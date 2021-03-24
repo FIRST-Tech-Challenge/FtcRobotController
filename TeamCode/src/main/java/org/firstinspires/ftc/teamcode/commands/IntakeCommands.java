@@ -44,6 +44,11 @@ public class IntakeCommands extends Command {
             intake.sweeperOff();
             intake.raiseStick();
         }
+        if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
+            intake.liftRoller();
+        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
+            intake.dropRoller();
+        }
     }
 
     @Override
