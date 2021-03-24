@@ -43,7 +43,7 @@ public class UpliftTelemetry extends Background {
             telem.addData("Right Encoder pos:\t", robot.odometry.getRightTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Center Encoder pos:\t", robot.odometry.getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Slow Mode:\t", robot.slowMode);
-            telem.addData("Transfer Pos:\t", robot.transferSub.transfer.getCurrentPosition() - robot.transferSub.transferOffset);
+            telem.addData("Transfer Pos:\t", robot.transferSub.transfer.getCurrentPosition());
             telem.addData("Transfer PID:\t", robot.transfer.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         }
         telem.addData("Shooting State\t",  robot.shootingState + "");
