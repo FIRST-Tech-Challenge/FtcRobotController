@@ -11,6 +11,7 @@ public class teleConfigTESTING_S implements teleOpInterface{
     double perfectval = 0.33;
     int reverseIntake = 1;
     int unnecessarynegintake = 1;
+    int numOfCycles = 1;
     double limiter = 1;
 
     public teleConfigTESTING_S(HardwareMapV2 robot) {
@@ -99,7 +100,8 @@ public class teleConfigTESTING_S implements teleOpInterface{
     public void y(boolean pressed) {
         if (pressed && System.currentTimeMillis()-button>=500) {
             if (confignumber == 1) {
-                drivetrain.singleCycle();
+                drivetrain.newOuttakeAll(1.0, numOfCycles);
+                numOfCycles = 1;
             }
             button = System.currentTimeMillis();
         }
@@ -121,12 +123,18 @@ public class teleConfigTESTING_S implements teleOpInterface{
 
     }
 
-    public void dl(boolean pressed) {
-
+    public void dr(boolean pressed) {
+        if (pressed && System.currentTimeMillis()-button>=300) {
+            if (numOfCycles != 3) {numOfCycles++;}
+            button = System.currentTimeMillis();
+        }
     }
 
-    public void dr(boolean pressed) {
-
+    public void dl(boolean pressed) {
+        if (pressed && System.currentTimeMillis()-button>=300) {
+            if (numOfCycles != 1) {numOfCycles--;}
+            button = System.currentTimeMillis();
+        }
     }
 
     public void rb(boolean pressed) {
@@ -167,6 +175,7 @@ public class teleConfigTESTING_S implements teleOpInterface{
 
     public void updateTelemetryDM() {
         telemetryDM.put("Instructions: ", configname); telemetryDM.put("Limiter:", (String.valueOf(limiter)));
+        telemetryDM.put("Number of Cycles ", String.valueOf(numOfCycles));
     }
 
     public void loop() {

@@ -84,7 +84,7 @@ public class Drivetrain {
         moveSlapper(slapperPos.OUT);
         pause(300);
         moveSlapper(slapperPos.IN);
-        pause(100);
+        pause(300);
     }
     public void tilt(double pos){
         if (0.0 <= pos && pos <= 4.0) {

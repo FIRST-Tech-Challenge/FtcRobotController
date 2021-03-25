@@ -12,6 +12,7 @@ public class lessButtonsConfig implements teleOpInterface {
     double limiter2, limiter1, outtakeC, outtakeW, intake = 1.0;
     double intakeTime, outtakeTime, xTime, yTime, dTime, button, dpad;
     enum overrides{INTAKE, CONVEYOR, OUTTAKE, NONE}
+    int numOfCycles = 1;
     teleConfigRohit2.overrides currOverride;
 
     public lessButtonsConfig(HardwareMapV2 robot){
@@ -60,17 +61,23 @@ public class lessButtonsConfig implements teleOpInterface {
 
     public void dp(boolean pressed) {
         if (pressed && System.currentTimeMillis()-button>=500) {
-            drivetrain.singleCycle();
+            drivetrain.newOuttakeAll(1.0, numOfCycles);
+            button = System.currentTimeMillis();
+        }
+    }
+
+    public void dr(boolean pressed) {
+        if (pressed && System.currentTimeMillis()-button>=300) {
+            if (numOfCycles != 3) {numOfCycles++;}
             button = System.currentTimeMillis();
         }
     }
 
     public void dl(boolean pressed) {
-
-    }
-
-    public void dr(boolean pressed) {
-        if (pressed){drivetrain.tilt(0.35);}
+        if (pressed && System.currentTimeMillis()-button>=300) {
+            if (numOfCycles != 1) {numOfCycles--;}
+            button = System.currentTimeMillis();
+        }
     }
 
     public void rb(boolean pressed) {
@@ -106,7 +113,7 @@ public class lessButtonsConfig implements teleOpInterface {
     }
 
     public void ljoyb(boolean pressed) {
-
+        if (pressed){drivetrain.tilt(0.35);}
     }
 
     public void custom1() {
@@ -114,7 +121,7 @@ public class lessButtonsConfig implements teleOpInterface {
     }
 
     public void updateTelemetryDM() {
-
+        telemetryDM.put("Number of Cycles ", String.valueOf(numOfCycles));
     }
 
     public void loop() {
