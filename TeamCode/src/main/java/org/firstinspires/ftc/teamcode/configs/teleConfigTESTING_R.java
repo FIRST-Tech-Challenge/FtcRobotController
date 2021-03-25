@@ -123,7 +123,7 @@ public class teleConfigTESTING_R implements teleOpInterface{
     }
 
     public void updateTelemetryDM() {
-        
+
     }
 
     public void loop() {
