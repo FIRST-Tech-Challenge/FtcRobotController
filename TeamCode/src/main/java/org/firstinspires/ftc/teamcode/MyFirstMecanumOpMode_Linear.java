@@ -19,23 +19,17 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
-    DcMotor wobbleGoalExtendMotor = null;
-    DcMotor wobbleGoalRaiseMotor = null;
     DcMotor elevator = null;
+    DcMotor wobbleGoalRaiseMotor = null;
     DcMotorImplEx shooterMotor = null;
     Servo wobbleGoalGrippyThing = null;
     CRServo intakeOne = null;
     CRServo intakeTwo = null;
     CRServo trigger = null;
-  //  CRServo intakeTwo = null;
-    CRServo shooterServo1 = null;
-    CRServo shooterServo2 = null;
+    DcMotor elevator1 = null;
+    DcMotor elevator2 = null;
     RobotClass robot;
     private double ticks = 537;//537
-
-
-    private double ticks = 537;//537
-
 
     @Override
     public void runOpMode() {
@@ -50,17 +44,17 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
-        wobbleGoalExtendMotor = hardwareMap.dcMotor.get("wobbleExtendo");
-        wobbleGoalRaiseMotor = hardwareMap.dcMotor.get("wobbleLift");
-        elevator = hardwareMap.dcMotor.get("");
         shooterMotor = (DcMotorImplEx) hardwareMap.dcMotor.get("shooterMotor");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
         intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
       //  intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
-        shooterServo1 = hardwareMap.crservo.get("shooterServo1");
-        shooterServo2 = hardwareMap.crservo.get("shooterServo2");
+//        shooterServo1 = hardwareMap.crservo.get("shooterServo1");
+//        shooterServo2 = hardwareMap.crservo.get("shooterServo2");
         trigger = hardwareMap.crservo.get("trigger");
+        elevator1 = hardwareMap.dcMotor.get("elevator1");
+        elevator2 = hardwareMap.dcMotor.get("elevator2");
+        wobbleGoalRaiseMotor = hardwareMap.dcMotor.get("wobbleLift");
 
         leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -73,9 +67,14 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         boolean shooterServoPressed = false;
         boolean shooterServoOn= false;
         boolean intake = false;
-        wobbleGoalGrippyThing.setPosition(0.9);
-        boolean elevatorGoal = true;
-        boolean elevatorPosition = true;
+        wobbleGoalGrippyThing.setPosition(0.76);
+        int elevatorGoal = 0;
+        int elevatorPosition = 0;
+        boolean wantTriggerOn = false;
+
+        elevator1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elevator2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -113,23 +112,6 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
 
-            if (gamepad2.dpad_down) {
-                if (!shooterServoPressed) {
-                    if (shooterServoOn) {
-                        shooterServo1.setPower(0);
-                        shooterServo2.setPower(0);
-                        shooterServoOn = false;
-                    } else {
-                        shooterServo1.setPower(0.8);
-                        shooterServo2.setPower(0.8);
-                        shooterServoOn = true;
-                    }
-                }
-                shooterServoPressed=true;
-            } else {
-                shooterServoPressed = false;
-            }
-
 
             if (gamepad2.left_trigger >= .87) {
                 wobbleGoalRaiseMotor.setPower(.6);
@@ -140,18 +122,20 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 wobbleGoalRaiseMotor.setPower(0);
             }
 
-            if (gamepad2.right_trigger >= .87) {
+            if (gamepad1.right_trigger >= .87) {
                 shooterMotor.setVelocity(-5400*0.85*28/60);
-            } else if(gamepad2.right_bumper == true){
+            } else if(gamepad1.right_bumper == true){
                 shooterMotor.setVelocity(0);
             }
 
+            if (gamepad2.right_trigger >= .3) { wantTriggerOn = true; }
+            if (wantTriggerOn) {
+                trigger.setPower(1);
+                robot.pause(600);
+                trigger.setPower(-1);
+                robot.pause(600); }
+            if (gamepad2.right_bumper) { trigger.setPower(0); wantTriggerOn = false; }
 
-            if (gamepad2.right_bumper == true) {
-                wobbleGoalExtendMotor.setPower(-.5);
-            } else {
-                wobbleGoalExtendMotor.setPower(0);
-            }
 
             if (gamepad2.a) {
                 intakeOne.setPower(0.9);
@@ -164,12 +148,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 intakeTwo.setPower(0);
 
             }
-            /*beep boop
-            *
-            * robot thigd
-            *
-            *
-            * */
+
             if (gamepad2.y) {
                 if (!yPressed) {
                     if (yOpen) {
@@ -189,42 +168,63 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 forward(.5, -2.7);
             }
 
-            if (gamepad2.left_stick_y > .87) {
-                elevatorGoal = true;
+            if (gamepad2.dpad_down && elevatorGoal != -1) {
+                elevatorGoal = -1;
 
                 //Numbers completely arbitrary for theoretical purposes.
-                elevator.setTargetPosition((int)7);
-                elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elevator.setPower(Math.abs(2));
+                elevator1.setTargetPosition((int)2500);
+                elevator2.setTargetPosition((int)2500);
+                elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator1.setPower(Math.abs(.3));
+                elevator2.setPower(Math.abs(.3));
+
 
             }
-            if (gamepad2.left_stick_y < -.87) {
-                elevatorGoal = false;
+            if (gamepad2.dpad_up && elevatorGoal != 1) {
+                elevatorGoal = 1;
 
-                //Numbers completely arbitrary for theoretical purposes.
-                elevator.setTargetPosition((int)-3);
-                elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elevator.setPower(Math.abs(2));
+                elevator1.setTargetPosition((int)0);
+                elevator2.setTargetPosition((int)0);
+                elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator1.setPower(Math.abs(.3));
+                elevator2.setPower(Math.abs(.3));
+
 
             }
-            if (elevatorGoal) {
-                if (elevator.getCurrentPosition() >= 7) {
-                    elevatorPosition = true;
-                    elevator.setPower(0);
+            if (elevatorGoal == 1) {
+                if (elevator1.getCurrentPosition() <= 0 || elevator2.getCurrentPosition() <= 0) {
+                    elevatorPosition = 1;
+                    elevatorGoal = 0;
+                    elevator1.setPower(0);
+                    elevator2.setPower(0);
+
                 }
-            } else if (!elevatorGoal) {
-                if (elevator.getCurrentPosition() <= -3) {
-                    elevatorPosition = false;
-                    elevator.setPower(0);
+            } else if (elevatorGoal == -1) {
+                if (elevator1.getCurrentPosition() >= 2500  || elevator2.getCurrentPosition() >= 2500) {
+                    elevatorPosition = -1;
+                    elevatorGoal = 0;
+                    elevator1.setPower(0);
+                    elevator2.setPower(0);
+
                 }
             }
-            while (gamepad2.dpad_left) {
-                trigger.setPower(-.7);
-                robot.pause(700);
-                trigger.setPower(.7);
-                robot.pause(700);
-
+            if (gamepad2.dpad_right) {
+                elevator1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                elevator1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                elevator1.setPower(0);
+                elevator2.setPower(0);
+                elevatorGoal = 0;
             }
+
+            telemetry.addData("Elevator motor 1 current position: ", elevator1.getCurrentPosition());
+            telemetry.addData("Elevator motor 2 current position: ", elevator2.getCurrentPosition());
+            telemetry.addData("Current goal: ", elevatorGoal);
+            telemetry.addData("Current read position: ", elevatorPosition);
+            telemetry.update();
+
+
 
         }
     }

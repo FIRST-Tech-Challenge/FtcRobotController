@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Autonomous(name="AutoW")
 public class AtonomousWitchcraft extends LinearOpMode {
 
-    DcMotor wobbleGoalExtendMotor = null;
+//    DcMotor wobbleGoalExtendMotor = null;
     DcMotor wobbleGoalRaiseMotor = null;
     Servo wobbleGoalGrippyThing = null;
     RobotClass robotClass;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        wobbleGoalExtendMotor = hardwareMap.dcMotor.get("wobbleExtendo");
+//        wobbleGoalExtendMotor = hardwareMap.dcMotor.get("wobbleExtendo");
         wobbleGoalRaiseMotor = hardwareMap.dcMotor.get("wobbleLift");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         robotClass= new RobotClass(hardwareMap, telemetry, this);

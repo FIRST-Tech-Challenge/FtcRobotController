@@ -45,16 +45,16 @@ public class InsideRed extends LinearOpMode {
         robot.forward(0.6, -4.1);
         //robot.strafeRight(0.4, 0.3);
         robot.pivotLeft(0.1, 17);
-        robot.shooterEngageAlt();
+//        robot.shooterEngageAlt();
         robot.pause(500);
-        shoot();
+//        shoot();
         robot.pivotRight(0.1, 6);
-        shoot();
+//        shoot();
         robot.pivotRight(.1, 5);
-        shoot();
+//        shoot();
         robot.intakeServoEngage(0);
         robot.pause(200);
-        robot.stopShooting();
+//        robot.stopShooting();
         robot.pivotRight(.1, 6);
 
         if (ringNmb == RobotClass.RingPosition.NONE) {
@@ -80,14 +80,14 @@ public class InsideRed extends LinearOpMode {
         }
 
     }
-    protected void shoot(){
-        robot.shooterServo1(.8);
-        robot.shooterServo2(.8);
-        robot.pause(200);
-        robot.intakeServoEngage(.9);
-        robot.pause(800);
-        robot.shooterServo2(0);
-        robot.shooterServo1(0);
+//    protected void shoot(){
+//        robot.shooterServo1(.8);
+//        robot.shooterServo2(.8);
+//        robot.pause(200);
+//        robot.intakeServoEngage(.9);
+//        robot.pause(800);
+//        robot.shooterServo2(0);
+//        robot.shooterServo1(0);
     }
 //    protected void shootLast(){
 //        robot.shooterServo1(.8);
@@ -95,6 +95,5 @@ public class InsideRed extends LinearOpMode {
 //        robot.pause(1200);
 //        robot.shooterServo2(0);
 //        robot.shooterServo1(0);
-//    }
-}
+
 

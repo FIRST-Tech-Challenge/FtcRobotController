@@ -2,11 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.Date;
 
@@ -39,17 +34,17 @@ public class OuterRedAutonomous extends LinearOpMode {
         robot.strafeLeft(.3,1);
         robot.forward(.3,-1.7);
         robot.pivotLeft(.3,28);
-        robot.shooterEngage();
-        robot.pause(800);
-        robot.shooterServo1(.8);
-        robot.shooterServo2(.8);
-        robot.pause(200);
-        robot.intakeServoEngage(.9);
-        robot.pause(4500);
-        robot.shooterStop();
-        robot.shooterServo1Stop();
-        robot.shooterServo2Stop();
-        robot.intakeServoStop();
+//        robot.shooterEngage();
+//        robot.pause(800);
+//        robot.shooterServo1(.8);
+//        robot.shooterServo2(.8);
+//        robot.pause(200);
+//        robot.intakeServoEngage(.9);
+//        robot.pause(4500);
+//        robot.shooterStop();
+//        robot.shooterServo1Stop();
+//        robot.shooterServo2Stop();
+//        robot.intakeServoStop();
 
 //        robot.startShooting();
 //        robot.stopTimingBelt();
@@ -71,31 +66,31 @@ public class OuterRedAutonomous extends LinearOpMode {
         } else if (ringNmb == RobotClass.RingPosition.ONE) {
             robot.pivotRight(.5, 28);
             robot.forward(0.3, -.6);
-            robot.intakeServoEngage(.9);
+//            robot.intakeServoEngage(.9);
             robot.pivotRight(0.3,90);
             robot.forward(0.5,2);
             robot.forward(0.5, 1.8);
-            robot.shooterServo1(.8);
-            robot.shooterServo2(.8);
-            robot.pause(1000);
-            robot.shooterServo1Stop();
-            robot.shooterServo2Stop();
-            robot.intakeServoStop();
+//            robot.shooterServo1(.8);
+//            robot.shooterServo2(.8);
+//            robot.pause(1000);
+//            robot.shooterServo1Stop();
+//            robot.shooterServo2Stop();
+//            robot.intakeServoStop();
             robot.pivotLeft(0.3, 90);
             robot.forward(0.3, .6);
             robot.pivotLeft(.3,28);
 
-            robot.shooterEngage();
-            robot.pause(800);
-            robot.shooterServo1(.8);
-            robot.shooterServo2(.8);
-            robot.pause(200);
-            robot.intakeServoEngage(.9);
-            robot.pause(4500);
-            robot.shooterStop();
-            robot.shooterServo1Stop();
-            robot.shooterServo2Stop();
-            robot.intakeServoStop();
+//            robot.shooterEngage();
+//            robot.pause(800);
+//            robot.shooterServo1(.8);
+//            robot.shooterServo2(.8);
+//            robot.pause(200);
+//            robot.intakeServoEngage(.9);
+//            robot.pause(4500);
+//            robot.shooterStop();
+//            robot.shooterServo1Stop();
+//            robot.shooterServo2Stop();
+//            robot.intakeServoStop();
 
             robot.pivotRight(.5, 28);
             robot.forward(.4,-6.5);
