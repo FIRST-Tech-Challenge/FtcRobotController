@@ -45,11 +45,12 @@ public class IntakeCommands extends Command {
             intake.sweeperOff();
             intake.raiseStick();
         }
-        if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
-            intake.liftRoller();
-        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
-            intake.dropRoller();
-        }
+//        if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
+//            intake.liftRoller();
+//        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
+//            intake.dropRoller();
+//        }
+        //Toggle Button for Roller to Move up and Down
         if(opMode.gamepad2.dpad_left) {
             if (!aPressed) {
                 robot.intakeToggle = !robot.intakeToggle;
