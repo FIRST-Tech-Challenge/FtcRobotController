@@ -38,7 +38,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 //        digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
 //        sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
 //        servoTest = hardwareMap.get(Servo.class, "servoTest");
-        robot= new RobotClass(hardwareMap, telemetry, this);
+        robot = new RobotClass(hardwareMap, telemetry, this);
 
         leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
@@ -48,7 +48,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
         intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
-      //  intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
+        //  intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
 //        shooterServo1 = hardwareMap.crservo.get("shooterServo1");
 //        shooterServo2 = hardwareMap.crservo.get("shooterServo2");
         trigger = hardwareMap.crservo.get("trigger");
@@ -60,12 +60,12 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
         rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
-     //   intakeTwo.setDirection(CRServo.Direction.REVERSE);
+        //   intakeTwo.setDirection(CRServo.Direction.REVERSE);
 
         boolean yPressed = false;
         boolean yOpen = true;
         boolean shooterServoPressed = false;
-        boolean shooterServoOn= false;
+        boolean shooterServoOn = false;
         boolean intake = false;
         wobbleGoalGrippyThing.setPosition(0.76);
         int elevatorGoal = 0;
@@ -123,18 +123,24 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger >= .87) {
-                shooterMotor.setVelocity(-5400*0.85*28/60);
-            } else if(gamepad1.right_bumper == true){
+                shooterMotor.setVelocity(-5400 * 0.72 * 28 / 60);
+            } else if (gamepad1.right_bumper == true) {
                 shooterMotor.setVelocity(0);
             }
 
-            if (gamepad2.right_trigger >= .3) { wantTriggerOn = true; }
-            if (wantTriggerOn) {
-                trigger.setPower(1);
-                robot.pause(600);
-                trigger.setPower(-1);
-                robot.pause(600); }
-            if (gamepad2.right_bumper) { trigger.setPower(0); wantTriggerOn = false; }
+            if (gamepad2.right_trigger >= .3) {
+                double targetVelocity = -5400 * 0.72 * 28 / 60;
+                shooterMotor.setVelocity(targetVelocity);
+                while (shooterMotor.getVelocity() < targetVelocity) {
+                    trigger.setPower(1);
+                    robot.pause(600);
+                    trigger.setPower(-1);
+                    robot.pause(600);
+                    trigger.setPower(0);
+                }
+            } else {
+                trigger.setPower(0);
+            }
 
 
             if (gamepad2.a) {
@@ -143,7 +149,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             } else if (gamepad2.b) {
                 intakeOne.setPower(-0.9);
                 intakeTwo.setPower(-0.9);
-            } else if (gamepad2.x){
+            } else if (gamepad2.x) {
                 intakeOne.setPower(0);
                 intakeTwo.setPower(0);
 
@@ -159,12 +165,12 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                         yOpen = true;
                     }
                 }
-                yPressed=true;
+                yPressed = true;
             } else {
                 yPressed = false;
             }
             if (gamepad1.a) {
-                forwardToWhite(.9,.5,.3);
+                forwardToWhite(.9, .5, .3);
                 forward(.5, -2.7);
             }
 
@@ -172,8 +178,8 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 elevatorGoal = -1;
 
                 //Numbers completely arbitrary for theoretical purposes.
-                elevator1.setTargetPosition((int)2500);
-                elevator2.setTargetPosition((int)2500);
+                elevator1.setTargetPosition((int) 1500);
+                elevator2.setTargetPosition((int) 1500);
                 elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator1.setPower(Math.abs(.3));
@@ -184,8 +190,8 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             if (gamepad2.dpad_up && elevatorGoal != 1) {
                 elevatorGoal = 1;
 
-                elevator1.setTargetPosition((int)0);
-                elevator2.setTargetPosition((int)0);
+                elevator1.setTargetPosition((int) 0);
+                elevator2.setTargetPosition((int) 0);
                 elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator1.setPower(Math.abs(.3));
@@ -202,7 +208,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 
                 }
             } else if (elevatorGoal == -1) {
-                if (elevator1.getCurrentPosition() >= 2500  || elevator2.getCurrentPosition() >= 2500) {
+                if (elevator1.getCurrentPosition() >= 1500 || elevator2.getCurrentPosition() >= 1500) {
                     elevatorPosition = -1;
                     elevatorGoal = 0;
                     elevator1.setPower(0);
@@ -225,9 +231,11 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             telemetry.update();
 
 
-
         }
     }
+
+}
+
     public void forwardToWhite (double speed, double rotations, double speed2) {
         robot.frontLeft.setPower(speed2);
         robot.frontRight.setPower(speed2);
