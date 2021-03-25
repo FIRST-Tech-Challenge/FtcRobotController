@@ -74,29 +74,21 @@ public class TwoGPTeleop extends LinearOpMode {
                 boolean move_sticks_up = gamepad2.dpad_down;
                 boolean save_Shooting_Position = gamepad2.a;
                 float goToShootingPosition = gamepad2.left_trigger;
-                boolean vuforia_on = gamepad1.y;;
-                boolean gotoPosition_off= gamepad1.dpad_down;;
+                OdometryChassis.vuforia_on = gamepad1.y;;
+                if(gamepad1.y){
+                    robot.stopAllMotors();
+                    continue;
+                }
+                OdometryChassis.gotoPosition_off= gamepad2.dpad_left;;
 
 
 
-                angleInRadian = Math.atan2(left_stick_y, left_stick_x);
+                angleInRadian = Math.atan2(left_stick_y*-1, left_stick_x*2);
                 angleInDegree = Math.toDegrees(angleInRadian);
-                if(vuforia_on){
-                    OdometryChassis.vuforia_on=true;
-                }
-                else{
-                    OdometryChassis.vuforia_on=false;
-                }
-                if(gotoPosition_off){
-                    OdometryChassis.gotoPosition_off=true;
-                }
-                else{
-                    OdometryChassis.gotoPosition_off=false;
-                }
                 /**Powershots**/
                 if(odo_powershots){
                         //robot.setPosition(0,0,0);
-                        robot.goToPosition(4,-20 ,0,0.8);
+                        robot.goToPosition(5,-19.5 ,0,0.3);
                         //robot.goToPosition(40,-40,-88,0.7);
                         robot.shootThreePowerShot();
                 }
@@ -127,7 +119,7 @@ public class TwoGPTeleop extends LinearOpMode {
 
                 magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
-                robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
+                robot.moveMultidirectional(magnitude*0.9, angleInDegree, (float)(right_stick_x*0.6), slowMode); // It is 0.95, because the robot DCs at full power.
 
                 // wobble goal movements
                 if (move_wobble_goal_arm){
@@ -199,7 +191,7 @@ public class TwoGPTeleop extends LinearOpMode {
 
                 if (goToShootingPosition==1){
                     robot.shootGoalTeleop(1000);
-                    robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 0.9);
+                    robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8);
                 }
             }
             idle();

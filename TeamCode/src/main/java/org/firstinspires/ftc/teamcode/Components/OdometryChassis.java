@@ -142,10 +142,10 @@ public class OdometryChassis extends BasicChassis {
 
         globalAngle += deltaAngle;
         globalAngle%=360;
-        if(globalAngle>180){
+        if(globalAngle>270){
             globalAngle-=360;
         }
-        if(globalAngle<-180){
+        if(globalAngle<-270){
             globalAngle+=360;
         }
 
@@ -176,8 +176,11 @@ public class OdometryChassis extends BasicChassis {
         return data;
         //return navigation.getPosition();
     }
-    public void goToPosition(double x, double y, double a, double power){
+    public void goToPosition(double y, double x, double a, double power){
         if(!isCorgi) {
+            double f = x;
+            x=y;
+            y=f;
             motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
             motorRightFront.setDirection(DcMotor.Direction.FORWARD);
             motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -198,16 +201,16 @@ public class OdometryChassis extends BasicChassis {
             double startpower = power;
             while (op.opModeIsActive() && (difference >= 1)&&!gotoPosition_off) {
                 currentPosition = track();
-                power = difference / 15;
+                power = startpower*difference / 30;
                 if (power > startpower) {
                     power = startpower;
                 }
                 x = target_position[0] - currentPosition[0];
                 y = target_position[1] - currentPosition[1];
-                angleInRadians = atan2(x, y * 1.5) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
+                angleInRadians = atan2(-x, y * 2) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
-                anglecorrection = (currentPosition[2] - target_position[2]) % 360 * 0.03;
+                anglecorrection = (currentPosition[2] - target_position[2]) % 360 * -0.01;
                 if (abs(anglePower[1]) > abs(anglePower[0])) {
                     anglePower[1] *= abs(1 / anglePower[1]);
                     anglePower[0] *= abs(1 / anglePower[1]);
@@ -215,8 +218,8 @@ public class OdometryChassis extends BasicChassis {
                     anglePower[1] *= abs(1 / anglePower[0]);
                     anglePower[0] *= abs(1 / anglePower[0]);
                 }
-                while (abs(power) < 0.4) {
-                    power *= 0.4 / abs(power);
+                while (abs(power) < 0.42) {
+                    power *= 0.42 / abs(power);
                 }
                 motorRightBack.setPower(1.4 * (power * anglePower[1] + anglecorrection));//1.4 IF YOU ARE USING WALRUS MULTIPLY THIS BY 1.4
                 motorRightFront.setPower(power * anglePower[0] + anglecorrection);
@@ -231,11 +234,14 @@ public class OdometryChassis extends BasicChassis {
                 op.telemetry.update();
             }
             stopAllMotors();
-            turnInPlace(a, 1.0);
+            turnInPlace(a, 0.5);
             stopAllMotors();
             op.telemetry.addData("done", true);
         }
         else if(isCorgi) {
+            double f = x;
+            x=y;
+            y=f;
             motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
             motorRightFront.setDirection(DcMotor.Direction.FORWARD);
             motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -289,7 +295,7 @@ public class OdometryChassis extends BasicChassis {
                 op.telemetry.update();
             }
             stopAllMotors();
-            turnInPlace(a, 1.0);
+            //turnInPlace(a, 0.5);
             stopAllMotors();
             op.telemetry.addData("done", true);
         }
@@ -303,11 +309,63 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if(!isCorgi) {
+            float currentAngle = getAngle();
+            float newTarget = (float) target;
+            float error = (float) target - currentAngle;
+            double gain = -0.005;
+            int direction = 1;
+            if (error < 0) {
+                direction = -1;
+            } else {
+                direction = 1;
+            }
+            double rightPower = direction * min(abs(power * gain * error), abs(power));
+            double leftPower = -rightPower;
 
+
+            if (newTarget > 180) {
+                newTarget = newTarget - 360;
+            }
+            if (newTarget <= -180) {
+                newTarget = newTarget + 360;
+            }
+
+            if (abs(error) < 20) {
+                while (op.opModeIsActive() && (error > 0.2 || error < -0.2)) {
+                    currentAngle = (float) track()[2];
+                    error = newTarget - currentAngle;
+                    if (error < 0) {
+                        direction = -1;
+                    } else {
+                        direction = 1;
+                    }
+                    rightPower = direction * min(abs(power * gain * error), abs(power));
+                    leftPower = -rightPower;
+
+                        if (abs(leftPower) < 0.18) {
+                            leftPower *= 0.18 / abs(leftPower);
+                        }
+                        if (abs(rightPower) < 0.18) {
+                            rightPower *= 0.18 / abs(rightPower);
+                        }
+                    motorLeftBack.setPower(leftPower);
+                    motorLeftFront.setPower(leftPower);
+                    motorRightBack.setPower(rightPower);
+                    motorRightFront.setPower(rightPower);
+                }
+
+                motorLeftBack.setPower(0);
+                motorRightFront.setPower(0);
+                motorLeftFront.setPower(0);
+                motorRightBack.setPower(0);
+            }
+        }
+        else{
         float currentAngle = getAngle();
         float newTarget = (float)target;
         float error = (float)target-currentAngle;
-        double gain = 0.05;
+        double gain = -0.05;
         int direction=1;
         if(error<0){
             direction = -1;
@@ -391,6 +449,7 @@ public class OdometryChassis extends BasicChassis {
             motorRightFront.setPower(0);
             motorLeftFront.setPower(0);
             motorRightBack.setPower(0);
+        }
         }
     }
 
