@@ -36,5 +36,10 @@
       <option name="name" value="maven2" />
       <option name="url" value="https://jitpack.io" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven3" />
+      <option name="name" value="maven3" />
+      <option name="url" value="https://maven.brott.dev/" />
+    </remote-repository>
   </component>
 </project>

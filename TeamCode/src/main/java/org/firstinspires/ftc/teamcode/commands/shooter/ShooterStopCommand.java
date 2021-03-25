@@ -5,19 +5,17 @@ import com.technototes.library.command.Command;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 
 import java.util.function.DoubleSupplier;
-public class ShooterSetSpeedCommand extends Command {
+public class ShooterStopCommand extends Command {
     public ShooterSubsystem subsystem;
-    public DoubleSupplier supplier;
-    public ShooterSetSpeedCommand(ShooterSubsystem sub, DoubleSupplier sup){
+    public ShooterStopCommand(ShooterSubsystem sub){
         addRequirements(sub);
         subsystem = sub;
-        supplier = sup;
     }
 
 
     @Override
     public void execute() {
-        subsystem.setVelocity(supplier.getAsDouble());
+        subsystem.setVelocity(0);
     }
 
 }

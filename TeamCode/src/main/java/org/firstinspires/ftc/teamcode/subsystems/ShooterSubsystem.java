@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.technototes.library.hardware.motor.EncodedMotor;
+import com.technototes.library.hardware.servo.Servo;
 import com.technototes.library.subsystem.motor.EncodedMotorSubsystem;
 import com.technototes.logger.Stated;
 
@@ -10,9 +11,11 @@ import com.technototes.logger.Stated;
  */
 public class ShooterSubsystem extends EncodedMotorSubsystem implements Stated<Double> {
     public EncodedMotor motor;
-    public ShooterSubsystem(EncodedMotor m){
+    public Servo servo;
+    public ShooterSubsystem(EncodedMotor m, Servo s){
         super(m);
         motor = m;
+        servo = s;
 
     }
     public void setVelocity(double ticksPerSecond){
@@ -26,6 +29,10 @@ public class ShooterSubsystem extends EncodedMotorSubsystem implements Stated<Do
     }
     public boolean isAtIdleVelocity(){
         return getIdleVelocity() <= getVelocity();
+    }
+
+    public void setFlapPosition(double pos){
+        servo.setPosition((pos+1)*0.5);
     }
 
     @Override

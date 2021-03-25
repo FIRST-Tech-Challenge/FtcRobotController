@@ -27,7 +27,15 @@ public class TeleOpV1 extends CommandOpMode implements Loggable {
     public void uponInit() {
         robot = new Robot();
         operatorInterface = new OperatorInterface(driverGamepad, codriverGamepad, robot);
-        super.telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
     }
 
+    @Override
+    public void runLoop() {
+//        robot.hardware.flDriveMotor.setSpeed(driverGamepad.a.getAsBoolean() ? 1 : 0);
+//        robot.hardware.frDriveMotor.setSpeed(driverGamepad.b.getAsBoolean() ? 1 : 0);
+//        robot.hardware.rlDriveMotor.setSpeed(driverGamepad.x.getAsBoolean() ? 1 : 0);
+//        robot.hardware.rrDriveMotor.setSpeed(driverGamepad.y.getAsBoolean() ? 1 : 0);
+
+        robot.drivebaseSubsystem.joystickDriveWithGyro(driverGamepad.leftStick.getXAxis(), driverGamepad.leftStick.getYAxis(), driverGamepad.rightStick.getXAxis(), robot.hardware.imu.gyroHeading());
+    }
 }

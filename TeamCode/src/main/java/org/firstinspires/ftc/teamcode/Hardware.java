@@ -23,7 +23,7 @@ public class Hardware implements Loggable {
     public EncodedMotor<DcMotor> rlDriveMotor;
     public EncodedMotor<DcMotor> rrDriveMotor;
 
-    public GyroSensor imu;
+    public IMU imu;
 
     //index
     public Servo indexArmServo;
@@ -39,6 +39,8 @@ public class Hardware implements Loggable {
     public EncodedMotor<DcMotor> shooterMotor2;
     public EncodedMotorGroup shooterMotorGroup;
 
+    public Servo shooterFlapServo;
+
 
     //wobble
     public Servo wobbleArmServo;
@@ -50,8 +52,7 @@ public class Hardware implements Loggable {
         rlDriveMotor = new EncodedMotor<>("rlMotor");
         rrDriveMotor = new EncodedMotor<>("rrMotor");
 
-        //TODO fix
-        imu = new GyroSensor("imu");
+        imu = new IMU("imu");
 
         indexArmServo = new Servo("indexarm");
         indexPivotServo = new Servo("indexpivot");
@@ -63,6 +64,8 @@ public class Hardware implements Loggable {
         shooterMotor1 = new EncodedMotor<>("shooter1");
         shooterMotor2 = new EncodedMotor<>("shooter2");
         shooterMotorGroup = new EncodedMotorGroup(shooterMotor1.invert(), shooterMotor2.invert());
+
+        shooterFlapServo = new Servo("flapservo");
 
         wobbleArmServo = new Servo("wobblearm");
         wobbleClawServo = new Servo("wobbleclaw");

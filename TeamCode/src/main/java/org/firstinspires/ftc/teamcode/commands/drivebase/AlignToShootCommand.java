@@ -22,12 +22,12 @@ public class AlignToShootCommand extends Command {
 
     @Override
     public void execute() {
-        //make the changes
+        shooterSubsystem.setVelocity(1);
     }
 
     @Override
     public boolean isFinished() {
         //check if changes are made
-        return super.isFinished();
+        return shooterSubsystem.getVelocity()>0.9;
     }
 }

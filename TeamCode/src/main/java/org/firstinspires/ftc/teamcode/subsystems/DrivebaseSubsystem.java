@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.util.Range;
 import com.technototes.library.hardware.motor.EncodedMotor;
 import com.technototes.library.hardware.motor.Motor;
 import org.firstinspires.ftc.teamcode.subsystems.GyroSensor;
@@ -12,7 +13,7 @@ import com.technototes.logger.Stated;
  *
  */
 public class DrivebaseSubsystem extends EncodedMecanumDrivebaseSubsystem implements Stated<DrivebaseSubsystem.DriveSpeed> {
-    public GyroSensor imu;
+    public IMU imu;
 
 
     //drivespeed stuff
@@ -27,15 +28,15 @@ public class DrivebaseSubsystem extends EncodedMecanumDrivebaseSubsystem impleme
         }
         //for velocity control
         double getSpeedAsVelocity(){
-            return 2655*speed;
+            return speed;
         }
     }
 
     public DriveSpeed driveSpeed;
 
-    public DrivebaseSubsystem(EncodedMotor flMotor, EncodedMotor frMotor, EncodedMotor rlMotor, EncodedMotor rrMotor, GyroSensor i) {
+    public DrivebaseSubsystem(EncodedMotor flMotor, EncodedMotor frMotor, EncodedMotor rlMotor, EncodedMotor rrMotor, IMU i) {
         //note order
-        super(()->0, frMotor, flMotor, rrMotor, rlMotor);
+        super(i::gyroHeading, flMotor, frMotor, rlMotor, rrMotor);
         driveSpeed = DriveSpeed.NORMAL;
         imu = i;
     }
@@ -58,4 +59,29 @@ public class DrivebaseSubsystem extends EncodedMecanumDrivebaseSubsystem impleme
         return getDriveSpeed();
     }
     //TODO rest of subsystem
+    //TODO make turn value custom
+
+    //test
+//    @Override
+//    public void drive(double speed, double angle, double rotation) {
+//        //angle = 0;
+//        //rotation = 0;
+//        double x = Math.cos(angle) * speed;
+//        double y = Math.sin(angle) * speed;
+//
+//        double powerCompY = -(x+y);//-(1+0)-1
+//        double powerCompX = x-y;//(1-0)1
+//
+//        speed = Range.clip(speed + Math.abs(rotation), 0, 1);
+//
+//        double flPower = powerCompY - powerCompX - 2*rotation;
+//        double frPower = -powerCompY - powerCompX - 2*rotation;
+//        double rlPower = powerCompY + powerCompX - 2*rotation;
+//        double rrPower = -powerCompY + powerCompX - 2*rotation;
+//
+//        double scale = 1;//getScale(flPower, frPower, rlPower, rrPower);
+//        scale = scale == 0 ? 0 : speed/scale;
+//        //scale = Math.cbrt(scale);
+//        drive(flPower*scale, frPower*scale,rlPower*scale, rrPower*scale);
+//    }
 }
