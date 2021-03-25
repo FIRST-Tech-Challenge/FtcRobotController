@@ -76,6 +76,7 @@ public class UpliftRobot {
     public int shotCount = 0;
     public double constant = 0;
     public boolean slowMode = false;
+    public boolean intakeToggle = false;
     public double shooter1Vel = -1;
     public double shooter2Vel = -1;
     public double highGoalVelocity = 1950;

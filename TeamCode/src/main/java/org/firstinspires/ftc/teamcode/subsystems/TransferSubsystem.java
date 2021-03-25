@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.core.Subsystem;
 
@@ -58,6 +59,8 @@ public class TransferSubsystem extends Subsystem {
         return transfer.getPower();
     }
 
+    public double getTransferCurrent(){return robot.transfer.getCurrent(CurrentUnit.MILLIAMPS);}
+
     public void initTransferPos() {
         dropTransfer();
         transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -84,11 +87,12 @@ public class TransferSubsystem extends Subsystem {
 //            transfer.setPower(-0.1);//10,3,0,0
 //        }
 //        transfer.setPower(0);
+
         transfer.setTargetPosition(TRANSFER_TARGET);
         transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         transfer.setPower(0.35);
         double initialTime = System.currentTimeMillis();
-        while(transfer.isBusy() && System.currentTimeMillis() - initialTime < 3000) {
+        while(transfer.isBusy() && System.currentTimeMillis() - initialTime < 3000 && getTransferCurrent() < 1500) {
             robot.safeSleep(5);
         }
         transfer.setPower(0);

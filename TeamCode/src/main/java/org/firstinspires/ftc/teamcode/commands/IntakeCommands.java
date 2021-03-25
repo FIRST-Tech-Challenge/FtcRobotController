@@ -12,6 +12,7 @@ public class IntakeCommands extends Command {
     public IntakeSubsystem intake;
     public UpliftTele opMode;
     UpliftRobot robot;
+    public boolean aPressed;
 
     public IntakeCommands(UpliftTele opMode, UpliftRobot robot, IntakeSubsystem intakeSubsystem) {
         super(opMode, intakeSubsystem);
@@ -47,6 +48,20 @@ public class IntakeCommands extends Command {
         if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
             intake.liftRoller();
         } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
+            intake.dropRoller();
+        }
+        if(opMode.gamepad2.dpad_left) {
+            if (!aPressed) {
+                robot.intakeToggle = !robot.intakeToggle;
+                aPressed = true;
+            }
+        } else {
+            aPressed = false;
+        }
+        if(robot.intakeToggle){
+            intake.liftRoller();
+        }
+        else{
             intake.dropRoller();
         }
     }
