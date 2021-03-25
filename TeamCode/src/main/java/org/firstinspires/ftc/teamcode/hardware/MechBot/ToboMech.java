@@ -1301,7 +1301,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
         if (hopper != null) {
-            if(tZone != TargetZone.ZONE_A) {
+            if(tZone != TargetZone.ZONE_C) {
                 hopper.hopperUpCombo(true);
             }
             TaskManager.processTasks();
@@ -1311,6 +1311,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, 25, 165, 0, false, 2);
                 chassis.rotateToFast(1,-50,0.5);
             } else if (tZone == TargetZone.ZONE_B) {//1
+                chassis.driveTo(auto_chassis_power, 50, 120, 0, true, 4);
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 10, 300, -40, true, 6);
@@ -1653,7 +1654,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+16,chassis.odo_y_pos_cm(),target_heading-0.5,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+16,chassis.odo_y_pos_cm(),target_heading,false,1);
         sleep(200);
         hopper.feederAuto();
         if (n==2) {
@@ -1666,7 +1667,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+16,chassis.odo_y_pos_cm(),target_heading-0.5,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+16,chassis.odo_y_pos_cm(),target_heading,false,1);
         sleep(200);
         hopper.feederAuto();
         sleep(100);
@@ -1807,11 +1808,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B) {//1
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 intake.intakeIn();
-                chassis.driveTo(auto_chassis_power, side(80), 165, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(75), 165, 0, false, 5);
                 sleep(500); //to allow time for intaking the bonus ring
                 intake.stop();
                 autoShootHighGoal(1, true);
-                chassis.driveTo(auto_chassis_power, side(75), 225, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(75), 230, 0, false, 5);
                 while (!TaskManager.isComplete("Transfer Down Combo") && !interrupted()) {
                     TaskManager.processTasks();
                 }
