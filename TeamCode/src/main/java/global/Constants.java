@@ -27,4 +27,10 @@ public class Constants {
     public static final double ANGLE_ACCURACY = 3.5;
     public static final double COMPASS_START = 163;
 
+    public static final double TICKS_FOR_ODOMETRY =  8192;
+    public static final double ENCODER_WHEEL_RADIUS = 1.75; // in cm
+    public static final double RADIUS_CENTER_TO_ENC = 3; // in cm
+    public static final double DIS_BEWTEEN_ENCS = 37.46; //in cm
+    public static final double CM_TO_TICKS = TICKS_FOR_ODOMETRY/(pi2*ENCODER_WHEEL_RADIUS);
+
 }

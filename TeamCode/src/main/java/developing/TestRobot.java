@@ -251,21 +251,4 @@ public class TestRobot {
         odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo(), angularPosition.getHeadingGY());
     }
 
-    public Telemetry addOuttakeTelemetry(Telemetry telemetry) {
-        telemetry.addData("Right Outtake Position", outr.getCurrentPosition());
-        telemetry.addData("Left Outtake Position", outl.getCurrentPosition());
-        telemetry.addData("Right Outtake Angular Velocity", autoAimer.outrController.currSpeed);
-        telemetry.addData("Left Outtake Angular Velocity", autoAimer.outlController.currSpeed);
-        telemetry.addData("Right Outtake Error", autoAimer.outrController.currError);
-        telemetry.addData("Left Outtake Error", autoAimer.outlController.currError);
-        telemetry.addData("Right Outtake Power", autoAimer.outrController.power);
-        telemetry.addData("Left Outtake Power", autoAimer.outlController.power);
-        telemetry.addData("Right Outtake Change Time", autoAimer.outrController.changeTime);
-        telemetry.addData("Left Outtake Change Time", autoAimer.outlController.changeTime);
-        telemetry.addData("Right Outtake Derivative Power", autoAimer.outrController.derivativeOfPower);
-        telemetry.addData("Left Outtake Derivative Power", autoAimer.outlController.derivativeOfPower);
-        telemetry.addData("Right Outtake Target Speed", autoAimer.outrController.targetSpeed);
-        telemetry.addData("Left Outtake Target Speed", autoAimer.outlController.targetSpeed);
-        return telemetry;
-    }
 }

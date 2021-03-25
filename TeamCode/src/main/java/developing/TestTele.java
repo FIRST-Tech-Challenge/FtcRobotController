@@ -11,6 +11,7 @@ import global.Constants;
 @TeleOp(name = "TestOp")
 public class TestTele extends OpMode {
     TestRobot bot = new TestRobot();
+    TelemetryHandler telemetryHandler = new TelemetryHandler();
 
     @Override
     public void init() {
@@ -22,7 +23,6 @@ public class TestTele extends OpMode {
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
-
 
         bot.moveTeleOp(forward, strafe, turn);
 
@@ -42,46 +42,20 @@ public class TestTele extends OpMode {
 
         }
 
-
         if(gamepad2.y){
             bot.shooter.start();
         }
 
         bot.updateOdometry();
 
+        
+//        telemetry = telemetryHandler.addAutoAimer(telemetry, bot);
+//        telemetry = telemetryHandler.addOuttake(telemetry, bot);
+//        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
 
-//        telemetry.addData("average angle", bot.angularPosition.getHeading());
-//        telemetry.addData("gyro", bot.angularPosition.getHeadingGY());
-//        telemetry.addData("compass", bot.angularPosition.getHeadingCS());
-//        telemetry.addData("left distance", bot.getLeftDistance());
-//        telemetry.addData("front distance", bot.getFrontDistance());
+        telemetry = telemetryHandler.addOdometry(telemetry, bot);
 
-//        telemetry.addData("distance to center: ", bot.autoAimer.getDisFromCenter(bot.getLeftDistance(), bot.angularPosition.getHeadingGY()));
-//        telemetry.update();
-
-//         telemetry = bot.addOuttakeTelemetry(telemetry);
-
-//        telemetry.addData("center odometry", bot.getCenterOdo());
-//        telemetry.addData("left odometry", bot.getLeftOdo());
-//        telemetry.addData("right odometry", bot.getRightOdo());
-//        telemetry.addData("x pos", bot.odometry.getX());
-//        telemetry.addData("y pos", bot.odometry.getY());
-//        telemetry.addData("heading", bot.odometry.getTheta());
-
-        telemetry.addData("left gyro", bot.angularPosition.getHeadingLeftGY());
-        telemetry.addData("right gyro", bot.angularPosition.getHeadingRightGY());
-        telemetry.addData("average gyro", bot.angularPosition.getHeadingGY());
-        telemetry.addData("compass sensor", bot.angularPosition.getHeadingCS());
-
-//        telemetry.addData("Outl Target Power", bot.autoAimer.outlController.getMotorPower(bot.outl.getCurrentPosition()));
-
-//        telemetry.addData("right wheel angular pos", bot.getRightAngPos());
-//        telemetry.addData("target angular velocity", bot.rightSpeedController.targetSpeed);
         telemetry.update();
-
-
-
-
 
     }
 
