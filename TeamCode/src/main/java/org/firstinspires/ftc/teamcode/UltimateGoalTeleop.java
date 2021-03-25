@@ -55,7 +55,7 @@ import java.util.ArrayList;
  *
  */
 
-@TeleOp(name="Ultimate Goal TeleOp", group="UltimateGoal")
+@TeleOp(name="Ultimate Goal poop", group="UltimateGoal")
 public class UltimateGoalTeleop extends OpMode{
 
 
