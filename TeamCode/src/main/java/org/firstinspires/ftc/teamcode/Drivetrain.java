@@ -55,7 +55,7 @@ public class Drivetrain {
     public void moveSlapper(slapperPos Slapper){
         switch (Slapper){
             case IN:
-                robot.slapper.setPosition(0.4);
+                robot.slapper.setPosition(0.55);
                 break;
             case OUT:
                 robot.slapper.setPosition(0.0);

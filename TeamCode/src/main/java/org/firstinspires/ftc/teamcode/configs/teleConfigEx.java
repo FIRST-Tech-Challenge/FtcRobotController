@@ -15,7 +15,7 @@ public class teleConfigEx implements teleOpInterface {
         drivetrain = new Drivetrain(robot);
     }
 
-    public void a(boolean pressed) { if (pressed && System.currentTimeMillis()-intakeTime>=700) {robot.intake.setPower((robot.intake.getPower() != 0.0) ? 0 : 0.4*reverseIntake); intakeTime = System.currentTimeMillis();} }
+    public void a(boolean pressed) { if (pressed && System.currentTimeMillis()-intakeTime>=700) {robot.intake.setPower((robot.intake.getPower() != 0.0) ? 0 : 1*reverseIntake); intakeTime = System.currentTimeMillis();} }
 
     public void b(boolean pressed) {
         if (pressed && System.currentTimeMillis()-outtakeTime>=700) {
