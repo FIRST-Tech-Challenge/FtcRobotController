@@ -279,8 +279,8 @@ public class OdometryChassis extends BasicChassis {
                     anglePower[1] *= abs(1 / anglePower[0]);
                     anglePower[0] *= abs(1 / anglePower[0]);
                 }
-                while (abs(power) < 0.18) {
-                    power *= 0.18 / abs(power);
+                while (abs(power) < 0.25) {
+                    power *= 0.25 / abs(power);
                 }
                 motorRightBack.setPower((power * anglePower[1] + anglecorrection));
                 motorRightFront.setPower(power * anglePower[0] + anglecorrection);
