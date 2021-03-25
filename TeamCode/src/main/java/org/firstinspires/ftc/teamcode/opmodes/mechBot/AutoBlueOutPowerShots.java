@@ -17,8 +17,8 @@ import java.io.IOException;
 /**
  * Created by 28761 on 6/29/2019.
  */
-@Autonomous(name = "Blue Out", group = "MechBot")
-public class AutoBlueOut extends LinearOpMode {
+@Autonomous(name = "Blue Out Power Shots", group = "MechBot")
+public class AutoBlueOutPowerShots extends LinearOpMode {
     private ToboSigma.SkystoneLocation StoneLoc;
 
     protected static int LOG_LEVEL = Log.INFO;
@@ -48,6 +48,8 @@ public class AutoBlueOut extends LinearOpMode {
             configuration.apply();
             robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(true);
+            robot.autoPara.setDoPowerShots(true);
+            robot.showInitStatus(getRuntime());
             robot.showStatus(getRuntime());
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
@@ -65,19 +67,25 @@ public class AutoBlueOut extends LinearOpMode {
         // run until the end of the match (driver presses STOP or timeout)
         if (opModeIsActive()) {
             try {
-                // write the program here
-                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
                 robot.detectPosition();
-                robot.deliverFirstWobbleGoal();
-                if (opModeIsActive()) {
-                    robot.doPowerShots();
-                    if (opModeIsActive()){
-                        robot.getSecondWobbleGoal();
+                if (robot.autoPara.isDoPowerShots() && robot.tZone!= ToboMech.TargetZone.ZONE_C) {
+                    robot.deliverFirstWobbleGoal();
+                    if (opModeIsActive()) {
+                        robot.doPowerShots();
+                        if (opModeIsActive()){
+                            robot.getSecondWobbleGoal();
+                            robot.deliverSecondWobbleGoalAndShootBonusRings();
+                        }
+                    }
+                } else {
+                    robot.doHighGoalsAndPowerShots(3, 0, false);
+                    robot.deliverFirstWobbleGoalAfterHighGoal();
+                    if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                        robot.getSecondWobbleGoalAfterHighGoal();
                         robot.deliverSecondWobbleGoalAndShootBonusRings();
                     }
                 }
                 robot.park();
-
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
                 handleException(E);
