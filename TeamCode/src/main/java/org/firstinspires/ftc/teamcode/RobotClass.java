@@ -41,9 +41,8 @@ public class RobotClass {
     private double ticksTheSequel = 2786;
   //  private CRServo continuous1;
     private Servo wobbleGoalGrippyThing;
-    private CRServo shooterServo1;
-    private CRServo shooterServo2;
     private CRServo intakeServo;
+    private CRServo trigger;
     BNO055IMU imu;
 
     public Telemetry telemetry;
@@ -68,12 +67,10 @@ public class RobotClass {
         shooterMotor = hardwareMap.get(DcMotorImplEx.class, "shooterMotor");
        // continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
-        shooterServo1 = hardwareMap.get(CRServo.class,"shooterServo1");
         wobbleGoalRaise = hardwareMap.dcMotor.get("wobbleLift");
         intakeServo = hardwareMap.crservo.get("intakeServoOne");
-        shooterServo1 = hardwareMap.crservo.get("shooterServo1");
-        shooterServo2 = hardwareMap.crservo.get("shooterServo2");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        trigger = hardwareMap.crservo.get("trigger");
 
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -111,12 +108,10 @@ this.color= color;
         shooterMotor = hardwareMap.get(DcMotorImplEx.class, "shooterMotor");
         // continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
-        shooterServo1 = hardwareMap.get(CRServo.class,"shooterServo1");
         wobbleGoalRaise = hardwareMap.dcMotor.get("wobbleLift");
         intakeServo = hardwareMap.crservo.get("intakeServoOne");
-        shooterServo1 = hardwareMap.crservo.get("shooterServo1");
-        shooterServo2 = hardwareMap.crservo.get("shooterServo2");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        trigger = hardwareMap.crservo.get("trigger");
 
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -571,22 +566,6 @@ this.color= color;
         wobbleGoalGrippyThing.setPosition(.9);
     }
 
-    public void shooterServo1 (double speed) {
-       shooterServo1.setPower(speed);
-    }
-
-    public void shooterServo1Stop () {
-        shooterServo1.setPower(0);
-    }
-
-    public void shooterServo2 (double speed) {
-        shooterServo2.setPower(speed);
-    }
-
-    public void shooterServo2Stop () {
-        shooterServo2.setPower(0);
-    }
-
     public void moveWobbleGoalArm (double speed, double rotation) {
         int currentPosition = wobbleGoalRaise.getCurrentPosition();
         telemetry.addData("current:",currentPosition);
@@ -642,32 +621,27 @@ this.color= color;
         }
     }
 
-    public void startShooting() {
-        shooterEngageAlt();
-        shooterServo1(.8);
-        shooterServo2(.8);
-        pause(500);
-        intakeServoEngage(.9);
+    public void justShootGood() {
+        double targetVelocity = -5400*0.80*28/60;
+        shooterMotor.setVelocity(targetVelocity);
+        while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()) {
 
+        }
+        trigger.setPower(1);
+        pause(700);
+        trigger.setPower(-1);
+        pause(700);
+        trigger.setPower(1);
+        pause(700);
+        trigger.setPower(-1);
+        pause(700);
+        trigger.setPower(1);
+        pause(700);
+        trigger.setPower(-1);
+        pause(700);
+        trigger.setPower(0);
 
     }
-
-    public void stopShooting() {
-        shooterStop();
-        shooterServo1Stop();
-        shooterServo2Stop();
-        intakeServoStop();
-    }
-
-    public void stopTimingBelt() {
-        shooterServo1Stop();
-        shooterServo2Stop();
-    }
-    public void startTimingBelt() {
-        shooterServo1(.8);
-        shooterServo2(.8);
-    }
-
     public void openCVInnitShenanigans() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);

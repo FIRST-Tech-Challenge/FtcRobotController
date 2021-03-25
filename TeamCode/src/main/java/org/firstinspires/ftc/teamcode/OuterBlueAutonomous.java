@@ -63,11 +63,11 @@ public class OuterBlueAutonomous extends LinearOpMode{
             robot.forward(.3, -.8);
             robot.pivotLeft(.3, 90);
             robot.forward(.5, 2);
-            robot.shooterServo1(.8);
-            robot.shooterServo2(.8);
-            robot.pause(1000);
-            robot.shooterServo1(0);
-            robot.shooterServo2(0);
+//            robot.shooterServo1(.8);
+//            robot.shooterServo2(.8);
+//            robot.pause(1000);
+//            robot.shooterServo1(0);
+//            robot.shooterServo2(0);
             robot.forward(.5, -1.8);
             robot.pivotRight(.3, 90);
             robot.forward(0.3, .8);
