@@ -1301,7 +1301,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
         if (hopper != null) {
-            if(tZone != TargetZone.ZONE_C) {
+            if(tZone == TargetZone.ZONE_C) {
                 hopper.hopperUpCombo(true);
             }
             TaskManager.processTasks();
@@ -1311,8 +1311,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, 25, 165, 0, false, 2);
                 chassis.rotateToFast(1,-50,0.5);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 50, 120, 0, true, 4);
-                chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
+                chassis.driveTo(auto_chassis_power, 50, 120, 0, true, 2);
+                chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 2);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 10, 300, -40, true, 6);
             } else {
