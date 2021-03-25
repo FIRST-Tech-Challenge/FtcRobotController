@@ -122,7 +122,7 @@ public class MasterCalib extends LinearOpMode {
             this.templateDiagRight.setDirection(RobotDirection.Right);
 
 
-            this.led = bot.getLights();
+//            this.led = bot.getLights();
 
             gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
 

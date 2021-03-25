@@ -24,9 +24,9 @@ public class RingRecogTestNone extends LinearOpMode {
     public void runOpMode() {
         try {
             try {
-                Led lights = new Led();
-                lights.init(this.hardwareMap, telemetry);
-                rf = new RingDetector(this.hardwareMap, AutoRoute.NAME_RED, this, null, lights, telemetry);
+//                Led lights = new Led();
+//                lights.init(this.hardwareMap, telemetry);
+                rf = new RingDetector(this.hardwareMap, AutoRoute.NAME_RED, this, null, telemetry);
                 telemetry.addData("Info", "Opmode initialized");
                 telemetry.update();
             } catch (Exception ex) {

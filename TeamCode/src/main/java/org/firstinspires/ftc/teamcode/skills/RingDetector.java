@@ -17,7 +17,6 @@ public class RingDetector implements Runnable{
     Telemetry telemetry;
     private Detector tfDetector = null;
     private HardwareMap hardwareMap;
-    private Led lights;
 
     private boolean isRunning = true;
 
@@ -42,10 +41,9 @@ public class RingDetector implements Runnable{
     private static AutoDot zoneB = new AutoDot("B", 65, 100, -1, AutoRoute.NAME_RED);
     private static AutoDot zoneC = new AutoDot("C", 75, 120, -1, AutoRoute.NAME_RED);
 
-    public RingDetector(HardwareMap hMap, String side, LinearOpMode caller, ArrayList<AutoDot> namedCoordinates, Led led, Telemetry t) throws Exception {
+    public RingDetector(HardwareMap hMap, String side, LinearOpMode caller, ArrayList<AutoDot> namedCoordinates, Telemetry t) throws Exception {
         hardwareMap = hMap;
         telemetry = t;
-        lights = led;
         initDetector();
         activateDetector();
         this.side = side;
@@ -56,10 +54,9 @@ public class RingDetector implements Runnable{
         configZones(side);
     }
 
-    public RingDetector(HardwareMap hMap, String side, LinearOpMode caller, ArrayList<AutoDot> namedCoordinates, Led led, Telemetry t, String model, String labels) throws Exception {
+    public RingDetector(HardwareMap hMap, String side, LinearOpMode caller, ArrayList<AutoDot> namedCoordinates, Telemetry t, String model, String labels) throws Exception {
         hardwareMap = hMap;
         telemetry = t;
-        lights = led;
         setModelFileName(model);
         setLabelFileName(labels);
         initDetector();
@@ -218,19 +215,19 @@ public class RingDetector implements Runnable{
 
     }
 
-    public void displayLights() {
-        switch (targetZone) {
-            case "C":
-                this.lights.blue();
-                break;
-            case "B":
-                this.lights.orange();
-                break;
-            case "A":
-                this.lights.pink();
-                break;
-        }
-    }
+//    public void displayLights() {
+//        switch (targetZone) {
+//            case "C":
+//                this.lights.blue();
+//                break;
+//            case "B":
+//                this.lights.orange();
+//                break;
+//            case "A":
+//                this.lights.pink();
+//                break;
+//        }
+//    }
 
     public void initDetector() throws Exception {
         tfDetector = new Detector(MODEl_TYPE, getModelFileName(), getLabelFileName(), hardwareMap.appContext, telemetry);

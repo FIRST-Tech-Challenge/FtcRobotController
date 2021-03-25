@@ -15,8 +15,11 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
+import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
+
+import static java.lang.Math.abs;
 
 // Control Hub ADB Terminal Command for Reference
 // adb.exe connect 192.168.43.1:5555
@@ -34,7 +37,7 @@ public class UltimateBot extends YellowBot {
     private static double SWING_BACK_POS = 1;
     private static double SWING_PLACE_POS = 0;
     private static double SWING_LIFT_AND_HOLD = 0.25;
-    private static double SWING_LIFT_WALL = 0.5;
+    private static double SWING_LIFT_WALL = 0.45;
     private static double SHOOT_SERVO = 0.7;
 
     private static int TIMEOUT = 2500;
@@ -169,7 +172,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
     public void shooterpeglow() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.63);
+            shooter.setVelocity(MAX_VELOCITY*0.65);
         }
     }
 
@@ -321,21 +324,21 @@ public class UltimateBot extends YellowBot {
     }
 
 
-    @BotAction(displayName = "Green Light", defaultReturn = "")
-    public void signalOK() {
-        getLights().OK();
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-        while (timer.seconds() < 1) {
-
-        }
-        getLights().none();
-    }
+//    @BotAction(displayName = "Green Light", defaultReturn = "")
+//    public void signalOK() {
+//        getLights().OK();
+//        ElapsedTime timer = new ElapsedTime();
+//        timer.reset();
+//        while (timer.seconds() < 1) {
+//
+//        }
+//        getLights().none();
+//    }
 
 
     public void initDetector(String side, LinearOpMode caller) {
         try {
-            rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, this.getLights(), telemetry);
+            rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, telemetry);
         }
         catch (Exception ex){
             telemetry.addData("Error", String.format("Unable to initialize Detector. %s", ex.getMessage()));
@@ -351,7 +354,7 @@ public class UltimateBot extends YellowBot {
 
     public void initDetectorThread(String side, LinearOpMode caller) {
         try {
-            rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, this.getLights(), telemetry);
+            rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, telemetry);
             Thread detectThread = new Thread(rf);
             detectThread.start();
         } catch (Exception ex) {
@@ -378,15 +381,15 @@ public class UltimateBot extends YellowBot {
     }
 
 
-    @BotAction(displayName = "Detection Lights", defaultReturn = "")
-    public void displayDetectionLights() {
-        rf.displayLights();
-    }
+//    @BotAction(displayName = "Detection Lights", defaultReturn = "")
+//    public void displayDetectionLights() {
+//        rf.displayLights();
+//    }
 
-    @BotAction(displayName = "Lights Off", defaultReturn = "")
-    public void lightsOff() {
-        getLights().none();
-    }
+//    @BotAction(displayName = "Lights Off", defaultReturn = "")
+//    public void lightsOff() {
+//        getLights().none();
+//    }
 
     ///use for non-threaded detection
     @BotAction(displayName = "Detect Stack", defaultReturn = "B")
@@ -447,9 +450,8 @@ public class UltimateBot extends YellowBot {
 
     }
 
-    public void shootPegSequence(RobotCoordinatePosition locator){
-
-        //start shooter
+    public void shootPegContinuous(RobotCoordinatePosition locator){
+        // start shooter
         shooterpeglow();
 
         //wait for the locator to stabilize
@@ -460,28 +462,125 @@ public class UltimateBot extends YellowBot {
 
         //get the orientation as the locator knows it. we'll use it later for corrections
         double originalOrientation = locator.getAdjustedCurrentHeading();
+
+        double strafeSpeed = 0.2;
+        double spinSpeed = 0.1;
+        double strafeToFirst = 7;
+        double strafeToSecond = 13;
+        double strafeToLast = 22;
+
+        double currentPos = this.getHorizontalOdometer();
+        double distancefinal = strafeToLast * COUNTS_PER_INCH_REV;
+        double distancefirst = strafeToFirst * COUNTS_PER_INCH_REV;
+        double distancesecond = strafeToSecond * COUNTS_PER_INCH_REV;
+
+        MotorReductionBot calib = null;
+        calib = getCalibConfig().getStrafeLeftReduction();
+
+        double overage = 0;
+        double target = currentPos + distancefinal;
+        double target1 = currentPos + distancefirst;
+        double target2 = currentPos + distancesecond;
+        boolean stop = false;
+
+        // breaking and slowing down variables
+        double slowdownMark = target * 0.85;
+        double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*strafeSpeed;
+        slowdownMark = slowdownMark - ticksAdjustment;
+        int step = 0;
+        double power = 0;
+        double minSpeed = 0.05;
+        double speedIncrement = 0.05;
+        double speedDropStep = 0.05;
+        double currentSpeed = 0;
+
+        boolean shotfirstalready = false;
+        boolean shotsecondalready = false;
+
+        //move
+        while (!stop && this.owner.opModeIsActive()) {
+            currentPos = this.getHorizontalOdometer();
+            if (currentPos >= target) {
+                stop = true;
+            }
+            if (currentPos >= slowdownMark) {
+                // slow down
+                step++;
+                power = currentSpeed - speedDropStep*step;
+                if (power <= minSpeed) {
+                    power = minSpeed;
+                }
+            } else {
+                // accelerate
+                if (power+speedIncrement <= strafeSpeed) {
+                    power+=speedIncrement;
+                    currentSpeed = power;
+                }
+            }
+
+            // shoot at correct points
+            if (abs(currentPos-target1)/COUNTS_PER_INCH_REV <= 0.5 && !shotfirstalready) {
+                shootServo();
+                shotfirstalready = true;
+            }
+            // shoot at correct points
+            if (abs(currentPos-target2)/COUNTS_PER_INCH_REV <= 0.5 && !shotsecondalready) {
+                shootServo();
+                shotsecondalready = true;
+            }
+
+            // move the motors
+            this.backLeft.setVelocity(MAX_VELOCITY * -power * calib.getLB());
+            this.backRight.setVelocity(MAX_VELOCITY * power * calib.getRB());
+            this.frontLeft.setVelocity(MAX_VELOCITY * power * calib.getLF());
+            this.frontRight.setVelocity(MAX_VELOCITY * -power * calib.getRF());
+
+        }
+
+        shootServo();
+        stop();
+        double newPos = this.getHorizontalOdometer();
+        double diff = abs(newPos - target);
+        overage = diff / distancefinal * 100;
+
+    }
+
+    public void shootPegSequence(RobotCoordinatePosition locator){
+
+        //start shooter
+        shooterpeglow();
+
+        //wait for the locator to stabilize
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
+        }
+
+        //get the orientation as the locator knows it. we'll use it later for corrections
+        double originalOrientation = locator.getAdjustedCurrentHeading();
         Log.d("UltimateBot", String.format("original orientation: %.2f", originalOrientation));
         double strafeSpeed = 0.3;
         double spinSpeed = 0.1;
-        double strafeToFirst = 10;
+        double strafeToFirst = 12.5;
         double strafeBetweenPegs = 5;
+        double strafeToLastPeg = 6;
         //FirstPeg
         //strafe to align the robot with the first peg
         strafeTo(strafeSpeed, strafeToFirst, true);
         //let locator settle
         timer.reset();
-        while(timer.milliseconds() < 200 && this.owner.opModeIsActive()){
+        while(timer.milliseconds() < 400 && this.owner.opModeIsActive()){
         }
         double newOrientation = locator.getAdjustedCurrentHeading();
-        int marginError = 6;
+        int marginError = 4;
         Log.d("UltimateBot", String.format("newOrientation 1: %.2f", newOrientation));
         //spin to the desired orientation
-//        double diff = newOrientation - originalOrientation;
-//        if (Math.abs(diff ) > marginError) {
-//            double updated = originalOrientation + diff/2;
-//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-//            spin(profileSpin, locator);
-//        }
+        double diff = newOrientation - originalOrientation;
+        if (abs(diff) > marginError) {
+            double updated = originalOrientation + diff/2;
+            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+            spin(profileSpin, locator);
+        }
         //shoot
         shootServo();
 
@@ -490,36 +589,36 @@ public class UltimateBot extends YellowBot {
         strafeTo(strafeSpeed, strafeBetweenPegs, true);
 //        //let locator settle
         timer.reset();
-        while(timer.milliseconds() < 200 && this.owner.opModeIsActive()){
+        while(timer.milliseconds() < 400 && this.owner.opModeIsActive()){
         }
         newOrientation = locator.getAdjustedCurrentHeading();
         Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
-        //spin to the desired orientation
-//        double diff = newOrientation - originalOrientation;
-//        if (Math.abs(diff ) > marginError) {
-//            double updated = originalOrientation + diff/2;
-//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-//            spin(profileSpin, locator);
-//        }
+//        spin to the desired orientation
+        diff = newOrientation - originalOrientation;
+        if (abs(diff ) > marginError) {
+            double updated = originalOrientation + diff/2;
+            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+            spin(profileSpin, locator);
+        }
         //shoot
         shootServo();
 
         //Third Peg
         //strafe to the next peg
-        strafeTo(strafeSpeed, strafeBetweenPegs, true);
+        strafeTo(strafeSpeed, strafeToLastPeg, true);
         //let locator settle
         timer.reset();
-        while(timer.milliseconds() < 200 && this.owner.opModeIsActive()){
+        while(timer.milliseconds() < 400 && this.owner.opModeIsActive()){
         }
         newOrientation = locator.getAdjustedCurrentHeading();
         Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
         //spin to the desired orientation
-//        diff = newOrientation - originalOrientation;
-//        if (Math.abs(diff ) > marginError) {
-//            double updated = newOrientation - 2;
-//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-//            spin(profileSpin, locator);
-//        }
+        diff = newOrientation - originalOrientation;
+        if (Math.abs(diff ) > marginError) {
+            double updated = newOrientation - 2;
+            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+            spin(profileSpin, locator);
+        }
         //shoot
         shootServo();
 

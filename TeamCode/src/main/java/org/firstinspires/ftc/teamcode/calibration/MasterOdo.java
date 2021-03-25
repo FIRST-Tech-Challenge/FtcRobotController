@@ -108,7 +108,7 @@ public class MasterOdo extends OdoBase {
     public void runOpMode() throws InterruptedException {
         try {
             super.runOpMode();
-            this.led = bot.getLights();
+//            this.led = bot.getLights();
             gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
             listRoutes();
 

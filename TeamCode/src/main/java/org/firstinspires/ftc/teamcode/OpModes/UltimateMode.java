@@ -207,7 +207,6 @@ public class UltimateMode extends LinearOpMode {
                 telemetry.addData("X ", locator.getXInches() );
                 telemetry.addData("Y ", locator.getYInches() );
                 telemetry.addData("Orientation (Degrees)", locator.getOrientation());
-                telemetry.addData("Wobble Position", robot.getWobblePos());
                 telemetry.update();
             }
         } catch (Exception ex) {
@@ -230,6 +229,7 @@ public class UltimateMode extends LinearOpMode {
         }
         if (gamepad1.y){
             robot.shootPegSequence(locator);
+//            robot.shootPegContinuous(locator);
             gamepadRateLimit.reset();
         }
     }

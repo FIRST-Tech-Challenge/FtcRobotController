@@ -31,13 +31,13 @@ import java.util.Random;
 
 public class YellowBot implements OdoBot {
     public static double CALIB_SPEED = 0.5;
-    private DcMotorEx frontLeft = null;
-    private DcMotorEx frontRight = null;
+    protected DcMotorEx frontLeft = null;
+    protected DcMotorEx frontRight = null;
     protected DcMotorEx leftOdo = null; //leftodo port 1 ext hub    forward positive
     protected DcMotorEx rightOdo = null; // rightodo - intake port 0 control hub     forw negative
     protected DcMotorEx horizontalOdo = null; // horizontal port 0 ext hub    right neg
-    private DcMotorEx backLeft = null;
-    private DcMotorEx backRight = null;
+    protected DcMotorEx backLeft = null;
+    protected DcMotorEx backRight = null;
 
     protected HardwareMap hwMap = null;
     protected Telemetry telemetry;
@@ -983,11 +983,13 @@ public class YellowBot implements OdoBot {
     public void strafeLeft(double speed) {
         if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
+            MotorReductionBot calib = null;
+            calib = getCalibConfig().getStrafeRightReduction();
             power = power * power * power;
-            this.backLeft.setPower(power);
-            this.backRight.setPower(-power);
-            this.frontLeft.setPower(-power);
-            this.frontRight.setPower(power);
+            this.backLeft.setPower(power * calib.getLB());
+            this.backRight.setPower(-power * calib.getRB());
+            this.frontLeft.setPower(-power * calib.getLF());
+            this.frontRight.setPower(power * calib.getRF());
             telemetry.addData("Motors", "Front: %.0f", power);
             telemetry.addData("Motors", "Back: %.0f", power);
         }
@@ -996,11 +998,13 @@ public class YellowBot implements OdoBot {
     public void strafeRight(double speed) {
         if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
+            MotorReductionBot calib = null;
+            calib = getCalibConfig().getStrafeRightReduction();
             power = power * power * power;
-            this.backLeft.setPower(-power);
-            this.backRight.setPower(power);
-            this.frontLeft.setPower(power);
-            this.frontRight.setPower(-power);
+            this.backLeft.setPower(-power * calib.getLB());
+            this.backRight.setPower(power * calib.getRB());
+            this.frontLeft.setPower(power * calib.getLF());
+            this.frontRight.setPower(-power * calib.getRF());
             telemetry.addData("Motors", "Front: %.0f", power);
             telemetry.addData("Motors", "Back: %.0f", power);
         }
@@ -1048,7 +1052,7 @@ public class YellowBot implements OdoBot {
 //        }
 
         // breaking and slowing down variables
-        double slowdownMark = target * 0.9;
+        double slowdownMark = target * 0.85;
         double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*speed;
         slowdownMark = slowdownMark - ticksAdjustment;
         int step = 0;
@@ -1462,13 +1466,13 @@ public class YellowBot implements OdoBot {
 
     //leds
 
-    public Led getLights() {
-        if (led == null) {
-            led = new Led();
-            led.init(hwMap, telemetry);
-        }
-        return led;
-    }
+//    public Led getLights() {
+//        if (led == null) {
+//            led = new Led();
+//            led.init(hwMap, telemetry);
+//        }
+//        return led;
+//    }
 
     public void addNamedCoordinate(AutoDot dot){
         this.namedCoordinates.add(dot);
