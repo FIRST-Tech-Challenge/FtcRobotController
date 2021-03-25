@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class TimeData {
     public String name;
+    public String user = "me";
     public ArrayList<String> timeStamps;
     public ArrayList<String> data;
 
