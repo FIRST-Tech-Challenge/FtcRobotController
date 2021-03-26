@@ -51,6 +51,7 @@ public class UpliftTelemetry extends Background {
             telem.addData("Transfer Pos:\t", robot.transferSub.transfer.getCurrentPosition());
             telem.addData("Transfer Mode:\t", robot.transfer.getMode());
             telem.addData("Current Mode:\t", robot.transfer.getCurrent(CurrentUnit.MILLIAMPS));
+            telem.addData("Roller Pos:\t", robot.intakeToggle);
             telem.addData("Distance Sensor:\t", robot.shooterSensor.getDistance(DistanceUnit.CM));
         }
         telem.addData("Shooting State\t",  robot.shootingState + "");

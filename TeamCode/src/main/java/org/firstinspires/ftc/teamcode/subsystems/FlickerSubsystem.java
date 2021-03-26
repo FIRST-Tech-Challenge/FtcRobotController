@@ -44,14 +44,14 @@ public class FlickerSubsystem extends Subsystem {
         robot.setFlickingState(UpliftRobot.FlickingState.FLICKING);
         // move in
         flicker.setPosition(0.25);
-        if(!robot.safeSleep(500)){
+        if(!robot.safeSleep(300)){
             safeDisable();
             return;
         }
 
         // move out
         flicker.setPosition(0.08);
-        if(!robot.safeSleep(500)) {
+        if(!robot.safeSleep(300)) {
             safeDisable();
             return;
         }

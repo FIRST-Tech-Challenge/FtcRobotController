@@ -13,6 +13,7 @@ public class IntakeCommands extends Command {
     public UpliftTele opMode;
     UpliftRobot robot;
     public boolean lifterButtonPressed;
+    public boolean stickButtonPressed;
 
     public IntakeCommands(UpliftTele opMode, UpliftRobot robot, IntakeSubsystem intakeSubsystem) {
         super(opMode, intakeSubsystem);
@@ -45,13 +46,32 @@ public class IntakeCommands extends Command {
             intake.sweeperOff();
             intake.raiseStick();
         }
-//        if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
-//            intake.liftRoller();
-//        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
-//            intake.dropRoller();
-//        }
 
-        //Toggle Button for Roller to Move up and Down
+        if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
+            intake.raiseStick();
+        } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
+            intake.initStick();
+        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
+            intake.dropStick();
+        }
+
+        // Toggle Button for stick
+        if(opMode.gamepad1.dpad_right) {
+            if(!stickButtonPressed) {
+                robot.stickToggle = !robot.stickToggle;
+                stickButtonPressed = true;
+            }
+        } else {
+            stickButtonPressed = false;
+        }
+
+        if(robot.stickToggle) {
+            intake.initStick();
+        } else {
+            intake.dropStick();
+        }
+
+        // Toggle Button for Roller to Move up and Down
         if(opMode.gamepad2.left_bumper) {
             if (!lifterButtonPressed) {
                 robot.intakeToggle = !robot.intakeToggle;
@@ -61,9 +81,9 @@ public class IntakeCommands extends Command {
             lifterButtonPressed = false;
         }
 
-        if(robot.intakeToggle){
+        if(robot.intakeToggle) {
             intake.liftRoller();
-        } else{
+        } else {
             intake.dropRoller();
         }
     }

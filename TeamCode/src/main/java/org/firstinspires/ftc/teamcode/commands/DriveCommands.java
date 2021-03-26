@@ -101,7 +101,7 @@ public class DriveCommands extends Command {
 //        } else {
 //            rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 2), -1, 1);
 //        }
-        rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 3), -1, 1);
+        rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 3) / 2, -0.5, 0.5);
         double leftX = Range.clip(opMode.gamepad1.left_stick_x, -1, 1);
 
         // find the angle of the left joystick

@@ -70,7 +70,7 @@ public class TransferSubsystem extends Subsystem {
             public void run() {
                 transfer.setTargetPosition(TRANSFER_TARGET);
                 transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                transfer.setPower(0.35);
+                transfer.setPower(0.5);
                 robot.setTransferState(UpliftRobot.TransferState.MOVING);
                 double initialTime = System.currentTimeMillis();
                 while(transfer.isBusy() && !robot.operatorCancel && getTransferCurrent() < 1700 && robot.opMode.opModeIsActive()) {
@@ -86,7 +86,7 @@ public class TransferSubsystem extends Subsystem {
     public void teleRaiseTransfer() {
         transfer.setTargetPosition(TRANSFER_TARGET);
         transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        transfer.setPower(0.35);
+        transfer.setPower(0.5);
         robot.setTransferState(UpliftRobot.TransferState.MOVING);
         double initialTime = System.currentTimeMillis();
         while(transfer.isBusy() && !robot.operatorCancel && getTransferCurrent() < 1700 && robot.opMode.opModeIsActive()) {
@@ -105,7 +105,7 @@ public class TransferSubsystem extends Subsystem {
                 transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 double initialTime = System.currentTimeMillis();
                 while(transferTouchBottom.getState() && !robot.operatorCancel && (System.currentTimeMillis() - initialTime) < 3000 && getTransferCurrent() < 1700) {
-                    transfer.setPower(0.35);
+                    transfer.setPower(0.5);
                 }
                 transfer.setPower(0);
                 robot.setTransferState(UpliftRobot.TransferState.DOWN);
@@ -118,7 +118,7 @@ public class TransferSubsystem extends Subsystem {
         transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double initialTime = System.currentTimeMillis();
         while(transferTouchBottom.getState() && !robot.operatorCancel && (System.currentTimeMillis() - initialTime) < 3000 && getTransferCurrent() < 1700) {
-            transfer.setPower(0.35);
+            transfer.setPower(0.5);
         }
         transfer.setPower(0);
         robot.setTransferState(UpliftRobot.TransferState.DOWN);

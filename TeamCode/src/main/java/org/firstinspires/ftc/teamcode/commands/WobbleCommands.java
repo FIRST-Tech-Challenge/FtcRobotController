@@ -21,6 +21,7 @@ public class WobbleCommands extends Command {
 
     @Override
     public void init() {
+        wobble.setWobblePosition(0.5);
     }
 
     @Override

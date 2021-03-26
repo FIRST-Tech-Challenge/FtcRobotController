@@ -68,9 +68,9 @@ public class Meet5Auto extends UpliftAuto {
         shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
         transferSub.autoRaiseTransfer();
 
+        intakeSub.dropRoller();
+
         if(stack == 4) {
-            // drop roller
-            intakeSub.dropRoller();
 
             // shoot
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
@@ -132,7 +132,6 @@ public class Meet5Auto extends UpliftAuto {
             park();
 
         } else if(stack == 1) {
-            intakeSub.dropRoller();
 
             // shoot
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
