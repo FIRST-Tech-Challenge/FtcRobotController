@@ -202,7 +202,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
                 calibrationTarget.y = 50.0;
                 calibrationTarget.angle = Math.toRadians(180.0);
                 calibrationTarget.speed = 1.0;
-                robot.startShotAligning(calibrationTarget, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                robot.startShotAligning(calibrationTarget, false);
                 aligning = true;
             } else {
                 aligning = false;
@@ -219,7 +219,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
                 calibrationTarget.y = 0.0;
                 calibrationTarget.angle = Math.toRadians(90.0);
                 calibrationTarget.speed = 1.0;
-                robot.startShotAligning(calibrationTarget, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                robot.startShotAligning(calibrationTarget, false);
                 aligning = true;
             } else {
                 aligning = false;
@@ -236,7 +236,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
                 calibrationTarget.y = 0.0;
                 calibrationTarget.angle = Math.toRadians(90.0);
                 calibrationTarget.speed = 1.0;
-                robot.startShotAligning(calibrationTarget, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                robot.startShotAligning(calibrationTarget, false);
                 aligning = true;
             } else {
                 aligning = false;
@@ -253,7 +253,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
                 calibrationTarget.y = 150.0;
                 calibrationTarget.angle = Math.toRadians(90.0);
                 calibrationTarget.speed = 1.0;
-                robot.startShotAligning(calibrationTarget, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                robot.startShotAligning(calibrationTarget, false);
                 aligning = true;
             } else {
                 aligning = false;

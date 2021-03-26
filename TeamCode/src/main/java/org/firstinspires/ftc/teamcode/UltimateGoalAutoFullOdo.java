@@ -67,7 +67,7 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
 
     public void shootPowerShotStrafeStopStyle() {
         robot.setShooterFlapPowerShot();
-        robot.shooterOn();
+        robot.shooterOnPowershot();
         driveToWayPoint(aroundStartingStack1, true, true);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
         driveToWayPoint(powerShotFirst, false, false);
@@ -92,7 +92,7 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
     }
     public void shootPowerShotRotateStyle() {
         robot.setShooterFlapPowerShot();
-        robot.shooterOn();
+        robot.shooterOnPowershot();
         driveToWayPoint(aroundStartingStack1, true, true);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
         driveToWayPoint(powerShotFirst, false, false);
@@ -116,7 +116,7 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
     }
     public void shootPowerShotStrafeThroughStyle() {
         robot.setShooterFlapPowerShot();
-        robot.shooterOn();
+        robot.shooterOnPowershot();
         driveToWayPoint(aroundStartingStack1, true, true);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
         driveToWayPoint(powerShotFirst, false, false);
@@ -140,7 +140,7 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
     }
     public void shootHighGoal() {
         robot.setShooterFlapHighGoal();
-        robot.shooterOn();
+        robot.shooterOnHighGoal();
         driveToWayPoint(aroundStartingStack1, true, true);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
         driveToWayPoint(powerShotThird, true, true);

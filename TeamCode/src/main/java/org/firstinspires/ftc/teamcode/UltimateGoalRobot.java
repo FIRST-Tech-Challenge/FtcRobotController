@@ -39,12 +39,14 @@ import static java.lang.Math.sqrt;
  */
 public class UltimateGoalRobot
 {
-    public static WayPoint finalAutoPosition;
+    public static WayPoint finalAutoPosition = new WayPoint(0, 0, 0, 1.0);
 
     /* Public OpMode members. */
-    public final static double WOBBLE_ARM_MIN = 0.100;
+    public final static double WOBBLE_ARM_MIN = 0.300;
     public final static double WOBBLE_ARM_MAX = 3.2;
-    public final static double SHOOT_VELOCITY = 1120;
+//    public final static double SHOOT_VELOCITY = 1120;
+    public final static double SHOOT_VELOCITY = 1080;
+    public final static double SHOOT_POWERSHOT_VELOCITY = 950;
     public final static double SHOOT_VELOCITY_ERROR = 20;
     public final static double THROTTLE_TIMEOUT = 7000;
     public final static double STRAFE_MULTIPLIER = 1.5;
@@ -141,13 +143,10 @@ public class UltimateGoalRobot
     public boolean disableDriverCentric = true;
 
     public static WayPoint shootingError = new WayPoint(0, 0, Math.toRadians(0), 1.0);
-    public static WayPoint highGoal = new WayPoint(0, 0, Math.toRadians(95.0), 1.0);
-    public static WayPoint powerShotRight = new WayPoint(0, 0, Math.toRadians(0), 1.0);
-    public static WayPoint powerShotCenter = new WayPoint(0, 0, Math.toRadians(0), 1.0);
-    public static WayPoint powerShotLeft = new WayPoint(0, 0, Math.toRadians(0), 1.0);
-    public static WayPoint powerShotRightOffset = new WayPoint(40, 0, Math.toRadians(0), 1.0);
-    public static WayPoint powerShotCenterOffset = new WayPoint(59, 0, Math.toRadians(0), 1.0);
-    public static WayPoint powerShotLeftOffset = new WayPoint(78, 0, Math.toRadians(0), 1.0);
+    public static WayPoint highGoal = new WayPoint(167.35324, 149.7584, Math.toRadians(95.0), 1.0);
+    public static WayPoint powerShotRight = new WayPoint(122.77404, 149.7584, Math.toRadians(95.0), 1.0);
+    public static WayPoint powerShotCenter = new WayPoint(103.77404, 149.7584, Math.toRadians(95.0), 1.0);
+    public static WayPoint powerShotLeft = new WayPoint(77.77404, 149.7584, Math.toRadians(95.0), 1.0);
 
     public double xAngle, yAngle, zAngle;
     /* local OpMode members. */
@@ -234,8 +233,8 @@ public class UltimateGoalRobot
         wobbleTimer = new ElapsedTime();
 
         // Let's try to tweak the PIDs
-        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(200,
-                3, 0, 0, MotorControlAlgorithm.PIDF));
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300,
+                10, 3, 0, MotorControlAlgorithm.PIDF));
 
         // Define and initialize sensors
         armPot = hwMap.get(AnalogInput.class, ARM_POT);
@@ -304,9 +303,20 @@ public class UltimateGoalRobot
     }
 
     public void shooterOn() {
+        shooter.setVelocity(shooterMotorTargetVelocity);
+    }
+
+    public void shooterOnHighGoal() {
         if(shooterMotorTargetVelocity != SHOOT_VELOCITY) {
             shooter.setVelocity(SHOOT_VELOCITY);
             shooterMotorTargetVelocity = SHOOT_VELOCITY;
+        }
+    }
+
+    public void shooterOnPowershot() {
+        if(shooterMotorTargetVelocity != SHOOT_POWERSHOT_VELOCITY) {
+            shooter.setVelocity(SHOOT_POWERSHOT_VELOCITY);
+            shooterMotorTargetVelocity = SHOOT_POWERSHOT_VELOCITY;
         }
     }
 
@@ -719,9 +729,9 @@ public class UltimateGoalRobot
 
     /** Inject activity pushes a disk into the shooter and resets th
      * e injector. **/
-    public final static double INJECTOR_FIRE_TIME = 400.0;
-    public final static double INJECTOR_RESET_TIME = 400.0;
-    public final static double INJECTOR_HOME_TIME = 300.0;
+    public final static double INJECTOR_FIRE_TIME = 200.0;
+    public final static double INJECTOR_RESET_TIME = 200.0;
+    public final static double INJECTOR_HOME_TIME = 100.0;
     public final static double SHOOTER_THROTTLE_DELAY = 500.0;
 //    public final static double INJECTOR_HOME = 0.53;
 //    public final static double INJECTOR_RESET = 0.450;
@@ -735,10 +745,11 @@ public class UltimateGoalRobot
 //    public final static double INJECTOR_RESET = -0.15;
 //    public final static double INJECTOR_FIRE = 0.6;
     public final static double INJECTOR_HOME = 0.73;
-    public final static double INJECTOR_RESET = 0.83;
-//    public final static double INJECTOR_FIRE = 0.15;
-    public final static double INJECTOR_FIRE = 0.25;
-    public final static int VELOCITY_SUCCESS_CHECKS = 6;
+//    public final static double INJECTOR_RESET = 0.83;
+    public final static double INJECTOR_RESET = 0.77;
+//    public final static double INJECTOR_FIRE = 0.25;
+    public final static double INJECTOR_FIRE = 0.50;
+    public final static int VELOCITY_SUCCESS_CHECKS = 100;
     public boolean disableVelocityCheck = false;
     public int sequentialStableVelocityChecks = 0;
     public enum INJECTING {
@@ -899,7 +910,7 @@ public class UltimateGoalRobot
     }
 
     /** Moves the wobble arm to the specified position. **/
-    public static double WOBBLE_ARM_STOWED = 0.300;
+    public static double WOBBLE_ARM_STOWED = WOBBLE_ARM_MIN;
     public static double WOBBLE_ARM_RUNNING = 1.400;
     public static double WOBBLE_ARM_DEPLOYING = 2.100;
     public static double WOBBLE_ARM_GRABBING = 3.100;
@@ -962,21 +973,26 @@ public class UltimateGoalRobot
     }
     public SHOT_ALIGNMENT_STATE shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
     public FLAP_POSITION shooterFlapTarget;
-    public void startShotAligning(WayPoint alignmentCoordinates, FLAP_POSITION targetFlap) {
+    public void startShotAligning(WayPoint alignmentCoordinates, boolean shootingPowershot) {
         if (shotAlignmentState == SHOT_ALIGNMENT_STATE.IDLE) {
             shootingDestination = alignmentCoordinates;
-            shooterFlapTarget = targetFlap;
+            shootingDestination.x += shootingError.x;
+            shootingDestination.y += shootingError.y;
+            shootingDestination.angle += shootingError.angle;
+            shooterFlapTarget = FLAP_POSITION.POWERSHOT;
             // If the shooter isn't on, fire it up.
-            shooterOn();
             // Make sure shooter flap is in the right position.
-            if(shooterFlapTarget == FLAP_POSITION.POWERSHOT) {
-                setShooterFlapPowerShot();
+            if(shootingPowershot) {
+                shooterOnPowershot();
+//                setShooterFlapPowerShot();
             } else {
-                setShooterFlapHighGoal();
+                shooterOnHighGoal();
+//                setShooterFlapHighGoal();
             }
-            driveToXY(shootingDestination.x + shootingError.x,
-                    shootingDestination.y + shootingError.y,
-                    shootingDestination.angle + shootingError.angle,
+//            shooterOn();
+            driveToXY(shootingDestination.x,
+                    shootingDestination.y,
+                    shootingDestination.angle,
                     MIN_DRIVE_MAGNITUDE,
                     shootingDestination.speed, 0.014, 2.0, false);
             shotAlignmentState = SHOT_ALIGNMENT_STATE.DRIVE_TO_POSITION;

@@ -33,7 +33,7 @@ public class UltimateGoalTeleOp extends OpMode {
         updateTelemetry(telemetry);
         robot.init(hardwareMap);
 //        robot.disableDriveEncoders();
-        robot.setShooterFlapHighGoal();
+        robot.setShooterFlapPowerShot();
         robot.setInputShaping(true);
         telemetry.addLine("Ready");
         updateTelemetry(telemetry);
@@ -102,6 +102,7 @@ public class UltimateGoalTeleOp extends OpMode {
     private double spin;
     private ElapsedTime loopTime = new ElapsedTime();
     private boolean runWithEncoders = true;
+    private boolean shootHighGoal = true;
 
     @Override
     public void start() {
@@ -115,6 +116,11 @@ public class UltimateGoalTeleOp extends OpMode {
                     robot.getRightEncoderWheelPosition(),
                     robot.getStrafeEncoderWheelPosition());
         }
+
+        robot.highGoal = new WayPoint(110.10, 153.99, Math.toRadians(84.45), 1.0);
+        robot.finalAutoPosition.x = 149.7584;
+        robot.finalAutoPosition.y = 22.86;
+        robot.finalAutoPosition.angle = Math.toRadians(90.0);
         MyPosition.setPosition(robot.finalAutoPosition.x, robot.finalAutoPosition.y,
                 robot.finalAutoPosition.angle);
     }
@@ -184,24 +190,34 @@ public class UltimateGoalTeleOp extends OpMode {
             circleHeld = false;
         }
 
-        if(!triangleHeld && trianglePressed) {
-            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
-                UltimateGoalRobot.shootingError.x = MyPosition.worldXPosition - UltimateGoalRobot.highGoal.x;
-                UltimateGoalRobot.shootingError.y = MyPosition.worldYPosition - UltimateGoalRobot.highGoal.y;
-                UltimateGoalRobot.shootingError.angle = MyPosition.worldAngle_rad - UltimateGoalRobot.highGoal.angle;
+        if(trianglePressed) {
+            if(robot.injectState == UltimateGoalRobot.INJECTING.IDLE) {
+                if (shootHighGoal) {
+                    UltimateGoalRobot.shootingError.x = MyPosition.worldXPosition - UltimateGoalRobot.highGoal.x;
+                    UltimateGoalRobot.shootingError.y = MyPosition.worldYPosition - UltimateGoalRobot.highGoal.y;
+                    UltimateGoalRobot.shootingError.angle = MyPosition.worldAngle_rad - UltimateGoalRobot.highGoal.angle;
+                }
+                robot.startInjecting();
             }
-            robot.startInjecting();
-            triangleHeld = true;
-        } else if(!trianglePressed) {
-            triangleHeld = false;
         }
+//        if(!triangleHeld && trianglePressed) {
+//            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
+//                UltimateGoalRobot.shootingError.x = MyPosition.worldXPosition - UltimateGoalRobot.highGoal.x;
+//                UltimateGoalRobot.shootingError.y = MyPosition.worldYPosition - UltimateGoalRobot.highGoal.y;
+//                UltimateGoalRobot.shootingError.angle = MyPosition.worldAngle_rad - UltimateGoalRobot.highGoal.angle;
+//            }
+//            robot.startTripleInjecting();
+//            triangleHeld = true;
+//        } else if(!trianglePressed) {
+//            triangleHeld = false;
+//        }
 
         if(!crossHeld && crossPressed) {
             crossHeld = true;
             if(robot.shooterMotorTargetVelocity == SHOOT_VELOCITY) {
                 robot.shooterOff();
             } else {
-                robot.shooterOn();
+                robot.shooterOnHighGoal();
             }
         } else if(!crossPressed) {
             crossHeld = false;
@@ -210,15 +226,13 @@ public class UltimateGoalTeleOp extends OpMode {
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
             if(!aligning) {
-                robot.powerShotRight = new WayPoint(UltimateGoalRobot.highGoal.x - UltimateGoalRobot.powerShotRightOffset.x,
-                        UltimateGoalRobot.highGoal.y - UltimateGoalRobot.powerShotRightOffset.y,
-                        UltimateGoalRobot.highGoal.angle - UltimateGoalRobot.powerShotRightOffset.angle, 1.0);
-                robot.startShotAligning(UltimateGoalRobot.powerShotRight, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                robot.startShotAligning(UltimateGoalRobot.powerShotRight, true);
                 aligning = true;
             } else {
                 aligning = false;
                 robot.stopShotAligning();
             }
+            shootHighGoal = false;
             rightHeld = true;
         } else if(!rightPressed) {
             rightHeld = false;
@@ -226,46 +240,41 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!leftHeld && leftPressed) {
             if(!aligning) {
-                robot.powerShotLeft = new WayPoint(UltimateGoalRobot.highGoal.x - UltimateGoalRobot.powerShotLeftOffset.x,
-                        UltimateGoalRobot.highGoal.y - UltimateGoalRobot.powerShotLeftOffset.y,
-                        UltimateGoalRobot.highGoal.angle - UltimateGoalRobot.powerShotLeftOffset.angle, 1.0);
-                robot.startShotAligning(UltimateGoalRobot.powerShotLeft, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                robot.startShotAligning(UltimateGoalRobot.powerShotLeft, true);
                 aligning = true;
             } else {
                 aligning = false;
                 robot.stopShotAligning();
             }
+            shootHighGoal = false;
             leftHeld = true;
         } else if(!leftPressed) {
             leftHeld = false;
         }
 
         if(!downHeld && downPressed) {
-//            robot.setShooterFlapPowerShot();
             if(!aligning) {
-                robot.powerShotCenter = new WayPoint(UltimateGoalRobot.highGoal.x - UltimateGoalRobot.powerShotCenterOffset.x,
-                        UltimateGoalRobot.highGoal.y - UltimateGoalRobot.powerShotCenterOffset.y,
-                        UltimateGoalRobot.highGoal.angle - UltimateGoalRobot.powerShotCenterOffset.angle, 1.0);
-                robot.startShotAligning(UltimateGoalRobot.powerShotCenter, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                robot.startShotAligning(UltimateGoalRobot.powerShotCenter, true);
                 aligning = true;
             } else {
                 aligning = false;
                 robot.stopShotAligning();
             }
+            shootHighGoal = false;
             downHeld = true;
         } else if (!downPressed) {
             downHeld = false;
         }
 
         if(!upHeld && upPressed) {
-//            robot.setShooterFlapHighGoal();
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                robot.startShotAligning(UltimateGoalRobot.highGoal, false);
                 aligning = true;
             } else {
                 aligning = false;
                 robot.stopShotAligning();
             }
+            shootHighGoal = true;
             upHeld = true;
         } else if (!upPressed) {
             upHeld = false;
@@ -377,12 +386,16 @@ public class UltimateGoalTeleOp extends OpMode {
 		}
 
         if(!rightBumper2Held && rightBumper2Pressed) {
+            robot.shooterMotorTargetVelocity += 20;
+            robot.shooterOn();
             rightBumper2Held = true;
         } else if(!rightBumper2Pressed) {
             rightBumper2Held = false;
         }
 
         if(!leftBumper2Held && leftBumper2Pressed) {
+            robot.shooterMotorTargetVelocity += 20;
+            robot.shooterOn();
             leftBumper2Held = true;
         } else if(!leftBumper2Pressed) {
             leftBumper2Held = false;
@@ -396,7 +409,10 @@ public class UltimateGoalTeleOp extends OpMode {
                     spinMultiplier * spin, driverAngle - 90.0, robot.defaultInputShaping);
         }
 
-        telemetry.addData( "Offset Angle: ", driverAngle);
+        telemetry.addData("Shooter Target Velocity: ", robot.shooterMotorTargetVelocity);
+        telemetry.addData("Shooter Actual Velocity: ", robot.shooter.getVelocity());
+        telemetry.addData("Shooter Stability Count: ", robot.sequentialStableVelocityChecks);
+        telemetry.addData("Offset Angle: ", driverAngle);
         telemetry.addData("Flap Position: ", robot.flapAngle);
         telemetry.addData("Wobble Pot: ", robot.armPot.getVoltage());
         telemetry.addData("Shooter Velocity: ", robot.shooter.getVelocity());
