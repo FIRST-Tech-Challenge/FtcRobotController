@@ -37,8 +37,8 @@ public class finalAutonomous extends LinearOpMode {
     private DcMotor shooter;
     private DcMotor belt;
 
-    private boolean shouldShoot = false;
-    private boolean shouldDrive = false;
+    private boolean shouldShoot = true;
+    private boolean shouldDrive = true;
     private boolean shouldDetectRings = true;
     private boolean ringDetectTestMode = true;
 
