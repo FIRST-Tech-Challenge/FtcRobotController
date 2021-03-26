@@ -48,6 +48,7 @@ public class TransferCommands extends Command {
         // if Y pressed on OPERATOR gamepad or shooting state is PREPARING_HIGHGOAL, prepare for shooting highgoal by raising transfer
         // *NOTE: Y button on the OPERATOR gamepad also turns on shooter to the highgoal velocity (simultaneously)
         if (opMode.gamepad2.y || robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
+            robot.setShootingState(UpliftRobot.ShootingState.PREPARING_HIGHGOAL);
             transfer.raiseTransfer();
             robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_HIGHGOAL);
         }
@@ -55,6 +56,7 @@ public class TransferCommands extends Command {
         // if X pressed on OPERATOR gamepad or shooting state is PREPARING_POWERSHOT, prepare for powershots by raising transfer
         // *NOTE: X button on the OPERATOR gamepad also turns on shooter to the powershot velocity (simultaneously)
         if (opMode.gamepad2.x || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
+            robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
             transfer.raiseTransfer();
             robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS1);
         }

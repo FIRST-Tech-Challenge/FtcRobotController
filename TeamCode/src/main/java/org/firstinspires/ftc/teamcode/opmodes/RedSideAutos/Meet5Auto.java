@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.RedSideAutos;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
@@ -45,10 +47,10 @@ public class Meet5Auto extends UpliftAuto {
 
     @Override
     public void initAction() {
+        transferSub.initTransferPos();
         intakeSub.initRoller();
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
-        transferSub.initTransferPos();
         intakeSub.initStick();
         intakeSub.initSweeper();
     }
@@ -161,20 +163,20 @@ public class Meet5Auto extends UpliftAuto {
             driveSub.driveToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 1, 0);
             autoHighGoalShoot();
             // drop off first wobble
-            driveSub.driveToPosition(130, 74, 1, 180, DriveSubsystem.CLOCKWISE);
-            wobbleSub.dropOff();
-            driveSub.driveToPosition(130, 70, 1, 180);
-
-            // go to pick up second wobble
-            getSecondWobble();
-
-            // go to drop off second wobble
-            driveSub.driveToPosition(132, 64, 1, 180, DriveSubsystem.CLOCKWISE);
-            wobbleSub.dropOff();
-            driveSub.driveToPosition(132, 60, 1,180);
-
-            // park
-            park();
+//            driveSub.driveToPosition(128, 74, 1, 180, DriveSubsystem.CLOCKWISE);
+//            wobbleSub.dropOff();
+//            driveSub.driveToPosition(128, 70, 1, 180);
+//
+//            // go to pick up second wobble
+//            getSecondWobble();
+//
+//            // go to drop off second wobble
+//            driveSub.driveToPosition(128, 68, 1, 180, DriveSubsystem.CLOCKWISE);
+//            wobbleSub.dropOff();
+//            driveSub.driveToPosition(128, 62, 1,180);
+//
+//            // park
+//            park();
         }
 
     }
@@ -192,29 +194,21 @@ public class Meet5Auto extends UpliftAuto {
     }
 
     public void getSecondWobble() {
-        driveSub.driveToPosition(117, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-        driveSub.driveToPosition(117, 32, 0.5, 0.5, 0, 0);
+        driveSub.driveToPosition(115, 48, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
+        driveSub.driveToPosition(115, 38, 0.5, 0.5, 0, 0);
         wobbleSub.pickUp();
     }
 
     public void autoHighGoalShoot() {
-        double initialTime = System.currentTimeMillis();
-        while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && opModeIsActive()) {
-            robot.safeSleep(1);
+        while(robot.transferState != UpliftRobot.TransferState.UP && opModeIsActive()) {
+            robot.safeSleep(5);
         }
-        if(System.currentTimeMillis() - initialTime >= 2000) {
-            flickerSub.flickRing();
-            robot.safeSleep(100);
-            flickerSub.flickRing();
-            robot.safeSleep(100);
-            flickerSub.flickRing();
-        } else {
-            for(int i = 0; i < 3 && opModeIsActive(); i++) {
-                while (!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && opModeIsActive()) {
-                    robot.safeSleep(1);
-                }
-                flickerSub.flickRing();
+        double initialTime = System.currentTimeMillis();
+        for(int i = 0; i < 3; i++) {
+            while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel && opModeIsActive()) {
+                robot.safeSleep(1);
             }
+            flickerSub.flickRing();
         }
         shooterSub.setShooterPower(0);
         transferSub.dropTransfer();

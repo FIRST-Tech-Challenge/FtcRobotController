@@ -35,14 +35,14 @@ public class ShooterCommands extends Command {
     public void loop() {
 
         if(opMode.gamepad2.a){
-            shooter.setShooterPower(1);
+            shooter.setShooterVelocity(robot.highGoalVelocity);
         }
 
         if(opMode.gamepad2.b) {
             shooter.setShooterPower(0);
         }
 
-        if(opMode.gamepad2.y || opMode.gamepad2.left_bumper || robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
+        if(opMode.gamepad2.y || robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
             shooter.setShooterVelocity(robot.highGoalVelocity);
         }
 

@@ -31,7 +31,7 @@ public class RedTestAuto extends UpliftAuto {
     @Override
     public void body() throws InterruptedException {
         robot.odometry.setOdometryPosition(0, 0, 0);
-        drive.driveToPosition(0, 60, 0.5, 0);
+        drive.driveToPosition(0, 100, 1, 0);
     }
 
     @Override

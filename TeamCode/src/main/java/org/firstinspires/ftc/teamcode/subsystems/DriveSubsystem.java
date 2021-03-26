@@ -21,7 +21,7 @@ public class DriveSubsystem extends Subsystem {
     private DcMotor leftFront, leftBack, rightFront, rightBack;
 
     // shooting positions
-    public static Point highGoalShootingPt = new Point(98, 68, 0);
+    public static Point highGoalShootingPt = new Point(106, 70, 0);
     public static Point powershotShootingPt1 = new Point(67.5, 70,0);
     public static Point powershotShootingPt2 = new Point(74.5, 70,0);
     public static Point powershotShootingPt3 = new Point(81.5, 70,0);
@@ -148,7 +148,7 @@ public class DriveSubsystem extends Subsystem {
                 turnVal = Range.clip((60 / initialDistToPt) * (180 / Math.abs(turnAngle)), -1, 1);
             }
         } else if(turnAngle > 5) {
-            turnVal = 0.15;
+            turnVal = 0.10;
         } else if(turnAngle < -30) {
             if(turnDirection == CLOCKWISE) {
                 turnVal = Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
@@ -158,7 +158,7 @@ public class DriveSubsystem extends Subsystem {
                 turnVal = Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
             }
         } else if(turnAngle < -5) {
-            turnVal = -0.15;
+            turnVal = -0.10;
         } else {
             turnVal = 0;
         }

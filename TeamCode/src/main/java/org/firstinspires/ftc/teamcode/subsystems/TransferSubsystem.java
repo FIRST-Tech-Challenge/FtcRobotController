@@ -88,25 +88,50 @@ public class TransferSubsystem extends Subsystem {
 //        }
 //        transfer.setPower(0);
 
-        transfer.setTargetPosition(TRANSFER_TARGET);
-        transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        transfer.setPower(0.35);
-        double initialTime = System.currentTimeMillis();
-        while(transfer.isBusy() && System.currentTimeMillis() - initialTime < 3000 && getTransferCurrent() < 1500) {
-            robot.safeSleep(5);
-        }
-        transfer.setPower(0);
-        transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                transfer.setTargetPosition(TRANSFER_TARGET);
+                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                transfer.setPower(0.35);
+//                robot.setTransferState(UpliftRobot.TransferState.MOVING);
+                double initialTime = System.currentTimeMillis();
+                while(transfer.isBusy() && !robot.operatorCancel && getTransferCurrent() < 1700 && robot.opMode.opModeIsActive()) {
+                    Log.i("TRANSFER BUSY", transfer.isBusy() + "");
+                    Log.i("TIME", System.currentTimeMillis() - initialTime + "");
+                    Log.i("Cancel", !robot.operatorCancel + "");
+                    Log.i("Current", getTransferCurrent() + "");
+                }
+                Log.i("Finish", "yes");
+                transfer.setPower(0);
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                robot.setTransferState(UpliftRobot.TransferState.UP);
+            }
+        }).start();
     }
 
     public void dropTransfer() {
-        transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        double initialTime = System.currentTimeMillis();
-        while(transferTouchBottom.getState() && !robot.operatorCancel && (System.currentTimeMillis() - initialTime) < 3000) {
-            transfer.setPower(0.35);
-        }
-        transfer.setPower(0);
-//        transferOffset = transfer.getCurrentPosition();
+//        transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        double initialTime = System.currentTimeMillis();
+//        while(transferTouchBottom.getState() && !robot.operatorCancel && (System.currentTimeMillis() - initialTime) < 3000) {
+//            transfer.setPower(0.35);
+//        }
+//        transfer.setPower(0);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                robot.setTransferState(UpliftRobot.TransferState.MOVING);
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                double initialTime = System.currentTimeMillis();
+                while(transferTouchBottom.getState() && !robot.operatorCancel && (System.currentTimeMillis() - initialTime) < 3000 && getTransferCurrent() < 1700) {
+                    transfer.setPower(0.35);
+                }
+                transfer.setPower(0);
+//                robot.setTransferState(UpliftRobot.TransferState.DOWN);
+            }
+        }).start();
+
     }
 
 }

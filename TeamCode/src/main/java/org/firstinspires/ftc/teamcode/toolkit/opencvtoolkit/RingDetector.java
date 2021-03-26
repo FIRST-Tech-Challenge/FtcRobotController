@@ -27,7 +27,7 @@ public class RingDetector extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
 
         // zoom in on the input image
-        input = zoomMat(input, 1.5, new Point(input.width() * 0.667, input.height() * 0.667));
+        input = zoomMat(input, 1.5, new Point(input.width() * 0.5, input.height() * 0.667));
         totalMatArea = input.width() * input.height();
         Mat zoomedMat = input.clone();
 

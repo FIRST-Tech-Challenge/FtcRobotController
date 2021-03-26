@@ -12,7 +12,7 @@ public class IntakeCommands extends Command {
     public IntakeSubsystem intake;
     public UpliftTele opMode;
     UpliftRobot robot;
-    public boolean aPressed;
+    public boolean lifterButtonPressed;
 
     public IntakeCommands(UpliftTele opMode, UpliftRobot robot, IntakeSubsystem intakeSubsystem) {
         super(opMode, intakeSubsystem);
@@ -37,7 +37,9 @@ public class IntakeCommands extends Command {
 
     @Override
     public void loop() {
+
         intake.setIntakePower(Range.clip(opMode.gamepad2.left_stick_y, -1, 1));
+
         if(intake.getPower() < 0){
             intake.sweeperOn();
             intake.dropStick();
@@ -50,19 +52,20 @@ public class IntakeCommands extends Command {
 //        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
 //            intake.dropRoller();
 //        }
+
         //Toggle Button for Roller to Move up and Down
-        if(opMode.gamepad2.dpad_left) {
-            if (!aPressed) {
+        if(opMode.gamepad2.left_bumper) {
+            if (!lifterButtonPressed) {
                 robot.intakeToggle = !robot.intakeToggle;
-                aPressed = true;
+                lifterButtonPressed = true;
             }
         } else {
-            aPressed = false;
+            lifterButtonPressed = false;
         }
+
         if(robot.intakeToggle){
             intake.liftRoller();
-        }
-        else{
+        } else{
             intake.dropRoller();
         }
     }
