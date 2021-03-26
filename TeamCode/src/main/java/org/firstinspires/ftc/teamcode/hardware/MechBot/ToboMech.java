@@ -1709,20 +1709,39 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void doPowerShotsSemiNew(int n, boolean angleCollection) throws InterruptedException {
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
         shooting_rpm = SEMI_POWER_SHOT_RPM;
-
-        chassis.rotateTo(0.3, 0);
-        sleep(200);
-        double idealRightDist = 45.5;
-        double rightDist = (chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT)+chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT))/2;
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-(idealRightDist-rightDist),chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
-        chassis.rotateTo(0.3, 0);//delete?
-
         if (hopper != null && hopper.getTransferIsDown()) {
             hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
         if (intake!=null)
             intake.stop();
+        chassis.rotateTo(0.3, 0);
+        sleep(200);
+        double idealRightDist = 58; // 43 cm at Hans field; 58 cm? at Winston's house
+        double crab_power=0.5;
+        for (int i=0; i<3; i++) {
+            double rightDist = (chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT) + chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT)) / 2;
+            if (Math.abs(rightDist-idealRightDist)<1) break;
+            chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(), chassis.odo_heading(), false, 2);
+            crab_power-=0.05;
+        }
+        // chassis.rotateTo(0.3, 0);//delete?
+        double target_heading=2.3;
+        double angle_error = 0.6;
+        if(angleCollection){
+            if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
+                if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
+                    chassis.rotateTo(0.3, target_heading);
+                    sleep(100);
+                }
+                int i=0;
+                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<3) {
+                    chassis.rawRotateTo(0.18, target_heading, false, 0.5);
+                    i++;
+                }
+                sleep(100);
+            } else sleep(300);
+        }
 
         while (!TaskManager.isComplete("Transfer Up Combo")) {
             TaskManager.processTasks();
@@ -1736,24 +1755,54 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
             return;
         }
+        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-40);
         //sleep(200);
         // move to center power shot
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(),chassis.odo_heading()-0.5,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
+        if(angleCollection){
+            if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
+                if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
+                    chassis.rotateTo(0.3, target_heading);
+                    sleep(100);
+                }
+                int i=0;
+                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<3) {
+                    chassis.rawRotateTo(0.18, target_heading, false, 0.5);
+                    i++;
+                }
+                sleep(100);
+            } else sleep(300);
+        }
         hopper.feederAuto();
         if (n==2) {
             shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
             return;
         }
+        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-40);
         //sleep(500);
         // move to right power shot
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(),chassis.odo_heading()-0.5,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
+        if(angleCollection){
+            if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
+                if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
+                    chassis.rotateTo(0.3, target_heading);
+                    sleep(100);
+                }
+                int i=0;
+                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<3) {
+                    chassis.rawRotateTo(0.18, target_heading, false, 0.5);
+                    i++;
+                }
+                sleep(100);
+            } else sleep(300);
+        }
         hopper.feederAuto();
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
