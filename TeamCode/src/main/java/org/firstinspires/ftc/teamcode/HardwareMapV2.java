@@ -89,16 +89,22 @@ public class HardwareMapV2 {
         wobble.setDirection(Servo.Direction.FORWARD);
         slapper.setDirection(Servo.Direction.FORWARD);
 
+        slapper.setPosition(0.0);
+        pause(1000);
         rightTilt.setPosition(0.5);
         leftTilt.setPosition(0.5);
         wobble.setPosition(0.0);
-        slapper.setPosition(0.0);
 
         if (initIMU){
             imu.initialize(parameters);
         }
 
     }
+    public void pause(double milis){
+        double time = System.currentTimeMillis() + milis;
+        while (time >= System.currentTimeMillis()) {}
+    }
+
 
     public void setEncoders(ArrayList<DcMotor> motors, DcMotor.RunMode... modes){
         for (DcMotor motor: motors){

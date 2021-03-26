@@ -93,7 +93,9 @@ public class lessButtonsConfig implements teleOpInterface {
     }
 
     public void lt(float pressure) {
-
+        if (pressure > 0.5 && System.currentTimeMillis()-button>=300){
+            drivetrain.moveSlapper(Drivetrain.slapperPos.IN);
+        }
     }
 
     public void rjoy(float x, float y) {
@@ -122,6 +124,8 @@ public class lessButtonsConfig implements teleOpInterface {
 
     public void updateTelemetryDM() {
         telemetryDM.put("Number of Cycles ", String.valueOf(numOfCycles));
+        telemetryDM.put("Slapper High ", String.valueOf(drivetrain.slapperHigh));
+        telemetryDM.put("Slapper Low ", String.valueOf(drivetrain.slapperLow));
     }
 
     public void loop() {

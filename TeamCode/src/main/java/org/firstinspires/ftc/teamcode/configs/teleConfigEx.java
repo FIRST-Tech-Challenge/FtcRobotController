@@ -7,7 +7,7 @@ public class teleConfigEx implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
     double intakeTime, outtakeTime, xTime, yTime, dTime, somePause;
-    double perfectval = 0.33;
+    double perfectval = 0.36;
     int reverseIntake = 1;
 
     public teleConfigEx(HardwareMapV2 robot) {

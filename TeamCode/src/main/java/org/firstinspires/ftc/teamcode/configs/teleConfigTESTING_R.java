@@ -34,9 +34,13 @@ public class teleConfigTESTING_R implements teleOpInterface{
     }
 
     public void x(boolean pressed) {
-        //Conveyor
+        //Slapper
         if (pressed && System.currentTimeMillis()-button >= 500){
-            robot.slapper.setPosition((robot.slapper.getPosition() == 0) ? 1.0 : 0.0);
+            if (robot.slapper.getPosition()>0.5){
+                drivetrain.moveSlapper(Drivetrain.slapperPos.OUT);
+            }else{
+                drivetrain.moveSlapper(Drivetrain.slapperPos.IN);
+            }
             button = System.currentTimeMillis();
         }
     }
@@ -103,7 +107,10 @@ public class teleConfigTESTING_R implements teleOpInterface{
     }
 
     public void rjoy(float x, float y) {
-
+        if (Math.abs(y) >= 0.75 && System.currentTimeMillis()-button>=500) {
+            robot.slapper.setPosition(robot.slapper.getPosition()+((y/Math.abs(y))/10));
+            button = System.currentTimeMillis();
+        }
     }
 
     public void ljoy(float x, float y) {
@@ -123,7 +130,7 @@ public class teleConfigTESTING_R implements teleOpInterface{
     }
 
     public void updateTelemetryDM() {
-
+        telemetryDM.put("Slapper", String.valueOf(robot.slapper.getPosition()));
     }
 
     public void loop() {

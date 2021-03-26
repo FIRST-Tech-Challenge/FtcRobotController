@@ -23,6 +23,7 @@ public class Drivetrain {
     static int pos = 0;
     static final double     P_TURN_COEFF            = 0.03;
     static final double     HEADING_THRESHOLD       = 1 ;
+    public static double slapperHigh, slapperLow = 0;
 
     public void forward(double power){
         setMotorPowers(power, power, power, power);
@@ -55,10 +56,12 @@ public class Drivetrain {
     public void moveSlapper(slapperPos Slapper){
         switch (Slapper){
             case IN:
-                robot.slapper.setPosition(0.55);
+                robot.slapper.setPosition(0.6);
+                pause(300);
                 break;
             case OUT:
-                robot.slapper.setPosition(0.0);
+                robot.slapper.setPosition(0.01);
+                pause(300);
                 break;
         }
     }
@@ -74,7 +77,8 @@ public class Drivetrain {
     }
     public void newOuttakeAll(double power, int cycles){
         robot.outtake.setPower(power);
-        pause(300);
+        pause(500);
+        slapperHigh = 0; slapperLow = 0;
         for (int i=0; i<cycles; i++){
             singleCycle();
         }
@@ -82,9 +86,7 @@ public class Drivetrain {
     }
     public void singleCycle(){
         moveSlapper(slapperPos.OUT);
-        pause(300);
         moveSlapper(slapperPos.IN);
-        pause(300);
     }
     public void tilt(double pos){
         if (0.0 <= pos && pos <= 4.0) {
@@ -120,7 +122,16 @@ public class Drivetrain {
 
     public void pause(double milis){
         double time = System.currentTimeMillis() + milis;
-        while (time >= System.currentTimeMillis()) {}
+        while (time >= System.currentTimeMillis()) {
+            double pos = robot.slapper.getPosition();
+            slapperHigh = Math.max(pos, slapperHigh);
+            slapperLow = Math.min(pos, slapperLow);
+        }
+    }
+    public void waitTillPos(double pos){
+        double time = System.currentTimeMillis() + 5000;
+        //time >= System.currentTimeMillis() ||
+        while (Math.abs(robot.slapper.getPosition()-pos) >= 0.1) { pause(500);}
     }
     // NOT USED; gets average gyro value for more accurate angles
     public double getAverageGyro(){
