@@ -24,8 +24,8 @@ public class Odometry2 {
     public final double c = Constants.RADIUS_CENTER_TO_ENC;
 
 
-    public Vector dl = new Vector(0,0);
-    public Vector dr = new Vector(0,0);
+    public Vector dl = new Vector(0, 0);
+    public Vector dr = new Vector(0, 0);
     public double s = 0;
     public double c1 = 0;
 
@@ -66,7 +66,7 @@ public class Odometry2 {
     //Derivative of theta function, accepts change in heading
     //Used in newtons method
     public double derivativeOfThetaFunction(double theta) {
-        return ing0(theta ,(1 - Math.cos(theta) - theta * Math.sin(theta)) / (Math.pow(theta, 2)) );
+        return ing0(theta, (1 - Math.cos(theta) - theta * Math.sin(theta)) / (Math.pow(theta, 2)));
     }
 
     //NewtonsMethodOfThetaFunction used to calculate theta to a greater accuracy
@@ -80,29 +80,29 @@ public class Odometry2 {
     }
 
     //Calculate distance vectors for left and right odometry that measure the change in coordinates from the center odometry at (0,0)
-    public void calcDVectors(){
-        dl.setXY(d*(1-c1)-d-c*s, c*(1-c1) - c + d*s);
-        dr.setXY(-d*(1-c1)+d-c*s, c*(1-c1) - c + d*s);
+    public void calcDVectors() {
+        dl.setXY(d * (1 - c1) - d - (c * s), c * (1 - c1) - c + (d * s));
+        dr.setXY(-d * (1 - c1) + d - (c * s), c * (1 - c1) - c - (d * s));
     }
+
     //Calculate x using encoder position and d vectors, inputs encoder reading and d vector
-    public double calcX(double E, Vector d){
-        return ing0(c1,0.5 * ((deltaCP*deltaH*s)/c1) - (E*deltaH) + (d.x*c1) - (d.y*s));
+    public double calcX(double E, Vector d) {
+        return ing0(c1, 0.5 * ((deltaCP * deltaH * s) / c1) - (E * deltaH) + (d.x * c1) - (d.y * s));
     }
 
     //Calculate y using x
-    public double calcY(double x){
-        return ing0(c1,(deltaCP*deltaH - x*s)/c1);
+    public double calcY(double x) {
+        return ing0(c1, ((deltaCP * deltaH) - (x * s)) / c1);
     }
 
     //calculate average x and use that to calculate average y and then update
-    public void updateDeltaXY(){
-        deltaX = 0.5*(calcX(deltaLP, dl) + calcX(deltaRP, dr));
-//        deltaX = (calcX(deltaLP, dl));
+    public void updateDeltaXY() {
+        deltaX = 0.5 * (calcX(deltaLP, dl) + calcX(deltaRP, dr));
         deltaY = calcY(deltaX);
     }
 
     //update global x y and h
-    public void updateGlobalXYH(){
+    public void updateGlobalXYH() {
         Vector deltaGlobalPos = new Vector(deltaX, deltaY).getRotatedVec(h, Vector.angle.DEGREES);
         x += deltaGlobalPos.x;
         y += deltaGlobalPos.y;
@@ -110,9 +110,9 @@ public class Odometry2 {
     }
 
     //Update c1 and s
-    public void updateCS(){
+    public void updateCS() {
         s = Math.sin(deltaH);
-        c1 = 1-Math.cos(deltaH);
+        c1 = 1 - Math.cos(deltaH);
     }
 
     //Convert ticks to cm
@@ -154,23 +154,15 @@ public class Odometry2 {
     public double[] getPos() {
         return new double[]{getX(), getY(), getHeading()};
     }
+
     //returns out if inp is not 0
-    public double ing0(double inp, double out){
-        if(inp != 0) {
+    public double ing0(double inp, double out) {
+        if (inp != 0) {
             return out;
-        }else{
+        } else {
             return 0;
         }
     }
-
-
-
-
-
-
-
-
-
 
 
 //    public void updateGlobalPosition(double l, double c , double r, double heading){
