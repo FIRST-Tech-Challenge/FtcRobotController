@@ -94,7 +94,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     final public double SEMI_AUTO_RPM = 1660;
     final public double WARM_UP_RPM_POWER_SHOT = 1420;
     final public double SEMI_POWER_SHOT_RPM = 1420;
-    final public double SEMI_HIGHGOAL_HEADING = -9; // 0 for tile-2, -9 for tile-3
+    final public double SEMI_HIGHGOAL_HEADING = -12; // 0 for tile-2, -9 for tile-3
     public double shooting_rpm = WARM_UP_RPM;
     public double batteryVolt = 0;
 
