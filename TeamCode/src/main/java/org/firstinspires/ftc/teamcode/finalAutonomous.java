@@ -11,12 +11,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Autonomous
 
 public class finalAutonomous extends LinearOpMode {
-    private static final String TFOD_MODEL_ASSET = "detect.tflite";
+    //private static final String TFOD_MODEL_ASSET = "detect.tflite";
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_QUAD = "four";
     private static final String LABEL_SINGLE = "one";
 
@@ -56,7 +61,8 @@ public class finalAutonomous extends LinearOpMode {
         int zone;
         if (opModeIsActive()) {
             do {
-                zone = determineZone();
+                //zone = determineZone();
+                zone = calculateZone();
                 switch (zone) {
                     case 0:
                         //move to zone A
@@ -68,7 +74,7 @@ public class finalAutonomous extends LinearOpMode {
                         //move to zone C
                         break;
                     default:
-                        telemetry.addData("Status:", "Invalid number of rings");
+                        //telemetry.addData("Status:", "Invalid number of rings");
                         break;
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
@@ -118,6 +124,46 @@ public class finalAutonomous extends LinearOpMode {
             sleep(5000);
             shooter.setPower(0);
             belt.setPower(0);
+        }
+    }
+
+    public int calculateZone() {
+        int samples = 100;
+        telemetry.addData(">", "Taking " + samples + " samples...");
+        telemetry.update();
+
+        Integer[] zones = {0, 0, 0, 0};
+
+        for (int i=0; i<samples; i++) {
+            int zone = determineZone();
+            switch(zone) {
+                case 0: zones[0]++;
+                        break;
+                case 1: zones[1]++;
+                    break;
+                case 2: zones[2]++;
+                    break;
+                default: zones[3]++;
+                    break;
+            }
+            sleep(200);
+        }
+
+        int largestIndex = 0;
+        for(int i = 0; i < zones.length; i++ ) {
+            telemetry.addData("zone" + i, zones[i]);
+            if (zones[i] > zones[largestIndex]) {
+                largestIndex = i;
+            }
+        }
+
+        telemetry.addData(">", "Calculated zone " + largestIndex + " as highest value.");
+        telemetry.update();
+
+        if (largestIndex == 3) {
+            return -1;
+        } else {
+            return largestIndex;
         }
     }
 
@@ -211,6 +257,6 @@ public class finalAutonomous extends LinearOpMode {
         tensorFlowObjDetector = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tensorFlowObjDetector.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_QUAD, LABEL_SINGLE);
         tensorFlowObjDetector.activate();
-        tensorFlowObjDetector.setZoom(2.5, 1.78);
+        tensorFlowObjDetector.setZoom(1.5, 1.78);
     }
 }
