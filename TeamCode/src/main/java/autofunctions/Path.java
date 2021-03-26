@@ -399,7 +399,7 @@ public class Path {
                 }
             }
 
-            double[] pows = update(bot.odometry.getPos(), bot.odometry.getVels());
+            double[] pows = update(bot.odometry.getPos(), bot.odometry.getVels()); //bot.odometry.getVels()
             bot.move(pows[1], pows[0], pows[2]);
 //            op.telemetry.addData("xpow",  pows[0]);
 //            op.telemetry.addData("ypow",  pows[1]);

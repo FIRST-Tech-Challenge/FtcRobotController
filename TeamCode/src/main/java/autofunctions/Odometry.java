@@ -122,4 +122,18 @@ public class Odometry {
         deltaLP = 0;
     }
 
+    public double getTVel(){
+        return 0;
+    }
+    public double getYVel(){
+        return 0;
+    }
+    public double getXVel(){
+        return 0;
+    }
+
+    public double[] getVels(){
+        return new double[]{0,0,0};
+    }
+
 }

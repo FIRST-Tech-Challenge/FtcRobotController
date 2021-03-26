@@ -4,9 +4,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TelemetryHandler {
     public Telemetry addOdometry(Telemetry telemetry, TestRobot bot) {
-        telemetry.addData("center odometry", bot.getCenterOdo());
-        telemetry.addData("left odometry", bot.getLeftOdo());
-        telemetry.addData("right odometry", bot.getRightOdo());
+//        telemetry.addData("center odometry", bot.odometry.cp);
+//        telemetry.addData("left odometry", bot.odometry.lp);
+//        telemetry.addData("right odometry", bot.odometry.rp);
+//        telemetry.addData("deltaRP", bot.odometry.deltaRP);
+        telemetry.addData("deltaCP", bot.odometry.deltaCP);
+//        telemetry.addData("deltaLP", bot.odometry.deltaLP);
+        telemetry.addData("dl", "(%f , %f)", bot.odometry.dl.x, bot.odometry.dl.y);
+        telemetry.addData("dr", "(%f , %f)", bot.odometry.dr.x, bot.odometry.dr.y);
+//        telemetry.addData("deltaH", bot.odometry.deltaH);
         telemetry.addData("x pos", bot.odometry.getX());
         telemetry.addData("y pos", bot.odometry.getY());
         telemetry.addData("heading", bot.odometry.getHeading());
