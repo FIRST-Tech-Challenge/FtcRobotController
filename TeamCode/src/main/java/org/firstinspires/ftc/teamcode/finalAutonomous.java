@@ -37,10 +37,10 @@ public class finalAutonomous extends LinearOpMode {
     private DcMotor shooter;
     private DcMotor belt;
 
-    private boolean shouldShoot = true;
-    private boolean shouldDrive = true;
+    private boolean shouldShoot = false;
+    private boolean shouldDrive = false;
     private boolean shouldDetectRings = true;
-    private boolean ringDetectTestMode = true;
+    private boolean ringDetectTestMode = false;
 
     //code to play once the OpMode is active
     public void runOpMode() {
@@ -83,7 +83,7 @@ public class finalAutonomous extends LinearOpMode {
         if (tensorFlowObjDetector != null) {
             tensorFlowObjDetector.shutdown();
         }
-        move(.5, 3500);
+        move(1, 1750);
     }
 
     public void move(double speed, int time) {
@@ -121,7 +121,7 @@ public class finalAutonomous extends LinearOpMode {
             shooter.setPower(power);
             sleep(1500);
             belt.setPower(.5);
-            sleep(5000);
+            sleep(4000);
             shooter.setPower(0);
             belt.setPower(0);
         }
