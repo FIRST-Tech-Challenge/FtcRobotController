@@ -30,7 +30,7 @@ public class Odometry extends Background {
     @Override
     public void loop() {
         updatePosition();
-        Log.i("Odometry:", "X: " + robot.worldX + "   Y: " + robot.worldY + "   Angle: " + robot.worldAngle);
+//        Log.i("Odometry:", "X: " + robot.worldX + "   Y: " + robot.worldY + "   Angle: " + robot.worldAngle);
     }
 
     // method to update the current position and angle of the robot (relative to left-rear edge of robot and left-rear field corner)
