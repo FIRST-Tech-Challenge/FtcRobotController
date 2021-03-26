@@ -1339,6 +1339,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void deliverFirstWobbleGoalAfterHighGoal() throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
+        if (comboGrabber!=null)
+            comboGrabber.armUpLow();
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(auto_chassis_power, 25, 175, -20, false, 3);
@@ -1894,6 +1896,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 sleep(500); //to allow time for intaking the bonus ring
                 intake.stop();
                 autoShootHighGoal(1, true);
+                if (comboGrabber!=null)
+                    comboGrabber.armUpLow();
                 chassis.driveTo(0.8, side(75), 230, 0, false, 5);
                 while (!TaskManager.isComplete("Transfer Down Combo") && !interrupted()) {
                     TaskManager.processTasks();
@@ -1909,6 +1913,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 }
                 chassis.driveTo(1.0, side(87), 165, 0, false, 1);
                 autoShootHighGoal(3, true);
+                if (comboGrabber!=null)
+                    comboGrabber.armUpLow();
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 while (!TaskManager.isComplete("Transfer Down Combo")) {
                     TaskManager.processTasks();

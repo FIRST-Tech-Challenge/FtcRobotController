@@ -39,7 +39,8 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private final int SLIDER_POS_MAX = 1733;
     private final int SLIDER_POS_RING = 580;
 
-    private double ARM_UP_AUTO = 0.7;
+    private double ARM_UP_AUTO = 0.4;
+    private double ARM_UP_AUTO_LOW = 0.7;
     private double ARM_UP = 0.4;
     private double ARM_INIT = 0.16;
     private double ARM_DOWN_RELEASE = 0.91;
@@ -237,6 +238,12 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     public void armUp() {
         if (arm==null) return;
         arm.setPosition(ARM_UP);
+        armIsLow = false;
+    }
+
+    public void armUpLow() {
+        if (arm==null) return;
+        arm.setPosition(ARM_UP_AUTO_LOW);
         armIsLow = false;
     }
 
