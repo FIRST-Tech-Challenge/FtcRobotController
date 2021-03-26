@@ -11,11 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 @Autonomous
 
@@ -261,6 +257,6 @@ public class finalAutonomous extends LinearOpMode {
         tensorFlowObjDetector = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tensorFlowObjDetector.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_QUAD, LABEL_SINGLE);
         tensorFlowObjDetector.activate();
-        tensorFlowObjDetector.setZoom(2, 2.5);
+        //tensorFlowObjDetector.setZoom(1, 1.5);
     }
 }
