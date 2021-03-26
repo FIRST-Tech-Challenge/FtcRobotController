@@ -1343,10 +1343,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             comboGrabber.armUpLow();
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 25, 175, -20, false, 3);
+                chassis.driveTo(0.8, 25, 175, -20, false, 3);
                 chassis.rawRotateTo(0.4,-20,false,1);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 65, 230, 0, true, 3);
+                chassis.driveTo(0.8, 65, 230, 0, true, 3);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 5, 290, 0, false, 3); // no rotation to make it faster
             } else {
@@ -1892,7 +1892,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B) {//1
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 intake.intakeIn();
-                chassis.driveTo(auto_chassis_power, side(75), 165, 0, false, 5);
+                chassis.driveTo(0.8, side(75), 165, 0, false, 5);
                 sleep(500); //to allow time for intaking the bonus ring
                 intake.stop();
                 autoShootHighGoal(1, true);
