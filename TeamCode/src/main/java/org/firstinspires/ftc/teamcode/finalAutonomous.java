@@ -5,12 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
+
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
+// 8 degrees
 import java.util.List;
 
 @Autonomous
@@ -60,19 +63,21 @@ public class finalAutonomous extends LinearOpMode {
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        //move to zone A
+                        move(1, 1750);
+                        strafeLeft(500);
                         break;
                     case 1:
-                        //move to zone B
+                        move(1, 2000);
                         break;
                     case 2:
-                        //move to zone C
+                        move(1, 2250);
+                        strafeLeft(500);
                         break;
                     default:
-                        //telemetry.addData("Status:", "Invalid number of rings");
                         break;
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
+            move(-1, 500);
             if (ringDetectTestMode){
                 while (opModeIsActive()){
                     telemetry.update();
@@ -83,7 +88,6 @@ public class finalAutonomous extends LinearOpMode {
         if (tensorFlowObjDetector != null) {
             tensorFlowObjDetector.shutdown();
         }
-        move(1, 1750);
     }
 
     public void move(double speed, int time) {
@@ -216,8 +220,8 @@ public class finalAutonomous extends LinearOpMode {
 
             frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
             frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-            backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+            backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+            backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         }
     }
 
