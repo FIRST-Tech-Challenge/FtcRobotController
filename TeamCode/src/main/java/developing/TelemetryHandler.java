@@ -9,7 +9,7 @@ public class TelemetryHandler {
         telemetry.addData("right odometry", bot.getRightOdo());
         telemetry.addData("x pos", bot.odometry.getX());
         telemetry.addData("y pos", bot.odometry.getY());
-        telemetry.addData("heading", bot.odometry.getTheta());
+        telemetry.addData("heading", bot.odometry.getHeading());
         return telemetry;
     }
     public Telemetry addAngularPosition(Telemetry telemetry, TestRobot bot) {

@@ -55,7 +55,7 @@ public class TestRobot {
 
     public ButtonController outtakeButtonController = new ButtonController();
 
-    public Odometry odometry = new Odometry();
+    public Odometry2 odometry = new Odometry2();
 
 
     public void init(HardwareMap hwMap) {
@@ -101,7 +101,7 @@ public class TestRobot {
         shooter.addStage(rp, pushControl, 0, 0.3);
         autoModule2s.add(shooter);
 
-        odometry.init(getLeftOdo(), getCenterOdo(), getRightOdo());
+        odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());
 
 
     }
@@ -248,7 +248,7 @@ public class TestRobot {
     }
 
     public void updateOdometry() {
-        odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo(), angularPosition.getHeadingGY());
+        odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
     }
 
 }

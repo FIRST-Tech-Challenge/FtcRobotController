@@ -24,13 +24,14 @@ public class Constants {
     public static final double GO_DEGREES_TO_TICKS = GOBUILDA1_Ticks/360;
 
     public static final double pi2 = Math.PI*2;
-    public static final double ANGLE_ACCURACY = 3.5;
-    public static final double COMPASS_START = 163;
+    public static final double ANGLE_ACCURACY = 3.5; // in degrees
+    public static final double COMPASS_START = 163; //in degrees
 
-    public static final double TICKS_FOR_ODOMETRY =  8192;
+    public static final double TICKS_FOR_ODOMETRY =  8192; //in ticks
     public static final double ENCODER_WHEEL_RADIUS = 1.75; // in cm
     public static final double RADIUS_CENTER_TO_ENC = 3; // in cm
     public static final double DIS_BEWTEEN_ENCS = 37.46; //in cm
     public static final double CM_TO_TICKS = TICKS_FOR_ODOMETRY/(pi2*ENCODER_WHEEL_RADIUS);
+    public static final double HALF_DIS_BETWEEN_ENCS = DIS_BEWTEEN_ENCS/2; // in cm
 
 }
