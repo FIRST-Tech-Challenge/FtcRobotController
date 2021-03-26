@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.RedSideAutos;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
@@ -67,7 +65,7 @@ public class Meet5Auto extends UpliftAuto {
         odom.setOdometryPosition(105.25, 8.5, 0);
         stack = robot.ringDetector.ringCount;
         shooterSub.setShooterVelocity(robot.highGoalVelocity);
-        transferSub.raiseTransfer();
+        transferSub.autoRaiseTransfer();
 
         if(stack == 4) {
             // shoot
@@ -83,7 +81,7 @@ public class Meet5Auto extends UpliftAuto {
             intakeSub.setIntakePower(0);
 
             // shoot second set of 3
-            transferSub.raiseTransfer();
+            transferSub.autoRaiseTransfer();
             driveSub.driveToPosition(105.25, 12, 0.5, 0);
             fourStackShoot();
 
@@ -93,7 +91,7 @@ public class Meet5Auto extends UpliftAuto {
             intakeSub.setIntakePower(0);
 
             // shoot last ring
-            transferSub.raiseTransfer();
+            transferSub.autoRaiseTransfer();
             driveSub.driveToPosition(105.25, 12, 0.5, 0);
             flickerSub.flickRing();
 
@@ -129,7 +127,7 @@ public class Meet5Auto extends UpliftAuto {
             intakeSub.setIntakePower(0);
 
             // shoot last ring
-            transferSub.raiseTransfer();
+            transferSub.autoRaiseTransfer();
             driveSub.driveToPosition(105.25, 12, 0.5, 0);
             flickerSub.flickRing();
 
@@ -204,7 +202,7 @@ public class Meet5Auto extends UpliftAuto {
             flickerSub.flickRing();
         }
         shooterSub.setShooterPower(0);
-        transferSub.dropTransfer();
+        transferSub.autoDropTransfer();
     }
 
     public void fourStackShoot() {
@@ -219,7 +217,7 @@ public class Meet5Auto extends UpliftAuto {
         robot.safeSleep(100);
         flickerSub.flickRing();
 
-        transferSub.dropTransfer();
+        transferSub.autoDropTransfer();
     }
 
 }

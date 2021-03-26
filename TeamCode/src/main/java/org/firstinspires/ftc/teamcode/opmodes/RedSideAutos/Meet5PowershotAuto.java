@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.RedSideAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -59,7 +57,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
         stack = robot.ringDetector.ringCount;
         robot.shooter1.setVelocity(robot.powerShotVelocity);
         robot.shooter2.setVelocity(robot.powerShotVelocity);
-        transferSub.raiseTransfer();
+        transferSub.autoRaiseTransfer();
 
         if (stack == 0) {
             driveSub.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 1, 0);
@@ -115,9 +113,9 @@ public class Meet5PowershotAuto extends UpliftAuto {
             robot.shooter1.setVelocity(robot.highGoalVelocity);
             robot.shooter2.setVelocity(robot.highGoalVelocity);
             driveSub.driveToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 1, 0);
-            transferSub.raiseTransfer();
+            transferSub.autoRaiseTransfer();
             flickerSub.flickRing();
-            transferSub.dropTransfer();
+            transferSub.autoDropTransfer();
             shooterSub.setShooterPower(0);
 
             // park
@@ -202,7 +200,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
             driveSub.driveToPosition(DriveSubsystem.powershotShootingPt3.x, DriveSubsystem.powershotShootingPt2.y, 1, 0);
         }
         robot.shooterSub.setShooterPower(0);
-        robot.transferSub.dropTransfer();
+        robot.transferSub.autoDropTransfer();
     }
 
 }
