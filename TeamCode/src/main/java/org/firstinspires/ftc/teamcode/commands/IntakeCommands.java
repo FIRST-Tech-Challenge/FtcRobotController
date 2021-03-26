@@ -41,10 +41,8 @@ public class IntakeCommands extends Command {
 
         if(intake.getPower() < 0){
             intake.sweeperOn();
-            intake.dropStick();
         } else {
             intake.sweeperOff();
-            intake.raiseStick();
         }
 
         if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
@@ -55,21 +53,21 @@ public class IntakeCommands extends Command {
             intake.dropStick();
         }
 
-        // Toggle Button for stick
-        if(opMode.gamepad1.dpad_right) {
-            if(!stickButtonPressed) {
-                robot.stickToggle = !robot.stickToggle;
-                stickButtonPressed = true;
-            }
-        } else {
-            stickButtonPressed = false;
-        }
-
-        if(robot.stickToggle) {
-            intake.initStick();
-        } else {
-            intake.dropStick();
-        }
+//        // Toggle Button for stick
+//        if(opMode.gamepad1.dpad_right) {
+//            if(!stickButtonPressed) {
+//                robot.stickToggle = !robot.stickToggle;
+//                stickButtonPressed = true;
+//            }
+//        } else {
+//            stickButtonPressed = false;
+//        }
+//
+//        if(robot.stickToggle) {
+//            intake.initStick();
+//        } else {
+//            intake.dropStick();
+//        }
 
         // Toggle Button for Roller to Move up and Down
         if(opMode.gamepad2.left_bumper) {
