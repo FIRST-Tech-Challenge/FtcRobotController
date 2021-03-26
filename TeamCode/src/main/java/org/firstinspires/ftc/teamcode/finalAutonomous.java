@@ -20,7 +20,6 @@ import java.util.TreeMap;
 @Autonomous
 
 public class finalAutonomous extends LinearOpMode {
-    //private static final String TFOD_MODEL_ASSET = "detect.tflite";
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_QUAD = "four";
     private static final String LABEL_SINGLE = "one";
@@ -37,7 +36,7 @@ public class finalAutonomous extends LinearOpMode {
     private DcMotor shooter;
     private DcMotor belt;
 
-    private boolean shouldShoot = false;
+    private boolean shouldShoot = true;
     private boolean shouldDrive = false;
     private boolean shouldDetectRings = true;
     private boolean ringDetectTestMode = false;
@@ -78,6 +77,11 @@ public class finalAutonomous extends LinearOpMode {
                         break;
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
+            if (ringDetectTestMode){
+                while (opModeIsActive()){
+                    telemetry.update();
+                }
+            }
         }
 
         if (tensorFlowObjDetector != null) {
@@ -128,7 +132,7 @@ public class finalAutonomous extends LinearOpMode {
     }
 
     public int calculateZone() {
-        int samples = 100;
+        int samples = 50;
         telemetry.addData(">", "Taking " + samples + " samples...");
         telemetry.update();
 
@@ -257,6 +261,6 @@ public class finalAutonomous extends LinearOpMode {
         tensorFlowObjDetector = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tensorFlowObjDetector.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_QUAD, LABEL_SINGLE);
         tensorFlowObjDetector.activate();
-        tensorFlowObjDetector.setZoom(1.5, 1.78);
+        tensorFlowObjDetector.setZoom(2, 2.5);
     }
 }
