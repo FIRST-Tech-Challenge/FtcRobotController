@@ -41,6 +41,7 @@ public class FlickerSubsystem extends Subsystem {
     }
 
     public void flickRing() {
+        robot.setFlickingState(UpliftRobot.FlickingState.FLICKING);
         // move in
         flicker.setPosition(0.25);
         if(!robot.safeSleep(500)){
@@ -54,5 +55,6 @@ public class FlickerSubsystem extends Subsystem {
             safeDisable();
             return;
         }
+        robot.setFlickingState(UpliftRobot.FlickingState.IDLE);
     }
 }

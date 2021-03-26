@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.core.Command;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
+import org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants;
 import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 
 public class ShooterCommands extends Command {
@@ -60,6 +61,8 @@ public class ShooterCommands extends Command {
 //            }
 //            robot.shotCount += 1;
 //        }
+
+//        robot.highGoalVelocity = DashboardConstants.targetVel;
 
     }
 

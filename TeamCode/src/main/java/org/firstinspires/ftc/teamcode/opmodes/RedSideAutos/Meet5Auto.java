@@ -45,11 +45,11 @@ public class Meet5Auto extends UpliftAuto {
 
     @Override
     public void initAction() {
+        intakeSub.initStick();
         transferSub.initTransferPos();
         intakeSub.initRoller();
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
-        intakeSub.initStick();
         intakeSub.initSweeper();
     }
 
@@ -63,44 +63,57 @@ public class Meet5Auto extends UpliftAuto {
 
         // set the initial position, ring stack count, and prepare shooter/transfer/intake
         odom.setOdometryPosition(105.25, 8.5, 0);
-        stack = robot.ringDetector.ringCount;
-        shooterSub.setShooterVelocity(robot.highGoalVelocity);
+//        stack = robot.ringDetector.ringCount;
+        stack = 1;
+        shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
         transferSub.autoRaiseTransfer();
 
         if(stack == 4) {
+            // drop roller
+            intakeSub.dropRoller();
+
             // shoot
-            shooterSub.setShooterVelocity(2300);
-            driveSub.driveToPosition(105.25, 12, 0.5, 0);
-            fourStackShoot();
+            shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
+            driveSub.driveToPosition(110, 48, 0.7, 0);
+            driveSub.turnTo(0, 0.3, 0);
+            autoHighGoalShoot();
 
-            // intake four stack
-            driveSub.driveToPosition(108, 20, 1, 0);
-            driveSub.driveToPosition(108, 16, 1, 0);
-            intakeSub.setIntakePower(1);
-            driveSub.driveToPosition(108, 24, 0.5, 0);
-            intakeSub.setIntakePower(0);
+            // intake four stack, if you were able to shoot all 3 initial rings
+//            if(robot.shotCount >= 3) {
+                while(robot.transferState != UpliftRobot.TransferState.DOWN && opModeIsActive()) {
+                    robot.safeSleep(5);
+                }
+                intakeSub.setIntakePower(1);
+                driveSub.driveToPosition(110, 56, 0.25, 0);
+                robot.safeSleep(2000);
+                intakeSub.setIntakePower(0);
 
-            // shoot second set of 3
-            transferSub.autoRaiseTransfer();
-            driveSub.driveToPosition(105.25, 12, 0.5, 0);
-            fourStackShoot();
+                // shoot second set of 3
+                transferSub.autoRaiseTransfer();
+                shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
+                driveSub.driveToPosition(110, 48, 0.5, 0);
+                driveSub.turnTo(0, 0.3, 0);
+                autoHighGoalShoot();
 
-            // intake last ring
-            intakeSub.setIntakePower(1);
-            driveSub.driveToPosition(108, 28, 0.5, 0);
-            intakeSub.setIntakePower(0);
+//                // intake last ring
+//                intakeSub.setIntakePower(1);
+//                driveSub.driveToPosition(108, 28, 0.5, 0);
+//                intakeSub.setIntakePower(0);
+//
+//                // shoot last ring
+//                transferSub.autoRaiseTransfer();
+//                driveSub.driveToPosition(105.25, 12, 0.5, 0);
+//                flickerSub.flickRing();
 
-            // shoot last ring
-            transferSub.autoRaiseTransfer();
-            driveSub.driveToPosition(105.25, 12, 0.5, 0);
-            flickerSub.flickRing();
+//            }
+
 
             // drive to drop off first wobble
-            driveSub.driveToPosition(134, 122, 1, 180);
+            wobbleSub.setWobblePosition(0.2);
+            driveSub.driveToPosition(132, 116, 1, 180);
             wobbleSub.dropWobble();
             robot.safeSleep(500);
             wobbleSub.openWobble();
-            driveSub.driveToPosition(134, 112, 1, 180);
 
             // drive to pick up second wobble
             driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
@@ -119,27 +132,39 @@ public class Meet5Auto extends UpliftAuto {
             park();
 
         } else if(stack == 1) {
-            shooterSub.setShooterVelocity(2300);
-            driveSub.driveToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 1, 0);
-            fourStackShoot();
+            intakeSub.dropRoller();
+
+            // shoot
+            shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
+            driveSub.driveToPosition(110, 48, 0.7, 0);
+            driveSub.turnTo(0, 0.3, 0);
+            autoHighGoalShoot();
+
+            // intake single stack
+            while (robot.transferState != UpliftRobot.TransferState.DOWN && opModeIsActive()) {
+                robot.safeSleep(5);
+            }
             intakeSub.setIntakePower(1);
-            driveSub.driveToPosition(108, 28, 0.5, 0);
+            driveSub.driveToPosition(110, 56, 0.25, 0);
+            robot.safeSleep(1000);
             intakeSub.setIntakePower(0);
 
-            // shoot last ring
+            // shoot the 1 ring
             transferSub.autoRaiseTransfer();
-            driveSub.driveToPosition(105.25, 12, 0.5, 0);
+            shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
+            driveSub.driveToPosition(110, 48, 0.5, 0);
+            driveSub.turnTo(0, 0.3, 0);
             flickerSub.flickRing();
-
+            shooterSub.setShooterPower(0);
+            transferSub.autoDropTransfer();
 
             // drop off first wobble
             driveSub.driveToPosition(116, 96, 1, 180);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(106, 80, 0.7, 180);
 
-            // turn on shooter and pick up second wobble goal
+            // pick up second wobble goal
             driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-            driveSub.driveToPosition(115, 32, 0.5, 0.5, 0, 0);
+            driveSub.driveToPosition(115, 36, 0.5, 0.5, 0, 0);
             wobbleSub.pickUp();
 
             // drop off the second wobble goal
@@ -196,7 +221,7 @@ public class Meet5Auto extends UpliftAuto {
         }
         double initialTime = System.currentTimeMillis();
         for(int i = 0; i < 3; i++) {
-            while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel && opModeIsActive()) {
+            while(!robot.velocityData.isAutoHighGoalReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel && opModeIsActive()) {
                 robot.safeSleep(1);
             }
             flickerSub.flickRing();
@@ -205,19 +230,19 @@ public class Meet5Auto extends UpliftAuto {
         transferSub.autoDropTransfer();
     }
 
-    public void fourStackShoot() {
-        double initialTime = System.currentTimeMillis();
-        while(robot.shooter1Vel < 2300 && (System.currentTimeMillis() - initialTime) < 2300 && opModeIsActive()) {
-            robot.safeSleep(1);
-        }
-
-        flickerSub.flickRing();
-        robot.safeSleep(100);
-        flickerSub.flickRing();
-        robot.safeSleep(100);
-        flickerSub.flickRing();
-
-        transferSub.autoDropTransfer();
-    }
+//    public void fourStackShoot() {
+//        double initialTime = System.currentTimeMillis();
+//        while(robot.shooter1Vel < 2300 && (System.currentTimeMillis() - initialTime) < 2300 && opModeIsActive()) {
+//            robot.safeSleep(1);
+//        }
+//
+//        flickerSub.flickRing();
+//        robot.safeSleep(100);
+//        flickerSub.flickRing();
+//        robot.safeSleep(100);
+//        flickerSub.flickRing();
+//
+//        transferSub.autoDropTransfer();
+//    }
 
 }

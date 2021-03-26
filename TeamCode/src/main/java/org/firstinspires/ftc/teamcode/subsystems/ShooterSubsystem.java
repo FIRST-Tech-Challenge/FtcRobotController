@@ -20,6 +20,7 @@ public class ShooterSubsystem extends Subsystem {
         this.shooter1 = robot.shooter1;
         this.shooter2 = robot.shooter2;
     }
+
     @Override
     public void enable() {
 
@@ -54,5 +55,15 @@ public class ShooterSubsystem extends Subsystem {
         shooter1.setVelocity(targetVelocity);
         shooter2.setVelocity(targetVelocity);
     }
+
+    public void IntakeCount(){
+
+    }
+//    if (robot.shooterSensor.getDistance(DistanceUnit.CM)<5.48){
+//        while(robot.intakeSensor.getDistance(DistanceUnit.CM)<5.48){
+//            Utils.sleep(10);
+//        }
+//        robot.count += 1;
+//    }
 
 }

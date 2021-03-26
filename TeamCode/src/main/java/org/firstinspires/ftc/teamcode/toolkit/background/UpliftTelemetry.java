@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.subsystems.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.core.Background;
@@ -46,10 +47,11 @@ public class UpliftTelemetry extends Background {
             telem.addData("Right Encoder pos:\t", robot.odometry.getRightTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Center Encoder pos:\t", robot.odometry.getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Slow Mode:\t", robot.slowMode);
+            telem.addData("Shot Count\t", robot.shotCount);
             telem.addData("Transfer Pos:\t", robot.transferSub.transfer.getCurrentPosition());
             telem.addData("Transfer Mode:\t", robot.transfer.getMode());
             telem.addData("Current Mode:\t", robot.transfer.getCurrent(CurrentUnit.MILLIAMPS));
-
+            telem.addData("Distance Sensor:\t", robot.shooterSensor.getDistance(DistanceUnit.CM));
         }
         telem.addData("Shooting State\t",  robot.shootingState + "");
         telem.update();

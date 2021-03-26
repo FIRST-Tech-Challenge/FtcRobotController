@@ -56,15 +56,6 @@ public class IntakeSubsystem extends Subsystem {
     public double getPower(){
         return -intake.getPower();
     }
-    
-//    public void IntakeCount(){
-//        if (robot.intakeSensor.getDistance(DistanceUnit.CM)<5.48){
-//            while(robot.intakeSensor.getDistance(DistanceUnit.CM)<5.48){
-//                Utils.sleep(10);
-//            }
-//            robot.count += 1;
-//        }
-//    }
 
     public void initRoller() {
         intakeLifter.setPosition(0.95);
@@ -79,11 +70,11 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void initStick() {
-        stick.setPosition(0.1);
+        stick.setPosition(0);
     }
 
     public void dropStick() {
-        stick.setPosition(1);
+        stick.setPosition(0.97);
     }
 
     public void raiseStick() {

@@ -23,16 +23,14 @@ public class IntakeCommands extends Command {
 
     @Override
     public void init() {
-        intake.initRoller();
-        intake.initSweeper();
         intake.initStick();
     }
 
     @Override
     public void start() {
-        intake.dropStick();
         intake.dropRoller();
         intake.dropSweeper();
+        intake.dropStick();
     }
 
     @Override

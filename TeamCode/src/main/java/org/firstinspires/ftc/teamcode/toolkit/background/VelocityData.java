@@ -40,6 +40,13 @@ public class VelocityData extends Background {
         dashTelem.addData("Lower Limit", 1000);
         dashTelem.addData("Upper Limit", 3000);
 //        dashTelem.update();
+
+    }
+
+    public boolean isAutoHighGoalReady() {
+        double lowerLimit = robot.autoHighGoalVelocity - 50;
+        double upperLimit = robot.autoHighGoalVelocity + 50;
+        return (robot.shooter1Vel > lowerLimit && robot.shooter2Vel > lowerLimit && robot.shooter1Vel < upperLimit && robot.shooter2Vel < upperLimit);
     }
 
     public boolean isHighGoalShooterReady() {

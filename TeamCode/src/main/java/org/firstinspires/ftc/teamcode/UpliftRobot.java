@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.background.Cancel;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
+import org.firstinspires.ftc.teamcode.toolkit.background.ShotCounter;
 import org.firstinspires.ftc.teamcode.toolkit.background.UpliftTelemetry;
 import org.firstinspires.ftc.teamcode.toolkit.background.VelocityData;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
@@ -39,6 +40,7 @@ public class UpliftRobot {
     public Cancel cancelClass;
     public Odometry odometry;
     public VelocityData velocityData;
+    public ShotCounter shotCounter;
     public boolean driverCancel = false;
     public boolean operatorCancel = false;
 
@@ -80,8 +82,9 @@ public class UpliftRobot {
     public double shooter1Vel = -1;
     public double shooter2Vel = -1;
 
-    public double highGoalVelocity = 2200;
+    public double highGoalVelocity = 2100;
     public double powerShotVelocity = 1050;
+    public double autoHighGoalVelocity = 1750;
     public double kP = 50;
     public double kI = 0;
     public double kD = 0;
@@ -290,6 +293,8 @@ public class UpliftRobot {
         if(shooterInitialized) {
             velocityData = new VelocityData(this);
             velocityData.enable();
+            shotCounter = new ShotCounter(this);
+            shotCounter.enable();
         }
     }
 
@@ -372,6 +377,15 @@ public class UpliftRobot {
     public TransferState transferState = TransferState.DEFAULT;
     public void setTransferState(TransferState state) {
         transferState = state;
+    }
+
+    public enum FlickingState {
+        FLICKING,
+        IDLE
+    }
+    public FlickingState flickingState = FlickingState.IDLE;
+    public void setFlickingState(FlickingState state) {
+        flickingState = state;
     }
 
 }
