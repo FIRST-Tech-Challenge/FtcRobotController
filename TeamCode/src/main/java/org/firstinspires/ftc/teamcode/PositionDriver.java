@@ -72,7 +72,7 @@ public class PositionDriver extends OpMode {
         double rightSpeed = 0;
 
         double power = rotationController.rotate(Vals.rotate_target);
-        double power2 = positionController.goto_pos(pose, targetPose);
+        double power2 = -positionController.goto_pos(pose, targetPose);
 
         leftSpeed += power;
         rightSpeed -= power;
