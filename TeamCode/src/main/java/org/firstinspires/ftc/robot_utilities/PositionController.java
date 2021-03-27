@@ -56,7 +56,9 @@ public class PositionController {
         double dy = target.getY() - o.getY();
         double dx = target.getX() - o.getX();
 
-        return Math.toDegrees(Math.atan(dy/dx));
+//        if(dx == 0) return 0;
+
+        return Math.toDegrees(Math.atan2(dx, dy)) - 90;
     }
 
     public void reset() {
