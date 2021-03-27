@@ -23,7 +23,7 @@ public class PositionDriver extends OpMode {
     private FtcDashboard dashboard;
     private GamePadController gamepad;
     private DriveTrain driveTrain;
-    private DifferentialDriveOdometry odometry;
+
     private RotationController rotationController;
     private PositionController positionController;
 
@@ -35,29 +35,23 @@ public class PositionDriver extends OpMode {
                 new Motor(hardwareMap, "dr"), Motor.RunMode.RawPower);
         driveTrain.resetEncoders();
 
-        rotationController = new RotationController(hardwareMap.get(BNO055IMU.class, "imu"));
-        rotationController.resetAngle();
-
         Pose2d currentPose = new Pose2d(Vals.drive_target_x,  Vals.drive_target_y, new Rotation2d(Math.PI/2));
 
-        positionController = new PositionController(currentPose);
-        positionController.reset(currentPose);
-
-
-        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), currentPose);
+        rotationController = new RotationController(hardwareMap.get(BNO055IMU.class, "imu"));
+        positionController = new PositionController(currentPose, rotationController);
+        positionController.reset();
     }
 
     @Override
     public void loop() {
         gamepad.update();
-        double[] driveTrainDistance = driveTrain.getDistance();
-        double leftDistanceInch = driveTrainDistance[0] / Vals.TICKS_PER_INCH_MOVEMENT;
-        double rightDistanceInch = driveTrainDistance[1] / Vals.TICKS_PER_INCH_MOVEMENT;
-        odometry.update(new Rotation2d(rotationController.getAngleRadians()), leftDistanceInch, rightDistanceInch);
+        positionController.update(driveTrain.getDistance());
 
-        Pose2d targetPose = new Pose2d(Vals.drive_target_x, Vals.drive_target_y, new Rotation2d());
-        Pose2d pose = odometry.getPoseMeters();
+        Pose2d pose = positionController.odometry.getPoseMeters();
+        Pose2d targetPose = new Pose2d(Vals.drive_target_x,  Vals.drive_target_y, new Rotation2d());
+
         TelemetryPacket packet = new TelemetryPacket();
+
         if(gamepad.isARelease()) {
             driveTrain.setSpeed(0, 0);
             rotationController.resetAngle();
@@ -65,21 +59,18 @@ public class PositionDriver extends OpMode {
 
         if(gamepad.isBRelease()) {
             driveTrain.setSpeed(0, 0);
-            positionController.updatePID();
-            positionController.reset(pose);
+//            positionController.updatePID();
+            positionController.reset();
         }
 
         double leftSpeed = 0;
         double rightSpeed = 0;
 
-        double power = rotationController.rotate(Vals.rotate_target);
-        double power2 = -positionController.goto_pos(pose, targetPose, packet);
 
-        leftSpeed += power;
-        rightSpeed -= power;
+        double[] speeds = positionController.goto_pose(targetPose, packet);
 
-        leftSpeed += power2;
-        rightSpeed += power2;
+        leftSpeed = speeds[0];
+        rightSpeed = speeds[1];
 
 
 
@@ -92,8 +83,6 @@ public class PositionDriver extends OpMode {
         packet.put("X Pos: ", pose.getX());
         packet.put("Y Pos: ", pose.getY());
         packet.put("Heading: ", pose.getHeading());
-        packet.put("Position Power", power2);
-        packet.put("Rotation Power", power);
         packet.put("Left Speed", leftSpeed);
         packet.put("Right Speed", rightSpeed);
 
