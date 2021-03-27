@@ -26,6 +26,11 @@ public class Vals {
     public static double rotate_tolerance = 1;
     public static double rotate_target = 0;
 
+    public static double drive_kp = .015;
+    public static double drive_ki = .11;
+    public static double drive_kd = .0003;
+    public static double drive_tolerance = 1;
+
     public static final double TICKS_PER_INCH_MOVEMENT = 40.58;
 
     public static double hitter_start = 0.4;

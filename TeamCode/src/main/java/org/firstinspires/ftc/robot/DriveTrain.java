@@ -49,6 +49,10 @@ public class DriveTrain {
         return new double[]{driveLeft.getDistance(), -driveRight.getDistance()};
     }
 
+    public double getAverageDistance() {
+        return (driveLeft.getDistance() - driveRight.getDistance())/2;
+    }
+
     public double[] getRevolutions() {
         return new double[]{driveLeft.encoder.getRevolutions(), driveRight.encoder.getRevolutions()};
     }

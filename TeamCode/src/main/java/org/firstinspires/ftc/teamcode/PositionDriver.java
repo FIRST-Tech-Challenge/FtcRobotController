@@ -12,38 +12,61 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robot.DriveTrain;
 import org.firstinspires.ftc.robot_utilities.DashboardCorrections;
+import org.firstinspires.ftc.robot_utilities.GamePadController;
+import org.firstinspires.ftc.robot_utilities.PositionController;
 import org.firstinspires.ftc.robot_utilities.RotationController;
 import org.firstinspires.ftc.robot_utilities.Vals;
 
-@TeleOp(name = "PositionTracker")
-public class PositionTracker extends OpMode {
+@TeleOp(name = "PositionDriver")
+public class PositionDriver extends OpMode {
 
     private FtcDashboard dashboard;
+    private GamePadController gamepad;
     private DriveTrain driveTrain;
     private DifferentialDriveOdometry odometry;
     private RotationController rotationController;
+    private PositionController positionController;
 
     @Override
     public void init() {
         dashboard = FtcDashboard.getInstance();
+        gamepad = new GamePadController(gamepad1);
         driveTrain = new DriveTrain(new Motor(hardwareMap, "dl"),
-                new Motor(hardwareMap, "dr"));
+                new Motor(hardwareMap, "dr"), Motor.RunMode.RawPower);
         driveTrain.resetEncoders();
 
         rotationController = new RotationController(hardwareMap.get(BNO055IMU.class, "imu"));
+        rotationController.resetAngle();
 
-        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), new Pose2d(45,  -65, new Rotation2d(Math.PI/2)));
+        Pose2d currentPose = new Pose2d(45,  -65, new Rotation2d(Math.PI/2));
+
+        positionController = new PositionController(currentPose);
+        positionController.setTarget(currentPose);
+
+        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), currentPose);
     }
 
     @Override
     public void loop() {
+        gamepad.update();
         double[] driveTrainDistance = driveTrain.getDistance();
         double leftDistanceInch = driveTrainDistance[0] / Vals.TICKS_PER_INCH_MOVEMENT;
         double rightDistanceInch = driveTrainDistance[1] / Vals.TICKS_PER_INCH_MOVEMENT;
         odometry.update(new Rotation2d(rotationController.getAngleRadians()), leftDistanceInch, rightDistanceInch);
 
-        double leftSpeed = gamepad1.left_stick_y;
-        double rightSpeed = gamepad1.right_stick_y;
+
+        if(gamepad.isARelease()) {
+            driveTrain.setSpeed(0, 0);
+            rotationController.resetAngle();
+        }
+
+        double leftSpeed = 0;
+        double rightSpeed = 0;
+
+        double power = rotationController.rotate(Vals.rotate_target);
+
+        leftSpeed += power;
+        rightSpeed -= power;
 
         driveTrain.setSpeed(leftSpeed, rightSpeed);
 
