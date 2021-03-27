@@ -78,15 +78,8 @@ public class PositionController {
         double power = 0;
         double power2 = 0;
 
-        if(currentDistance < 1) {
-            power = rotationController.rotate(rotationToPoint);
-        } else if(targetDistance - currentDistance > 1) {
-            power = rotationController.rotate(rotationToPoint);
-            power2 = pidDrive.calculate(currentDistance, targetDistance);
-        } else {
-            power = rotationController.rotate(rotationToPoint);
-            power2 = pidDrive.calculate(currentDistance, targetDistance);
-        }
+        power = rotationController.rotate(rotationToPoint);
+        power2 = pidDrive.calculate(currentDistance, targetDistance);
 
         leftSpeed += power;
         rightSpeed -= power;
