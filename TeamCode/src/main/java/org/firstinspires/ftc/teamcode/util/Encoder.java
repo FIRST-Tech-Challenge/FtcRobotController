@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.roadrunner.util.NanoClock;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.technototes.library.hardware.motor.EncodedMotor;
+import com.technototes.library.hardware.sensor.Sensor;
 
 /**
  * Wraps a motor instance to provide corrected velocity counts and allow reversing independently of the corresponding
  * slot's motor direction
  */
-public class Encoder {
+public class Encoder extends Sensor<DcMotorEx> {
     private final static int CPS_STEP = 0x10000;
 
     private static double inverseOverflow(double input, double estimate) {
@@ -17,6 +20,11 @@ public class Encoder {
             real += Math.signum(estimate - real) * CPS_STEP;
         }
         return real;
+    }
+
+    @Override
+    public double getSensorValue() {
+        return getCurrentPosition();
     }
 
     public enum Direction {
@@ -44,6 +52,8 @@ public class Encoder {
     private double lastUpdateTime;
 
     public Encoder(DcMotorEx motor, NanoClock clock) {
+        super(motor);
+        //motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.motor = motor;
         this.clock = clock;
 
@@ -56,6 +66,13 @@ public class Encoder {
 
     public Encoder(DcMotorEx motor) {
         this(motor, NanoClock.system());
+    }
+
+    public Encoder(EncodedMotor<DcMotorEx> motor){
+        this(motor.getDevice());
+    }
+    public Encoder(String deviceName){
+        this(hardwareMap.get(DcMotorEx.class, deviceName));
     }
 
     public Direction getDirection() {
@@ -72,6 +89,10 @@ public class Encoder {
      */
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public void invert(){
+        setDirection(getDirection() == Direction.FORWARD ? Direction.REVERSE : Direction.FORWARD);
     }
 
     public int getCurrentPosition() {

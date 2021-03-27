@@ -1,2 +1,6 @@
 include ':FtcRobotController'
 include ':TeamCode'
+include ':RobotLibrary'
+include ':Subsystem'
+include ':Logger'
+include ':Control'

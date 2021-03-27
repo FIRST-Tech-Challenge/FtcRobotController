@@ -29,6 +29,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -42,25 +43,25 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -136,19 +137,19 @@ public class SampleMecanumDrive extends MecanumDrive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
+        rightFront = hardwareMap.get(DcMotorEx.class, "frMotor");
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
         // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "flMotor");
+        leftRear = hardwareMap.get(DcMotorEx.class, "rlMotor");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rrMotor");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (DcMotorEx motor : motors) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+                MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
             motor.setMotorType(motorConfigurationType);
         }
@@ -164,9 +165,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+        /* for instance,*/ setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
