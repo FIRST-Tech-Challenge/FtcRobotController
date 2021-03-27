@@ -48,14 +48,17 @@ public class Storage {
 
     }
 
-    public void saveJSON(String dirname, TimeData in){
+    public String convertToJSON(String dirname, TimeData in){
         makeOutputFile(dirname);
         ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            objectMapper.writeValue(new File(outputFile.getAbsolutePath() + "/" + in.name + ".json"), in);
-        } catch (IOException e) { }
+//        try {
+//            objectMapper.writeValue(new File(outputFile.getAbsolutePath() + "/" + in.name + ".json"), in);
+//        } catch (IOException e) { }
 
-//        String timeDataAsString = objectMapper.writeValueAsString(in);
+        String timeDataAsString = " ";
+        try {timeDataAsString = objectMapper.writeValueAsString(in); } catch (IOException ignore) {}
+
+        return timeDataAsString;
     }
 
     public void makeOutputFile(String dirname){
