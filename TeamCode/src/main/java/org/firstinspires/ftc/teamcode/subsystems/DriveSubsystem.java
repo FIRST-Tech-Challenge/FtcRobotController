@@ -97,11 +97,11 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void driveToPosition(double xPosition, double yPosition, double movementSpeed, double targetAngle, int turnDirection) {
-        driveToPosition(xPosition, yPosition, movementSpeed, 1, targetAngle, turnDirection);
+        driveToPosition(xPosition, yPosition, movementSpeed, 2, targetAngle, turnDirection);
     }
 
     public void driveToPosition(double xPosition, double yPosition, double movementSpeed, double targetAngle) {
-        driveToPosition(xPosition, yPosition, movementSpeed, 1, targetAngle, DriveSubsystem.QUICKEST_DIRECTION);
+        driveToPosition(xPosition, yPosition, movementSpeed, 2, targetAngle, DriveSubsystem.QUICKEST_DIRECTION);
     }
 
     public void passThroughPosition(double xPosition, double yPosition, double movementSpeed, double targetAngle, int turnDirection) {

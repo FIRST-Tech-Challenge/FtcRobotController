@@ -56,7 +56,6 @@ public class WobbleSubsystem extends Subsystem {
     }
     public void dropOff(){
         dropWobble();
-        robot.safeSleep(250);
         openWobble();
     }
 
@@ -72,7 +71,7 @@ public class WobbleSubsystem extends Subsystem {
 
     public void dropWobble() {
         setWobblePosition(0);
-        robot.safeSleep(750);
+        robot.safeSleep(350);
     }
 
     public void endgameWobble() {

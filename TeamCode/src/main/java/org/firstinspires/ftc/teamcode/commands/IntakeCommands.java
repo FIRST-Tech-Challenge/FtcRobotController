@@ -39,35 +39,15 @@ public class IntakeCommands extends Command {
 
         intake.setIntakePower(Range.clip(opMode.gamepad2.left_stick_y, -1, 1));
 
-        if(intake.getPower() < 0){
-            intake.sweeperOn();
+        // Toggle Button for stick
+        if(opMode.gamepad1.dpad_right) {
+            if(!stickButtonPressed) {
+                robot.stickToggle = !robot.stickToggle;
+                stickButtonPressed = true;
+            }
         } else {
-            intake.sweeperOff();
+            stickButtonPressed = false;
         }
-
-        if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
-            intake.raiseStick();
-        } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
-            intake.initStick();
-        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
-            intake.dropStick();
-        }
-
-//        // Toggle Button for stick
-//        if(opMode.gamepad1.dpad_right) {
-//            if(!stickButtonPressed) {
-//                robot.stickToggle = !robot.stickToggle;
-//                stickButtonPressed = true;
-//            }
-//        } else {
-//            stickButtonPressed = false;
-//        }
-//
-//        if(robot.stickToggle) {
-//            intake.initStick();
-//        } else {
-//            intake.dropStick();
-//        }
 
         // Toggle Button for Roller to Move up and Down
         if(opMode.gamepad2.left_bumper) {
@@ -83,6 +63,22 @@ public class IntakeCommands extends Command {
             intake.liftRoller();
         } else {
             intake.dropRoller();
+        }
+
+        if(intake.getPower() < 0){
+            intake.sweeperOn();
+        } else {
+            intake.sweeperOff();
+        }
+
+        if(robot.stickToggle) {
+            intake.initStick();
+        } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
+            intake.raiseStick();
+        } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
+            intake.initStick();
+        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
+            intake.dropStick();
         }
     }
 

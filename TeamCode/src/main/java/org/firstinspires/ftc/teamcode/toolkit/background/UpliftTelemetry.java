@@ -31,11 +31,11 @@ public class UpliftTelemetry extends Background {
     @Override
     public void loop() {
 
-//        if(opMode instanceof UpliftTele) {
-//            displayTeleOpTelemetry(robot);
-//        } else if(opMode instanceof UpliftAuto){
-//            displayAutoTelemetry(robot);
-//        }
+        if(opMode instanceof UpliftTele) {
+            displayTeleOpTelemetry(robot);
+        } else if(opMode instanceof UpliftAuto){
+            displayAutoTelemetry(robot);
+        }
 
     }
 

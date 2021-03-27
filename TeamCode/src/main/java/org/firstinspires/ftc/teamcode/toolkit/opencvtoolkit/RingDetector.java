@@ -94,11 +94,11 @@ public class RingDetector extends OpenCvPipeline {
 
             // Determine the number of rings detected
             // if rectangle height : width ratio is between 2.5/5 and 4/5, then there are 4 rings (5 x 3 inches)
-            if (rectRatio > 0.5 && rectRatio < 0.7) {
+            if (rectRatio > 0.55 && rectRatio < 0.75) {
                 ringCount = 4;
             }
             // if height : width ratio is between 0.5/5 and 2/5, then there is 1 ring (5 x 0.75 inches)
-            else if (rectRatio > 0.15 && rectRatio < 0.35) {
+            else if (rectRatio > 0.25 && rectRatio < 0.45) {
                 ringCount = 1;
             } else {
                 ringCount = -1;

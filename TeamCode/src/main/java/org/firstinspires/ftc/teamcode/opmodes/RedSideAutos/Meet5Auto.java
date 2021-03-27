@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.RedSideAutos;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
@@ -63,12 +65,14 @@ public class Meet5Auto extends UpliftAuto {
 
         // set the initial position, ring stack count, and prepare shooter/transfer/intake
         odom.setOdometryPosition(105.25, 8.5, 0);
-//        stack = robot.ringDetector.ringCount;
-        stack = 1;
+        stack = robot.ringDetector.ringCount;
+        Log.i("Rect Ratio", robot.ringDetector.rectRatio + "");
+        Log.i("Ring Count", robot.ringDetector.ringCount + "");
+//        stack = 1;
         shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
         transferSub.autoRaiseTransfer();
 
-        intakeSub.dropRoller();
+//        intakeSub.dropRoller();
 
         if(stack == 4) {
 
@@ -156,6 +160,7 @@ public class Meet5Auto extends UpliftAuto {
             flickerSub.flickRing();
             shooterSub.setShooterPower(0);
             transferSub.autoDropTransfer();
+            wobbleSub.setWobblePosition(0.2);
 
             // drop off first wobble
             driveSub.driveToPosition(116, 96, 1, 180);
@@ -175,23 +180,27 @@ public class Meet5Auto extends UpliftAuto {
             park();
 
         } else {        // either 0 rings, or a problem with detection (-1)
-            driveSub.driveToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 1, 0);
+            shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
+            driveSub.driveToPosition(110, 48, 0.7, 0);
+            driveSub.turnTo(0, 0.3, 0);
             autoHighGoalShoot();
+
             // drop off first wobble
-//            driveSub.driveToPosition(128, 74, 1, 180, DriveSubsystem.CLOCKWISE);
-//            wobbleSub.dropOff();
-//            driveSub.driveToPosition(128, 70, 1, 180);
-//
-//            // go to pick up second wobble
-//            getSecondWobble();
-//
-//            // go to drop off second wobble
-//            driveSub.driveToPosition(128, 68, 1, 180, DriveSubsystem.CLOCKWISE);
-//            wobbleSub.dropOff();
-//            driveSub.driveToPosition(128, 62, 1,180);
-//
-//            // park
-//            park();
+            wobbleSub.setWobblePosition(0.2);
+            driveSub.driveToPosition(130, 72, 1, 180, DriveSubsystem.CLOCKWISE);
+            wobbleSub.dropOff();
+            driveSub.driveToPosition(130, 68, 1, 180);
+
+            // go to pick up second wobble
+            getSecondWobble();
+
+            // go to drop off second wobble
+            driveSub.driveToPosition(130, 66, 1, 180, DriveSubsystem.CLOCKWISE);
+            wobbleSub.dropOff();
+            driveSub.driveToPosition(130, 62, 1,180);
+
+            // park
+            park();
         }
 
     }
@@ -209,8 +218,9 @@ public class Meet5Auto extends UpliftAuto {
     }
 
     public void getSecondWobble() {
-        driveSub.driveToPosition(115, 48, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-        driveSub.driveToPosition(115, 38, 0.5, 0.5, 0, 0);
+        driveSub.driveToPosition(115, 44, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
+        driveSub.turnTo(0, 0.3, 0);
+        driveSub.driveToPosition(115, 37, 0.4, 1, 0, 0);
         wobbleSub.pickUp();
     }
 

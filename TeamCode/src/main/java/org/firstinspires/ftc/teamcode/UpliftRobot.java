@@ -83,7 +83,7 @@ public class UpliftRobot {
     public double shooter1Vel = -1;
     public double shooter2Vel = -1;
 
-    public double highGoalVelocity = 1900;
+    public double highGoalVelocity = 1950;
     public double powerShotVelocity = 1050;
     public double autoHighGoalVelocity = 1750;
     public double kP = 50;
@@ -249,6 +249,7 @@ public class UpliftRobot {
             camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
         } catch (Exception ex) {
             visionInitialized = false;
+            opMode.telemetry.addData("WARNING WARNING WARNING WARNING", "");
             opMode.telemetry.addData("Vision initialization failed: ", ex.getMessage());
         }
 

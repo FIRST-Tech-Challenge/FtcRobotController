@@ -25,10 +25,10 @@ public class MathFunctions {
         if(Math.abs(distToTarget) > approachZoneRadius) {
             // NOTHING
         } else if(Math.abs(distToTarget) > tolerance) {
-            double val = Math.abs(distToTarget) / (approachZoneRadius);
+            double val = Math.pow(Math.abs(distToTarget) / (approachZoneRadius), 2);
             moveSpeed = moveSpeed * val;
-            if (Math.abs(moveSpeed) < 0.3) {
-                moveSpeed = 0.3;
+            if (Math.abs(moveSpeed) < 0.4) {
+                moveSpeed = 0.4;
             }
         } else {
             moveSpeed = 0;

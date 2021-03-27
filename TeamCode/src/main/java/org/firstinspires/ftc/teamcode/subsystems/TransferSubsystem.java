@@ -104,7 +104,7 @@ public class TransferSubsystem extends Subsystem {
                 robot.setTransferState(UpliftRobot.TransferState.MOVING);
                 transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 double initialTime = System.currentTimeMillis();
-                while(transferTouchBottom.getState() && !robot.operatorCancel && (System.currentTimeMillis() - initialTime) < 3000 && getTransferCurrent() < 1700) {
+                while(transferTouchBottom.getState() && !robot.operatorCancel && (System.currentTimeMillis() - initialTime) < 3000) {
                     transfer.setPower(0.5);
                 }
                 transfer.setPower(0);
@@ -117,7 +117,7 @@ public class TransferSubsystem extends Subsystem {
         robot.setTransferState(UpliftRobot.TransferState.MOVING);
         transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double initialTime = System.currentTimeMillis();
-        while(transferTouchBottom.getState() && !robot.operatorCancel && (System.currentTimeMillis() - initialTime) < 3000 && getTransferCurrent() < 1700) {
+        while(transferTouchBottom.getState() && !robot.operatorCancel) {
             transfer.setPower(0.5);
         }
         transfer.setPower(0);
