@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.technototes.library.command.Command;
 import com.technototes.library.command.CommandScheduler;
+import com.technototes.library.command.InstantCommand;
 import com.technototes.library.command.ParallelCommandGroup;
 import com.technototes.library.command.WaitCommand;
 import com.technototes.library.structure.CommandOpMode;
@@ -26,6 +27,7 @@ import org.firstinspires.ftc.teamcode.commands.wobble.WobbleCloseCommand;
 import org.firstinspires.ftc.teamcode.commands.wobble.WobbleLowerCommand;
 import org.firstinspires.ftc.teamcode.commands.wobble.WobbleOpenCommand;
 import org.firstinspires.ftc.teamcode.commands.wobble.WobbleRaiseCommand;
+import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
 
 /** Main OpMode
  *
@@ -44,34 +46,40 @@ public class AutoV1 extends CommandOpMode implements Loggable {
 
     @Override
     public void uponStart() {
-        Command shoot = new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem));
-        Command shoot3 = new SequentialCommandGroup(shoot, shoot, shoot);
-        Command preptoshoot = new ParallelCommandGroup(
-                new IndexPivotUpCommand(robot.indexSubsystem),
-                new AlignToShootCommand(robot.drivebaseSubsystem, robot.shooterSubsystem),
-                new ShooterSetFlapCommand(robot.shooterSubsystem, ()->0.5),
-                new IntakeStopCommand(robot.intakeSubsystem));
-        Command closeWobble = new ParallelCommandGroup(new WobbleCloseCommand(robot.wobbleSubsystem), new WobbleRaiseCommand(robot.wobbleSubsystem));
-        Command openWobble = new SequentialCommandGroup(new WobbleOpenCommand(robot.wobbleSubsystem), new WobbleLowerCommand(robot.wobbleSubsystem));
+//        Command closeWobble = new SequentialCommandGroup(new WobbleCloseCommand(robot.wobbleSubsystem), new WobbleRaiseCommand(robot.wobbleSubsystem));
+//        Command openWobble = new ParallelCommandGroup(new WobbleOpenCommand(robot.wobbleSubsystem), new WobbleLowerCommand(robot.wobbleSubsystem));
 
-        Command start = new Command();
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-                closeWobble,
-                new WaitCommand(1),
-                preptoshoot,
-                new WaitCommand(5),
-                shoot3,
-                new WaitCommand(1),
+                new InstantCommand(()->robot.wobbleSubsystem.setClawPosition(WobbleSubsystem.ClawPosition.CLOSED)),
+                new ParallelCommandGroup(
+                    new IndexPivotUpCommand(robot.indexSubsystem),
+                    new AlignToShootCommand(robot.drivebaseSubsystem, robot.shooterSubsystem),
+                    new ShooterSetFlapCommand(robot.shooterSubsystem, ()->0.5),
+                    new IntakeStopCommand(robot.intakeSubsystem)
+                ),
+                new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
+                new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
+                new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
+                new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
                 new ParallelCommandGroup(new IndexPivotDownCommand(robot.indexSubsystem),
                         new ShooterStopCommand(robot.shooterSubsystem),
                         new IntakeInCommand(robot.intakeSubsystem)),
+                new SplineCommand(robot.drivebaseSubsystem, 48, 12, 0),
+                new ParallelCommandGroup(
+                        new IndexPivotUpCommand(robot.indexSubsystem),
+                        new AlignToShootCommand(robot.drivebaseSubsystem, robot.shooterSubsystem),
+                        new ShooterSetFlapCommand(robot.shooterSubsystem, ()->0.5),
+                        new IntakeStopCommand(robot.intakeSubsystem)),
+                new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
+                new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
+                new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
+                new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
                 new SplineCommand(robot.drivebaseSubsystem, 110, 24, 0),
-                new WaitCommand(1),
-                openWobble,
-                new WaitCommand(1),
-                new TurnCommand(robot.drivebaseSubsystem, 90),
-                new WaitCommand(1),
-                new StrafeCommand(robot.drivebaseSubsystem, 50, 0)
+                new ParallelCommandGroup(new WobbleOpenCommand(robot.wobbleSubsystem), new WobbleLowerCommand(robot.wobbleSubsystem)),
+//                new SplineCommand(robot.drivebaseSubsystem, 10, 10, 180, true),
+//                new SplineCommand(robot.drivebaseSubsystem, 110, 24, 0),
+//                new StrafeCommand(robot.drivebaseSubsystem, 72, 10),
+                new WaitCommand(100)
         ));
     }
 }

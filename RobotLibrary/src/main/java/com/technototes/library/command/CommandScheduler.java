@@ -4,8 +4,10 @@ import com.technototes.library.structure.CommandOpMode;
 import com.technototes.library.subsystem.Subsystem;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 
 public class CommandScheduler implements Runnable {
@@ -77,22 +79,30 @@ public class CommandScheduler implements Runnable {
         }
         return this;
     }
+    private Set<Command> cancelledCommands;
+
     @Override
     public void run() {
+        cancelledCommands = new HashSet<>();
         requirementCommands.forEach(((subsystem, commandMap) -> {
+            Command c = runningRequirementCommands.get(subsystem);
             commandMap.entrySet().stream().filter((entry) -> {
                         return entry.getKey().commandState == Command.CommandState.RESET
                                 && entry.getValue().getAsBoolean()
-                                && entry.getKey() != runningRequirementCommands.get(subsystem);
+                                && entry.getKey() != c;
                     }
             ).findFirst().ifPresent(m -> {
-                cancel(runningRequirementCommands.get(subsystem));
+                if(c != null) {
+                    cancel(c);
+                    cancelledCommands.add(c);
+                }
                 runningRequirementCommands.put(subsystem, m.getKey());
             });
         }));
         runningRequirementCommands.forEach(((subsystem, command) -> run(command, requirementCommands.get(subsystem).get(command))));
         commandsWithoutRequirements.forEach(this::run);
         requirementCommands.keySet().forEach(Subsystem::periodic);
+        cancelledCommands.forEach(Command::run);
     }
     public void run(Command command, BooleanSupplier supplier){
         if(supplier.getAsBoolean() || command.commandState != Command.CommandState.RESET){

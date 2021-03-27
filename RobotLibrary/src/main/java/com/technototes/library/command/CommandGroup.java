@@ -37,7 +37,7 @@ public abstract class CommandGroup extends Command {
     @Override
     public void execute() {
         //makes true if command just finished
-        commandMap.replaceAll((command, bool) -> command.isFinished() ? true : bool);
+        commandMap.replaceAll((command, bool) -> command.justFinished() ? true : bool);
     }
 
     @Override

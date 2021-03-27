@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.technototes.control.gamepad.GamepadStick;
+import com.technototes.library.command.CommandScheduler;
 import com.technototes.library.command.ParallelCommandGroup;
 import com.technototes.library.command.WaitCommand;
 import com.technototes.library.control.gamepad.CommandAxis;
@@ -9,6 +10,7 @@ import com.technototes.library.control.gamepad.CommandGamepad;
 
 import com.technototes.library.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.commands.drivebase.AlignToShootCommand;
+import org.firstinspires.ftc.teamcode.commands.drivebase.DriveCommand;
 import org.firstinspires.ftc.teamcode.commands.drivebase.TestSplineCommand;
 import org.firstinspires.ftc.teamcode.commands.index.ArmExtendCommand;
 import org.firstinspires.ftc.teamcode.commands.index.ArmRetractCommand;
@@ -85,7 +87,7 @@ public class OperatorInterface {
         wobbleArmButton.whenToggled(new ParallelCommandGroup(new WobbleOpenCommand(robot.wobbleSubsystem), new WobbleLowerCommand(robot.wobbleSubsystem)))
                 .whenInverseToggled(new SequentialCommandGroup(new WobbleCloseCommand(robot.wobbleSubsystem), new WobbleRaiseCommand(robot.wobbleSubsystem)));
 
-        testButton.whenPressed(new TestSplineCommand(robot.drivebaseSubsystem));
+        //testButton.whenPressed(new TestSplineCommand(robot.drivebaseSubsystem));
 
         //intake commands
         intakeMainButton.whenPressed(new IntakeInCommand(robot.intakeSubsystem));
@@ -106,7 +108,7 @@ public class OperatorInterface {
                 .whenReleased(new IntakeInCommand(robot.intakeSubsystem));
         //fireAxis.whenReleased(new ArmRetractCommand(robot.indexSubsystem));
         //drive command
-        //CommandScheduler.getInstance().scheduleJoystick(new DriveCommand(robot.drivebaseSubsystem, driveLStick, driveRStick), ()->true);
+        CommandScheduler.getInstance().scheduleJoystick(new DriveCommand(robot.drivebaseSubsystem, driveLStick, driveRStick), ()->true);
 
 //        snailModeButton.whenPressed(new SnailSpeedCommand(robot.drivebaseSubsystem))
 //                .whenReleased(new NormalSpeedCommand(robot.drivebaseSubsystem));

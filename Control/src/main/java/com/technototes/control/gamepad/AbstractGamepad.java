@@ -91,7 +91,7 @@ public abstract class AbstractGamepad<T extends GamepadButton, U extends Gamepad
         dpadUp = buttonClass.newInstance();
         dpadUp.setSupplier(() -> g.dpad_up);
         dpadDown = buttonClass.newInstance();
-        dpadDown.setSupplier(() -> g.dpad_up);
+        dpadDown.setSupplier(() -> g.dpad_down);
         dpadLeft = buttonClass.newInstance();
         dpadLeft.setSupplier(() -> g.dpad_left);
         dpadRight = buttonClass.newInstance();

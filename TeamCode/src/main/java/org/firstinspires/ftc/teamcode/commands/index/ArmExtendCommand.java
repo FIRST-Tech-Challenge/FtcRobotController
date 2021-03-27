@@ -17,4 +17,9 @@ public class ArmExtendCommand extends WaitCommand {
     public void init() {
         indexSubsystem.extendArm();
     }
+
+    @Override
+    public void execute() {
+        System.out.print("armextend");
+    }
 }

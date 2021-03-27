@@ -11,7 +11,7 @@ public class TurnCommand extends PathCommand {
 
     @Override
     public void init() {
-        subsystem.turnAsync(Math.toRadians(angle)-subsystem.getPoseEstimate().getHeading());
+        subsystem.turnAsync(Math.toRadians(angle)-subsystem.getExternalHeading());
     }
 
 }

@@ -112,10 +112,10 @@ public class Command implements Runnable {
             case EXECUTING:
                 execute();
                 if(isFinished()) commandState = CommandState.FINISHED;
-                if (commandState == CommandState.FINISHED) end(!isFinished());
                 //allow one cycle to run so other dependent commands can schedule
                 return;
             case FINISHED:
+                end(!isFinished());
                 commandState = CommandState.RESET;
                 return;
         }

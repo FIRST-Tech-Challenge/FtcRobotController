@@ -7,12 +7,13 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import org.firstinspires.ftc.teamcode.subsystems.DrivebaseSubsystem;
 
 public class StrafeCommand extends PathCommand {
-    public Trajectory trajectory;
-    public StrafeCommand(DrivebaseSubsystem sub, double x, double y, boolean reversed) {
+    public double xpos, ypos;
+    public boolean reversed;
+    public StrafeCommand(DrivebaseSubsystem sub, double x, double y, boolean rev) {
         super(sub);
-        trajectory = sub.trajectoryBuilder(sub.getPoseEstimate(), reversed)
-                .strafeTo(new Vector2d(x,y))
-                .build();
+        xpos = x;
+        ypos = y;
+        reversed = rev;
     }
 
 
@@ -22,7 +23,9 @@ public class StrafeCommand extends PathCommand {
 
     @Override
     public void init() {
-        subsystem.followTrajectoryAsync(trajectory);
+        subsystem.followTrajectoryAsync(subsystem.trajectoryBuilder(subsystem.getPoseEstimate(), reversed)
+                .strafeTo(new Vector2d(xpos,ypos))
+                .build());
     }
 
 }

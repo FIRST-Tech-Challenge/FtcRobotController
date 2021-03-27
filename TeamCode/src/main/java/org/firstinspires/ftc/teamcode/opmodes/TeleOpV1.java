@@ -26,4 +26,8 @@ public class TeleOpV1 extends CommandOpMode implements Loggable {
         operatorInterface = new OperatorInterface(driverGamepad, codriverGamepad, robot);
     }
 
+    @Override
+    public void universalLoop() {
+        System.out.println();
+    }
 }
