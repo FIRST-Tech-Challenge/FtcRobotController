@@ -6,7 +6,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 public class DashboardCorrections {
 
     public static void drawRobotOnField(Pose2d pose, TelemetryPacket packet) {
-        drawRobotOnField(pose, 13, "blue", packet);
+        drawRobotOnField(pose, 13, "black", packet);
     }
 
     public static void drawRobotOnField(Pose2d pose, double size, String color, TelemetryPacket packet) {
