@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.configs.NewConfig;
 import org.firstinspires.ftc.teamcode.configs.lessButtonsConfig;
 import org.firstinspires.ftc.teamcode.configs.teleConfigEx;
 import org.firstinspires.ftc.teamcode.configs.teleConfigRohit;
@@ -95,6 +96,7 @@ public class UltimateGoalTeleop extends OpMode{
 
         vroom = new MecanumDriveTrain(robot, gamepad1,telemetry);
 
+        configs.add(NewConfig.class);
         configs.add(teleConfigEx.class);
         configs.add(teleConfigRohit.class);
         configs.add(teleConfigSamih.class);
@@ -173,7 +175,7 @@ public class UltimateGoalTeleop extends OpMode{
             for (String caption : t.telemetryDM.keySet()){
                 telemetry.addData(caption, t.telemetryDM.get(caption));
             }
-            telemetry.addData("Version: ", "2.2.2");
+            telemetry.addData("Version: ", "3.0");
             telemetry.addData("Configuration: ", t.getName());
 
             telemetry.addData("FL", robot.frontLeft.getCurrentPosition());
@@ -221,8 +223,8 @@ public class UltimateGoalTeleop extends OpMode{
 
         telemetry.update();
         if (gamepad2.x) {
-            if (configs.get(index).getName().equals(teleConfigEx.class.getName())) {
-                t = new teleConfigEx(robot);
+            if (configs.get(index).getName().equals(NewConfig.class.getName())) {
+                t = new NewConfig(robot);
             } else if (configs.get(index).getName().equals(teleConfigRohit.class.getName())) {
                 t = new teleConfigRohit(robot);
 //              }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
@@ -235,6 +237,8 @@ public class UltimateGoalTeleop extends OpMode{
                 t = new teleConfigTESTING_R(robot);
             } else if (configs.get(index).getName().equals(teleConfigTESTING_S.class.getName())) {
                 t = new teleConfigTESTING_S(robot);
+            } else if (configs.get(index).getName().equals(teleConfigEx.class.getName())) {
+                t = new teleConfigEx(robot);
             }
 
             switching = false;

@@ -57,11 +57,11 @@ public class Drivetrain {
         switch (Slapper){
             case IN:
                 robot.slapper.setPosition(0.6);
-                pause(300);
+                pause(500);
                 break;
             case OUT:
                 robot.slapper.setPosition(0.01);
-                pause(300);
+                pause(500);
                 break;
         }
     }
@@ -88,6 +88,10 @@ public class Drivetrain {
     public void singleCycle(){
         moveSlapper(slapperPos.OUT);
         moveSlapper(slapperPos.IN);
+    }
+    public void invertSingleCycle(){
+        moveSlapper(slapperPos.IN);
+        moveSlapper(slapperPos.OUT);
     }
     public void tilt(double pos){
         if (0.0 <= pos && pos <= 4.0) {

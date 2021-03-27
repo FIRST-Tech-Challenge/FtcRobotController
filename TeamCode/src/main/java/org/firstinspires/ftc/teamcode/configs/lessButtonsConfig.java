@@ -29,11 +29,8 @@ public class lessButtonsConfig implements teleOpInterface {
 
     public void b(boolean pressed) {
         if (pressed && System.currentTimeMillis()-button>=500) {
-            outtakeW = (outtakeC==1.0) ? 0.0 : 1.0;
-            outtakeC = outtakeW;
             intake = (outtakeC==1.0) ? 0.0 : 1.0;
             currOverride = teleConfigRohit2.overrides.NONE;
-
             button = System.currentTimeMillis();
         }
     }
@@ -61,7 +58,8 @@ public class lessButtonsConfig implements teleOpInterface {
 
     public void dp(boolean pressed) {
         if (pressed && System.currentTimeMillis()-button>=500) {
-            drivetrain.newOuttakeAll(1.0, numOfCycles);
+//            drivetrain.newOuttakeAll(1.0, numOfCycles);
+            drivetrain.invertSingleCycle();
             button = System.currentTimeMillis();
         }
     }

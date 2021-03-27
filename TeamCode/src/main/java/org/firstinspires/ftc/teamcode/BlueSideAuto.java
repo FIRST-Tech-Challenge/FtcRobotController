@@ -19,9 +19,11 @@ public class BlueSideAuto extends BaseAuto {
 
         initializeOpenCV();
 
-
         drivetrain = new Drivetrain(robot);
-
+        sleep(250);
+        drivetrain.tilt(0.44);
+        sleep(250);
+//        drivetrain.moveSlapper(Drivetrain.slapperPos.IN);
 
         //Wait for the start button to be pressed
         waitForStart();
@@ -53,7 +55,6 @@ public class BlueSideAuto extends BaseAuto {
         sleep(500);
         if (pipeline.position.toString() == "FOUR"){
             telemetry.addData("Going with four", "");
-//            encoderMecanumDrive(0.3, 20, 3, 0, -1);
         } else if (pipeline.position.toString() == "ONE"){
             telemetry.addData("Going with one", "");
         } else {
@@ -61,46 +62,51 @@ public class BlueSideAuto extends BaseAuto {
         }
         telemetry.update();
         numOfRings = pipeline.position.toString();
-        sleep(500);
+
         startingAngle = getAverageGyro();
-        encoderMecanumDrive(0.5, 215, 6, -0.464,-1);
-        drivetrain.tilt(0.37);
-        sleep(300);
-        gyroTurn(0.3, getAverageGyro()+5);
+        encoderMecanumDrive(0.8, 215, 6, -0.464,-1);
 //        encoderMecanumDrive(0.3, 10, 3, 1, 0);
-        encoderMecanumDrive(0.3, 15, 3, -1, 0);//slide to reach 3rd power shot
-        drivetrain.outtakeAll(1.0, 1.0);//ramp
-        sleep(1750);
-        encoderMecanumDrive(0.3, 20, 3, 1, 0);//shoots 3rd then moves
-        drivetrain.tilt(0.35);
-        sleep(300);
-        encoderMecanumDrive(0.3, 15, 3, 1, 0);//shoots 2nd then moves hopefully
-//        encoderMecanumDrive(0.3, 15, 3, 1, 0)
-        sleep(1000);
+        drivetrain.outtakeAll(1.0);//rev up
+
+        encoderMecanumDrive(0.4, 10, 3, -1, 0);//slide to reach 3rd power shot
+        //Shoot 3
+        drivetrain.invertSingleCycle();
+
+        encoderMecanumDrive(0.4, 30, 3, 1, 0);//shoots 3rd then moves
+        //Shoot 2
+        drivetrain.invertSingleCycle();
+
+        encoderMecanumDrive(0.4, 30, 3, 1, 0);//shoots 2nd then moves hopefully
+        //Shoot 1
+        drivetrain.invertSingleCycle();
+
         drivetrain.outtakeAll(0.0);
 
         switch (numOfRings){
             case "FOUR":
-                encoderMecanumDrive(0.7, 200, 3, 0.5, -1);
-                sleep(300);
-                robot.wobble.setPosition(1.0);
-                sleep(300);
-                encoderMecanumDrive(0.3, 20, 3, -1, 0);
-                encoderMecanumDrive(0.7, 1109, 3, 0, 1);
+                encoderMecanumDrive(0.8, 190, 3, 0.5, -1);
+                inAndOutWobble();
+                encoderMecanumDrive(0.8, 100, 3, 0, 1);
+
+                //END OF FIRST WOBBLE
+
+
                 break;
             case "ONE":
-                encoderMecanumDrive(0.5, 80, 3, 0, -1);//forward
-                sleep(300);
-                robot.wobble.setPosition(1.0); //release
-                sleep(300);
-                encoderMecanumDrive(0.3, 20, 3, -1, 0);//move out
-                encoderMecanumDrive(0.5, 50, 3, 0, 1);//move to line
+                encoderMecanumDrive(0.8, 130, 3, -0.3, -1);//forward
+                inAndOutWobble();
+                encoderMecanumDrive(0.8, 50, 3, 0, 1);//move to line
+
+                //END OF FIRST WOBBLE
+
+
                 break;
             case "NONE":
-                encoderMecanumDrive(0.3, 110, 3, 1, -0.6);
-                sleep(300);
-                robot.wobble.setPosition(1.0);
-                encoderMecanumDrive(0.3, 20, 3, -1, 0);
+                encoderMecanumDrive(0.5, 50, 3, 1, -0.6);
+                inAndOutWobble();
+                encoderMecanumDrive(0.5, 20, 3, -1, 0);
+
+                //END OF FIRST WOBBLE
                 break;
         }
         robot.wobble.setPosition(0.0);
@@ -166,5 +172,17 @@ public class BlueSideAuto extends BaseAuto {
 
 
 
+    }
+
+    public void inAndOutWobble(){
+        encoderMecanumDrive(0.4, 20, 3, 1, 0);
+        sleep(100);
+        robot.wobble.setPosition(1.0);
+        sleep(600);
+        encoderMecanumDrive(0.4, 30, 3, -1, 0);
+        sleep(100);
+        gyroTurn(0.3, getAverageGyro()-30);
+        sleep(100);
+        gyroTurn(0.3, startingAngle);
     }
 }

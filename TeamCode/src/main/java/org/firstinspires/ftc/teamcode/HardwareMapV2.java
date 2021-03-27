@@ -58,12 +58,6 @@ public class HardwareMapV2 {
         intake = hwMap.get(DcMotor.class, "succ");
         outtake = hwMap.get(DcMotor.class, "spit");
 
-        if (odometry) {
-
-        }
-        if (odometryTest){
-
-        }
 //        conveyor = hwMap.get(CRServo.class, "convey");
         slapper = hwMap.get(Servo.class, "slappa");
         leftTilt = hwMap.get(Servo.class, "left_tilt");

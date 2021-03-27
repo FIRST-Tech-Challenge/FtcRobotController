@@ -7,7 +7,7 @@ public class teleConfigEx implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
     double intakeTime, outtakeTime, xTime, yTime, dTime, somePause;
-    double perfectval = 0.36;
+    double perfectval = 0.48;
     int reverseIntake = 1;
 
     public teleConfigEx(HardwareMapV2 robot) {
@@ -18,7 +18,7 @@ public class teleConfigEx implements teleOpInterface {
     public void a(boolean pressed) { if (pressed && System.currentTimeMillis()-intakeTime>=700) {robot.intake.setPower((robot.intake.getPower() != 0.0) ? 0 : 1*reverseIntake); intakeTime = System.currentTimeMillis();} }
 
     public void b(boolean pressed) {
-        if (pressed && System.currentTimeMillis()-outtakeTime>=700) {
+        if (pressed && System.currentTimeMillis()-outtakeTime>=500) {
             drivetrain.outtakeAll(0, (((robot.outtake.getPower() >= 0.1) ? 0 : 1)));
             somePause = System.currentTimeMillis();
             if (robot.outtake.getPower()>= 0.1){
@@ -39,21 +39,20 @@ public class teleConfigEx implements teleOpInterface {
 
     public void dd(boolean pressed) {
         if (pressed && System.currentTimeMillis()-dTime>=500) {
-            robot.wobble.setPosition(0.0);
-            dTime = System.currentTimeMillis();
+
         }
     }
 
     public void dp(boolean pressed) {
         if (pressed && System.currentTimeMillis()-dTime>=500) {
-            robot.wobble.setPosition(1.0);
+            robot.wobble.setPosition((robot.wobble.getPosition()==1.0) ? 0.0 : 1.0);
             dTime = System.currentTimeMillis();
         }
     }
 
     public void dl(boolean pressed) {
         if (pressed) {
-            robot.intake.setPower(-0.4);
+
         }
     }
 
