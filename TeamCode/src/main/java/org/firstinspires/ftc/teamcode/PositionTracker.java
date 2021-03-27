@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robot.DriveTrain;
+import org.firstinspires.ftc.robot_utilities.DashboardCorrections;
 import org.firstinspires.ftc.robot_utilities.RotationController;
 import org.firstinspires.ftc.robot_utilities.Vals;
 
@@ -31,7 +32,7 @@ public class PositionTracker extends OpMode {
 
         rotationController = new RotationController(hardwareMap.get(BNO055IMU.class, "imu"));
 
-        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), new Pose2d(45,  -135, new Rotation2d(Math.PI/2)));
+        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), new Pose2d(-100,  -45, new Rotation2d(Math.PI/2)));
     }
 
     @Override
@@ -49,12 +50,7 @@ public class PositionTracker extends OpMode {
 
         Pose2d pose = odometry.getPoseMeters();
         TelemetryPacket packet = new TelemetryPacket();
-        packet.fieldOverlay()
-                .setFill("blue")
-                .fillRect(pose.getX(), pose.getY(), 10, 10);
-        packet.fieldOverlay()
-                .setFill("red")
-                .fillRect(0, 0, 30, 30);
+        DashboardCorrections.drawRobotOnField(pose, packet);
 
         packet.put("X Pos: ", pose.getX());
         packet.put("Y Pos: ", pose.getY());
