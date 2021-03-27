@@ -11,7 +11,7 @@ public class IntakeSubsystem extends Subsystem {
 
     private UpliftRobot robot;
     private DcMotor intake;
-    private Servo intakeLifter;
+    public Servo intakeLifter;
     public Servo sweeperJoint;
     public Servo stick;
     public CRServo sweeperLeft;

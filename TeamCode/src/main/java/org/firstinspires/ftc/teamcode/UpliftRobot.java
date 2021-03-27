@@ -83,8 +83,8 @@ public class UpliftRobot {
     public double shooter1Vel = -1;
     public double shooter2Vel = -1;
 
-    public double highGoalVelocity = 1950;
-    public double powerShotVelocity = 1050;
+    public double highGoalVelocity = 1850;
+    public double powerShotVelocity = 1500;
     public double autoHighGoalVelocity = 1750;
     public double kP = 50;
     public double kI = 0;

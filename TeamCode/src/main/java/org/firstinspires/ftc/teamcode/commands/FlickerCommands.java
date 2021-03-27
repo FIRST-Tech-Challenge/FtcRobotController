@@ -42,25 +42,25 @@ public class FlickerCommands extends Command {
                 while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel) {
                     robot.safeSleep(1);
                 }
-                flicker.flickRing();
+                flicker.flickRingTele();
             }
             robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
         }
 
-        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS1) {
-            flicker.flickRing();
-            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS1);
-        }
-
-        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS2) {
-            flicker.flickRing();
-            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS2);
-        }
-
-        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS3) {
-            flicker.flickRing();
-            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS3);
-        }
+//        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS1) {
+//            flicker.flickRing();
+//            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS1);
+//        }
+//
+//        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS2) {
+//            flicker.flickRing();
+//            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS2);
+//        }
+//
+//        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS3) {
+//            flicker.flickRing();
+//            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS3);
+//        }
 
     }
 

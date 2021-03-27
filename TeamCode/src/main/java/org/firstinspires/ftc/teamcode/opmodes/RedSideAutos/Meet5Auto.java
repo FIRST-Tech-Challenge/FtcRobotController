@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.background.AutoTimeout;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
+import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
 
 @Autonomous(name = "Meet 5 Auto", group = "opModes")
@@ -53,6 +54,7 @@ public class Meet5Auto extends UpliftAuto {
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
         intakeSub.initSweeper();
+        flickerSub.setFlickerPos(0.08);
     }
 
     @Override
@@ -72,13 +74,14 @@ public class Meet5Auto extends UpliftAuto {
         shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
         transferSub.autoRaiseTransfer();
 
-//        intakeSub.dropRoller();
+        intakeSub.dropRoller();
 
         if(stack == 4) {
 
             // shoot
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
-            driveSub.driveToPosition(110, 48, 0.7, 0);
+            driveSub.passThroughPosition(109, 24, 1, 0);
+            driveSub.driveToPosition(109, 48, 0.75, 0);
             driveSub.turnTo(0, 0.3, 0);
             autoHighGoalShoot();
 
@@ -88,14 +91,17 @@ public class Meet5Auto extends UpliftAuto {
                     robot.safeSleep(5);
                 }
                 intakeSub.setIntakePower(1);
-                driveSub.driveToPosition(110, 56, 0.25, 0);
-                robot.safeSleep(2000);
+                driveSub.driveToPosition(109, 58, 0.35, 0);
+                robot.safeSleep(2500);
                 intakeSub.setIntakePower(0);
+                intakeSub.liftRoller();
 
                 // shoot second set of 3
+                intakeSub.setIntakePower(-1);
                 transferSub.autoRaiseTransfer();
+                intakeSub.setIntakePower(0);
                 shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
-                driveSub.driveToPosition(110, 48, 0.5, 0);
+                driveSub.driveToPosition(109, 48, 0.7, 0);
                 driveSub.turnTo(0, 0.3, 0);
                 autoHighGoalShoot();
 
@@ -113,27 +119,28 @@ public class Meet5Auto extends UpliftAuto {
 
 
             // drive to drop off first wobble
+            intakeSub.setIntakePower(1);
             wobbleSub.setWobblePosition(0.2);
-            driveSub.driveToPosition(132, 116, 1, 180);
+            driveSub.driveToPosition(132, 114, 1, 180);
+            intakeSub.setIntakePower(0);
             wobbleSub.dropWobble();
             robot.safeSleep(500);
             wobbleSub.openWobble();
 
             // drive to pick up second wobble
-            driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-            driveSub.driveToPosition(115, 32, 0.5, 0.5, 0, 0);
-            wobbleSub.pickUp();
+//            driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
+//            driveSub.driveToPosition(115, 32, 0.5, 0.5, 0, 0);
+//            wobbleSub.pickUp();
+            getSecondWobble();
 
             // drop off second wobble
-            driveSub.driveToPosition(134, 116, 1, -135);
+            driveSub.driveToPosition(128,116, 1, -135);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(124, 106, 1, -135);
+            driveSub.driveToPosition(88, 78, 1, -135);
 
-            // put wobble mechanism up for teleop
-            wobbleSub.highWobble();
-
-            // park by driving forward to the line
-            park();
+            //park
+            intakeSub.dropRoller();
+            driveSub.driveToPosition(94, 84, 0.7, 0);
 
         } else if(stack == 1) {
 
@@ -145,12 +152,14 @@ public class Meet5Auto extends UpliftAuto {
 
             // intake single stack
             while (robot.transferState != UpliftRobot.TransferState.DOWN && opModeIsActive()) {
-                robot.safeSleep(5);
+                Utils.sleep(5);
             }
+            robot.safeSleep(500);
             intakeSub.setIntakePower(1);
             driveSub.driveToPosition(110, 56, 0.25, 0);
             robot.safeSleep(1000);
             intakeSub.setIntakePower(0);
+            intakeSub.liftRoller();
 
             // shoot the 1 ring
             transferSub.autoRaiseTransfer();
@@ -167,17 +176,18 @@ public class Meet5Auto extends UpliftAuto {
             wobbleSub.dropOff();
 
             // pick up second wobble goal
-            driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-            driveSub.driveToPosition(115, 36, 0.5, 0.5, 0, 0);
-            wobbleSub.pickUp();
+//            driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
+//            driveSub.driveToPosition(115, 36, 0.5, 0.5, 0, 0);
+//            wobbleSub.pickUp();
+            getSecondWobble();
 
             // drop off the second wobble goal
             driveSub.driveToPosition(110, 90, 1, 180);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(110, 80, 1, 180);
 
             // park
             park();
+            intakeSub.dropRoller();
 
         } else {        // either 0 rings, or a problem with detection (-1)
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
@@ -218,16 +228,17 @@ public class Meet5Auto extends UpliftAuto {
     }
 
     public void getSecondWobble() {
-        driveSub.driveToPosition(115, 44, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
+        driveSub.driveToPosition(113, 44, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
         driveSub.turnTo(0, 0.3, 0);
-        driveSub.driveToPosition(115, 37, 0.4, 1, 0, 0);
+        driveSub.driveToPosition(113, 37, 0.4, 1, 0, 0);
         wobbleSub.pickUp();
     }
 
     public void autoHighGoalShoot() {
         while(robot.transferState != UpliftRobot.TransferState.UP && opModeIsActive()) {
-            robot.safeSleep(5);
+            Utils.sleep(5);
         }
+        robot.safeSleep(500);
         double initialTime = System.currentTimeMillis();
         for(int i = 0; i < 3; i++) {
             while(!robot.velocityData.isAutoHighGoalReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel && opModeIsActive()) {
