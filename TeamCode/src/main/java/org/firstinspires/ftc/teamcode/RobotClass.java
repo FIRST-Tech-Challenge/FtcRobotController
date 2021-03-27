@@ -541,7 +541,7 @@ this.color= color;
 
     }
     public void shooterEngage () {
-        double targetVelocity = -5400*0.80*28/60;
+        double targetVelocity = -5400*0.65*28/60;
         shooterMotor.setVelocity(targetVelocity);
         while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()) {
 
@@ -622,24 +622,24 @@ this.color= color;
     }
 
     public void justShootGood() {
-        double targetVelocity = -5400*0.80*28/60;
-        shooterMotor.setVelocity(targetVelocity);
-        while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()) {
 
-        }
         trigger.setPower(1);
-        pause(700);
+        pause(500);
         trigger.setPower(-1);
-        pause(700);
-        trigger.setPower(1);
-        pause(700);
-        trigger.setPower(-1);
-        pause(700);
-        trigger.setPower(1);
-        pause(700);
-        trigger.setPower(-1);
-        pause(700);
+        pause(500);
         trigger.setPower(0);
+//        pause(500);
+//        trigger.setPower(1);
+//        pause(500);
+//        trigger.setPower(-1);
+//        pause(500);
+//        trigger.setPower(0);
+//        pause(500);
+//        trigger.setPower(1);
+//        pause(500);
+//        trigger.setPower(-1);
+//        pause(500);
+//        trigger.setPower(0);
 
     }
     public void openCVInnitShenanigans() {

@@ -48,9 +48,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
         intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
-        //  intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
-//        shooterServo1 = hardwareMap.crservo.get("shooterServo1");
-//        shooterServo2 = hardwareMap.crservo.get("shooterServo2");
+
         trigger = hardwareMap.crservo.get("trigger");
         elevator1 = hardwareMap.dcMotor.get("elevator1");
         elevator2 = hardwareMap.dcMotor.get("elevator2");
@@ -60,17 +58,17 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
         rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
-        //   intakeTwo.setDirection(CRServo.Direction.REVERSE);
 
         boolean yPressed = false;
         boolean yOpen = true;
         boolean shooterServoPressed = false;
         boolean shooterServoOn = false;
         boolean intake = false;
-        wobbleGoalGrippyThing.setPosition(0.76);
+        wobbleGoalGrippyThing.setPosition(0.9);
         int elevatorGoal = 0;
         int elevatorPosition = 0;
         boolean wantTriggerOn = false;
+        double SHOOTING_SPEED=-5400 * 0.70 * 28 / 60;
 
         elevator1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevator2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -123,21 +121,23 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger >= .87) {
-                shooterMotor.setVelocity(-5400 * 0.72 * 28 / 60);
+                shooterMotor.setVelocity(SHOOTING_SPEED);
             } else if (gamepad1.right_bumper == true) {
                 shooterMotor.setVelocity(0);
             }
 
             if (gamepad2.right_trigger >= .3) {
-                double targetVelocity = -5400 * 0.72 * 28 / 60;
-                shooterMotor.setVelocity(targetVelocity);
-                while (shooterMotor.getVelocity() < targetVelocity) {
-                    trigger.setPower(1);
-                    robot.pause(600);
-                    trigger.setPower(-1);
-                    robot.pause(600);
-                    trigger.setPower(0);
+
+                shooterMotor.setVelocity(SHOOTING_SPEED);
+                while (shooterMotor.getVelocity() < SHOOTING_SPEED) {
+
                 }
+                    trigger.setPower(1);
+                    robot.pause(450);
+                    trigger.setPower(-1);
+                    robot.pause(450);
+                    trigger.setPower(0);
+               // }
             } else {
                 trigger.setPower(0);
             }
@@ -145,10 +145,10 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 
             if (gamepad2.a) {
                 intakeOne.setPower(0.9);
-                intakeTwo.setPower(0.9);
+                intakeTwo.setPower(-0.5);
             } else if (gamepad2.b) {
                 intakeOne.setPower(-0.9);
-                intakeTwo.setPower(-0.9);
+                intakeTwo.setPower(0.5);
             } else if (gamepad2.x) {
                 intakeOne.setPower(0);
                 intakeTwo.setPower(0);
@@ -178,12 +178,12 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 elevatorGoal = -1;
 
                 //Numbers completely arbitrary for theoretical purposes.
-                elevator1.setTargetPosition((int) 1500);
-                elevator2.setTargetPosition((int) 1500);
+                elevator1.setTargetPosition((int) 1900);
+                elevator2.setTargetPosition((int) 1900);
                 elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elevator1.setPower(Math.abs(.3));
-                elevator2.setPower(Math.abs(.3));
+                elevator1.setPower(Math.abs(.8));
+                elevator2.setPower(Math.abs(.8));
 
 
             }
@@ -194,8 +194,8 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 elevator2.setTargetPosition((int) 0);
                 elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elevator1.setPower(Math.abs(.3));
-                elevator2.setPower(Math.abs(.3));
+                elevator1.setPower(Math.abs(.8));
+                elevator2.setPower(Math.abs(.8));
 
 
             }
@@ -208,7 +208,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 
                 }
             } else if (elevatorGoal == -1) {
-                if (elevator1.getCurrentPosition() >= 1500 || elevator2.getCurrentPosition() >= 1500) {
+                if (elevator1.getCurrentPosition() >= 1900 || elevator2.getCurrentPosition() >= 1900) {
                     elevatorPosition = -1;
                     elevatorGoal = 0;
                     elevator1.setPower(0);
@@ -224,17 +224,17 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 elevatorGoal = 0;
             }
 
-            telemetry.addData("Elevator motor 1 current position: ", elevator1.getCurrentPosition());
-            telemetry.addData("Elevator motor 2 current position: ", elevator2.getCurrentPosition());
-            telemetry.addData("Current goal: ", elevatorGoal);
-            telemetry.addData("Current read position: ", elevatorPosition);
-            telemetry.update();
+//            telemetry.addData("Elevator motor 1 current position: ", elevator1.getCurrentPosition());
+//            telemetry.addData("Elevator motor 2 current position: ", elevator2.getCurrentPosition());
+//            telemetry.addData("Current goal: ", elevatorGoal);
+//            telemetry.addData("Current read position: ", elevatorPosition);
+//            telemetry.update();
 
 
         }
     }
 
-}
+
 
     public void forwardToWhite (double speed, double rotations, double speed2) {
         robot.frontLeft.setPower(speed2);
