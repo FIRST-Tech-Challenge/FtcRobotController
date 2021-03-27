@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robot_utilities.Vals;
 
 @TeleOp(name = "EchoOp")
 public class EchoOp extends OpMode {
-    FtcDashboard dashboard;
+    private FtcDashboard dashboard;
     private GamePadController gamepad;
     private DriveTrain driveTrain;
     private FlyWheel flywheel;
@@ -30,7 +30,7 @@ public class EchoOp extends OpMode {
     private Motor wobbleArm;
     private Servo wobbleHand;
     private DifferentialDriveOdometry odometry;
-    RotationController rotationController;
+    private RotationController rotationController;
 
     private double intakeSpeed = 0;
     private boolean wobbleHandOpen = false;
