@@ -18,7 +18,7 @@ public class DashboardCorrections {
         double[] xPoints = {x - size, x - size, x + size, x + size};
         double[] yPoints = {y - size, y + size, y - size, y + size};
 
-        rotatePoints(xPoints, yPoints, heading_radians);
+//        rotatePoints(xPoints, yPoints, heading_radians);
 
         packet.fieldOverlay()
                 .setStrokeWidth(1)
