@@ -86,7 +86,7 @@ public class TwoGPTeleop extends LinearOpMode {
                     angleInRadian = Math.atan2(left_stick_y*-1, left_stick_x*2);
                 }
                 else{
-                    angleInRadian = Math.atan2(left_stick_y, left_stick_x);
+                    angleInRadian = Math.atan2(left_stick_y, left_stick_x*2);
                 }
                 angleInDegree = Math.toDegrees(angleInRadian);
                 /**Powershots**/
