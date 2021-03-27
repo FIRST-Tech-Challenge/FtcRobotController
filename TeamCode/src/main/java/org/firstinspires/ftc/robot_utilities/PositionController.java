@@ -16,6 +16,11 @@ public class PositionController {
         this.startPose = currentPose;
     }
 
+    public void updatePID() {
+        pidDrive.setPID(Vals.drive_kp, Vals.drive_ki, Vals.drive_kd);
+        pidDrive.setTolerance(Vals.drive_tolerance);
+    }
+
     private double getDistance(Pose2d a, Pose2d b) {
         return Math.hypot(a.getX() - b.getX(), a.getY() - b.getY());
     }
