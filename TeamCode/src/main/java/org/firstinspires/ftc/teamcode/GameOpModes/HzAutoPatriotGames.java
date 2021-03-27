@@ -209,7 +209,7 @@ public class HzAutoPatriotGames extends LinearOpMode {
                 //Move to position to launch rings
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-10, 14, Math.toRadians(18)))//-10
+                            .lineToLinearHeading(new Pose2d(-10, 14, Math.toRadians(21)))//-10
                             .build();
                 } else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -234,19 +234,24 @@ public class HzAutoPatriotGames extends LinearOpMode {
 
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-10, af * 15, Math.toRadians(af * 5)))
+                            //.lineToLinearHeading(new Pose2d(-10, af * 15, Math.toRadians(af * 5)))
+                            .lineToLinearHeading(new Pose2d(-10, af * 19, Math.toRadians(af * 5)))
                             .build();
                     hzDrive.followTrajectory(traj);
+                    //Set turn angles prior to launching for each of the power shorts
+                    turnAnglePowershot12 = Math.toRadians(af * -5);
+                    turnAnglePowershot23 = Math.toRadians(af * -6);
                 } else {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             .lineToLinearHeading(new Pose2d(-10, af * 15, Math.toRadians(af * 0)))
                             .build();
                     hzDrive.followTrajectory(traj);
+                    //Set turn angles prior to launching for each of the power shorts
+                    turnAnglePowershot12 = Math.toRadians(af * -5);
+                    turnAnglePowershot23 = Math.toRadians(af * -7);
                 }
 
-                //Set turn angles prior to launching for each of the power shorts
-                turnAnglePowershot12 = Math.toRadians(af * -5);
-                turnAnglePowershot23 = Math.toRadians(af * -7);
+
                 launch3RingsToPowerShots();
             }
         }
@@ -393,12 +398,12 @@ public class HzAutoPatriotGames extends LinearOpMode {
     public void runInnerOnlyLaunchPark(int waitInBetween){
         //Move towards base line away from other robot and Park
         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(50, af * 10, Math.toRadians(af * -45))) //y:51
+                .lineToSplineHeading(new Pose2d(50, af * 15, Math.toRadians(af * -45))) //y:51
                 .build();
         hzDrive.followTrajectory(traj);
         hzWait(waitInBetween);
         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(13, af * 10, Math.toRadians(af * 0)))
+                .lineToSplineHeading(new Pose2d(13, af * 13, Math.toRadians(af * 0)))
                 .build();
         hzDrive.followTrajectory(traj);
     }
