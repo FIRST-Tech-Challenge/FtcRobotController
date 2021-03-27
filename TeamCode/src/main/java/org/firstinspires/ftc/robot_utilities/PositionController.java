@@ -53,12 +53,12 @@ public class PositionController {
     }
 
     private double getRotationToPoint(Pose2d target, Pose2d o) {
-        double dy = target.getY() - o.getY();
-        double dx = target.getX() - o.getX();
+        double dx = target.getY() - o.getY();
+        double dy = -target.getX() + o.getX();
 
 //        if(dx == 0) return 0;
 
-        return Math.toDegrees(Math.atan2(dx, dy)) - 90;
+        return Math.toDegrees(Math.atan2(dx, dy));
     }
 
     public void reset() {
@@ -94,6 +94,7 @@ public class PositionController {
         leftSpeed -= power2;
         rightSpeed -= power2;
 
+        packet.put("Rotation to point", rotationToPoint);
         packet.put("Position Power", power2);
         packet.put("Rotation Power", power);
 
