@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.robot_utilities;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 
 public class PositionController {
-
-    double targetDistance = 0;
     Pose2d startPose;
     private PIDController pidDrive;
 
@@ -27,13 +26,16 @@ public class PositionController {
 
     public void reset(Pose2d currentPose) {
         pidDrive.reset();
-        targetDistance = 0;
         startPose = currentPose;
     }
 
-    public double goto_pos(Pose2d currentPose, Pose2d targetPose) {
-        targetDistance = getDistance(targetPose, currentPose);
+    public double goto_pos(Pose2d currentPose, Pose2d targetPose, TelemetryPacket packet) {
+        double targetDistance = getDistance(targetPose, startPose);
         double currentDistance = getDistance(currentPose, startPose);
+
+        packet.put("Target Distance", targetDistance);
+        packet.put("Current Distance", currentDistance);
+
         return pidDrive.calculate(currentDistance, targetDistance);
     }
 
