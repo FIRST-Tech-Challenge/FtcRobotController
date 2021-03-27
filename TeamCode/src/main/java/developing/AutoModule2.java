@@ -10,11 +10,9 @@ import global.Constants;
 import telefunctions.Cycle;
 import telefunctions.ServoController;
 import telefunctions.Stage;
-import util.CodeSeg;
-import util.TerraThread;
 
 public class AutoModule2 {
-    TestThread testThread = new TestThread();
+    AutoModuleThread autoModuleThread = new AutoModuleThread();
 
 
     public ArrayList<Stage> stages = new ArrayList<>();
@@ -26,21 +24,21 @@ public class AutoModule2 {
 
 
     public void start(){
-        if(!testThread.executing) {
-            testThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
-            testThread.init(stages);
+        if(!autoModuleThread.executing) {
+            autoModuleThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
+            autoModuleThread.init(stages);
 
-            Thread t = new Thread(testThread);
+            Thread t = new Thread(autoModuleThread);
             t.start();
         }
         pausing = false;
     }
 
     public boolean isExecuting(){
-        return testThread.executing;
+        return autoModuleThread.executing;
     }
     public void stop(){
-        testThread.stop();
+        autoModuleThread.stop();
     }
 
     public void addDelay(final double secs){

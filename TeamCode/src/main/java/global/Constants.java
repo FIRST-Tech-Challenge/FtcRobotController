@@ -17,6 +17,7 @@ public class Constants {
     public static final double CENTER_THETA = Math.PI - Math.atan2(ROBOT_LENGTH, ROBOT_WIDTH); // radians
 
     public static final int AUTOMODULE_REFRESH_RATE = 100; // hertz
+    public static final int ODOMETRY_REFRESH_RATE = 100; //hertz
 
     public static final double NEVEREST256_TICKS = 7168;
     public static final double NEV_DEGREES_TO_TICKS = NEVEREST256_TICKS/360;

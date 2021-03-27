@@ -102,8 +102,6 @@ public class TestRobot {
         autoModule2s.add(shooter);
 
         odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());
-
-
     }
 
     public DcMotor getMotor(HardwareMap hwMap, String name, DcMotor.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode){

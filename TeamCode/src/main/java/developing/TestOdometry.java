@@ -8,6 +8,11 @@ public class TestOdometry extends OpMode {
     TestRobot bot = new TestRobot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
 
+    Optimizer optimizer = new Optimizer();
+
+    AutoModuleThread autoModuleThread = new AutoModuleThread();
+
+
     @Override
     public void init() {
         bot.init(hardwareMap);
@@ -15,9 +20,23 @@ public class TestOdometry extends OpMode {
 
     @Override
     public void loop() {
-        bot.updateOdometry();
-        telemetry = telemetryHandler.addOdometry(telemetry, bot);
-        telemetry.update();
+
+        if(!optimizer.show) {
+            bot.updateOdometry();
+            optimizer.update();
+        }else{
+            telemetry.addData("avgDeltaTime", optimizer.avgDeltaTime);
+            telemetry.update();
+        }
+
+        if(gamepad1.a && !optimizer.show){
+            optimizer.show();
+        }
+//        telemetry = telemetryHandler.addOdometry(telemetry, bot);
+//        telemetry.addData("c")
+//        telemetry.update();
+
+
 
     }
 

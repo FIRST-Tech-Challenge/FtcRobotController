@@ -1,30 +1,19 @@
 package developing;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
 import telefunctions.Stage;
-import util.CodeSeg;
 
-public class TestThread implements Runnable{
+public class AutoThread implements Runnable{
         public boolean executing = false;
-        public int stageNum = 0;
-        public ArrayList<Stage> stages = new ArrayList<>();
-
-        public ElapsedTime timer = new ElapsedTime();
-
-
         public int refreshRate = 100; // hertz
 
 
 
-        public void init(ArrayList<Stage> stages){
-            this.stages = stages;
+        public void init(){
             executing = true;
-            timer.reset();
         }
 
         public void changeRefreshRate(int rf){
@@ -40,15 +29,7 @@ public class TestThread implements Runnable{
         }
 
         public void update() {
-            Stage s = stages.get(stageNum);
-            if (s.run(timer.seconds())) {
-                stageNum+=1;
-                timer.reset();
-            }
-            if (stageNum == (stages.size())) {
-                stop();
-                stageNum = 0;
-            }
+
         }
 
         @Override
