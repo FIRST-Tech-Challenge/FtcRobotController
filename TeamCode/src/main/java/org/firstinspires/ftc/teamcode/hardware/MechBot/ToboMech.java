@@ -616,6 +616,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     }
                 } else if (source.isPressed(Button.BACK)) {
                     comboGrabber.releaseWobbleGoalCombo();
+                } else {
+                    if (hopper != null){
+                        hopper.blockerAuto();
+                    }
                 }
             }
         }, new Button[]{Button.X});
@@ -1598,7 +1602,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
 
-
+        if (hopper != null) {
+            hopper.blockerDown();
+        }
         chassis.resetOdometry(true); // use rangeSensor to correct Odometry
         //shoot
         for (int i=0; i<nshots; i++) {

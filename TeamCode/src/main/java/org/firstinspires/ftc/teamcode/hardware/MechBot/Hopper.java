@@ -28,6 +28,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     private AdjustableServo feeder;
     private AdjustableServo holder;
+    private AdjustableServo blocker;
     private CRServo ringLifter;
     /*private*/ public TouchSensor magLow;
     /*private*/ public TouchSensor magHigh;
@@ -44,8 +45,13 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private final double HOLDER_INIT = HOLDER_IN;
     private final double HOLDER_OUT = 0.15;
 
+    private final double BLOCKER_UP = 0.72;
+    private final double BLOCKER_INIT = BLOCKER_UP;
+    private final double BLOCKER_DOWN = 0.31;
+
     private boolean feederIsIn = true;
     private boolean holderIsIn = true;
+    private boolean blockerIsUp = true;
     private boolean transferIsDown = true;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -86,9 +92,13 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 logTag + ":hopper", logLevel
         );
         holder.configure(configuration.getHardwareMap(), "holder");
-
+        blocker = new AdjustableServo(0, 1).configureLogging(
+                logTag + ":hopper", logLevel
+        );
+        blocker.configure(configuration.getHardwareMap(), "blocker");
         configuration.register(feeder);
         configuration.register(holder);
+        configuration.register(blocker);
 
         magLow = configuration.getHardwareMap().get(TouchSensor.class, "magLow");
         magHigh = configuration.getHardwareMap().get(TouchSensor.class, "magHigh");
@@ -104,6 +114,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
         holder.setPosition(HOLDER_INIT);
         holderIsIn = true;
+        blocker.setPosition(BLOCKER_INIT);
+        blockerIsUp = true;
         //hookUp();
         // configuration.register(this);
     }
@@ -149,6 +161,23 @@ public class Hopper extends Logger<Hopper> implements Configurable {
             holderIn();
     }
 
+    public void blockerUp() {
+        blocker.setPosition(BLOCKER_UP);
+        blockerIsUp = true;
+    }
+
+    public void blockerDown() {
+        blocker.setPosition(BLOCKER_DOWN);
+        blockerIsUp = false;
+    }
+
+    public void blockerAuto() throws InterruptedException {
+        if(blockerIsUp)
+            blockerDown();
+        else
+            blockerUp();
+    }
+
     public void transferUp(){
         if (ringLifter==null) return;
         ringLifter.setPower(-1);
@@ -185,6 +214,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
+                blockerUp();
                 ringLifter.setPower(-1);
                 HopperTimer.reset();
                 return new Progress() {
@@ -394,6 +424,15 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 @Override
                 public Double value() {
                     return holder.getPosition();
+                }
+            });
+        }
+
+        if (blocker != null) {
+            line.addData("Blocker", "pos=%.2f", new Func<Double>() {
+                @Override
+                public Double value() {
+                    return blocker.getPosition();
                 }
             });
         }
