@@ -1146,6 +1146,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             batteryVolt = getBatteryVoltage();
             chassis.set_auto_power_scale_by_voltage(batteryVolt);
         }
+        if (hopper != null) {
+            hopper.blockerUp();
+        }
     }
 
     // Computes the current battery voltage
