@@ -76,7 +76,7 @@ public class PositionDriver extends OpMode {
 
         leftSpeed += power;
         rightSpeed -= power;
-        
+
         leftSpeed += power2;
         rightSpeed += power2;
 
@@ -93,6 +93,10 @@ public class PositionDriver extends OpMode {
         packet.put("X Pos: ", pose.getX());
         packet.put("Y Pos: ", pose.getY());
         packet.put("Heading: ", pose.getHeading());
+        packet.put("Position Power", power2);
+        packet.put("Rotation Power", power);
+        packet.put("Left Speed", leftSpeed);
+        packet.put("Right Speed", rightSpeed);
 
         dashboard.sendTelemetryPacket(packet);
     }
