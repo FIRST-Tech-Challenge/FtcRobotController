@@ -32,9 +32,9 @@ public class TestOdometry extends OpMode {
         if(gamepad1.a && !optimizer.show){
             optimizer.show();
         }
-//        telemetry = telemetryHandler.addOdometry(telemetry, bot);
-//        telemetry.addData("c")
-//        telemetry.update();
+        telemetry = telemetryHandler.addOdometry(telemetry, bot);
+        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
+        telemetry.update();
 
 
 

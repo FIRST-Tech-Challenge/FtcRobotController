@@ -5,9 +5,9 @@ import util.Vector;
 
 public class Odometry2 {
 
-    private double x = 0; // total x
-    private double y = 0; // total y
-    private double h = 0; // heading
+    public double x = 0; // total x
+    public double y = 0; // total y
+    public double h = 0; // heading
 
     public double rp = 0; // right pos
     public double lp = 0; // left pos
@@ -60,18 +60,18 @@ public class Odometry2 {
     //Er/l is right/left change in encoder positions, theta is change in heading
     //This function should return 0 if theta is the correct value
     public double thetaFunction(double theta) {
-        return ing0(theta, (deltaRP - deltaLP) / (4 * d) + (Math.cos(theta) - 1) / theta);
+        return ign0(theta, (deltaRP - deltaLP) / (4 * d) + (Math.cos(theta) - 1) / theta);
     }
 
     //Derivative of theta function, accepts change in heading
     //Used in newtons method
     public double derivativeOfThetaFunction(double theta) {
-        return ing0(theta, (1 - Math.cos(theta) - theta * Math.sin(theta)) / (Math.pow(theta, 2)));
+        return ign0(theta, (1 - Math.cos(theta) - theta * Math.sin(theta)) / (Math.pow(theta, 2)));
     }
 
     //NewtonsMethodOfThetaFunction used to calculate theta to a greater accuracy
     public double nmotf(double theta) {
-        return ing0(theta, theta - (thetaFunction(theta) / derivativeOfThetaFunction(theta)));
+        return ign0(theta, theta - (thetaFunction(theta) / derivativeOfThetaFunction(theta)));
     }
 
     //Calculated change in heading using newtons method
@@ -81,18 +81,18 @@ public class Odometry2 {
 
     //Calculate distance vectors for left and right odometry that measure the change in coordinates from the center odometry at (0,0)
     public void calcDVectors() {
-        dl.setXY(d * (1 - c1) - d - (c * s), c * (1 - c1) - c + (d * s));
-        dr.setXY(-d * (1 - c1) + d - (c * s), c * (1 - c1) - c - (d * s));
+        dl.setXY((-d * c1) - (c * s), (-c * c1) + (d * s));
+        dr.setXY((d * c1) - (c * s), (-c * c1) - (d * s));
     }
 
     //Calculate x using encoder position and d vectors, inputs encoder reading and d vector
     public double calcX(double E, Vector d) {
-        return ing0(c1, 0.5 * ((deltaCP * deltaH * s) / c1) - (E * deltaH) + (d.x * c1) - (d.y * s));
+        return ign0(c1, 0.5 * ((deltaCP * deltaH * s) / c1) - (E * deltaH) + (d.x * c1) - (d.y * s));
     }
 
     //Calculate y using x
     public double calcY(double x) {
-        return ing0(c1, ((deltaCP * deltaH) - (x * s)) / c1);
+        return ign0(c1, ((deltaCP * deltaH) - (x * s)) / c1);
     }
 
     //calculate average x and use that to calculate average y and then update
@@ -120,43 +120,21 @@ public class Odometry2 {
         return (ticks / Constants.CM_TO_TICKS);
     }
 
-    //convert cm to ticks
-    public double CmToTicks(double cm) {
-        return (cm * Constants.CM_TO_TICKS);
-    }
-
     //update encoder positions
     public void updateEncoderPositions(double l, double c, double r) {
-        deltaRP = ticksToCm(r) - rp; // change since last
-        deltaLP = ticksToCm(l) - lp; // change since last
-        deltaCP = ticksToCm(c) - cp; // change since last
-        rp = ticksToCm(r);
-        lp = ticksToCm(l);
-        cp = ticksToCm(c);
-    }
-
-    //return x in cm
-    public double getX() {
-        return x;
-    }
-
-    //return y in cm
-    public double getY() {
-        return y;
-    }
-
-    //return heading in degrees
-    public double getHeading() {
-        return h;
-    }
-
-    //get position as an array
-    public double[] getPos() {
-        return new double[]{getX(), getY(), getHeading()};
+        r = ticksToCm(r);
+        l = ticksToCm(l);
+        c = ticksToCm(c);
+        deltaRP = r - rp; // change since last
+        deltaLP = l - lp; // change since last
+        deltaCP = c - cp; // change since last
+        rp = r;
+        lp = l;
+        cp = c;
     }
 
     //returns out if inp is not 0
-    public double ing0(double inp, double out) {
+    public double ign0(double inp, double out) {
         if (inp != 0) {
             return out;
         } else {
@@ -165,6 +143,29 @@ public class Odometry2 {
     }
 
 
+//    //convert cm to ticks
+//    public double CmToTicks(double cm) {
+//        return (cm * Constants.CM_TO_TICKS);
+//    }
+//    //return x in cm
+//    public double getX() {
+//        return x;
+//    }
+//
+//    //return y in cm
+//    public double getY() {
+//        return y;
+//    }
+//
+//    //return heading in degrees
+//    public double getHeading() {
+//        return h;
+//    }
+//
+//    //get position as an array
+//    public double[] getPos() {
+//        return new double[]{getX(), getY(), getHeading()};
+//    }
 //    public void updateGlobalPosition(double l, double c , double r, double heading){
 //        deltaRP = r-rp; // change since last
 //        deltaLP = l-lp; // change since last

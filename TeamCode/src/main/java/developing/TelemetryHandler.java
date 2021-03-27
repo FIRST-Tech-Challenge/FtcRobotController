@@ -13,9 +13,9 @@ public class TelemetryHandler {
         telemetry.addData("dl", "(%f , %f)", bot.odometry.dl.x, bot.odometry.dl.y);
         telemetry.addData("dr", "(%f , %f)", bot.odometry.dr.x, bot.odometry.dr.y);
 //        telemetry.addData("deltaH", bot.odometry.deltaH);
-        telemetry.addData("x pos", bot.odometry.getX());
-        telemetry.addData("y pos", bot.odometry.getY());
-        telemetry.addData("heading", bot.odometry.getHeading());
+        telemetry.addData("x pos", bot.odometry.x);
+        telemetry.addData("y pos", bot.odometry.y);
+        telemetry.addData("heading", bot.odometry.h);
         return telemetry;
     }
     public Telemetry addAngularPosition(Telemetry telemetry, TestRobot bot) {

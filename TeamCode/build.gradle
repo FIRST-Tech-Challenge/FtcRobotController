@@ -23,5 +23,4 @@ dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:rev-extensions-2:1.2'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
-    implementation 'com.squareup.okhttp3:okhttp:3.14.6'
 }

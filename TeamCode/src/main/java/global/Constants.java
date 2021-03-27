@@ -11,6 +11,10 @@ public class Constants {
     public static final double SHOOTER_WHEEL_RADIUS = 0.05; // meters
     public static final double FIELD_LENGTH = 3.6576; //meters
 
+    public static final double WGE_START = 0.55;
+    public static final double WGE_EXTENDED = 0.85;
+    public static final double RP_START = 0.1;
+
     public static final double ROBOT_WIDTH = 30; // meters
     public static final double ROBOT_LENGTH = 33; // meters
     public static final double ROBOT_RADIUS = Math.sqrt(Math.pow(ROBOT_WIDTH/2, 2) + Math.pow(ROBOT_LENGTH/2, 2)); // meters
@@ -26,7 +30,7 @@ public class Constants {
 
     public static final double pi2 = Math.PI*2;
     public static final double ANGLE_ACCURACY = 3.5; // in degrees
-    public static final double COMPASS_START = 163; //in degrees
+    public static final double COMPASS_START = 342; //in degrees
 
     public static final double TICKS_FOR_ODOMETRY =  8192; //in ticks
     public static final double ENCODER_WHEEL_RADIUS = 1.75; // in cm

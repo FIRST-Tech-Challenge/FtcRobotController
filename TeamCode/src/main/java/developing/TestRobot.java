@@ -32,8 +32,10 @@ public class TestRobot {
     public CRServo rh2;
 
     public Servo rp;
+    public Servo wge;
 
     public Cycle pushControl = new Cycle(0.1, 0.25, 0.32);
+    public Cycle wgeControl = new Cycle(Constants.WGE_START, Constants.WGE_EXTENDED);
 
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor br;
@@ -44,8 +46,6 @@ public class TestRobot {
 
     public boolean intaking = false;
     public boolean outtaking = false;
-
-    public double rpStart = 0.1;
 
     public boolean fastMode = true;
 
@@ -76,7 +76,8 @@ public class TestRobot {
 
         rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
         rh2 = getCRServo(hwMap, "rh2", DcMotorSimple.Direction.REVERSE);
-        rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, rpStart);
+        rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, Constants.RP_START);
+        wge = getServo(hwMap, "wge", Servo.Direction.FORWARD, Constants.WGE_START);
 
         angularPosition.init(hwMap);
 
@@ -247,6 +248,10 @@ public class TestRobot {
 
     public void updateOdometry() {
         odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
+    }
+
+    public void extendWobbleGoal(boolean extend) {
+        wge.setPosition(wgeControl.update(false, extend));
     }
 
 }

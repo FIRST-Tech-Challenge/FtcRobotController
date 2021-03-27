@@ -46,6 +46,8 @@ public class TestTele extends OpMode {
             bot.shooter.start();
         }
 
+        bot.extendWobbleGoal(gamepad2.a);
+
         bot.updateOdometry();
 
         
