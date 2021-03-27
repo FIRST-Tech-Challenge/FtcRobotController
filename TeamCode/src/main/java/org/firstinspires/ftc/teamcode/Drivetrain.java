@@ -77,10 +77,11 @@ public class Drivetrain {
     }
     public void newOuttakeAll(double power, int cycles){
         robot.outtake.setPower(power);
-        pause(500);
+        pause(1500);
         slapperHigh = 0; slapperLow = 0;
         for (int i=0; i<cycles; i++){
             singleCycle();
+            pause(100);
         }
         robot.outtake.setPower(0.0);
     }
