@@ -53,8 +53,8 @@ public class PositionController {
     }
 
     private double getRotationToPoint(Pose2d target, Pose2d o) {
-        double dx = target.getY() - o.getY();
-        double dy = -target.getX() + o.getX();
+        double dy = target.getY() - o.getY();
+        double dx = -target.getX() + o.getX();
 
 //        if(dx == 0) return 0;
 
