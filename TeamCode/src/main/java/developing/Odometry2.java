@@ -22,7 +22,8 @@ public class Odometry2 {
     public double deltaX = 0; //change in x (robot frame)
     public double deltaY = 0; //change in y (robot frame)
 
-    public final double d = Constants.HALF_DIS_BETWEEN_ENCS;
+    public final double dL = Constants.DIS_CENTER_TO_LEFT_ENC;
+    public final double dR = Constants.DIS_CENTER_TO_RIGHT_ENC;
     public final double c = Constants.RADIUS_CENTER_TO_ENC;
 
     public ArrayList<Double> Ydebug = new ArrayList<>();
@@ -66,7 +67,7 @@ public class Odometry2 {
     //Er/l is right/left change in encoder positions, theta is change in heading
     //This function should return 0 if theta is the correct value
     public double thetaFunction(double theta) {
-        return ign0(theta, (deltaRP - deltaLP) / (4 * d) + (Math.cos(theta) - 1) / theta);
+        return ign0(theta, (deltaRP - deltaLP) / (2 * (dL+dR)) + (Math.cos(theta) - 1) / theta);
     }
 
     //Derivative of theta function, accepts change in heading
@@ -82,13 +83,13 @@ public class Odometry2 {
 
     //Calculated change in heading using newtons method
     public void calcDeltaH() {
-        deltaH = nmotf(nmotf(nmotf((deltaRP - deltaLP) / (2 * d))));
+        deltaH = nmotf(nmotf(nmotf((deltaRP - deltaLP) / (dL+dR))));
     }
 
     //Calculate distance vectors for left and right odometry that measure the change in coordinates from the center odometry at (0,0)
     public void calcDVectors() {
-        dl.setXY((-d * c1) - (c * s), (-c * c1) + (d * s));
-        dr.setXY((d * c1) - (c * s), (-c * c1) - (d * s));
+        dl.setXY((-dL * c1) - (c * s), (-c * c1) + (dL * s));
+        dr.setXY((dR * c1) - (c * s), (-c * c1) - (dR * s));
     }
 
     //Calculate x using encoder position and d vectors, inputs encoder reading and d vector
@@ -112,7 +113,7 @@ public class Odometry2 {
 
         double oldY = ign0(deltaH, ((deltaRP + deltaLP) * s )/ (2 * deltaH));
         double oldX = ign0(deltaH, deltaCP - (oldY * c1 / deltaH));
-        double oldH = (deltaRP - deltaLP) / (2 * d);
+        double oldH = (deltaRP - deltaLP) / (dL+dR);
 
 
 

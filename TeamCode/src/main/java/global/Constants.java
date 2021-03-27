@@ -38,5 +38,7 @@ public class Constants {
     public static final double DIS_BEWTEEN_ENCS = 35.4; //in cm
     public static final double CM_TO_TICKS = TICKS_FOR_ODOMETRY/(pi2*ENCODER_WHEEL_RADIUS);
     public static final double HALF_DIS_BETWEEN_ENCS = DIS_BEWTEEN_ENCS/2; // in cm
+    public static final double DIS_CENTER_TO_LEFT_ENC = 17.7; //cm
+    public static final double DIS_CENTER_TO_RIGHT_ENC = DIS_BEWTEEN_ENCS-DIS_CENTER_TO_LEFT_ENC; //cm
 
 }
