@@ -30,29 +30,21 @@ public class OuterRedAutonomous extends LinearOpMode {
             telemetry.addData("Position", ringNmb);
             telemetry.update();
         }
+        robot.shooterEngage();
         robot.forward(.1, -0.3);
         robot.strafeLeft(.3,1);
         robot.forward(.3,-1.7);
-        robot.pivotLeft(.3,28);
-        robot.shooterEngage();
-        robot.pause(800);
+        robot.pivotLeft(.3,23);
 
-        robot.pause(200);
-        robot.intakeServoEngage(.9);
-        robot.pause(4500);
-        robot.shooterStop();
-        robot.intakeServoStop();
-//
-//        robot.startShooting();
-//        robot.stopTimingBelt();
-//        robot.pause(950);
-//        robot.startTimingBelt();
-//        robot.pause(500);
-//        robot.stopTimingBelt();
-//        robot.pause(750);
-//        robot.startTimingBelt();
-//        robot.pause(2000);
-//        robot.stopShooting();
+        robot.justShootGood();
+
+        robot.pause(1000);
+        robot.justShootGood();
+        robot.pause(1000);
+        robot.justShootGood();
+        robot.justShootGood();
+ //       robot.pivotRight(.5, 23);
+
 
 //        if (ringNmb == RobotClass.RingPosition.NONE) {
 //            robot.pivotRight(.5, 28);

@@ -105,7 +105,7 @@ public class EasyOpenCVExample extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(192,176);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(85,176);
 //inner blue 68,176 size 30,42
         //outer blue 192, 176 size 30,42
         //inside red, the same as outer blue
