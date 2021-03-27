@@ -41,7 +41,7 @@ public class PositionDriver extends OpMode {
         Pose2d currentPose = new Pose2d(Vals.drive_target_x,  Vals.drive_target_y, new Rotation2d(Math.PI/2));
 
         positionController = new PositionController(currentPose);
-        positionController.setTarget(currentPose);
+        positionController.reset(currentPose);
 
 
         odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), currentPose);
@@ -65,14 +65,14 @@ public class PositionDriver extends OpMode {
         if(gamepad.isBRelease()) {
             driveTrain.setSpeed(0, 0);
             positionController.updatePID();
-            positionController.setTarget(pose, targetPose);
+            positionController.reset(pose);
         }
 
         double leftSpeed = 0;
         double rightSpeed = 0;
 
         double power = rotationController.rotate(Vals.rotate_target);
-        double power2 = positionController.goto_pos(pose);
+        double power2 = positionController.goto_pos(pose, targetPose);
 
         leftSpeed += power;
         rightSpeed -= power;

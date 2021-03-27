@@ -25,20 +25,14 @@ public class PositionController {
         return Math.hypot(a.getX() - b.getX(), a.getY() - b.getY());
     }
 
-
-    public void setTarget(Pose2d currentPose) {
+    public void reset(Pose2d currentPose) {
         pidDrive.reset();
         targetDistance = 0;
         startPose = currentPose;
     }
 
-    public void setTarget(Pose2d currentPose, Pose2d targetPose) {
-        pidDrive.reset();
+    public double goto_pos(Pose2d currentPose, Pose2d targetPose) {
         targetDistance = getDistance(targetPose, currentPose);
-        startPose = currentPose;
-    }
-
-    public double goto_pos(Pose2d currentPose) {
         double currentDistance = getDistance(currentPose, startPose);
         return pidDrive.calculate(currentDistance, targetDistance);
     }
