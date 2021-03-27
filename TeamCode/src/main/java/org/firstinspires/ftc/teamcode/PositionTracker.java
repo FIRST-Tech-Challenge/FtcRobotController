@@ -56,6 +56,10 @@ public class PositionTracker extends OpMode {
                 .setFill("red")
                 .fillRect(0, 0, 30, 30);
 
+        packet.put("X Pos: ", pose.getX());
+        packet.put("Y Pos: ", pose.getY());
+        packet.put("Heading: ", pose.getHeading());
+
         dashboard.sendTelemetryPacket(packet);
     }
 }
