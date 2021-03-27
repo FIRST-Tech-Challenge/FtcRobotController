@@ -64,6 +64,7 @@ public abstract class BasicChassis {
     abstract public void setPosition(float xPosition, float yPosition, float newangle);
     abstract public void goToPosition(double xPosition, double yPosition, double newangle, double power);
     abstract public void navigate();
+    abstract public boolean goToPositionTeleop(double xPosition, double yPosition, double newangle, double power);
     abstract public void navigateTeleOp();
     abstract public double[] track();
     public void moveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {

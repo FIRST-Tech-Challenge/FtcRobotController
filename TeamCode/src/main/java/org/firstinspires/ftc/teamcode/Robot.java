@@ -104,7 +104,7 @@ public class Robot {
     }
     public void setPosition(float xPosition,float yPosition, float newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
     public double[] track(){return drivetrain.track();}//track[0] is y value, track[1] is x value, and track[2] is angle
-    public void goToPosition(double xPosition,double yPosition, double newAngle, double power){drivetrain.goToPosition(xPosition,yPosition,newAngle,power);}
+    public void goToPosition(double yPosition,double xPosition, double newAngle, double power){drivetrain.goToPosition(yPosition,xPosition,newAngle,power);}
     public void moveRight(double distance, double power) {
         drivetrain.moveRight(distance, power);
     }
@@ -318,4 +318,5 @@ public class Robot {
     public void navigateTeleOp(){
         drivetrain.navigateTeleOp();
     }
+    public boolean goToPositionTeleop(double yPosition, double xPosition, double newangle, double power){return drivetrain.goToPositionTeleop(yPosition, xPosition, newangle, power);}
 }

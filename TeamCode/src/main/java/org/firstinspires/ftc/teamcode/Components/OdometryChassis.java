@@ -176,6 +176,53 @@ public class OdometryChassis extends BasicChassis {
         return data;
         //return navigation.getPosition();
     }
+    public boolean goToPositionTeleop(double y, double x, double a, double power) {
+        double f = x;
+        x = y;
+        y = f;
+        double[] currentPosition = track();
+        double[] target_position = {0, 0, 0};
+        double anglecorrection = 0;
+        target_position[0] = x;
+        target_position[1] = y - 0.15;
+        target_position[2] = a;
+        double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
+        power = power * difference / 30;
+        x = target_position[0] - currentPosition[0];
+        y = target_position[1] - currentPosition[1];
+        double angleInRadians = atan2(-x, y * 2) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
+        double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
+        if (op.opModeIsActive() && (difference >= 1) && !gotoPosition_off) {
+            anglecorrection = (currentPosition[2] - target_position[2]) % 360 * -0.005;
+            if(anglecorrection>0.22){
+                anglecorrection=0.22;
+            }
+            if (abs(anglePower[1]) > abs(anglePower[0])) {
+                anglePower[1] *= abs(1 / anglePower[1]);
+                anglePower[0] *= abs(1 / anglePower[1]);
+            } else {
+                anglePower[1] *= abs(1 / anglePower[0]);
+                anglePower[0] *= abs(1 / anglePower[0]);
+            }
+            while (abs(power) < 0.42) {
+                power *= 0.42 / abs(power);
+            }
+            motorRightBack.setPower(1.4 * (power * anglePower[1] + anglecorrection));//1.4 IF YOU ARE USING WALRUS MULTIPLY THIS BY 1.4
+            motorRightFront.setPower(power * anglePower[0] + anglecorrection);
+            motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
+            motorLeftFront.setPower(power * anglePower[1] - anglecorrection);
+//            op.telemetry.addData("leftBack",power * anglePower[0] - anglecorrection);
+//            op.telemetry.addData("rightBack",power * anglePower[1] + anglecorrection);
+//            op.telemetry.addData("leftFront",power * anglePower[1] - anglecorrection);
+//            op.telemetry.addData("rightFront",power * anglePower[0] + anglecorrection);
+//            op.telemetry.addData("distance", difference);
+        }
+        else if(difference<1){
+            stopAllMotors();
+            return true;
+        }
+        return false;
+    }
     public void goToPosition(double y, double x, double a, double power){
         if(!isCorgi) {
             double f = x;
@@ -329,6 +376,12 @@ public class OdometryChassis extends BasicChassis {
             }
             if (newTarget <= -180) {
                 newTarget = newTarget + 360;
+            }
+            if(error>180){
+                error-=360;
+            }
+            if(error<-180){
+                error+=360;
             }
 
             if (abs(error) < 20) {

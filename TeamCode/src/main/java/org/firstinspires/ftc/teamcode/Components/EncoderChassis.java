@@ -378,6 +378,11 @@ public class EncoderChassis extends BasicChassis {
     }
 
     @Override
+    public boolean goToPositionTeleop(double xPosition, double yPosition, double newangle, double power) {
+return false;
+    }
+
+    @Override
     public void navigateTeleOp() {
 
     }

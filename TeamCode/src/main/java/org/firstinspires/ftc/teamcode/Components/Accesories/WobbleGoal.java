@@ -95,6 +95,7 @@ public class WobbleGoal {
 
         wobbleGoalMotor.setTargetPosition(i);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        op.sleep(1000);
         if (p == Position.DROP) {
             wobbleGoalMotor.setPower(wobbleGoalSpeedDrop);
         } else {

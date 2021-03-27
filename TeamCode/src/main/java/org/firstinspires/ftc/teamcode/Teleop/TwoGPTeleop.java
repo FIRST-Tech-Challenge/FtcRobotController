@@ -48,6 +48,7 @@ public class TwoGPTeleop extends LinearOpMode {
             double yShootingPosition = 0;
             double xShootingPosition = 0;
             double angleShootingPosition = 0;
+            int goingToPosition = 0;
 
             telemetry.addData("Status", "Ready to go");
             telemetry.update();
@@ -79,7 +80,6 @@ public class TwoGPTeleop extends LinearOpMode {
                     robot.stopAllMotors();
                     continue;
                 }
-                OdometryChassis.gotoPosition_off= gamepad2.dpad_left;;
 
 
 
@@ -88,9 +88,29 @@ public class TwoGPTeleop extends LinearOpMode {
                 /**Powershots**/
                 if(odo_powershots){
                         //robot.setPosition(0,0,0);
-                        robot.goToPosition(5,-19.5 ,0,0.3);
+                        goingToPosition=1;
+                        if(robot.goToPositionTeleop(5,-19.5 ,0,0.3)){
+                            robot.shootThreePowerShot();
+                        }
                         //robot.goToPosition(40,-40,-88,0.7);
-                        robot.shootThreePowerShot();
+                    continue;
+                }
+                else if(goingToPosition==1&&!odo_powershots&&goToShootingPosition!=1){
+                    robot.stopAllMotors();
+                    goingToPosition=0;
+                }
+                if (goToShootingPosition==1){
+                    robot.shootGoalTeleop(1000);
+                    goingToPosition=1;
+                    if(robot.goToPositionTeleop(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8)){
+                        robot.turnInPlace(angleShootingPosition,0.8);
+                    }
+                    continue;
+
+                }
+                else if(goingToPosition==1&&goToShootingPosition!=1&&!odo_powershots){
+                    robot.stopAllMotors();
+                    goingToPosition=0;
                 }
 
                 /**Sticks**/
@@ -189,10 +209,7 @@ public class TwoGPTeleop extends LinearOpMode {
                     angleShootingPosition = robot.track()[2];
                 }
 
-                if (goToShootingPosition==1){
-                    robot.shootGoalTeleop(1000);
-                    robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8);
-                }
+
             }
             idle();
         }
