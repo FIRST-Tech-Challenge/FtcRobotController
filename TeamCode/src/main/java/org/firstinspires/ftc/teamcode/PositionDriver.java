@@ -57,6 +57,7 @@ public class PositionDriver extends OpMode {
 
         Pose2d targetPose = new Pose2d(Vals.drive_target_x, Vals.drive_target_y, new Rotation2d());
         Pose2d pose = odometry.getPoseMeters();
+        TelemetryPacket packet = new TelemetryPacket();
         if(gamepad.isARelease()) {
             driveTrain.setSpeed(0, 0);
             rotationController.resetAngle();
@@ -72,7 +73,7 @@ public class PositionDriver extends OpMode {
         double rightSpeed = 0;
 
         double power = rotationController.rotate(Vals.rotate_target);
-        double power2 = -positionController.goto_pos(pose, targetPose);
+        double power2 = -positionController.goto_pos(pose, targetPose, packet);
 
         leftSpeed += power;
         rightSpeed -= power;
@@ -86,8 +87,6 @@ public class PositionDriver extends OpMode {
 
 
 
-        pose.getTranslation();
-        TelemetryPacket packet = new TelemetryPacket();
         DashboardCorrections.drawRobotOnField(pose, packet);
 
         packet.put("X Pos: ", pose.getX());
