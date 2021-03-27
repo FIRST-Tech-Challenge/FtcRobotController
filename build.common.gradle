@@ -1,4 +1,4 @@
-/**
+    /**
  * build.common.gradle
  *
  * Try to avoid editing this file, as it may be updated from time to time as the FTC SDK
@@ -54,7 +54,7 @@ android {
     defaultConfig {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
-        minSdkVersion 24
+        minSdkVersion 23
         targetSdkVersion 28
         multiDexEnabled true
 
