@@ -193,7 +193,7 @@ public class OdometryChassis extends BasicChassis {
         double angleInRadians = atan2(-x, y * 2) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
         double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
         if (op.opModeIsActive() && (difference >= 1) && !gotoPosition_off) {
-            anglecorrection = (currentPosition[2] - target_position[2]) % 360 * -0.005;
+            anglecorrection = (currentPosition[2] - target_position[2]) % 360 * -0.05;
             if(anglecorrection>0.22){
                 anglecorrection=0.22;
             }
