@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 @Autonomous(name = "VisionTest")
 public class VisionTest extends LinearOpMode {
 
+    // Code for vision testing.
     OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline;
 
