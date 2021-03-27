@@ -31,7 +31,7 @@ public class PositionTracker extends OpMode {
 
         rotationController = new RotationController(hardwareMap.get(BNO055IMU.class, "imu"));
 
-        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), new Pose2d(45,  -300, new Rotation2d(Math.PI/2)));
+        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), new Pose2d(45,  -135, new Rotation2d(Math.PI/2)));
     }
 
     @Override
