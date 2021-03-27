@@ -253,7 +253,7 @@ public class WobbleGoal {
 
         protected AutoMotionState(final String name, final Telemetry telemetry, final Ticker ticker,
                                   final DigitalChannel limitSwitch, final float motorPower) {
-            super(name, telemetry, ticker, TimeUnit.SECONDS.toMillis(8));
+            super(name, telemetry, ticker, TimeUnit.SECONDS.toMillis(5));
             this.limitSwitch = limitSwitch;
             this.motorPower = motorPower;
         }
