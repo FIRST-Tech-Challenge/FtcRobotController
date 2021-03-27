@@ -1,5 +1,6 @@
 package developing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -7,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Const;
 
 import global.Constants;
-
+@Disabled
 @TeleOp(name = "TestOp")
 public class TestTele extends OpMode {
     TestRobot bot = new TestRobot();

@@ -33,9 +33,9 @@ public class Constants {
     public static final double COMPASS_START = 342; //in degrees
 
     public static final double TICKS_FOR_ODOMETRY =  8192; //in ticks
-    public static final double ENCODER_WHEEL_RADIUS = 1.75; // in cm
+    public static final double ENCODER_WHEEL_RADIUS = 1.75; // in cm //1.75
     public static final double RADIUS_CENTER_TO_ENC = 3; // in cm
-    public static final double DIS_BEWTEEN_ENCS = 37.46; //in cm
+    public static final double DIS_BEWTEEN_ENCS = 35.4; //in cm
     public static final double CM_TO_TICKS = TICKS_FOR_ODOMETRY/(pi2*ENCODER_WHEEL_RADIUS);
     public static final double HALF_DIS_BETWEEN_ENCS = DIS_BEWTEEN_ENCS/2; // in cm
 

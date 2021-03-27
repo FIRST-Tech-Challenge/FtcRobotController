@@ -24,9 +24,7 @@ public class Optimizer {
 
     public void show(){
         show = true;
-        for(double i:times){
-            avgDeltaTime += (i/times.size());
-        }
+        avgDeltaTime = calcAvg(times);
     }
 
     public void reset(){
@@ -35,6 +33,25 @@ public class Optimizer {
         avgDeltaTime = 0;
         show = false;
         times = new ArrayList<>();
+    }
+
+    public double calcAvg(ArrayList<Double> in){
+        double total = 0;
+        for(double i:in){
+            total += (i/in.size());
+        }
+
+        return total;
+    }
+
+    public double max(ArrayList<Double> in){
+        double max = 0;
+        for(double i:in){
+            if (i > max){
+                max = i;
+            }
+        }
+        return max;
     }
 
 

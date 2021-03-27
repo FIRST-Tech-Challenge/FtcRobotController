@@ -1,5 +1,7 @@
 package developing;
 
+import java.util.ArrayList;
+
 import global.Constants;
 import util.Vector;
 
@@ -22,6 +24,10 @@ public class Odometry2 {
 
     public final double d = Constants.HALF_DIS_BETWEEN_ENCS;
     public final double c = Constants.RADIUS_CENTER_TO_ENC;
+
+    public ArrayList<Double> Ydebug = new ArrayList<>();
+    public ArrayList<Double> Xdebug = new ArrayList<>();
+    public ArrayList<Double> Hdebug = new ArrayList<>();
 
 
     public Vector dl = new Vector(0, 0);
@@ -103,6 +109,22 @@ public class Odometry2 {
 
     //update global x y and h
     public void updateGlobalXYH() {
+
+        double oldY = ign0(deltaH, ((deltaRP + deltaLP) * s )/ (2 * deltaH));
+        double oldX = ign0(deltaH, deltaCP - (oldY * c1 / deltaH));
+        double oldH = (deltaRP - deltaLP) / (2 * d);
+
+
+
+        Ydebug.add(deltaY - oldY);
+        Xdebug.add(deltaX - oldX);
+        Hdebug.add(deltaH - oldH);
+
+//        deltaH = oldH;
+
+        deltaY = oldY;
+        deltaX = oldX;
+
         Vector deltaGlobalPos = new Vector(deltaX, deltaY).getRotatedVec(h, Vector.angle.DEGREES);
         x += deltaGlobalPos.x;
         y += deltaGlobalPos.y;

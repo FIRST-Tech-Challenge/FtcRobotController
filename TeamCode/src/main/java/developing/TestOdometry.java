@@ -10,7 +10,7 @@ public class TestOdometry extends OpMode {
 
     Optimizer optimizer = new Optimizer();
 
-    AutoModuleThread autoModuleThread = new AutoModuleThread();
+//    AutoModuleThread autoModuleThread = new AutoModuleThread();
 
 
     @Override
@@ -24,16 +24,31 @@ public class TestOdometry extends OpMode {
         if(!optimizer.show) {
             bot.updateOdometry();
             optimizer.update();
+            telemetry = telemetryHandler.addOdometry(telemetry, bot);
         }else{
+            double ydebA = optimizer.calcAvg(bot.odometry.Ydebug);
+            double xdebA = optimizer.calcAvg(bot.odometry.Xdebug);
+            double hdebA = optimizer.calcAvg(bot.odometry.Hdebug);
+            double ydebM = optimizer.max(bot.odometry.Ydebug);
+            double xdebM = optimizer.max(bot.odometry.Xdebug);
+            double hdebM = optimizer.max(bot.odometry.Hdebug);
+
+
             telemetry.addData("avgDeltaTime", optimizer.avgDeltaTime);
+            telemetry.addData("xdebA", xdebA);
+            telemetry.addData("ydebA", ydebA);
+            telemetry.addData("hdebA", hdebA);
+            telemetry.addData("xdebM", xdebM);
+            telemetry.addData("ydebM", ydebM);
+            telemetry.addData("hdebM", hdebM);
             telemetry.update();
         }
 
         if(gamepad1.a && !optimizer.show){
             optimizer.show();
         }
-        telemetry = telemetryHandler.addOdometry(telemetry, bot);
-        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
+
+//        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
         telemetry.update();
 
 
