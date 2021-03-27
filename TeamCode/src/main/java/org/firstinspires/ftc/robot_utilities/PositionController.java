@@ -95,6 +95,8 @@ public class PositionController {
         rightSpeed -= power2;
 
         packet.put("Rotation to point", rotationToPoint);
+        packet.put("Target Distance", targetDistance);
+        packet.put("Current Distance", currentDistance);
         packet.put("Position Power", power2);
         packet.put("Rotation Power", power);
 
