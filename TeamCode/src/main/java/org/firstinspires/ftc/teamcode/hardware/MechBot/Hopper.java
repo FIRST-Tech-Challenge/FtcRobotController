@@ -45,9 +45,9 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private final double HOLDER_INIT = HOLDER_IN;
     private final double HOLDER_OUT = 0.15;
 
-    private final double BLOCKER_UP = 0.72;
+    private final double BLOCKER_UP = 0.2;
     private final double BLOCKER_INIT = BLOCKER_UP;
-    private final double BLOCKER_DOWN = 0.31;
+    private final double BLOCKER_DOWN = 0.72;
 
     private boolean feederIsIn = true;
     private boolean holderIsIn = true;
