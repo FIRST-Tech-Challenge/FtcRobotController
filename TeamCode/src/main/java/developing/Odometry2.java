@@ -36,6 +36,9 @@ public class Odometry2 {
     public double s = 0;
     public double c1 = 0;
 
+    public boolean test = false;
+    public int testCounter = 0;
+
 
     //resets positions to 0
     public void reset() {
@@ -61,6 +64,13 @@ public class Odometry2 {
         calcDVectors();
         updateDeltaXY();
         updateGlobalXYH();
+
+        if (deltaH == 0 && deltaLP != 0 && !test) {
+            test = true;
+            testCounter++;
+        } else {
+            test = false;
+        }
 
     }
 

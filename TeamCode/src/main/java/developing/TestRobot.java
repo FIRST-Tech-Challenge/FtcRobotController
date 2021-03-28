@@ -1,6 +1,7 @@
 package developing;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,6 +17,8 @@ import autofunctions.Odometry;
 import global.AngularPosition;
 import global.Constants;
 import telefunctions.Cycle;
+import util.CodeSeg;
+import util.ThreadHandler;
 
 public class TestRobot {
 
@@ -56,6 +59,8 @@ public class TestRobot {
     public ButtonController outtakeButtonController = new ButtonController();
 
     public Odometry2 odometry = new Odometry2();
+
+    public ThreadHandler odometryThread = new ThreadHandler();
 
 
     public void init(HardwareMap hwMap) {
@@ -252,6 +257,19 @@ public class TestRobot {
 
     public void extendWobbleGoal(boolean extend) {
         wge.setPosition(wgeControl.update(false, extend));
+    }
+
+    public void startOdoThreadAuto(LinearOpMode op){
+        odometryThread.startAutoThread(new CodeSeg() {
+            @Override
+            public void run() {
+                odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
+            }
+        }, op, 30);
+    }
+
+    public void stopOdoThreadAuto() {
+        odometryThread.stopAutoThread();
     }
 
 }

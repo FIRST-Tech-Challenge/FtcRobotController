@@ -25,6 +25,8 @@ public class TestOdometry extends OpMode {
             bot.updateOdometry();
             optimizer.update();
             telemetry = telemetryHandler.addOdometry(telemetry, bot);
+            telemetry.addData("BOOLEAN IS", bot.odometry.test);
+            telemetry.addData("COUNTER IS", bot.odometry.testCounter);
         }else{
             double ydebA = optimizer.calcAvg(bot.odometry.Ydebug);
             double xdebA = optimizer.calcAvg(bot.odometry.Xdebug);
@@ -41,6 +43,7 @@ public class TestOdometry extends OpMode {
             telemetry.addData("xdebM", xdebM);
             telemetry.addData("ydebM", ydebM);
             telemetry.addData("hdebM", hdebM);
+
             telemetry.update();
         }
 
