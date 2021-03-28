@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.technototes.library.command.simple.MecanumDriveCommand;
 import com.technototes.logger.Color;
 import com.technototes.logger.Log;
 import com.technototes.logger.Loggable;
 
-import org.firstinspires.ftc.teamcode.subsystems.DrivebaseSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.OldDrivebaseSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IndexSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DrivebaseSubsystem;
 
 /** Class for the subsystems on the robot
  *
@@ -19,6 +20,8 @@ public class Robot implements Loggable {
 
     //drivebase
     public DrivebaseSubsystem drivebaseSubsystem;
+
+    public OdometrySubsystem odometrySubsystem;
 
     //index
     @Log.NumberBar(name = "Ring Capacity", index = -1, color = Color.DARK_GRAY, completeBarColor = Color.YELLOW, incompleteBarColor = Color.LIGHT_GRAY)
@@ -39,7 +42,9 @@ public class Robot implements Loggable {
     public Robot(){
         hardware = new Hardware();
 
-        drivebaseSubsystem = new DrivebaseSubsystem(hardware.flDriveMotor, hardware.frDriveMotor, hardware.rlDriveMotor, hardware.rrDriveMotor, hardware.imu);
+        odometrySubsystem = new OdometrySubsystem(hardware.leftOdometryEncoder, hardware.rightOdometryEncoder, hardware.frontOdometryEncoder);
+
+        drivebaseSubsystem = new DrivebaseSubsystem(hardware.flDriveMotor, hardware.frDriveMotor, hardware.rlDriveMotor, hardware.rrDriveMotor, hardware.imu, odometrySubsystem);
 
         indexSubsystem = new IndexSubsystem(hardware.indexPivotServo, hardware.indexArmServo);
 

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.drivebase;
 
+import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.technototes.library.command.Command;
-import com.technototes.library.command.ParallelCommandGroup;
 
 import org.firstinspires.ftc.teamcode.subsystems.DrivebaseSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
@@ -10,7 +10,7 @@ public class AlignToShootCommand extends Command {
     public DrivebaseSubsystem drivebaseSubsystem;
     public ShooterSubsystem shooterSubsystem;
     public AlignToShootCommand(DrivebaseSubsystem drive, ShooterSubsystem shoot){
-        addRequirements(drive, shoot);
+        addRequirements(shoot);//, drive.dummySubsystem);
         drivebaseSubsystem = drive;
         shooterSubsystem = shoot;
     }
@@ -28,6 +28,10 @@ public class AlignToShootCommand extends Command {
     @Override
     public boolean isFinished() {
         //check if changes are made
-        return shooterSubsystem.getVelocity()>0.9;
+        return true;//return shooterSubsystem.getVelocity()>0.9;
     }
+//    @Override
+//    public void end(boolean cancel) {
+//        drivebaseSubsystem.setDriveSignal(new DriveSignal());
+//    }
 }

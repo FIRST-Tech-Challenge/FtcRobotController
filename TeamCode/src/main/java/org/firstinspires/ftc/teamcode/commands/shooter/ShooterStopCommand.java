@@ -15,6 +15,7 @@ public class ShooterStopCommand extends Command {
 
     @Override
     public void execute() {
+        System.out.print("stopshooter");
         subsystem.setVelocity(0);
     }
 

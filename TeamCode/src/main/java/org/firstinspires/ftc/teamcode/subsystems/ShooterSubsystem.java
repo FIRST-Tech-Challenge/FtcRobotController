@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.technototes.library.hardware.motor.EncodedMotor;
 import com.technototes.library.hardware.servo.Servo;
 import com.technototes.library.subsystem.motor.EncodedMotorSubsystem;
@@ -16,6 +15,7 @@ public class ShooterSubsystem extends EncodedMotorSubsystem implements Stated<Do
         super(m);
         motor = m;
         servo = s;
+        s.setRange(0.5, 1);
 
     }
     public void setVelocity(double ticksPerSecond){
@@ -32,7 +32,11 @@ public class ShooterSubsystem extends EncodedMotorSubsystem implements Stated<Do
     }
 
     public void setFlapPosition(double pos){
-        servo.setPosition((pos+1)*0.5);
+        servo.setPosition(pos);
+    }
+
+    public double getFlapPosition(){
+        return servo.getPosition();
     }
 
     @Override

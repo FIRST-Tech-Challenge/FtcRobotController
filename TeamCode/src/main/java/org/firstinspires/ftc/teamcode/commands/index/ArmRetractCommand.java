@@ -9,7 +9,7 @@ public class ArmRetractCommand extends WaitCommand {
     public ArmRetractCommand(IndexSubsystem subsystem){
         //COOLDOWN
         super(0.1);
-        //addRequirements(subsystem);
+        addRequirements(subsystem);
         indexSubsystem = subsystem;
     }
 
@@ -18,3 +18,4 @@ public class ArmRetractCommand extends WaitCommand {
         indexSubsystem.retractArm();
     }
 }
+

@@ -9,7 +9,7 @@ public class IndexPivotDownCommand extends WaitCommand {
     public IndexPivotDownCommand(IndexSubsystem subsystem){
         //COOLDOWN
         super(1);
-        //addRequirements(subsystem);
+        addRequirements(subsystem);
         indexSubsystem = subsystem;
     }
 

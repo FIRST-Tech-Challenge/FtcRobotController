@@ -1,0 +1,49 @@
+//
+// build.gradle in Ftc3543Lib
+//
+apply plugin: 'com.android.library'
+
+android {
+
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 28
+    }
+
+    compileSdkVersion 28
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation('org.ejml:ejml-simple:0.39') {
+        exclude group: 'org.ejml', module: 'ejml-all'
+    }
+
+    testImplementation(platform('org.junit:junit-bom:5.7.0'))
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.7.0')
+    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.7.0')
+    testImplementation('org.mockito:mockito-core:3.5.11')
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.7.0"
+
+//    compileOnly 'org.firstinspires.ftc:Inspection:6.0'
+//    compileOnly 'org.firstinspires.ftc:Blocks:6.0'
+//    compileOnly 'org.firstinspires.ftc:RobotCore:6.0'
+//    compileOnly 'org.firstinspires.ftc:RobotServer:6.0'
+//    compileOnly 'org.firstinspires.ftc:OnBotJava:6.0'
+//    compileOnly 'org.firstinspires.ftc:Hardware:6.0'
+//    compileOnly 'org.firstinspires.ftc:FtcCommon:6.0'
+//    compileOnly 'androidx.appcompat:appcompat:1.2.0'
+}
+
+repositories {
+    flatDir {
+        dirs '../libs'
+    }
+}
+
+apply from: '../build.dependencies.gradle'

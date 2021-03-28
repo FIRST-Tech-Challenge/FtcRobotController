@@ -21,7 +21,7 @@ public class WobbleSubsystem extends ServoSubsystem implements Stated<String> {
     }
 
     public enum ClawPosition{
-        OPEN(1), CLOSED(0);
+        OPEN(0), CLOSED(1);
         public double position;
         ClawPosition(double pos) {
             position = pos;

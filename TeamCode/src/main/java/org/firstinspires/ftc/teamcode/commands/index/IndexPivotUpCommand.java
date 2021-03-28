@@ -8,8 +8,8 @@ public class IndexPivotUpCommand extends WaitCommand {
     public IndexSubsystem indexSubsystem;
     public IndexPivotUpCommand(IndexSubsystem subsystem){
         //COOLDOWN
-        super(1);
-        //addRequirements(subsystem);
+        super(0.2);
+        addRequirements(subsystem);
         indexSubsystem = subsystem;
     }
 

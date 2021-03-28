@@ -8,12 +8,10 @@ import com.technototes.library.control.gamepad.CommandAxis;
 import com.technototes.library.control.gamepad.CommandButton;
 import com.technototes.library.control.gamepad.CommandGamepad;
 
-import org.firstinspires.ftc.teamcode.commands.SequentialCommandGroup;
+import com.technototes.library.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.commands.drivebase.AlignToShootCommand;
 import org.firstinspires.ftc.teamcode.commands.drivebase.DriveCommand;
-import org.firstinspires.ftc.teamcode.commands.drivebase.NormalSpeedCommand;
-import org.firstinspires.ftc.teamcode.commands.drivebase.SnailSpeedCommand;
-import org.firstinspires.ftc.teamcode.commands.drivebase.TurboSpeedCommand;
+import org.firstinspires.ftc.teamcode.commands.drivebase.TestSplineCommand;
 import org.firstinspires.ftc.teamcode.commands.index.ArmExtendCommand;
 import org.firstinspires.ftc.teamcode.commands.index.ArmRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.index.IndexPivotDownCommand;
@@ -47,7 +45,7 @@ public class OperatorInterface {
      */
     public CommandButton intakeMainButton, intakeSpitButton;
 
-    public CommandButton wobbleClawButton, wobbleArmButton;
+    public CommandButton testButton, wobbleArmButton;
 
     public CommandButton firePrepButton;
     public CommandAxis fireAxis;
@@ -69,7 +67,7 @@ public class OperatorInterface {
         intakeMainButton = driverGamepad.a;
         intakeSpitButton = driverGamepad.b;
 
-        wobbleClawButton = driverGamepad.x;
+        testButton = driverGamepad.x;
         wobbleArmButton = driverGamepad.y;
 
         firePrepButton = driverGamepad.leftBumper;
@@ -86,8 +84,10 @@ public class OperatorInterface {
         turboModeButton = driverGamepad.leftStickButton;
         snailModeButton = driverGamepad.rightStickButton;
 
-        wobbleArmButton.whenToggled(new ParallelCommandGroup(new WobbleCloseCommand(robot.wobbleSubsystem), new WobbleLowerCommand(robot.wobbleSubsystem)))
-                .whenInverseToggled(new SequentialCommandGroup(new WobbleOpenCommand(robot.wobbleSubsystem), new WobbleRaiseCommand(robot.wobbleSubsystem)));
+        wobbleArmButton.whenToggled(new ParallelCommandGroup(new WobbleOpenCommand(robot.wobbleSubsystem), new WobbleLowerCommand(robot.wobbleSubsystem)))
+                .whenInverseToggled(new SequentialCommandGroup(new WobbleCloseCommand(robot.wobbleSubsystem), new WobbleRaiseCommand(robot.wobbleSubsystem)));
+
+        //testButton.whenPressed(new TestSplineCommand(robot.drivebaseSubsystem));
 
         //intake commands
         intakeMainButton.whenPressed(new IntakeInCommand(robot.intakeSubsystem));
@@ -108,12 +108,12 @@ public class OperatorInterface {
                 .whenReleased(new IntakeInCommand(robot.intakeSubsystem));
         //fireAxis.whenReleased(new ArmRetractCommand(robot.indexSubsystem));
         //drive command
-        //CommandScheduler.getInstance().scheduleJoystick(//new DriveCommand(robot.drivebaseSubsystem, driveLStick, driveRStick), ()->true);
+        CommandScheduler.getInstance().scheduleJoystick(new DriveCommand(robot.drivebaseSubsystem, driveLStick, driveRStick), ()->true);
 
-        snailModeButton.whenPressed(new SnailSpeedCommand(robot.drivebaseSubsystem))
-                .whenReleased(new NormalSpeedCommand(robot.drivebaseSubsystem));
-        turboModeButton.whenPressed(new TurboSpeedCommand(robot.drivebaseSubsystem))
-                .whenReleased(new NormalSpeedCommand(robot.drivebaseSubsystem));
+//        snailModeButton.whenPressed(new SnailSpeedCommand(robot.drivebaseSubsystem))
+//                .whenReleased(new NormalSpeedCommand(robot.drivebaseSubsystem));
+//        turboModeButton.whenPressed(new TurboSpeedCommand(robot.drivebaseSubsystem))
+//                .whenReleased(new NormalSpeedCommand(robot.drivebaseSubsystem));
 
     }
 }

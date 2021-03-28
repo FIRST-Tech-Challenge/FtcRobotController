@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.technototes.library.hardware.motor.Motor;
 import com.technototes.library.subsystem.motor.MotorSubsystem;
-import com.technototes.logger.Loggable;
 import com.technototes.logger.Stated;
 
 /** Intake subsystem
