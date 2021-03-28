@@ -398,14 +398,7 @@ public class Path2 {
             op.telemetry.addData("Executing; rfsQueue Size", this.rfsQueue.size());
             op.telemetry.update();
 
-            if(bot.outtaking){
-                bot.outtakeWithCalculations();
-            }else{
-                if(bot.outr.getPower() != 0) {
-                    bot.outr.setPower(0);
-                    bot.outl.setPower(0);
-                }
-            }
+            bot.outtakeWithCalculations();
 
             update();
         }

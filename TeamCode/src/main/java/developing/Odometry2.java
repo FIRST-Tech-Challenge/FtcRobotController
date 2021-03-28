@@ -106,7 +106,7 @@ public class Odometry2 {
     //Calculate delta x using encoder position and d vectors, inputs encoder reading and d vector
     public double calcX(double E, Vector d1) {
 //        return ign0(c1, 0.5 * ((deltaCP * deltaH * s) / c1) - (E * deltaH) + (d.x * c1) - (d.y * s));
-        return ign0(c1,(d*c1) - (((deltaRP-deltaLP)*deltaH)-(d*s*s))/(c1));
+        return ign0(c1,-(d*c1) - ((deltaRP-deltaLP)*deltaH-(d*s*s))/(c1));
     }
 
     //Calculate delta y using x
