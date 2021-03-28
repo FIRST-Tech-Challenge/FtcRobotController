@@ -48,10 +48,12 @@ public abstract class MasterAutonomous extends MasterOpMode
 
         while(settingUp && !isStopRequested())
         {
+            driver1.update();
+            driver2.update();
             // Select alliance
-            if (driver1.isButtonJustPressed(Button.B))
+            if (driver1.isButtonPressed(Button.B))
                 isRedAlliance = true;
-            else if (driver1.isButtonJustPressed(Button.X))
+            else if (driver1.isButtonPressed(Button.X))
                 isRedAlliance = false;
 
             //Toggles through moving wobble goal
@@ -71,6 +73,8 @@ public abstract class MasterAutonomous extends MasterOpMode
                 settingUp = false;
 
             // Display the current setup
+            telemetry.addData("a just pressed", driver1.getLeftStickX());
+            telemetry.addData("a presses", driver1.isButtonPressed(Button.A));
             telemetry.addData("Is on red alliance: ", isRedAlliance);
             telemetry.addData("Is scoring wobble goal: ", moveWobbleGoal);
             telemetry.addData("Start position: ", matchStartPosition);
@@ -79,6 +83,7 @@ public abstract class MasterAutonomous extends MasterOpMode
 
         }
 
+        telemetry.addData("State: ", "waitForStart()");
         //Sets the match start position
         xPos = startPositions[matchStartPosition][0];
         yPos = startPositions[matchStartPosition][1];

@@ -35,6 +35,9 @@ public abstract class MasterOpMode extends LinearOpMode
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        driver1 = new DriverInput(gamepad1);
+        driver2 = new DriverInput(gamepad2);
     }
 
     //This method drives mecanum when given an angle drive power and turning power
