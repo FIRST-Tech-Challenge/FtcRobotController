@@ -92,43 +92,51 @@ public class Odometry2 {
         dr.setXY((dR * c1) - (c * s), (-c * c1) - (dR * s));
     }
 
-    //Calculate x using encoder position and d vectors, inputs encoder reading and d vector
+    //Calculate delta x using encoder position and d vectors, inputs encoder reading and d vector
     public double calcX(double E, Vector d) {
         return ign0(c1, 0.5 * ((deltaCP * deltaH * s) / c1) - (E * deltaH) + (d.x * c1) - (d.y * s));
     }
 
-    //Calculate y using x
-    public double calcY(double x) {
-        return ign0(c1, ((deltaCP * deltaH) - (x * s)) / c1);
+    //Calculate delta y using x
+    public double calcY() {
+        return ign0(c1, ((deltaCP * deltaH) - (deltaX * s)) / c1)/2;
+//        return ign0(s, (-(deltaX * c1)) / s);
+
+//        return ign0(c1,((deltaLP*deltaH)+((x-dl.x)*c1)/s)+dl.y);
+//        return ign0(deltaH,((deltaRP + deltaLP) * s )/ (2 * deltaH));
+
     }
 
     //calculate average x and use that to calculate average y and then update
     public void updateDeltaXY() {
         deltaX = 0.5 * (calcX(deltaLP, dl) + calcX(deltaRP, dr));
-        deltaY = calcY(deltaX);
+        deltaY = calcY();
     }
 
     //update global x y and h
     public void updateGlobalXYH() {
 
-        double oldY = ign0(deltaH, ((deltaRP + deltaLP) * s )/ (2 * deltaH));
-        double oldX = ign0(deltaH, deltaCP - (oldY * c1 / deltaH));
+//        double oldY = ign0(deltaH, ((deltaRP + deltaLP) * s )/ (2 * deltaH));
+        double oldY = ign0(deltaH, (deltaRP + deltaLP)/2);
+        double oldX = ign0(deltaH, deltaCP - (deltaH * Constants.RADIUS_CENTER_TO_ENC)+(oldY * c1 / deltaH));
         double oldH = (deltaRP - deltaLP) / (dL+dR);
 
 
 
-        Ydebug.add(deltaY - oldY);
-        Xdebug.add(deltaX - oldX);
+        Ydebug.add(deltaY);
+        Xdebug.add(deltaX-oldX);
         Hdebug.add(deltaH - oldH);
 
 //        deltaH = oldH;
 
-        deltaY = oldY;
-        deltaX = oldX;
+//        deltaY = oldY;
+//        deltaX = oldX;
 
         Vector deltaGlobalPos = new Vector(deltaX, deltaY).getRotatedVec(h, Vector.angle.DEGREES);
         x += deltaGlobalPos.x;
         y += deltaGlobalPos.y;
+//        x += deltaX;
+//        y += deltaY;
         h += Math.toDegrees(deltaH);
     }
 

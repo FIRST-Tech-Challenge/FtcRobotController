@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Const;
 
 import global.Constants;
-@Disabled
+
 @TeleOp(name = "TestOp")
 public class TestTele extends OpMode {
     TestRobot bot = new TestRobot();
@@ -33,6 +33,7 @@ public class TestTele extends OpMode {
             bot.fastMode = false;
         }
 
+
         if(!bot.areAutomodulesRunning()) {
             bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
@@ -47,16 +48,16 @@ public class TestTele extends OpMode {
             bot.shooter.start();
         }
 
-        bot.extendWobbleGoal(gamepad2.a);
+//        bot.extendWobbleGoal(gamepad2.a);
 
-        bot.updateOdometry();
+//        bot.updateOdometry();
 
         
 //        telemetry = telemetryHandler.addAutoAimer(telemetry, bot);
 //        telemetry = telemetryHandler.addOuttake(telemetry, bot);
 //        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
-
-        telemetry = telemetryHandler.addOdometry(telemetry, bot);
+//
+//        telemetry = telemetryHandler.addOdometry(telemetry, bot);
 
         telemetry.update();
 

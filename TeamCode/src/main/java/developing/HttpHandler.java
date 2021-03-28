@@ -1,21 +1,54 @@
-//package developing;
-//
-//import java.io.IOException;
-//
-//import okhttp3.MediaType;
-//import okhttp3.OkHttpClient;
-//import okhttp3.Request;
-//import okhttp3.RequestBody;
-//import okhttp3.Response;
-//
-//
-//public class HttpHandler {
-//    public void sendGetRequest(String text){
-//        OkHttpClient client = new OkHttpClient().newBuilder().build();
-//        MediaType mediaType = MediaType.parse("application/json");
-//        RequestBody body = RequestBody.create(mediaType, text);
-//        Request request = new Request.Builder().url("http://127.0.0.1:9200/robot/data/1").method("POST", body).addHeader("Content-Type", "application/json").build();
-//        try {Response response = client.newCall(request).execute();} catch (IOException ignore) {}
-//    }
-//
-//}
+package developing;
+
+import java.net.*;
+import java.io.*;
+
+public class HttpHandler {
+    // initialize socket and input output streams
+    private Socket socket		 = null;
+    private DataInputStream input = null;
+    private DataOutputStream out	 = null;
+
+    // constructor to put ip address and port
+    public HttpHandler(String address, int port)
+    {
+        // establish a connection
+        try
+        {
+            socket = new Socket(address, port);
+
+            // takes input from terminal
+
+            // sends output to the socket
+            out = new DataOutputStream(socket.getOutputStream());
+        } catch(IOException ignore) {}
+
+        // string to read message from input
+        String line = "";
+
+        // keep reading until "Over" is input
+        while (!line.equals("over"))
+        {
+            try
+            {
+                String test = "test";
+                out.writeUTF(test);
+            }
+            catch(IOException i)
+            {
+            }
+        }
+
+        // close the connection
+        try
+        {
+            input.close();
+            out.close();
+            socket.close();
+        }
+        catch(IOException i)
+        {
+        }
+    }
+
+}
