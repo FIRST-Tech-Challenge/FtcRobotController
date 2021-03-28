@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team417_2020.Resources.FIRFilter;
 import org.firstinspires.ftc.team417_2020.Resources.PIDFilter;
@@ -18,6 +19,8 @@ abstract public class MasterOpMode extends LinearOpMode {
     public DcMotor motorFR = null; // hub 1 port 0
     public DcMotor motorBL = null; // hub 2 port 1
     public DcMotor motorBR = null; // hub 1 port 1
+    public DcMotor motorWobbleGoalArm = null; //
+    public Servo wobbleGoalGrabber = null;//
 
     public BNO055IMU imu;
 
@@ -25,6 +28,8 @@ abstract public class MasterOpMode extends LinearOpMode {
     static final double DRIVE_GEAR_REDUCTION = 1.0; // This is < 1.0 if geared UP    16.0 / 24.0
     static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double WOBBLEGOALGRABBERIN = 0.0; //initial position of servo
+
 
     PIDFilter turnFilter;
     PIDFilter moveFilter;
@@ -49,22 +54,26 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
-
+        motorWobbleGoalArm = hardwareMap.dcMotor.get("motorWobbleGoalArm");
+        wobbleGoalGrabber = hardwareMap.servo.get("wobbleGoalGrabber");
 
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorWobbleGoalArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorWobbleGoalArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorWobbleGoalArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // reverse front and back right motors
         motorFL.setDirection(DcMotor.Direction.FORWARD);
@@ -77,6 +86,9 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorFR.setPower(0);
         motorBL.setPower(0);
         motorBR.setPower(0);
+        motorWobbleGoalArm.setPower(0);
+
+        wobbleGoalGrabber.setPosition(WOBBLEGOALGRABBERIN);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;

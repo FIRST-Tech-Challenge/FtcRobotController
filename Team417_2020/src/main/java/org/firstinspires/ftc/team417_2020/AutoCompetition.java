@@ -16,11 +16,11 @@ public class AutoCompetition extends MasterAutonomous {
 
     // Constants
     static final int MINIMUM_RING_AREA = 1800;
-    static final int PARKING_Y_POSITION = 73;
-    static final int A_C_TARGET_ZONE_X_POSITION = -29;
-    static final int A_TARGET_ZONE_Y_POSITION = 60;
-    static final int B_TARGET_ZONE_Y_POSITION = 90;
-    static final int C_TARGET_ZONE_Y_POSITION = 114;
+    static final int PARKING_Y_POSITION = -58;
+    static final int A_C_TARGET_ZONE_X_POSITION = 40;
+    static final int A_TARGET_ZONE_Y_POSITION = -72;
+    static final int B_TARGET_ZONE_Y_POSITION = -86;
+    static final int C_TARGET_ZONE_Y_POSITION = -110;
 
     RingDetectionOpenCV ringDetector = new RingDetectionOpenCV();
     OpenCvCamera webcam;
@@ -39,44 +39,48 @@ public class AutoCompetition extends MasterAutonomous {
             telemetry.update();
         }
 
+
         waitForStart();
 
+        //strafe away from wall and pivot
         move(-6, 0, 0.7);
-        pivot(90, 0.4);
+        pivot(-90, 0.4);
         // 0 rings -> Zone A
         // 1 rings -> Zone B
         // 4 rings -> Zone C
-        switch (numRings) {
-            case 0:
-                // Nagivate to Zone A
-                //move(0, A_TARGET_ZONE_Y_POSITION, 0.7);
-                move(A_C_TARGET_ZONE_X_POSITION, A_TARGET_ZONE_Y_POSITION, 0.7);
-                openWobbleGoalArm();
-                move(A_C_TARGET_ZONE_X_POSITION, (A_TARGET_ZONE_Y_POSITION - 20), 0.7);
-                break;
-            case 1:
-                // Navigate to Zone B
-                move(A_C_TARGET_ZONE_X_POSITION, 24, 0.7);
-                move(0, B_TARGET_ZONE_Y_POSITION, 0.7);
-                openWobbleGoalArm();
-                break;
+        deliverWobbleGoal();
 
-            case 4:
-                // Navigate to Zone C
-                move(A_C_TARGET_ZONE_X_POSITION, 24, 0.7);
-                move(A_C_TARGET_ZONE_X_POSITION, C_TARGET_ZONE_Y_POSITION, 0.7);
-                openWobbleGoalArm();
-                break;
+        /*
+        //Returning to get second wobble goal
+        //move left
+        move(-20, A_TARGET_ZONE_Y_POSITION, 0.9);
+        //move forward
+        move(-20, 24, 0.9);
+        pivot(180,0.7);
+        //wobbleGoalGrabber
+        pivot(180,0.7);
+        move(0, 0, 0.9);
 
-        }
+        deliverWobbleGoal();
+        */
+        //grab
+        //pivot
+        //move - tbd
+
+        //deliverWobbleGoal
+
 
         // Park over white line
-        move(0, PARKING_Y_POSITION, 0.7);
+        move(-10, PARKING_Y_POSITION, 0.9);
+
+
 
     }
 
     // todo program Wobble Goal arm
     public void openWobbleGoalArm() {
+
+
 
     }
 
@@ -136,4 +140,39 @@ public class AutoCompetition extends MasterAutonomous {
         });
         webcam.setPipeline(ringDetector);
     }
+
+    public void deliverWobbleGoal() throws InterruptedException {
+        switch (numRings) {
+            case 0:
+                // Nagivate to Zone A
+                move(A_C_TARGET_ZONE_X_POSITION, -24, 0.9);
+                move(A_C_TARGET_ZONE_X_POSITION, A_TARGET_ZONE_Y_POSITION, 0.9);
+                openWobbleGoalArm();
+                //move(A_C_TARGET_ZONE_X_POSITION, (A_TARGET_ZONE_Y_POSITION + 15), 0.9);
+                break;
+
+            case 1:
+                // Navigate to Zone B
+                move(A_C_TARGET_ZONE_X_POSITION, -24, 0.9);
+                move(-13, B_TARGET_ZONE_Y_POSITION, 0.9);
+                openWobbleGoalArm();
+                break;
+
+            case 4:
+                // Navigate to Zone C
+                move(A_C_TARGET_ZONE_X_POSITION, -24, 0.9);
+                move(A_C_TARGET_ZONE_X_POSITION, C_TARGET_ZONE_Y_POSITION, 0.9);
+                openWobbleGoalArm();
+                break;
+
+        }
+
+
+    }
+
+
+
+
 }
+
+
