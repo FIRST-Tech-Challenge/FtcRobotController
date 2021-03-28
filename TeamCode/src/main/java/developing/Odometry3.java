@@ -80,17 +80,6 @@ public class Odometry3 {
 
     //update global x y and h
     public void updateGlobalXYH() {
-
-//        double oldY = ign0(deltaH, ((deltaRP + deltaLP) * s )/ (2 * deltaH));
-        double oldY = ign0(deltaH, (deltaRP + deltaLP) / 2);
-        double oldX = ign0(deltaH, deltaCP - (deltaH * Constants.RADIUS_CENTER_TO_ENC) + (oldY * c1 / deltaH));
-        double oldH = (deltaRP - deltaLP) / (2*d);
-
-
-        Ydebug.add(deltaY - oldY);
-        Xdebug.add(deltaX - oldX);
-        Hdebug.add(deltaH - oldH);
-
         Vector deltaGlobalPos = new Vector(deltaX, deltaY).getRotatedVec(h, Vector.angle.DEGREES);
         x += deltaGlobalPos.x;
         y += deltaGlobalPos.y;
@@ -116,15 +105,6 @@ public class Odometry3 {
         rp = r;
         lp = l;
         cp = c;
-    }
-
-    //returns out if inp is not 0
-    public double ign0(double inp, double out) {
-        if (inp != 0) {
-            return out;
-        } else {
-            return 0;
-        }
     }
 
     //Convert ticks to cm

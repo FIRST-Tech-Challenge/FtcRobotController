@@ -22,6 +22,12 @@ public class TestOdometry extends OpMode {
     public void loop() {
 
         if(!optimizer.show) {
+
+            double forward = -gamepad1.right_stick_y;
+            double strafe = gamepad1.right_stick_x;
+            double turn = -gamepad1.left_stick_x;
+
+            bot.moveTeleOp(forward, strafe, turn);
             bot.updateOdometry();
             optimizer.update();
             telemetry = telemetryHandler.addOdometry(telemetry, bot);
