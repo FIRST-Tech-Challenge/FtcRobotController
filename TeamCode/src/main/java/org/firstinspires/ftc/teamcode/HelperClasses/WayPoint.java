@@ -7,6 +7,12 @@ public class WayPoint {
         this.angle = angle;
         this.speed = speed;
     }
+    public void setWayPoint(double X, double Y, double angle) {
+        this.x = X;
+        this.y = Y;
+        this.angle = angle;
+    }
+
     public double x;
     public double y;
     public double angle;

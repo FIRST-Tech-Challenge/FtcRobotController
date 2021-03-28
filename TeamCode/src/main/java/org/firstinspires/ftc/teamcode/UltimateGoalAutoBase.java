@@ -38,7 +38,7 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
     public static float mmBotWidth = 18 * mmPerInch;            // ... or whatever is right for your robot
     public static float mmFTCFieldWidth = (12 * 12 - 2) * mmPerInch;   // the FTC field is ~11'10" center-to-center of the glass panels
     protected boolean skipThis = false;
-    protected boolean integrated = false;
+    protected boolean integrated = true;
 
     // The curve points we are going to use to do the whole auto.  Set in the alliance
     // specific autonomous.
@@ -62,6 +62,14 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
     protected WayPoint beforeStack;
     protected WayPoint collectStack;
 
+    // Quad stack stack collection points
+    protected WayPoint beforeQuadStack;
+    protected WayPoint collectQuadStack;
+    protected WayPoint collectQuadStraggler;
+    protected WayPoint quadHighGoalCollecting;
+    protected WayPoint quadHighGoalFinal;
+    protected WayPoint quadSecondWobbleStart;
+
     // Pickup the second wobble goal.
     protected WayPoint wobble2PickupLineup;
     protected WayPoint wobble2Pickup;
@@ -71,6 +79,7 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
 
     // Shoot the collected rings in the high goal.
     protected WayPoint highGoal;
+    protected WayPoint longShotHighGoal;
 
     // Deliver the second wobble goal.
     protected WayPoint targetZone2;
@@ -101,6 +110,10 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
         MyPosition.giveMePositions(robot.getLeftEncoderWheelPosition(),
                 robot.getRightEncoderWheelPosition(),
                 robot.getStrafeEncoderWheelPosition());
+        if(opModeIsActive()) {
+            robot.finalAutoPosition.setWayPoint(MyPosition.worldXPosition, MyPosition.worldYPosition,
+                    MyPosition.worldAngle_rad);
+        }
 
         // Progress the robot actions.
         performRobotActions();

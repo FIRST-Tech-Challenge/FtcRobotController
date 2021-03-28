@@ -39,14 +39,15 @@ import static java.lang.Math.sqrt;
  */
 public class UltimateGoalRobot
 {
-    public static WayPoint finalAutoPosition = new WayPoint(0, 0, 0, 1.0);
+    public static WayPoint finalAutoPosition;
 
     /* Public OpMode members. */
     public final static double WOBBLE_ARM_MIN = 0.300;
     public final static double WOBBLE_ARM_MAX = 3.2;
-//    public final static double SHOOT_VELOCITY = 1120;
-    public final static double SHOOT_VELOCITY = 1080;
-    public final static double SHOOT_POWERSHOT_VELOCITY = 950;
+    public final static double SHOOT_VELOCITY = 1180;
+    public final static double QUAD_HIGH_SHOT_VELOCITY = 1160;
+    public final static double LONG_SHOT_VELOCITY = 1080;
+    public final static double SHOOT_POWERSHOT_VELOCITY = 980;
     public final static double SHOOT_VELOCITY_ERROR = 20;
     public final static double THROTTLE_TIMEOUT = 7000;
     public final static double STRAFE_MULTIPLIER = 1.5;
@@ -306,6 +307,19 @@ public class UltimateGoalRobot
         shooter.setVelocity(shooterMotorTargetVelocity);
     }
 
+    public void shooterOnLongShotHighGoal() {
+        if(shooterMotorTargetVelocity != LONG_SHOT_VELOCITY) {
+            shooter.setVelocity(LONG_SHOT_VELOCITY);
+            shooterMotorTargetVelocity = LONG_SHOT_VELOCITY;
+        }
+    }
+
+    public void shooterOnQuadHighGoal() {
+        if(shooterMotorTargetVelocity != QUAD_HIGH_SHOT_VELOCITY) {
+            shooter.setVelocity(QUAD_HIGH_SHOT_VELOCITY);
+            shooterMotorTargetVelocity = QUAD_HIGH_SHOT_VELOCITY;
+        }
+    }
     public void shooterOnHighGoal() {
         if(shooterMotorTargetVelocity != SHOOT_VELOCITY) {
             shooter.setVelocity(SHOOT_VELOCITY);
@@ -674,7 +688,7 @@ public class UltimateGoalRobot
     // velocity.
     public void updateShooterStability() {
         // Verify this loop is at target velocity.
-        if(abs(shooter.getVelocity() - SHOOT_VELOCITY) <= SHOOT_VELOCITY_ERROR) {
+        if(abs(shooter.getVelocity() - shooterMotorTargetVelocity) <= SHOOT_VELOCITY_ERROR) {
             sequentialStableVelocityChecks++;
         } else {
             sequentialStableVelocityChecks = 0;
@@ -732,7 +746,7 @@ public class UltimateGoalRobot
     public final static double INJECTOR_FIRE_TIME = 200.0;
     public final static double INJECTOR_RESET_TIME = 200.0;
     public final static double INJECTOR_HOME_TIME = 100.0;
-    public final static double SHOOTER_THROTTLE_DELAY = 500.0;
+    public final static double SHOOTER_THROTTLE_DELAY = 5000.0;
 //    public final static double INJECTOR_HOME = 0.53;
 //    public final static double INJECTOR_RESET = 0.450;
 //    public final static double INJECTOR_FIRE = 0.850;
@@ -857,7 +871,6 @@ public class UltimateGoalRobot
                 break;
             case FIRING_THREE:
                 if(injectState == INJECTING.IDLE) {
-                    shooterOff();
                     tripleInjectState = TRIPLE_INJECTING.IDLE;
 //                    startInjecting();
                 }

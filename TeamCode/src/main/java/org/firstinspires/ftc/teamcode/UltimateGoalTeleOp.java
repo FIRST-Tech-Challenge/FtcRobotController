@@ -117,10 +117,7 @@ public class UltimateGoalTeleOp extends OpMode {
                     robot.getStrafeEncoderWheelPosition());
         }
 
-        robot.highGoal = new WayPoint(110.10, 153.99, Math.toRadians(84.45), 1.0);
-        robot.finalAutoPosition.x = 149.7584;
-        robot.finalAutoPosition.y = 22.86;
-        robot.finalAutoPosition.angle = Math.toRadians(90.0);
+        robot.highGoal = new WayPoint(110.10, 153.99, Math.toRadians(87.45), 1.0);
         MyPosition.setPosition(robot.finalAutoPosition.x, robot.finalAutoPosition.y,
                 robot.finalAutoPosition.angle);
     }
@@ -386,16 +383,14 @@ public class UltimateGoalTeleOp extends OpMode {
 		}
 
         if(!rightBumper2Held && rightBumper2Pressed) {
-            robot.shooterMotorTargetVelocity += 20;
-            robot.shooterOn();
-            rightBumper2Held = true;
+            robot.shooterOnPowershot();
+           rightBumper2Held = true;
         } else if(!rightBumper2Pressed) {
             rightBumper2Held = false;
         }
 
         if(!leftBumper2Held && leftBumper2Pressed) {
-            robot.shooterMotorTargetVelocity += 20;
-            robot.shooterOn();
+            robot.shooterOnHighGoal();
             leftBumper2Held = true;
         } else if(!leftBumper2Pressed) {
             leftBumper2Held = false;

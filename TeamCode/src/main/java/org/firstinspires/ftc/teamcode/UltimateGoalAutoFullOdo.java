@@ -66,32 +66,34 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
     }
 
     public void shootPowerShotStrafeStopStyle() {
-        robot.setShooterFlapPowerShot();
         robot.shooterOnPowershot();
         driveToWayPoint(aroundStartingStack1, true, true);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
         driveToWayPoint(powerShotFirst, false, false);
         sleep(500);
         robot.startInjecting();
-        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+        while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
             updatePosition();
         }
-        driveToWayPoint(powerShotSecond,false, false);
+        driveToWayPoint(powerShotSecond, false, false);
         robot.startInjecting();
-        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+        while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
             updatePosition();
         }
         driveToWayPoint(powerShotThird, false, false);
         robot.startInjecting();
-        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+        while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
             updatePosition();
         }
 
-        robot.shooterOff();
-        robot.setShooterFlapHighGoal();
+        if (randomizationPosition == 1) {
+            robot.shooterOff();
+        } else {
+            robot.shooterOnHighGoal();
+        }
     }
+
     public void shootPowerShotRotateStyle() {
-        robot.setShooterFlapPowerShot();
         robot.shooterOnPowershot();
         driveToWayPoint(aroundStartingStack1, true, true);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
@@ -112,10 +114,8 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
         }
 
         robot.shooterOff();
-        robot.setShooterFlapHighGoal();
     }
     public void shootPowerShotStrafeThroughStyle() {
-        robot.setShooterFlapPowerShot();
         robot.shooterOnPowershot();
         driveToWayPoint(aroundStartingStack1, true, true);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
@@ -136,21 +136,27 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
         }
 
         robot.shooterOff();
-        robot.setShooterFlapHighGoal();
     }
     public void shootHighGoal() {
-        robot.setShooterFlapHighGoal();
-        robot.shooterOnHighGoal();
-        driveToWayPoint(aroundStartingStack1, true, true);
-        robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
-        driveToWayPoint(powerShotThird, true, true);
-        driveToWayPoint(bumpStack, true, true);
-        driveToWayPoint(highGoal, false, false);
+        robot.shooterOnLongShotHighGoal();
+        driveToWayPoint(longShotHighGoal, false, false);
         robot.startTripleInjecting();
         while(opModeIsActive() && robot.tripleInjectState != UltimateGoalRobot.TRIPLE_INJECTING.IDLE) {
             updatePosition();
         }
-        robot.shooterOff();
+        robot.shooterOnQuadHighGoal();
+        robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
+        robot.setIntakeIn();
+        driveToWayPoint(beforeQuadStack, true, true);
+        driveToWayPoint(collectQuadStack, false, true);
+        driveToWayPoint(quadHighGoalCollecting, false, false);
+        robot.startInjecting();
+        // shoot
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+        robot.shooterOnHighGoal();
+        driveToWayPoint(collectQuadStraggler, true, true);
     }
 
     @Override
@@ -229,8 +235,9 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
             // Set our robot starting coordinates on the field.
             robot.resetReads();
             MyPosition.setPosition(startLocation.x, startLocation.y, startLocation.angle);
+            robot.finalAutoPosition = new WayPoint(startLocation.x, startLocation.y, startLocation.angle, 1.0);
 
-            switch(startShootingStyle) {
+            switch (startShootingStyle) {
                 case STRAFE_STOP:
                     shootPowerShotStrafeStopStyle();
                     break;
@@ -247,66 +254,68 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
 
             dropWobbleTargetZone();
 
-            if(randomizationPosition != 3) {
+            // This is for position 1 and 2
+            if (randomizationPosition != 3) {
                 driveToWayPoint(beforeStack, true, true);
                 robot.startRotatingArm(WOBBLE_ARM_GRABBING);
                 robot.setIntakeIn();
 
                 driveToWayPoint(collectStack, true, true);
-                driveToWayPoint(wobble2PickupLineup, true, false);
-                driveToWayPoint(wobble2Pickup, false, false);
+            // This is for position 3
             } else {
-                driveToWayPoint(wobblePullAway, true, true);
-                driveToWayPoint(beforeStack, true, true);
+                driveToWayPoint(quadSecondWobbleStart, true, true);
                 robot.startRotatingArm(WOBBLE_ARM_GRABBING);
-                driveToWayPoint(wobble2PickupLineup, true, false);
-                driveToWayPoint(wobble2Pickup, false, false);
-
+                robot.setIntakeOff();
             }
 
+            driveToWayPoint(wobble2PickupLineup, true, false);
+            driveToWayPoint(wobble2Pickup, false, false);
+
             robot.startClawToggle(false);
-            while(opModeIsActive() && robot.grabState != IDLE) {
+            while (opModeIsActive() && robot.grabState != IDLE) {
                 updatePosition();
             }
             robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
-            while(opModeIsActive() && robot.armMovement != UltimateGoalRobot.WOBBLE_ARM_ROTATOR.IDLE) {
+            while (opModeIsActive() && robot.armMovement != UltimateGoalRobot.WOBBLE_ARM_ROTATOR.IDLE) {
                 updatePosition();
             }
 
-            if(randomizationPosition == 1) {
+            if (randomizationPosition == 1) {
+                robot.shooterOff();
                 driveToWayPoint(highGoal, true, true);
-            } else if(randomizationPosition == 2) {
-                robot.startInjectingJiggle();
+                robot.setIntakeOff();
+            } else if (randomizationPosition == 2) {
                 driveToWayPoint(highGoal, false, false);
                 robot.startInjecting();
                 while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
                     updatePosition();
                 }
+                robot.shooterOff();
+                robot.setIntakeOff();
             } else if (randomizationPosition == 3) {
-                robot.startInjectingJiggle();
-                driveToWayPoint(highGoal, true, true);
-//                robot.startTripleInjecting();
-//                while (opModeIsActive() && robot.tripleInjectState != UltimateGoalRobot.TRIPLE_INJECTING.IDLE) {
-//                    updatePosition();
-//                }
+                driveToWayPoint(quadHighGoalFinal, false, false);
+                robot.startTripleInjecting();
+                while (opModeIsActive() && robot.tripleInjectState != UltimateGoalRobot.TRIPLE_INJECTING.IDLE) {
+                    updatePosition();
+                }
+                robot.shooterOff();
             }
             driveToWayPoint(targetZone2, false, true);
             robot.startClawToggle(true);
-            while(opModeIsActive() && robot.grabState != IDLE) {
+            while (opModeIsActive() && robot.grabState != IDLE) {
                 updatePosition();
             }
 
             // When we run out of time, the wobble goal arm keeps rotating and will break
             // your potentiometer.
-//            robot.startRotatingArm(WOBBLE_ARM_STOWED);
             driveToWayPoint(park, false, true);
             robot.startClawToggle(false);
-            while(opModeIsActive() && robot.grabState != IDLE) {
+            while (opModeIsActive() && robot.grabState != IDLE) {
                 updatePosition();
             }
         }
 
-        robot.finalAutoPosition = new WayPoint(MyPosition.worldXPosition, MyPosition.worldYPosition, MyPosition.worldAngle_rad, 1.0);
+        updatePosition();
         if (tfod != null) {
             tfod.shutdown();
         }
