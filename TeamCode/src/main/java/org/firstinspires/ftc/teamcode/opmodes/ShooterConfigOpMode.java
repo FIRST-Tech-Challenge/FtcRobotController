@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.commands.shooter.ShooterSetSpeedCommand;
 public class ShooterConfigOpMode extends CommandOpMode implements Loggable {
     @LogConfig.Disabled
     public Robot robot;
-    
+
     @Override
     public void uponInit() {
         robot = new Robot();
@@ -33,7 +33,7 @@ public class ShooterConfigOpMode extends CommandOpMode implements Loggable {
         driverGamepad.dpadDown.whenPressed(new ShooterSetSpeedCommand(robot.shooterSubsystem, ()->robot.shooterSubsystem.getVelocity()-0.05));
         driverGamepad.dpadLeft.whenPressed(new ShooterSetFlapCommand(robot.shooterSubsystem, ()->robot.shooterSubsystem.getFlapPosition()+0.05));
         driverGamepad.dpadRight.whenPressed(new ShooterSetFlapCommand(robot.shooterSubsystem, ()->robot.shooterSubsystem.getFlapPosition()-0.05));
-        //CommandScheduler.getInstance().scheduleJoystick(new DriveCommand(robot.drivebaseSubsystem, driverGamepad.leftStick, driverGamepad.rightStick), ()->true);
+        driverGamepad.a.whilePressed(new DriveCommand(robot.drivebaseSubsystem, driverGamepad.leftStick, driverGamepad.rightStick));
         driverGamepad.leftBumper.whenPressed(new InstantCommand(()->robot.drivebaseSubsystem.turn(robot.drivebaseSubsystem.getExternalHeading()-0.1)));
         driverGamepad.rightBumper.whenPressed(new InstantCommand(()->robot.drivebaseSubsystem.turn(robot.drivebaseSubsystem.getExternalHeading()+0.1)));
 
