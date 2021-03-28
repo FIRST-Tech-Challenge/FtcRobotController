@@ -52,7 +52,7 @@ public class ShooterCommands extends Command {
         }
 
         if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
-            shooter.setShooterPower(0.1);
+            shooter.setShooterPower(0);
         }
 
 //        if (robot.shooterSensor.getDistance(DistanceUnit.CM) < 5){

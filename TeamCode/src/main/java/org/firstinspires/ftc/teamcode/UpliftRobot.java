@@ -25,6 +25,8 @@ import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.background.ShotCounter;
 import org.firstinspires.ftc.teamcode.toolkit.background.UpliftTelemetry;
 import org.firstinspires.ftc.teamcode.toolkit.background.VelocityData;
+import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
+import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -179,7 +181,7 @@ public class UpliftRobot {
             shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
             shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            shooterSensor = hardwareMap.get(DistanceSensor.class, "shooter_sensor");
+//            shooterSensor = hardwareMap.get(DistanceSensor.class, "shooter_sensor");
 
             shooterInitialized = true;
         } catch (Exception ex) {
@@ -239,18 +241,20 @@ public class UpliftRobot {
 //            opMode.telemetry.update();
         }
 
-        try {
-            ringDetector = new RingDetector();
-            webcamName = hardwareMap.get(WebcamName.class,"webcam");
-            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id",hardwareMap.appContext.getPackageName());
-            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-            camera.openCameraDevice();
-            camera.setPipeline(ringDetector);
-            camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
-        } catch (Exception ex) {
-            visionInitialized = false;
-            opMode.telemetry.addData("WARNING WARNING WARNING WARNING", "");
-            opMode.telemetry.addData("Vision initialization failed: ", ex.getMessage());
+        if(opMode instanceof UpliftAuto) {
+            try {
+                ringDetector = new RingDetector();
+                webcamName = hardwareMap.get(WebcamName.class, "webcam");
+                int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+                camera.openCameraDevice();
+                camera.setPipeline(ringDetector);
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            } catch (Exception ex) {
+                visionInitialized = false;
+                opMode.telemetry.addData("WARNING WARNING WARNING WARNING", "");
+                opMode.telemetry.addData("Vision initialization failed: ", ex.getMessage());
+            }
         }
 
         // setup file system
@@ -295,8 +299,8 @@ public class UpliftRobot {
         if(shooterInitialized) {
             velocityData = new VelocityData(this);
             velocityData.enable();
-            shotCounter = new ShotCounter(this);
-            shotCounter.enable();
+//            shotCounter = new ShotCounter(this);
+//            shotCounter.enable();
         }
     }
 

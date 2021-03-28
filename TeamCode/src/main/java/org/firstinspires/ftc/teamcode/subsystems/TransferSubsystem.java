@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
@@ -73,7 +75,7 @@ public class TransferSubsystem extends Subsystem {
                 transfer.setPower(0.65);
                 robot.setTransferState(UpliftRobot.TransferState.MOVING);
                 double initialTime = System.currentTimeMillis();
-                while(transfer.isBusy() && !robot.operatorCancel && getTransferCurrent() < 1700 && robot.opMode.opModeIsActive()) {
+                while(transfer.isBusy() && !robot.operatorCancel  && robot.opMode.opModeIsActive()) {
                     robot.safeSleep(5);
                 }
                 transfer.setPower(0);
@@ -89,9 +91,13 @@ public class TransferSubsystem extends Subsystem {
         transfer.setPower(0.65);
         robot.setTransferState(UpliftRobot.TransferState.MOVING);
         double initialTime = System.currentTimeMillis();
-        while(transfer.isBusy() && !robot.operatorCancel && getTransferCurrent() < 1700 && robot.opMode.opModeIsActive()) {
+        while(transfer.isBusy() && !robot.operatorCancel && robot.opMode.opModeIsActive() && robot.transfer.getCurrent(CurrentUnit.MILLIAMPS) < 2000) {
             robot.safeSleep(5);
         }
+        Log.i("Transfer Busy", transfer.isBusy() + "");
+        Log.i("Transfer cancel", robot.operatorCancel + "");
+        Log.i("Opmode active", robot.opMode.opModeIsActive() + "");
+        Log.i("Transfer current", robot.transfer.getCurrent(CurrentUnit.MILLIAMPS) + "");
         transfer.setPower(0);
         transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.setTransferState(UpliftRobot.TransferState.UP);

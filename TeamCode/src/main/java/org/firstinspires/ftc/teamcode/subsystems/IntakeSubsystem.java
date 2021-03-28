@@ -86,7 +86,7 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void dropSweeper() {
-        sweeperJoint.setPosition(0.175);
+        sweeperJoint.setPosition(0.17);
     }
 
     public void sweeperOn() {

@@ -54,7 +54,7 @@ public class Meet5Auto extends UpliftAuto {
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
         intakeSub.initSweeper();
-        flickerSub.setFlickerPos(0.08);
+        flickerSub.setFlickerPos(0);
     }
 
     @Override
@@ -84,6 +84,8 @@ public class Meet5Auto extends UpliftAuto {
             driveSub.driveToPosition(109, 48, 0.75, 0);
             driveSub.turnTo(0, 0.3, 0);
             autoHighGoalShoot();
+            driveSub.driveToPosition(109, 44, 0.75, 0);
+
 
             // intake four stack, if you were able to shoot all 3 initial rings
 //            if(robot.shotCount >= 3) {
@@ -91,7 +93,7 @@ public class Meet5Auto extends UpliftAuto {
                     robot.safeSleep(5);
                 }
                 intakeSub.setIntakePower(1);
-                driveSub.driveToPosition(109, 58, 0.35, 0);
+                driveSub.driveToPosition(109, 56, 0.35, 0);
                 robot.safeSleep(2500);
                 intakeSub.setIntakePower(0);
                 intakeSub.liftRoller();
@@ -121,7 +123,7 @@ public class Meet5Auto extends UpliftAuto {
             // drive to drop off first wobble
             intakeSub.setIntakePower(1);
             wobbleSub.setWobblePosition(0.2);
-            driveSub.driveToPosition(132, 114, 1, 180);
+            driveSub.driveToPosition(136, 114, 1, 180);
             intakeSub.setIntakePower(0);
             wobbleSub.dropWobble();
             robot.safeSleep(500);
@@ -146,7 +148,7 @@ public class Meet5Auto extends UpliftAuto {
 
             // shoot
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
-            driveSub.driveToPosition(110, 48, 0.7, 0);
+            driveSub.driveToPosition(109, 48, 0.7, 0);
             driveSub.turnTo(0, 0.3, 0);
             autoHighGoalShoot();
 
@@ -166,6 +168,7 @@ public class Meet5Auto extends UpliftAuto {
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
             driveSub.driveToPosition(110, 48, 0.5, 0);
             driveSub.turnTo(0, 0.3, 0);
+            flickerSub.flickRing();
             flickerSub.flickRing();
             shooterSub.setShooterPower(0);
             transferSub.autoDropTransfer();
@@ -197,17 +200,17 @@ public class Meet5Auto extends UpliftAuto {
 
             // drop off first wobble
             wobbleSub.setWobblePosition(0.2);
-            driveSub.driveToPosition(130, 72, 1, 180, DriveSubsystem.CLOCKWISE);
+            driveSub.driveToPosition(135, 70, 1, 180, DriveSubsystem.CLOCKWISE);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(130, 68, 1, 180);
+            driveSub.driveToPosition(135, 66, 1, 180);
 
             // go to pick up second wobble
             getSecondWobble();
 
             // go to drop off second wobble
-            driveSub.driveToPosition(130, 66, 1, 180, DriveSubsystem.CLOCKWISE);
+            driveSub.driveToPosition(130, 66, 1, -135, DriveSubsystem.CLOCKWISE);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(130, 62, 1,180);
+            driveSub.driveToPosition(126, 62, 1,-135);
 
             // park
             park();

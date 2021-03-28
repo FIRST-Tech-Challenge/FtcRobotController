@@ -261,9 +261,7 @@ public class DriveSubsystem extends Subsystem {
                     safeDisable();
                     return;
                 }
-                if(abs(degrees) < 5) {
-                    spin(-0.1);
-                } else if(abs(degrees) < 10) {
+                if(abs(degrees) < 10) {
                     spin(-0.2);
                 } else if(abs(degrees) < 30) {
                     spin(-0.4);
@@ -279,9 +277,7 @@ public class DriveSubsystem extends Subsystem {
                     safeDisable();
                     return;
                 }
-                if(abs(degrees) < 5) {
-                    spin(0.1);
-                } else if(abs(degrees) < 10) {
+                if(abs(degrees) < 10) {
                     spin(0.2);
                 } else if(abs(degrees) < 30) {
                     spin(0.4);
