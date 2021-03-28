@@ -43,14 +43,14 @@ public class FlickerSubsystem extends Subsystem {
     public void flickRing() {
         robot.setFlickingState(UpliftRobot.FlickingState.FLICKING);
         // move in
-        flicker.setPosition(0.25);
+        flicker.setPosition(0.22);
         if(!robot.safeSleep(350)){
             safeDisable();
             return;
         }
 
         // move out
-        flicker.setPosition(0.08);
+        flicker.setPosition(0);
         if(!robot.safeSleep(350)) {
             safeDisable();
             return;
@@ -61,15 +61,15 @@ public class FlickerSubsystem extends Subsystem {
     public void flickRingTele() {
         robot.setFlickingState(UpliftRobot.FlickingState.FLICKING);
         // move in
-        flicker.setPosition(0.25);
-        if(!robot.safeSleep(300)){
+        flicker.setPosition(0.22);
+        if(!robot.safeSleep(350)){
             safeDisable();
             return;
         }
 
         // move out
-        flicker.setPosition(0.08);
-        if(!robot.safeSleep(300)) {
+        flicker.setPosition(0);
+        if(!robot.safeSleep(350)) {
             safeDisable();
             return;
         }

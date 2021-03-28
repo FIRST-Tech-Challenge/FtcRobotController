@@ -49,12 +49,12 @@ public class WobbleSubsystem extends Subsystem {
         closeWobble();
         liftWobble();
     }
-    public void pickUpTeleop(){
+    public void pickUpTeleop() {
         closeWobble();
         robot.safeSleep(500);
         highWobble();
     }
-    public void dropOff(){
+    public void dropOff() {
         dropWobble();
         openWobble();
     }
