@@ -31,10 +31,10 @@ public class NewConfig implements teleOpInterface {
     public void b(boolean pressed) {
         //Intake
         if (pressed && System.currentTimeMillis()-button >= 300) {
-            if (robot.leftTilt.getPosition() > 0.40){
+            if (robot.leftTilt.getPosition() > collectingAngle){
                 drivetrain.tilt(collectingAngle);
             }
-            intakePwr = (intakePwr!=1.0) ? 1.0 : 0.0;
+            intakePwr = (Math.abs(intakePwr)!=0.9) ? 0.9 : 0.0;
             outtakePower = 0.0;
             button = System.currentTimeMillis();
         }
@@ -59,8 +59,8 @@ public class NewConfig implements teleOpInterface {
     public void dd(boolean pressed) {
         //Outake Rev
         if (pressed && System.currentTimeMillis()-button>=300) {
-            outtakePower = (outtakePower!=1.0) ? 1.0 : 0.0;
-            if (robot.leftTilt.getPosition() < 0.40) {
+            outtakePower = (Math.abs(outtakePower)!=1.0) ? 1.0 : 0.0;
+            if (robot.leftTilt.getPosition() < outtakeAngle) {
                 drivetrain.tilt(outtakeAngle);
             }
             intakePwr = 0.0;
@@ -85,10 +85,10 @@ public class NewConfig implements teleOpInterface {
     }
 
     public void rb(boolean pressed) {
-        if (pressed && System.currentTimeMillis()-button>=300){
-            savedAngle = robot.leftTilt.getPosition();
-            button = System.currentTimeMillis();
-        }
+//        if (pressed && System.currentTimeMillis()-button>=300){
+//            savedAngle = robot.leftTilt.getPosition();
+//            button = System.currentTimeMillis();
+//        }
     }
 
     public void rt(float pressure) {
@@ -100,10 +100,10 @@ public class NewConfig implements teleOpInterface {
     }
 
     public void lb(boolean pressed) {
-        if (pressed && System.currentTimeMillis()-button>=300){
-            drivetrain.tilt(savedAngle);
-            button = System.currentTimeMillis();
-        }
+//        if (pressed && System.currentTimeMillis()-button>=300){
+//            drivetrain.tilt(savedAngle);
+//            button = System.currentTimeMillis();
+//        }
     }
 
     public void lt(float pressure) {
@@ -141,6 +141,7 @@ public class NewConfig implements teleOpInterface {
     public void loop() {
         robot.intake.setPower(intakePwr*limiter*inverse);
         robot.outtake.setPower(outtakePower*limiter*inverse);
+        outtakeAngle = (robot.getVoltage()>13.5) ? 0.43 : 0.42;
     }
 
     public void clearTelemetryDM() {

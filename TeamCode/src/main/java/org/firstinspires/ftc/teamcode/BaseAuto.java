@@ -635,7 +635,7 @@ public abstract class BaseAuto extends LinearOpMode {
         static final int REGION_HEIGHT = 80;
 
         final int FOUR_RING_THRESHOLD = 137;
-        final int ONE_RING_THRESHOLD = 130;
+        final int ONE_RING_THRESHOLD = 131;
 
 //        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,0);
 //
