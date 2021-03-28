@@ -22,6 +22,7 @@ public class Odometry2 {
     public double deltaX = 0; //change in x (robot frame)
     public double deltaY = 0; //change in y (robot frame)
 
+    public final double d = Constants.DIS_BEWTEEN_ENCS;
     public final double dL = Constants.DIS_CENTER_TO_LEFT_ENC;
     public final double dR = Constants.DIS_CENTER_TO_RIGHT_ENC;
     public final double c = Constants.RADIUS_CENTER_TO_ENC;
@@ -103,8 +104,9 @@ public class Odometry2 {
     }
 
     //Calculate delta x using encoder position and d vectors, inputs encoder reading and d vector
-    public double calcX(double E, Vector d) {
-        return ign0(c1, 0.5 * ((deltaCP * deltaH * s) / c1) - (E * deltaH) + (d.x * c1) - (d.y * s));
+    public double calcX(double E, Vector d1) {
+//        return ign0(c1, 0.5 * ((deltaCP * deltaH * s) / c1) - (E * deltaH) + (d.x * c1) - (d.y * s));
+        return ign0(c1,((deltaRP-deltaLP)*deltaH-(d*s*s))/(c1-(d*c1*c1)));
     }
 
     //Calculate delta y using x
