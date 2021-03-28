@@ -15,4 +15,20 @@ public class RobotFunctions2 {
             }
         };
     }
+    public CodeSeg startOuttake() {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.outtaking = true;
+            }
+        };
+    }
+    public CodeSeg stopOuttake() {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.outtaking = false;
+            }
+        };
+    }
 }
