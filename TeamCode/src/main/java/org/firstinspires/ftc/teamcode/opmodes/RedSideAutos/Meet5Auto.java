@@ -140,7 +140,7 @@ public class Meet5Auto extends UpliftAuto {
 
             //park
             intakeSub.dropRoller();
-            driveSub.driveToPosition(94, 84, 0.7, 0);
+            driveSub.driveToPosition(94, 84, 0.5, 0);
 
         } else if(stack == 1) {
 
