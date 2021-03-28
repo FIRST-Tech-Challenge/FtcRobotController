@@ -43,8 +43,8 @@ public class TwoGPTeleop extends LinearOpMode {
             boolean move_wobble_goal_servo = true;
             robot.openWobbleGoalClaw();
             WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
-            robot.moveLeftStick(0.3);
-            robot.moveRightStick(1);
+            robot.moveLeftStick(0.36);
+            robot.moveRightStick(0.9);
             double yShootingPosition = 0;
             double xShootingPosition = 0;
             double angleShootingPosition = 0;
@@ -106,27 +106,28 @@ public class TwoGPTeleop extends LinearOpMode {
                 if (goToShootingPosition==1){
                     robot.shootGoalTeleop(1000);
                     goingToPosition=1;
-                    if(robot.goToPositionTeleop(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8)){
+                    robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8);
+                    /*if(robot.goToPositionTeleop(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8)){
                         robot.turnInPlace(angleShootingPosition,0.8);
-                    }
-                    continue;
+                    }*/
+                    //continue;
 
                 }
-                else if(goingToPosition==1&&goToShootingPosition!=1&&!odo_powershots){
+                /*else if(goingToPosition==1&&goToShootingPosition!=1&&!odo_powershots){
                     robot.stopAllMotors();
                     goingToPosition=0;
-                }
+                }*/
 
                 /**Sticks**/
 
                 if (move_sticks_down) {
-                    robot.moveLeftStick(1);
-                    robot.moveRightStick(0);
+                    robot.moveLeftStick(0.36);
+                    robot.moveRightStick(0.9);
                 }
 
                 if (move_sticks_up){
-                    robot.moveLeftStick(0.3);
-                    robot.moveRightStick(0.8);
+                    robot.moveLeftStick(1);
+                    robot.moveRightStick(0.0);
                 }
 
                 /**Shooter**/
@@ -191,7 +192,7 @@ public class TwoGPTeleop extends LinearOpMode {
                 if(start_transfer_sys){
                     robot.startIntake();
                     robot.startTransfer();
-                } else if (!start_transfer_sys){
+                } else if (!start_transfer_sys&&!quick_reverse){
                     robot.stopIntake();
                     robot.stopTransfer();
                 }
@@ -203,6 +204,9 @@ public class TwoGPTeleop extends LinearOpMode {
                     sleep(250);
                     robot.startIntake();
                     robot.startTransfer();
+                }else if(!quick_reverse&&!start_transfer_sys){
+                    robot.stopIntake();
+                    robot.stopTransfer();
                 }
 
 
