@@ -19,6 +19,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
+import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Robot;
+
 @Autonomous(name = "WalrusTest ", group="Tests: ")
 //@Disabled
 public class WalrusTest extends LinearOpMode {
@@ -26,15 +30,12 @@ public class WalrusTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
         DcMotorEx motorLeftFront;
         DcMotorEx motorRightFront;
         DcMotorEx motorLeftBack;
         DcMotorEx motorRightBack;
         DcMotorEx intakeMotor;
-        DcMotorEx shooterMotor;
-        Servo shooter_Servo;
-        DcMotorEx wobbleGoalMotor;
-        Servo wobbleGoalServoClaw;
         Servo webcamServo;
 
 
@@ -42,46 +43,30 @@ public class WalrusTest extends LinearOpMode {
         motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
         motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
-        intakeMotor = (DcMotorEx) hardwareMap.dcMotor.get("IntakeMotor");
-        shooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
-        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
-        shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
-        wobbleGoalServoClaw = (Servo) hardwareMap.servo.get("wobbleGoalServoClaw");
         webcamServo = (Servo) hardwareMap.servo.get("TensorFlowServo");
 
 
-        // All Motors
+        // Drivetrain Motors
         motorLeftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLeftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Servos
-        shooter_Servo.setPosition(-0.5);
-        wobbleGoalServoClaw.setPosition(0);
         webcamServo.setPosition(0.35);
-
 
         // To match default
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
-        shooterMotor.setDirection(DcMotor.Direction.FORWARD);
-        wobbleGoalMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // make the motors run on only power
+
+        // make the drivetrains motors run on only power
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         ElapsedTime runtime = new ElapsedTime();
         //Robot robot = new Robot(this);
@@ -139,67 +124,53 @@ public class WalrusTest extends LinearOpMode {
 
         //Tests intake motor
         //Forwards
-        intakeMotor.setPower(0.3);
-        telemetry.addData("Moving intakeMotor forwards", 0.3);
-        telemetry.update();
+        robot.startIntake();
         sleep(1000);
-        intakeMotor.setPower(0);
+        robot.stopIntake();
         sleep(1000);
         //Backwards
-        intakeMotor.setPower(-0.3);
-        telemetry.addData("Moving intakeMotor backwards", -0.3);
-        telemetry.update();
+        robot.reverseIntake();
         sleep(1000);
-        intakeMotor.setPower(0);
+        robot.stopIntake();
+        sleep(1500);
+
+        //Tests transfer motor
+        //Forwards
+        robot.startTransfer();
+        sleep(1000);
+        robot.stopTransfer();
+        sleep(1000);
+        //Backwards
+        robot.reverseTransfer();
+        sleep(1000);
+        robot.stopTransfer();
+        sleep(1500);
 
         //Tests shooter motor
-        shooterMotor.setPower(0.8);
-        telemetry.addData("Moving shooterMotor forwards", 0.8);
-        telemetry.update();
-        sleep(700);
-        shooterMotor.setPower(0);
-        sleep(1000);
-        shooterMotor.setPower(-0.8);
-        telemetry.addData("Moving shooterMotor backwards", -0.8);
-        telemetry.update();
-        sleep(700);
-        shooterMotor.setPower(0);
-        sleep(1000);
-
-        //Tests Shooter Servo
-        shooter_Servo.setPosition(0.5);
-        telemetry.addData("Moving Shooter Servo", 0.5);
-        telemetry.update();
-        sleep(1000);
-        shooter_Servo.setPosition(0);
-        sleep(2000);
-        shooter_Servo.setPosition(-0.5);
-        telemetry.addData("Moving Shooter Servo", -0.5);
-        telemetry.update();
-        sleep(1000);
-        shooter_Servo.setPosition(0);
+        robot.shootHighGoal(3);
+        robot.stopShooter();
 
         //Moving wobbleGoalMotor
-        wobbleGoalMotor.setPower(0.25);
-        telemetry.addData("Moving wobbleGoalMotor", 0.25);
+        robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
+        telemetry.addData("wobbleGoalMotor", "grab position");
         telemetry.update();
-        sleep(500);
-        wobbleGoalMotor.setPower(0);
         sleep(1000);
-        wobbleGoalMotor.setPower(-0.3);
-        telemetry.addData("Moving wobbleGoalMotor", -0.25);
+        robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
+        telemetry.addData("wobbleGoalMotor", "raise position");
         telemetry.update();
-        sleep(750);
-        wobbleGoalMotor.setPower(0);
+        sleep(1000);
+        robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
+        telemetry.addData("wobbleGoalMotor", "rest position");
+        telemetry.update();
         sleep(1500);
 
         //Wobble Goal Servo Claw
-        wobbleGoalServoClaw.setPosition(1);
-        telemetry.addData("Moving wobbleGoalServoClaw", 1);
+        robot.openWobbleGoalClaw();
+        telemetry.addData("wobbleGoalServoClaw", "open");
         telemetry.update();
         sleep(1000);
-        wobbleGoalServoClaw.setPosition(0);
-        telemetry.addData("Moving wobbleGoalServoClaw", 0);
+        robot.closeWobbleGoalClaw();
+        telemetry.addData("wobbleGoalServoClaw", "closed");
         telemetry.update();
         sleep(1500);
 
@@ -212,5 +183,11 @@ public class WalrusTest extends LinearOpMode {
         telemetry.addData("Moving webcamServo", 0.35);
         telemetry.update();
         sleep(2000);
+
+        //Sticks
+        robot.moveRightStick(0);
+        robot.moveRightStick(1);
+        robot.moveLeftStick(0);
+        robot.moveLeftStick(1);
     }
 }
