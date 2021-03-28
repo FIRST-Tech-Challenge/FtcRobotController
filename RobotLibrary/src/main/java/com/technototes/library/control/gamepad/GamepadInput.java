@@ -3,7 +3,7 @@ package com.technototes.library.control.gamepad;
 import com.technototes.control.gamepad.GamepadButton;
 import com.technototes.library.command.Command;
 import com.technototes.library.command.CommandScheduler;
-import com.technototes.library.control.Trigger;
+import com.technototes.library.control.InputScheduler;
 
 import java.util.function.BooleanSupplier;
 
@@ -11,7 +11,7 @@ import java.util.function.BooleanSupplier;
  * @author Alex Stedman
  * @param <T> The type of Gamepad Button
  */
-public interface GamepadTrigger<T extends GamepadButton> extends Trigger<T> {
+public interface GamepadInput<T extends GamepadButton> extends InputScheduler<T> {
 
     @Override
     default T whenPressed(Command command){

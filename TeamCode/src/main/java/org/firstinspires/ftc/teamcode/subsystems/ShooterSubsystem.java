@@ -15,6 +15,7 @@ public class ShooterSubsystem extends EncodedMotorSubsystem implements Stated<Do
         super(m);
         motor = m;
         servo = s;
+        s.setRange(0.5, 1);
 
     }
     public void setVelocity(double ticksPerSecond){
@@ -31,7 +32,11 @@ public class ShooterSubsystem extends EncodedMotorSubsystem implements Stated<Do
     }
 
     public void setFlapPosition(double pos){
-        servo.setPosition((pos+1)*0.5);
+        servo.setPosition(pos);
+    }
+
+    public double getFlapPosition(){
+        return servo.getPosition();
     }
 
     @Override

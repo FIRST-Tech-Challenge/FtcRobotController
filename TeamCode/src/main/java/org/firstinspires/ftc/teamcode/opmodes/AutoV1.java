@@ -74,19 +74,16 @@ public class AutoV1 extends CommandOpMode implements Loggable {
                 new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
                 new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
                 new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new ArmRetractCommand(robot.indexSubsystem)),
-                //V drop point
-                new SplineCommand(robot.drivebaseSubsystem, 110, 24, 0),
-                //V drop sequence
+                new ParallelCommandGroup(new IndexPivotDownCommand(robot.indexSubsystem),
+                        new ShooterStopCommand(robot.shooterSubsystem),
+                        new IntakeInCommand(robot.intakeSubsystem)),
+                new StrafeCommand(robot.drivebaseSubsystem, 110, 24),
                 new ParallelCommandGroup(new WobbleOpenCommand(robot.wobbleSubsystem), new WobbleLowerCommand(robot.wobbleSubsystem)),
-                new SplineCommand(robot.drivebaseSubsystem, 10, 10, 180, true),
-                //V grab sequence
-                //new ParallelCommandGroup(new WobbleOpenCommand(robot.wobbleSubsystem), new WobbleLowerCommand(robot.wobbleSubsystem));
-
-                //process wobble
-                //drop off wobble
-                //park on line
-
-                //(x=72, y=10)
+                new StrafeCommand(robot.drivebaseSubsystem, 10, 10),
+                new SequentialCommandGroup(new WobbleCloseCommand(robot.wobbleSubsystem), new WobbleRaiseCommand(robot.wobbleSubsystem)),
+                new StrafeCommand(robot.drivebaseSubsystem, 110, 24),
+                new ParallelCommandGroup(new WobbleOpenCommand(robot.wobbleSubsystem), new WobbleLowerCommand(robot.wobbleSubsystem)),
+                new StrafeCommand(robot.drivebaseSubsystem, 72, 10),
 
                 //END
                 new WaitCommand(100)

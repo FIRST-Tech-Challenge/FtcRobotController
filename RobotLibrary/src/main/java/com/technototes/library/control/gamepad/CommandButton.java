@@ -7,7 +7,7 @@ import java.util.function.BooleanSupplier;
 /** Class for command buttons for gamepad
  * @author Alex Stedman
  */
-public class CommandButton extends GamepadButton implements GamepadTrigger<CommandButton> {
+public class CommandButton extends GamepadButton implements GamepadInput<CommandButton> {
     /** Make command button
      *
      * @param supplier The supplier for the button

@@ -3,7 +3,7 @@ package com.technototes.library.control;
 import com.technototes.control.gamepad.GamepadButton;
 import com.technototes.library.command.Command;
 
-public interface Trigger<T> {
+public interface InputScheduler<T> {
     /** Schedule command when gamepad button is just pressed
      *
      * @param command The command

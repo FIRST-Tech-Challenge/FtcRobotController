@@ -39,13 +39,21 @@ public class SequentialCommandGroup extends CommandGroup {
         return !commandMap.containsValue(false);
     }
 
-    @Override
-    public void end(boolean cancel) {
-        if(cancel){
-            for (Map.Entry<Command, Boolean> entry : commandMap.entrySet()) {
-                if (!entry.getValue()) entry.getKey().end(true);
-            }
-        }
-        commandMap.replaceAll((command, bool) -> false);
-    }
+    /*
+    g
+    ga
+    ga
+    ga
+    ga
+    gab
+    g b
+    g b
+    g bc
+    g  c
+    g  c
+    g  c
+    g
+
+     */
+
 }

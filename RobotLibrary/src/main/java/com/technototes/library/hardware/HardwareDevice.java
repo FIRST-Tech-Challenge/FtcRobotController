@@ -26,7 +26,7 @@ public abstract class HardwareDevice<T extends com.qualcomm.robotcore.hardware.H
      * @param deviceName The device name
      */
     public HardwareDevice(String deviceName) {
-        this(hardwareMap.get((Class<T>) com.qualcomm.robotcore.hardware.HardwareDevice.class, deviceName));
+        this(hardwareMap.get((Class<T>) com.qualcomm.robotcore.hardware.HardwareDevice.class /*T.class*/, deviceName));
     }
 
     /** Get encapsulated device

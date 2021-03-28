@@ -86,7 +86,8 @@ public class Logger {
         }
     }
 
-
+    //TODO make list and do sort with comparators
+    //List<List<Entry<?>>
     private Entry<?>[] generate(Set<Entry<?>> a) {
         Entry<?>[] returnEntry = new Entry[20];
         List<Entry<?>> unindexed = new ArrayList<>();

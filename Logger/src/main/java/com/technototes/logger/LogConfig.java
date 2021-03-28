@@ -14,6 +14,7 @@ import static java.lang.annotation.ElementType.METHOD;
  * @author Alex Stedman
  */
 @Retention(RetentionPolicy.RUNTIME)
+
 public @interface LogConfig {
 
     /** Annotation for determining when logged item will be sent to Telemetry

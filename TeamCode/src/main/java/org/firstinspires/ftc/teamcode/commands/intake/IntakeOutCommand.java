@@ -8,7 +8,7 @@ public class IntakeOutCommand extends Command {
     public IntakeSubsystem subsystem;
     public IntakeOutCommand(IntakeSubsystem s) {
         subsystem = s;
-        //this.addRequirements(subsystem);
+        this.addRequirements(subsystem);
     }
 
     @Override

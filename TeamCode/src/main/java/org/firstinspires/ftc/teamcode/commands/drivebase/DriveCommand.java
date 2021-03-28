@@ -25,7 +25,7 @@ public class DriveCommand extends Command {
 
     @Override
     public void execute() {
-        Vector2d input = new Vector2d(
+             Vector2d input = new Vector2d(
                 -y.getAsDouble(),
                 -x.getAsDouble()
         ).rotated(-subsystem.getExternalHeading());

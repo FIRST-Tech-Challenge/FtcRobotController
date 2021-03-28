@@ -58,6 +58,7 @@ public class Motor<T extends DcMotorSimple> extends HardwareDevice<T> implements
         getDevice().setPower(Range.clip(speed, -1, 1));
     }
 
+    //TODO fix
     @Override
     @Deprecated
     public Motor follow(Motor device) {

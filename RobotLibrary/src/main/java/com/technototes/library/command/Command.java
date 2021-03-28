@@ -104,7 +104,7 @@ public class Command implements Runnable {
             case RESET:
                 commandRuntime.reset();
                 commandState = CommandState.INITILAIZING;
-                return;
+                return;//
             case INITILAIZING:
                 init();
                 commandState = CommandState.EXECUTING;
@@ -113,7 +113,7 @@ public class Command implements Runnable {
                 execute();
                 if(isFinished()) commandState = CommandState.FINISHED;
                 //allow one cycle to run so other dependent commands can schedule
-                return;
+                return;//
             case FINISHED:
                 end(!isFinished());
                 commandState = CommandState.RESET;

@@ -9,7 +9,7 @@ public class IntakeInCommand extends Command {
     public IntakeSubsystem subsystem;
     public IntakeInCommand(IntakeSubsystem s) {
         subsystem=s;
-        //this.addRequirements(subsystem);
+        this.addRequirements(subsystem);
 
     }
 
