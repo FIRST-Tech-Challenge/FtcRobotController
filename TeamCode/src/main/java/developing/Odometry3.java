@@ -22,7 +22,8 @@ public class Odometry3 {
     public double deltaX = 0; //change in x (robot frame)
     public double deltaY = 0; //change in y (robot frame)
 
-    public final double d = Constants.HALF_DIS_BETWEEN_ENCS; //Looks like this      L |-----|------| R
+    public final double d = Constants.HALF_DIS_BETWEEN_ENCS; //Looks like this
+    //  L |-----|------| R
     public final double dc = Constants.DIS_CENTER_ENC_TO_CENTER;//Looks like this
     //          C
     // L--------|--|-----------R

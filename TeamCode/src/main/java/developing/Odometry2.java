@@ -22,7 +22,7 @@ public class Odometry2 {
     public double deltaX = 0; //change in x (robot frame)
     public double deltaY = 0; //change in y (robot frame)
 
-    public final double d = Constants.DIS_BEWTEEN_ENCS;
+    public final double d = Constants.HALF_DIS_BETWEEN_ENCS;
     public final double dL = Constants.DIS_CENTER_TO_LEFT_ENC;
     public final double dR = Constants.DIS_CENTER_TO_RIGHT_ENC;
     public final double c = Constants.RADIUS_CENTER_TO_ENC;
