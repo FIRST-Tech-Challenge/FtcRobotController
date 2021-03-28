@@ -26,6 +26,6 @@ public class WobbleGoalAutonomousTest extends LinearOpMode {
         telemetry.addData("Init", "Complete");
         telemetry.update();
         waitForStart();
-        robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
+        robot.closeWobbleGoalClaw();
     }
 }

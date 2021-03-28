@@ -35,7 +35,6 @@ public class WalrusTest extends LinearOpMode {
         DcMotorEx motorRightFront;
         DcMotorEx motorLeftBack;
         DcMotorEx motorRightBack;
-        DcMotorEx intakeMotor;
         Servo webcamServo;
 
 
@@ -43,10 +42,10 @@ public class WalrusTest extends LinearOpMode {
         motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
         motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
-        webcamServo = (Servo) hardwareMap.servo.get("TensorFlowServo");
+        webcamServo = hardwareMap.servo.get("TensorFlowServo");
 
 
-        // Drivetrain Motors
+        //Motors
         motorLeftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLeftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -55,7 +54,6 @@ public class WalrusTest extends LinearOpMode {
         //Servos
         webcamServo.setPosition(0.35);
 
-        // To match default
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -69,54 +67,54 @@ public class WalrusTest extends LinearOpMode {
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         ElapsedTime runtime = new ElapsedTime();
-        //Robot robot = new Robot(this);
 
         waitForStart();
-        //Tests all of the motors individually
+
+        //Tests drivetrain motors
         motorLeftFront.setPower(0.5);
-        telemetry.addData("Moving LeftFront Motor", 0.5);
+        telemetry.addData("Moving LeftFront Motor", "forward");
         telemetry.update();
         sleep(1000);
         motorLeftFront.setPower(0);
         sleep(1000);
         motorLeftFront.setPower(-0.5);
-        telemetry.addData("Moving LeftFront Motor", -0.5);
+        telemetry.addData("Moving LeftFront Motor", "backward");
         telemetry.update();
         sleep(1000);
         motorLeftFront.setPower(0);
         sleep(1000);
         motorRightFront.setPower(0.5);
-        telemetry.addData("Moving RightFront Motor", 0.5);
+        telemetry.addData("Moving RightFront Motor", "forward");
         telemetry.update();
         sleep(1000);
         motorRightFront.setPower(0);
         sleep(1000);
         motorRightFront.setPower(-0.5);
-        telemetry.addData("Moving RightFront Motor", -0.5);
+        telemetry.addData("Moving RightFront Motor", "backward");
         telemetry.update();
         sleep(1000);
         motorRightFront.setPower(0);
         sleep(1000);
         motorLeftBack.setPower(0.5);
-        telemetry.addData("Moving LeftBack Motor", 0.5);
+        telemetry.addData("Moving LeftBack Motor", "forward");
         telemetry.update();
         sleep(1000);
         motorLeftBack.setPower(0);
         sleep(1000);
         motorLeftBack.setPower(-0.5);
-        telemetry.addData("Moving LeftBack Motor", -0.5);
+        telemetry.addData("Moving LeftBack Motor", "backward");
         telemetry.update();
         sleep(1000);
         motorLeftBack.setPower(0);
         sleep(1000);
         motorRightBack.setPower(0.5);
-        telemetry.addData("Moving RightBack Motor", 0.5);
+        telemetry.addData("Moving RightBack Motor", "forward");
         telemetry.update();
         sleep(1000);
         motorRightBack.setPower(0);
         sleep(1000);
         motorRightBack.setPower(-0.5);
-        telemetry.addData("Moving RightBack Motor", -0.5);
+        telemetry.addData("Moving RightBack Motor", "backward");
         telemetry.update();
         sleep(1000);
         motorRightBack.setPower(0);
@@ -125,11 +123,15 @@ public class WalrusTest extends LinearOpMode {
         //Tests intake motor
         //Forwards
         robot.startIntake();
+        telemetry.addData("intake direction", "forward");
+        telemetry.update();
         sleep(1000);
         robot.stopIntake();
         sleep(1000);
         //Backwards
         robot.reverseIntake();
+        telemetry.addData("intake direction", "backward");
+        telemetry.update();
         sleep(1000);
         robot.stopIntake();
         sleep(1500);
@@ -137,18 +139,25 @@ public class WalrusTest extends LinearOpMode {
         //Tests transfer motor
         //Forwards
         robot.startTransfer();
+        telemetry.addData("transfer direction", "forward");
+        telemetry.update();
         sleep(1000);
         robot.stopTransfer();
         sleep(1000);
         //Backwards
         robot.reverseTransfer();
+        telemetry.addData("transfer direction", "backward");
+        telemetry.update();
         sleep(1000);
         robot.stopTransfer();
         sleep(1500);
 
         //Tests shooter motor
         robot.shootHighGoal(3);
+        telemetry.addData("shooter", "shooting");
+        telemetry.update();
         robot.stopShooter();
+        sleep(5000);
 
         //Moving wobbleGoalMotor
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
@@ -165,12 +174,12 @@ public class WalrusTest extends LinearOpMode {
         sleep(1500);
 
         //Wobble Goal Servo Claw
-        robot.openWobbleGoalClaw();
-        telemetry.addData("wobbleGoalServoClaw", "open");
-        telemetry.update();
-        sleep(1000);
         robot.closeWobbleGoalClaw();
         telemetry.addData("wobbleGoalServoClaw", "closed");
+        telemetry.update();
+        sleep(1000);
+        robot.openWobbleGoalClaw();
+        telemetry.addData("wobbleGoalServoClaw", "open");
         telemetry.update();
         sleep(1500);
 
@@ -182,12 +191,24 @@ public class WalrusTest extends LinearOpMode {
         webcamServo.setPosition(0.35);
         telemetry.addData("Moving webcamServo", 0.35);
         telemetry.update();
-        sleep(2000);
+        sleep(1500);
 
         //Sticks
-        robot.moveRightStick(0);
         robot.moveRightStick(1);
+        telemetry.addData("right stick", "down");
+        telemetry.update();
+        sleep(1000);
+        robot.moveRightStick(0);
+        telemetry.addData("right stick", "up");
+        telemetry.update();
+        sleep(1000);
         robot.moveLeftStick(0);
+        telemetry.addData("left stick", "down");
+        telemetry.update();
+        sleep(1000);
         robot.moveLeftStick(1);
+        telemetry.addData("left stick", "up");
+        telemetry.update();
+        sleep(1500);
     }
 }
