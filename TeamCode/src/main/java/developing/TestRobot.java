@@ -58,7 +58,7 @@ public class TestRobot {
 
     public ButtonController outtakeButtonController = new ButtonController();
 
-    public Odometry2 odometry = new Odometry2();
+    public Odometry3 odometry = new Odometry3();
 
     public ThreadHandler odometryThread = new ThreadHandler();
 
