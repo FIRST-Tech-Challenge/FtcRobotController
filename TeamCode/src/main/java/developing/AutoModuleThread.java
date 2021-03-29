@@ -1,13 +1,10 @@
 package developing;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
 import telefunctions.Stage;
-import util.CodeSeg;
 
 public class AutoModuleThread implements Runnable{
         public boolean executing = false;

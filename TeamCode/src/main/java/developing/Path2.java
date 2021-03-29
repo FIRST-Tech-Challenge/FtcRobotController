@@ -63,11 +63,9 @@ public class Path2 {
     public ArrayList<CodeSeg> rfs = new ArrayList<>();
     public ArrayList<Boolean> isRf = new ArrayList<>();
     public ArrayList<Double> stops = new ArrayList<>();
-
     public ArrayList<CodeSeg> rfsQueue = new ArrayList<>();
 
     public ThreadHandler threadHandler = new ThreadHandler();
-
     public TelemetryHandler telemetryHandler = new TelemetryHandler();
 
 
@@ -76,6 +74,7 @@ public class Path2 {
     final public double[] ks = {0.04,0.03,0.02};
     final public double[] ds = {0.00015,0.00015,3};
     final public double[] is = {0.01,0.01,0.005};
+
     final public double XAccS = 1;
     final public double YAccS = 1;
     final public double HAccS = 2;
@@ -112,6 +111,7 @@ public class Path2 {
         }else{
             radius = 25;
         }
+
     }
 
     public void scaleKs(double sx, double sy, double sh){
@@ -131,14 +131,12 @@ public class Path2 {
         hint = 0;
     }
 
-    public CodeSeg nullCode(){
-        return new CodeSeg() {
+    public CodeSeg nullCode(){ return new CodeSeg() {
             @Override
             public void run() {
 
             }
-        };
-    }
+        }; }
 
 
 
@@ -188,6 +186,7 @@ public class Path2 {
         rfs.add(combineSegs(segs));
         isRf.add(true);
     }
+
     public CodeSeg combineSegs(final CodeSeg[] segs){
         return new CodeSeg() {
             @Override
@@ -250,7 +249,6 @@ public class Path2 {
         double disc = (b * b) - (4 * a * c);
         ans = (-1)*((b - Math.sqrt(disc)) / (2 * a));
         ans2 = (-1)*((b + Math.sqrt(disc)) / (2 * a));
-
         if(!Double.isNaN(ans)) {
             if(ans > 1){
                 next();
@@ -356,10 +354,10 @@ public class Path2 {
         iv = iv.getRotatedVec(-robotTheta, Vector.angle.DEGREES);
 
         double[] out = new double[3];
-
-        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, currentVels[0], iv.x);
-        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, currentVels[1], iv.y);
-        out[2] = Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
+//
+//        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, currentVels[0], iv.x);
+//        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, currentVels[1], iv.y);
+//        out[2] = Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
 
         out[0] = Range.clip(out[0], -1, 1);
         out[1] = Range.clip(out[1], -1, 1);

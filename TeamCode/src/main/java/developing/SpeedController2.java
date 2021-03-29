@@ -13,11 +13,8 @@ public class SpeedController2 {
 
     double lastPos;
     double lastTime;
-    public double lastError;
 
-    public double currError = 0;
-    public double derivativeOfError = 0;
-    public double integralOfError = 0;
+
 
     public double derivativeOfPower = 0;
     public double power = 0;
@@ -28,15 +25,10 @@ public class SpeedController2 {
     double changeTime = 0;
 
 
-    public double k;
-    public double d;
-    public double i;
-
     public boolean isReady = false;
 
 
     public SpeedController2(){
-        lastError = -0.1;
         lastTime = -0.1;
         pid.Kp = 0.003;
         pid.Kd = 0.0001;
@@ -56,9 +48,7 @@ public class SpeedController2 {
     }
 
     public void reset(double currPos){
-        lastError = -0.1;
         lastTime = -0.1;
-        integralOfError = 0;
         lastPos = currPos;
         power = targetSpeed/Constants.MAX_OUTTAKE_SPEED;
         timer.reset();
@@ -67,13 +57,9 @@ public class SpeedController2 {
     public double getMotorPower(double currPos){
         updateMotorSpeed(currPos);
 
-        currError = targetSpeed-currSpeed;
+        pid.update(targetSpeed-currSpeed);
 
-        derivativeOfError = (currError-lastError)/changeTime;
-        lastError = currError;
-        integralOfError += currError*changeTime;
-
-        derivativeOfPower = pid.getPower(currError, derivativeOfError, integralOfError);
+        derivativeOfPower = pid.getPower();
         power += derivativeOfPower*changeTime;
         return power;
     }

@@ -354,9 +354,9 @@ public class Path {
 
         double[] out = new double[3];
 
-        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, currentVels[0], iv.x);
-        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, currentVels[1], iv.y);
-        out[2] = -Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
+//        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, currentVels[0], iv.x);
+//        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, currentVels[1], iv.y);
+//        out[2] = -Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
 
         out[0] = Range.clip(out[0], -1, 1);
         out[1] = Range.clip(out[1], -1, 1);
@@ -417,7 +417,7 @@ public class Path {
 //            op.telemetry.addData("herr", herr);
 //            op.telemetry.addData("y", yint);
 //            op.telemetry.addData("stopIndex", stopIndex);
-//            op.telemetry.addData("timer.seconds()", timer.seconds());
+//            op.telemetry.addData("globalTime.seconds()", globalTime.seconds());
 //            op.telemetry.addData("current index", curIndex);
 //
 //            op.telemetry.addData("yvel", bot.odometry.getYVel());

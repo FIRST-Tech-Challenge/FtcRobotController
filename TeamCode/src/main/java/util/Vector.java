@@ -38,6 +38,12 @@ public class Vector {
         double radius = Math.sqrt(x * x + y * y);
         return new Vector(Math.cos(ang) * radius, Math.sin(ang) * radius);
     }
+    public void rotate(double angle, angle type){
+        Vector rot = getRotatedVec(angle,type);
+        this.x = rot.x;
+        this.y = rot.y;
+        this.theta = rot.theta;
+    }
 
     public double getX() {
         return this.x;
