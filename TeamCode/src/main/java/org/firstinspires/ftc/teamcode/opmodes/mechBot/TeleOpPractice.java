@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.support.events.EventManager;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
-@TeleOp(name="TeleOp-Along", group="MechBot")
-public class TeleOpAlong extends LinearOpMode {
+@TeleOp(name="Practice-TeleOp", group="MechBot")
+public class TeleOpPractice extends LinearOpMode {
     protected static int LOG_LEVEL = Log.INFO;
 
     private Configuration configuration;

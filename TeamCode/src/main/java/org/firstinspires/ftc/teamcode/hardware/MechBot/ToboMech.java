@@ -514,7 +514,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (comboGrabber != null)
                         comboGrabber.armDownInc();
                 } else if (source.isPressed(Button.BACK)) {
-                    doHighGoalsSemi(true, 3);
+                    doHighGoalsSemi(false, 3);
                 } else if (!source.isPressed((Button.START))) {
                     if (hopper != null) {
                         if (hopper.getTransferIsDown() || Math.abs(shooting_rpm-WARM_UP_RPM)>20 ||
