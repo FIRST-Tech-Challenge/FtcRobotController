@@ -17,6 +17,7 @@ import autofunctions.Odometry;
 import global.AngularPosition;
 import global.Constants;
 import telefunctions.Cycle;
+import telefunctions.Stage;
 import util.CodeSeg;
 import util.ThreadHandler;
 
@@ -60,7 +61,7 @@ public class TestRobot {
 
     public Odometry3 odometry = new Odometry3();
 
-    public ThreadHandler odometryThread = new ThreadHandler();
+    public TerraThread2 odometryThread;
 
 
     public void init(HardwareMap hwMap) {
@@ -267,17 +268,39 @@ public class TestRobot {
         wge.setPosition(wgeControl.update(false, extend));
     }
 
-    public void startOdoThreadAuto(LinearOpMode op){
-        odometryThread.startAutoThread(new CodeSeg() {
+    public void startOdoThreadAuto(final LinearOpMode op){
+        CodeSeg run = new CodeSeg() {
             @Override
             public void run() {
                 odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
             }
-        }, op, 30);
+        };
+        Stage exit = new Stage() {
+            @Override
+            public boolean run(double in) {
+                return !op.opModeIsActive();
+            }
+        };
+        odometryThread = new TerraThread2(run, exit);
+        Thread t = new Thread(odometryThread);
+        t.start();
+
+    }
+    public void startOdoThreadTele(){
+        CodeSeg run = new CodeSeg() {
+            @Override
+            public void run() {
+                odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
+            }
+        };
+        odometryThread = new TerraThread2(run);
+        Thread t = new Thread(odometryThread);
+        t.start();
+
     }
 
-    public void stopOdoThreadAuto() {
-        odometryThread.stopAutoThread();
+    public void stopOdoThread() {
+        odometryThread.stop();
     }
 
 }
