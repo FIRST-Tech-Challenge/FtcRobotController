@@ -52,9 +52,9 @@ public class TestRobot {
 
     public boolean fastMode = true;
 
-    public AutoModule2 shooter = new AutoModule2(); // 0
+    public AutoModule3 shooter = new AutoModule3(); // 0
 
-    public ArrayList<AutoModule2> autoModule2s = new ArrayList<>();
+    public ArrayList<AutoModule3> autoModule3s = new ArrayList<>();
 
     public ButtonController outtakeButtonController = new ButtonController();
 
@@ -105,7 +105,7 @@ public class TestRobot {
             shooter.addStage(rp, pushControl, 1, 0.3);
         }
         shooter.addStage(rp, pushControl, 0, 0.3);
-        autoModule2s.add(shooter);
+        autoModule3s.add(shooter);
 
         odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());
     }
@@ -185,13 +185,13 @@ public class TestRobot {
     }
 
     public boolean areAutomodulesRunning(){
-        for (AutoModule2 a:autoModule2s) {
+        for (AutoModule3 a:autoModule3s) {
             if (a.isExecuting()) { return true; }
         }
         return false;
     }
     public void stopAllAutomodules(){
-        for (AutoModule2 a:autoModule2s) {
+        for (AutoModule3 a:autoModule3s) {
             a.stop();
         }
     }

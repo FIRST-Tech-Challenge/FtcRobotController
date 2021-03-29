@@ -33,8 +33,8 @@ public class TelemetryHandler {
         telemetry.addData("Left Outtake Position", bot.outl.getCurrentPosition());
         telemetry.addData("Right Outtake Angular Velocity", bot.autoAimer.outrController.currSpeed);
         telemetry.addData("Left Outtake Angular Velocity", bot.autoAimer.outlController.currSpeed);
-        telemetry.addData("Right Outtake Error", bot.autoAimer.outrController.currError);
-        telemetry.addData("Left Outtake Error", bot.autoAimer.outlController.currError);
+        telemetry.addData("Right Outtake Error", bot.autoAimer.outrController.pid.error);
+        telemetry.addData("Left Outtake Error", bot.autoAimer.outlController.pid.error);
         telemetry.addData("Right Outtake Power", bot.autoAimer.outrController.power);
         telemetry.addData("Left Outtake Power", bot.autoAimer.outlController.power);
         telemetry.addData("Right Outtake Change Time", bot.autoAimer.outrController.changeTime);

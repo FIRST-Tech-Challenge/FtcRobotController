@@ -39,7 +39,6 @@ public class Path3 {
     public ArrayList<Double> stops = new ArrayList<>();
     public int stopIndex = 0;
 
-    public ThreadHandler threadHandler = new ThreadHandler();
     public TelemetryHandler telemetryHandler = new TelemetryHandler();
 
 
