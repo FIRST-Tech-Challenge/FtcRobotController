@@ -92,7 +92,21 @@ public class Odometry3 {
         c1 = 1 - Math.cos(deltaH);
     }
 
+    public double[] getPos() { return new double[] {x,y,h}; }
 
+    public double getTVel(){
+        return 0;//deltaH;
+    }
+    public double getYVel(){
+        return 0;//deltaY;
+    }
+    public double getXVel(){
+        return 0;//deltaX;
+    }
+
+    public double[] getVels(){
+        return new double[] { getXVel(), getYVel(), getTVel() };
+    }
 
     //update encoder positions
     public void updateEncoderPositions(double l, double c, double r) {

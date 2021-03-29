@@ -20,6 +20,7 @@ public class RobotFunctions2 {
             @Override
             public void run() {
                 bot.outtaking = true;
+                bot.resetOuttake();
             }
         };
     }

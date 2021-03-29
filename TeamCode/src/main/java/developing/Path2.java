@@ -68,6 +68,8 @@ public class Path2 {
 
     public ThreadHandler threadHandler = new ThreadHandler();
 
+    public TelemetryHandler telemetryHandler = new TelemetryHandler();
+
 
     public boolean isExecuting = true;
 
@@ -301,24 +303,24 @@ public class Path2 {
         }
     }
 
-    public double[] update() {//double[] currentPos, double[] currentVels){
-//        if(posetypes.get(curIndex+1).equals(Posetype.WAYPOINT)) {
-//            double[] target = getTargetPos(currentPos);
-//            xerr = currentPos[0] - target[0];
-//            yerr = currentPos[1] - target[1];
-//            herr = currentPos[2] - poses.get(curIndex + 1)[2];
-//            updateDIs(currentVels, false);
-//            updateRadius(lines.get(curIndex).getDis());
-//            return calcPows(currentPos,currentVels, false);
-//        }else if(posetypes.get(curIndex+1).equals(Posetype.SETPOINT)){
-//            double[] target = poses.get(curIndex+1);
-//            xerr = currentPos[0] - target[0];
-//            yerr = currentPos[1] - target[1];
-//            herr = currentPos[2] - target[2];
-//            updateDIs(currentVels, true);
-//            hasReachedSetpoint();
-//            return calcPows(currentPos,currentVels, true);
-//        }else
+    public double[] update(double[] currentPos, double[] currentVels){
+        if(posetypes.get(curIndex+1).equals(Posetype.WAYPOINT)) {
+            double[] target = getTargetPos(currentPos);
+            xerr = currentPos[0] - target[0];
+            yerr = currentPos[1] - target[1];
+            herr = currentPos[2] - poses.get(curIndex + 1)[2];
+            updateDIs(currentVels, false);
+            updateRadius(lines.get(curIndex).getDis());
+            return calcPows(currentPos,currentVels, false);
+        }else if(posetypes.get(curIndex+1).equals(Posetype.SETPOINT)){
+            double[] target = poses.get(curIndex+1);
+            xerr = currentPos[0] - target[0];
+            yerr = currentPos[1] - target[1];
+            herr = currentPos[2] - target[2];
+            updateDIs(currentVels, true);
+            hasReachedSetpoint();
+            return calcPows(currentPos,currentVels, true);
+        }else
         if (posetypes.get(curIndex+1).equals(Posetype.STOP)){
             if(timer.seconds() > stops.get(stopIndex)){
                 next();
@@ -357,7 +359,7 @@ public class Path2 {
 
         out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, currentVels[0], iv.x);
         out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, currentVels[1], iv.y);
-        out[2] = -Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
+        out[2] = Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
 
         out[0] = Range.clip(out[0], -1, 1);
         out[1] = Range.clip(out[1], -1, 1);
@@ -366,7 +368,7 @@ public class Path2 {
         if(isSet) {
             out[0] += -Math.signum(mv.x) * restPowX;
             out[1] += -Math.signum(mv.y) * restPowY;
-            out[2] += -Math.signum(herr) * restPowT;
+            out[2] += Math.signum(herr) * restPowT;
 
             out[0] = Range.clip(out[0], -1, 1);
             out[1] = Range.clip(out[1], -1, 1);
@@ -390,17 +392,18 @@ public class Path2 {
         timer.reset();
         op.telemetry.addData("Starting", "RF Threads");
         op.telemetry.update();
-        startRFThread(op);
+//        startRFThread(op);
         while (op.opModeIsActive() && isExecuting){
-            op.telemetry.addData("Executing; rfsQueueIndex = ", this.rfsQueueIndex);
-            op.telemetry.addData("Executing; rfsIndex = ", this.rfsIndex);
-            op.telemetry.addData("Executing; rfs Size", this.rfs.size());
-            op.telemetry.addData("Executing; rfsQueue Size", this.rfsQueue.size());
+            op.telemetry = telemetryHandler.addAutoAimer(op.telemetry, bot);
+            op.telemetry = telemetryHandler.addOuttake(op.telemetry, bot);
+//            op.telemetry = telemetryHandler.addOdometry(op.telemetry, bot);
             op.telemetry.update();
 
             bot.outtakeWithCalculations();
 
-            update();
+//            double[] pows = update(bot.odometry.getPos(), bot.odometry.getVels()); //bot.odometry.getVels()
+//            bot.move(pows[1], pows[0], pows[2]);
+//            bot.updateOdometry();
         }
         op.telemetry.addData("COMPLETED", "");
         op.telemetry.update();

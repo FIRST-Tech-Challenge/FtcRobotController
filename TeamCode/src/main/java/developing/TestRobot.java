@@ -199,8 +199,12 @@ public class TestRobot {
     public void toggleOuttake(boolean in) {
         if (outtakeButtonController.isPressing(in)) {
             outtaking = !outtaking;
-            autoAimer.resetOuttake(getLeftAngPos(), getRightAngPos());
+            resetOuttake();
         }
+    }
+
+    public void resetOuttake() {
+        autoAimer.resetOuttake(getLeftAngPos(), getRightAngPos());
     }
 
     public double getRightAngPos(){
@@ -218,18 +222,22 @@ public class TestRobot {
     }
 
     public void outtakeWithCalculations() {
-        if (outtaking) {
-//            autoAimer.update(angularPosition.getHeadingGY(), lr.getDistance(DistanceUnit.METER), br.getDistance(DistanceUnit.METER));
-            autoAimer.update(0, 1.25,1.5);
-            outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
-            outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
-            rh.setPower(-0.5);
-        } else {
-            outr.setPower(0);
-            outl.setPower(0);
-            if (!intaking) { rh.setPower(0); }
-        }
+//        if (outtaking) {
+////            autoAimer.update(angularPosition.getHeadingGY(), lr.getDistance(DistanceUnit.METER), br.getDistance(DistanceUnit.METER));
+//            autoAimer.update(0, 1.25,1.5);
+//            outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
+//            outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
+//            rh.setPower(-0.5);
+//        } else {
+//            outr.setPower(0);
+//            outl.setPower(0);
+//            if (!intaking) { rh.setPower(0); }
+//        }
         //remove when make automodule
+        autoAimer.update(0, 1.25,1.5);
+        outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
+        outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
+        rh.setPower(-0.5);
     }
 
     public double getRobotToGoalAngle() {
