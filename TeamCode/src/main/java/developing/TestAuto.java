@@ -12,18 +12,18 @@ public class TestAuto extends LinearOpMode {
     RobotFunctions2 rf = new RobotFunctions2();
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         initialize();
 
         waitForStart();
 
 //        bot.startOdoThreadAuto(this);
 
-//        path.addStop(0.1);
-        path.addSetpoint(0,0,90);
-//        path.addRF(rf.startOuttake());
-//        path.addStop(5);
-//        path.addRF(rf.stopOuttake());
+        path.addStop(0.1);
+//        path.addSetpoint(0,0,90);
+        path.addRF(rf.startOuttake(bot));
+        path.addStop(5);
+        path.addRF(rf.stopOuttake());
         path.start(bot, this);
 
 

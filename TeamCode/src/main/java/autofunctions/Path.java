@@ -419,7 +419,7 @@ public class Path {
 //            op.telemetry.addData("stopIndex", stopIndex);
 //            op.telemetry.addData("timer.seconds()", timer.seconds());
 //            op.telemetry.addData("current index", curIndex);
-            //
+//
 //            op.telemetry.addData("yvel", bot.odometry.getYVel());
 //            op.telemetry.addData("xvel", bot.odometry.getXVel());
 //            op.telemetry.addData("tvel", bot.odometry.getTVel());
@@ -437,7 +437,7 @@ public class Path {
     public enum Posetype{
         WAYPOINT,
         SETPOINT,
-        STOP;
+        STOP
     }
 
 }

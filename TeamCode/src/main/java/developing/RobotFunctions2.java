@@ -15,7 +15,7 @@ public class RobotFunctions2 {
             }
         };
     }
-    public CodeSeg startOuttake() {
+    public CodeSeg startOuttake(final TestRobot bot) {
         return new CodeSeg() {
             @Override
             public void run() {

@@ -414,7 +414,7 @@ public class Path2 {
     public enum Posetype{
         WAYPOINT,
         SETPOINT,
-        STOP;
+        STOP
     }
 
 }
