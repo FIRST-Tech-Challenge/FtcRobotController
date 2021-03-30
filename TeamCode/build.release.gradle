@@ -5,6 +5,7 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:6.2.1'
     implementation (name: 'tfod-release', ext:'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext:'aar')
+<<<<<<< HEAD
     implementation 'org.apache.commons:commons-math3:3.6.1'
 
     implementation 'com.acmerobotics.roadrunner:core:0.5.3'
@@ -12,4 +13,6 @@ dependencies {
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.1'
 
     implementation "com.noahbres.jotai:jotai:1.0.2"
+=======
+>>>>>>> parent of 8dd0276 (gradle stuff)
 }

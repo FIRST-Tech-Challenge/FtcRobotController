@@ -7,6 +7,9 @@ dependencies {
     implementation 'org.firstinspires.ftc:Hardware:6.2.1'
     implementation 'org.firstinspires.ftc:FtcCommon:6.2.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+<<<<<<< HEAD
 
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.1'
+=======
+>>>>>>> parent of 8dd0276 (gradle stuff)
 }
