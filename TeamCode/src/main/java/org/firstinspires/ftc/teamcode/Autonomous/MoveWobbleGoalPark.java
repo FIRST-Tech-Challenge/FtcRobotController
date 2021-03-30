@@ -14,7 +14,6 @@ public class MoveWobbleGoalPark extends LinearOpMode {
     public void runOpMode() {
 
         Robot robot = new Robot(this, BasicChassis.ChassisType.IMU, true, false);
-        ElapsedTime runtime = new ElapsedTime();
 
         int rings = robot.getRingsAndWaitForStart();
 

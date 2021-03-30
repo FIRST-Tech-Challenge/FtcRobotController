@@ -1,4 +1,4 @@
-/**
+/*
  * Vuforia Test. Inits Vuforia and it
  * displays the target it sees, the location
  * of the phone/robot relative to the target,
@@ -36,12 +36,12 @@ public class VuforiaTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))>=24.5 && VuforiaWebcam.isTargetVisible()==true){
+            if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))>=24.5 && VuforiaWebcam.isTargetVisible()){
                 telemetry.addData("ok dist", Math.hypot(VuforiaWebcam.getVuforiaX(),VuforiaWebcam.getVuforiaY()));
                 telemetry.update();
             }
 
-            if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))<24.5 && VuforiaWebcam.isTargetVisible()==true){
+            if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))<24.5 && VuforiaWebcam.isTargetVisible()){
                 telemetry.addData("Too far", Math.hypot(VuforiaWebcam.getVuforiaX(),VuforiaWebcam.getVuforiaY()));
                 telemetry.update();
             }

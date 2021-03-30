@@ -1,7 +1,7 @@
-/**
+/*
  * Moves 2 wobble goals, shoots 3 high goals, and parks
  * @author  Aamod
- * @volgate 13.6-13.8 V
+ * @voltage 13.6-13.8 V
  * USE BATTERY 4 and 5 (Batter 5 works better)
  */
 
@@ -21,7 +21,6 @@ public class Move2WobbleGoalsShootHighPark extends LinearOpMode {
     public void runOpMode() {
 
         Robot robot = new Robot(this, BasicChassis.ChassisType.IMU, true, false);
-        ElapsedTime runtime = new ElapsedTime();
 
         int rings = robot.getRingsAndWaitForStart();
 

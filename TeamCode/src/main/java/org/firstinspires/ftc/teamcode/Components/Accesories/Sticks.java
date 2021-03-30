@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Sticks {
-    Servo leftStick;
-    Servo rightStick;
+    final Servo leftStick;
+    final Servo rightStick;
 
     public Sticks(LinearOpMode opMode) {
         LinearOpMode op = opMode;

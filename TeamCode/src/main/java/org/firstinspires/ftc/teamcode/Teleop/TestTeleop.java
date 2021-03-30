@@ -58,14 +58,14 @@ public class TestTeleop extends LinearOpMode {
                 robot.setPosition(0,0,0);
             }
 
-            /**Powershots**/
+            /*Powershots*/
             if(odo_powershots){
                 robot.goToPosition(5,5 ,0,0.8);
                 //robot.goToPosition(40,-40,-88,0.7);
                 //robot.shootThreePowerShot();
             }
 
-            /**Sticks**/
+            /*Sticks*/
             boolean sticksUp = true;
             if (move_sticks) {
                 if(sticksUp) {
@@ -79,7 +79,7 @@ public class TestTeleop extends LinearOpMode {
                 }
             }
 
-            /**Shooter**/
+            /*Shooter*/
             if (shooter_servo){
                 telemetry.addData("Servo", " SERVO Forward and Backward");
                 telemetry.update();

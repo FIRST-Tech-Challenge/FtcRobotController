@@ -4,10 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
-import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
-import org.firstinspires.ftc.teamcode.Robot;
 
 @Autonomous(name= "CorgiFinalAutoPower", preselectTeleOp = "OneGPTeleop")
 
@@ -15,7 +12,6 @@ public class CorgiFinalAutoPower extends LinearOpMode {
     @Override
     public void runOpMode(){
         OdometryChassis robot = new OdometryChassis(this, false, true);
-        ElapsedTime runtime = new ElapsedTime();
 //        int rings = robot.getRingsAndWaitForStart();
 //        robot.navigate();
 //        robot.stopRingDetection();
@@ -61,7 +57,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             telemetry.update();
             sleep(100);
 //            robot.startIntake();
-//            robot.startTrasnfer();
+//            robot.startTransfer();
             robot.goToPosition(-24, 4, 0, 2);
 //            robot.stopIntake();
 //            robot.stopTransfer();

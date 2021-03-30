@@ -1,4 +1,4 @@
-/**
+/*
  * Moves 2 wobble goals, shoots 3 high goals, and parks
  * @author  Aamod
  * @volgate 13.6-13.8 V
@@ -21,7 +21,6 @@ public class WobbleGoal2ShootAllHighPark extends LinearOpMode {
     public void runOpMode() {
 
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
-        ElapsedTime runtime = new ElapsedTime();
 
         final int rings = robot.getRingsAndWaitForStart();
 

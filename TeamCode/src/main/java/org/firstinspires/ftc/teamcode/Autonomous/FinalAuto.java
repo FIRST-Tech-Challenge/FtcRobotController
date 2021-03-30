@@ -14,7 +14,6 @@ public class FinalAuto extends LinearOpMode {
     @Override
     public void runOpMode(){
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
-        ElapsedTime runtime = new ElapsedTime();
         int rings = robot.getRingsAndWaitForStart();
         robot.navigate();
         robot.stopRingDetection();
