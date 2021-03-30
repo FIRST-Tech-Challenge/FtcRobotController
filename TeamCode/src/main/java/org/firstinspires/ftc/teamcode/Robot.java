@@ -73,6 +73,7 @@ public class Robot {
         leftfront.setDirection(DcMotor.Direction.FORWARD);
         launcherbelt.setDirection(DcMotor.Direction.FORWARD);
         wobbleArmMotor.setDirection((DcMotor.Direction.REVERSE));
+        launcher2.setDirection((DcMotor.Direction.REVERSE));
         resetMotors();
     }
 
@@ -90,6 +91,7 @@ public class Robot {
         launcherbelt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         launcherbelt.setDirection(DcMotor.Direction.FORWARD);
         wobbleArmMotor.setDirection((DcMotor.Direction.REVERSE));
+        launcher2.setDirection((DcMotor.Direction.REVERSE));
     }
 
     public static void resetMotors() {
