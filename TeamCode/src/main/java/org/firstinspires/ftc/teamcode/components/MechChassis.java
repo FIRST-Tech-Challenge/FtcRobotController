@@ -1139,49 +1139,49 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                         (simulation_mode?"Simulation":(getNormalizeMode()?"Normalized":"Speedy")));
             }
         });
-        if (leftRangeSensor != null) {
-            line.addData("ran-L", "%.1f", new Func<Double>() {
-                @Override
-                public Double value() {
-                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
-                    return getDistance(SwerveChassis.Direction.LEFT);
-                }
-            });
-        }
-        if (rightFrontRangeSensor != null) {
-            line.addData("ran-RF", "%.1f", new Func<Double>() {
-                @Override
-                public Double value() {
-                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
-                    return getDistance(SwerveChassis.Direction.RIGHT_FRONT);
-                }
-            });
-        }
-        if (rightBackRangeSensor != null) {
-            line.addData("ran-RB", "%.1f", new Func<Double>() {
-                @Override
-                public Double value() {
-                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
-                    return getDistance(SwerveChassis.Direction.RIGHT_BACK);
-                }
-            });
-        }
-        if (frontRangeSensor != null) {
-            line.addData("rangeF", "%.1f", new Func<Double>() {
-                    @Override
-                    public Double value() {
-                        // return rightRangeSensor.getDistance(DistanceUnit.CM);
-                        return getDistance(SwerveChassis.Direction.FRONT); }
-                });
-        }
-        if (testRange != null) {
-            line.addData("rangeT", "%.1f", new Func<Double>() {
-                @Override
-                public Double value() {
-                    // return rightRangeSensor.getDistance(DistanceUnit.CM);
-                    return testRange.getDistance(DistanceUnit.CM); }
-            });
-        }
+//        if (leftRangeSensor != null) {
+//            line.addData("ran-L", "%.1f", new Func<Double>() {
+//                @Override
+//                public Double value() {
+//                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
+//                    return getDistance(SwerveChassis.Direction.LEFT);
+//                }
+//            });
+//        }
+//        if (rightFrontRangeSensor != null) {
+//            line.addData("ran-RF", "%.1f", new Func<Double>() {
+//                @Override
+//                public Double value() {
+//                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
+//                    return getDistance(SwerveChassis.Direction.RIGHT_FRONT);
+//                }
+//            });
+//        }
+//        if (rightBackRangeSensor != null) {
+//            line.addData("ran-RB", "%.1f", new Func<Double>() {
+//                @Override
+//                public Double value() {
+//                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
+//                    return getDistance(SwerveChassis.Direction.RIGHT_BACK);
+//                }
+//            });
+//        }
+//        if (frontRangeSensor != null) {
+//            line.addData("rangeF", "%.1f", new Func<Double>() {
+//                    @Override
+//                    public Double value() {
+//                        // return rightRangeSensor.getDistance(DistanceUnit.CM);
+//                        return getDistance(SwerveChassis.Direction.FRONT); }
+//                });
+//        }
+//        if (testRange != null) {
+//            line.addData("rangeT", "%.1f", new Func<Double>() {
+//                @Override
+//                public Double value() {
+//                    // return rightRangeSensor.getDistance(DistanceUnit.CM);
+//                    return testRange.getDistance(DistanceUnit.CM); }
+//            });
+//        }
 
         if (showEncoderDetail) {
             if (motorFL != null) {
