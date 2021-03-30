@@ -17,6 +17,7 @@ import autofunctions.Odometry;
 import global.AngularPosition;
 import global.Constants;
 import telefunctions.Cycle;
+import telefunctions.Limits;
 import telefunctions.Stage;
 import util.CodeSeg;
 import util.ThreadHandler;
@@ -29,17 +30,19 @@ public class TestRobot {
     public DcMotor l2;
     public DcMotor outr;
     public DcMotor outl;
+    public DcMotor arm;
 
     public DcMotor in;
 
     public CRServo rh;
     public CRServo rh2;
+    public CRServo cl;
+    public CRServo wge;
 
     public Servo rp;
-    public Servo wge;
+
 
     public Cycle pushControl = new Cycle(0.1, 0.25, 0.32);
-    public Cycle wgeControl = new Cycle(Constants.WGE_START, Constants.WGE_EXTENDED);
 
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor br;
@@ -47,6 +50,8 @@ public class TestRobot {
     public FTCAutoAimer autoAimer = new FTCAutoAimer();
 
     public AngularPosition angularPosition = new AngularPosition();
+
+    public Limits limits = new Limits();
 
     public boolean intaking = false;
     public boolean outtaking = false;
@@ -74,16 +79,17 @@ public class TestRobot {
         in = getMotor(hwMap, "in", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outr = getMotor(hwMap, "outr", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl = getMotor(hwMap, "outl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm = getMotor(hwMap, "arm", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        outr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        resetEnc(outr);
+        resetEnc(outl);
+        resetEnc(arm);
 
         rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
-        rh2 = getCRServo(hwMap, "rh2", DcMotorSimple.Direction.REVERSE);
+        rh2 = getCRServo(hwMap, "rh2", CRServo.Direction.REVERSE);
+        cl = getCRServo(hwMap, "cl", CRServo.Direction.FORWARD);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, Constants.RP_START);
-        wge = getServo(hwMap, "wge", Servo.Direction.FORWARD, Constants.WGE_START);
+        wge = getCRServo(hwMap, "wge", CRServo.Direction.FORWARD);
 
         angularPosition.init(hwMap);
 
@@ -133,6 +139,11 @@ public class TestRobot {
         return crServo;
     }
 
+    public void resetEnc(DcMotor mot){
+        mot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        mot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
     public void move(double f, double s, double t){
         l1.setPower(f+s-t);
         l2.setPower(-f+s+t);
@@ -154,6 +165,10 @@ public class TestRobot {
     public void outtake(double p){
         outr.setPower(p);
         outl.setPower(p);
+    }
+
+    public void claw(double pow){
+        cl.setPower(pow);
     }
 
     public void updateIntake(boolean left_bumper, boolean right_bumper) {
@@ -183,6 +198,24 @@ public class TestRobot {
             move((f*0.2) + Math.signum(f)*restForwardPow, (s*0.2)+Math.signum(s)*restStrafePow, (t*0.2)+Math.signum(t)*restTurnPow);
         }
 
+    }
+    public void moveArm(double p){
+        arm.setPower(p);
+    }
+    public void moveArmWithEnc(double deg, double pow){
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setTargetPosition((int) (deg*Constants.NEV_DEGREES_TO_TICKS));
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        moveArm(pow);
+        while (arm.isBusy()){}
+        moveArm(0);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public double getArmPos(){
+        return arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS;
+    }
+    public boolean isArmInLimts(double dir){
+        return limits.isInLimits(arm, dir, getArmPos());
     }
 
     public boolean areAutomodulesRunning(){
@@ -264,8 +297,8 @@ public class TestRobot {
         odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
     }
 
-    public void extendWobbleGoal(boolean extend) {
-        wge.setPosition(wgeControl.update(false, extend));
+    public void extendWobbleGoal(double pow) {
+        wge.setPower(pow);
     }
 
     public void startOdoThreadAuto(final LinearOpMode op){

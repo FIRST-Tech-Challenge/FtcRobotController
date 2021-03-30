@@ -48,6 +48,22 @@ public class TestTele extends OpMode {
             bot.shooter.start();
         }
 
+        if(gamepad2.right_trigger > 0){
+            bot.extendWobbleGoal(gamepad2.right_trigger);
+        }else if (gamepad2.left_trigger > 0 ){
+            bot.extendWobbleGoal(-gamepad2.left_trigger);
+        }else{
+            bot.extendWobbleGoal(0);
+        }
+
+        if(gamepad2.dpad_right){
+            bot.claw(1);
+        }else if(gamepad2.dpad_left){
+             bot.claw(-1);
+        }else{
+            bot.claw(0);
+        }
+
 //        bot.extendWobbleGoal(gamepad2.a);
 
 //        bot.updateOdometry();
