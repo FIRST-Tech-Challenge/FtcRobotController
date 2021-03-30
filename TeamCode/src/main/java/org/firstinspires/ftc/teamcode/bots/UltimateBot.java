@@ -244,6 +244,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    // CAMERA FUNCTIONS
     @BotAction(displayName = "Camera Left", defaultReturn = "")
     public void leftRingCamera() {
         if (ringCamera != null) {
@@ -255,6 +256,20 @@ public class UltimateBot extends YellowBot {
     public void rightRingCamera() {
         if (ringCamera != null) {
             ringCamera.setPosition(CAMERA_RIGHT_LINE);
+        }
+    }
+
+    @BotAction(displayName = "Camera Little Right", defaultReturn = "")
+    public void rightLittleCamera() {
+        if (ringCamera != null) {
+            ringCamera.setPosition(ringCamera.getPosition() + 0.02);
+        }
+    }
+
+    @BotAction(displayName = "Camera Little Left", defaultReturn = "")
+    public void leftLittleCamera() {
+        if (ringCamera != null) {
+            ringCamera.setPosition(ringCamera.getPosition() - 0.02);
         }
     }
 
