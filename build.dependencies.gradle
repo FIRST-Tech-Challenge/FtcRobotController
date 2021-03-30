@@ -6,6 +6,9 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
+    implementation('com.acmerobotics.dashboard:dashboard:0.4.1') {
+        exclude group: 'org.firstinspires.ftc'
+    }
 }
 
 dependencies {
