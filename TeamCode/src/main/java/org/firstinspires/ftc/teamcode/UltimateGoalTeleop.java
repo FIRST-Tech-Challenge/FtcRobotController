@@ -197,8 +197,14 @@ public class UltimateGoalTeleop extends OpMode{
             //If A is pressed turn to shooting angle
             if (gamepad1.a){
                 turnTimer = System.currentTimeMillis() + 1500;
-                gyroTurn(0.5, startingAngle-+7);
+<<<<<<< Updated upstream
+                gyroTurn(0.5, startingAngle-15);
                 telemetry.addData("Turning to the right angle", "wait");
+=======
+                gyroTurn(0.8, startingAngle+7);
+                telemetry.addData("ok", "yes");
+>>>>>>> Stashed changes
+                telemetry.update();
             }
 
         }
