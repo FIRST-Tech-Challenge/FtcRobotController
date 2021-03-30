@@ -23,9 +23,9 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
-@Autonomous(name = "WalrusTest ", group="Tests: ")
+@Autonomous(name = "WalrusSoftwareTest ", group="Tests: ")
 //@Disabled
-public class WalrusTest extends LinearOpMode {
+public class WalrusSoftwareTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
