@@ -25,4 +25,12 @@ android {
     }
 }
 
-apply from: '../build.dependencies.gradle'
+repositories {
+    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+
+    flatDir {
+        dirs '../libs'
+    }
+}
+
+apply from: 'build.release.gradle'

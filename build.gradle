@@ -3,14 +3,8 @@
  *
  * It is extraordinarily rare that you will ever need to edit this file.
  */
-
-configurations {
-    doc { transitive false }
-}
-
 buildscript {
     repositories {
-        mavenCentral()
         google()
         jcenter()
     }
@@ -23,11 +17,11 @@ buildscript {
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
     repositories {
-        mavenCentral()
         google()
         jcenter()
     }
 }
+<<<<<<< HEAD
 
 repositories {
     mavenCentral()
@@ -67,3 +61,5 @@ task extractJavadoc {
     }
 }
 
+=======
+>>>>>>> parent of 16b1b91 (Merge remote-tracking branch 'upstream/master' into RohitTesting-9/26)
