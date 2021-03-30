@@ -67,7 +67,7 @@ public class UltimateGoalTeleop extends OpMode{
     /* Declare OpMode members. */
     HardwareMapV2 robot = new HardwareMapV2(true); // use the class created to define a RoverRuckus's hardware
 
-    teleOpInterface t = new NewConfig(robot);
+    teleOpInterface t = new teleConfigEx(robot);
     ArrayList<Class<? extends teleOpInterface>> configs = new ArrayList<>();
     int index = 0;
     double duTimer, ddTimer;
@@ -197,13 +197,8 @@ public class UltimateGoalTeleop extends OpMode{
             //If A is pressed turn to shooting angle
             if (gamepad1.a){
                 turnTimer = System.currentTimeMillis() + 1500;
-<<<<<<< Updated upstream
                 gyroTurn(0.5, startingAngle-15);
                 telemetry.addData("Turning to the right angle", "wait");
-=======
-                gyroTurn(0.8, startingAngle+7);
-                telemetry.addData("ok", "yes");
->>>>>>> Stashed changes
                 telemetry.update();
             }
 

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "BlueSideAuto",group = "SkyStone")
@@ -20,19 +19,9 @@ public class BlueSideAuto extends BaseAuto {
 
         initializeOpenCV();
 
-        VoltageSensor voltageSensor;
-        voltageSensor = hardwareMap.voltageSensor.iterator().next();
-
         drivetrain = new Drivetrain(robot);
         sleep(250);
-
-        //Set Angle based on voltage
-        if (voltageSensor.getVoltage()<13.5){
-            drivetrain.tilt(0.44);
-        } else {
-            drivetrain.tilt(0.45);
-        }
-
+        drivetrain.tilt(0.44);
         sleep(250);
 //        drivetrain.moveSlapper(Drivetrain.slapperPos.IN);
 
@@ -75,15 +64,9 @@ public class BlueSideAuto extends BaseAuto {
         numOfRings = pipeline.position.toString();
 
         startingAngle = getAverageGyro();
-
-        drivetrain.outtakeAll(1.0);//rev up
-        if (voltageSensor.getVoltage()<13.5){
-            encoderMecanumDrive(0.7, 215, 6, -0.464/*0.464*/,-1);
-        } else {
-            encoderMecanumDrive(0.8, 215, 6, -0.464/*0.464*/,-1);
-        }
-        gyroTurn(0.5,startingAngle);
+        encoderMecanumDrive(0.8, 215, 6, -0.464,-1);
 //        encoderMecanumDrive(0.3, 10, 3, 1, 0);
+        drivetrain.outtakeAll(1.0);//rev up
 
         encoderMecanumDrive(0.4, 10, 3, -1, 0);//slide to reach 3rd power shot
         //Shoot 3
@@ -97,126 +80,36 @@ public class BlueSideAuto extends BaseAuto {
         //Shoot 1
         drivetrain.invertSingleCycle();
 
-        sleep(200);
-//        drivetrain.outtakeAll(0.0);
+        drivetrain.outtakeAll(0.0);
 
         switch (numOfRings){
             case "FOUR":
-                encoderMecanumDrive(0.8, 280, 3, 0.83, -1);
+                encoderMecanumDrive(0.8, 190, 3, 0.5, -1);
                 inAndOutWobble();
+                encoderMecanumDrive(0.8, 100, 3, 0, 1);
 
                 //END OF FIRST WOBBLE
-
-                drivetrain.tilt(0.37);
-                robot.intake.setPower(1);
-                robot.wobble.setPosition(1);
-                //come towards ring
-                gyroTurn(0.7,startingAngle);
-                encoderMecanumDrive(0.70, 164, 3, -0.2, 1);
-                sleep(750);
-                gyroTurn(0.7, startingAngle-10);
-                encoderMecanumDrive(0.35,97.5,3,0.35,1);
-//                gyroTurn(0.5,getAverageGyro()+15);
-//                encoderMecanumDrive(0.45,30,3,-0.39,1);
-                encoderMecanumDrive(0.50,8,3,0.2,-1);
-//                gyroTurn(0.7,startingAngle-15);
-//                encoderMecanumDrive(0.4,29.5,3,1,0);
-//                //move out + back in to pick up wobble
-//                sleep(400);
-//                robot.wobble.setPosition(0);
-//                sleep(150);
-                if (voltageSensor.getVoltage()<13.5){
-                    drivetrain.tilt(0.44);
-                } else {
-                    drivetrain.tilt(0.45);
-                }
-                gyroTurn(0.5, startingAngle+5);
-                encoderMecanumDrive(0.8, 40, 3, 0, -1);
-                gyroTurn(0.5, startingAngle+5);
-                robot.intake.setPower(0);
-                drivetrain.invertSingleCycle();
-                sleep(50);
-                drivetrain.invertSingleCycle();
-                sleep(50);
-                drivetrain.invertSingleCycle();
-                encoderMecanumDrive(0.4, 20, 3, 0, -1);
-
-
-//                drivetrain.waitTillPos(robot.wobble,0);
-//                encoderMecanumDrive(0.8, 270, 3, 0.2, -1);
-//                inAndOutWobble();
-//                encoderMecanumDrive(0.8, 100, 3, 0, 1);
-
-
-
 
 
                 break;
             case "ONE":
-                encoderMecanumDrive(0.8, 145, 3, -0.3, -1);//forward
+                encoderMecanumDrive(0.8, 130, 3, -0.3, -1);//forward
                 inAndOutWobble();
-
-//                encoderMecanumDrive(0.8, 50, 3, 0, 1);//move to line
+                encoderMecanumDrive(0.8, 50, 3, 0, 1);//move to line
 
                 //END OF FIRST WOBBLE
-                drivetrain.tilt(0.37);
-                robot.intake.setPower(1);
-                robot.wobble.setPosition(1);
-                //come towards ring
-                encoderMecanumDrive(0.6,227.5,3,0.575,1);
-                sleep(750);
-                robot.intake.setPower(0);
-                encoderMecanumDrive(0.8,87.5,3,-0.39,1);
-                encoderMecanumDrive(0.3,29.5,3,1,0);
-                //move out + back in to pick up wobble
-                sleep(500);
-                robot.wobble.setPosition(0);
-                sleep(150);
-                drivetrain.waitTillPos(robot.wobble,0);
-                //drive back to zone, turn, and drop (also park)
-                encoderMecanumDrive(0.72,168,3,-0.28,-1);
-                gyroTurn(0.7,getAverageGyro()-90);
-                inAndOutWobble();
-                robot.outtake.setPower(1.0);
-                if (voltageSensor.getVoltage()<13.5){
-                    drivetrain.tilt(0.43);
-                } else {
-                    drivetrain.tilt(0.44);
-                }
-                gyroTurn(0.5, startingAngle+10);
-                encoderMecanumDrive(0.5, 20, 3, 0, 1);
-                drivetrain.invertSingleCycle();
-                sleep(50);
-                drivetrain.invertSingleCycle();
-                sleep(50);
-                drivetrain.invertSingleCycle();
-                sleep(50);
-                encoderMecanumDrive(0.5, 20, 3, 0, -1);
-//                encoderMecanumDrive(0.5,15,3,0,1);
-                robot.outtake.setPower(0.0);
+
+
                 break;
             case "NONE":
-                encoderMecanumDrive(0.5, 105, 3, 1, -0.6);
+                encoderMecanumDrive(0.5, 50, 3, 1, -0.6);
                 inAndOutWobble();
-                encoderMecanumDrive(0.5, 40, 3, -1, 0);
-                gyroTurn(0.6,startingAngle);
-                robot.wobble.setPosition(1);
+                encoderMecanumDrive(0.5, 20, 3, -1, 0);
 
                 //END OF FIRST WOBBLE
-
-                encoderMecanumDrive(0.75, 150, 3, 0, 1);
-                encoderMecanumDrive(0.3,25,3,1,0);
-                //move out + back in to pick up wobble
-                sleep(500);
-                robot.wobble.setPosition(0);
-                sleep(150);
-                drivetrain.waitTillPos(robot.wobble,0);
-                encoderMecanumDrive(0.75, 160, 3, 0.2, -1);
-                inAndOutWobble();
-
                 break;
         }
-//        robot.wobble.setPosition(0.0);
+        robot.wobble.setPosition(0.0);
         gyroTurn(0.5, startingAngle);
         sleep(300);
 
@@ -282,16 +175,14 @@ public class BlueSideAuto extends BaseAuto {
     }
 
     public void inAndOutWobble(){
-        drivetrain.outtakeAll(0.0);
         encoderMecanumDrive(0.4, 20, 3, 1, 0);
-        drivetrain.waitTillPos(robot.wobble, 1.0);
+        sleep(100);
+        robot.wobble.setPosition(1.0);
+        sleep(600);
         encoderMecanumDrive(0.4, 30, 3, -1, 0);
         sleep(100);
-        gyroTurn(0.5 , getAverageGyro()-30);
+        gyroTurn(0.3, getAverageGyro()-30);
         sleep(100);
-        robot.wobble.setPosition(0.0);
-        gyroTurn(0.5, startingAngle);
-        sleep(400);
-
+        gyroTurn(0.3, startingAngle);
     }
 }

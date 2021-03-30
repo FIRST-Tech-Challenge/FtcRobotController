@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -12,7 +10,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 
 public class Drivetrain {
     HardwareMapV2 robot;
-
     public Drivetrain(HardwareMapV2 robot) { this.robot = robot; }
     public enum slapperPos{
         OUT, IN
@@ -59,14 +56,12 @@ public class Drivetrain {
     public void moveSlapper(slapperPos Slapper){
         switch (Slapper){
             case IN:
-//                robot.slapper.setPosition(0.6);
-//                pause(500);
-                waitTillPos(robot.slapper, 0.6);
+                robot.slapper.setPosition(0.6);
+                pause(500);
                 break;
             case OUT:
-//                robot.slapper.setPosition(0.01);
-//                pause(500);
-                waitTillPos(robot.slapper, 0.01);
+                robot.slapper.setPosition(0.01);
+                pause(500);
                 break;
         }
     }
@@ -138,14 +133,10 @@ public class Drivetrain {
             slapperLow = Math.min(pos, slapperLow);
         }
     }
-    public void waitTillPos(Servo servo, double angle){
-        servo.setPosition(angle);
-        double pos = -1.0;
-        while (servo.getPosition() != pos) {
-            pause(70);
-            pos = servo.getPosition();
-        }
-        pause(70);
+    public void waitTillPos(double pos){
+        double time = System.currentTimeMillis() + 5000;
+        //time >= System.currentTimeMillis() ||
+        while (Math.abs(robot.slapper.getPosition()-pos) >= 0.1) { pause(500);}
     }
     // NOT USED; gets average gyro value for more accurate angles
     public double getAverageGyro(){

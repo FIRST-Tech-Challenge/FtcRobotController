@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 
 import java.util.ArrayList;
@@ -23,9 +22,6 @@ public class HardwareMapV2 {
     boolean odometry = false;
     boolean odometryTest = false;
     boolean initIMU;
-
-    VoltageSensor voltageSensor;
-
 
     ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
     ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(frontRight, frontLeft));
@@ -96,7 +92,6 @@ public class HardwareMapV2 {
         if (initIMU){
             imu.initialize(parameters);
         }
-        voltageSensor = hwMap.voltageSensor.iterator().next();
 
     }
     public void pause(double milis){
@@ -133,10 +128,6 @@ public class HardwareMapV2 {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public double getVoltage(){
-        return voltageSensor.getVoltage();
     }
 
 }
