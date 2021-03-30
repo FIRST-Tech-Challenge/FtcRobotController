@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 // adb.exe connect 192.168.43.1:5555
 
 @TeleOp(name="Ring Rec FIRST", group="Robot15173")
-//@Disabled
+@Disabled
 public class FTCImageRec extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";

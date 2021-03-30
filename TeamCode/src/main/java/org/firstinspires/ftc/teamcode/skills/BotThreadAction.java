@@ -29,6 +29,8 @@ public class BotThreadAction implements Runnable {
             robot.forwardWobbleSwing();
         } else if (function.contains("wobblewall")) {
             robot.liftWobbleWall();
+        } else if (function.contains("moveTurretCams")) {
+            robot.angleTurret();
         }
     }
 }

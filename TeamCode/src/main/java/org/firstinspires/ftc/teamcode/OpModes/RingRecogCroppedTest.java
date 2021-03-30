@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.skills.RingDetector;
 // adb.exe connect 192.168.43.1:5555
 
 @TeleOp(name = "Ring Cropped Test", group = "Robot15173")
-//@Disabled
+@Disabled
 public class RingRecogCroppedTest extends LinearOpMode {
 
     // Declare OpMode members.

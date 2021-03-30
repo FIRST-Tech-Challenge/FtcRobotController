@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.skills;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -25,12 +27,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XZY;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
-// vuforia reference
-// https://ftctechnh.github.io/ftc_app/doc/javadoc/org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackableDefaultListener.html#getUpdatedVuforiaCameraFromTarget--
-
-@TeleOp(name="Turret Orientation Testing", group ="Robot15173")
-//@Disabled
-public class NavigationTesting extends LinearOpMode {
+public class TurretAngler implements Runnable{
+    // vuforia variables
     private static final String VUFORIA_KEY =
             "AZs0syj/////AAABmaxIME6H4k74lx12Yv3gnoYvtGHACOflWi3Ej36sE7Hn86xDafDA3vhzxSOgBtyNIQ1ua6KP2j3I2ScFedVw8n6MJ7PReZQP4sTdc8gHvoy17hD574exMmoUQ3rVUMkgU2fwN2enw2X+Ls2F3BLuCg/A4SBZjzG3cweO+owiKO/2iSIpeC4rBdUnPiTxqPHNa8UOxyncCGV0+ZFXresQm/rK7HbOKB9MEszi8eW2JNyfjTdKozwDxikeDRV7yPvoIhZ5A+mrrC1GgrEzYwNTVHeki2cg4Ea62pYwdscaJ+6IWHlBIDutqmgJu/Os3kAzZkOh0TJ8P3e29Ou4ZczTdDH0oqkPt78Nt4VdYbSbLRCw";
 
@@ -48,25 +46,79 @@ public class NavigationTesting extends LinearOpMode {
     private VuforiaLocalizer vuforia = null;
 
     WebcamName webcamName = null;
-    UltimateBot robot = new UltimateBot();
     RobotCoordinatePosition locator = null;
 
     private boolean targetVisible = false;
 
+    VuforiaTrackables targetsUltimateGoal = null;
+    List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+
     // tracking variables
     private float xval = 0;
     private boolean inCenter = false;
+    public boolean cameraLeft = false;
+
+    Telemetry telemetry;
+    private HardwareMap hardwareMap;
+    private boolean isRunning = true;
 
 
-    @Override public void runOpMode() {
-        try {
-            robot.init(this, this.hardwareMap, telemetry);
-            robot.setDriveToPowerMode();
-        } catch (Exception ex) {
-            telemetry.addData("Init", ex.getMessage());
+    public TurretAngler(HardwareMap hMap, LinearOpMode caller, Telemetry t) throws Exception {
+        hardwareMap = hMap;
+        telemetry = t;
+        initTracker();
+//        activateTracker();
+    }
+
+
+    public void angleTurret() {
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+        while (isRunning) {
+            // check all the trackable targets to see which one (if any) is visible.
+            targetVisible = false;
+            for (VuforiaTrackable trackable : allTrackables) {
+                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                    telemetry.addData("Visible Target", trackable.getName());
+                    targetVisible = true;
+
+                    OpenGLMatrix rawObjectLocation = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedVuforiaCameraFromTarget();
+
+                    if (rawObjectLocation != null){
+                        lastRawLocation = rawObjectLocation;
+                    }
+                    break;
+                }
+            }
+
+            // Provide feedback as to where the robot is located (if we know).
+            if (targetVisible) {
+                // raw values of object position on video
+                VectorF rawTranslation = lastRawLocation.getTranslation();
+                telemetry.addData("Raw X", "%.0f", rawTranslation.get(0));
+                xval = rawTranslation.get(0);
+
+                // check if out of center zone
+                inCenter = !(abs(xval) >= 100);
+
+                // if out of center zone do this
+                if (!inCenter) {
+                    cameraLeft = xval < 0;
+                    while(runtime.milliseconds() < 60){
+                    }
+                    runtime.reset();
+                }
+
+            } else {
+                telemetry.addData("Visible Target", "none");
+            }
+            telemetry.update();
         }
-        telemetry.update();
 
+    }
+
+
+    public void initTracker() throws Exception {
         webcamName = hardwareMap.get(WebcamName.class, "wcam");
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -86,7 +138,7 @@ public class NavigationTesting extends LinearOpMode {
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        VuforiaTrackables targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
+        targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
         VuforiaTrackable blueTowerGoalTarget = targetsUltimateGoal.get(0);
         blueTowerGoalTarget.setName("Blue Tower Goal Target");
         VuforiaTrackable redTowerGoalTarget = targetsUltimateGoal.get(1);
@@ -99,7 +151,6 @@ public class NavigationTesting extends LinearOpMode {
         frontWallTarget.setName("Front Wall Target");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targetsUltimateGoal);
 
 
@@ -136,56 +187,44 @@ public class NavigationTesting extends LinearOpMode {
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(parameters.cameraName, cameraLocationOnRobot);
         }
-
-         waitForStart();
-
-
-        targetsUltimateGoal.activate();
-        while (!isStopRequested()) {
-
-            // check all the trackable targets to see which one (if any) is visible.
-            targetVisible = false;
-            for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
-                    targetVisible = true;
-
-                    OpenGLMatrix rawObjectLocation = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedVuforiaCameraFromTarget();
-
-                    if (rawObjectLocation != null){
-                        lastRawLocation = rawObjectLocation;
-                    }
-                    break;
-                }
-            }
-
-            // Provide feedback as to where the robot is located (if we know).
-            if (targetVisible) {
-                // raw values of object position on video
-                VectorF rawTranslation = lastRawLocation.getTranslation();
-                telemetry.addData("Raw X", "%.0f", rawTranslation.get(0));
-                xval = rawTranslation.get(0);
-
-                // check if out of center zone
-                inCenter = !(abs(xval) >= 100);
-
-                // if out of center zone do this
-                if (!inCenter) {
-                    if (xval < 0) {
-                        robot.leftLittleCamera();
-                    } else {
-                        robot.rightLittleCamera();
-                    }
-                    sleep(60);
-                }
-
-            } else {
-                telemetry.addData("Visible Target", "none");
-            }
-            telemetry.update();
-        }
-
-        // Disable Tracking when we are done;
-        targetsUltimateGoal.deactivate();
     }
+
+    public void activateTracker() throws Exception {
+        if (targetsUltimateGoal != null) {
+            targetsUltimateGoal.activate();
+        }
+        telemetry.addData("Info", "Turret Angling Activated");
+    }
+
+
+    public void stopVuforia() {
+        stopThread();
+        if (targetsUltimateGoal != null) {
+            targetsUltimateGoal.deactivate();
+        }
+    }
+
+    public void stopThread() {
+        isRunning = false;
+    }
+
+    public int moveTurret() {
+        if (targetVisible && !inCenter) {
+            if (cameraLeft) {
+                return 1;
+            } else {
+                return 2;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public void run() {
+        while(isRunning) {
+            angleTurret();
+        }
+    }
+
 }

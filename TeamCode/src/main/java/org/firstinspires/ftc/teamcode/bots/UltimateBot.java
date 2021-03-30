@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
+import org.firstinspires.ftc.teamcode.skills.TurretAngler;
 
 import static java.lang.Math.abs;
 
@@ -49,6 +50,7 @@ public class UltimateBot extends YellowBot {
     private static double CAMERA_LEFT_LINE = 0.5;
 
     private RingDetector rf = null;
+    private TurretAngler ta = null;
 
 
     /* Constructor */
@@ -94,6 +96,7 @@ public class UltimateBot extends YellowBot {
         // camera has no init position so can manually move
         try {
             ringCamera = hwMap.get(Servo.class, "camera");
+            ringCamera.setPosition(0.5);
         } catch (Exception ex) {
             throw new Exception("Issues with ringCamera. Check the controller config", ex);
         }
@@ -259,17 +262,23 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    double cameraPos = 0;
+
     @BotAction(displayName = "Camera Little Right", defaultReturn = "")
     public void rightLittleCamera() {
         if (ringCamera != null) {
-            ringCamera.setPosition(ringCamera.getPosition() + 0.02);
+            cameraPos = ringCamera.getPosition();
+            cameraPos = cameraPos + 0.005;
+            ringCamera.setPosition(cameraPos);
         }
     }
 
     @BotAction(displayName = "Camera Little Left", defaultReturn = "")
     public void leftLittleCamera() {
         if (ringCamera != null) {
-            ringCamera.setPosition(ringCamera.getPosition() - 0.02);
+            cameraPos = ringCamera.getPosition();
+            cameraPos = cameraPos - 0.005;
+            ringCamera.setPosition(cameraPos);
         }
     }
 
@@ -350,6 +359,58 @@ public class UltimateBot extends YellowBot {
 //        getLights().none();
 //    }
 
+    // turret angling functions
+    public void initTurretThread(LinearOpMode caller) {
+        try {
+            ta = new TurretAngler(this.hwMap, caller, telemetry);
+            Thread turretThread = new Thread(ta);
+            turretThread.start();
+        } catch (Exception ex) {
+            telemetry.addData("Error", String.format("Unable to initialize Turret thread. %s", ex.getMessage()));
+            telemetry.update();
+        }
+    }
+
+    public void activatTurretThread(LinearOpMode caller) {
+        try {
+            if (ta !=null) {
+                ta.activateTracker();
+                Thread turretThread = new Thread(ta);
+                turretThread.start();
+            }
+        } catch (Exception ex) {
+            telemetry.addData("Error", String.format("Unable to activate Turret thread. %s", ex.getMessage()));
+            telemetry.update();
+        }
+    }
+
+    int cameramove = 0;
+    boolean turretrunning = true;
+
+    public void angleTurret() {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        if (ta != null) {
+            while (turretrunning) {
+                cameramove = ta.moveTurret();
+                if (cameramove == 1) {
+                    leftLittleCamera();
+                } else if (cameramove == 2) {
+                    rightLittleCamera();
+                }
+                while(timer.milliseconds() < 60){
+                }
+                timer.reset();
+            }
+        }
+    }
+
+    public void stopTurretAngler() {
+        if (ta != null) {
+            ta.stopThread();
+            turretrunning = false;
+        }
+    }
 
     public void initDetector(String side, LinearOpMode caller) {
         try {
@@ -422,48 +483,6 @@ public class UltimateBot extends YellowBot {
         return target;
     }
 
-
-    public int checkRingPos() {
-        float ringCenter = 0;
-        int strafeAmnt = 0;
-        if (rf != null) {
-            try {
-                ringCenter = rf.detectRingsPos(2, telemetry, owner);
-            } finally {
-//                if (rf != null) {
-//                    rf.stopDetection();
-//                }
-            }
-        }
-
-        if (ringCenter > 15) {
-            strafeAmnt = 1;
-        } else {
-            strafeAmnt = -1;
-        }
-
-        return strafeAmnt;
-    }
-
-    @BotAction(displayName = "Adjust to Ring Stack", defaultReturn = "")
-    public void adjustToCameraRing(RobotCoordinatePosition locator){
-        int strafeAmnt = checkRingPos();
-
-        //wait for the locator to stabilize
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-        while(timer.milliseconds() < 500 && this.owner.opModeIsActive()){
-        }
-
-        //get the orientation as the locator knows it. we'll use it later for corrections
-        double originalOrientation = locator.getAdjustedCurrentHeading();
-        double originalx = locator.getX();
-        Log.d("UltimateBot", String.format("original orientation: %.2f", originalOrientation));
-
-        //strafe to align the robot with ring stack
-        strafeTo(0.2, originalx + strafeAmnt, true);
-
-    }
 
     public void shootPegContinuous(RobotCoordinatePosition locator){
         // start shooter

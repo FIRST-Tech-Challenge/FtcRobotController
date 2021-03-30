@@ -37,6 +37,7 @@ public class UltimateMode extends LinearOpMode {
     double startdelay = 0;
     double grabdelay = 0;
     private BotThreadAction bta = null;
+    private BotThreadAction turretbta = null;
     Thread btaThread = null;
     RobotCoordinatePosition locator = null;
     Deadline gamepadRateLimit;
@@ -59,9 +60,17 @@ public class UltimateMode extends LinearOpMode {
             Thread positionThread = new Thread(locator);
             positionThread.start();
 
+            // init turret
+            robot.initTurretThread(this);
+
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
             runtime.reset();
+
+            robot.activatTurretThread(this);
+            turretbta = new BotThreadAction(robot, telemetry, "moveTurretCams", this);
+            Thread moveCamTurretThread = new Thread(turretbta);
+            moveCamTurretThread.start();
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
@@ -217,6 +226,7 @@ public class UltimateMode extends LinearOpMode {
         finally {
             robot.stopintake();
             robot.stopshooter();
+            robot.stopTurretAngler();
             if (locator != null){
                 locator.stop();
             }
