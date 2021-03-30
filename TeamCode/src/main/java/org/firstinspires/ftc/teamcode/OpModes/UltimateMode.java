@@ -26,19 +26,26 @@ public class UltimateMode extends LinearOpMode {
     // Declare OpMode members.
     UltimateBot robot = new UltimateBot();
     private ElapsedTime runtime = new ElapsedTime();
+
+    // Declare Toggle Booleans
     boolean changedclaw = true;
     boolean changedintake = false;
     boolean changedshooter = false;
     boolean intakeReverse = false;
-    boolean buttonpressable = true;
-    boolean shooterslower = false;
     boolean changedguard = false;
+    boolean autoShooter = true;
+
+    // Declare Button Delays
+    boolean buttonpressable = true;
     double delaytime = 200;
     double startdelay = 0;
-    double grabdelay = 0;
+
+    // Run Bot Thread Action
     private BotThreadAction bta = null;
     private BotThreadAction turretbta = null;
     Thread btaThread = null;
+
+    // Locator Variables
     RobotCoordinatePosition locator = null;
     Deadline gamepadRateLimit;
     private final static int GAMEPAD_LOCKOUT = 500;
@@ -53,10 +60,11 @@ public class UltimateMode extends LinearOpMode {
                 telemetry.addData("Init", ex.getMessage());
             }
             telemetry.update();
-            gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
 
+            // locator thread initialization
             locator = new RobotCoordinatePosition(robot, RobotCoordinatePosition.THREAD_INTERVAL);
             locator.reverseHorEncoder();
+            gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
             Thread positionThread = new Thread(locator);
             positionThread.start();
 
@@ -75,6 +83,7 @@ public class UltimateMode extends LinearOpMode {
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
+                // DRIVING
                 double drive = gamepad1.left_stick_y;
                 double turn = 0;
                 double ltrigger = gamepad1.left_trigger;
@@ -86,8 +95,6 @@ public class UltimateMode extends LinearOpMode {
                 }
 
                 double strafe = gamepad1.right_stick_x;
-
-                buttonpressable = ((runtime.milliseconds() - startdelay) >= delaytime);
 
                 if (Math.abs(strafe) > 0) {
                     telemetry.addData("Strafing", "Left: %2f", strafe);
@@ -101,7 +108,10 @@ public class UltimateMode extends LinearOpMode {
                     robot.move(drive, turn);
                 }
 
-                // move claw
+                // BUTTON PRESSABLE
+                buttonpressable = ((runtime.milliseconds() - startdelay) >= delaytime);
+
+                // MOVE CLAW
                 if (gamepad1.dpad_right && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     changedclaw = !changedclaw;
@@ -114,44 +124,29 @@ public class UltimateMode extends LinearOpMode {
                 }
 
 
-                // move swing thread
-//                if (gamepad1.dpad_up) {
-//                    bta = new BotThreadAction(robot, telemetry, "wobbleforward", this);
-//                    btaThread = new Thread(bta);
-//                    btaThread.start();
-//                } else if (gamepad1.dpad_down) {
-//                    bta = new BotThreadAction(robot, telemetry, "wobbleback", this);
-//                    btaThread = new Thread(bta);
-//                    btaThread.start();
-//                } else if (gamepad1.dpad_left) {
-//                    bta = new BotThreadAction(robot, telemetry, "wobblewall", this);
-//                    btaThread = new Thread(bta);
-//                    btaThread.start();
-//                } else if (gamepad1.x && buttonpressable) {
-//                    startdelay = runtime.milliseconds();
-//                    bta = new BotThreadAction(robot, telemetry, "wallclose", this);
-//                    btaThread = new Thread(bta);
-//                    btaThread.start();
-//                    changedclaw = !changedclaw;
-//                }
-
-
-                // wobble swing regular
-                if (gamepad1.dpad_up && buttonpressable) {
-                    startdelay = runtime.milliseconds();
-                    robot.forwardWobbleSwing();
-                } else if (gamepad1.dpad_down && buttonpressable) {
-                    startdelay = runtime.milliseconds();
-                    robot.backWobbleSwing();
-                } else if (gamepad1.dpad_left && buttonpressable) {
-                    startdelay = runtime.milliseconds();
-                    changedguard = !changedguard;
+                // MOVE WOBBLE THREAD
+                if (gamepad1.dpad_up) {
+                    bta = new BotThreadAction(robot, telemetry, "wobbleforward", this);
+                    btaThread = new Thread(bta);
+                    btaThread.start();
+                } else if (gamepad1.dpad_down) {
+                    bta = new BotThreadAction(robot, telemetry, "wobbleback", this);
+                    btaThread = new Thread(bta);
+                    btaThread.start();
                 } else if (gamepad1.x && buttonpressable) {
                     startdelay = runtime.milliseconds();
-                    robot.liftWallGrab();
+                    bta = new BotThreadAction(robot, telemetry, "wallclose", this);
+                    btaThread = new Thread(bta);
+                    btaThread.start();
                     changedclaw = !changedclaw;
                 }
 
+
+                // CHANGE GUARD POSITION
+                if (gamepad1.dpad_left && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    changedguard = !changedguard;
+                }
 
                 if (changedguard) {
                     robot.guardDown();
@@ -159,7 +154,7 @@ public class UltimateMode extends LinearOpMode {
                     robot.guardUp();
                 }
 
-                // move intake
+                // MOVE INTAKE
                 if (gamepad1.a && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     changedintake = !changedintake;
@@ -180,33 +175,44 @@ public class UltimateMode extends LinearOpMode {
                     robot.intakeReverse();
                 }
 
-                // move shooter
+                // MOVE SHOOTER
                 if (gamepad1.left_bumper && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     changedshooter = !changedshooter;
                 }
 
-                if (gamepad2.left_bumper && buttonpressable) {
-                    startdelay = runtime.milliseconds();
-                    changedshooter = !changedshooter;
-                }
-
                 if (changedshooter) {
-                    if (shooterslower) {
-                        robot.shootermed();
-                    } else {
-                        robot.shooter();
-                    }
+                    robot.shooter();
                 } else {
                     robot.stopshooter();
                 }
 
-                // shoot with servo
+                // SHOOT SERVO
                 if (gamepad1.right_bumper && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     robot.shootServo();
                 }
+                if (gamepad2.right_bumper && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    robot.shootServo();
+                }
 
+                // TURN OFF AUTO TURRET
+                if (gamepad2.b) {
+                    autoShooter = false;
+                    robot.stopTurretAngler();
+                }
+
+                // ROTATE TURRET MANUALLY
+                if (gamepad2.dpad_left && !autoShooter && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    robot.turretLittleLeft();
+                } else if (gamepad2.dpad_right && !autoShooter && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    robot.turretLittleRight();
+                }
+
+                // SHOOT PEGS
                 runShootPegSequence();
 
                 telemetry.addData("X ", locator.getXInches() );
@@ -217,7 +223,7 @@ public class UltimateMode extends LinearOpMode {
         } catch (Exception ex) {
             telemetry.addData("Issues with the OpMode", ex.getMessage());
             telemetry.update();
-            sleep(10000);
+            sleep(1000);
         }
         finally {
             robot.stopintake();
