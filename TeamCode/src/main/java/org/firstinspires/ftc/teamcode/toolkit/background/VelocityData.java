@@ -60,4 +60,10 @@ public class VelocityData extends Background {
         double upperLimit = robot.powerShotVelocity + 50;
         return (robot.shooter1Vel > lowerLimit && robot.shooter2Vel > lowerLimit && robot.shooter1Vel < upperLimit && robot.shooter2Vel < upperLimit);
     }
+
+    public boolean isBounceBackReady() {
+        double lowerLimit = robot.bounceBackVelocity - 50;
+        double upperLimit = robot.bounceBackVelocity + 50;
+        return (robot.shooter1Vel > lowerLimit && robot.shooter2Vel > lowerLimit && robot.shooter1Vel < upperLimit && robot.shooter2Vel < upperLimit);
+    }
 }

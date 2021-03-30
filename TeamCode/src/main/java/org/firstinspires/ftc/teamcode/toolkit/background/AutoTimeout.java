@@ -34,7 +34,7 @@ public class AutoTimeout extends Background {
         if ((notMoving || encoderZero) && isPowered) {
             //increment the loop counter
             loopCounter++;
-            if (loopCounter >= 5) {
+            if (loopCounter >= 3) {
                 robot.driveSub.stopMotors();
                 robot.stopThreads();
                 // since the robot has stalled for at least five seconds (loops), timeout (cancel)

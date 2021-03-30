@@ -31,11 +31,11 @@ public class UpliftTelemetry extends Background {
     @Override
     public void loop() {
 
-//        if(opMode instanceof UpliftTele) {
-//            displayTeleOpTelemetry(robot);
-//        } else if(opMode instanceof UpliftAuto){
-//            displayAutoTelemetry(robot);
-//        }
+        if(opMode instanceof UpliftTele) {
+            displayTeleOpTelemetry(robot);
+        } else if(opMode instanceof UpliftAuto){
+            displayAutoTelemetry(robot);
+        }
 
     }
 
@@ -65,6 +65,7 @@ public class UpliftTelemetry extends Background {
             telem.addData("Left Encoder pos:\t", robot.odometry.getLeftTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Right Encoder pos:\t", robot.odometry.getRightTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Center Encoder pos:\t", robot.odometry.getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
+            telem.addData("Transfer State:\t", robot.transferState + "");
         }
         if(robot.visionInitialized) {
             telem.addData("Ring Stack:\t", robot.ringDetector.ringCount);
