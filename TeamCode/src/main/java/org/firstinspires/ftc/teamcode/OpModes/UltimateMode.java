@@ -67,6 +67,7 @@ public class UltimateMode extends LinearOpMode {
             waitForStart();
             runtime.reset();
 
+            // start turret tracking
             robot.activatTurretThread(this);
             turretbta = new BotThreadAction(robot, telemetry, "moveTurretCams", this);
             Thread moveCamTurretThread = new Thread(turretbta);
@@ -150,11 +151,6 @@ public class UltimateMode extends LinearOpMode {
                     robot.liftWallGrab();
                     changedclaw = !changedclaw;
                 }
-
-//                if (gamepad1.y && buttonpressable) {
-//                    startdelay = runtime.milliseconds();
-//                    shooterslower = !shooterslower;
-//                }
 
 
                 if (changedguard) {

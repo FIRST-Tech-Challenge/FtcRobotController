@@ -32,22 +32,14 @@ public class UltimateBot extends YellowBot {
     private Servo ringCamera = null;
     private Servo shooterServo = null;
     private Servo ringGuard = null;
+    private Servo turretServo = null;
     private DcMotorEx shooter = null;
 
-    private SwingPosition swingPosition = SwingPosition.Init;
     private static double SWING_BACK_POS = 1;
     private static double SWING_PLACE_POS = 0;
     private static double SWING_LIFT_AND_HOLD = 0.25;
     private static double SWING_LIFT_WALL = 0.45;
     private static double SHOOT_SERVO = 0.7;
-
-    private static int TIMEOUT = 2500;
-    private static int TIMEOUT_LONGER = 3000;
-    private static int TIMEOUT_SHORTER = 1500;
-
-
-    private static double CAMERA_RIGHT_LINE = 0.35;
-    private static double CAMERA_LEFT_LINE = 0.5;
 
     private RingDetector rf = null;
     private TurretAngler ta = null;
@@ -134,6 +126,7 @@ public class UltimateBot extends YellowBot {
     }
 
 
+    // INTAKE FUNCTIONS
     @BotAction(displayName = "Move Intake", defaultReturn = "")
     public void intake() {
         DcMotorEx intake = getIntakeMotor();
@@ -158,6 +151,8 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+
+    // MOVE SHOOTER FUNCTIONS
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
@@ -169,13 +164,6 @@ public class UltimateBot extends YellowBot {
     public void shooterhigh() {
         if (shooter != null) {
             shooter.setVelocity(MAX_VELOCITY*0.8);
-        }
-    }
-
-    @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
-    public void shooterpeglow() {
-        if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.65);
         }
     }
 
@@ -200,7 +188,21 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
+    public void shooterpeglow() {
+        if (shooter != null) {
+            shooter.setVelocity(MAX_VELOCITY*0.65);
+        }
+    }
 
+    @BotAction(displayName = "Stop Shooter", defaultReturn = "")
+    public void stopshooter() {
+        if (shooter != null) {
+            shooter.setPower(0);
+        }
+    }
+
+    // SHOOT SERVO
     @BotAction(displayName = "Shoot", defaultReturn = "")
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
@@ -214,6 +216,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    // GUARD WALL FUNCTIONS
     @BotAction(displayName = "Guard Down", defaultReturn =  "")
     public void guardDown() {
         ringGuard.setPosition(0.03);
@@ -224,13 +227,7 @@ public class UltimateBot extends YellowBot {
         ringGuard.setPosition(1);
     }
 
-    @BotAction(displayName = "Stop Shooter", defaultReturn = "")
-    public void stopshooter() {
-        if (shooter != null) {
-            shooter.setPower(0);
-        }
-    }
-
+    // CLAW FUNCTIONS
     @BotAction(displayName = "Close Claw", defaultReturn = "")
     public void closeWobbleClaw() {
         if ((wobbleClaw1 != null) && (wobbleClaw2 != null)) {
@@ -248,20 +245,6 @@ public class UltimateBot extends YellowBot {
     }
 
     // CAMERA FUNCTIONS
-    @BotAction(displayName = "Camera Left", defaultReturn = "")
-    public void leftRingCamera() {
-        if (ringCamera != null) {
-            ringCamera.setPosition(CAMERA_LEFT_LINE);
-        }
-    }
-
-    @BotAction(displayName = "Camera Right", defaultReturn = "")
-    public void rightRingCamera() {
-        if (ringCamera != null) {
-            ringCamera.setPosition(CAMERA_RIGHT_LINE);
-        }
-    }
-
     double cameraPos = 0;
 
     @BotAction(displayName = "Camera Little Right", defaultReturn = "")
@@ -339,27 +322,27 @@ public class UltimateBot extends YellowBot {
         liftWobbleWall();
     }
 
-    public double getWobblePos() {
-        if (wobbleSwing != null) {
-            return wobbleSwing.getPosition();
-        } else {
-            return (-1);
+    // SPING TURRET FUNCTIONS
+    double turretPos = 0;
+    @BotAction(displayName = "Turret Little Right", defaultReturn = "")
+    public void turretLittleRight() {
+        if (turretServo != null) {
+            turretPos = turretServo.getPosition();
+            turretPos = turretPos + 0.005;
+            turretServo.setPosition(turretPos);
         }
     }
 
+    @BotAction(displayName = "Turret Little Left", defaultReturn = "")
+    public void turretLittleLeft() {
+        if (turretServo != null) {
+            turretPos = turretServo.getPosition();
+            turretPos = turretPos - 0.005;
+            turretServo.setPosition(turretPos);
+        }
+    }
 
-//    @BotAction(displayName = "Green Light", defaultReturn = "")
-//    public void signalOK() {
-//        getLights().OK();
-//        ElapsedTime timer = new ElapsedTime();
-//        timer.reset();
-//        while (timer.seconds() < 1) {
-//
-//        }
-//        getLights().none();
-//    }
-
-    // turret angling functions
+    // TURRET ANGLING THREAD FUNCTIONS
     public void initTurretThread(LinearOpMode caller) {
         try {
             ta = new TurretAngler(this.hwMap, caller, telemetry);
@@ -395,8 +378,10 @@ public class UltimateBot extends YellowBot {
                 cameramove = ta.moveTurret();
                 if (cameramove == 1) {
                     leftLittleCamera();
+                    turretLittleLeft();
                 } else if (cameramove == 2) {
                     rightLittleCamera();
+                    turretLittleRight();
                 }
                 while(timer.milliseconds() < 60){
                 }
@@ -412,6 +397,8 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+
+    // RING RECOGNITION FUNCTIONS
     public void initDetector(String side, LinearOpMode caller) {
         try {
             rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, telemetry);
@@ -457,16 +444,6 @@ public class UltimateBot extends YellowBot {
     }
 
 
-//    @BotAction(displayName = "Detection Lights", defaultReturn = "")
-//    public void displayDetectionLights() {
-//        rf.displayLights();
-//    }
-
-//    @BotAction(displayName = "Lights Off", defaultReturn = "")
-//    public void lightsOff() {
-//        getLights().none();
-//    }
-
     ///use for non-threaded detection
     @BotAction(displayName = "Detect Stack", defaultReturn = "B")
     public AutoDot detectStack(String side) {
@@ -484,6 +461,7 @@ public class UltimateBot extends YellowBot {
     }
 
 
+    // SHOOT PEG FUNCTIONS
     public void shootPegContinuous(RobotCoordinatePosition locator){
         // start shooter
         shooterpeglow();
