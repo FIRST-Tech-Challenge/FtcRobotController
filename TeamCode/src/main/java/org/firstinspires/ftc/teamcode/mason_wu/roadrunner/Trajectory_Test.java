@@ -102,7 +102,7 @@ public class Trajectory_Test extends LinearOpMode {
         if (opModeIsActive()) {
             //Two straight paths
             drive.followTrajectory(traj1);
-            sleep(200);
+            //sleep(200);
             drive.followTrajectory(traj2);
 
             //One curvy trajectory
