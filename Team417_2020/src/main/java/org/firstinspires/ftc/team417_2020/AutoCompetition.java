@@ -17,7 +17,7 @@ public class AutoCompetition extends MasterAutonomous {
     // Constants
     static final int MINIMUM_RING_AREA = 1800;
     static final int PARKING_Y_POSITION = -58;
-    static final int A_C_TARGET_ZONE_X_POSITION = 40;
+    static final int A_C_TARGET_ZONE_X_POSITION = 12;
     static final int A_TARGET_ZONE_Y_POSITION = -72;
     static final int B_TARGET_ZONE_Y_POSITION = -86;
     static final int C_TARGET_ZONE_Y_POSITION = -110;
@@ -43,8 +43,8 @@ public class AutoCompetition extends MasterAutonomous {
         waitForStart();
 
         //strafe away from wall and pivot
-        move(-6, 0, 0.7);
-        pivot(-90, 0.4);
+        move(-6, 0, 0.9);
+        pivot(-90, 0.7);
         // 0 rings -> Zone A
         // 1 rings -> Zone B
         // 4 rings -> Zone C
@@ -71,7 +71,27 @@ public class AutoCompetition extends MasterAutonomous {
 
 
         // Park over white line
-        move(-10, PARKING_Y_POSITION, 0.9);
+        move(-24, PARKING_Y_POSITION, 0.9);
+        // navigate to other goal
+        move(-24, -18, 0.9);
+        move(-18, -18, 0.9);
+        pivot(88, 0.9);
+
+        // move toward wobble goal
+        move(-18, -22, -0.3);
+        // lift arm
+        wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
+        runMotorToPosition(motorWobbleGoalArm, 120, 0.2);
+        motorWobbleGoalArm.setPower(0.005);
+        sleep(300);
+        // close grabber
+        wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_IN);
+        // back up
+        move(-18, -18, 0.7);
+        motorWobbleGoalArm.setPower(0.0);
+        // lift arm up
+        runMotorToPosition(motorWobbleGoalArm, 300, 0.7);
+
 
 
 
@@ -148,7 +168,7 @@ public class AutoCompetition extends MasterAutonomous {
                 move(A_C_TARGET_ZONE_X_POSITION, -24, 0.9);
                 move(A_C_TARGET_ZONE_X_POSITION, A_TARGET_ZONE_Y_POSITION, 0.9);
                 openWobbleGoalArm();
-                //move(A_C_TARGET_ZONE_X_POSITION, (A_TARGET_ZONE_Y_POSITION + 15), 0.9);
+                move(A_C_TARGET_ZONE_X_POSITION, (A_TARGET_ZONE_Y_POSITION + 15), 0.9);
                 break;
 
             case 1:
