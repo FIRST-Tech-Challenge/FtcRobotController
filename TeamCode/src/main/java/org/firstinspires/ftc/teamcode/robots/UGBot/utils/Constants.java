@@ -58,6 +58,8 @@ public class Constants {
 
     public static double MIN_CONTOUR_AREA = .1;
 
+    public static double MIN_BLOB_SIZE = 4000;
+
     //odometry positions all in meters
     public static double goalX = 0.9144;
     public static double goalY = 3.6576;
@@ -67,8 +69,9 @@ public class Constants {
     public static double startingYOffset = ROBOT_RADIUS_INCHES/INCHES_PER_METER;
     public static double HEIGHT_MULTIPLIER = 1.15;
     public static double RPS_MULTIPLIER = 1.07;
-    public static double MUZZLE_ANGLE_OFFSET_IN_TELE_OP = -20;
+    public static double MUZZLE_ANGLE_OFFSET_IN_TELE_OP = -10;
     public static int  ELBOW_ZERO_DEGREES_OFFSET = 141;
+    public static double ILLEGAL_SHOOTING_DISTANCE = 1.8288;
 
     public static int WOBBLE_GRIPPER_CLOSED = 900;
     public static int WOBBLE_GRIPPER_STOWED = 2100;
@@ -77,11 +80,16 @@ public class Constants {
     public static int INTAKE_SERVO_PICKUP = 1525;
     public static double AUTO_INTAKE_FIRST = .65;
     public static double AUTO_INTAKE_SECOND = .75;
+    public static int INTAKE_OUT_SERVO_OUT = 1500;
+    public static int INTAKE_OUT_SERVO_IN = 900;
+    public static double AUTO_INTAKE_SPEED = 0.5;
+    public static double TURRET_TOLERANCE = 0.01;
 
 
     public static int LAUNCHER_TRIGGER_STOWED = 900;
     public static int LAUNCHER_TRIGGER_SHOOT = 1920;
-    public static int LAUNCHER_TRIGGER_STARTING = 1700;
+    public static int LAUNCHER_TRIGGER_STARTING = 1500;
+
 
     //inner conflicts
     public static double TURRET_HEADING_OFFSET = 30;
@@ -119,7 +127,7 @@ public class Constants {
         //340, 45
         ALIGNMENT_RESET(49/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1,1),
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
-        TARGET_C_1(49/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,60+45,5,1),
+        TARGET_C_1(49/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,-1,-1,1),
         TARGET_C_2((49+7)/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,45+45,5,0),
         TARGET_B_1((49)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
         TARGET_B_2((49+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, -1,0,5,1),

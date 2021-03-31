@@ -89,6 +89,7 @@ public class PoseUG {
     private DcMotor headlight = null;
     private DcMotor intakeMotor = null;
     private Servo tiltServo = null;
+    private Servo outServo = null;
     private DcMotorEx flywheelMotor = null;
     private DcMotor turretMotor = null;
     private Servo triggerServo = null;
@@ -324,6 +325,7 @@ public class PoseUG {
 
         this.intakeMotor = this.hwMap.dcMotor.get("intakeMotor");
         this.tiltServo = this.hwMap.servo.get("tiltServo");
+        this.outServo = this.hwMap.servo.get("outServo");
 
         this.blinkin = this.hwMap.servo.get("blinkin");
         this.distForward = this.hwMap.get(DistanceSensor.class, "distForward");
@@ -364,7 +366,7 @@ public class PoseUG {
         launcher = new Launcher(elbow, flywheelMotor, triggerServo, gripperServo);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
-        intake = new Intake(intakeMotor, tiltServo);
+        intake = new Intake(intakeMotor, tiltServo, outServo);
         ledSystem = new LEDSystem(blinkin);
 
         moveMode = MoveMode.still;
@@ -688,18 +690,17 @@ public class PoseUG {
 //                turret.setTurntableAngle(getHeading());
                 break;
             default:
-                goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
-                turret.setTurntableAngle(model.getTurretHeading() + Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
+                    goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
+                    turret.setTurntableAngle(goalHeading + Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
 
-                launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.HEIGHT_MULTIPLIER);
-                if(flywheelIsActive){
-                    launcher.setFlywheelActivePID(true);
-                    launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity() * Constants.RPS_MULTIPLIER);
-                }
-                else{
-                    launcher.setFlywheelActivePID(false);
-                }
+                    launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.HEIGHT_MULTIPLIER);
 
+                    if (flywheelIsActive) {
+                        launcher.setFlywheelActivePID(true);
+                        launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity() * Constants.RPS_MULTIPLIER);
+                    } else {
+                        launcher.setFlywheelActivePID(false);
+                    }
                 break;
         }
     }
@@ -864,15 +865,11 @@ public class PoseUG {
             //stopAll();
             driveMixerDiffSteer(0, 0);
             driveIMUDistanceInitialzed = false;
+
+            setPoseHeading(0);
+
             return true;
         }
-    }
-
-    public void shiftOdometer(double newHeading){
-        double oldX = getX();
-        double oldY = getY();
-        poseX = oldX*Math.cos(Math.toRadians(newHeading)) - oldY*Math.sin(Math.toRadians(newHeading));
-        poseY = oldX*Math.sin(Math.toRadians(newHeading)) - oldY*Math.cos(Math.toRadians(newHeading));
     }
 
     public boolean driveIMUUntilDistance(double pwr, double targetAngle, boolean forward, double targetMetersAway) {
@@ -1078,13 +1075,13 @@ public class PoseUG {
         return true;
     }
 
-    private int autoIntakeState = 0;
+    public int autoIntakeState = 0;
     private double autoIntakeTimer = 0;
     public boolean autoIntake(){
         switch(autoIntakeState){
             case 0:
                 intake.setTiltTargetPosition(Constants.INTAKE_SERVO_PICKUP);
-                intake.setIntakeSpeed(1);
+                intake.setIntakeSpeed(Constants.AUTO_INTAKE_SPEED);
                 autoIntakeTimer = System.nanoTime();
                 autoIntakeState++;
                 break;

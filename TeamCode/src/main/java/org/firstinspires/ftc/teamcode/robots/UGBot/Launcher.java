@@ -45,7 +45,7 @@ public class Launcher {
     public static  double kdElbow= 0.0; //derivative constant multiplier
     double elbowCorrection = 0.00; //correction to apply to elbow motor
     boolean elbowActivePID = true;
-    int elbowPos = Constants.ELBOW_ZERO_DEGREES_OFFSET;
+    int elbowPos = 0;
     double elbowPwr = 0;
 
     //elbow safety limits
@@ -69,7 +69,7 @@ public class Launcher {
 
         this.flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        gripperTargetPos = Constants.LAUNCHER_TRIGGER_STARTING;
+        gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;
 
         //PID
         lastUpdateTime = System.currentTimeMillis();

@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
@@ -157,7 +159,7 @@ public class Turret{
 
     public boolean setTurntableAngle(double angle){
         turretTargetHeading=wrap360(angle);
-        return true;
+        return Conversions.between(getHeading(), angle - Constants.TURRET_TOLERANCE, angle + Constants.TURRET_TOLERANCE);
     }
 
     public void setPower(double pwr){

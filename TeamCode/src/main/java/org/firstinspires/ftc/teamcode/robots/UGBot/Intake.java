@@ -12,20 +12,23 @@ public class Intake {
 
     public DcMotor intakeMotor = null;
     public Servo tiltServo = null;
+    public Servo outServo = null;
     private double speed;
     private boolean active = true;
     private int tiltTargetPosition = Constants.INTAKE_SERVO_TRAVEL;
+    private int outTargetPos = Constants.INTAKE_OUT_SERVO_OUT;
 
 
 
-    public Intake(DcMotor intakeMotor, Servo tiltServo) {
+    public Intake(DcMotor intakeMotor, Servo tiltServo, Servo outServo) {
         this.intakeMotor = intakeMotor;
-        this.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //this.intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.tiltServo = tiltServo;
+        this.outServo = outServo;
         speed = 0;
     }
 
+    boolean intakeGimbalIsActive = false;
     public void update(){
         if(active){
             intakeMotor.setPower(speed);
@@ -34,8 +37,13 @@ public class Intake {
             intakeMotor.setPower(0);
         }
 
-        tiltServo.setPosition(Conversions.servoNormalize(tiltTargetPosition));
+        if(intakeGimbalIsActive) {
+            tiltServo.setPosition(Conversions.servoNormalize(tiltTargetPosition));
+            outServo.setPosition(Conversions.servoNormalize(outTargetPos));
+        }
     }
+
+    public void setIntakeGimbalIsActive(boolean intakeGimbalIsActive){this.intakeGimbalIsActive = intakeGimbalIsActive;}
 
     //region getters and setters
 
@@ -46,6 +54,10 @@ public class Intake {
     public boolean setTiltTargetPosition(int tiltTargetPosition){this.tiltTargetPosition = tiltTargetPosition; return true;}
 
     public int getTiltTargetPosition(){return this.tiltTargetPosition;}
+
+    public boolean setOutTargetPosition(int outTargetPosition){this.outTargetPos = outTargetPosition; return true;}
+
+    public int getOutTargetPosition(){return this.outTargetPos;}
 
     public double getIntakeSpeed(){
         return speed;

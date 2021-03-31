@@ -103,6 +103,13 @@ public class OpenCVIntegration implements VisionProvider {
             overlay.release();
 //        }
 
+        for(int i = 0; i < blobs.size(); i++) {
+            if(blobs.get(i).area < Constants.MIN_BLOB_SIZE) {
+                blobs.remove(i);
+                i--;
+            }
+        }
+
         if(blobs.isEmpty())
             return StackHeight.ZERO;
         else {

@@ -477,6 +477,7 @@ public class UG_6832 extends OpMode {
                         }
                         break;
                     case 4:
+                        testRamp();
                         break;
                     case 6:
                         demo();
@@ -545,6 +546,80 @@ public class UG_6832 extends OpMode {
     double lastCachedTPS = 0;
     boolean cacheValidated = false;
 
+    boolean rotate = false;
+    private void testRamp() {
+        reverse = -1;
+        pwrDamper = .70;
+
+        pwrFwd = 0;
+        pwrRot = 0;
+
+        if (notdeadzone(gamepad1.left_stick_y))
+            pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
+        if (notdeadzone(gamepad1.right_stick_x))
+            pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
+
+        if (nearZero(pwrFwd) && nearZero(pwrRot)) {
+            robot.driveMixerDiffSteer(0, 0);
+        } else {
+            robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
+        }
+
+        if (gamepad1.right_trigger > .01)
+            robot.turret.rotateRight(gamepad1.right_trigger * 2);
+
+        if (gamepad1.left_trigger > .01)
+            robot.turret.rotateLeft(gamepad1.left_trigger * 2);
+
+        if (notdeadzone(gamepad1.right_stick_y)) {
+            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
+        }
+
+        if(toggleAllowed(gamepad1.b, b, 1))
+            rotate = !rotate;
+
+        if(toggleAllowed(gamepad1.dpad_right,dpad_right,1))
+            robot.setTarget(Constants.Target.NONE);
+        if(toggleAllowed(gamepad1.dpad_up,dpad_up,1))
+            robot.setTarget(Constants.Target.HIGH_GOAL);
+        if(toggleAllowed(gamepad1.dpad_left,dpad_left,1)){
+            switch(robot.getTarget()){
+                case FIRST_POWER_SHOT:
+                    robot.setTarget(Constants.Target.SECOND_POWER_SHOT);
+                    break;
+                case SECOND_POWER_SHOT:
+                    robot.setTarget(Constants.Target.THIRD_POWER_SHOT);
+                    break;
+                case THIRD_POWER_SHOT:
+                    robot.setTarget(Constants.Target.FIRST_POWER_SHOT);
+                    break;
+                default:
+                    robot.setTarget(Constants.Target.FIRST_POWER_SHOT);
+            }
+        }
+        if(toggleAllowed(gamepad1.dpad_down,dpad_down,1)) {
+            switch(robot.getTarget()){
+                case MID_GOAL:
+                    robot.setTarget(Constants.Target.LOW_GOAL);
+                    break;
+                case LOW_GOAL:
+                    robot.setTarget(Constants.Target.MID_GOAL);
+                    break;
+                default:
+                    robot.setTarget(Constants.Target.MID_GOAL);
+            }
+        }
+
+        if(rotate) {
+            robot.turret.rotateRight(2);
+            if(robot.autoIntakeState == 0)
+                robot.articulate(PoseUG.Articulation.autoIntake);
+        }
+
+        robot.launcher.update();
+        robot.turret.update();
+        robot.intake.update();
+    }
 
     private void joystickDrive() { //apple
 
@@ -552,6 +627,7 @@ public class UG_6832 extends OpMode {
             robot.setAutonSingleStep(true);
             joystickDriveStarted = true;
             robot.launcher.setActive(true);
+            robot.intake.setIntakeGimbalIsActive(true);
         }
 
 
@@ -667,7 +743,7 @@ public class UG_6832 extends OpMode {
         // turret controls - this is on gamepad2 in teleop - but on gamepad 1 for
         // prematch setup
         if (notdeadzone(gamepad1.right_trigger))
-            //robot.turret.rotateRight(gamepad1.right_trigger * 5);
+            robot.turret.rotateRight(gamepad1.right_trigger * 5);
         if (notdeadzone(gamepad1.left_trigger))
             robot.turret.rotateLeft(gamepad1.left_trigger * 5);
 
@@ -680,13 +756,9 @@ public class UG_6832 extends OpMode {
             robot.turret.adjust(gamepad1.left_stick_x);
         }
 
-        if(toggleAllowed(gamepad1.b, b, 1)){
-            robot.launcher.setElbowTargetPos(400,1);
-        }
+        if(toggleAllowed(gamepad1.x,x,1))
+            robot.alignmentRun(.5,-0.4572 * Constants.WALL_FOLLOW_MULTIPLIER, -robot.getDistRightDist() * Constants.WALL_FOLLOW_MULTIPLIER,true, 2.7432);
 
-        if(toggleAllowed(gamepad1.y, y, 1)){
-            robot.setPoseHeading(0);
-        }
     }
 
     private void logTurns(double target) {

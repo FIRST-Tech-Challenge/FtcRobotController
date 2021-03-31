@@ -57,6 +57,7 @@ public class TrajectoryCalculator {
         double xOffset = target.x - vx * flightTime;
         // horizontal distance in meters the disk has to travel
         distance = Math.hypot(xOffset - x, target.y - y);
+        distance = Math.max(distance, Constants.ILLEGAL_SHOOTING_DISTANCE);
 
         // using pythagorean theorem to find magnitude of muzzle velocity (in m/s);
         // accounting for velocity of robot in y axis
