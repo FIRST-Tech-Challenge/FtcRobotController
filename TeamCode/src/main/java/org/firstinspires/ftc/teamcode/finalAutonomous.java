@@ -72,7 +72,7 @@ public class finalAutonomous extends LinearOpMode {
                         break;
                     case 1:
                         move(1, 2000);
-                        strafeLeft(500);
+                        strafeRight(500);
                         wobble.setPosition(180);
                         break;
                     case 2:
@@ -138,7 +138,7 @@ public class finalAutonomous extends LinearOpMode {
     }
 
     public int calculateZone() {
-        int samples = 50;
+        int samples = 6;
         telemetry.addData(">", "Taking " + samples + " samples...");
         telemetry.update();
 
@@ -156,7 +156,7 @@ public class finalAutonomous extends LinearOpMode {
                 default: zones[3]++;
                     break;
             }
-            sleep(200);
+            sleep(150);
         }
 
         int largestIndex = 0;
