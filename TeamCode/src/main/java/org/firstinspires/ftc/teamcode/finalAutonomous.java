@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
@@ -13,7 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-// 8 degrees
 import java.util.List;
 
 @Autonomous
@@ -35,6 +35,9 @@ public class finalAutonomous extends LinearOpMode {
     private DcMotor shooter;
     private DcMotor belt;
 
+    private Servo wobble;
+
+    private boolean shouldWobble = true;
     private boolean shouldShoot = true;
     private boolean shouldDrive = false;
     private boolean shouldDetectRings = true;
@@ -45,6 +48,7 @@ public class finalAutonomous extends LinearOpMode {
 
         initDriveMotors();
         initShootingMotors();
+        initOtherMotors();
 
         initVuforia();
         initTensorFlowObjDetector();
@@ -64,13 +68,16 @@ public class finalAutonomous extends LinearOpMode {
                 switch (zone) {
                     case 0:
                         move(1, 1750); // only need to drop goal, no need to strafe
+                        wobble.setPosition(180);
                         break;
                     case 1:
                         move(1, 2000);
                         strafeLeft(500);
+                        wobble.setPosition(180);
                         break;
                     case 2:
                         move(1, 2250);
+                        wobble.setPosition(180);
                         break;
                     default:
                         break;
@@ -208,6 +215,12 @@ public class finalAutonomous extends LinearOpMode {
         }
 
         return zone;
+    }
+
+    private void initOtherMotors(){
+        if (shouldWobble) {
+            wobble = hardwareMap.get(Servo.class, "wobble");
+        }
     }
 
     private void initDriveMotors(){
