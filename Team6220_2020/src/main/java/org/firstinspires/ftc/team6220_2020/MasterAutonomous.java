@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.team6220_2020.ResourceClasses.Button;
 import org.firstinspires.ftc.team6220_2020.ResourceClasses.PIDFilter;
 
+//todo add is op mode active breakers
 public abstract class MasterAutonomous extends MasterOpMode
 {
     // Initialize booleans used in runSetup()--------------------------------------------------
@@ -69,7 +70,7 @@ public abstract class MasterAutonomous extends MasterOpMode
             }
 
             // If the driver presses start, we exit setup.
-            if (driver1.isButtonJustPressed(Button.START))
+            if (driver1.isButtonJustPressed(Button.A))
                 settingUp = false;
 
             // Display the current setup
@@ -83,6 +84,7 @@ public abstract class MasterAutonomous extends MasterOpMode
 
         }
 
+        telemetry.clearAll();
         telemetry.addData("State: ", "waitForStart()");
         //Sets the match start position
         xPos = startPositions[matchStartPosition][0];
@@ -105,6 +107,8 @@ public abstract class MasterAutonomous extends MasterOpMode
 
         boolean targetAcquired = false;
 
+        double driveAngle = -1.5708;
+
         //Starting position to measure distance traveled.
         double startX = xPos;
         double startY = yPos;
@@ -118,8 +122,13 @@ public abstract class MasterAutonomous extends MasterOpMode
             //This adds a value to the PID loop si it can update
             translationPID.roll(distanceTraveled);
 
+            if(targetDistance > 0){
+                driveAngle = -1.5708;
+            } else{
+                driveAngle = 1.5708;
+            }
             //We drive the mecanum wheels with the PID value
-            driveMecanum(0.0,translationPID.getFilteredValue(),0.0);
+            driveMecanum(driveAngle,translationPID.getFilteredValue(),0.0);
 
             // Update positions using last distance measured by encoders (utilizes fact that encoders have been reset to 0).
             xPos = lastX + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() +
@@ -129,7 +138,12 @@ public abstract class MasterAutonomous extends MasterOpMode
 
             telemetry.addData("X Position: ", xPos);
             telemetry.addData("Y Position: ", yPos);
+            telemetry.addData("distance traveled", distanceTraveled);
             telemetry.update();
+
+            if(Math.abs(distanceTraveled) > Math.abs(targetDistance)){
+                targetAcquired = true;
+            }
         }
     }
 

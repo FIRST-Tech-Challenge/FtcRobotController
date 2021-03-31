@@ -38,6 +38,7 @@ public abstract class MasterOpMode extends LinearOpMode
 
         driver1 = new DriverInput(gamepad1);
         driver2 = new DriverInput(gamepad2);
+
     }
 
     //This method drives mecanum when given an angle drive power and turning power
