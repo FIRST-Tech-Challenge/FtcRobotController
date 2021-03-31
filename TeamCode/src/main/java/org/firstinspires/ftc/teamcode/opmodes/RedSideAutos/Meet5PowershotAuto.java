@@ -193,8 +193,8 @@ public class Meet5PowershotAuto extends UpliftAuto {
             intakeSub.dropRoller();
 
         } else {        // either 0 rings, or a problem with detection (-1)
-            shooterSub.setShooterVelocity(robot.powerShotVelocity);
-            driveSub.driveToPosition(93.25, 60, 0.7, 0);
+            shooterSub.setShooterVelocity(robot.bounceBackVelocity);
+            driveSub.driveToPosition(91, 60, 0.7, 0.5, 0, 0);
             driveSub.turnTo(0, 0);
 
             transferSub.autoRaiseTransfer();
@@ -202,25 +202,21 @@ public class Meet5PowershotAuto extends UpliftAuto {
                 robot.safeSleep(1);
             }
             flickerSub.flickRing();
-            driveSub.driveToPosition(86.25, 60, 0.7, 0);
-            while (!robot.velocityData.isBounceBackReady() || robot.transferState != UpliftRobot.TransferState.UP) {
-                robot.safeSleep(1);
-            }
-//            flickerSub.flickRing();
-//            driveSub.driveToPosition(79.25, 60, 0.7, 0);
-//            while (!robot.velocityData.isBounceBackReady() || robot.transferState != UpliftRobot.TransferState.UP) {
-//                robot.safeSleep(1);
-//            }
+            driveSub.driveToPosition(83.5, 60, 0.7, 0.5,0 ,0);
+            flickerSub.flickRing();
+            driveSub.driveToPosition(75, 60, 0.7, 0.5,0 ,0);
             flickerSub.flickRing();
             transferSub.autoDropTransfer();
             shooterSub.setShooterPower(0);
-            driveSub.driveToPosition(12, 132, 0.7, 90);
-
+            intakeSub.setIntakePower(1);
+            driveSub.driveToPosition(60, 127, 0.7, 0);
+            driveSub.driveToPosition(60, 125, 0.7, 90);
+            driveSub.driveToPosition(89.89, 124, 0.7, 90);
 //            // drop off first wobble
-//            wobbleSub.setWobblePosition(0.2);
-//            driveSub.driveToPosition(135, 70, 1, 180, DriveSubsystem.CLOCKWISE);
-//            wobbleSub.dropOff();
-//            driveSub.driveToPosition(135, 66, 1, 180);
+            wobbleSub.setWobblePosition(0.2);
+            driveSub.driveToPosition(135, 70, 1, 180, DriveSubsystem.CLOCKWISE);
+            wobbleSub.dropOff();
+            driveSub.driveToPosition(135, 66, 1, 180);
 //
 //            // go to pick up second wobble
 //            getSecondWobble();

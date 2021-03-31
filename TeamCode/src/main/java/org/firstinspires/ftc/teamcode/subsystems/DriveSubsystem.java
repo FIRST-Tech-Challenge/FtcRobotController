@@ -163,10 +163,13 @@ public class DriveSubsystem extends Subsystem {
             turnVal = 0;
         }
 
-        double lf = sin(toRadians(90 - relativeAngleToPoint) + (0.25 * PI)) * speedVal + turnVal;
-        double rf = sin(toRadians(90 - relativeAngleToPoint) - (0.25 * PI)) * speedVal - turnVal;
-        double lb = sin(toRadians(90 - relativeAngleToPoint) - (0.25 * PI)) * speedVal + turnVal;
-        double rb = sin(toRadians(90 - relativeAngleToPoint) + (0.25 * PI)) * speedVal - turnVal;
+        double x = 1.25 * speedVal * sin(toRadians(relativeAngleToPoint));
+        double y = speedVal * cos(toRadians(relativeAngleToPoint));
+
+        double lf = y + x + turnVal;
+        double rf = y - x - turnVal;
+        double lb = y - x + turnVal;
+        double rb = y + x - turnVal;
 
         // find max total input out of the 4 motors
         double maxVal = abs(lf);
@@ -192,15 +195,18 @@ public class DriveSubsystem extends Subsystem {
     }
 
     // method to move a certain direction at a given speed
-    public void teleDrive(double speedVal, double angle, double turnVal) {
+    public void teleDrive(double x, double y, double turnVal) {
 
-        double lf = sin(toRadians(90 - angle) + (0.25 * PI)) * speedVal + turnVal;
-        double rf = sin(toRadians(90 - angle) - (0.25 * PI)) * speedVal - turnVal;
-        double lb = sin(toRadians(90 - angle) - (0.25 * PI)) * speedVal + turnVal;
-        double rb = sin(toRadians(90 - angle) + (0.25 * PI)) * speedVal - turnVal;
+        double lf = y + x + turnVal;
+        double rf = y - x - turnVal;
+        double lb = y - x + turnVal;
+        double rb = y + x - turnVal;
 
-        // find max total input out of the 4 motors
-        double maxVal = abs(lf);
+        // find max total input out of the 4 motors, if none above 1/sqrt(2) , then max is 1/sqrt(2)
+        double maxVal = 1 / sqrt(2);
+        if(abs(lf) > maxVal){
+            maxVal = abs(lf);
+        }
         if(abs(rf) > maxVal){
             maxVal = abs(rf);
         }
@@ -209,10 +215,6 @@ public class DriveSubsystem extends Subsystem {
         }
         if(abs(rb) > maxVal){
             maxVal = abs(rb);
-        }
-
-        if(maxVal < (1 / sqrt(2))) {
-            maxVal = 1 / sqrt(2);
         }
 
         // set the scaled powers
@@ -261,13 +263,13 @@ public class DriveSubsystem extends Subsystem {
 
             if (angleRemaining > 30) {
                 power = 1;
-            } else if(angleRemaining > 5) {
+            } else if(angleRemaining > 8) {
                 power = 0.3;
             } else if(angleRemaining > 0) {
                 power = 0.1;
             } else if(angleRemaining < -30) {
                 power = -1;
-            } else if(angleRemaining < -5) {
+            } else if(angleRemaining < -8) {
                 power = -0.3;
             } else if(angleRemaining < 0) {
                 power = -0.1;

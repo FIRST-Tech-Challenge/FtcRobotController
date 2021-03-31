@@ -8,6 +8,10 @@ import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 import org.firstinspires.ftc.teamcode.toolkit.misc.MathFunctions;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
+
 public class DriveCommands extends Command {
 
     public DriveSubsystem drive;
@@ -90,34 +94,16 @@ public class DriveCommands extends Command {
     }
 
     public void teleOpDrive() {
-        // Note: The following algorithm was inspired by the webpage https://seamonsters-2605.github.io/archive/mecanum/. It explains this concept very well.
-        double magnitude;
-        double turnValue;
-        // initialize the gamepad stick values to the three needed axes
-        double leftY = Range.clip((-opMode.gamepad1.left_stick_y), -1, 1);
-        double rightX;
-//        if(opMode.gamepad1.right_stick_x < 0) {
-//            rightX = -Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 2), -1, 1);
-//        } else {
-//            rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 2), -1, 1);
-//        }
-        rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 3) / 2, -0.5, 0.5);
-        double leftX = Range.clip(opMode.gamepad1.left_stick_x, -1, 1);
-
-        // find the angle of the left joystick
-        double joystickAngle = Math.toDegrees(MathFunctions.atan2UL(leftY, leftX));
-
-        magnitude = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2));
-        turnValue = rightX;
+        double xPwr = opMode.gamepad1.left_stick_x;
+        double yPwr = -opMode.gamepad1.left_stick_y;
+        double turnValue = Math.pow(opMode.gamepad1.right_stick_x, 3) / 2;
 
         if(robot.slowMode) {
-            magnitude /= 2;
+            xPwr /= 2;
+            yPwr /= 2;
             turnValue /= 2;
         }
 
-        // find the turnValue directly from the rightX input value (scaled for smoothness)
-        // set the powers using the 2 specific equations and clip the result
-        drive.teleDrive(magnitude, joystickAngle, turnValue);
+        drive.teleDrive(xPwr, yPwr, turnValue);
     }
-
 }
