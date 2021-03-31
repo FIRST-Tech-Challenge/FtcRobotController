@@ -82,7 +82,7 @@ public class Trajectory_Test extends LinearOpMode {
         Pose2d initialPose = new Pose2d();
         //drive.setPoseEstimate(initialPose);
         /////////////// Trajectories ///////////////
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
+        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(0,0,0))
                 .forward(30)
                 .build();
 
@@ -102,11 +102,23 @@ public class Trajectory_Test extends LinearOpMode {
         if (opModeIsActive()) {
             //Two straight paths
             drive.followTrajectory(traj1);
+
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("X", poseEstimate.getX());
+            telemetry.addData("Y", poseEstimate.getY());
+            telemetry.addData("Heading", poseEstimate.getHeading());
+            telemetry.update();
+
             //sleep(200);
             drive.followTrajectory(traj2);
 
             //One curvy trajectory
             //drive.followTrajectory(trajAlt);
+
+            telemetry.addData("X", poseEstimate.getX());
+            telemetry.addData("Y", poseEstimate.getY());
+            telemetry.addData("Heading", poseEstimate.getHeading());
+            telemetry.update();
         }
     }
     //Vision
