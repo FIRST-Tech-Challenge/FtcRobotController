@@ -63,15 +63,14 @@ public class finalAutonomous extends LinearOpMode {
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        move(1, 1750);
-                        strafeLeft(500);
+                        move(1, 1750); // only need to drop goal, no need to strafe
                         break;
                     case 1:
                         move(1, 2000);
+                        strafeLeft(500);
                         break;
                     case 2:
                         move(1, 2250);
-                        strafeLeft(500);
                         break;
                     default:
                         break;
