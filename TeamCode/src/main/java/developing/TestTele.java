@@ -49,9 +49,9 @@ public class TestTele extends OpMode {
         }
 
         if(gamepad2.right_trigger > 0){
-            bot.extendWobbleGoal(gamepad2.right_trigger);
+            bot.extendWobbleGoal(1);
         }else if (gamepad2.left_trigger > 0 ){
-            bot.extendWobbleGoal(-gamepad2.left_trigger);
+            bot.extendWobbleGoal(-1);
         }else{
             bot.extendWobbleGoal(0);
         }
@@ -63,6 +63,9 @@ public class TestTele extends OpMode {
         }else{
             bot.claw(0);
         }
+
+
+        bot.moveArm(gamepad2.right_stick_y);
 
 //        bot.extendWobbleGoal(gamepad2.a);
 

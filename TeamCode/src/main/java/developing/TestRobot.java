@@ -89,7 +89,7 @@ public class TestRobot {
         rh2 = getCRServo(hwMap, "rh2", CRServo.Direction.REVERSE);
         cl = getCRServo(hwMap, "cl", CRServo.Direction.FORWARD);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, Constants.RP_START);
-        wge = getCRServo(hwMap, "wge", CRServo.Direction.FORWARD);
+        wge = getCRServo(hwMap, "wge", CRServo.Direction.REVERSE);
 
         angularPosition.init(hwMap);
 
@@ -256,22 +256,17 @@ public class TestRobot {
     }
 
     public void outtakeWithCalculations() {
-//        if (outtaking) {
-////            autoAimer.update(angularPosition.getHeadingGY(), lr.getDistance(DistanceUnit.METER), br.getDistance(DistanceUnit.METER));
-//            autoAimer.update(0, 1.25,1.5);
-//            outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
-//            outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
-//            rh.setPower(-0.5);
-//        } else {
-//            outr.setPower(0);
-//            outl.setPower(0);
-//            if (!intaking) { rh.setPower(0); }
-//        }
-        //remove when make automodule
-        autoAimer.update(0, 1.25,1.5);
-        outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
-        outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
-        rh.setPower(-0.5);
+        if (outtaking) {
+//            autoAimer.update(angularPosition.getHeadingGY(), lr.getDistance(DistanceUnit.METER), br.getDistance(DistanceUnit.METER));
+            autoAimer.update(0, 1.25,1.5);
+            outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
+            outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
+            rh.setPower(-0.5);
+        } else {
+            outr.setPower(0);
+            outl.setPower(0);
+            if (!intaking) { rh.setPower(0); }
+        }
     }
 
     public double getRobotToGoalAngle() {
