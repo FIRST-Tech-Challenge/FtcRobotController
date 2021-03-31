@@ -23,6 +23,9 @@ public class TestDriveTeleOp extends MasterTeleOp {
 
         while (opModeIsActive()) {
             driveRobot();
+            //setWobbleGoalGrabber();
+            moveWobbleGoalArm();
+            telemetry.update();
 
             idle();
         }

@@ -14,8 +14,16 @@ public class TestDriveAuto extends MasterAutonomous {
         telemetry.update();
         waitForStart();
 
-        move(-6, 0, 0.7);
-        pivot(-90, 0.4);
+        pivot(178, 0.8);
+        sleep(500);
+        pivot(90, 0.5);
+        sleep(500);
+        pivot(0, 0.7);
+
+
+
+        //move(24,24 , 0.7);
+        //pivot(-90, 0.4);
         //move(12, 12, 0.9);
         //pivot(90, 0.7);
         //move(0, 0, 0.7);

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.team417_2020;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team417_2020.Resources.FIRFilter;
@@ -28,7 +27,11 @@ abstract public class MasterOpMode extends LinearOpMode {
     static final double DRIVE_GEAR_REDUCTION = 1.0; // This is < 1.0 if geared UP    16.0 / 24.0
     static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
-    static final double WOBBLEGOALGRABBERIN = 0.0; //initial position of servo
+    static final double WOBBLE_GOAL_GRABBER_IN = 0.5; //initial position of servo
+    static final double WOBBLE_GOAL_GRABBER_OUT = 0.0;
+    static final int WOBBLE_GOAL_ARM_UP = 500;
+    static final int WOBBLE_GOAL_ARM_DOWN = 150;
+    static final int WOBBLE_GOAL_ARM_MID = 300;
 
 
     PIDFilter turnFilter;
@@ -41,7 +44,7 @@ abstract public class MasterOpMode extends LinearOpMode {
      */
     protected void initializeHardware()
     {
-        turnFilter = new PIDFilter(0.01, 0, 0.00);
+        turnFilter = new PIDFilter(0.015, 0, 0.00);
         moveFilter = new PIDFilter(0.04, 0, 0);
         // weights for weighted average
         double[] filterCoefficients = {1};
@@ -88,7 +91,7 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorBR.setPower(0);
         motorWobbleGoalArm.setPower(0);
 
-        wobbleGoalGrabber.setPosition(WOBBLEGOALGRABBERIN);
+        wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_IN);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -171,6 +174,23 @@ abstract public class MasterOpMode extends LinearOpMode {
             }
         }
         return max;
+    }
+
+    /**
+     * Runs DcMotor at any power using encoder
+     * @param motor
+     * @param targetPosition
+     * @param power
+     */
+    public void runMotorToPosition(DcMotor motor, int targetPosition, double power) {
+
+        motor.setTargetPosition(targetPosition);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(power);
+        while (opModeIsActive() && motor.isBusy()) {
+            telemetry.addData("Current Position", motor.getCurrentPosition());
+        }
+        motor.setPower(0.0);
     }
 
 
