@@ -7,18 +7,24 @@ public class AutoCompetition extends MasterAutonomous{
     @Override
     public void runOpMode() throws InterruptedException {
         Initialize();
-        telemetry.addData("Progress: ", "Init");
-        telemetry.addData("Progress: ", "Run Setup");
+
+        telemetry.addData("Status : ", "Pre Setup");
+        telemetry.update();
         runSetup();
 
-        telemetry.addData("Progress: ", "Wait for start");
+        telemetry.addData("Status : ", "Waiting");
+        telemetry.update();
         waitForStart();
 
-        telemetry.addData("Progress: ", "Going");
-        driveForwardInches(24);
+        telemetry.addData("Status : ", "Pre Pause");
+        telemetry.update();
+        driveInches(24, 90);
         pauseMillis(1000);
-        telemetry.addData("Progress: ", "Going Going");
-        driveForwardInches(-24);
-        telemetry.addData("Progress: ", "Gone!!!!  ");
+        //driveForwardInches(-24);
+        telemetry.addData("Status : ", "Done");
+        telemetry.update();
+
+        pauseMillis(5000);
+
     }
 }

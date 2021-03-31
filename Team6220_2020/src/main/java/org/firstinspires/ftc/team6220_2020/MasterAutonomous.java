@@ -22,7 +22,7 @@ public abstract class MasterAutonomous extends MasterOpMode
 
     //Start Position Variables. The various start positions are stored in the array start positions are chosen in runSetup.
     int matchStartPosition = 0;
-    int[][] startPositions = {/*Position 1: X,Y */{0,0},/*Position 2: X,Y */{4,6}};
+    int[][] startPositions = {/*Position 1: X,Y */{4,6},/*Position 2: X,Y */{4,6}};
     int numStartPositions = startPositions.length - 1;
 
     //Position values to use in navigation
@@ -70,7 +70,7 @@ public abstract class MasterAutonomous extends MasterOpMode
             }
 
             // If the driver presses start, we exit setup.
-            if (driver1.isButtonJustPressed(Button.A))
+            if (driver1.isButtonJustPressed(Button.A) || opModeIsActive())
                 settingUp = false;
 
             // Display the current setup
@@ -85,14 +85,16 @@ public abstract class MasterAutonomous extends MasterOpMode
         }
 
         telemetry.clearAll();
+        telemetry.log().clear();
         telemetry.addData("State: ", "waitForStart()");
+        telemetry.update();
         //Sets the match start position
         xPos = startPositions[matchStartPosition][0];
         yPos = startPositions[matchStartPosition][1];
 
     }
 
-    public void driveForwardInches(double targetDistance)
+    public void driveInches(double targetDistance, double degDriveAngle)
     {
         // Reset motor encoders and return them to RUN_USING_ENCODERS.
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -107,7 +109,7 @@ public abstract class MasterAutonomous extends MasterOpMode
 
         boolean targetAcquired = false;
 
-        double driveAngle = -1.5708;
+        double radDriveAngle = Math.toRadians(degDriveAngle);
 
         //Starting position to measure distance traveled.
         double startX = xPos;
@@ -117,33 +119,31 @@ public abstract class MasterAutonomous extends MasterOpMode
         {
 
             //This calculates the distance traveled in inches
-            double distanceTraveled = Math.sqrt(Math.pow((startX - xPos),2) + Math.pow((startY - yPos),2));
+            //Todo seperate class for equations e.g. double distanceTraveled = distanceTraveled(xPos, YPos)...
+            double distanceTraveled = Math.sqrt(Math.pow((startX - xPos), 2) + Math.pow((startY - yPos), 2));
 
-            //This adds a value to the PID loop si it can update
-            translationPID.roll(distanceTraveled);
+            //This adds a value to the PID loop so it can update
+            translationPID.roll(Math.abs(distanceTraveled) - Math.abs(targetDistance));
 
-            if(targetDistance > 0){
-                driveAngle = -1.5708;
-            } else{
-                driveAngle = 1.5708;
-            }
             //We drive the mecanum wheels with the PID value
-            driveMecanum(driveAngle,translationPID.getFilteredValue(),0.0);
+            driveMecanum(radDriveAngle, translationPID.getFilteredValue(),0.0);
 
             // Update positions using last distance measured by encoders (utilizes fact that encoders have been reset to 0).
             xPos = lastX + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() +
-                    motorBL.getCurrentPosition() - motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / (4));
+                    motorBL.getCurrentPosition() - motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / 4);
             yPos = lastY + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() -
                     motorBL.getCurrentPosition() + motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / 4);
 
             telemetry.addData("X Position: ", xPos);
             telemetry.addData("Y Position: ", yPos);
-            telemetry.addData("distance traveled", distanceTraveled);
+            telemetry.addData("Distance Traveled ", distanceTraveled);
             telemetry.update();
 
             if(Math.abs(distanceTraveled) > Math.abs(targetDistance)){
                 targetAcquired = true;
             }
+
+            telemetry.addData("Target", targetAcquired);
         }
     }
 

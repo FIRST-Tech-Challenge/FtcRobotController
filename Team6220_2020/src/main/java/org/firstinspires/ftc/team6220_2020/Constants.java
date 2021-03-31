@@ -7,9 +7,9 @@ package org.firstinspires.ftc.team6220_2020;
 public class Constants
 {
     // Standard conversions------------------------------------------
-    // This is for an AndyMark 40; 20s are 560 ticks / rot and 60s are 1680 ticks / rot
-    public static final int AM_40_TICKS_PER_ROTATION = 1120;
-    public static final int US_DIGITAL_TICKS_PER_ROTATION = 1440;   // For odometry wheels
+    public static final double AM_40_TICKS_PER_ROTATION = 1120;
+    public static final double AM_20_TICKS_PER_ROTATION = 537.6;
+    public static final double US_DIGITAL_TICKS_PER_ROTATION = 1440;   // For odometry wheels
     public static final double MM_PER_INCH = 25.4;
     public static final double IN_FIELD_SIZE = 140.94;  // Not 144" due to interlocking pieces being cut off on field edge.
     //---------------------------------------------------------------
@@ -26,7 +26,7 @@ public class Constants
     // Robot specs---------------------------------------------------
     public static final double WHEEL_DIAMETER_IN = 4.0;         // 4 inch diameter wheel
     public static final double SPROCKET_RATIO = 16.0 / 16.0;    // Driven to driving sprocket teeth
-    public static final double IN_PER_ANDYMARK_TICK = (Math.PI * WHEEL_DIAMETER_IN) / (0.5 * AM_40_TICKS_PER_ROTATION * SPROCKET_RATIO);    // Num inches per tick of drive motors
+    public static final double IN_PER_ANDYMARK_TICK = (Math.PI * WHEEL_DIAMETER_IN) / (AM_20_TICKS_PER_ROTATION * SPROCKET_RATIO);    // Num inches per tick of drive motors
     //---------------------------------------------------------------
 
 
