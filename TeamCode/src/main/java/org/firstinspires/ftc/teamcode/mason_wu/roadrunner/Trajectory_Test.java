@@ -101,12 +101,16 @@ public class Trajectory_Test extends LinearOpMode {
 
         if (opModeIsActive()) {
             //Two straight paths
-            //drive.followTrajectory(traj1);
-            //sleep(200);
-            //drive.followTrajectory(traj2);
+            drive.followTrajectory(traj1);
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("X", poseEstimate.getX());
+            telemetry.addData("Y", poseEstimate.getY());
+            telemetry.addData("Heading", poseEstimate.getHeading());
+            telemetry.update();
+            drive.followTrajectory(traj2);
 
             //One curvy trajectory
-            drive.followTrajectory(trajAlt);
+            //drive.followTrajectory(trajAlt);
         }
     }
     //Vision
