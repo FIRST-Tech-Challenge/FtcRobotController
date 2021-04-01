@@ -70,7 +70,7 @@ public abstract class MasterOpMode extends LinearOpMode
         motorLauncher.setPower(power);
     }
 
-    //This method returns the speed of a given motor after a delay od delayInMillis
+    //This method returns the speed of a given motor after a delay of delayInMillis
     //@param motor Input the motor you want to know the RPM of
     //@param delayInMillis Input the delay you want to measure the change in encoder ticks in milliseconds.
     public double getMotorTicksPerMinute(DcMotor motor, int delayInMillis) {
@@ -96,7 +96,7 @@ public abstract class MasterOpMode extends LinearOpMode
         timeChange = endTime - startTime;
 
         //Converts the ▲Time from milliseconds to minutes then finds encoder ticks per minute
-        double timeChangeInMin = timeChange / 60000;
+        double timeChangeInMin = timeChange / Constants.MILLIS_TO_MIN;
 
         //To avoid divide by zero we need to be sure timeChangeInMin does not equal zero.
         double ticksPerMinute = 0;

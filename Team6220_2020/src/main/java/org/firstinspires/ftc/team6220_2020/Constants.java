@@ -74,4 +74,8 @@ public class Constants
     public static final double MINIMUM_JOYSTICK_POWER = 0.05;
     public static final double MINIMUM_TRIGGER_VALUE = 0.1;
     //---------------------------------------------------------------
+
+    // Helpful Constants
+    public static  final double MILLIS_TO_MIN = 60000;
+    //--------------------------------------------------------------
 }
