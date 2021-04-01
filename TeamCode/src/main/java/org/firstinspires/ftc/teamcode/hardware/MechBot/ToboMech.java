@@ -398,8 +398,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //                        if (hopper != null && !hopper.getTransferIsDown())
 //                            hopper.hopperDownCombo();
 //                        intake.intakeInAuto();
-                        hopperDownIntakeCombo();
-                        TaskManager.processTasks();
+                        if (hopper.getTransferIsDown()) {
+                            intake.intakeInAuto();
+                        } else {
+                            hopperDownIntakeCombo();
+                            TaskManager.processTasks();
+                        }
                     }
                 }
             }
@@ -1304,7 +1308,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (hopper.HopperTimer.seconds()>0.2);
+                        return (hopper.HopperTimer.seconds()>0.01);
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
