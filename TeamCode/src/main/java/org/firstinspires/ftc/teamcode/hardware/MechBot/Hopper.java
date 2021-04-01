@@ -224,7 +224,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.seconds()>=1.5 || magHigh.isPressed());
+                        return (HopperTimer.seconds()>=2.5 || magHigh.isPressed());
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
@@ -249,7 +249,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.milliseconds()>=10);
+                        return (HopperTimer.milliseconds()>=40);
                     }
                 }; }}, taskName);
         }
@@ -308,7 +308,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.seconds()>0.2);
+                        return (HopperTimer.seconds()>0.01);
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
