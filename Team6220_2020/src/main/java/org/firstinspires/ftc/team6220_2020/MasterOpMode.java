@@ -7,39 +7,40 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public abstract class MasterOpMode extends LinearOpMode
 {
     //Motors
-    /*public static DcMotor motorFrontLeft;
+    public static DcMotor motorFrontLeft;
     public static DcMotor motorFrontRight;
     public static DcMotor motorBackLeft;
-    public static DcMotor motorBackRight;*/
+    public static DcMotor motorBackRight;
     // Todo - move to miscellaneous motors.
+    // Make sure to declare the 3.7 launch motor as a 20 on the control hub
     public static DcMotor motorLauncher;
 
     //Other Devices
 
     public void Initialize(){
         //Initialize
-        //motorFrontLeft = hardwareMap.dcMotor.get("motorFL");
-        //motorFrontRight = hardwareMap.dcMotor.get("motorFR");
-        //motorBackLeft = hardwareMap.dcMotor.get("motorBL");
-        //motorBackRight = hardwareMap.dcMotor.get("motorBR");
+        motorFrontLeft = hardwareMap.dcMotor.get("motorFL");
+        motorFrontRight = hardwareMap.dcMotor.get("motorFR");
+        motorBackLeft = hardwareMap.dcMotor.get("motorBL");
+        motorBackRight = hardwareMap.dcMotor.get("motorBR");
         // Todo - move to miscellaneous motors.
         motorLauncher = hardwareMap.dcMotor.get("motorLauncher");
 
 
-        /*motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Todo - move to miscellaneous motors.
         motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    /*public void driveMecanum(double driveAngle, double drivePower, double w)
+    public void driveMecanum(double driveAngle, double drivePower, double w)
     {
         double x = drivePower * Math.cos(driveAngle);
         double y = drivePower * Math.sin(driveAngle);
@@ -62,7 +63,7 @@ public abstract class MasterOpMode extends LinearOpMode
             motorBackLeft.setPower(motorBLPower);
             motorBackRight.setPower(motorBRPower);
         }
-    }*/
+    }
 
     //Sets the launch motor to a given power
     public void driveLauncher(double power){

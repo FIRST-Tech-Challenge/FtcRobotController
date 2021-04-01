@@ -22,17 +22,8 @@ public class LauncherTest extends MasterTeleOp {
 
             //driveLauncherWithController();
             double motorPower = gamepad1.left_stick_y;
-            driveLauncher(motorPower);
+            driveLauncherWithController();
 
-            if(gamepad1.a){
-                motorLauncher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-            if(gamepad1.b){
-                motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-
-            telemetry.addData("Power: ", motorPower);
-            telemetry.addData("Mode: ", motorLauncher.getMode().toString());
             telemetry.addData("Launcher RPM", (getMotorTicksPerMinute(motorLauncher, 100)) / Constants.AM_37_TICKS_PER_ROTATION);
             telemetry.update();
 
