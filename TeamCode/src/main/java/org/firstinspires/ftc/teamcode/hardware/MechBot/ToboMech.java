@@ -1785,7 +1785,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(100);
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
-    public void doPowerShotsSemiNew(int n, boolean angleCollection) throws InterruptedException {
+    public void doPowerShotsSemiNew(int n, boolean angleCollection) throws InterruptedException {//auto power shots
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
         shooting_rpm = SEMI_POWER_SHOT_RPM;
         if (hopper != null && hopper.getTransferIsDown()) {
@@ -1799,7 +1799,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double idealRightDist = 61; // 43 cm at Hans field; 58 cm? at Winston's house
         double crab_power=0.5;
         for (int i=0; i<3; i++) {
-            double rightDist = (chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT) + chassis.getDistance(SwerveChassis.Direction.RIGHT_BACK)) / 2;
+            double rightDistF = chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT);
+            double rightDistB = chassis.getDistance(SwerveChassis.Direction.RIGHT_BACK);
+            if (rightDistF>100){
+                rightDistF = rightDistB;
+            }
+            if (rightDistB>100){
+                rightDistB = rightDistF;
+                if (rightDistF>100){
+                    return;
+                }
+            }
+            double rightDist = (rightDistF + rightDistB) / 2;
             if (Math.abs(rightDist-idealRightDist)<1) break;
             chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(), chassis.odo_heading(), false, 2);
             crab_power-=0.05;
