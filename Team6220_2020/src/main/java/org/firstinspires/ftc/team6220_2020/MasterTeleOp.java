@@ -9,5 +9,17 @@ public abstract class MasterTeleOp extends MasterOpMode
         double drivePower = Math.hypot(gamepad1.right_stick_y, gamepad1.right_stick_x);
         driveMecanum(driveAngle, drivePower, turningPower);
     }
+
+    // Drives launcher with controller. X starts launcher Y stops launcher
+    public void driveLauncherWithController()
+    {
+        // Todo - migrate to DriverInput class and control to toggle
+        if (gamepad2.x) {
+            driveLauncher(1.0);
+        }
+        else if(gamepad2.y){
+            driveLauncher(0.0);
+        }
+    }
 }
 

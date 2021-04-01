@@ -7,10 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public abstract class MasterOpMode extends LinearOpMode
 {
     //Motors
-    DcMotor motorFrontLeft;
-    DcMotor motorFrontRight;
-    DcMotor motorBackLeft;
-    DcMotor motorBackRight;
+    public static DcMotor motorFrontLeft;
+    public static DcMotor motorFrontRight;
+    public static DcMotor motorBackLeft;
+    public static DcMotor motorBackRight;
+    // Todo - move to miscellaneous motors.
+    // Make sure to declare the 3.7 launch motor as a 20 on the control hub
+    public static DcMotor motorLauncher;
 
     //Other Devices
 
@@ -20,6 +23,9 @@ public abstract class MasterOpMode extends LinearOpMode
         motorFrontRight = hardwareMap.dcMotor.get("motorFR");
         motorBackLeft = hardwareMap.dcMotor.get("motorBL");
         motorBackRight = hardwareMap.dcMotor.get("motorBR");
+        // Todo - move to miscellaneous motors.
+        motorLauncher = hardwareMap.dcMotor.get("motorLauncher");
+
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -29,6 +35,9 @@ public abstract class MasterOpMode extends LinearOpMode
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // Todo - move to miscellaneous motors.
+        motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void driveMecanum(double driveAngle, double drivePower, double w)
@@ -54,5 +63,49 @@ public abstract class MasterOpMode extends LinearOpMode
             motorBackLeft.setPower(motorBLPower);
             motorBackRight.setPower(motorBRPower);
         }
+    }
+
+    //Sets the launch motor to a given power
+    public void driveLauncher(double power){
+        motorLauncher.setPower(power);
+    }
+
+    //This method returns the speed of a given motor after a delay of delayInMillis
+    //@param motor Input the motor you want to know the RPM of
+    //@param delayInMillis Input the delay you want to measure the change in encoder ticks in milliseconds.
+    public double getMotorTicksPerMinute(DcMotor motor, int delayInMillis) {
+
+        //Variables used only in this method
+        double startTime = System.currentTimeMillis();
+        double startPosition = motor.getCurrentPosition();
+        double endTime;
+        double endPosition;
+        double positionChange;
+        double timeChange;
+
+        //Waits delayInMillis milliseconds before recording endTime and endPosition
+        while (true) {
+            if (System.currentTimeMillis() - startTime >= delayInMillis) break;
+        }
+
+        endTime = System.currentTimeMillis();
+        endPosition = motor.getCurrentPosition();
+
+        //Calculates the ▲Position and the ▲Time
+        positionChange = endPosition - startPosition;
+        timeChange = endTime - startTime;
+
+        //Converts the ▲Time from milliseconds to minutes then finds encoder ticks per minute
+        double timeChangeInMin = timeChange / Constants.MILLIS_TO_MIN;
+
+        //To avoid divide by zero we need to be sure timeChangeInMin does not equal zero.
+        double ticksPerMinute = 0;
+        if(timeChangeInMin != 0) {
+            ticksPerMinute = positionChange / timeChangeInMin;
+        }
+
+        //If timeChange is not zero return the motor RPM otherwise return zero.
+        return (ticksPerMinute);
+
     }
 }
