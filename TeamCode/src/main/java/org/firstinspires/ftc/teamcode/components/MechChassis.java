@@ -1148,24 +1148,24 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 //                }
 //            });
 //        }
-//        if (rightFrontRangeSensor != null) {
-//            line.addData("ran-RF", "%.1f", new Func<Double>() {
-//                @Override
-//                public Double value() {
-//                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
-//                    return getDistance(SwerveChassis.Direction.RIGHT_FRONT);
-//                }
-//            });
-//        }
-//        if (rightBackRangeSensor != null) {
-//            line.addData("ran-RB", "%.1f", new Func<Double>() {
-//                @Override
-//                public Double value() {
-//                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
-//                    return getDistance(SwerveChassis.Direction.RIGHT_BACK);
-//                }
-//            });
-//        }
+        if (rightFrontRangeSensor != null) {
+            line.addData("ran-RF", "%.1f", new Func<Double>() {
+                @Override
+                public Double value() {
+                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
+                    return getDistance(SwerveChassis.Direction.RIGHT_FRONT);
+                }
+            });
+        }
+        if (rightBackRangeSensor != null) {
+            line.addData("ran-RB", "%.1f", new Func<Double>() {
+               @Override
+                public Double value() {
+                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
+                    return getDistance(SwerveChassis.Direction.RIGHT_BACK);
+                }
+            });
+        }
 //        if (frontRangeSensor != null) {
 //            line.addData("rangeF", "%.1f", new Func<Double>() {
 //                    @Override

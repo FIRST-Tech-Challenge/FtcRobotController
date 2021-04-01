@@ -1419,7 +1419,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(0.8, 25, 175, -20, false, 3);
-                chassis.rawRotateTo(0.4,-20,false,1);
+                chassis.rawRotateTo(0.4,-30,false,1);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(0.8, 65, 230, 0, true, 3);
             } else if (tZone == TargetZone.ZONE_C) {//4
