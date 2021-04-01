@@ -153,16 +153,19 @@ public class TeleopV1 extends LinearOpMode {
             if(a2){
                 //launcher1.setPower(0.80);
                 launchPower = 0.75; //0.75
-                blocker.setPosition(0.81); //open
+                blocker.setPosition(0.65); //open
             } else if (LTrigger2 > 0 && LBumper1) { //both controller 1 and controller 2 are needed to initiate shooting to force teamwork
                 launchPower = 0.81; //0.8
-                blocker.setPosition(0.81); //open
+                blocker.setPosition(0.65); //open
             } else if (LBumper2 && LBumper1) {
                 launchPower = 1; //full
-                blocker.setPosition(0.81); //open
+                blocker.setPosition(0.65); //open
+            } else if (dpadRight2) {
+                launchPower = -0.1; //backwards
+                blocker.setPosition(0.65);
             } else {
                 launchPower = 0;
-                blocker.setPosition(1); //closed
+                blocker.setPosition(0.85); //closed
             }
 
             //feeder servo
@@ -180,8 +183,7 @@ public class TeleopV1 extends LinearOpMode {
                 feeder.setPower(1);
             } else if (RBumper2) {
                 launcherbelt.setPower(-0.25);
-                launchPower = -.05;
-                blocker.setPosition(0.81);
+                blocker.setPosition(0.65);
             } else {
                 launcherbelt.setPower(0);
             }
