@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.support.events.Button;
 import org.firstinspires.ftc.teamcode.support.events.EventManager;
 import org.firstinspires.ftc.teamcode.support.events.Events;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
+import org.firstinspires.ftc.teamcode.support.tasks.Progress;
+import org.firstinspires.ftc.teamcode.support.tasks.Task;
 import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
 import java.io.File;
@@ -393,9 +395,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                 } else if (source.getTrigger(Events.Side.RIGHT) < 0.2 && source.getTrigger(Events.Side.LEFT) < 0.2) {
                     if (intake != null) {
-                        if (hopper != null && !hopper.getTransferIsDown())
-                            hopper.hopperDownCombo();
-                        intake.intakeInAuto();
+//                        if (hopper != null && !hopper.getTransferIsDown())
+//                            hopper.hopperDownCombo();
+//                        intake.intakeInAuto();
+                        hopperDownIntakeCombo();
+                        TaskManager.processTasks();
                     }
                 }
             }
@@ -1286,6 +1290,66 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             case DIAGNOSIS:
                 break;
         }
+    }
+
+    public void hopperDownIntakeCombo() throws InterruptedException {
+        if (hopper == null) return;
+        final String taskName = "Hopper Down Intake Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                hopper.holderIn();
+                hopper.HopperTimer.reset();
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (hopper.HopperTimer.seconds()>0.2);
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                hopper.ringLifter.setPower(1);
+                hopper.HopperTimer.reset();
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (hopper.magLow.isPressed() || (hopper.HopperTimer.seconds()>=2.5));
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                intake.intakeIn();
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (true);
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                hopper.ringLifter.setPower(-0.5);
+                hopper.HopperTimer.reset();
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (hopper.HopperTimer.milliseconds()>60);
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                hopper.ringLifter.setPower(0);
+                hopper.setTransferIsDown(true);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (true);
+                    }
+                }; }}, taskName);
     }
 
     public void setInitPositions(ProgramType s, StartPosition startP) {

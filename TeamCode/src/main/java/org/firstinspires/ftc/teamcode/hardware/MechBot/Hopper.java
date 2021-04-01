@@ -29,11 +29,11 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private AdjustableServo feeder;
     private AdjustableServo holder;
     private AdjustableServo blocker;
-    private CRServo ringLifter;
+    public CRServo ringLifter;
     /*private*/ public TouchSensor magLow;
     /*private*/ public TouchSensor magHigh;
     public DistanceSensor rangetouch;
-    private ElapsedTime HopperTimer = new ElapsedTime();
+    public ElapsedTime HopperTimer = new ElapsedTime();
 
 
 
@@ -58,6 +58,10 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     public boolean getTransferIsDown(){
         return transferIsDown;
     }
+    public void setTransferIsDown(boolean val){
+        transferIsDown=val;
+    }
+
     @Override
     public String getUniqueName() {
         return "hopper";
