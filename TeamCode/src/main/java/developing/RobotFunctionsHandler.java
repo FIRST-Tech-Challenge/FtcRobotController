@@ -8,7 +8,7 @@ import telefunctions.Stage;
 import util.CodeSeg;
 import util.TerraThread;
 
-public class RobotFunctionHandler {
+public class RobotFunctionsHandler {
     public int rfsIndex = 0;
     public int rfsQueueIndex = 0;
     public ArrayList<CodeSeg> rfs = new ArrayList<>();

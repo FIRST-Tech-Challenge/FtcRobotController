@@ -10,7 +10,7 @@ public class TerraThread2 implements Runnable{
 
     CodeSeg cs;
     Stage st;
-    public boolean executing = false;
+    public boolean executing = true;
     public int refreshRate = 100; // hertz
 
 
@@ -30,9 +30,7 @@ public class TerraThread2 implements Runnable{
     }
 
 
-    public void init(){
-        executing = true;
-    }
+
 
     public void changeRefreshRate(int rf){
         refreshRate = rf;
@@ -56,6 +54,7 @@ public class TerraThread2 implements Runnable{
     @Override
     public void run() {
         while (isExecuting()) {
+            update();
             try {Thread.sleep(1000/refreshRate); } catch (InterruptedException e) {}
         }
     }

@@ -12,7 +12,7 @@ public class PID {
     public double derivative = 0;
     public double integral = 0;
 
-    public double lastTime = -0.1;
+    public double lastTime = -0.01;
     public double deltaTime = 0;
 
     public double deltaError = 0;
@@ -40,11 +40,12 @@ public class PID {
     }
 
     public void update(double error){
-        deltaTime = timer.seconds();
+        deltaTime = timer.seconds()-lastTime;
         lastTime += deltaTime;
 
         deltaError = error - lastError;
         this.error += deltaError;
+        lastError = error;
 
         derivative = deltaError/deltaTime;
 

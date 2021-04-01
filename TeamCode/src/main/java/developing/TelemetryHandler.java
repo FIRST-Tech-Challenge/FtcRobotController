@@ -2,6 +2,8 @@ package developing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import autofunctions.Path;
+
 public class TelemetryHandler {
     public Telemetry addOdometry(Telemetry telemetry, TestRobot bot) {
 //        telemetry.addData("center odometry", bot.odometry.cp);
@@ -18,6 +20,25 @@ public class TelemetryHandler {
         telemetry.addData("x pos", bot.odometry.x);
         telemetry.addData("y pos", bot.odometry.y);
         telemetry.addData("heading", bot.odometry.h);
+        return telemetry;
+    }
+    public Telemetry addAuton(Telemetry telemetry, Path3 path, TestRobot bot){
+        telemetry.addData("y pow", path.yControl.getPower());
+        telemetry.addData("x pow", path.xControl.getPower());
+        telemetry.addData("h pow", path.hControl.getPower());
+        telemetry.addData("y error", path.yControl.error);
+        telemetry.addData("x error", path.xControl.error);
+        telemetry.addData("h error", path.hControl.error);
+        telemetry.addData("y derivative", path.yControl.derivative);
+        telemetry.addData("x derivative", path.xControl.derivative);
+        telemetry.addData("h derivative", path.hControl.derivative);
+        telemetry.addData("y integral", path.yControl.integral);
+        telemetry.addData("x integral", path.xControl.integral);
+        telemetry.addData("h integral", path.hControl.integral);
+        telemetry.addData("h", bot.odometry.h);
+        telemetry.addData("x", bot.odometry.x);
+        telemetry.addData("y", bot.odometry.y);
+
         return telemetry;
     }
     public Telemetry addAngularPosition(Telemetry telemetry, TestRobot bot) {

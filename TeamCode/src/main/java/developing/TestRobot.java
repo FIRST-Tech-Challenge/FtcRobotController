@@ -300,7 +300,7 @@ public class TestRobot {
         CodeSeg run = new CodeSeg() {
             @Override
             public void run() {
-                odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
+                updateOdometry();
             }
         };
         Stage exit = new Stage() {
@@ -318,7 +318,7 @@ public class TestRobot {
         CodeSeg run = new CodeSeg() {
             @Override
             public void run() {
-                odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
+                updateOdometry();
             }
         };
         odometryThread = new TerraThread2(run);
@@ -328,7 +328,9 @@ public class TestRobot {
     }
 
     public void stopOdoThread() {
-        odometryThread.stop();
+        if(odometryThread != null) {
+            odometryThread.stop();
+        }
     }
 
 }

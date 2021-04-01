@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import util.CodeSeg;
 import util.Line;
 import util.PID;
-import util.ThreadHandler;
 import util.Vector;
 
 public class Path3 {
 
-    PID xControl = new PID();
-    PID yControl = new PID();
-    PID hControl = new PID();
+    public PID xControl = new PID();
+    public PID yControl = new PID();
+    public PID hControl = new PID();
 
     public ElapsedTime globalTime = new ElapsedTime();
     public ElapsedTime endTimer = new ElapsedTime();
@@ -34,7 +33,7 @@ public class Path3 {
     public ArrayList<double[]> poses = new ArrayList<>();
     public ArrayList<Line> lines = new ArrayList<>();
     public ArrayList<Posetype> posetypes = new ArrayList<>();
-    public RobotFunctionHandler rfsHandler = new RobotFunctionHandler();
+    public RobotFunctionsHandler rfsHandler = new RobotFunctionsHandler();
 
     public ArrayList<Double> stops = new ArrayList<>();
     public int stopIndex = 0;
@@ -44,15 +43,19 @@ public class Path3 {
 
     public boolean isExecuting = true;
 
-    final public double[] ks = {0.04,0.03,0.02};
-    final public double[] ds = {0.00015,0.00015,3};
-    final public double[] is = {0.01,0.01,0.005};
+//    final public double[] ks = {0.04,0.03,0.02};
+//    final public double[] ds = {0.00015,0.00015,3};
+//    final public double[] is = {0.01,0.01,0.005};
+    final public double[] ks = {0.1,0.1,0.01}; //0.1
+    final public double[] ds = {0.01,0.01,0.001};
+    final public double[] is = {0.01,0.01,0.0001};
 
     public double XAcc = 1;
     public double YAcc = 1;
-    public double HAcc = 2;
+    public double HAcc = 3;
 
-    final public double endWait = 0.3;
+
+    final public double endWait = 1;
 
 
 
@@ -69,9 +72,7 @@ public class Path3 {
         globalTime.reset();
     }
 
-    public void updateRadius(double dis){
-        radius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis)));
-    }
+    public void updateRadius(double dis){ radius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis))); }
 
 
     public void addNewPose(double x, double y, double h){
@@ -145,7 +146,9 @@ public class Path3 {
 //        second answer = (-1)*((b + Math.sqrt(disc)) / (2 * a));
         if(!Double.isNaN(ans)) {
             if(ans > 1){
-                next();
+//                next();
+
+                //Figure this out do not do next when setpoint
             }
             return ans;
         }else{
@@ -166,6 +169,7 @@ public class Path3 {
         double herr = currentPos[2] - poses.get(curIndex + 1)[2];
 
         Vector disVect = new Vector(xdis,ydis);
+        disVect.rotate(-currentPos[2], Vector.angle.DEGREES);
 
         xControl.update(disVect.x);
         yControl.update(disVect.y);
@@ -186,7 +190,7 @@ public class Path3 {
             return calcPows();
         }else if(posetypes.get(curIndex+1).equals(Posetype.SETPOINT)){
             updateControls(currentPos,target);
-            hasReachedSetpoint();
+            //hasReachedSetpoint();
             return calcPows();
         }else if (posetypes.get(curIndex+1).equals(Posetype.STOP)){
             if(globalTime.seconds() > stops.get(stopIndex)){
@@ -212,10 +216,20 @@ public class Path3 {
 
     public double[] calcPows(){
         double[] out = new double[3];
-        out[0] = Range.clip(xControl.getPower(),-1,1);
-        out[1] = Range.clip(yControl.getPower(),-1,1);
-        out[2] = Range.clip(hControl.getPower(),-1,1);
+        out[0] = -Range.clip(xControl.getPower(),-1,1);
+        out[1] = -Range.clip(yControl.getPower(),-1,1);
+        out[2] = -Range.clip(hControl.getPower(),-1,1);
         return out;
+    }
+
+    public double[] normalize(double[] in){
+        double sum = Math.abs(in[0]) + Math.abs(in[1]) + Math.abs(in[2]);
+        if(sum > 1){
+            return new double[]{in[0]/sum, in[1]/sum, in[2]/sum};
+        }else{
+            return in;
+        }
+
     }
 
     public void start(TestRobot bot, LinearOpMode op){
@@ -224,16 +238,22 @@ public class Path3 {
         op.telemetry.update();
         startRFThread(op);
         while (op.opModeIsActive() && isExecuting){
-            op.telemetry = telemetryHandler.addAutoAimer(op.telemetry, bot);
-            op.telemetry = telemetryHandler.addOuttake(op.telemetry, bot);
+//            op.telemetry = telemetryHandler.addAutoAimer(op.telemetry, bot);
+//            op.telemetry = telemetryHandler.addOuttake(op.telemetry, bot);
 //            op.telemetry = telemetryHandler.addOdometry(op.telemetry, bot);
+//
+//            op.telemetry.addData("yControl", yControl.getPower());
+//            op.telemetry.addData("error", hControl.error);
+//            op.telemetry.addData("h", bot.odometry.h);
+//            op.telemetry.addData("x", bot.odometry.x);
+//            op.telemetry.addData("y", bot.odometry.y);
+            op.telemetry = telemetryHandler.addAuton(op.telemetry, this, bot);
             op.telemetry.update();
+//
+//            bot.outtakeWithCalculations();
 
-            bot.outtakeWithCalculations();
-
-//            double[] pows = update(bot.odometry.getPos(), bot.odometry.getVels()); //bot.odometry.getVels()
-//            bot.move(pows[1], pows[0], pows[2]);
-//            bot.updateOdometry();
+            double[] pows = update(bot.odometry.getPos()); //bot.odometry.getVels()
+            bot.move(pows[1], pows[0], pows[2]);
         }
         op.telemetry.addData("COMPLETED", "");
         op.telemetry.update();

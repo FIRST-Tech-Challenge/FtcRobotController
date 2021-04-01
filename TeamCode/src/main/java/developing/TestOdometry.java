@@ -16,6 +16,13 @@ public class TestOdometry extends OpMode {
     @Override
     public void init() {
         bot.init(hardwareMap);
+
+
+    }
+
+    @Override
+    public void start() {
+        bot.startOdoThreadTele();
     }
 
     @Override
@@ -28,7 +35,6 @@ public class TestOdometry extends OpMode {
             double turn = -gamepad1.left_stick_x;
 
             bot.moveTeleOp(forward, strafe, turn);
-            bot.updateOdometry();
             optimizer.update();
             telemetry = telemetryHandler.addOdometry(telemetry, bot);
         }else{
@@ -63,5 +69,7 @@ public class TestOdometry extends OpMode {
     }
 
     @Override
-    public void stop() { }
+    public void stop() {
+        bot.stopOdoThread();
+    }
 }

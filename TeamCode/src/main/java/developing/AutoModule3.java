@@ -24,6 +24,8 @@ public class AutoModule3 {
 
     public boolean pausing = false;
 
+
+
     public CodeSeg updateCode = new CodeSeg() {
         @Override
         public void run() {
@@ -40,14 +42,15 @@ public class AutoModule3 {
     };
 
 
-    TerraThread2 autoModuleThread = new TerraThread2(updateCode);
+    public TerraThread2 autoModuleThread;
+
 
 
     public void start(){
         if(!autoModuleThread.executing) {
             autoModuleThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
-            autoModuleThread.init();
 
+            autoModuleThread = new TerraThread2(updateCode);
             Thread t = new Thread(autoModuleThread);
             t.start();
         }
