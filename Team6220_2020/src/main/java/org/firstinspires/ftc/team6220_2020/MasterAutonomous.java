@@ -97,15 +97,15 @@ public abstract class MasterAutonomous extends MasterOpMode
     public void driveInches(double targetDistance, double degDriveAngle)
     {
         // Reset motor encoders and return them to RUN_USING_ENCODERS.
-        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         boolean targetAcquired = false;
 
@@ -129,10 +129,10 @@ public abstract class MasterAutonomous extends MasterOpMode
             driveMecanum(radDriveAngle, translationPID.getFilteredValue(),0.0);
 
             // Update positions using last distance measured by encoders (utilizes fact that encoders have been reset to 0).
-            xPos = lastX + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() +
-                    motorBL.getCurrentPosition() - motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / 4);
-            yPos = lastY + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() -
-                    motorBL.getCurrentPosition() + motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / 4);
+            xPos = lastX + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() +
+                    motorBackLeft.getCurrentPosition() - motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
+            yPos = lastY + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() -
+                    motorBackLeft.getCurrentPosition() + motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
 
             telemetry.addData("X Position: ", xPos);
             telemetry.addData("Y Position: ", yPos);

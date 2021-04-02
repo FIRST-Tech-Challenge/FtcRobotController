@@ -18,7 +18,7 @@ public class AutoCompetition extends MasterAutonomous{
 
         telemetry.addData("Status : ", "Pre Pause");
         telemetry.update();
-        driveInches(24, 90);
+        driveInches(84, 90);
         pauseMillis(1000);
         //driveForwardInches(-24);
         telemetry.addData("Status : ", "Done");
