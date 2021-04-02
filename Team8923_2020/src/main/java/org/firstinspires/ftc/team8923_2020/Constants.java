@@ -32,4 +32,7 @@ public class Constants {
     //Lift
     public static final double LIFT_PWR = 1;
 
+    //Shooter
+    public static final double SHOOTER_PWR = 1;
+
 }
