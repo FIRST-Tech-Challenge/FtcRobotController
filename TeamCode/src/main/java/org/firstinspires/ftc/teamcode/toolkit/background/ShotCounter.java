@@ -26,8 +26,8 @@ public class ShotCounter extends Background {
 
     @Override
     public void loop() {
-        if(shooterSensor.getDistance(DistanceUnit.CM) < 7.5 && robot.flickingState == UpliftRobot.FlickingState.FLICKING) {
-            while(shooterSensor.getDistance(DistanceUnit.CM) < 7.5 && robot.flickingState == UpliftRobot.FlickingState.FLICKING){
+        if(shooterSensor.getDistance(DistanceUnit.CM) < 9 && robot.flickingState == UpliftRobot.FlickingState.FLICKING) {
+            while(shooterSensor.getDistance(DistanceUnit.CM) < 9 && robot.flickingState == UpliftRobot.FlickingState.FLICKING){
                 Utils.sleep(5);
             }
             robot.shotCount += 1;

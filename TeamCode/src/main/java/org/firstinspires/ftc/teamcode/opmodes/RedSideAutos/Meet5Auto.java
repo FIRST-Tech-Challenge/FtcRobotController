@@ -74,7 +74,7 @@ public class Meet5Auto extends UpliftAuto {
         shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
         transferSub.autoRaiseTransfer();
 
-        intakeSub.dropRoller();
+//        intakeSub.dropRoller();
 
         if(stack == 4) {
 
@@ -195,9 +195,9 @@ public class Meet5Auto extends UpliftAuto {
 
             // drop off first wobble
             wobbleSub.setWobblePosition(0.2);
-            driveSub.driveToPosition(135, 70, 1, 180, DriveSubsystem.CLOCKWISE);
+            driveSub.driveToPosition(130, 70, 1, 180, DriveSubsystem.CLOCKWISE);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(135, 66, 1, 180);
+            driveSub.driveToPosition(130, 66, 1, 180);
 
             // go to pick up second wobble
             getSecondWobble();

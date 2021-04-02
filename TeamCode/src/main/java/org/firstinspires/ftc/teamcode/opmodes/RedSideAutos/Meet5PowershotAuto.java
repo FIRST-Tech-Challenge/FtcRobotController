@@ -194,7 +194,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
 
         } else {        // either 0 rings, or a problem with detection (-1)
             shooterSub.setShooterVelocity(robot.bounceBackVelocity);
-            driveSub.driveToPosition(91, 60, 0.7, 0.5, 0, 0);
+            driveSub.driveToPosition(91, 60, 0.7, 1, 0, 0);
             driveSub.turnTo(0, 0);
 
             transferSub.autoRaiseTransfer();
@@ -202,21 +202,21 @@ public class Meet5PowershotAuto extends UpliftAuto {
                 robot.safeSleep(1);
             }
             flickerSub.flickRing();
-            driveSub.driveToPosition(83.5, 60, 0.7, 0.5,0 ,0);
+            driveSub.driveToPosition(83.5, 60, 0.7, 1,0 ,0);
             flickerSub.flickRing();
-            driveSub.driveToPosition(75, 60, 0.7, 0.5,0 ,0);
+            driveSub.driveToPosition(75, 60, 0.7, 1,0 ,0);
             flickerSub.flickRing();
             transferSub.autoDropTransfer();
             shooterSub.setShooterPower(0);
             intakeSub.setIntakePower(1);
             driveSub.driveToPosition(60, 127, 0.7, 0);
-            driveSub.driveToPosition(60, 125, 0.7, 90);
-            driveSub.driveToPosition(89.89, 124, 0.7, 90);
+            driveSub.driveToPosition(60, 125, 0.5, 90);
+            driveSub.driveToPosition(100, 125, 0.7, 90);
 //            // drop off first wobble
             wobbleSub.setWobblePosition(0.2);
-            driveSub.driveToPosition(135, 70, 1, 180, DriveSubsystem.CLOCKWISE);
+            driveSub.driveToPosition(130, 70, 1, 180, DriveSubsystem.CLOCKWISE);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(135, 66, 1, 180);
+            driveSub.driveToPosition(130, 66, 1, 180);
 //
 //            // go to pick up second wobble
 //            getSecondWobble();
