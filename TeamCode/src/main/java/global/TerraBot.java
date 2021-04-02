@@ -60,10 +60,7 @@ public class TerraBot {
     public Servo sgl;
 
     public BNO055IMU gyro;
-//    public DistanceSensor dsr1;
     public ModernRoboticsI2cRangeSensor dsl2;
-//    public DistanceSensor dsr2;
-//    public DistanceSensor dsl1;
 
     public NormalizedColorSensor col;
     public NormalizedColorSensor cor;
@@ -94,9 +91,6 @@ public class TerraBot {
 
     public double savedHeading = 0;
 
-    public double rightP = 1.5;
-    public double leftP = 0.8;
-
 
     public final double NEVEREST256_TICKS = 7168;
     public final double NEV_DEGREES_TO_TICKS = NEVEREST256_TICKS/360;
@@ -126,8 +120,6 @@ public class TerraBot {
 
     public Limits limits = new Limits();
 
-    //d = 0.00024
-
     public double ratio = 2.5;
     public double outtakeStartR = 0.658;
     public double outtakeStartL = outtakeStartR/ratio;
@@ -140,39 +132,28 @@ public class TerraBot {
     public ThreadHandler threadHandler = new ThreadHandler();
 
     public ExpansionHubEx expansionHub;
-    //public ExpansionHubEx expansionHub2;
+    public ExpansionHubEx expansionHub2;
 
     public double[] startPos = {0,0};
 
-    //1.075
-    //0.658,
-    //2.5
-    //0.4
-
-
-
-
-
-
-
     public void init(HardwareMap hwMap) {
 
-        l1 = hwMap.get(DcMotor.class, "l1");
-        l2 = hwMap.get(DcMotorEx.class, "l2");
-        r1 = hwMap.get(DcMotorEx.class, "r1");
-        r2 = hwMap.get(DcMotor.class, "r2");
-        in = hwMap.get(DcMotorEx.class, "in");
-        outr = hwMap.get(DcMotorEx.class, "outr");
-        outl = hwMap.get(DcMotorEx.class, "outl");
-        arm = hwMap.get(DcMotorEx.class, "arm");
+        l1 = initMotor(hwMap, "l1", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        l2 = initMotor(hwMap, "l2", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        r1 = initMotor(hwMap, "r1", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        r2 = initMotor(hwMap, "r2", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        in = initMotor(hwMap, "in", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outr = initMotor(hwMap, "outr", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outl = initMotor(hwMap, "outl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm = initMotor(hwMap, "arm", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        slr = hwMap.get(Servo.class, "slr");
-        sll = hwMap.get(Servo.class, "sll");
-        ssr = hwMap.get(Servo.class, "ssr");
-        ssl = hwMap.get(Servo.class, "ssl");
-        st = hwMap.get(Servo.class, "st");
-        sgr = hwMap.get(Servo.class, "sgr");
-        sgl = hwMap.get(Servo.class, "sgl");
+//        slr = hwMap.get(Servo.class, "slr");
+//        sll = hwMap.get(Servo.class, "sll");
+//        ssr = hwMap.get(Servo.class, "ssr");
+//        ssl = hwMap.get(Servo.class, "ssl");
+//        st = hwMap.get(Servo.class, "st");
+//        sgr = hwMap.get(Servo.class, "sgr");
+//        sgl = hwMap.get(Servo.class, "sgl");
 
         gyro = hwMap.get(BNO055IMU.class, "gyro");
 
@@ -194,26 +175,6 @@ public class TerraBot {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-
-
-
-
-
-        
-
-
-
-
-        l1.setPower(0);
-        l2.setPower(0);
-        r1.setPower(0);
-        r2.setPower(0);
-        in.setPower(0);
-        outr.setPower(0);
-        outl.setPower(0);
-        arm.setPower(0);
-
-
         slr.setPosition(liftStart);
         sll.setPosition(1-liftStart);
         ssr.setPosition(shootStartR);
@@ -222,17 +183,6 @@ public class TerraBot {
         sgr.setPosition(grabStart);
         sgl.setPosition(1-grabStart);
 
-
-        l1.setDirection(DcMotorSimple.Direction.REVERSE);
-        l2.setDirection(DcMotorSimple.Direction.REVERSE);
-//        l2.setDirection(DcMotorSimple.Direction.FORWARD);
-        r1.setDirection(DcMotorSimple.Direction.FORWARD);
-        r2.setDirection(DcMotorSimple.Direction.REVERSE);
-        in.setDirection(DcMotorSimple.Direction.REVERSE);
-        outl.setDirection(DcMotorSimple.Direction.FORWARD);
-        outr.setDirection(DcMotorSimple.Direction.REVERSE);
-        arm.setDirection(DcMotorSimple.Direction.FORWARD);
-
         slr.setDirection(Servo.Direction.FORWARD);
         sll.setDirection(Servo.Direction.REVERSE);
         ssr.setDirection(Servo.Direction.FORWARD);
@@ -240,23 +190,6 @@ public class TerraBot {
         st.setDirection(Servo.Direction.FORWARD);
         sgr.setDirection(Servo.Direction.FORWARD);
         sgl.setDirection(Servo.Direction.REVERSE);
-
-        l1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        l2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        r1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        r2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        in.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        outr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        outl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        l1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        l2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        r1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        r2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        in.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         shootControlR.changeCurr(1);
         shootControlL.changeCurr(1);
@@ -282,10 +215,15 @@ public class TerraBot {
 
         col.setGain(10);
         cor.setGain(10);
+    }
 
-
-
-
+    public DcMotorEx initMotor(HardwareMap hwMap, String name, DcMotorSimple.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode) {
+        DcMotorEx a = hwMap.get(DcMotorEx.class, name);
+        a.setPower(0);
+        a.setDirection(dir);
+        a.setZeroPowerBehavior(zpb);
+        a.setMode(mode);
+        return a;
     }
 
     public void move(double f, double s, double t){
@@ -376,7 +314,7 @@ public class TerraBot {
             });
             Path p = new Path(0, 0, 0);
             p.addSetpoint(0, 0, 0);
-            shooter.addPath(p, this);
+//            shooter.addPath(p, this);
             //shooter.addMoveUntilLine(-0.3, this);
             shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
             shooter.addStage(ssl, shootControlL.getPos(2), 0.01);
@@ -400,7 +338,7 @@ public class TerraBot {
             });
             Path p1 = new Path(0, 0, 0);
             p1.addSetpoint(67, 0, 0);
-            shooter.addPath(p1, this);
+//            shooter.addPath(p1, this);
             shooter.addCustomOnce(new CodeSeg() {
                 @Override
                 public void run() {
@@ -484,7 +422,7 @@ public class TerraBot {
         powerShot.addStage(sll, liftControl.getPos(1), 0.01);
         Path p = new Path(0, 0, 0);
         p.addSetpoint(0, 0, 0);
-        powerShot.addPath(p, this);
+//        powerShot.addPath(p, this);
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(2), 0.01);
         powerShot.addStage(in, 0.0, 0.01);
@@ -509,7 +447,7 @@ public class TerraBot {
         Path path0 = new Path(98, 0, 0);
         path0.HAcc = 1;
         path0.addSetpoint(0, 0, 0);
-        powerShot.addPath(path0, this);
+//        powerShot.addPath(path0, this);
         powerShot.addWaitUntil();
         powerShot.addCustomOnce(new CodeSeg() {
             @Override
@@ -524,7 +462,7 @@ public class TerraBot {
         Path path = new Path(98, 0, 0);
         path.HAcc = 1;
         path.addSetpoint(0, 0, -6);
-        powerShot.addPath(path, this);
+//        powerShot.addPath(path, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
@@ -532,7 +470,7 @@ public class TerraBot {
         Path path1 = new Path(98, 0, -5);
         path1.HAcc = 1;
         path1.addSetpoint(0, 0, -6);
-        powerShot.addPath(path1, this);
+//        powerShot.addPath(path1, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
@@ -631,7 +569,7 @@ public class TerraBot {
         Path p1 = new Path(0,0,0);
         p1.dScale = 4;
         p1.addSetpoint(81,-180,0);
-        back.addPath(p1, this);
+//        back.addPath(p1, this);
         back.addCustomOnce(new CodeSeg() {
             @Override
             public void run() {
@@ -642,7 +580,7 @@ public class TerraBot {
         });
         Path p2 = new Path(0,0,0);
         p2.addSetpoint(81,-180,0);
-        back.addPath(p2, this);
+//        back.addPath(p2, this);
         back.addCustomOnce(new CodeSeg() {
             @Override
             public void run() {
@@ -704,8 +642,8 @@ public class TerraBot {
         });
         Path p = new Path(0,0,0);
         p.addSetpoint(0,0,0);
-        cal.addPath(p, this);
-        cal.addMoveUntilLine(-0.3, this);
+//        cal.addPath(p, this);
+//        cal.addMoveUntilLine(-0.3, this);
         cal.addDelay(0.5);
         cal.addCustomOnce(new CodeSeg() {
             @Override
@@ -716,7 +654,7 @@ public class TerraBot {
         });
         Path p1 = new Path(0,0,0);
         p1.addSetpoint(67,0,0);
-        cal.addPath(p1, this);
+//        cal.addPath(p1, this);
 
 
 //        cal.addCustomOnce(new CodeSeg() {

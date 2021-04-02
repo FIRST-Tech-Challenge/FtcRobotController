@@ -29,26 +29,20 @@ public class Vector {
     }
 
     public Vector getRotatedVec(double angle, angle type) {
-        double ang  = theta + Math.toRadians(angle);
-        double radius = Math.sqrt(x*x + y*y);
-        return new Vector(Math.cos(ang)*radius, Math.sin(ang)*radius);
+        double ang = 0;
+        if(type.equals(Vector.angle.DEGREES)) {
+            ang = theta + Math.toRadians(angle);
+        }else{
+            ang = theta + angle;
+        }
+        double radius = Math.sqrt(x * x + y * y);
+        return new Vector(Math.cos(ang) * radius, Math.sin(ang) * radius);
     }
-
-    public Vector reverse() {
-        return new Vector(-this.x, -this.y);
-    }
-
-    public Vector addVector(Vector vec) {
-        return new Vector(this.x+vec.getX(), this.y+vec.getY());
-    }
-
-    public Vector subtractVector(Vector vec) {
-        return this.addVector(vec.reverse());
-    }
-
-
-    public double dotProduct(Vector vec) {
-        return this.x * vec.getX() + this.y * vec.getY();
+    public void rotate(double angle, angle type){
+        Vector rot = getRotatedVec(angle,type);
+        this.x = rot.x;
+        this.y = rot.y;
+        this.theta = rot.theta;
     }
 
     public double getX() {
@@ -69,6 +63,12 @@ public class Vector {
         } else {
             return Math.atan2(y,x) * 180/Math.PI;
         }
+    }
+
+    public void setXY(double x1, double y1){
+        x = x1;
+        y = y1;
+        theta = Math.atan2(y, x);
     }
 
     public String toString() {

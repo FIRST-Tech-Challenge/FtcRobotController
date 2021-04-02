@@ -2,8 +2,6 @@ package util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import util.CodeSeg;
-
 
 public class TerraThread implements Runnable{
     private boolean executing = false;
@@ -45,5 +43,6 @@ public class TerraThread implements Runnable{
                 try {Thread.sleep(updateMs); } catch (InterruptedException e) {}
             }
         }
+
     }
 }

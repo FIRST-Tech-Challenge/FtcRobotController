@@ -59,7 +59,7 @@ public class SensorMRCompass extends LinearOpMode {
     @Override public void runOpMode() {
 
         // get a reference to our compass
-        compass = hardwareMap.get(ModernRoboticsI2cCompassSensor.class, "compass");
+        compass = hardwareMap.get(ModernRoboticsI2cCompassSensor.class, "cp");
 
         telemetry.log().setCapacity(20);
         telemetry.log().add("The compass sensor operates quite well out-of-the");

@@ -1,0 +1,90 @@
+Index: TeamCode/src/main/java/developing/TestRobot.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package developing;\r\n\r\nimport com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;\r\nimport com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;\r\nimport com.qualcomm.robotcore.hardware.CRServo;\r\nimport com.qualcomm.robotcore.hardware.CompassSensor;\r\nimport com.qualcomm.robotcore.hardware.DcMotor;\r\nimport com.qualcomm.robotcore.hardware.DcMotorEx;\r\nimport com.qualcomm.robotcore.hardware.DcMotorSimple;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\nimport com.qualcomm.robotcore.hardware.Servo;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;\r\n\r\nimport global.Constants;\r\nimport telefunctions.Cycle;\r\n\r\npublic class TestRobot {\r\n\r\n    public DcMotor r1;\r\n    public DcMotor l1;\r\n    public DcMotor r2;\r\n    public DcMotor l2;\r\n    public DcMotor outr;\r\n    public DcMotor outl;\r\n\r\n    public DcMotor in;\r\n\r\n    public CRServo rh;\r\n\r\n    public Servo rp;\r\n\r\n    public Cycle pushControl = new Cycle(0.1, 0.3);\r\n\r\n    public ModernRoboticsI2cCompassSensor compassSensor;\r\n\r\n    public ModernRoboticsI2cRangeSensor lr;\r\n    public ModernRoboticsI2cRangeSensor fr;\r\n\r\n    public FTCAutoAimer autoAimer = new FTCAutoAimer();\r\n\r\n    public boolean intaking = false;\r\n    public boolean calibratingCompass = true;\r\n\r\n    public double rpStart = 0.1;\r\n\r\n//    public final double MAX_OUTTAKE_SPEED = 200 * Math.PI; // rad/s\r\n//    public final double LR_TO_OUTTAKE = 0.2;\r\n//    public final double FR_TO_OUTTAKE = 0.2;\r\n\r\n\r\n\r\n    public void init(HardwareMap hwMap) {\r\n\r\n\r\n        l1 = getMotor(hwMap, \"l1\", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        l2 = getMotor(hwMap, \"l2\", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        r1 = getMotor(hwMap, \"r1\", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        r2 = getMotor(hwMap, \"r2\", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n\r\n        in = getMotor(hwMap, \"in\", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        outr = getMotor(hwMap, \"outr\", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        outl = getMotor(hwMap, \"outl\", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n\r\n\r\n        rh = getCRServo(hwMap, \"rh\", CRServo.Direction.FORWARD);\r\n        rp = getServo(hwMap, \"rp\", Servo.Direction.FORWARD, rpStart);\r\n\r\n\r\n        compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, \"compass\");\r\n\r\n        lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, \"lr\");\r\n        fr = hwMap.get(ModernRoboticsI2cRangeSensor.class, \"fr\");\r\n\r\n        compassSensor.setMode(CompassSensor.CompassMode.CALIBRATION_MODE);\r\n\r\n    }\r\n\r\n    public DcMotor getMotor(HardwareMap hwMap, String name, DcMotor.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode){\r\n        DcMotor dcMotor = hwMap.get(DcMotor.class, name);\r\n        dcMotor.setPower(0);\r\n        dcMotor.setDirection(dir);\r\n        dcMotor.setZeroPowerBehavior(zpb);\r\n        dcMotor.setMode(mode);\r\n\r\n        return dcMotor;\r\n    }\r\n    public Servo getServo(HardwareMap hwMap, String name, Servo.Direction dir, double startpos){\r\n        Servo servo = hwMap.get(Servo.class, name);\r\n        servo.setDirection(dir);\r\n        servo.setPosition(startpos);\r\n        return servo;\r\n    }\r\n    public CRServo getCRServo(HardwareMap hwMap, String name, CRServo.Direction dir){\r\n        CRServo crServo = hwMap.get(CRServo.class, name);\r\n        crServo.setPower(0);\r\n        crServo.setDirection(CRServo.Direction.FORWARD);\r\n        return crServo;\r\n    }\r\n\r\n    public void move(double f, double s, double t){\r\n        l1.setPower(f+s-t);\r\n        l2.setPower(-f+s+t);\r\n        r1.setPower(f-s+t);\r\n        r2.setPower(-f-s-t);\r\n    }\r\n\r\n    public void intake(double p){\r\n        in.setPower(p);\r\n        rh.setPower(p);\r\n    }\r\n\r\n    public void pushRings(double pos){\r\n        rp.setPosition(pos);\r\n    }\r\n\r\n    public void outtakeWithCalculations() {\r\n        double p = autoAimer.getOuttakePower(compassSensor.getDirection(), lr.getDistance(DistanceUnit.METER), fr.getDistance(DistanceUnit.METER));\r\n        outr.setPower(p);\r\n        outl.setPower(p);\r\n\r\n    }\r\n\r\n    public double getRobotToGoalAngle() {\r\n        double robotTheta = compassSensor.getDirection() * Math.PI/180;\r\n        double x = autoAimer.getDisFromCenter(lr.getDistance(DistanceUnit.METER), robotTheta) - Constants.GOAL_FROM_LEFT;\r\n        double y = autoAimer.getDisFromCenter(fr.getDistance(DistanceUnit.METER), robotTheta);\r\n        return Math.atan2(y, x);\r\n    }\r\n\r\n    public void outtake(double p){\r\n        outr.setPower(p);\r\n        outl.setPower(p);\r\n    }\r\n\r\n    public void updateIntake(boolean left_bumper, boolean right_bumper) {\r\n        if(right_bumper){\r\n            intaking = true;\r\n        }else if(left_bumper){\r\n            intaking = false;\r\n            intake(-0.5);\r\n        }else if(intaking){\r\n            intake(1);\r\n        }else{\r\n            intake(0);\r\n        }\r\n    }\r\n\r\n    public void setCompassMode () {\r\n        if (calibratingCompass && !compassSensor.isCalibrating()) {\r\n            compassSensor.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);\r\n            calibratingCompass = false;\r\n        }\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/developing/TestRobot.java	(revision a9db71602c406f26588aae57dece8ac28ecb6137)
++++ TeamCode/src/main/java/developing/TestRobot.java	(date 1614737015352)
+@@ -1,5 +1,6 @@
+ package developing;
+ 
++import com.qualcomm.hardware.bosch.BNO055IMU;
+ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
+ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+ import com.qualcomm.robotcore.hardware.CRServo;
+@@ -10,6 +11,9 @@
+ import com.qualcomm.robotcore.hardware.HardwareMap;
+ import com.qualcomm.robotcore.hardware.Servo;
+ 
++import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
++import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
++import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+ 
+ import global.Constants;
+@@ -44,6 +48,8 @@
+ 
+     public double rpStart = 0.1;
+ 
++    public BNO055IMU gyro;
++
+ //    public final double MAX_OUTTAKE_SPEED = 200 * Math.PI; // rad/s
+ //    public final double LR_TO_OUTTAKE = 0.2;
+ //    public final double FR_TO_OUTTAKE = 0.2;
+@@ -68,10 +74,12 @@
+ 
+ 
+         compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "compass");
+-
++        gyro = hwMap.get(BNO055IMU.class, "gyro");
+         lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
+         fr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "fr");
+ 
++
++
+         compassSensor.setMode(CompassSensor.CompassMode.CALIBRATION_MODE);
+ 
+     }
+@@ -153,4 +161,5 @@
+         }
+     }
+ 
++
+ }
+Index: TeamCode/src/main/java/global/AngularPosition.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/global/AngularPosition.java	(date 1614740910343)
++++ TeamCode/src/main/java/global/AngularPosition.java	(date 1614740910343)
+@@ -0,0 +1,25 @@
++package global;
++
++import com.qualcomm.hardware.bosch.BNO055IMU;
++
++import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
++import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
++import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
++
++public class AngularPosition {
++    public BNO055IMU gyro;
++
++
++
++    public void initGyro(){
++        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
++        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
++        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
++        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
++        gyro.initialize(parameters);
++    }
++//    public void resetGyro() {
++//        lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
++//        heading = 0;
++//    }
++}
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_3_2_21_5_22_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_3_2_21_5_22_PM__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_3_2_21_4_53_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_3_2_21_4_53_PM__Default_Changelist_.xml

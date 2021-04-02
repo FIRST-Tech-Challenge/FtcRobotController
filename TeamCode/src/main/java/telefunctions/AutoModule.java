@@ -3,7 +3,6 @@ package telefunctions;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 
@@ -14,7 +13,7 @@ import util.CodeSeg;
 public class AutoModule {
     public boolean executing = false;
     public int stageNum = 0;
-    public ArrayList<Stage> stages = new ArrayList();
+    public ArrayList<Stage> stages = new ArrayList<>();
 
     public ElapsedTime timer = new ElapsedTime();
 
@@ -255,9 +254,6 @@ public class AutoModule {
 
                     timer.reset();
                 }
-
-
-
 
                 bot.moveTank(lpow, rpow);
 

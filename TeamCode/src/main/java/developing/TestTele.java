@@ -1,11 +1,18 @@
 package developing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Const;
+
+import global.Constants;
 
 @TeleOp(name = "TestOp")
 public class TestTele extends OpMode {
     TestRobot bot = new TestRobot();
+    TelemetryHandler telemetryHandler = new TelemetryHandler();
 
     @Override
     public void init() {
@@ -18,24 +25,65 @@ public class TestTele extends OpMode {
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
 
-        bot.move(forward,strafe,turn);
+        bot.moveTeleOp(forward, strafe, turn);
 
-        if(gamepad1.right_bumper){
-            bot.intaking = true;
-        }else if(gamepad1.left_bumper){
-            bot.intaking = false;
-            bot.intake(-0.5);
-        }else if(bot.intaking){
-            bot.intake(1);
-        }else{
-            bot.intake(0);
+        if(gamepad1.right_trigger > 0){
+            bot.fastMode = true;
+        }else if(gamepad1.left_trigger > 0){
+            bot.fastMode = false;
         }
 
-        bot.outtake(gamepad2.right_stick_y);
+
+        if(!bot.areAutomodulesRunning()) {
+            bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
+
+            bot.toggleOuttake(gamepad2.x);
+            bot.outtakeWithCalculations();
+
+            bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
+
+        }
+
+        if(gamepad2.y){
+            bot.shooter.start();
+        }
+
+        if(gamepad2.right_trigger > 0){
+            bot.extendWobbleGoal(1);
+        }else if (gamepad2.left_trigger > 0 ){
+            bot.extendWobbleGoal(-1);
+        }else{
+            bot.extendWobbleGoal(0);
+        }
+
+        if(gamepad2.dpad_right){
+            bot.claw(1);
+        }else if(gamepad2.dpad_left){
+             bot.claw(-1);
+        }else{
+            bot.claw(0);
+        }
 
 
-        bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
+        bot.moveArm(gamepad2.right_stick_y);
 
+//        bot.extendWobbleGoal(gamepad2.a);
 
+//        bot.updateOdometry();
+
+        
+//        telemetry = telemetryHandler.addAutoAimer(telemetry, bot);
+//        telemetry = telemetryHandler.addOuttake(telemetry, bot);
+//        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
+//
+//        telemetry = telemetryHandler.addOdometry(telemetry, bot);
+
+        telemetry.update();
+
+    }
+
+    @Override
+    public void stop() {
+        bot.stopAllAutomodules();
     }
 }

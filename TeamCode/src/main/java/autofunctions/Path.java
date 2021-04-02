@@ -1,14 +1,10 @@
 package autofunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.internal.android.dex.Code;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import global.TerraBot;
 import util.CodeSeg;
@@ -32,10 +28,6 @@ public class Path {
     public double xerr = 0;
     public double yerr = 0;
     public double herr = 0;
-
-    public double lxerr = 0;
-    public double lyerr = 0;
-    public double lherr = 0;
 
     public double xder = 0;
     public double yder = 0;
@@ -78,7 +70,6 @@ public class Path {
 
 
     public boolean isExecuting = true;
-    public boolean isDoneWithRfs = false;
 
     final public double[] ks = {0.04,0.03,0.02};
     final public double[] ds = {0.00015,0.00015,3};
@@ -94,9 +85,6 @@ public class Path {
     public double restPowX = 0.1;
     public double restPowY = 0.05;
     public double restPowT = 0.3;
-    final public double maxIX = 100*0.1;
-    final public double maxIY = 100*0.1;
-    final public double maxIT = 200*0.1;
 
     public double shootSpeed = 1;
 
@@ -110,23 +98,10 @@ public class Path {
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
         posetypes.add(Posetype.SETPOINT);
-        xControl.setCoeffecients(ks[0], ds[0], is[0]);
-        yControl.setCoeffecients(ks[1], ds[1], is[1]);
-        hControl.setCoeffecients(ks[2], ds[2], is[2]);
+        xControl.setCoefficients(ks[0], ds[0], is[0]);
+        yControl.setCoefficients(ks[1], ds[1], is[1]);
+        hControl.setCoefficients(ks[2], ds[2], is[2]);
         timer.reset();
-    }
-
-
-
-    public CodeSeg changeAcc(final double xacc, final double yacc, final double hacc){
-        return new CodeSeg() {
-            @Override
-            public void run() {
-                XAcc = xacc;
-                YAcc = yacc;
-                HAcc = hacc;
-            }
-        };
     }
 
     public void updateRadius(double dis){
@@ -138,14 +113,14 @@ public class Path {
     }
 
     public void scaleKs(double sx, double sy, double sh){
-        xControl.setCoeffecients(ks[0]*sx, xControl.Kd, xControl.Ki);
-        yControl.setCoeffecients(ks[1]*sy, yControl.Kd, yControl.Ki);
-        hControl.setCoeffecients(ks[2]*sh, hControl.Kd, hControl.Ki);
+        xControl.setCoefficients(ks[0]*sx, xControl.Kd, xControl.Ki);
+        yControl.setCoefficients(ks[1]*sy, yControl.Kd, yControl.Ki);
+        hControl.setCoefficients(ks[2]*sh, hControl.Kd, hControl.Ki);
     }
     public void scaleDs(double sx, double sy, double sh){
-        xControl.setCoeffecients(xControl.Kp, ds[0]*sx, xControl.Ki);
-        yControl.setCoeffecients(yControl.Kp, ds[1]*sy, yControl.Ki);
-        hControl.setCoeffecients(hControl.Kp, ds[2]*sh, hControl.Ki);
+        xControl.setCoefficients(xControl.Kp, ds[0]*sx, xControl.Ki);
+        yControl.setCoefficients(yControl.Kp, ds[1]*sy, yControl.Ki);
+        hControl.setCoefficients(hControl.Kp, ds[2]*sh, hControl.Ki);
     }
 
     public void resetIs(){
@@ -379,9 +354,9 @@ public class Path {
 
         double[] out = new double[3];
 
-        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, currentVels[0], iv.x);
-        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, currentVels[1], iv.y);
-        out[2] = -Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
+//        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, currentVels[0], iv.x);
+//        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, currentVels[1], iv.y);
+//        out[2] = -Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
 
         out[0] = Range.clip(out[0], -1, 1);
         out[1] = Range.clip(out[1], -1, 1);
@@ -424,7 +399,7 @@ public class Path {
                 }
             }
 
-            double[] pows = update(bot.odometry.getPos(), bot.odometry.getVels());
+            double[] pows = update(bot.odometry.getPos(), bot.odometry.getVels()); //bot.odometry.getVels()
             bot.move(pows[1], pows[0], pows[2]);
 //            op.telemetry.addData("xpow",  pows[0]);
 //            op.telemetry.addData("ypow",  pows[1]);
@@ -442,9 +417,9 @@ public class Path {
 //            op.telemetry.addData("herr", herr);
 //            op.telemetry.addData("y", yint);
 //            op.telemetry.addData("stopIndex", stopIndex);
-//            op.telemetry.addData("timer.seconds()", timer.seconds());
+//            op.telemetry.addData("globalTime.seconds()", globalTime.seconds());
 //            op.telemetry.addData("current index", curIndex);
-            //
+//
 //            op.telemetry.addData("yvel", bot.odometry.getYVel());
 //            op.telemetry.addData("xvel", bot.odometry.getXVel());
 //            op.telemetry.addData("tvel", bot.odometry.getTVel());
@@ -462,7 +437,7 @@ public class Path {
     public enum Posetype{
         WAYPOINT,
         SETPOINT,
-        STOP;
+        STOP
     }
 
 }

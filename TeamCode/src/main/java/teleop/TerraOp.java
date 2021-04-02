@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import global.TerraBot;
-import util.Vector;
+
 @Disabled
 @TeleOp(name = "TerraOp V5")
 public class TerraOp extends OpMode {
@@ -19,6 +19,8 @@ public class TerraOp extends OpMode {
 
     @Override
     public void init() {
+
+
 
         telemetry.addData("Status: ","Not Ready");
         telemetry.update();
@@ -69,7 +71,7 @@ public class TerraOp extends OpMode {
                 }else{
                     bot.intake(0);
                 }
-                
+
                 if (gamepad2.right_stick_y < 0) {
                     bot.outtaking = true;
                     bot.outtake(0.41);
@@ -137,7 +139,7 @@ public class TerraOp extends OpMode {
                     bot.outtakeWithEncoders(1);
                 }
             }
-            
+
         }else if(bot.shooter.executing || bot.powerShot.executing){
             if(bot.powershot){
                 bot.outtakeWithEncoders(bot.powerShotSpeed);
@@ -161,10 +163,6 @@ public class TerraOp extends OpMode {
             bot.powershot = true;
             bot.setLEDs(255,50,0);
         }
-
-//        double forward = -gamepad1.right_stick_y;
-//        double strafe = gamepad1.right_stick_x;
-//        double turn = -gamepad1.left_stick_x;
 
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;
@@ -201,62 +199,6 @@ public class TerraOp extends OpMode {
                 }
             }
         }
-
-
-
-//
-//        if(!bot.globalMode) {
-//            double forward = -gamepad1.right_stick_x;
-//            double strafe = -gamepad1.right_stick_y;
-//            double turn = -gamepad1.left_stick_x;
-//
-//            if (!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing) {
-//                bot.moveTeleOp(forward, strafe, turn);
-//            }
-//        }else{
-//            double forward = -gamepad1.right_stick_x;
-//            double strafe = -gamepad1.right_stick_y;
-//            double turn = -gamepad1.left_stick_x;
-//
-//            Vector vect = new Vector(strafe, forward);
-//            Vector vect2 = vect.getRotatedVec(-bot.getHeading(), Vector.angle.DEGREES);
-//
-//
-//            if (!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing) {
-//                bot.moveTeleOp(vect2.y, vect2.x, turn);
-//            }
-//        }
-
-//
-//        telemetry.addData("Heading", bot.getHeading());
-//        telemetry.addData("OdometryX", bot.odometry.getX());
-//        telemetry.addData("OdometryY", bot.odometry.getY());
-//        telemetry.update();
-//        telemetry.addData("touch", bot.isTouchSensorPressed());
-//        telemetry.update();
-//
-//        telemetry.addData("errR", bot.outrController.getPercentageError());
-//        telemetry.addData("ce l", bot.outlController.currError);
-//        telemetry.addData("ce r", bot.outrController.currError);
-//        telemetry.addData("powl", bot.outlController.pow);
-//        telemetry.addData("powr", bot.outrController.pow);
-//        telemetry.addData("targetr", bot.outrController.targetSpeed);
-//        telemetry.addData("targetl", bot.outlController.targetSpeed);
-//        telemetry.addData("curr", bot.outrController.currSpeed);
-//        telemetry.addData("curl", bot.outlController.currSpeed);
-//        telemetry.addData("outr", bot.getOutrPos());
-//        telemetry.addData("outl", bot.getOutlPos());
-//        telemetry.addData("dsr1", bot.getDisR1());
-//        telemetry.addData("dsl2", bot.getDisL2());
-//        telemetry.update();
-
-//        telemetry.addData("x", bot.odometry.getX());
-//        telemetry.addData("y", bot.odometry.getY());
-//        telemetry.addData("theta", bot.odometry.getTheta());
-//        telemetry.addData("heading", bot.getHeading());
-
-//        telemetry.addData("vs", vs);
-//        telemetry.addData("dis", bot.getDisL2());
 
         telemetry.addData("gameTime", bot.gameTime.seconds());
         telemetry.addData("isPowerShotMode", bot.powershot);

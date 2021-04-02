@@ -11,9 +11,6 @@ public class OdoTele extends OpMode {
 
     TerraBot bot = new TerraBot();
 
-
-
-
     @Override
     public void init() {
 
@@ -25,7 +22,6 @@ public class OdoTele extends OpMode {
         telemetry.update();
 
     }
-
 
     @Override
     public void start() {
@@ -41,14 +37,13 @@ public class OdoTele extends OpMode {
 
         bot.move(forward, strafe, turn);
 
-
-        telemetry.addData("Heading", bot.getHeading());
-        telemetry.addData("deltaX", bot.odometry.testx);
-        telemetry.addData("deltaY", bot.odometry.testy);
-        telemetry.addData("OdometryX", bot.odometry.getX());
-        telemetry.addData("OdometryY", bot.odometry.getY());
-        telemetry.addData("Heading", bot.getHeading());
-        telemetry.addData("sketch angle", bot.odometry.thetaEnc);
+//        telemetry.addData("Heading", bot.getHeading());
+//        telemetry.addData("deltaX", bot.odometry.testx);
+//        telemetry.addData("deltaY", bot.odometry.testy);
+//        telemetry.addData("OdometryX", bot.odometry.getX());
+//        telemetry.addData("OdometryY", bot.odometry.getY());
+//        telemetry.addData("Heading", bot.getHeading());
+//        telemetry.addData("sketch angle", bot.odometry.thetaEnc);
         telemetry.update();
 
         bot.update();

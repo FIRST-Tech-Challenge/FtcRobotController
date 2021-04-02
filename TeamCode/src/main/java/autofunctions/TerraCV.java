@@ -70,70 +70,10 @@ public class TerraCV {
         tfodParameters.minResultConfidence = (float) minConf;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
-//        tfod.setZoom(2.5, 1.78);
 
     }
-//
-//    public RingNum scanRingsBeforeInit(){
-//        RingNum out = RingNum.ZERO;
-//        tfod.activate();
-//        //tfod.setClippingMargins(100,500,400,200);
-//        //tfod.setZoom(2.5, 1.78);
-//        while (!op.isStarted() && !op.isStopRequested()){
-//            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-//            if (updatedRecognitions != null) {
-//                for (Recognition recognition : updatedRecognitions) {
-//                    op.telemetry.addData("label", recognition.getLabel());
-//                    op.telemetry.update();
-//                    if(recognition.getLabel().equals(LABEL_FIRST_ELEMENT)){
-//                        out = RingNum.ONE;
-//                    }else if(recognition.getLabel().equals(LABEL_SECOND_ELEMENT)){
-//                        out = RingNum.FOUR;
-//                    }
-//                }
-//            }
-//            op.idle();
-//        }
-//        tfod.shutdown();
-//        return out;
-//    }
 
 
-//
-//
-//    public void init(TerraBot b, LinearOpMode o, int acc){
-//        bot = b;
-//        op = o;
-//        Accuracy = acc;
-//        int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
-//        //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-//        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-//        parameters.vuforiaLicenseKey = h.VUFORIA_KEY;
-//        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-//
-//       vuforia = ClassFactory.getInstance().createVuforia(parameters);
-//       //CameraDevice.getInstance().setFlashTorchMode(true);
-//
-//       Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
-//       vuforia.setFrameQueueCapacity(1);
-//
-//    }
-//    public void takePicture(){
-//        //1280, 720
-//        while (op.opModeIsActive() && img == null) {
-//            try {currentFrame = vuforia.getFrameQueue().take();}catch (InterruptedException e){}
-//            long numImages = currentFrame.getNumImages();
-//            for (int i = 0; i < numImages; i++) {
-//                if (currentFrame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
-//                    img = currentFrame.getImage(i);
-//                    break;
-//                }
-//            }
-//            if (img != null) {
-//                bm = vuforia.convertFrameToBitmap(currentFrame);
-//            }
-//        }
-//    }
     public void takePictureBeforeInit(){
         //1280, 720
         resetImg();
@@ -201,19 +141,13 @@ public class TerraCV {
         int x2 = rect.getX2();
         int y2 = rect.getY2();
 
-        int[] max = new int[]{0,0};
-
         for (int x = x1; x < x2; x+= accuracy) {
             for (int y = y1; y < y2; y+= accuracy ) {
                 int pix = bm.getPixel(x,y);
                 float[] hsv = rgbToHSV(pix);
-//                if(35 < hsv[0] && hsv[0] < 65) {
-//                    total += hsv[1];
-//                }
                 if(20 < hsv[0] && hsv[0] < 50) {
                     total += hsv[1];
                 }
-                //total += hsv[2];
                 if(op.isStarted() || op.isStopRequested()){
                     break;
                 }

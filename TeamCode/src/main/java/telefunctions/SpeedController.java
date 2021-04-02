@@ -1,6 +1,5 @@
 package telefunctions;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -23,9 +22,9 @@ public class SpeedController {
 
     double changeTime = 0;
 
-    double oldPos = 0;
+    double oldPos;
 
-    public double pow = 0;
+    public double pow;
 
     public double k;
     public double d;
@@ -44,7 +43,7 @@ public class SpeedController {
         lastTime = -0.1;
         lastError = 0;
         oldPos = 0;
-        pid.setCoeffecients(k,d,i);
+        pid.setCoefficients(k,d,i);
         this.k = k;
         this.d = d;
         this.i = i;
@@ -55,10 +54,9 @@ public class SpeedController {
         pow = startPow;
     }
 
-
-    public void scaleK(double scale){
-        pid.setCoeffecients(k*scale,d,i);
-    }
+//    public void scaleK(double scale){
+//        pid.setCoefficients(k*scale,d,i);
+//    }
 
     public double getMotorSpeed(double currPos){
         double changePos = currPos-lastPos;
@@ -91,33 +89,12 @@ public class SpeedController {
         return isReady;
     }
 
-    public double getPercentageError(){
-        return ((currError/targetSpeed))*100;
-    }
-
+//    public double getPercentageError(){
+//        return ((currError/targetSpeed))*100;
+//    }
 
     public double getPow(){
-//        if(Math.abs(currError) < 2000){
-//            if(Math.abs(currError) < acc){
-//                isReady = true;
-//                return pow;
-//            }
-//            isReady = true;
-//                //pow += Math.signum(currError) * pid.getPower(currError, currDer, integralOfError);
-//            pow += Math.signum(currError) * 0.01;
-//            pow = Range.clip(pow, -1, 1);
-//            //isReady = false;
-//            return pow;
-//        }else{
-//            isReady = false;
-//            if(currError > 0){
-//                return 0.4;
-//            }else{
-//                return -0.3;
-//            }
-//        }
         if(Math.abs(currError) < 2000) {
-            //pow += Math.signum(currError) * 0.0004;
             pow = Range.clip(pow, -1, 1);
         }
         return pow;
