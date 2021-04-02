@@ -1,4 +1,4 @@
-/**
+/*
  * Tests Tensor Flow. If Tensor Flow detects
  * 4 rings, the robot should move forward.
  * If it detects 1 ring, the robot should
@@ -14,14 +14,11 @@
 package org.firstinspires.ftc.teamcode.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
-import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.ObjectDetection.TensorFlow;
-import org.firstinspires.ftc.teamcode.Robot;
 
 import java.util.ArrayList;
 
@@ -33,20 +30,19 @@ public class TensorFlowTest extends LinearOpMode {
     public void runOpMode() {
 
         TensorFlow tensorFlow = new TensorFlow(this);
-        ElapsedTime runtime = new ElapsedTime();
 
         tensorFlow.moveTensorFlowServo(0.35);
         sleep(5000);
 
-        int rings = -1;
-        int i = 0;
+        int rings; //For DEBUGGING, replace with "int rings= -1;"
+        int i;
 
-        int numOfTime4Rings = 0;
-        int numOfTime1Ring = 0;
-        int numOfTime0Rings = 0;
+        int numOfTime4Rings;
+        int numOfTime1Ring;
+        int numOfTime0Rings;
 
         int arraySize = 11;
-        ArrayList<Integer> NumberOfRings = new ArrayList<Integer>(arraySize);
+        ArrayList<Integer> NumberOfRings = new ArrayList<>(arraySize);
 
         for (int index = 0; index<arraySize; index++) {
             tensorFlow.runTensorFlow();

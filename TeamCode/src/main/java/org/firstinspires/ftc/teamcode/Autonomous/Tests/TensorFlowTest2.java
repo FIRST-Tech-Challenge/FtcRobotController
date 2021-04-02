@@ -1,4 +1,4 @@
-/**
+/*
  * Tests Tensor Flow. If Tensor Flow detects
  * 4 rings, the robot should move forward.
  * If it detects 1 ring, the robot should
@@ -14,16 +14,13 @@
 package org.firstinspires.ftc.teamcode.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Components.ObjectDetection.TensorFlow;
 import org.firstinspires.ftc.teamcode.Robot;
-
-import java.util.ArrayList;
 
 @Autonomous(name= "TensorFlowTest2 ", group="Tests: ")
 
@@ -33,7 +30,6 @@ public class TensorFlowTest2 extends LinearOpMode {
     public void runOpMode() {
 
         Robot robot = new Robot(this, BasicChassis.ChassisType.IMU, true, false);
-        ElapsedTime runtime = new ElapsedTime();
 
         int rings = robot.getRingsAndWaitForStart();
 
