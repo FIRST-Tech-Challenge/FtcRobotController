@@ -3,8 +3,14 @@
  *
  * It is extraordinarily rare that you will ever need to edit this file.
  */
+
+configurations {
+    doc { transitive false }
+}
+
 buildscript {
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
@@ -17,7 +23,47 @@ buildscript {
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
 }
+
+repositories {
+    mavenCentral()
+
+    flatDir {
+        dirs '../libs'
+    }
+}
+
+dependencies {
+    doc 'org.firstinspires.ftc:Hardware:6.2.0'
+    doc 'org.firstinspires.ftc:RobotCore:6.2.0'
+    doc 'org.firstinspires.ftc:FtcCommon:6.2.0'
+    doc 'org.firstinspires.ftc:OnBotJava:6.2.0'
+    doc 'org.firstinspires.ftc:Inspection:6.2.0'
+}
+
+task extractJavadoc {
+    doLast {
+        def componentIds = configurations.doc.incoming.resolutionResult.allDependencies.collect { it.selected.id }
+
+        def result = dependencies.createArtifactResolutionQuery()
+                .forComponents(componentIds)
+                .withArtifacts(JvmLibrary, SourcesArtifact, JavadocArtifact)
+                .execute()
+
+        for (component in result.resolvedComponents) {
+            component.getArtifacts(JavadocArtifact).each { artifact ->
+                def version = artifact.identifier.componentIdentifier.version
+                def libName = artifact.identifier.componentIdentifier.moduleIdentifier.name
+                copy {
+                    from zipTree(artifact.file)
+                    into "docs/$version/$libName/"
+                }
+            }
+        }
+    }
+}
+

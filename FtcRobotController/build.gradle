@@ -13,7 +13,7 @@ android {
         buildConfigField "String", "BUILD_TIME", '"' + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT).format(new Date())) + '"'
     }
 
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -21,12 +21,4 @@ android {
     }
 }
 
-repositories {
-    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
-
-    flatDir {
-        dirs '../libs'
-    }
-}
-
-apply from: 'build.release.gradle'
+apply from: '../build.dependencies.gradle'
