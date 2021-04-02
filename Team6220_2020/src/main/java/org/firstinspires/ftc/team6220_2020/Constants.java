@@ -12,6 +12,7 @@ public class Constants
     public static final double US_DIGITAL_TICKS_PER_ROTATION = 1440;   // For odometry wheels
     public static final double MM_PER_INCH = 25.4;
     public static final double IN_FIELD_SIZE = 140.94;  // Not 144" due to interlocking pieces being cut off on field edge.
+    public static final double AM_37_TICKS_PER_ROTATION = 103.6;
     //---------------------------------------------------------------
 
 
@@ -73,4 +74,8 @@ public class Constants
     public static final double MINIMUM_JOYSTICK_POWER = 0.05;
     public static final double MINIMUM_TRIGGER_VALUE = 0.1;
     //---------------------------------------------------------------
+
+    // Helpful Constants
+    public static  final double MILLIS_TO_MIN = 60000;
+    //--------------------------------------------------------------
 }
