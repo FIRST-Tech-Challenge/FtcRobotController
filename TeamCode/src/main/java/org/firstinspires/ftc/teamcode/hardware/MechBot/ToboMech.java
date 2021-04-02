@@ -1689,6 +1689,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     sleep(250);
                 }
             }
+            shooter.shootOutByRpm(SEMI_AUTO_RPM-40);
 
         }
         shooter.shootOutByRpm(WARM_UP_RPM);
@@ -2150,7 +2151,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.yMove(1, 0.17);
         intake.intakeIn();
         for (int i = 0; i < n; i++) {
-            sleep(700);
+            sleep(650);
             if(i+2==n)
                 chassis.stop();
         }
@@ -2279,7 +2280,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double getRpmFromVelocity(double velocity){
         double a = 159.647; // 225.686;
         double b = 290.359; // -35.9631;
-        double ideal_rpm = a*velocity+b;
+        double ideal_rpm = a*velocity+b-10;
         double real_rpm = (int)(ideal_rpm/20) * 20;
         double error = ideal_rpm - real_rpm;
         if (error > 10){
