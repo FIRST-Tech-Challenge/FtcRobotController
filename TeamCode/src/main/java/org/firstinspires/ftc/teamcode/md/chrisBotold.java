@@ -1,10 +1,15 @@
-package org.firstinspires.ftc.teamcode.disabled;
+package org.firstinspires.ftc.teamcode;
+
+import android.graphics.Color;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,18 +25,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.PID;
-import org.firstinspires.ftc.teamcode.Position;
-import org.firstinspires.ftc.teamcode.ringObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
@@ -49,34 +49,30 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  * the internal hub IMU named imu
  * a webcam attached to USB.
  */
-public class chrisBot_old
+public class chrisBotold
 {
-    private String version = "1.0.0";
+    private String version = "1.1";
 
     /** MOTOR OBJECTS */
-    public DcMotor  motorBackLeft   = null;
-    public DcMotor  motorFrontLeft  = null;
-    public DcMotor  motorFrontRight  = null;
-    public DcMotor  motorBackRight  = null;
-    public DcMotor motorIntake = null;
-    public DcMotor motorShooter = null;
+    public DcMotor  motorBackLeft   = null, motorFrontLeft  = null, motorFrontRight  = null, motorBackRight  = null;
+    public DcMotorSimple motorIntake = null, motorShooter1 = null, motorShooter2 = null, motorBottomIntake = null;
 
     public WebcamName webcam = null;
+
+    public ColorSensor colorL = null, colorR = null;
 
     public static final double COUNTS_PER_MOTOR_REV    = 560 ;    // eg: TETRIX Motor Encoder
     public static final double DRIVE_GEAR_REDUCTION    = (double)2/(double)3 ;     // This is < 1.0 if geared UP
     public static final double WHEEL_DIAMETER_INCHES   = 2.95276 ;     // For figuring circumference
     public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    public static final double DRIVE_SPEED = 0.3;
-    public static final double TURN_SPEED = 0.3;
+    public static final double DRIVE_SPEED = chrisBotConstants.DRIVE_SPEED, TURN_SPEED = chrisBotConstants.TURN_SPEED, JIGGLE_SPEED = chrisBotConstants.JIGGLE_SPEED;
 
-    int FLTarget = 0;
-    int FRTarget = 0;
-    int BLTarget = 0;
-    int BRTarget = 0;
+    int FLTarget = 0, FRTarget = 0, BLTarget = 0, BRTarget = 0;
 
-    public boolean shooterOn = false;
-    public boolean intakeOn = false;
+    public static final double shootPower = chrisBotConstants.shootPower, shootPowerSlow = chrisBotConstants.shootPowerSlow;
+
+    public boolean shooterOn = chrisBotConstants.shooterOn, intakeOn = chrisBotConstants.intakeOn;
+
 
     /** GYRO OBJECTS */
 
@@ -86,6 +82,9 @@ public class chrisBot_old
     Orientation angles;
     Acceleration gravity;
 
+    Orientation lastAngles = new Orientation();
+    double globalAngle;
+
     /** VUFORIA OBJECTS */
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
@@ -93,17 +92,13 @@ public class chrisBot_old
 
     private static final boolean PHONE_IS_PORTRAIT = false  ;
 
-    private static final float mmPerInch        = 25.4f;
-    private static final float mmTargetHeight   = (6) * mmPerInch;
+    private static final float mmPerInch = 25.4f, mmTargetHeight = (6) * mmPerInch;
 
     // Constants for perimeter targets
-    private static final float halfField = 72 * mmPerInch;
-    private static final float quadField  = 36 * mmPerInch;
+    private static final float halfField = 72 * mmPerInch, quadField  = 36 * mmPerInch;
 
     // private boolean targetVisible = false;
-    private float phoneXRotate    = 0;
-    private float phoneYRotate    = 0;
-    private float phoneZRotate    = 0;
+    private float phoneXRotate = 0, phoneYRotate = 0, phoneZRotate = 0;
 
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 
@@ -113,12 +108,9 @@ public class chrisBot_old
 
     public TFObjectDetector tfod;
 
-    public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    public static final String LABEL_FIRST_ELEMENT = "Quad";
-    public static final String LABEL_SECOND_ELEMENT = "Single";
+    public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite", LABEL_FIRST_ELEMENT = "Quad", LABEL_SECOND_ELEMENT = "Single";
 
-    public static final String VUFORIA_KEY = "AQU7a8H/////AAABmfH4ZcQHIkPTjsjCf80CSVReJtuQBMiQodPHMSkdFHY8RhKT4fIEcY3JbCWjXRsUBFiewYx5etup17dUnX/SIQx6cjctrioEXrID+gV4tD9B29eCOdFVgyAr+7ZnEHHDYcSnt2pfzDZyMpi+I3IODqbUgVO82UiaZViuZBnA3dNvokZNFwZvv8/YDkcd4LhHv75Qdk" +
-            "qgBzKe/TumwxjR/EqtR2fQRy9WnRjNVR9fYGl9MsuGNBSEmmys6GczXn8yZ/k2PKusiYz7h4hFGiXmlVLyikZuB4dxETGoqz+WWYUFJAdHzFiBptg5xXaa86qMBYBi3ht0RUiBKicLJhQZzLG0bIEJZWr198ihexUuhhGV";
+    public static final String VUFORIA_KEY = chrisBotConstants.key1;
 
     /** local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -127,10 +119,10 @@ public class chrisBot_old
 
     private Telemetry telemetry;
 
-    public boolean shooterExists = false, intakeExists = false, webcamExists = false;
+    public boolean shooterExists = false, intakeExists = false, webcamExists = false, intakeBottomExists = false, colorExists = false;
 
     /* Constructor */
-    public chrisBot_old() { }
+    public chrisBotold() { }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap, Telemetry telemetry) {
@@ -157,18 +149,16 @@ public class chrisBot_old
         /** Drive motor section */
 
         // Define and Initialize Motors
+
         motorBackLeft  = hwMap.get(DcMotor.class, "motorBackLeft");
         motorFrontLeft = hwMap.get(DcMotor.class, "motorFrontLeft");
         motorFrontRight = hwMap.get(DcMotor.class, "motorFrontRight");
         motorBackRight = hwMap.get(DcMotor.class, "motorBackRight");
 
-        imu = hwMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        motorFrontRight.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        motorBackRight.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        motorBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
 
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -181,29 +171,44 @@ public class chrisBot_old
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
+
         /** Attachment section */
 
-        intakeExists = hwMap.tryGet(DcMotor.class, "motorIntake") != null;
-        shooterExists = hwMap.tryGet(DcMotor.class, "motorShooter") != null;
-        webcamExists = hwMap.get(WebcamName.class, "Webcam 1") != null;
+        intakeExists = hwMap.tryGet(DcMotorSimple.class, "motorIntake") != null;
+        intakeBottomExists = hwMap.tryGet(DcMotorSimple.class, "motorBottomIntake") != null;
+        shooterExists = hwMap.tryGet(DcMotorSimple.class, "motorShooter1") != null && hwMap.tryGet(DcMotorSimple.class, "motorShooter2") != null;
+        webcamExists = hwMap.tryGet(WebcamName.class, "Webcam 1") != null;
+        colorExists = hwMap.tryGet(ColorSensor.class, "colorL") != null && hwMap.tryGet(ColorSensor.class, "colorR") != null;
 
         if (intakeExists) {
-            motorIntake = hwMap.get(DcMotor.class, "motorIntake");
-            motorIntake.setDirection(DcMotor.Direction.REVERSE);
+            motorIntake = hwMap.get(DcMotorSimple.class, "motorIntake");
+            motorIntake.setDirection(DcMotorSimple.Direction.FORWARD);
             motorIntake.setPower(0);
-            motorIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            motorIntake.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
 
             telemetry.addLine("Intake motor initialized");
             telemetry.update();
         }
 
+        if (intakeBottomExists) {
+            motorBottomIntake = hwMap.get(DcMotorSimple.class, "motorBottomIntake");
+            motorBottomIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+            motorBottomIntake.setPower(0);
+
+            telemetry.addLine("Bottom Intake motor initialized");
+            telemetry.update();
+        }
+
         if (shooterExists) {
-            motorShooter = hwMap.get(DcMotor.class, "motorShooter");
-            motorShooter.setDirection(DcMotor.Direction.FORWARD);
-            motorShooter.setPower(0);
-            motorShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            motorShooter.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
+            motorShooter1 = hwMap.get(DcMotorSimple.class, "motorShooter1");
+            motorShooter1.setDirection(DcMotorSimple.Direction.FORWARD);
+            motorShooter1.setPower(0);
+
+            motorShooter2 = hwMap.get(DcMotorSimple.class, "motorShooter2");
+            motorShooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+            motorShooter2.setPower(0);
 
             telemetry.addLine("Shooter motor initialized");
             telemetry.update();
@@ -216,7 +221,15 @@ public class chrisBot_old
             telemetry.update();
         }
 
-        setAllPower(0);
+        if (colorExists) {
+            colorL = hwMap.get(ColorSensor.class, "colorL");
+            colorR = hwMap.get(ColorSensor.class, "colorR");
+
+            telemetry.addLine("Color sensors initialized");
+            telemetry.update();
+        }
+
+        setAllDrivePower(0);
 
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new org.firstinspires.ftc.robotcore.external.navigation.Position(), new Velocity(), 1000);
@@ -250,8 +263,7 @@ public class chrisBot_old
             telemetry.update();
         }
         if (initTfod) {
-            int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
-                    "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
+            int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
             TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
             tfodParameters.minResultConfidence = 0.8f;
             tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
@@ -270,21 +282,21 @@ public class chrisBot_old
         return motorFrontLeft.isBusy() || motorBackRight.isBusy() || motorFrontRight.isBusy() || motorBackLeft.isBusy();
     }
     // This method sets the powers of all the drive motors on the robot.
-    public void setAllPower(double speed) {
+    public void setAllDrivePower(double speed) {
         motorFrontLeft.setPower(speed);
         motorFrontRight.setPower(speed);
         motorBackRight.setPower(speed);
         motorBackLeft.setPower(speed);
     }
     // This method sets the encoder drive targets on the actual motors.
-    public void setTargets() {
+    public void setDriveTargets() {
         motorFrontLeft.setTargetPosition(FLTarget);
         motorFrontRight.setTargetPosition(FRTarget);
         motorBackLeft.setTargetPosition(BLTarget);
         motorBackRight.setTargetPosition(BRTarget);
     }
     // This method sets the modes of all the motors.
-    public void setAllMode(DcMotor.RunMode mode) {
+    public void setAllDriveMode(DcMotor.RunMode mode) {
         motorFrontLeft.setMode(mode);
         motorFrontRight.setMode(mode);
         motorBackLeft.setMode(mode);
@@ -299,19 +311,13 @@ public class chrisBot_old
     }
 
     // This method checks power levels to be safe and pushes them to the motors
-    public void setPower(double flPower, double frPower, double blPower, double brPower)
-    {
-        setPower(new double[]{flPower, frPower, blPower, brPower});
+    public void setDrivePower(double flPower, double frPower, double blPower, double brPower) {
+        setDrivePower(new double[]{flPower, frPower, blPower, brPower});
     }
-    public void setPower(double[] powers) {
+    public void setDrivePower(double[] powers) {
         // Check deadzones
         for (int i = 0; i < powers.length; i++) {
-            if(powers[i] > 1) {
-                powers[i] = 1;
-            }
-            else if(powers[i] < -1) {
-                powers[i] = -1;
-            }
+            powers[i] = Range.clip(powers[i], -1, 1);
         }
         // Push powers
         motorFrontLeft.setPower(powers[0]);
@@ -333,27 +339,59 @@ public class chrisBot_old
         BLTarget = motorBackLeft.getCurrentPosition() + countsToTravel;
         BRTarget = motorBackRight.getCurrentPosition() + countsToTravel;
 
-        setTargets();
+        setDriveTargets();
 
         // Turn On RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setAllDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
         runtime.reset();
-        setAllPower(DRIVE_SPEED);
+        setAllDrivePower(DRIVE_SPEED);
 
         // keep looping while we are still active, and there is time left and motors are running.
         while (isBusy()) {
         }
 
         // Stop all motion;
-        setAllPower(0);
+        setAllDrivePower(0);
 
         // Turn off RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setAllDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void encoderDrive(double inches) {
         encoderDrive(DRIVE_SPEED, inches);
+    }
+
+    public void byWheelEncoderDrive(double flInches, double frInches, double blInches, double brInches, double speed) {
+        resetTargets();
+
+        // Determine new target position, and pass to motor controller
+        FLTarget = motorFrontLeft.getCurrentPosition() + (int)(flInches * COUNTS_PER_INCH);
+        FRTarget = motorFrontRight.getCurrentPosition() + (int)(frInches * COUNTS_PER_INCH);
+        BLTarget = motorBackLeft.getCurrentPosition() + (int)(blInches * COUNTS_PER_INCH);
+        BRTarget = motorBackRight.getCurrentPosition() + (int)(brInches * COUNTS_PER_INCH);
+
+        setDriveTargets();
+
+        // Turn On RUN_TO_POSITION
+        setAllDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        runtime.reset();
+        setAllDrivePower(speed);
+
+        // keep looping while we are still active, and there is time left and motors are running.
+        while (isBusy()) {
+        }
+
+        // Stop all motion;
+        setAllDrivePower(0);
+
+        // Turn off RUN_TO_POSITION
+        setAllDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void byWheelEncoderDrive(double flInches, double frInches, double blInches, double brInches) {
+        byWheelEncoderDrive(flInches, frInches, blInches, brInches, DRIVE_SPEED);
     }
 
     // This overloaded method allows the robot to drive with encoders on a per wheel basis. It can be called with inches and with or without a drive speed.
@@ -375,24 +413,24 @@ public class chrisBot_old
         BLTarget = motorBackLeft.getCurrentPosition() + (int) (inches[2] * COUNTS_PER_INCH);
         BRTarget = motorBackRight.getCurrentPosition() + (int) (inches[3] * COUNTS_PER_INCH);
 
-        setTargets();
+        setDriveTargets();
 
         // Turn On RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setAllDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
         runtime.reset();
-        setAllPower(DRIVE_SPEED);
+        setAllDrivePower(DRIVE_SPEED);
 
         // keep looping while we are still active, and there is time left and motors are running.
         while ((runtime.seconds() < timeoutS) && isBusy()) {
         }
 
         // Stop all motion;
-        setAllPower(0);
+        setAllDrivePower(0);
 
         // Turn off RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setAllDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
     public void wheelMecanumDrive(double[] inches) {
@@ -404,7 +442,8 @@ public class chrisBot_old
 
     public void linearSlowEncoderDrive(double inches, double speed) {
         double[] powers = {speed, speed, speed, speed};
-        int[] motorPositions = {motorFrontLeft.getCurrentPosition(), motorFrontRight.getCurrentPosition(), motorBackLeft.getCurrentPosition(), motorBackRight.getCurrentPosition()};
+        int[] motorPositionsOld = {motorFrontLeft.getCurrentPosition(), motorFrontRight.getCurrentPosition(), motorBackLeft.getCurrentPosition(), motorBackRight.getCurrentPosition()};
+        int[] motorPositions = motorPositionsOld;
         resetTargets();
 
         // Determine new target position, and pass to motor controller
@@ -415,34 +454,47 @@ public class chrisBot_old
         BRTarget = motorBackRight.getCurrentPosition() + countsToTravel;
         int[] targets = {FLTarget, FRTarget, BLTarget, BRTarget};
 
-        setTargets();
+        setDriveTargets();
 
         // Turn On RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setAllDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
         runtime.reset();
-        setPower(powers);
+        setDrivePower(powers);
+
+        Telemetry.Item a = telemetry.addData("fl",powers[0]);
+        Telemetry.Item b = telemetry.addData("fr",powers[1]);
+        Telemetry.Item c = telemetry.addData("bl",powers[2]);
+        Telemetry.Item d = telemetry.addData("br",powers[3]);
+        telemetry.update();
 
         // keep looping while we are still active, and there is time left and motors are running.
         while (isBusy()) {
             for(int i : range(0,4)) {
-                double power = powers[i]*(double)motorPositions[i]/(double)countsToTravel;
-                if (power < 0.05) {
-                    power = 0.05;
+                motorPositions = new int[]{motorFrontLeft.getCurrentPosition(), motorFrontRight.getCurrentPosition(), motorBackLeft.getCurrentPosition(), motorBackRight.getCurrentPosition()};
+                double power = powers[i]*(1 - (double)(motorPositions[i]-motorPositionsOld[i])/(double)countsToTravel);
+                if (power < 0.5) {
+                    power = 0.5;
                 }
                 powers[i] = power;
             }
+            setDrivePower(powers);
+            a.setValue(powers[0]);
+            b.setValue(powers[1]);
+            c.setValue(powers[2]);
+            d.setValue(powers[3]);
+            telemetry.update();
         }
 
         // Stop all motion;
-        setAllPower(0);
+        setAllDrivePower(0);
 
         // Turn off RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setAllDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void halfGyroDrive(double inches) { halfGyroDrive(inches, DRIVE_SPEED); }
+    /*public void halfGyroDrive(double inches) { halfGyroDrive(inches, DRIVE_SPEED); }
 
     public void halfGyroDrive(double inches, double speed) {
         double[] powers = {speed, speed, speed, speed};
@@ -465,8 +517,7 @@ public class chrisBot_old
         setPower(powers);
 
         double angle = getOrientation().firstAngle;
-        PID angleCorrector = new PID(angle, angle);
-        angleCorrector.setCoefficient(new double[]{0.02,0.02,0});
+        PID angleCorrector = new PID(angle, new double[]{0.02,0.02,0});
         double correction = 0;
 
         // keep looping while we are still active, and there is time left and motors are running.
@@ -477,6 +528,7 @@ public class chrisBot_old
             powers[1] = powers[1] - correction;
             powers[2] = powers[2] + correction;
             powers[3] = powers[3] - correction;
+            setPower(powers);
         }
 
         // Stop all motion;
@@ -484,9 +536,110 @@ public class chrisBot_old
 
         // Turn off RUN_TO_POSITION
         setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }*/
+    /*
+    public void stemPIDdrive(int ms, double power) {
+        PIDController pidDrive = new PIDController(chrisBotConstants.drive_Kp, chrisBotConstants.drive_Ki, chrisBotConstants.drive_Kd);
+        ElapsedTime e = new ElapsedTime();
+        // Set up parameters for driving in a straight line.
+        pidDrive.setSetpoint(0);
+        pidDrive.setOutputRange(0, power);
+        pidDrive.setInputRange(-90, 90);
+        pidDrive.enable();
+
+        // drive until end of period.
+        e.reset();
+        Telemetry.Item a = telemetry.addData("1 imu heading", lastAngles.firstAngle);
+        Telemetry.Item b = telemetry.addData("2 global heading", globalAngle);
+        Telemetry.Item c = telemetry.addData("3 correction", 0);
+        telemetry.update();
+        while (e.milliseconds() < ms)
+        {
+            // Use PID with imu input to drive in a straight line.
+            double correction = pidDrive.performPID(getAngle());
+
+            a.setValue(lastAngles.firstAngle);
+            b.setValue(globalAngle);
+            c.setValue(correction);
+            telemetry.update();
+
+            // set power levels.
+            setDrivePower(power + correction, power - correction, power + correction, power - correction);
+
+        }
+
+        // turn the motors off.
+        setAllDrivePower(0);
+    }
+
+     */
+
+    public void lineUp() {
+        boolean Ltripped = false, Rtripped = false;
+        boolean rightFirst = false;
+        setAllDrivePower(0.1);
+        while(true) {
+            if(Ltripped && Rtripped) {
+                break;
+            } else if (Ltripped) {
+                motorBackLeft.setPower(-0.06);
+                motorFrontLeft.setPower(-0.06);
+                motorFrontRight.setPower(0.1);
+                motorBackRight.setPower(0.1);
+                if(white(colorR)) {
+                    Rtripped = true;
+                }
+            } else if (Rtripped) {
+                motorBackRight.setPower(-0.06);
+                motorFrontRight.setPower(-0.06);
+                motorFrontLeft.setPower(0.1);
+                motorBackLeft.setPower(0.1);
+                if(white(colorL)) {
+                    Ltripped = true;
+                }
+            } else {
+                setAllDrivePower(0.1);
+                if(white(colorL)) {
+                    Ltripped = true;
+                } else if(white(colorR)) {
+                    Rtripped = true;
+                }
+            }
+        }
+        setAllDrivePower(0);
     }
 
     /** ATTACHMENT METHODS */
+    public void autonShoot() {
+        lineUp();
+
+        busyWait(500);
+
+        byWheelEncoderDrive(0,-3,0,-3,0.25);
+        busyWait(2000);
+
+        ElapsedTime e = new ElapsedTime();
+        while(e.milliseconds() < 200) {
+            intakeOn();
+        }
+        intakeOff();
+        shootOn(0.237);
+        byWheelEncoderDrive(0,-2,0,-2,0.1);
+        busyWait(6000);
+        e.reset();
+        while(e.milliseconds() < 230) {
+            intakeOn();
+        }
+        intakeOff();
+        shootOn(0.24);
+        byWheelEncoderDrive(0,-1.5,0,-1.5,0.1);
+        busyWait(3000);
+        e.reset();
+        while(e.milliseconds() < 700) {
+            intakeOn();
+        }
+        intakeOff();
+    }
 
     // This method runs the motors in order to drop the Wobble Goal.
     public void dropGoal() {
@@ -495,45 +648,71 @@ public class chrisBot_old
         telemetry.update();
     }
 
-    // These methods turn the shooter motor on and off, at a set power or at full power.
-    public void shootOn(double power) {
+    public void shootOnSlow() {
         if(shooterExists) {
-            motorShooter.setPower(power);
+            motorShooter1.setPower(shootPowerSlow);
+            motorShooter2.setPower(shootPowerSlow);
             shooterOn = true;
         }
     }
-
+    public void shootOn(double x) {
+        if(shooterExists) {
+            motorShooter1.setPower(x);
+            motorShooter2.setPower(x);
+            shooterOn = true;
+        }
+    }
     public void shootOn() {
         if(shooterExists) {
-            motorShooter.setPower(1);
+            motorShooter1.setPower(shootPower);
+            motorShooter2.setPower(shootPower);
             shooterOn = true;
         }
     }
     public void shootOff() {
         if(shooterExists) {
-            motorShooter.setPower(0);
+            motorShooter1.setPower(0);
+            motorShooter2.setPower(0);
             shooterOn = false;
         }
     }
-
+    public void shootReverse() {
+        if(shooterExists) {
+            motorShooter1.setPower(-1);
+            motorShooter2.setPower(-1);
+            shooterOn = true;
+        }
+    }
     // These methods turn the intake motor on and off, at a set power or at full power.
-    public void intakeOn(double power) {
+    public void intakeOn() {
         if(intakeExists) {
-            motorIntake.setPower(power);
+            motorIntake.setPower(1);
+            motorBottomIntake.setPower(1);
             intakeOn = true;
         }
     }
-
-    public void intakeOn() {
+    public void intakeBottomReverse() {
+        if(intakeBottomExists) {
+            motorBottomIntake.setPower(-1);
+            intakeOn = true;
+        }
+    }
+    public void intakeBottom() {
+        if(intakeBottomExists) {
+            motorBottomIntake.setPower(1);
+            intakeOn = true;
+        }
+    }
+    public void intakeTop() {
         if(intakeExists) {
             motorIntake.setPower(1);
             intakeOn = true;
         }
     }
-
     public void intakeOff() {
         if(intakeExists) {
             motorIntake.setPower(0);
+            motorBottomIntake.setPower(0);
             intakeOn = false;
         }
     }
@@ -543,110 +722,39 @@ public class chrisBot_old
         // Code to get the gyro orientation goes here
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
+    // stemrobotics code
+    public void resetAngle() {
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        globalAngle = 0;
+    }
+    public double getAngle() {
+        Orientation x = getOrientation();
+        double deltaAngle = (double)x.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return globalAngle;
+    }
+    public boolean white(ColorSensor c) {
+        int[] color = {c.red(), c.green(), c.blue()};
+        for(int i = 0; i < 3; i++) {
+            if(color[i]<chrisBotConstants.white[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /** VUFORIA METHODS */
 
-    public void initVuMarks() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
-         * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
-         */
-        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = chrisBot_old.VUFORIA_KEY;
-
-        /*
-          We also indicate which camera on the RC we wish to use.
-         */
-        parameters.cameraName = webcam;
-
-        // Make sure extended tracking is disabled for this example.
-        parameters.useExtendedTracking = false;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-        VuforiaTrackables targetsUltimateGoal = vuforia.loadTrackablesFromAsset("UltimateGoal");
-
-        VuforiaTrackable blueTowerGoalTarget = targetsUltimateGoal.get(0);
-
-        VuforiaTrackable redTowerGoalTarget = targetsUltimateGoal.get(1);
-
-        VuforiaTrackable redAllianceTarget = targetsUltimateGoal.get(2);
-
-        VuforiaTrackable blueAllianceTarget = targetsUltimateGoal.get(3);
-
-        VuforiaTrackable frontWallTarget = targetsUltimateGoal.get(4);
-        //Set the position of the perimeter targets with relation to origin (center of field)
-        redAllianceTarget.setLocation(OpenGLMatrix
-                .translation(0, -halfField, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180)));
-
-        blueAllianceTarget.setLocation(OpenGLMatrix
-                .translation(0, halfField, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
-        frontWallTarget.setLocation(OpenGLMatrix
-                .translation(-halfField, 0, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90)));
-
-        // The tower goal targets are located a quarter field length from the ends of the back perimeter wall.
-        blueTowerGoalTarget.setLocation(OpenGLMatrix
-                .translation(halfField, quadField, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , -90)));
-        redTowerGoalTarget.setLocation(OpenGLMatrix
-                .translation(halfField, -quadField, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
-//
-        blueTowerGoalTarget.setName("Blue Tower Goal Target");
-        redTowerGoalTarget.setName("Red Tower Goal Target");
-        redAllianceTarget.setName("Red Alliance Target");
-        blueAllianceTarget.setName("Blue Alliance Target");
-        frontWallTarget.setName("Front Wall Target");
-
-        //
-        // Create a transformation matrix describing where the phone is on the robot.
-        //
-        // NOTE !!!!  It's very important that you turn OFF your phone's Auto-Screen-Rotation option.
-        // Lock it into Portrait for these numbers to work.
-        //
-        // Info:  The coordinate frame for the robot looks the same as the field.
-        // The robot's "forward" direction is facing out along X axis, with the LEFT side facing out along the Y axis.
-        // Z is UP on the robot.  This equates to a bearing angle of Zero degrees.
-        //
-        // The phone starts out lying flat, with the screen facing Up and with the physical top of the phone
-        // pointing to the LEFT side of the Robot.
-        // The two examples below assume that the camera is facing forward out the front of the robot.
-
-        // We need to rotate the camera around it's long axis to bring the correct camera forward.
-        if (CAMERA_CHOICE == BACK) {
-            phoneYRotate = -90;
-        } else {
-            phoneYRotate = 90;
-        }
-
-        // Rotate the phone vertical about the X axis if it's in portrait mode
-        if (PHONE_IS_PORTRAIT) {
-            phoneXRotate = 90 ;
-        }
-
-        // Next, translate the camera lens to where it is on the robot.
-        // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
-        final float CAMERA_FORWARD_DISPLACEMENT  = 4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot-center
-        final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground
-        final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
-
-        OpenGLMatrix robotFromCamera = OpenGLMatrix
-                .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
-
-        // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        allTrackables.clear();
-        allTrackables.addAll(targetsUltimateGoal);
-        targetsUltimateGoal.activate();
-    }
+    /*
 
     // This detects the number of rings in front of the robot (for use in auton). Vuforia and TFOD must be initialized first.
     public boolean[] detectRings() {
@@ -705,6 +813,8 @@ public class chrisBot_old
         return P;
     }
 
+     */
+
     /** MATH/CALCULATION METHODS */
     // This method calculates the inches each mecanum wheel should turn to make the robot drive a certain number of x/y inches overall.
     // Positive x is to the right; Positive y is forward.
@@ -736,7 +846,14 @@ public class chrisBot_old
         telemetry.update();
     }
 
+    /** MISC METHODS */
 
-
+    private void busyWait(long ms) {
+        ElapsedTime e = new ElapsedTime();
+        e.reset();
+        while(e.milliseconds() < ms) {
+            int i = (int)3;
+        }
+    }
 }
 

@@ -5,12 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.PID;
-
 import java.util.Arrays;
 
-@TeleOp(name="chrisBotTeleopFINAL", group="chrisBot")
+@TeleOp(name="ChrisBot TeleOp 1 Controller", group="chrisBot")
 //@Disabled
 
 public class chrisBotTeleopFinal extends OpMode{
@@ -22,7 +19,6 @@ public class chrisBotTeleopFinal extends OpMode{
     final double inchPower = 0.3;
     ElapsedTime count2 = new ElapsedTime();
     boolean forward = true;
-    boolean shooterState = false;
 
     @Override
     public void init() {
@@ -36,15 +32,7 @@ public class chrisBotTeleopFinal extends OpMode{
     public void loop() {
         // Drive/inch
         if(gamepad1.left_bumper) {
-            if(count2.milliseconds() > 100) {
-                forward = !forward;
-                count2.reset();
-            }
-            if(forward) {
-                robot.setAllDrivePower(chrisBotConstants.JIGGLE_SPEED);
-            } else {
-                robot.setAllDrivePower(-1*chrisBotConstants.JIGGLE_SPEED);
-            }
+            robot.shootOn(1);
         }
         else if(gamepad1.dpad_left || gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_down) {
             double[] powers = {};
@@ -89,25 +77,27 @@ public class chrisBotTeleopFinal extends OpMode{
         }
 
         // Attachment code
-        if(gamepad1.x && !shooterState) {
-            shooterState = true;
-            telemetry.addLine("Shooter speed fast");
-            robot.shootOn();
-        } else if (gamepad1.x) {
-            shooterState = false;
-            telemetry.addLine("Shooter speed slow");
-            robot.shootOnSlow();
-        }
-
-        telemetry.update();
-        if(gamepad1.a) {
-            robot.intakeOn();
-            telemetry.addLine("Intake: Feed");
-        } else if(gamepad1.y) {
-            robot.intakeBottom();
-            telemetry.addLine("Intake: Reverse");
+        if(gamepad1.left_trigger>0.5) {
+            robot.lineUp();
         } else {
-            robot.intakeOff();
+            if(gamepad1.x) {
+                telemetry.addLine("Shooter speed fast");
+                robot.shootOn();
+            } else if (gamepad1.b) {
+                telemetry.addLine("Shooter speed slow");
+                robot.shootOnSlow();
+            }
+
+            telemetry.update();
+            if(gamepad1.a) {
+                robot.intakeOn();
+                telemetry.addLine("Intake: Feed");
+            } else if(gamepad1.y) {
+                robot.intakeBottom();
+                telemetry.addLine("Intake: Bottom");
+            } else {
+                robot.intakeOff();
+            }
         }
 
     }
