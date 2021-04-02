@@ -22,13 +22,13 @@ abstract public class MasterOpMode extends LinearOpMode {
     public Servo wobbleGoalGrabber = null;//
 
     public BNO055IMU imu;
-
+    //initial position of servo
+    static final double WOBBLE_GOAL_GRABBER_OUT = 0.0;
     static final double COUNTS_PER_MOTOR_REV = 537.6; // 40:1 motor    1120
     static final double DRIVE_GEAR_REDUCTION = 1.0; // This is < 1.0 if geared UP    16.0 / 24.0
     static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
-    static final double WOBBLE_GOAL_GRABBER_IN = 0.5; //initial position of servo
-    static final double WOBBLE_GOAL_GRABBER_OUT = 0.0;
+    static final double WOBBLE_GOAL_GRABBER_IN = 0.5;
     static final int WOBBLE_GOAL_ARM_UP = 500;
     static final int WOBBLE_GOAL_ARM_DOWN = 150;
     static final int WOBBLE_GOAL_ARM_MID = 300;

@@ -18,7 +18,7 @@ public class AutoCompetition extends MasterAutonomous {
     static final int MINIMUM_RING_AREA = 1800;
     static final int PARKING_Y_POSITION = -58;
     static final int A_C_TARGET_ZONE_X_POSITION = 12;
-    static final int A_TARGET_ZONE_Y_POSITION = -72;
+    static final int A_TARGET_ZONE_Y_POSITION = -68;
     static final int B_TARGET_ZONE_Y_POSITION = -86;
     static final int C_TARGET_ZONE_Y_POSITION = -110;
 
@@ -71,15 +71,19 @@ public class AutoCompetition extends MasterAutonomous {
 
 
         // Park over white line
-        move(-24, PARKING_Y_POSITION, 0.9);
+        move(-30, PARKING_Y_POSITION, 0.9);
         // navigate to other goal
-        move(-24, -18, 0.9);
-        move(-18, -18, 0.9);
+        move(-30, -18, 0.9);
+        move(-20, -18, 0.9);
         pivot(88, 0.9);
 
+
         // move toward wobble goal
-        move(-18, -22, -0.3);
+        move(-20, -22, -0.3);
+
+
         // lift arm
+        sleep(300);
         wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
         runMotorToPosition(motorWobbleGoalArm, 120, 0.2);
         motorWobbleGoalArm.setPower(0.005);
@@ -87,18 +91,23 @@ public class AutoCompetition extends MasterAutonomous {
         // close grabber
         wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_IN);
         // back up
-        move(-18, -18, 0.7);
+        move(-20, -18, 0.7);
         motorWobbleGoalArm.setPower(0.0);
         // lift arm up
-        runMotorToPosition(motorWobbleGoalArm, 300, 0.7);
+        //runMotorToPosition(motorWobbleGoalArm, 500, 0.9);
+        //go to starting position
+        pivot(-90, 0.7);
+        move(0, 0, 0.7);
 
+        deliverWobbleGoal();
 
-
-
+        //parking on white line
+        move(-13, -68, 0.9);
     }
 
     // todo program Wobble Goal arm
-    public void openWobbleGoalArm() {
+    public void OpenWobbleGoalGrabber() {
+        wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
 
 
 
@@ -167,7 +176,7 @@ public class AutoCompetition extends MasterAutonomous {
                 // Nagivate to Zone A
                 move(A_C_TARGET_ZONE_X_POSITION, -24, 0.9);
                 move(A_C_TARGET_ZONE_X_POSITION, A_TARGET_ZONE_Y_POSITION, 0.9);
-                openWobbleGoalArm();
+                OpenWobbleGoalGrabber();
                 move(A_C_TARGET_ZONE_X_POSITION, (A_TARGET_ZONE_Y_POSITION + 15), 0.9);
                 break;
 
@@ -175,14 +184,14 @@ public class AutoCompetition extends MasterAutonomous {
                 // Navigate to Zone B
                 move(A_C_TARGET_ZONE_X_POSITION, -24, 0.9);
                 move(-13, B_TARGET_ZONE_Y_POSITION, 0.9);
-                openWobbleGoalArm();
+                OpenWobbleGoalGrabber();
                 break;
 
             case 4:
                 // Navigate to Zone C
                 move(A_C_TARGET_ZONE_X_POSITION, -24, 0.9);
                 move(A_C_TARGET_ZONE_X_POSITION, C_TARGET_ZONE_Y_POSITION, 0.9);
-                openWobbleGoalArm();
+                OpenWobbleGoalGrabber();
                 break;
 
         }

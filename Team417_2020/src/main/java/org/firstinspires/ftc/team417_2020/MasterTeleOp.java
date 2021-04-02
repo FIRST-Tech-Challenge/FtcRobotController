@@ -104,9 +104,16 @@ abstract public class MasterTeleOp extends MasterOpMode {
             wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_IN);
         }
 
-        motorWobbleGoalArm.setPower(gamepad2.left_stick_y * -0.5);
+        if (gamepad2.right_bumper) {
+            motorWobbleGoalArm.setPower(gamepad2.left_stick_y * -1);
+        } else {
+            motorWobbleGoalArm.setPower(gamepad2.left_stick_y * -0.8);
+        }
         if (gamepad1.left_stick_y == 0) {
             motorWobbleGoalArm.setPower(0.0);
+            if (motorWobbleGoalArm.getCurrentPosition() > 50 && motorWobbleGoalArm.getCurrentPosition() < 500) {
+
+            }
         }
 
     }
