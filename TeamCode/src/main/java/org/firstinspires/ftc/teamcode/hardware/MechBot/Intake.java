@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware.MechBot;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -40,6 +41,7 @@ public class Intake extends Logger<Intake>  {
 
     public void configure(Configuration configuration, boolean auto) {
         intake1 = configuration.getHardwareMap().get(DcMotorEx.class, "intake1");
+        intake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // intake1.setDirection(DcMotorSimple.Direction.REVERSE);
         // intake2 = configuration.getHardwareMap().get(DcMotorEx.class, "intake2");
         init();
