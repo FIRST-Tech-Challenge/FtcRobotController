@@ -11,7 +11,7 @@ public abstract class CVPipelineBase extends OpenCvPipeline {
     protected List<CVRoi> targets;
     protected volatile int meanVal;
     protected double PIXELS_PER_INCH = 9.5;
-    protected double ROBOT_CENTER = 9;
+    protected double ROBOT_CENTER = 18;
     protected CVRoi nearestTarget = null;
     protected CVRoi secondTarget = null;
 

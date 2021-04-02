@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
 import org.firstinspires.ftc.teamcode.CVRec.CVRoi;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
+import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
+import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 
@@ -30,6 +32,7 @@ public class CVRingSearchTest extends LinearOpMode {
     RobotCoordinatePosition locator = null;
     UltimateBot robot   = new UltimateBot();
     ElapsedTime timer = new ElapsedTime();
+    ElapsedTime searchTimer = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -60,7 +63,7 @@ public class CVRingSearchTest extends LinearOpMode {
 
             waitForStart();
 
-
+            searchTimer.reset();
             double nextHead = 0;
             while (opModeIsActive()) {
 
@@ -89,7 +92,7 @@ public class CVRingSearchTest extends LinearOpMode {
                     telemetry.addData("Robot", String.format("Turn to %.2f degrees", nextHead));
                 }
 
-                if (next != null){
+                if (next != null) {
                     telemetry.addData("Next Index", next.getIndex());
                     telemetry.addData("Next Val", next.getMeanVal());
                     telemetry.addData("Next Angle", next.getAngle());
@@ -97,16 +100,28 @@ public class CVRingSearchTest extends LinearOpMode {
                     telemetry.addData("Next Distance", next.getDistance());
                 }
 
-                if (gamepad1.x){
-                    gamepadRateLimit.reset();
-                    BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(nextHead, 0.3, locator);
-                    robot.spin(profileSpin, locator);
+
+                if (closest != null){
+                    turnAndGetIt(nextHead, closest.getDistance() + 10);
 
                     timer.reset();
                     while (timer.milliseconds() < 1000){
                         //do nothing
                     }
+
                     nextHead = locator.getAdjustedCurrentHeading();
+                    searchTimer.reset();
+                }
+
+                if (searchTimer.milliseconds() > 5000){
+                    //turn 90 and reset
+                    double heading = locator.getAdjustedCurrentHeading() + 90;
+                    if (heading > 360){
+                        heading = 0;
+                    }
+                    BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(heading, 0.3, locator);
+                    robot.spin(profileSpin, locator);
+                    searchTimer.reset();
                 }
 
                 telemetry.update();
@@ -122,5 +137,21 @@ public class CVRingSearchTest extends LinearOpMode {
                 locator.stop();
             }
         }
+    }
+
+    private void turnAndGetIt(double heading, double distance){
+        BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(heading, 0.3, locator);
+        robot.spin(profileSpin, locator);
+
+        robot.intake();
+
+        BotMoveProfile profileStraight = BotMoveProfile.bestRoute(robot, locator.getXInches(), locator.getYInches(), new Point((int)distance, 0), RobotDirection.Optimal, 0.3, MoveStrategy.StrafeRelative, -1, locator);
+        robot.moveTo(profileStraight);
+
+        timer.reset();
+        while (timer.milliseconds() < 1000){
+            //do nothing
+        }
+        robot.stopintake();
     }
 }

@@ -65,7 +65,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             shooter = hwMap.get(DcMotorEx.class, "shooter");
-            shooter.setDirection(DcMotor.Direction.REVERSE);
+            shooter.setDirection(DcMotor.Direction.FORWARD);
             shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             shooter.setVelocity(0);
         } catch (Exception ex) {
