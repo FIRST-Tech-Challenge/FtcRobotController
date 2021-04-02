@@ -30,45 +30,33 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     public void runintake(){
         if(gamepad1.right_trigger > Constants.MINIMUM_TRIGGER_VALUE)
-            motorIntake.setPower(0.8);
+            motorIntake.setPower(0.95);
 
         else if (gamepad1.left_trigger > Constants.MINIMUM_TRIGGER_VALUE)
-            motorIntake.setPower(-0.8);
+            motorIntake.setPower(-0.95);
         else    motorIntake.setPower(0.0);
     }
 
     public void runLift(){
 
         if(gamepad1.dpad_up){
-            //motorLift.setPower(0.1);
             motorLift.setTargetPosition(870);
         }
         else if (gamepad1.dpad_down){
-            //motorLift.setPower(-0.1);
             motorLift.setTargetPosition(0);
         }
         motorLift.setPower(Math.max((motorLift.getTargetPosition() - motorLift.getCurrentPosition()) * (1 / 75.0), 1.0));
-
-        //else    motorLift.setPower(0.0);
     }
 
     public void runShooter(){
         if(gamepad1.right_bumper && !isShooterRunning){
-            motorShooter.setPower(0.8);
-            //shooterSpeed = 0.3;
+            motorShooter.setPower(- 0.8);
             isShooterRunning = true;
         }
         else if(gamepad1.left_bumper && isShooterRunning){
             motorShooter.setPower(0.0);
             isShooterRunning = false;
         }
-        /*
-        if(gamepad1.y)     shooterSpeed += 0.1;
-        if(gamepad1.x)     shooterSpeed -= 0.1;
-        */
-
-        //motorShooter.setPower(shooterSpeed);
-
         if(gamepad1.a){
             servoFlicker.setPosition(0.55);
             //servoFlicker.wait(300);
@@ -80,8 +68,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     void sendTelemetry(){
         telemetry.addData("Lift Ticks", motorLift.getCurrentPosition());
-        telemetry.addData("Shooter Speed", shooterSpeed);
-
+        telemetry.addData("Shoot Speed", motorShooter.getPower());
         telemetry.update();
     }
 }

@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
 abstract public class MasterOpMode extends LinearOpMode {
     //declare drive motors
     public DcMotor motorFL = null;
@@ -29,7 +28,6 @@ abstract public class MasterOpMode extends LinearOpMode {
 
     //declare imu
     public BNO055IMU imu;
-
 
     public void initHardware(){
         //init drive motors
@@ -54,35 +52,29 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
-        //motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //=============================================================
         //init misc motors
         motorIntake =hardwareMap.dcMotor.get("motorIntake");
         motorLift = hardwareMap.dcMotor.get("motorLift");
         motorShooter = hardwareMap.dcMotor.get("motorShooter");
-        //motorWobble = hardwareMap.dcMotor.get("motorWobble");
+        motorWobble = hardwareMap.dcMotor.get("motorWobble");
 
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorShooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorWobble.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorWobble.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motorIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //intake motor doesn't really need encoders
         motorLift.setTargetPosition(motorLift.getCurrentPosition());
         motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //motorShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-        //motorWobble.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorWobble.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //=============================================================
         //init servos
         servoFlicker = hardwareMap.get(Servo.class, "servoFlicker");
         //servoGrabber = hardwareMap.get(Servo.class, "servoGrabber");
 
         //start positions
         servoFlicker.setPosition(0.55);
-        //servoGrabber.setPosition(0.0);
+        servoGrabber.setPosition(0.0);
 
         //init imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -99,9 +91,6 @@ abstract public class MasterOpMode extends LinearOpMode {
         // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
         double x = drivePower * -Math.sin(Math.toRadians(driveAngle));
         double y = drivePower * Math.cos(Math.toRadians(driveAngle));
-
-        //double x = drivePower * Math.cos(driveAngle);
-        //double y = drivePower * Math.sin(driveAngle);
 
         double powerFL = x - y + turnPower;
         double powerFR = x + y + turnPower;
