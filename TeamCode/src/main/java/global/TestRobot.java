@@ -1,4 +1,4 @@
-package developing;
+package global;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,19 +8,18 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
 
-import autofunctions.Odometry;
-import global.AngularPosition;
-import global.Constants;
+import globalfunctions.Constants;
+import globalfunctions.TerraThread2;
+import telefunctions.AutoModule3;
+import telefunctions.ButtonController;
 import telefunctions.Cycle;
 import telefunctions.Limits;
 import telefunctions.Stage;
 import util.CodeSeg;
-import util.ThreadHandler;
 
 public class TestRobot {
 

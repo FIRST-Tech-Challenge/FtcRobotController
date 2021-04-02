@@ -1,13 +1,10 @@
-package developing;
+package teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Const;
-
-import global.Constants;
+import global.TestRobot;
+import globalfunctions.TelemetryHandler;
 
 @TeleOp(name = "TestOp")
 public class TestTele extends OpMode {

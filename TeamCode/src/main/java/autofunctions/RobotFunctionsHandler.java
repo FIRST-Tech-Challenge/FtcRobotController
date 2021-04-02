@@ -1,12 +1,12 @@
-package developing;
+package autofunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.ArrayList;
 
+import globalfunctions.TerraThread2;
 import telefunctions.Stage;
 import util.CodeSeg;
-import util.TerraThread;
 
 public class RobotFunctionsHandler {
     public int rfsIndex = 0;

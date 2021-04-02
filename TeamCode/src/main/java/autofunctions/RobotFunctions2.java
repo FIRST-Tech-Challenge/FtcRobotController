@@ -1,5 +1,6 @@
-package developing;
+package autofunctions;
 
+import global.TestRobot;
 import util.CodeSeg;
 
 public class RobotFunctions2 {

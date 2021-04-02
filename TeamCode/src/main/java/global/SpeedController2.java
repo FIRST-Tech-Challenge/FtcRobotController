@@ -1,8 +1,8 @@
-package developing;
+package global;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import global.Constants;
+import globalfunctions.Constants;
 import util.PID;
 
 public class SpeedController2 {

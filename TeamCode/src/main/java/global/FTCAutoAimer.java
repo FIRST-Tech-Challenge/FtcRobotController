@@ -1,7 +1,7 @@
-package developing;
+package global;
 
 
-import global.Constants;
+import globalfunctions.Constants;
 import util.Geometry;
 
 public class FTCAutoAimer {

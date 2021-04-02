@@ -1,4 +1,4 @@
-package developing;
+package autofunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 
+import globalfunctions.TelemetryHandler;
+import global.TestRobot;
 import util.CodeSeg;
 import util.Line;
 import util.PID;

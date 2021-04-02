@@ -1,4 +1,4 @@
-package developing;
+package telefunctions;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,10 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
-import global.Constants;
-import telefunctions.Cycle;
-import telefunctions.ServoController;
-import telefunctions.Stage;
+import globalfunctions.TerraThread2;
+import globalfunctions.Constants;
 import util.CodeSeg;
 
 public class AutoModule3 {

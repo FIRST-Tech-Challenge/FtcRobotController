@@ -1,8 +1,9 @@
-package developing;
+package globalfunctions;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import autofunctions.Path;
+import autofunctions.Path3;
+import global.TestRobot;
 
 public class TelemetryHandler {
     public Telemetry addOdometry(Telemetry telemetry, TestRobot bot) {
@@ -54,12 +55,12 @@ public class TelemetryHandler {
         telemetry.addData("Left Outtake Position", bot.outl.getCurrentPosition());
         telemetry.addData("Right Outtake Angular Velocity", bot.autoAimer.outrController.currSpeed);
         telemetry.addData("Left Outtake Angular Velocity", bot.autoAimer.outlController.currSpeed);
-        telemetry.addData("Right Outtake Error", bot.autoAimer.outrController.pid.error);
-        telemetry.addData("Left Outtake Error", bot.autoAimer.outlController.pid.error);
-        telemetry.addData("Right Outtake Power", bot.autoAimer.outrController.power);
-        telemetry.addData("Left Outtake Power", bot.autoAimer.outlController.power);
-        telemetry.addData("Right Outtake Change Time", bot.autoAimer.outrController.changeTime);
-        telemetry.addData("Left Outtake Change Time", bot.autoAimer.outlController.changeTime);
+//        telemetry.addData("Right Outtake Error", bot.autoAimer.outrController.pid.error);
+//        telemetry.addData("Left Outtake Error", bot.autoAimer.outlController.pid.error);
+//        telemetry.addData("Right Outtake Power", bot.autoAimer.outrController.power);
+//        telemetry.addData("Left Outtake Power", bot.autoAimer.outlController.power);
+//        telemetry.addData("Right Outtake Change Time", bot.autoAimer.outrController.changeTime);
+//        telemetry.addData("Left Outtake Change Time", bot.autoAimer.outlController.changeTime);
         telemetry.addData("Right Outtake Derivative Power", bot.autoAimer.outrController.derivativeOfPower);
         telemetry.addData("Left Outtake Derivative Power", bot.autoAimer.outlController.derivativeOfPower);
         telemetry.addData("Right Outtake Target Speed", bot.autoAimer.outrController.targetSpeed);

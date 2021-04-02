@@ -1,4 +1,4 @@
-package global;
+package globalfunctions;
 
 
 public class Constants {

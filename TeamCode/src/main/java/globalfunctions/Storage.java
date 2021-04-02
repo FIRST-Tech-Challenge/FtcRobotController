@@ -1,4 +1,4 @@
-package developing;
+package globalfunctions;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
@@ -8,16 +8,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import java.io.File;
-import java.io.IOException;
+import globalfunctions.TimeData;
 
 public class Storage {
     public int num = 0;

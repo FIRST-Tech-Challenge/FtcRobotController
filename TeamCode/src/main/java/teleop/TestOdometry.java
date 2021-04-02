@@ -1,7 +1,11 @@
-package developing;
+package teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import global.TestRobot;
+import globalfunctions.Optimizer;
+import globalfunctions.TelemetryHandler;
 
 @TeleOp(name = "TestOdometry")
 public class TestOdometry extends OpMode {

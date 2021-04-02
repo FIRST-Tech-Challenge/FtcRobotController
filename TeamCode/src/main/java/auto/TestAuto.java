@@ -1,9 +1,11 @@
-package developing;
+package auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import autofunctions.Path;
+import autofunctions.Path3;
+import autofunctions.RobotFunctions2;
+import global.TestRobot;
 
 @Autonomous(name="TestAuto", group="Auto")
 public class TestAuto extends LinearOpMode {
