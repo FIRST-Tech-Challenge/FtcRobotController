@@ -29,15 +29,14 @@ public class UltimateBot extends YellowBot {
     private Servo wobbleSwing = null;
     private Servo wobbleClaw1 = null;
     private Servo wobbleClaw2 = null;
-    private Servo ringCamera = null;
     private Servo shooterServo = null;
     private Servo ringGuard = null;
     private Servo turretServo = null;
     private DcMotorEx shooter = null;
 
     private static double SWING_BACK_POS = 1;
-    private static double SWING_PLACE_POS = 0;
-    private static double SWING_LIFT_AND_HOLD = 0.25;
+    private static double SWING_PLACE_POS = 0.2;
+    private static double SWING_LIFT_AND_HOLD = 0.3;
     private static double SWING_LIFT_WALL = 0.45;
     private static double SHOOT_SERVO = 0.7;
 
@@ -64,6 +63,15 @@ public class UltimateBot extends YellowBot {
         }
 
         try {
+            DcMotorEx intakecurve = getIntakeCMotor();
+            intakecurve.setDirection(DcMotor.Direction.REVERSE);
+            intakecurve.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            intakecurve.setPower(0);
+        } catch (Exception ex) {
+            throw new Exception("Issues with shooter. Check the controller config", ex);
+        }
+
+        try {
             shooter = hwMap.get(DcMotorEx.class, "shooter");
             shooter.setDirection(DcMotor.Direction.FORWARD);
             shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -84,13 +92,6 @@ public class UltimateBot extends YellowBot {
             wobbleClaw2.setPosition(1);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleClaw2. Check the controller config", ex);
-        }
-        // camera has no init position so can manually move
-        try {
-            ringCamera = hwMap.get(Servo.class, "camera");
-            ringCamera.setPosition(0.5);
-        } catch (Exception ex) {
-            throw new Exception("Issues with ringCamera. Check the controller config", ex);
         }
 
         try {
@@ -114,11 +115,22 @@ public class UltimateBot extends YellowBot {
             throw new Exception("Issues with ringGuard. Check the controller config", ex);
         }
 
+        try {
+            turretServo = hwMap.get(Servo.class, "turret");
+            turretServo.setPosition(0.5);
+        } catch (Exception ex) {
+            throw new Exception("Issues with ringGuard. Check the controller config", ex);
+        }
+
         telemetry.addData("Init", "Ultimate is ready");
     }
 
     public DcMotorEx getIntakeMotor(){
         return rightOdo;
+    }
+
+    public DcMotorEx getIntakeCMotor() {
+        return leftOdo;
     }
 
     public double getShooterVelocity(){
@@ -130,24 +142,30 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Intake", defaultReturn = "")
     public void intake() {
         DcMotorEx intake = getIntakeMotor();
+        DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
             intake.setPower(0.9);
+            intakecurve.setPower(0.9);
         }
     }
 
     @BotAction(displayName = "Move Intake Reverse", defaultReturn = "")
     public void intakeReverse() {
         DcMotorEx intake = getIntakeMotor();
+        DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
             intake.setPower(-0.7);
+            intakecurve.setPower(-0.7);
         }
     }
 
     @BotAction(displayName = "Stop Intake", defaultReturn = "")
     public void stopintake() {
         DcMotorEx intake = getIntakeMotor();
+        DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
             intake.setPower(0);
+            intakecurve.setPower(0);
         }
     }
 
@@ -244,26 +262,6 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    // CAMERA FUNCTIONS
-    double cameraPos = 0;
-
-    @BotAction(displayName = "Camera Little Right", defaultReturn = "")
-    public void rightLittleCamera() {
-        if (ringCamera != null) {
-            cameraPos = ringCamera.getPosition();
-            cameraPos = cameraPos + 0.005;
-            ringCamera.setPosition(cameraPos);
-        }
-    }
-
-    @BotAction(displayName = "Camera Little Left", defaultReturn = "")
-    public void leftLittleCamera() {
-        if (ringCamera != null) {
-            cameraPos = ringCamera.getPosition();
-            cameraPos = cameraPos - 0.005;
-            ringCamera.setPosition(cameraPos);
-        }
-    }
 
     // WOBLLE FUNCTIONS
     @BotAction(displayName = "Wobble Little Up", defaultReturn = "")
@@ -377,10 +375,8 @@ public class UltimateBot extends YellowBot {
             while (turretrunning) {
                 cameramove = ta.moveTurret();
                 if (cameramove == 1) {
-                    leftLittleCamera();
                     turretLittleLeft();
                 } else if (cameramove == 2) {
-                    rightLittleCamera();
                     turretLittleRight();
                 }
                 while(timer.milliseconds() < 60){

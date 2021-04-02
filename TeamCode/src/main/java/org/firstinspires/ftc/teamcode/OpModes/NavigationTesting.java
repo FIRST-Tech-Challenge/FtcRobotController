@@ -172,9 +172,9 @@ public class NavigationTesting extends LinearOpMode {
                 // if out of center zone do this
                 if (!inCenter) {
                     if (xval < 0) {
-                        robot.leftLittleCamera();
+                        robot.turretLittleLeft();
                     } else {
-                        robot.rightLittleCamera();
+                        robot.turretLittleRight();
                     }
                     sleep(60);
                 }
