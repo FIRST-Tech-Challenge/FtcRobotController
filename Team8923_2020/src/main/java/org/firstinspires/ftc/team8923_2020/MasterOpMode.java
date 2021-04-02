@@ -132,4 +132,3 @@ abstract public class MasterOpMode extends LinearOpMode {
     }
 
 }
-
