@@ -13,11 +13,11 @@ public class CompetitionTeleOp extends MasterTeleOp{
 
         while(opModeIsActive()){
 
-            driveRobot();
+            driveMecanum();
 
-            runintake();
+            //runIntake();
 
-            runShooter();
+            //runLauncher();
 
             //runWobbleGrabber();
 

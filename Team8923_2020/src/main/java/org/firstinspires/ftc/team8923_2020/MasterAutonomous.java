@@ -16,6 +16,13 @@ import com.qualcomm.robotcore.util.Range;
     double robotY;
     double robotAngle;
     double headingOffset = 0.0;
+    /*enum Stone{
+        RIGHT,MIDDLE,LEFT
+    }
+
+     */
+
+
 
     int newTargetFL;
     int newTargetFR;
@@ -34,6 +41,7 @@ import com.qualcomm.robotcore.util.Range;
 
     double Kmove = 1.0f/1200.0f;
 
+
     int TOL = 100;
 
     boolean isDoneSettingUp = false;
@@ -46,9 +54,12 @@ import com.qualcomm.robotcore.util.Range;
 
     boolean autoReverseDrive = false;
 
+    Alliance alliance = Alliance.BLUE;
     Destinations destination = Destinations.SQUAREA;
 
     int rings;
+
+
 
     int delays = 0;
     int numOfSecondsDelay = 0;
@@ -58,6 +69,11 @@ import com.qualcomm.robotcore.util.Range;
     double TURN_POWER_CONSTANT = 1.0/65;
 
     double MIN_DRIVE_POWER = 0.2;
+
+    enum Alliance{
+        BLUE,RED
+    }
+
 
     enum Destinations{
         SQUAREA, SQUAREB, SQUAREC
@@ -75,6 +91,7 @@ import com.qualcomm.robotcore.util.Range;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         telemetry.addData("Init State", "Init Finished");
+        telemetry.addData("Alliance", alliance.name());
         telemetry.addData("Delay Time", delayTime);
 
 
@@ -99,7 +116,11 @@ import com.qualcomm.robotcore.util.Range;
 
     public void configureAutonomous(){
         while(!isDoneSettingUp){
-
+            if(gamepad1.x){
+                alliance = Alliance.BLUE;
+            }else if(gamepad1.b){
+                alliance = Alliance.RED;
+            }
             if(gamepad1.dpad_up){
                 delays++;
             }else if(gamepad1.dpad_down){
@@ -114,15 +135,19 @@ import com.qualcomm.robotcore.util.Range;
                 destination = Destinations.SQUAREC;
             }
 
+
+
             if(gamepad1.start){
                 isDoneSettingUp = true;
             }
             // input information
+            telemetry.addLine("Alliance Blue/Red: X/B");
             telemetry.addLine("Add a delay: D-Pad Up/Down");
             telemetry.addLine("toggle objective: a park/park and foundation");
             telemetry.addLine("After routine is complete and robot is on field, press Start");
 
             telemetry.addLine();
+            telemetry.addData("alliance: ", alliance);
             telemetry.addData("delays:", delays);
             telemetry.addData("destination", destination);
             telemetry.update();
@@ -187,10 +212,10 @@ import com.qualcomm.robotcore.util.Range;
         //counter-clockwise is positive
         double pivot;
         double currentRobotAngle;
-        double angleError;
+            double angleError;
 
-        targetAngle = referenceAngle + targetAngle;
-        targetAngle = adjustAngles(targetAngle);
+            targetAngle = referenceAngle + targetAngle;
+            targetAngle = adjustAngles(targetAngle);
             do{
                 currentRobotAngle = imu.getAngularOrientation().firstAngle;
                 angleError =  currentRobotAngle - targetAngle;
@@ -273,11 +298,11 @@ import com.qualcomm.robotcore.util.Range;
 
 
     public void wobbleUp(){
-        servoGrabber.setPosition(0);
+            //wobbleGrabber.setPosition(0);
     }
 
     public void wobbleDown(){
-       servoGrabber.setPosition(1);
+       // wobbleGrabber.setPosition(1);
 
     }
 
@@ -351,79 +376,98 @@ import com.qualcomm.robotcore.util.Range;
     }
 
     public void runIntake() throws InterruptedException{
-        motorIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorIntake.setPower(Constants.INTAKE_PWR);
+        //intakeLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        //intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        //intakeLeft.setPower(Constants.INTAKE_PWR);
+        //intakeLeft.setPower(Constants.INTAKE_PWR);
     }
 
     public void turnOffIntake() throws InterruptedException{
-        motorIntake.setPower(0);
+        //intakeLeft.setPower(0);
+        //intakeRight.setPower(0);
     }
 
-    public void runShooter() throws InterruptedException{
-        motorShooter.setPower(Constants.SHOOTER_PWR);
-    }
-
-    public void turnOffShooter() throws InterruptedException{
-        motorShooter.setPower(0);
+    public void runLauncher() throws InterruptedException{
 
     }
 
-    public void moveLift(int ticks, double timeout){
+    public void turnOffLauncher() throws InterruptedException{
+
+    }
+
+    /*public void moveLift(int ticks, double timeout){
         runtime.reset();
-        while(Math.abs(ticks - motorLift.getCurrentPosition()) > TOL && (runtime.seconds() < timeout))
-            motorLift.setTargetPosition(motorLift.getCurrentPosition() + ticks);
-            motorLift.setPower(motorLift.getTargetPosition() - motorLift.getCurrentPosition() * (1 / 1000.0));
-
+        while(Math.abs(ticks - motorLift1.getCurrentPosition()) > TOL && (runtime.seconds() < timeout))
+            //motorLift1.setTargetPosition(motorLift1.getCurrentPosition() + ticks);
+            //motorLift1.setPower(motorLift1.getTargetPosition() - motorLift1.getCurrentPosition() * (1 / 1000.0));
+            //motorLift2.setTargetPosition(motorLift1.getCurrentPosition() + ticks);
+            //motorLift2.setPower(motorLift1.getTargetPosition() - motorLift1.getCurrentPosition() * 1 / 1000.0);
             sendTelemetry();
             idle();
         }
 
-
+     */
 
         public void stopLift(){
-            motorLift.setPower(0.0);
+            //motorLift1.setPower(0.0);
+            //motorLift2.setPower(0.0);
             idle();
         }
 
         public void moveBackAndIntake() throws InterruptedException{
-            runIntake();
+            //runIntake();
             moveAuto(0, -12, 1, 0.3);
             sleep(900);
         }
 
         public void moveForwardAndIntake() throws InterruptedException{
-            runIntake();
+            //runIntake();
             moveAuto(0, 12, 1, 0.3);
             sleep(900);
         }
 
         public void wobbleGrabberOpen(){
-
+            //wobbleGrabber.setPosition(1);
         }
 
         public void wobbleGrabberClose(){
-
+            //wobbleGrabber.setPosition(0);
         }
 
-        public void collectRings(int rings)throws InterruptedException{
+        public void collectRings(int rings, Alliance alliance)throws InterruptedException{
             double referenceAngle = imu.getAngularOrientation().firstAngle;
 
+            switch (alliance){
+                case BLUE:
                     if(rings == 0) {
-
+                        break;
                     }else if(rings == 1){
                         moveAuto(0, 5, 1, .4);
                         runIntake();
                         turnOffIntake();
-
+                        break;
 
                     }else if(rings == 4){
                         moveAuto(0, 5, 1, .4);
                         runIntake();
                         turnOffIntake();
-
+                        break;
                     }
+                case RED:
+                    if(rings == 0) {
+                        break;
+                    }else if(rings == 1){
+                        moveAuto(0, 5, 1, .4);
+                        runIntake();
+                        turnOffIntake();
+                        break;
 
-
+                    }else if(rings == 4){
+                        moveAuto(0, 5, 1, .4);
+                        runIntake();
+                        turnOffIntake();
+                        break;
+                    }
 
             }
         }
@@ -437,6 +481,6 @@ import com.qualcomm.robotcore.util.Range;
 
 
 
-
+}
 
 

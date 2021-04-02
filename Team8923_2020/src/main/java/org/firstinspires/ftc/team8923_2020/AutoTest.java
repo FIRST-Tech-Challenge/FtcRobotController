@@ -13,10 +13,20 @@ public class AutoTest extends MasterAutonomous{
 
             moveAuto(0, 5, 20, 10);
             //imuPivot();
+
+
+
+
             //grab wobblegoal
+
             //move forward
+
+
+
             //drop wobblegoal
+
             //move backward
+
             //park
 
 
