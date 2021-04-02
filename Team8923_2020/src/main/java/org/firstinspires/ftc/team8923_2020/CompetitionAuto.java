@@ -27,27 +27,27 @@ public class CompetitionAuto extends MasterAutonomous {
                     if(alliance == Alliance.RED){
                         moveAuto(0, 5, 1, .2);
                         imuPivot(referenceAngle, 90, .5, .015, 1);
-                        //wobbleGrabberOpen();
+                        wobbleGrabberOpen();
 
                     }
                     break;
                 case SQUAREB:
                     if(alliance == Alliance.RED){
                         moveAuto(0, 5, 1, 2.);
-                        //runIntake();
-                        //turnOffIntake();
+                        runIntake();
+                        turnOffIntake();
                         moveAuto(0, 5, 1, .2);
                         imuPivot(referenceAngle, 90, .5, .015, 1);
-                        //wobbleGrabberOpen();
+                        wobbleGrabberOpen();
                     }
                     break;
                 case SQUAREC:
                     if(alliance == Alliance.RED){
                         moveAuto(0, 5, 1, .2);
-                        //runIntake();
-                        //turnOffIntake();
+                        runIntake();
+                        turnOffIntake();
                         moveAuto(0, 3, 1, .2 );
-                        //wobbleGrabberOpen();
+                        wobbleGrabberOpen();
                     }
                     break;
             }

@@ -285,25 +285,12 @@ import com.qualcomm.robotcore.util.Range;
 
     }
 
-
-
-
     public void sendTelemetry(){
 
         //Informs drivers of robot location
         telemetry.addData("X", robotX);
         telemetry.addData("Y", robotY);
         telemetry.addData("Robot Angle", imu.getAngularOrientation().firstAngle);
-    }
-
-
-    public void wobbleUp(){
-            //wobbleGrabber.setPosition(0);
-    }
-
-    public void wobbleDown(){
-       // wobbleGrabber.setPosition(1);
-
     }
 
     private void stopDriving(){
