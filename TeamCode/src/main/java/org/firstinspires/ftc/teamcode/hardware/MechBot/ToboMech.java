@@ -1681,16 +1681,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         for (int i=0; i<nshots; i++) {
             if (i==0) {
                 autoShoot();
+                shooter.shootOutByRpm(SEMI_AUTO_RPM-40);
                 sleep(200);
             }
             else {
                 autoShootFast(false);
+                shooter.shootOutByRpm(SEMI_AUTO_RPM-40);
                 if (i==1) {
                     sleep(250);
                 }
             }
-            shooter.shootOutByRpm(SEMI_AUTO_RPM-40);
-
         }
         shooter.shootOutByRpm(WARM_UP_RPM);
     }
