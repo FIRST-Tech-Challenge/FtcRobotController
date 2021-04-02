@@ -192,6 +192,7 @@ public class PoseUG {
         returnHome,
         autoIntake,
         testShot,
+        makeIntakeOuttake,
         intakeDisk
     }
 
@@ -1080,21 +1081,21 @@ public class PoseUG {
     public boolean autoIntake(){
         switch(autoIntakeState){
             case 0:
-                intake.setTiltTargetPosition(Constants.INTAKE_SERVO_PICKUP);
+                intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_PICKUP);
                 intake.setIntakeSpeed(Constants.AUTO_INTAKE_SPEED);
                 autoIntakeTimer = System.nanoTime();
                 autoIntakeState++;
                 break;
             case 1:
                 if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_FIRST * 1E9) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_SERVO_HANDOFF);
+                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_HANDOFF);
                     autoIntakeTimer = System.nanoTime();
                     autoIntakeState++;
                 }
                 break;
             case 2:
                 if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_SECOND * 1E9) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_SERVO_TRAVEL);
+                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
                     intake.setIntakeSpeed(0);
                     autoIntakeState = 0;
                     return true;
@@ -1215,6 +1216,41 @@ public class PoseUG {
         return false;
     }
 
+    int outtakeState = 0;
+    double outtakeTimer = 0.0;
+    public boolean makeIntakeOuttake(){
+        switch (outtakeState){
+            case 0:
+                intake.setIntakeSpeed(1);
+                intake.setTiltTargetPosition(Constants.INTAKE_TILT_FOR_OUTTAKE);
+                outtakeTimer = System.nanoTime();
+                outtakeState++;
+                break;
+            case 1:
+                if(System.nanoTime() - outtakeTimer > .2 * 1E9) {
+                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_FOR_OUTTAKE_TOO);
+                    outtakeTimer = System.nanoTime();
+                    outtakeState++;
+                }
+                break;
+            case 2:
+                if(System.nanoTime() - outtakeTimer > .2 * 1E9){
+                    intake.setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT);
+                    outtakeTimer = System.nanoTime();
+                    outtakeState++;
+                }
+                break;
+            case 3:
+                if(System.nanoTime() - outtakeTimer > .2 * 1E9){
+                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
+                    intake.setIntakeSpeed(0);
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
+
     public Articulation articulate(Articulation target) {
         articulation = target; // store the most recent explict articulation request as our target, allows us
                                // to keep calling incomplete multi-step transitions
@@ -1243,6 +1279,11 @@ public class PoseUG {
                 break;
             case cardinalBaseRight:
                 if (cardinalBaseTurn(true)) {
+                    articulation = PoseUG.Articulation.manual;
+                }
+                break;
+            case makeIntakeOuttake:
+                if(makeIntakeOuttake()){
                     articulation = PoseUG.Articulation.manual;
                 }
                 break;

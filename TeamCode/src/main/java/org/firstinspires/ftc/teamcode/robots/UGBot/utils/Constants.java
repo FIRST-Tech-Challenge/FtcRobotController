@@ -75,14 +75,21 @@ public class Constants {
 
     public static int WOBBLE_GRIPPER_CLOSED = 900;
     public static int WOBBLE_GRIPPER_STOWED = 2100;
-    public static int INTAKE_SERVO_TRAVEL = 1232;
-    public static int INTAKE_SERVO_HANDOFF = 1159;
-    public static int INTAKE_SERVO_PICKUP = 1525;
+
+    public static int INTAKE_TILT_SERVO_TRAVEL = 1600;
+    public static int INTAKE_TILT_SERVO_HANDOFF = 1300;
+    public static int INTAKE_TILT_SERVO_PICKUP = 1750;
+    public static int INTAKE_TILT_FOR_OUTTAKE = 1300;
+    public static int INTAKE_TILT_FOR_OUTTAKE_TOO = 1600;
+    public static int INTAKE_TILT_INIT_POS = 899;
+
+    public static int INTAKE_OUT_SERVO_OUT = 1690;
+    public static int INTAKE_OUT_SERVO_IN = 900;
+
+    public static double AUTO_INTAKE_SPEED = 1;
     public static double AUTO_INTAKE_FIRST = .65;
     public static double AUTO_INTAKE_SECOND = .75;
-    public static int INTAKE_OUT_SERVO_OUT = 1500;
-    public static int INTAKE_OUT_SERVO_IN = 900;
-    public static double AUTO_INTAKE_SPEED = 0.5;
+
     public static double TURRET_TOLERANCE = 0.01;
 
 

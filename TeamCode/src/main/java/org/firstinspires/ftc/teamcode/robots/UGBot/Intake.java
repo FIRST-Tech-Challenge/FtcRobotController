@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.UGBot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
@@ -15,8 +13,8 @@ public class Intake {
     public Servo outServo = null;
     private double speed;
     private boolean active = true;
-    private int tiltTargetPosition = Constants.INTAKE_SERVO_TRAVEL;
-    private int outTargetPos = Constants.INTAKE_OUT_SERVO_OUT;
+    private int tiltTargetPosition = Constants.INTAKE_TILT_INIT_POS;
+    private int outTargetPos = Constants.INTAKE_OUT_SERVO_IN;
 
 
 
@@ -28,7 +26,7 @@ public class Intake {
         speed = 0;
     }
 
-    boolean intakeGimbalIsActive = false;
+
     public void update(){
         if(active){
             intakeMotor.setPower(speed);
@@ -37,13 +35,10 @@ public class Intake {
             intakeMotor.setPower(0);
         }
 
-        if(intakeGimbalIsActive) {
-            tiltServo.setPosition(Conversions.servoNormalize(tiltTargetPosition));
-            outServo.setPosition(Conversions.servoNormalize(outTargetPos));
-        }
-    }
 
-    public void setIntakeGimbalIsActive(boolean intakeGimbalIsActive){this.intakeGimbalIsActive = intakeGimbalIsActive;}
+        tiltServo.setPosition(Conversions.servoNormalize(tiltTargetPosition));
+        outServo.setPosition(Conversions.servoNormalize(outTargetPos));
+    }
 
     //region getters and setters
 

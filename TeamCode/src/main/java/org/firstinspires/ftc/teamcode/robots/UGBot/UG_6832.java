@@ -627,7 +627,6 @@ public class UG_6832 extends OpMode {
             robot.setAutonSingleStep(true);
             joystickDriveStarted = true;
             robot.launcher.setActive(true);
-            robot.intake.setIntakeGimbalIsActive(true);
         }
 
 
@@ -675,7 +674,7 @@ public class UG_6832 extends OpMode {
             robot.articulate(PoseUG.Articulation.autoIntake);
         }
         if(toggleAllowed(gamepad1.x,x,1))
-            robot.launcher.toggleGripper();
+            robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
 
         if (notdeadzone(gamepad1.right_stick_y)) {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
@@ -758,7 +757,9 @@ public class UG_6832 extends OpMode {
 
         if(toggleAllowed(gamepad1.x,x,1))
             robot.alignmentRun(.5,-0.4572 * Constants.WALL_FOLLOW_MULTIPLIER, -robot.getDistRightDist() * Constants.WALL_FOLLOW_MULTIPLIER,true, 2.7432);
-
+        if(toggleAllowed(gamepad1.a,a,1)){
+            robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
+        }
     }
 
     private void logTurns(double target) {
