@@ -13,7 +13,7 @@
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
-
+apply from: '../build.dependencies.gradle'
 
 repositories {
     maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
