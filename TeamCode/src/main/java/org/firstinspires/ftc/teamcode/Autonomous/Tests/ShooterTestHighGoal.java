@@ -3,6 +3,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.Shooter;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
@@ -19,25 +20,24 @@ import org.firstinspires.ftc.teamcode.Robot;
  */
 @Autonomous(name= "Shooter Test High Goal ", group="Tests: ")
 public class ShooterTestHighGoal extends LinearOpMode {
-//    private Shooter shooter=null;
-    //private Object Shooter;
+
+    DcMotorEx shooterMotor;
 
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Ready to go");
+        shooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
+        telemetry.addData("Status", "Init Complete, Ready to Start");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
-        telemetry.addData("Status", "InitComplete, Ready to Start");
-        telemetry.update();
+        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor.setVelocityPIDFCoefficients(57, 0, 0, 15.4);
 
         waitForStart();
-
-            robot.shootHighGoal(3);
-
-
-
-
+            while(!isStopRequested()){
+                shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                shooterMotor.setTargetPosition(1000);
+                shooterMotor.setVelocity(1675);
+            }
 
 
     }
