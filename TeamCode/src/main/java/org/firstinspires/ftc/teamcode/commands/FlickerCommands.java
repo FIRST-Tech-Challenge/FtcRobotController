@@ -41,8 +41,11 @@ public class FlickerCommands extends Command {
                 double initialTime = System.currentTimeMillis();
                 while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel) {
                     robot.safeSleep(1);
+                    if(robot.driverCancel || robot.operatorCancel) {
+                        return;
+                    }
                 }
-                flicker.flickRingTele();
+                flicker.flickRing();
             }
             robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
         }

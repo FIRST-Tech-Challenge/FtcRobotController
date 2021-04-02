@@ -259,20 +259,20 @@ public class DriveSubsystem extends Subsystem {
         double power = 0;
         double angleRemaining = targetAngle - robot.rawAngle;
 
-        while ((angleRemaining < -1 || angleRemaining > 1) && opMode.opModeIsActive()) {
+        while ((angleRemaining < -2.5 || angleRemaining > 2.5) && opMode.opModeIsActive()) {
 
             if (angleRemaining > 30) {
                 power = 1;
-            } else if(angleRemaining > 8) {
+            } else if(angleRemaining > 5) {
                 power = 0.3;
             } else if(angleRemaining > 0) {
-                power = 0.1;
+                power = 0.15;
             } else if(angleRemaining < -30) {
                 power = -1;
-            } else if(angleRemaining < -8) {
+            } else if(angleRemaining < -5) {
                 power = -0.3;
             } else if(angleRemaining < 0) {
-                power = -0.1;
+                power = -0.15;
             }
 
             angleRemaining = targetAngle - robot.rawAngle;

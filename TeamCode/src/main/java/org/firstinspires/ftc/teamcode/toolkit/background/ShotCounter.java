@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.toolkit.background;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -24,11 +26,12 @@ public class ShotCounter extends Background {
 
     @Override
     public void loop() {
-        if(shooterSensor.getDistance(DistanceUnit.CM) < 2.0 && robot.flickingState == UpliftRobot.FlickingState.FLICKING) {
-            while(shooterSensor.getDistance(DistanceUnit.CM) < 2.0 && robot.flickingState == UpliftRobot.FlickingState.FLICKING){
-                Utils.sleep(50);
+        if(shooterSensor.getDistance(DistanceUnit.CM) < 7.5 && robot.flickingState == UpliftRobot.FlickingState.FLICKING) {
+            while(shooterSensor.getDistance(DistanceUnit.CM) < 7.5 && robot.flickingState == UpliftRobot.FlickingState.FLICKING){
+                Utils.sleep(5);
             }
             robot.shotCount += 1;
         }
+        Log.i("Shot count", robot.shotCount + "");
     }
 }

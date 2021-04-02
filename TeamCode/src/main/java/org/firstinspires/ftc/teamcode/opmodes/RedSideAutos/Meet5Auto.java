@@ -87,7 +87,7 @@ public class Meet5Auto extends UpliftAuto {
 
 
             // intake four stack, if you were able to shoot all 3 initial rings
-//            if(robot.shotCount >= 3) {
+            if(robot.shotCount >= 3) {
                 while(robot.transferState != UpliftRobot.TransferState.DOWN && opModeIsActive()) {
                     robot.safeSleep(5);
                 }
@@ -115,7 +115,7 @@ public class Meet5Auto extends UpliftAuto {
 //                driveSub.driveToPosition(105.25, 12, 0.5, 0);
 //                flickerSub.flickRing();
 
-//            }
+            }
 
 
             // drive to drop off first wobble

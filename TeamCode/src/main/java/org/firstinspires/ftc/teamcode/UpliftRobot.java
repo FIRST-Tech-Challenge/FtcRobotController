@@ -182,7 +182,7 @@ public class UpliftRobot {
             shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
             shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-//            shooterSensor = hardwareMap.get(DistanceSensor.class, "shooter_sensor");
+            shooterSensor = hardwareMap.get(DistanceSensor.class, "shooter_sensor");
 
             shooterInitialized = true;
         } catch (Exception ex) {
@@ -300,8 +300,8 @@ public class UpliftRobot {
         if(shooterInitialized) {
             velocityData = new VelocityData(this);
             velocityData.enable();
-//            shotCounter = new ShotCounter(this);
-//            shotCounter.enable();
+            shotCounter = new ShotCounter(this);
+            shotCounter.enable();
         }
     }
 
