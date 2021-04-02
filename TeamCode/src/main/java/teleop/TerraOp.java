@@ -3,12 +3,12 @@ package teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import global.TestRobot;
+import global.TerraBot;
 import globalfunctions.TelemetryHandler;
 
 @TeleOp(name = "TestOp")
-public class TestTele extends OpMode {
-    TestRobot bot = new TestRobot();
+public class TerraOp extends OpMode {
+    TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
 
     @Override

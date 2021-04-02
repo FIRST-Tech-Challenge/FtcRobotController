@@ -1,4 +1,4 @@
-package util;
+package globalfunctions;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 

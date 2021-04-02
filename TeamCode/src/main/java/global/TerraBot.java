@@ -13,15 +13,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.util.ArrayList;
 
 import globalfunctions.Constants;
-import globalfunctions.TerraThread2;
-import telefunctions.AutoModule3;
+import globalfunctions.TerraThread;
+import telefunctions.AutoModule;
 import telefunctions.ButtonController;
 import telefunctions.Cycle;
 import telefunctions.Limits;
-import telefunctions.Stage;
+import util.Stage;
 import util.CodeSeg;
 
-public class TestRobot {
+public class TerraBot {
 
     public DcMotor r1;
     public DcMotor l1;
@@ -46,7 +46,7 @@ public class TestRobot {
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor br;
 
-    public FTCAutoAimer autoAimer = new FTCAutoAimer();
+    public AutoAimer autoAimer = new AutoAimer();
 
     public AngularPosition angularPosition = new AngularPosition();
 
@@ -57,15 +57,15 @@ public class TestRobot {
 
     public boolean fastMode = true;
 
-    public AutoModule3 shooter = new AutoModule3(); // 0
+    public AutoModule shooter = new AutoModule(); // 0
 
-    public ArrayList<AutoModule3> autoModule3s = new ArrayList<>();
+    public ArrayList<AutoModule> autoModules = new ArrayList<>();
 
     public ButtonController outtakeButtonController = new ButtonController();
 
-    public Odometry3 odometry = new Odometry3();
+    public Odometry odometry = new Odometry();
 
-    public TerraThread2 odometryThread;
+    public TerraThread odometryThread;
 
 
     public void init(HardwareMap hwMap) {
@@ -111,7 +111,7 @@ public class TestRobot {
             shooter.addStage(rp, pushControl, 1, 0.3);
         }
         shooter.addStage(rp, pushControl, 0, 0.3);
-        autoModule3s.add(shooter);
+        autoModules.add(shooter);
 
         odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());
     }
@@ -218,13 +218,13 @@ public class TestRobot {
     }
 
     public boolean areAutomodulesRunning(){
-        for (AutoModule3 a:autoModule3s) {
+        for (AutoModule a: autoModules) {
             if (a.isExecuting()) { return true; }
         }
         return false;
     }
     public void stopAllAutomodules(){
-        for (AutoModule3 a:autoModule3s) {
+        for (AutoModule a: autoModules) {
             a.stop();
         }
     }
@@ -308,7 +308,7 @@ public class TestRobot {
                 return !op.opModeIsActive();
             }
         };
-        odometryThread = new TerraThread2(run, exit);
+        odometryThread = new TerraThread(run, exit);
         Thread t = new Thread(odometryThread);
         t.start();
 
@@ -320,7 +320,7 @@ public class TestRobot {
                 updateOdometry();
             }
         };
-        odometryThread = new TerraThread2(run);
+        odometryThread = new TerraThread(run);
         Thread t = new Thread(odometryThread);
         t.start();
 

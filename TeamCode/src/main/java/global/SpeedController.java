@@ -3,9 +3,9 @@ package global;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import globalfunctions.Constants;
-import util.PID;
+import globalfunctions.PID;
 
-public class SpeedController2 {
+public class SpeedController {
 
     ElapsedTime timer = new ElapsedTime();
 
@@ -28,7 +28,7 @@ public class SpeedController2 {
     public boolean isReady = false;
 
 
-    public SpeedController2(){
+    public SpeedController(){
         lastTime = -0.1;
         pid.Kp = 0.003;
         pid.Kd = 0.0001;

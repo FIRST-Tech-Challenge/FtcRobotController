@@ -2,11 +2,11 @@ package globalfunctions;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import autofunctions.Path3;
-import global.TestRobot;
+import autofunctions.Path;
+import global.TerraBot;
 
 public class TelemetryHandler {
-    public Telemetry addOdometry(Telemetry telemetry, TestRobot bot) {
+    public Telemetry addOdometry(Telemetry telemetry, TerraBot bot) {
 //        telemetry.addData("center odometry", bot.odometry.cp);
 //        telemetry.addData("left odometry", bot.odometry.lp);
 //        telemetry.addData("right odometry", bot.odometry.rp);
@@ -23,7 +23,7 @@ public class TelemetryHandler {
         telemetry.addData("heading", bot.odometry.h);
         return telemetry;
     }
-    public Telemetry addAuton(Telemetry telemetry, Path3 path, TestRobot bot){
+    public Telemetry addAuton(Telemetry telemetry, Path path, TerraBot bot){
         telemetry.addData("y pow", path.yControl.getPower());
         telemetry.addData("x pow", path.xControl.getPower());
         telemetry.addData("h pow", path.hControl.getPower());
@@ -42,7 +42,7 @@ public class TelemetryHandler {
 
         return telemetry;
     }
-    public Telemetry addAngularPosition(Telemetry telemetry, TestRobot bot) {
+    public Telemetry addAngularPosition(Telemetry telemetry, TerraBot bot) {
         telemetry.addData("average angle", bot.angularPosition.getHeading());
         telemetry.addData("average gyro angle", bot.angularPosition.getHeadingGY());
         telemetry.addData("left gyro", bot.angularPosition.getHeadingLeftGY());
@@ -50,7 +50,7 @@ public class TelemetryHandler {
         telemetry.addData("compass sensor", bot.angularPosition.getHeadingCS());
         return telemetry;
     }
-    public Telemetry addOuttake(Telemetry telemetry, TestRobot bot) {
+    public Telemetry addOuttake(Telemetry telemetry, TerraBot bot) {
         telemetry.addData("Right Outtake Position", bot.outr.getCurrentPosition());
         telemetry.addData("Left Outtake Position", bot.outl.getCurrentPosition());
         telemetry.addData("Right Outtake Angular Velocity", bot.autoAimer.outrController.currSpeed);
@@ -67,7 +67,7 @@ public class TelemetryHandler {
         telemetry.addData("Left Outtake Target Speed", bot.autoAimer.outlController.targetSpeed);
         return telemetry;
     }
-    public Telemetry addAutoAimer(Telemetry telemetry, TestRobot bot) {
+    public Telemetry addAutoAimer(Telemetry telemetry, TerraBot bot) {
         telemetry.addData("left distance", bot.getLeftDistance());
         telemetry.addData("back distance", bot.getBackDistance());
         telemetry.addData("distance to center: ", bot.autoAimer.getDisFromCenter(bot.getLeftDistance(), bot.angularPosition.getHeadingGY()));

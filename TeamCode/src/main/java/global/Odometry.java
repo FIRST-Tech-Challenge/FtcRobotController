@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import globalfunctions.Constants;
 import util.Vector;
 
-public class Odometry3 {
+public class Odometry {
 
     public double x = 0; // total x
     public double y = 0; // total y

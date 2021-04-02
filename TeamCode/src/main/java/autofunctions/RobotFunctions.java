@@ -1,11 +1,11 @@
 package autofunctions;
 
-import global.TestRobot;
+import global.TerraBot;
 import util.CodeSeg;
 
-public class RobotFunctions2 {
-    private TestRobot bot;
-    public void init(TestRobot t) {
+public class RobotFunctions {
+    private TerraBot bot;
+    public void init(TerraBot t) {
         bot = t;
     }
     public CodeSeg intake(final double pow) {
@@ -16,7 +16,7 @@ public class RobotFunctions2 {
             }
         };
     }
-    public CodeSeg startOuttake(final TestRobot bot) {
+    public CodeSeg startOuttake(final TerraBot bot) {
         return new CodeSeg() {
             @Override
             public void run() {

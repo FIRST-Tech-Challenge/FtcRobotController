@@ -7,11 +7,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
-import globalfunctions.TerraThread2;
+import globalfunctions.TerraThread;
 import globalfunctions.Constants;
 import util.CodeSeg;
+import util.Stage;
 
-public class AutoModule3 {
+public class AutoModule {
 
 
     public ArrayList<Stage> stages = new ArrayList<>();
@@ -40,7 +41,7 @@ public class AutoModule3 {
     };
 
 
-    public TerraThread2 autoModuleThread;
+    public TerraThread autoModuleThread;
 
 
 
@@ -48,7 +49,7 @@ public class AutoModule3 {
         if(!autoModuleThread.executing) {
             autoModuleThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
 
-            autoModuleThread = new TerraThread2(updateCode);
+            autoModuleThread = new TerraThread(updateCode);
             Thread t = new Thread(autoModuleThread);
             t.start();
         }

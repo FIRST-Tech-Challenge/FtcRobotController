@@ -4,10 +4,10 @@ package global;
 import globalfunctions.Constants;
 import util.Geometry;
 
-public class FTCAutoAimer {
+public class AutoAimer {
     private final Geometry geometry = new Geometry();
-    public SpeedController2 outlController = new SpeedController2();
-    public SpeedController2 outrController = new SpeedController2();
+    public SpeedController outlController = new SpeedController();
+    public SpeedController outrController = new SpeedController();
 
     public void update(double robotTheta, double lrDis, double brDis) {
         robotTheta *= Math.PI/180;

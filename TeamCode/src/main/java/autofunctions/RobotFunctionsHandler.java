@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.ArrayList;
 
-import globalfunctions.TerraThread2;
-import telefunctions.Stage;
+import globalfunctions.TerraThread;
+import util.Stage;
 import util.CodeSeg;
 
 public class RobotFunctionsHandler {
@@ -37,13 +37,13 @@ public class RobotFunctionsHandler {
     };
 
 
-    public TerraThread2 rfsThread;
+    public TerraThread rfsThread;
 
 
 
     public void start(LinearOpMode op){
         this.op = op;
-        rfsThread = new TerraThread2(updateCode, exit);
+        rfsThread = new TerraThread(updateCode, exit);
         Thread t = new Thread(rfsThread);
         t.start();
     }

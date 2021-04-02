@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.ArrayList;
 
 import globalfunctions.TelemetryHandler;
-import global.TestRobot;
+import global.TerraBot;
 import util.CodeSeg;
 import util.Line;
-import util.PID;
+import globalfunctions.PID;
 import util.Vector;
 
-public class Path3 {
+public class Path {
 
     public PID xControl = new PID();
     public PID yControl = new PID();
@@ -62,7 +62,7 @@ public class Path3 {
 
 
 
-    public Path3(double sx, double sy, double sh){
+    public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
         posetypes.add(Posetype.SETPOINT);
         xControl.setCoefficients(ks[0], ds[0], is[0]);
@@ -234,7 +234,7 @@ public class Path3 {
 
     }
 
-    public void start(TestRobot bot, LinearOpMode op){
+    public void start(TerraBot bot, LinearOpMode op){
         globalTime.reset();
         op.telemetry.addData("Starting", "RF Threads");
         op.telemetry.update();

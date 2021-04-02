@@ -3,15 +3,15 @@ package auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import autofunctions.Path3;
-import autofunctions.RobotFunctions2;
-import global.TestRobot;
+import autofunctions.Path;
+import autofunctions.RobotFunctions;
+import global.TerraBot;
 
 @Autonomous(name="TestAuto", group="Auto")
 public class TestAuto extends LinearOpMode {
-    TestRobot bot = new TestRobot();
-    Path3 path = new Path3(0,0,0);
-    RobotFunctions2 rf = new RobotFunctions2();
+    TerraBot bot = new TerraBot();
+    Path path = new Path(0,0,0);
+    RobotFunctions rf = new RobotFunctions();
 
     @Override
     public void runOpMode() {

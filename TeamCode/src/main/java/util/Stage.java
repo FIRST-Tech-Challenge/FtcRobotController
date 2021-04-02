@@ -1,4 +1,4 @@
-package telefunctions;
+package util;
 
 public abstract class Stage {
     public boolean run(double in) {

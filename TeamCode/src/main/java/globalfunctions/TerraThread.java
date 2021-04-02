@@ -1,12 +1,10 @@
 package globalfunctions;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import telefunctions.Stage;
+import util.Stage;
 import util.CodeSeg;
 
 
-public class TerraThread2 implements Runnable{
+public class TerraThread implements Runnable{
 
     CodeSeg cs;
     Stage st;
@@ -14,12 +12,12 @@ public class TerraThread2 implements Runnable{
     public int refreshRate = 100; // hertz
 
 
-    public TerraThread2(CodeSeg run, Stage stop){
+    public TerraThread(CodeSeg run, Stage stop){
         this.cs = run;
         this.st = stop;
     }
 
-    public TerraThread2(CodeSeg run){
+    public TerraThread(CodeSeg run){
         this.cs = run;
         this.st = new Stage() {
             @Override
