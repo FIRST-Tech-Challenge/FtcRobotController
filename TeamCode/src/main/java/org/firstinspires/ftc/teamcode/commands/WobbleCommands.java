@@ -36,7 +36,7 @@ public class WobbleCommands extends Command {
 
     @Override
     public void loop() {
-        Log.i("wobbleValue",clickCount + "");
+//        Log.i("wobbleValue",clickCount + "");
         oldCount = clickCount;
         if(opMode.gamepad2.dpad_right) {
             if(!wobbleButtonPressed) {
