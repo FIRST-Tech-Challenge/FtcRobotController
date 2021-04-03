@@ -1828,7 +1828,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         // chassis.rotateTo(0.3, 0);//delete?
         double target_heading=2.3;
-        double angle_error = 0.6;
+        double angle_error = 0.5;
+        double LOCAL_ALIGNMENT_POWER = 0.18;
+        double ALIGN_ITER = 5;
         if(angleCollection){
             if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
@@ -1836,8 +1838,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     sleep(100);
                 }
                 int i=0;
-                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<3) {
-                    chassis.rawRotateTo(0.18, target_heading, false, 0.5);
+                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<ALIGN_ITER) {
+                    chassis.rawRotateTo(LOCAL_ALIGNMENT_POWER, target_heading, false, 0.5);
                     i++;
                 }
                 sleep(100);
@@ -1897,8 +1899,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     sleep(100);
                 }
                 int i=0;
-                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<3) {
-                    chassis.rawRotateTo(0.18, target_heading, false, 0.5);
+                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<ALIGN_ITER) {
+                    chassis.rawRotateTo(LOCAL_ALIGNMENT_POWER, target_heading, false, 0.5);
                     i++;
                 }
                 sleep(100);
