@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
@@ -10,11 +11,13 @@ public class FlickerSubsystem extends Subsystem {
 
     public UpliftRobot robot;
     private Servo flicker;
+    public AnalogInput potentiometer;
 
     public FlickerSubsystem(UpliftRobot robot){
         super(robot);
         this.robot = robot;
         this.flicker = robot.flicker;
+        this.potentiometer = robot.potentiometer;
     }
     @Override
     public void enable() {
@@ -51,4 +54,17 @@ public class FlickerSubsystem extends Subsystem {
         robot.safeSleep(350);
         robot.setFlickingState(UpliftRobot.FlickingState.IDLE);
     }
+
+//    public void flickRing() {
+//        robot.setFlickingState(UpliftRobot.FlickingState.FLICKING);
+//        // move in
+//        flicker.setPosition(0.22);
+//        while(potentiometer.getVoltage() < 0.50) {
+//            robot.safeSleep(1);
+//        }
+//        flicker.setPosition(0);
+//        while(potentiometer.getVoltage() > 0) {
+//            robot.safeSleep(1);
+//        }
+//    }
 }

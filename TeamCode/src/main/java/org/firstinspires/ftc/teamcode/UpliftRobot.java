@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -66,6 +67,7 @@ public class UpliftRobot {
     public CRServo sweeperRight;
     public DigitalChannel digitalTouchBottom, digitalTouchTop;
     public DistanceSensor shooterSensor;
+    public AnalogInput potentiometer;
 
     public BNO055IMU imu;
 
@@ -82,6 +84,7 @@ public class UpliftRobot {
     public boolean slowMode = false;
     public boolean intakeToggle = false;
     public boolean stickToggle = false;
+    public boolean highGoalMode = true;
     public double shooter1Vel = -1;
     public double shooter2Vel = -1;
 
@@ -149,6 +152,7 @@ public class UpliftRobot {
 
         try {
             flicker = hardwareMap.get(Servo.class, "flicker");
+            potentiometer = hardwareMap.get(AnalogInput.class, "potentiometer");
             flickerInitialized = true;
         } catch (Exception ex) {
             flickerInitialized = false;
@@ -163,8 +167,8 @@ public class UpliftRobot {
 
             digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "touch_bottom");
             digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
-//            digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
-//            digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
+            digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
+            digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
 
             transferInitialized = true;
         } catch (Exception ex) {

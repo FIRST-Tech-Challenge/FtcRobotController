@@ -35,34 +35,31 @@ public class TransferCommands extends Command {
     public void loop() {
 
         // if transfer going down and bottom touch sensor is pressed, stop
-//        if (!transfer.transferTouchBottom.getState() && opMode.gamepad2.right_stick_y > 0) {
-//            transfer.setTransferPower(0);
-//        // if transfer going up and top touch sensor is pressed, stop
-//        } else if (!transfer.transferTouchTop.getState() && opMode.gamepad2.right_stick_y < 0) {
-//            transfer.setTransferPower(0);
-//        // else, set the transfer power to 1/2 of the joystick val
-//        } else {
-            transfer.setTransferPower(Range.clip(opMode.gamepad2.right_stick_y/2 , -1, 1));
-//        }
-
-        // if Y pressed on OPERATOR gamepad or shooting state is PREPARING_HIGHGOAL, prepare for shooting highgoal by raising transfer
-        // *NOTE: Y button on the OPERATOR gamepad also turns on shooter to the highgoal velocity (simultaneously)
-        if (opMode.gamepad2.y || robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
-            robot.setShootingState(UpliftRobot.ShootingState.PREPARING_HIGHGOAL);
-            transfer.teleRaiseTransfer();
-            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_HIGHGOAL);
+        if (!transfer.transferTouchBottom.getState() && opMode.gamepad2.right_stick_y > 0) {
+            transfer.setTransferPower(0);
+        // if transfer going up and top touch sensor is pressed, stop
+        } else if (!transfer.transferTouchTop.getState() && opMode.gamepad2.right_stick_y < 0) {
+            transfer.setTransferPower(0);
+        // else, set the transfer power to 1/2 of the joystick val
+        } else {
+            transfer.setTransferPower(Range.clip(opMode.gamepad2.right_stick_y / 2 , -1, 1));
         }
 
-        // if X pressed on OPERATOR gamepad or shooting state is PREPARING_POWERSHOT, prepare for powershots by raising transfer
-        // *NOTE: X button on the OPERATOR gamepad also turns on shooter to the powershot velocity (simultaneously)
-        if (opMode.gamepad2.x || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
-            robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
-            transfer.teleRaiseTransfer();
-            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS1);
+        // if Y pressed on OPERATOR gamepad, raise transfer
+        // *NOTE: Y button on the OPERATOR gamepad also turns on shooter to the highgoal velocity (simultaneously)
+        if (opMode.gamepad2.y) {
+            if(robot.highGoalMode) {
+                robot.setShootingState(UpliftRobot.ShootingState.PREPARING_HIGHGOAL);
+                transfer.teleRaiseTransfer();
+                robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_HIGHGOAL);
+            } else {
+                robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
+                transfer.teleRaiseTransfer();
+            }
         }
 
         // if done shooting, drop the transfer and set the shooter state to IDLE
-        // *NOTE: SONE_SHOOTING also tells the shooter to set power to 0.1
+        // *NOTE: DONE_SHOOTING also tells the shooter to set power to 0.1
         if (robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
             transfer.teleDropTransfer();
             robot.setShootingState(UpliftRobot.ShootingState.IDLE);

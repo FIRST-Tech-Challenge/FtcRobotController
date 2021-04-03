@@ -13,8 +13,7 @@ public class ShooterCommands extends Command {
     public UpliftTele opMode;
     Thread velThread;
     UpliftRobot robot;
-    boolean shooterButtonPressed = false;
-    int shooterClickCounter = 0;
+    boolean shooterSwitchPressed = false;
 
     public ShooterCommands(UpliftTele opMode, UpliftRobot robot, ShooterSubsystem shooterSubsystem) {
         super(opMode, shooterSubsystem);
@@ -36,20 +35,26 @@ public class ShooterCommands extends Command {
     @Override
     public void loop() {
 
-        if(opMode.gamepad2.a) {
-            shooter.setShooterVelocity(robot.highGoalVelocity);
+        // Toggle Button for shooter type (highgoal if true, powershot if false)
+        if(opMode.gamepad2.x) {
+            if(!shooterSwitchPressed) {
+                robot.highGoalMode = !robot.highGoalMode;
+                shooterSwitchPressed = true;
+            }
+        } else {
+            shooterSwitchPressed = false;
+        }
+
+        if(opMode.gamepad2.a || opMode.gamepad2.y) {
+            if(robot.highGoalMode) {
+                shooter.setShooterVelocity(robot.highGoalVelocity);
+            } else {
+                shooter.setShooterVelocity(robot.powerShotVelocity);
+            }
         }
 
         if(opMode.gamepad2.b) {
             shooter.setShooterPower(0);
-        }
-
-        if(opMode.gamepad2.y || robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
-            shooter.setShooterVelocity(robot.highGoalVelocity);
-        }
-
-        if(opMode.gamepad2.x || opMode.gamepad2.right_bumper || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
-            shooter.setShooterVelocity(robot.powerShotVelocity);
         }
 
         if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {

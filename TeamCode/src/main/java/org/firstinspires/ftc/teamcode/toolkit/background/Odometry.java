@@ -31,10 +31,10 @@ public class Odometry extends Background {
     public void loop() {
         updatePosition();
         Log.i("Odometry:", "X: " + robot.worldX + "   Y: " + robot.worldY + "   Angle: " + robot.worldAngle);
-        Log.i("Lf", robot.leftFront.getPower() + "");
-        Log.i("Rf", robot.rightFront.getPower() + "");
-        Log.i("Lb", robot.leftBack.getPower() + "");
-        Log.i("Rb", robot.rightBack.getPower() + "");
+//        Log.i("Lf", robot.leftFront.getPower() + "");
+//        Log.i("Rf", robot.rightFront.getPower() + "");
+//        Log.i("Lb", robot.leftBack.getPower() + "");
+//        Log.i("Rb", robot.rightBack.getPower() + "");
 
     }
 

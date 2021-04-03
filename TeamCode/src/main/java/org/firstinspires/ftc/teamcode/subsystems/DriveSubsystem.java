@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
@@ -163,7 +165,7 @@ public class DriveSubsystem extends Subsystem {
             turnVal = 0;
         }
 
-        double x = 1.25 * speedVal * sin(toRadians(relativeAngleToPoint));
+        double x = 1.4 * speedVal * sin(toRadians(relativeAngleToPoint));
         double y = speedVal * cos(toRadians(relativeAngleToPoint));
 
         double lf = y + x + turnVal;
@@ -259,28 +261,33 @@ public class DriveSubsystem extends Subsystem {
         double power = 0;
         double angleRemaining = targetAngle - robot.rawAngle;
 
-        while ((angleRemaining < -2.5 || angleRemaining > 2.5) && opMode.opModeIsActive()) {
-
-            if(angleRemaining > 45) {
-                power = 1;
-            } else if (angleRemaining > 30) {
-                power = 0.5;
-            } else if(angleRemaining > 5) {
-                power = 0.2;
-            } else if(angleRemaining > 0) {
-                power = 0.1;
-            } else if(initialAngle < -45) {
-                power = -1;
-            } else if(angleRemaining < -30) {
-                power = -0.5;
-            } else if(angleRemaining < -5) {
-                power = -0.2;
-            } else if(angleRemaining < 0) {
-                power = -0.1;
-            }
-
+        while ((angleRemaining < -2 || angleRemaining > 2) && opMode.opModeIsActive()) {
             angleRemaining = targetAngle - robot.rawAngle;
+            if(angleRemaining > 90) {
+                power = 1;
+//            } else if(angleRemaining > 45) {
+//                power = 0.5;
+//            } else if (angleRemaining > 30) {
+//                power = 0.3;
+//            } else if(angleRemaining > 5) {
+//                power = 0.2;
+            } else if(angleRemaining > 0) {
+                power = Math.pow(Math.abs(angleRemaining) / 120, 0.6);
+            } else if(angleRemaining < -90) {
+                power = -1;
+//            } else if(angleRemaining < -45) {
+//                power = -0.5;
+//            } else if(angleRemaining < -30) {
+//                power = -0.3;
+//            } else if(angleRemaining < -5) {
+//                power = -0.2;
+            } else if(angleRemaining < 0) {
+                power = -Math.pow(Math.abs(angleRemaining) / 120, 0.6);
+            }
+            Log.i("Odometry", "turning power: " + power);
+            Log.i("Odometry", "Angle remaining;" + angleRemaining);
             spin(power);
+            angleRemaining = targetAngle - robot.rawAngle;
         }
 
         stopMotors();

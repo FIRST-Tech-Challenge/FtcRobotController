@@ -73,7 +73,7 @@ public class IntakeCommands extends Command {
 
         if(robot.stickToggle) {
             intake.stick.setPosition(0.35);
-        } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
+        } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL || robot.shootingState == UpliftRobot.ShootingState.SHOOTING_HIGHGOAL) {
             intake.raiseStick();
         } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
             intake.stick.setPosition(0.35);
