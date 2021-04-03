@@ -464,7 +464,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (cameraDetector != null)
                         cameraDetector.dec_cam_pos();
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
-                    autoIntakeRings(3, false);
+                    //autoIntakeRings(3, false);
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     shooting_rpm = SEMI_POWER_SHOT_RPM;
                     shooter.shootOutByRpm(shooting_rpm);
