@@ -164,7 +164,7 @@ public class RedTopRR extends LinearOpMode {
         ejectWobbleGoal();
         moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(), true)
                 //.splineTo(new Vector2d(7,43), Math.toRadians(180))
-                .lineToLinearHeading(new Pose2d(8, 50, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(10, 49, Math.toRadians(0)))
                 .build();
         drive.followTrajectory(moveToWobble2);
 
