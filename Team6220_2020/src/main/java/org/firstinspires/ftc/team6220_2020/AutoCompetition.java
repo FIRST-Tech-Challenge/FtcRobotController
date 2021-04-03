@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(name = "Autonomous Competition", group = "Autonomous")
 public class AutoCompetition extends MasterAutonomous{
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode()
+    {
         Initialize();
 
         telemetry.addData("Status : ", "Pre Setup");
@@ -16,13 +17,15 @@ public class AutoCompetition extends MasterAutonomous{
         telemetry.update();
         waitForStart();
 
-        telemetry.addData("Status : ", "Pre Pause");
-        telemetry.update();
-        driveInches(84, 90);
+        //telemetry.addData("Status : ", "12 90");
+        //telemetry.update();
+        driveInches(24, 90);
         pauseMillis(1000);
-        //driveForwardInches(-24);
-        telemetry.addData("Status : ", "Done");
-        telemetry.update();
+        //telemetry.addData("Status : ", "12 180");
+        //telemetry.update();
+        driveInches(24, 270);
+        //telemetry.addData("Status : ", "Done");
+        //telemetry.update();
 
         pauseMillis(5000);
 

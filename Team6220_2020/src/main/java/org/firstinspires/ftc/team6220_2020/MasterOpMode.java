@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team6220_2020;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team6220_2020.ResourceClasses.DriverInput;
 
@@ -17,6 +18,7 @@ public abstract class MasterOpMode extends LinearOpMode
     public static DcMotor motorLauncher;
 
     //Other Devices
+    public static Servo servoLauncher;
 
     // Create drivers
     public DriverInput driver1;
@@ -24,13 +26,16 @@ public abstract class MasterOpMode extends LinearOpMode
 
     //This method initializes the motors.
     public void Initialize(){
-        //Initialize
+        // Drive train motors
         motorFrontLeft = hardwareMap.dcMotor.get("motorFL");
         motorFrontRight = hardwareMap.dcMotor.get("motorFR");
         motorBackLeft = hardwareMap.dcMotor.get("motorBL");
         motorBackRight = hardwareMap.dcMotor.get("motorBR");
         // Todo - move to miscellaneous motors.
         motorLauncher = hardwareMap.dcMotor.get("motorLauncher");
+
+        //Servos
+        servoLauncher = hardwareMap.servo.get("servoLauncher");
 
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -44,6 +49,7 @@ public abstract class MasterOpMode extends LinearOpMode
         // Todo - move to miscellaneous motors.
         motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLauncher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         driver1 = new DriverInput(gamepad1);
         driver2 = new DriverInput(gamepad2);
@@ -118,4 +124,31 @@ public abstract class MasterOpMode extends LinearOpMode
         return (ticksPerMinute);
 
     }
+
+    public void fireLauncher(boolean checkSpeed)
+    {
+        if (checkSpeed) {
+            double launcherRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
+            if (launcherRPM >= Constants.MINIMUM_LAUNCHER_SPEED) {
+                servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
+                pauseMillis(100);
+                servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
+            }
+        } else {
+            servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
+            pauseMillis(100);
+            servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
+        }
+
+    }
+
+    //Pauses for time milliseconds
+    public void pauseMillis(double time)
+    {
+        double startTime = System.currentTimeMillis();
+        while(System.currentTimeMillis() - startTime < time && opModeIsActive()){
+            idle();
+        }
+    }
+
 }

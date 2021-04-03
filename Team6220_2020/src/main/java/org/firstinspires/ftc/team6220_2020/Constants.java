@@ -59,7 +59,7 @@ public class Constants
     public static final double TRANSLATION_P = DRIVE_POWER_FACTOR;
     public static final double TRANSLATION_I = 0;
     public static final double TRANSLATION_D = 0;
-    //----------------------------------------------------------------
+    //---------------------------------------------------------------
 
 
     // Vuforia and OpenCV constants----------------------------------
@@ -75,7 +75,13 @@ public class Constants
     public static final double MINIMUM_TRIGGER_VALUE = 0.1;
     //---------------------------------------------------------------
 
+    //Servo Values --------------------------------------------------
+    public static final double SERVO_LAUNCH_REST = 0.27;
+    public static final double SERVO_LAUNCH_FIRE = 0.34;
+    //---------------------------------------------------------------
+
     // Helpful Constants
-    public static  final double MILLIS_TO_MIN = 60000;
-    //--------------------------------------------------------------
+    public static final double MILLIS_TO_MIN = 60000;
+    public static final double MINIMUM_LAUNCHER_SPEED = 1200;
+    //---------------------------------------------------------------
 }
