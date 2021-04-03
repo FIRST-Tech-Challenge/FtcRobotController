@@ -29,26 +29,23 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.drm.DrmStore;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import java.security.KeyStore;
 
-
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Red Skystone", group ="Concept")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Red Skystone", group ="Disabled")
 
 public class RedSkystone extends LinearOpMode implements MecanumDrive.TickCallback {
 
     private MecanumDrive mecanumDrive = new MecanumDrive();
     private AtlasRobot robot = new AtlasRobot();
-    private TensorflowDetector tf;
+    private SkystoneObjectDetector tf;
+
     enum RedScan {LEFT, MIDDLE, RIGHT}
     int updates;
 
     @Override
     public void runOpMode() {
-        tf = new TensorflowDetector();
+        tf = new SkystoneObjectDetector();
         tf.init(hardwareMap, telemetry, this);
 
         while (!isStarted() ) {
