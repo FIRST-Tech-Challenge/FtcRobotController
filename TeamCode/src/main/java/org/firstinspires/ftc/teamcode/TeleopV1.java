@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.Robot.*;
 
 @TeleOp(name = "teleop")
 public class TeleopV1 extends LinearOpMode {
+
     @Override
     public void runOpMode() throws InterruptedException {
         initMotors(this);
@@ -152,20 +153,23 @@ public class TeleopV1 extends LinearOpMode {
             //launcher motors
             if(a2){
                 //launcher1.setPower(0.80);
-                launchPower = 0.75; //0.75
-                blocker.setPosition(0.65); //open
+                launchPower = 0.73; //0.75
+                blocker.setPosition(BLOCKER_OPEN); //open
             } else if (LTrigger2 > 0 && LBumper1) { //both controller 1 and controller 2 are needed to initiate shooting to force teamwork
-                launchPower = 0.81; //0.8
-                blocker.setPosition(0.65); //open
+                launchPower = 0.78; //0.8
+                blocker.setPosition(BLOCKER_OPEN); //open
             } else if (LBumper2 && LBumper1) {
                 launchPower = 1; //full
-                blocker.setPosition(0.65); //open
+                blocker.setPosition(BLOCKER_OPEN); //open
             } else if (dpadRight2) {
                 launchPower = -0.1; //backwards
-                blocker.setPosition(0.65);
+                blocker.setPosition(BLOCKER_OPEN);
+            } else if (RStickX2 > 0.2 || RStickY2 > 0.2)  {
+                launchPower = 0.64;
+                blocker.setPosition(BLOCKER_OPEN);
             } else {
                 launchPower = 0;
-                blocker.setPosition(0.85); //closed
+                blocker.setPosition(BLOCKER_CLOSED); //closed
             }
 
             //feeder servo
@@ -213,9 +217,11 @@ public class TeleopV1 extends LinearOpMode {
             }
 
 
+
+
             //telementry////////////////////////////////////////////////////////////////////////////////////////////
             telemetry.addData("angle: ", getAngle());
-            telemetry.addData("Belt encoder value: ", blocker.getPosition());
+            telemetry.addData("Belt encoder value: ", launcherbelt.getCurrentPosition());
             telemetry.addData("arm encoder: ", wobbleArmMotor.getCurrentPosition());
             telemetry.addData("wheel encoder: ", leftfront.getCurrentPosition());
             telemetry.addData("launcher Power: ", launcher2.getPower());

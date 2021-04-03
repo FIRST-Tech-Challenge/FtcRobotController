@@ -26,6 +26,8 @@ public class Robot {
     public Robot() {}
 
     final static int TICKS_PER_INCH = 33;
+    public final static double BLOCKER_OPEN = 0.25;
+    public final static double BLOCKER_CLOSED = 0.7;
 
     final static double DEG90 = 22;//90 degree turn distance ()
 

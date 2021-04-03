@@ -51,7 +51,7 @@ public class RedTopRR extends LinearOpMode {
 
 ////////Program start////////////////////////////////////////////////////////////////////////
         //init servos
-        blocker.setPosition(.2);
+        blocker.setPosition(BLOCKER_OPEN);
         //wobbleArmMotor.setTargetPosition(ARM_UP);
         //wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //wobbleArmMotor.setPower(.5);
@@ -84,10 +84,10 @@ public class RedTopRR extends LinearOpMode {
         drive.followTrajectory(initForward);
 
         //Ramp up launcher
-        launcher2.setPower(0.83);
+        launcher2.setPower(0.85);
         //move to first shot
         Trajectory shot1 = drive.trajectoryBuilder(initForward.end())
-                .lineToLinearHeading(new Pose2d(-6, 58, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-7.5, 43, Math.toRadians(0)))
                 .build();
         drive.followTrajectory(shot1);
 
@@ -99,13 +99,13 @@ public class RedTopRR extends LinearOpMode {
         while(launcherbelt.isBusy()) {}
         //launch ring2
         sleep(300);
-        launcherbelt.setTargetPosition(1800);
+        launcherbelt.setTargetPosition(3000);
         launcherbelt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         launcherbelt.setPower(1); //.6
         while(launcherbelt.isBusy()) {}
         //launch ring3
         sleep(300);
-        launcherbelt.setTargetPosition(3400);
+        launcherbelt.setTargetPosition(7500);
         launcherbelt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         launcherbelt.setPower(1); //.6
         while(launcherbelt.isBusy()) {}
@@ -158,13 +158,13 @@ public class RedTopRR extends LinearOpMode {
         Trajectory moveToWobble2;
         Trajectory approachWobble2;
         moveToZone = drive.trajectoryBuilder(shot1.end(),true)
-                .lineToLinearHeading(new Pose2d(-12, 54, Math.toRadians(115)))
+                .lineToLinearHeading(new Pose2d(-10, 54, Math.toRadians(115)))
                 .build();
         drive.followTrajectory(moveToZone);
         ejectWobbleGoal();
         moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(), true)
                 //.splineTo(new Vector2d(7,43), Math.toRadians(180))
-                .lineToLinearHeading(new Pose2d(8.5, 48, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(8, 50, Math.toRadians(0)))
                 .build();
         drive.followTrajectory(moveToWobble2);
 
@@ -179,7 +179,7 @@ public class RedTopRR extends LinearOpMode {
         pickUpWobble();
 
         moveToZoneAgain = drive.trajectoryBuilder(moveToWobble2.end())
-                .lineToLinearHeading(new Pose2d(-6, 48, Math.toRadians(143)))
+                .lineToLinearHeading(new Pose2d(-5, 51, Math.toRadians(143)))
                 .build();
         drive.followTrajectory(moveToZoneAgain);
     }
@@ -189,12 +189,12 @@ public class RedTopRR extends LinearOpMode {
         Trajectory moveToWobble2;
         Trajectory approachWobble2;
         moveToZone = drive.trajectoryBuilder(shot1.end(),true)
-                .splineTo(new Vector2d(-34.5,32), Math.toRadians(-45))
+                .splineTo(new Vector2d(-29,32), Math.toRadians(-45))
                 .build();
         drive.followTrajectory(moveToZone);
         ejectWobbleGoal();
         moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(),true)
-                .splineTo(new Vector2d(1,43.8), Math.toRadians(180))
+                .splineTo(new Vector2d(8.5,44.8), Math.toRadians(180))
                 .build();
         drive.followTrajectory(moveToWobble2);
 
@@ -208,7 +208,7 @@ public class RedTopRR extends LinearOpMode {
         pickUpWobble();
 
         moveToZoneAgain = drive.trajectoryBuilder(approachWobble2.end(),true)
-                .splineTo(new Vector2d(-28,22), Math.toRadians(-45))
+                .splineTo(new Vector2d(-20,27), Math.toRadians(-45))
                 .build();
         drive.followTrajectory(moveToZoneAgain);
     }
@@ -220,7 +220,7 @@ public class RedTopRR extends LinearOpMode {
         Trajectory backUp;
         moveToZone = drive.trajectoryBuilder(shot1.end(),true)
                 //.splineTo(new Vector2d(-48,50), Math.toRadians(-45))
-                .lineToLinearHeading(new Pose2d(-53, 59, Math.toRadians(145)))
+                .lineToLinearHeading(new Pose2d(-49, 59, Math.toRadians(145)))
                 .build();
         drive.followTrajectory(moveToZone);
         ejectWobbleGoal();
@@ -230,7 +230,8 @@ public class RedTopRR extends LinearOpMode {
         drive.followTrajectory(backUp);
 
         moveToWobble2 = drive.trajectoryBuilder(backUp.end())
-                .splineTo(new Vector2d(13.7,47), Math.toRadians(0))
+                //.splineTo(new Vector2d(13.7,47), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(10, 47, Math.toRadians(0)))
                 .build();
         drive.followTrajectory(moveToWobble2);
 
@@ -244,7 +245,8 @@ public class RedTopRR extends LinearOpMode {
         pickUpWobble();
 
         moveToZoneAgain = drive.trajectoryBuilder(approachWobble2.end(),true)
-                .splineTo(new Vector2d(-46,48), Math.toRadians(-45))
+                //.splineTo(new Vector2d(-46,48), Math.toRadians(-45))
+                .lineToLinearHeading(new Pose2d(-49, 52, Math.toRadians(115)))
                 .build();
         drive.followTrajectory(moveToZoneAgain);
     }
