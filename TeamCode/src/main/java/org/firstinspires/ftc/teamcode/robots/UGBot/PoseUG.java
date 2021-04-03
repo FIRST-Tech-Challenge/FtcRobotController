@@ -66,7 +66,7 @@ public class PoseUG {
     public double brightness = 0.0; //headlamp brightness - max value should be .8 on a fully charged battery
     public static double turnP = 0.0055; // proportional constant applied to error in degrees
     public static double turnI = 0.0; // integral constant
-    public static double turnD = .01; // derivative constant
+    public static double turnD = .13; // derivative constant
     public static double distP = 0.5; // proportional constant applied to error in meters
     public static double distI = 0.0; // integral constant
     public static double distD = .19; // derivative constant
@@ -507,8 +507,7 @@ public class PoseUG {
         packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
         packet.put("rotVelBase", rotVelBase);
         packet.put("zero indicator", 0);
-        packet.put("actual thing", 0.4572*70);
-        packet.put("target Thing", getDistRightDist() * 70);
+        packet.put("turn error", turnError);
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -688,7 +687,6 @@ public class PoseUG {
             case NONE:
                 //turret.setTurntableAngle(turret.getTurretTargetHeading());
                 launcher.setFlywheelActivePID(false);
-//                turret.setTurntableAngle(getHeading());
                 break;
             default:
                     goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
@@ -1116,13 +1114,13 @@ public class PoseUG {
         if(rampedUp){
             switch (toggleTriggerState) {
                 case 0:
-                    launcher.servoTrigger.setPosition(servoNormalize(2100));
+                    launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_SHOOT);
                     lastTriggerTime = System.currentTimeMillis();
                     toggleTriggerState++;
                     break;
                 case 1:
                     if (System.currentTimeMillis() - lastTriggerTime > 500) {
-                        launcher.servoTrigger.setPosition(servoNormalize(1790));
+                        launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_BACK);
                         toggleTriggerState = 0;
                         rampedUp = false;
                         return true;
@@ -1172,7 +1170,7 @@ public class PoseUG {
 
     boolean isNavigating = false;
     boolean autonTurnInitialized = false;
-    double autonTurnTarget = 90.0;
+    double autonTurnTarget = Constants.__ATMEP;
 
     public boolean cardinalBaseTurn(boolean isRightTurn) {
 //        if (!autonTurnInitialized) {
@@ -1187,7 +1185,7 @@ public class PoseUG {
         if (rotateIMU(autonTurnTarget, 5.0) ) {
 //            isNavigating = false;
 //            autonTurnInitialized = false;
-            autonTurnTarget = wrap360(autonTurnTarget + 90);
+            autonTurnTarget = wrap360(isRightTurn ? autonTurnTarget + Constants.__ATMEP : autonTurnTarget - Constants.__ATMEP);
             return true;
         }
         return false;
@@ -1632,6 +1630,9 @@ public class PoseUG {
      * @param targetAngle  the target angle of the robot in the coordinate system of
      *                     the sensor that provides the current angle
      */
+
+    double turnError = 0;
+
     public void movePIDMixer(double Kp, double Ki, double Kd, double pwrFwd, double pwrStf, double currentAngle,
             double targetAngle) {
         // if (pwr>0) PID.setOutputRange(pwr-(1-pwr),1-pwr);
@@ -1650,8 +1651,10 @@ public class PoseUG {
         turnPID.setContinuous();
         turnPID.setInput(currentAngle);
 
+
         // calculates the angular correction to apply
         double turnCorrection = turnPID.performPID();
+        turnError = wrapAngleMinus(targetAngle, currentAngle);
 
         // performs the drive with the correction applied
         driveMixerMec(pwrFwd, pwrStf, turnCorrection);

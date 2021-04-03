@@ -92,11 +92,11 @@ public class Constants {
 
     public static double TURRET_TOLERANCE = 0.01;
 
+    public static int LAUNCHER_TRIGGER_STOWED = 2050;
+    public static int LAUNCHER_TRIGGER_SHOOT = 2200;
+    public static int LAUNCHER_TRIGGER_BACK = 1835;
 
-    public static int LAUNCHER_TRIGGER_STOWED = 900;
-    public static int LAUNCHER_TRIGGER_SHOOT = 1920;
-    public static int LAUNCHER_TRIGGER_STARTING = 1500;
-
+    public static int __ATMEP = 90;
 
     //inner conflicts
     public static double TURRET_HEADING_OFFSET = 30;
@@ -136,9 +136,9 @@ public class Constants {
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
         TARGET_C_1(49/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,-1,-1,1),
         TARGET_C_2((49+7)/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,45+45,5,0),
-        TARGET_B_1((49)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
+        TARGET_B_1((49)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,.5), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
         TARGET_B_2((49+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, -1,0,5,1),
-        TARGET_A_1((49+7)/INCHES_PER_METER, 7.75*12/INCHES_PER_METER, 0,180,5,0),
+        TARGET_A_1((49+7)/INCHES_PER_METER, 7.75*12/INCHES_PER_METER, 0,190,5,.5),
         TARGET_A_2((49-7)/INCHES_PER_METER, 7*12/INCHES_PER_METER, -1,45+45,5,1),
         RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1,0),
         RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1),

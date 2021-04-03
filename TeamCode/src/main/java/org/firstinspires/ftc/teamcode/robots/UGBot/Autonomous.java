@@ -12,8 +12,6 @@ import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
-
 /**
  * Class to keep all autonomous-related functions and state-machines in
  */
@@ -96,13 +94,18 @@ public class Autonomous {
     public StateMachine AutoFull = getStateMachine(autoStage)
             .addState(()-> robot.makeIntakeOuttake())
             .addState(() -> robot.launcher.setElbowTargetAngle(0))
-            .addState(() -> robot.intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_PICKUP)) //1240
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.launcher.WobbleGrip())
+//            .addState(() -> robot.launcher.WobbleGrip())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.launcher.setElbowTargetAngle(15))
-            .addSingleState(() -> robot.launcher.servoTrigger.setPosition(servoNormalize(Constants.LAUNCHER_TRIGGER_STARTING)))
+            .addSingleState(() -> robot.launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_BACK))
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addMineralState(ugStateProvider,
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true,  .5),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .5),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .5))
+
             .addMineralState(ugStateProvider,
                     ()-> robot.turret.setTurntableAngle(190) && (robot.turret.getHeading() < 210 && robot.turret.getHeading() > 10),
                     ()-> robot.returnTrue(),
@@ -115,12 +118,7 @@ public class Autonomous {
                     () -> true,
                     ()-> robot.turret.setTurntableAngle(115) && (robot.turret.getHeading() < 120))
 
-            .addMineralState(ugStateProvider,
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true,  .5),
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .5),
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .5))
-
-            .addState(() -> robot.launcher.WobbleRelease())
+//            .addState(() -> robot.launcher.WobbleRelease())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,false, .5))

@@ -79,8 +79,6 @@ public class Launcher {
         elbowPID.setIntegralCutIn(40);
         elbowPID.enableIntegralZeroCrossingReset(false);
 
-        servoTrigger.setPosition(servoNormalize(2000));
-
     }
 
     //Important junk
@@ -88,6 +86,7 @@ public class Launcher {
     long prevNanoTime;
     int prevMotorTicks;
     int gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;
+    int triggerTargetPos = Constants.LAUNCHER_TRIGGER_STOWED;
     public void update(){
         if(active) {
             if(elbowActivePID)
@@ -95,6 +94,7 @@ public class Launcher {
             else
                 elbow.setPower(0);
 
+            servoTrigger.setPosition(servoNormalize(triggerTargetPos));
             servoGripper.setPosition(servoNormalize(gripperTargetPos));
 
             flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) / 1E9);
@@ -134,32 +134,15 @@ public class Launcher {
         //flywheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-
-    //gripper methods
-
-    public void setGripperPos(int pos){gripperTargetPos = pos;}
-
-    boolean toggleGripperState = true;
-
-    public boolean toggleGripper(){
-        if(toggleGripperState){
-            toggleGripperState = false;
-            gripperTargetPos = Constants.LAUNCHER_TRIGGER_STOWED;
-            return true;
-        }
-        else{
-            toggleGripperState = true;
-            gripperTargetPos = Constants.LAUNCHER_TRIGGER_SHOOT;
-            return false;
-        }
-    }
-
     public boolean WobbleGrip(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;return true;}
     public boolean WobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;return true;}
 
+    //trigger methods
+
+    public boolean setTriggerTargetPos(int triggerPos){triggerTargetPos = triggerPos;return true;}
+    public int getTriggerTargetPos(){return triggerTargetPos;}
+
     //flywheel methods
-
-
 
     public void spinPIDFlywheel(double Kp, double Ki, double Kd, double currentVelocity, double targetVelocity) {
 

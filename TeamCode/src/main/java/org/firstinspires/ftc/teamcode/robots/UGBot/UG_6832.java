@@ -664,7 +664,6 @@ public class UG_6832 extends OpMode {
 //            cacheValidated = false;
 //        }
         //endregion
-
         if(toggleAllowed(gamepad1.b, b, 1))
             robot.articulate(PoseUG.Articulation.toggleTrigger);
         if(toggleAllowed(gamepad1.a, a, 1))

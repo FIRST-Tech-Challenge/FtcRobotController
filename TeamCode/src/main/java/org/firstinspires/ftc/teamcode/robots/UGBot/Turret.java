@@ -84,6 +84,8 @@ public class Turret{
     }
 
     public void update(){
+
+
         //IMU Update
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         if (!initialized) {
@@ -95,13 +97,30 @@ public class Turret{
             initialized = true;
         }
 
+
         turretHeading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
 
-        //execute PID calcs
-        if(isMaintainingHeading)
-            maintainHeadingTurret(true);
+        if(active) {
+            //execute PID calcs
+            if (isMaintainingHeading)
+                maintainHeadingTurret(true);
+            else
+                maintainHeadingTurret(false);
+        }
         else
-            maintainHeadingTurret(false);
+            motor.setPower(0);
+
+    }
+
+    double turnIncrement = 10;
+    public boolean setTurretHeadingDirectional(double finalHeading, boolean turnsRight){
+        turretTargetHeading = Math.min(finalHeading,  (turnsRight ? turretHeading + turnIncrement : turretHeading - turnIncrement));
+
+        if(turretTargetHeading == finalHeading){
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -120,13 +139,9 @@ public class Turret{
     public boolean isActive(){
         return active;
     }
-    public void setActive(boolean active){
-        this.active = active;
-        if(active)
-            if(motor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) motor.setPower(.5);
-        else
-            motor.setPower(0);
-    }
+
+    public void setActive(boolean active){this.active = active;}
+
     public void adjust(double speed) {
         setTurntableAngle(getHeading(), 7.0 * speed);
     }
