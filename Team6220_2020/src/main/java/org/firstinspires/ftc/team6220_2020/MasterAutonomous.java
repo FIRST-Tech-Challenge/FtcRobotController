@@ -32,7 +32,7 @@ public abstract class MasterAutonomous extends MasterOpMode
     double lastY = 0;
 
     //PID filters for navigation
-    PIDFilter translationPID;
+    //PIDFilter translationPID;
     //-----------------------------------------------------------------------------------------
 
     // Allows the 1st driver to decide which autonomous routine should be run using gamepad input
@@ -115,8 +115,11 @@ public abstract class MasterAutonomous extends MasterOpMode
         double startX = xPos;
         double startY = yPos;
 
-        double netDistance;
+        double netDistance = 0;
 
+        //double startAngle = imu.get
+
+        PIDFilter translationPID;
         translationPID = new PIDFilter(Constants.TRANSLATION_P, Constants.TRANSLATION_I, Constants.TRANSLATION_D);
 
         while(!targetAcquired && opModeIsActive())
@@ -131,11 +134,11 @@ public abstract class MasterAutonomous extends MasterOpMode
             translationPID.roll(netDistance);
 
             //We drive the mecanum wheels with the PID value
-            //if(translationPID.getFilteredValue() < Constants.MINIMUM_DRIVE_POWER){
-            driveMecanum(radDriveAngle, Constants.MINIMUM_DRIVE_POWER,0.0);
-            //} else{
-            //    driveMecanum(radDriveAngle, translationPID.getFilteredValue(),0.0);
-            //}
+            if(translationPID.getFilteredValue() < Constants.MINIMUM_DRIVE_POWER){
+                driveMecanum(radDriveAngle, Constants.MINIMUM_DRIVE_POWER,0.0);
+            } else{
+                driveMecanum(radDriveAngle, translationPID.getFilteredValue(),0.0);
+            }
 
             // Update positions using last distance measured by encoders (utilizes fact that encoders have been reset to 0).
             xPos = lastX + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() +
@@ -145,14 +148,15 @@ public abstract class MasterAutonomous extends MasterOpMode
 
             telemetry.addData("X Position: ", xPos);
             telemetry.addData("Y Position: ", yPos);
-            telemetry.addData("Distance Traveled ", distanceTraveled);
+            telemetry.addData("Net Distance ", netDistance);
             telemetry.update();
 
             netDistance = Math.abs(Math.abs(distanceTraveled) - Math.abs(targetDistance));
-            if(Math.abs(netDistance) < Constants.POSITION_TOLERANCE_IN){
+            if(/*Math.abs(netDistance) < Constants.POSITION_TOLERANCE_IN*/ Math.abs(distanceTraveled) > targetDistance){
                 targetAcquired = true;
             }
 
+            driveMecanum(radDriveAngle, 0.0,0.0);
             telemetry.addData("Target", targetAcquired);
         }
     }

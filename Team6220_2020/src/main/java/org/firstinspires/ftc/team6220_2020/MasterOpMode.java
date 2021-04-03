@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team6220_2020;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -23,6 +24,12 @@ public abstract class MasterOpMode extends LinearOpMode
     // Create drivers
     public DriverInput driver1;
     public DriverInput driver2;
+
+    //Booleans
+    public boolean isSlowMode = false;
+
+    //
+    public BNO055IMU imu;
 
     //This method initializes the motors.
     public void Initialize(){
@@ -53,11 +60,29 @@ public abstract class MasterOpMode extends LinearOpMode
 
         driver1 = new DriverInput(gamepad1);
         driver2 = new DriverInput(gamepad2);
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu". Certain parameters must be specified before using the imu.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
     }
 
     //This method drives mecanum when given an angle drive power and turning power
     public void driveMecanum(double driveAngle, double drivePower, double turningPower)
     {
+
+        if(isSlowMode){
+            drivePower *= 0.5;
+            turningPower *= 0.5;
+        }
+
         double x = drivePower * Math.cos(driveAngle);
         double y = drivePower * Math.sin(driveAngle);
 

@@ -2,16 +2,16 @@ package org.firstinspires.ftc.team6220_2020;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Autonomous Competition", group = "Autonomous")
+@Autonomous(name = "_Autonomous Competition_", group = "Autonomous")
 public class AutoCompetition extends MasterAutonomous{
     @Override
     public void runOpMode()
     {
         Initialize();
 
-        telemetry.addData("Status : ", "Pre Setup");
-        telemetry.update();
-        runSetup();
+        //telemetry.addData("Status : ", "Pre Setup");
+        //telemetry.update();
+        //runSetup();
 
         telemetry.addData("Status : ", "Waiting");
         telemetry.update();
@@ -19,15 +19,26 @@ public class AutoCompetition extends MasterAutonomous{
 
         //telemetry.addData("Status : ", "12 90");
         //telemetry.update();
-        driveInches(24, 90);
+        driveInches(60, 90);
+        driveInches(12, 0);
+
         pauseMillis(1000);
-        //telemetry.addData("Status : ", "12 180");
-        //telemetry.update();
-        driveInches(24, 270);
-        //telemetry.addData("Status : ", "Done");
-        //telemetry.update();
 
-        pauseMillis(5000);
+        driveLauncher(-1.0);
+        pauseMillis(2000);
 
+        fireLauncher(false);
+        driveInches(12, 0);
+        pauseMillis(2000);
+
+        fireLauncher(false);
+        driveInches(12, 0);
+        pauseMillis(2000);
+
+        fireLauncher(false);
+        pauseMillis(2000);
+
+        driveLauncher(0.0);
+        driveInches(12, 90);
     }
 }
