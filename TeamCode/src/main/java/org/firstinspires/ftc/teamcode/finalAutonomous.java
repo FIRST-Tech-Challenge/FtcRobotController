@@ -39,7 +39,7 @@ public class finalAutonomous extends LinearOpMode {
 
     private boolean shouldWobble = true;
     private boolean shouldShoot = true;
-    private boolean shouldDrive = false;
+    private boolean shouldDrive = true;
     private boolean shouldDetectRings = true;
     private boolean ringDetectTestMode = false;
 
@@ -67,23 +67,25 @@ public class finalAutonomous extends LinearOpMode {
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        move(1, 1750); // only need to drop goal, no need to strafe
+                        move(0.4, 1750); // only need to drop goal, no need to strafe
                         wobble.setPosition(180);
                         break;
                     case 1:
-                        move(1, 2000);
+                        move(0.2, 200); //Off wall
+                       // spin(0.2, 2000); //Spin 180
+                        move(0.4, 2);
                         strafeRight(500);
                         wobble.setPosition(180);
                         break;
                     case 2:
-                        move(1, 2250);
+                        move(0.4, 2250);
                         wobble.setPosition(180);
                         break;
                     default:
                         break;
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
-            move(-1, 500);
+            move(-0.0, 0);
             if (ringDetectTestMode){
                 while (opModeIsActive()){
                     telemetry.update();
@@ -106,6 +108,16 @@ public class finalAutonomous extends LinearOpMode {
         }
     }
 
+    /*public void spin(double speed, int time) {
+        if (shouldDrive) {
+            frontLeft.setPower(speed);
+            backLeft.setPower(speed);
+            frontRight.setPower(-1*speed);
+            backRight.setPower(-1*speed);
+            sleep(time);
+        }
+    }
+*/
     public void strafeLeft(int time) {
         if (shouldDrive) {
             frontLeft.setPower(-0.5);
@@ -138,7 +150,7 @@ public class finalAutonomous extends LinearOpMode {
     }
 
     public int calculateZone() {
-        int samples = 6;
+        int samples = 10;
         telemetry.addData(">", "Taking " + samples + " samples...");
         telemetry.update();
 
@@ -156,7 +168,7 @@ public class finalAutonomous extends LinearOpMode {
                 default: zones[3]++;
                     break;
             }
-            sleep(150);
+            sleep(200);
         }
 
         int largestIndex = 0;
