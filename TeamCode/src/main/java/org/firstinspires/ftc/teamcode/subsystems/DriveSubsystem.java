@@ -91,7 +91,7 @@ public class DriveSubsystem extends Subsystem {
         // arrived at point, so stop
         stopMotors();
 
-        // correct angle to be preferred angle * DON'T NEED IF slowTurn() works correctly (within +-1 degree)
+        // correct angle to be preferred angle
         turnTo(targetAngle, DriveSubsystem.QUICKEST_DIRECTION);
 
     }
@@ -261,18 +261,22 @@ public class DriveSubsystem extends Subsystem {
 
         while ((angleRemaining < -2.5 || angleRemaining > 2.5) && opMode.opModeIsActive()) {
 
-            if (angleRemaining > 30) {
+            if(angleRemaining > 45) {
                 power = 1;
+            } else if (angleRemaining > 30) {
+                power = 0.5;
             } else if(angleRemaining > 5) {
-                power = 0.3;
+                power = 0.2;
             } else if(angleRemaining > 0) {
-                power = 0.15;
-            } else if(angleRemaining < -30) {
+                power = 0.1;
+            } else if(initialAngle < -45) {
                 power = -1;
+            } else if(angleRemaining < -30) {
+                power = -0.5;
             } else if(angleRemaining < -5) {
-                power = -0.3;
+                power = -0.2;
             } else if(angleRemaining < 0) {
-                power = -0.15;
+                power = -0.1;
             }
 
             angleRemaining = targetAngle - robot.rawAngle;
