@@ -2,37 +2,56 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robot.DriveTrain;
 import org.firstinspires.ftc.robot.FlyWheel;
 import org.firstinspires.ftc.robot_utilities.GamePadController;
 import org.firstinspires.ftc.robot.Hitter;
+import org.firstinspires.ftc.robot_utilities.RotationController;
 import org.firstinspires.ftc.robot_utilities.Vals;
 
 @TeleOp(name = "EchoOp")
 public class EchoOp extends OpMode {
+    private FtcDashboard dashboard;
     private GamePadController gamepad;
-    private Motor driveLeft, driveRight;
+    private DriveTrain driveTrain;
     private FlyWheel flywheel;
     private Hitter hitter;
     private Motor intake1, intake2;
+    private Motor wobbleArm;
+    private Servo wobbleHand;
+    private DifferentialDriveOdometry odometry;
+    private RotationController rotationController;
 
     private double intakeSpeed = 0;
+    private boolean wobbleHandOpen = false;
+    private double wobbleHandPos = Vals.wobble_hand_close;
+    private double wobbleArmVelocity = 0;
     private boolean flywheelOn = false;
+    private boolean flywheelPowershot = false;
 
     @Override
     public void init() {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         gamepad = new GamePadController(gamepad1);
 
-        driveLeft = new Motor(hardwareMap, "dl");
-        driveRight = new Motor(hardwareMap, "dr");
-        driveLeft.setRunMode(Motor.RunMode.VelocityControl);
-        driveRight.setRunMode(Motor.RunMode.VelocityControl);
-        driveLeft.setVeloCoefficients(0.05, 0, 0);
-        driveRight.setVeloCoefficients(0.05, 0, 0);
+        driveTrain = new DriveTrain(new Motor(hardwareMap, "dl"),
+                                    new Motor(hardwareMap, "dr"));
+        driveTrain.resetEncoders();
+
+        rotationController = new RotationController(hardwareMap.get(BNO055IMU.class, "imu"));
+
+        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), new Pose2d(45,  -300, new Rotation2d(Math.PI/2)));
 
         intake1 = new Motor(hardwareMap, "in1");
         intake2 = new Motor(hardwareMap, "in2");
@@ -41,7 +60,10 @@ public class EchoOp extends OpMode {
         intake1.setVeloCoefficients(0.05, 0, 0);
         intake2.setVeloCoefficients(0.05, 0, 0);
 
-        flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE));
+        wobbleHand = hardwareMap.servo.get("wobbleArmServo");
+        wobbleArm = new Motor(hardwareMap, "wobbleArmMotor");
+
+        flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE), telemetry);
 
         hitter = new Hitter(hardwareMap.servo.get("sv"));
     }
@@ -49,9 +71,13 @@ public class EchoOp extends OpMode {
     @Override
     public void loop() {
         gamepad.update();
+        double[] driveTrainDistance = driveTrain.getDistance();
+        double leftDistanceInch = driveTrainDistance[0] / Vals.TICKS_PER_INCH_MOVEMENT;
+        double rightDistanceInch = driveTrainDistance[1] / Vals.TICKS_PER_INCH_MOVEMENT;
+        odometry.update(new Rotation2d(rotationController.getAngleRadians()), leftDistanceInch, rightDistanceInch);
 
 
-        double leftSpeed = -gamepad1.left_stick_y;
+        double leftSpeed = gamepad1.left_stick_y;
         double rightSpeed = gamepad1.right_stick_y;
         if(gamepad1.right_trigger >= 0.1) {
             intakeSpeed = 0.7;
@@ -62,6 +88,28 @@ public class EchoOp extends OpMode {
         }
 
         if(gamepad.isARelease()) {
+            wobbleHandOpen = !wobbleHandOpen;
+        }
+
+        if(wobbleHandOpen) {
+            wobbleHandPos = Vals.wobble_hand_open;
+        } else {
+            wobbleHandPos = Vals.wobble_hand_close;
+        }
+
+        if(gamepad1.dpad_up) {
+            wobbleArmVelocity = Vals.wobble_arm_up_velocity;
+        } else if(gamepad1.dpad_down) {
+            wobbleArmVelocity = Vals.wobble_arm_down_velocity;
+        } else {
+            wobbleArmVelocity = 0;
+        }
+
+
+        if(gamepad.isXRelease()) {
+            flywheelPowershot = !flywheelPowershot;
+        }
+        if(gamepad.isYRelease()) {
             flywheel.flipDirection();
         }
 
@@ -74,7 +122,11 @@ public class EchoOp extends OpMode {
         }
 
         if(flywheelOn) {
-            flywheel.on();
+            if(flywheelPowershot) {
+                flywheel.on_slow();
+            } else {
+                flywheel.on();
+            }
         } else {
             flywheel.off();
         }
@@ -93,21 +145,44 @@ public class EchoOp extends OpMode {
             hitter.reset();
         }
 
-        driveLeft.set(leftSpeed);
-        driveRight.set(rightSpeed);
+        driveTrain.setSpeed(leftSpeed, rightSpeed);
 
         intake1.set(intakeSpeed);
         intake2.set(intakeSpeed);
 
+        wobbleHand.setPosition(wobbleHandPos);
+        wobbleArm.set(wobbleArmVelocity);
+
 
         telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
         telemetry.addData("Flywheel Velocity", flywheel.flywheel.getCorrectedVelocity());
+        telemetry.addData("Flywheel Filtered Speed", Vals.flywheel_filtered_speed);
         telemetry.addData("Flywheel Position", flywheel.flywheel.getCurrentPosition());
         telemetry.addData("Hitter Position", hitter.hitter.getPosition());
         telemetry.addData("Left Speed", leftSpeed);
         telemetry.addData("Right Speed", rightSpeed);
+        telemetry.addData("Left Distance", driveTrainDistance[0]);
+        telemetry.addData("Right Distance", driveTrainDistance[1]);
         telemetry.addData("Intake Speed", intakeSpeed);
         telemetry.addData("Flywheel Ready State", isReady);
+
+        Pose2d pose = odometry.getPoseMeters();
+        telemetry.addData("X Pos: ", pose.getX());
+        telemetry.addData("Y Pos: ", pose.getY());
+        telemetry.addData("Heading: ", pose.getHeading());
+
+
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay()
+                .setFill("blue")
+                .fillRect(pose.getX(), pose.getY(), 10, 10);
+        TelemetryPacket packet2 = new TelemetryPacket();
+        packet2.fieldOverlay()
+                .setFill("red")
+                .fillRect(0, 0, 30, 30);
+
+        dashboard.sendTelemetryPacket(packet);
+        dashboard.sendTelemetryPacket(packet2);
 
 
     }

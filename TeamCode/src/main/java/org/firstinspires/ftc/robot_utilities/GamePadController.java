@@ -11,8 +11,8 @@ public class GamePadController {
     private boolean pressedRB, pressedLB;
 
 
-    public GamePadController(Gamepad gamepad1) {
-        this.gamepad = gamepad1;
+    public GamePadController(Gamepad gamepad) {
+        this.gamepad = gamepad;
     }
 
 
