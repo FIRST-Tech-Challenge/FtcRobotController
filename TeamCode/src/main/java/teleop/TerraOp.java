@@ -42,6 +42,8 @@ public class TerraOp extends OpMode {
 
             bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
 
+            bot.claw(bot.cllControl.update(gamepad2.dpad_left, gamepad2.dpad_right), bot.clrControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
+
         }
 
         if(gamepad2.y){
@@ -56,11 +58,11 @@ public class TerraOp extends OpMode {
             bot.extendWobbleGoal(0);
         }
 
-        if (gamepad2.dpad_right){
-            bot.openClaw();
-        } else if(gamepad2.dpad_left){
-            bot.closeClaw();
-        }
+//        if (gamepad2.dpad_right){
+//            bot.openClaw();
+//        } else if(gamepad2.dpad_left){
+//            bot.closeClaw();
+//        }
 
 
         bot.moveArm(-gamepad2.right_stick_y);
@@ -79,6 +81,8 @@ public class TerraOp extends OpMode {
 //        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
 //
 //        telemetry = telemetryHandler.addOdometry(telemetry, bot);
+        telemetry.addData("cll pos", bot.cll.getPosition());
+        telemetry.addData("clr pos", bot.clr.getPosition());
 
         telemetry.update();
 

@@ -45,6 +45,9 @@ public class TerraBot {
 
     public Cycle pushControl = new Cycle(0.1, 0.25, 0.32);
 
+    public Cycle cllControl = new Cycle(0.2, 0.5, 1);
+    public Cycle clrControl = new Cycle(1, 0.5, 0.0);
+
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor br;
 
@@ -118,7 +121,8 @@ public class TerraBot {
 
         odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());
 
-        limits.addLimit(arm, 0, 180);
+        limits.addLimit(arm, Constants.WG_LOWER_LIMIT, Constants.WG_UPPER_LIMIT);
+        limits.addLimit(wge, 0, Constants.WGE_UPPER_LIMIT);
     }
 
     public DcMotor getMotor(HardwareMap hwMap, String name, DcMotor.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode){
@@ -176,13 +180,13 @@ public class TerraBot {
         clr.setPosition(posRight);
     }
 
-    public void openClaw() {
-        claw(Constants.CLL_OPEN, Constants.CLR_OPEN);
-    }
-
-    public void closeClaw() {
-        claw(Constants.CLL_GRAB, Constants.CLR_GRAB);
-    }
+//    public void openClaw() {
+//        claw(Constants.CLL_OPEN, Constants.CLR_OPEN);
+//    }
+//
+//    public void closeClaw() {
+//        claw(Constants.CLL_GRAB, Constants.CLR_GRAB);
+//    }
 
     public void updateIntake(boolean left_bumper, boolean right_bumper) {
         if(right_bumper){
@@ -227,7 +231,7 @@ public class TerraBot {
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public double getArmPos(){
-        return arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS;
+        return (arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS) + Constants.WG_START_POS;
     }
     public boolean isArmInLimits(double dir){
         return limits.isInLimits(arm, dir, getArmPos());

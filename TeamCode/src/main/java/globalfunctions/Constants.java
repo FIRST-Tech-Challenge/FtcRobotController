@@ -17,6 +17,12 @@ public class Constants {
     public static final double CLR_OPEN = 0;
     public static final double RP_START = 0.1;
 
+    public static final double WG_LOWER_LIMIT = -12;
+    public static final double WG_UPPER_LIMIT = 180;
+    public static final double WG_START_POS = -3;
+
+    public static final double WGE_UPPER_LIMIT = 10; // cm
+
     public static final double ROBOT_WIDTH = 30; // meters
     public static final double ROBOT_LENGTH = 33; // meters
     public static final double ROBOT_RADIUS = Math.sqrt(Math.pow(ROBOT_WIDTH/2, 2) + Math.pow(ROBOT_LENGTH/2, 2)); // meters
