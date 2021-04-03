@@ -19,7 +19,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
         telemetry.addData("ReadyToStart",0);
         telemetry.update();
         waitForStart();
-        int rings=0;
+        int rings=1;
         if(rings!=1&&rings!=4) {
             robot.goToPosition(-10,0,0,2);
             robot.goToPosition( -26,-16,-183,2);
