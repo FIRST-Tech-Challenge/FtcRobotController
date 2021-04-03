@@ -38,9 +38,13 @@ public class LauncherTest extends MasterTeleOp {
                 isSlowMode = !isSlowMode;
             }
 
+            if(driver2.isButtonJustPressed(Button.RIGHT_BUMPER)){
+                front = !front;
+            }
+
             telemetry.addData("Launcher RPM", (getMotorTicksPerMinute(motorLauncher, 100)) / Constants.AM_37_TICKS_PER_ROTATION);
             telemetry.addData("Slow Mode", isSlowMode);
-            telemetry.addData("IMU: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
+            telemetry.addData("IMU: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES));
             telemetry.update();
 
             idle();

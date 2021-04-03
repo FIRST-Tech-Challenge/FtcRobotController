@@ -150,19 +150,27 @@ public abstract class MasterOpMode extends LinearOpMode
 
     }
 
-    public void fireLauncher(boolean checkSpeed)
+    public void fireLauncher(double speed)
     {
-        if (checkSpeed) {
-            double launcherRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
-            if (launcherRPM >= Constants.MINIMUM_LAUNCHER_SPEED) {
-                servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
-                pauseMillis(100);
-                servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
-            }
-        } else {
+        if (speed == 0) {
             servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
             pauseMillis(100);
             servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
+        } else {
+            boolean firedYet = false;
+            while(!firedYet) {
+                double motorRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
+                if (Math.abs(motorRPM - speed) < 50) {
+                    servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
+                    pauseMillis(100);
+                    servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
+                    firedYet = true;
+                } else if (motorRPM > speed) {
+                    motorLauncher.setPower(motorLauncher.getPower() - 0.05);
+                } else {
+                    motorLauncher.setPower(motorLauncher.getPower() + 0.05);
+                }
+            }
         }
 
     }

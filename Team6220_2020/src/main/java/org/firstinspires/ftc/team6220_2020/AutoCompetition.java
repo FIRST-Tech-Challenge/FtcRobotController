@@ -13,32 +13,46 @@ public class AutoCompetition extends MasterAutonomous{
         //telemetry.update();
         //runSetup();
 
-        telemetry.addData("Status : ", "Waiting");
+        telemetry.addData("RPM: ", getMotorTicksPerMinute(motorLauncher, 100));
         telemetry.update();
         waitForStart();
 
         //telemetry.addData("Status : ", "12 90");
         //telemetry.update();
-        driveInches(60, 90);
-        driveInches(12, 0);
+        //driveInches(60, 90);
 
-        pauseMillis(1000);
-
-        driveLauncher(-1.0);
+        //old 1700 millis
+        driveMillis(4000,90, 0.25);
+        //driveMillis(10,180);
         pauseMillis(2000);
 
-        fireLauncher(false);
-        driveInches(12, 0);
-        pauseMillis(2000);
 
-        fireLauncher(false);
-        driveInches(12, 0);
-        pauseMillis(2000);
+        //driveMillis(800, 180, 0.3);
 
-        fireLauncher(false);
+        driveLauncher(1.0);
+        //driveLauncher(-1.0);
+        pauseMillis(2200);
+
+        fireLauncher(1400);
+        pauseMillis(2200);
+        driveMillis(600, 0, 0.25);
+        pauseMillis(4000);
+
+        fireLauncher(1400);
+        driveMillis(600, 0, 0.25);
+        pauseMillis(2200);
+
+        fireLauncher(1400);
         pauseMillis(2000);
 
         driveLauncher(0.0);
-        driveInches(12, 90);
+        driveMillis(500,90, 0.5);
+    }
+
+    public void driveMillis(double millis, double direction, double power){
+        driveMecanum(Math.toRadians(direction), power, 0.0);
+        pauseMillis(millis);
+        driveMecanum(0.0,0.0,0.0);
+
     }
 }

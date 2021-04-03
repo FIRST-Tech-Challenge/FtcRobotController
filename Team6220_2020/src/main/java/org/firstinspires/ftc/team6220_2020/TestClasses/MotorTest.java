@@ -28,6 +28,9 @@ public class MotorTest extends MasterTeleOp {
         //motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         while (opModeIsActive()){
+
+            driveLauncher(gamepad1.left_stick_y);
+
             driver1.update();
             if(driver1.isButtonPressed(Button.A)){
                 motorFrontLeft.setPower(.5);
