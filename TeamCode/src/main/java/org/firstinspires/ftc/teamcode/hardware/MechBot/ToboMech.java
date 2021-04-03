@@ -280,11 +280,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     double scale = chassis.powerScale()*normalizeRatio;
                     if (scale>0.6) scale=0.6; // fix turn power to be 0.6 for the odometry accuracy
                     else if (scale<0.2) scale=0.2;
-                    chassis.turn((currentX > 0 ? 1 : -1), Math.abs(currentX * currentX) * scale);
+                    //chassis.turn((currentX > 0 ? 1 : -1), Math.abs(currentX * currentX) * scale);
+                    chassis.turn((currentX > 0 ? 1 : -1), Math.abs(scaleRotatePower(currentX))*scale);
+
                 } else if (Math.abs(currentY) > MIN_STICK_VAL) { // car mode
                     chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio * chassis.powerScale(), right_x);
                 } else if (Math.abs(currentY) > MIN_STICK_VAL) {
-                    chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
+                    //chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
+                    if( chassis.powerScale()<1.0 ) { 
+                       chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(scaleDrivePowerLowSensitivity(currentY, normalizeRatio)));
+                    } else {
+                       chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(scaleDrivePower(currentY, normalizeRatio)));
+                    }
                 } else {
                     chassis.stop();
                 }
@@ -310,7 +317,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         // car drive
                         chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio, left_x);
                     } else { // turn over-write free style
-                        chassis.turn((left_x > 0 ? 1 : -1), 0.6 * Math.abs(left_x * left_x) * chassis.powerScale() * normalizeRatio);
+                        //chassis.turn((left_x > 0 ? 1 : -1), 0.6 * Math.abs(left_x * left_x) * chassis.powerScale() * normalizeRatio);
+                        chassis.turn((left_x > 0 ? 1 : -1), Math.abs(scaleRotatePower(left_x)) * normalizeRatio);
                     }
                 } else if (Math.abs(currentX) + Math.abs(currentY) > MIN_STICK_VAL) { // free style
                     movingAngle = Math.toDegrees(Math.atan2(currentX, currentY));
@@ -2316,5 +2324,98 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double a1= -0.00919319;
         return a1*rpm + a0;
     }
+
+   double scaleDrivePower(double dVal, double factor) {
+      double[] scaleArray = {0.0, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.27, 0.30, 0.34, 0.38, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00}; 
+
+      // Get the corresponding index for the scaleDrivePower array.
+      int index = (int) (dVal * 16.0);
+      if (index < 0) {
+         index = -index;
+      } else if (index > 16) {
+         index = 16;
+      }
+
+      double dScale = 0.0;
+      if (dVal < 0) {
+         dScale = -scaleArray[index];
+      } else {
+         dScale = scaleArray[index];
+      }
+
+      if( factor>0.0 && factor<=1.5) dScale *= factor;
+      return dScale;
+   }
+
+   /// Low sensitivity drive mode for balancing and relic
+   double scaleDrivePowerLowSensitivity(double dVal, double factor) {
+      double[] scaleArray = { 0.0, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.26, 0.28, 0.30, 0.32, 0.34, 0.36, 0.38, 0.40, 0.42, 0.44};  // Y17, with encoder
+
+      // Get the corresponding index for the scaleDrivePower array.
+      int index = (int) (dVal * 16.0);
+      if (index < 0) {
+         index = -index;
+      } else if (index > 16) {
+         index = 16;
+      }
+
+      double dScale = 0.0;
+      if (dVal < 0) {
+         dScale = -scaleArray[index];
+      } else {
+         dScale = scaleArray[index];
+      }
+
+      if( factor>0.0 && factor<=1.5) dScale *= factor;
+      return dScale;
+   }
+
+   /// Low sensitivity drive mode 
+   double scaleDrivePowerLowSensitivitySidewalk(double dVal, double factor) {
+      double[] scaleArray = {0.0, 0.22, 0.24, 0.26, 0.28, 0.30, 0.32, 0.34, 0.36, 0.38, 0.40, 0.42, 0.44, 0.46, 0.48, 0.50, 0.52};  // Y20, TRMec
+
+      // Get the corresponding index for the scaleDrivePower array.
+      int index = (int) (dVal * 16.0);
+      if (index < 0) {
+         index = -index;
+      } else if (index > 16) {
+         index = 16;
+      }
+
+      double dScale = 0.0;
+      if (dVal < 0) {
+         dScale = -scaleArray[index];
+      } else {
+         dScale = scaleArray[index];
+      }
+
+      if( factor>0.0 && factor<=1.5) dScale *= factor;
+      return dScale;
+   }
+
+   /// Scale the robot rotating power
+   double scaleRotatePower(double dVal) {
+      double[] scaleArray = {0.0, 0.35, 0.4, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.78, 0.80, 0.85, 0.90, 0.93, 0.97, 1.0};   // Y17, with encoder for Mecanum 6
+
+      // Get the corresponding index for the scalePower array.
+      int index = (int) (dVal * 16.0);
+      if (index < 0) {
+         index = -index;
+      } else if (index > 16) {
+         index = 16;
+      }
+
+      double dScale = 0.0;
+      if (dVal < 0) {
+         dScale = -scaleArray[index];
+      } else {
+         dScale = scaleArray[index];
+      }
+
+      double ENCODER_MAX_ROTATE_POWER = 1.0;
+      dScale *= ENCODER_MAX_ROTATE_POWER;
+      return dScale;
+   }
+
 
 }
