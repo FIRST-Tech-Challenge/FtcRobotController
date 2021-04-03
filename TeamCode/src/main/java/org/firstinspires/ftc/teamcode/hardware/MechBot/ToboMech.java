@@ -581,8 +581,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
                 } else if (source.isPressed(Button.BACK)) {
                     // semi power shot
-                    // doPowerShotsSemi(3,false);
-                    doPowerShotsSemiNew(3,true);
+                     doPowerShotsSemi(3,false);
+                    //doPowerShotsSemiNew(3,true);
                 } else {
                     if (hopper.getTransferIsDown() || Math.abs(shooting_rpm-WARM_UP_RPM_POWER_SHOT)>20 ||
                     shooter.getCurrentRPM()<WARM_UP_RPM_POWER_SHOT-100) {
