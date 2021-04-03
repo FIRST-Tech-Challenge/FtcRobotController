@@ -24,7 +24,6 @@ public class AutoModule {
     public boolean pausing = false;
 
 
-
     public CodeSeg updateCode = new CodeSeg() {
         @Override
         public void run() {
@@ -40,16 +39,14 @@ public class AutoModule {
         }
     };
 
-
     public TerraThread autoModuleThread;
-
+    public boolean initialized = false;
 
 
     public void start(){
-        if(!autoModuleThread.executing) {
-            autoModuleThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
-
+        if(!initialized || !autoModuleThread.executing) {
             autoModuleThread = new TerraThread(updateCode);
+            autoModuleThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
             Thread t = new Thread(autoModuleThread);
             t.start();
         }
@@ -57,10 +54,12 @@ public class AutoModule {
     }
 
     public boolean isExecuting(){
-        return autoModuleThread.executing;
+        return initialized && autoModuleThread.executing;
     }
     public void stop(){
-        autoModuleThread.stop();
+        if (initialized) {
+            autoModuleThread.stop();
+        }
     }
 
     public void addDelay(final double secs){

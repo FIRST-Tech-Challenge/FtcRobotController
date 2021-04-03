@@ -21,13 +21,7 @@ public class Limits {
         double lower_bound = lower.get(i);
         double upper_bound = upper.get(i);
 
-        boolean inLim = true;
-        if (lower_bound >= pos && dir < 0) {
-            inLim = false;
-        } else if (pos >= upper_bound && dir > 0) {
-            inLim = false;
-        }
-        return inLim;
+        return !((lower_bound >= pos && dir < 0) || (pos >= upper_bound && dir > 0));
     }
 
 

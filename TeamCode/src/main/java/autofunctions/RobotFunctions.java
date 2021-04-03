@@ -33,5 +33,21 @@ public class RobotFunctions {
             }
         };
     }
+    public CodeSeg turnArm (final double pos) {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.startWobbleGoalWithEncoders(pos, 1);
+            }
+        };
+    }
+    public CodeSeg stopArm () {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.stopWobbleGoal();
+            }
+        };
+    }
 
 }

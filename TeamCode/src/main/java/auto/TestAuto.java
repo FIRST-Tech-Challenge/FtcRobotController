@@ -26,8 +26,8 @@ public class TestAuto extends LinearOpMode {
         bot.startOdoThreadAuto(this);
 
 //        path.addStop(0.1);
-
-
+//
+//
 //        path.addRF(rf.startOuttake(bot));
 //        path.addStop(5);
 //        path.addRF(rf.stopOuttake());

@@ -35,9 +35,11 @@ public class TerraBot {
 
     public CRServo rh;
     public CRServo rh2;
-    public CRServo cl;
+
     public CRServo wge;
 
+    public Servo cll;
+    public Servo clr;
     public Servo rp;
 
 
@@ -78,7 +80,7 @@ public class TerraBot {
         in = getMotor(hwMap, "in", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outr = getMotor(hwMap, "outr", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl = getMotor(hwMap, "outl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm = getMotor(hwMap, "arm", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm = getMotor(hwMap, "arm", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         resetEnc(outr);
         resetEnc(outl);
@@ -86,7 +88,8 @@ public class TerraBot {
 
         rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
         rh2 = getCRServo(hwMap, "rh2", CRServo.Direction.REVERSE);
-        cl = getCRServo(hwMap, "cl", CRServo.Direction.FORWARD);
+        cll = getServo(hwMap, "cll", Servo.Direction.FORWARD, Constants.CLL_GRAB);
+        clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLL_OPEN);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, Constants.RP_START);
         wge = getCRServo(hwMap, "wge", CRServo.Direction.REVERSE);
 
@@ -114,6 +117,8 @@ public class TerraBot {
         autoModules.add(shooter);
 
         odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());
+
+        limits.addLimit(arm, 0, 180);
     }
 
     public DcMotor getMotor(HardwareMap hwMap, String name, DcMotor.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode){
@@ -166,8 +171,17 @@ public class TerraBot {
         outl.setPower(p);
     }
 
-    public void claw(double pow){
-        cl.setPower(pow);
+    public void claw(double posLeft, double posRight){
+        cll.setPosition(posLeft);
+        clr.setPosition(posRight);
+    }
+
+    public void openClaw() {
+        claw(Constants.CLL_OPEN, Constants.CLR_OPEN);
+    }
+
+    public void closeClaw() {
+        claw(Constants.CLL_GRAB, Constants.CLR_GRAB);
     }
 
     public void updateIntake(boolean left_bumper, boolean right_bumper) {
@@ -199,7 +213,9 @@ public class TerraBot {
 
     }
     public void moveArm(double p){
-        arm.setPower(p);
+        if (isArmInLimits(p)) {
+            arm.setPower(p);
+        }
     }
     public void moveArmWithEnc(double deg, double pow){
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -213,7 +229,7 @@ public class TerraBot {
     public double getArmPos(){
         return arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS;
     }
-    public boolean isArmInLimts(double dir){
+    public boolean isArmInLimits(double dir){
         return limits.isInLimits(arm, dir, getArmPos());
     }
 
@@ -293,6 +309,19 @@ public class TerraBot {
 
     public void extendWobbleGoal(double pow) {
         wge.setPower(pow);
+    }
+
+    public void startWobbleGoalWithEncoders(double pos, double pow) {
+        pos *= Constants.NEV_DEGREES_TO_TICKS;
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setTargetPosition((int) pos);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(pow);
+    }
+
+    public void stopWobbleGoal() {
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setPower(0);
     }
 
     public void startOdoThreadAuto(final LinearOpMode op){

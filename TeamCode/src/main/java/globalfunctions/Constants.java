@@ -11,8 +11,10 @@ public class Constants {
     public static final double SHOOTER_WHEEL_RADIUS = 0.05; // meters
     public static final double FIELD_LENGTH = 3.6576; //meters
 
-    public static final double WGE_START = 0.55;
-    public static final double WGE_EXTENDED = 0.85;
+    public static final double CLL_GRAB = 0.2;
+    public static final double CLL_OPEN = 1;
+    public static final double CLR_GRAB = 1;
+    public static final double CLR_OPEN = 0;
     public static final double RP_START = 0.1;
 
     public static final double ROBOT_WIDTH = 30; // meters

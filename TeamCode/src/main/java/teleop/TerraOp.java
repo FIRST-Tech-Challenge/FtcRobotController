@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import global.TerraBot;
+import globalfunctions.Constants;
 import globalfunctions.TelemetryHandler;
 
-@TeleOp(name = "TestOp")
+@TeleOp(name = "TerraOp")
 public class TerraOp extends OpMode {
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
@@ -14,6 +15,8 @@ public class TerraOp extends OpMode {
     @Override
     public void init() {
         bot.init(hardwareMap);
+        telemetry.addData("Ready", "");
+        telemetry.update();
     }
 
     @Override
@@ -53,16 +56,18 @@ public class TerraOp extends OpMode {
             bot.extendWobbleGoal(0);
         }
 
-        if(gamepad2.dpad_right){
-            bot.claw(1);
-        }else if(gamepad2.dpad_left){
-             bot.claw(-1);
-        }else{
-            bot.claw(0);
+        if (gamepad2.dpad_right){
+            bot.openClaw();
+        } else if(gamepad2.dpad_left){
+            bot.closeClaw();
         }
 
 
-        bot.moveArm(gamepad2.right_stick_y);
+        bot.moveArm(-gamepad2.right_stick_y);
+
+        telemetry.addData("Wobble goal pow", -gamepad2.right_stick_y);
+        telemetry.addData("Wobble goal pos", -bot.arm.getCurrentPosition());
+        telemetry.addData("Wobble goal pos in deg", bot.getArmPos());
 
 //        bot.extendWobbleGoal(gamepad2.a);
 
