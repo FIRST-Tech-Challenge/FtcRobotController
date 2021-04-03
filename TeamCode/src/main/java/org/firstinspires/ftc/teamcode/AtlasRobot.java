@@ -95,7 +95,7 @@ public class AtlasRobot {
 
     void setManipulator(ManipulatorDirection direction, boolean autoStop) {
         manipulatorAutostop = autoStop;
-        manipulatorState=direction;
+        manipulatorState = direction;
         switch (direction) {
             case IN:
                 inRamp.setPosition(1);

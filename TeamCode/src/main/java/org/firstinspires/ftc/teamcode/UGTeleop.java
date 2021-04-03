@@ -4,10 +4,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="Teleop", group="Linear Opmode")
+@TeleOp(name="UG Teleop", group="Linear Opmode")
 
 public class UGTeleop extends LinearOpMode {
 
@@ -37,7 +38,7 @@ public class UGTeleop extends LinearOpMode {
     @Override
     public void runOpMode() {
         mecanumDrive.init(hardwareMap, telemetry, this);
-
+        robot.init(hardwareMap,telemetry,this);
 
 
         //capstone = hardwareMap.get(Servo.class, "capstone");
@@ -76,14 +77,38 @@ public class UGTeleop extends LinearOpMode {
 
             boolean pull = gamepad2.x;
             boolean push = gamepad2.b;
-
-            if (gamepad2.right_bumper) {
-                //mecanumDrive.setMotors(0,0,0,1);
-                sleep(100);
-                sleep(100);
-
+            if (pull) {
+                robot.setPickup(UGRobot.pickupDirection.IN);
+                telemetry.addData("Manipulator Motors", "Pulling");
+            } else if (push) {
+                robot.setPickup(UGRobot.pickupDirection.OUT);
+                telemetry.addData("Manipulator Motors", "Pushing");
             } else {
+                telemetry.addData("Manipulator Motors", "Idle");
+                robot.setPickup(UGRobot.pickupDirection.STOP);
             }
+            float shoot = gamepad2.right_trigger;
+            float unshoot = gamepad2.left_trigger;
+
+            boolean shootTriggered = gamepad2.right_trigger > 0.5;
+            boolean unshootTriggered = gamepad2.left_trigger > 0.5;
+
+            if (shootTriggered) {
+                robot.setShooter(UGRobot.shooterDirection.OUT);
+                sleep(500);
+                robot.setLaunchServo(true);
+                sleep(300);
+                robot.setLaunchServo(false);
+                sleep(700);
+
+            } else if (unshootTriggered) {
+                robot.setShooter(UGRobot.shooterDirection.IN);
+            } else {
+                robot.setShooter(UGRobot.shooterDirection.IDLE);
+            }
+
+
+
 
 
 
