@@ -193,6 +193,7 @@ public class PoseUG {
         autoIntake,
         testShot,
         makeIntakeOuttake,
+        setUpTent,
         intakeDisk
     }
 
@@ -507,7 +508,7 @@ public class PoseUG {
         packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
         packet.put("rotVelBase", rotVelBase);
         packet.put("zero indicator", 0);
-        packet.put("turn error", turnError);
+        packet.put("tent", isTented);
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -977,7 +978,7 @@ public class PoseUG {
                         launcher.setElbowTargetAngle(targetPose.launchElevation);
                     }
                     if(targetPose.launchHeading > -.01) {
-                        turret.setTurntableAngle(targetPose.launchHeading);
+                        turret.setTurretHeadingDirectional(targetPose.launchHeading, targetPose.DoT);
                     }
                 }
 
@@ -994,15 +995,22 @@ public class PoseUG {
                 break;
             case 2: //end of travel
                 // if we haven't kicked in launcher adjustments yet, now is the time to do it
-                if (targetPose.launchElevation > -.01) { //set elevation{
+                if (targetPose.launchElevation > -.01 && targetPose.launchStart > .99) { //set elevation{
                         launcher.setElbowTargetAngle(targetPose.launchElevation);
                     }
-                if (targetPose.launchHeading > -.01) {
-                        turret.setTurntableAngle(targetPose.launchHeading);
-                    }
 
-                getFieldPosStateThree = 0;
-                return true;
+                if(targetPose.launchHeading > -.01 && targetPose.launchStart > .99) {
+                    if(turret.setTurretHeadingDirectional(targetPose.launchHeading, targetPose.DoT)){
+                        getFieldPosStateThree = 0;
+                        return true;
+                    }
+                }
+                else{
+                    getFieldPosStateThree = 0;
+                    return true;
+                }
+                break;
+
 
                 }
         return false;
@@ -1076,25 +1084,37 @@ public class PoseUG {
 
     public int autoIntakeState = 0;
     private double autoIntakeTimer = 0;
+    private boolean wasTented = false;
     public boolean autoIntake(){
         switch(autoIntakeState){
             case 0:
-                intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_PICKUP);
+                if(isTented){ //this looks like bad coding, but it the only way to structure this
+                    wasTented = true;
+                }
+                isTented = false;
+                intake.setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT);
+                autoIntakeState++;
+                break;
+            case 1:
+                if(!wasTented) {
+                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_PICKUP);
+                }
                 intake.setIntakeSpeed(Constants.AUTO_INTAKE_SPEED);
                 autoIntakeTimer = System.nanoTime();
                 autoIntakeState++;
                 break;
-            case 1:
+            case 2:
                 if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_FIRST * 1E9) {
                     intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_HANDOFF);
                     autoIntakeTimer = System.nanoTime();
                     autoIntakeState++;
                 }
                 break;
-            case 2:
+            case 3:
                 if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_SECOND * 1E9) {
                     intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
                     intake.setIntakeSpeed(0);
+                    wasTented = false;
                     autoIntakeState = 0;
                     return true;
                 }
@@ -1170,7 +1190,7 @@ public class PoseUG {
 
     boolean isNavigating = false;
     boolean autonTurnInitialized = false;
-    double autonTurnTarget = Constants.__ATMEP;
+    double autonTurnTarget = 90;
 
     public boolean cardinalBaseTurn(boolean isRightTurn) {
 //        if (!autonTurnInitialized) {
@@ -1185,7 +1205,7 @@ public class PoseUG {
         if (rotateIMU(autonTurnTarget, 5.0) ) {
 //            isNavigating = false;
 //            autonTurnInitialized = false;
-            autonTurnTarget = wrap360(isRightTurn ? autonTurnTarget + Constants.__ATMEP : autonTurnTarget - Constants.__ATMEP);
+            autonTurnTarget = wrap360(isRightTurn ? autonTurnTarget + 90 : autonTurnTarget - 90);
             return true;
         }
         return false;
@@ -1249,6 +1269,30 @@ public class PoseUG {
         return false;
     }
 
+    int tentSetup = 0;
+    boolean isTented = false;
+    public boolean setupTent(){
+        switch (tentSetup){
+            case 0:
+                intake.setIntakeSpeed(1);
+                intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_PICKUP);
+                intake.setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT - 200);
+                outtakeTimer = System.nanoTime();
+                tentSetup++;
+                break;
+            case 1:
+                if(System.nanoTime() - outtakeTimer > 1 * 1E9) {
+                    intake.setIntakeSpeed(0);
+                    outtakeTimer = System.nanoTime();
+                    tentSetup = 0;
+                    isTented = true;
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
+
     public Articulation articulate(Articulation target) {
         articulation = target; // store the most recent explict articulation request as our target, allows us
                                // to keep calling incomplete multi-step transitions
@@ -1282,6 +1326,11 @@ public class PoseUG {
                 break;
             case makeIntakeOuttake:
                 if(makeIntakeOuttake()){
+                    articulation = PoseUG.Articulation.manual;
+                }
+                break;
+            case setUpTent:
+                if(setupTent()){
                     articulation = PoseUG.Articulation.manual;
                 }
                 break;

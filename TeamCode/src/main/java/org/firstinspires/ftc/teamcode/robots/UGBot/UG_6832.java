@@ -627,6 +627,7 @@ public class UG_6832 extends OpMode {
             robot.setAutonSingleStep(true);
             joystickDriveStarted = true;
             robot.launcher.setActive(true);
+            robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
         }
 
 
@@ -636,10 +637,25 @@ public class UG_6832 extends OpMode {
         pwrFwd = 0;
         pwrRot = 0;
 
-            if (notdeadzone(gamepad1.left_stick_y))
-                pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
-            if (notdeadzone(gamepad1.right_stick_x))
-                pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
+        if(gamepad1.left_bumper){
+            pwrDamper = .3 * .75;
+        }
+
+        if (notdeadzone(gamepad1.left_stick_y)) {
+            pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
+        }
+
+        if(robot.isTented){
+            if(gamepad1.left_stick_y <= 0)
+                robot.intake.setIntakeSpeed(gamepad1.left_stick_y * Constants.__ATMEP2);
+            if(gamepad1.left_stick_y >= 0)
+                robot.intake.setIntakeSpeed(gamepad1.left_stick_y * Constants.__ATMEP);
+        }
+
+
+        if (notdeadzone(gamepad1.right_stick_x))
+            pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
+
 
             if (nearZero(pwrFwd) && nearZero(pwrRot)) {
                 robot.driveMixerDiffSteer(0, 0);
@@ -669,15 +685,17 @@ public class UG_6832 extends OpMode {
         if(toggleAllowed(gamepad1.a, a, 1))
             robot.flywheelIsActive = !robot.flywheelIsActive;
         if(toggleAllowed(gamepad1.y, y, 1)) {
-//            robot.intake.toggleFullTilt();
             robot.articulate(PoseUG.Articulation.autoIntake);
         }
-        if(toggleAllowed(gamepad1.x,x,1))
-            robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
+        if(toggleAllowed(gamepad1.x,x,1)){
+            robot.articulate(PoseUG.Articulation.setUpTent);
+        }
 
         if (notdeadzone(gamepad1.right_stick_y)) {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
         }
+
+
 
         if (gamepad1.right_trigger > .01)
             robot.turret.rotateRight(gamepad1.right_trigger * 2);

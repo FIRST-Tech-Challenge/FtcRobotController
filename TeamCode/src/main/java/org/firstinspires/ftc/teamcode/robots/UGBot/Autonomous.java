@@ -98,7 +98,7 @@ public class Autonomous {
 //            .addState(() -> robot.launcher.WobbleGrip())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.launcher.setElbowTargetAngle(15))
-            .addSingleState(() -> robot.launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_BACK))
+
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addMineralState(ugStateProvider,
@@ -106,17 +106,9 @@ public class Autonomous {
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .5),
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .5))
 
-            .addMineralState(ugStateProvider,
-                    ()-> robot.turret.setTurntableAngle(190) && (robot.turret.getHeading() < 210 && robot.turret.getHeading() > 10),
-                    ()-> robot.returnTrue(),
-                    ()-> robot.turret.setTurntableAngle(190)
-                            && (robot.turret.getHeading() < 210 && robot.turret.getHeading() > 10)
-                            && (robot.intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_PICKUP)))
+            .addSingleState(() -> robot.launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_BACK))
+
             .addState(() -> robot.intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL)) //1240
-            .addMineralState(ugStateProvider,
-                    ()-> true,
-                    () -> true,
-                    ()-> robot.turret.setTurntableAngle(115) && (robot.turret.getHeading() < 120))
 
 //            .addState(() -> robot.launcher.WobbleRelease())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))

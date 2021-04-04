@@ -112,15 +112,47 @@ public class Turret{
 
     }
 
-    double turnIncrement = 10;
-    public boolean setTurretHeadingDirectional(double finalHeading, boolean turnsRight){
-        turretTargetHeading = Math.min(finalHeading,  (turnsRight ? turretHeading + turnIncrement : turretHeading - turnIncrement));
+    double turnIncrement = 20;
+    public boolean setTurretHeadingDirectional(double finalHeading, Constants.DirectionOfTurn DoT){
 
-        if(turretTargetHeading == finalHeading){
-            return true;
-        }
+            switch (DoT) {
+                case LEFT:
+                    if(diffAngle2(finalHeading, turretHeading) < 90){
+                        turretTargetHeading = finalHeading;
+                        return true;
+                    }
+                    turretTargetHeading = wrap360(turretHeading - turnIncrement);
+                    break;
+                case RIGHT:
+                    if(diffAngle2(finalHeading, turretHeading) > 270){
+                        turretTargetHeading = finalHeading;
+                        return true;
+                    }
+                    turretTargetHeading = wrap360(turretHeading + turnIncrement);
+                    break;
+                case I_REALLY_DONT_CARE:
+                    turretTargetHeading = finalHeading;
+                    return true;
+            }
 
         return false;
+    }
+
+    public double diffAngle2(double angle1, double angle2){
+
+        double diff = angle1 - angle2;
+
+        //allow wrap around
+
+        if (Math.abs(diff) > 180)
+        {
+            if (diff > 0) {
+                diff -= 360;
+            } else {
+                diff += 360;
+            }
+        }
+        return diff;
     }
 
 

@@ -72,6 +72,7 @@ public class Conversions {
     public static double wrapAngle(double angle1, double angle2){
         return (angle1 + angle2) % 360;
     }
+
     public static double wrapAngleMinus(double angle1, double angle2){
         return 360-((angle1 + angle2) % 360);
     }
