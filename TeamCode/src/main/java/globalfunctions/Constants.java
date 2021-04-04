@@ -16,12 +16,14 @@ public class Constants {
     public static final double CLR_GRAB = 1;
     public static final double CLR_OPEN = 0;
     public static final double RP_START = 0.1;
+    public static final double CR_SERVO_MAX_SPEED = 180/(0.13 * 3 * Math.PI); // rad/s
 
     public static final double WG_LOWER_LIMIT = -12;
     public static final double WG_UPPER_LIMIT = 180;
     public static final double WG_START_POS = -3;
 
     public static final double WGE_UPPER_LIMIT = 10; // cm
+    public static final double WGE_RADIUS = 1.459 * 2.54; // cm
 
     public static final double ROBOT_WIDTH = 30; // meters
     public static final double ROBOT_LENGTH = 33; // meters
@@ -49,5 +51,7 @@ public class Constants {
     public static final double DIS_CENTER_TO_LEFT_ENC = 16; //cm 17.4
     public static final double DIS_CENTER_TO_RIGHT_ENC = DIS_BEWTEEN_ENCS-DIS_CENTER_TO_LEFT_ENC; //cm
     public static final double DIS_CENTER_ENC_TO_CENTER = HALF_DIS_BETWEEN_ENCS-DIS_CENTER_TO_LEFT_ENC;
+
+    public static final double DEGREES_TO_H = 0.5;
 
 }

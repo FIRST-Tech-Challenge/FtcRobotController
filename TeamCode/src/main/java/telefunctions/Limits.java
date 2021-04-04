@@ -35,9 +35,9 @@ public class Limits {
     }
 
     public boolean isInLimits(CRServo s, double dir,  double pos) {
-        int i = motors.indexOf(s);
-        double lower_bound = lowerM.get(i);
-        double upper_bound = upperM.get(i);
+        int i = crServos.indexOf(s);
+        double lower_bound = lowerS.get(i);
+        double upper_bound = upperS.get(i);
 
         return !((lower_bound >= pos && dir < 0) || (pos >= upper_bound && dir > 0));
     }

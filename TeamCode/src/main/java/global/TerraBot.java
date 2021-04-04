@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
 
+import globalfunctions.CRServoPositionTracker;
 import globalfunctions.Constants;
 import globalfunctions.TerraThread;
 import telefunctions.AutoModule;
@@ -37,6 +38,7 @@ public class TerraBot {
     public CRServo rh2;
 
     public CRServo wge;
+    public CRServoPositionTracker wgeTracker = new CRServoPositionTracker(0);
 
     public Servo cll;
     public Servo clr;
@@ -219,6 +221,9 @@ public class TerraBot {
     public void moveArm(double p){
         if (isArmInLimits(p)) {
             arm.setPower(p);
+            if (isWgeInLimits(p)) {
+                wge.setPower(Math.signum(p));
+            }
         }
     }
     public void moveArmWithEnc(double deg, double pow){
@@ -230,12 +235,17 @@ public class TerraBot {
         moveArm(0);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+    public void updateWgeTracker() {
+        wgeTracker.update(wge.getPower());
+    }
     public double getArmPos(){
         return (arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS) + Constants.WG_START_POS;
     }
+    public double getWgePos() { return wgeTracker.getPosCM(Constants.WGE_RADIUS); }
     public boolean isArmInLimits(double dir){
         return limits.isInLimits(arm, dir, getArmPos());
     }
+    public boolean isWgeInLimits(double dir) { return limits.isInLimits(wge, dir, getWgePos()); }
 
     public boolean areAutomodulesRunning(){
         for (AutoModule a: autoModules) {
