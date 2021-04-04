@@ -10,14 +10,18 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-public class TestPipeline extends OpenCvPipeline
+public class TerraCV extends OpenCvPipeline
 {
 
-    public Mat yCbCrChan2Mat = new Mat();
+    public Mat hsvMat = new Mat();
     public Mat thresholdMat = new Mat();
     public Mat contoursOnFrameMat = new Mat();
     public ArrayList<MatOfPoint> contoursList = new ArrayList<>();
     public int numContoursFound;
+
+    public Scalar ringColor =  new Scalar(30,86,82);
+    Scalar lower =  new Scalar(20,64,64);
+    Scalar upper =  new Scalar(40,100,100);
 
 
     @Override
@@ -25,9 +29,14 @@ public class TestPipeline extends OpenCvPipeline
     {
         contoursList.clear();
 
-        Imgproc.cvtColor(input, yCbCrChan2Mat, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(yCbCrChan2Mat, yCbCrChan2Mat, 2);
-        Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
+
+        Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
+//
+//        Core.extractChannel(hsvMat, hsvMat, 0);
+
+
+        Core.inRange(hsvMat, lower, upper, thresholdMat);
+//        Imgproc.threshold(hsvMat, thresholdMat, 102, 100, Imgproc.THRESH_BINARY_INV);
         Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         numContoursFound = contoursList.size();
         input.copyTo(contoursOnFrameMat);

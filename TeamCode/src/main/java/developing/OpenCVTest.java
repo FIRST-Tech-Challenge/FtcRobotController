@@ -4,15 +4,9 @@ package developing;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 @TeleOp
 public class OpenCVTest extends LinearOpMode
@@ -26,7 +20,7 @@ public class OpenCVTest extends LinearOpMode
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
         phoneCam.openCameraDevice();
-        phoneCam.setPipeline(new TestPipeline());
+        phoneCam.setPipeline(new TerraCV());
 
         phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 //
