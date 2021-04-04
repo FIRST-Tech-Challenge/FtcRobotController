@@ -197,10 +197,15 @@ public class UltimateMode extends LinearOpMode {
                     robot.shootServo();
                 }
 
-                // TURN OFF AUTO TURRET
-                if (gamepad2.b) {
-                    autoShooter = false;
-                    robot.stopTurretAngler();
+                // TOGGLE AUTO TURRET
+                if (gamepad2.x && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    autoShooter = !autoShooter;
+                    robot.changeTurretSync();
+                }
+
+                if (gamepad2.a) {
+                    robot.turretInit();
                 }
 
                 // ROTATE TURRET MANUALLY

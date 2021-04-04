@@ -32,13 +32,16 @@ public class UltimateBot extends YellowBot {
     private Servo shooterServo = null;
     private Servo ringGuard = null;
     private Servo turretServo = null;
+    private Servo camera = null;
     private DcMotorEx shooter = null;
 
     private static double SWING_BACK_POS = 1;
     private static double SWING_PLACE_POS = 0.2;
-    private static double SWING_LIFT_AND_HOLD = 0.3;
+    private static double SWING_LIFT_AND_HOLD = 0.35;
     private static double SWING_LIFT_WALL = 0.45;
-    private static double SHOOT_SERVO = 0.7;
+    private static double SHOOT_SERVO = 0.6;
+
+    private boolean syncturretcamera = true;
 
     private RingDetector rf = null;
     private TurretAngler ta = null;
@@ -110,7 +113,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             ringGuard = hwMap.get(Servo.class, "rguard");
-            ringGuard.setPosition(1);
+            ringGuard.setPosition(0.7);
         } catch (Exception ex) {
             throw new Exception("Issues with ringGuard. Check the controller config", ex);
         }
@@ -119,7 +122,14 @@ public class UltimateBot extends YellowBot {
             turretServo = hwMap.get(Servo.class, "turret");
             turretServo.setPosition(0.5);
         } catch (Exception ex) {
-            throw new Exception("Issues with ringGuard. Check the controller config", ex);
+            throw new Exception("Issues with turret. Check the controller config", ex);
+        }
+
+        try {
+            camera = hwMap.get(Servo.class, "camera");
+            camera.setPosition(0.5);
+        } catch (Exception ex) {
+            throw new Exception("Issues with camera. Check the controller config", ex);
         }
 
         telemetry.addData("Init", "Ultimate is ready");
@@ -174,7 +184,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.77);
+            shooter.setVelocity(MAX_VELOCITY*0.85);
         }
     }
 
@@ -225,9 +235,9 @@ public class UltimateBot extends YellowBot {
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
         if (shooterServo != null) {
-            shooterServo.setPosition(SHOOT_SERVO - 0.4);
+            shooterServo.setPosition(SHOOT_SERVO + 0.4);
             runtime.reset();
-            while (runtime.milliseconds() <= 250) {
+            while (runtime.milliseconds() <= 300) {
 
             }
             shooterServo.setPosition(SHOOT_SERVO);
@@ -242,7 +252,12 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Guard Up", defaultReturn =  "")
     public void guardUp() {
-        ringGuard.setPosition(1);
+        ringGuard.setPosition(0.7);
+    }
+
+    @BotAction(displayName = "Guard Middle", defaultReturn =  "")
+    public void guardMiddle() {
+        ringGuard.setPosition(0.5);
     }
 
     // CLAW FUNCTIONS
@@ -320,7 +335,32 @@ public class UltimateBot extends YellowBot {
         liftWobbleWall();
     }
 
-    // SPING TURRET FUNCTIONS
+    // CAMERA POSITIONING
+    double cameraPos = 0;
+    @BotAction(displayName = "Camera Init", defaultReturn = "")
+    public void cameraInit() {
+        if (camera != null) {
+            camera.setPosition(0.5);
+        }
+    }
+
+    public void cameraRight() {
+        if (camera != null) {
+            cameraPos = camera.getPosition();
+            cameraPos = cameraPos + 0.005;
+            camera.setPosition(cameraPos);
+        }
+    }
+
+    public void cameraLeft() {
+        if (camera != null) {
+            cameraPos = camera.getPosition();
+            cameraPos = cameraPos - 0.005;
+            camera.setPosition(cameraPos);
+        }
+    }
+
+    // TURRET FUNCTIONS
     double turretPos = 0;
     @BotAction(displayName = "Turret Little Right", defaultReturn = "")
     public void turretLittleRight() {
@@ -336,6 +376,27 @@ public class UltimateBot extends YellowBot {
         if (turretServo != null) {
             turretPos = turretServo.getPosition();
             turretPos = turretPos - 0.005;
+            turretServo.setPosition(turretPos);
+        }
+    }
+
+    @BotAction(displayName = "Turret Init", defaultReturn = "")
+    public void turretInit() {
+        if (turretServo != null) {
+            turretServo.setPosition(0.5);
+        }
+    }
+
+    @BotAction(displayName = "Turret to Camera", defaultReturn = "")
+    public void turretCamera() {
+        if (turretServo != null) {
+            if (cameraPos > 0.5) {
+                turretPos = cameraPos * 0.95;
+            } else if (cameraPos < 0.5) {
+                turretPos = cameraPos * 1.05;
+            } else {
+                turretPos = 0.5;
+            }
             turretServo.setPosition(turretPos);
         }
     }
@@ -368,6 +429,11 @@ public class UltimateBot extends YellowBot {
     int cameramove = 0;
     boolean turretrunning = true;
 
+    @BotAction(displayName = "Change Turret Sync", defaultReturn = "")
+    public void changeTurretSync() {
+        syncturretcamera = !syncturretcamera;
+    }
+
     public void angleTurret() {
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
@@ -375,9 +441,15 @@ public class UltimateBot extends YellowBot {
             while (turretrunning) {
                 cameramove = ta.moveTurret();
                 if (cameramove == 1) {
-                    turretLittleLeft();
+                    cameraLeft();
+                    if (syncturretcamera) {
+                        turretCamera();
+                    }
                 } else if (cameramove == 2) {
-                    turretLittleRight();
+                    cameraRight();
+                    if (syncturretcamera) {
+                        turretCamera();
+                    }
                 }
                 while(timer.milliseconds() < 60){
                 }
@@ -441,7 +513,6 @@ public class UltimateBot extends YellowBot {
 
 
     ///use for non-threaded detection
-    @BotAction(displayName = "Detect Stack", defaultReturn = "B")
     public AutoDot detectStack(String side) {
         AutoDot target = null;
         if (rf != null) {
@@ -457,10 +528,11 @@ public class UltimateBot extends YellowBot {
     }
 
 
-    // SHOOT PEG FUNCTIONS
-    public void shootPegContinuous(RobotCoordinatePosition locator){
+    // SHOOT PEG FUNCTION
+    public void shootPegTurn(RobotCoordinatePosition locator){
         // start shooter
         shooterpeglow();
+        turretInit();
 
         //wait for the locator to stabilize
         ElapsedTime timer = new ElapsedTime();
@@ -468,94 +540,45 @@ public class UltimateBot extends YellowBot {
         while(timer.milliseconds() < 500 && this.owner.opModeIsActive()){
         }
 
-        //get the orientation as the locator knows it. we'll use it later for corrections
         double originalOrientation = locator.getAdjustedCurrentHeading();
-
         double strafeSpeed = 0.2;
         double spinSpeed = 0.1;
-        double strafeToFirst = 7;
-        double strafeToSecond = 13;
-        double strafeToLast = 22;
+        double strafeTo = 15;
 
-        double currentPos = this.getHorizontalOdometer();
-        double distancefinal = strafeToLast * COUNTS_PER_INCH_REV;
-        double distancefirst = strafeToFirst * COUNTS_PER_INCH_REV;
-        double distancesecond = strafeToSecond * COUNTS_PER_INCH_REV;
+        strafeTo(strafeSpeed, strafeTo, true);
 
-        MotorReductionBot calib = null;
-        calib = getCalibConfig().getStrafeLeftReduction();
-
-        double overage = 0;
-        double target = currentPos + distancefinal;
-        double target1 = currentPos + distancefirst;
-        double target2 = currentPos + distancesecond;
-        boolean stop = false;
-
-        // breaking and slowing down variables
-        double slowdownMark = target * 0.85;
-        double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*strafeSpeed;
-        slowdownMark = slowdownMark - ticksAdjustment;
-        int step = 0;
-        double power = 0;
-        double minSpeed = 0.05;
-        double speedIncrement = 0.05;
-        double speedDropStep = 0.05;
-        double currentSpeed = 0;
-
-        boolean shotfirstalready = false;
-        boolean shotsecondalready = false;
-
-        //move
-        while (!stop && this.owner.opModeIsActive()) {
-            currentPos = this.getHorizontalOdometer();
-            if (currentPos >= target) {
-                stop = true;
-            }
-            if (currentPos >= slowdownMark) {
-                // slow down
-                step++;
-                power = currentSpeed - speedDropStep*step;
-                if (power <= minSpeed) {
-                    power = minSpeed;
-                }
-            } else {
-                // accelerate
-                if (power+speedIncrement <= strafeSpeed) {
-                    power+=speedIncrement;
-                    currentSpeed = power;
-                }
-            }
-
-            // shoot at correct points
-            if (abs(currentPos-target1)/COUNTS_PER_INCH_REV <= 0.5 && !shotfirstalready) {
-                shootServo();
-                shotfirstalready = true;
-            }
-            // shoot at correct points
-            if (abs(currentPos-target2)/COUNTS_PER_INCH_REV <= 0.5 && !shotsecondalready) {
-                shootServo();
-                shotsecondalready = true;
-            }
-
-            // move the motors
-            this.backLeft.setVelocity(MAX_VELOCITY * -power * calib.getLB());
-            this.backRight.setVelocity(MAX_VELOCITY * power * calib.getRB());
-            this.frontLeft.setVelocity(MAX_VELOCITY * power * calib.getLF());
-            this.frontRight.setVelocity(MAX_VELOCITY * -power * calib.getRF());
-
+        timer.reset();
+        while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
+        }
+        double newOrientation = locator.getAdjustedCurrentHeading();
+        int marginError = 3;
+        Log.d("UltimateBot", String.format("newOrientation 1: %.2f", newOrientation));
+        //spin to the desired orientation
+        double diff = newOrientation - originalOrientation;
+        if (abs(diff) > marginError) {
+            double updated = originalOrientation + diff/2;
+            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+            spin(profileSpin, locator);
         }
 
         shootServo();
-        stop();
-        double newPos = this.getHorizontalOdometer();
-        double diff = abs(newPos - target);
-        overage = diff / distancefinal * 100;
+        turretServo.setPosition(0.4);
+        timer.reset();
+        while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
+        }
+        shootServo();
+        turretServo.setPosition(0.6);
+        timer.reset();
+        while(timer.milliseconds() < 500 && this.owner.opModeIsActive()){
+        }
+        shootServo();
 
     }
 
     public void shootPegSequence(RobotCoordinatePosition locator){
         //start shooter
         shooterpeglow();
+        turretInit();
 
         //wait for the locator to stabilize
         ElapsedTime timer = new ElapsedTime();
