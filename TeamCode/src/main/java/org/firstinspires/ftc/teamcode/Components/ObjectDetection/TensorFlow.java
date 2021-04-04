@@ -1,4 +1,4 @@
-/**
+/*
  * Tensor Flow Class. This is for detecting the
  * number of rings in autonomous. It uses
  * the Vuforia Engine.
@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.key;
 //import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 
 public class TensorFlow {
-    Servo tensorFlowServo;
+    final Servo tensorFlowServo;
 
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
@@ -39,9 +39,9 @@ public class TensorFlow {
 
     private static final String VUFORIA_KEY = key.key;
 
-    private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;
-    private LinearOpMode op;
+    private final VuforiaLocalizer vuforia;
+    private final TFObjectDetector tfod;
+    private final LinearOpMode op;
 
     public TensorFlow(LinearOpMode opMode) {
         op = opMode;
@@ -98,10 +98,10 @@ public class TensorFlow {
 //                            recognition.getLeft(), recognition.getTop());
 //                    op.telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
 //                            recognition.getRight(), recognition.getBottom());
-                    if (recognition.getLabel() == "Quad" ) {
+                    if (recognition.getLabel().equals("Quad")) {
                         numberOfRings = 4;
                     }
-                    else if (recognition.getLabel() == "Single" ) {
+                    else if (recognition.getLabel().equals("Single")) {
                         numberOfRings = 1;
                     }
                     else{
@@ -128,14 +128,14 @@ public class TensorFlow {
 
     public int runTensorFlowWaitForStart(){
         int rings = -1;
-        int i = 0;
+        int i;
 
-        int numOfTime4Rings = 0;
-        int numOfTime1Ring = 0;
-        int numOfTime0Rings = 0;
+        int numOfTime4Rings;
+        int numOfTime1Ring;
+        int numOfTime0Rings;
 
         int arraySize = 11;
-        ArrayList<Integer> NumberOfRings = new ArrayList<Integer>(arraySize);
+        ArrayList<Integer> NumberOfRings = new ArrayList<>(arraySize);
 
 //        initTensorFlow();
 
