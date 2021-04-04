@@ -497,7 +497,9 @@ public class OdometryChassis extends BasicChassis {
             double startpower = power;
             while (op.opModeIsActive() && (difference >= 1)&&!gotoPosition_off) {
                 currentPosition = track();
-                power = difference*startpower / 30;
+                if(difference<10){
+                    power=startpower*difference/30;
+                }
                 if (power > startpower) {
                     power = startpower;
                 }
@@ -531,7 +533,6 @@ public class OdometryChassis extends BasicChassis {
             }
             stopAllMotors();
             //turnInPlace(a, 0.5);
-            stopAllMotors();
             op.telemetry.addData("done", true);
         }
     }
