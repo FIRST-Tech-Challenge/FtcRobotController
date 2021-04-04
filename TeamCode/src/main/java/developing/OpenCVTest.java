@@ -13,6 +13,8 @@ public class OpenCVTest extends LinearOpMode
 {
     OpenCvInternalCamera2 phoneCam;
 
+    TerraCV terraCV = new TerraCV();
+
     @Override
     public void runOpMode()
     {
@@ -20,7 +22,7 @@ public class OpenCVTest extends LinearOpMode
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
         phoneCam.openCameraDevice();
-        phoneCam.setPipeline(new TerraCV());
+        phoneCam.setPipeline(terraCV);
 
         phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 //
@@ -39,6 +41,7 @@ public class OpenCVTest extends LinearOpMode
             telemetry.addData("Pipeline time ms", phoneCam.getPipelineTimeMs());
             telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
             telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
+            telemetry.addData("RingNum", terraCV.ringNum);
             telemetry.update();
 
             if(gamepad1.a)
@@ -49,6 +52,7 @@ public class OpenCVTest extends LinearOpMode
 
             sleep(100);
         }
+
     }
 
 }

@@ -3,12 +3,15 @@ package developing;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TerraCV extends OpenCvPipeline
 {
@@ -16,50 +19,74 @@ public class TerraCV extends OpenCvPipeline
     public static double ORANGE_MIN = 80;
     public static double ORANGE_MAX = 110;
 
-    public Mat hsvMat = new Mat();
-    public Mat thresholdMat = new Mat();
-    public Mat contoursOnFrameMat = new Mat();
-    public ArrayList<MatOfPoint> contoursList = new ArrayList<>();
-    public int numContoursFound;
+    // Cases
+    public enum RingNum {ZERO, ONE, FOUR}
 
-    private Mat yCrCb = new Mat();
-    private Mat cb = new Mat();
-    private Mat processed = new Mat();
-//
-//    public Scalar ringColor =  new Scalar(30,86,82);
-//    Scalar lower =  new Scalar(20,100,100);
-//    Scalar upper =  new Scalar(40,255,255);
 
+    // Thresholds
+    public static int HEIGHT_MIN = 10;
+    public static int WIDTH_MIN = 15;
+    public static int HEIGHT_MAX = 60;
+    public static int WIDTH_MAX = 60;
+    public static double ONE_MIN = 2.3;
+    public static double ONE_MAX = 2.8;
+    public static double FOUR_MIN = 0.5;
+    public static double FOUR_AREA = 1000;
+
+    public double[] result = new double[3];
+
+
+
+    public Mat yCrCb = new Mat();
+    public Mat cb = new Mat();
+    public Mat processed = new Mat();
+
+    public List<MatOfPoint> contours = new ArrayList<>();
+
+    public RingNum ringNum;
+
+    public MatOfPoint2f areaPoints;
+    public RotatedRect boundingRect;
 
     @Override
     public Mat processFrame(Mat input)
     {
-        contoursList.clear();
+        contours.clear();
 
         Imgproc.cvtColor(input, yCrCb, Imgproc.COLOR_RGB2YCrCb);
 
         Core.extractChannel(yCrCb, cb, 2);
 
-
-        Core.inRange(cb, new Scalar(ORANGE_MIN), new Scalar(ORANGE_MIN), processed);
+        Core.inRange(cb, new Scalar(ORANGE_MIN), new Scalar(ORANGE_MAX), processed);
 
         Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
 
-//
-//
-//        Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
-////
-////        Core.extractChannel(hsvMat, hsvMat, 0);
-//
-//
-//        Core.inRange(hsvMat, lower, upper, thresholdMat);
-////        Imgproc.threshold(hsvMat, thresholdMat, 102, 100, Imgproc.THRESH_BINARY_INV);
-//        Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-//        numContoursFound = contoursList.size();
-//        input.copyTo(contoursOnFrameMat);
-//        Imgproc.drawContours(contoursOnFrameMat, contoursList, -1, new Scalar(0, 0, 255), 3, 8);
 
+        Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        int i = 0;
+        for (MatOfPoint contour : contours) {
+            areaPoints = new MatOfPoint2f(contour.toArray());
+            boundingRect = Imgproc.minAreaRect(areaPoints);
+
+            if (HEIGHT_MIN < boundingRect.size.height && boundingRect.size.height < HEIGHT_MAX && WIDTH_MIN < boundingRect.size.width && boundingRect.size.width < WIDTH_MAX) {
+
+                Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
+                i++;
+
+                double width = boundingRect.size.width;
+                double height = boundingRect.size.height;
+                double wh_ratio = width/height;
+
+                result = new double[] {width, height, wh_ratio};
+
+                if (FOUR_MIN <= wh_ratio && wh_ratio <= ONE_MIN && boundingRect.size.area() >= FOUR_AREA) {
+                    ringNum = RingNum.FOUR;
+                } else if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
+                    ringNum = RingNum.ONE;
+                }
+            }
+        }
         return processed;
     }
 
