@@ -178,7 +178,7 @@ public class VuforiaWebcam extends Thread {
 //                    op.telemetry.update();
 //                }
                 try {
-                    this.sleep(500);
+                    this.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
