@@ -1,4 +1,4 @@
-/**
+/*
  * Vuforia Class. This is for detecting the
  * VuMarks. This class is for using the Webcams
  * It should display the target
@@ -38,9 +38,9 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.teamcode.Components.OdometryChassis.*;
 
 public class VuforiaWebcam extends Thread {
-    private OpMode op;
+    private final OpMode op;
     private static float xpos, ypos, angle;
-    private double vuforiaAngle = 90.0;
+    private final double vuforiaAngle = 90.0;
 
     //It is used on line 193 for debugging purposes. This is why it isn't currently in use.
     private String trackable;
@@ -48,13 +48,13 @@ public class VuforiaWebcam extends Thread {
     private static boolean targetVisible = false;
 
     private VuforiaTrackables targetsUltimateGoal;
-    private List<VuforiaTrackable> allTrackables = new ArrayList<>();
+    private final List<VuforiaTrackable> allTrackables = new ArrayList<>();
 
     private OpenGLMatrix lastLocation = null;
 
     private final float mmPerInch = 25.4f;
 
-    private VuforiaLocalizer vuforia = null;
+    private VuforiaLocalizer vuforia;
 
     public VuforiaWebcam(OpMode opMode) {
         op = opMode;
@@ -63,7 +63,7 @@ public class VuforiaWebcam extends Thread {
         final String VUFORIA_KEY = key.key;
 
         // Initialize Variables
-        boolean targetVisible = false;
+
         final float halfField = 72 * mmPerInch;
         final float quarterField = 36 * mmPerInch;
         final float mmTargetHeight = 5.75f * mmPerInch;
@@ -185,9 +185,10 @@ public class VuforiaWebcam extends Thread {
 
                 //setInVuforia(false);
                 //op.telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-            } else {
-//                op.telemetry.addData("Visible Target", "none");
             }
+//            else {
+//                op.telemetry.addData("Visible Target", "none");
+//            }
         }
     }
 
@@ -211,7 +212,9 @@ public class VuforiaWebcam extends Thread {
         return vuforiaAngle;
     }
 
+    /*For Debugging
     public String getVuforiaTrackable() {
         return trackable;
     }
+     */
 }
