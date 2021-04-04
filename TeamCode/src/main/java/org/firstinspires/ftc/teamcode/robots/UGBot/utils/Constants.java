@@ -39,10 +39,10 @@ public class Constants {
     public static  double kdFlywheel= 0.0; //derivative constant multiplier
 
     // Vision
-    public static int TOP_LEFT_X = 184;
-    public static int TOP_LEFT_Y = 303;
-    public static int BOTTOM_RIGHT_X = 484;
-    public static int BOTTOM_RIGHT_Y = 448;
+    public static int TOP_LEFT_X = 70;
+    public static int TOP_LEFT_Y = 120;
+    public static int BOTTOM_RIGHT_X = 180;
+    public static int BOTTOM_RIGHT_Y = 180;
 
     public static double NORMALIZE_ALPHA = 51.0;
     public static double NORMALIZE_BETA = 261.0;
@@ -59,6 +59,9 @@ public class Constants {
     public static double MIN_CONTOUR_AREA = .1;
 
     public static double MIN_BLOB_SIZE = 4000;
+
+    public static int WEBCAM_WIDTH = 320;
+    public static int WEBCAM_HEIGHT = 240;
 
     //odometry positions all in meters
     public static double goalX = 0.9144;

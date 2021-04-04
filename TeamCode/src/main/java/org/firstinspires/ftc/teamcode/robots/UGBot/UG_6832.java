@@ -351,15 +351,26 @@ public class UG_6832 extends OpMode {
                     if(auto.vp instanceof OpenCVIntegration) {
                         OpenCVIntegration vp = (OpenCVIntegration) auto.vp;
                         robot.setVisionTimes(new long[] {
-                                vp.getImageTime - vp.startTime,
-                                vp.rotateTime - vp.getImageTime,
-                                vp.cropTime - vp.rotateTime,
-                                vp.normalizeTime - vp.cropTime,
-                                vp.blurTime - vp.normalizeTime,
-                                vp.hsvTime - vp.blurTime,
-                                vp.contourTime - vp.hsvTime,
-                                vp.momentsTime - vp.contourTime
+                                vp.pipeline.normalizeTime - vp.pipeline.cropTime,
+                                vp.pipeline.blurTime - vp.pipeline.normalizeTime,
+                                vp.pipeline.hsvTime - vp.pipeline.blurTime,
+                                vp.pipeline.contourTime - vp.pipeline.hsvTime,
+                                vp.pipeline.momentsTime - vp.pipeline.contourTime
                         });
+                        telemetry.addData("Frame Count", vp.camera.getFrameCount());
+                        telemetry.addData("FPS", String.format("%.2f", vp.camera.getFps()));
+                        telemetry.addData("Total frame time ms", vp.camera.getTotalFrameTimeMs());
+                        telemetry.addData("Pipeline time ms", vp.camera.getPipelineTimeMs());
+                        telemetry.addData("Overhead time ms", vp.camera.getOverheadTimeMs());
+                        telemetry.addData("Theoretical max FPS", vp.camera.getCurrentPipelineMaxFps());
+
+                        robot.setFrameCount(vp.camera.getFrameCount());
+                        robot.setVisionFPS(vp.camera.getFps());
+                        robot.setTotalFrameTimeMs(vp.camera.getTotalFrameTimeMs());
+                        robot.setPipelineTimeMs(vp.camera.getPipelineTimeMs());
+                        robot.setOverheadTimeMs(vp.camera.getOverheadTimeMs());
+                        robot.setCurrentPipelineMaxFps(vp.camera.getCurrentPipelineMaxFps());
+
                     }
                 }
 
@@ -419,6 +430,7 @@ public class UG_6832 extends OpMode {
             robot.ledSystem.setColor(LEDSystem.Color.GAME_OVER);
 
             robot.updateSensors(active);
+            robot.sendTelemetry();
 
 
         } // end of stuff that happens during Init, but before Start

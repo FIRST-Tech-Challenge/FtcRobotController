@@ -427,6 +427,36 @@ public class PoseUG {
     public void setDetection(StackHeight detection) {this.detection = detection;}
     public StackHeight getDetection() {return detection;}
 
+    private int frameCount;
+    public void setFrameCount(int frameCount) {
+        this.frameCount = frameCount;
+    }
+
+    private float visionFPS;
+    public void setVisionFPS(float visionFPS) {
+        this.visionFPS = visionFPS;
+    }
+
+    private int totalFrameTimeMs;
+    public void setTotalFrameTimeMs(int totalFrameTimeMs) {
+        this.totalFrameTimeMs = totalFrameTimeMs;
+    }
+
+    private int pipelineTimeMs;
+    public void setPipelineTimeMs(int pipelineTimeMs) {
+        this.pipelineTimeMs = pipelineTimeMs;
+    }
+
+    private int overheadTimeMs;
+    public void setOverheadTimeMs(int overheadTimeMs) {
+        this.overheadTimeMs = overheadTimeMs;
+    }
+
+    private int currentPipelineMaxFps;
+    public void setCurrentPipelineMaxFps(int currentPipelineMaxFps) {
+        this.currentPipelineMaxFps = currentPipelineMaxFps;
+    }
+
     public void sendTelemetry() {
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
@@ -481,6 +511,14 @@ public class PoseUG {
 
         // turret heading (red)
         CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS_INCHES, turret.getHeading(), "#FF0000");
+
+        // vision
+        packet.put("Frame Count", frameCount);
+        packet.put("FPS", String.format("%.2f", visionFPS));
+        packet.put("Total frame time ms", totalFrameTimeMs);
+        packet.put("Pipeline time ms", pipelineTimeMs);
+        packet.put("Overhead time ms", overheadTimeMs);
+        packet.put("Theoretical max FPS", currentPipelineMaxFps);
 
         packet.put("detection", detection);
         packet.put("vision times", Arrays.toString(visionTimes));
