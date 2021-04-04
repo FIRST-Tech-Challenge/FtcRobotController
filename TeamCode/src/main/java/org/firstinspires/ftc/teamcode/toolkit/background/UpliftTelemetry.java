@@ -47,15 +47,23 @@ public class UpliftTelemetry extends Background {
             telem.addData("Right Encoder pos:\t", robot.odometry.getRightTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Center Encoder pos:\t", robot.odometry.getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Slow Mode:\t", robot.slowMode);
-            telem.addData("Shot Count\t", robot.shotCount);
+        }
+        if(robot.transferInitialized) {
             telem.addData("Transfer Pos:\t", robot.transferSub.transfer.getCurrentPosition());
             telem.addData("Transfer Mode:\t", robot.transfer.getMode());
-            telem.addData("Current Mode:\t", robot.transfer.getCurrent(CurrentUnit.MILLIAMPS));
+            telem.addData("Transfer Current:\t", robot.transfer.getCurrent(CurrentUnit.MILLIAMPS));
+        }
+        if(robot.intakeInitialized) {
             telem.addData("Roller Pos:\t", robot.intakeToggle);
+        }
+        if(robot.shooterInitialized) {
             telem.addData("Distance Sensor:\t", robot.shooterSensor.getDistance(DistanceUnit.CM));
+            telem.addData("Shot Count\t", robot.shotCount);
+            telem.addData("Shooting State\t",  robot.shootingState + "");
+        }
+        if(robot.flickerInitialized) {
             telem.addData("Potentiometer Voltage\t", robot.potentiometer.getVoltage());
         }
-        telem.addData("Shooting State\t",  robot.shootingState + "");
         telem.update();
     }
 
@@ -66,6 +74,8 @@ public class UpliftTelemetry extends Background {
             telem.addData("Left Encoder pos:\t", robot.odometry.getLeftTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Right Encoder pos:\t", robot.odometry.getRightTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Center Encoder pos:\t", robot.odometry.getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
+        }
+        if(robot.transferInitialized) {
             telem.addData("Transfer State:\t", robot.transferState + "");
         }
         if(robot.visionInitialized) {

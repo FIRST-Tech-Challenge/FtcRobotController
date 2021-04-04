@@ -68,13 +68,10 @@ public class Meet5Auto extends UpliftAuto {
         // set the initial position, ring stack count, and prepare shooter/transfer/intake
         odom.setOdometryPosition(105.25, 8.5, 0);
         stack = robot.ringDetector.ringCount;
-        Log.i("Rect Ratio", robot.ringDetector.rectRatio + "");
-        Log.i("Ring Count", robot.ringDetector.ringCount + "");
-//        stack = 1;
         shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
         transferSub.autoRaiseTransfer();
 
-//        intakeSub.dropRoller();
+        intakeSub.dropRoller();
 
         if(stack == 4) {
 
@@ -117,7 +114,6 @@ public class Meet5Auto extends UpliftAuto {
 
             }
 
-
             // drive to drop off first wobble
             intakeSub.setIntakePower(1);
             wobbleSub.setWobblePosition(0.2);
@@ -128,9 +124,6 @@ public class Meet5Auto extends UpliftAuto {
             wobbleSub.openWobble();
 
             // drive to pick up second wobble
-//            driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-//            driveSub.driveToPosition(115, 32, 0.5, 0.5, 0, 0);
-//            wobbleSub.pickUp();
             getSecondWobble();
 
             // drop off second wobble
@@ -175,9 +168,6 @@ public class Meet5Auto extends UpliftAuto {
             wobbleSub.dropOff();
 
             // pick up second wobble goal
-//            driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-//            driveSub.driveToPosition(115, 36, 0.5, 0.5, 0, 0);
-//            wobbleSub.pickUp();
             getSecondWobble();
 
             // drop off the second wobble goal
