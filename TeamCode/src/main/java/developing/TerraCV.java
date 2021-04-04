@@ -16,8 +16,8 @@ import java.util.List;
 public class TerraCV extends OpenCvPipeline
 {
 
-    public static double ORANGE_MIN = 80;
-    public static double ORANGE_MAX = 110;
+    public double ORANGE_MIN = 80;
+    public double ORANGE_MAX = 110;
 
     // Cases
     public enum RingNum {ZERO, ONE, FOUR}
@@ -84,8 +84,14 @@ public class TerraCV extends OpenCvPipeline
                     ringNum = RingNum.FOUR;
                 } else if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
                     ringNum = RingNum.ONE;
+                }else{
+                    ringNum = RingNum.ZERO;
                 }
             }
+        }
+
+        if(i == 0){
+            ringNum = RingNum.ZERO;
         }
         return processed;
     }
