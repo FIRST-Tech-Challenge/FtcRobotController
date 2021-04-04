@@ -22,7 +22,7 @@ public class Constants {
     public static final double WG_UPPER_LIMIT = 180;
     public static final double WG_START_POS = -3;
 
-    public static final double WGE_UPPER_LIMIT = 10; // cm
+    public static final double WGE_UPPER_LIMIT = 21; // cm
     public static final double WGE_RADIUS = 1.459 * 2.54; // cm
 
     public static final double ROBOT_WIDTH = 30; // meters

@@ -222,7 +222,8 @@ public class TerraBot {
         if (isArmInLimits(p)) {
             arm.setPower(p);
             if (isWgeInLimits(p)) {
-                wge.setPower(Math.signum(p));
+                updateWgeTracker(p);
+                wge.setPower(p);
             }
         }
     }
@@ -235,8 +236,8 @@ public class TerraBot {
         moveArm(0);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    public void updateWgeTracker() {
-        wgeTracker.update(wge.getPower());
+    public void updateWgeTracker(double p) {
+        wgeTracker.update(p);
     }
     public double getArmPos(){
         return (arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS) + Constants.WG_START_POS;

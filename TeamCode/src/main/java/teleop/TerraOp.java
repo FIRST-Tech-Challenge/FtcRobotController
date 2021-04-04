@@ -57,8 +57,6 @@ public class TerraOp extends OpMode {
             bot.extendWobbleGoal(0);
         }
 
-        bot.updateWgeTracker();
-
 //        if (gamepad2.dpad_right){
 //            bot.openClaw();
 //        } else if(gamepad2.dpad_left){
@@ -72,7 +70,6 @@ public class TerraOp extends OpMode {
         telemetry.addData("Wobble goal pos", -bot.arm.getCurrentPosition());
         telemetry.addData("Wobble goal pos in deg", bot.getArmPos());
         telemetry.addData("WGE Pos", bot.getWgePos());
-        telemetry.addData("WGE Pow", bot.wge.getPower());
         telemetry.addData("WGE Pos rad", bot.wgeTracker.pos);
 
 //        bot.extendWobbleGoal(gamepad2.a);

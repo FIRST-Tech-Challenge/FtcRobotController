@@ -14,7 +14,7 @@ public class CRServoPositionTracker {
 
     public void update(double pow) {
         double curSpeed = Constants.CR_SERVO_MAX_SPEED * pow;
-        pos += curSpeed * (timer.seconds() - lastTime);
+        pos += pow; //curSpeed * (timer.seconds() - lastTime);
         lastTime = timer.seconds();
     }
 
