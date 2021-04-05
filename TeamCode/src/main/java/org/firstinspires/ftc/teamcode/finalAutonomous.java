@@ -71,7 +71,7 @@ public class finalAutonomous extends LinearOpMode {
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        move(0.4, 4000);
+                        move(0.4, 3500);
                         break;
                     case 1:
                         move(0.4, 4500);
