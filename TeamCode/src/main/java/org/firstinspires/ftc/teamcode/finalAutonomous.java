@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -37,7 +38,7 @@ public class finalAutonomous extends LinearOpMode {
 
     private Servo wobble;
 
-    private boolean shouldWobble = true;
+//    private boolean shouldDropWobble = true;
     private boolean shouldShoot = true;
     private boolean shouldDrive = true;
     private boolean shouldDetectRings = true;
@@ -58,37 +59,41 @@ public class finalAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        telemetry.addData("servo pos", wobble.getPosition());
-
-        shoot(0.73);
-
         int zone;
         if (opModeIsActive()) {
-            telemetry.addData("Current position of Servo: ", wobble);
-            telemetry.update();
+            shoot(0.73);
+
+            move(-0.4, 500);
+            sleep(500);
+            strafeLeft(200);
             do {
                 //zone = determineZone();
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        move(0.4, 1750);
-                        wobble.setPosition(1);
+                        move(0.4, 4000);
                         break;
                     case 1:
-                       // spin(0.2, 2000); //Spin 180
-                        move(0.4, 2);
-                        strafeRight(500);
-                        wobble.setPosition(1);
+                        move(0.4, 4500);
+                        strafeRight(1000);
+                        //TODO
+                        // Strafe More,
+                        // Don't go as far forward,
+                        // go back to line
                         break;
                     case 2:
-                        move(0.4, 2250);
-                        wobble.setPosition(1);
+                        move(0.4, 7500);
                         break;
                     default:
                         break;
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
-            move(-0.0, 0);
+
+            wobble.setPosition(1.0);
+            sleep(1000);
+
+
+
             if (ringDetectTestMode){
                 while (opModeIsActive()){
                     telemetry.update();
@@ -108,6 +113,10 @@ public class finalAutonomous extends LinearOpMode {
             backLeft.setPower(speed);
             backRight.setPower(speed);
             sleep(time);
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
         }
     }
 
@@ -121,23 +130,31 @@ public class finalAutonomous extends LinearOpMode {
         }
     }
 */
-    public void strafeLeft(int time) {
+    public void strafeRight(int time) {
         if (shouldDrive) {
             frontLeft.setPower(-0.5);
             backLeft.setPower(0.5);
             frontRight.setPower(0.5);
             backRight.setPower(-0.5);
             sleep(time);
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
         }
     }
 
-    public void strafeRight(int time) {
+    public void strafeLeft(int time) {
         if (shouldDrive) {
             frontLeft.setPower(0.5);
             backLeft.setPower(-0.5);
             frontRight.setPower(-0.5);
             backRight.setPower(0.5);
             sleep(time);
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
         }
     }
 
@@ -233,9 +250,7 @@ public class finalAutonomous extends LinearOpMode {
     }
 
     private void initOtherMotors(){
-        if (shouldWobble) {
-            wobble = hardwareMap.get(Servo.class, "wobble");
-        }
+        wobble = hardwareMap.get(Servo.class, "wobble");
     }
 
     private void initDriveMotors(){
