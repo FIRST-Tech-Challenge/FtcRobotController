@@ -58,28 +58,31 @@ public class finalAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        shoot(0.75);
+        telemetry.addData("servo pos", wobble.getPosition());
+
+        shoot(0.73);
 
         int zone;
         if (opModeIsActive()) {
+            telemetry.addData("Current position of Servo: ", wobble);
+            telemetry.update();
             do {
                 //zone = determineZone();
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        move(0.4, 1750); // only need to drop goal, no need to strafe
-                        wobble.setPosition(180);
+                        move(0.4, 1750);
+                        wobble.setPosition(1);
                         break;
                     case 1:
-                        move(0.2, 200); //Off wall
                        // spin(0.2, 2000); //Spin 180
                         move(0.4, 2);
                         strafeRight(500);
-                        wobble.setPosition(180);
+                        wobble.setPosition(1);
                         break;
                     case 2:
                         move(0.4, 2250);
-                        wobble.setPosition(180);
+                        wobble.setPosition(1);
                         break;
                     default:
                         break;
@@ -143,7 +146,7 @@ public class finalAutonomous extends LinearOpMode {
             shooter.setPower(power);
             sleep(1500);
             belt.setPower(.5);
-            sleep(4000);
+            sleep(5000);
             shooter.setPower(0);
             belt.setPower(0);
         }
@@ -285,6 +288,6 @@ public class finalAutonomous extends LinearOpMode {
         tensorFlowObjDetector = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tensorFlowObjDetector.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_QUAD, LABEL_SINGLE);
         tensorFlowObjDetector.activate();
-        //tensorFlowObjDetector.setZoom(1, 1.5);
+        tensorFlowObjDetector.setZoom(1.75, 1.78);
     }
 }
