@@ -52,56 +52,50 @@ public class TerraCV extends OpenCvPipeline
     public Scalar lower = new Scalar(10,100,20);
     public Scalar upper = new Scalar(25,255,255);
 
-    public boolean sketch = false;
-
     @Override
     public Mat processFrame(Mat input)
     {
         contours.clear();
 
-        if(!sketch) {
 
-            Imgproc.cvtColor(input, yCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(yCrCb, cb, 2);
-            Core.inRange(cb, new Scalar(ORANGE_MIN), new Scalar(ORANGE_MAX), processed);
-            Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
 
-        }else {
-            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-            Core.inRange(hsv, lower, upper, processed);
-        }
+        Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
+        Core.inRange(hsv, lower, upper, processed);
 
         Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
 
         int i = 0;
         for (MatOfPoint contour : contours) {
             areaPoints = new MatOfPoint2f(contour.toArray());
             boundingRect = Imgproc.minAreaRect(areaPoints);
 
-            if (HEIGHT_MIN < boundingRect.size.height && boundingRect.size.height < HEIGHT_MAX && WIDTH_MIN < boundingRect.size.width && boundingRect.size.width < WIDTH_MAX) {
-
-                Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
-                i++;
-
-                double width = boundingRect.size.width;
-                double height = boundingRect.size.height;
-                double wh_ratio = width/height;
-
-                result = new double[] {width, height, wh_ratio};
-
-                if (FOUR_MIN <= wh_ratio && wh_ratio <= ONE_MIN && boundingRect.size.area() >= FOUR_AREA) {
-                    ringNum = RingNum.FOUR;
-                } else if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
-                    ringNum = RingNum.ONE;
-                }
-            }
+            Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
+//
+//            if (HEIGHT_MIN < boundingRect.size.height && boundingRect.size.height < HEIGHT_MAX && WIDTH_MIN < boundingRect.size.width && boundingRect.size.width < WIDTH_MAX) {
+//
+//                Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
+//                i++;
+//
+//                double width = boundingRect.size.width;
+//                double height = boundingRect.size.height;
+//                double wh_ratio = width/height;
+//
+//                result = new double[] {width, height, wh_ratio};
+//
+//                if (FOUR_MIN <= wh_ratio && wh_ratio <= ONE_MIN && boundingRect.size.area() >= FOUR_AREA) {
+//                    ringNum = RingNum.FOUR;
+//                } else if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
+//                    ringNum = RingNum.ONE;
+//                }
+//            }
         }
 
-        if(i == 0){
-            ringNum = RingNum.ZERO;
-        }
+//        if(i == 0){
+//            ringNum = RingNum.ZERO;
+//        }
 
-        return processed;
+        return input;
     }
 
     @Override

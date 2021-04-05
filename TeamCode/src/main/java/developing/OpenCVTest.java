@@ -44,16 +44,8 @@ public class OpenCVTest extends LinearOpMode
             telemetry.addData("RingNum", terraCV.ringNum);
             telemetry.addData("min", terraCV.ORANGE_MIN);
             telemetry.addData("max", terraCV.ORANGE_MAX);
-            telemetry.addData("sketchmode", terraCV.sketch);
             telemetry.update();
 
-            if(gamepad1.right_trigger > 0) {
-//                phoneCam.stopStreaming();
-                //phoneCam.closeCameraDevice();
-                terraCV.sketch = false;
-            }else if(gamepad1.left_trigger>0){
-                terraCV.sketch = true;
-            }
 
             if(gamepad1.right_bumper){
                 terraCV.ORANGE_MAX += 1;
