@@ -98,7 +98,7 @@ public class Robot {
     public void moveForward(double distance, double power) {
         drivetrain.moveForward(distance, power);
     }
-
+    public void goToPositionWithoutStop(float x, float y, float angle, float power){drivetrain.goToPositionWithoutStop(x,y,angle,power);}
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
