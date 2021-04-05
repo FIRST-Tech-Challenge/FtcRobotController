@@ -66,7 +66,7 @@ public class TerraOp extends OpMode {
 
 
         bot.moveArm(-gamepad2.right_stick_y);
-        telemetry.addData("WGE Target Pos", bot.updateWge());
+//        telemetry.addData("WGE Target Pos", bot.updateWge());
 
         telemetry.addData("Wobble goal pow", -gamepad2.right_stick_y);
         telemetry.addData("Wobble goal pos", -bot.arm.getCurrentPosition());

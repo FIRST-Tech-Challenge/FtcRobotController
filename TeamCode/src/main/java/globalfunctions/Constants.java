@@ -20,12 +20,12 @@ public class Constants {
 
     public static final double WG_LOWER_LIMIT = -5;
     public static final double WG_UPPER_LIMIT = 180;
-    public static final double WG_REST_POW = 0.15;
+    public static final double WG_REST_POW = 0.1;
 
     public static final double WGE_UPPER_LIMIT = 10.8; // cm
     public static final double WGE_START = 8.5; // cm
     public static final double WGE_ACC = 1; // cm
-    public static final double WGE_IGNORE_RANGE = 20; // deg
+    public static final double[] WGE_IGNORE_RANGE = {-40,0};
 //    public static final double WGE_RADIUS = 2.25; //1.459 * 2.54; // cm
 
     public static final double ROBOT_WIDTH = 30; // meters

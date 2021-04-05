@@ -42,21 +42,11 @@ public class OpenCVTest extends LinearOpMode
 //            telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
 //            telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
             telemetry.addData("RingNum", terraCV.ringNum);
-            telemetry.addData("min", terraCV.ORANGE_MIN);
-            telemetry.addData("max", terraCV.ORANGE_MAX);
+//            telemetry.addData("min", terraCV.ORANGE_MIN);
+//            telemetry.addData("max", terraCV.ORANGE_MAX);
             telemetry.update();
 
 
-            if(gamepad1.right_bumper){
-                terraCV.ORANGE_MAX += 1;
-            }else if(gamepad1.left_bumper){
-                terraCV.ORANGE_MAX -= 1;
-            }
-            if(gamepad2.right_bumper){
-                terraCV.ORANGE_MIN += 1;
-            }else if(gamepad2.left_bumper){
-                terraCV.ORANGE_MIN -= 1;
-            }
 
             sleep(100);
         }

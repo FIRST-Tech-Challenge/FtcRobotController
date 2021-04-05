@@ -5,6 +5,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -15,10 +16,6 @@ import java.util.List;
 
 public class TerraCV extends OpenCvPipeline
 {
-
-    public double ORANGE_MIN = 80;
-    public double ORANGE_MAX = 120;
-
     // Cases
     public enum RingNum {ZERO, ONE, FOUR}
 
@@ -28,17 +25,17 @@ public class TerraCV extends OpenCvPipeline
     public static int WIDTH_MIN = 15;
     public static int HEIGHT_MAX = 60;
     public static int WIDTH_MAX = 60;
-    public static double ONE_MIN = 2.3;
-    public static double ONE_MAX = 2.8;
-    public static double FOUR_MIN = 0.5;
-    public static double FOUR_AREA = 1000;
-
-    public double[] result = new double[3];
-
-
-
-    public Mat yCrCb = new Mat();
-    public Mat cb = new Mat();
+//    public static double ONE_MIN = 2.3;
+//    public static double ONE_MAX = 2.8;
+//    public static double FOUR_MIN = 0.5;
+//    public static double FOUR_AREA = 1000;
+//
+//    public double[] result = new double[3];
+//
+//
+//
+//    public Mat yCrCb = new Mat();
+//    public Mat cb = new Mat();
     public Mat processed = new Mat();
 
     public List<MatOfPoint> contours = new ArrayList<>();
@@ -46,11 +43,12 @@ public class TerraCV extends OpenCvPipeline
     public RingNum ringNum;
 
     public MatOfPoint2f areaPoints;
-    public RotatedRect boundingRect;
+    public Rect boundingRect;
 
     public Mat hsv = new Mat();
-    public Scalar lower = new Scalar(10,100,20);
+    public Scalar lower = new Scalar(10,20,20);
     public Scalar upper = new Scalar(25,255,255);
+
 
     @Override
     public Mat processFrame(Mat input)
@@ -59,7 +57,17 @@ public class TerraCV extends OpenCvPipeline
 
 
 
+
+        input.convertTo(input, -1, 1, 100);
+
+
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
+
+
+
+
+
+
         Core.inRange(hsv, lower, upper, processed);
 
         Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
@@ -72,14 +80,14 @@ public class TerraCV extends OpenCvPipeline
         int i = 0;
         for (MatOfPoint contour : contours) {
             areaPoints = new MatOfPoint2f(contour.toArray());
-            boundingRect = Imgproc.minAreaRect(areaPoints);
+            boundingRect = Imgproc.minAreaRect(areaPoints).boundingRect();
 
-            Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
+
 //
-//            if (HEIGHT_MIN < boundingRect.size.height && boundingRect.size.height < HEIGHT_MAX && WIDTH_MIN < boundingRect.size.width && boundingRect.size.width < WIDTH_MAX) {
-//
-//                Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
-//                i++;
+            if (HEIGHT_MIN < boundingRect.height && boundingRect.height < HEIGHT_MAX && WIDTH_MIN < boundingRect.width && boundingRect.width < WIDTH_MAX) {
+
+                Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 4);
+                i++;
 //
 //                double width = boundingRect.size.width;
 //                double height = boundingRect.size.height;
@@ -92,8 +100,11 @@ public class TerraCV extends OpenCvPipeline
 //                } else if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
 //                    ringNum = RingNum.ONE;
 //                }
-//            }
+            }
         }
+//        if(maxBoundingRect != null) {
+//            Imgproc.rectangle(input, maxBoundingRect, new Scalar(0, 255, 0), 4);
+//        }
 
 //        if(i == 0){
 //            ringNum = RingNum.ZERO;

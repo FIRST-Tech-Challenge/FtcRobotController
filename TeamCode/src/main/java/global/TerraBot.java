@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import globalfunctions.CRServoPositionTracker;
 import globalfunctions.Constants;
+import globalfunctions.Optimizer;
 import globalfunctions.TerraThread;
 import telefunctions.AutoModule;
 import telefunctions.ButtonController;
@@ -48,8 +49,10 @@ public class TerraBot {
 
     public Cycle pushControl = new Cycle(0.1, 0.25, 0.32);
 
-    public Cycle cllControl = new Cycle(0.2, 0.5, 1);
-    public Cycle clrControl = new Cycle(1, 0.5, 0.0);
+//    public Cycle cllControl = new Cycle(0.2, 0.5, 1);
+//    public Cycle clrControl = new Cycle(1, 0.5, 0.0);
+    public Cycle cllControl = new Cycle(0.2, 1);
+    public Cycle clrControl = new Cycle(1, 0.0);
 
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor br;
@@ -89,9 +92,13 @@ public class TerraBot {
         outl = getMotor(hwMap, "outl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm = getMotor(hwMap, "arm", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        resetEnc(outr);
-        resetEnc(outl);
-        resetEnc(arm);
+
+        outr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
         rh2 = getCRServo(hwMap, "rh2", CRServo.Direction.REVERSE);
@@ -155,10 +162,6 @@ public class TerraBot {
         return crServo;
     }
 
-    public void resetEnc(DcMotor mot){
-        mot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        mot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
 
     public void move(double f, double s, double t){
         l1.setPower(f+s-t);
@@ -225,15 +228,17 @@ public class TerraBot {
 
     public void moveArm(double p){
         if (isArmInLimits(p)) {
-            if (Math.abs(getArmPos() - 90) < 45) {
-                arm.setPower(p + Math.signum(getArmPos() - 90) * Constants.WG_REST_POW);
-            } else {
-                arm.setPower(p);
+            arm.setPower(p + getRestPowArm());
+            if(isWgeInLimits(p)) {
+                updateWge();
+            }else{
+                wge.setPower(0);
             }
-//            if (isWgeInLimits(p)) {
-//                wge.setPower(Math.signum(p));
-//            }
         }
+    }
+
+    public double getRestPowArm(){
+        return Constants.WG_REST_POW*Math.cos(Math.toRadians(getArmPos()));
     }
 
     public void moveArmWithEnc(double deg, double pow){
@@ -241,7 +246,13 @@ public class TerraBot {
         arm.setTargetPosition((int) (deg*Constants.NEV_DEGREES_TO_TICKS));
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         moveArm(pow);
-        while (arm.isBusy()){}
+        while (arm.isBusy()){
+            if(isWgeInLimits(pow)) {
+                updateWge();
+            }else{
+                wge.setPower(0);
+            }
+        }
         moveArm(0);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -256,7 +267,7 @@ public class TerraBot {
         return limits.isInLimits(arm, dir, getArmPos());
     }
 
-    public boolean isWgeInLimits(double dir) { return limits.isInLimits(wge, dir, getWgePos()); }
+    public boolean isWgeInLimits(double dir) { return limits.isInLimits(wge, dir, getWgePos()) && !Optimizer.inRange(getArmPos(), Constants.WGE_IGNORE_RANGE); }
 
     public double updateWge() {
         if (!wgeStartMode) {

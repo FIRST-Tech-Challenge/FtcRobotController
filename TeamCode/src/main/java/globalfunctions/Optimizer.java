@@ -35,7 +35,7 @@ public class Optimizer {
         times = new ArrayList<>();
     }
 
-    public double calcAvg(ArrayList<Double> in){
+    public static double calcAvg(ArrayList<Double> in){
         double total = 0;
         for(double i:in){
             total += (i/in.size());
@@ -44,7 +44,7 @@ public class Optimizer {
         return total;
     }
 
-    public double max(ArrayList<Double> in){
+    public static double max(ArrayList<Double> in){
         double max = 0;
         for(double i:in){
             if (i > max){
@@ -52,6 +52,10 @@ public class Optimizer {
             }
         }
         return max;
+    }
+
+    public static boolean inRange(double in, double[] range){
+        return in > range[0] && in < range[1];
     }
 
 
