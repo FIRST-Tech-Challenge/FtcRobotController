@@ -8,6 +8,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -16,107 +17,46 @@ import java.util.List;
 
 public class TerraCV extends OpenCvPipeline
 {
-    // Cases
+    //Cases
     public enum RingNum {ZERO, ONE, FOUR}
-
-
-    // Thresholds
-    public static int HEIGHT_MIN = 10;
-    public static int WIDTH_MIN = 15;
-    public static int HEIGHT_MAX = 60;
-    public static int WIDTH_MAX = 60;
-//    public static double ONE_MIN = 2.3;
-//    public static double ONE_MAX = 2.8;
-//    public static double FOUR_MIN = 0.5;
-//    public static double FOUR_AREA = 1000;
-//
-//    public double[] result = new double[3];
-//
-//
-//
-//    public Mat yCrCb = new Mat();
-//    public Mat cb = new Mat();
+    //frame after processing
     public Mat processed = new Mat();
-
-    public List<MatOfPoint> contours = new ArrayList<>();
-
+    //RingNum detected
     public RingNum ringNum;
 
-    public MatOfPoint2f areaPoints;
-    public Rect boundingRect;
-
+    //Hsv frame
     public Mat hsv = new Mat();
-    public Scalar lower = new Scalar(10,20,20);
-    public Scalar upper = new Scalar(25,255,255);
+    //Position of rings on screen use telemetry to change
+    // Note: (x is actually y pos and starts at 0 from bottom, ypos starts at 0 from left and is x
+    public int xPos = 75;
+    public int yPos = 500;
+
+    //average color and hue value
+    public double[] avgColor = new double[2];
+    public double avgH;
+
 
 
     @Override
     public Mat processFrame(Mat input)
     {
-        contours.clear();
+        input.convertTo(input, -1, 2, 100); //Artificially increase brightness
+        Rect rectCrop = new Rect(xPos, yPos, 150,150); //define rect to crop image based on xpos and ypos
+        processed = new Mat(input, rectCrop); //crop
+        Imgproc.cvtColor(processed, hsv, Imgproc.COLOR_RGB2HSV); //convert to hsv color space
+        avgColor = Core.mean(hsv).val; //find the mean value of the colors
+        avgH = avgColor[0]; // find the mean hue value
 
-
-
-
-        input.convertTo(input, -1, 1, 100);
-
-
-        Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-
-
-
-
-
-
-        Core.inRange(hsv, lower, upper, processed);
-
-        Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
-
-        Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-
-
-
-
-        int i = 0;
-        for (MatOfPoint contour : contours) {
-            areaPoints = new MatOfPoint2f(contour.toArray());
-            boundingRect = Imgproc.minAreaRect(areaPoints).boundingRect();
-
-
-//
-            if (HEIGHT_MIN < boundingRect.height && boundingRect.height < HEIGHT_MAX && WIDTH_MIN < boundingRect.width && boundingRect.width < WIDTH_MAX) {
-
-                Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 4);
-                i++;
-//
-//                double width = boundingRect.size.width;
-//                double height = boundingRect.size.height;
-//                double wh_ratio = width/height;
-//
-//                result = new double[] {width, height, wh_ratio};
-//
-//                if (FOUR_MIN <= wh_ratio && wh_ratio <= ONE_MIN && boundingRect.size.area() >= FOUR_AREA) {
-//                    ringNum = RingNum.FOUR;
-//                } else if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
-//                    ringNum = RingNum.ONE;
-//                }
-            }
+        if(avgH > 90){ //for zero hue is usually around 100
+            ringNum = RingNum.ZERO;
+        }else if(avgH > 50){ //for one hue is usually around 70
+            ringNum = RingNum.ONE;
+        }else if(avgH > 10){ // for four hue is usually around 30
+            ringNum = RingNum.FOUR;
         }
-//        if(maxBoundingRect != null) {
-//            Imgproc.rectangle(input, maxBoundingRect, new Scalar(0, 255, 0), 4);
-//        }
+        //Uncomment this line if you want to view fullscreen
+        //Imgproc.resize(processed, processed, input.size());
 
-//        if(i == 0){
-//            ringNum = RingNum.ZERO;
-//        }
-
-        return input;
-    }
-
-    @Override
-    public void onViewportTapped()
-    {
-
-
+        return processed;
     }
 }

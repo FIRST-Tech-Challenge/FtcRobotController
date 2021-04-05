@@ -52,6 +52,37 @@ public class Path {
     final public double[] ds = {0.01,0.01,0.001};
     final public double[] is = {0.01,0.01,0.0001};
 
+    //LOOOOOOOOOOOOOOOOOK UPPPPPPPPPPPPPPPPPPPP
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+    //CHANGE COEFS FOR SETPOINT
+
+
+
+
+
+
+
+
+
+
+
+
     public double XAcc = 1;
     public double YAcc = 1;
     public double HAcc = 3;
@@ -148,9 +179,7 @@ public class Path {
 //        second answer = (-1)*((b + Math.sqrt(disc)) / (2 * a));
         if(!Double.isNaN(ans)) {
             if(ans > 1){
-//                next();
-
-                //Figure this out do not do next when setpoint
+                next();
             }
             return ans;
         }else{
@@ -185,14 +214,16 @@ public class Path {
     }
 
     public double[] update(double[] currentPos){
-        double[] target = getTargetPos(currentPos);
+
         if(posetypes.get(curIndex+1).equals(Posetype.WAYPOINT)) {
+            double[] target = getTargetPos(currentPos);
             updateControls(currentPos,target);
             updateRadius(lines.get(curIndex).getDis());
             return calcPows();
         }else if(posetypes.get(curIndex+1).equals(Posetype.SETPOINT)){
+            double[] target = poses.get(curIndex+1);
             updateControls(currentPos,target);
-            //hasReachedSetpoint();
+            hasReachedSetpoint();
             return calcPows();
         }else if (posetypes.get(curIndex+1).equals(Posetype.STOP)){
             if(globalTime.seconds() > stops.get(stopIndex)){
@@ -218,9 +249,9 @@ public class Path {
 
     public double[] calcPows(){
         double[] out = new double[3];
-        out[0] = -Range.clip(xControl.getPower(),-1,1);
-        out[1] = -Range.clip(yControl.getPower(),-1,1);
-        out[2] = -Range.clip(hControl.getPower(),-1,1);
+        out[0] = -Range.clip(xControl.getPower(),-0.5,0.5);
+        out[1] = -Range.clip(yControl.getPower(),-0.5,0.5);
+        out[2] = -Range.clip(hControl.getPower(),-0.5,0.5);
         return out;
     }
 
@@ -253,7 +284,7 @@ public class Path {
             op.telemetry.update();
 //
 //            bot.outtakeWithCalculations();
-
+//
             double[] pows = update(bot.odometry.getPos()); //bot.odometry.getVels()
             bot.move(pows[1], pows[0], pows[2]);
         }
