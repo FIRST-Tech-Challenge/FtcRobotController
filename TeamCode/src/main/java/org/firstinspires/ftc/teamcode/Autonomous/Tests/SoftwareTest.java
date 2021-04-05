@@ -23,112 +23,53 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
-@Autonomous(name = "WalrusSoftwareTest ", group="Tests: ")
+@Autonomous(name = "SoftwareTest ", group="Tests: ")
 //@Disabled
-public class WalrusSoftwareTest extends LinearOpMode {
+public class SoftwareTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
 
         Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
-        DcMotorEx motorLeftFront;
-        DcMotorEx motorRightFront;
-        DcMotorEx motorLeftBack;
-        DcMotorEx motorRightBack;
         Servo webcamServo;
 
-
-        motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
-        motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
-        motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
-        motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
         webcamServo = hardwareMap.servo.get("TensorFlowServo");
-
-
-        //Motors
-        motorLeftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLeftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Servos
         webcamServo.setPosition(0.35);
 
-        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
-        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
-        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-
-
-        // make the drivetrains motors run on only power
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         ElapsedTime runtime = new ElapsedTime();
 
         waitForStart();
 
         //Tests drivetrain motors
-        motorLeftFront.setPower(0.5);
-        telemetry.addData("Moving LeftFront Motor", "forward");
+        robot.moveForward(1, 0.5);
+        telemetry.addData("Moving Robot", "forward");
         telemetry.update();
         sleep(1000);
-        motorLeftFront.setPower(0);
-        sleep(1000);
-        motorLeftFront.setPower(-0.5);
-        telemetry.addData("Moving LeftFront Motor", "backward");
+        robot.moveBackward(1, 0.5);
+        telemetry.addData("Moving Robot", "backward");
         telemetry.update();
         sleep(1000);
-        motorLeftFront.setPower(0);
-        sleep(1000);
-        motorRightFront.setPower(0.5);
-        telemetry.addData("Moving RightFront Motor", "forward");
+        robot.moveLeft(1, 0.5);
+        telemetry.addData("Moving Robot", "left");
         telemetry.update();
         sleep(1000);
-        motorRightFront.setPower(0);
-        sleep(1000);
-        motorRightFront.setPower(-0.5);
+        robot.moveRight(1, 0.5);
         telemetry.addData("Moving RightFront Motor", "backward");
         telemetry.update();
-        sleep(1000);
-        motorRightFront.setPower(0);
-        sleep(1000);
-        motorLeftBack.setPower(0.5);
-        telemetry.addData("Moving LeftBack Motor", "forward");
-        telemetry.update();
-        sleep(1000);
-        motorLeftBack.setPower(0);
-        sleep(1000);
-        motorLeftBack.setPower(-0.5);
-        telemetry.addData("Moving LeftBack Motor", "backward");
-        telemetry.update();
-        sleep(1000);
-        motorLeftBack.setPower(0);
-        sleep(1000);
-        motorRightBack.setPower(0.5);
-        telemetry.addData("Moving RightBack Motor", "forward");
-        telemetry.update();
-        sleep(1000);
-        motorRightBack.setPower(0);
-        sleep(1000);
-        motorRightBack.setPower(-0.5);
-        telemetry.addData("Moving RightBack Motor", "backward");
-        telemetry.update();
-        sleep(1000);
-        motorRightBack.setPower(0);
-        sleep(1000);
+        sleep(1500);
 
         //Tests intake motor
-        //Forwards
+        //Forward
         robot.startIntake();
         telemetry.addData("intake direction", "forward");
         telemetry.update();
         sleep(1000);
         robot.stopIntake();
         sleep(1000);
-        //Backwards
+        //Backward
         robot.reverseIntake();
         telemetry.addData("intake direction", "backward");
         telemetry.update();
@@ -137,14 +78,14 @@ public class WalrusSoftwareTest extends LinearOpMode {
         sleep(1500);
 
         //Tests transfer motor
-        //Forwards
+        //Forward
         robot.startTransfer();
         telemetry.addData("transfer direction", "forward");
         telemetry.update();
         sleep(1000);
         robot.stopTransfer();
         sleep(1000);
-        //Backwards
+        //Backward
         robot.reverseTransfer();
         telemetry.addData("transfer direction", "backward");
         telemetry.update();

@@ -19,9 +19,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "WalrusHardwareTest ", group="Tests: ")
+@Autonomous(name = "HardwareTest ", group="Tests: ")
 //@Disabled
-public class WalrusHardwareTest extends LinearOpMode {
+public class HardwareTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
