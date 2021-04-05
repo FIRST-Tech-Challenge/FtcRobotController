@@ -1,6 +1,7 @@
 package global;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -38,7 +39,7 @@ public class TerraBot {
     public CRServo rh2;
 
     public CRServo wge;
-    public CRServoPositionTracker wgeTracker = new CRServoPositionTracker(0);
+    public Rev2mDistanceSensor wgp;
 
     public Servo cll;
     public Servo clr;
@@ -63,6 +64,7 @@ public class TerraBot {
     public boolean outtaking = false;
 
     public boolean fastMode = true;
+    public boolean wgeStartMode = true;
 
     public AutoModule shooter = new AutoModule(); // 0
 
@@ -97,6 +99,8 @@ public class TerraBot {
         clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLL_OPEN);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, Constants.RP_START);
         wge = getCRServo(hwMap, "wge", CRServo.Direction.REVERSE);
+
+        wgp = hwMap.get(Rev2mDistanceSensor.class, "wgp");
 
         angularPosition.init(hwMap);
 
@@ -136,12 +140,14 @@ public class TerraBot {
 
         return dcMotor;
     }
+
     public Servo getServo(HardwareMap hwMap, String name, Servo.Direction dir, double startpos){
         Servo servo = hwMap.get(Servo.class, name);
         servo.setDirection(dir);
         servo.setPosition(startpos);
         return servo;
     }
+
     public CRServo getCRServo(HardwareMap hwMap, String name, CRServo.Direction dir){
         CRServo crServo = hwMap.get(CRServo.class, name);
         crServo.setPower(0);
@@ -204,8 +210,6 @@ public class TerraBot {
         }
     }
 
-
-
     public void moveTeleOp(double f, double s, double t){
         double restForwardPow = 0.05;
         double restStrafePow = 0.1;
@@ -218,15 +222,20 @@ public class TerraBot {
         }
 
     }
+
     public void moveArm(double p){
         if (isArmInLimits(p)) {
-            arm.setPower(p);
-            if (isWgeInLimits(p)) {
-                updateWgeTracker(p);
-                wge.setPower(p);
+            if (Math.abs(getArmPos() - 90) < 45) {
+                arm.setPower(p + Math.signum(getArmPos() - 90) * Constants.WG_REST_POW);
+            } else {
+                arm.setPower(p);
             }
+//            if (isWgeInLimits(p)) {
+//                wge.setPower(Math.signum(p));
+//            }
         }
     }
+
     public void moveArmWithEnc(double deg, double pow){
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setTargetPosition((int) (deg*Constants.NEV_DEGREES_TO_TICKS));
@@ -236,17 +245,36 @@ public class TerraBot {
         moveArm(0);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    public void updateWgeTracker(double p) {
-        wgeTracker.update(p);
-    }
+
     public double getArmPos(){
-        return (arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS) + Constants.WG_START_POS;
+        return (arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS);
     }
-    public double getWgePos() { return wgeTracker.getPosCM(Constants.WGE_RADIUS); }
+
+    public double getWgePos() { return wgp.getDistance(DistanceUnit.CM) - Constants.WGE_START; }
+
     public boolean isArmInLimits(double dir){
         return limits.isInLimits(arm, dir, getArmPos());
     }
+
     public boolean isWgeInLimits(double dir) { return limits.isInLimits(wge, dir, getWgePos()); }
+
+    public double updateWge() {
+        if (!wgeStartMode) {
+            double wgePos = getWgePos();
+            double armPos = getArmPos();
+            double c = 0.05;
+            double targetPos = Constants.WGE_UPPER_LIMIT - Constants.WGE_UPPER_LIMIT / (1 + Math.pow(Math.E, -c * (armPos - 0.5 * Constants.WG_UPPER_LIMIT - Constants.WG_LOWER_LIMIT)));
+            if (Math.abs(targetPos - wgePos) < Constants.WGE_ACC) {
+                wge.setPower(0);
+            } else {
+                wge.setPower(Math.signum(targetPos - wgePos));
+            }
+            return targetPos;
+        } else {
+            wgeStartMode = getArmPos() < 40;
+            return 0;
+        }
+    }
 
     public boolean areAutomodulesRunning(){
         for (AutoModule a: autoModules) {
@@ -254,6 +282,7 @@ public class TerraBot {
         }
         return false;
     }
+
     public void stopAllAutomodules(){
         for (AutoModule a: autoModules) {
             a.stop();
@@ -274,6 +303,7 @@ public class TerraBot {
     public double getRightAngPos(){
         return (outr.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
     }
+
     public double getLeftAngPos(){
         return (outl.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
     }
@@ -281,6 +311,7 @@ public class TerraBot {
     public double getLeftDistance(){
         return lr.getDistance(DistanceUnit.CM);
     }
+
     public double getBackDistance(){
         return br.getDistance(DistanceUnit.CM);
     }
@@ -355,8 +386,8 @@ public class TerraBot {
         odometryThread = new TerraThread(run, exit);
         Thread t = new Thread(odometryThread);
         t.start();
-
     }
+
     public void startOdoThreadTele(){
         CodeSeg run = new CodeSeg() {
             @Override

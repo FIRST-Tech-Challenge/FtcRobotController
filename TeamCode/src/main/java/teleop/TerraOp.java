@@ -49,13 +49,14 @@ public class TerraOp extends OpMode {
             bot.shooter.start();
         }
 
-        if(gamepad2.right_trigger > 0){
-            bot.extendWobbleGoal(1);
-        }else if (gamepad2.left_trigger > 0 ){
-            bot.extendWobbleGoal(-1);
-        }else{
-            bot.extendWobbleGoal(0);
-        }
+
+//        if(gamepad2.right_trigger > 0){
+//            bot.extendWobbleGoal(1);
+//        }else if (gamepad2.left_trigger > 0 ){
+//            bot.extendWobbleGoal(-1);
+//        }else{
+//            bot.extendWobbleGoal(0);
+//        }
 
 //        if (gamepad2.dpad_right){
 //            bot.openClaw();
@@ -65,12 +66,12 @@ public class TerraOp extends OpMode {
 
 
         bot.moveArm(-gamepad2.right_stick_y);
+        telemetry.addData("WGE Target Pos", bot.updateWge());
 
         telemetry.addData("Wobble goal pow", -gamepad2.right_stick_y);
         telemetry.addData("Wobble goal pos", -bot.arm.getCurrentPosition());
         telemetry.addData("Wobble goal pos in deg", bot.getArmPos());
         telemetry.addData("WGE Pos", bot.getWgePos());
-        telemetry.addData("WGE Pos rad", bot.wgeTracker.pos);
 
 //        bot.extendWobbleGoal(gamepad2.a);
 
@@ -84,7 +85,6 @@ public class TerraOp extends OpMode {
 //        telemetry = telemetryHandler.addOdometry(telemetry, bot);
         telemetry.addData("cll pos", bot.cll.getPosition());
         telemetry.addData("clr pos", bot.clr.getPosition());
-        telemetry.addData("servoTracker", bot.wgeTracker.timer.seconds());
 
         telemetry.update();
 
