@@ -67,11 +67,11 @@ public class UltimateBot extends YellowBot {
 
         try {
             DcMotorEx intakecurve = getIntakeCMotor();
-            intakecurve.setDirection(DcMotor.Direction.REVERSE);
+            intakecurve.setDirection(DcMotor.Direction.FORWARD);
             intakecurve.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intakecurve.setPower(0);
         } catch (Exception ex) {
-            throw new Exception("Issues with shooter. Check the controller config", ex);
+            throw new Exception("Issues with curved intake. Check the controller config", ex);
         }
 
         try {
@@ -139,9 +139,7 @@ public class UltimateBot extends YellowBot {
         return rightOdo;
     }
 
-    public DcMotorEx getIntakeCMotor() {
-        return leftOdo;
-    }
+    public DcMotorEx getIntakeCMotor() { return leftOdo; }
 
     public double getShooterVelocity(){
         return shooter.getVelocity();
@@ -155,7 +153,7 @@ public class UltimateBot extends YellowBot {
         DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
             intake.setPower(0.9);
-            intakecurve.setPower(0.9);
+            intakecurve.setPower(-0.9);
         }
     }
 
@@ -165,7 +163,7 @@ public class UltimateBot extends YellowBot {
         DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
             intake.setPower(-0.7);
-            intakecurve.setPower(-0.7);
+            intakecurve.setPower(0.7);
         }
     }
 
@@ -391,9 +389,9 @@ public class UltimateBot extends YellowBot {
     public void turretCamera() {
         if (turretServo != null) {
             if (cameraPos > 0.5) {
-                turretPos = cameraPos * 0.95;
+                turretPos = cameraPos * 0.98;
             } else if (cameraPos < 0.5) {
-                turretPos = cameraPos * 1.05;
+                turretPos = cameraPos * 1.02;
             } else {
                 turretPos = 0.5;
             }
@@ -450,6 +448,8 @@ public class UltimateBot extends YellowBot {
                     if (syncturretcamera) {
                         turretCamera();
                     }
+                } else {
+                    turretInit();
                 }
                 while(timer.milliseconds() < 60){
                 }
