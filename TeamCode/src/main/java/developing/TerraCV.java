@@ -48,19 +48,28 @@ public class TerraCV extends OpenCvPipeline
     public MatOfPoint2f areaPoints;
     public RotatedRect boundingRect;
 
+    public Mat hsv = new Mat();
+    public Scalar lower = new Scalar(10,100,20);
+    public Scalar upper = new Scalar(25,255,255);
+
+    public boolean sketch = false;
+
     @Override
     public Mat processFrame(Mat input)
     {
         contours.clear();
 
-        Imgproc.cvtColor(input, yCrCb, Imgproc.COLOR_RGB2YCrCb);
+        if(!sketch) {
 
-        Core.extractChannel(yCrCb, cb, 2);
+            Imgproc.cvtColor(input, yCrCb, Imgproc.COLOR_RGB2YCrCb);
+            Core.extractChannel(yCrCb, cb, 2);
+            Core.inRange(cb, new Scalar(ORANGE_MIN), new Scalar(ORANGE_MAX), processed);
+            Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
 
-        Core.inRange(cb, new Scalar(ORANGE_MIN), new Scalar(ORANGE_MAX), processed);
-
-        Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
-
+        }else {
+            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
+            Core.inRange(hsv, lower, upper, processed);
+        }
 
         Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -84,8 +93,6 @@ public class TerraCV extends OpenCvPipeline
                     ringNum = RingNum.FOUR;
                 } else if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
                     ringNum = RingNum.ONE;
-                }else{
-                    ringNum = RingNum.ZERO;
                 }
             }
         }
@@ -93,6 +100,7 @@ public class TerraCV extends OpenCvPipeline
         if(i == 0){
             ringNum = RingNum.ZERO;
         }
+
         return processed;
     }
 
