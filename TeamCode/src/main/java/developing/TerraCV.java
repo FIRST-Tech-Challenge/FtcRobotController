@@ -17,7 +17,7 @@ public class TerraCV extends OpenCvPipeline
 {
 
     public double ORANGE_MIN = 80;
-    public double ORANGE_MAX = 110;
+    public double ORANGE_MAX = 120;
 
     // Cases
     public enum RingNum {ZERO, ONE, FOUR}
