@@ -62,7 +62,11 @@ public class TerraCV extends OpenCvPipeline
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
         Core.inRange(hsv, lower, upper, processed);
 
+        Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
+
         Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
+
 
 
         int i = 0;
