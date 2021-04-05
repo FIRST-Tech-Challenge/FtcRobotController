@@ -87,13 +87,17 @@ final boolean debug = true;
         //robot.moveForward(24,0.5);
         //robot.moveBackward(24,0.5);
         //}
-        robot.goToPosition(72,0,0,0.8);
+        robot.goToPosition(72,0,0,0.5);
         sleep(3000);
-        robot.goToPosition(0,0,0,0.8);
+        robot.goToPosition(0,0,0,0.5);
         sleep(3000);
-        robot.goToPosition(0,48,0,0.8);
+        robot.goToPosition(0,48,90,0.5);
         sleep(3000);
-        robot.goToPosition(0,0,0,0.8);
+        robot.goToPosition(0,0,0,0.5);
+        sleep(3000);
+        robot.goToPosition(48,48,-90,0.5);
+        sleep(3000);
+        robot.goToPosition(48,48,0,0.5);
         sleep(3000);
         stop();
     }
