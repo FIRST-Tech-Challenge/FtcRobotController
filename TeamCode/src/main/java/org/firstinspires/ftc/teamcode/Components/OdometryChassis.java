@@ -328,7 +328,7 @@ public class OdometryChassis extends BasicChassis {
             double max = 0.22;
             while (op.opModeIsActive() && (difference >= 1)&&op.gamepad2.left_trigger!=1) {
                 currentPosition = track();
-                if(difference<15){
+                if(difference<10){
                     power = startpower*difference / 25;
                 }
                 if (power > startpower) {
@@ -400,8 +400,17 @@ public class OdometryChassis extends BasicChassis {
             double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
             double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
             double startpower = power;
+            double error=0;
             while (op.opModeIsActive() && (difference >= 1)&&!gotoPosition_off) {
                 currentPosition = track();
+                error = currentPosition[2]- target_position[2];
+                error%=360;
+                if(error>180){
+                    error-=360;
+                }
+                if(error<-180){
+                    error+=360;
+                }
                 if(difference<5){
                     power=startpower*difference/30;
                 }
@@ -413,7 +422,10 @@ public class OdometryChassis extends BasicChassis {
                 angleInRadians = atan2(x, -y*2) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
-                anglecorrection = (currentPosition[2] - target_position[2]) % 360 * 0.03;
+                anglecorrection = error*0.05;
+                if(anglecorrection>0.3){
+                    anglecorrection=0.3;
+                }
                 if (abs(anglePower[1]) > abs(anglePower[0])) {
                     anglePower[1] *= abs(1 / anglePower[1]);
                     anglePower[0] *= abs(1 / anglePower[1]);
