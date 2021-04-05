@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Robot;
 
 /**
  * Ultimate Goal Accessory
@@ -24,10 +25,13 @@ public class Shooter {
 
     Servo shooter_Servo;
 
-    protected double highGoalVelocity = 1675;
+    protected double highGoalVelocity = 1625;
     protected double middleGoalVelocity = 1600;
     protected double lowGoalVelocity = 1500;
     protected double powershotVelocity = 1725;
+    protected double veloThreshold = 50;
+    double servoBack;
+    double servoForward;
 
     public Shooter(LinearOpMode opMode) {
         op = opMode;
@@ -35,8 +39,18 @@ public class Shooter {
         shooterMotor = (DcMotorEx) op.hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
         shooter_Servo = op.hardwareMap.servo.get("ShooterServo");
         shooterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        shooterMotor.setVelocityPIDFCoefficients(57, 0, 0, 15.4);
-        shooter_Servo.setPosition(0.59);
+        if(!Robot.isCorgi){
+            servoBack = 0.59;
+            servoForward = 0.52;
+            shooterMotor.setVelocityPIDFCoefficients(57, 0, 0, 15.4);
+        }
+        else{
+            servoBack = 0.64;
+            servoForward = 0.5;
+            shooterMotor.setVelocityPIDFCoefficients(14, 0, 0.1, 15.8);
+        }
+        shooter_Servo.setPosition(servoBack);
+
     }
 
     public void setVelocity(double velocity, int distance) {
@@ -84,9 +98,9 @@ public class Shooter {
 
     public void moveServo(boolean direction) {
         if (direction == true) {
-            shooter_Servo.setPosition(0.59);
+            shooter_Servo.setPosition(servoBack);
         } else {
-            shooter_Servo.setPosition(0.52);
+            shooter_Servo.setPosition(servoForward);
         }
         op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
