@@ -209,7 +209,7 @@ public class HzAutoPatriotGames extends LinearOpMode {
                 //Move to position to launch rings
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-10, 14, Math.toRadians(21)))//-10
+                            .lineToLinearHeading(new Pose2d(-10, 14, Math.toRadians(19)))//-10
                             .build();
                 } else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -587,7 +587,8 @@ public class HzAutoPatriotGames extends LinearOpMode {
                             hzDrive.followTrajectory(traj);
                         } else {
                             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(18, -30, Math.toRadians(180)))
+                                    //.lineToSplineHeading(new Pose2d(18, -30, Math.toRadians(180)))
+                                    .lineToSplineHeading(new Pose2d(14, -33, Math.toRadians(180)))
                                     .build();
                             hzDrive.followTrajectory(traj);
                         }
