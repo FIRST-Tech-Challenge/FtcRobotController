@@ -29,6 +29,8 @@ public class Vals {
     public static double drive_kp = .1;
     public static double drive_ki = .11;
     public static double drive_kd = .0003;
+    public static double drive_kv = 1;
+    public static double drive_ks = 3;
     public static double drive_tolerance = 1;
     public static double drive_target_x = 45;
     public static double drive_target_y = -65;
