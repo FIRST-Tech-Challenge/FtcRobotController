@@ -17,6 +17,7 @@ public class MotorTest extends OpMode {
     private DriveTrain driveTrain;
     private ElapsedTime elapsedTime;
     boolean reset;
+    double spinTime = 0;
 
     @Override
     public void init() {
@@ -36,6 +37,7 @@ public class MotorTest extends OpMode {
                 reset = false;
                 elapsedTime.reset();
             }
+            spinTime = elapsedTime.seconds();
             driveTrain.setSpeed(1, -1);
         } else {
             reset = true;
@@ -44,7 +46,7 @@ public class MotorTest extends OpMode {
 
         telemetry.addData("Right Speed", driveTrain.driveRight.getCorrectedVelocity());
         telemetry.addData("Right Power", driveTrain.driveRight.get());
-        telemetry.addData("Elapsed Time", elapsedTime.seconds());
+        telemetry.addData("Elapsed Time", spinTime);
     }
 
 }
