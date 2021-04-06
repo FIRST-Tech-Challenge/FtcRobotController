@@ -2,23 +2,23 @@ package org.firstinspires.ftc.robot_utilities;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.RamseteController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 
 public class PositionController {
 
     public DifferentialDriveOdometry odometry;
+    private PIDController pidDrive;
+    private RotationController rotationController;
+    private RamseteController ramseteController;
 
     private Pose2d startPose;
     private Pose2d m_poseError = new Pose2d();
     private Pose2d m_poseTolerance = new Pose2d();
-    private PIDController pidDrive;
-    private RotationController rotationController;
-
-    double b;
-    double zeta;
 
     public PositionController(Pose2d currentPose,
                               RotationController rotationController,
@@ -27,8 +27,7 @@ public class PositionController {
         pidDrive = new PIDController(Vals.drive_kp, Vals.drive_ki, Vals.drive_kd);
         pidDrive.setTolerance(Vals.drive_tolerance);
 
-        this.b = b;
-        this.zeta = zeta;
+        ramseteController = new RamseteController(b, zeta);
 
         this.rotationController = rotationController;
         this.startPose = currentPose;
@@ -44,18 +43,12 @@ public class PositionController {
      * @param poseTolerance Pose error which is tolerable.
      */
     public void setTolerance(Pose2d poseTolerance) {
-        this.m_poseTolerance = poseTolerance;
+        ramseteController.setTolerance(poseTolerance);
     }
 
     /** Returns true if the pose error is within tolerance of the reference. */
     public boolean atReference() {
-        final Translation2d eTranslate = m_poseError.getTranslation();
-        final Rotation2d eRotate = m_poseError.getRotation();
-        final Translation2d tolTranslate = m_poseTolerance.getTranslation();
-        final Rotation2d tolRotate = m_poseTolerance.getRotation();
-        return Math.abs(eTranslate.getX()) < tolTranslate.getX()
-                && Math.abs(eTranslate.getY()) < tolTranslate.getY()
-                && Math.abs(eRotate.getRadians()) < tolRotate.getRadians();
+        return ramseteController.atReference();
     }
 
     /**
@@ -116,25 +109,24 @@ public class PositionController {
         rotationController.resetAngle();
     }
 
-    public double[] goto_pose(Pose2d targetPose,
+    public ChassisSpeeds goto_pose(Pose2d targetPose,
                               double linearVelocityRefMeters,
                               double angularVelocityRefRadiansPerSecond,
                               TelemetryPacket packet) {
 
         Pose2d currentPose = odometry.getPoseMeters();
 
-        m_poseError = targetPose.relativeTo(currentPose);
+        ChassisSpeeds chassisSpeeds = ramseteController.calculate(currentPose,
+                                                        targetPose,
+                                                        linearVelocityRefMeters,
+                                                        angularVelocityRefRadiansPerSecond);
 
-        final double eX = m_poseError.getX();
-        final double eY = m_poseError.getY();
-        final double eTheta = m_poseError.getRotation().getRadians();
-        final double vRef = linearVelocityRefMeters;
-        final double omegaRef = angularVelocityRefRadiansPerSecond;
 
-        double k = 2.0 * zeta * Math.sqrt(Math.pow(omegaRef, 2) + b * Math.pow(vRef, 2));
+        if(atReference())
+            return new ChassisSpeeds(0, 0, 0);
 
-        double linearVelocityInMeters = vRef * m_poseError.getRotation().getCos() + k * eX;
-        double angularVelocityInRadiansPerSecond = omegaRef + k * eTheta + b * vRef * sinc(eTheta) * eY;
+        return chassisSpeeds;
+
 //        double targetDistance = getDistance(targetPose, startPose);
 //        double currentDistance = getDistance(odometry.getPoseMeters(), startPose);
 //        double rotationToPoint = getRotationToPoint(targetPose, startPose);
@@ -161,17 +153,13 @@ public class PositionController {
 //        packet.put("Rotation Power", power);
 
 
-        packet.put("eX", eX);
-        packet.put("eY", eY);
-        packet.put("eTheta", eTheta);
-        packet.put("Linear Meters Velocity", linearVelocityInMeters);
-        packet.put("Angular Degrees Velocity", Math.toDegrees(angularVelocityInRadiansPerSecond));
+//        packet.put("eX", eX);
+//        packet.put("eY", eY);
+//        packet.put("eTheta", eTheta);
+//        packet.put("Linear Meters Velocity", linearVelocityInMeters);
+//        packet.put("Angular Degrees Velocity", Math.toDegrees(angularVelocityInRadiansPerSecond));
 
-        if(atReference()) {
-            return new double[]{0, 0};
-        }
 
-        return convert2Robot(linearVelocityInMeters, angularVelocityInRadiansPerSecond);
     }
 
     private double[] convert2Robot(double linearVelocityRefMeters,

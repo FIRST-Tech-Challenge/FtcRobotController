@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -68,15 +69,13 @@ public class PositionDriver extends OpMode {
         double rightSpeed = 0;
 
 
-        double[] speeds = positionController.goto_pose(targetPose, .3, 2.5, packet);
-        double linearVelocity = speeds[0];
-        double angularVelocity = speeds[1];
-        leftSpeed = -linearVelocity + angularVelocity;
-        rightSpeed = -linearVelocity - angularVelocity;
+        ChassisSpeeds speeds = positionController.goto_pose(targetPose, .3, 2.5, packet);
+
+        double linearVelocity = speeds.vxMetersPerSecond;
+        double angularVelocity = speeds.omegaRadiansPerSecond;
 
 
-
-        driveTrain.setSpeed(leftSpeed, rightSpeed);
+        driveTrain.setSpeed(speeds);
 
 
 
