@@ -60,7 +60,7 @@ public class PositionDriver extends OpMode {
                 TrajectoryGenerator.generateTrajectory(
                         currentPose,
                         List.of(new Translation2d(0, 35), new Translation2d(10, 15)),
-                        new Pose2d(3, 0, Rotation2d.fromDegrees(0)),
+                        new Pose2d(55, -15, new Rotation2d(Math.PI/180)),
                         new TrajectoryConfig(Vals.MAX_LINEAR_VELOCITY_METERS_PER_SECOND, Vals.MAX_LINEAR_VELOCITY_METERS_PER_SECOND));
     }
 
