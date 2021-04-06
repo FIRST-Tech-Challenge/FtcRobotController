@@ -69,7 +69,10 @@ public class PositionDriver extends OpMode {
         double rightSpeed = 0;
 
 
-        ChassisSpeeds speeds = positionController.goto_pose(targetPose, .3, 2.5, packet);
+        ChassisSpeeds speeds = positionController.goto_pose(targetPose,
+                                                            Vals.drive_linear_velocity_mps,
+                                                            Vals.drive_angular_velocity_radians,
+                                                            packet);
 
         double linearVelocity = speeds.vxMetersPerSecond;
         double angularVelocity = speeds.omegaRadiansPerSecond;

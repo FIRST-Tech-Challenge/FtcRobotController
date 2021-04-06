@@ -32,6 +32,8 @@ public class Vals {
     public static double drive_tolerance = 1;
     public static double drive_target_x = 45;
     public static double drive_target_y = -65;
+    public static double drive_linear_velocity_mps = .1;
+    public static double drive_angular_velocity_radians = 1;
 
     public static final double POSITION_PRE_MOVEMENT = 5;
 
