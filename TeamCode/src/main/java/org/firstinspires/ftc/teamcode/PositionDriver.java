@@ -82,6 +82,8 @@ public class PositionDriver extends OpMode {
 
         DashboardCorrections.drawRobotOnField(pose, packet);
 
+        packet.put("Linear Velocity", linearVelocity);
+        packet.put("Angular Velocity", angularVelocity);
         packet.put("X Pos: ", pose.getX());
         packet.put("Y Pos: ", pose.getY());
         packet.put("Heading: ", pose.getHeading());

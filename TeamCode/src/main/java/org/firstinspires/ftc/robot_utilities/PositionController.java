@@ -161,6 +161,8 @@ public class PositionController {
 //        packet.put("Rotation Power", power);
 
 
+        packet.put("Linear Meters Velocity", linearVelocityInMeters);
+        packet.put("Angular Radians Velocity", angularVelocityInRadiansPerSecond);
 
         return convert2Robot(linearVelocityInMeters, angularVelocityInRadiansPerSecond);
     }
