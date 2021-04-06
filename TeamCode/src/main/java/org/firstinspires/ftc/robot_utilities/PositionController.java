@@ -162,7 +162,11 @@ public class PositionController {
 
 
         packet.put("Linear Meters Velocity", linearVelocityInMeters);
-        packet.put("Angular Radians Velocity", angularVelocityInRadiansPerSecond);
+        packet.put("Angular Degrees Velocity", Math.toDegrees(angularVelocityInRadiansPerSecond));
+
+        if(atReference()) {
+            return new double[]{0, 0};
+        }
 
         return convert2Robot(linearVelocityInMeters, angularVelocityInRadiansPerSecond);
     }
