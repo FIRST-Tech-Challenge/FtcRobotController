@@ -40,12 +40,12 @@ public class Vals {
     public static double hitter_start = 0.4;
     public static double hitter_end = .7;
 
+    // Wobble Arm Values
     public static double wobble_arm_down_velocity = -0.3;
     public static double wobble_arm_up_velocity = 0.5;
     public static double wobble_hand_open = .45;
     public static double wobble_hand_close = 0;
 
-    // Wobble Arm Values
     public static double initialMotorPosition = 0.0;
     public static double initialServoPosition = 0.0;
     public static double servoOpenUp = 1.0;
