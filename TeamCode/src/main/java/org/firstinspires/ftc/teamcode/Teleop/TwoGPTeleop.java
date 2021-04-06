@@ -43,8 +43,8 @@ public class TwoGPTeleop extends LinearOpMode {
             boolean move_wobble_goal_servo = true;
             robot.openWobbleGoalClaw();
             WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
-            robot.moveLeftStick(0.36);
-            robot.moveRightStick(0.9);
+            robot.moveLeftStick(0.2);
+            robot.moveRightStick(1);
             double yShootingPosition = 0;
             double xShootingPosition = 0;
             double angleShootingPosition = 0;
@@ -82,7 +82,7 @@ public class TwoGPTeleop extends LinearOpMode {
                 }
 
 
-                if(!robot.isCorgi){
+                if(!Robot.isCorgi){
                     angleInRadian = Math.atan2(left_stick_y*-1, left_stick_x*2);
                 }
                 else{

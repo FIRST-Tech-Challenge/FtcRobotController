@@ -47,7 +47,7 @@ public class Shooter {
         else{
             servoBack = 0.64;
             servoForward = 0.5;
-            shooterMotor.setVelocityPIDFCoefficients(14, 0, 0.1, 15.8);
+            shooterMotor.setVelocityPIDFCoefficients(15, 0, 0.03, 15.8);
         }
         shooter_Servo.setPosition(servoBack);
 
