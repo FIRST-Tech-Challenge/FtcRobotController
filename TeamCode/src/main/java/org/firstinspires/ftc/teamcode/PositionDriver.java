@@ -68,6 +68,7 @@ public class PositionDriver extends OpMode {
     public void loop() {
         if(start) {
             elapsedTime.reset();
+            start = false;
         }
         gamepad.update();
         positionController.update(driveTrain.getDistance());
@@ -115,6 +116,7 @@ public class PositionDriver extends OpMode {
         packet.put("Target X Pos: ", targetPose.getX());
         packet.put("Target Y Pos: ", targetPose.getY());
         packet.put("Target Heading: ", targetPose.getHeading());
+        packet.put("Elapsed Time: ", elapsedTime.seconds());
 //        packet.put("Left Speed", leftSpeed);
 //        packet.put("Right Speed", rightSpeed);
 
