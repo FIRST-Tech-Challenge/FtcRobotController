@@ -75,7 +75,7 @@ public class PositionDriver extends OpMode {
         double angularVelocity = speeds.omegaRadiansPerSecond;
 
 
-        driveTrain.setSpeed(speeds);
+        driveTrain.setSpeed(speeds, packet);
 
 
 
@@ -86,8 +86,8 @@ public class PositionDriver extends OpMode {
         packet.put("X Pos: ", pose.getX());
         packet.put("Y Pos: ", pose.getY());
         packet.put("Heading: ", pose.getHeading());
-        packet.put("Left Speed", leftSpeed);
-        packet.put("Right Speed", rightSpeed);
+//        packet.put("Left Speed", leftSpeed);
+//        packet.put("Right Speed", rightSpeed);
 
         dashboard.sendTelemetryPacket(packet);
     }

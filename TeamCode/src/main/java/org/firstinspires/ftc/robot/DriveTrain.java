@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.robot;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveKinematics;
@@ -45,7 +46,7 @@ public class DriveTrain {
         driveRight.set(-rightSpeed);
     }
 
-    public void setSpeed(ChassisSpeeds speeds) {
+    public void setSpeed(ChassisSpeeds speeds, TelemetryPacket packet) {
         DifferentialDriveWheelSpeeds wheelSpeeds = m_kinematics.toWheelSpeeds(speeds);
 //        wheelSpeeds.normalize();
 
@@ -54,6 +55,9 @@ public class DriveTrain {
 
         leftSpeed = Math.min(1, Math.max(-1, leftSpeed));
         rightSpeed = Math.min(1, Math.max(-1, rightSpeed));
+
+        packet.put("Left Speed", leftSpeed);
+        packet.put("Right Speed", rightSpeed);
 
         setSpeedPositiveForward(leftSpeed, rightSpeed);
     }
