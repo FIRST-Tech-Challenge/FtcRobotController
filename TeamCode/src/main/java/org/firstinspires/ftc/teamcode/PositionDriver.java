@@ -67,7 +67,7 @@ public class PositionDriver extends OpMode {
         double rightSpeed = 0;
 
 
-        double[] speeds = positionController.goto_pose(targetPose, packet);
+        double[] speeds = positionController.goto_pose(targetPose, 0, 0, packet);
 
         leftSpeed = speeds[0];
         rightSpeed = speeds[1];
