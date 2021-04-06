@@ -236,6 +236,7 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
             robot.resetReads();
             MyPosition.setPosition(startLocation.x, startLocation.y, startLocation.angle);
             robot.finalAutoPosition = new WayPoint(startLocation.x, startLocation.y, startLocation.angle, 1.0);
+            robot.autoExecuted = true;
 
             switch (startShootingStyle) {
                 case STRAFE_STOP:

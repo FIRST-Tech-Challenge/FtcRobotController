@@ -40,6 +40,10 @@ import static java.lang.Math.sqrt;
 public class UltimateGoalRobot
 {
     public static WayPoint finalAutoPosition;
+    public static int finalRightEncoder;
+    public static int finalLeftEncoder;
+    public static int finalStrafeEncoder;
+    public static boolean autoExecuted;
 
     /* Public OpMode members. */
     public final static double WOBBLE_ARM_MIN = 0.300;

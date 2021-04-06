@@ -106,20 +106,33 @@ public class UltimateGoalTeleOp extends OpMode {
 
     @Override
     public void start() {
-        robot.resetEncoders();
+        robot.resetReads();
+        if(!robot.autoExecuted) {
+            robot.finalAutoPosition = new WayPoint(149.7584, 22.86, Math.toRadians(90.0), 0.0);
+            robot.resetEncoders();
+            robot.finalLeftEncoder = robot.getLeftEncoderWheelPosition();
+            robot.finalRightEncoder = robot.getRightEncoderWheelPosition();
+            robot.finalStrafeEncoder = robot.getStrafeEncoderWheelPosition();
+        }
+        robot.autoExecuted = false;
 
         //give MyPosition our current positions so that it saves the last positions of the wheels
         //this means we won't teleport when we start the match. Just in case, run this twice
         for(int i = 0; i < 2 ; i ++) {
-            robot.resetReads();
-            MyPosition.initialize(robot.getLeftEncoderWheelPosition(),
-                    robot.getRightEncoderWheelPosition(),
-                    robot.getStrafeEncoderWheelPosition());
+            MyPosition.initialize(robot.finalLeftEncoder,
+                    robot.finalRightEncoder,
+                    robot.finalStrafeEncoder);
         }
 
         robot.highGoal = new WayPoint(110.10, 153.99, Math.toRadians(87.45), 1.0);
         MyPosition.setPosition(robot.finalAutoPosition.x, robot.finalAutoPosition.y,
                 robot.finalAutoPosition.angle);
+
+        // This should  account for any motion of the robot after auto ends.
+        robot.resetReads();
+        MyPosition.giveMePositions(robot.getLeftEncoderWheelPosition(),
+                robot.getRightEncoderWheelPosition(),
+                robot.getStrafeEncoderWheelPosition());
     }
 
     @Override
