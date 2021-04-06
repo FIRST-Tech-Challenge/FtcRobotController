@@ -16,7 +16,7 @@ public class TransferSubsystem extends Subsystem {
     public DigitalChannel transferTouchBottom;
     public DigitalChannel transferTouchTop;
 
-    public int TRANSFER_TARGET = -735;
+    public int TRANSFER_TARGET = -740;
 //    public int transferOffset = 0;
 
     public TransferSubsystem(UpliftRobot robot){
@@ -75,7 +75,7 @@ public class TransferSubsystem extends Subsystem {
                 transfer.setPower(0.65);
                 robot.setTransferState(UpliftRobot.TransferState.MOVING);
                 double initialTime = System.currentTimeMillis();
-                while(transfer.isBusy() && !robot.operatorCancel  && robot.opMode.opModeIsActive()) {
+                while(transfer.isBusy() && !robot.operatorCancel  && robot.opMode.opModeIsActive() && transferTouchTop.getState()) {
                     robot.safeSleep(5);
                 }
                 transfer.setPower(0);
@@ -91,7 +91,7 @@ public class TransferSubsystem extends Subsystem {
         transfer.setPower(0.65);
         robot.setTransferState(UpliftRobot.TransferState.MOVING);
         double initialTime = System.currentTimeMillis();
-        while(transfer.isBusy() && !robot.operatorCancel && robot.opMode.opModeIsActive() && robot.transfer.getCurrent(CurrentUnit.MILLIAMPS) < 2000) {
+        while(transfer.isBusy() && !robot.operatorCancel && robot.opMode.opModeIsActive() && transferTouchTop.getState()) {
             robot.safeSleep(5);
         }
         Log.i("Transfer Busy", transfer.isBusy() + "");

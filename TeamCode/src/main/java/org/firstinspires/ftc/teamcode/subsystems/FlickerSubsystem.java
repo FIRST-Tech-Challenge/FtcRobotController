@@ -43,28 +43,28 @@ public class FlickerSubsystem extends Subsystem {
         flicker.setPosition(pos);
     }
 
-    public void flickRing() {
-        robot.setFlickingState(UpliftRobot.FlickingState.FLICKING);
-        // move in
-        flicker.setPosition(0.22);
-        robot.safeSleep(350);
-
-        // move out
-        flicker.setPosition(0);
-        robot.safeSleep(350);
-        robot.setFlickingState(UpliftRobot.FlickingState.IDLE);
-    }
-
 //    public void flickRing() {
 //        robot.setFlickingState(UpliftRobot.FlickingState.FLICKING);
 //        // move in
 //        flicker.setPosition(0.22);
-//        while(potentiometer.getVoltage() < 0.50) {
-//            robot.safeSleep(1);
-//        }
+//        robot.safeSleep(350);
+//
+//        // move out
 //        flicker.setPosition(0);
-//        while(potentiometer.getVoltage() > 0) {
-//            robot.safeSleep(1);
-//        }
+//        robot.safeSleep(350);
+//        robot.setFlickingState(UpliftRobot.FlickingState.IDLE);
 //    }
+
+    public void flickRing() {
+        robot.setFlickingState(UpliftRobot.FlickingState.FLICKING);
+        // move in
+        flicker.setPosition(0.13);
+        while(potentiometer.getVoltage() > 1) {
+            robot.safeSleep(1);
+        }
+        flicker.setPosition(0);
+        while(potentiometer.getVoltage() < 1.42) {
+            robot.safeSleep(1);
+        }
+    }
 }

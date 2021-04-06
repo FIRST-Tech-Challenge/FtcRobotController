@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class DashboardConstants {
+    public static boolean RAISE_TRANSFER = false;
+    public static boolean DROP_TRANSFER = false;
     public static double SWEEPER_JOINT_POS = 0.7;
     public static double STICK_POS = 0.5;
     public static double SWEEPER_LEFT_POWER = 0;

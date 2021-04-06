@@ -261,7 +261,8 @@ public class DriveSubsystem extends Subsystem {
         double power = 0;
         double angleRemaining = targetAngle - robot.rawAngle;
 
-        while ((angleRemaining < -2 || angleRemaining > 2) && opMode.opModeIsActive()) {
+        double initialTime = System.currentTimeMillis();
+        while ((angleRemaining < -2 || angleRemaining > 2) && opMode.opModeIsActive() && System.currentTimeMillis() - initialAngle < 3500) {
             angleRemaining = targetAngle - robot.rawAngle;
             if(angleRemaining > 90) {
                 power = 1;

@@ -55,6 +55,7 @@ public class ServoTester extends UpliftAuto {
             robot.flicker.setPosition(FLICKER_POS);
 //            robot.wobbleSub.setWobblePosition(WOBBLE_POS);
 //            robot.clamp.setPosition(CLAMP_POS);
+            dashTelem.addData("Potentiometer Val:", robot.potentiometer.getVoltage());
         }
 
     }
