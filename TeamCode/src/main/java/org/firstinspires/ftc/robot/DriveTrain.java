@@ -50,8 +50,14 @@ public class DriveTrain {
         DifferentialDriveWheelSpeeds wheelSpeeds = m_kinematics.toWheelSpeeds(speeds);
 //        wheelSpeeds.normalize();
 
+        packet.put("Left Meters Speed", wheelSpeeds.leftMetersPerSecond);
+        packet.put("Right Meters Speed", wheelSpeeds.rightMetersPerSecond);
+
         double leftSpeed = wheelSpeeds.leftMetersPerSecond/Vals.MAX_LINEAR_VELOCITY_METERS_PER_SECOND;
         double rightSpeed = wheelSpeeds.rightMetersPerSecond/Vals.MAX_LINEAR_VELOCITY_METERS_PER_SECOND;
+
+        packet.put("Left Before Speed", leftSpeed);
+        packet.put("Right Before Speed", rightSpeed);
 
         leftSpeed = Math.min(1, Math.max(-1, leftSpeed));
         rightSpeed = Math.min(1, Math.max(-1, rightSpeed));
