@@ -133,8 +133,8 @@ public class PositionController {
 
         double k = 2.0 * zeta * Math.sqrt(Math.pow(omegaRef, 2) + b * Math.pow(vRef, 2));
 
-        double linearVelocity = vRef * m_poseError.getRotation().getCos() + k * eX;
-        double angularVelocity = omegaRef + k * eTheta + b * vRef * sinc(eTheta) * eY;
+        double linearVelocityInMeters = vRef * m_poseError.getRotation().getCos() + k * eX;
+        double angularVelocityInRadiansPerSecond = omegaRef + k * eTheta + b * vRef * sinc(eTheta) * eY;
 //        double targetDistance = getDistance(targetPose, startPose);
 //        double currentDistance = getDistance(odometry.getPoseMeters(), startPose);
 //        double rotationToPoint = getRotationToPoint(targetPose, startPose);
@@ -160,7 +160,17 @@ public class PositionController {
 //        packet.put("Position Power", power2);
 //        packet.put("Rotation Power", power);
 
-        return new double[]{1, 1};
+
+
+        return convert2Robot(linearVelocityInMeters, angularVelocityInRadiansPerSecond);
+    }
+
+    private double[] convert2Robot(double linearVelocityRefMeters,
+                                   double angularVelocityRefRadiansPerSecond) {
+        double linearVelocityRobot = Math.max(1, linearVelocityRefMeters / Vals.MAX_LINEAR_VELOCITY_METERS_PER_SECOND);
+        double angularVelocityRobot = Math.max(1, angularVelocityRefRadiansPerSecond / Vals.MAX_ANGULAR_VELOCITY_RADIANS);
+
+        return new double[]{linearVelocityRobot, angularVelocityRobot};
     }
 
 

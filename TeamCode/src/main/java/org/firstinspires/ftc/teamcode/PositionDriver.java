@@ -39,6 +39,7 @@ public class PositionDriver extends OpMode {
 
         rotationController = new RotationController(hardwareMap.get(BNO055IMU.class, "imu"));
         positionController = new PositionController(currentPose, rotationController);
+        positionController.setTolerance(new Pose2d(3, 3, new Rotation2d(Math.PI/180)));
         positionController.reset();
     }
 
@@ -67,10 +68,11 @@ public class PositionDriver extends OpMode {
         double rightSpeed = 0;
 
 
-        double[] speeds = positionController.goto_pose(targetPose, 0, 0, packet);
-
-        leftSpeed = speeds[0];
-        rightSpeed = speeds[1];
+        double[] speeds = positionController.goto_pose(targetPose, .3, 2.5, packet);
+        double linearVelocity = speeds[0];
+        double angularVelocity = speeds[1];
+        leftSpeed = -linearVelocity + angularVelocity;
+        rightSpeed = -linearVelocity - angularVelocity;
 
 
 
