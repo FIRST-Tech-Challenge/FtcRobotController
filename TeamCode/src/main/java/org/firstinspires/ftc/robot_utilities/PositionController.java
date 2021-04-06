@@ -161,6 +161,9 @@ public class PositionController {
 //        packet.put("Rotation Power", power);
 
 
+        packet.put("eX", eX);
+        packet.put("eY", eY);
+        packet.put("eTheta", eTheta);
         packet.put("Linear Meters Velocity", linearVelocityInMeters);
         packet.put("Angular Degrees Velocity", Math.toDegrees(angularVelocityInRadiansPerSecond));
 
