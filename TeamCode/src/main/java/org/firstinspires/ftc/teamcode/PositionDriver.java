@@ -49,7 +49,7 @@ public class PositionDriver extends OpMode {
         positionController.update(driveTrain.getDistance());
 
         Pose2d pose = positionController.odometry.getPoseMeters();
-        Pose2d targetPose = new Pose2d(Vals.drive_target_x,  Vals.drive_target_y, new Rotation2d());
+        Pose2d targetPose = new Pose2d(Vals.drive_target_x,  Vals.drive_target_y, new Rotation2d(Math.PI/2));
 
         TelemetryPacket packet = new TelemetryPacket();
 
