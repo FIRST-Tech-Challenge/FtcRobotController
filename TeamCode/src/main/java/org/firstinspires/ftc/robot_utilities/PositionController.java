@@ -8,6 +8,10 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
+import com.arcrobotics.ftclib.trajectory.Trajectory;
+import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
+import com.arcrobotics.ftclib.trajectory.TrajectoryGenerator;
+import com.sun.tools.javac.util.List;
 
 public class PositionController {
 
@@ -15,6 +19,8 @@ public class PositionController {
     private PIDController pidDrive;
     private RotationController rotationController;
     private RamseteController ramseteController;
+
+    private Trajectory m_trajectory;
 
     private Pose2d startPose;
     private Pose2d m_poseError = new Pose2d();
@@ -32,6 +38,7 @@ public class PositionController {
         this.rotationController = rotationController;
         this.startPose = currentPose;
         odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), currentPose);
+
     }
 
     public PositionController(Pose2d currentPose, RotationController rotationController) {
@@ -107,6 +114,19 @@ public class PositionController {
         pidDrive.reset();
         startPose = odometry.getPoseMeters();
         rotationController.resetAngle();
+    }
+
+    public ChassisSpeeds goto_pose(Trajectory.State desiredState, TelemetryPacket packet) {
+
+        Pose2d currentPose = odometry.getPoseMeters();
+
+        ChassisSpeeds chassisSpeeds = ramseteController.calculate(currentPose, desiredState);
+
+
+        if (atReference())
+            return new ChassisSpeeds(0, 0, 0);
+
+        return chassisSpeeds;
     }
 
     public ChassisSpeeds goto_pose(Pose2d targetPose,
