@@ -89,6 +89,9 @@ public class PositionDriver extends OpMode {
         packet.put("X Pos: ", pose.getX());
         packet.put("Y Pos: ", pose.getY());
         packet.put("Heading: ", pose.getHeading());
+        packet.put("Target X Pos: ", targetPose.getX());
+        packet.put("Target Y Pos: ", targetPose.getY());
+        packet.put("Target Heading: ", targetPose.getHeading());
 //        packet.put("Left Speed", leftSpeed);
 //        packet.put("Right Speed", rightSpeed);
 
