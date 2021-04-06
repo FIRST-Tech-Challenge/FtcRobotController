@@ -39,7 +39,7 @@ public class Vals {
     public static final double MAX_LINEAR_VELOCITY_METERS_PER_SECOND = 0.818;
     public static final double MAX_ANGULAR_VELOCITY_DEGREES = 293.878;
     public static final double MAX_ANGULAR_VELOCITY_RADIANS = 5.129;
-    public static final double TRACK_WIDTH_METERS = 0.3683;
+    public static final double TRACK_WIDTH_METERS = 0.41275;
 
     public static double hitter_start = 0.4;
     public static double hitter_end = .7;
