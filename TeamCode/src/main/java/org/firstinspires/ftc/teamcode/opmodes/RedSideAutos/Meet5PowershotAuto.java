@@ -82,7 +82,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
             driveSub.passThroughPosition(109, 24, 1, 0);
             driveSub.driveToPosition(109, 48, 0.75, 0);
-            driveSub.turnTo(0, 0);
+            driveSub.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
             autoHighGoalShoot();
             driveSub.driveToPosition(109, 44, 0.75, 0);
 
@@ -104,7 +104,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
             intakeSub.setIntakePower(0);
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
             driveSub.driveToPosition(109, 48, 0.7, 0);
-            driveSub.turnTo(0, 0);
+            driveSub.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
             autoHighGoalShoot();
 
 //                // intake last ring
@@ -149,7 +149,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
             // shoot
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
             driveSub.driveToPosition(109, 48, 0.7, 0);
-            driveSub.turnTo(0, 0);
+            driveSub.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
             autoHighGoalShoot();
 
             // intake single stack
@@ -167,7 +167,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
             transferSub.autoRaiseTransfer();
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
             driveSub.driveToPosition(110, 48, 0.5, 0);
-            driveSub.turnTo(0, 0);
+            driveSub.turnTo(0,1, DriveSubsystem.QUICKEST_DIRECTION);
             flickerSub.flickRing();
             flickerSub.flickRing();
             shooterSub.setShooterPower(0);
@@ -195,7 +195,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
         } else {        // either 0 rings, or a problem with detection (-1)
             shooterSub.setShooterVelocity(robot.bounceBackVelocity);
             driveSub.driveToPosition(91, 60, 0.7, 1, 0, 0);
-            driveSub.turnTo(0, 0);
+            driveSub.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
 
             transferSub.autoRaiseTransfer();
             while (!robot.velocityData.isBounceBackReady() || robot.transferState != UpliftRobot.TransferState.UP) {
@@ -246,7 +246,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
 
     public void getSecondWobble() {
         driveSub.driveToPosition(113, 44, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-        driveSub.turnTo(0, 0);
+        driveSub.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
         driveSub.driveToPosition(113, 37, 0.4, 1, 0, 0);
         wobbleSub.pickUp();
     }

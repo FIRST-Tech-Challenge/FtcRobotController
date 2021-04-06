@@ -94,7 +94,7 @@ public class DriveSubsystem extends Subsystem {
         stopMotors();
 
         // correct angle to be preferred angle
-        turnTo(targetAngle, DriveSubsystem.QUICKEST_DIRECTION);
+        turnTo(targetAngle, movementSpeed, DriveSubsystem.QUICKEST_DIRECTION);
 
     }
 
@@ -150,7 +150,7 @@ public class DriveSubsystem extends Subsystem {
                 turnVal = Range.clip((60 / initialDistToPt) * (180 / Math.abs(turnAngle)), -1, 1);
             }
         } else if(turnAngle > 5) {
-            turnVal = 0.2;
+            turnVal = 0.10;
         } else if(turnAngle < -30) {
             if(turnDirection == CLOCKWISE) {
                 turnVal = Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
@@ -160,18 +160,15 @@ public class DriveSubsystem extends Subsystem {
                 turnVal = Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
             }
         } else if(turnAngle < -5) {
-            turnVal = -0.2;
+            turnVal = -0.10;
         } else {
             turnVal = 0;
         }
 
-        double x = 1.4 * speedVal * sin(toRadians(relativeAngleToPoint));
-        double y = speedVal * cos(toRadians(relativeAngleToPoint));
-
-        double lf = y + x + turnVal;
-        double rf = y - x - turnVal;
-        double lb = y - x + turnVal;
-        double rb = y + x - turnVal;
+        double lf = sin(toRadians(90 - relativeAngleToPoint) + (0.25 * PI)) * speedVal + turnVal;
+        double rf = sin(toRadians(90 - relativeAngleToPoint) - (0.25 * PI)) * speedVal - turnVal;
+        double lb = sin(toRadians(90 - relativeAngleToPoint) - (0.25 * PI)) * speedVal + turnVal;
+        double rb = sin(toRadians(90 - relativeAngleToPoint) + (0.25 * PI)) * speedVal - turnVal;
 
         // find max total input out of the 4 motors
         double maxVal = abs(lf);
@@ -197,18 +194,15 @@ public class DriveSubsystem extends Subsystem {
     }
 
     // method to move a certain direction at a given speed
-    public void teleDrive(double x, double y, double turnVal) {
+    public void teleDrive(double speedVal, double angle, double turnVal) {
 
-        double lf = y + x + turnVal;
-        double rf = y - x - turnVal;
-        double lb = y - x + turnVal;
-        double rb = y + x - turnVal;
+        double lf = sin(toRadians(90 - angle) + (0.25 * PI)) * speedVal + turnVal;
+        double rf = sin(toRadians(90 - angle) - (0.25 * PI)) * speedVal - turnVal;
+        double lb = sin(toRadians(90 - angle) - (0.25 * PI)) * speedVal + turnVal;
+        double rb = sin(toRadians(90 - angle) + (0.25 * PI)) * speedVal - turnVal;
 
-        // find max total input out of the 4 motors, if none above 1/sqrt(2) , then max is 1/sqrt(2)
-        double maxVal = 1 / sqrt(2);
-        if(abs(lf) > maxVal){
-            maxVal = abs(lf);
-        }
+        // find max total input out of the 4 motors
+        double maxVal = abs(lf);
         if(abs(rf) > maxVal){
             maxVal = abs(rf);
         }
@@ -217,6 +211,10 @@ public class DriveSubsystem extends Subsystem {
         }
         if(abs(rb) > maxVal){
             maxVal = abs(rb);
+        }
+
+        if(maxVal < (1 / sqrt(2))) {
+            maxVal = 1 / sqrt(2);
         }
 
         // set the scaled powers
@@ -255,40 +253,42 @@ public class DriveSubsystem extends Subsystem {
     }
 
     // method to turn a certain number of degrees ( [+] for clockwise and [-] for counter-clockwise )
-    public void turn(double degrees) {
+    public void turn(double degrees, double speed) {
         double initialAngle = robot.rawAngle;
-        double targetAngle = initialAngle + degrees;
-        double power = 0;
-        double angleRemaining = targetAngle - robot.rawAngle;
-
-        double initialTime = System.currentTimeMillis();
-        while ((angleRemaining < -2 || angleRemaining > 2) && opMode.opModeIsActive() && System.currentTimeMillis() - initialAngle < 3500) {
-            angleRemaining = targetAngle - robot.rawAngle;
-            if(angleRemaining > 90) {
-                power = 1;
-//            } else if(angleRemaining > 45) {
-//                power = 0.5;
-//            } else if (angleRemaining > 30) {
-//                power = 0.3;
-//            } else if(angleRemaining > 5) {
-//                power = 0.2;
-            } else if(angleRemaining > 0) {
-                power = Math.pow(Math.abs(angleRemaining) / 120, 0.6);
-            } else if(angleRemaining < -90) {
-                power = -1;
-//            } else if(angleRemaining < -45) {
-//                power = -0.5;
-//            } else if(angleRemaining < -30) {
-//                power = -0.3;
-//            } else if(angleRemaining < -5) {
-//                power = -0.2;
-            } else if(angleRemaining < 0) {
-                power = -Math.pow(Math.abs(angleRemaining) / 120, 0.6);
+        // if turning counter-clockwise
+        if(degrees < 0) {
+            while(robot.rawAngle > (initialAngle + degrees)) {
+                if (robot.driverCancel || !opMode.opModeIsActive() || opMode.isStopRequested()) {
+                    // breakaway statement for teleop
+                    safeDisable();
+                    return;
+                }
+                if(abs(degrees) < 10) {
+                    spin(-0.2);
+                } else if(abs(degrees) < 30) {
+                    spin(-0.4);
+                } else {
+                    spin(-speed);
+                }
             }
-            Log.i("Odometry", "turning power: " + power);
-            Log.i("Odometry", "Angle remaining;" + angleRemaining);
-            spin(power);
-            angleRemaining = targetAngle - robot.rawAngle;
+            // if turning clockwise
+        } else if(degrees > 0) {
+            while(robot.rawAngle < (initialAngle + degrees)) {
+                if (robot.driverCancel || !opMode.opModeIsActive() || opMode.isStopRequested()) {
+                    // breakaway statement for teleop
+                    safeDisable();
+                    return;
+                }
+                if(abs(degrees) < 10) {
+                    spin(0.2);
+                } else if(abs(degrees) < 30) {
+                    spin(0.4);
+                } else {
+                    spin(speed);
+                }
+            }
+        } else {
+            // either a value of 0 was passed into the method, or some null/NA value [do nothing]
         }
 
         stopMotors();
@@ -296,24 +296,24 @@ public class DriveSubsystem extends Subsystem {
     }
 
     // method to turn TO a certain angle (within the angle restrictions), with either the shortest path (technique 0) or through a specified direction in the direction indicator (clockwise for 1, counter-clockwise for 2)
-    public void turnTo(double targetAngle, int directionIndex) {
+    public void turnTo(double targetAngle, double speed, int directionIndex) {
         double initialAngle = robot.worldAngle;
         double quickestTurnAngle = MathFunctions.angleRestrictions(targetAngle - initialAngle);
         if(quickestTurnAngle > 0) {
             if(directionIndex == CLOCKWISE) {
-                turn(quickestTurnAngle);
+                turn(quickestTurnAngle, speed);
             } else if(directionIndex == COUNTER_CLOCKWISE) {
-                turn(quickestTurnAngle - 360);
+                turn(quickestTurnAngle - 360, speed);
             } else {
-                turn(quickestTurnAngle);
+                turn(quickestTurnAngle, speed);
             }
         } else if(quickestTurnAngle < 0) {
             if(directionIndex == CLOCKWISE) {
-                turn(quickestTurnAngle + 360);
+                turn(quickestTurnAngle + 360, speed);
             } else if(directionIndex == COUNTER_CLOCKWISE) {
-                turn(quickestTurnAngle);
+                turn(quickestTurnAngle, speed);
             } else {
-                turn(quickestTurnAngle);
+                turn(quickestTurnAngle, speed);
             }
         } else {
             // NOTHING...

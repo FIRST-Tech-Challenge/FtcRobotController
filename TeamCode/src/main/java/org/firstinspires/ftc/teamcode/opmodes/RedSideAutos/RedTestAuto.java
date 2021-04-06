@@ -42,9 +42,9 @@ public class RedTestAuto extends UpliftAuto {
         Log.i("Odometry", "REACHED THIRD POINT!!!");
         drive.driveToPosition(0, 0, 1, 180);
         Log.i("Odometry", "REACHED LAST POINT!!!");
-        drive.turnTo(0, DriveSubsystem.QUICKEST_DIRECTION);
+        drive.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
         Log.i("Odometry", "FINISHED TURNING!!!");
-        drive.turnTo(0, DriveSubsystem.QUICKEST_DIRECTION);
+        drive.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
     }
 
     @Override
