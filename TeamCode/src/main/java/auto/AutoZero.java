@@ -22,34 +22,38 @@ public class AutoZero extends LinearOpMode {
         waitForStart();
         bot.startOdoThreadAuto(this);
 
-        //TODO LIST
-        //  Design:
-        //  Add things on wobble arm so that it drops properly and fix broken plexiglass
-        //  Side servos
-        //  Programming:
-        //  SETPOINTS NEED WORK LOOK AT PATH
-        //  Check robot functions
-        //  XX Check stops XX
-        //  Incorporate gyro and compass resets
-        //  Incorporate distance sensor resets
-        //  Make robot functions for
-        //  Shooting
-        //  Intake
-        //  Wobble goal methods
-        //  FINALLY
-        //  Make teleop autoshooter
-        //  PlAN
-        //      1. shoot 3 rings into normal goal
-        //      2. shoot 1 ring into normal goal
-        //      3. shoot 3 rings into powershot
-        //      4. place wobble goal
-        //      5. get other wobble goal
-        //      6. place other wobble goal
-        //      7. park
+        /**
+         * YOU NEED A STOP TO START RFs AND ONE TO ALLOW THE RF TO EXECUTE (AFTER)
+         *
+         * TODO LIST
+         *  Design:
+         *      XX Add things on wobble arm so that it drops properly and fix broken plexiglass XX
+         *      Side servos
+         *  Programming:
+         *      SETPOINTS NEED WORK LOOK AT PATH
+         *      Check robot functions
+         *      XX Check stops XX
+         *      Incorporate gyro and compass resets
+         *      Incorporate distance sensor resets
+         *      Make robot functions for
+         *          Shooting
+         *          XX Intake XX
+         *          XX Wobble goal methods XX
+         *      Make teleop autoshooter
+         *      PlAN
+         *          1. shoot 3 rings into normal goal
+         *          2. shoot 1 ring into normal goal
+         *          3. shoot 3 rings into powershot
+         *          4. place wobble goal
+         *          5. get other wobble goal
+         *          6. place other wobble goal
+         *          7. park
+         */
 
-
-
+        path.addStop(0.01);
         path.addRF(rf.wgMoveBack());
+        path.addStop(5);
+        path.addRF(rf.wgMoveFront());
         path.addStop(5);
 //        path.addRF(rf.wgMoveFront());
 

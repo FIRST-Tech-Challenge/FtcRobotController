@@ -280,7 +280,7 @@ public class Path {
 //            op.telemetry.addData("h", bot.odometry.h);
 //            op.telemetry.addData("x", bot.odometry.x);
 //            op.telemetry.addData("y", bot.odometry.y);
-            op.telemetry.addData()
+            op.telemetry.addData("rfs index", rfsHandler.rfsIndex);
             op.telemetry = telemetryHandler.addAuton(op.telemetry, this, bot);
             op.telemetry.update();
 //
