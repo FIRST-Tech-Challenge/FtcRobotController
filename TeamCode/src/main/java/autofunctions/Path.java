@@ -103,6 +103,7 @@ public class Path {
         yControl.setAcc(YAcc);
         hControl.setAcc(HAcc);
         globalTime.reset();
+        addStop(0.01);
     }
 
     public void updateRadius(double dis){ radius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis))); }
@@ -284,7 +285,7 @@ public class Path {
             op.telemetry = telemetryHandler.addAuton(op.telemetry, this, bot);
             op.telemetry.update();
 //
-//            bot.outtakeWithCalculations();
+            bot.outtakeWithCalculations();
 //
             double[] pows = update(bot.odometry.getPos()); //bot.odometry.getVels()
             bot.move(pows[1], pows[0], pows[2]);

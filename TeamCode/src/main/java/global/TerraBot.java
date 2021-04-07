@@ -335,9 +335,9 @@ public class TerraBot {
 
     public void outtakeWithCalculations() {
         if (outtaking) {
-            double robotTheta = angularPosition.getHeading();
+//            double robotTheta = angularPosition.getHeading();
 //            autoAimer.update(robotTheta,localizer.getPos(robotTheta));
-            autoAimer.update(robotTheta, new double[]{1.25,1.5});
+            autoAimer.update(0, new double[]{1.25,1.5});
             outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
             outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
             rh.setPower(-0.5);

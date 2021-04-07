@@ -14,7 +14,7 @@ public class AutoAimer {
 
 //        double s = calcSpeed(frontDis, leftDis);
 
-        double s = calcSpeed(2.07, 1);
+        double s = calcSpeed(2.2098, 1);
         outlController.setTargetSpeed(s);
         outrController.setTargetSpeed(s);
     }

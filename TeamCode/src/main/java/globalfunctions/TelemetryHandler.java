@@ -68,9 +68,8 @@ public class TelemetryHandler {
         return telemetry;
     }
     public Telemetry addAutoAimer(Telemetry telemetry, TerraBot bot) {
-        telemetry.addData("left distance", bot.getLeftDistance());
-        telemetry.addData("back distance", bot.getBackDistance());
-        telemetry.addData("distance to center: ", bot.autoAimer.getDisFromCenter(bot.getLeftDistance(), bot.angularPosition.getHeadingGY()));
+        telemetry.addData("left distance", bot.localizer.getLeftDistance());
+        telemetry.addData("back distance", bot.localizer.getBackDistance());
         telemetry.addData("Outl Target Power", bot.autoAimer.outlController.getMotorPower(bot.outl.getCurrentPosition()));
         telemetry.addData("Outr Target Power", bot.autoAimer.outrController.getMotorPower(bot.outr.getCurrentPosition()));
         return telemetry;

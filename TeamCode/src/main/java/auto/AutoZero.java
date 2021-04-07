@@ -23,7 +23,7 @@ public class AutoZero extends LinearOpMode {
         bot.startOdoThreadAuto(this);
 
         /**
-         * YOU NEED A STOP TO START RFs AND ONE TO ALLOW THE RF TO EXECUTE (AFTER)
+         * YOU NEED A STOP TO ALLOW THE RF TO EXECUTE (AFTER)
          *
          * TODO LIST
          *  Design:
@@ -50,11 +50,9 @@ public class AutoZero extends LinearOpMode {
          *          7. park
          */
 
-        path.addStop(0.01);
-        path.addRF(rf.wgMoveBack());
-        path.addStop(5);
-        path.addRF(rf.wgMoveFront());
-        path.addStop(5);
+        path.addRF(rf.startOuttake());
+        path.addStop(10);
+        path.addRF(rf.stopOuttake());
 //        path.addRF(rf.wgMoveFront());
 
         path.start(bot, this);

@@ -17,7 +17,7 @@ public class RobotFunctions {
             }
         };
     }
-    public CodeSeg startOuttake(final TerraBot bot) {
+    public CodeSeg startOuttake() {
         return new CodeSeg() {
             @Override
             public void run() {
