@@ -30,6 +30,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private int count=0;
     private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
     private double DEFAULT_COUNTS_PER_INCH = 303.7; //307.699557;
+    private double netRotation = 0;// clockwise rotation in degrees
+    private double prevHeading = 0; // previous heading in degrees
 
     //Algorithm constants
     //private double robotEncoderWheelDistance = 15.20435 * DEFAULT_COUNTS_PER_INCH;
@@ -50,10 +52,16 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private double normalEncoderPositionMultiplier = 1;
     private int GPSVersion = 1; // version 1 - Wizard Odometry
                                 // version 2 - Beta Odometry
-
+    public double getNetRotation(){
+        return netRotation;
+    }
+    public double rotationCorrection(){
+        return getNetRotation() / 360. * 0.6;
+    }
 
     public void set_orientationSensor(CombinedOrientationSensor val) {
         orientationSensor = val;
+        prevHeading = orientationSensor.getHeading();
     }
 
     /**
@@ -82,6 +90,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
             horizontalEncoderTickPerDegreeOffset = 60;
             useIMU=false;
         }
+        netRotation = 0;
     }
 
     /**
@@ -134,8 +143,21 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
 
     }
     public void correctAngleUsingIMU(){
-        if (orientationSensor!=null)
-            robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
+        if (orientationSensor!=null){
+            double currentHeading =orientationSensor.getHeading();
+            robotOrientationRadians = Math.toRadians(currentHeading)+initRadians;
+        // calculate robot net rotatoin
+            double changeInRotation = currentHeading - prevHeading;
+            if (currentHeading*prevHeading <0){
+                if (currentHeading<0){
+                    currentHeading+= 360;
+                } else{
+                    currentHeading-=360;
+                }
+            }
+                netRotation += changeInRotation;
+            prevHeading=currentHeading;
+    }
     }
 
     /**
