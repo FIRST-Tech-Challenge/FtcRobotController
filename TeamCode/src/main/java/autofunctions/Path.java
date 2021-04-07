@@ -263,6 +263,7 @@ public class Path {
         op.telemetry.addData("Starting", "RF Threads");
         op.telemetry.update();
         telemetryHandler.init(op.telemetry, bot);
+        bot.odometry.resetAll(poses.get(0));
         startRFThread(op);
         while (op.opModeIsActive() && isExecuting){
 //            op.telemetry = telemetryHandler.addAutoAimer(op.telemetry, bot);
@@ -282,7 +283,7 @@ public class Path {
 //
             bot.outtakeWithCalculations();
 //
-            double[] pows = update(bot.odometry.getPos()); //bot.odometry.getVels()
+            double[] pows = update(bot.odometry.getAll()); //bot.odometry.getVels()
             bot.move(pows[1], pows[0], pows[2]);
         }
         op.telemetry.addData("COMPLETED", "");

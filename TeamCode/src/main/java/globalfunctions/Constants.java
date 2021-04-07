@@ -43,8 +43,10 @@ public class Constants {
 
     public static final double pi2 = Math.PI*2;
     public static final double halfPi = Math.PI/2;
-    public static final double ANGLE_ACCURACY = 3.5; // in degrees
+    public static final double tfPi = halfPi+Math.PI;
+    public static final double ANGLE_ACCURACY = 5; // in degrees
     public static final double COMPASS_START = 343; //in degrees
+    public static final double POS_ACCURACY = 5; //cm
 
     public static final double TICKS_FOR_ODOMETRY =  8192; //in ticks
     public static final double ENCODER_WHEEL_RADIUS = 1.75; // in cm //1.75
@@ -56,6 +58,9 @@ public class Constants {
     public static final double DIS_CENTER_TO_RIGHT_ENC = DIS_BEWTEEN_ENCS-DIS_CENTER_TO_LEFT_ENC; //cm
     public static final double DIS_CENTER_ENC_TO_CENTER = HALF_DIS_BETWEEN_ENCS-DIS_CENTER_TO_LEFT_ENC;
 
-    public static final double DEGREES_TO_H = 0.5;
+    public static final double START_X = 63;
+    public static final double START_Y = 27;
+    public static final double START_H = 0;
+
 
 }

@@ -97,6 +97,17 @@ public class RobotFunctions {
             }
         };
     }
+    public CodeSeg resetAll(){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.resetHeadingUsingGyro();
+                bot.resetPosUsingDisSensors();
+            }
+        };
+    }
+
+
 
 
 }

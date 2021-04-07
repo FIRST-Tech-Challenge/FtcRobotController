@@ -9,11 +9,13 @@ import autofunctions.RobotFunctions;
 import developing.TerraCV;
 import developing.TerraCVHandler;
 import global.TerraBot;
+import globalfunctions.Constants;
 
 @Autonomous(name="AutoZero", group="Auto")
 public class AutoZero extends LinearOpMode {
     TerraBot bot = new TerraBot();
-    Path path = new Path(0,0,0);
+//    Path path = new Path(Constants.START_X,Constants.START_Y,Constants.START_H);
+    Path path = new Path(Constants.START_X,Constants.START_Y,Constants.START_H);
     RobotFunctions rf = new RobotFunctions();
     TerraCV.RingNum ringNum = TerraCV.RingNum.ZERO;
 
@@ -29,7 +31,6 @@ public class AutoZero extends LinearOpMode {
          * TODO LIST
          *  Programming:
          *      shooter (powershot)
-         *      localizer test
          *      auton
          *
          *      PlAN
@@ -41,15 +42,11 @@ public class AutoZero extends LinearOpMode {
          *          6. place other wobble goal
          *          7. park
          */
-
-//        path.addRF(rf.startOuttake());
-//        path.addStop(10);
-//        path.addRF(rf.stopOuttake());
-//        path.addRF(rf.wgMoveFront());
-        path.addSetpoint(0,20,90);
+//        path.addRF(rf.intake(1));
+        path.addRF(rf.resetAll());
+        path.addSetpoint(0,20,0);
 
         path.start(bot, this);
-//
 
         bot.stopOdoThread();
     }

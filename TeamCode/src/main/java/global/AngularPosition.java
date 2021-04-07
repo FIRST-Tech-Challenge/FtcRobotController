@@ -35,11 +35,11 @@ public class AngularPosition {
 
     }
 
-    public double getHeading(double robotTheta) {
+    public double getHeading(double oldHeading) {
         double headingGY = getHeadingGY();
         double headingCS = getHeadingCS();
-        boolean gyAccurate = Math.abs(robotTheta - headingGY) < Constants.ANGLE_ACCURACY;
-        boolean csAccurate = Math.abs(robotTheta - headingCS) < Constants.ANGLE_ACCURACY;
+        boolean gyAccurate = Math.abs(oldHeading - headingGY) < Constants.ANGLE_ACCURACY;
+        boolean csAccurate = Math.abs(oldHeading - headingCS) < Constants.ANGLE_ACCURACY;
         isFailing = !gyAccurate && !csAccurate;
         if (gyAccurate && csAccurate) {
             return 0.5 * (headingGY + headingCS);
@@ -47,8 +47,9 @@ public class AngularPosition {
             return headingGY;
         } else if (csAccurate) {
             return headingCS;
+        }else{
+            return oldHeading;
         }
-        return 0;
     }
 
     public double getHeading() {

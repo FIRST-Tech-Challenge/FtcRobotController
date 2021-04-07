@@ -1,6 +1,5 @@
 package global;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -13,8 +12,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
 
-import autofunctions.Localizer;
-import globalfunctions.CRServoPositionTracker;
 import globalfunctions.Constants;
 import globalfunctions.Optimizer;
 import globalfunctions.TerraThread;
@@ -424,11 +421,11 @@ public class TerraBot {
     }
 
     public void resetHeadingUsingGyro(){
-        odometry.reset(angularPosition.getHeading(odometry.h));
+        odometry.resetHeading(angularPosition.getHeading(odometry.h));
     }
 
     public void resetPosUsingDisSensors(){
-        odometry.reset(localizer.getPos(odometry.h));
+        odometry.resetPos(localizer.getPos(odometry.getPos(), odometry.h));
     }
 
 

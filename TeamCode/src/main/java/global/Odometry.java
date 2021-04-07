@@ -51,22 +51,29 @@ public class Odometry {
         h = 0;
     }
 
-    //resets positions to desired values
-    public void reset(double x, double y, double h) {
-        this.x = x;
-        this.y = y;
-        this.h = h;
-    }
+
 
     //resets heading to desired value
-    public void reset(double h) {
+    public void resetHeading(double h) {
         this.h = h;
     }
 
     //resets coords to desired values
-    public void reset(double[] pos) {
+    public void resetPos(double[] pos) {
         this.x = pos[0];
         this.y = pos[1];
+    }
+    //resets positions to desired values
+    public void resetAll(double x, double y, double h) {
+        this.x = x;
+        this.y = y;
+        this.h = h;
+    }
+    //resets coords to desired values
+    public void resetAll(double[] pos) {
+        this.x = pos[0];
+        this.y = pos[1];
+        this.h = pos[2];
     }
 
     //Make sure to call update encoder positions once before using this to reset them
@@ -106,21 +113,9 @@ public class Odometry {
         c1 = 1 - Math.cos(deltaH);
     }
 
-    public double[] getPos() { return new double[] {x,y,h}; }
+    public double[] getPos() { return new double[] {x,y};}
+    public double[] getAll() { return new double[] {x,y,h}; }
 
-    public double getTVel(){
-        return 0;//deltaH;
-    }
-    public double getYVel(){
-        return 0;//deltaY;
-    }
-    public double getXVel(){
-        return 0;//deltaX;
-    }
-
-    public double[] getVels(){
-        return new double[] { getXVel(), getYVel(), getTVel() };
-    }
 
     //update encoder positions
     public void updateEncoderPositions(double l, double c, double r) {

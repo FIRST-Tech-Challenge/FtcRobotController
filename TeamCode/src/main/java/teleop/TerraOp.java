@@ -87,7 +87,7 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("cll pos", bot.cll.getPosition());
 //        telemetry.addData("clr pos", bot.clr.getPosition());
         telemetryHandler.addAutoAimer();
-        telemetryHandler.addAngularPosition();
+//        telemetryHandler.addAngularPosition();
         telemetry = telemetryHandler.getTelemetry();
 
         telemetry.update();
