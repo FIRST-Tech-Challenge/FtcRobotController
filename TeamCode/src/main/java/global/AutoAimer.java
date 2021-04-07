@@ -8,13 +8,11 @@ public class AutoAimer {
     public SpeedController outlController = new SpeedController();
     public SpeedController outrController = new SpeedController();
 
-    public void update(double robotTheta, double[] pos) {
-        robotTheta *= Math.PI/180;
+    public int shotMode = 0;
 
 
-//        double s = calcSpeed(frontDis, leftDis);
-
-        double s = calcSpeed(2.2098, 1);
+    public void update(double[] pos) {
+        double s = calcSpeed((Constants.FIELD_LENGTH - pos[1]/100), pos[0]/100);
         outlController.setTargetSpeed(s);
         outrController.setTargetSpeed(s);
     }
@@ -27,11 +25,26 @@ public class AutoAimer {
         return outrController.getMotorPower(outrPos);
     }
 
+    public void nextShotMode(){
+        if(shotMode < 3){
+            shotMode++;
+        }else {
+            shotMode = 0;
+        }
+    }
+
 
 
     public double calcSpeed(double disFromFront, double disFromLeft) {
-        double disToGoal = Math.sqrt(Math.pow(disFromFront, 2) + Math.pow(disFromLeft - Constants.GOAL_FROM_LEFT, 2));
-        double deltaHeight = Constants.GOAL_HEIGHT - Constants.SHOOTER_HEIGHT;
+        double disToGoal = 0;
+        double deltaHeight = 0;
+        if(shotMode == 0) {
+            deltaHeight = Constants.GOAL_HEIGHT - Constants.SHOOTER_HEIGHT;
+            disToGoal = Geometry.pythagoreanC(disFromFront, disFromLeft-Constants.GOAL_FROM_LEFT);
+        }else{
+            deltaHeight = Constants.POWERSHOT_HEIGHT - Constants.SHOOTER_HEIGHT;
+            disToGoal = Geometry.pythagoreanC(disFromFront, disFromLeft - Constants.POWERSHOT_FROM_LEFT - (Constants.DIS_BETWEEN_POWERSHOTS*(shotMode-1)));
+        }
         double linearSpeed = disToGoal/Math.cos(Constants.OUTTAKE_ANGLE) * Math.sqrt(4.9/(disToGoal * Math.tan(Constants.OUTTAKE_ANGLE) - deltaHeight));
         return linearSpeed/Constants.SHOOTER_WHEEL_RADIUS;
     }
@@ -40,6 +53,17 @@ public class AutoAimer {
         outlController.reset(outlPos);
         outrController.reset(outrPos);
     }
+
+    public double getRobotToGoalAngle(double[] pos) {
+        double disFromFront = (Constants.FIELD_LENGTH - pos[1]/100);
+        double disFromLeft = pos[0]/100;
+        if(shotMode == 0) {
+            return Math.atan2(disFromFront, disFromLeft - Constants.GOAL_FROM_LEFT);
+        }else{
+            return Math.atan2(disFromFront, disFromLeft - Constants.POWERSHOT_FROM_LEFT - (Constants.DIS_BETWEEN_POWERSHOTS*(shotMode-1)));
+        }
+    }
+
 
 
 }

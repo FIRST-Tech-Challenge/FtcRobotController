@@ -8,5 +8,8 @@ public class Geometry {
     public static double lawOfSinesAngle(double a, double b, double bAng){
         return Math.asin(a*Math.sin(bAng)*(1/b));
     }
+    public static double pythagoreanC(double a, double b){
+        return Math.sqrt(a*a + b*b);
+    }
 
 }

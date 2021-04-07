@@ -29,6 +29,8 @@ public class Path {
     public double ans = 0;
     public int curIndex = 0;
 
+    public double targetHeading = 0;
+
 
     public double[] targetPos = {0,0};
 
@@ -126,6 +128,12 @@ public class Path {
         rfsHandler.notRF();
     }
 
+    public void addShoot(){
+        addNewPose(0,0,0);
+        posetypes.add(Posetype.SHOOT);
+        rfsHandler.notRF();
+    }
+
     public void addRF(CodeSeg... segs){
         rfsHandler.addRFs(segs);
     }
@@ -204,29 +212,41 @@ public class Path {
         hControl.reset();
     }
 
-    public double[] update(double[] currentPos){
+    public double[] update(double[] currentPos, TerraBot bot){
+        switch (posetypes.get(curIndex+1)){
+            case WAYPOINT:
+                setCoeffsForWaypoint();
+                double[] target = getTargetPos(currentPos);
+                updateControls(currentPos,target);
+                updateRadius(lines.get(curIndex).getDis());
+                return calcPows();
+            case SETPOINT:
+                setCoeffsForSetpoint();
+                double[] target1 = poses.get(curIndex+1);
+                updateControls(currentPos,target1);
+                hasReachedSetpoint();
+                return calcPows();
+            case STOP:
+                if(globalTime.seconds() > stops.get(stopIndex)){
+                    next();
+                    stopIndex++;
+                }
+                return new double[]{0,0,0};
+            case SHOOT:
+                setCoeffsForSetpoint();
+                double[] target2 = poses.get(curIndex+1);
+                target2[2] = targetHeading;
+                updateControls(currentPos,target2);
+                if(!bot.outtaking){
+                    next();
+                }
+                return calcPows();
+            default:
+                return new double[]{0,0,0};
 
-        if(posetypes.get(curIndex+1).equals(Posetype.WAYPOINT)) {
-            setCoeffsForWaypoint();
-            double[] target = getTargetPos(currentPos);
-            updateControls(currentPos,target);
-            updateRadius(lines.get(curIndex).getDis());
-            return calcPows();
-        }else if(posetypes.get(curIndex+1).equals(Posetype.SETPOINT)){
-            setCoeffsForSetpoint();
-            double[] target = poses.get(curIndex+1);
-            updateControls(currentPos,target);
-            hasReachedSetpoint();
-            return calcPows();
-        }else if (posetypes.get(curIndex+1).equals(Posetype.STOP)){
-            if(globalTime.seconds() > stops.get(stopIndex)){
-                next();
-                stopIndex++;
-            }
-            return new double[]{0,0,0};
-        }else{
-            return new double[]{0,0,0};
         }
+
+
 
     }
 
@@ -275,15 +295,15 @@ public class Path {
 //            op.telemetry.addData("h", bot.odometry.h);
 //            op.telemetry.addData("x", bot.odometry.x);
 //            op.telemetry.addData("y", bot.odometry.y);
-            op.telemetry.addData("rfs index", rfsHandler.rfsIndex);
-
-            telemetryHandler.addAuton(this);
-            op.telemetry = telemetryHandler.getTelemetry();
-            op.telemetry.update();
+//            op.telemetry.addData("rfs index", rfsHandler.rfsIndex);
+//
+//            telemetryHandler.addAuton(this);
+//            op.telemetry = telemetryHandler.getTelemetry();
+//            op.telemetry.update();
 //
             bot.outtakeWithCalculations();
-//
-            double[] pows = update(bot.odometry.getAll()); //bot.odometry.getVels()
+
+            double[] pows = update(bot.odometry.getAll(), bot);
             bot.move(pows[1], pows[0], pows[2]);
         }
         op.telemetry.addData("COMPLETED", "");
@@ -295,7 +315,8 @@ public class Path {
     public enum Posetype{
         WAYPOINT,
         SETPOINT,
-        STOP
+        STOP,
+        SHOOT
     }
 
 }

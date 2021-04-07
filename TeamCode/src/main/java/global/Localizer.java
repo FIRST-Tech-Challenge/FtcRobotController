@@ -22,6 +22,7 @@ public class Localizer {
     public boolean isFailing = false;
 
 
+
     public void init(HardwareMap hwMap){
         lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
         br = hwMap.get(ModernRoboticsI2cRangeSensor.class, "br");
@@ -43,13 +44,13 @@ public class Localizer {
 
     public double getDisFromCenterX(double sensorDis){
         double d = Geometry.lawOfCosinesC(sensorDis, Constants.ROBOT_RADIUS, Constants.CENTER_THETA);
-        double phi = Geometry.lawOfSinesAngle(Constants.ROBOT_RADIUS, d, Constants.CENTER_THETA);
+        double phi = Geometry.lawOfSinesAngle(sensorDis, d, Constants.CENTER_THETA);
         return d * Math.sin(Math.toRadians(theta) + phi + Constants.CENTER_THETA - Constants.halfPi);
     }
     public double getDisFromCenterY(double sensorDis){
         double centThe = Constants.tfPi - Constants.CENTER_THETA;
         double d = Geometry.lawOfCosinesC(sensorDis, Constants.ROBOT_RADIUS, centThe);
-        double phi = Geometry.lawOfSinesAngle(Constants.ROBOT_RADIUS, d, centThe);
+        double phi = Geometry.lawOfSinesAngle(sensorDis, d, centThe);
         return d * -Math.cos(Math.toRadians(theta) + Constants.pi2 - centThe - phi);
     }
 

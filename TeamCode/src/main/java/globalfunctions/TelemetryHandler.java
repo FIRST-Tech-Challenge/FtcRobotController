@@ -72,10 +72,12 @@ public class TelemetryHandler {
         telemetry.addData("Left Outtake Target Speed", bot.autoAimer.outlController.targetSpeed);
     }
     public void addAutoAimer() {
+//        telemetry.addData("center the", Constants.CENTER_THETA);
 //        telemetry.addData("left distance", bot.localizer.getLeftDistance());
 //        telemetry.addData("back distance", bot.localizer.getBackDistance());
-        telemetry.addData("x", bot.localizer.getPos(bot.angularPosition.getHeading())[0]);
-        telemetry.addData("y", bot.localizer.getPos(bot.angularPosition.getHeading())[1]);
+        telemetry.addData("x", bot.localizer.getPos(0)[0]);
+        telemetry.addData("y", bot.localizer.getPos(0)[1]);
+        telemetry.addData("h", bot.angularPosition.getHeading());
         telemetry.addData("back distance", bot.localizer.getBackDistance());
         telemetry.addData("Outl Target Power", bot.autoAimer.outlController.getMotorPower(bot.outl.getCurrentPosition()));
         telemetry.addData("Outr Target Power", bot.autoAimer.outrController.getMotorPower(bot.outr.getCurrentPosition()));

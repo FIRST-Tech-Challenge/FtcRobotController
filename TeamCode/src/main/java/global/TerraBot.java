@@ -332,9 +332,7 @@ public class TerraBot {
 
     public void outtakeWithCalculations() {
         if (outtaking) {
-//            double robotTheta = angularPosition.getHeading();
-//            autoAimer.update(robotTheta,localizer.getPos(robotTheta));
-            autoAimer.update(0, new double[]{1.25,1.5});
+            autoAimer.update(odometry.getPos());
             outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
             outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
             rh.setPower(-0.5);
@@ -343,11 +341,6 @@ public class TerraBot {
             outl.setPower(0);
             if (!intaking) { rh.setPower(0); }
         }
-    }
-
-    public double getRobotToGoalAngle() {
-        double[] pos = localizer.getPos(angularPosition.getHeading());
-        return Math.atan2(pos[1], pos[0]);
     }
 
     public int getLeftOdo() {

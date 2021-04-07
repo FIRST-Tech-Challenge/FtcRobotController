@@ -30,7 +30,6 @@ public class AutoZero extends LinearOpMode {
          *
          * TODO LIST
          *  Programming:
-         *      shooter (powershot)
          *      auton
          *
          *      PlAN
@@ -43,8 +42,10 @@ public class AutoZero extends LinearOpMode {
          *          7. park
          */
 //        path.addRF(rf.intake(1));
-        path.addRF(rf.resetAll());
+        path.addRF(rf.resetAll(), rf.startOuttake());
         path.addSetpoint(0,20,0);
+        path.addShoot();
+
 
         path.start(bot, this);
 
