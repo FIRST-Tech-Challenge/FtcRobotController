@@ -73,7 +73,7 @@ public class Robot {
         rightback.setDirection(DcMotor.Direction.REVERSE);
         leftback.setDirection(DcMotor.Direction.FORWARD);
         leftfront.setDirection(DcMotor.Direction.FORWARD);
-        launcherbelt.setDirection(DcMotor.Direction.FORWARD);
+        launcherbelt.setDirection(DcMotor.Direction.REVERSE);
         wobbleArmMotor.setDirection((DcMotor.Direction.REVERSE));
         launcher2.setDirection((DcMotor.Direction.REVERSE));
         resetMotors();
@@ -91,7 +91,7 @@ public class Robot {
         blocker = opMode.hardwareMap.servo.get("blocker");
 
         launcherbelt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        launcherbelt.setDirection(DcMotor.Direction.FORWARD);
+        launcherbelt.setDirection(DcMotor.Direction.REVERSE);
         wobbleArmMotor.setDirection((DcMotor.Direction.REVERSE));
         launcher2.setDirection((DcMotor.Direction.REVERSE));
     }

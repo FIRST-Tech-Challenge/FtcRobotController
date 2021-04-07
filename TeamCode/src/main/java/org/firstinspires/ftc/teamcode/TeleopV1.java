@@ -153,10 +153,10 @@ public class TeleopV1 extends LinearOpMode {
             //launcher motors
             if(a2){
                 //launcher1.setPower(0.80);
-                launchPower = 0.73; //0.75
+                launchPower = 0.75; //0.75
                 blocker.setPosition(BLOCKER_OPEN); //open
             } else if (LTrigger2 > 0 && LBumper1) { //both controller 1 and controller 2 are needed to initiate shooting to force teamwork
-                launchPower = 0.78; //0.8
+                launchPower = 0.85; //0.8
                 blocker.setPosition(BLOCKER_OPEN); //open
             } else if (LBumper2 && LBumper1) {
                 launchPower = 1; //full

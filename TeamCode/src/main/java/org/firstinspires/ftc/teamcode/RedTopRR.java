@@ -84,7 +84,7 @@ public class RedTopRR extends LinearOpMode {
         drive.followTrajectory(initForward);
 
         //Ramp up launcher
-        launcher2.setPower(0.85);
+        launcher2.setPower(0.87);
         //move to first shot
         Trajectory shot1 = drive.trajectoryBuilder(initForward.end())
                 .lineToLinearHeading(new Pose2d(-7.5, 43, Math.toRadians(0)))
@@ -162,6 +162,9 @@ public class RedTopRR extends LinearOpMode {
                 .build();
         drive.followTrajectory(moveToZone);
         ejectWobbleGoal();
+
+        intake();
+
         moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(), true)
                 //.splineTo(new Vector2d(7,43), Math.toRadians(180))
                 .lineToLinearHeading(new Pose2d(10, 49, Math.toRadians(0)))
@@ -193,8 +196,9 @@ public class RedTopRR extends LinearOpMode {
                 .build();
         drive.followTrajectory(moveToZone);
         ejectWobbleGoal();
+        intake();
         moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(),true)
-                .splineTo(new Vector2d(8.5,44.8), Math.toRadians(180))
+                .splineTo(new Vector2d(8.5,46.8), Math.toRadians(180))
                 .build();
         drive.followTrajectory(moveToWobble2);
 
@@ -228,6 +232,8 @@ public class RedTopRR extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-30, 40, Math.toRadians(180)))
                 .build();
         drive.followTrajectory(backUp);
+
+        intake();
 
         moveToWobble2 = drive.trajectoryBuilder(backUp.end())
                 //.splineTo(new Vector2d(13.7,47), Math.toRadians(0))
@@ -289,5 +295,13 @@ public class RedTopRR extends LinearOpMode {
         wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleArmMotor.setPower(ARM_POWER);
         while (wobbleArmMotor.getCurrentPosition() < ARM_DOWN - 10){}
+    }
+    private void intake(){
+        //intake
+        feeder.setPower(1);
+        launcherbelt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        launcherbelt.setTargetPosition(10000);
+        launcherbelt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        launcherbelt.setPower(1);
     }
 }
