@@ -87,11 +87,11 @@ public class UGTeleop extends LinearOpMode {
                 telemetry.addData("Manipulator Motors", "Idle");
                 robot.setPickup(UGRobot.pickupDirection.STOP);
             }
-            float shoot = gamepad2.right_trigger;
-            float unshoot = gamepad2.left_trigger;
+            //float shoot = gamepad2.right_trigger;
+            //float unshoot = gamepad2.left_trigger;
 
-            boolean shootTriggered = gamepad2.right_trigger > 0.5;
-            boolean unshootTriggered = gamepad2.left_trigger > 0.5;
+            boolean shootTriggered = gamepad2.right_bumper;
+            boolean unshootTriggered = gamepad2.left_bumper;
 
             if (shootTriggered) {
                 robot.setShooter(UGRobot.shooterDirection.OUT);
