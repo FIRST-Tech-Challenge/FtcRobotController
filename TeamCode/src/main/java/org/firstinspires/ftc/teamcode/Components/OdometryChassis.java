@@ -401,7 +401,8 @@ public class OdometryChassis extends BasicChassis {
             double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
             double startpower = power;
             double error=0;
-            while (op.opModeIsActive() && (difference >= 1)&&!gotoPosition_off) {
+            double max = 0.2;
+            while (op.opModeIsActive() && (difference >= 0.5)&&!gotoPosition_off) {
                 currentPosition = track();
                 error = currentPosition[2]- target_position[2];
                 error%=360;
@@ -412,19 +413,23 @@ public class OdometryChassis extends BasicChassis {
                     error+=360;
                 }
                 if(difference<5){
-                    power=startpower*difference/30;
+                    power=0.25*difference/6;
+                    max=0.35;
                 }
                 if (power > startpower) {
                     power = startpower;
                 }
                 x = target_position[0] - currentPosition[0];
                 y = target_position[1] - currentPosition[1];
+                if(y/x>5){
+                    max=0.01;
+                }
                 angleInRadians = atan2(x, -y*2) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
-                anglecorrection = error*0.03;
-                if(anglecorrection>0.3){
-                    anglecorrection=0.3;
+                anglecorrection = error*0.06;
+                if(anglecorrection>max){
+                    anglecorrection=max;
                 }
                 if (abs(anglePower[1]) > abs(anglePower[0])) {
                     anglePower[1] *= abs(1 / anglePower[1]);
@@ -433,8 +438,8 @@ public class OdometryChassis extends BasicChassis {
                     anglePower[1] *= abs(1 / anglePower[0]);
                     anglePower[0] *= abs(1 / anglePower[0]);
                 }
-                while (abs(power) < 0.25) {
-                    power *= 0.25 / abs(power);
+                while (abs(power) < 0.2) {
+                    power *= 0.2 / abs(power);
                 }
                 motorRightBack.setPower((power * anglePower[1] + anglecorrection));
                 motorRightFront.setPower(power * anglePower[0] + anglecorrection);
@@ -448,9 +453,8 @@ public class OdometryChassis extends BasicChassis {
 //            op.telemetry.addData("distance", difference);
                 op.telemetry.update();
             }
+            turnInPlace(a, 0.5);
             stopAllMotors();
-            //turnInPlace(a, 0.5);
-            op.telemetry.addData("done", true);
         }
     }public void goToPositionWithoutStop(double y, double x, double a, double power){
         if(!isCorgi) {
@@ -523,9 +527,6 @@ public class OdometryChassis extends BasicChassis {
 //            op.telemetry.addData("distance", difference);
                 op.telemetry.update();
             }
-            stopAllMotors();
-            turnInPlace(a, 0.5);
-            stopAllMotors();
             op.telemetry.addData("done", true);
         }
         else if(isCorgi) {
@@ -551,6 +552,7 @@ public class OdometryChassis extends BasicChassis {
             double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
             double startpower = power;
             double error=0;
+            double max = 0.25;
             while (op.opModeIsActive() && (difference >= 1)&&!gotoPosition_off) {
                 currentPosition = track();
                 error = currentPosition[2]- target_position[2];
@@ -562,7 +564,7 @@ public class OdometryChassis extends BasicChassis {
                     error+=360;
                 }
                 if(difference<5){
-                    power=startpower*difference/30;
+                    power=startpower*0.7;
                 }
                 if (power > startpower) {
                     power = startpower;
@@ -572,9 +574,9 @@ public class OdometryChassis extends BasicChassis {
                 angleInRadians = atan2(x, -y*2) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
-                anglecorrection = error*0.03;
-                if(anglecorrection>0.3){
-                    anglecorrection=0.3;
+                anglecorrection = error*0.06;
+                if(anglecorrection>max){
+                    anglecorrection=max;
                 }
                 if (abs(anglePower[1]) > abs(anglePower[0])) {
                     anglePower[1] *= abs(1 / anglePower[1]);
@@ -583,8 +585,8 @@ public class OdometryChassis extends BasicChassis {
                     anglePower[1] *= abs(1 / anglePower[0]);
                     anglePower[0] *= abs(1 / anglePower[0]);
                 }
-                while (abs(power) < 0.25) {
-                    power *= 0.25 / abs(power);
+                while (abs(power) < 0.2) {
+                    power *= 0.2 / abs(power);
                 }
                 motorRightBack.setPower((power * anglePower[1] + anglecorrection));
                 motorRightFront.setPower(power * anglePower[0] + anglecorrection);
@@ -686,7 +688,7 @@ public class OdometryChassis extends BasicChassis {
         float currentAngle = getAngle();
         float newTarget = (float)target;
         float error = (float)target-currentAngle;
-        double gain = -0.05;
+        double gain = -0.02;
         int direction=1;
         if(error<0){
             direction = -1;
@@ -699,8 +701,6 @@ public class OdometryChassis extends BasicChassis {
 
         if (newTarget>180){newTarget=newTarget-360;}
         if (newTarget<=-180){newTarget=newTarget+360;}
-
-        if(abs(error)<20){
             while (op.opModeIsActive() && (error > 0.2  || error < -0.2))
             {
                 currentAngle = (float)track()[2];
@@ -713,19 +713,11 @@ public class OdometryChassis extends BasicChassis {
                 rightPower = -direction*min(abs(power*gain*error),abs(power));
                 leftPower = -rightPower;
                 if(isCorgi) {
-                    if (abs(leftPower) < 0.1) {
-                        leftPower *= 0.1 / abs(leftPower);
+                    if (abs(leftPower) < 0.09) {
+                        leftPower *= 0.09 / abs(leftPower);
                     }
-                    if (abs(rightPower) < 0.1) {
-                        rightPower *= 0.1 / abs(rightPower);
-                    }
-                }
-                else{
-                    if (abs(leftPower) < 0.28) {
-                        leftPower *= 0.28 / abs(leftPower);
-                    }
-                    if (abs(rightPower) < 0.28) {
-                        rightPower *= 0.28 / abs(rightPower);
+                    if (abs(rightPower) < 0.09) {
+                        rightPower *= 0.09 / abs(rightPower);
                     }
                 }
                 motorLeftBack.setPower(leftPower);
@@ -738,39 +730,6 @@ public class OdometryChassis extends BasicChassis {
             motorRightFront.setPower(0);
             motorLeftFront.setPower(0);
             motorRightBack.setPower(0);
-        }
-        else {
-            while (op.opModeIsActive() && (error > 0.5 || error < -0.5)) {
-                currentAngle = getAngle();
-                error = newTarget - currentAngle % 360;
-                if (error < 0) {
-                    direction = -1;
-                } else {
-                    direction = 1;
-                }
-                rightPower = -direction * min(abs(power * gain * error), abs(power));
-                leftPower = -rightPower;
-                while (abs(leftPower) < 0.4) {
-                    leftPower *= 0.4 / abs(leftPower);
-                }
-                while (abs(rightPower) < 0.4) {
-                    rightPower *= 0.4 / abs(rightPower);
-                }
-                op.telemetry.addData("leftPower", leftPower);
-                op.telemetry.addData("rightPower", rightPower);
-                op.telemetry.addData("error", error);
-                motorLeftBack.setPower(leftPower);
-                motorLeftFront.setPower(leftPower);
-                motorRightBack.setPower(rightPower);
-                motorRightFront.setPower(rightPower);
-                track();
-            }
-
-            motorLeftBack.setPower(0);
-            motorRightFront.setPower(0);
-            motorLeftFront.setPower(0);
-            motorRightBack.setPower(0);
-        }
         }
     }
     public boolean turnInPlaceTeleop(double target, double power) {

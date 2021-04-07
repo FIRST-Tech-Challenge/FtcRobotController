@@ -97,7 +97,7 @@ final boolean debug = true;
         sleep(3000);
         robot.goToPosition(48,48,-90,0.5);
         sleep(3000);
-        robot.goToPosition(48,48,0,0.5);
+        robot.goToPosition(0,0,0,0.5);
         sleep(3000);
         stop();
     }

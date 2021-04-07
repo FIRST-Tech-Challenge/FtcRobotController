@@ -86,16 +86,15 @@ public class TwoGPTeleop extends LinearOpMode {
                     angleInRadian = Math.atan2(left_stick_y*-1, left_stick_x*2);
                 }
                 else{
-                    angleInRadian = Math.atan2(left_stick_y, left_stick_x*2);
+                    angleInRadian = Math.atan2(left_stick_y, left_stick_x*-2);
                 }
                 angleInDegree = Math.toDegrees(angleInRadian);
                 /**Powershots**/
                 if(odo_powershots){
                         //robot.setPosition(0,0,0);
                         goingToPosition=1;
-                        if(robot.goToPositionTeleop(5,-19.5 ,0,0.3)){
-                            robot.shootThreePowerShot();
-                        }
+                        robot.goToPosition(5,-19.5 ,0,0.7);
+                        robot.shootThreePowerShot();
                         //robot.goToPosition(40,-40,-88,0.7);
                     continue;
                 }
@@ -104,10 +103,9 @@ public class TwoGPTeleop extends LinearOpMode {
                     goingToPosition=0;
                 }
                 if (goToShootingPosition==1){
-                    robot.shootGoalTeleop(1000);
+                    //robot.shootGoalTeleop(1000);
                     goingToPosition=1;
-                    robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 0.95);
-                    robot.turnInPlace(angleShootingPosition, 0.5);
+                    robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8);
                     /*if(robot.goToPositionTeleop(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8)){
                         robot.turnInPlace(angleShootingPosition,0.8);
                     }*/
@@ -145,7 +143,7 @@ public class TwoGPTeleop extends LinearOpMode {
 
                 magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
-                robot.moveMultidirectional(magnitude*0.9, angleInDegree, (float)(right_stick_x*0.6), slowMode); // It is 0.95, because the robot DCs at full power.
+                robot.moveMultidirectional(magnitude*0.95, angleInDegree, (float)(right_stick_x*0.6), slowMode); // It is 0.95, because the robot DCs at full power.
 
                 // wobble goal movements
                 if (move_wobble_goal_arm){
