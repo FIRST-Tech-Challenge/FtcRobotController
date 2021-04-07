@@ -45,41 +45,17 @@ public class Path {
 
     public boolean isExecuting = true;
 
-//    final public double[] ks = {0.04,0.03,0.02};
-//    final public double[] ds = {0.00015,0.00015,3};
-//    final public double[] is = {0.01,0.01,0.005};
-    final public double[] ks = {0.1,0.1,0.01}; //0.1
+    final public double[] ks = {0.1,0.1,0.01};
     final public double[] ds = {0.01,0.01,0.001};
-    final public double[] is = {0.01,0.01,0.0001};
+    final public double[] is = {0.00,0.00,0.0000};
 
-    //LOOOOOOOOOOOOOOOOOK UPPPPPPPPPPPPPPPPPPPP
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT//CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
-    //CHANGE COEFS FOR SETPOINT
+    final public double[] ksS = {0.05,0.05,0.01};
+    final public double[] dsS = {0.008,0.008,0.0005};
+    final public double[] isS = {0.0005,0.0005,0.00005};
 
-
-
-
-
-
-
-
-
+    public double xRestPow = 0.05;
+    public double yRestPow = 0.05;
+    public double hRestPow = 0.05;
 
 
 
@@ -88,7 +64,7 @@ public class Path {
     public double HAcc = 3;
 
 
-    final public double endWait = 1;
+    final public double endWait = 0.2;
 
 
 
@@ -96,15 +72,29 @@ public class Path {
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
         posetypes.add(Posetype.SETPOINT);
-        xControl.setCoefficients(ks[0], ds[0], is[0]);
-        yControl.setCoefficients(ks[1], ds[1], is[1]);
-        hControl.setCoefficients(ks[2], ds[2], is[2]);
+        setCoeffsForWaypoint();
         xControl.setAcc(XAcc);
         yControl.setAcc(YAcc);
         hControl.setAcc(HAcc);
+        xControl.setRestPow(xRestPow);
+        yControl.setRestPow(yRestPow);
+        hControl.setRestPow(hRestPow);
         globalTime.reset();
         addStop(0.01);
     }
+
+    public void setCoeffsForSetpoint(){
+        xControl.setCoefficients(ksS[0], dsS[0], isS[0]);
+        yControl.setCoefficients(ksS[1], dsS[1], isS[1]);
+        hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
+    }
+    public void setCoeffsForWaypoint(){
+        xControl.setCoefficients(ks[0], ds[0], is[0]);
+        yControl.setCoefficients(ks[1], ds[1], is[1]);
+        hControl.setCoefficients(ks[2], ds[2], is[2]);
+    }
+
+
 
     public void updateRadius(double dis){ radius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis))); }
 
@@ -217,11 +207,13 @@ public class Path {
     public double[] update(double[] currentPos){
 
         if(posetypes.get(curIndex+1).equals(Posetype.WAYPOINT)) {
+            setCoeffsForWaypoint();
             double[] target = getTargetPos(currentPos);
             updateControls(currentPos,target);
             updateRadius(lines.get(curIndex).getDis());
             return calcPows();
         }else if(posetypes.get(curIndex+1).equals(Posetype.SETPOINT)){
+            setCoeffsForSetpoint();
             double[] target = poses.get(curIndex+1);
             updateControls(currentPos,target);
             hasReachedSetpoint();

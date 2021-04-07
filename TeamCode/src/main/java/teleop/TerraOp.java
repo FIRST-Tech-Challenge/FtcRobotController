@@ -68,10 +68,10 @@ public class TerraOp extends OpMode {
         bot.moveArm(-gamepad2.right_stick_y);
 //        telemetry.addData("WGE Target Pos", bot.updateWge());
 
-        telemetry.addData("Wobble goal pow", -gamepad2.right_stick_y);
-        telemetry.addData("Wobble goal pos", -bot.arm.getCurrentPosition());
-        telemetry.addData("Wobble goal pos in deg", bot.getArmPos());
-        telemetry.addData("WGE Pos", bot.getWgePos());
+//        telemetry.addData("Wobble goal pow", -gamepad2.right_stick_y);
+//        telemetry.addData("Wobble goal pos", -bot.arm.getCurrentPosition());
+//        telemetry.addData("Wobble goal pos in deg", bot.getArmPos());
+//        telemetry.addData("WGE Pos", bot.getWgePos());
 
 //        bot.extendWobbleGoal(gamepad2.a);
 
@@ -83,8 +83,9 @@ public class TerraOp extends OpMode {
 //        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
 //
 //        telemetry = telemetryHandler.addOdometry(telemetry, bot);
-        telemetry.addData("cll pos", bot.cll.getPosition());
-        telemetry.addData("clr pos", bot.clr.getPosition());
+//        telemetry.addData("cll pos", bot.cll.getPosition());
+//        telemetry.addData("clr pos", bot.clr.getPosition());
+        telemetry = telemetryHandler.addAutoAimer(telemetry, bot);
 
         telemetry.update();
 

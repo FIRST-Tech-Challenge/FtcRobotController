@@ -17,6 +17,8 @@ public class PID {
 
     public double deltaError = 0;
 
+    public double restPow = 0;
+
     public ElapsedTime timer = new ElapsedTime();
 
     public double acc = 0;
@@ -27,12 +29,15 @@ public class PID {
         Kd = d;
         Ki = i;
     }
+    public void setRestPow(double pow){
+        restPow = pow;
+    }
     public void setAcc(double in){
         acc = in;
     }
 
     public double getPower(){
-        return Math.signum(error)*(Kp*abs(error) - Kd*abs(derivative) + Ki*abs(integral));
+        return Math.signum(error)*(Kp*abs(error) - Kd*abs(derivative) + Ki*abs(integral) + restPow);
     }
 
     public double abs(double in){

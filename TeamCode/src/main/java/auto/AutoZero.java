@@ -27,19 +27,12 @@ public class AutoZero extends LinearOpMode {
          *
          * TODO LIST
          *  Design:
-         *      XX Add things on wobble arm so that it drops properly and fix broken plexiglass XX
+         *      Compass Sensor
          *      Side servos
          *  Programming:
-         *      SETPOINTS NEED WORK LOOK AT PATH
-         *      XX Check robot functions XX
-         *      XX Check stops XX
-         *      XX Incorporate gyro and compass resets XX
-         *      XX Incorporate distance sensor resets XX
-         *      Make robot functions for
-         *          Shooting
-         *          XX Intake XX
-         *          XX Wobble goal methods XX
-         *      Make teleop autoshooter
+         *      shooter (powershot)
+         *      auton
+         *
          *      PlAN
          *          1. shoot 3 rings into normal goal
          *          2. shoot 1 ring into normal goal
@@ -50,10 +43,11 @@ public class AutoZero extends LinearOpMode {
          *          7. park
          */
 
-        path.addRF(rf.startOuttake());
-        path.addStop(10);
-        path.addRF(rf.stopOuttake());
+//        path.addRF(rf.startOuttake());
+//        path.addStop(10);
+//        path.addRF(rf.stopOuttake());
 //        path.addRF(rf.wgMoveFront());
+        path.addSetpoint(0,20,90);
 
         path.start(bot, this);
 //
