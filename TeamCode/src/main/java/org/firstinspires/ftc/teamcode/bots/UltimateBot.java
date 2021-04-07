@@ -36,12 +36,13 @@ public class UltimateBot extends YellowBot {
     private DcMotorEx shooter = null;
 
     private static double SWING_BACK_POS = 1;
-    private static double SWING_PLACE_POS = 0.2;
+    private static double SWING_PLACE_POS = 0.18;
     private static double SWING_LIFT_AND_HOLD = 0.35;
     private static double SWING_LIFT_WALL = 0.45;
-    private static double SHOOT_SERVO = 0.6;
+    private static double SHOOT_SERVO = 0.42;
 
     private boolean syncturretcamera = true;
+    private static double TURRET_OFFSET = 0.05;
 
     private RingDetector rf = null;
     private TurretAngler ta = null;
@@ -120,7 +121,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             turretServo = hwMap.get(Servo.class, "turret");
-            turretServo.setPosition(0.5);
+            turretServo.setPosition(0.5 + TURRET_OFFSET);
         } catch (Exception ex) {
             throw new Exception("Issues with turret. Check the controller config", ex);
         }
@@ -153,7 +154,7 @@ public class UltimateBot extends YellowBot {
         DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
             intake.setPower(0.9);
-            intakecurve.setPower(-0.9);
+            intakecurve.setPower(-0.95);
         }
     }
 
@@ -162,8 +163,8 @@ public class UltimateBot extends YellowBot {
         DcMotorEx intake = getIntakeMotor();
         DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
-            intake.setPower(-0.7);
-            intakecurve.setPower(0.7);
+            intake.setPower(-0.8);
+            intakecurve.setPower(0.8);
         }
     }
 
@@ -189,35 +190,35 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter High", defaultReturn = "")
     public void shooterhigh() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.8);
+            shooter.setVelocity(MAX_VELOCITY*0.95);
         }
     }
 
     @BotAction(displayName = "Move Shooter Med", defaultReturn = "")
     public void shootermed() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.7);
+            shooter.setVelocity(MAX_VELOCITY*0.9);
         }
     }
 
     @BotAction(displayName = "Move Shooter Low", defaultReturn = "")
     public void shooterlow() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.75);
+            shooter.setVelocity(MAX_VELOCITY*0.8);
         }
     }
 
     @BotAction(displayName = "Move Shooter Lower", defaultReturn = "")
     public void shooterlower() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.73);
+            shooter.setVelocity(MAX_VELOCITY*0.75);
         }
     }
 
     @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
     public void shooterpeglow() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.65);
+            shooter.setVelocity(MAX_VELOCITY*0.7);
         }
     }
 
@@ -233,7 +234,7 @@ public class UltimateBot extends YellowBot {
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
         if (shooterServo != null) {
-            shooterServo.setPosition(SHOOT_SERVO + 0.4);
+            shooterServo.setPosition(SHOOT_SERVO + 0.15);
             runtime.reset();
             while (runtime.milliseconds() <= 300) {
 
@@ -364,7 +365,7 @@ public class UltimateBot extends YellowBot {
     public void turretLittleRight() {
         if (turretServo != null) {
             turretPos = turretServo.getPosition();
-            turretPos = turretPos + 0.005;
+            turretPos = turretPos + 0.01;
             turretServo.setPosition(turretPos);
         }
     }
@@ -373,7 +374,7 @@ public class UltimateBot extends YellowBot {
     public void turretLittleLeft() {
         if (turretServo != null) {
             turretPos = turretServo.getPosition();
-            turretPos = turretPos - 0.005;
+            turretPos = turretPos - 0.01;
             turretServo.setPosition(turretPos);
         }
     }
@@ -381,7 +382,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Turret Init", defaultReturn = "")
     public void turretInit() {
         if (turretServo != null) {
-            turretServo.setPosition(0.5);
+            turretServo.setPosition(0.5 + TURRET_OFFSET);
         }
     }
 
@@ -389,11 +390,11 @@ public class UltimateBot extends YellowBot {
     public void turretCamera() {
         if (turretServo != null) {
             if (cameraPos > 0.5) {
-                turretPos = cameraPos * 0.98;
+                turretPos = cameraPos +TURRET_OFFSET;
             } else if (cameraPos < 0.5) {
-                turretPos = cameraPos * 1.02;
+                turretPos = cameraPos + TURRET_OFFSET;
             } else {
-                turretPos = 0.5;
+                turretPos = 0.5 +TURRET_OFFSET;
             }
             turretServo.setPosition(turretPos);
         }
