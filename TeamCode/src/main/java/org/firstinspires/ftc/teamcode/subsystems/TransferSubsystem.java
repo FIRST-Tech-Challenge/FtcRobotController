@@ -58,7 +58,7 @@ public class TransferSubsystem extends Subsystem {
         return transfer.getPower();
     }
 
-    public double getTransferCurrent(){return robot.transfer.getCurrent(CurrentUnit.MILLIAMPS);}
+    public double getTransferCurrent() { return robot.transfer.getCurrent(CurrentUnit.MILLIAMPS);}
 
     public void initTransferPos() {
         teleDropTransfer();
@@ -75,7 +75,7 @@ public class TransferSubsystem extends Subsystem {
                 transfer.setPower(0.65);
                 robot.setTransferState(UpliftRobot.TransferState.MOVING);
                 double initialTime = System.currentTimeMillis();
-                while(transfer.isBusy() && !robot.operatorCancel  && robot.opMode.opModeIsActive() && transferTouchTop.getState()) {
+                while(transfer.isBusy() && !robot.operatorCancel  && robot.opMode.opModeIsActive()) {
                     robot.safeSleep(5);
                 }
                 transfer.setPower(0);
@@ -91,7 +91,7 @@ public class TransferSubsystem extends Subsystem {
         transfer.setPower(0.65);
         robot.setTransferState(UpliftRobot.TransferState.MOVING);
         double initialTime = System.currentTimeMillis();
-        while(transfer.isBusy() && !robot.operatorCancel && robot.opMode.opModeIsActive() && transferTouchTop.getState()) {
+        while(transfer.isBusy() && !robot.operatorCancel && robot.opMode.opModeIsActive()) {
             robot.safeSleep(5);
         }
         Log.i("Transfer Busy", transfer.isBusy() + "");

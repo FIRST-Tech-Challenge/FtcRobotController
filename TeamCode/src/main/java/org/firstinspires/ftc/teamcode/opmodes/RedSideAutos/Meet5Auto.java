@@ -182,7 +182,7 @@ public class Meet5Auto extends UpliftAuto {
 
         } else {        // either 0 rings, or a problem with detection (-1)
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
-            driveSub.driveToPosition(110, 48, 0.7, 0);
+            driveSub.driveToPosition(108, 48, 0.7, 0);
             autoHighGoalShoot();
 
             // drop off first wobble

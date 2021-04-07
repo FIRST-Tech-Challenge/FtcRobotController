@@ -167,8 +167,8 @@ public class UpliftRobot {
 
             digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "touch_bottom");
             digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
-            digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
-            digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
+//            digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
+//            digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
 
             transferInitialized = true;
         } catch (Exception ex) {

@@ -316,7 +316,7 @@ public class DriveSubsystem extends Subsystem {
                 turn(quickestTurnAngle, speed);
             }
         } else {
-            // NOTHING...
+            // NOTHING
         }
 
     }
