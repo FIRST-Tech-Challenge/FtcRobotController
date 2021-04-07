@@ -62,6 +62,9 @@ public class CombinedOrientationSensor extends Logger<CombinedOrientationSensor>
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         for (Map.Entry<String, BNO055IMU> entry : sensors.entrySet()) {
+            if (entry.getKey()=="imu2") {
+                parameters.calibrationDataFile = "BNO055IMU2Calibration.json";
+            }
             parameters.loggingTag = entry.getKey();
             entry.getValue().initialize(parameters);
         }

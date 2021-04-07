@@ -589,8 +589,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
                 } else if (source.isPressed(Button.BACK)) {
                     // semi power shot
-                     doPowerShotsSemi(3,false);
-                    //doPowerShotsSemiNew(3,true);
+                    // doPowerShotsSemi(3,false);
+                    doPowerShotsSemiNew(3,true);
                 } else {
                     if (hopper.getTransferIsDown() || Math.abs(shooting_rpm-WARM_UP_RPM_POWER_SHOT)>20 ||
                     shooter.getCurrentRPM()<WARM_UP_RPM_POWER_SHOT-100) {
@@ -1807,7 +1807,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             intake.stop();
         chassis.rotateTo(0.3, 0);
         sleep(200);
-        double idealRightDist = 61; // 43 cm at Hans field; 58 cm? at Winston's house
+        double idealRightDist = 43; // 43 cm at Hans field; 61 cm at Winston's house
         double crab_power=0.5;
         for (int i=0; i<3; i++) {
             double rightDistF = chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT);
@@ -1825,6 +1825,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             if (Math.abs(rightDist-idealRightDist)<1) break;
             chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(), chassis.odo_heading(), false, 2);
             crab_power-=0.05;
+            sleep(100);
         }
         // chassis.rotateTo(0.3, 0);//delete?
         double target_heading=2.3;
@@ -1872,8 +1873,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     sleep(100);
                 }
                 int i=0;
-                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<3) {
-                    chassis.rawRotateTo(0.18, target_heading, false, 0.5);
+                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<ALIGN_ITER) {
+                    chassis.rawRotateTo(LOCAL_ALIGNMENT_POWER, target_heading, false, 0.5);
                     i++;
                 }
                 sleep(100);

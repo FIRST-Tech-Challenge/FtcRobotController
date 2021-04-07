@@ -165,7 +165,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double servoCorrection;   // latest correction applied to leading wheels' servos to correct heading deviation
     private double curHeading = 0;
     private boolean useScalePower = true;//
-    private boolean setImuTelemetry = false;//unless debugging, don't set telemetry for imu
+    private boolean setImuTelemetry = true;//unless debugging, don't set telemetry for imu
     private boolean setRangeSensorTelemetry = true; //unless debugging, don't set telemetry for range sensor
     private boolean useOdometry = true;
     private boolean normalizeMode = false;
@@ -1139,6 +1139,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                         (simulation_mode?"Simulation":(getNormalizeMode()?"Normalized":"Speedy")));
             }
         });
+        if (setImuTelemetry) {
 //        if (leftRangeSensor != null) {
 //            line.addData("ran-L", "%.1f", new Func<Double>() {
 //                @Override
@@ -1148,15 +1149,21 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 //                }
 //            });
 //        }
- //
-//        if (frontRangeSensor != null) {
-//            line.addData("rangeF", "%.1f", new Func<Double>() {
-//                    @Override
-//                    public Double value() {
-//                        // return rightRangeSensor.getDistance(DistanceUnit.CM);
-//                        return getDistance(SwerveChassis.Direction.FRONT); }
-//                });
-//        }
+            //
+            if (rightFrontRangeSensor != null) {
+                line.addData("range-RF", "%.1f", new Func<Double>() {
+                    @Override
+                    public Double value() {
+                        return getDistance(SwerveChassis.Direction.RIGHT_FRONT); }
+                });
+            }
+            if (rightBackRangeSensor != null) {
+                line.addData("range-RB", "%.1f", new Func<Double>() {
+                    @Override
+                    public Double value() {
+                        return getDistance(SwerveChassis.Direction.RIGHT_BACK); }
+                });
+            }
 //        if (testRange != null) {
 //            line.addData("rangeT", "%.1f", new Func<Double>() {
 //                @Override
@@ -1165,7 +1172,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 //                    return testRange.getDistance(DistanceUnit.CM); }
 //            });
 //        }
-
+        }
         if (showEncoderDetail) {
             if (motorFL != null) {
                 line.addData("FL", "%d", new Func<Integer>() {
