@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
 
+import autofunctions.Localizer;
 import globalfunctions.CRServoPositionTracker;
 import globalfunctions.Constants;
 import globalfunctions.Optimizer;
@@ -54,12 +55,12 @@ public class TerraBot {
 //    public Cycle cllControl = new Cycle(0.2, 1);
 //    public Cycle clrControl = new Cycle(1, 0.0);
 
-    public ModernRoboticsI2cRangeSensor lr;
-    public ModernRoboticsI2cRangeSensor br;
 
     public AutoAimer autoAimer = new AutoAimer();
 
     public AngularPosition angularPosition = new AngularPosition();
+
+    public Localizer localizer = new Localizer();
 
     public Limits limits = new Limits();
 
@@ -78,6 +79,7 @@ public class TerraBot {
     public Odometry odometry = new Odometry();
 
     public TerraThread odometryThread;
+
 
 
     public void init(HardwareMap hwMap) {
@@ -110,9 +112,8 @@ public class TerraBot {
         wgp = hwMap.get(Rev2mDistanceSensor.class, "wgp");
 
         angularPosition.init(hwMap);
+        localizer.init(hwMap);
 
-        lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
-        br = hwMap.get(ModernRoboticsI2cRangeSensor.class, "br");
         shooter.addStage(rh, -1);
         shooter.addStage(rh2, -1);
         shooter.addStage(rp, pushControl, 1 , 0.5);
@@ -136,6 +137,7 @@ public class TerraBot {
 
         limits.addLimit(arm, Constants.WG_LOWER_LIMIT, Constants.WG_UPPER_LIMIT);
         limits.addLimit(wge, 0, Constants.WGE_UPPER_LIMIT);
+
     }
 
     public DcMotor getMotor(HardwareMap hwMap, String name, DcMotor.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode){
@@ -189,6 +191,7 @@ public class TerraBot {
     public void claw(double posLeft, double posRight){
         cll.setPosition(posLeft);
         clr.setPosition(posRight);
+
     }
 
 //    public void openClaw() {
@@ -328,18 +331,13 @@ public class TerraBot {
         return (outl.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
     }
 
-    public double getLeftDistance(){
-        return lr.getDistance(DistanceUnit.CM);
-    }
 
-    public double getBackDistance(){
-        return br.getDistance(DistanceUnit.CM);
-    }
 
     public void outtakeWithCalculations() {
         if (outtaking) {
-//            autoAimer.update(angularPosition.getHeadingGY(), lr.getDistance(DistanceUnit.METER), br.getDistance(DistanceUnit.METER));
-            autoAimer.update(0, 1.25,1.5);
+            double robotTheta = angularPosition.getHeading();
+//            autoAimer.update(robotTheta,localizer.getPos(robotTheta));
+            autoAimer.update(robotTheta, new double[]{1.25,1.5});
             outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
             outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
             rh.setPower(-0.5);
@@ -351,10 +349,8 @@ public class TerraBot {
     }
 
     public double getRobotToGoalAngle() {
-        double robotTheta = angularPosition.getHeadingCS() * Math.PI/180;
-        double x = autoAimer.getDisFromCenter(getLeftDistance()/100, robotTheta) - Constants.GOAL_FROM_LEFT;
-        double y = autoAimer.getDisFromCenter(getBackDistance()/100, robotTheta);
-        return Math.atan2(y, x);
+        double[] pos = localizer.getPos(angularPosition.getHeading());
+        return Math.atan2(pos[1], pos[0]);
     }
 
     public int getLeftOdo() {
@@ -426,5 +422,15 @@ public class TerraBot {
             odometryThread.stop();
         }
     }
+
+    public void resetHeadingUsingGyro(){
+        odometry.reset(angularPosition.getHeading(odometry.h));
+    }
+
+    public void resetPosUsingDisSensors(){
+        odometry.reset(localizer.getPos(odometry.h));
+    }
+
+
 
 }

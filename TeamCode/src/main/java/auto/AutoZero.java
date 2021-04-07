@@ -31,10 +31,10 @@ public class AutoZero extends LinearOpMode {
          *      Side servos
          *  Programming:
          *      SETPOINTS NEED WORK LOOK AT PATH
-         *      Check robot functions
+         *      XX Check robot functions XX
          *      XX Check stops XX
-         *      Incorporate gyro and compass resets
-         *      Incorporate distance sensor resets
+         *      XX Incorporate gyro and compass resets XX
+         *      XX Incorporate distance sensor resets XX
          *      Make robot functions for
          *          Shooting
          *          XX Intake XX

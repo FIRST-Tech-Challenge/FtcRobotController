@@ -58,6 +58,17 @@ public class Odometry {
         this.h = h;
     }
 
+    //resets heading to desired value
+    public void reset(double h) {
+        this.h = h;
+    }
+
+    //resets coords to desired values
+    public void reset(double[] pos) {
+        this.x = pos[0];
+        this.y = pos[1];
+    }
+
     //Make sure to call update encoder positions once before using this to reset them
 
     //Update global positions using encoder readings

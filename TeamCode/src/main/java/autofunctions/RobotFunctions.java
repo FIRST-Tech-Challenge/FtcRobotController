@@ -80,6 +80,23 @@ public class RobotFunctions {
             }
         };
     }
+    public CodeSeg resetHeadingUsingGyro(){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.resetHeadingUsingGyro();
+            }
+        };
+    }
+
+    public CodeSeg resetPosUsingDisSensors(){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.resetPosUsingDisSensors();
+            }
+        };
+    }
 
 
 }
