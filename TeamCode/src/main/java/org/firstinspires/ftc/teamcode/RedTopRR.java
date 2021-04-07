@@ -95,19 +95,19 @@ public class RedTopRR extends LinearOpMode {
         sleep(1500);
         launcherbelt.setTargetPosition(900);
         launcherbelt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        launcherbelt.setPower(1); //0.6
+        launcherbelt.setPower(1);
         while(launcherbelt.isBusy()) {}
         //launch ring2
         sleep(300);
         launcherbelt.setTargetPosition(3000);
         launcherbelt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        launcherbelt.setPower(1); //.6
+        launcherbelt.setPower(1);
         while(launcherbelt.isBusy()) {}
         //launch ring3
         sleep(300);
         launcherbelt.setTargetPosition(7500);
         launcherbelt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        launcherbelt.setPower(1); //.6
+        launcherbelt.setPower(1);
         while(launcherbelt.isBusy()) {}
         launcher1.setPower(0);
         launcher2.setPower(0);
@@ -166,12 +166,10 @@ public class RedTopRR extends LinearOpMode {
         intake();
 
         moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(), true)
-                //.splineTo(new Vector2d(7,43), Math.toRadians(180))
                 .lineToLinearHeading(new Pose2d(10, 49, Math.toRadians(0)))
                 .build();
         drive.followTrajectory(moveToWobble2);
 
-        //move arm down
         moveWobbleArmDown();
 
         approachWobble2 = drive.trajectoryBuilder(moveToWobble2.end(),true)
@@ -202,7 +200,6 @@ public class RedTopRR extends LinearOpMode {
                 .build();
         drive.followTrajectory(moveToWobble2);
 
-        //move arm down
         moveWobbleArmDown();
 
         approachWobble2 = drive.trajectoryBuilder(moveToWobble2.end(),true)
@@ -223,7 +220,6 @@ public class RedTopRR extends LinearOpMode {
         Trajectory approachWobble2;
         Trajectory backUp;
         moveToZone = drive.trajectoryBuilder(shot1.end(),true)
-                //.splineTo(new Vector2d(-48,50), Math.toRadians(-45))
                 .lineToLinearHeading(new Pose2d(-49, 59, Math.toRadians(145)))
                 .build();
         drive.followTrajectory(moveToZone);
@@ -236,7 +232,6 @@ public class RedTopRR extends LinearOpMode {
         intake();
 
         moveToWobble2 = drive.trajectoryBuilder(backUp.end())
-                //.splineTo(new Vector2d(13.7,47), Math.toRadians(0))
                 .lineToLinearHeading(new Pose2d(10, 47, Math.toRadians(0)))
                 .build();
         drive.followTrajectory(moveToWobble2);
@@ -251,7 +246,6 @@ public class RedTopRR extends LinearOpMode {
         pickUpWobble();
 
         moveToZoneAgain = drive.trajectoryBuilder(approachWobble2.end(),true)
-                //.splineTo(new Vector2d(-46,48), Math.toRadians(-45))
                 .lineToLinearHeading(new Pose2d(-49, 52, Math.toRadians(115)))
                 .build();
         drive.followTrajectory(moveToZoneAgain);
