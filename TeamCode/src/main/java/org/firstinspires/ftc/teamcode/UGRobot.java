@@ -44,6 +44,22 @@ public class UGRobot {
         pickupbottom.setPower(0);
         pickuptop.setPower(0);
         setShooter(shooterDirection.IDLE);
+        setLaunchServo(false);
+
+
+    }
+
+    public void shoot (boolean out) {
+        if (out) {
+            setShooter(UGRobot.shooterDirection.OUT);
+            opMode.sleep(500);
+            setLaunchServo(true);
+            opMode.sleep(300);
+            setLaunchServo(false);
+            opMode.sleep(700);
+        } else {
+            setShooter(shooterDirection.IDLE);
+        }
 
     }
 
@@ -78,7 +94,7 @@ public class UGRobot {
                 shooter.setPower(-1);
                 break;
             case OUT:
-                shooter.setPower(.7);
+                shooter.setPower(.6);
                 break;
             case STOP:
                 shooter.setPower(0);

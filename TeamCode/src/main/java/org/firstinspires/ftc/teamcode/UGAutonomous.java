@@ -30,7 +30,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
+import static org.firstinspires.ftc.teamcode.MecanumDrive.MoveDirection.*;
+import static org.firstinspires.ftc.teamcode.UGObjectDetector.ringStackState.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Ultimate Goal Auto", group ="Concept")
 
@@ -39,6 +40,8 @@ public class UGAutonomous extends LinearOpMode {
 
     private MecanumDrive mecanumDrive = new MecanumDrive();
     private UGRobot robot = new UGRobot();
+    private UGObjectDetector OD = new UGObjectDetector();
+
 
 
 
@@ -46,12 +49,58 @@ public class UGAutonomous extends LinearOpMode {
 
         mecanumDrive.init(hardwareMap, telemetry, this);
         robot.init(hardwareMap, telemetry, this);
+        OD.init(hardwareMap, telemetry,this);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
+        while (!isStarted()) {
+            UGObjectDetector.ringStackState ringsFound = OD.findRings();
+            if (ringsFound == NONE) {
+                telemetry.addLine("NONE Detected");
+            } else if (ringsFound == SINGLE) {
+                telemetry.addLine("SINGLE Detected");
+
+            } else if (ringsFound == QUAD) {
+                telemetry.addLine("QUAD Detected");
+
+            } else {
+                telemetry.addLine("This Cant Happen");
+            }
+            telemetry.update();
+            this.idle();
+        }
+
         waitForStart();
 
+        if (opModeIsActive()) {
+            UGObjectDetector.ringStackState ringsFound = OD.findRings();
+            OD.shutdown();
+
+
+            mecanumDrive.forward(60, 0.7);
+            mecanumDrive.rightTurn(10, 0.2);
+            robot.shoot(true);
+            robot.shoot(true);
+            robot.shoot(true);
+            if (ringsFound == UGObjectDetector.ringStackState.NONE) {
+                mecanumDrive.arcMove(0, 72, 0.3, RIGHT, true, true);
+                mecanumDrive.forward(31, 0.5);
+                mecanumDrive.backward(6, 0.5);
+            } else if (ringsFound == UGObjectDetector.ringStackState.SINGLE) {
+                mecanumDrive.rightTurn(2, 0.4);
+                mecanumDrive.forward(37, 0.5);
+                mecanumDrive.backward(19, 0.5);
+            } else if (ringsFound == UGObjectDetector.ringStackState.QUAD) {
+                mecanumDrive.rightTurn(16, 0.4);
+                mecanumDrive.forward(72, 0.7);
+                mecanumDrive.backward(55, 0.7);
+            }
+        } else {
+            OD.shutdown();
+        }
+
+/*
         mecanumDrive.forward(24,.5);
                 mecanumDrive.leftTurn(120, .5);
                 robot.setPickup(UGRobot.pickupDirection.IN);
@@ -67,5 +116,7 @@ public class UGAutonomous extends LinearOpMode {
                 mecanumDrive.forward(12, .5);
 
         sleep(1500);
+
+ */
     }
 }

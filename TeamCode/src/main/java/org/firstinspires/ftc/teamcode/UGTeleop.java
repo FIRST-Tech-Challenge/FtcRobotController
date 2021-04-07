@@ -94,12 +94,7 @@ public class UGTeleop extends LinearOpMode {
             boolean unshootTriggered = gamepad2.left_trigger > 0.5;
 
             if (shootTriggered) {
-                robot.setShooter(UGRobot.shooterDirection.OUT);
-                sleep(500);
-                robot.setLaunchServo(true);
-                sleep(300);
-                robot.setLaunchServo(false);
-                sleep(700);
+                robot.shoot(true);
 
             } else if (unshootTriggered) {
                 robot.setShooter(UGRobot.shooterDirection.IN);
