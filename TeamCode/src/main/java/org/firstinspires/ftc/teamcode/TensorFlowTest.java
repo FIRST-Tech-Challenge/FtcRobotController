@@ -54,6 +54,7 @@ import java.util.List;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
+@Disabled
 public class TensorFlowTest extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "detect.tflite";
     private static final String LABEL_QUAD = "four";

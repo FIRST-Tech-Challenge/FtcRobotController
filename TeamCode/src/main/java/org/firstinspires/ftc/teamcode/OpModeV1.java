@@ -1,3 +1,4 @@
+
 //Setup
 package org.firstinspires.ftc.teamcode;
 
@@ -19,6 +20,7 @@ public class OpModeV1 extends LinearOpMode {
     private DcMotor shooter;
     private DcMotor belt;
     private DcMotor intake;
+    private DcMotor arm;
 
     //code to play once the OpMode is active
     public void runOpMode() {
@@ -32,6 +34,7 @@ public class OpModeV1 extends LinearOpMode {
         shooter = hardwareMap.get(DcMotor.class, "buzz");
         belt = hardwareMap.get(DcMotor.class, "belt");
         intake = hardwareMap.get(DcMotor.class, "intake");
+        arm = hardwareMap.get(DcMotor.class, "arm");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -49,6 +52,8 @@ public class OpModeV1 extends LinearOpMode {
         double pivot;
         double beltPower;
         boolean powerA;
+        boolean armUp;
+        boolean armDown;
         boolean powerB;
         boolean powerX;
         boolean powerY;
@@ -70,6 +75,9 @@ public class OpModeV1 extends LinearOpMode {
             powerX = gamepad2.x;
             powerY = gamepad2.y;
             intakePower = gamepad2.left_bumper;
+            armUp = gamepad1.dpad_up;
+            armDown = gamepad1.dpad_down;
+
 
 
             // Driving
@@ -113,6 +121,14 @@ public class OpModeV1 extends LinearOpMode {
                 intake.setPower(.5);
             }else{
                 intake.setPower(0);
+            }
+
+            if (armUp){
+                arm.setPower(0.25);
+            }else if (armDown){
+                arm.setPower(-0.25);
+            }else{
+                arm.setPower(0);
             }
 
             if (beltPower > 0){

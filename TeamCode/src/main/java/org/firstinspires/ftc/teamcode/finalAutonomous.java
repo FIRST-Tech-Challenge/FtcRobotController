@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -32,8 +36,11 @@ public class finalAutonomous extends LinearOpMode {
     private DcMotor shooter;
     private DcMotor belt;
 
+    private Servo wobble;
+
+//    private boolean shouldDropWobble = true;
     private boolean shouldShoot = true;
-    private boolean shouldDrive = false;
+    private boolean shouldDrive = true;
     private boolean shouldDetectRings = true;
     private boolean ringDetectTestMode = false;
 
@@ -42,6 +49,7 @@ public class finalAutonomous extends LinearOpMode {
 
         initDriveMotors();
         initShootingMotors();
+        initOtherMotors();
 
         initVuforia();
         initTensorFlowObjDetector();
@@ -51,28 +59,50 @@ public class finalAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        shoot(0.75);
-
         int zone;
         if (opModeIsActive()) {
+            shoot(0.73);
+
+            move(-0.4, 500);
+            sleep(500);
+            strafeLeft(200);
             do {
                 //zone = determineZone();
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        //move to zone A
+                        move(0.4, 3500);
+                        wobble.setPosition(1.0);
+                        sleep(2000);
                         break;
                     case 1:
-                        //move to zone B
+                        strafeRight(1500);
+                        move(0.4, 4500);
+                        wobble.setPosition(1.0);
+                        sleep(2000);
+                        move(-0.4, 1000);
+                        //TODO
+                        // Strafe More,
+                        // Don't go as far forward,
+                        // go back to line
                         break;
                     case 2:
-                        //move to zone C
+                        strafeRight(1500);
+                        move(0.4, 7500);
+                        strafeLeft(1500);
+                        wobble.setPosition(1.0);
+                        sleep(2000);
+                        move(-0.4, 4000);
                         break;
                     default:
-                        //telemetry.addData("Status:", "Invalid number of rings");
                         break;
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
+
+
+
+
+
             if (ringDetectTestMode){
                 while (opModeIsActive()){
                     telemetry.update();
@@ -83,7 +113,6 @@ public class finalAutonomous extends LinearOpMode {
         if (tensorFlowObjDetector != null) {
             tensorFlowObjDetector.shutdown();
         }
-        move(1, 1750);
     }
 
     public void move(double speed, int time) {
@@ -93,26 +122,48 @@ public class finalAutonomous extends LinearOpMode {
             backLeft.setPower(speed);
             backRight.setPower(speed);
             sleep(time);
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
         }
     }
 
-    public void strafeLeft(int time) {
+    /*public void spin(double speed, int time) {
+        if (shouldDrive) {
+            frontLeft.setPower(speed);
+            backLeft.setPower(speed);
+            frontRight.setPower(-1*speed);
+            backRight.setPower(-1*speed);
+            sleep(time);
+        }
+    }
+*/
+    public void strafeRight(int time) {
         if (shouldDrive) {
             frontLeft.setPower(-0.5);
             backLeft.setPower(0.5);
             frontRight.setPower(0.5);
             backRight.setPower(-0.5);
             sleep(time);
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
         }
     }
 
-    public void strafeRight(int time) {
+    public void strafeLeft(int time) {
         if (shouldDrive) {
             frontLeft.setPower(0.5);
             backLeft.setPower(-0.5);
             frontRight.setPower(-0.5);
             backRight.setPower(0.5);
             sleep(time);
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
         }
     }
 
@@ -121,14 +172,14 @@ public class finalAutonomous extends LinearOpMode {
             shooter.setPower(power);
             sleep(1500);
             belt.setPower(.5);
-            sleep(4000);
+            sleep(5000);
             shooter.setPower(0);
             belt.setPower(0);
         }
     }
 
     public int calculateZone() {
-        int samples = 50;
+        int samples = 10;
         telemetry.addData(">", "Taking " + samples + " samples...");
         telemetry.update();
 
@@ -207,6 +258,10 @@ public class finalAutonomous extends LinearOpMode {
         return zone;
     }
 
+    private void initOtherMotors(){
+        wobble = hardwareMap.get(Servo.class, "wobble");
+    }
+
     private void initDriveMotors(){
         if (shouldDrive) {
             frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -216,8 +271,8 @@ public class finalAutonomous extends LinearOpMode {
 
             frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
             frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-            backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+            backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+            backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         }
     }
 
@@ -257,6 +312,6 @@ public class finalAutonomous extends LinearOpMode {
         tensorFlowObjDetector = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tensorFlowObjDetector.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_QUAD, LABEL_SINGLE);
         tensorFlowObjDetector.activate();
-        //tensorFlowObjDetector.setZoom(1, 1.5);
+        tensorFlowObjDetector.setZoom(1.75, 1.78);
     }
 }
