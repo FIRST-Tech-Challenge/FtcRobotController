@@ -49,10 +49,10 @@ public class TerraBot {
 
     public Cycle pushControl = new Cycle(0.1, 0.25, 0.32);
 
-//    public Cycle cllControl = new Cycle(0.2, 0.5, 1);
-//    public Cycle clrControl = new Cycle(1, 0.5, 0.0);
-    public Cycle cllControl = new Cycle(0.2, 1);
-    public Cycle clrControl = new Cycle(1, 0.0);
+    public Cycle cllControl = new Cycle(0.2, 0.5, 1);
+    public Cycle clrControl = new Cycle(1, 0.5, 0.0);
+//    public Cycle cllControl = new Cycle(0.2, 1);
+//    public Cycle clrControl = new Cycle(1, 0.0);
 
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor br;
@@ -245,8 +245,11 @@ public class TerraBot {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setTargetPosition((int) (deg*Constants.NEV_DEGREES_TO_TICKS));
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        moveArm(pow);
+        moveArm(Math.abs(pow) * Math.signum(deg - getArmPos()));
         while (arm.isBusy()){
+            if (Math.abs(getArmPos() - deg) < 10) {
+                moveArm(pow * 0.5);
+            }
             if(isWgeInLimits(pow)) {
                 updateWge();
             }else{
@@ -255,6 +258,12 @@ public class TerraBot {
         }
         moveArm(0);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void setClawPos(int ind) {
+        cllControl.changeCurr(ind);
+        clrControl.changeCurr(ind);
+        claw(cllControl.getPos(ind), clrControl.getPos(ind));
     }
 
     public double getArmPos(){

@@ -1,6 +1,7 @@
 package autofunctions;
 
 import global.TerraBot;
+import globalfunctions.Constants;
 import util.CodeSeg;
 
 public class RobotFunctions {
@@ -49,5 +50,36 @@ public class RobotFunctions {
             }
         };
     }
+    public CodeSeg wgMoveFront() {
+        return moveWgTo(Constants.WG_LOWER_LIMIT);
+    }
+    public CodeSeg wgMoveBack() {
+        return moveWgTo(Constants.WG_UPPER_LIMIT);
+    }
+    public CodeSeg closeClaw() {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.setClawPos(1);
+            }
+        };
+    }
+    public CodeSeg openClaw() {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.setClawPos(0);
+            }
+        };
+    }
+    public CodeSeg moveWgTo(final double deg) {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.moveArmWithEnc(deg, 1);
+            }
+        };
+    }
+
 
 }

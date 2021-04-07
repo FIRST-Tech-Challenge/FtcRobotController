@@ -53,11 +53,9 @@ public class RobotFunctionsHandler {
     }
 
     public void update(){
-        if(rfsIndex < (rfs.size()-1)) {
-            if (isRf.get(rfsIndex+1)) {
-                rfsQueue.add(rfs.get(rfsIndex+1));
-                rfsIndex++;
-            }
+        if(rfsIndex < rfs.size() - 1 && isRf.get(rfsIndex+1)) {
+            rfsQueue.add(rfs.get(rfsIndex+1));
+            rfsIndex++;
         }
         rfsIndex++;
     }
