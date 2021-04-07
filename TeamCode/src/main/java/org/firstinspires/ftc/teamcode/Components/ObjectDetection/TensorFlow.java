@@ -24,6 +24,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.key;
 
 //import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
@@ -47,7 +48,11 @@ public class TensorFlow {
         op = opMode;
 
         tensorFlowServo = op.hardwareMap.servo.get("TensorFlowServo");
-        moveTensorFlowServo(0.35);
+        if(Robot.isCorgi) {
+            moveTensorFlowServo(0.75);
+        } else if(!Robot.isCorgi) {
+            moveTensorFlowServo(0.35);
+        }
 
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 

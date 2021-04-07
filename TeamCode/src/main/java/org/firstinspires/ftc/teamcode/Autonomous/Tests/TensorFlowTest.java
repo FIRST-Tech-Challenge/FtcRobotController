@@ -28,18 +28,21 @@ public class TensorFlowTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         TensorFlow tensorFlow = new TensorFlow(this);
 
-        tensorFlow.moveTensorFlowServo(0.35);
-        sleep(5000);
+        waitForStart();
 
-        int rings; //For DEBUGGING, replace with "int rings= -1;"
-        int i;
+//        tensorFlow.moveTensorFlowServo(0.75);
 
-        int numOfTime4Rings;
-        int numOfTime1Ring;
-        int numOfTime0Rings;
+
+//        sleep(5000);
+
+        int rings=-1; //For DEBUGGING, replace with "int rings= -1;"
+        int i=0;
+
+        int numOfTime4Rings=0;
+        int numOfTime1Ring=0;
+        int numOfTime0Rings=0;
 
         int arraySize = 11;
         ArrayList<Integer> NumberOfRings = new ArrayList<>(arraySize);
@@ -49,17 +52,30 @@ public class TensorFlowTest extends LinearOpMode {
             sleep(10);
             rings = tensorFlow.getNumberOfRings();
             NumberOfRings.add(index, rings);
-            //telemetry.addData("11 Number of Rings: ", "i=%4d %d", i++, rings);
-            //telemetry.update();
+//            telemetry.addData("11 Number of Rings: ", "i=%4d %d", i++, rings);
+//            telemetry.update();
+//            sleep(100);
         }
-        //sleep(2000);
+        sleep(2000);
 
-//        telemetry.addData("Number of Rings: ", "%d %d %d %d %d %d", NumberOfRings.get(0),NumberOfRings.get(1),NumberOfRings.get(2),NumberOfRings.get(3),NumberOfRings.get(4), NumberOfRings.get(5));
-//        telemetry.addData("Number of Rings: ", "%d %d %d %d %d", NumberOfRings.get(6),NumberOfRings.get(7),NumberOfRings.get(8),NumberOfRings.get(9),NumberOfRings.get(10));
+        telemetry.addData("Number of Rings: ", "%d %d %d %d %d %d", NumberOfRings.get(0),NumberOfRings.get(1),NumberOfRings.get(2),NumberOfRings.get(3),NumberOfRings.get(4), NumberOfRings.get(5));
+        telemetry.addData("Number of Rings: ", "%d %d %d %d %d", NumberOfRings.get(6),NumberOfRings.get(7),NumberOfRings.get(8),NumberOfRings.get(9),NumberOfRings.get(10));
+        telemetry.update();
+        sleep(2000);
+
+//        boolean ifActive = this.opModeIsActive();
+//        telemetry.addData("ifActive", ifActive);
 //        telemetry.update();
-//        sleep(2000);
+//        sleep(1000);
+//        boolean ifActive2 = opModeIsActive();
+//        telemetry.addData("ifActive2", ifActive2);
+//        telemetry.update();
+//        sleep(1000);
+//        telemetry.addData("ifStopRequested", isStopRequested());
+//        telemetry.update();
+//        sleep(1000);
 
-        while(!opModeIsActive() && !isStopRequested()) {
+        while(opModeIsActive() && !isStopRequested()) {
             numOfTime4Rings = 0;
             numOfTime1Ring = 0;
             numOfTime0Rings = 0;
