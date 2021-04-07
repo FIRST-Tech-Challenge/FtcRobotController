@@ -58,5 +58,15 @@ public class Optimizer {
         return in > range[0] && in < range[1];
     }
 
+    public static double weightedAvg(double[] in, double[] weights){
+        double sum = 0;
+        double wsum = 0;
+        for (int i = 0; i < in.length; i++) {
+            sum += in[i]*weights[i];
+            wsum += weights[i];
+        }
+        return sum/wsum;
+    }
+
 
 }

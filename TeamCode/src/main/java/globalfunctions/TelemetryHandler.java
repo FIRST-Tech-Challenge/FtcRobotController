@@ -6,7 +6,14 @@ import autofunctions.Path;
 import global.TerraBot;
 
 public class TelemetryHandler {
-    public Telemetry addOdometry(Telemetry telemetry, TerraBot bot) {
+    Telemetry telemetry;
+    TerraBot bot;
+    public void init(Telemetry telemetry, TerraBot bot){
+        this.telemetry = telemetry;
+        this.bot = bot;
+    }
+
+    public void addOdometry() {
 //        telemetry.addData("center odometry", bot.odometry.cp);
 //        telemetry.addData("left odometry", bot.odometry.lp);
 //        telemetry.addData("right odometry", bot.odometry.rp);
@@ -21,9 +28,9 @@ public class TelemetryHandler {
         telemetry.addData("x pos", bot.odometry.x);
         telemetry.addData("y pos", bot.odometry.y);
         telemetry.addData("heading", bot.odometry.h);
-        return telemetry;
+
     }
-    public Telemetry addAuton(Telemetry telemetry, Path path, TerraBot bot){
+    public void addAuton(Path path){
         telemetry.addData("y pow", path.yControl.getPower());
         telemetry.addData("x pow", path.xControl.getPower());
         telemetry.addData("h pow", path.hControl.getPower());
@@ -39,18 +46,16 @@ public class TelemetryHandler {
         telemetry.addData("h", bot.odometry.h);
         telemetry.addData("x", bot.odometry.x);
         telemetry.addData("y", bot.odometry.y);
-
-        return telemetry;
     }
-    public Telemetry addAngularPosition(Telemetry telemetry, TerraBot bot) {
-        telemetry.addData("average angle", bot.angularPosition.getHeading());
+    public void addAngularPosition() {
+        telemetry.addData("average heading", bot.angularPosition.getHeading());
         telemetry.addData("average gyro angle", bot.angularPosition.getHeadingGY());
         telemetry.addData("left gyro", bot.angularPosition.getHeadingLeftGY());
         telemetry.addData("right gyro", bot.angularPosition.getHeadingRightGY());
         telemetry.addData("compass sensor", bot.angularPosition.getHeadingCS());
-        return telemetry;
+        telemetry.addData("cp raw", bot.angularPosition.compassSensor.getDirection());
     }
-    public Telemetry addOuttake(Telemetry telemetry, TerraBot bot) {
+    public void addOuttake() {
         telemetry.addData("Right Outtake Position", bot.outr.getCurrentPosition());
         telemetry.addData("Left Outtake Position", bot.outl.getCurrentPosition());
         telemetry.addData("Right Outtake Angular Velocity", bot.autoAimer.outrController.currSpeed);
@@ -65,13 +70,15 @@ public class TelemetryHandler {
         telemetry.addData("Left Outtake Derivative Power", bot.autoAimer.outlController.derivativeOfPower);
         telemetry.addData("Right Outtake Target Speed", bot.autoAimer.outrController.targetSpeed);
         telemetry.addData("Left Outtake Target Speed", bot.autoAimer.outlController.targetSpeed);
-        return telemetry;
     }
-    public Telemetry addAutoAimer(Telemetry telemetry, TerraBot bot) {
+    public void addAutoAimer() {
         telemetry.addData("left distance", bot.localizer.getLeftDistance());
         telemetry.addData("back distance", bot.localizer.getBackDistance());
         telemetry.addData("Outl Target Power", bot.autoAimer.outlController.getMotorPower(bot.outl.getCurrentPosition()));
         telemetry.addData("Outr Target Power", bot.autoAimer.outrController.getMotorPower(bot.outr.getCurrentPosition()));
+    }
+
+    public Telemetry getTelemetry(){
         return telemetry;
     }
 }

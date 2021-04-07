@@ -262,6 +262,7 @@ public class Path {
         globalTime.reset();
         op.telemetry.addData("Starting", "RF Threads");
         op.telemetry.update();
+        telemetryHandler.init(op.telemetry, bot);
         startRFThread(op);
         while (op.opModeIsActive() && isExecuting){
 //            op.telemetry = telemetryHandler.addAutoAimer(op.telemetry, bot);
@@ -274,7 +275,9 @@ public class Path {
 //            op.telemetry.addData("x", bot.odometry.x);
 //            op.telemetry.addData("y", bot.odometry.y);
             op.telemetry.addData("rfs index", rfsHandler.rfsIndex);
-            op.telemetry = telemetryHandler.addAuton(op.telemetry, this, bot);
+
+            telemetryHandler.addAuton(this);
+            op.telemetry = telemetryHandler.getTelemetry();
             op.telemetry.update();
 //
             bot.outtakeWithCalculations();

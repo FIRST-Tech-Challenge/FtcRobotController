@@ -44,7 +44,7 @@ public class Constants {
     public static final double pi2 = Math.PI*2;
     public static final double halfPi = Math.PI/2;
     public static final double ANGLE_ACCURACY = 3.5; // in degrees
-    public static final double COMPASS_START = 342; //in degrees
+    public static final double COMPASS_START = 343; //in degrees
 
     public static final double TICKS_FOR_ODOMETRY =  8192; //in ticks
     public static final double ENCODER_WHEEL_RADIUS = 1.75; // in cm //1.75

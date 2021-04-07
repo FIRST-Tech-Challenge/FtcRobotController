@@ -22,6 +22,7 @@ public class OdometryOp extends OpMode {
     @Override
     public void init() {
         bot.init(hardwareMap);
+        telemetryHandler.init(telemetry, bot);
 
 
     }
@@ -42,7 +43,8 @@ public class OdometryOp extends OpMode {
 
             bot.moveTeleOp(forward, strafe, turn);
             optimizer.update();
-            telemetry = telemetryHandler.addOdometry(telemetry, bot);
+            telemetryHandler.addOdometry();
+            telemetry = telemetryHandler.getTelemetry();
         }else{
             double ydebA = optimizer.calcAvg(bot.odometry.Ydebug);
             double xdebA = optimizer.calcAvg(bot.odometry.Xdebug);

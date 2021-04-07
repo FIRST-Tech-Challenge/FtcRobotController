@@ -16,6 +16,7 @@ public class TerraOp extends OpMode {
         bot.init(hardwareMap);
         telemetry.addData("Ready", "");
         telemetry.update();
+        telemetryHandler.init(telemetry, bot);
     }
 
     @Override
@@ -85,7 +86,9 @@ public class TerraOp extends OpMode {
 //        telemetry = telemetryHandler.addOdometry(telemetry, bot);
 //        telemetry.addData("cll pos", bot.cll.getPosition());
 //        telemetry.addData("clr pos", bot.clr.getPosition());
-        telemetry = telemetryHandler.addAutoAimer(telemetry, bot);
+        telemetryHandler.addAutoAimer();
+        telemetryHandler.addAngularPosition();
+        telemetry = telemetryHandler.getTelemetry();
 
         telemetry.update();
 

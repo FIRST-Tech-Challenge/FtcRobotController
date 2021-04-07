@@ -1,6 +1,7 @@
 package auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import autofunctions.Path;
@@ -23,14 +24,12 @@ public class AutoZero extends LinearOpMode {
         bot.startOdoThreadAuto(this);
 
         /**
-         * YOU NEED A STOP TO ALLOW THE RF TO EXECUTE (AFTER)
+         *
          *
          * TODO LIST
-         *  Design:
-         *      Compass Sensor
-         *      Side servos
          *  Programming:
          *      shooter (powershot)
+         *      localizer test
          *      auton
          *
          *      PlAN

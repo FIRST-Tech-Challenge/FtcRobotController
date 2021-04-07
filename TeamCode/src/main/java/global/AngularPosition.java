@@ -10,15 +10,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import globalfunctions.Constants;
+import globalfunctions.Optimizer;
 
 public class AngularPosition {
     public ModernRoboticsI2cCompassSensor compassSensor;
     public BNO055IMU leftGyro;
     public BNO055IMU rightGyro;
-//    public boolean calibratingCompass = true;
-
-//    public double lastHeadingGY = 0;
-//    public double headingGY = 0;
 
     public double addLeftGY = 0;
     public double addRightGY = 0;
@@ -55,7 +52,13 @@ public class AngularPosition {
     }
 
     public double getHeading() {
-        return 0.5 * (getHeadingGY() + getHeadingCS());
+        double gy = getHeadingGY();
+        double cs = getHeadingCS();
+        if(Math.abs(gy-cs) < 20) {
+            return Optimizer.weightedAvg(new double[]{gy, cs}, new double[]{1, 0.5});
+        }else{
+            return gy;
+        }
     }
 
     public double getHeadingCS(){
@@ -66,12 +69,6 @@ public class AngularPosition {
         return dir;
     }
 
-//    public void setCompassMode () {
-//        if (calibratingCompass && !compassSensor.isCalibrating()) {
-//            compassSensor.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);
-//            calibratingCompass = false;
-//        }
-//    }
     public void initGyro(){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -82,8 +79,6 @@ public class AngularPosition {
     }
 
     public void resetGyro() {
-//        addGY = (int) gyroSensor.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-//        headingGY = 0;
         addLeftGY = getHeadingCS() - getAngle(leftGyro);
         addRightGY = getHeadingCS() - getAngle(rightGyro);
     }
@@ -112,13 +107,18 @@ public class AngularPosition {
         return ang;
     }
     public double getHeadingGY() {
-//        double ang = 0.5 * (getAngle(leftGyro) + getAngle(rightGyro)) + addGY;
-//
-//        ang = ang < 0 ? (ang + 360) : ang;
-        double ang = 0.5 * (getHeadingLeftGY() + getHeadingRightGY());
+        double lgy = getHeadingLeftGY();
+        double rgy = getHeadingRightGY();
+        double ang = 0;
+        if(Math.abs(lgy - rgy) < 20) {
+             ang = Optimizer.weightedAvg(new double[]{lgy, rgy}, new double[]{1, 1});
+        }else{
+             ang = lgy;
+        }
         if (ang < 0) {
             ang += 360;
         }
+
         return ang;
     }
 
