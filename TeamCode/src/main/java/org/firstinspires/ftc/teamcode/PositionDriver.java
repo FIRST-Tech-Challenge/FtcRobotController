@@ -50,7 +50,7 @@ public class PositionDriver extends OpMode {
         Pose2d endPose = new Pose2d(55, -15, new Rotation2d(Math.PI/2));
 
         rotationController = new RotationController(hardwareMap.get(BNO055IMU.class, "imu"));
-        positionController = new PositionController(currentPose, rotationController);
+        positionController = new PositionController(currentPose, rotationController, Vals.drive_ramsete_b, Vals.drive_ramsete_zeta);
         positionController.setTolerance(new Pose2d(3, 3, new Rotation2d(Math.PI/180)));
         positionController.reset();
 
