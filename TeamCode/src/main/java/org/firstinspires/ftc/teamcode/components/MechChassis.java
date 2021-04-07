@@ -165,7 +165,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double servoCorrection;   // latest correction applied to leading wheels' servos to correct heading deviation
     private double curHeading = 0;
     private boolean useScalePower = true;//
-    private boolean setImuTelemetry = false;//unless debugging, don't set telemetry for imu
+    private boolean setImuTelemetry = true;//unless debugging, don't set telemetry for imu
     private boolean setRangeSensorTelemetry = true; //unless debugging, don't set telemetry for range sensor
     private boolean useOdometry = true;
     private boolean normalizeMode = false;
@@ -391,13 +391,6 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         if (heading>180) heading -= 360;
         else if (heading<-180) heading += 360;
         return heading;
-    }
-    public double odo_heading_with_correction() { // aways turn [-180..180]
-        if (GPS ==null) return 0;
-        double heading = (GPS.returnOrientation());
-        if (heading>180) heading -= 360;
-        else if (heading<-180) heading += 360;
-        return heading+GPS.rotationCorrection();
     }
 
     public double getLeft_ratio() { return left_ratio; }
@@ -1146,26 +1139,6 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                         (simulation_mode?"Simulation":(getNormalizeMode()?"Normalized":"Speedy")));
             }
         });
-        if(setImuTelemetry) {
-            if (rightFrontRangeSensor != null) {
-                line.addData("FR", "%.1f", new Func<Double>() {
-                    @Override
-                    public Double value() {
-                        // return rightRangeSensor.getDistance(DistanceUnit.CM);
-                        return getDistance(SwerveChassis.Direction.FRONT);
-                    }
-                });
-            }
-            if (rightBackRangeSensor != null) {
-                line.addData("FB", "%.1f", new Func<Double>() {
-                    @Override
-                    public Double value() {
-                        // return rightRangeSensor.getDistance(DistanceUnit.CM);
-                        return getDistance(SwerveChassis.Direction.FRONT);
-                    }
-                });
-            }
-        }
 //        if (leftRangeSensor != null) {
 //            line.addData("ran-L", "%.1f", new Func<Double>() {
 //                @Override
@@ -1175,7 +1148,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 //                }
 //            });
 //        }
-                //
+ //
 //        if (frontRangeSensor != null) {
 //            line.addData("rangeF", "%.1f", new Func<Double>() {
 //                    @Override
@@ -1193,69 +1166,69 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 //            });
 //        }
 
-                if (showEncoderDetail) {
-                    if (motorFL != null) {
-                        line.addData("FL", "%d", new Func<Integer>() {
-                            @Override
-                            public Integer value() {
-                                return motorFL.getCurrentPosition();
-                            }
-                        });
+        if (showEncoderDetail) {
+            if (motorFL != null) {
+                line.addData("FL", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return motorFL.getCurrentPosition();
                     }
-                    if (motorFR != null) {
-                        line.addData("FR", "%d", new Func<Integer>() {
-                            @Override
-                            public Integer value() {
-                                return motorFR.getCurrentPosition();
-                            }
-                        });
+                });
+            }
+            if (motorFR != null) {
+                line.addData("FR", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return motorFR.getCurrentPosition();
                     }
-                    if (motorBL != null) {
-                        line.addData("BL", "%d", new Func<Integer>() {
-                            @Override
-                            public Integer value() {
-                                return motorBL.getCurrentPosition();
-                            }
-                        });
+                });
+            }
+            if (motorBL != null) {
+                line.addData("BL", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return motorBL.getCurrentPosition();
                     }
-                    if (motorBR != null) {
-                        line.addData("BR", "%d", new Func<Integer>() {
-                            @Override
-                            public Integer value() {
-                                return motorBR.getCurrentPosition();
-                            }
-                        });
+                });
+            }
+            if (motorBR != null) {
+                line.addData("BR", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return motorBR.getCurrentPosition();
                     }
+                });
+            }
 
-                    if (horizontalEncoder != null) {
-                        line.addData("row X", "%d", new Func<Integer>() {
-                            @Override
-                            public Integer value() {
-                                return horizontalEncoder.getCurrentPosition();
-                            }
-                        });
+            if (horizontalEncoder != null) {
+                line.addData("row X", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return horizontalEncoder.getCurrentPosition();
                     }
-                    if (verticalLeftEncoder != null) {
-                        line.addData("row Y-Left", "%d", new Func<Integer>() {
-                            @Override
-                            public Integer value() {
-                                return verticalLeftEncoder.getCurrentPosition();
-                            }
-                        });
+                });
+            }
+            if (verticalLeftEncoder != null) {
+                line.addData("row Y-Left", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return verticalLeftEncoder.getCurrentPosition();
                     }
-                    if (verticalRightEncoder != null) {
-                        line.addData("row Y-Right", "%d\n", new Func<Integer>() {
-                            @Override
-                            public Integer value() {
-                                return verticalRightEncoder.getCurrentPosition();
-                            }
-                        });
+                });
+            }
+            if (verticalRightEncoder != null) {
+                line.addData("row Y-Right", "%d\n", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return verticalRightEncoder.getCurrentPosition();
                     }
+                });
+            }
 
-                }
+        }
 
-                // setupGPSTelemetry(telemetry);
-                setupIMUTelemetry(telemetry);
+        // setupGPSTelemetry(telemetry);
+        setupIMUTelemetry(telemetry);
 
 
 //        telemetry.addLine().addData("M", new Func<String>() {
@@ -1276,8 +1249,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 //                return String.format("%+.1f", servoCorrection);
 //            }
 //        });
-            }
-
+    }
 
     public void setupIMUTelemetry(Telemetry telemetry) {
         if ((orientationSensor!=null) && setImuTelemetry) {
