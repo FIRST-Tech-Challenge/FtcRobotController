@@ -72,25 +72,34 @@ public class finalAutonomous extends LinearOpMode {
                 switch (zone) {
                     case 0:
                         move(0.4, 3500);
+                        wobble.setPosition(1.0);
+                        sleep(2000);
                         break;
                     case 1:
+                        strafeRight(1500);
                         move(0.4, 4500);
-                        strafeRight(1000);
+                        wobble.setPosition(1.0);
+                        sleep(2000);
+                        move(-0.4, 1000);
                         //TODO
                         // Strafe More,
                         // Don't go as far forward,
                         // go back to line
                         break;
                     case 2:
+                        strafeRight(1500);
                         move(0.4, 7500);
+                        strafeLeft(1500);
+                        wobble.setPosition(1.0);
+                        sleep(2000);
+                        move(-0.4, 4000);
                         break;
                     default:
                         break;
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
 
-            wobble.setPosition(1.0);
-            sleep(1000);
+
 
 
 
