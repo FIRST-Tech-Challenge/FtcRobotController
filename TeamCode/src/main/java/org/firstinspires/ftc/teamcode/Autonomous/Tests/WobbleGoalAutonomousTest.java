@@ -5,7 +5,6 @@
  * @since 2020-11-01
  */
 package org.firstinspires.ftc.teamcode.Autonomous.Tests;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,11 +20,12 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class WobbleGoalAutonomousTest extends LinearOpMode {
 
     public void runOpMode(){
-        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
+        WobbleGoal wobbleGoal = new WobbleGoal(this);
         ElapsedTime runtime = new ElapsedTime();
         telemetry.addData("Init", "Complete");
         telemetry.update();
         waitForStart();
-        robot.closeWobbleGoalClaw();
+        wobbleGoal.goToPosition(WobbleGoal.Position.GRAB);
+        sleep(5000);
     }
 }

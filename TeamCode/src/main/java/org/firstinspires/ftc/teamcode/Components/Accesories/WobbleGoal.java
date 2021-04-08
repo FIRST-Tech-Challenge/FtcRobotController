@@ -29,10 +29,10 @@ public class WobbleGoal {
     protected Servo wobbleGoalServoClaw = null;
 
     private final int ticksForREST = 0;
-    private final int ticksForGRAB = -475;
+    private final int ticksForGRAB = 240;
     private final int ticksForDriveToWall = 250;
-    private final int ticksForDropOverWall = -140;
-    private final int ticksForRAISE = -400;
+    private final int ticksForDropOverWall = 70;
+    private final int ticksForRAISE = 80;
     private final int ticksForAutonomousRUN = -350;
     private final int ticksForAutonomousGRAB = -500;
     private final int ticksForAutonomousStart = 175;
@@ -52,7 +52,7 @@ public class WobbleGoal {
         wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wobbleGoalServoClaw.setPosition(1);
-        goToPosition(Position.START);
+        goToPosition(Position.RAISE);
         opMode.sleep(500);
 
     }
