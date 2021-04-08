@@ -4,10 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -38,7 +35,6 @@ public class finalAutonomous extends LinearOpMode {
 
     private Servo wobble;
 
-//    private boolean shouldDropWobble = true;
     private boolean shouldShoot = true;
     private boolean shouldDrive = true;
     private boolean shouldDetectRings = true;
@@ -99,15 +95,6 @@ public class finalAutonomous extends LinearOpMode {
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
 
-
-
-
-
-            if (ringDetectTestMode){
-                while (opModeIsActive()){
-                    telemetry.update();
-                }
-            }
         }
 
         if (tensorFlowObjDetector != null) {
@@ -129,16 +116,6 @@ public class finalAutonomous extends LinearOpMode {
         }
     }
 
-    /*public void spin(double speed, int time) {
-        if (shouldDrive) {
-            frontLeft.setPower(speed);
-            backLeft.setPower(speed);
-            frontRight.setPower(-1*speed);
-            backRight.setPower(-1*speed);
-            sleep(time);
-        }
-    }
-*/
     public void strafeRight(int time) {
         if (shouldDrive) {
             frontLeft.setPower(-0.5);
