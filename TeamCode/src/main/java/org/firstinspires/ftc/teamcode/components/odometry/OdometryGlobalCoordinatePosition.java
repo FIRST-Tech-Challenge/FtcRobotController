@@ -30,6 +30,9 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private int count=0;
     private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
     private double DEFAULT_COUNTS_PER_INCH = 303.7; //307.699557;
+    private double netRotations; // clockwise rotations in degrees
+    private double prevHeading;  // previous heading
+
 
     //Algorithm constants
     //private double robotEncoderWheelDistance = 15.20435 * DEFAULT_COUNTS_PER_INCH;
@@ -51,9 +54,16 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private int GPSVersion = 1; // version 1 - Wizard Odometry
                                 // version 2 - Beta Odometry
 
+    public double getNetRotations() { return netRotations; }
+
+    public double rotationCorrection() { // degrees to be corrected due to rotation error
+        return getNetRotations() / 360.0 * 0.6;
+    }
+
 
     public void set_orientationSensor(CombinedOrientationSensor val) {
         orientationSensor = val;
+        prevHeading = orientationSensor.getHeading();
     }
 
     /**
@@ -101,7 +111,19 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         // changeInRobotOrientation = Math.signum(leftChange - rightChange) * Math.acos(1  - (leftChange - rightChange)*(leftChange - rightChange)/ robotEncoderWheelDistance/ robotEncoderWheelDistance / 2);
         // Replace angle calculation by imu
         if ((orientationSensor!=null) && useIMU) { // robot is almost stop
-            robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
+            double curHeading = orientationSensor.getHeading();
+            robotOrientationRadians = Math.toRadians(curHeading) + initRadians;
+            // calculate robot netRotations
+            double curRotation = curHeading-prevHeading;
+            if (curHeading*prevHeading<0) {
+                if (curHeading<0) {
+                    curRotation += 360;
+                } else {
+                    curRotation -= 360;
+                }
+            }
+            netRotations += curRotation;
+            prevHeading = curHeading;
         } else {
             robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
         }
@@ -134,8 +156,10 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
 
     }
     public void correctAngleUsingIMU(){
-        if (orientationSensor!=null)
-            robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
+        if (orientationSensor!=null) {
+            double curHeading = orientationSensor.getHeading();
+            robotOrientationRadians = Math.toRadians(curHeading) + initRadians;
+        }
     }
 
     /**

@@ -385,9 +385,16 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
        return speed;
     }
 
-    public double odo_heading() { // aways turn [-180..180]
+    public double odo_heading() {
+        return odo_heading(true);
+    }
+
+    public double odo_heading(boolean correction) { // aways turn [-180..180]
         if (GPS ==null) return 0;
         double heading = (GPS.returnOrientation());
+        if (correction) {
+            heading += GPS.rotationCorrection();;
+        }
         if (heading>180) heading -= 360;
         else if (heading<-180) heading += 360;
         return heading;
@@ -1282,18 +1289,19 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 //                    return String.format("(%5.1f,%5.1f,%5.1f,%5.1f)\n", auto_exit_speed, auto_stop_early_dist, auto_max_speed, auto_max_calc_speed);
 //                }
 //            });
-            line.addData("Odo-pos (x,y,angle)", new Func<String>() {
+            line.addData("Odo-pos (x,y,angle/c-ang)", new Func<String>() {
                 @Override
                 public String value() {
-                    return String.format("(%2.2f, %2.2f, %2.2f)", odo_x_pos_cm(), odo_y_pos_cm(), odo_heading());
+                    return String.format("(%2.2f, %2.2f, %2.2f/%2.2f)", odo_x_pos_cm(), odo_y_pos_cm(),
+                            odo_heading(false), odo_heading(true));
                 }
             });
-            line.addData("Raw (x,ly,ry)", new Func<String>() {
+            line.addData("Raw (x,ly,ry,net-r)", new Func<String>() {
                 @Override
                 public String value() {
-                    return String.format("(%2.0f,%2.0f,%2.0f)", GPS.XEncoder(),
+                    return String.format("(%2.0f,%2.0f,%2.0f,%3.0f)", GPS.XEncoder(),
                             GPS.leftYEncoder(),
-                            GPS.rightYEncoder());
+                            GPS.rightYEncoder(), GPS.getNetRotations());
                 }
             });
         }
