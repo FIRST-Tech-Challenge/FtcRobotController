@@ -62,7 +62,7 @@ public class TerraBot {
     public Limits limits = new Limits();
 
     public boolean intaking = false;
-    public boolean outtaking = false;
+    public int outtakingMode = 0;
 
     public boolean fastMode = true;
     public boolean wgeStartMode = true;
@@ -209,7 +209,7 @@ public class TerraBot {
             intake(1);
         }else{
             intake(0);
-            if (!outtaking) { rh.setPower(0); }
+            if (outtakingMode == 0) { rh.setPower(0); }
         }
     }
 
@@ -311,13 +311,16 @@ public class TerraBot {
 
     public void toggleOuttake(boolean in) {
         if (outtakeButtonController.isPressing(in)) {
-            outtaking = !outtaking;
+            outtakingMode++;
+            if (outtakingMode > 2) {
+                outtakingMode = 0;
+            }
             resetOuttake();
         }
     }
 
     public void resetOuttake() {
-        autoAimer.update(odometry.getPos());
+//        autoAimer.update(odometry.getPos());
         autoAimer.resetOuttake(getLeftAngPos(), getRightAngPos());
     }
 
@@ -332,12 +335,14 @@ public class TerraBot {
 
 
     public void outtakeWithCalculations() {
-        if (outtaking) {
+        if (outtakingMode == 2) {
             autoAimer.update(odometry.getPos());
             outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
             outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
-            //rh.setPower(-0.5);
-        } else {
+        } else if (outtakingMode == 1 && outl.getPower() == 0) {
+            outr.setPower(0.5);
+            outl.setPower(0.5);
+        } else if (outtakingMode == 0) {
             outr.setPower(0);
             outl.setPower(0);
             if (!intaking) { rh.setPower(0); }

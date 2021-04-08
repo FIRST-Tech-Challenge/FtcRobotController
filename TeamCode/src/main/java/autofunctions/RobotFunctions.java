@@ -1,14 +1,11 @@
 package autofunctions;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import global.TerraBot;
 import globalfunctions.Constants;
 import util.CodeSeg;
 
 public class RobotFunctions {
     private TerraBot bot;
-    public ElapsedTime timer = new ElapsedTime();
     public void init(TerraBot t) {
         bot = t;
     }
@@ -20,20 +17,11 @@ public class RobotFunctions {
             }
         };
     }
-    public CodeSeg startOuttake() {
-        return new CodeSeg() {
-            @Override
-            public void run() {
-                bot.outtaking = true;
-                bot.resetOuttake();
-            }
-        };
-    }
     public CodeSeg stopOuttake() {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.outtaking = false;
+                bot.outtakingMode = 0;
             }
         };
     }
@@ -131,7 +119,7 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.outtaking = true;
+                bot.outtakingMode = 1;
                 bot.resetOuttake();
                 bot.rh.setPower(-0.3);
                 bot.rh2.setPower(-1);
@@ -148,10 +136,10 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
+                bot.outtakingMode = 2;
+                pause(3);
                 bot.rh.setPower(-0.5);
-                for(int i = 0; i < numRings; i++) {
-                    pause(0.5);
-                }
+                pause(0.5 * numRings);
                 bot.rp.setPosition(bot.pushControl.getPos(0));
                 bot.rh.setPower(0);
             }
@@ -159,8 +147,9 @@ public class RobotFunctions {
     }
 
     public void pause(final double secs){
-        timer.reset();
-        while (timer.seconds() < secs){}
+//        timer.reset();
+//        while (timer.seconds() < secs){}
+        try { Thread.sleep((long)(secs * 1000)); } catch (InterruptedException ignore) {}
     }
 
 

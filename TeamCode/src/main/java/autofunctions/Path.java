@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
@@ -51,22 +52,23 @@ public class Path {
     public boolean isExecuting = true;
 
     final public double[] ks = {0.1,0.1,0.01};
-    final public double[] ds = {0.01,0.01,0.001};
+    final public double[] ds = {0.01,0.015,0.001};
     final public double[] is = {0.00,0.00,0.0000};
 
     final public double[] ksS = {0.05,0.05,0.01};
     final public double[] dsS = {0.008,0.008,0.0005};
-    final public double[] isS = {0.0005,0.0005,0.00005};
+//    final public double[] isS = {0.0005,0.0005,0.00005};
+    final public double[] isS = {0.000,0.000,0.0000};
 
     public double xRestPow = 0.05;
-    public double yRestPow = 0.05;
+    public double yRestPow = 0.03;
     public double hRestPow = 0.05;
 
 
 
     public double XAcc = 1;
     public double YAcc = 1;
-    public double HAcc = 1;
+    public double HAcc = 0.5;
 
 
     final public double endWait = 0.2;
@@ -98,17 +100,18 @@ public class Path {
         addStop(0.01);
     }
 
-    public void setCoeffsForSetpoint(){
+    public void setCoeffsForSetpoint(double dis){
         xControl.setCoefficients(ksS[0], dsS[0], isS[0]);
         yControl.setCoefficients(ksS[1], dsS[1], isS[1]);
         hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
+        xControl.scaleCoeffs(40/dis);
+        yControl.scaleCoeffs(40/dis);
     }
     public void setCoeffsForWaypoint(){
         xControl.setCoefficients(ks[0], ds[0], is[0]);
         yControl.setCoefficients(ks[1], ds[1], is[1]);
         hControl.setCoefficients(ks[2], ds[2], is[2]);
     }
-
 
 
     public void updateRadius(double dis){ radius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis))); }
@@ -239,7 +242,7 @@ public class Path {
                 updateRadius(lines.get(curIndex).getDis());
                 return calcPows();
             case SETPOINT:
-                setCoeffsForSetpoint();
+                setCoeffsForSetpoint(lines.get(curIndex).getDis());
                 double[] target1 = poses.get(curIndex+1);
                 updateControls(currentPos,target1, false);
                 hasReachedSetpoint();
@@ -251,11 +254,11 @@ public class Path {
                 }
                 return new double[]{0,0,0};
             case SHOOT:
-                setCoeffsForSetpoint();
+                setCoeffsForSetpoint(20);
                 double[] target2 = poses.get(curIndex+1);
                 target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
                 updateControls(currentPos,target2, true);
-                if(!bot.outtaking){
+                if(bot.outtakingMode == 0){
                     next();
                 }
                 if(xControl.done() && yControl.done() && hControl.done()){
@@ -325,8 +328,12 @@ public class Path {
 //            op.telemetry.addData("y", bot.odometry.y);
 //            op.telemetry.addData("rfs index", rfsHandler.rfsIndex);
 //
-            telemetryHandler.addAuton(this);
-            op.telemetry = telemetryHandler.getTelemetry();
+//            telemetryHandler.addAuton(this);
+//            telemetryHandler.addAutoAimer();
+//            op.telemetry = telemetryHandler.getTelemetry();
+//            op.telemetry.addData("Odometry pos", Arrays.toString(bot.odometry.getPos())); 87, 71 FINE
+//            op.telemetry.addData("Target speed", bot.autoAimer.outlController.targetSpeed); // 213.5 CORRECT
+            op.telemetry.addData("Outr speed", bot.autoAimer.outrController.currSpeed);
             op.telemetry.update();
 //
             bot.outtakeWithCalculations();

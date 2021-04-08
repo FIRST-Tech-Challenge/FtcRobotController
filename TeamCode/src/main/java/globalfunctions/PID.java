@@ -3,6 +3,10 @@ package globalfunctions;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PID {
+    public double sKp = 0;
+    public double sKd = 0;
+    public double sKi = 0;
+
     public double Kp = 0;
     public double Kd = 0;
     public double Ki = 0;
@@ -27,9 +31,10 @@ public class PID {
 
 
     public void setCoefficients(double k, double d, double i){
-        Kp = k;
-        Kd = d;
-        Ki = i;
+        sKp = k;
+        sKd = d;
+        sKi = i;
+        scaleCoeffs(1);
     }
     public void setRestPow(double pow){
         restPow = pow;
@@ -78,6 +83,12 @@ public class PID {
 
     public void setMaxI(double maxI){
         this.maxI = maxI;
+    }
+
+    public void scaleCoeffs(double scale) {
+        Kp = sKp * scale;
+        Kd = sKd * scale;
+        Ki = sKi * scale;
     }
 
 
