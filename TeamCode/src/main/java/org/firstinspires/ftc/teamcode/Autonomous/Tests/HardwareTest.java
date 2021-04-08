@@ -125,7 +125,7 @@ public class HardwareTest extends LinearOpMode {
         }
         if (webcamServoConfigured) {
             webcamServo = hardwareMap.servo.get("TensorFlowServo");
-            webcamServo.setPosition(0.35);
+            webcamServo.setPosition(0.75);
         }
         if (leftStickConfigured) {
             leftStick = hardwareMap.servo.get("leftStick");
@@ -345,12 +345,16 @@ public class HardwareTest extends LinearOpMode {
         }
         if (webcamServoConfigured) {
             webcamServo = hardwareMap.servo.get("TensorFlowServo");
-            webcamServo.setPosition(0.5);
-            telemetry.addData("Moving webcamServo", 0.5);
+            webcamServo.setPosition(0.85);
+            telemetry.addData("Moving webcamServo", 0.8);
             telemetry.update();
             sleep(1000);
-            webcamServo.setPosition(0.35);
-            telemetry.addData("Moving webcamServo", 0.35);
+            webcamServo.setPosition(0.65);
+            telemetry.addData("Moving webcamServo", 0.65);
+            telemetry.update();
+            sleep(1000);
+            webcamServo.setPosition(0.75);
+            telemetry.addData("Moving webcamServo", 0.65);
             telemetry.update();
             sleep(2000);
         } else {
