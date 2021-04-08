@@ -4,10 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import java.sql.Time;
 import java.util.ArrayList;
 
+import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
 import global.TerraBot;
+import globalfunctions.TimeData;
 import util.CodeSeg;
 import util.Line;
 import globalfunctions.PID;
@@ -21,6 +24,8 @@ public class Path {
 
     public ElapsedTime globalTime = new ElapsedTime();
     public ElapsedTime endTimer = new ElapsedTime();
+
+
 
 
     public double maxRadius = 25;
@@ -67,6 +72,13 @@ public class Path {
 
 
     final public double endWait = 0.2;
+
+    public Storage storage = new Storage();
+    public ArrayList<double[]> track = new ArrayList<>();
+    public ArrayList<Double> trackTimes = new ArrayList<>();
+
+    public ElapsedTime trackTime = new ElapsedTime();
+
 
 
 
@@ -285,6 +297,7 @@ public class Path {
         telemetryHandler.init(op.telemetry, bot);
         bot.odometry.resetAll(poses.get(0));
         startRFThread(op);
+        trackTime.reset();
         while (op.opModeIsActive() && isExecuting){
 //            op.telemetry = telemetryHandler.addAutoAimer(op.telemetry, bot);
 //            op.telemetry = telemetryHandler.addOuttake(op.telemetry, bot);
@@ -304,12 +317,19 @@ public class Path {
             bot.outtakeWithCalculations();
 
             double[] pows = update(bot.odometry.getAll(), bot);
+            track.add(bot.odometry.getAll());
+            trackTimes.add(trackTime.seconds());
             bot.move(pows[1], pows[0], pows[2]);
         }
         op.telemetry.addData("COMPLETED", "");
         op.telemetry.update();
         bot.move(0,0,0);
         stopRFThread();
+    }
+
+    public void saveTrack(){
+        TimeData timeData = new TimeData("Current", track, trackTimes);
+        storage.saveText(storage.convertToJSON("Today", timeData), timeData.name);
     }
 
     public enum Posetype{

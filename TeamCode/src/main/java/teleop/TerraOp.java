@@ -4,12 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import global.TerraBot;
+import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
 
 @TeleOp(name = "TerraOp")
 public class TerraOp extends OpMode {
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
+
+    Storage storage = new Storage();
 
     @Override
     public void init() {
@@ -97,5 +100,7 @@ public class TerraOp extends OpMode {
     @Override
     public void stop() {
         bot.stopAllAutomodules();
+        storage.makeOutputFile("Today");
+        storage.saveText("yes", "pls work");
     }
 }

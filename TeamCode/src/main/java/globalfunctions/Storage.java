@@ -60,7 +60,7 @@ public class Storage {
 
     public void makeOutputFile(String dirname){
         File filepath = Environment.getExternalStorageDirectory();
-        File dir = new File(filepath.getAbsolutePath()+"/test/");
+        File dir = new File(filepath.getAbsolutePath()+"/FTC_Files/");
         dir.mkdir();
         File dir1= new File(dir.getAbsolutePath()+"/"+dirname+"/");
         dir1.mkdir();
