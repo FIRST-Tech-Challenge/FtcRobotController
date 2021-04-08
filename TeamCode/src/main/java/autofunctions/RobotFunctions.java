@@ -133,14 +133,12 @@ public class RobotFunctions {
             public void run() {
                 bot.outtaking = true;
                 bot.resetOuttake();
-                bot.rh.setPower(-1);
+                bot.rh.setPower(-0.3);
                 bot.rh2.setPower(-1);
                 bot.rp.setPosition(bot.pushControl.getPos(1));
-                pause(0.4);
+                pause(0.3);
                 bot.rh2.setPower(0);
                 bot.rh.setPower(0);
-                bot.outtaking = true;
-                bot.resetOuttake();
 
             }
         };

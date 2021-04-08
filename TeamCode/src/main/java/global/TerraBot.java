@@ -317,6 +317,7 @@ public class TerraBot {
     }
 
     public void resetOuttake() {
+        autoAimer.update(odometry.getPos());
         autoAimer.resetOuttake(getLeftAngPos(), getRightAngPos());
     }
 

@@ -23,6 +23,8 @@ public class PID {
 
     public double acc = 0;
 
+    public double maxI = 1000;
+
 
     public void setCoefficients(double k, double d, double i){
         Kp = k;
@@ -54,7 +56,9 @@ public class PID {
 
         derivative = deltaError/deltaTime;
 
-        integral += error*deltaTime;
+        if(Ki*abs(integral) < maxI || Math.signum(integral*error) == -1) {
+            integral += error * deltaTime;
+        }
 
     }
 
@@ -70,6 +74,10 @@ public class PID {
 
     public boolean done(){
         return abs(error) < acc;
+    }
+
+    public void setMaxI(double maxI){
+        this.maxI = maxI;
     }
 
 

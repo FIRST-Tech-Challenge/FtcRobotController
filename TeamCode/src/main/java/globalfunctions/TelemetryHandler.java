@@ -31,18 +31,20 @@ public class TelemetryHandler {
 
     }
     public void addAuton(Path path){
-        telemetry.addData("y pow", path.yControl.getPower());
-        telemetry.addData("x pow", path.xControl.getPower());
-        telemetry.addData("h pow", path.hControl.getPower());
-        telemetry.addData("y error", path.yControl.error);
-        telemetry.addData("x error", path.xControl.error);
-        telemetry.addData("h error", path.hControl.error);
-        telemetry.addData("y derivative", path.yControl.derivative);
-        telemetry.addData("x derivative", path.xControl.derivative);
-        telemetry.addData("h derivative", path.hControl.derivative);
-        telemetry.addData("y integral", path.yControl.integral);
-        telemetry.addData("x integral", path.xControl.integral);
-        telemetry.addData("h integral", path.hControl.integral);
+        telemetry.addData("auto angle", bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos()));
+        telemetry.addData("shotmode", bot.autoAimer.shotMode);
+//        telemetry.addData("y pow", path.yControl.getPower());
+//        telemetry.addData("x pow", path.xControl.getPower());
+//        telemetry.addData("h pow", path.hControl.getPower());
+//        telemetry.addData("y error", path.yControl.error);
+//        telemetry.addData("x error", path.xControl.error);
+//        telemetry.addData("h error", path.hControl.error);
+//        telemetry.addData("y derivative", path.yControl.derivative);
+//        telemetry.addData("x derivative", path.xControl.derivative);
+//        telemetry.addData("h derivative", path.hControl.derivative);
+//        telemetry.addData("y integral", path.yControl.integral);
+//        telemetry.addData("x integral", path.xControl.integral);
+//        telemetry.addData("h integral", path.hControl.integral);
         telemetry.addData("h", bot.odometry.h);
         telemetry.addData("x", bot.odometry.x);
         telemetry.addData("y", bot.odometry.y);

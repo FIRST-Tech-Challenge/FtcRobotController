@@ -66,7 +66,7 @@ public class Path {
 
     public double XAcc = 1;
     public double YAcc = 1;
-    public double HAcc = 3;
+    public double HAcc = 1;
 
 
     final public double endWait = 0.2;
@@ -91,6 +91,9 @@ public class Path {
         xControl.setRestPow(xRestPow);
         yControl.setRestPow(yRestPow);
         hControl.setRestPow(hRestPow);
+        xControl.setMaxI(0.05);
+        yControl.setMaxI(0.05);
+        hControl.setMaxI(0.05);
         globalTime.reset();
         addStop(0.01);
     }
@@ -203,10 +206,15 @@ public class Path {
     }
 
 
-    public void updateControls(double[] currentPos, double[] target){
+    public void updateControls(double[] currentPos, double[] target, boolean isShoot){
         double xdis = currentPos[0] - target[0];
         double ydis = currentPos[1] - target[1];
-        double herr = currentPos[2] - poses.get(curIndex + 1)[2];
+        double herr;
+        if(!isShoot) {
+            herr = currentPos[2] - poses.get(curIndex + 1)[2];
+        }else{
+            herr = currentPos[2] - target[2];
+        }
 
         Vector disVect = new Vector(xdis,ydis);
         disVect.rotate(-currentPos[2], Vector.angle.DEGREES);
@@ -227,13 +235,13 @@ public class Path {
             case WAYPOINT:
                 setCoeffsForWaypoint();
                 double[] target = getTargetPos(currentPos);
-                updateControls(currentPos,target);
+                updateControls(currentPos,target, false);
                 updateRadius(lines.get(curIndex).getDis());
                 return calcPows();
             case SETPOINT:
                 setCoeffsForSetpoint();
                 double[] target1 = poses.get(curIndex+1);
-                updateControls(currentPos,target1);
+                updateControls(currentPos,target1, false);
                 hasReachedSetpoint();
                 return calcPows();
             case STOP:
@@ -246,12 +254,16 @@ public class Path {
                 setCoeffsForSetpoint();
                 double[] target2 = poses.get(curIndex+1);
                 target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
-                updateControls(currentPos,target2);
+                updateControls(currentPos,target2, true);
                 if(!bot.outtaking){
                     next();
                 }
-                if(xControl.done() && yControl.done() && hControl.done() && (endTimer.seconds() > endWait)){
-                    return new double[]{0,0,0};
+                if(xControl.done() && yControl.done() && hControl.done()){
+                    if((endTimer.seconds() > endWait)) {
+                        return new double[]{0, 0, 0};
+                    }else{
+                        return calcPows();
+                    }
                 }else {
                     endTimer.reset();
                     return calcPows();
@@ -313,9 +325,9 @@ public class Path {
 //            op.telemetry.addData("y", bot.odometry.y);
 //            op.telemetry.addData("rfs index", rfsHandler.rfsIndex);
 //
-//            telemetryHandler.addAuton(this);
-//            op.telemetry = telemetryHandler.getTelemetry();
-//            op.telemetry.update();
+            telemetryHandler.addAuton(this);
+            op.telemetry = telemetryHandler.getTelemetry();
+            op.telemetry.update();
 //
             bot.outtakeWithCalculations();
 
