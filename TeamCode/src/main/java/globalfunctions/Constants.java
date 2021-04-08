@@ -6,6 +6,7 @@ import util.Geometry;
 public class Constants {
     public static final double MAX_OUTTAKE_SPEED = 100*2*Math.PI; // rad/s
     public static final double OUTTAKE_SPEED_OFFSET = 0; // MAX_OUTTAKE_SPEED/6;
+    public static final double OUTTAKE_FIXER = 1.133;
 
     public static final double OUTTAKE_ANGLE = 20 * Math.PI/180; // degrees -> radians
     public static final double GOAL_FROM_LEFT = 0.9; // meters
