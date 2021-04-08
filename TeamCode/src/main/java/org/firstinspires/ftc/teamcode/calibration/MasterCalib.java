@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.bots.RobotVeer;
 import org.firstinspires.ftc.teamcode.bots.YellowBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Geometry;
-import org.firstinspires.ftc.teamcode.skills.Led;
 //import org.openftc.revextensions2.ExpansionHubEx;
 //import org.openftc.revextensions2.ExpansionHubMotor;
 
@@ -91,8 +90,6 @@ public class MasterCalib extends LinearOpMode {
 
     MotorReductionBotCalib templateDiagLeft = new MotorReductionBotCalib();
     MotorReductionBotCalib templateDiagRight = new MotorReductionBotCalib();
-
-    private Led led = null;
 
 
     @Override
@@ -700,13 +697,6 @@ public class MasterCalib extends LinearOpMode {
 
             double actualChange = Math.abs(endHead - startHead);
 
-            if (Math.abs(actualChange) <= MARGIN_ERROR_DEGREES){
-                led.OK();
-            }
-            else{
-                led.needAdjustment();
-            }
-
 
             telemetry.addData("left", left);
             telemetry.addData("desired", desiredChange);
@@ -716,7 +706,7 @@ public class MasterCalib extends LinearOpMode {
 
             }
 
-            led.none();
+//            led.none();
         }
         catch (Exception ex){
             telemetry.addData("Error", ex.getMessage());
@@ -795,7 +785,7 @@ public class MasterCalib extends LinearOpMode {
             positionThread.start();
             moveBot(templateMRForward, templateMRBack, locator);
 //            restoreHead();
-            led.none();
+//            led.none();
             showMotorReductionCalib(templateMRForward);
             showMotorReductionCalib(templateMRBack);
             telemetry.addData("Question", "Save MR from Amps? Yes - Press Start. No - Any key");
@@ -810,7 +800,7 @@ public class MasterCalib extends LinearOpMode {
     }
 
     private void moveBot(MotorReductionBotCalib calibF, MotorReductionBotCalib calibB, RobotCoordinatePosition locator){
-        led.none();
+//        led.none();
         MotorReductionBot mrForward = calibF.getMR();
         MotorReductionBot mrBack = calibB.getMR();
 
@@ -825,7 +815,7 @@ public class MasterCalib extends LinearOpMode {
             bF = breakPointOverride * bot.COUNTS_PER_INCH_REV;
         }
         int distance = Math.abs(desiredY - startY);
-        RobotMovementStats statsF = bot.moveToCalib(desiredSpeed, desiredSpeed, distance, mrForward, bF, led);
+        RobotMovementStats statsF = bot.moveToCalib(desiredSpeed, desiredSpeed, distance, mrForward, bF);
         calibF.setStats(statsF);
 
         timer.reset();
@@ -846,13 +836,6 @@ public class MasterCalib extends LinearOpMode {
         double distanceFromTarget = Geometry.getDistance(locator.getXInches(), locator.getYInches(), startX, desiredY);
         calibF.setDistanceFromTarget(distanceFromTarget );
 
-        if (distanceFromTarget > MARGIN_ERROR_RADIUS){
-            led.needAdjustment();
-        }
-        else{
-            saveConfigMoveForward(templateMRForward);
-            led.OK();
-        }
 
 
         timer.reset();
@@ -873,7 +856,7 @@ public class MasterCalib extends LinearOpMode {
         telemetry.addData("Forw Location", "x:%.2f  y: %.2f ", locator.getXInches(), locator.getYInches());
 
 
-        RobotMovementStats statsB =  bot.moveToCalib(desiredSpeed, desiredSpeed, -distance, mrBack, bB, led);
+        RobotMovementStats statsB =  bot.moveToCalib(desiredSpeed, desiredSpeed, -distance, mrBack, bB);
         calibB.setStats(statsB);
         telemetry.addData("Actual BP Forw", bF);
         telemetry.addData("Actual BP Back", bB);
@@ -892,14 +875,6 @@ public class MasterCalib extends LinearOpMode {
 
         telemetry.addData("Back Location", "x:%.2f  y: %.2f ", locator.getXInches(), locator.getYInches());
 
-        if (distanceFromTargetBack > MARGIN_ERROR_RADIUS){
-            led.needAdjustment();
-        }
-        else{
-            led.OK();
-            saveConfigMoveForward(templateMRBack);
-        }
-
         leftDistance = Math.abs(bot.getLeftOdometer() - leftOdo);
         rightDistance = Math.abs(bot.getRightOdometer() - rightOdo);
 
@@ -915,7 +890,7 @@ public class MasterCalib extends LinearOpMode {
         int selectedIndex = 0;
         while(selectedIndex < MotorReductionBot.POWER_SAMPLES.length){
             double power = MotorReductionBot.POWER_SAMPLES[selectedIndex];
-            RobotMovementStats statsF =  bot.moveToCalib(power, power, desiredX, templateMRForward, 0, led);
+            RobotMovementStats statsF =  bot.moveToCalib(power, power, desiredX, templateMRForward, 0);
             templateMRForward.setBreakPoint(statsF.getSlowDownDistanceRaw(), power);
             statsConfig.setStatsForward(power, statsF);
 
@@ -923,7 +898,7 @@ public class MasterCalib extends LinearOpMode {
             while (timer.milliseconds() < 1000 && opModeIsActive()) {
 
             }
-            RobotMovementStats statsB =  bot.moveToCalib(power, power, -desiredX, templateMRBack, 0, led);
+            RobotMovementStats statsB =  bot.moveToCalib(power, power, -desiredX, templateMRBack, 0);
             templateMRBack.setBreakPoint(statsB.getSlowDownDistanceRaw(), power);
             statsConfig.setStatsBack(power, statsB);
             selectedIndex++;
@@ -1193,7 +1168,7 @@ public class MasterCalib extends LinearOpMode {
     private void calibStrafe(){
         strafeBot(templateStrafeLeft, templateStrafeRight);
 //        restoreHead();
-        led.none();
+//        led.none();
 //        saveConfigStrafe(templateStrafeLeft, templateStrafeRight);
         showMotorReductionCalib(templateStrafeLeft);
         showMotorReductionCalib(templateStrafeRight);
@@ -1201,7 +1176,7 @@ public class MasterCalib extends LinearOpMode {
     }
 
     private void strafeBot(MotorReductionBotCalib calibLeft, MotorReductionBotCalib calibRight){
-        led.none();
+//        led.none();
         MotorReductionBot mrLeft = calibLeft.getMR();
         MotorReductionBot mrRight = calibRight.getMR();
 
@@ -1226,13 +1201,6 @@ public class MasterCalib extends LinearOpMode {
         calibLeft.setHeadChange(headChange);
         calibLeft.process(true);
 
-        if (Math.abs(headChange) > MARGIN_ERROR_DEGREES){
-            led.needAdjustment();
-        }
-        else{
-            led.OK();
-        }
-
 //        restoreHead();
 
         timer.reset();
@@ -1254,12 +1222,6 @@ public class MasterCalib extends LinearOpMode {
 
         calibRight.setHeadChange(headChange);
 
-        if (Math.abs(headChange) > MARGIN_ERROR_DEGREES){
-            led.needAdjustment();
-        }
-        else{
-            led.OK();
-        }
 
         leftDistance = Math.abs(bot.getLeftOdometer() - leftOdo);
         rightDistance = Math.abs(bot.getRightOdometer() - rightOdo);
@@ -1413,9 +1375,9 @@ public class MasterCalib extends LinearOpMode {
     private void calibDiag(){
         diagBot(templateDiagLeft, templateDiagRight);
 //        restoreHead();
-        led.none();
+//        led.none();
         //bring bot back
-        bot.moveToCalib(CALIB_SPEED, CALIB_SPEED, -desiredX, templateMRBack, 0, this.led);
+        bot.moveToCalib(CALIB_SPEED, CALIB_SPEED, -desiredX, templateMRBack, 0);
         saveConfigDiag(templateDiagLeft, templateDiagRight);
         showMotorReductionCalib(templateDiagLeft);
         showMotorReductionCalib(templateDiagRight);
@@ -1423,7 +1385,7 @@ public class MasterCalib extends LinearOpMode {
     }
 
     private void diagBot(MotorReductionBotCalib calibLeft, MotorReductionBotCalib calibRight){
-        led.none();
+//        led.none();
         MotorReductionBot mrLeft = calibLeft.getMR();
         MotorReductionBot mrRight = calibRight.getMR();
 
@@ -1448,13 +1410,6 @@ public class MasterCalib extends LinearOpMode {
         calibLeft.setHeadChange(headChange);
         calibLeft.process(false);
 
-        if (Math.abs(headChange) > MARGIN_ERROR_DEGREES){
-            led.needAdjustment();
-        }
-        else{
-            led.OK();
-        }
-
 //        restoreHead();
 
         timer.reset();
@@ -1475,13 +1430,6 @@ public class MasterCalib extends LinearOpMode {
         headChange = Math.abs(actualHead - currentHead);
 
         calibRight.setHeadChange(headChange);
-
-        if (Math.abs(headChange) > MARGIN_ERROR_DEGREES){
-            led.needAdjustment();
-        }
-        else{
-            led.OK();
-        }
 
         leftDistance = Math.abs(bot.getLeftOdometer() - leftOdo);
         rightDistance = Math.abs(bot.getRightOdometer() - rightOdo);
@@ -1722,7 +1670,7 @@ public class MasterCalib extends LinearOpMode {
             }
 
 //            restoreHead();
-            this.led.none();
+//            this.led.none();
         }
 
         timer.reset();

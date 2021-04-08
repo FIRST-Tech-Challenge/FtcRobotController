@@ -245,9 +245,9 @@ public class UltimateMode extends LinearOpMode {
             return;
         }
         if (gamepad1.y){
-//            robot.shootPegSequence(locator);
-            robot.shootPegSequenceManual(locator);
-//            robot.shootPegContinuous(locator);
+//            robot.shootPegTurnManual(locator);
+//            robot.shootPegTurn(locator);
+            robot.shootPegTurnManualTape(locator);
             gamepadRateLimit.reset();
         }
     }

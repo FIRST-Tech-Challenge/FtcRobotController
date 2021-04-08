@@ -183,14 +183,14 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.85);
+            shooter.setVelocity(MAX_VELOCITY*0.84);
         }
     }
 
     @BotAction(displayName = "Move Shooter High", defaultReturn = "")
     public void shooterhigh() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.95);
+            shooter.setVelocity(MAX_VELOCITY*1);
         }
     }
 
@@ -218,7 +218,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
     public void shooterpeglow() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.7);
+            shooter.setVelocity(MAX_VELOCITY*0.57);
         }
     }
 
@@ -343,6 +343,13 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    @BotAction(displayName = "Camera Init Auto", defaultReturn = "")
+    public void cameraInitAuto() {
+        if (camera != null) {
+            camera.setPosition(0.43);
+        }
+    }
+
     public void cameraRight() {
         if (camera != null) {
             cameraPos = camera.getPosition();
@@ -389,7 +396,9 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Turret to Camera", defaultReturn = "")
     public void turretCamera() {
         if (turretServo != null) {
-            if (cameraPos > 0.5) {
+            if (cameraPos > 0.85 || cameraPos < 0.15) {
+                turretPos = 0.5 + TURRET_OFFSET;
+            } else if (cameraPos > 0.5) {
                 turretPos = cameraPos +TURRET_OFFSET;
             } else if (cameraPos < 0.5) {
                 turretPos = cameraPos + TURRET_OFFSET;
@@ -449,8 +458,6 @@ public class UltimateBot extends YellowBot {
                     if (syncturretcamera) {
                         turretCamera();
                     }
-                } else {
-                    turretInit();
                 }
                 while(timer.milliseconds() < 60){
                 }
@@ -532,7 +539,10 @@ public class UltimateBot extends YellowBot {
     // SHOOT PEG FUNCTION
     public void shootPegTurn(RobotCoordinatePosition locator){
         // start shooter
-        shooterpeglow();
+        if (shooter != null) {
+            shooter.setVelocity(MAX_VELOCITY*0.55);
+        }
+        syncturretcamera = false;
         turretInit();
 
         //wait for the locator to stabilize
@@ -542,17 +552,17 @@ public class UltimateBot extends YellowBot {
         }
 
         double originalOrientation = locator.getAdjustedCurrentHeading();
-        double strafeSpeed = 0.2;
-        double spinSpeed = 0.1;
-        double strafeTo = 15;
+        double strafeSpeed = 0.3;
+        double spinSpeed = 0.15;
+        double strafeTo = 24;
 
-        strafeTo(strafeSpeed, strafeTo, true);
+        strafeTo(strafeSpeed, strafeTo, false);
 
         timer.reset();
         while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
         }
         double newOrientation = locator.getAdjustedCurrentHeading();
-        int marginError = 3;
+        int marginError = 2;
         Log.d("UltimateBot", String.format("newOrientation 1: %.2f", newOrientation));
         //spin to the desired orientation
         double diff = newOrientation - originalOrientation;
@@ -562,138 +572,88 @@ public class UltimateBot extends YellowBot {
             spin(profileSpin, locator);
         }
 
-        shootServo();
-        turretServo.setPosition(0.4);
         timer.reset();
         while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
         }
-        shootServo();
-        turretServo.setPosition(0.6);
-        timer.reset();
-        while(timer.milliseconds() < 500 && this.owner.opModeIsActive()){
-        }
-        shootServo();
 
-    }
-
-    public void shootPegSequence(RobotCoordinatePosition locator){
-        //start shooter
+        shootServo();
         shooterpeglow();
-        turretInit();
-
-        //wait for the locator to stabilize
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-        while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
-        }
-
-        //get the orientation as the locator knows it. we'll use it later for corrections
-        double originalOrientation = locator.getAdjustedCurrentHeading();
-        Log.d("UltimateBot", String.format("original orientation: %.2f", originalOrientation));
-        double strafeSpeed = 0.4;
-        double strafeSpeedFirst = 0.35;
-        double spinSpeed = 0.1;
-        double strafeToFirst = 8;
-        double strafeBetweenPegs = 2.2;
-        double strafeToLastPeg = 2;
-
-        //FirstPeg
-        //strafe to align the robot with the first peg
-        strafeTo(strafeSpeedFirst, strafeToFirst, true);
-        //let locator settle
-        timer.reset();
-        while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
-        }
-        double newOrientation = locator.getAdjustedCurrentHeading();
-        int marginError = 3;
-        Log.d("UltimateBot", String.format("newOrientation 1: %.2f", newOrientation));
-        //spin to the desired orientation
-        double diff = newOrientation - originalOrientation;
-        if (abs(diff) > marginError) {
-            double updated = originalOrientation + diff/2;
-            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-            spin(profileSpin, locator);
-        }
-        //shoot
-        shootServo();
-
-        //Second Peg
-        //strafe to the next peg
-        strafeTo(strafeSpeed, strafeBetweenPegs, true);
-//        //let locator settle
-        timer.reset();
-        while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
-        }
-        newOrientation = locator.getAdjustedCurrentHeading();
-        Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
-//        spin to the desired orientation
-//        diff = newOrientation - originalOrientation;
-//        if (abs(diff ) > marginError) {
-//            double updated = originalOrientation + diff/2;
-//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-//            spin(profileSpin, locator);
-//        }
-        //shoot
-        shootServo();
-
-        //Third Peg
-        //strafe to the next peg
-        strafeTo(strafeSpeed, strafeToLastPeg, true);
-        //let locator settle
-        timer.reset();
-        while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
-        }
-        marginError = 1;
-        newOrientation = locator.getAdjustedCurrentHeading();
-        Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
-        //spin to the desired orientation
-//        diff = newOrientation - originalOrientation;
-//        if (Math.abs(diff) > marginError) {
-//            double updated = newOrientation - 2;
-//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-//            spin(profileSpin, locator);
-//        }
-        //shoot
-        shootServo();
-
-    }
-
-    public void shootPegSequenceManual(RobotCoordinatePosition locator){
-        //start shooter
-        shooterpeglow();
-
-        //wait for the locator to stabilize
-        ElapsedTime timer = new ElapsedTime();
+        turretServo.setPosition(0.47 + TURRET_OFFSET);
         timer.reset();
         while(timer.milliseconds() < 750 && this.owner.opModeIsActive()){
         }
-
-        //get the orientation as the locator knows it. we'll use it later for corrections
-        double strafeSpeed = 0.25;
-        double strafeBetweenPegs = 2.5;
-
-        // shoot first peg
         shootServo();
-
-        // strafe to second peg
+        turretServo.setPosition(0.52 + TURRET_OFFSET);
         timer.reset();
-        while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
+        while(timer.milliseconds() < 750 && this.owner.opModeIsActive()){
+        }
+        timer.reset();
+        shootServo();
+        syncturretcamera = true;
+    }
+
+
+    public void shootPegTurnManual(RobotCoordinatePosition locator){
+        // start shooter
+        if (shooter != null) {
+            shooter.setVelocity(MAX_VELOCITY*0.54);
+        }
+        syncturretcamera = false;
+        turretInit();
+
+        //wait for the locator to stabilize
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while(timer.milliseconds() < 1000 && this.owner.opModeIsActive()){
         }
 
-        strafeTo(strafeSpeed, strafeBetweenPegs, true);
-
-        //shoot
         shootServo();
-
-
-        // strafe to the next peg
+        shooterpeglow();
+        turretServo.setPosition(0.47 + TURRET_OFFSET);
         timer.reset();
-        while(timer.milliseconds() < 300 && this.owner.opModeIsActive()){
+        while(timer.milliseconds() < 1000 && this.owner.opModeIsActive()){
         }
-        strafeTo(strafeSpeed, strafeBetweenPegs, true);
-
-        //shoot
         shootServo();
+        turretServo.setPosition(0.52 + TURRET_OFFSET);
+        timer.reset();
+        while(timer.milliseconds() < 1000 && this.owner.opModeIsActive()){
+        }
+        timer.reset();
+        shootServo();
+        syncturretcamera = true;
+
+    }
+
+    public void shootPegTurnManualTape(RobotCoordinatePosition locator){
+        // start shooter
+        if (shooter != null) {
+            shooter.setVelocity(MAX_VELOCITY*0.59);
+        }
+        syncturretcamera = false;
+        turretServo.setPosition(0.46 + TURRET_OFFSET);
+
+        //wait for the locator to stabilize
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while(timer.milliseconds() < 1000 && this.owner.opModeIsActive()){
+        }
+
+        shootServo();
+        turretServo.setPosition(0.44 + TURRET_OFFSET);
+        if (shooter != null) {
+            shooter.setVelocity(MAX_VELOCITY*0.6);
+        }
+        timer.reset();
+        while(timer.milliseconds() < 1000 && this.owner.opModeIsActive()){
+        }
+        shootServo();
+        turretServo.setPosition(0.49 + TURRET_OFFSET);
+        timer.reset();
+        while(timer.milliseconds() < 1000 && this.owner.opModeIsActive()){
+        }
+        timer.reset();
+        shootServo();
+        syncturretcamera = true;
 
     }
 }

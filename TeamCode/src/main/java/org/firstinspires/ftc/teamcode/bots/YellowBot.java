@@ -369,7 +369,7 @@ public class YellowBot implements OdoBot {
     }
 
 
-    public RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint, Led led) {
+    public RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint) {
         RobotMovementStats stats = new RobotMovementStats();
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double rightPower = rightspeed;

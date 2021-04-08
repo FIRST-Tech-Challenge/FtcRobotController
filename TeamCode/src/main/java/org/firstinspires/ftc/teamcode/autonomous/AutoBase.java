@@ -16,6 +16,7 @@ public abstract class AutoBase extends OdoBase {
             super.runOpMode();
             preStart();
             bot.initDetectorThread(this.getOpModeSide(), this);
+            bot.cameraInitAuto();
             telemetry.update();
             waitForStart();
             startLocator();
