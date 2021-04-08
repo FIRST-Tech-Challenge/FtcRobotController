@@ -21,6 +21,7 @@ public class AngularPosition {
     public double addRightGY = 0;
 
     public boolean isFailing = false;
+    public boolean dontUseCompassSensor = false;
 
 
     public void init(HardwareMap hwMap){
@@ -31,7 +32,11 @@ public class AngularPosition {
         compassSensor.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);
 
         initGyro();
-        resetGyro();
+        if(!dontUseCompassSensor) {
+            resetGyro(getHeadingCS());
+        }else{
+            resetGyro(0);
+        }
 
     }
 
@@ -79,9 +84,9 @@ public class AngularPosition {
         rightGyro.initialize(parameters);
     }
 
-    public void resetGyro() {
-        addLeftGY = getHeadingCS() - getAngle(leftGyro);
-        addRightGY = getHeadingCS() - getAngle(rightGyro);
+    public void resetGyro(double heading) {
+        addLeftGY = heading - getAngle(leftGyro);
+        addRightGY = heading - getAngle(rightGyro);
     }
     public float getAngle(BNO055IMU gyro) {
         return gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;

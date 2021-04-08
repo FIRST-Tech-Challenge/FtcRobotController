@@ -13,8 +13,8 @@ public class AutoAimer {
 
     public void update(double[] pos) {
         double s = calcSpeed((Constants.FIELD_LENGTH - pos[1]/100), pos[0]/100);
-        outlController.setTargetSpeed(s);
-        outrController.setTargetSpeed(s);
+        outlController.setTargetSpeed(s + Constants.OUTTAKE_SPEED_OFFSET);
+        outrController.setTargetSpeed(s -  Constants.OUTTAKE_SPEED_OFFSET);
     }
 
     public double getOutlPow(double outlPos) {

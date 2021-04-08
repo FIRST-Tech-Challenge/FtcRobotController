@@ -34,8 +34,6 @@ public class Path {
     public double ans = 0;
     public int curIndex = 0;
 
-    public double targetHeading = 0;
-
 
     public double[] targetPos = {0,0};
 
@@ -247,12 +245,17 @@ public class Path {
             case SHOOT:
                 setCoeffsForSetpoint();
                 double[] target2 = poses.get(curIndex+1);
-                target2[2] = targetHeading;
+                target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
                 updateControls(currentPos,target2);
                 if(!bot.outtaking){
                     next();
                 }
-                return calcPows();
+                if(xControl.done() && yControl.done() && hControl.done() && (endTimer.seconds() > endWait)){
+                    return new double[]{0,0,0};
+                }else {
+                    endTimer.reset();
+                    return calcPows();
+                }
             default:
                 return new double[]{0,0,0};
 

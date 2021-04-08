@@ -335,7 +335,7 @@ public class TerraBot {
             autoAimer.update(odometry.getPos());
             outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
             outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
-            rh.setPower(-0.5);
+            //rh.setPower(-0.5);
         } else {
             outr.setPower(0);
             outl.setPower(0);

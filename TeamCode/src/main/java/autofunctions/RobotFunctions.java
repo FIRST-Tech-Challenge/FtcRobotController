@@ -135,10 +135,13 @@ public class RobotFunctions {
                 bot.resetOuttake();
                 bot.rh.setPower(-1);
                 bot.rh2.setPower(-1);
-                pause(0.3);
+                bot.rp.setPosition(bot.pushControl.getPos(1));
+                pause(0.4);
                 bot.rh2.setPower(0);
-                bot.rh.setPower(1);
-                pause(0.3);
+                bot.rh.setPower(0);
+                bot.outtaking = true;
+                bot.resetOuttake();
+
             }
         };
     }
@@ -147,12 +150,9 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.rh.setPower(-1);
+                bot.rh.setPower(-0.5);
                 for(int i = 0; i < numRings; i++) {
-                    bot.rp.setPosition(bot.pushControl.getPos(2));
-                    pause(0.3);
-                    bot.rp.setPosition(bot.pushControl.getPos(1));
-                    pause(0.3);
+                    pause(0.5);
                 }
                 bot.rp.setPosition(bot.pushControl.getPos(0));
                 bot.rh.setPower(0);
