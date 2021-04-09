@@ -90,8 +90,8 @@ public class Meet5Auto extends UpliftAuto {
                 }
                 intakeSub.setIntakePower(1);
                 double shootingActualY = robot.worldY;
-                driveSub.driveToPosition(109, shootingActualY + 4, 0.35, 0);
-                robot.safeSleep(1000);
+                driveSub.driveToPosition(109, shootingActualY + 2, 0.3, 1, 0, DriveSubsystem.QUICKEST_DIRECTION);
+                robot.safeSleep(1250);
                 intakeSub.setIntakePower(0);
 
                 // shoot second set of 3
@@ -128,7 +128,8 @@ public class Meet5Auto extends UpliftAuto {
             getSecondWobble();
 
             // drop off second wobble
-            driveSub.driveToPosition(124,116, 1, -135);
+            driveSub.passThroughPosition(110, 102, 1, -135);
+            driveSub.driveToPosition(124,116, 0.7, -135);
             wobbleSub.dropOff();
             driveSub.driveToPosition(92, 84, 1, -135);
 
