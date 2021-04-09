@@ -39,11 +39,11 @@ repositories {
 }
 
 dependencies {
-    doc 'org.firstinspires.ftc:Hardware:6.2.0'
-    doc 'org.firstinspires.ftc:RobotCore:6.2.0'
-    doc 'org.firstinspires.ftc:FtcCommon:6.2.0'
-    doc 'org.firstinspires.ftc:OnBotJava:6.2.0'
-    doc 'org.firstinspires.ftc:Inspection:6.2.0'
+    doc 'org.firstinspires.ftc:Hardware:6.2.1'
+    doc 'org.firstinspires.ftc:RobotCore:6.2.1'
+    doc 'org.firstinspires.ftc:FtcCommon:6.2.1'
+    doc 'org.firstinspires.ftc:OnBotJava:6.2.1'
+    doc 'org.firstinspires.ftc:Inspection:6.2.1'
 }
 
 task extractJavadoc {

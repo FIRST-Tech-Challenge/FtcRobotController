@@ -44,8 +44,9 @@ public class TerraBot {
     public Servo clr;
     public Servo rp;
 
-
-    public Cycle pushControl = new Cycle(0.1, 0.25, 0.32);
+//
+    public Cycle pushControl = new Cycle(0.1, 0.2, 0.32);
+//    public Cycle pushControl = new Cycle(0.1, 0.27, 0.25);
 
     public Cycle cllControl = new Cycle(0.2, 0.5, 1);
     public Cycle clrControl = new Cycle(1, 0.5, 0.0);
@@ -63,6 +64,8 @@ public class TerraBot {
 
     public boolean intaking = false;
     public int outtakingMode = 0;
+
+    public double[] outtakePos = {0,0};
 
     public boolean fastMode = true;
     public boolean wgeStartMode = true;
@@ -336,12 +339,13 @@ public class TerraBot {
 
     public void outtakeWithCalculations() {
         if (outtakingMode == 2) {
-            autoAimer.update(odometry.getPos());
-            outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
-            outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
+//            autoAimer.update(outtakePos);
+//            outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
+//            outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
         } else if (outtakingMode == 1 && outl.getPower() == 0) {
-            outr.setPower(0.5);
-            outl.setPower(0.5);
+            autoAimer.update(outtakePos);
+            outr.setPower(0.7);
+            outl.setPower(0.4);
         } else if (outtakingMode == 0) {
             outr.setPower(0);
             outl.setPower(0);

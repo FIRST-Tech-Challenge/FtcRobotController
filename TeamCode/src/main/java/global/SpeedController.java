@@ -31,7 +31,7 @@ public class SpeedController {
     public SpeedController(){
         lastTime = -0.1;
         pid.Kp = 0.003;
-        pid.Kd = 0.0001;
+        pid.Kd = 0.0003;
         pid.Ki = 0.0001;
     }
 

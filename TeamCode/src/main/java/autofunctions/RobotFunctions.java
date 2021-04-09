@@ -119,14 +119,17 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.outtakingMode = 1;
-                bot.resetOuttake();
-                bot.rh.setPower(-0.3);
+                bot.rh.setPower(-0.7);
                 bot.rh2.setPower(-1);
-                bot.rp.setPosition(bot.pushControl.getPos(1));
-                pause(0.3);
+                bot.rp.setPosition(bot.pushControl.getPos(2));
+                pause(0.4);
                 bot.rh2.setPower(0);
                 bot.rh.setPower(0);
+                bot.rp.setPosition(bot.pushControl.getPos(1));
+                pause(0.4);
+                bot.rp.setPosition(bot.pushControl.getPos(1));
+                bot.outtakingMode = 1;
+                bot.resetOuttake();
 
             }
         };
@@ -137,9 +140,17 @@ public class RobotFunctions {
             @Override
             public void run() {
                 bot.outtakingMode = 2;
-                pause(3);
-                bot.rh.setPower(-0.5);
-                pause(0.5 * numRings);
+                pause(1);
+//                bot.rh.setPower(-0.2);
+//                pause(numRings*1);
+                for (int i = 0; i < numRings; i++) {
+                    bot.rp.setPosition(bot.pushControl.getPos(2));
+                    pause(0.2);
+                    bot.rp.setPosition(bot.pushControl.getPos(1));
+                    pause(0.2);
+                }
+                pause(0.1);
+
                 bot.rp.setPosition(bot.pushControl.getPos(0));
                 bot.rh.setPower(0);
             }
@@ -150,6 +161,15 @@ public class RobotFunctions {
 //        timer.reset();
 //        while (timer.seconds() < secs){}
         try { Thread.sleep((long)(secs * 1000)); } catch (InterruptedException ignore) {}
+    }
+
+    public CodeSeg setTargetPos(final double x, final  double y){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.outtakePos = new double[]{x,y};
+            }
+        };
     }
 
 

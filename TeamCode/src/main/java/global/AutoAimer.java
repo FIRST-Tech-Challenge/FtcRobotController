@@ -11,10 +11,11 @@ public class AutoAimer {
     public int shotMode = 0;
 
     public void update(double[] pos) {
-        double s = Constants.OUTTAKE_FIXER*calcSpeed((Constants.FIELD_LENGTH - pos[1]/100), pos[0]/100); // 2.9476, 0.87 -> 213.6
-        outlController.setTargetSpeed(s + Constants.OUTTAKE_SPEED_OFFSET);
-        outrController.setTargetSpeed(s -  Constants.OUTTAKE_SPEED_OFFSET);
+        double s = calcSpeed((Constants.FIELD_LENGTH - pos[1]/100), pos[0]/100); // 2.9476, 0.87 -> 213.6
+        outlController.setTargetSpeed(s);
+        outrController.setTargetSpeed(s);
     }
+
 
     public double getOutlPow(double outlPos) {
         return outlController.getMotorPower(outlPos);
@@ -22,6 +23,14 @@ public class AutoAimer {
 
     public double getOutrPow(double outrPos) {
         return outrController.getMotorPower(outrPos);
+    }
+
+    public double getOutlTargetPow() {
+        return outlController.targetSpeed/Constants.MAX_OUTTAKE_SPEED;
+    }
+
+    public double getOutrTargetPow() {
+        return outrController.targetSpeed/Constants.MAX_OUTTAKE_SPEED;
     }
 
     public void nextShotMode(){

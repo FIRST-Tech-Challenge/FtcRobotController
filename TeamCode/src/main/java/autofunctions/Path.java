@@ -111,6 +111,16 @@ public class Path {
         xControl.setCoefficients(ks[0], ds[0], is[0]);
         yControl.setCoefficients(ks[1], ds[1], is[1]);
         hControl.setCoefficients(ks[2], ds[2], is[2]);
+        xControl.scaleCoeffs(1);
+        yControl.scaleCoeffs(1);
+        hControl.scaleCoeffs(1);
+    }
+
+    public void setCoeffsForShoot(){
+        xControl.setCoefficients(ksS[0], dsS[0], isS[0]);
+        yControl.setCoefficients(ksS[1], dsS[1], isS[1]);
+        hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
+        hControl.scaleCoeffs(2);
     }
 
 
@@ -254,7 +264,7 @@ public class Path {
                 }
                 return new double[]{0,0,0};
             case SHOOT:
-                setCoeffsForSetpoint(20);
+                setCoeffsForShoot();
                 double[] target2 = poses.get(curIndex+1);
                 target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
                 updateControls(currentPos,target2, true);
