@@ -58,7 +58,7 @@ public class FlickerSubsystem extends Subsystem {
 //    }
 
     public void setFlickerOut() {
-        flicker.setPosition(0.47);
+        flicker.setPosition(0.49);
     }
 
     public void setFlickerIn() {
@@ -70,14 +70,14 @@ public class FlickerSubsystem extends Subsystem {
         // move in
         setFlickerIn();
         double initialTime = System.currentTimeMillis();
-        while(potentiometer.getVoltage() > 0.575 && System.currentTimeMillis() - initialTime < 750) {
+        while(potentiometer.getVoltage() > 1.3 && System.currentTimeMillis() - initialTime < 750) {
             robot.safeSleep(1);
             Log.i("Flicker", potentiometer.getVoltage() + "");
         }
         Log.i("Flicker", "In Time: " + (System.currentTimeMillis() - initialTime));
         setFlickerOut();
         initialTime = System.currentTimeMillis();
-        while(potentiometer.getVoltage() < 0.88 && System.currentTimeMillis() - initialTime < 750) {
+        while(potentiometer.getVoltage() < 1.33 && System.currentTimeMillis() - initialTime < 750) {
             robot.safeSleep(1);
             Log.i("Flicker", potentiometer.getVoltage() + "");
         }
