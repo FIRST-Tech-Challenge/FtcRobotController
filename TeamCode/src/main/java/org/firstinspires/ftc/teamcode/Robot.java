@@ -205,9 +205,7 @@ public class Robot {
 
     // intake
     public void startIntake(){
-        if(!isCorgi) {
-            intake.startIntake();
-        }
+        intake.startIntake();
     }
 
     public void reverseIntake(){
@@ -215,16 +213,12 @@ public class Robot {
     }
 
     public void stopIntake(){
-        if(!isCorgi) {
             intake.stopIntake();
-        }
     }
 
     //transfer
     public void startTransfer(){
-        if(!isCorgi) {
-            transfer.startTransfer();
-        }
+        transfer.startTransfer();
     }
 
     public void reverseTransfer(){
@@ -232,9 +226,7 @@ public class Robot {
     }
 
     public void stopTransfer() {
-        if (!isCorgi) {
-            transfer.stopTransfer();
-        }
+        transfer.stopTransfer();
     }
 
     //sticks

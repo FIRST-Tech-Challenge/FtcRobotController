@@ -106,6 +106,7 @@ public class TwoGPTeleop extends LinearOpMode {
                     //robot.shootGoalTeleop(1000);
                     goingToPosition=1;
                     robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8);
+                    robot.turnInPlace(angleShootingPosition,1.0);
                     /*if(robot.goToPositionTeleop(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8)){
                         robot.turnInPlace(angleShootingPosition,0.8);
                     }*/

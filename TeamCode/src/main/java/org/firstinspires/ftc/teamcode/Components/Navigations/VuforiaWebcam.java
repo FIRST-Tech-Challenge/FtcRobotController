@@ -165,7 +165,7 @@ public class VuforiaWebcam extends Thread {
 //                    op.telemetry.addData("PosIf (in)", "{X, Y, getX, getY} = %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getVuforiaX(), getVuforiaY());
                     xpos = translation.get(0) / mmPerInch;
                     ypos = translation.get(1) / mmPerInch;
-                    angle = rotation.thirdAngle;
+                    angle = (rotation.thirdAngle+180)%360;
                     if(xpos>-15&&xpos<15&&ypos>-60&&ypos<-38&&vuforia_on) {
                         OdometryChassis.setXpos(-xpos);
                         OdometryChassis.setYpos(ypos);

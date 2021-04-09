@@ -76,13 +76,11 @@ public class OdometryChassis extends BasicChassis {
         while (!op.isStopRequested() && !imu.isGyroCalibrated()) {
             op.sleep(50);
             op.idle();
-        }
-        if(!tobeCorgiornottobeCorgi) {
-            if (navigator) {
+        }         if (navigator) {
                 vuforia = new VuforiaWebcam(op);
                 vuforia.start();
             }
-        }
+
         isCorgi=tobeCorgiornottobeCorgi;
         op.sleep(500);
         if(track()[2]>5&&track()[2]<-5){
@@ -374,8 +372,6 @@ public class OdometryChassis extends BasicChassis {
                 op.telemetry.update();
             }
             stopAllMotors();
-            turnInPlace(a, 0.5);
-            stopAllMotors();
             op.telemetry.addData("done", true);
         }
         else if(isCorgi) {
@@ -453,7 +449,6 @@ public class OdometryChassis extends BasicChassis {
 //            op.telemetry.addData("distance", difference);
                 op.telemetry.update();
             }
-            turnInPlace(a, 0.5);
             stopAllMotors();
         }
     }public void goToPositionWithoutStop(double y, double x, double a, double power){
@@ -688,7 +683,7 @@ public class OdometryChassis extends BasicChassis {
         float currentAngle = getAngle();
         float newTarget = (float)target;
         float error = (float)target-currentAngle;
-        double gain = -0.02;
+        double gain = -0.07;
         int direction=1;
         if(error<0){
             direction = -1;
@@ -728,8 +723,8 @@ public class OdometryChassis extends BasicChassis {
 
             motorLeftBack.setPower(0);
             motorRightFront.setPower(0);
-            motorLeftFront.setPower(0);
             motorRightBack.setPower(0);
+            motorLeftFront.setPower(0);
         }
     }
     public boolean turnInPlaceTeleop(double target, double power) {
