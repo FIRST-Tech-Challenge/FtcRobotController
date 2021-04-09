@@ -132,9 +132,9 @@ public class Path {
         xControl.scaleCoeffs(40/dis);
         yControl.scaleCoeffs(40/dis);
         hControl.scaleCoeffs(2);
-        xControl.scaleAccs(0.5);
-        yControl.scaleAccs(0.5);
-        hControl.scaleAccs(0.25);
+//        xControl.scaleAccs(0.5);
+//        yControl.scaleAccs(0.5);
+//        hControl.scaleAccs(0.25);
     }
 
 
@@ -278,6 +278,9 @@ public class Path {
                 }
                 return new double[]{0,0,0};
             case SHOOT:
+                if(!bot.autoAimer.hasPosBeenUpdated()) {
+                    bot.autoAimer.setOuttakePos(Arrays.copyOf(poses.get(curIndex+1), 2));
+                }
                 setCoeffsForShoot(lines.get(curIndex).getDis());
                 double[] target2 = poses.get(curIndex+1);
                 target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
@@ -363,10 +366,11 @@ public class Path {
 //            op.telemetry.addData("Target speed L", bot.autoAimer.outlController.targetSpeed);
 //            op.telemetry.addData("Target speed R", bot.autoAimer.outrController.targetSpeed);// 213.5 CORRECT
 //            op.telemetry.addData("Outr speed", bot.autoAimer.outrController.currSpeed);
-            op.telemetry.addData("targetPos", bot.autoAimer.outtakePos);
-            op.telemetry.addData("oldtargetPos", bot.autoAimer.oldOuttakePos);
+            op.telemetry.addData("targetPos", Arrays.toString(bot.autoAimer.outtakePos));
+            op.telemetry.addData("oldtargetPos", Arrays.toString(bot.autoAimer.oldOuttakePos));
             op.telemetry.addData("isDone", bot.autoAimer.isDone);
             op.telemetry.addData("hasreached", bot.autoAimer.hasReached);
+            op.telemetry.addData("outtaking", bot.outtaking);
             op.telemetry.update();
 //
 

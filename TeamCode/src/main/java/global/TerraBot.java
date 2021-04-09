@@ -47,7 +47,7 @@ public class TerraBot {
     public Servo rp;
 
 //
-    public Cycle pushControl = new Cycle(0.1, 0.25, 0.32);
+    public Cycle pushControl = new Cycle(0.1, 0.27, 0.32);
 //    public Cycle pushControl = new Cycle(0.1, 0.27, 0.25);
 
     public Cycle cllControl = new Cycle(0.2, 0.5, 1);
@@ -365,7 +365,7 @@ public class TerraBot {
                 outr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 outl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-            if(!autoAimer.hasPosBeenUpdated()){
+            if(autoAimer.hasPosBeenUpdated()){
                 autoAimer.updateTargetSpeed();
                 outr.setVelocity(autoAimer.getOutrTargetVel());
                 outl.setVelocity(autoAimer.getOutlTargetVel());

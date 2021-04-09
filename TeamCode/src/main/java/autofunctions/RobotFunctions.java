@@ -115,12 +115,16 @@ public class RobotFunctions {
         };
     }
 
-    public CodeSeg readyShooter(final Path path){
+    public CodeSeg readyShooter(){
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.autoAimer.setOuttakePos(path.poses.get(path.curIndex+1));
+                while (!bot.autoAimer.hasPosBeenUpdated()) {}
                 bot.outtaking = true;
+                bot.rp.setPosition(bot.pushControl.getPos(1));
+                pause(0.4);
+                bot.rp.setPosition(0.2);
+                pause(0.4);
                 bot.rp.setPosition(bot.pushControl.getPos(1));
             }
         };
@@ -131,6 +135,7 @@ public class RobotFunctions {
             @Override
             public void run() {
                 while (!bot.autoAimer.hasReached){}
+                pause(0.3);
                 for (int i = 0; i < numRings; i++) {
                     bot.rp.setPosition(bot.pushControl.getPos(2));
                     pause(0.2);

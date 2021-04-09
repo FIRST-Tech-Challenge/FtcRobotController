@@ -19,7 +19,7 @@ public class AutoAimer {
     public boolean hasReached = false;
 
     public boolean hasPosBeenUpdated(){
-        return (outtakePos[0] == oldOuttakePos[0]) && (outtakePos[1] == oldOuttakePos[1]);
+        return !((outtakePos[0] == oldOuttakePos[0]) && (outtakePos[1] == oldOuttakePos[1]));
     }
     public void setOuttakePos(double[] pos){
         outtakePos = pos;
@@ -38,16 +38,14 @@ public class AutoAimer {
 
     public void updateTargetSpeed(){
         targetSpeed = calcSpeed((Constants.FIELD_LENGTH - outtakePos[1]/100), outtakePos[0]/100);
-//        outlController.setTargetSpeed(targetSpeed);
-//        outrController.setTargetSpeed(targetSpeed);
         oldOuttakePos = outtakePos;
     }
 
-    public int getOutrTargetVel(){
-        return (int) (((targetSpeed/Constants.pi2)+Constants.OUTR_SPEED_OFFSET)*Constants.GOBUILDA1_Ticks);
+    public double getOutrTargetVel(){
+        return (((targetSpeed+Constants.OUTR_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
-    public int getOutlTargetVel(){
-        return (int) (((targetSpeed/Constants.pi2)+Constants.OUTL_SPEED_OFFSET)*Constants.GOBUILDA1_Ticks);
+    public double getOutlTargetVel(){
+        return (((targetSpeed+Constants.OUTL_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
 
 //
