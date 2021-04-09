@@ -1827,7 +1827,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
             double rightDist = (rightDistF + rightDistB) / 2;
             if (Math.abs(rightDist-idealRightDist)<1) break;
-            chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(), chassis.odo_heading(), false, 2);
+            chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(), chassis.odo_heading(), false, 3);
             crab_power-=0.05;
             sleep(100);
         }
@@ -1869,7 +1869,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(), target_heading,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(), target_heading,false,2);
         if(angleCollection){
             if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
@@ -1896,7 +1896,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(), target_heading,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(), target_heading,false,2);
         if(angleCollection){
             if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
