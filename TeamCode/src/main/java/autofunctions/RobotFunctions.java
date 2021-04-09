@@ -21,7 +21,7 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.outtakingMode = 0;
+                bot.outtaking = false;
             }
         };
     }
@@ -115,23 +115,14 @@ public class RobotFunctions {
         };
     }
 
-    public CodeSeg readyShooter(){
+    public CodeSeg readyShooter(final Path path){
         return new CodeSeg() {
             @Override
             public void run() {
-//                bot.rh.setPower(-0.7);
-//                bot.rh2.setPower(-1);
-//                bot.rp.setPosition(bot.pushControl.getPos(2));
-//                pause(0.4);
-//                bot.rh2.setPower(0);
-//                bot.rh.setPower(0);
-//                bot.rp.setPosition(bot.pushControl.getPos(1));
-//                pause(0.4);
-                bot.outtakingMode = 1;
-                bot.resetOuttake();
+                bot.autoAimer.setOuttakePos(path.poses.get(path.curIndex+1));
+                bot.outtaking = true;
                 bot.rp.setPosition(bot.pushControl.getPos(1));
                 pause(0.4);
-//                bot.rp.setPosition(bot.pushControl.getPos(1));
 
             }
         };
@@ -141,10 +132,6 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.outtakingMode = 2;
-                pause(1);
-//                bot.rh.setPower(-0.2);
-//                pause(numRings*1);
                 for (int i = 0; i < numRings; i++) {
                     bot.rp.setPosition(bot.pushControl.getPos(2));
                     pause(0.2);
@@ -158,20 +145,19 @@ public class RobotFunctions {
             }
         };
     }
-
-    public void pause(final double secs){
-//        timer.reset();
-//        while (timer.seconds() < secs){}
-        try { Thread.sleep((long)(secs * 1000)); } catch (InterruptedException ignore) {}
-    }
-
-    public CodeSeg setTargetPos(final double x, final  double y){
+    public CodeSeg pauseRfs(final double secs){
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.outtakePos = new double[]{x,y};
+                pause(secs);
             }
         };
+    }
+
+    private void pause(final double secs){
+//        timer.reset();
+//        while (timer.seconds() < secs){}
+        try { Thread.sleep((long)(secs * 1000)); } catch (InterruptedException ignore) {}
     }
 
 

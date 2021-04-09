@@ -5,36 +5,53 @@ import globalfunctions.Constants;
 import util.Geometry;
 
 public class AutoAimer {
-    public SpeedController outlController = new SpeedController();
-    public SpeedController outrController = new SpeedController();
+//    public SpeedController outlController = new SpeedController();
+//    public SpeedController outrController = new SpeedController();
 
     public int shotMode = 0;
 
     public double targetSpeed = 0;
 
+    public double[] outtakePos = {0,0};
+    public double[] oldOuttakePos = {0,0};
 
-    public void updateTargetSpeed(double[] pos){
-        targetSpeed = calcSpeed((Constants.FIELD_LENGTH - pos[1]/100), pos[0]/100);
-        outlController.setTargetSpeed(targetSpeed);
-        outrController.setTargetSpeed(targetSpeed);
+    public boolean hasPosBeenUpdated(){
+        return (outtakePos[0] == oldOuttakePos[0]) && (outtakePos[1] == oldOuttakePos[1]);
+    }
+    public void setOuttakePos(double[] pos){
+        outtakePos = pos;
     }
 
-
-    public double getOutlPow(double outlPos) {
-        return outlController.getMotorPower(outlPos);
+    public void updateTargetSpeed(){
+        targetSpeed = calcSpeed((Constants.FIELD_LENGTH - outtakePos[1]/100), outtakePos[0]/100);
+//        outlController.setTargetSpeed(targetSpeed);
+//        outrController.setTargetSpeed(targetSpeed);
+        oldOuttakePos = outtakePos;
     }
 
-    public double getOutrPow(double outrPos) {
-        return outrController.getMotorPower(outrPos);
+    public int getOutrTargetVel(){
+        return (int) (((targetSpeed/Constants.pi2)+Constants.OUTR_SPEED_OFFSET)*Constants.GOBUILDA1_Ticks);
+    }
+    public int getOutlTargetVel(){
+        return (int) (((targetSpeed/Constants.pi2)+Constants.OUTL_SPEED_OFFSET)*Constants.GOBUILDA1_Ticks);
     }
 
-    public double getOutlTargetPow() {
-        return outlController.targetSpeed/Constants.MAX_OUTTAKE_SPEED;
-    }
-
-    public double getOutrTargetPow() {
-        return outrController.targetSpeed/Constants.MAX_OUTTAKE_SPEED;
-    }
+//
+//    public double getOutlPow(double outlPos) {
+//        return outlController.getMotorPower(outlPos);
+//    }
+//
+//    public double getOutrPow(double outrPos) {
+//        return outrController.getMotorPower(outrPos);
+//    }
+//
+//    public double getOutlTargetPow() {
+//        return outlController.targetSpeed/Constants.MAX_OUTTAKE_SPEED;
+//    }
+//
+//    public double getOutrTargetPow() {
+//        return outrController.targetSpeed/Constants.MAX_OUTTAKE_SPEED;
+//    }
 
     public void nextShotMode(){
         if(shotMode < 3){
@@ -66,11 +83,11 @@ public class AutoAimer {
         // returns 213.6
         return linearSpeed/Constants.SHOOTER_WHEEL_RADIUS;
     }
-
-    public void resetOuttake(double outlPos, double outrPos){
-        outlController.reset(outlPos);
-        outrController.reset(outrPos);
-    }
+//
+//    public void resetOuttake(double outlPos, double outrPos){
+//        outlController.reset(outlPos);
+//        outrController.reset(outrPos);
+//    }
 
     public double getRobotToGoalAngle(double[] pos) {
         double disFromFront = (Constants.FIELD_LENGTH - pos[1]/100);

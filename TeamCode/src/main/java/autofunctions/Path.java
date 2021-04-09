@@ -8,6 +8,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import globalfunctions.Constants;
 import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
 import global.TerraBot;
@@ -270,7 +271,7 @@ public class Path {
                 double[] target2 = poses.get(curIndex+1);
                 target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
                 updateControls(currentPos,target2, true);
-                if(bot.outtakingMode == 0){
+                if(!bot.outtaking){
                     next();
                 }
                 if(xControl.done() && yControl.done() && hControl.done()){
@@ -344,16 +345,18 @@ public class Path {
 //            telemetryHandler.addAutoAimer();
 //            op.telemetry = telemetryHandler.getTelemetry();
 //            op.telemetry.addData("Odometry pos", Arrays.toString(bot.odometry.getPos())); 87, 71 FINE
-            op.telemetry.addData("Target speed L", bot.autoAimer.outlController.targetSpeed);
-            op.telemetry.addData("Target speed R", bot.autoAimer.outrController.targetSpeed);// 213.5 CORRECT
-            op.telemetry.addData("Outr speed", bot.autoAimer.outrController.currSpeed);
+//            op.telemetry.addData("Target speed L", bot.autoAimer.outlController.targetSpeed);
+//            op.telemetry.addData("Target speed R", bot.autoAimer.outrController.targetSpeed);// 213.5 CORRECT
+//            op.telemetry.addData("Outr speed", bot.autoAimer.outrController.currSpeed);
+            op.telemetry.addData("targetPos", bot.autoAimer.outtakePos);
+            op.telemetry.addData("oldtargetPos", bot.autoAimer.oldOuttakePos);
             op.telemetry.update();
 //
             bot.outtakeWithCalculations();
 
             double[] pows = update(bot.odometry.getAll(), bot);
             track.add(bot.odometry.getAll());
-            speeds.add(new double[] {bot.autoAimer.outrController.currSpeed, bot.autoAimer.outlController.currSpeed});
+            speeds.add(new double[] {bot.getRightAngVel(), bot.getLeftAngVel()});
             trackTimes.add(trackTime.seconds());
             bot.move(pows[1], pows[0], pows[2]);
         }
