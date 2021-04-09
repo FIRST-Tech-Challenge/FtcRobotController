@@ -165,7 +165,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double servoCorrection;   // latest correction applied to leading wheels' servos to correct heading deviation
     private double curHeading = 0;
     private boolean useScalePower = true;//
-    private boolean setImuTelemetry = true;//unless debugging, don't set telemetry for imu
+    private boolean setImuTelemetry = false;//unless debugging, don't set telemetry for imu
     private boolean setRangeSensorTelemetry = true; //unless debugging, don't set telemetry for range sensor
     private boolean useOdometry = true;
     private boolean normalizeMode = false;
@@ -1296,12 +1296,12 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                             odo_heading(false), odo_heading(true));
                 }
             });
-            line.addData("Raw (x,ly,ry,net-r)", new Func<String>() {
+            line.addData("Raw (x,ly,ry,lr/rr)", new Func<String>() {
                 @Override
                 public String value() {
-                    return String.format("(%2.0f,%2.0f,%2.0f,%3.0f)", GPS.XEncoder(),
+                    return String.format("(%2.0f,%2.0f,%2.0f,%2.0f,%2.0f)", GPS.XEncoder(),
                             GPS.leftYEncoder(),
-                            GPS.rightYEncoder(), GPS.getNetRotations());
+                            GPS.rightYEncoder(), GPS.getlRotations(), GPS.getrRotations());
                 }
             });
         }

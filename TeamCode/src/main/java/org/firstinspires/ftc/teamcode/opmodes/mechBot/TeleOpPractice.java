@@ -43,7 +43,7 @@ public class TeleOpPractice extends LinearOpMode {
             robot.reset(false);
 
             eventManager1 = new EventManager(gamepad1, true);
-            eventManager2 = new EventManager(gamepad2, true);
+            // eventManager2 = new EventManager(gamepad2, true);
 
             robot.mainTeleOp(eventManager1);
 
@@ -58,13 +58,17 @@ public class TeleOpPractice extends LinearOpMode {
         waitForStart();
 
         robot.initAfterStart();
-
+        long prevTime=System.nanoTime();
+        long curTime=System.nanoTime();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             try {
                 eventManager1.processEvents();
-                eventManager2.processEvents();
+                // eventManager2.processEvents();
                 TaskManager.processTasks();
+                curTime=System.nanoTime();
+                robot.updateCycleTime(curTime-prevTime);
+                prevTime=curTime;
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
                 handleException(E);

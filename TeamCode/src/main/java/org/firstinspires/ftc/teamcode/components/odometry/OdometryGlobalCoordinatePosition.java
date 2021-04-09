@@ -30,7 +30,9 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private int count=0;
     private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
     private double DEFAULT_COUNTS_PER_INCH = 303.7; //307.699557;
-    private double netRotations; // clockwise rotations in degrees
+    // private double netRotations; // clockwise rotations in degrees
+    private double rRotations; // clockwise rotations in degrees
+    private double lRotations; // counter-clockwise rotations in degrees
     private double prevHeading;  // previous heading
 
 
@@ -54,16 +56,18 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private int GPSVersion = 1; // version 1 - Wizard Odometry
                                 // version 2 - Beta Odometry
 
-    public double getNetRotations() { return netRotations; }
+    public double getlRotations() { return lRotations; }
+    public double getrRotations() { return rRotations; }
 
     public double rotationCorrection() { // degrees to be corrected due to rotation error
-        return getNetRotations() / 360.0 * 0.6;
+        return (getrRotations() * 1.45 + getlRotations() * 1.1) / 360.0;
     }
 
 
     public void set_orientationSensor(CombinedOrientationSensor val) {
         orientationSensor = val;
         prevHeading = orientationSensor.getHeading();
+        rRotations = lRotations = 0;
     }
 
     /**
@@ -115,15 +119,20 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
             robotOrientationRadians = Math.toRadians(curHeading) + initRadians;
             // calculate robot netRotations
             double curRotation = curHeading-prevHeading;
-            if (curHeading*prevHeading<0) {
-                if (curHeading<0) {
-                    curRotation += 360;
-                } else {
-                    curRotation -= 360;
+            if (curRotation!=0) {
+                if (curHeading * prevHeading < -1000) { // cross the +180/-180 gap
+                    if (curHeading < 0) {
+                        curRotation += 360;
+                    } else {
+                        curRotation -= 360;
+                    }
                 }
+                if (curRotation > 0)
+                    rRotations += curRotation;
+                else
+                    lRotations += curRotation;
+                prevHeading = curHeading;
             }
-            netRotations += curRotation;
-            prevHeading = curHeading;
         } else {
             robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
         }

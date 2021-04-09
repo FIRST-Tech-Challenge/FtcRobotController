@@ -79,6 +79,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public Hopper hopper;
     public Intake intake;
 
+    private double cycleTime = 0; // nano-sec
     public double auto_chassis_power = 1.0;
     public double auto_chassis_dist = 100;
     public double auto_chassis_heading = -90;
@@ -114,6 +115,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean targetHighGoal = true; // when false, it target power shot
     private boolean useIMUforOdometryAngleCorrection = true; // use IMU for radian correction
 
+    public void updateCycleTime(long val) {
+        cycleTime = val; // milli-seconds
+    }
     public void set_simulation_mode(boolean value) {
         simulation_mode = value;
         if (simulation_mode) {
@@ -781,11 +785,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.set_auto_power_scale_by_voltage(batteryVolt);
         }
         if (side==ProgramType.TELE_OP) { // TeleOp
-            line.addData(" | Shooting (dist,angle,rpm, volt) =", new Func<String>() {
+            line.addData(" | Shooting (dist,angle,tps,volt,c-time) =", new Func<String>() {
                 @Override
                 public String value() {
-                    return String.format("(%1.0f,%1.0f,%1.0f, %2.1f)\n",
-                            shooting_dist, shooting_angle, shooting_rpm, getBatteryVoltage());
+                    return String.format("(%1.0f,%1.0f,%1.0f,%2.1f,%2.2fms)\n",
+                            shooting_dist, shooting_angle, shooting_rpm, getBatteryVoltage(),cycleTime/1000000.0);
                 }
             });
             if (useVuforia && (cameraDetector != null)) {
