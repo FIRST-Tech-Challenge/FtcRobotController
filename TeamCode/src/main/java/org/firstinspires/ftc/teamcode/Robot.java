@@ -177,22 +177,16 @@ public class Robot {
     }
     /**wobble goal methods**/
     public WobbleGoal.Position moveWobbleGoalToPosition(WobbleGoal.Position p){
-        if(!isCorgi) {
             wobbleGoal.goToPosition(p);
-        }
         return (p);
     }
 
     public void printCurrentWobbleGoalLocation(){
-        if(!isCorgi) {
             wobbleGoal.printCurrentLocation();
-        }
     }
 
     public void stopWobbleGoal(){
-        if(!isCorgi) {
             wobbleGoal.stop();
-        }
     }
 
     public void openWobbleGoalClaw(){
@@ -205,9 +199,7 @@ public class Robot {
 
     // intake
     public void startIntake(){
-        if(!isCorgi) {
             intake.startIntake();
-        }
     }
 
     public void reverseIntake(){
@@ -215,16 +207,12 @@ public class Robot {
     }
 
     public void stopIntake(){
-        if(!isCorgi) {
             intake.stopIntake();
-        }
     }
 
     //transfer
     public void startTransfer(){
-        if(!isCorgi) {
             transfer.startTransfer();
-        }
     }
 
     public void reverseTransfer(){
@@ -232,9 +220,7 @@ public class Robot {
     }
 
     public void stopTransfer() {
-        if (!isCorgi) {
             transfer.stopTransfer();
-        }
     }
 
     //sticks

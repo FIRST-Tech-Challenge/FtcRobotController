@@ -7,7 +7,7 @@ public class Transfer {
 
     private DcMotor transferMotor = null;
 
-    final private double transferSpeed = 1.0;
+    final private double transferSpeed = 1;
 
     // initialization of transferMotor
     public Transfer(LinearOpMode opMode){
