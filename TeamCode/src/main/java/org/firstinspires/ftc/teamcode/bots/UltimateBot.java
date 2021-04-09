@@ -43,6 +43,7 @@ public class UltimateBot extends YellowBot {
 
     private boolean syncturretcamera = true;
     private static double TURRET_OFFSET = 0.05;
+    private static double TURRET_OFFSET_SHOOTING = 0.03;
 
     private RingDetector rf = null;
     private TurretAngler ta = null;
@@ -183,7 +184,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.84);
+            shooter.setVelocity(MAX_VELOCITY*0.83);
         }
     }
 
@@ -399,9 +400,9 @@ public class UltimateBot extends YellowBot {
             if (cameraPos > 0.85 || cameraPos < 0.15) {
                 turretPos = 0.5 + TURRET_OFFSET;
             } else if (cameraPos > 0.5) {
-                turretPos = cameraPos +TURRET_OFFSET;
+                turretPos = cameraPos +TURRET_OFFSET_SHOOTING;
             } else if (cameraPos < 0.5) {
-                turretPos = cameraPos + TURRET_OFFSET;
+                turretPos = cameraPos + TURRET_OFFSET_SHOOTING;
             } else {
                 turretPos = 0.5 +TURRET_OFFSET;
             }
@@ -442,24 +443,58 @@ public class UltimateBot extends YellowBot {
         syncturretcamera = !syncturretcamera;
     }
 
+    public int getRawXDetect() {
+        if (ta != null) {
+            return ta.returnRawX();
+        } else {
+            return 0;
+        }
+    }
+
     public void angleTurret() {
         ElapsedTime timer = new ElapsedTime();
+        ElapsedTime timertimeout = new ElapsedTime();
+        timertimeout.reset();
         timer.reset();
+//        double startdelay = 0;
+//        boolean delaystarted = false;
+//        boolean firsttime = true;
         if (ta != null) {
             while (turretrunning) {
                 cameramove = ta.moveTurret();
                 if (cameramove == 1) {
+//                    delaystarted = false;
+//                    firsttime = true;
                     cameraLeft();
                     if (syncturretcamera) {
                         turretCamera();
                     }
                 } else if (cameramove == 2) {
+//                    delaystarted = false;
+//                    firsttime = true;
                     cameraRight();
                     if (syncturretcamera) {
                         turretCamera();
                     }
                 }
-                while(timer.milliseconds() < 60){
+//                else if (cameramove == 3) {
+//                    delaystarted = false;
+//                    firsttime = true;
+//                } else if (cameramove == 0) {
+//                    delaystarted = true;
+//                }
+//
+//                if (delaystarted && firsttime) {
+//                    startdelay = timertimeout.milliseconds();
+//                    firsttime = false;
+//                }
+//                if ((timertimeout.milliseconds() - startdelay) >= 5000) {
+//                    turretInit();
+//                    cameraInit();
+//                    startdelay = 0;
+//                }
+
+                while(timer.milliseconds() < 50){
                 }
                 timer.reset();
             }

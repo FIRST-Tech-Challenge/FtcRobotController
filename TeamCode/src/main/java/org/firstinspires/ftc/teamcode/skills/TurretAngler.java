@@ -79,7 +79,7 @@ public class TurretAngler implements Runnable{
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
                 if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
+//                    telemetry.addData("Visible Target", trackable.getName());
                     targetVisible = true;
 
                     OpenGLMatrix rawObjectLocation = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedVuforiaCameraFromTarget();
@@ -95,7 +95,7 @@ public class TurretAngler implements Runnable{
             if (targetVisible) {
                 // raw values of object position on video
                 VectorF rawTranslation = lastRawLocation.getTranslation();
-                telemetry.addData("Raw X", "%.0f", rawTranslation.get(0));
+//                telemetry.addData("Raw X", "%.0f", rawTranslation.get(0));
                 xval = rawTranslation.get(0);
 
                 // check if out of center zone
@@ -104,13 +104,13 @@ public class TurretAngler implements Runnable{
                 // if out of center zone do this
                 if (!inCenter) {
                     cameraLeft = xval < 0;
-                    while(runtime.milliseconds() < 60){
+                    while(runtime.milliseconds() < 50){
                     }
                     runtime.reset();
                 }
 
             } else {
-                telemetry.addData("Visible Target", "none");
+//                telemetry.addData("Visible Target", "none");
             }
             telemetry.update();
         }
@@ -193,7 +193,7 @@ public class TurretAngler implements Runnable{
         if (targetsUltimateGoal != null) {
             targetsUltimateGoal.activate();
         }
-        telemetry.addData("Info", "Turret Angling Activated");
+//        telemetry.addData("Info", "Turret Angling Activated");
     }
 
 
@@ -215,6 +215,16 @@ public class TurretAngler implements Runnable{
             } else {
                 return 2;
             }
+        } else if (inCenter) {
+            return 3;
+        } else {
+            return 0;
+        }
+    }
+
+    public int returnRawX() {
+        if (targetVisible) {
+            return (int) xval;
         } else {
             return 0;
         }

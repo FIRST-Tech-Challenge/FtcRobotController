@@ -223,6 +223,7 @@ public class UltimateMode extends LinearOpMode {
                 telemetry.addData("X ", locator.getXInches() );
                 telemetry.addData("Y ", locator.getYInches() );
                 telemetry.addData("Orientation (Degrees)", locator.getOrientation());
+                telemetry.addData("Turret Detect X", robot.getRawXDetect());
                 telemetry.update();
             }
         } catch (Exception ex) {
