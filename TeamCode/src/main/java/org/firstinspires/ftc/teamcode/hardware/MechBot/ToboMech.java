@@ -1813,7 +1813,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(200);
         double idealRightDist = 43; // 43 cm at Hans field; 61 cm at Winston's house
         double crab_power=0.5;
-        for (int i=0; i<3; i++) {
+        double timeout=3.0;
+        for (int i=0; i<5; i++) {
             double rightDistF = chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT);
             double rightDistB = chassis.getDistance(SwerveChassis.Direction.RIGHT_BACK);
             if (rightDistF>100){
@@ -1827,12 +1828,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
             double rightDist = (rightDistF + rightDistB) / 2;
             if (Math.abs(rightDist-idealRightDist)<1) break;
-            chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(), chassis.odo_heading(), false, 3);
+            chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(), chassis.odo_heading(), false, timeout);
             crab_power-=0.05;
+            timeout=1.0;
             sleep(100);
         }
         // chassis.rotateTo(0.3, 0);//delete?
-        double target_heading=2.3;
+        double target_heading=(angleCollection?2.3:chassis.odo_heading());
         double angle_error = 0.5;
         double LOCAL_ALIGNMENT_POWER = 0.18;
         double ALIGN_ITER = 5;
@@ -1845,6 +1847,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 int i=0;
                 while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<ALIGN_ITER) {
                     chassis.rawRotateTo(LOCAL_ALIGNMENT_POWER, target_heading, false, 0.5);
+                    sleep(50);
                     i++;
                 }
                 sleep(100);
@@ -1879,6 +1882,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 int i=0;
                 while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<ALIGN_ITER) {
                     chassis.rawRotateTo(LOCAL_ALIGNMENT_POWER, target_heading, false, 0.5);
+                    sleep(50);
                     i++;
                 }
                 sleep(100);
@@ -1906,6 +1910,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 int i=0;
                 while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<ALIGN_ITER) {
                     chassis.rawRotateTo(LOCAL_ALIGNMENT_POWER, target_heading, false, 0.5);
+                    sleep(50);
                     i++;
                 }
                 sleep(100);
@@ -2017,7 +2022,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     hopper.hopperUpCombo(true);
                     TaskManager.processTasks();
                 }
-                chassis.driveTo(1.0, side(87), 165, 0, false, 1);
+                chassis.driveTo(0.6, side(87), 165, 0, false, 1);
                 autoShootHighGoal(3, true);
                 if (comboGrabber!=null)
                     comboGrabber.armUpLow();
