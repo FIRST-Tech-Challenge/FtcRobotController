@@ -37,20 +37,22 @@ public class ShooterCommands extends Command {
 
         // Toggle Button for shooter type (highgoal if true, powershot if false)
         if(opMode.gamepad2.x) {
-            if(!shooterSwitchPressed) {
-                robot.highGoalMode = !robot.highGoalMode;
-                shooterSwitchPressed = true;
-            }
-        } else {
-            shooterSwitchPressed = false;
+             shooter.setShooterVelocity(robot.powerShotVelocity);
+
+//            if(!shooterSwitchPressed) {
+//                robot.highGoalMode = !robot.highGoalMode;
+//                shooterSwitchPressed = true;
+//            }
+//        } else {
+//            shooterSwitchPressed = false;
         }
 
         if(opMode.gamepad2.a || opMode.gamepad2.y) {
-            if(robot.highGoalMode) {
+//            if(robot.highGoalMode) {
                 shooter.setShooterVelocity(robot.highGoalVelocity);
-            } else {
-                shooter.setShooterVelocity(robot.powerShotVelocity);
-            }
+//            } else {
+//                shooter.setShooterVelocity(robot.powerShotVelocity);
+//            }
         }
 
         if(opMode.gamepad2.b) {

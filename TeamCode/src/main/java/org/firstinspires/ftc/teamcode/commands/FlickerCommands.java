@@ -22,6 +22,7 @@ public class FlickerCommands extends Command {
     @Override
     public void init() {
         // set flicker to start position (back)
+        flicker.setFlickerOut();
     }
 
     @Override
@@ -42,6 +43,7 @@ public class FlickerCommands extends Command {
                 while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel) {
                     robot.safeSleep(1);
                     if(robot.driverCancel || robot.operatorCancel) {
+                        flicker.setFlickerOut();
                         return;
                     }
                 }

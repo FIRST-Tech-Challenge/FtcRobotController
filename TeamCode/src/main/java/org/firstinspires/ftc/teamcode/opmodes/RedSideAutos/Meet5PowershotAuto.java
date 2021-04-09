@@ -54,7 +54,7 @@ public class Meet5PowershotAuto extends UpliftAuto {
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
         intakeSub.initSweeper();
-        flickerSub.setFlickerPos(0);
+        flickerSub.setFlickerOut();
     }
 
     @Override

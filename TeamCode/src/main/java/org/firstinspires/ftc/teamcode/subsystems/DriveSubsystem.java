@@ -172,13 +172,13 @@ public class DriveSubsystem extends Subsystem {
 
         // find max total input out of the 4 motors
         double maxVal = abs(lf);
-        if(abs(rf) > maxVal){
+        if(abs(rf) > maxVal) {
             maxVal = abs(rf);
         }
-        if(abs(lb) > maxVal){
+        if(abs(lb) > maxVal) {
             maxVal = abs(lb);
         }
-        if(abs(rb) > maxVal){
+        if(abs(rb) > maxVal) {
             maxVal = abs(rb);
         }
 
@@ -279,7 +279,9 @@ public class DriveSubsystem extends Subsystem {
                     safeDisable();
                     return;
                 }
-                if(abs(degrees) < 10) {
+                if(abs(degrees) < 5) {
+                    spin(0.15);
+                } else if(abs(degrees) < 10) {
                     spin(0.2);
                 } else if(abs(degrees) < 30) {
                     spin(0.4);

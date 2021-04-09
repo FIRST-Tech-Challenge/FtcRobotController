@@ -44,8 +44,8 @@ public class VelocityData extends Background {
     }
 
     public boolean isAutoHighGoalReady() {
-        double lowerLimit = robot.autoHighGoalVelocity - 50;
-        double upperLimit = robot.autoHighGoalVelocity + 50;
+        double lowerLimit = robot.autoHighGoalVelocity - 25;
+        double upperLimit = robot.autoHighGoalVelocity + 25;
         return (robot.shooter1Vel > lowerLimit && robot.shooter2Vel > lowerLimit && robot.shooter1Vel < upperLimit && robot.shooter2Vel < upperLimit);
     }
 

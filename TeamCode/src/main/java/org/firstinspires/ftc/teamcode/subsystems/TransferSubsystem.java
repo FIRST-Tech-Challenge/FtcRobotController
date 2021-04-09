@@ -16,7 +16,7 @@ public class TransferSubsystem extends Subsystem {
     public DigitalChannel transferTouchBottom;
     public DigitalChannel transferTouchTop;
 
-    public int TRANSFER_TARGET = -740;
+    public int TRANSFER_TARGET = -735;
 //    public int transferOffset = 0;
 
     public TransferSubsystem(UpliftRobot robot){

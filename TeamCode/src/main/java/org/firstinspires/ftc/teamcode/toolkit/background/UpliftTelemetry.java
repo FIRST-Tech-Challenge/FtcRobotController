@@ -48,14 +48,14 @@ public class UpliftTelemetry extends Background {
             telem.addData("Center Encoder pos:\t", robot.odometry.getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Slow Mode:\t", robot.slowMode);
         }
-        if(robot.transferInitialized) {
-            telem.addData("Transfer Pos:\t", robot.transferSub.transfer.getCurrentPosition());
-            telem.addData("Transfer Mode:\t", robot.transfer.getMode());
-            telem.addData("Transfer Current:\t", robot.transfer.getCurrent(CurrentUnit.MILLIAMPS));
-        }
-        if(robot.intakeInitialized) {
-            telem.addData("Roller Pos:\t", robot.intakeToggle);
-        }
+//        if(robot.transferInitialized) {
+//            telem.addData("Transfer Pos:\t", robot.transferSub.transfer.getCurrentPosition());
+//            telem.addData("Transfer Mode:\t", robot.transfer.getMode());
+//            telem.addData("Transfer Current:\t", robot.transfer.getCurrent(CurrentUnit.MILLIAMPS));
+//        }
+//        if(robot.intakeInitialized) {
+//            telem.addData("Intake Toggle:\t", robot.intakeToggle);
+//        }
         if(robot.shooterInitialized) {
             telem.addData("Distance Sensor:\t", robot.shooterSensor.getDistance(DistanceUnit.CM));
             telem.addData("Shot Count\t", robot.shotCount);
