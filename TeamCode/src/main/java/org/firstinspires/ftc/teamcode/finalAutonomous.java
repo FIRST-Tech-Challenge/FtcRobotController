@@ -1,3 +1,5 @@
+//TODO:Fix Gear meshing
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.ftcsecrets;
 
 import java.util.List;
 
@@ -81,10 +84,6 @@ public class finalAutonomous extends LinearOpMode {
                         wobble.setPosition(1.0);
                         sleep(2000);
                         move(-0.4, 1000);
-                        //TODO
-                        // Strafe More,
-                        // Don't go as far forward,
-                        // go back to line
                         break;
                     case 2:
                         strafeRight(1500);
@@ -92,22 +91,12 @@ public class finalAutonomous extends LinearOpMode {
                         strafeLeft(1500);
                         wobble.setPosition(1.0);
                         sleep(2000);
-                        move(-0.4, 4000);
+                        move(-0.4, 3800);
                         break;
                     default:
                         break;
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
-
-
-
-
-
-            if (ringDetectTestMode){
-                while (opModeIsActive()){
-                    telemetry.update();
-                }
-            }
         }
 
         if (tensorFlowObjDetector != null) {
@@ -129,22 +118,12 @@ public class finalAutonomous extends LinearOpMode {
         }
     }
 
-    /*public void spin(double speed, int time) {
-        if (shouldDrive) {
-            frontLeft.setPower(speed);
-            backLeft.setPower(speed);
-            frontRight.setPower(-1*speed);
-            backRight.setPower(-1*speed);
-            sleep(time);
-        }
-    }
-*/
     public void strafeRight(int time) {
         if (shouldDrive) {
-            frontLeft.setPower(-0.5);
-            backLeft.setPower(0.5);
-            frontRight.setPower(0.5);
-            backRight.setPower(-0.5);
+            frontLeft.setPower(0.5);
+            backLeft.setPower(-0.5);
+            frontRight.setPower(-0.5);
+            backRight.setPower(0.5);
             sleep(time);
             frontLeft.setPower(0);
             frontRight.setPower(0);
@@ -155,10 +134,10 @@ public class finalAutonomous extends LinearOpMode {
 
     public void strafeLeft(int time) {
         if (shouldDrive) {
-            frontLeft.setPower(0.5);
-            backLeft.setPower(-0.5);
-            frontRight.setPower(-0.5);
-            backRight.setPower(0.5);
+            frontLeft.setPower(-0.5);
+            backLeft.setPower(0.5);
+            frontRight.setPower(0.5);
+            backRight.setPower(-0.5);
             sleep(time);
             frontLeft.setPower(0);
             frontRight.setPower(0);
@@ -269,10 +248,10 @@ public class finalAutonomous extends LinearOpMode {
             backLeft = hardwareMap.get(DcMotor.class, "backLeft");
             backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-            frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-            frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-            backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-            backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+            frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+            frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+            backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+            backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         }
     }
 
