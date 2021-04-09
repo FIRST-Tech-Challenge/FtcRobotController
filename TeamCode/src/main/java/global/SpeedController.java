@@ -30,9 +30,10 @@ public class SpeedController {
 
     public SpeedController(){
         lastTime = -0.1;
-        pid.Kp = 0.003;
-        pid.Kd = 0.0003;
-        pid.Ki = 0.0001;
+        pid.Kp = 0.008;
+        pid.Kd = 0.002;
+        pid.Ki = 0.000;
+//        pid.Ki = 0.0001;
     }
 
     public void updateMotorSpeed(double currPos){

@@ -10,10 +10,13 @@ public class AutoAimer {
 
     public int shotMode = 0;
 
-    public void update(double[] pos) {
-        double s = calcSpeed((Constants.FIELD_LENGTH - pos[1]/100), pos[0]/100); // 2.9476, 0.87 -> 213.6
-        outlController.setTargetSpeed(s);
-        outrController.setTargetSpeed(s);
+    public double targetSpeed = 0;
+
+
+    public void updateTargetSpeed(double[] pos){
+        targetSpeed = calcSpeed((Constants.FIELD_LENGTH - pos[1]/100), pos[0]/100);
+        outlController.setTargetSpeed(targetSpeed);
+        outrController.setTargetSpeed(targetSpeed);
     }
 
 

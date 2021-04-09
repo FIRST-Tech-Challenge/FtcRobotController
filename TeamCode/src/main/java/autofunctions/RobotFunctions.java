@@ -119,17 +119,19 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.rh.setPower(-0.7);
-                bot.rh2.setPower(-1);
-                bot.rp.setPosition(bot.pushControl.getPos(2));
-                pause(0.4);
-                bot.rh2.setPower(0);
-                bot.rh.setPower(0);
-                bot.rp.setPosition(bot.pushControl.getPos(1));
-                pause(0.4);
-                bot.rp.setPosition(bot.pushControl.getPos(1));
+//                bot.rh.setPower(-0.7);
+//                bot.rh2.setPower(-1);
+//                bot.rp.setPosition(bot.pushControl.getPos(2));
+//                pause(0.4);
+//                bot.rh2.setPower(0);
+//                bot.rh.setPower(0);
+//                bot.rp.setPosition(bot.pushControl.getPos(1));
+//                pause(0.4);
                 bot.outtakingMode = 1;
                 bot.resetOuttake();
+                bot.rp.setPosition(bot.pushControl.getPos(1));
+                pause(0.4);
+//                bot.rp.setPosition(bot.pushControl.getPos(1));
 
             }
         };

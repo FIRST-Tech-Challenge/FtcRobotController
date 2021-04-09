@@ -77,6 +77,8 @@ public class Path {
     public ArrayList<double[]> track = new ArrayList<>();
     public ArrayList<Double> trackTimes = new ArrayList<>();
 
+    public ArrayList<double[]> speeds = new ArrayList<>();
+
     public ElapsedTime trackTime = new ElapsedTime();
 
 
@@ -342,7 +344,8 @@ public class Path {
 //            telemetryHandler.addAutoAimer();
 //            op.telemetry = telemetryHandler.getTelemetry();
 //            op.telemetry.addData("Odometry pos", Arrays.toString(bot.odometry.getPos())); 87, 71 FINE
-//            op.telemetry.addData("Target speed", bot.autoAimer.outlController.targetSpeed); // 213.5 CORRECT
+            op.telemetry.addData("Target speed L", bot.autoAimer.outlController.targetSpeed);
+            op.telemetry.addData("Target speed R", bot.autoAimer.outrController.targetSpeed);// 213.5 CORRECT
             op.telemetry.addData("Outr speed", bot.autoAimer.outrController.currSpeed);
             op.telemetry.update();
 //
@@ -350,6 +353,7 @@ public class Path {
 
             double[] pows = update(bot.odometry.getAll(), bot);
             track.add(bot.odometry.getAll());
+            speeds.add(new double[] {bot.autoAimer.outrController.currSpeed, bot.autoAimer.outlController.currSpeed});
             trackTimes.add(trackTime.seconds());
             bot.move(pows[1], pows[0], pows[2]);
         }
@@ -359,9 +363,11 @@ public class Path {
         stopRFThread();
     }
 
-    public void saveTrack(){
+    public void saveData(){
         TimeData timeData = new TimeData("Current", track, trackTimes);
+        TimeData timeData2 = new TimeData("Current2", speeds, trackTimes);
         storage.saveText(storage.convertToJSON("Today", timeData), timeData.name);
+        storage.saveText(storage.convertToJSON("Today", timeData2), timeData2.name);
     }
 
     public enum Posetype{

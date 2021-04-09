@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -32,6 +33,9 @@ public class TerraBot {
     public DcMotor outl;
     public DcMotor arm;
 
+    public DcMotorEx outrSketch;
+    public DcMotorEx outlSketch;
+
     public DcMotor in;
 
     public CRServo rh;
@@ -45,7 +49,7 @@ public class TerraBot {
     public Servo rp;
 
 //
-    public Cycle pushControl = new Cycle(0.1, 0.2, 0.32);
+    public Cycle pushControl = new Cycle(0.1, 0.25, 0.32);
 //    public Cycle pushControl = new Cycle(0.1, 0.27, 0.25);
 
     public Cycle cllControl = new Cycle(0.2, 0.5, 1);
@@ -93,6 +97,15 @@ public class TerraBot {
         outr = getMotor(hwMap, "outr", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl = getMotor(hwMap, "outl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm = getMotor(hwMap, "arm", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        outrSketch = hwMap.get(DcMotorEx.class, "outr");
+        outrSketch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outrSketch.setVelocityPIDFCoefficients(54, 0, 0, 14);
+        outrSketch.setDirection(DcMotorSimple.Direction.FORWARD);
+        outlSketch = hwMap.get(DcMotorEx.class, "outl");
+        outlSketch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outlSketch.setVelocityPIDFCoefficients(54, 0, 0, 14);
+        outlSketch.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         outr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -339,13 +352,20 @@ public class TerraBot {
 
     public void outtakeWithCalculations() {
         if (outtakingMode == 2) {
-//            autoAimer.update(outtakePos);
 //            outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
 //            outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
-        } else if (outtakingMode == 1 && outl.getPower() == 0) {
-            autoAimer.update(outtakePos);
-            outr.setPower(0.7);
-            outl.setPower(0.4);
+//            outr.setPower(0.5);
+//            outr.setPower(0.5);
+        } else if (outtakingMode == 1) {
+//            if(outl.getPower() == 0){
+//                autoAimer.updateTargetSpeed(outtakePos);
+//            }
+//            outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
+//            outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
+//            outr.setPower(0.5);
+//            outr.setPower(0.5);
+            outrSketch.setVelocity(1200);
+            outlSketch.setVelocity(1000);
         } else if (outtakingMode == 0) {
             outr.setPower(0);
             outl.setPower(0);
