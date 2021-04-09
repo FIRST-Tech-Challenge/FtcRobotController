@@ -294,7 +294,7 @@ public class UpliftRobot {
 
     public void initBackground() {
         upliftTelemetry = new UpliftTelemetry(this);
-//        upliftTelemetry.enable();
+        upliftTelemetry.enable();
         cancelClass = new Cancel(this);
         cancelClass.enable();
         if(driveInitialized) {
