@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.team6220_2020;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.team6220_2020.ResourceClasses.Button;
-import org.firstinspires.ftc.team6220_2020.ResourceClasses.PIDFilter;
 
 //todo add is op mode active breakers
 public abstract class MasterAutonomous extends MasterOpMode
@@ -92,72 +90,5 @@ public abstract class MasterAutonomous extends MasterOpMode
         xPos = startPositions[matchStartPosition][0];
         yPos = startPositions[matchStartPosition][1];
 
-    }
-
-    public void driveInches(double targetDistance, double degDriveAngle)
-    {
-        // Reset motor encoders and return them to RUN_USING_ENCODERS.
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        boolean targetAcquired = false;
-
-        double radDriveAngle = Math.toRadians(degDriveAngle);
-
-        //Starting position to measure distance traveled.
-        double startX = xPos;
-        double startY = yPos;
-
-        double netDistance = 0;
-
-        //double startAngle = imu.get
-
-        PIDFilter translationPID;
-        translationPID = new PIDFilter(Constants.TRANSLATION_P, Constants.TRANSLATION_I, Constants.TRANSLATION_D);
-
-        while(!targetAcquired && opModeIsActive())
-        {
-
-            //This calculates the distance traveled in inches
-            //Todo seperate class for equations e.g. double distanceTraveled = distanceTraveled(xPos, YPos)...
-            double distanceTraveled = Math.sqrt(Math.pow((startX - xPos), 2) + Math.pow((startY - yPos), 2));
-
-            //This adds a value to the PID loop so it can update
-            netDistance = Math.abs(Math.abs(distanceTraveled) - Math.abs(targetDistance));
-            translationPID.roll(netDistance);
-
-            //We drive the mecanum wheels with the PID value
-            if(translationPID.getFilteredValue() < Constants.MINIMUM_DRIVE_POWER){
-                driveMecanum(radDriveAngle, Constants.MINIMUM_DRIVE_POWER,0.0);
-            } else{
-                driveMecanum(radDriveAngle, translationPID.getFilteredValue(),0.0);
-            }
-
-            // Update positions using last distance measured by encoders (utilizes fact that encoders have been reset to 0).
-            xPos = lastX + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() +
-                    motorBackLeft.getCurrentPosition() - motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
-            yPos = lastY + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() -
-                    motorBackLeft.getCurrentPosition() + motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
-
-            telemetry.addData("X Position: ", xPos);
-            telemetry.addData("Y Position: ", yPos);
-            telemetry.addData("Net Distance ", netDistance);
-            telemetry.update();
-
-            netDistance = Math.abs(Math.abs(distanceTraveled) - Math.abs(targetDistance));
-            if(/*Math.abs(netDistance) < Constants.POSITION_TOLERANCE_IN*/ Math.abs(distanceTraveled) > targetDistance){
-                targetAcquired = true;
-            }
-
-            driveMecanum(radDriveAngle, 0.0,0.0);
-            telemetry.addData("Target", targetAcquired);
-        }
     }
 }
