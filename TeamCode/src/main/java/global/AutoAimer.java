@@ -15,12 +15,26 @@ public class AutoAimer {
     public double[] outtakePos = {0,0};
     public double[] oldOuttakePos = {0,0};
 
+    public boolean isDone = false;
+    public boolean hasReached = false;
+
     public boolean hasPosBeenUpdated(){
         return (outtakePos[0] == oldOuttakePos[0]) && (outtakePos[1] == oldOuttakePos[1]);
     }
     public void setOuttakePos(double[] pos){
         outtakePos = pos;
     }
+
+    public void done(){
+        isDone = true;
+        hasReached = false;
+    }
+    public void ready(){
+        isDone = false;
+    }
+    public void reached(){ hasReached = true; }
+
+
 
     public void updateTargetSpeed(){
         targetSpeed = calcSpeed((Constants.FIELD_LENGTH - outtakePos[1]/100), outtakePos[0]/100);

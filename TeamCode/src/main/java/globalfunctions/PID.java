@@ -25,6 +25,7 @@ public class PID {
 
     public ElapsedTime timer = new ElapsedTime();
 
+    public double sacc = 0;
     public double acc = 0;
 
     public double maxI = 1000;
@@ -40,6 +41,7 @@ public class PID {
         restPow = pow;
     }
     public void setAcc(double in){
+        sacc = in;
         acc = in;
     }
 
@@ -89,6 +91,10 @@ public class PID {
         Kp = sKp * scale;
         Kd = sKd * scale;
         Ki = sKi * scale;
+    }
+
+    public void scaleAccs(double scale){
+        acc = sacc *scale;
     }
 
 

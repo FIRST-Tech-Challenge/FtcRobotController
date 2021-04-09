@@ -61,12 +61,12 @@ public class AutoZero extends LinearOpMode {
          *
          *
          */
-        path.addRF(rf.readyShooter(path));
-        path.addSetpoint(7,50,0);
+        path.addSetpoint(10,10,10);
+        path.addSetpoint(-10,-10,-10);
         path.addStop(1);
-        path.addRF(rf.shootIntoGoal(3), rf.stopOuttake());
-////
-        path.addShoot();
+        path.addRF(rf.readyShooter(path), rf.shootIntoGoal(3), rf.stopOuttake());
+        path.addShoot(7,50,0);
+
         path.start(bot, this);
         path.saveData();
 

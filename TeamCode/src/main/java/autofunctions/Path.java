@@ -67,9 +67,9 @@ public class Path {
 
 
 
-    public double XAcc = 1;
-    public double YAcc = 1;
-    public double HAcc = 0.5;
+    public double XAcc = 2;
+    public double YAcc = 2;
+    public double HAcc = 2;
 
 
     final public double endWait = 0.2;
@@ -109,6 +109,9 @@ public class Path {
         hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
         xControl.scaleCoeffs(40/dis);
         yControl.scaleCoeffs(40/dis);
+        xControl.scaleAccs(1);
+        yControl.scaleAccs(1);
+        hControl.scaleAccs(1);
     }
     public void setCoeffsForWaypoint(){
         xControl.setCoefficients(ks[0], ds[0], is[0]);
@@ -117,13 +120,21 @@ public class Path {
         xControl.scaleCoeffs(1);
         yControl.scaleCoeffs(1);
         hControl.scaleCoeffs(1);
+        xControl.scaleAccs(1);
+        yControl.scaleAccs(1);
+        hControl.scaleAccs(1);
     }
 
-    public void setCoeffsForShoot(){
+    public void setCoeffsForShoot(double dis){
         xControl.setCoefficients(ksS[0], dsS[0], isS[0]);
         yControl.setCoefficients(ksS[1], dsS[1], isS[1]);
         hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
+        xControl.scaleCoeffs(40/dis);
+        yControl.scaleCoeffs(40/dis);
         hControl.scaleCoeffs(2);
+        xControl.scaleAccs(0.5);
+        yControl.scaleAccs(0.5);
+        hControl.scaleAccs(0.25);
     }
 
 
@@ -157,8 +168,8 @@ public class Path {
         rfsHandler.notRF();
     }
 
-    public void addShoot(){
-        addNewPose(0,0,0);
+    public void addShoot(double x, double y, double h){
+        addNewPose(x,y,h);
         posetypes.add(Posetype.SHOOT);
         rfsHandler.notRF();
     }
@@ -267,15 +278,18 @@ public class Path {
                 }
                 return new double[]{0,0,0};
             case SHOOT:
-                setCoeffsForShoot();
+                setCoeffsForShoot(lines.get(curIndex).getDis());
                 double[] target2 = poses.get(curIndex+1);
                 target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
                 updateControls(currentPos,target2, true);
-                if(!bot.outtaking){
+                if(bot.autoAimer.isDone){
+                    bot.autoAimer.ready();
                     next();
                 }
+                bot.outtakeWithCalculations();
                 if(xControl.done() && yControl.done() && hControl.done()){
                     if((endTimer.seconds() > endWait)) {
+                        bot.autoAimer.reached();
                         return new double[]{0, 0, 0};
                     }else{
                         return calcPows();
@@ -321,6 +335,7 @@ public class Path {
 
     }
 
+
     public void start(TerraBot bot, LinearOpMode op){
         globalTime.reset();
         op.telemetry.addData("Starting", "RF Threads");
@@ -350,9 +365,10 @@ public class Path {
 //            op.telemetry.addData("Outr speed", bot.autoAimer.outrController.currSpeed);
             op.telemetry.addData("targetPos", bot.autoAimer.outtakePos);
             op.telemetry.addData("oldtargetPos", bot.autoAimer.oldOuttakePos);
+            op.telemetry.addData("isDone", bot.autoAimer.isDone);
+            op.telemetry.addData("hasreached", bot.autoAimer.hasReached);
             op.telemetry.update();
 //
-            bot.outtakeWithCalculations();
 
             double[] pows = update(bot.odometry.getAll(), bot);
             track.add(bot.odometry.getAll());
