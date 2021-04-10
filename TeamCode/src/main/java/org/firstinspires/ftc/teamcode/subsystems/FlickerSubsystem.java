@@ -62,7 +62,7 @@ public class FlickerSubsystem extends Subsystem {
     }
 
     public void setFlickerIn() {
-        flicker.setPosition(0.59);
+        flicker.setPosition(0.61);
     }
 
     public void flickRing() {
@@ -70,7 +70,7 @@ public class FlickerSubsystem extends Subsystem {
         // move in
         setFlickerIn();
         double initialTime = System.currentTimeMillis();
-        while(potentiometer.getVoltage() > 0.72 && System.currentTimeMillis() - initialTime < 750) {
+        while(potentiometer.getVoltage() > 0.642 && System.currentTimeMillis() - initialTime < 750) {
             robot.safeSleep(1);
             Log.i("Flicker", potentiometer.getVoltage() + "");
         }

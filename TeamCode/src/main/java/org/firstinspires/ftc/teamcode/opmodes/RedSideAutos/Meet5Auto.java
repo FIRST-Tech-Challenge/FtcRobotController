@@ -79,7 +79,7 @@ public class Meet5Auto extends UpliftAuto {
             // shoot
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
             driveSub.passThroughPosition(109, 24, 1, 0);
-            driveSub.driveToPosition(109, 48, 0.6, 0);
+            driveSub.driveToPosition(109, 48, 0.4, 0);
             driveSub.turnTo(0,0.3, DriveSubsystem.QUICKEST_DIRECTION);
             autoHighGoalShoot();
 
@@ -90,12 +90,13 @@ public class Meet5Auto extends UpliftAuto {
                 }
                 intakeSub.setIntakePower(1);
                 double shootingActualY = robot.worldY;
-                driveSub.driveToPosition(109, shootingActualY + 2, 0.3, 1, 0, DriveSubsystem.QUICKEST_DIRECTION);
-                robot.safeSleep(1250);
+                driveSub.driveToPosition(109, shootingActualY + 1.5, 0.3, 1, 0, DriveSubsystem.QUICKEST_DIRECTION);
+                robot.safeSleep(1100);
                 intakeSub.setIntakePower(0);
 
                 // shoot second set of 3
                 intakeSub.setIntakePower(-1);
+                robot.safeSleep(200);
                 transferSub.autoRaiseTransfer();
                 intakeSub.liftRoller();
                 shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
@@ -117,21 +118,20 @@ public class Meet5Auto extends UpliftAuto {
             }
 
             // drive to drop off first wobble
-            wobbleSub.setWobblePosition(0.5);
-            driveSub.passThroughPosition(134,100,1,180);
-            driveSub.driveToPosition(134, 114, 0.5, 180);
-            wobbleSub.dropWobble();
-            robot.safeSleep(500);
-            wobbleSub.openWobble();
+            wobbleSub.setWobblePosition(0.4);
+            driveSub.passThroughPosition(120, 102, 1, -135);
+            driveSub.driveToPosition(128,120, 0.6, -135);
+            wobbleSub.dropOff();
+            driveSub.passThroughPosition(122, 114, 1, -135);
 
             // drive to pick up second wobble
             getSecondWobble();
 
             // drop off second wobble
-            driveSub.passThroughPosition(110, 102, 1, -135);
-            driveSub.driveToPosition(124,116, 0.7, -135);
+            driveSub.passThroughPosition(120, 102, 1, -135);
+            driveSub.driveToPosition(124,116, 0.6, -135);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(92, 84, 1, -135);
+            driveSub.driveToPosition(96, 88, 1, -135);
 
             //park
             intakeSub.dropRoller();
@@ -142,7 +142,9 @@ public class Meet5Auto extends UpliftAuto {
             // shoot
             shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
             driveSub.driveToPosition(107, 48, 0.7, 0);
-            driveSub.turnTo(0,0.3,DriveSubsystem.QUICKEST_DIRECTION);
+            wobbleSub.setWobblePosition(0.85);
+            wobbleSub.setWobblePosition(0.2);
+            driveSub.turnTo(0,0.3, DriveSubsystem.QUICKEST_DIRECTION);
             intakeSub.liftRoller();
             autoHighGoalShoot();
             intakeSub.dropRoller();
@@ -170,16 +172,16 @@ public class Meet5Auto extends UpliftAuto {
             }
 
             // drop off first wobble
-            wobbleSub.setWobblePosition(0.2);
-            driveSub.driveToPosition(118, 96, 1, 180);
+            driveSub.driveToPosition(120, 96, 1, 180);
+            driveSub.turnTo(180, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
             wobbleSub.dropOff();
 
             // pick up second wobble goal
             getSecondWobble();
 
             // drop off the second wobble goal
-            driveSub.passThroughPosition(110, 80, 1, 180);
-            driveSub.driveToPosition(110, 90, 0.7, 180);
+            driveSub.passThroughPosition(114, 80, 0.85, 180, DriveSubsystem.QUICKEST_DIRECTION, 6);
+            driveSub.driveToPosition(114, 92, 0.7, 180);
             wobbleSub.dropOff();
 
             // park
@@ -194,6 +196,7 @@ public class Meet5Auto extends UpliftAuto {
             // drop off first wobble
             wobbleSub.setWobblePosition(0.2);
             driveSub.driveToPosition(129, 70, 1, -180, DriveSubsystem.CLOCKWISE);
+            driveSub.turnTo(-180, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
             wobbleSub.dropOff();
             driveSub.driveToPosition(129, 66, 1, -180);
 
@@ -201,8 +204,9 @@ public class Meet5Auto extends UpliftAuto {
             getSecondWobble();
 
             // go to drop off second wobble
-            driveSub.passThroughPosition(110, 48, 1, -135, DriveSubsystem.CLOCKWISE);
+            driveSub.passThroughPosition(110, 54, 1, -135, DriveSubsystem.CLOCKWISE, 4);
             driveSub.driveToPosition(126, 70, 0.7, -135);
+            driveSub.turnTo(-135, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
             wobbleSub.dropOff();
             driveSub.driveToPosition(122, 66, 1,-135);
 
@@ -225,9 +229,9 @@ public class Meet5Auto extends UpliftAuto {
     }
 
     public void getSecondWobble() {
-        driveSub.passThroughPosition(113, 44, 0.5, 0, DriveSubsystem.COUNTER_CLOCKWISE);
+        driveSub.passThroughPosition(112, 50, 0.5, 0, DriveSubsystem.COUNTER_CLOCKWISE, 6);
         driveSub.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
-        driveSub.driveToPosition(113, 38, 0.3, 1, 0, 0);
+        driveSub.driveToPosition(112, 37, 0.3, 1, 0, 0);
         wobbleSub.pickUp();
     }
 

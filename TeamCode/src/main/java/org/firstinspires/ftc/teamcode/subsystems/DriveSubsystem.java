@@ -106,7 +106,7 @@ public class DriveSubsystem extends Subsystem {
         driveToPosition(xPosition, yPosition, movementSpeed, 2, targetAngle, DriveSubsystem.QUICKEST_DIRECTION);
     }
 
-    public void passThroughPosition(double xPosition, double yPosition, double movementSpeed, double targetAngle, int turnDirection) {
+    public void passThroughPosition(double xPosition, double yPosition, double movementSpeed, double targetAngle, int turnDirection, int tolerance) {
         double xDistanceToPoint = xPosition - robot.worldX;
         double yDistanceToPoint = yPosition - robot.worldY;
         double distanceToPoint = hypot(xDistanceToPoint, yDistanceToPoint);
@@ -115,7 +115,7 @@ public class DriveSubsystem extends Subsystem {
         double initialDistanceToPoint = distanceToPoint;
 
         double relativeAngle = toDegrees(MathFunctions.atan2UL(yDistanceToPoint, xDistanceToPoint)) - robot.worldAngle;
-        while (distanceToPoint > 4) {
+        while (distanceToPoint > tolerance) {
             if (robot.driverCancel || !opMode.opModeIsActive() || opMode.isStopRequested()) {
                 // breakaway statement for teleop
                 disable();
@@ -133,7 +133,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void passThroughPosition(double xPosition, double yPosition, double movementSpeed, double targetAngle) {
-        passThroughPosition(xPosition, yPosition, movementSpeed, targetAngle, DriveSubsystem.QUICKEST_DIRECTION);
+        passThroughPosition(xPosition, yPosition, movementSpeed, targetAngle, DriveSubsystem.QUICKEST_DIRECTION, 4);
     }
 
     public void driveTowards(double speedVal, double relativeAngleToPoint, double targetAngle, double initialDistToPt, int turnDirection) {
