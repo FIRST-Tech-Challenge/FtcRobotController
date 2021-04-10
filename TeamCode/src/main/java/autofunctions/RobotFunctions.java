@@ -135,7 +135,7 @@ public class RobotFunctions {
             @Override
             public void run() {
                 while (!bot.autoAimer.hasReached){}
-                pause(0.3);
+                pause(0.1);
                 for (int i = 0; i < numRings; i++) {
                     bot.rp.setPosition(bot.pushControl.getPos(2));
                     pause(0.2);

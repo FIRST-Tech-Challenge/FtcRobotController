@@ -43,6 +43,7 @@ public class Path {
     public ArrayList<Line> lines = new ArrayList<>();
     public ArrayList<Posetype> posetypes = new ArrayList<>();
     public RobotFunctionsHandler rfsHandler = new RobotFunctionsHandler();
+    public RobotFunctionsHandler wobbleGoalHandler = new RobotFunctionsHandler();
 
     public ArrayList<Double> stops = new ArrayList<>();
     public int stopIndex = 0;
@@ -132,9 +133,9 @@ public class Path {
         xControl.scaleCoeffs(40/dis);
         yControl.scaleCoeffs(40/dis);
         hControl.scaleCoeffs(2);
-//        xControl.scaleAccs(0.5);
-//        yControl.scaleAccs(0.5);
-//        hControl.scaleAccs(0.25);
+        xControl.scaleAccs(0.5);
+        yControl.scaleAccs(0.5);
+        hControl.scaleAccs(0.25);
     }
 
 
@@ -153,12 +154,14 @@ public class Path {
         addNewPose(x,y,h);
         posetypes.add(Posetype.WAYPOINT);
         rfsHandler.notRF();
+        wobbleGoalHandler.notRF();
     }
 
     public void addSetpoint(double x, double y, double h){
         addNewPose(x,y,h);
         posetypes.add(Posetype.SETPOINT);
         rfsHandler.notRF();
+        wobbleGoalHandler.notRF();
     }
 
     public void addStop(double time){
@@ -166,24 +169,32 @@ public class Path {
         posetypes.add(Posetype.STOP);
         stops.add(time);
         rfsHandler.notRF();
+        wobbleGoalHandler.notRF();
     }
 
     public void addShoot(double x, double y, double h){
         addNewPose(x,y,h);
         posetypes.add(Posetype.SHOOT);
         rfsHandler.notRF();
+        wobbleGoalHandler.notRF();
     }
 
     public void addRF(CodeSeg... segs){
         rfsHandler.addRFs(segs);
     }
 
+    public void addWGRF(CodeSeg... segs) {
+        wobbleGoalHandler.addRFs(segs);
+    }
+
 
     public void startRFThread(LinearOpMode op){
        rfsHandler.start(op);
+       wobbleGoalHandler.start(op);
     }
     public void stopRFThread(){
        rfsHandler.stop();
+       wobbleGoalHandler.stop();
     }
 
     public void next(){
@@ -191,6 +202,7 @@ public class Path {
         globalTime.reset();
         curIndex++;
         rfsHandler.update();
+        wobbleGoalHandler.update();
         if(curIndex >= lines.size()){
             end();
         }
@@ -291,7 +303,7 @@ public class Path {
                 }
                 bot.outtakeWithCalculations();
                 if(xControl.done() && yControl.done() && hControl.done()){
-                    if((endTimer.seconds() > endWait)) {
+                    if(endTimer.seconds() > endWait) {
                         bot.autoAimer.reached();
                         return new double[]{0, 0, 0};
                     }else{
@@ -303,7 +315,6 @@ public class Path {
                 }
             default:
                 return new double[]{0,0,0};
-
         }
 
 
@@ -366,13 +377,13 @@ public class Path {
 //            op.telemetry.addData("Target speed L", bot.autoAimer.outlController.targetSpeed);
 //            op.telemetry.addData("Target speed R", bot.autoAimer.outrController.targetSpeed);// 213.5 CORRECT
 //            op.telemetry.addData("Outr speed", bot.autoAimer.outrController.currSpeed);
-            op.telemetry.addData("targetPos", Arrays.toString(bot.autoAimer.outtakePos));
-            op.telemetry.addData("oldtargetPos", Arrays.toString(bot.autoAimer.oldOuttakePos));
-            op.telemetry.addData("isDone", bot.autoAimer.isDone);
-            op.telemetry.addData("hasreached", bot.autoAimer.hasReached);
-            op.telemetry.addData("outtaking", bot.outtaking);
+//            op.telemetry.addData("targetPos", Arrays.toString(bot.autoAimer.outtakePos));
+//            op.telemetry.addData("oldtargetPos", Arrays.toString(bot.autoAimer.oldOuttakePos));
+//            op.telemetry.addData("isDone", bot.autoAimer.isDone);
+//            op.telemetry.addData("hasreached", bot.autoAimer.hasReached);
+//            op.telemetry.addData("outtaking", bot.outtaking);
+            op.telemetry.addData("wg distance sensor", bot.getWgePos());
             op.telemetry.update();
-//
 
             double[] pows = update(bot.odometry.getAll(), bot);
             track.add(bot.odometry.getAll());

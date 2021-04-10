@@ -276,6 +276,7 @@ public class TerraBot {
             }
         }
         moveArm(0);
+        wge.setPower(0);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 

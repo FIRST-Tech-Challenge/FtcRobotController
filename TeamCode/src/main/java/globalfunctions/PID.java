@@ -88,13 +88,15 @@ public class PID {
     }
 
     public void scaleCoeffs(double scale) {
-        Kp = sKp * scale;
-        Kd = sKd * scale;
-        Ki = sKi * scale;
+        if (scale < 100) {
+            Kp = sKp * scale;
+            Kd = sKd * scale;
+            Ki = sKi * scale;
+        }
     }
 
     public void scaleAccs(double scale){
-        acc = sacc *scale;
+        acc = sacc * scale;
     }
 
 

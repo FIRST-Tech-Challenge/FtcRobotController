@@ -21,7 +21,7 @@ public class RobotFunctionsHandler {
         @Override
         public void run() {
             if(rfsIndex < rfs.size()) {
-                if((rfsQueue.size()) > rfsQueueIndex){
+                if(rfsQueue.size() > rfsQueueIndex){
                     rfsQueue.get(rfsQueueIndex).run();
                     rfsQueueIndex++;
                 }

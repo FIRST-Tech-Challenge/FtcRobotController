@@ -11,13 +11,13 @@ import developing.TerraCVHandler;
 import global.TerraBot;
 import globalfunctions.Constants;
 
-@Autonomous(name="AutoZero", group="Auto")
-public class AutoZero extends LinearOpMode {
+@Autonomous(name="AutoFour", group="Auto")
+public class AutoFour extends LinearOpMode {
     TerraBot bot = new TerraBot();
-//    Path path = new Path(Constants.START_X,Constants.START_Y,Constants.START_H);
+    //    Path path = new Path(Constants.START_X,Constants.START_Y,Constants.START_H);
     Path path = new Path(Constants.START_X,Constants.START_Y,Constants.START_H);
     RobotFunctions rf = new RobotFunctions();
-    TerraCV.RingNum ringNum = TerraCV.RingNum.ZERO;
+    TerraCV.RingNum ringNum = TerraCV.RingNum.FOUR;
 
     @Override
     public void runOpMode() {
@@ -61,12 +61,19 @@ public class AutoZero extends LinearOpMode {
          *
          *
          */
+        // INITIAL SHOOTING
         path.addWGRF(rf.moveWgTo(45));
-//        path.addRF(rf.readyShooter(), rf.shootIntoGoal(3), rf.stopOuttake());
-//        path.addShoot(7,50,0);
-        path.addStop(5);
-        path.addWGRF(rf.stopArm());
-        path.addStop(0.1);
+        path.addRF(rf.readyShooter(), rf.shootIntoGoal(3), rf.stopOuttake());
+        path.addShoot(7,50,0);
+
+        // NOW TO KNOCK DOWN THE TOWER AND INTAKE THE RINGS
+        path.addRF(rf.intake(1));
+        path.addSetpoint(0, 30, 0);
+
+        path.addWaypoint(0, 10, 0);
+        path.addStop(3);
+        path.addRF(rf.intake(0), rf.readyShooter(), rf.shootIntoGoal(1), rf.stopOuttake());
+        path.addShoot(0.001, -0.001, 0);
 
         path.start(bot, this);
         path.saveData();

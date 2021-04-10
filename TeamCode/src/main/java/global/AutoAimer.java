@@ -102,12 +102,13 @@ public class AutoAimer {
 //    }
 
     public double getRobotToGoalAngle(double[] pos) {
+        double offset = Constants.CURVATURE_TAN_THETA * pos[1]/100;
         double disFromFront = (Constants.FIELD_LENGTH - pos[1]/100);
         double disFromLeft = pos[0]/100;
         if(shotMode == 0) {
-            return Math.toDegrees(Constants.halfPi - Math.atan2(disFromFront, disFromLeft - Constants.GOAL_FROM_LEFT));
+            return Math.toDegrees(Constants.halfPi - Math.atan2(disFromFront, disFromLeft - Constants.GOAL_FROM_LEFT - offset));
         }else{
-            return Math.toDegrees(Constants.halfPi - Math.atan2(disFromFront, disFromLeft - Constants.POWERSHOT_FROM_LEFT - (Constants.DIS_BETWEEN_POWERSHOTS*(shotMode-1))));
+            return Math.toDegrees(Constants.halfPi - Math.atan2(disFromFront, disFromLeft - Constants.POWERSHOT_FROM_LEFT - (Constants.DIS_BETWEEN_POWERSHOTS*(shotMode-1)) - offset));
         }
     }
 

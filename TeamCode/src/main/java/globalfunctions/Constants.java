@@ -5,7 +5,7 @@ import util.Geometry;
 
 public class Constants {
     public static final double MAX_OUTTAKE_SPEED = 100*2*Math.PI; // rad/s
-    public static final double OUTR_SPEED_OFFSET = 0.1*MAX_OUTTAKE_SPEED;
+    public static final double OUTR_SPEED_OFFSET = 0.12*MAX_OUTTAKE_SPEED;
     public static final double OUTL_SPEED_OFFSET = -0.05*MAX_OUTTAKE_SPEED;
 //    public static final double OUTR_SPEED_OFFSET = 0;
 //    public static final double OUTL_SPEED_OFFSET = 0;
@@ -20,6 +20,7 @@ public class Constants {
     public static final double SHOOTER_HEIGHT = 0.25; // meters
     public static final double SHOOTER_WHEEL_RADIUS = 0.05; // meters
     public static final double FIELD_LENGTH = 3.6576; //meters
+    public static final double CURVATURE_TAN_THETA = Math.tan(12/294.76);
 
     public static final double CLL_GRAB = 0.2;
     public static final double CLL_OPEN = 1;
