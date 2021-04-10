@@ -37,8 +37,8 @@ public class UltimateBot extends YellowBot {
 
     private static double SWING_BACK_POS = 1;
     private static double SWING_PLACE_POS = 0.18;
-    private static double SWING_LIFT_AND_HOLD = 0.35;
-    private static double SWING_LIFT_WALL = 0.45;
+    private static double SWING_LIFT_AND_HOLD = 0.4;
+    private static double SWING_LIFT_WALL = 0.5;
     private static double SHOOT_SERVO = 0.42;
 
     private boolean syncturretcamera = true;
@@ -184,42 +184,42 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.83);
+            shooter.setVelocity(MAX_VELOCITY*0.8);
         }
     }
 
     @BotAction(displayName = "Move Shooter High", defaultReturn = "")
     public void shooterhigh() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*1);
+            shooter.setVelocity(MAX_VELOCITY*0.87);
         }
     }
 
     @BotAction(displayName = "Move Shooter Med", defaultReturn = "")
     public void shootermed() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.9);
+            shooter.setVelocity(MAX_VELOCITY*0.82);
         }
     }
 
     @BotAction(displayName = "Move Shooter Low", defaultReturn = "")
     public void shooterlow() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.8);
+            shooter.setVelocity(MAX_VELOCITY*0.75);
         }
     }
 
     @BotAction(displayName = "Move Shooter Lower", defaultReturn = "")
     public void shooterlower() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.75);
+            shooter.setVelocity(MAX_VELOCITY*0.7);
         }
     }
 
     @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
     public void shooterpeglow() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.57);
+            shooter.setVelocity(MAX_VELOCITY*0.54);
         }
     }
 

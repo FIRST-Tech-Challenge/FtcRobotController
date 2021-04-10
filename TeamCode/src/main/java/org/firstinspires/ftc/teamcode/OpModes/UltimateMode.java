@@ -245,7 +245,7 @@ public class UltimateMode extends LinearOpMode {
         if (!gamepadRateLimit.hasExpired()) {
             return;
         }
-        if (gamepad1.y){
+        if (gamepad2.y){
 //            robot.shootPegTurnManual(locator);
 //            robot.shootPegTurn(locator);
             robot.shootPegTurnManualTape(locator);
