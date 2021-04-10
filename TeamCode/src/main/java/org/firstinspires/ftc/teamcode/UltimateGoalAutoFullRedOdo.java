@@ -46,8 +46,8 @@ public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
         switch(startShootingStyle) {
             case STRAFE_STOP:
             case HIGH_GOAL:
-                powerShotFirst = new WayPoint(77.77404, 149.7584, Math.toRadians(93.0), REGULAR_SPEED);
-                powerShotSecond = new WayPoint(103.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+                powerShotFirst = new WayPoint(82.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+                powerShotSecond = new WayPoint(100.27404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
                 powerShotThird = new WayPoint(122.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
                 beforeQuadStack = new WayPoint(152.865, 74.46187, Math.toRadians(71.43), SLOW_SPEED);
                 collectQuadStack = new WayPoint(165.2126, 122.607, Math.toRadians(69.946), REGULAR_SPEED);

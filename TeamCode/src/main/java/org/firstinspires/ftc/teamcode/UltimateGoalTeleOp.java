@@ -440,6 +440,11 @@ public class UltimateGoalTeleOp extends OpMode {
         if(!robot.disableDriverCentric) {
             telemetry.addData("Gyro Angle: ", robot.readIMU());
         }
+        telemetry.addData("Was Auto Run? ", robot.autoExecuted);
+        telemetry.addData("Final Auto Left Encoder: ", robot.finalLeftEncoder);
+        telemetry.addData("Final Auto Right Encoder: ", robot.finalRightEncoder);
+        telemetry.addData("Final Auto Strafe Encoder: ", robot.finalStrafeEncoder);
+
         telemetry.addData("Final Auto X Position: ", robot.finalAutoPosition.x);
         telemetry.addData("Final Auto Y Position: ", robot.finalAutoPosition.y);
         telemetry.addData("Final Auto Angle: ", Math.toDegrees(robot.finalAutoPosition.angle));

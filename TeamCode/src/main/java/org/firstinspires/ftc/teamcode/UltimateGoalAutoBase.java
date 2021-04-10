@@ -107,20 +107,23 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
     protected void updatePosition() {
         // Allow the robot to read sensors again
         robot.resetReads();
+        int leftValue = robot.getLeftEncoderWheelPosition();
+        int rightValue = robot.getRightEncoderWheelPosition();
+        int strafeValue = robot.getStrafeEncoderWheelPosition();
         if(opModeIsActive()) {
-            robot.finalLeftEncoder = robot.getLeftEncoderWheelPosition();
-            robot.finalRightEncoder = robot.getRightEncoderWheelPosition();
-            robot.finalStrafeEncoder = robot.getStrafeEncoderWheelPosition();
+            robot.finalLeftEncoder = leftValue;
+            robot.finalRightEncoder = rightValue;
+            robot.finalStrafeEncoder = strafeValue;
             MyPosition.giveMePositions(robot.finalLeftEncoder,
                     robot.finalRightEncoder,
                     robot.finalStrafeEncoder);
 
             robot.finalAutoPosition.setWayPoint(MyPosition.worldXPosition, MyPosition.worldYPosition,
                     MyPosition.worldAngle_rad);
-        }
 
-        // Progress the robot actions.
-        performRobotActions();
+            // Progress the robot actions.
+            performRobotActions();
+        }
     }
 
     protected void performRobotActions() {

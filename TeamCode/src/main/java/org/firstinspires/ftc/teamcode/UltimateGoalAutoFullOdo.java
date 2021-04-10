@@ -70,17 +70,20 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
         driveToWayPoint(aroundStartingStack1, true, true);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
         driveToWayPoint(powerShotFirst, false, false);
+        rotateToWayPointAngle(powerShotFirst);
         sleep(500);
         robot.startInjecting();
         while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
             updatePosition();
         }
         driveToWayPoint(powerShotSecond, false, false);
+        rotateToWayPointAngle(powerShotSecond);
         robot.startInjecting();
         while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
             updatePosition();
         }
         driveToWayPoint(powerShotThird, false, false);
+        rotateToWayPointAngle(powerShotThird);
         robot.startInjecting();
         while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
             updatePosition();
@@ -286,7 +289,9 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
                 driveToWayPoint(highGoal, true, true);
                 robot.setIntakeOff();
             } else if (randomizationPosition == 2) {
+                robot.startInjectingJiggle();
                 driveToWayPoint(highGoal, false, false);
+                rotateToWayPointAngle(highGoal);
                 robot.startInjecting();
                 while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
                     updatePosition();
@@ -295,6 +300,7 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
                 robot.setIntakeOff();
             } else if (randomizationPosition == 3) {
                 driveToWayPoint(quadHighGoalFinal, false, false);
+                rotateToWayPointAngle(quadHighGoalFinal);
                 robot.startTripleInjecting();
                 while (opModeIsActive() && robot.tripleInjectState != UltimateGoalRobot.TRIPLE_INJECTING.IDLE) {
                     updatePosition();

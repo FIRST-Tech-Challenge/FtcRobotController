@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
@@ -27,8 +30,11 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         updateTelemetry(telemetry);
         robot.init(hardwareMap);
 //        robot.disableDriveEncoders();
-        robot.setShooterFlapHighGoal();
+        robot.setShooterFlapPowerShot();
         robot.setInputShaping(true);
+        // Let's try to tweak the PIDs
+        robot.shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(400,
+                1, 1, 0, MotorControlAlgorithm.PIDF));
         telemetry.addLine("Ready");
         updateTelemetry(telemetry);
     }
@@ -190,6 +196,11 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         }
 
         if(!crossHeld && crossPressed) {
+            if(robot.shooterMotorTargetVelocity == 0) {
+                robot.shooterOnHighGoal();
+            } else {
+                robot.shooterOff();
+            }
             crossHeld = true;
         } else if(!crossPressed) {
             crossHeld = false;

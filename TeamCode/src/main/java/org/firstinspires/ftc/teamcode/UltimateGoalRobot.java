@@ -48,11 +48,21 @@ public class UltimateGoalRobot
     /* Public OpMode members. */
     public final static double WOBBLE_ARM_MIN = 0.300;
     public final static double WOBBLE_ARM_MAX = 3.2;
+
+    // Regular high goal shots
     public final static double SHOOT_VELOCITY = 1180;
+
+    // Quad auto high goal stack shots
     public final static double QUAD_HIGH_SHOT_VELOCITY = 1160;
-    public final static double LONG_SHOT_VELOCITY = 1080;
+
+    // Quad auto long initial shot
+    public final static double LONG_SHOT_VELOCITY = 1100;
+    // public final static double LONG_SHOT_VELOCITY = 1080;
+
+    // Power shots
     public final static double SHOOT_POWERSHOT_VELOCITY = 980;
-    public final static double SHOOT_VELOCITY_ERROR = 20;
+
+    public final static double SHOOT_VELOCITY_ERROR = 40;
     public final static double THROTTLE_TIMEOUT = 7000;
     public final static double STRAFE_MULTIPLIER = 1.5;
     public final static double SLOW_STRAFE_MULTIPLIER = 1.5;
@@ -149,9 +159,10 @@ public class UltimateGoalRobot
 
     public static WayPoint shootingError = new WayPoint(0, 0, Math.toRadians(0), 1.0);
     public static WayPoint highGoal = new WayPoint(167.35324, 149.7584, Math.toRadians(95.0), 1.0);
+
     public static WayPoint powerShotRight = new WayPoint(122.77404, 149.7584, Math.toRadians(95.0), 1.0);
-    public static WayPoint powerShotCenter = new WayPoint(103.77404, 149.7584, Math.toRadians(95.0), 1.0);
-    public static WayPoint powerShotLeft = new WayPoint(77.77404, 149.7584, Math.toRadians(95.0), 1.0);
+    public static WayPoint powerShotCenter = new WayPoint(100.27404, 149.7584, Math.toRadians(95.0), 1.0);
+    public static WayPoint powerShotLeft = new WayPoint(82.77404, 149.7584, Math.toRadians(95.0), 1.0);
 
     public double xAngle, yAngle, zAngle;
     /* local OpMode members. */
@@ -238,8 +249,8 @@ public class UltimateGoalRobot
         wobbleTimer = new ElapsedTime();
 
         // Let's try to tweak the PIDs
-        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300,
-                10, 3, 0, MotorControlAlgorithm.PIDF));
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(400,
+                1, 1, 0, MotorControlAlgorithm.PIDF));
 
         // Define and initialize sensors
         armPot = hwMap.get(AnalogInput.class, ARM_POT);
@@ -548,7 +559,7 @@ public class UltimateGoalRobot
         }
 
         // We are done if we are within 2 degrees
-        if(abs(Math.toDegrees(deltaAngle)) < 2) {
+        if(abs(Math.toDegrees(deltaAngle)) < 1) {
             // We have reached our destination if the angle is close enough
             setAllDriveZero();
             reachedDestination = true;
