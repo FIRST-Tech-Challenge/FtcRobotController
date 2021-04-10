@@ -29,6 +29,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private AdjustableServo feeder;
     private AdjustableServo holder;
     private AdjustableServo blocker;
+    private AdjustableServo ringBar;
     public CRServo ringLifter;
     /*private*/ public TouchSensor magLow;
     /*private*/ public TouchSensor magHigh;
@@ -49,9 +50,14 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private final double BLOCKER_INIT = 0.15;
     private final double BLOCKER_DOWN = 0.82;
 
+    private final double RING_BAR_UP = 0.18;
+    private final double RING_BAR_INIT = 0.15;
+    private final double RING_BAR_DOWN = 0.82;
+
     private boolean feederIsIn = true;
     private boolean holderIsIn = true;
     private boolean blockerIsUp = true;
+    private boolean ringBarIsUp = true;
     private boolean transferIsDown = true;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -100,9 +106,14 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 logTag + ":hopper", logLevel
         );
         blocker.configure(configuration.getHardwareMap(), "blocker");
+        ringBar = new AdjustableServo(0, 1).configureLogging(
+                logTag + ":hopper", logLevel
+        );
+        ringBar.configure(configuration.getHardwareMap(), "ringBar");
         configuration.register(feeder);
         configuration.register(holder);
         configuration.register(blocker);
+        configuration.register(ringBar);
 
         magLow = configuration.getHardwareMap().get(TouchSensor.class, "magLow");
         magHigh = configuration.getHardwareMap().get(TouchSensor.class, "magHigh");
@@ -120,6 +131,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         holderIsIn = true;
         blocker.setPosition(BLOCKER_INIT);
         blockerIsUp = true;
+        ringBar.setPosition(RING_BAR_INIT);
+        ringBarIsUp = true;
         //hookUp();
         // configuration.register(this);
     }
@@ -181,6 +194,24 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         else
             blockerUp();
     }
+
+    public void ringBarUp() {
+        ringBar.setPosition(RING_BAR_UP);
+        ringBarIsUp = true;
+    }
+
+    public void ringBarDown() {
+        ringBar.setPosition(RING_BAR_DOWN);
+        ringBarIsUp = false;
+    }
+
+    public void ringBarAuto() throws InterruptedException {
+        if(ringBarIsUp)
+            ringBarDown();
+        else
+            ringBarUp();
+    }
+
 
     public void transferUp(){
         if (ringLifter==null) return;
@@ -437,6 +468,15 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 @Override
                 public Double value() {
                     return blocker.getPosition();
+                }
+            });
+        }
+
+        if (ringBar != null) {
+            line.addData("RingBar", "pos=%.2f", new Func<Double>() {
+                @Override
+                public Double value() {
+                    return ringBar.getPosition();
                 }
             });
         }

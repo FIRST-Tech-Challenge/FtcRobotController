@@ -658,6 +658,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (comboGrabber != null)
                         autoGrabHighWobbleGoal(true);
                     //top wobble goal combos functions go here
+                } else if (source.isPressed(Button.RIGHT_BUMPER)) {
+                    if (hopper != null) {
+                        hopper.ringBarAuto();
+                    }
                 } else if (source.isPressed(Button.BACK)) {
                     if (comboGrabber != null)
                         autoGrabHighWobbleGoal(false);
@@ -2027,10 +2031,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 }
             } else if (tZone == TargetZone.ZONE_C) {//4
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
+                if (hopper != null) {
+                    hopper.ringBarDown();
+                    sleep(200);
+                }
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(1.0, side(87), 123, -2, false, 2);
                 autoIntakeRings(3, true);
                 if (hopper != null) {
+                    hopper.ringBarUp();
                     hopper.hopperUpCombo(true);
                     TaskManager.processTasks();
                 }
