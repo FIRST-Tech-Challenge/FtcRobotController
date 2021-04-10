@@ -57,7 +57,6 @@ public class WobbleCommands extends Command {
                 wobble.closeWobble();
                 wobble.endgameWobble();
             } else if (clickCount == 3) {
-                wobble.endgameWobble();
                 wobble.openWobble();
             }
         }
