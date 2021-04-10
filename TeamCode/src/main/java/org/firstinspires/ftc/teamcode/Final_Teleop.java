@@ -101,15 +101,15 @@ public class Final_Teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
+                lf.setPower(lfPower * 0.8);
+                rf.setPower(rfPower * 0.8);
+                lb.setPower(lbPower * 0.8);
+                rb.setPower(rbPower * 0.8);
+            } else {
                 lf.setPower(lfPower * 0.5);
                 rf.setPower(rfPower * 0.5);
                 lb.setPower(lbPower * 0.5);
                 rb.setPower(rbPower * 0.5);
-            } else {
-                lf.setPower(lfPower * 0.25);
-                rf.setPower(rfPower * 0.25);
-                lb.setPower(lbPower * 0.25);
-                rb.setPower(rbPower * 0.25);
             }
 
             if (gamepad2.right_trigger >= 0.2) {

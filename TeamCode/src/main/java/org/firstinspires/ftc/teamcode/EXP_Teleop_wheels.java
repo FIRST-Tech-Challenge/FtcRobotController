@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -20,12 +22,19 @@ import static java.lang.StrictMath.abs;
 public class EXP_Teleop_wheels extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
+
     private DcMotor lf = null;
     private DcMotor rf = null;
     private DcMotor lb = null;
     private DcMotor rb = null;
 
-    private DcMotor SoN = null;
+    private CRServo SoN = null;
+    //private Servo feeder = null;
+    //private Servo wobble = null;
+
+    private DcMotor spinL = null;
+    private DcMotor spinR = null;
+    private DcMotor factory = null;
 
     @Override
     public void runOpMode() {
@@ -37,7 +46,9 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
 
-        SoN = hardwareMap.get(DcMotor.class, "SoN");
+        SoN = hardwareMap.get(CRServo.class, "SoN");
+        //feeder = hardwareMap.get(Servo.class, "feeder");
+
 
         //left side needs to be reversed because the motors are upside down, forehead
         lf.setDirection(DcMotor.Direction.REVERSE);
@@ -45,7 +56,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
 
-        SoN.setDirection(DcMotor.Direction.FORWARD);
+        SoN.setDirection(CRServo.Direction.FORWARD);
 
         float lfPower;
         float rfPower;
@@ -108,7 +119,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
 
             //TODO put SoN on gamepad2
             //sticking with gamepad1 for ease of testing at this point
-            collectPwr = gamepad1.right_trigger;
+            //collectPwr = gamepad1.right_trigger;
 
 
             lfPower = Range.clip(lfPower, -1, 1);
@@ -116,7 +127,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
             lbPower = Range.clip(lbPower, -1, 1);
             rbPower = Range.clip(rbPower, -1, 1);
 
-            collectPwr = Range.clip(collectPwr, 0, 1);
+            //collectPwr = Range.clip(collectPwr, 0, 1);
 
             if (gamepad1.right_bumper){
                 lf.setPower(lfPower * highPwrMult);
@@ -130,7 +141,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
                 rb.setPower(rbPower * basePwrMult);
             }
 
-            SoN.setPower(collectPwr * SoNPwrMult);
+            //SoN.setPower(collectPwr * SoNPwrMult);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f), leftback (%.2f), rightback (%.2f), SoN (%.2f)", lfPower, rfPower, lbPower ,rbPower, collectPwr);
