@@ -630,6 +630,11 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public void driveTo(double power, double target_x, double target_y, double target_heading, boolean useRotateTo, double timeout_sec) throws InterruptedException {
+        driveTo(power, target_x,target_y,target_heading,useRotateTo,true,timeout_sec);
+    }
+
+    public void driveTo(double power, double target_x, double target_y, double target_heading, boolean useRotateTo,
+                        boolean headingCorrection, double timeout_sec) throws InterruptedException {
         if (simulation_mode) { // simulation mode
             try {
                 dumpEvent (String.format("driveTo: %3.0f, %3.0f, %3.0f\n", target_x, target_y, target_heading));
@@ -727,7 +732,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                 TaskManager.processTasks();
             }
             //move
-            boolean headingCorrection = true; // Math.abs(desiredDegree) <90;
+            // boolean headingCorrection = true; // Math.abs(desiredDegree) <90;
             motorPowers = angleMove(desiredDegree, powerUsed, headingCorrection,
                     (autoDriveMode== AutoDriveMode.CONTINUE_NO_CORRECTION?desiredDegree:target_heading));
 

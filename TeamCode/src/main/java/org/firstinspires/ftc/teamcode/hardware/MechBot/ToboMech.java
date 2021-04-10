@@ -594,7 +594,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.isPressed(Button.BACK)) {
                     // semi power shot
                     // doPowerShotsSemi(3,false);
-                    doPowerShotsSemiNew(3,true);
+                    doPowerShotsSemiNew(3,true, true);
                 } else {
                     if (hopper.getTransferIsDown() || Math.abs(shooting_rpm-WARM_UP_RPM_POWER_SHOT)>20 ||
                     shooter.getCurrentRPM()<WARM_UP_RPM_POWER_SHOT-100) {
@@ -1800,7 +1800,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(100);
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
-    public void doPowerShotsSemiNew(int n, boolean angleCollection) throws InterruptedException {//auto power shots
+    public void doPowerShotsSemiNew(int n, boolean angleCollection, boolean driverAligned) throws InterruptedException {//auto power shots
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
         shooting_rpm = SEMI_POWER_SHOT_RPM;
         if (hopper != null && hopper.getTransferIsDown()) {
@@ -1809,8 +1809,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (intake!=null)
             intake.stop();
-        chassis.rotateTo(0.3, 0);
-        sleep(200);
+        double target_heading=(angleCollection?2.3:chassis.odo_heading());
+        if (driverAligned) {
+            // assume robot is facing 0 degree by driver. Ues this to correct IMU
+            target_heading=chassis.odo_heading()+2.3;
+        } else {
+            chassis.rotateTo(0.3, 0);
+            sleep(200);
+            target_heading=(angleCollection?2.3:chassis.odo_heading());
+        }
         double idealRightDist = 43; // 43 cm at Hans field; 61 cm at Winston's house
         double crab_power=0.5;
         double timeout=3.0;
@@ -1828,13 +1835,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
             double rightDist = (rightDistF + rightDistB) / 2;
             if (Math.abs(rightDist-idealRightDist)<1) break;
-            chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(), chassis.odo_heading(), false, timeout);
+            chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(),
+                    chassis.odo_heading(), false, false, timeout);
+
             crab_power-=0.05;
             timeout=1.0;
             sleep(100);
         }
         // chassis.rotateTo(0.3, 0);//delete?
-        double target_heading=(angleCollection?2.3:chassis.odo_heading());
         double angle_error = 0.5;
         double LOCAL_ALIGNMENT_POWER = 0.18;
         double ALIGN_ITER = 5;
@@ -1872,7 +1880,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(), target_heading,false,2);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), target_heading,
+                false, false,2);
+
         if(angleCollection){
             if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
@@ -1900,7 +1910,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(), target_heading,false,2);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), target_heading,
+                false, false,2);
+
         if(angleCollection){
             if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
