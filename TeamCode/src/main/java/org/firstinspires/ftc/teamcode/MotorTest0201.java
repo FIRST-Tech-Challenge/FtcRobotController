@@ -55,28 +55,13 @@ public class MotorTest0201 extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
             double pwr1;
 
-            //double input = gamepad1.left_stick_y;
-            //pwr1 = Range.clip(input, -1.0, 1.0);
-
-            if(gamepad1.a){
-                pwr1 = 0.25;
-            }
-            else if(gamepad1.b){
-                pwr1 = 0.5;
-            }
-            else if(gamepad1.x){
-                pwr1 = 0.-5;
-            }
-            else if(gamepad1.y){
-                pwr1 = -0.25;
-            }
-            else{
-                pwr1 = 0;
-            }
+            double input = gamepad1.left_stick_y;
+            pwr1 = Range.clip(input, -1.0, 1.0);
 
 
             motor1.setPower(pwr1);
