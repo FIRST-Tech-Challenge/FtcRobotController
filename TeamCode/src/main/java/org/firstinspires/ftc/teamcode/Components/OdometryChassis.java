@@ -559,7 +559,7 @@ public class OdometryChassis extends BasicChassis {
                     error+=360;
                 }
                 if(difference<5){
-                    power=startpower*0.7;
+                    power=0.5;
                 }
                 if (power > startpower) {
                     power = startpower;
