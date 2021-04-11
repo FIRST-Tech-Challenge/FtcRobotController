@@ -2045,7 +2045,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     hopper.hopperUpCombo(true);
                     TaskManager.processTasks();
                 }
-                chassis.driveTo(0.6, side(87), 165, 0, false, 1);
+                chassis.driveTo(0.5, side(87), 165, 0, false, 2);
                 autoShootHighGoal(3, true);
                 if (comboGrabber!=null)
                     comboGrabber.armUpLow();
@@ -2103,7 +2103,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 autoShootHighGoal(2, true);
                 comboGrabber.initWobbleGoalCombo();
                 TaskManager.processTasks();
-                chassis.driveTo(1.0, chassis.odo_x_pos_cm()+20, chassis.odo_y_pos_cm() + 30, chassis.getCurHeading(), false, 2);
+                chassis.driveTo(1.0, chassis.odo_x_pos_cm()+50, chassis.odo_y_pos_cm() + 30, chassis.getCurHeading(), false, 2);
             }
             else {
                 chassis.driveTo(1.0, chassis.odo_x_pos_cm()+20, 220, chassis.getCurHeading(), false, 2);

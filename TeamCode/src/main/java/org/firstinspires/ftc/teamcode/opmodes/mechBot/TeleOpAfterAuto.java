@@ -58,7 +58,9 @@ public class TeleOpAfterAuto extends LinearOpMode {
         waitForStart();
 
         robot.initAfterStart();
-
+        if (robot.hopper!=null) {
+            robot.hopper.blockerDown();
+        }
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             try {
