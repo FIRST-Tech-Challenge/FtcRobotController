@@ -2199,7 +2199,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             sleep(200);
         }
         chassis.stop();
-        sleep(400);
+        sleep(800);
         //sleep(1000);
         //hopper.transferShakeCombo();
         intake.stop();
