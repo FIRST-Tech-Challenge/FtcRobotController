@@ -1,8 +1,8 @@
 {
-  "ringBar": {
+  "arm": {
     "center": 0.5,
-    "left": 0.001,
-    "right": 0.999
+    "left": 0.01,
+    "right": 0.99
   },
   "t_grabber": {
     "center": 0.5,
@@ -33,6 +33,11 @@
     "center": 0.5,
     "left": 0.01,
     "right": 0.99
+  },
+  "ringBar": {
+    "center": 0.5,
+    "left": 0.0001,
+    "right": 0.9999
   },
   "chassis": {
     "track": 15.75,
