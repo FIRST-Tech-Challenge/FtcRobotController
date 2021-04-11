@@ -67,6 +67,7 @@ public class IntakeCommands extends Command {
 
         if(intake.getPower() < 0){
             intake.sweeperOn();
+            intake.dropRoller();
         } else {
             intake.sweeperOff();
         }

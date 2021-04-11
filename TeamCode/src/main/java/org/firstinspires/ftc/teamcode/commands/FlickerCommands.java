@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.UpliftRobot;
-import org.firstinspires.ftc.teamcode.toolkit.core.Command;
 import org.firstinspires.ftc.teamcode.subsystems.FlickerSubsystem;
+import org.firstinspires.ftc.teamcode.toolkit.core.Command;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
-import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 
 public class FlickerCommands extends Command {
 
@@ -44,12 +45,15 @@ public class FlickerCommands extends Command {
                     robot.safeSleep(1);
                     if(robot.driverCancel || robot.operatorCancel) {
                         flicker.setFlickerOut();
+                        Log.i("flicker", "CANCELLED");
                         return;
                     }
                 }
                 flicker.flickRing();
             }
-            robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
+            if(!robot.driverCancel) {
+                robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
+            }
         }
 
 //        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS1) {

@@ -62,8 +62,6 @@ public class TransferSubsystem extends Subsystem {
 
     public void initTransferPos() {
         teleDropTransfer();
-        transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void autoRaiseTransfer() {
@@ -75,7 +73,7 @@ public class TransferSubsystem extends Subsystem {
                 transfer.setPower(0.65);
                 robot.setTransferState(UpliftRobot.TransferState.MOVING);
                 double initialTime = System.currentTimeMillis();
-                while(transfer.isBusy() && !robot.operatorCancel  && robot.opMode.opModeIsActive()) {
+                while(transfer.isBusy() && !robot.operatorCancel && robot.opMode.opModeIsActive()) {
                     robot.safeSleep(5);
                 }
                 transfer.setPower(0);
@@ -115,6 +113,8 @@ public class TransferSubsystem extends Subsystem {
                 }
                 transfer.setPower(0);
                 robot.setTransferState(UpliftRobot.TransferState.DOWN);
+                transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         }).start();
     }
@@ -128,6 +128,8 @@ public class TransferSubsystem extends Subsystem {
         }
         transfer.setPower(0);
         robot.setTransferState(UpliftRobot.TransferState.DOWN);
+        transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 }
