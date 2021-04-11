@@ -172,8 +172,9 @@ public class Meet5Auto extends UpliftAuto {
             }
 
             // drop off first wobble
-            driveSub.driveToPosition(120, 96, 1, 180);
+            driveSub.driveToPosition(120, 92, 1, 180);
             driveSub.turnTo(180, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
+            driveSub.driveToPosition(120, 92, 0.6, 180);
             wobbleSub.dropOff();
 
             // pick up second wobble goal
@@ -181,7 +182,9 @@ public class Meet5Auto extends UpliftAuto {
 
             // drop off the second wobble goal
             driveSub.passThroughPosition(114, 80, 0.85, 180, DriveSubsystem.QUICKEST_DIRECTION, 6);
-            driveSub.driveToPosition(114, 92, 0.7, 180);
+            driveSub.driveToPosition(114, 88, 0.7, 180);
+            driveSub.turnTo(180, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
+            driveSub.driveToPosition(114, 88, 0.6, 180);
             wobbleSub.dropOff();
 
             // park
@@ -195,20 +198,21 @@ public class Meet5Auto extends UpliftAuto {
 
             // drop off first wobble
             wobbleSub.setWobblePosition(0.2);
-            driveSub.driveToPosition(129, 70, 1, -180, DriveSubsystem.CLOCKWISE);
-            driveSub.turnTo(-180, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
+            driveSub.passThroughPosition(110, 54, 1, -135, DriveSubsystem.CLOCKWISE, 4);
+            driveSub.driveToPosition(126, 70, 0.7, -135);
+            driveSub.turnTo(-135, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(129, 66, 1, -180);
+            driveSub.driveToPosition(122, 66, 0.7, -135);
 
             // go to pick up second wobble
             getSecondWobble();
 
             // go to drop off second wobble
-            driveSub.passThroughPosition(110, 54, 1, -135, DriveSubsystem.CLOCKWISE, 4);
-            driveSub.driveToPosition(126, 70, 0.7, -135);
+            driveSub.passThroughPosition(106, 54, 1, -135, DriveSubsystem.CLOCKWISE, 4);
+            driveSub.driveToPosition(118, 66, 0.7, -135);
             driveSub.turnTo(-135, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(122, 66, 1,-135);
+            driveSub.driveToPosition(114, 62, 0.7,-135);
 
             // park
             park();

@@ -24,18 +24,18 @@ public class UpliftTelemetry extends Background {
         super(robot);
         this.robot = robot;
         this.opMode = robot.opMode;
-        this.telem = FtcDashboard.getInstance().getTelemetry();
+//        this.telem = FtcDashboard.getInstance().getTelemetry();
 //        this.telem = robot.opMode.telemetry;
     }
 
     @Override
     public void loop() {
 
-        if(opMode instanceof UpliftTele) {
-            displayTeleOpTelemetry(robot);
-        } else if(opMode instanceof UpliftAuto){
-            displayAutoTelemetry(robot);
-        }
+//        if(opMode instanceof UpliftTele) {
+//            displayTeleOpTelemetry(robot);
+//        } else if(opMode instanceof UpliftAuto){
+//            displayAutoTelemetry(robot);
+//        }
 
     }
 
