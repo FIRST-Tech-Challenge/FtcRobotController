@@ -25,7 +25,7 @@ public class Shooter {
 
     Servo shooter_Servo;
 
-    protected double highGoalVelocity = 1625;
+    protected double highGoalVelocity = 1675;
     protected double middleGoalVelocity = 1600;
     protected double lowGoalVelocity = 1500;
     protected double powershotVelocity = 1725;
@@ -47,7 +47,7 @@ public class Shooter {
         else{
             servoBack = 0.64;
             servoForward = 0.5;
-            shooterMotor.setVelocityPIDFCoefficients(15, 0, 0.03, 15.8);
+            shooterMotor.setVelocityPIDFCoefficients(17, 0, 0.15, 16.5);
         }
         shooter_Servo.setPosition(servoBack);
 
@@ -104,7 +104,7 @@ public class Shooter {
         }
         op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
-        op.sleep(175);
+        op.sleep(150);
     }
 
     public void shootGoalTeleop(int distance) {

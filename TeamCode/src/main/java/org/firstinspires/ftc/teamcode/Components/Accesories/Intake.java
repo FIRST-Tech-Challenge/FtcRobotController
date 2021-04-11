@@ -19,7 +19,7 @@ public class Intake {
 
     private DcMotor intakeMotor = null;
 
-    final private double intakeSpeed = -1;
+    final private double intakeSpeed = 0.8;
 
     // initialization of intakeMotor
     public Intake(LinearOpMode opMode){
@@ -29,7 +29,7 @@ public class Intake {
 
     public void startIntake() {
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeMotor.setPower(intakeSpeed);
+        intakeMotor.setPower(intakeSpeed*-1);
     }
 
     public void reverseIntake(){
