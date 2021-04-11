@@ -30,46 +30,49 @@ public class TerraOp extends OpMode {
 
         bot.moveTeleOp(forward, strafe, turn);
 
-        if(gamepad1.right_trigger > 0){
-            bot.fastMode = true;
-        }else if(gamepad1.left_trigger > 0){
-            bot.fastMode = false;
-        }
+//        if(gamepad1.right_trigger > 0){
+//            bot.fastMode = true;
+//        }else if(gamepad1.left_trigger > 0){
+//            bot.fastMode = false;
+//        }
+//
+//
+        bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
+//        if(!bot.areAutomodulesRunning()) {
 
-
-        if(!bot.areAutomodulesRunning()) {
-            bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
-
-            bot.toggleOuttake(gamepad2.x);
-            bot.outtakeWithCalculations();
-
-            bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
-
-            bot.claw(bot.cllControl.update(gamepad2.dpad_left, gamepad2.dpad_right), bot.clrControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
-
-        }
-
-        if(gamepad2.y){
-            bot.shooter.start();
-        }
-
-
-//        if(gamepad2.right_trigger > 0){
-//            bot.extendWobbleGoal(1);
-//        }else if (gamepad2.left_trigger > 0 ){
-//            bot.extendWobbleGoal(-1);
-//        }else{
-//            bot.extendWobbleGoal(0);
+//
+//            bot.toggleOuttake(gamepad2.x);
+//            bot.outtakeWithCalculations();
+//
+//            bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
+//
+//            bot.claw(bot.cllControl.update(gamepad2.dpad_left, gamepad2.dpad_right), bot.clrControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
+//
 //        }
 
-//        if (gamepad2.dpad_right){
-//            bot.openClaw();
-//        } else if(gamepad2.dpad_left){
-//            bot.closeClaw();
+//        bot.outtake(gamepad2.right_stick_y);
+//
+//        if(gamepad2.y){
+//            bot.shooter.start();
 //        }
-
-
-        bot.moveArm(-gamepad2.right_stick_y);
+//
+//
+////        if(gamepad2.right_trigger > 0){
+////            bot.extendWobbleGoal(1);
+////        }else if (gamepad2.left_trigger > 0 ){
+////            bot.extendWobbleGoal(-1);
+////        }else{
+////            bot.extendWobbleGoal(0);
+////        }
+//
+////        if (gamepad2.dpad_right){
+////            bot.openClaw();
+////        } else if(gamepad2.dpad_left){
+////            bot.closeClaw();
+////        }
+//
+//
+//        bot.moveArm(-gamepad2.right_stick_y);
 //        telemetry.addData("WGE Target Pos", bot.updateWge());
 
 //        telemetry.addData("Wobble goal pow", -gamepad2.right_stick_y);
@@ -89,18 +92,18 @@ public class TerraOp extends OpMode {
 //        telemetry = telemetryHandler.addOdometry(telemetry, bot);
 //        telemetry.addData("cll pos", bot.cll.getPosition());
 //        telemetry.addData("clr pos", bot.clr.getPosition());
-        telemetryHandler.addAutoAimer();
-//        telemetryHandler.addAngularPosition();
-        telemetry = telemetryHandler.getTelemetry();
-
-        telemetry.update();
+//        telemetryHandler.addAutoAimer();
+////        telemetryHandler.addAngularPosition();
+//        telemetry = telemetryHandler.getTelemetry();
+//
+//        telemetry.update();
 
     }
 
     @Override
     public void stop() {
         bot.stopAllAutomodules();
-        storage.makeOutputFile("Today");
-        storage.saveText("yes", "pls work");
+//        storage.makeOutputFile("Today");
+//        storage.saveText("yes", "pls work");
     }
 }

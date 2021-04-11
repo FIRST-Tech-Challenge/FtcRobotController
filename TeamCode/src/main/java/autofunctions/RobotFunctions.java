@@ -138,9 +138,16 @@ public class RobotFunctions {
                 pause(0.1);
                 for (int i = 0; i < numRings; i++) {
                     bot.rp.setPosition(bot.pushControl.getPos(2));
-                    pause(0.2);
-                    bot.rp.setPosition(bot.pushControl.getPos(1));
-                    pause(0.2);
+                    pause(0.5);
+                    bot.rp.setPosition(0.2);
+                    pause(0.5);
+
+                    if(i == 0){
+                        bot.autoAimer.debug = 30;
+                    }else{
+                        bot.autoAimer.debug = 0;
+                    }
+                    bot.autoAimer.updateTargetSpeed();
                 }
                 pause(0.1);
 

@@ -18,6 +18,8 @@ public class AutoAimer {
     public boolean isDone = false;
     public boolean hasReached = false;
 
+    public double debug = 0;
+
     public boolean hasPosBeenUpdated(){
         return !((outtakePos[0] == oldOuttakePos[0]) && (outtakePos[1] == oldOuttakePos[1]));
     }
@@ -42,10 +44,10 @@ public class AutoAimer {
     }
 
     public double getOutrTargetVel(){
-        return (((targetSpeed+Constants.OUTR_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
+        return (((targetSpeed+Constants.OUTR_SPEED_OFFSET + debug)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
     public double getOutlTargetVel(){
-        return (((targetSpeed+Constants.OUTL_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
+        return (((targetSpeed+Constants.OUTL_SPEED_OFFSET + debug)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
 
 //

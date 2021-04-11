@@ -67,12 +67,19 @@ public class AutoFour extends LinearOpMode {
         path.addShoot(7,50,0);
 
         // NOW TO KNOCK DOWN THE TOWER AND INTAKE THE RINGS
+        path.addSetpoint(0, 40, 0);
         path.addRF(rf.intake(1));
-        path.addSetpoint(0, 30, 0);
+        path.addStop(1);
 
         path.addWaypoint(0, 10, 0);
         path.addStop(3);
-        path.addRF(rf.intake(0), rf.readyShooter(), rf.shootIntoGoal(1), rf.stopOuttake());
+        path.addRF(rf.intake(0), rf.readyShooter(), rf.shootIntoGoal(2), rf.stopOuttake());
+        path.addStop(1);
+        path.addShoot(0.001, -0.001, 0);
+        path.addRF(rf.intake(1));
+        path.addWaypoint(0,15,0);
+        path.addStop(3);
+        path.addRF(rf.intake(0), rf.readyShooter(), rf.shootIntoGoal(2), rf.stopOuttake());
         path.addShoot(0.001, -0.001, 0);
 
         path.start(bot, this);

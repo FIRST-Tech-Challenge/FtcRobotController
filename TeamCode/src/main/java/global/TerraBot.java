@@ -105,7 +105,7 @@ public class TerraBot {
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
-        rh2 = getCRServo(hwMap, "rh2", CRServo.Direction.REVERSE);
+        rh2 = getCRServo(hwMap, "rh2", CRServo.Direction.FORWARD);
         cll = getServo(hwMap, "cll", Servo.Direction.FORWARD, Constants.CLL_GRAB);
         clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLL_OPEN);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, Constants.RP_START);
