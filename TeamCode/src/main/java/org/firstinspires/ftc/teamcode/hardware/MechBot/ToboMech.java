@@ -476,7 +476,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (cameraDetector != null)
                         cameraDetector.dec_cam_pos();
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
-                    autoIntakeRings(3, false);
+                    // autoIntakeRings(3, false);
+                    autoIntakeRingsNew(3);
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     shooting_rpm = SEMI_POWER_SHOT_RPM;
                     shooter.shootOutByRpm(shooting_rpm);
@@ -1231,7 +1232,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (isTeleOpAfterAuto) {
                         chassis.initOdoFromJson();
                     } else {
-                        chassis.set_init_pos(side(120), 155, 0);
+                        // chassis.set_init_pos(side(120), 155, 0);
+                        chassis.set_init_pos(58,23, 0);
+
                     }
                 }
                 break;
@@ -2033,11 +2036,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 if (hopper != null) {
                     hopper.ringBarDown();
-                    sleep(200);
                 }
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
-                chassis.driveTo(0.8, side(87), 100, -2, false, 2);
-                autoIntakeRings(3, true);
+                chassis.driveTo(0.6, side(87), 90, 0, false, 2);
+                autoIntakeRingsNew(3);
                 if (hopper != null) {
                     hopper.ringBarUp();
                     hopper.hopperUpCombo(true);
@@ -2178,6 +2180,26 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         TaskManager.processTasks();
         chassis.rawRotateTo(0.8,50,false, 2);
         chassis.rawRotateTo(0.2,15,false, 2);
+    }
+
+    public void autoIntakeRingsNew(int n) throws InterruptedException {
+        if (simulation_mode || chassis==null) return;
+
+        if (hopper != null) {
+            hopper.ringBarDown();
+            sleep(200);
+        }
+        intake.intakeIn();
+        chassis.driveTo(0.3, chassis.odo_x_pos_cm(), 100+n*13, 2);
+        if(hopper != null) {
+            hopper.ringBarUp();
+            sleep(200);
+        }
+        chassis.stop();
+        sleep(400);
+        //sleep(1000);
+        //hopper.transferShakeCombo();
+        intake.stop();
     }
 
     public void autoIntakeRings(int n, boolean callFromAuto) throws InterruptedException {
