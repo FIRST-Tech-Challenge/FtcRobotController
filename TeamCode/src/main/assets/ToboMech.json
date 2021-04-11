@@ -14,10 +14,10 @@
     "left": 0.001,
     "right": 0.999
   },
-  "arm": {
+  "ringBar": {
     "center": 0.5,
-    "left": 0.001,
-    "right": 0.999
+    "left": 0.0,
+    "right": 1.0
   },
   "grabber": {
     "center": 0.5,
