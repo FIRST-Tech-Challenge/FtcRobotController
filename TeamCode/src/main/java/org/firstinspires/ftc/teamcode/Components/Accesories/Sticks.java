@@ -17,7 +17,7 @@ public class Sticks {
         moveLeftStick(1);
         moveRightStick(0);
         if(Robot.isCorgi){
-            moveLeftStick(0.2);
+            moveLeftStick(0);
             moveRightStick(1);
         }
 

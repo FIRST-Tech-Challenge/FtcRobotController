@@ -43,7 +43,7 @@ public class TwoGPTeleop extends LinearOpMode {
             boolean move_wobble_goal_servo = true;
             robot.openWobbleGoalClaw();
             WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
-            robot.moveLeftStick(0.2);
+            robot.moveLeftStick(0);
             robot.moveRightStick(1);
             double yShootingPosition = 0;
             double xShootingPosition = 0;
@@ -121,8 +121,8 @@ public class TwoGPTeleop extends LinearOpMode {
                 /**Sticks**/
 
                 if (move_sticks_down) {
-                    robot.moveLeftStick(0.36);
-                    robot.moveRightStick(0.9);
+                    robot.moveLeftStick(0);
+                    robot.moveRightStick(1);
                 }
 
                 if (move_sticks_up){
