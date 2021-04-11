@@ -2193,7 +2193,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(0.6, side(87), 90, 0, false, 2);
         }
         intake.intakeIn();
-        chassis.driveTo(0.3, chassis.odo_x_pos_cm(), 98+n*13, 2);
+        chassis.driveTo(0.25, chassis.odo_x_pos_cm(), 90+n*13, 2);
         if(hopper != null) {
             hopper.ringBarUp();
             sleep(200);
