@@ -1,8 +1,8 @@
 {
-  "arm": {
+  "ringBar": {
     "center": 0.5,
-    "left": 0.01,
-    "right": 0.99
+    "left": 0.001,
+    "right": 0.999
   },
   "t_grabber": {
     "center": 0.5,
@@ -14,10 +14,10 @@
     "left": 0.001,
     "right": 0.999
   },
-  "ringBar": {
+  "arm": {
     "center": 0.5,
-    "left": 0.0,
-    "right": 1.0
+    "left": 0.001,
+    "right": 0.999
   },
   "grabber": {
     "center": 0.5,
