@@ -408,9 +408,17 @@ public class OdometryChassis extends BasicChassis {
                 if(error<-180){
                     error+=360;
                 }
-                if(difference<5){
-                    power=0.25*difference/6;
-                    max=0.35;
+                if(startpower<0.7) {
+                    if (difference < 5) {
+                        power = 0.2;
+                        max = 0.35;
+                    }
+                }
+                else{
+                    if (difference < 10) {
+                        power = 0.2;
+                        max = 0.35;
+                    }
                 }
                 if (power > startpower) {
                     power = startpower;
@@ -683,7 +691,7 @@ public class OdometryChassis extends BasicChassis {
         float currentAngle = getAngle();
         float newTarget = (float)target;
         float error = (float)target-currentAngle;
-        double gain = -0.07;
+        double gain = -0.09;
         int direction=1;
         if(error<0){
             direction = -1;
