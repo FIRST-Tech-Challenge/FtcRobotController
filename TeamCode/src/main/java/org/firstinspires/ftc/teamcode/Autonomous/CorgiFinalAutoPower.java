@@ -2,25 +2,64 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
+import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Robot;
 
 @Autonomous(name= "CorgiFinalAutoPower", preselectTeleOp = "OneGPTeleop")
 
 public class CorgiFinalAutoPower extends LinearOpMode {
     @Override
     public void runOpMode(){
-        OdometryChassis robot = new OdometryChassis(this, false, true);
-//        int rings = robot.getRingsAndWaitForStart();
-//        robot.navigate();
-//        robot.stopRingDetection();
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
+        int rings = robot.getRingsAndWaitForStart();
+        robot.navigate();
+        robot.stopRingDetection();
 //        robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
         telemetry.addData("ReadyToStart",0);
         telemetry.update();
         waitForStart();
-        int rings=1;
         if(rings!=1&&rings!=4) {
+            robot.goToPosition(-48,-15,0,1);
+            robot.goToPosition(-56,-17,0,1);
+//            robot.moveWobbleGoalToPosition(WobbleGoal.Position.DROP);
+//            robot.openWobbleGoalClaw();
+            robot.goToPosition(-54,23,0,1);
+            robot.shootThreePowerShot();
+            sleep(100);
+            robot.goToPosition(-33,22,138,1);
+            sleep(500);
+            robot.goToPosition(-26,16,140,0.5);
+//            robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGrab);
+            sleep(500);
+//            robot.closeWobbleGoalClaw();
+            sleep(300);
+//            robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
+            robot.goToPosition(-70,-9,90,1);
+            robot.turnInPlace(90,1);
+//            robot.moveWobbleGoalToPosition(WobbleGoal.Position.DROP);
+            sleep(500);
+//            robot.openWobbleGoalClaw();
+            robot.goToPosition(-70,-2,90,1);
+//            robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
+            sleep(300);
+            robot.startTransfer();
+            robot.startIntake();
+            robot.goToPosition(-114,-5,90,1);
+            robot.goToPosition(-114,28,90,0.7);
+            sleep(300);
+            robot.goToPosition(-110,28,90,1);
+            robot.goToPosition(-108,28,0,1);
+            sleep(300);
+            robot.goToPosition(-100,28,0,1);
+            robot.goToPosition(-100,28,-90,1);
+            sleep(300);
+            robot.goToPosition(-100,0,-90,0.7);
+            robot.stopIntake();
+            robot.stopTransfer();
+
+
+            sleep(30000);
             robot.goToPosition(-10,0,0,2);
             robot.goToPosition( -26,-16,-183,2);
 //            robot.openWobbleGoalClaw();
