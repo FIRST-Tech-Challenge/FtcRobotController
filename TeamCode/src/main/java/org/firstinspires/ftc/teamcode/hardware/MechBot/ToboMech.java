@@ -477,7 +477,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         cameraDetector.dec_cam_pos();
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
                     // autoIntakeRings(3, false);
-                    autoIntakeRingsNew(3);
+                    autoIntakeRingsNew(3, false);
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     shooting_rpm = SEMI_POWER_SHOT_RPM;
                     shooter.shootOutByRpm(shooting_rpm);
@@ -2039,7 +2039,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 }
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(0.6, side(87), 90, 0, false, 2);
-                autoIntakeRingsNew(3);
+                autoIntakeRingsNew(3, true);
                 if (hopper != null) {
                     hopper.ringBarUp();
                     hopper.hopperUpCombo(true);
@@ -2182,15 +2182,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.rawRotateTo(0.2,15,false, 2);
     }
 
-    public void autoIntakeRingsNew(int n) throws InterruptedException {
+    public void autoIntakeRingsNew(int n, boolean fromAuto) throws InterruptedException {
         if (simulation_mode || chassis==null) return;
 
         if (hopper != null) {
             hopper.ringBarDown();
             sleep(200);
         }
+        if (!fromAuto) {
+            chassis.driveTo(0.6, side(87), 90, 0, false, 2);
+        }
         intake.intakeIn();
-        chassis.driveTo(0.3, chassis.odo_x_pos_cm(), 100+n*13, 2);
+        chassis.driveTo(0.3, chassis.odo_x_pos_cm(), 98+n*13, 2);
         if(hopper != null) {
             hopper.ringBarUp();
             sleep(200);
