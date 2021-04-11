@@ -50,9 +50,9 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private final double BLOCKER_INIT = 0.15;
     private final double BLOCKER_DOWN = 0.82;
 
-    private final double RING_BAR_UP = 0.18;
-    private final double RING_BAR_INIT = 0.15;
-    private final double RING_BAR_DOWN = 0.82;
+    private final double RING_BAR_UP = 0.27;
+    private final double RING_BAR_INIT = 0.27;
+    private final double RING_BAR_DOWN = 0.83;
 
     private boolean feederIsIn = true;
     private boolean holderIsIn = true;
