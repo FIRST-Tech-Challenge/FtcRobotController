@@ -20,7 +20,8 @@ public class Final_Teleop extends LinearOpMode {
     private DcMotor lb = null; //left back wheel
     private DcMotor rb = null; //right back wheel
     private CRServo SoN = null; //collector
-    private DcMotor spindoctor = null; //shooter
+    private DcMotor spindoctorL = null; //shooter
+    private DcMotor spindoctorR = null; //shooter (opposite, inverted)
     private DcMotor factory = null; //gear train system
 
     @Override
@@ -33,7 +34,8 @@ public class Final_Teleop extends LinearOpMode {
         lb = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
         SoN = hardwareMap.get(CRServo.class, "SoN");
-        spindoctor = hardwareMap.get(DcMotor.class, "spin");
+        spindoctorL = hardwareMap.get(DcMotor.class, "spinL");
+        spindoctorR = hardwareMap.get(DcMotor.class, "spinR");
         factory = hardwareMap.get(DcMotor.class,"factory");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
@@ -41,7 +43,8 @@ public class Final_Teleop extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
         SoN.setDirection(CRServo.Direction.FORWARD);
-        spindoctor.setDirection(DcMotorSimple.Direction.FORWARD);
+        spindoctorL.setDirection(DcMotorSimple.Direction.FORWARD);
+        spindoctorR.setDirection(DcMotorSimple.Direction.REVERSE);
         factory.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
@@ -53,89 +56,100 @@ public class Final_Teleop extends LinearOpMode {
             double rfPower;
             double lbPower;
             double rbPower;
-            double spinPower; //see spindoctor
+            double spinPower; //see spindoctor  //JH: second spin motor uses same variable, inverted when applied
             double factoryPower; //see factory
             double SPower; //see SoN
+
+            double deadzone = 0.2;
 
             lfPower = 0.0f;
             rfPower = 0.0f;
             lbPower = 0.0f;
             rbPower = 0.0f;
-            factoryPower = 0.0f;
 
-            if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) > 0.2) {
+            factoryPower = 0;
+            SPower = 0;
+            spinPower = 0;
+
+            //left side strafe drive
+            if (abs(gamepad1.left_stick_y) < deadzone && abs(gamepad1.left_stick_x) > deadzone) {
                 lfPower = -gamepad1.left_stick_x;
                 lbPower = gamepad1.left_stick_x;
-            } else if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) < 0.2) {
+            } else if (abs(gamepad1.left_stick_y) < deadzone && abs(gamepad1.left_stick_x) < deadzone) {
                 lfPower = 0.15 * ((gamepad1.left_stick_y - gamepad1.left_stick_x) / (abs(gamepad1.left_stick_y - gamepad1.left_stick_x)));
                 lbPower = 0.15 * ((gamepad1.left_stick_y + gamepad1.left_stick_x) / (abs(gamepad1.left_stick_y + gamepad1.left_stick_x)));
-            } else if (abs(gamepad1.left_stick_y) > 0.2 && abs(gamepad1.left_stick_x) > 0.2) {
+            } else if (abs(gamepad1.left_stick_y) > deadzone && abs(gamepad1.left_stick_x) > deadzone) {
                 lfPower = gamepad1.left_stick_y - gamepad1.left_stick_x;
                 lbPower = gamepad1.left_stick_y + gamepad1.left_stick_x;
-            } else if (abs(gamepad1.left_stick_y) > 0.2 && abs(gamepad1.left_stick_x) < 0.2) {
+            } else if (abs(gamepad1.left_stick_y) > deadzone && abs(gamepad1.left_stick_x) < deadzone) {
                 lfPower = gamepad1.left_stick_y;
                 lbPower = gamepad1.left_stick_y;
-            } //left side strafe drive
-
+            }
             if (abs(gamepad1.left_stick_y) < 0.05 && abs(gamepad1.left_stick_x) < 0.05) {
                 lfPower = 0.0f;
                 lbPower = 0.0f;
             }
 
-            if (abs(gamepad1.right_stick_y) < 0.2 && abs(gamepad1.right_stick_x) > 0.2) {
+            //right side strafe drive
+            if (abs(gamepad1.right_stick_y) < deadzone && abs(gamepad1.right_stick_x) > deadzone) {
                 rfPower = gamepad1.right_stick_x;
                 rbPower = -gamepad1.right_stick_x;
-            } else if (abs(gamepad1.right_stick_y) < 0.2 && abs(gamepad1.right_stick_x) < 0.2) {
+            } else if (abs(gamepad1.right_stick_y) < deadzone && abs(gamepad1.right_stick_x) < deadzone) {
                 rfPower = 0.15 * ((gamepad1.right_stick_y + gamepad1.right_stick_x) / (abs(gamepad1.right_stick_y + gamepad1.right_stick_x)));
                 rbPower = 0.15 * ((gamepad1.right_stick_y - gamepad1.right_stick_x) / (abs(gamepad1.right_stick_y - gamepad1.right_stick_x)));
-            } else if (abs(gamepad1.right_stick_y) > 0.2 && abs(gamepad1.right_stick_x) > 0.2) {
+            } else if (abs(gamepad1.right_stick_y) > deadzone && abs(gamepad1.right_stick_x) > deadzone) {
                 rfPower = gamepad1.left_stick_y + gamepad1.right_stick_x;
                 rbPower = gamepad1.left_stick_y - gamepad1.right_stick_x;
-            } else if (abs(gamepad1.right_stick_y) > 0.2 && abs(gamepad1.right_stick_x) < 0.2) {
+            } else if (abs(gamepad1.right_stick_y) > deadzone && abs(gamepad1.right_stick_x) < deadzone) {
                 rfPower = gamepad1.right_stick_y;
                 rbPower = gamepad1.right_stick_y;
             }
             if (abs(gamepad1.right_stick_y) < 0.05 && abs(gamepad1.right_stick_x) < 0.05) {
                 rfPower = 0.0f;
                 rbPower = 0.0f;
-            } //right side strafe drive
+            }
 
+            // wheel power set
             if (gamepad1.right_bumper) {
+                // right bumper, "sprint mode"
                 lf.setPower(lfPower * 0.5);
                 rf.setPower(rfPower * 0.5);
                 lb.setPower(lbPower * 0.5);
                 rb.setPower(rbPower * 0.5);
             } else {
+                // normal power
                 lf.setPower(lfPower * 0.25);
                 rf.setPower(rfPower * 0.25);
                 lb.setPower(lbPower * 0.25);
                 rb.setPower(rbPower * 0.25);
-            } //speed modifier
+            }
 
-            if (gamepad2.right_trigger >= 0.2) {
+
+            //shooter power set
+            if (gamepad2.right_trigger >= deadzone) {
                 spinPower = 1;
-            } else if (gamepad2.left_trigger >= 0.2) {
+            } else if (gamepad2.left_trigger >= deadzone) {
                 spinPower = -1;
-            } else {
-                spinPower = 0;
-            } //shooter power set
+            }
+            // JH: no else condition needed, they're set to 0 at the beginning of the cycle
+
+            //collector power set
             if (gamepad2.a) {
                 SPower = 0.75;
             } else if (gamepad2.b) {
                 SPower = -0.75;
-            } else {
-                SPower = 0;
-            } //collector power set
+            }
+
+            //gear train power set
             if (gamepad2.x) {
                 factoryPower = -0.4;
             } else if (gamepad2.y) {
                 factoryPower = 0.4;
-            } else {
-                factoryPower = 0;
-            } //gear train power set
+            }
 
             SoN.setPower(SPower);
-            spindoctor.setPower(spinPower);
+            spindoctorL.setPower(spinPower);
+            spindoctorR.setPower(spinPower); // JH: the motor direction is reverse, so the power shouldn't need to be
             factory.setPower(factoryPower);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
