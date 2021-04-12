@@ -138,17 +138,17 @@ public class Autonomous_Proto extends LinearOpMode {
                 }
             }
             //function  VVV
-            /*
-            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
-                    (int) (sensorColor.green() * SCALE_FACTOR),
-                    (int) (sensorColor.blue() * SCALE_FACTOR),
+
+            Color.RGBToHSV((int) (CS.red() * SCALE_FACTOR),
+                    (int) (CS.green() * SCALE_FACTOR),
+                    (int) (CS.blue() * SCALE_FACTOR),
                     hsvValues);
             telemetry.addData("Distance (cm)",
-            String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-            telemetry.addData("Alpha", sensorColor.alpha());
-            telemetry.addData("Red  ", sensorColor.red());
-            telemetry.addData("Green", sensorColor.green());
-            telemetry.addData("Blue ", sensorColor.blue());
+            String.format(Locale.US, "%.02f", DS.getDistance(DistanceUnit.CM)));
+            telemetry.addData("Alpha", CS.alpha());
+            telemetry.addData("Red  ", CS.red());
+            telemetry.addData("Green", CS.green());
+            telemetry.addData("Blue ", CS.blue());
             telemetry.addData("Hue", hsvValues[0]);
             relativeLayout.post(new Runnable() {
                 public void run() {
@@ -157,7 +157,7 @@ public class Autonomous_Proto extends LinearOpMode {
             });
 
             telemetry.update();
-             */
+
 
         }
     }
