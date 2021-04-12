@@ -179,6 +179,10 @@ public class Path {
         wobbleGoalHandler.notRF();
     }
 
+    public void addShoot() {
+        addShoot(0.0001, 0.0001, 0);
+    }
+
     public void addRF(CodeSeg... segs){
         rfsHandler.addRFs(segs);
     }

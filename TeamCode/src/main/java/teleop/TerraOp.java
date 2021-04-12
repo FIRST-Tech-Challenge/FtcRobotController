@@ -20,6 +20,8 @@ public class TerraOp extends OpMode {
         telemetry.addData("Ready?", "Yes!");
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
+        bot.shooter.autoModuleThread.executing = false;
+//        bot.moveArmWithEnc(45, 1);
     }
 
     @Override
@@ -30,38 +32,38 @@ public class TerraOp extends OpMode {
         bot.updateRP(gamepad2.left_bumper, gamepad2.right_bumper);
 
 
-//        if(!bot.areAutomodulesRunning()) {
+        if(!bot.areAutomodulesRunning()) {
 
-//
-//            bot.toggleOuttake(gamepad2.x);
-//            bot.outtakeWithCalculations();
-//
-//            bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
-//
-//            bot.claw(bot.cllControl.update(gamepad2.dpad_left, gamepad2.dpad_right), bot.clrControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
-//
-//        }
+
+            bot.toggleOuttake(gamepad2.x);
+            bot.outtakeWithCalculations();
+
+            bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
+
+            bot.claw(bot.cllControl.update(gamepad2.dpad_left, gamepad2.dpad_right), bot.clrControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
+
+        }
 
 //        bot.outtake(gamepad2.right_stick_y);
 //
-//        if(gamepad2.y){
-//            bot.shooter.start();
+        if(gamepad2.y){
+            bot.shooter.start();
+        }
+//
+//
+        if(gamepad2.right_trigger > 0){
+            bot.extendWobbleGoal(1);
+        }else if (gamepad2.left_trigger > 0 ){
+            bot.extendWobbleGoal(-1);
+        }else{
+            bot.extendWobbleGoal(0);
+        }
+//
+//        if (gamepad2.dpad_right){
+//            bot.openClaw();
+//        } else if(gamepad2.dpad_left){
+//            bot.closeClaw();
 //        }
-//
-//
-////        if(gamepad2.right_trigger > 0){
-////            bot.extendWobbleGoal(1);
-////        }else if (gamepad2.left_trigger > 0 ){
-////            bot.extendWobbleGoal(-1);
-////        }else{
-////            bot.extendWobbleGoal(0);
-////        }
-//
-////        if (gamepad2.dpad_right){
-////            bot.openClaw();
-////        } else if(gamepad2.dpad_left){
-////            bot.closeClaw();
-////        }
 //
 //
 //        bot.moveArm(-gamepad2.right_stick_y);
@@ -94,7 +96,7 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-//        bot.stopAllAutomodules();
+        bot.stopAllAutomodules();
 //        storage.makeOutputFile("Today");
 //        storage.saveText("yes", "pls work");
     }

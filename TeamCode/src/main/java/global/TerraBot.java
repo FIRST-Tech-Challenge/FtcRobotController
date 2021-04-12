@@ -117,23 +117,48 @@ public class TerraBot {
         angularPosition.init(hwMap);
         localizer.init(hwMap);
 
+
+
+//        shooter.addStage(rh, -1);
+//        shooter.addStage(rh2, -1);
+//        shooter.addStage(rp, pushControl, 1 , 0.5);
+//        shooter.addStage(rh2, 0);
+//        shooter.addStage(rh, 1);
+//        shooter.addWait(0.3);
+//        shooter.addStage(rh, 0);
+////        shooter.addStage(0.8, outl);
+////        shooter.addStage( 0.4, outr);
+//        shooter.addPause();
+//        for(int i = 0; i < 3; i++) {
+//            shooter.addStage(rh, -1);
+//            shooter.addStage(rp, pushControl, 2, 0.3);
+//            shooter.addStage(rh, 0);
+//            shooter.addStage(rp, pushControl, 1, 0.3);
+//        }
+//        shooter.addStage(rp, pushControl, 0, 0.3);
+
         shooter.addStage(rh, -1);
         shooter.addStage(rh2, -1);
         shooter.addStage(rp, pushControl, 1 , 0.5);
-        shooter.addStage(rh2, 0);
-        shooter.addStage(rh, 1);
-        shooter.addWait(0.3);
-        shooter.addStage(rh, 0);
-//        shooter.addStage(0.8, outl);
-//        shooter.addStage( 0.4, outr);
+//        shooter.addStage(rh2, 0);
+//        shooter.addStage(rh, 1);
+//        shooter.addWait(0.3);
+//        shooter.addStage(rh, 0);
+        shooter.addStage(outl, 0.5, 0.01);
+        shooter.addStage(outr, 0.7, 0.01);
         shooter.addPause();
-        for(int i = 0; i < 3; i++) {
-            shooter.addStage(rh, -1);
-            shooter.addStage(rp, pushControl, 2, 0.3);
-            shooter.addStage(rh, 0);
-            shooter.addStage(rp, pushControl, 1, 0.3);
+        for (int i = 0; i < 3; i++) {
+            shooter.addStage(rp, pushControl.getPos(2), 0.01);
+            shooter.addDelay(0.3);
+            shooter.addStage(rp, 0.2, 0.01);
+            shooter.addDelay(0.3);
         }
-        shooter.addStage(rp, pushControl, 0, 0.3);
+        shooter.addStage(outl, 0, 0.05);
+        shooter.addStage(outr, 0, 0.05);
+
+        shooter.addStage(rp, pushControl.getPos(0), 0.01);
+        shooter.addStage(rh, 0);
+
         autoModules.add(shooter);
 
         odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());

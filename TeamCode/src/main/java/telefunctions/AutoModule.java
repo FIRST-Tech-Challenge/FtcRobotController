@@ -39,12 +39,10 @@ public class AutoModule {
         }
     };
 
-    public TerraThread autoModuleThread;
-    public boolean initialized = false;
-
+    public TerraThread autoModuleThread = new TerraThread(updateCode);
 
     public void start(){
-        if(!initialized || !autoModuleThread.executing) {
+        if(!autoModuleThread.executing) {
             autoModuleThread = new TerraThread(updateCode);
             autoModuleThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
             Thread t = new Thread(autoModuleThread);
@@ -54,12 +52,10 @@ public class AutoModule {
     }
 
     public boolean isExecuting(){
-        return initialized && autoModuleThread.executing;
+        return autoModuleThread.executing;
     }
     public void stop(){
-        if (initialized) {
-            autoModuleThread.stop();
-        }
+        autoModuleThread.stop();
     }
 
     public void addDelay(final double secs){

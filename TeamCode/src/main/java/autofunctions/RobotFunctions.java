@@ -17,6 +17,11 @@ public class RobotFunctions {
             }
         };
     }
+    public CodeSeg shootRF(int rings) {
+        return RobotFunctionsHandler.combineSegs(new CodeSeg[]{
+                intake(0), readyShooter(), shootIntoGoal(rings), stopOuttake()
+        });
+    }
     public CodeSeg stopOuttake() {
         return new CodeSeg() {
             @Override
@@ -138,9 +143,9 @@ public class RobotFunctions {
                 pause(0.1);
                 for (int i = 0; i < numRings; i++) {
                     bot.rp.setPosition(bot.pushControl.getPos(2));
-                    pause(0.5);
+                    pause(0.3);
                     bot.rp.setPosition(0.2);
-                    pause(0.5);
+                    pause(0.3);
 
                     if(i == 0){
                         bot.autoAimer.debug = 30;
