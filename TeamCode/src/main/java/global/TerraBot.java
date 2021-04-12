@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
+import java.util.function.DoubleFunction;
 
 import globalfunctions.Constants;
 import globalfunctions.Optimizer;
@@ -232,16 +233,20 @@ public class TerraBot {
         }
     }
 
-    public void moveTeleOp(double f, double s, double t){
-        double restForwardPow = 0.05;
-        double restStrafePow = 0.1;
-        double restTurnPow = 0.1;
+    public void moveTeleOp(double f, double s, double t, double rt, double lt){
 
         if(fastMode) {
-            move((f*(1-restForwardPow)) + Math.signum(f)*restForwardPow, (s*(1-restStrafePow))+Math.signum(s)*restStrafePow, 0.9*t*(1-restTurnPow)+ (Math.signum(t) * restTurnPow));
+            move(Math.signum(f) * Math.pow(Math.abs(f), 0.5), Math.signum(s) * Math.pow(Math.abs(s), 0.5), Math.signum(t) * Math.pow(Math.abs(t), 0.5));
         }else{
-            move((f*0.2) + Math.signum(f)*restForwardPow, (s*0.2)+Math.signum(s)*restStrafePow, (t*0.2)+Math.signum(t)*restTurnPow);
+            move(0.4*Math.signum(f) * Math.pow(Math.abs(f), 0.5), 0.4*Math.signum(s) * Math.pow(Math.abs(s), 0.5), 0.4*Math.signum(t) * Math.pow(Math.abs(t), 0.5));
         }
+
+        if(rt > 0){
+            fastMode = true;
+        }else if(lt > 0){
+            fastMode = false;
+        }
+
 
     }
 
@@ -334,6 +339,10 @@ public class TerraBot {
             outtaking = !outtaking;
 //            resetOuttake();
         }
+    }
+
+    public void updateRP(boolean lb, boolean rb){
+        rp.setPosition(pushControl.update(lb, rb));
     }
 
 //    public void resetOuttake() {

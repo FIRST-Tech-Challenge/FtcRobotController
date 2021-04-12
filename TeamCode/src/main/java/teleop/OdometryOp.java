@@ -3,6 +3,7 @@ package teleop;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import global.TerraBot;
 import globalfunctions.Optimizer;
@@ -15,6 +16,8 @@ public class OdometryOp extends OpMode {
     TelemetryHandler telemetryHandler = new TelemetryHandler();
 
     Optimizer optimizer = new Optimizer();
+
+
 
 //    AutoModuleThread autoModuleThread = new AutoModuleThread();
 
@@ -41,7 +44,7 @@ public class OdometryOp extends OpMode {
             double strafe = gamepad1.right_stick_x;
             double turn = -gamepad1.left_stick_x;
 
-            bot.moveTeleOp(forward, strafe, turn);
+            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger,gamepad1.left_trigger);
             optimizer.update();
             telemetryHandler.addOdometry();
             telemetry = telemetryHandler.getTelemetry();

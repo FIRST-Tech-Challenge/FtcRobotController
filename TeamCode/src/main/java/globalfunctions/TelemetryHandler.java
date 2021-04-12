@@ -55,7 +55,7 @@ public class TelemetryHandler {
         telemetry.addData("left gyro", bot.angularPosition.getHeadingLeftGY());
         telemetry.addData("right gyro", bot.angularPosition.getHeadingRightGY());
         telemetry.addData("compass sensor", bot.angularPosition.getHeadingCS());
-        telemetry.addData("cp raw", bot.angularPosition.compassSensor.getDirection());
+//        telemetry.addData("cp raw", bot.angularPosition.compassSensor.getDirection());
     }
     public void addOuttake() {
         telemetry.addData("Right Outtake Position", bot.outr.getCurrentPosition());

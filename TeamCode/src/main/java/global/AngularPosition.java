@@ -13,7 +13,8 @@ import globalfunctions.Constants;
 import globalfunctions.Optimizer;
 
 public class AngularPosition {
-    public ModernRoboticsI2cCompassSensor compassSensor;
+    //Expansion Hub 1 port 1
+//    public ModernRoboticsI2cCompassSensor compassSensor;
     public BNO055IMU leftGyro;
     public BNO055IMU rightGyro;
 
@@ -25,11 +26,11 @@ public class AngularPosition {
 
 
     public void init(HardwareMap hwMap){
-        compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "cp");
+//        compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "cp");
         leftGyro = hwMap.get(BNO055IMU.class, "gyrol");
         rightGyro = hwMap.get(BNO055IMU.class, "gyror");
 
-        compassSensor.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);
+//        compassSensor.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);
 
         initGyro();
         if(!dontUseCompassSensor) {
@@ -66,13 +67,14 @@ public class AngularPosition {
             return gy;
         }
     }
-
+//
     public double getHeadingCS(){
-        double dir = Constants.COMPASS_START - compassSensor.getDirection();
-        if (dir < 0) {
-            dir += 360;
-        }
-        return dir;
+//        double dir = Constants.COMPASS_START - compassSensor.getDirection();
+//        if (dir < 0) {
+//            dir += 360;
+//        }
+//        return dir;
+        return 1000000;
     }
 
     public void initGyro(){

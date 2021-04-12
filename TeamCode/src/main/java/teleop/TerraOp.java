@@ -2,6 +2,7 @@ package teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import global.TerraBot;
 import globalfunctions.Storage;
@@ -11,33 +12,24 @@ import globalfunctions.TelemetryHandler;
 public class TerraOp extends OpMode {
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
-
     Storage storage = new Storage();
 
     @Override
     public void init() {
         bot.init(hardwareMap);
-        telemetry.addData("Ready", "");
+        telemetry.addData("Ready?", "Yes!");
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
     }
 
     @Override
     public void loop() {
-        double forward = -gamepad1.right_stick_y;
-        double strafe = gamepad1.right_stick_x;
-        double turn = -gamepad1.left_stick_x;
-
-        bot.moveTeleOp(forward, strafe, turn);
-
-//        if(gamepad1.right_trigger > 0){
-//            bot.fastMode = true;
-//        }else if(gamepad1.left_trigger > 0){
-//            bot.fastMode = false;
-//        }
-//
-//
+        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger,gamepad1.left_trigger);
         bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
+
+        bot.updateRP(gamepad2.left_bumper, gamepad2.right_bumper);
+
+
 //        if(!bot.areAutomodulesRunning()) {
 
 //
@@ -102,7 +94,7 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-        bot.stopAllAutomodules();
+//        bot.stopAllAutomodules();
 //        storage.makeOutputFile("Today");
 //        storage.saveText("yes", "pls work");
     }

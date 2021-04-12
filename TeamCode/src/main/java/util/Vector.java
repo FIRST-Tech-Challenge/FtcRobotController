@@ -75,6 +75,7 @@ public class Vector {
         return "x: " + this.getX() + ", y: " + this.getY() + ", angle: " + this.getAngle(Vector.angle.DEGREES) + ", length: " + this.getLen();
     }
 
+
     public enum angle {
         DEGREES,
         RADIANS
