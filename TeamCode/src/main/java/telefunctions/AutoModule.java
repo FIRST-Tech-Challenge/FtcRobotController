@@ -33,20 +33,29 @@ public class AutoModule {
                 timer.reset();
             }
             if (stageNum == (stages.size())) {
-                stop();
+//                stop();
                 stageNum = 0;
             }
         }
     };
 
-    public TerraThread autoModuleThread = new TerraThread(updateCode);
+    public TerraThread autoModuleThread;
+    public boolean inited = false;
 
     public void start(){
-        if(!autoModuleThread.executing) {
+        if(!inited) {
             autoModuleThread = new TerraThread(updateCode);
             autoModuleThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
+            inited = true;
             Thread t = new Thread(autoModuleThread);
             t.start();
+        }else{
+            if (!autoModuleThread.executing) {
+                autoModuleThread = new TerraThread(updateCode);
+                autoModuleThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
+                Thread t = new Thread(autoModuleThread);
+                t.start();
+            }
         }
         pausing = false;
     }
@@ -56,15 +65,6 @@ public class AutoModule {
     }
     public void stop(){
         autoModuleThread.stop();
-    }
-
-    public void addDelay(final double secs){
-        stages.add(new Stage() {
-            @Override
-            public boolean run(double in) {
-                return in > secs;
-            }
-        });
     }
 
     public void addStage(final DcMotor mot, final double pow, final int pos) {
@@ -191,7 +191,7 @@ public class AutoModule {
         });
     }
 
-    public void addWait(final double t){
+    public void addWait(final double t) {
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {

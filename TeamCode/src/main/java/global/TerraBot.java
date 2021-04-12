@@ -48,7 +48,7 @@ public class TerraBot {
     public Servo rp;
 
 //
-    public Cycle pushControl = new Cycle(0.1, 0.27, 0.32);
+    public Cycle pushControl = new Cycle(0.1, 0.27, 0.35);
 //    public Cycle pushControl = new Cycle(0.1, 0.27, 0.25);
 
     public Cycle cllControl = new Cycle(0.2, 0.5, 1);
@@ -117,49 +117,7 @@ public class TerraBot {
         angularPosition.init(hwMap);
         localizer.init(hwMap);
 
-
-
-//        shooter.addStage(rh, -1);
-//        shooter.addStage(rh2, -1);
-//        shooter.addStage(rp, pushControl, 1 , 0.5);
-//        shooter.addStage(rh2, 0);
-//        shooter.addStage(rh, 1);
-//        shooter.addWait(0.3);
-//        shooter.addStage(rh, 0);
-////        shooter.addStage(0.8, outl);
-////        shooter.addStage( 0.4, outr);
-//        shooter.addPause();
-//        for(int i = 0; i < 3; i++) {
-//            shooter.addStage(rh, -1);
-//            shooter.addStage(rp, pushControl, 2, 0.3);
-//            shooter.addStage(rh, 0);
-//            shooter.addStage(rp, pushControl, 1, 0.3);
-//        }
-//        shooter.addStage(rp, pushControl, 0, 0.3);
-
-        shooter.addStage(rh, -1);
-        shooter.addStage(rh2, -1);
-        shooter.addStage(rp, pushControl, 1 , 0.5);
-//        shooter.addStage(rh2, 0);
-//        shooter.addStage(rh, 1);
-//        shooter.addWait(0.3);
-//        shooter.addStage(rh, 0);
-        shooter.addStage(outl, 0.5, 0.01);
-        shooter.addStage(outr, 0.7, 0.01);
-        shooter.addPause();
-        for (int i = 0; i < 3; i++) {
-            shooter.addStage(rp, pushControl.getPos(2), 0.01);
-            shooter.addDelay(0.3);
-            shooter.addStage(rp, 0.2, 0.01);
-            shooter.addDelay(0.3);
-        }
-        shooter.addStage(outl, 0, 0.05);
-        shooter.addStage(outr, 0, 0.05);
-
-        shooter.addStage(rp, pushControl.getPos(0), 0.01);
-        shooter.addStage(rh, 0);
-
-        autoModules.add(shooter);
+        defineShooter();
 
         odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());
 
@@ -348,14 +306,20 @@ public class TerraBot {
 
     public boolean areAutomodulesRunning(){
         for (AutoModule a: autoModules) {
-            if (a.isExecuting()) { return true; }
+            if(a.inited) {
+                if (a.isExecuting()) {
+                    return true;
+                }
+            }
         }
         return false;
     }
 
     public void stopAllAutomodules(){
         for (AutoModule a: autoModules) {
-            a.stop();
+            if(a.inited) {
+                a.stop();
+            }
         }
     }
 
@@ -368,6 +332,9 @@ public class TerraBot {
 
     public void updateRP(boolean lb, boolean rb){
         rp.setPosition(pushControl.update(lb, rb));
+    }
+    public void updateClaw(boolean dpl, boolean dpr){
+        claw(cllControl.update(dpl, dpr),clrControl.update(dpl, dpr));
     }
 
 //    public void resetOuttake() {
@@ -495,6 +462,26 @@ public class TerraBot {
 
     public void resetPosUsingDisSensors(){
         odometry.resetPos(localizer.getPos(odometry.getPos(), odometry.h));
+    }
+
+    public void defineShooter(){
+        shooter.addStage(rh2, -1);
+        shooter.addStage(0.5, outl);
+        shooter.addStage( 0.7, outr);
+        shooter.addStage(rp, pushControl, 1 , 0.5);
+        shooter.addStage(rh2, 0);
+        shooter.addPause();
+        for (int i = 0; i < 3; i++) {
+            shooter.addStage(rp, pushControl, 2, 0.01);
+            shooter.addWait(0.3);
+            shooter.addStage(rp, pushControl, 1, 0.01);
+            shooter.addWait(0.3);
+        }
+        shooter.addStage(0.0, outl);
+        shooter.addStage( 0.0, outr);
+        shooter.addStage(rp, pushControl, 0,  0.01);
+        shooter.addPause();
+        autoModules.add(shooter);
     }
 
 

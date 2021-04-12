@@ -20,7 +20,6 @@ public class TerraOp extends OpMode {
         telemetry.addData("Ready?", "Yes!");
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
-        bot.shooter.autoModuleThread.executing = false;
 //        bot.moveArmWithEnc(45, 1);
     }
 
@@ -29,19 +28,13 @@ public class TerraOp extends OpMode {
         bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger,gamepad1.left_trigger);
         bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
-        bot.updateRP(gamepad2.left_bumper, gamepad2.right_bumper);
-
 
         if(!bot.areAutomodulesRunning()) {
+//            bot.toggleOuttake(gamepad2.x);
+//            bot.outtakeWithCalculations();
 
-
-            bot.toggleOuttake(gamepad2.x);
-            bot.outtakeWithCalculations();
-
-            bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
-
-            bot.claw(bot.cllControl.update(gamepad2.dpad_left, gamepad2.dpad_right), bot.clrControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
-
+            bot.updateRP(gamepad2.left_bumper, gamepad2.right_bumper);
+            bot.updateClaw(gamepad2.dpad_left, gamepad2.dpad_right);
         }
 
 //        bot.outtake(gamepad2.right_stick_y);
@@ -51,13 +44,13 @@ public class TerraOp extends OpMode {
         }
 //
 //
-        if(gamepad2.right_trigger > 0){
-            bot.extendWobbleGoal(1);
-        }else if (gamepad2.left_trigger > 0 ){
-            bot.extendWobbleGoal(-1);
-        }else{
-            bot.extendWobbleGoal(0);
-        }
+//        if(gamepad2.right_trigger > 0){
+//            bot.extendWobbleGoal(1);
+//        }else if (gamepad2.left_trigger > 0 ){
+//            bot.extendWobbleGoal(-1);
+//        }else{
+//            bot.extendWobbleGoal(0);
+//        }
 //
 //        if (gamepad2.dpad_right){
 //            bot.openClaw();
@@ -92,6 +85,10 @@ public class TerraOp extends OpMode {
 //
 //        telemetry.update();
 
+        if(bot.shooter.inited){
+            telemetry.addData("executing", bot.shooter.autoModuleThread.executing);
+        }
+        telemetry.update();
     }
 
     @Override
