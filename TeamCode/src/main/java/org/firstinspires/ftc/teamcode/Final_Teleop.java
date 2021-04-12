@@ -15,13 +15,13 @@ import static java.lang.StrictMath.abs;
 public class Final_Teleop extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor lf = null;
-    private DcMotor rf = null;
-    private DcMotor lb = null;
-    private DcMotor rb = null;
-    private CRServo SoN = null;
-    private DcMotor spindoctor = null;
-    private DcMotor factory = null;
+    private DcMotor lf = null; //left front wheel
+    private DcMotor rf = null; //right front wheel
+    private DcMotor lb = null; //left back wheel
+    private DcMotor rb = null; //right back wheel
+    private CRServo SoN = null; //collector
+    private DcMotor spindoctor = null; //shooter
+    private DcMotor factory = null; //gear train system
 
     @Override
     public void runOpMode() {
@@ -53,9 +53,9 @@ public class Final_Teleop extends LinearOpMode {
             double rfPower;
             double lbPower;
             double rbPower;
-            double spinPower;
-            double factoryPower;
-            double SPower;
+            double spinPower; //see spindoctor
+            double factoryPower; //see factory
+            double SPower; //see SoN
 
             lfPower = 0.0f;
             rfPower = 0.0f;
@@ -75,7 +75,7 @@ public class Final_Teleop extends LinearOpMode {
             } else if (abs(gamepad1.left_stick_y) > 0.2 && abs(gamepad1.left_stick_x) < 0.2) {
                 lfPower = gamepad1.left_stick_y;
                 lbPower = gamepad1.left_stick_y;
-            }
+            } //left side strafe drive
 
             if (abs(gamepad1.left_stick_y) < 0.05 && abs(gamepad1.left_stick_x) < 0.05) {
                 lfPower = 0.0f;
@@ -98,7 +98,7 @@ public class Final_Teleop extends LinearOpMode {
             if (abs(gamepad1.right_stick_y) < 0.05 && abs(gamepad1.right_stick_x) < 0.05) {
                 rfPower = 0.0f;
                 rbPower = 0.0f;
-            }
+            } //right side strafe drive
 
             if (gamepad1.right_bumper) {
                 lf.setPower(lfPower * 0.5);
@@ -110,7 +110,7 @@ public class Final_Teleop extends LinearOpMode {
                 rf.setPower(rfPower * 0.25);
                 lb.setPower(lbPower * 0.25);
                 rb.setPower(rbPower * 0.25);
-            }
+            } //speed modifier
 
             if (gamepad2.right_trigger >= 0.2) {
                 spinPower = 1;
@@ -118,21 +118,21 @@ public class Final_Teleop extends LinearOpMode {
                 spinPower = -1;
             } else {
                 spinPower = 0;
-            }
+            } //shooter power set
             if (gamepad2.a) {
-                SPower = 0.5;
+                SPower = 0.75;
             } else if (gamepad2.b) {
-                SPower = -0.5;
+                SPower = -0.75;
             } else {
                 SPower = 0;
-            }
+            } //collector power set
             if (gamepad2.x) {
                 factoryPower = -0.4;
             } else if (gamepad2.y) {
                 factoryPower = 0.4;
             } else {
                 factoryPower = 0;
-            }
+            } //gear train power set
 
             SoN.setPower(SPower);
             spindoctor.setPower(spinPower);
