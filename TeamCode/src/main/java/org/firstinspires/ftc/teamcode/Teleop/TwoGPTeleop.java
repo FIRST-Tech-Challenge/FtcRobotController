@@ -152,15 +152,9 @@ public class TwoGPTeleop extends LinearOpMode {
                     if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
                         nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                     } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
-                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DriveToWall);
-                    } else if (currentWobbleGoalPosition == WobbleGoal.Position.DriveToWall) {
-                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DropOverWall);
-                        this.sleep(600);
-                        robot.openWobbleGoalClaw();
-                    } else if(currentWobbleGoalPosition == WobbleGoal.Position.DropOverWall){
-                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-                    }
-                    else {
+                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
+                    } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE) {
+                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
                     }
                     // added by Aiden; must have this otherwise if you hold onto the button multiple
                     // actions/movements will be executed by mistake
