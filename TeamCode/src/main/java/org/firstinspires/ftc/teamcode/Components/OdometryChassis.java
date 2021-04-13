@@ -429,7 +429,7 @@ public class OdometryChassis extends BasicChassis {
                     }
                 }
                 else if(startpower<0.85){
-                    if (difference < 10) {
+                    if (difference < 10*startpower) {
                         power = -0.2;
                         maxpower= -0.2;
                         max = 0.35;
@@ -441,7 +441,7 @@ public class OdometryChassis extends BasicChassis {
                     }
                 }
                 else if(startpower<0.95){
-                    if (difference < 15) {
+                    if (difference < 15*startpower) {
                         power = -0.2*startpower;
                         maxpower=-0.2*startpower;
                         max = 0.35;
@@ -453,7 +453,7 @@ public class OdometryChassis extends BasicChassis {
                     }
                 }
                 else{
-                    if (difference < 16) {
+                    if (difference < 16*startpower) {
                         power = -0.2*startpower;
                         maxpower=-0.2*startpower;
                         max = 0.35;
