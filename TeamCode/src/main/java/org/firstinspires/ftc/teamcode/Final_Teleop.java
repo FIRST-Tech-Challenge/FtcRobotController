@@ -71,6 +71,7 @@ public class Final_Teleop extends LinearOpMode {
             SPower = 0;
             spinPower = 0;
 
+
             //left side strafe drive
             if (abs(gamepad1.left_stick_y) < deadzone && abs(gamepad1.left_stick_x) > deadzone) {
                 lfPower = -gamepad1.left_stick_x;
@@ -108,6 +109,34 @@ public class Final_Teleop extends LinearOpMode {
                 rfPower = 0.0f;
                 rbPower = 0.0f;
             }
+
+            // JH: and here we have a dpad strafing control system nobody asked for but may be useful?
+
+            if(gamepad1.dpad_up){
+                lfPower = 1.0f;
+                rfPower = 1.0f;
+                lbPower = 1.0f;
+                rbPower = 1.0f;
+            }
+            if(gamepad1.dpad_down){
+                lfPower = -1.0f;
+                rfPower = -1.0f;
+                lbPower = -1.0f;
+                rbPower = -1.0f;
+            }
+            if(gamepad1.dpad_left){
+                lfPower = -1.0f;
+                rfPower = 1.0f;
+                lbPower = -1.0f;
+                rbPower = 1.0f;
+            }
+            if(gamepad1.dpad_right){
+                lfPower = 1.0f;
+                rfPower = -1.0f;
+                lbPower = 1.0f;
+                rbPower = -1.0f;
+            }
+
 
             // wheel power set
             if (gamepad1.right_bumper) {
