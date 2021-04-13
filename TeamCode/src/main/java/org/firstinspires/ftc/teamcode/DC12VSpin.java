@@ -1,9 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
+
+/**
+ * This <b>should</b> make a 12V DC Motor spin
+ * Name of DCMotor needs to be <code>spin</code>
+ * @author Joshua Miller <22jmiller@xbhs.net>
+ * @version 1.0.0
+ */
+
+@TeleOp
 public class DC12VSpin extends LinearOpMode {
     // Lets you get the Elapsed time of the program (big shocker)
     private ElapsedTime runtime = new ElapsedTime();
