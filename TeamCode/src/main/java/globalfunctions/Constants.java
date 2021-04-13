@@ -75,9 +75,12 @@ public class Constants {
     public static final double DIS_CENTER_TO_RIGHT_ENC = DIS_BEWTEEN_ENCS-DIS_CENTER_TO_LEFT_ENC; //cm
     public static final double DIS_CENTER_ENC_TO_CENTER = HALF_DIS_BETWEEN_ENCS-DIS_CENTER_TO_LEFT_ENC;
 
-    public static final double START_X = 80;
-    public static final double START_Y = 21;
-    public static final double START_H = 0;
+//    public static final double START_X = 80;
+//    public static final double START_Y = 21;
+//    public static final double START_H = 0;
+
+    public static final double[] AUTO_START = new double[]{80,21,0};
+    public static final double[] TELE_START = new double[]{97,180,0};
 
 
 }

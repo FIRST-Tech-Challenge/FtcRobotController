@@ -83,12 +83,21 @@ public class Path {
 
     public ElapsedTime trackTime = new ElapsedTime();
 
+    public boolean globalMode = false;
+
 
 
 
 
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
+        init();
+    }
+    public Path(double[] pos){
+        poses.add(pos);
+        init();
+    }
+    private void init(){
         posetypes.add(Posetype.SETPOINT);
         setCoeffsForWaypoint();
         xControl.setAcc(XAcc);
@@ -141,12 +150,23 @@ public class Path {
 
     public void updateRadius(double dis){ radius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis))); }
 
+    public void setGlobalMode(boolean val){
+        globalMode = val;
+    }
+
 
     public void addNewPose(double x, double y, double h){
-        double[] lastPose = poses.get(poses.size()-1);
-        poses.add(new double[]{lastPose[0]+x, lastPose[1]+y, lastPose[2]+h});
-        double[] currPose = poses.get(poses.size()-1);
-        lines.add(new Line(lastPose[0], lastPose[1], currPose[0], currPose[1]));
+        if(!globalMode) {
+            double[] lastPose = poses.get(poses.size() - 1);
+            poses.add(new double[]{lastPose[0] + x, lastPose[1] + y, lastPose[2] + h});
+            double[] currPose = poses.get(poses.size() - 1);
+            lines.add(new Line(lastPose[0], lastPose[1], currPose[0], currPose[1]));
+        }else{
+            double[] lastPose = poses.get(poses.size() - 1);
+            poses.add(new double[]{x, y, h});
+            double[] currPose = poses.get(poses.size() - 1);
+            lines.add(new Line(lastPose[0], lastPose[1], currPose[0], currPose[1]));
+        }
     }
 
 

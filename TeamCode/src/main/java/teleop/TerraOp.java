@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import global.TerraBot;
+import globalfunctions.Constants;
 import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
 
@@ -21,11 +22,23 @@ public class TerraOp extends OpMode {
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
 //        bot.moveArmWithEnc(45, 1);
+//
+        bot.startOdoThreadTele();
+        bot.odometry.resetAll(Constants.TELE_START);
     }
 
     @Override
     public void loop() {
-        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger,gamepad1.left_trigger);
+        if(bot.aimer.inited) {
+            if (bot.aimer.isExecuting()) {
+
+            }else{
+                bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger,gamepad1.left_trigger);
+            }
+        }else{
+            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger,gamepad1.left_trigger);
+        }
+
         bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
 
@@ -41,6 +54,10 @@ public class TerraOp extends OpMode {
 //
         if(gamepad2.y){
             bot.shooter.start();
+        }
+        if(gamepad2.x){
+            bot.defineAimer();
+            bot.aimer.start();
         }
 //
 //
@@ -76,14 +93,15 @@ public class TerraOp extends OpMode {
 //        telemetry = telemetryHandler.addOuttake(telemetry, bot);
 //        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
 //
-//        telemetry = telemetryHandler.addOdometry(telemetry, bot);
+        telemetryHandler.addOdometry();
 //        telemetry.addData("cll pos", bot.cll.getPosition());
 //        telemetry.addData("clr pos", bot.clr.getPosition());
 //        telemetryHandler.addAutoAimer();
 ////        telemetryHandler.addAngularPosition();
 //        telemetry = telemetryHandler.getTelemetry();
 //
-//        telemetry.update();
+        telemetry = telemetryHandler.getTelemetry();
+        telemetry.update();
 
         if(bot.shooter.inited){
             telemetry.addData("executing", bot.shooter.autoModuleThread.executing);
@@ -94,7 +112,6 @@ public class TerraOp extends OpMode {
     @Override
     public void stop() {
         bot.stopAllAutomodules();
-//        storage.makeOutputFile("Today");
-//        storage.saveText("yes", "pls work");
+        bot.stopOdoThread();
     }
 }

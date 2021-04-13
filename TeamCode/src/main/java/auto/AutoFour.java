@@ -15,7 +15,7 @@ import globalfunctions.Constants;
 public class AutoFour extends LinearOpMode {
     TerraBot bot = new TerraBot();
     //    Path path = new Path(Constants.START_X,Constants.START_Y,Constants.START_H);
-    Path path = new Path(Constants.START_X,Constants.START_Y,Constants.START_H);
+    Path path = new Path(Constants.AUTO_START[0],Constants.AUTO_START[1],Constants.AUTO_START[2]);
     RobotFunctions rf = new RobotFunctions();
     TerraCV.RingNum ringNum = TerraCV.RingNum.FOUR;
 

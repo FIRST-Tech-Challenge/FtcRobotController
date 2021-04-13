@@ -74,6 +74,7 @@ public class TerraBot {
     public boolean wgeStartMode = true;
 
     public AutoModule shooter = new AutoModule(); // 0
+    public AutoModule aimer = new AutoModule();
 
     public ArrayList<AutoModule> autoModules = new ArrayList<>();
 
@@ -117,8 +118,6 @@ public class TerraBot {
         angularPosition.init(hwMap);
         localizer.init(hwMap);
 
-        defineShooter();
-
         odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());
 
         limits.addLimit(arm, Constants.WG_LOWER_LIMIT, Constants.WG_UPPER_LIMIT);
@@ -128,6 +127,9 @@ public class TerraBot {
 
         outr.setVelocityPIDFCoefficients(54, 0, 0, 14);
         outl.setVelocityPIDFCoefficients(54, 0, 0, 14);
+
+
+        defineShooter();
     }
 
     public DcMotor getMotor(HardwareMap hwMap, String name, DcMotor.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode){
@@ -469,6 +471,12 @@ public class TerraBot {
         shooter.addOuttake(outr, outl, 1300, 1600);
         shooter.addStage(rp, pushControl, 1 , 0.5);
         shooter.addStage(rh2, 0);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastMode = false;
+            }
+        });
         shooter.addPause();
         for (int i = 0; i < 3; i++) {
             shooter.addStage(rp, pushControl, 2, 0.01);
@@ -478,8 +486,19 @@ public class TerraBot {
         }
         shooter.addOuttake(outr, outl, 0, 0);
         shooter.addStage(rp, pushControl, 0,  0.01);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastMode = true;
+            }
+        });
         shooter.addPause();
         autoModules.add(shooter);
+    }
+    public void defineAimer(){
+        aimer.addAimer(this);
+        aimer.addPause();
+        autoModules.add(aimer);
     }
 
 

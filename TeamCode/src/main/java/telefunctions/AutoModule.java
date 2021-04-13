@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
+import autofunctions.Path;
+import global.TerraBot;
 import globalfunctions.TerraThread;
 import globalfunctions.Constants;
 import util.CodeSeg;
@@ -23,6 +25,8 @@ public class AutoModule {
 
 
     public boolean pausing = false;
+
+    public Path path;
 
 
     public CodeSeg updateCode = new CodeSeg() {
@@ -220,4 +224,59 @@ public class AutoModule {
             }
         });
     }
+
+    public void addCustom(final CodeSeg cs){
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                cs.run();
+                return true;
+            }
+        });
+    }
+
+    public void addAimer(final TerraBot bot){
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+               path = new Path(bot.odometry.getAll());
+               path.setGlobalMode(true);
+               path.addSetpoint(Constants.TELE_START[0],Constants.TELE_START[1], Constants.TELE_START[2] );
+                return true;
+            }
+        });
+//
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                double[] pows = path.update(bot.odometry.getAll(), bot);
+                bot.move(pows[1], pows[0], pows[2]);
+                return !path.isExecuting;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.move(0,0,0);
+                return true;
+            }
+        });
+    }
+//    public void addPath(final Path path, final TerraBot bot){
+//        stages.add(new Stage() {
+//            @Override
+//            public boolean run(double in) {
+//                double[] pows = path.update(bot.odometry.getPos(), bot);
+//                bot.move(pows[1], pows[0], pows[2]);
+//                return !path.isExecuting;
+//            }
+//        });
+//        stages.add(new Stage() {
+//            @Override
+//            public boolean run(double in) {
+//                bot.move(0,0,0);
+//                return true;
+//            }
+//        });
+//    }
 }
