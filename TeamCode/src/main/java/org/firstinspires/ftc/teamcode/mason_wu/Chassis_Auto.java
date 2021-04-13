@@ -256,7 +256,7 @@ public class Chassis_Auto extends LinearOpMode {
                 stopMotion(100);
                 rotateToAngle(90.0, 1.0, 0.2);
                 stopMotion(100);
-                driveStraight(true, 1.0, -0.6, 200);
+                driveStraight(true, 1.0, -0.6, 175);
                 stopMotion(100);
                 // drops wobble here
                 armMotion(false, 0.8, 300);
@@ -269,7 +269,7 @@ public class Chassis_Auto extends LinearOpMode {
                 sleep(250);
                 rotateToAngle(0.0, 1.0, 0.2);
                 sleep(250);
-                driveStraight(true, 1.0, 0.6, 525);
+                driveStraight(true, 1.0, 0.6, 560);
 
             } else {
                 telemetry.addLine("Fail to recognize");
