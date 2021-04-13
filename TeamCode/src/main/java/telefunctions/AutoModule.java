@@ -2,6 +2,7 @@ package telefunctions;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -132,6 +133,33 @@ public class AutoModule {
             }
         });
     }
+
+    public void addOuttake(final DcMotorEx outr, final DcMotorEx outl, final double outrVel, final double outlVel) {
+        if(outrVel == 0){
+            stages.add(new Stage() {
+                @Override
+                public boolean run(double in) {
+                    outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    outr.setPower(0);
+                    outl.setPower(0);
+                    return true;
+                }
+            });
+        } else {
+            stages.add(new Stage() {
+                @Override
+                public boolean run(double in) {
+                    outr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    outl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    outr.setVelocity(outrVel);
+                    outl.setVelocity(outlVel);
+                    return true;
+                }
+            });
+        }
+    }
+
     public void addStage(final CRServo crs, final double pow) {
         stages.add(new Stage() {
             @Override

@@ -48,7 +48,7 @@ public class TerraBot {
     public Servo rp;
 
 //
-    public Cycle pushControl = new Cycle(0.1, 0.27, 0.35);
+    public Cycle pushControl = new Cycle(0.1, 0.28, 0.35);
 //    public Cycle pushControl = new Cycle(0.1, 0.27, 0.25);
 
     public Cycle cllControl = new Cycle(0.2, 0.5, 1);
@@ -466,19 +466,17 @@ public class TerraBot {
 
     public void defineShooter(){
         shooter.addStage(rh2, -1);
-        shooter.addStage(0.5, outl);
-        shooter.addStage( 0.7, outr);
+        shooter.addOuttake(outr, outl, 1300, 1600);
         shooter.addStage(rp, pushControl, 1 , 0.5);
         shooter.addStage(rh2, 0);
         shooter.addPause();
         for (int i = 0; i < 3; i++) {
             shooter.addStage(rp, pushControl, 2, 0.01);
-            shooter.addWait(0.3);
-            shooter.addStage(rp, pushControl, 1, 0.01);
-            shooter.addWait(0.3);
+            shooter.addWait(0.25);
+            shooter.addStage(rp, pushControl.getPos(1)-0.03, 0.01);
+            shooter.addWait(0.25);
         }
-        shooter.addStage(0.0, outl);
-        shooter.addStage( 0.0, outr);
+        shooter.addOuttake(outr, outl, 0, 0);
         shooter.addStage(rp, pushControl, 0,  0.01);
         shooter.addPause();
         autoModules.add(shooter);

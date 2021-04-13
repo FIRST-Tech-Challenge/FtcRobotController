@@ -4,7 +4,7 @@ import util.Stage;
 import util.CodeSeg;
 
 
-public class TerraThread implements Runnable{
+public class TerraThread extends Thread{
 
     CodeSeg cs;
     Stage st;
@@ -34,7 +34,7 @@ public class TerraThread implements Runnable{
         refreshRate = rf;
     }
 
-    public synchronized void stop() {
+    public synchronized void stop1() {
         this.executing = false;
     }
 
