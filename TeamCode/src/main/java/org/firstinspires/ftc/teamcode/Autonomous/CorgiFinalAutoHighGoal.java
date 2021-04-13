@@ -17,7 +17,7 @@ public class CorgiFinalAutoHighGoal extends LinearOpMode {
         OdometryChassis robot = new OdometryChassis(this,false,true);
         ElapsedTime runtime = new ElapsedTime();
 //        int rings = robot.getRingsAndWaitForStart();
-        int rings = 0;
+        int rings = 1;
         robot.navigate();
 //        robot.stopRingDetection();
 //        robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
@@ -45,8 +45,7 @@ public class CorgiFinalAutoHighGoal extends LinearOpMode {
         }
         else if(rings==1) {
         // 1 RING AUTO
-            robot.goToPosition(-23,-10,-13.5,0.9);
-//            robot.shootHighGoal(3);
+            robot.goToPosition(-33,-16,0,0.9);
             robot.goToPosition(-86,4,0,1);
 //            robot.openWobbleGoalClaw();
             robot.goToPosition(-60,4,1,0.6);
