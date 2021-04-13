@@ -50,13 +50,6 @@ public class AutoModule {
             inited = true;
             Thread t = new Thread(autoModuleThread);
             t.start();
-        }else{
-            if (!autoModuleThread.executing) {
-                autoModuleThread = new TerraThread(updateCode);
-                autoModuleThread.changeRefreshRate(Constants.AUTOMODULE_REFRESH_RATE);
-                Thread t = new Thread(autoModuleThread);
-                t.start();
-            }
         }
         pausing = false;
     }

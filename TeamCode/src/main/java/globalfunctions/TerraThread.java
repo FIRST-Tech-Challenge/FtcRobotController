@@ -1,10 +1,12 @@
 package globalfunctions;
 
+import android.net.IpSecManager;
+
 import util.Stage;
 import util.CodeSeg;
 
 
-public class TerraThread extends Thread{
+public class TerraThread implements Runnable {
 
     CodeSeg cs;
     Stage st;
@@ -34,7 +36,7 @@ public class TerraThread extends Thread{
         refreshRate = rf;
     }
 
-    public synchronized void stop1() {
+    public synchronized void stop() {
         this.executing = false;
     }
 
