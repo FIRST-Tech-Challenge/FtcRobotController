@@ -106,7 +106,7 @@ public class Autonomous {
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .5),
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .5))
 
-            .addSingleState(() -> robot.launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_BACK))
+//            .addSingleState(() -> robot.launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_BACK))
 
             .addState(() -> robot.intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL)) //1240
 
