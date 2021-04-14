@@ -406,7 +406,9 @@ public class Path {
 //            op.telemetry.addData("isDone", bot.autoAimer.isDone);
 //            op.telemetry.addData("hasreached", bot.autoAimer.hasReached);
 //            op.telemetry.addData("outtaking", bot.outtaking);
-            op.telemetry.addData("wg distance sensor", bot.getWgePos());
+//            op.telemetry.addData("wg distance sensor", bot.getWgePos());
+            op.telemetry.addData("RightVel", bot.getRightAngVel());
+            op.telemetry.addData("LeftVel", bot.getLeftAngVel());
             op.telemetry.update();
 
             double[] pows = update(bot.odometry.getAll(), bot);

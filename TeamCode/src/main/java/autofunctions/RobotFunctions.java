@@ -126,11 +126,10 @@ public class RobotFunctions {
             public void run() {
                 while (!bot.autoAimer.hasPosBeenUpdated()) {}
                 bot.outtaking = true;
+                bot.rh2.setPower(-1);
                 bot.rp.setPosition(bot.pushControl.getPos(1));
-                pause(0.4);
-                bot.rp.setPosition(0.2);
-                pause(0.4);
-                bot.rp.setPosition(bot.pushControl.getPos(1));
+                pause(0.5);
+                bot.rh2.setPower(0);
             }
         };
     }
@@ -140,24 +139,22 @@ public class RobotFunctions {
             @Override
             public void run() {
                 while (!bot.autoAimer.hasReached){}
-                pause(0.1);
+                pause(0.4);
                 for (int i = 0; i < numRings; i++) {
                     bot.rp.setPosition(bot.pushControl.getPos(2));
-                    pause(0.3);
-                    bot.rp.setPosition(0.2);
-                    pause(0.3);
-
-                    if(i == 0){
-                        bot.autoAimer.debug = 30;
-                    }else{
-                        bot.autoAimer.debug = 0;
-                    }
-                    bot.autoAimer.updateTargetSpeed();
+                    pause(0.4);
+                    bot.rp.setPosition(bot.pushControl.getPos(1)-0.03);
+                    pause(0.4);
+//
+//                    if(i == 0){
+//                        bot.autoAimer.debug = 30;
+//                    }else{
+//                        bot.autoAimer.debug = 0;
+//                    }
+//                    bot.autoAimer.updateTargetSpeed();
                 }
                 pause(0.1);
-
                 bot.rp.setPosition(bot.pushControl.getPos(0));
-                bot.rh.setPower(0);
                 bot.autoAimer.done();
             }
         };
