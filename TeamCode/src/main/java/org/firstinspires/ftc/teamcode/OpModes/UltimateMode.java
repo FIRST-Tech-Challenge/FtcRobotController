@@ -33,7 +33,7 @@ public class UltimateMode extends LinearOpMode {
     boolean changedshooter = false;
     boolean intakeReverse = false;
     boolean changedguard = false;
-    boolean autoShooter = true;
+//    boolean autoShooter = true;
 
     // Declare Button Delays
     boolean buttonpressable = true;
@@ -42,7 +42,7 @@ public class UltimateMode extends LinearOpMode {
 
     // Run Bot Thread Action
     private BotThreadAction bta = null;
-    private BotThreadAction turretbta = null;
+//    private BotThreadAction turretbta = null;
     Thread btaThread = null;
 
     // Locator Variables
@@ -69,17 +69,17 @@ public class UltimateMode extends LinearOpMode {
             positionThread.start();
 
             // init turret
-            robot.initTurretThread(this);
+//            robot.initTurretThread(this);
 
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
             runtime.reset();
 
             // start turret tracking
-            robot.activatTurretThread(this);
-            turretbta = new BotThreadAction(robot, telemetry, "moveTurretCams", this);
-            Thread moveCamTurretThread = new Thread(turretbta);
-            moveCamTurretThread.start();
+//            robot.activatTurretThread(this);
+//            turretbta = new BotThreadAction(robot, telemetry, "moveTurretCams", this);
+//            Thread moveCamTurretThread = new Thread(turretbta);
+//            moveCamTurretThread.start();
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
@@ -198,21 +198,17 @@ public class UltimateMode extends LinearOpMode {
                 }
 
                 // TOGGLE AUTO TURRET
-                if (gamepad2.x && buttonpressable) {
-                    startdelay = runtime.milliseconds();
-                    autoShooter = !autoShooter;
-                    robot.changeTurretSync();
-                }
-
-                if (gamepad2.a) {
-                    robot.turretInit();
-                }
+//                if (gamepad2.x && buttonpressable) {
+//                    startdelay = runtime.milliseconds();
+//                    autoShooter = !autoShooter;
+//                    robot.changeTurretSync();
+//                }
 
                 // ROTATE TURRET MANUALLY
-                if (gamepad2.dpad_left && !autoShooter && buttonpressable) {
+                if (gamepad2.dpad_left && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     robot.turretLittleLeft();
-                } else if (gamepad2.dpad_right && !autoShooter && buttonpressable) {
+                } else if (gamepad2.dpad_right && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     robot.turretLittleRight();
                 }
@@ -223,7 +219,7 @@ public class UltimateMode extends LinearOpMode {
                 telemetry.addData("X ", locator.getXInches() );
                 telemetry.addData("Y ", locator.getYInches() );
                 telemetry.addData("Orientation (Degrees)", locator.getOrientation());
-                telemetry.addData("Turret Detect X", robot.getRawXDetect());
+//                telemetry.addData("Turret Detect X", robot.getRawXDetect());
                 telemetry.update();
             }
         } catch (Exception ex) {
@@ -234,7 +230,7 @@ public class UltimateMode extends LinearOpMode {
         finally {
             robot.stopintake();
             robot.stopshooter();
-            robot.stopTurretAngler();
+//            robot.stopTurretAngler();
             if (locator != null){
                 locator.stop();
             }
@@ -245,10 +241,10 @@ public class UltimateMode extends LinearOpMode {
         if (!gamepadRateLimit.hasExpired()) {
             return;
         }
-        if (gamepad2.y){
-//            robot.shootPegTurnManual(locator);
+        if (gamepad1.y){
+            robot.shootPegTurnManual(locator);
 //            robot.shootPegTurn(locator);
-            robot.shootPegTurnManualTape(locator);
+//            robot.shootPegTurnManualTape(locator);
             gamepadRateLimit.reset();
         }
     }

@@ -36,14 +36,14 @@ public class UltimateBot extends YellowBot {
     private DcMotorEx shooter = null;
 
     private static double SWING_BACK_POS = 1;
-    private static double SWING_PLACE_POS = 0.18;
-    private static double SWING_LIFT_AND_HOLD = 0.4;
-    private static double SWING_LIFT_WALL = 0.5;
+    private static double SWING_PLACE_POS = 0.24;
+    private static double SWING_LIFT_AND_HOLD = 0.35;
+    private static double SWING_LIFT_WALL = 0.6;
     private static double SHOOT_SERVO = 0.42;
 
     private boolean syncturretcamera = true;
     private static double TURRET_OFFSET = 0.05;
-    private static double TURRET_OFFSET_SHOOTING = 0.03;
+    private static double TURRET_OFFSET_SHOOTING = 0.02;
 
     private RingDetector rf = null;
     private TurretAngler ta = null;
@@ -67,14 +67,14 @@ public class UltimateBot extends YellowBot {
             throw new Exception("Issues with intake. Check the controller config", ex);
         }
 
-        try {
-            DcMotorEx intakecurve = getIntakeCMotor();
-            intakecurve.setDirection(DcMotor.Direction.FORWARD);
-            intakecurve.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            intakecurve.setPower(0);
-        } catch (Exception ex) {
-            throw new Exception("Issues with curved intake. Check the controller config", ex);
-        }
+//        try {
+//            DcMotorEx intakecurve = getIntakeCMotor();
+//            intakecurve.setDirection(DcMotor.Direction.FORWARD);
+//            intakecurve.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            intakecurve.setPower(0);
+//        } catch (Exception ex) {
+//            throw new Exception("Issues with curved intake. Check the controller config", ex);
+//        }
 
         try {
             shooter = hwMap.get(DcMotorEx.class, "shooter");
@@ -152,30 +152,30 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Intake", defaultReturn = "")
     public void intake() {
         DcMotorEx intake = getIntakeMotor();
-        DcMotorEx intakecurve = getIntakeCMotor();
+//        DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
-            intake.setPower(0.9);
-            intakecurve.setPower(-0.95);
+            intake.setPower(0.95);
+//            intakecurve.setPower(-0.95);
         }
     }
 
     @BotAction(displayName = "Move Intake Reverse", defaultReturn = "")
     public void intakeReverse() {
         DcMotorEx intake = getIntakeMotor();
-        DcMotorEx intakecurve = getIntakeCMotor();
+//        DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
             intake.setPower(-0.8);
-            intakecurve.setPower(0.8);
+//            intakecurve.setPower(0.8);
         }
     }
 
     @BotAction(displayName = "Stop Intake", defaultReturn = "")
     public void stopintake() {
         DcMotorEx intake = getIntakeMotor();
-        DcMotorEx intakecurve = getIntakeCMotor();
+//        DcMotorEx intakecurve = getIntakeCMotor();
         if (intake != null) {
             intake.setPower(0);
-            intakecurve.setPower(0);
+//            intakecurve.setPower(0);
         }
     }
 
@@ -191,7 +191,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter High", defaultReturn = "")
     public void shooterhigh() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.87);
+            shooter.setVelocity(MAX_VELOCITY*0.86);
         }
     }
 
@@ -219,7 +219,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
     public void shooterpeglow() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.54);
+            shooter.setVelocity(MAX_VELOCITY*0.6);
         }
     }
 
@@ -347,7 +347,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Camera Init Auto", defaultReturn = "")
     public void cameraInitAuto() {
         if (camera != null) {
-            camera.setPosition(0.43);
+            camera.setPosition(0.47);
         }
     }
 
@@ -408,6 +408,33 @@ public class UltimateBot extends YellowBot {
             }
             turretServo.setPosition(turretPos);
         }
+    }
+
+    @BotAction(displayName = "Shoot Pegs", defaultReturn = "")
+    public void shootPegsAuto() {
+        // start shooter
+        if (shooter != null) {
+            shooter.setVelocity(MAX_VELOCITY*0.62);
+        }
+        turretInit();
+
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while(timer.milliseconds() < 1000 && this.owner.opModeIsActive()){
+        }
+        shootServo();
+        shooterpeglow();
+        turretServo.setPosition(0.47 + TURRET_OFFSET);
+        timer.reset();
+        while(timer.milliseconds() < 750 && this.owner.opModeIsActive()){
+        }
+        shootServo();
+        turretServo.setPosition(0.52 + TURRET_OFFSET);
+        timer.reset();
+        while(timer.milliseconds() < 750 && this.owner.opModeIsActive()){
+        }
+        timer.reset();
+        shootServo();
     }
 
     // TURRET ANGLING THREAD FUNCTIONS
@@ -631,7 +658,7 @@ public class UltimateBot extends YellowBot {
     public void shootPegTurnManual(RobotCoordinatePosition locator){
         // start shooter
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.54);
+            shooter.setVelocity(MAX_VELOCITY*0.6);
         }
         syncturretcamera = false;
         turretInit();
@@ -662,7 +689,7 @@ public class UltimateBot extends YellowBot {
     public void shootPegTurnManualTape(RobotCoordinatePosition locator){
         // start shooter
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.59);
+            shooter.setVelocity(MAX_VELOCITY*0.62);
         }
         syncturretcamera = false;
         turretServo.setPosition(0.46 + TURRET_OFFSET);
