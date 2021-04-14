@@ -44,10 +44,10 @@ public class Constants
     // Movement control constants------------------------------------
     public static final double MINIMUM_DRIVE_POWER = 0.08;
     public static final double MAX_DRIVE_POWER = 1.0;
-    public static final double MINIMUM_TURNING_POWER = 0.02;    // todo Too small?
+    public static final double MINIMUM_TURNING_POWER = 0.03;
     // Constants for adjusting powers that are proportional to angle and position differences
-    public static final double TURNING_POWER_FACTOR = 0.01;
-    public static final double DRIVE_POWER_FACTOR = 0.04;
+    public static final double TURNING_POWER_FACTOR = 0.005;
+    public static final double DRIVE_POWER_FACTOR = 0.03;
     //---------------------------------------------------------------
 
 
@@ -57,8 +57,8 @@ public class Constants
     public static final double ROTATION_I = 0.0;
     public static final double ROTATION_D = 0.0;
     public static final double TRANSLATION_P = DRIVE_POWER_FACTOR;
-    public static final double TRANSLATION_I = 0;
-    public static final double TRANSLATION_D = 0;
+    public static final double TRANSLATION_I = 0.0;
+    public static final double TRANSLATION_D = 0.0;
     //---------------------------------------------------------------
 
 
@@ -77,7 +77,7 @@ public class Constants
 
     //Servo Values --------------------------------------------------
     public static final double SERVO_LAUNCH_REST = 0.27;
-    public static final double SERVO_LAUNCH_FIRE = 0.34;
+    public static final double SERVO_LAUNCH_FIRE = 0.45;
     //---------------------------------------------------------------
 
     // Helpful Constants

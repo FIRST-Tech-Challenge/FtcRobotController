@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.team6220_2020;
+package org.firstinspires.ftc.team6220_2020.TestClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.team6220_2020.MasterAutonomous;
+
 @Autonomous(name = "_Autonomous Competition_", group = "Autonomous")
-public class AutoCompetition extends MasterAutonomous{
+public class AutoCompetition extends MasterAutonomous {
     @Override
     public void runOpMode()
     {

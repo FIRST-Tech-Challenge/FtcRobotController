@@ -10,6 +10,6 @@ public class AutonomousCompetition extends MasterAutonomous {
         Initialize();
         waitForStart();
 
-        driveInches(120, -90);
+        driveInches(60, -90);
     }
 }

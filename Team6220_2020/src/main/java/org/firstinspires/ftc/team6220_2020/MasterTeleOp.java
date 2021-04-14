@@ -27,22 +27,22 @@ public abstract class MasterTeleOp extends MasterOpMode
         }
     }
 
-    // Drives launcher with controller. X starts launcher Y stops launcher
+    // Drives launcher with controller
     public void driveLauncherWithController()
     {
         // Todo - migrate to DriverInput class and control to toggle
         driver2.update();
-        if (driver2.isButtonJustPressed(Button.X)) {
+
+        if (driver2.isButtonJustPressed(Button.A)) {
             launcherJustPressed = !launcherJustPressed;
         }
-        if(launcherJustPressed){
+
+        if(launcherJustPressed) {
             driveLauncher(1.0);
-        } else {
+        }
+        else {
             driveLauncher(0.0);
         }
-        //else if(gamepad2.y){
-        //    driveLauncher(0.0);
-        //}
     }
 
     public void fireLauncherWithTrigger(boolean checkSpeed)

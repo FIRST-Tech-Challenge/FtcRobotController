@@ -28,7 +28,7 @@ public abstract class MasterOpMode extends LinearOpMode
     //Booleans
     public boolean isSlowMode = false;
 
-    //
+    // IMUs
     public BNO055IMU imu;
 
     //This method initializes the motors.
@@ -77,12 +77,6 @@ public abstract class MasterOpMode extends LinearOpMode
     //This method drives mecanum when given an angle drive power and turning power
     public void driveMecanum(double driveAngle, double drivePower, double turningPower)
     {
-
-        if(isSlowMode){
-            drivePower *= 0.5;
-            turningPower *= 0.5;
-        }
-
         double x = drivePower * Math.cos(driveAngle);
         double y = drivePower * Math.sin(driveAngle);
 
