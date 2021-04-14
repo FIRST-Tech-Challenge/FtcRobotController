@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static java.lang.StrictMath.abs;
@@ -23,6 +24,7 @@ public class Final_Teleop extends LinearOpMode {
     private DcMotor spindoctorL = null; //shooter
     private DcMotor spindoctorR = null; //shooter (opposite, inverted)
     private DcMotor factory = null; //gear train system
+    //private Servo wobble = null; //wobble goal arm
 
     @Override
     public void runOpMode() {
@@ -37,6 +39,7 @@ public class Final_Teleop extends LinearOpMode {
         spindoctorL = hardwareMap.get(DcMotor.class, "spinL");
         spindoctorR = hardwareMap.get(DcMotor.class, "spinR");
         factory = hardwareMap.get(DcMotor.class,"factory");
+        //wobble = hardwareMap.get(Servo.class, "wobble");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
@@ -112,45 +115,45 @@ public class Final_Teleop extends LinearOpMode {
 
             // JH: and here we have a dpad strafing control system nobody asked for but may be useful?
 
-            if(gamepad1.dpad_up){
+            if(gamepad1.dpad_down){
                 lfPower = 1.0f;
                 rfPower = 1.0f;
                 lbPower = 1.0f;
                 rbPower = 1.0f;
             }
-            if(gamepad1.dpad_down){
+            if(gamepad1.dpad_up){
                 lfPower = -1.0f;
                 rfPower = -1.0f;
                 lbPower = -1.0f;
+                rbPower = -1.0f;
+            }
+            if(gamepad1.dpad_right){
+                lfPower = -1.0f;
+                rfPower = 1.0f;
+                lbPower = 1.0f;
                 rbPower = -1.0f;
             }
             if(gamepad1.dpad_left){
-                lfPower = -1.0f;
-                rfPower = 1.0f;
-                lbPower = -1.0f;
-                rbPower = 1.0f;
-            }
-            if(gamepad1.dpad_right){
                 lfPower = 1.0f;
                 rfPower = -1.0f;
-                lbPower = 1.0f;
-                rbPower = -1.0f;
+                lbPower = -1.0f;
+                rbPower = 1.0f;
             }
 
 
             // wheel power set
             if (gamepad1.right_bumper) {
                 // right bumper, "sprint mode"
+                lf.setPower(lfPower * 0.75);
+                rf.setPower(rfPower * 0.75);
+                lb.setPower(lbPower * 0.75);
+                rb.setPower(rbPower * 0.75);
+            } else {
+                // normal power
                 lf.setPower(lfPower * 0.5);
                 rf.setPower(rfPower * 0.5);
                 lb.setPower(lbPower * 0.5);
                 rb.setPower(rbPower * 0.5);
-            } else {
-                // normal power
-                lf.setPower(lfPower * 0.25);
-                rf.setPower(rfPower * 0.25);
-                lb.setPower(lbPower * 0.25);
-                rb.setPower(rbPower * 0.25);
             }
 
 
