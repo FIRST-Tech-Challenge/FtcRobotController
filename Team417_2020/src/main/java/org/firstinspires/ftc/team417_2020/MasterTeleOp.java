@@ -18,6 +18,8 @@ abstract public class MasterTeleOp extends MasterOpMode {
     private Toggler wobbleGoalArmTogglerUpDown = new Toggler();
     private Toggler wobbleGoalArmTogglerMid = new Toggler();
 
+    int wobbleGoalPosition = 0;
+
     int targetPosition = 0;
 
 
@@ -33,15 +35,15 @@ abstract public class MasterTeleOp extends MasterOpMode {
         double x = gamepad1.right_stick_x;
         double rotationalPower = gamepad1.left_stick_x;
 
-        if (isSlowMode) {
+        if (gamepad1.right_bumper) {
             y *= 0.2;
             x *= 0.2;
             rotationalPower *= 0.2;
         }
-        else if (isReverseMode) {
+        //else if (gamepad1.left_bumper) { // permanently on reverse mode
             y *= -1;
             x *= -1;
-        }
+        //}
 
 
         // todo check and test to see if we need filtering
@@ -98,6 +100,8 @@ abstract public class MasterTeleOp extends MasterOpMode {
         openWobbleGoalGrabber = wobbleGoalGrabberToggler.toggle(gamepad2.a);
         upWobbleGoalArm = wobbleGoalArmTogglerUpDown.toggle(gamepad2.right_bumper);
         midWobbleGoalArm = wobbleGoalArmTogglerMid.toggle(gamepad2.left_bumper);
+
+        // control wobble goal grabber servo with Toggler
         if (openWobbleGoalGrabber) {
             wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
         } else {
@@ -105,17 +109,40 @@ abstract public class MasterTeleOp extends MasterOpMode {
         }
 
         if (gamepad2.right_bumper) {
-            motorWobbleGoalArm.setPower(gamepad2.left_stick_y * -1);
+            //motorWobbleGoalArm.setPower(gamepad2.left_stick_y);
         } else {
-            motorWobbleGoalArm.setPower(gamepad2.left_stick_y * -0.8);
+            //motorWobbleGoalArm.setPower(gamepad2.left_stick_y * 0.8);
+            wobbleGoalPosition += gamepad2.left_stick_y * 0.5;
+            runMotorToPosition(motorWobbleGoalArm, wobbleGoalPosition, gamepad2.left_stick_y);
         }
-        if (gamepad1.left_stick_y == 0) {
-            motorWobbleGoalArm.setPower(0.0);
+        if (gamepad2.left_stick_y == 0) {
+            //motorWobbleGoalArm.setPower(0.0);
             if (motorWobbleGoalArm.getCurrentPosition() > 50 && motorWobbleGoalArm.getCurrentPosition() < 500) {
 
             }
         }
+        //runMotorToPosition(motorWobbleGoalArm, wobbleGoalPosition, gamepad2.left_stick_y);
 
+    }
+
+    public void moveWobbleGoalArm2() {
+
+        // control arm position with controller 2 joystick
+        wobbleGoalPosition += gamepad2.left_stick_y * 3;
+        if (wobbleGoalPosition < -584) {
+            wobbleGoalPosition = -584;
+        }
+        telemetry.addData("Wobble Goal Position", wobbleGoalPosition);
+        runMotorToPosition(motorWobbleGoalArm, wobbleGoalPosition, gamepad2.left_stick_y);
+
+        // controller 2 A
+        // control wobble goal grabber servo with Toggler
+        openWobbleGoalGrabber = wobbleGoalGrabberToggler.toggle(gamepad2.a);
+        if (openWobbleGoalGrabber) {
+            wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
+        } else {
+            wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_IN);
+        }
     }
 
 }

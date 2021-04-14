@@ -24,10 +24,8 @@ public class TestDriveAuto extends MasterAutonomous {
 
 
 
-        move(24,0 , 0.7);
-        move(24,24 , 0.7);
-        move(0,24 , 0.7);
-        move(0, 0, 0.7);
+        runMotorToPosition(motorWobbleGoalArm, -300, 0.8);
+        //wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
 
         //pivot(-90, 0.4);
         //move(12, 12, 0.9);

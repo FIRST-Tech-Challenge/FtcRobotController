@@ -8,9 +8,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Competition Auto")
-public class AutoCompetition extends MasterAutonomous {
-
+@Autonomous (name="1 Wobble Goal Auto :)")
+public class OneWobbleGoalAutoComp extends MasterAutonomous {
     int allianceSide = 1;
     Toggler rightBumper = new Toggler();
 
@@ -18,8 +17,9 @@ public class AutoCompetition extends MasterAutonomous {
     static final int MINIMUM_RING_AREA = 1800;
     static final int PARKING_Y_POSITION = -58;
     static final int A_C_TARGET_ZONE_X_POSITION = 12;
-    static final int A_TARGET_ZONE_Y_POSITION = -72;
+    static final int A_TARGET_ZONE_Y_POSITION = -68;
     static final int B_TARGET_ZONE_Y_POSITION = -86;
+    static final int B_TARGET_ZONE_X_POSITION = -12;
     static final int C_TARGET_ZONE_Y_POSITION = -110;
 
     RingDetectionOpenCV ringDetector = new RingDetectionOpenCV();
@@ -49,64 +49,10 @@ public class AutoCompetition extends MasterAutonomous {
         // 1 rings -> Zone B
         // 4 rings -> Zone C
         deliverWobbleGoal();
-
-        /*
-        //Returning to get second wobble goal
-        //move left
-        move(-20, A_TARGET_ZONE_Y_POSITION, 0.9);
-        //move forward
-        move(-20, 24, 0.9);
-        pivot(180,0.7);
-        //wobbleGoalGrabber
-        pivot(180,0.7);
-        move(0, 0, 0.9);
-
-        deliverWobbleGoal();
-        */
-        //grab
-        //pivot
-        //move - tbd
-
-        //deliverWobbleGoal
+        // park
+        move(B_TARGET_ZONE_X_POSITION, -72, 0.9);
 
 
-        // Park over white line
-        move(-30, PARKING_Y_POSITION, 0.9);
-
-        pivot(88, 0.9);
-        // navigate to other goal
-        move(-30, -88, 0.9);
-        move(-38, -88, 0.9); // x: -24
-        //move(-20, -18, 0.9);
-
-        // lift arm
-        sleep(300);
-        wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
-        runMotorToPosition(motorWobbleGoalArm, -250, 0.5);
-        //runMotorForSeconds(300, -0.2);
-
-
-
-        // move toward wobble goal
-        move(-38, -90, 0.3); //-18
-
-        sleep(300);
-        // close grabber
-        wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_IN);
-
-        sleep(400);
-
-        // back up
-        //move(-20, -18, 0.7);
-
-        //go to starting position
-        pivot(-90, 0.7);
-        move(-22, -90, 0.7);
-
-        deliverWobbleGoal();
-
-        //parking on white line
-        move(-13, -68, 0.9);
     }
 
     // todo program Wobble Goal arm
@@ -187,7 +133,7 @@ public class AutoCompetition extends MasterAutonomous {
             case 1:
                 // Navigate to Zone B
                 move(A_C_TARGET_ZONE_X_POSITION, -24, 0.9);
-                move(-13, B_TARGET_ZONE_Y_POSITION, 0.9);
+                move(B_TARGET_ZONE_X_POSITION, B_TARGET_ZONE_Y_POSITION, 0.9);
                 OpenWobbleGoalGrabber();
                 break;
 
@@ -209,10 +155,4 @@ public class AutoCompetition extends MasterAutonomous {
         motorWobbleGoalArm.setPower(0.0);
 
     }
-
-
-
-
 }
-
-

@@ -187,10 +187,8 @@ abstract public class MasterOpMode extends LinearOpMode {
         motor.setTargetPosition(targetPosition);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setPower(power);
-        while (opModeIsActive() && motor.isBusy()) {
-            telemetry.addData("Current Position", motor.getCurrentPosition());
-        }
-        motor.setPower(0.0);
+
+
     }
 
 
