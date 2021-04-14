@@ -121,7 +121,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         while (!distanceReached && opModeIsActive()) {
             // This calculates the angle deviation
-            angleDeviation = degDriveAngle - startAngle;
+            angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle;
 
             // This calculates the distance traveled in inches
             double distanceTraveled = Math.sqrt(Math.pow((xPosition - 0), 2) + Math.pow((yPosition - 0), 2));
@@ -130,9 +130,17 @@ public abstract class MasterAutonomous extends MasterOpMode {
             distanceLeft = targetDistance - distanceTraveled;
             translationPID.roll(distanceLeft);
 
-            if (Math.abs(angleDeviation) >= 1) {
+            if (angleDeviation >= 1) {
+                radDriveAngle -= Math.toRadians(angleDeviation);
+            }
+            else if(angleDeviation <= 1){
                 radDriveAngle += Math.toRadians(angleDeviation);
             }
+
+            telemetry.addData("angleDeviation", angleDeviation);
+            telemetry.addData("degDriveAngle", degDriveAngle);
+            telemetry.addData("startAngle", startAngle);
+            telemetry.update();
 
             // We drive the mecanum wheels with the PID value
             driveMecanum(radDriveAngle, Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), 0.0);
