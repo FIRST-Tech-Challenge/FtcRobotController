@@ -6,57 +6,48 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class CompetitionAuto extends MasterAutonomous {
     @Override
     public void runOpMode() throws InterruptedException{
-        configureAutonomous();
+        //configureAutonomous();
         initAuto();
         double referenceAngle = imu.getAngularOrientation().firstAngle;
         telemetry.clear();
         telemetry.update();
 
         waitForStart();
-        telemetry.clear();
+        //telemetry.clear();
 
 
         while(opModeIsActive()){
+            double refAngle =  imu.getAngularOrientation().firstAngle; // Get a reference ange from the IMU for future movements using IMU
+            sleep(500);
+            moveAuto(0, 61, 0.5, 0.3);
+            moveAuto(12, 0, 0.5, 0.3);
+            imuPivot(refAngle, 1, 0.3, 0.015, 3.0);
+            //shootRings();
 
-            wait(delays * 1000);
-
-
-
-            switch (destination){
-                case SQUAREA:
-                    if(alliance == Alliance.RED){
-                        moveAuto(0, 5, 1, .2);
-                        imuPivot(referenceAngle, 90, .5, .015, 1);
-                        wobbleGrabberOpen();
-
-                    }
-                    break;
-                case SQUAREB:
-                    if(alliance == Alliance.RED){
-                        moveAuto(0, 5, 1, 2.);
-                        runIntake();
-                        turnOffIntake();
-                        moveAuto(0, 5, 1, .2);
-                        imuPivot(referenceAngle, 90, .5, .015, 1);
-                        wobbleGrabberOpen();
-                    }
-                    break;
-                case SQUAREC:
-                    if(alliance == Alliance.RED){
-                        moveAuto(0, 5, 1, .2);
-                        runIntake();
-                        turnOffIntake();
-                        moveAuto(0, 3, 1, .2 );
-                        wobbleGrabberOpen();
-                    }
-                    break;
-            }
-
-
-
+            motorLift.setTargetPosition(870);
+            motorLift.setPower(Math.max((motorLift.getTargetPosition() - motorLift.getCurrentPosition()) * (1 / 75.0), 1.0));
+            motorShooter.setPower(-0.33);
+            sleep(3000);
+            servoFlicker.setPosition(0.4);
+            sleep(100);
+            servoFlicker.setPosition(0.55);
+            sleep(500);
+            servoFlicker.setPosition(0.4);
+            sleep(100);
+            servoFlicker.setPosition(0.55);
+            sleep(600);
+            servoFlicker.setPosition(0.4);
+            sleep(100);
+            servoFlicker.setPosition(0.55);
+            sleep(500);
+            motorShooter.setPower(0.0);
+            motorLift.setTargetPosition(0);
+            motorLift.setPower(Math.max((motorLift.getTargetPosition() - motorLift.getCurrentPosition()) * (1 / 75.0), 1.0));
+            sleep(1500);
+            moveAuto(0, 12, 0.5, 0.3);
+            break;
 
         }
-
-
     }
+
 }

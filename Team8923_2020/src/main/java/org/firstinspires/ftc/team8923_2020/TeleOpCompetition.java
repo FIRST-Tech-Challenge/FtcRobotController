@@ -21,6 +21,9 @@ public class TeleOpCompetition extends MasterTeleOp
             runintake();
             runShooter();
             runLift();
+            runArm();
+            runGrabber();
+            runDriveSpeed();
             sendTelemetry();
             idle();
         }

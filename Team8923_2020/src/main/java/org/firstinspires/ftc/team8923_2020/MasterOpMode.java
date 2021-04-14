@@ -53,10 +53,12 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //init misc motors
-        motorIntake =hardwareMap.dcMotor.get("motorIntake");
+        motorIntake = hardwareMap.dcMotor.get("motorIntake");
         motorLift = hardwareMap.dcMotor.get("motorLift");
         motorShooter = hardwareMap.dcMotor.get("motorShooter");
         motorWobble = hardwareMap.dcMotor.get("motorWobble");
+
+        motorWobble.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorShooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -66,14 +68,17 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorLift.setTargetPosition(motorLift.getCurrentPosition());
         motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorWobble.setTargetPosition(motorWobble.getCurrentPosition());
         motorWobble.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //motorWobble.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         //init servos
         servoFlicker = hardwareMap.get(Servo.class, "servoFlicker");
-        //servoGrabber = hardwareMap.get(Servo.class, "servoGrabber");
+        servoGrabber = hardwareMap.get(Servo.class, "servoGrabber");
 
         //start positions
-        servoFlicker.setPosition(0.55);
+        servoFlicker.setPosition(0.56);
         servoGrabber.setPosition(0.0);
 
         //init imu
