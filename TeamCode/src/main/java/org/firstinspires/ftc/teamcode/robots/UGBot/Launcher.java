@@ -108,6 +108,7 @@ public class Launcher {
             else{
                 flywheelMotor.setPower(0);
             }
+
         }
     }
 

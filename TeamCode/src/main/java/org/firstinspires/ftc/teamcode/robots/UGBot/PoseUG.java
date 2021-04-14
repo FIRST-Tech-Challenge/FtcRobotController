@@ -594,9 +594,10 @@ public class PoseUG {
     boolean flywheelIsActive = false;
     int numLoops = 0;
     int laggyCounter = 0;
+    boolean autoLaunchActive = false;
+    double autoLaunchTimer = 0.0;
+    boolean ringChambered = false;
 
-    boolean inObstacleBandTurret = false;
-    boolean inObstacleBandLauncher = false;
     public void update(BNO055IMU imu, long ticksLeft, long ticksRight, boolean isActive) {
         long currentTime = System.nanoTime();
 
@@ -699,6 +700,18 @@ public class PoseUG {
         motorBackRight.setPower(clampMotor(powerBackRight));
 
         //turret.setTurntableAngle(model.getTurretHeading());
+
+        ringChambered = true; //todo- when the color sensor is implemented, this is where it will be updated
+        //we might not need this when we get the color sensor implemented
+
+        if(autoLaunchActive &&
+                ringChambered &&
+                System.nanoTime() - autoLaunchTimer > Constants.autoLaunchTime * 1E9 &&
+                poseX < 1.35 &&
+                target != Constants.Target.NONE){
+            articulate(Articulation.toggleTrigger);
+        }
+        autoLaunchTimer = System.nanoTime();
 
         trajCalc.updatePos(poseX, poseY);
         trajCalc.updateVel(velocityX, velocityY);
@@ -944,7 +957,7 @@ public class PoseUG {
     }
 
     int fieldPosState = 0;
-    public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double maxPower){
+    public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double maxPower, double closeEnoughDist){
 
         double heading = getBearingToWrapped(targetX, targetY);
 
@@ -967,7 +980,7 @@ public class PoseUG {
                 //double power =  distance < 0.1524 ? 0 : 0.5;
                 //double maxPower = .5; // (as a magnituded)
 
-                if(driveAbsoluteDistance(maxPower, heading, forward, distance,.1)) {
+                if(driveAbsoluteDistance(maxPower, heading, forward, distance, closeEnoughDist)) {
                     fieldPosState = 0;
                     return true;
                 }
@@ -980,10 +993,10 @@ public class PoseUG {
 
 
     // drive with a final heading
-        public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double maxPower, double targetFinalHeading){
+        public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double maxPower, double closeEnoughDist, double targetFinalHeading){
         switch (fieldPosStateToo){
             case 0:
-                if(driveToFieldPosition(targetX, targetY, forward, maxPower)) {
+                if(driveToFieldPosition(targetX, targetY, forward, maxPower, closeEnoughDist)) {
                     fieldPosStateToo++;
                 }
                 break;
@@ -999,7 +1012,7 @@ public class PoseUG {
         int getFieldPosStateThree = 0;
         double launchMoveDist = 0.0; // the distance at which launcher movements should start
         //drive to a fully defined Position
-    public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward, double maxPower){
+    public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward, double maxPower, double closeEnoughDist){
         switch (getFieldPosStateThree){
             case 0:
                 //calc the distance remaining when the launcher movements should kick-in
@@ -1026,7 +1039,7 @@ public class PoseUG {
                     }
                 }
                 else{
-                    if (driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower)) {
+                    if (driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, closeEnoughDist)) {
                         getFieldPosStateThree++;
                     }
                 }
