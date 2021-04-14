@@ -30,14 +30,6 @@ public class RobotFunctions {
             }
         };
     }
-    public CodeSeg turnArm (final double pos) {
-        return new CodeSeg() {
-            @Override
-            public void run() {
-                bot.startWobbleGoalWithEncoders(pos, 1);
-            }
-        };
-    }
     public CodeSeg stopArm () {
         return new CodeSeg() {
             @Override
@@ -145,13 +137,6 @@ public class RobotFunctions {
                     pause(0.4);
                     bot.rp.setPosition(bot.pushControl.getPos(1)-0.03);
                     pause(0.4);
-//
-//                    if(i == 0){
-//                        bot.autoAimer.debug = 30;
-//                    }else{
-//                        bot.autoAimer.debug = 0;
-//                    }
-//                    bot.autoAimer.updateTargetSpeed();
                 }
                 pause(0.1);
                 bot.rp.setPosition(bot.pushControl.getPos(0));

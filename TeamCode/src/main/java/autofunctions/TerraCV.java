@@ -1,4 +1,4 @@
-package developing;
+package autofunctions;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;

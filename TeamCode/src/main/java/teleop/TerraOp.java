@@ -41,15 +41,15 @@ public class TerraOp extends OpMode {
 
         optimizer.update();
 
-        if(bot.aimer.inited) {
-            if (bot.aimer.isExecuting() && !bot.aimer.pausing) {
+        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
 
-            }else{
-                bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
-            }
-        }else{
-            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
-        }
+//        if(bot.aimer.inited) {
+//            if (!(bot.aimer.isExecuting() && !bot.aimer.pausing)) {
+//                bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
+//            }
+//        }else{
+//            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
+//        }
 
         bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
@@ -142,7 +142,8 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("avgdeltatime", optimizer.avgDeltaTime);
 //        telemetry.addData("heading", bot.odometry.h);
 //        telemetry.addData("heading", Optimizer.optimizeHeading(bot.odometry.h));
-//        telemetry.update();
+        telemetry.addData("wgStart", bot.wgStartMode);
+        telemetry.update();
     }
 
     @Override

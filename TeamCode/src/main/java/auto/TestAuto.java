@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import autofunctions.Path;
 import autofunctions.RobotFunctions;
-import developing.TerraCV;
-import developing.TerraCVHandler;
+import autofunctions.TerraCV;
+import autofunctions.TerraCVHandler;
 import global.TerraBot;
 
 @Disabled

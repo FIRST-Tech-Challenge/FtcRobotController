@@ -1,10 +1,12 @@
-package developing;
+package autofunctions;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
+
+import autofunctions.TerraCV;
 
 public class TerraCVHandler {
     OpenCvInternalCamera2 phoneCam;

@@ -92,6 +92,8 @@ public class TerraBot {
 
     public double[] aimerPos = Constants.TELE_START;
 
+    public boolean isMovementAvailable = true;
+
 
 
 
@@ -231,15 +233,17 @@ public class TerraBot {
     }
 
     public void moveTeleOp(double f, double s, double t, double rt){
+        if(isMovementAvailable){
+            if (fastMode) {
+                move(Math.signum(f) * Math.pow(Math.abs(f), 0.5), Math.signum(s) * Math.pow(Math.abs(s), 0.5), Math.signum(t) * Math.pow(Math.abs(t), 0.5));
+            } else {
+                move(0.4 * Math.signum(f) * Math.pow(Math.abs(f), 0.5), 0.4 * Math.signum(s) * Math.pow(Math.abs(s), 0.5), 0.4 * Math.signum(t) * Math.pow(Math.abs(t), 0.5));
+            }
 
-        if(fastMode) {
-            move(Math.signum(f) * Math.pow(Math.abs(f), 0.5), Math.signum(s) * Math.pow(Math.abs(s), 0.5), Math.signum(t) * Math.pow(Math.abs(t), 0.5));
-        }else{
-            move(0.4*Math.signum(f) * Math.pow(Math.abs(f), 0.5), 0.4*Math.signum(s) * Math.pow(Math.abs(s), 0.5), 0.4*Math.signum(t) * Math.pow(Math.abs(t), 0.5));
-        }
 
-        if(fastModeController.isPressing(rt > 0)){
-           fastMode = !fastMode;
+            if (fastModeController.isPressing(rt > 0)) {
+                fastMode = !fastMode;
+            }
         }
 
 
@@ -248,11 +252,6 @@ public class TerraBot {
     public void moveArm(double p){
         if (isArmInLimits(p)) {
             arm.setPower(p + getRestPowArm());
-            if(isWgeInLimits(p)) {
-                updateWge();
-            }else{
-                wge.setPower(0);
-            }
         }
     }
 
@@ -279,6 +278,19 @@ public class TerraBot {
         wge.setPower(0);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+    public void moveArmWithEncWithoutWGE(double deg, double pow){
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setTargetPosition((int) (deg*Constants.NEV_DEGREES_TO_TICKS));
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        moveArm(Math.abs(pow) * Math.signum(deg - getArmPos()));
+        while (arm.isBusy()){
+            if (Math.abs(getArmPos() - deg) < 10) {
+                moveArm(pow * 0.5);
+            }
+        }
+        moveArm(0);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
     public void setClawPos(int ind) {
         cllControl.changeCurr(ind);
@@ -303,7 +315,7 @@ public class TerraBot {
             double wgePos = getWgePos();
             double armPos = getArmPos();
             double c = 0.05;
-            double targetPos = Constants.WGE_UPPER_LIMIT - Constants.WGE_UPPER_LIMIT / (1 + Math.pow(Math.E, -c * (armPos - 0.5 * Constants.WG_UPPER_LIMIT - Constants.WG_LOWER_LIMIT)));
+            double targetPos = (Constants.WGE_UPPER_LIMIT + Constants.WGE_ACC) - (Constants.WGE_UPPER_LIMIT + Constants.WGE_ACC) / (1 + Math.pow(Math.E, -c * (getArmPos() - 0.5 * Constants.WG_UPPER_LIMIT - Constants.WG_LOWER_LIMIT)));
             if (Math.abs(targetPos - wgePos) < Constants.WGE_ACC) {
                 wge.setPower(0);
             } else {
@@ -314,6 +326,30 @@ public class TerraBot {
             wgeStartMode = getArmPos() < 40;
             return 0;
         }
+    }
+
+    public void controlWGE(double pos){
+        if (!wgeStartMode) {
+            double wgePos = getWgePos();
+            double targetPos =  Constants.WGE_UPPER_LIMIT*pos;
+            if (Math.abs(targetPos - wgePos) < Constants.WGE_ACC) {
+                wge.setPower(0);
+            } else {
+                wge.setPower(Math.signum(targetPos - wgePos));
+            }
+        } else {
+            wgeStartMode = getArmPos() < 40;
+        }
+    }
+    public boolean isControlWgeDone(double pos){
+        double targetPos =  Constants.WGE_UPPER_LIMIT*pos;
+        return Math.abs(targetPos - getWgePos()) < Constants.WGE_ACC;
+    }
+
+    public boolean isWgeDone(){
+        double c = 0.05;
+        double targetPos = (Constants.WGE_UPPER_LIMIT + Constants.WGE_ACC) - (Constants.WGE_UPPER_LIMIT + Constants.WGE_ACC) / (1 + Math.pow(Math.E, -c * (getArmPos() - 0.5 * Constants.WG_UPPER_LIMIT - Constants.WG_LOWER_LIMIT)));
+        return Math.abs(targetPos - getWgePos()) < Constants.WGE_ACC;
     }
 
     public boolean areAutomodulesRunning(){
@@ -424,14 +460,6 @@ public class TerraBot {
         wge.setPower(pow);
     }
 
-    public void startWobbleGoalWithEncoders(double pos, double pow) {
-        pos *= Constants.NEV_DEGREES_TO_TICKS;
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setTargetPosition((int) pos);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(pow);
-    }
-
     public void stopWobbleGoal() {
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setPower(0);
@@ -501,11 +529,7 @@ public class TerraBot {
                 wgStartMode++;
                 break;
             case 1:
-                if(isWgeInLimits(1)) {
-                    updateWge();
-                }else{
-                    wge.setPower(0);
-                }
+                controlWGE(1);
                 if(!arm.isBusy()){
                     wgStartMode++;
                 }
@@ -517,6 +541,12 @@ public class TerraBot {
                 wgStartMode++;
                 break;
             case 3:
+                controlWGE(1);
+                if(isControlWgeDone(1)) {
+                    wgStartMode++;
+                }
+                break;
+            case 4:
                 break;
         }
 
@@ -560,12 +590,24 @@ public class TerraBot {
 
     public void defineWobbleGoal(){
         wobbleGoal.addClaw(this, 2);
+        wobbleGoal.addControlWGE(this, 1);
         wobbleGoal.addWobbleGoal(this, -10, 1);
+        wobbleGoal.toggleFastMode(this);
         wobbleGoal.addPause();
         wobbleGoal.addClaw(this, 0);
         wobbleGoal.addWait(1);
+        wobbleGoal.toggleFastMode(this);
+        wobbleGoal.addWobbleGoal(this, 120, 1);
+        wobbleGoal.addControlWGE(this, 0.5);
+        wobbleGoal.holdWobbleGoalAndPause(this);
+        wobbleGoal.addMove(this, new double[]{0,20,0});
+        wobbleGoal.addClaw(this, 1);
+        wobbleGoal.addWobbleGoal(this, 160, 1);
+        wobbleGoal.addClaw(this, 2);
+        wobbleGoal.addWait(0.7);
         wobbleGoal.addWobbleGoal(this, 45, 1);
         wobbleGoal.addPause();
+
         autoModules.add(wobbleGoal);
     }
 
