@@ -253,13 +253,13 @@ public class HardwareTest extends LinearOpMode {
             transferMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             transferMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             transferMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            transferMotor.setPower(0.3);
+            transferMotor.setPower(0.8);
             telemetry.addData("Moving transferMotor", "forward");
             telemetry.update();
             sleep(1000);
             transferMotor.setPower(0);
             sleep(1000);
-            transferMotor.setPower(-0.3);
+            transferMotor.setPower(-0.8 );
             telemetry.addData("Moving transferMotor", "backward");
             telemetry.update();
             sleep(1000);
@@ -331,11 +331,11 @@ public class HardwareTest extends LinearOpMode {
         if (wobbleGoalServoClawConfigured) {
             wobbleGoalServoClaw = hardwareMap.servo.get("wobbleGoalServoClaw");
             wobbleGoalServoClaw.setPosition(0);
-            telemetry.addData("wobbleGoalServoClaw", "closed");
+            telemetry.addData("wobbleGoalServoClaw", "open");
             telemetry.update();
             sleep(1000);
             wobbleGoalServoClaw.setPosition(1);
-            telemetry.addData("Moving wobbleGoalServoClaw", "open");
+            telemetry.addData("Moving wobbleGoalServoClaw", "closed");
             telemetry.update();
             sleep(1500);
         } else {

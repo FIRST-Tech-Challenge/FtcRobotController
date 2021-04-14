@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class WobbleGoal {
 
     public enum Position {
-        REST, GRAB, DriveToWall, DropOverWall, RAISE,RUN, RELEASE, DROP, STARTOFTELEEOP,START,AutoGRAB
+        REST, GRAB, RAISE, RUN, DROP, AutoGRAB
     }
 
     //declaring the op mode
@@ -29,15 +29,11 @@ public class WobbleGoal {
     protected Servo wobbleGoalServoClaw = null;
 
     private final int ticksForREST = 0;
-    private final int ticksForGRAB = 225;
-    private final int ticksForDriveToWall = 0;
-    private final int ticksForDropOverWall = 80;
-    private final int ticksForRAISE = -400;
+    private final int ticksForGRAB = 280;
+    private final int ticksForRAISE = 90;
     private final int ticksForAutonomousRUN = -350;
     private final int ticksForAutonomousGRAB = -500;
-    private final int ticksForAutonomousStart = 80;
-    private final int ticksForSTARTOFTELEEOP = -200;
-    private final double wobbleGoalSpeed = 0.3;
+    private final double wobbleGoalSpeed = 0.05;
     private final double wobbleGoalSpeedDrop = 0.5;
 
     public WobbleGoal(LinearOpMode opMode) {
@@ -52,7 +48,7 @@ public class WobbleGoal {
         wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wobbleGoalServoClaw.setPosition(1);
-        goToPosition(Position.START);
+        goToPosition(Position.REST);
         opMode.sleep(500);
 
     }
@@ -69,27 +65,11 @@ public class WobbleGoal {
             }
         } else if (p == Position.RAISE) {
             i = ticksForRAISE;
-        } else if (p == Position.STARTOFTELEEOP) {
-            i = ticksForSTARTOFTELEEOP;
-        }else if (p == Position.RUN) {
+        } else if (p == Position.RUN) {
             i = ticksForAutonomousRUN;
-        } else if (p == Position.START) {
-            i = ticksForAutonomousStart;
         }
         else if (p == Position.AutoGRAB) {
             i = ticksForAutonomousGRAB;
-        }else if (p == Position.DriveToWall){
-            i = ticksForDriveToWall;
-            while (wobbleGoalServoClaw.getPosition() != 0) {
-                wobbleGoalServoClaw.setPosition(1);
-            }
-            op.sleep(700);
-        } else if(p == Position.DropOverWall){
-            i = ticksForDropOverWall;
-            while (wobbleGoalServoClaw.getPosition() != 1) {
-                wobbleGoalServoClaw.setPosition(0);
-            }
-            op.sleep(700);
         }
         else {
             op.telemetry.addData("IQ Lvl", "0.00");

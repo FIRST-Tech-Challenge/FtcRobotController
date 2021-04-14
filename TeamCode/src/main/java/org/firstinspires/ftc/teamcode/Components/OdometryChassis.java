@@ -389,6 +389,7 @@ public class OdometryChassis extends BasicChassis {
             double[] currentPosition = track();
             double[] target_position = {0, 0, 0};
             double anglecorrection = 0;
+            double maxpower=0.2;
             target_position[0] = x;
             target_position[1] = y - 0.15;
             target_position[2] = a;
@@ -397,7 +398,7 @@ public class OdometryChassis extends BasicChassis {
             double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
             double startpower = power;
             double error=0;
-            double max = 0.2;
+            double max = 0.15;
             while (op.opModeIsActive() && (difference >= 0.5)&&!gotoPosition_off) {
                 currentPosition = track();
                 error = currentPosition[2]- target_position[2];
@@ -408,16 +409,59 @@ public class OdometryChassis extends BasicChassis {
                 if(error<-180){
                     error+=360;
                 }
-                if(startpower<0.7) {
-                    if (difference < 5) {
-                        power = 0.2;
+                if(startpower<0.55) {
+                    if (difference < 10*startpower*2) {
+                        power = 0.1;
+                        maxpower=0.1;
                         max = 0.35;
                     }
                 }
-                else{
+                else if(startpower<0.65){
                     if (difference < 10) {
-                        power = 0.2;
+                        power = -0.2;
+                        maxpower= -0.2;
                         max = 0.35;
+                    }
+                    if(difference<5){
+                        power=0.2;
+                        maxpower=0.2;
+                        max=0.35;
+                    }
+                }
+                else if(startpower<0.85){
+                    if (difference < 10*startpower) {
+                        power = -0.2;
+                        maxpower= -0.2;
+                        max = 0.35;
+                    }
+                    if(difference<5){
+                        power=0.2;
+                        maxpower=0.2;
+                        max=0.35;
+                    }
+                }
+                else if(startpower<0.95){
+                    if (difference < 13*startpower) {
+                        power = -0.2*startpower;
+                        maxpower=-0.2*startpower;
+                        max = 0.35;
+                    }
+                    if(difference<5){
+                        power=0.2;
+                        maxpower=0.2;
+                        max=0.35;
+                    }
+                }
+                else{
+                    if (difference < 16*startpower) {
+                        power = -0.2*startpower;
+                        maxpower=-0.2*startpower;
+                        max = 0.35;
+                    }
+                    if(difference<5){
+                        power=0.15;
+                        maxpower=0.15;
+                        max=0.35;
                     }
                 }
                 if (power > startpower) {
@@ -442,8 +486,8 @@ public class OdometryChassis extends BasicChassis {
                     anglePower[1] *= abs(1 / anglePower[0]);
                     anglePower[0] *= abs(1 / anglePower[0]);
                 }
-                while (abs(power) < 0.2) {
-                    power *= 0.2 / abs(power);
+                while (abs(power) < maxpower) {
+                    power *= maxpower / abs(power);
                 }
                 motorRightBack.setPower((power * anglePower[1] + anglecorrection));
                 motorRightFront.setPower(power * anglePower[0] + anglecorrection);
@@ -453,7 +497,13 @@ public class OdometryChassis extends BasicChassis {
 //            op.telemetry.addData("rightBack",power * anglePower[1] + anglecorrection);
 //            op.telemetry.addData("leftFront",power * anglePower[1] - anglecorrection);
 //            op.telemetry.addData("rightFront",power * anglePower[0] + anglecorrection);
-                difference = abs(sqrt((x) * (x) + (y) * (y)));
+                double gak=x*x+y*y;
+                if(gak<0){
+                    difference=-sqrt(gak);
+                }
+                else{
+                    difference=sqrt(gak);
+                }
 //            op.telemetry.addData("distance", difference);
                 op.telemetry.update();
             }
