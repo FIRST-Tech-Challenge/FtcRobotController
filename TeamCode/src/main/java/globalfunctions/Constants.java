@@ -82,5 +82,7 @@ public class Constants {
     public static final double[] AUTO_START = new double[]{80,21,0};
     public static final double[] TELE_START = new double[]{97,180,0};
 
+    public static final double GYRO_UPDATE_RATE = 10; //hertz
+
 
 }

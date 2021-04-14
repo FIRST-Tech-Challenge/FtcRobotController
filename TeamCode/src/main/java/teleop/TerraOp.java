@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import global.TerraBot;
 import globalfunctions.Constants;
+import globalfunctions.Optimizer;
 import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
 
@@ -14,29 +15,40 @@ public class TerraOp extends OpMode {
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
     Storage storage = new Storage();
+    Optimizer optimizer = new Optimizer();
 
     @Override
     public void init() {
         bot.init(hardwareMap);
+        bot.startOdoThreadTele();
+        bot.odometry.resetAll(Constants.TELE_START);
+        bot.angularPosition.resetGyro(0);
+        optimizer.reset();
+
         telemetry.addData("Ready?", "Yes!");
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
 //        bot.moveArmWithEnc(45, 1);
 //
-        bot.startOdoThreadTele();
-        bot.odometry.resetAll(Constants.TELE_START);
+
     }
+
+
 
     @Override
     public void loop() {
+        bot.initWobbleGoal();
+
+        optimizer.update();
+
         if(bot.aimer.inited) {
-            if (bot.aimer.isExecuting()) {
+            if (bot.aimer.isExecuting() && !bot.aimer.pausing) {
 
             }else{
-                bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger,gamepad1.left_trigger);
+                bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
             }
         }else{
-            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger,gamepad1.left_trigger);
+            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
         }
 
         bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
@@ -48,18 +60,34 @@ public class TerraOp extends OpMode {
 
             bot.updateRP(gamepad2.left_bumper, gamepad2.right_bumper);
             bot.updateClaw(gamepad2.dpad_left, gamepad2.dpad_right);
+//            if(bot.wgStartMode > 2) {
+//                bot.moveArm(-gamepad2.right_stick_y);
+//            }
+
         }
 
 //        bot.outtake(gamepad2.right_stick_y);
 //
+
+        if(gamepad1.y){
+            bot.aimer.start();
+        }
+
+        if(gamepad1.x){
+            bot.aimerPos = bot.odometry.getAll();
+        }
+
+        if(gamepad2.x){
+//            optimizer.show();
+            bot.wobbleGoal.start();
+        }
+
         if(gamepad2.y){
             bot.shooter.start();
         }
-        if(gamepad2.x){
-            bot.defineAimer();
-            bot.aimer.start();
-        }
+
 //
+
 //
 //        if(gamepad2.right_trigger > 0){
 //            bot.extendWobbleGoal(1);
@@ -88,25 +116,33 @@ public class TerraOp extends OpMode {
 
 //        bot.updateOdometry();
 
+        bot.optimizeOdometry();
         
 //        telemetry = telemetryHandler.addAutoAimer(telemetry, bot);
 //        telemetry = telemetryHandler.addOuttake(telemetry, bot);
-//        telemetry = telemetryHandler.addAngularPosition(telemetry, bot);
-//
-        telemetryHandler.addOdometry();
+
 //        telemetry.addData("cll pos", bot.cll.getPosition());
 //        telemetry.addData("clr pos", bot.clr.getPosition());
 //        telemetryHandler.addAutoAimer();
 ////        telemetryHandler.addAngularPosition();
 //        telemetry = telemetryHandler.getTelemetry();
-//
-        telemetry = telemetryHandler.getTelemetry();
-        telemetry.update();
+////
+//        telemetry = telemetryHandler.getTelemetry();
 
-        if(bot.shooter.inited){
-            telemetry.addData("executing", bot.shooter.autoModuleThread.executing);
-        }
-        telemetry.update();
+
+//        if(bot.shooter.inited){
+//            telemetry.addData("executing", bot.shooter.autoModuleThread.executing);
+//        }
+//        telemetry.update();
+//
+
+
+//        telemetryHandler.addAngularPosition();
+//        telemetryHandler.addOdometry();
+//        telemetry.addData("avgdeltatime", optimizer.avgDeltaTime);
+//        telemetry.addData("heading", bot.odometry.h);
+//        telemetry.addData("heading", Optimizer.optimizeHeading(bot.odometry.h));
+//        telemetry.update();
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import autofunctions.Path;
 import global.TerraBot;
+import globalfunctions.Optimizer;
 import globalfunctions.TerraThread;
 import globalfunctions.Constants;
 import util.CodeSeg;
@@ -114,6 +115,7 @@ public class AutoModule {
 
 
 
+
     public void addStage(final DcMotor mot, final double pow, final double t) {
         stages.add(new Stage() {
             @Override
@@ -155,6 +157,25 @@ public class AutoModule {
                 }
             });
         }
+    }
+
+    public void addWobbleGoal(final TerraBot bot, final double deg, final double pow){
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.moveArmWithEnc(deg, pow);
+                return true;
+            }
+        });
+    }
+    public void addClaw(final TerraBot bot, final int idx){
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.claw(bot.cllControl.getPos(idx), bot.clrControl.getPos(idx));
+                return true;
+            }
+        });
     }
 
     public void addStage(final CRServo crs, final double pow) {
@@ -241,11 +262,13 @@ public class AutoModule {
             public boolean run(double in) {
                path = new Path(bot.odometry.getAll());
                path.setGlobalMode(true);
-               path.addSetpoint(Constants.TELE_START[0],Constants.TELE_START[1], Constants.TELE_START[2] );
+               bot.fastMode = false;
+//               path.addSetpoint(Constants.TELE_START[0],Constants.TELE_START[1], Constants.TELE_START[2] );
+                path.addWaypoint(bot.aimerPos[0], bot.aimerPos[1], Optimizer.optimizeHeading(bot.aimerPos[2]));
+                path.addSetpoint(bot.aimerPos[0], bot.aimerPos[1], Optimizer.optimizeHeading(bot.aimerPos[2]));
                 return true;
             }
         });
-//
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {

@@ -44,7 +44,7 @@ public class OdometryOp extends OpMode {
             double strafe = gamepad1.right_stick_x;
             double turn = -gamepad1.left_stick_x;
 
-            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger,gamepad1.left_trigger);
+            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
             optimizer.update();
             telemetryHandler.addOdometry();
             telemetry = telemetryHandler.getTelemetry();

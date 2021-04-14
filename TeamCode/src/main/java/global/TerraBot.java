@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -72,17 +73,26 @@ public class TerraBot {
 
     public boolean fastMode = true;
     public boolean wgeStartMode = true;
+    public int wgStartMode = 0;
 
     public AutoModule shooter = new AutoModule(); // 0
     public AutoModule aimer = new AutoModule();
+    public AutoModule wobbleGoal = new AutoModule();
 
     public ArrayList<AutoModule> autoModules = new ArrayList<>();
 
     public ButtonController outtakeButtonController = new ButtonController();
+    public ButtonController fastModeController = new ButtonController();
 
     public Odometry odometry = new Odometry();
 
     public TerraThread odometryThread;
+
+    public ElapsedTime odometryTime = new ElapsedTime();
+
+    public double[] aimerPos = Constants.TELE_START;
+
+
 
 
 
@@ -130,6 +140,8 @@ public class TerraBot {
 
 
         defineShooter();
+        defineAimer();
+        defineWobbleGoal();
     }
 
     public DcMotor getMotor(HardwareMap hwMap, String name, DcMotor.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode){
@@ -218,7 +230,7 @@ public class TerraBot {
         }
     }
 
-    public void moveTeleOp(double f, double s, double t, double rt, double lt){
+    public void moveTeleOp(double f, double s, double t, double rt){
 
         if(fastMode) {
             move(Math.signum(f) * Math.pow(Math.abs(f), 0.5), Math.signum(s) * Math.pow(Math.abs(s), 0.5), Math.signum(t) * Math.pow(Math.abs(t), 0.5));
@@ -226,10 +238,8 @@ public class TerraBot {
             move(0.4*Math.signum(f) * Math.pow(Math.abs(f), 0.5), 0.4*Math.signum(s) * Math.pow(Math.abs(s), 0.5), 0.4*Math.signum(t) * Math.pow(Math.abs(t), 0.5));
         }
 
-        if(rt > 0){
-            fastMode = true;
-        }else if(lt > 0){
-            fastMode = false;
+        if(fastModeController.isPressing(rt > 0)){
+           fastMode = !fastMode;
         }
 
 
@@ -336,7 +346,11 @@ public class TerraBot {
         rp.setPosition(pushControl.update(lb, rb));
     }
     public void updateClaw(boolean dpl, boolean dpr){
-        claw(cllControl.update(dpl, dpr),clrControl.update(dpl, dpr));
+        if(dpr) {
+            claw(cllControl.getPos(0), clrControl.getPos(0));
+        }else if(dpl){
+            claw(cllControl.getPos(2), clrControl.getPos(2));
+        }
     }
 
 //    public void resetOuttake() {
@@ -363,7 +377,6 @@ public class TerraBot {
 
 
     public void outtakeWithCalculations() {
-
         if(outtaking){
             if(outr.getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)){
                 outr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -402,6 +415,9 @@ public class TerraBot {
 
     public void updateOdometry() {
         odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
+    }
+    public void optimizeHeading(){
+        odometry.resetHeading(Optimizer.optimizeHeading(odometry.h));
     }
 
     public void extendWobbleGoal(double pow) {
@@ -466,6 +482,46 @@ public class TerraBot {
         odometry.resetPos(localizer.getPos(odometry.getPos(), odometry.h));
     }
 
+    public void optimizeOdometry(){
+        if(odometryTime.seconds() > (1/Constants.GYRO_UPDATE_RATE)){
+            odometryTime.reset();
+//            resetHeadingUsingGyro();
+            //SKETYCHHHHHHHHHHHHHHHHHHHHH WHYYYYYYYYYYYYYYYYYYYYYYYYYYY????
+            optimizeHeading();
+        }
+    }
+
+    public void initWobbleGoal(){
+        switch (wgStartMode){
+            case 0:
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                arm.setTargetPosition((int) (45*Constants.NEV_DEGREES_TO_TICKS));
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                moveArm(Math.abs(1) * Math.signum(45 - getArmPos()));
+                wgStartMode++;
+                break;
+            case 1:
+                if(isWgeInLimits(1)) {
+                    updateWge();
+                }else{
+                    wge.setPower(0);
+                }
+                if(!arm.isBusy()){
+                    wgStartMode++;
+                }
+                break;
+            case 2:
+                moveArm(0);
+                wge.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                wgStartMode++;
+                break;
+            case 3:
+                break;
+        }
+
+    }
+
     public void defineShooter(){
         shooter.addStage(rh2, -1);
         shooter.addOuttake(outr, outl, 1300, 1600);
@@ -477,7 +533,8 @@ public class TerraBot {
                 fastMode = false;
             }
         });
-        shooter.addPause();
+        shooter.addWait(1);
+//        shooter.addPause();
         for (int i = 0; i < 3; i++) {
             shooter.addStage(rp, pushControl, 2, 0.01);
             shooter.addWait(0.25);
@@ -500,6 +557,19 @@ public class TerraBot {
         aimer.addPause();
         autoModules.add(aimer);
     }
+
+    public void defineWobbleGoal(){
+        wobbleGoal.addClaw(this, 2);
+        wobbleGoal.addWobbleGoal(this, -10, 1);
+        wobbleGoal.addPause();
+        wobbleGoal.addClaw(this, 0);
+        wobbleGoal.addWait(1);
+        wobbleGoal.addWobbleGoal(this, 45, 1);
+        wobbleGoal.addPause();
+        autoModules.add(wobbleGoal);
+    }
+
+
 
 
 

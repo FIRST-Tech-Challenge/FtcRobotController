@@ -68,5 +68,21 @@ public class Optimizer {
         return sum/wsum;
     }
 
+    public static double optimizeHeading(double heading){
+        if(!inRange(heading, new double[]{-180,180})){
+            double heading2 = (Math.abs(heading)%360);
 
+            if(inRange(heading2, new double[]{0,180})){
+                return Math.signum(heading)*heading2;
+            }else{
+                return -Math.signum(heading)*(360 - heading2);
+            }
+        }else{
+            return heading;
+        }
+    }
+
+    public static double[] optimizePos(double[] in){
+        return new double[]{in[0], in[1], optimizeHeading(in[2])};
+    }
 }
