@@ -48,7 +48,7 @@ public class DC12VSpin extends LinearOpMode {
             runtime.reset(); // Resets the runtime to when the program actually runs
 
         }
-
+        //test push again
         // Code while running
         while (opModeIsActive()) { // Only runs until the stop button is pressed
             spin.setPower(1); // Sets the power as fast as possible
