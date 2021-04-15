@@ -19,11 +19,12 @@ import org.firstinspires.ftc.teamcode.settings.HardwareMapDeviceNames;
 
 public class DriveTrain {
     // Drive Modes
-    public static final int DRIVE_MODE_WHEEL_PIVOT = 0;
     public static final int DRIVE_MODE_STOP = -1;
+    public static final int DRIVE_MODE_WHEEL_PIVOT = 0;
+    public static final int DRIVE_MODE_TANK = 1;
 
     // Debugging
-    public boolean debugging;
+    private boolean debugging;
 
     public static final int DRIVE_MODE_DEFAULT = DRIVE_MODE_WHEEL_PIVOT;
 
@@ -68,6 +69,10 @@ public class DriveTrain {
 
                 leftMotor.setPower(leftPower);
                 rightMotor.setPower(rightPower);
+                break;
+            case DRIVE_MODE_TANK:
+                leftMotor.setPower(gamepad1.left_stick_y);
+                rightMotor.setPower(gamepad1.right_stick_y);
                 break;
             case DRIVE_MODE_STOP:
             default:
