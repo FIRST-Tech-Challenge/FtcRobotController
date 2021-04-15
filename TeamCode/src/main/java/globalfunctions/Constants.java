@@ -5,16 +5,13 @@ import util.Geometry;
 
 public class Constants {
     public static final double MAX_OUTTAKE_SPEED = 100*2*Math.PI; // rad/s
-//    public static final double OUTR_SPEED_OFFSET = 0.12*MAX_OUTTAKE_SPEED;
-//    public static final double OUTL_SPEED_OFFSET = -0.05*MAX_OUTTAKE_SPEED;
+//
+//    public static final double OUTR_SPEED_OFFSET = 0.1*MAX_OUTTAKE_SPEED;
+//    public static final double OUTL_SPEED_OFFSET = 0.05*MAX_OUTTAKE_SPEED;
 
-    public static final double OUTR_SPEED_OFFSET = 0.23*MAX_OUTTAKE_SPEED;
-    public static final double OUTL_SPEED_OFFSET = -0.13*MAX_OUTTAKE_SPEED;
 
-//    public static final double OUTR_SPEED_OFFSET = 0.3*MAX_OUTTAKE_SPEED;
-//    public static final double OUTL_SPEED_OFFSET = -0.22*MAX_OUTTAKE_SPEED;
-//    public static final double OUTR_SPEED_OFFSET = 0;
-//    public static final double OUTL_SPEED_OFFSET = 0;
+    public static final double OUTR_SPEED_OFFSET = 0.5*MAX_OUTTAKE_SPEED;
+    public static final double OUTL_SPEED_OFFSET = -0.1*MAX_OUTTAKE_SPEED;
 
     public static final double OUTTAKE_ANGLE = 20 * Math.PI/180; // degrees -> radians
     public static final double GOAL_FROM_LEFT = 0.9; // meters

@@ -60,14 +60,39 @@ public class RobotFunctions {
             }
         };
     }
+    public CodeSeg claw(final int idx) {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.claw(bot.cllControl.getPos(idx), bot.clrControl.getPos(idx));
+            }
+        };
+    }
+
     public CodeSeg moveWgTo(final double deg) {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.moveArmWithEnc(deg, 1);
+                bot.moveArmWithEncWithoutWGE(deg, 1);
             }
         };
     }
+
+    public CodeSeg controlWGE(final double pos) {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                while (bot.isControlWgeDone(pos)) {
+                    bot.controlWGE(pos);
+                    bot.moveArm(bot.getRestPowArm());
+                }
+                bot.wge.setPower(0);
+            }
+        };
+    }
+
+
+
     public CodeSeg resetHeadingUsingGyro(){
         return new CodeSeg() {
             @Override
@@ -134,9 +159,9 @@ public class RobotFunctions {
                 pause(0.4);
                 for (int i = 0; i < numRings; i++) {
                     bot.rp.setPosition(bot.pushControl.getPos(2));
-                    pause(0.4);
+                    pause(0.3);
                     bot.rp.setPosition(bot.pushControl.getPos(1)-0.03);
-                    pause(0.4);
+                    pause(0.5);
                 }
                 pause(0.1);
                 bot.rp.setPosition(bot.pushControl.getPos(0));
