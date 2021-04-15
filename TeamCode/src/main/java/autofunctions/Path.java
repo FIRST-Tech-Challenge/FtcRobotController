@@ -53,13 +53,13 @@ public class Path {
 
     public boolean isExecuting = true;
 
-    final public double[] ks = {0.05,0.1,0.005};
+    final public double[] ks = {0.05,0.2,0.005};
 //    final public double[] ds = {0.03,0.03,0.0005};
     final public double[] ds = {0.01,0.01,0.0005};
 //    final public double[] ds = {0.005,0.005,0.0005};
     final public double[] is = {0.00,0.00,0.0000};
 
-    final public double[] ksS = {0.05,0.05,0.01};
+    final public double[] ksS = {0.05,0.05,0.012};
     final public double[] dsS = {0.008,0.008,0.0005};
 //    final public double[] isS = {0.0005,0.0005,0.00005};
     final public double[] isS = {0.000,0.000,0.0000};
@@ -397,7 +397,6 @@ public class Path {
         op.telemetry.update();
         telemetryHandler.init(op.telemetry, bot);
         bot.odometry.resetAll(poses.get(0));
-        startRFThread(op);
         trackTime.reset();
         while (op.opModeIsActive() && isExecuting){
 //            op.telemetry = telemetryHandler.addAutoAimer(op.telemetry, bot);
@@ -424,9 +423,9 @@ public class Path {
 //            op.telemetry.addData("hasreached", bot.autoAimer.hasReached);
 //            op.telemetry.addData("outtaking", bot.outtaking);
 //            op.telemetry.addData("wg distance sensor", bot.getWgePos());
-            op.telemetry.addData("RightVel", bot.getRightAngVel());
-            op.telemetry.addData("LeftVel", bot.getLeftAngVel());
-            op.telemetry.update();
+//            op.telemetry.addData("RightVel", bot.getRightAngVel());
+//            op.telemetry.addData("LeftVel", bot.getLeftAngVel());
+//            op.telemetry.update();
 
             double[] pows = update(bot.odometry.getAll(), bot);
             track.add(bot.odometry.getAll());

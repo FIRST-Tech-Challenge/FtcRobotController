@@ -32,7 +32,7 @@ public class RobotFunctionsHandler {
     public Stage exit = new Stage() {
         @Override
         public boolean run(double in) {
-            return !op.opModeIsActive();
+            return op.isStopRequested();
         }
     };
 
@@ -44,6 +44,7 @@ public class RobotFunctionsHandler {
     public void start(LinearOpMode op){
         this.op = op;
         rfsThread = new TerraThread(updateCode, exit);
+//        rfsThread = new TerraThread(updateCode);
         Thread t = new Thread(rfsThread);
         t.start();
     }

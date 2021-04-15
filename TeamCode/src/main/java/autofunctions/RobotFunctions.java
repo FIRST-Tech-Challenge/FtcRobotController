@@ -69,6 +69,15 @@ public class RobotFunctions {
         };
     }
 
+    public CodeSeg claw(final int idx, final double offset) {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.claw(bot.cllControl.getPos(idx)+offset, bot.clrControl.getPos(idx)-offset);
+            }
+        };
+    }
+
     public CodeSeg moveWgTo(final double deg) {
         return new CodeSeg() {
             @Override
@@ -145,7 +154,6 @@ public class RobotFunctions {
                 bot.outtaking = true;
                 bot.rh2.setPower(-1);
                 bot.rp.setPosition(bot.pushControl.getPos(1));
-                pause(0.5);
                 bot.rh2.setPower(0);
             }
         };
@@ -156,7 +164,7 @@ public class RobotFunctions {
             @Override
             public void run() {
                 while (!bot.autoAimer.hasReached){}
-                pause(0.4);
+                pause(0.1);
                 for (int i = 0; i < numRings; i++) {
                     bot.rp.setPosition(bot.pushControl.getPos(2));
                     pause(0.25);

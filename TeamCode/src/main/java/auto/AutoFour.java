@@ -21,97 +21,45 @@ public class AutoFour extends LinearOpMode {
     public void runOpMode() {
         initialize();
         waitForStart();
-        bot.startOdoThreadAuto(this);
 
         /**
          *
          *
-         * TODO LIST
-         *  Programming:
-         *      auton
-         *
-         *      PlAN (TIME) [note]
+         *  PlAN NEW(TIME) [note]
          *          1. scan rings (0.0) [done before init]
          *          2. ready shooter (0.0) [done while raising wobble]
          *          3. raise wobble goal (1)
-         *          4. move forward (1.5)
-         *          5. shoot 3 rings into normal goal (3.5)
-         *          6. turn intake on (3.5) [doesnt take time]
-         *          7. move forward (4)
-         *          8. intake 1 ring (5)
-         *          9. ready shooter (6)
-         *          10. shoot ring (7)
-         *          11. intake on (7)
-         *          12. intake 3 rings (10)
-         *          13. ready shooter (11)
-         *          14. move sideways (12)
-         *          15. shoot powershots (15)
-         *          16. move to wobble goal drop (18)
-         *          17. move wobble arm (19)
-         *          18. open claw (19.5)
-         *          19. turn arm around (20.5)
-         *          20. move to pick up other wobble (23.5)
-         *          21. grab other wobble (24)
-         *          22. pick up other wobble (25)
-         *          23. place other wobble (28)
-         *          24. open claw (28.5)
-         *          24. move to park (30)
-         *
-         *  PlAN NEW(TIME) [note]
-         *          *          1. scan rings (0.0) [done before init]
-         *          *          2. ready shooter (0.0) [done while raising wobble]
-         *          *          3. raise wobble goal (1)
-         *          *          4. move forward (2)
-         *          *          5. shoot 3 rings into normal goal (4)
-         *          *          16. move to wobble goal drop (6)
-         *          *          17. FINISH THIS LATER
-         *          *          18. open claw (19.5)
-         *          *          19. turn arm around (20.5)
-         *          *          20. move to pick up other wobble (23.5)
-         *          *          21. grab other wobble (24)
-         *          *          22. pick up other wobble (25)
-         *          *          23. place other wobble (28)
-         *          *          24. open claw (28.5)
-         *          *          24. move to park (30)
-         *
+         *          4. move forward (3)
+         *          5. shoot 3 rings into normal goal (6)
+         *          6. ready wobble arm [done while moving] (0)
+         *          7. move forward (7)
+         *          8. place wobble goal (9)
+         *          9. move back (12)
+         *          10. pick wobble goal from back (13)
+         *          11.
          */
-        //FIX MOVEMENT PLS SUPER SKECTH RN WAYPOINTS AAAAAAAAAAAA
 
 
 
-        // INITIAL SHOOTING
-//        path.addWGRF(rf.moveWgTo(45));
-//        path.addRF(rf.readyShooter(), rf.shootIntoGoal(3), rf.stopOuttake());
-//        path.addShoot(7,50,0);
-//
-//        // NOW TO KNOCK DOWN THE TOWER AND INTAKE THE RINGS
-//        path.addSetpoint(0, 45, 0);
-////        path.addRF(rf.intake(1));
-////        path.addStop(1);
-//        path.addWaypoint(0,-5,0);
-//
-//        path.addRF(rf.intake(1));
-//        path.addWaypoint(0, 15, 0);
-//        path.addStop(5);
-//        path.addRF(rf.shootRF(2));
-//        path.addStop(1);
-//        path.addShoot();
-//        path.addRF(rf.intake(1));
-//        path.addWaypoint(0,15,0);
-//        path.addStop(3);
-//        path.addRF(rf.shootRF(2));
-//        path.addShoot();
-
-        path.addWGRF(rf.moveWgTo(45));
+        path.addWGRF(rf.moveWgTo(45), rf.controlWGE(0.3));
         path.addRF(rf.readyShooter(), rf.shootIntoGoal(3), rf.stopOuttake());
         path.addWaypoint(-30, 50, 0);
-        path.addWaypoint(0,30,0);
-        path.addShoot(0,30,0);
+//        path.addWaypoint(0,30,0);
+        path.addShoot(0,60,0);
         path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
         path.addWaypoint(0,100, 0);
         path.addSetpoint(-10,50,0);
-        path.addWGRF(rf.claw(2));
+        path.addWGRF(rf.claw(2, -0.2));
+        path.addStop(0.3);
+        path.addWGRF(rf.moveWgTo(45));
+        path.addRF(rf.controlWGE(0.1));
+        path.addWaypoint(0, -215, 0);
+        path.addSetpoint(35, 10, 0);
+        path.addSetpoint(0,30, 0);
+        path.addRF(rf.intake(1));
+        path.addWGRF(rf.moveWgTo(150));
         path.addStop(1);
+
 
         path.start(bot, this);
         path.saveData();
@@ -123,7 +71,14 @@ public class AutoFour extends LinearOpMode {
         bot.angularPosition.dontUseCompassSensor = true;
         bot.init(hardwareMap);
         rf.init(bot);
+        bot.startOdoThreadAuto(this);
+        path.startRFThread(this);
         telemetry.addData("Ready:", ringNum);
         telemetry.update();
+
     }
+//    @Override
+//    public void stop(){
+//
+//    }
 }

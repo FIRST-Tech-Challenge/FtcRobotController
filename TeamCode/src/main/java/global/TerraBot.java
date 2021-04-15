@@ -479,9 +479,10 @@ public class TerraBot {
         Stage exit = new Stage() {
             @Override
             public boolean run(double in) {
-                return !op.opModeIsActive();
+                return op.isStopRequested();
             }
         };
+//        odometryThread = new TerraThread(run, exit);
         odometryThread = new TerraThread(run, exit);
         Thread t = new Thread(odometryThread);
         t.start();
