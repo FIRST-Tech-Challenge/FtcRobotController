@@ -27,7 +27,7 @@ public class DriveTrainTesting extends LinearOpMode {
             // Not too sure why we have this twice, but I currently do not have the controller with me and can not test the usefulness of this
             telemetry.addData("Status", "Initialized");
 
-            driveTrain = new DriveTrain(hardwareMap,gamepad1, DriveTrain.DRIVE_MODE_DEFAULT);
+            driveTrain = new DriveTrain(hardwareMap,gamepad1, DriveTrain.DRIVE_MODE_MIDDLE_PIVOT);
 
             // Tell the driver that initialization is complete.
             telemetry.addData("Status", "Initialized");

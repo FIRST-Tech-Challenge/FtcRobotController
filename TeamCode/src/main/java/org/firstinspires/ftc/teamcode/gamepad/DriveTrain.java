@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.settings.HardwareMapDeviceNames;
  * This controls the drive train
  * @author Joshua Miller <22jmiller@xbhs.net>
  * @author Brayden Meech <22bmeech@xbhs.net>
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 public class DriveTrain {
@@ -22,6 +22,7 @@ public class DriveTrain {
     public static final int DRIVE_MODE_STOP = -1;
     public static final int DRIVE_MODE_WHEEL_PIVOT = 0;
     public static final int DRIVE_MODE_TANK = 1;
+    public static final int DRIVE_MODE_MIDDLE_PIVOT = 2;
 
     // Debugging
     private boolean debugging;
@@ -63,6 +64,7 @@ public class DriveTrain {
 
     public void update() {
         switch (driveMode) {
+            // TODO: This doesn't work as well as expected
             case DRIVE_MODE_WHEEL_PIVOT:
                 double rightPower = 2 * gamepad1.left_stick_y * ((Math.abs(gamepad1.left_stick_x - 1) / 2));
                 double leftPower = 2 * gamepad1.left_stick_y * ((Math.abs(gamepad1.left_stick_x + 1) / 2));
@@ -73,6 +75,19 @@ public class DriveTrain {
             case DRIVE_MODE_TANK:
                 leftMotor.setPower(gamepad1.left_stick_y);
                 rightMotor.setPower(gamepad1.right_stick_y);
+                break;
+            case DRIVE_MODE_MIDDLE_PIVOT:
+                // Distance from center
+                double power = Math.sqrt(Math.pow(gamepad1.left_stick_x,2)+Math.pow(gamepad1.left_stick_y,2));
+
+                if (gamepad1.left_stick_y <= 0) { // Going Forwards
+                    leftMotor.setPower(2*gamepad1.left_stick_x+power);
+                    rightMotor.setPower(-2*gamepad1.left_stick_x+power);
+                } else { // Backwards
+                    leftMotor.setPower(2*gamepad1.left_stick_x-power);
+                    rightMotor.setPower(-2*gamepad1.left_stick_x-power);
+                }
+
                 break;
             case DRIVE_MODE_STOP:
             default:
