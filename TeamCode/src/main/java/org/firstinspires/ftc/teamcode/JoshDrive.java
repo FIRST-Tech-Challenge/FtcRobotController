@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,10 +26,24 @@ public class JoshDrive extends OpMode {
 
     @Override
     public void loop() {
-        //double power = Math.abs()
-        double rightPower = gamepad1.left_stick_y * ((gamepad1.left_stick_x + 1)/ 2);
+        double power = gamepad1.left_stick_y;
+        double turn = gamepad1.left_stick_x;
 
-        //leftDrive.setPower(leftPower);
+        double rPower;
+        double lPower;
+
+        if (power == 0) {
+            rPower = 0;
+            lPower = 0;
+        } else if (power > 0){ // Forwards
+            rPower = Math.min(-turn+power,1);
+            lPower = Math.min(turn+power,1);
+        } else { // Backwards
+            rPower = Math.max(turn-power,-1);
+            lPower = Math.max(-turn-power,-1);
+        }
+
+
 
 
         telemetry.addData("Left", "X:" + gamepad1.left_stick_x + " Y:" + gamepad1.left_stick_y);
