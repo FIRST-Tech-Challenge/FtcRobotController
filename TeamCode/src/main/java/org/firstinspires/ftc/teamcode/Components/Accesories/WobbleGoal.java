@@ -61,9 +61,6 @@ public class WobbleGoal {
             i = ticksForREST;
         } else if (p == Position.GRAB) {
             i = ticksForGRAB;
-            while (wobbleGoalServoClaw.getPosition() != 1) {
-                wobbleGoalServoClaw.setPosition(0);
-            }
         } else if (p == Position.RAISE) {
             i = ticksForRAISE;
         } else if (p == Position.RUN) {
