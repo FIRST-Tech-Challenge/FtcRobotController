@@ -548,6 +548,7 @@ public class TerraBot {
                 controlWGE(1);
                 if(isControlWgeDone(1)) {
                     wgStartMode++;
+                    wge.setPower(0);
                 }
                 break;
             case 4:

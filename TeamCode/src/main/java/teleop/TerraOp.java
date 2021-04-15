@@ -37,7 +37,7 @@ public class TerraOp extends OpMode {
 
     @Override
     public void loop() {
-        bot.initWobbleGoal();
+//        bot.initWobbleGoal();
 
         optimizer.update();
 
