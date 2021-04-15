@@ -1825,7 +1825,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             sleep(200);
             target_heading=(angleCollection?2.3:chassis.odo_heading());
         }
-        double idealRightDist = 61; // 43 cm at Hans field; 61 cm at Winston's house
+        double idealRightDist = 62; // 43 cm at Hans field; 61 cm at Winston's house
         double crab_power=0.5;
         double timeout=3.0;
         for (int i=0; i<5; i++) {
@@ -1887,7 +1887,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), chassis.odo_heading(),
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 18, chassis.odo_y_pos_cm(), chassis.odo_heading(),
                 false, false,2);
 
         if(angleCollection){
@@ -1917,7 +1917,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), chassis.odo_heading(),
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 18, chassis.odo_y_pos_cm(), chassis.odo_heading(),
                 false, false,2);
 
         if(angleCollection){
