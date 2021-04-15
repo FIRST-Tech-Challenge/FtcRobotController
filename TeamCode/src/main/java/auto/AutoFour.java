@@ -57,30 +57,61 @@ public class AutoFour extends LinearOpMode {
          *          24. open claw (28.5)
          *          24. move to park (30)
          *
+         *  PlAN NEW(TIME) [note]
+         *          *          1. scan rings (0.0) [done before init]
+         *          *          2. ready shooter (0.0) [done while raising wobble]
+         *          *          3. raise wobble goal (1)
+         *          *          4. move forward (2)
+         *          *          5. shoot 3 rings into normal goal (4)
+         *          *          16. move to wobble goal drop (6)
+         *          *          17. FINISH THIS LATER
+         *          *          18. open claw (19.5)
+         *          *          19. turn arm around (20.5)
+         *          *          20. move to pick up other wobble (23.5)
+         *          *          21. grab other wobble (24)
+         *          *          22. pick up other wobble (25)
+         *          *          23. place other wobble (28)
+         *          *          24. open claw (28.5)
+         *          *          24. move to park (30)
          *
          */
+        //FIX MOVEMENT PLS SUPER SKECTH RN WAYPOINTS AAAAAAAAAAAA
+
+
+
         // INITIAL SHOOTING
+//        path.addWGRF(rf.moveWgTo(45));
+//        path.addRF(rf.readyShooter(), rf.shootIntoGoal(3), rf.stopOuttake());
+//        path.addShoot(7,50,0);
+//
+//        // NOW TO KNOCK DOWN THE TOWER AND INTAKE THE RINGS
+//        path.addSetpoint(0, 45, 0);
+////        path.addRF(rf.intake(1));
+////        path.addStop(1);
+//        path.addWaypoint(0,-5,0);
+//
+//        path.addRF(rf.intake(1));
+//        path.addWaypoint(0, 15, 0);
+//        path.addStop(5);
+//        path.addRF(rf.shootRF(2));
+//        path.addStop(1);
+//        path.addShoot();
+//        path.addRF(rf.intake(1));
+//        path.addWaypoint(0,15,0);
+//        path.addStop(3);
+//        path.addRF(rf.shootRF(2));
+//        path.addShoot();
+
         path.addWGRF(rf.moveWgTo(45));
         path.addRF(rf.readyShooter(), rf.shootIntoGoal(3), rf.stopOuttake());
-        path.addShoot(7,50,0);
-
-        // NOW TO KNOCK DOWN THE TOWER AND INTAKE THE RINGS
-        path.addSetpoint(0, 45, 0);
-//        path.addRF(rf.intake(1));
-//        path.addStop(1);
-        path.addWaypoint(0,-5,0);
-
-        path.addRF(rf.intake(1));
-        path.addWaypoint(0, 15, 0);
-        path.addStop(5);
-        path.addRF(rf.shootRF(2));
+        path.addWaypoint(-30, 50, 0);
+        path.addWaypoint(0,30,0);
+        path.addShoot(0,30,0);
+        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
+        path.addWaypoint(0,100, 0);
+        path.addSetpoint(-10,50,0);
+        path.addWGRF(rf.claw(2));
         path.addStop(1);
-        path.addShoot();
-        path.addRF(rf.intake(1));
-        path.addWaypoint(0,15,0);
-        path.addStop(3);
-        path.addRF(rf.shootRF(2));
-        path.addShoot();
 
         path.start(bot, this);
         path.saveData();

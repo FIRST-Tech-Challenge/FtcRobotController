@@ -30,7 +30,7 @@ public class Path {
 
 
 
-    public double maxRadius = 25;
+    public double maxRadius = 40;
     public double radius = 5;
     public double t = 0;
     public double ans = 0;
@@ -53,8 +53,9 @@ public class Path {
 
     public boolean isExecuting = true;
 
-    final public double[] ks = {0.1,0.1,0.01};
-    final public double[] ds = {0.01,0.015,0.001};
+    final public double[] ks = {0.1,0.1,0.005};
+    final public double[] ds = {0.01,0.01,0.0005};
+//    final public double[] ds = {0.005,0.005,0.0005};
     final public double[] is = {0.00,0.00,0.0000};
 
     final public double[] ksS = {0.05,0.05,0.01};
@@ -253,7 +254,7 @@ public class Path {
         ans = (-1)*((b - Math.sqrt(disc)) / (2 * a));
 //        second answer = (-1)*((b + Math.sqrt(disc)) / (2 * a));
         if(!Double.isNaN(ans)) {
-            if(ans > 1){
+            if(ans > 0.9){
                 next();
             }
             return ans;

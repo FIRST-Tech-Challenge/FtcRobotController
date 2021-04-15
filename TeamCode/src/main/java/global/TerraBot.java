@@ -137,8 +137,8 @@ public class TerraBot {
 
 
 
-        outr.setVelocityPIDFCoefficients(40, 0, 0, 14);
-        outl.setVelocityPIDFCoefficients(40, 0, 0, 14);
+        outr.setVelocityPIDFCoefficients(54, 0, 0, 14);
+        outl.setVelocityPIDFCoefficients(54, 0, 0, 14);
 //
 //        outr.setVelocityPIDFCoefficients(1, 1, 10, 20);
 //        outl.setVelocityPIDFCoefficients(100, 1, 10, 20);

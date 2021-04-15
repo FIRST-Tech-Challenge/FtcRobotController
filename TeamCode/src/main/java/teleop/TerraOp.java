@@ -37,11 +37,11 @@ public class TerraOp extends OpMode {
 
     @Override
     public void loop() {
-//        bot.initWobbleGoal();
+        bot.initWobbleGoal();
 
         optimizer.update();
 
-        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
+        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
 
 //        if(bot.aimer.inited) {
 //            if (!(bot.aimer.isExecuting() && !bot.aimer.pausing)) {
