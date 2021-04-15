@@ -17,21 +17,21 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
+
 @Autonomous (name = "WobbleGoalAutonomous ", group="Tests: ")
 
 public class WobbleGoalAutonomousTest extends LinearOpMode {
 
-    public void runOpMode(){
+    protected DcMotor wobbleGoalMotor = null;
 
+    public void runOpMode(){
+        wobbleGoalMotor = (DcMotor) opMode.hardwareMap.get("wobbleGoalMotor");
+        wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
-        DcMotor wobbleGoalMotor;
-        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
-        wobbleGoalMotor.setPower(0.05);
-        wobbleGoalMotor.setTargetPosition(280);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep(5000);
-        wobbleGoalMotor.setTargetPosition(90);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep(5000);
+
     }
 }

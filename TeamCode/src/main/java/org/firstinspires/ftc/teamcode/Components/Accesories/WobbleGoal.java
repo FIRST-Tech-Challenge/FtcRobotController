@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class WobbleGoal {
 
     public enum Position {
-        REST, GRAB, RAISE, RUN, DROP, AutoGRAB
+        REST, GRAB, RAISE, RUN, DROP, AutoGRAB, DRIVETOWALL
     }
 
     //declaring the op mode
@@ -28,12 +28,13 @@ public class WobbleGoal {
 
     protected Servo wobbleGoalServoClaw = null;
 
-    private final int ticksForREST = 0;
-    private final int ticksForGRAB = 280;
-    private final int ticksForRAISE = 90;
+    private final int ticksForREST = 50;
+    private final int ticksForGRAB = 750;
+    private final int ticksForRAISE = 300;
+    private final int ticksForDriveToWall = 50;
     private final int ticksForAutonomousRUN = -350;
     private final int ticksForAutonomousGRAB = -500;
-    private final double wobbleGoalSpeed = 0.05;
+    private final double wobbleGoalSpeed = 0.4;
     private final double wobbleGoalSpeedDrop = 0.5;
 
     public WobbleGoal(LinearOpMode opMode) {
@@ -71,6 +72,9 @@ public class WobbleGoal {
         else if (p == Position.AutoGRAB) {
             i = ticksForAutonomousGRAB;
         }
+        else if (p == Position.DRIVETOWALL){
+            i = ticksForDriveToWall;
+        }
         else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();
@@ -105,7 +109,7 @@ public class WobbleGoal {
         if (direction){
             wobbleGoalServo.setPosition(1.0);
         } else {
-            wobbleGoalServo.setPosition(0.0);
+            wobbleGoalServo.setPosition(0.3);
         }
         op.telemetry.addData(" Wobble Goal Position: ", direction);
         op.telemetry.update();
@@ -120,7 +124,7 @@ public class WobbleGoal {
 
     }
     public void  closeWobbleGoalClaw() {
-            wobbleGoalServoClaw.setPosition(0);
+            wobbleGoalServoClaw.setPosition(0.2);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");
             op.telemetry.update();

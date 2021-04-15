@@ -145,15 +145,17 @@ public class TwoGPTeleop extends LinearOpMode {
                 magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
                 robot.moveMultidirectional(magnitude, angleInDegree, (float)(right_stick_x*0.6), slowMode); // It is 0.95, because the robot DCs at full power.
-
+                WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.REST;
                 // wobble goal movements
                 if (move_wobble_goal_arm){
-                    WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.REST;
                     if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
                         nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                     } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
+                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DRIVETOWALL);
+                    } else if (currentWobbleGoalPosition == WobbleGoal.Position.DRIVETOWALL) {
                         nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
-                    } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE) {
+                    }
+                    else if(currentWobbleGoalPosition == WobbleGoal.Position.RAISE){
                         nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
                     }
                     // added by Aiden; must have this otherwise if you hold onto the button multiple
