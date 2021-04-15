@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
 public class DC12VSpin extends LinearOpMode {
     // Lets you get the Elapsed time of the program (big shocker)
     private ElapsedTime runtime = new ElapsedTime();
-
+    //spinnnnnnnnnnnnn
     // DcMotor to spin
     private String spinName = "spin"; // The device name in the controller has to be "spin" Why? I said so and choose this name because I can
     private DcMotor spin;
