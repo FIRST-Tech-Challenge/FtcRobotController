@@ -1887,7 +1887,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), target_heading,
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), chassis.odo_heading(),
                 false, false,2);
 
         if(angleCollection){
@@ -1917,7 +1917,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), target_heading,
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), chassis.odo_heading(),
                 false, false,2);
 
         if(angleCollection){
@@ -2097,7 +2097,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             hopper.hopperUpCombo(true);
             TaskManager.processTasks();
             if (runtimeAuto.seconds() < 26) {
-                chassis.driveTo(1.0, side(70), 185, 0, false, 5);
+                chassis.driveTo(1.0, side(80), 185, 0, false, 5);
                 comboGrabber.initWobbleGoalCombo();
                 TaskManager.processTasks();
                 autoShootHighGoal(2, true);
