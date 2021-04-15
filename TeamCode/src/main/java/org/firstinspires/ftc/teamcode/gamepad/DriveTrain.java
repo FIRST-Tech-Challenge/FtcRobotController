@@ -1,10 +1,14 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.gamepad;
+
+import android.content.res.Resources;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.settings.HardwareMapDeviceNames;
 
 /**
  * This controls the drive train
@@ -14,10 +18,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 
 public class DriveTrain {
-    // Default name
-    private static final String DEFAULT_LEFT_MOTOR_NAME = "left_drive";
-    private static final String DEFAULT_RIGHT_MOTOR_NAME = "right_drive";
-
     // Drive Modes
     public static final int DRIVE_MODE_WHEEL_PIVOT = 0;
     public static final int DRIVE_MODE_STOP = -1;
@@ -53,7 +53,7 @@ public class DriveTrain {
     }
 
     public DriveTrain(HardwareMap hardwareMap, Gamepad gamepad1, int driveMode) {
-        this(hardwareMap, gamepad1, DEFAULT_LEFT_MOTOR_NAME, DEFAULT_RIGHT_MOTOR_NAME, driveMode);
+        this(hardwareMap, gamepad1, HardwareMapDeviceNames.LEFT_DRIVE, HardwareMapDeviceNames.RIGHT_DRIVE, driveMode);
     }
 
     public void setDebugging(boolean debugging) {
