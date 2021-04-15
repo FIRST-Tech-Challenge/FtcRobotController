@@ -165,7 +165,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double servoCorrection;   // latest correction applied to leading wheels' servos to correct heading deviation
     private double curHeading = 0;
     private boolean useScalePower = true;//
-    private boolean setImuTelemetry = true;//unless debugging, don't set telemetry for imu
+    private boolean setImuTelemetry = false;//unless debugging, don't set telemetry for imu
     private boolean setRangeSensorTelemetry = true; //unless debugging, don't set telemetry for range sensor
     private boolean useOdometry = true;
     private boolean normalizeMode = false;
@@ -385,9 +385,16 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
        return speed;
     }
 
-    public double odo_heading() { // aways turn [-180..180]
+    public double odo_heading() {
+        return odo_heading(true);
+    }
+
+    public double odo_heading(boolean correction) { // aways turn [-180..180]
         if (GPS ==null) return 0;
         double heading = (GPS.returnOrientation());
+        if (correction) {
+            heading += GPS.rotationCorrection();;
+        }
         if (heading>180) heading -= 360;
         else if (heading<-180) heading += 360;
         return heading;
@@ -623,6 +630,11 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public void driveTo(double power, double target_x, double target_y, double target_heading, boolean useRotateTo, double timeout_sec) throws InterruptedException {
+        driveTo(power, target_x,target_y,target_heading,useRotateTo,true,timeout_sec);
+    }
+
+    public void driveTo(double power, double target_x, double target_y, double target_heading, boolean useRotateTo,
+                        boolean headingCorrection, double timeout_sec) throws InterruptedException {
         if (simulation_mode) { // simulation mode
             try {
                 dumpEvent (String.format("driveTo: %3.0f, %3.0f, %3.0f\n", target_x, target_y, target_heading));
@@ -720,7 +732,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                 TaskManager.processTasks();
             }
             //move
-            boolean headingCorrection = true; // Math.abs(desiredDegree) <90;
+            // boolean headingCorrection = true; // Math.abs(desiredDegree) <90;
             motorPowers = angleMove(desiredDegree, powerUsed, headingCorrection,
                     (autoDriveMode== AutoDriveMode.CONTINUE_NO_CORRECTION?desiredDegree:target_heading));
 
@@ -1275,18 +1287,19 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 //                    return String.format("(%5.1f,%5.1f,%5.1f,%5.1f)\n", auto_exit_speed, auto_stop_early_dist, auto_max_speed, auto_max_calc_speed);
 //                }
 //            });
-            line.addData("Odo-pos (x,y,angle)", new Func<String>() {
+            line.addData("Odo-pos (x,y,angle/c-ang)", new Func<String>() {
                 @Override
                 public String value() {
-                    return String.format("(%2.2f, %2.2f, %2.2f)", odo_x_pos_cm(), odo_y_pos_cm(), odo_heading());
+                    return String.format("(%2.2f, %2.2f, %2.2f/%2.2f)", odo_x_pos_cm(), odo_y_pos_cm(),
+                            odo_heading(false), odo_heading(true));
                 }
             });
-            line.addData("Raw (x,ly,ry)", new Func<String>() {
+            line.addData("Raw (x,ly,ry,lr/rr)", new Func<String>() {
                 @Override
                 public String value() {
-                    return String.format("(%2.0f,%2.0f,%2.0f)", GPS.XEncoder(),
+                    return String.format("(%2.0f,%2.0f,%2.0f,%2.0f,%2.0f)", GPS.XEncoder(),
                             GPS.leftYEncoder(),
-                            GPS.rightYEncoder());
+                            GPS.rightYEncoder(), GPS.getlRotations(), GPS.getrRotations());
                 }
             });
         }

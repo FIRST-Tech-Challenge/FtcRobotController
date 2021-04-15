@@ -79,6 +79,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public Hopper hopper;
     public Intake intake;
 
+    private double cycleTime = 0; // nano-sec
     public double auto_chassis_power = 1.0;
     public double auto_chassis_dist = 100;
     public double auto_chassis_heading = -90;
@@ -94,8 +95,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     final public double WARM_UP_RPM = 1660;
     static final public double WARM_UP_RPM_AUTO = 1600;
     final public double SEMI_AUTO_RPM = 1660;
-    final public double WARM_UP_RPM_POWER_SHOT = 1420;
-    final public double SEMI_POWER_SHOT_RPM = 1420;
+    final public double WARM_UP_RPM_POWER_SHOT = 1440;
+    final public double SEMI_POWER_SHOT_RPM = 1440;
     final public double SEMI_HIGHGOAL_HEADING = -12; // 0 for tile-2, -9 for tile-3
     public double shooting_rpm = WARM_UP_RPM;
     public double batteryVolt = 0;
@@ -114,6 +115,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean targetHighGoal = true; // when false, it target power shot
     private boolean useIMUforOdometryAngleCorrection = true; // use IMU for radian correction
 
+    public void updateCycleTime(long val) {
+        cycleTime = val; // milli-seconds
+    }
     public void set_simulation_mode(boolean value) {
         simulation_mode = value;
         if (simulation_mode) {
@@ -472,7 +476,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (cameraDetector != null)
                         cameraDetector.dec_cam_pos();
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
-                    //autoIntakeRings(3, false);
+                    // autoIntakeRings(3, false);
+                    autoIntakeRingsNew(3, false);
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     shooting_rpm = SEMI_POWER_SHOT_RPM;
                     shooter.shootOutByRpm(shooting_rpm);
@@ -590,7 +595,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.isPressed(Button.BACK)) {
                     // semi power shot
                     // doPowerShotsSemi(3,false);
-                    doPowerShotsSemiNew(3,true);
+                    doPowerShotsSemiNew(3,true, true);
                 } else {
                     if (hopper.getTransferIsDown() || Math.abs(shooting_rpm-WARM_UP_RPM_POWER_SHOT)>20 ||
                     shooter.getCurrentRPM()<WARM_UP_RPM_POWER_SHOT-100) {
@@ -654,6 +659,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (comboGrabber != null)
                         autoGrabHighWobbleGoal(true);
                     //top wobble goal combos functions go here
+                } else if (source.isPressed(Button.RIGHT_BUMPER)) {
+                    if (hopper != null) {
+                        hopper.ringBarAuto();
+                    }
                 } else if (source.isPressed(Button.BACK)) {
                     if (comboGrabber != null)
                         autoGrabHighWobbleGoal(false);
@@ -781,11 +790,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.set_auto_power_scale_by_voltage(batteryVolt);
         }
         if (side==ProgramType.TELE_OP) { // TeleOp
-            line.addData(" | Shooting (dist,angle,rpm, volt) =", new Func<String>() {
+            line.addData(" | Shooting (dist,angle,tps,volt,c-time) =", new Func<String>() {
                 @Override
                 public String value() {
-                    return String.format("(%1.0f,%1.0f,%1.0f, %2.1f)\n",
-                            shooting_dist, shooting_angle, shooting_rpm, getBatteryVoltage());
+                    return String.format("(%1.0f,%1.0f,%1.0f,%2.1f,%2.2fms)\n",
+                            shooting_dist, shooting_angle, shooting_rpm, getBatteryVoltage(),cycleTime/1000000.0);
                 }
             });
             if (useVuforia && (cameraDetector != null)) {
@@ -1223,7 +1232,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (isTeleOpAfterAuto) {
                         chassis.initOdoFromJson();
                     } else {
-                        chassis.set_init_pos(side(120), 155, 0);
+                        // chassis.set_init_pos(side(120), 155, 0);
+                        chassis.set_init_pos(58,23, 0);
+
                     }
                 }
                 break;
@@ -1796,7 +1807,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(100);
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
-    public void doPowerShotsSemiNew(int n, boolean angleCollection) throws InterruptedException {//auto power shots
+    public void doPowerShotsSemiNew(int n, boolean angleCollection, boolean driverAligned) throws InterruptedException {//auto power shots
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
         shooting_rpm = SEMI_POWER_SHOT_RPM;
         if (hopper != null && hopper.getTransferIsDown()) {
@@ -1805,11 +1816,19 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (intake!=null)
             intake.stop();
-        chassis.rotateTo(0.3, 0);
-        sleep(200);
-        double idealRightDist = 61; // 43 cm at Hans field; 58 cm? at Winston's house
+        double target_heading=(angleCollection?2.3:chassis.odo_heading());
+        if (driverAligned) {
+            // assume robot is facing 0 degree by driver. Ues this to correct IMU
+            target_heading=chassis.odo_heading()+2.3;
+        } else {
+            chassis.rotateTo(0.3, 0);
+            sleep(200);
+            target_heading=(angleCollection?2.3:chassis.odo_heading());
+        }
+        double idealRightDist = 61; // 43 cm at Hans field; 61 cm at Winston's house
         double crab_power=0.5;
-        for (int i=0; i<3; i++) {
+        double timeout=3.0;
+        for (int i=0; i<5; i++) {
             double rightDistF = chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT);
             double rightDistB = chassis.getDistance(SwerveChassis.Direction.RIGHT_BACK);
             if (rightDistF>100){
@@ -1823,12 +1842,17 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
             double rightDist = (rightDistF + rightDistB) / 2;
             if (Math.abs(rightDist-idealRightDist)<1) break;
-            chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(), chassis.odo_heading(), false, 2);
+            chassis.driveTo(crab_power, chassis.odo_x_pos_cm() - (idealRightDist - rightDist), chassis.odo_y_pos_cm(),
+                    chassis.odo_heading(), false, false, timeout);
+
             crab_power-=0.05;
+            timeout=1.0;
+            sleep(100);
         }
         // chassis.rotateTo(0.3, 0);//delete?
-        double target_heading=2.3;
-        double angle_error = 0.6;
+        double angle_error = 0.5;
+        double LOCAL_ALIGNMENT_POWER = 0.18;
+        double ALIGN_ITER = 5;
         if(angleCollection){
             if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
@@ -1836,8 +1860,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     sleep(100);
                 }
                 int i=0;
-                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<3) {
-                    chassis.rawRotateTo(0.18, target_heading, false, 0.5);
+                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<ALIGN_ITER) {
+                    chassis.rawRotateTo(LOCAL_ALIGNMENT_POWER, target_heading, false, 0.5);
+                    sleep(50);
                     i++;
                 }
                 sleep(100);
@@ -1862,7 +1887,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), target_heading,
+                false, false,2);
+
         if(angleCollection){
             if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
@@ -1870,8 +1897,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     sleep(100);
                 }
                 int i=0;
-                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<3) {
-                    chassis.rawRotateTo(0.18, target_heading, false, 0.5);
+                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<ALIGN_ITER) {
+                    chassis.rawRotateTo(LOCAL_ALIGNMENT_POWER, target_heading, false, 0.5);
+                    sleep(50);
                     i++;
                 }
                 sleep(100);
@@ -1889,7 +1917,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm() - 19, chassis.odo_y_pos_cm(), target_heading,
+                false, false,2);
+
         if(angleCollection){
             if (Math.abs(chassis.odo_heading() - target_heading) >= angle_error) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
@@ -1897,8 +1927,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     sleep(100);
                 }
                 int i=0;
-                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<3) {
-                    chassis.rawRotateTo(0.18, target_heading, false, 0.5);
+                while (Math.abs(chassis.odo_heading() - target_heading)>angle_error && i<ALIGN_ITER) {
+                    chassis.rawRotateTo(LOCAL_ALIGNMENT_POWER, target_heading, false, 0.5);
+                    sleep(50);
                     i++;
                 }
                 sleep(100);
@@ -2003,14 +2034,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 }
             } else if (tZone == TargetZone.ZONE_C) {//4
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
-                //chassis.driveTo(.8, side(30), 60, 0, false, 5);
-                chassis.driveTo(1.0, side(87), 123, -2, false, 2);
-                autoIntakeRings(3, true);
                 if (hopper != null) {
+                    hopper.ringBarDown();
+                }
+                //chassis.driveTo(.8, side(30), 60, 0, false, 5);
+                chassis.driveTo(0.6, side(87), 90, 0, false, 2);
+                autoIntakeRingsNew(3, true);
+                if (hopper != null) {
+                    hopper.ringBarUp();
                     hopper.hopperUpCombo(true);
                     TaskManager.processTasks();
                 }
-                chassis.driveTo(1.0, side(87), 165, 0, false, 1);
+                chassis.driveTo(0.5, side(87), 165, 0, false, 2);
                 autoShootHighGoal(3, true);
                 if (comboGrabber!=null)
                     comboGrabber.armUpLow();
@@ -2068,7 +2103,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 autoShootHighGoal(2, true);
                 comboGrabber.initWobbleGoalCombo();
                 TaskManager.processTasks();
-                chassis.driveTo(1.0, chassis.odo_x_pos_cm()+20, chassis.odo_y_pos_cm() + 30, chassis.getCurHeading(), false, 2);
+                chassis.driveTo(1.0, chassis.odo_x_pos_cm()+50, chassis.odo_y_pos_cm() + 30, chassis.getCurHeading(), false, 2);
             }
             else {
                 chassis.driveTo(1.0, chassis.odo_x_pos_cm()+20, 220, chassis.getCurHeading(), false, 2);
@@ -2147,9 +2182,36 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.rawRotateTo(0.2,15,false, 2);
     }
 
+    public void autoIntakeRingsNew(int n, boolean fromAuto) throws InterruptedException {
+        if (simulation_mode || chassis==null) return;
+
+        if (hopper != null) {
+            hopper.ringBarDown();
+            sleep(200);
+        }
+        if (!fromAuto) {
+            chassis.driveTo(0.6, side(87), 90, 0, false, 2);
+        }
+        intake.intakeIn();
+        chassis.driveTo(0.25, chassis.odo_x_pos_cm(), 89+n*12, 2);
+        if(hopper != null) {
+            hopper.ringBarUp();
+            sleep(200);
+        }
+        chassis.stop();
+        sleep(800);
+        //sleep(1000);
+        //hopper.transferShakeCombo();
+        intake.stop();
+    }
+
     public void autoIntakeRings(int n, boolean callFromAuto) throws InterruptedException {
         if (simulation_mode || chassis==null) return;
         if(!callFromAuto) {
+            if (hopper != null) {
+                hopper.ringBarDown();
+                sleep(200);
+            }
             chassis.yMove(1, 1.0);
             sleep(400);
             chassis.stop();
@@ -2164,6 +2226,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             sleep(650);
             if(i+2==n)
                 chassis.stop();
+        }
+        if(hopper != null) {
+            hopper.ringBarUp();
+            sleep(200);
         }
         chassis.stop();
         sleep(400);

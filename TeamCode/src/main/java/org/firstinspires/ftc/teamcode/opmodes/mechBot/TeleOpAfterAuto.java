@@ -43,7 +43,7 @@ public class TeleOpAfterAuto extends LinearOpMode {
             robot.reset(false);
 
             eventManager1 = new EventManager(gamepad1, true);
-            eventManager2 = new EventManager(gamepad2, true);
+            // eventManager2 = new EventManager(gamepad2, true);
 
             robot.mainTeleOp(eventManager1);
 
@@ -58,12 +58,14 @@ public class TeleOpAfterAuto extends LinearOpMode {
         waitForStart();
 
         robot.initAfterStart();
-
+        if (robot.hopper!=null) {
+            robot.hopper.blockerDown();
+        }
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             try {
                 eventManager1.processEvents();
-                eventManager2.processEvents();
+                // eventManager2.processEvents();
                 TaskManager.processTasks();
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
