@@ -19,6 +19,9 @@ public class PID {
     public double lastTime = -0.01;
     public double deltaTime = 0;
 
+
+
+
     public double deltaError = 0;
 
     public double restPow = 0;
@@ -29,6 +32,12 @@ public class PID {
     public double acc = 0;
 
     public double maxI = 1000;
+
+    public double maxD = 1000;
+
+
+//    public boolean wayMode = false;
+//    public double wayPow = 0;
 
 
     public void setCoefficients(double k, double d, double i){
@@ -44,9 +53,22 @@ public class PID {
         sacc = in;
         acc = in;
     }
+//    public void setWayPow(double pow){
+//        wayPow = pow;
+//    }
+//    public void setWayMode(boolean mode){
+//        wayMode = mode;
+//    }
 
     public double getPower(){
-        return Math.signum(error)*(Kp*abs(error) - Kd*abs(derivative) + Ki*abs(integral) + restPow);
+//        if(!wayMode) {
+//            return Math.signum(error) * (Kp * abs(error) - Kd * abs(derivative) + Ki * abs(integral) + restPow);
+//        }else{
+//            return Math.signum(error) * (wayPow - Kd * abs(derivative) + Ki * abs(integral) + restPow);
+//        }
+        return Math.signum(error) * (Kp * abs(error) - Kd * abs(derivative) + Ki * abs(integral) + restPow);
+
+//        return Math.signum(error) * (Kp * abs(error) + Ki * abs(integral) + restPow) -  (Kd * abs(derivative)) ;
     }
 
     public double abs(double in){
@@ -67,6 +89,12 @@ public class PID {
             integral += error * deltaTime;
         }
 
+        if(Kd*abs(derivative) < maxD || Math.signum(derivative*error) == -1) {
+
+        }else{
+            derivative = 0;
+        }
+
     }
 
     public void reset(){
@@ -85,6 +113,9 @@ public class PID {
 
     public void setMaxI(double maxI){
         this.maxI = maxI;
+    }
+    public void setMaxD(double maxD){
+        this.maxD = maxD;
     }
 
     public void scaleCoeffs(double scale) {

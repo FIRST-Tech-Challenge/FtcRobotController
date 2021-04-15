@@ -30,7 +30,7 @@ public class Path {
 
 
 
-    public double maxRadius = 40;
+    public double maxRadius = 25;
     public double radius = 5;
     public double t = 0;
     public double ans = 0;
@@ -53,7 +53,8 @@ public class Path {
 
     public boolean isExecuting = true;
 
-    final public double[] ks = {0.1,0.1,0.005};
+    final public double[] ks = {0.05,0.1,0.005};
+//    final public double[] ds = {0.03,0.03,0.0005};
     final public double[] ds = {0.01,0.01,0.0005};
 //    final public double[] ds = {0.005,0.005,0.0005};
     final public double[] is = {0.00,0.00,0.0000};
@@ -110,6 +111,12 @@ public class Path {
         xControl.setMaxI(0.05);
         yControl.setMaxI(0.05);
         hControl.setMaxI(0.05);
+        xControl.setMaxD(0.05);
+        yControl.setMaxD(0.05);
+        hControl.setMaxD(0.05);
+//        xControl.setWayPow(0.5);
+//        yControl.setWayPow(0.5);
+//        hControl.setWayPow(0.2);
         globalTime.reset();
         addStop(0.01);
     }
@@ -123,6 +130,9 @@ public class Path {
         xControl.scaleAccs(1);
         yControl.scaleAccs(1);
         hControl.scaleAccs(1);
+//        xControl.setWayMode(false);
+//        yControl.setWayMode(false);
+//        hControl.setWayMode(false);
     }
     public void setCoeffsForWaypoint(){
         xControl.setCoefficients(ks[0], ds[0], is[0]);
@@ -134,6 +144,9 @@ public class Path {
         xControl.scaleAccs(1);
         yControl.scaleAccs(1);
         hControl.scaleAccs(1);
+//        xControl.setWayMode(true);
+//        yControl.setWayMode(true);
+//        hControl.setWayMode(true);
     }
 
     public void setCoeffsForShoot(double dis){
@@ -146,6 +159,9 @@ public class Path {
         xControl.scaleAccs(0.5);
         yControl.scaleAccs(0.5);
         hControl.scaleAccs(0.25);
+//        xControl.setWayMode(false);
+//        yControl.setWayMode(false);
+//        hControl.setWayMode(false);
     }
 
 
