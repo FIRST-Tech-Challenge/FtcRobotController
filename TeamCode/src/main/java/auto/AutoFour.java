@@ -53,12 +53,20 @@ public class AutoFour extends LinearOpMode {
         path.addStop(0.3);
         path.addWGRF(rf.moveWgTo(45));
         path.addRF(rf.controlWGE(0.1));
-        path.addWaypoint(0, -215, 0);
-        path.addSetpoint(35, 10, 0);
-        path.addSetpoint(0,30, 0);
+        path.addWaypoint(0, -225, 0);
+        path.addSetpoint(35, 20, 0);
+        path.addSetpoint(0,20, 0);
         path.addRF(rf.intake(1));
         path.addWGRF(rf.moveWgTo(150));
         path.addStop(1);
+        path.addWaypoint(0,13,0);
+        path.addStop(4);
+        path.addRF(rf.intake(0), rf.readyShooter(), rf.pauseRfs(1),  rf.shootIntoGoal(2), rf.stopOuttake());
+        path.addShoot(0, 15, 0);
+//        path.addWaypoint(0,10,0);
+//        path.addRF(rf.readyShooter(), rf.shootIntoGoal(2), rf.stopOuttake());
+//        path.addStop(2);
+//        path.addShoot();
 
 
         path.start(bot, this);

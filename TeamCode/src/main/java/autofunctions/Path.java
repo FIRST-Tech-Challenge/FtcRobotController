@@ -153,8 +153,13 @@ public class Path {
         xControl.setCoefficients(ksS[0], dsS[0], isS[0]);
         yControl.setCoefficients(ksS[1], dsS[1], isS[1]);
         hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
-        xControl.scaleCoeffs(40/dis);
-        yControl.scaleCoeffs(40/dis);
+        if(dis > 40) {
+            xControl.scaleCoeffs(40 / dis);
+            yControl.scaleCoeffs(40 / dis);
+        }else{
+            xControl.scaleCoeffs(1.3);
+            yControl.scaleCoeffs(1.3);
+        }
         hControl.scaleCoeffs(2);
         xControl.scaleAccs(0.5);
         yControl.scaleAccs(0.5);
