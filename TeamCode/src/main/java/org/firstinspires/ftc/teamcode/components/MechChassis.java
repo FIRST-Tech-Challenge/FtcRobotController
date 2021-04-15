@@ -386,7 +386,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public double odo_heading() {
-        return odo_heading(true);
+        return odo_heading(false); // return uncorrected heading
     }
 
     public double odo_heading(boolean correction) { // aways turn [-180..180]

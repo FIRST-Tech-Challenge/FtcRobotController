@@ -198,6 +198,11 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         robotGlobalYCoordinatePosition = y;
     }
 
+    public void correctHeading(double degree) {
+        robotOrientationRadians = Math.toRadians(degree);
+        initRadians = robotOrientationRadians;
+    }
+
     public void set_x_pos(double x_cm) {
 //        horizontalEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        horizontalEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

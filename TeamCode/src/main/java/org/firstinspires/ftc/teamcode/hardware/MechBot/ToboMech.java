@@ -388,7 +388,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
                 if (chassis != null && source.isPressed(Button.BACK) && source.isPressed(Button.START)) {
-                    chassis.resetOdometry(false);
+                    // chassis.resetOdometry(false);
                     // calibration mode. Only uncomment when testing new motors with chassis wheels suspended
                     // chassis.setupEncoders(telemetry);
 //                    chassis.freeStyle(1.0, 1.0, 1.0, 1.0, true);
@@ -1695,7 +1695,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (hopper != null) {
             hopper.blockerDown();
         }
-        chassis.resetOdometry(true); // use rangeSensor to correct Odometry
+        // chassis.resetOdometry(true); // use rangeSensor to correct Odometry
         //shoot
         for (int i=0; i<nshots; i++) {
             if (i==0) {
@@ -1819,6 +1819,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double target_heading=(angleCollection?2.3:chassis.odo_heading());
         if (driverAligned) {
             // assume robot is facing 0 degree by driver. Ues this to correct IMU
+            if (chassis.getGPS()!=null) {
+                chassis.getGPS().correctHeading(-chassis.odo_heading());
+            }
             target_heading=chassis.odo_heading()+2.3;
         } else {
             chassis.rotateTo(0.3, 0);
