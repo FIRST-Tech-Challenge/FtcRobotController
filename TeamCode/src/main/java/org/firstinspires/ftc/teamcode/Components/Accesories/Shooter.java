@@ -75,21 +75,22 @@ public class Shooter {
 
 
     public void shoot(double speed, int distance, int rings) {
-        ElapsedTime runtime = new ElapsedTime();
-        op.telemetry.addData("speed: ", getRPM());
-        op.telemetry.update();
-        op.sleep(100);
+//        ElapsedTime runtime = new ElapsedTime();
+//        op.telemetry.addData("speed: ", getRPM());
+//        op.telemetry.update();
+//        op.sleep(100);
         setVelocity(speed, distance);
-        op.sleep(1500);
+        op.sleep(1000);
         if (shooterMotor.getVelocity() > 0) {
-            op.sleep(100);
-            op.telemetry.clear();
-            op.telemetry.addData("status", getRPM());
-            op.telemetry.update();
+//            op.sleep(100);
+//            op.telemetry.clear();
+//            op.telemetry.addData("status", getRPM());
+//            op.telemetry.update();
         }
         for (int i = 0; i < rings; i++) {
             moveServo(false);
             moveServo(true);
+//            op.sleep(75);
         }
         if(op.getRuntime()>3){
             stopShooter();
@@ -104,7 +105,7 @@ public class Shooter {
         }
         op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
-        op.sleep(130);
+        op.sleep(170);
     }
 
     public void shootGoalTeleop(int distance) {
