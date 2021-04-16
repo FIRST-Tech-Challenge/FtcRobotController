@@ -199,8 +199,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     }
 
     public void correctHeading(double degree) {
-        robotOrientationRadians = Math.toRadians(degree);
-        initRadians = robotOrientationRadians;
+        initRadians = Math.toRadians(degree);
     }
 
     public void set_x_pos(double x_cm) {
