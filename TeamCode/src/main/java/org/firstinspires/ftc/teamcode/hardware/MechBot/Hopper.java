@@ -367,6 +367,19 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
+                if (!magLow.isPressed()) {
+                    ringLifter.setPower(1);
+                }
+                HopperTimer.reset();
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (magLow.isPressed() || (HopperTimer.seconds()>=0.8));
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
                 ringLifter.setPower(0);
                 transferIsDown = true;
                 return new Progress() {
