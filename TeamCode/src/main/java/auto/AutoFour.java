@@ -53,21 +53,42 @@ public class AutoFour extends LinearOpMode {
         path.addStop(0.3);
         path.addWGRF(rf.moveWgTo(45));
         path.addRF(rf.controlWGE(0.1));
-        path.addWaypoint(0, -225, 0);
-        path.addSetpoint(35, 20, 0);
-        path.addSetpoint(0,20, 0);
-        path.addRF(rf.intake(1));
-        path.addWGRF(rf.moveWgTo(150));
-        path.addStop(1);
-        path.addWaypoint(0,13,0);
-        path.addStop(4);
-        path.addRF(rf.intake(0), rf.readyShooter(), rf.pauseRfs(1),  rf.shootIntoGoal(2), rf.stopOuttake());
-        path.addShoot(0, 15, 0);
-//        path.addWaypoint(0,10,0);
-//        path.addRF(rf.readyShooter(), rf.shootIntoGoal(2), rf.stopOuttake());
-//        path.addStop(2);
-//        path.addShoot();
+        path.addWaypoint(0, -235, 0);
+        path.addSetpoint(35,40, 0);
 
+
+        path.addRF(rf.intake(1));
+        path.addWGRF(rf.moveWgTo(170));
+        path.addStop(0.3);
+        path.addSetpoint(0,15,0);
+        path.addStop(0.3);
+        path.addSetpoint(0,15,0);
+        path.addStop(0.3);
+        path.addSetpoint(0,15,0);
+
+
+        path.addWaypoint(0,-20,0);
+
+//        path.addStop(2);
+        path.addSetpoint(5, -25, 20);
+
+        path.addWGRF(rf.claw(0), rf.pauseRfs(0.5), rf.moveWgTo(60));
+        path.addStop(1);
+        path.addWaypoint(-5, 15, -20);
+
+        path.addRF(rf.intake(0), rf.overrideShooter(true),  rf.readyShooter(), rf.pauseRfs(1.5),  rf.shootIntoGoal(3), rf.stopOuttake());
+        path.addStop(1);
+        path.addShoot(0, 35, 3);
+        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
+        path.addRF(rf.intake(1));
+        path.addWaypoint(0,40,0);
+        path.addSetpoint(-50, 80, 0);
+        path.addWGRF(rf.claw(2, -0.2));
+        path.addStop(0.5);
+        path.addRF(rf.intake(0), rf.overrideShooter(true),  rf.readyShooter(), rf.pauseRfs(2.5),  rf.shootIntoGoal(1), rf.stopOuttake());
+        path.addWaypoint(30, -60, 0);
+        path.addShoot(20, -60, 0);
+        path.addSetpoint(0,30,0);
 
         path.start(bot, this);
         path.saveData();

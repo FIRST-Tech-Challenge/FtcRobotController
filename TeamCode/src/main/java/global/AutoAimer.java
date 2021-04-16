@@ -20,6 +20,8 @@ public class AutoAimer {
 
     public double debug = 0;
 
+    public boolean override = false;
+
     public boolean hasPosBeenUpdated(){
         return !((outtakePos[0] == oldOuttakePos[0]) && (outtakePos[1] == oldOuttakePos[1]));
     }

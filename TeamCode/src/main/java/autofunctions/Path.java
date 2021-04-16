@@ -53,15 +53,16 @@ public class Path {
 
     public boolean isExecuting = true;
 
-    final public double[] ks = {0.05,0.2,0.005};
-//    final public double[] ds = {0.03,0.03,0.0005};
+
+
+    //y coeff used to be 0.2 now 0.3
+    final public double[] ks = {0.05,0.3,0.005};
     final public double[] ds = {0.01,0.01,0.0005};
-//    final public double[] ds = {0.005,0.005,0.0005};
     final public double[] is = {0.00,0.00,0.0000};
 
     final public double[] ksS = {0.05,0.05,0.012};
-    final public double[] dsS = {0.008,0.008,0.0005};
-//    final public double[] isS = {0.0005,0.0005,0.00005};
+//    final public double[] dsS = {0.008,0.008,0.0005};
+final public double[] dsS = {0.015,0.015,0.0005};
     final public double[] isS = {0.000,0.000,0.0000};
 
     public double xRestPow = 0.05;
@@ -125,11 +126,16 @@ public class Path {
         xControl.setCoefficients(ksS[0], dsS[0], isS[0]);
         yControl.setCoefficients(ksS[1], dsS[1], isS[1]);
         hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
-        xControl.scaleCoeffs(40/dis);
-        yControl.scaleCoeffs(40/dis);
-        xControl.scaleAccs(1);
-        yControl.scaleAccs(1);
-        hControl.scaleAccs(1);
+        if(dis > 40) {
+            xControl.scaleCoeffs(40 / dis);
+            yControl.scaleCoeffs(40 / dis);
+        }else{
+            xControl.scaleCoeffs(1);
+            yControl.scaleCoeffs(1);
+        }
+        xControl.scaleAccs(2);
+        yControl.scaleAccs(2);
+        hControl.scaleAccs(2);
 //        xControl.setWayMode(false);
 //        yControl.setWayMode(false);
 //        hControl.setWayMode(false);
@@ -341,8 +347,12 @@ public class Path {
                 }
                 setCoeffsForShoot(lines.get(curIndex).getDis());
                 double[] target2 = poses.get(curIndex+1);
-                target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
-                updateControls(currentPos,target2, true);
+                if(!bot.autoAimer.override) {
+                    target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
+                    updateControls(currentPos,target2, true);
+                }else{
+                    updateControls(currentPos,target2, false);
+                }
                 if(bot.autoAimer.isDone){
                     bot.autoAimer.ready();
                     next();

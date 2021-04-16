@@ -23,7 +23,7 @@ public class Constants {
     public static final double SHOOTER_HEIGHT = 0.25; // meters
     public static final double SHOOTER_WHEEL_RADIUS = 0.05; // meters
     public static final double FIELD_LENGTH = 3.6576; //meters
-    public static final double CURVATURE_TAN_THETA = Math.tan(12/294.76);
+    public static final double CURVATURE_TAN_THETA = Math.tan(0/294.76); // used to be 12 now 0
 
     public static final double CLL_GRAB = 0.2;
     public static final double CLL_OPEN = 1;

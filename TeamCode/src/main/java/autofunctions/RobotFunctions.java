@@ -159,6 +159,16 @@ public class RobotFunctions {
         };
     }
 
+    public CodeSeg readyShooterWithoutPush(){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                while (!bot.autoAimer.hasPosBeenUpdated()) {}
+                bot.outtaking = true;
+            }
+        };
+    }
+
 
     public CodeSeg shootIntoGoal(final int numRings){
         return new CodeSeg() {
@@ -193,6 +203,14 @@ public class RobotFunctions {
         try { Thread.sleep((long)(secs * 1000)); } catch (InterruptedException ignore) {}
     }
 
+    public CodeSeg overrideShooter(final boolean val){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.autoAimer.override = val;
+            }
+        };
+    }
 
 
 
