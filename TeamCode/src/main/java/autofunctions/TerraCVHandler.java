@@ -10,12 +10,12 @@ import autofunctions.TerraCV;
 
 public class TerraCVHandler {
     OpenCvInternalCamera2 phoneCam;
-    TerraCV terraCV = new TerraCV();
+    public TerraCV terraCV = new TerraCV();
 
 
     public void init(HardwareMap hwMap){
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK);
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
         phoneCam.openCameraDevice();
         phoneCam.setPipeline(terraCV);
         phoneCam.startStreaming(960, 720, OpenCvCameraRotation.UPRIGHT);

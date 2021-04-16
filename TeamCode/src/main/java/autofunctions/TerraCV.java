@@ -28,12 +28,14 @@ public class TerraCV extends OpenCvPipeline
     public Mat hsv = new Mat();
     //Position of rings on screen use telemetry to change
     // Note: (x is actually y pos and starts at 0 from bottom, ypos starts at 0 from left and is x
-    public int xPos = 75;
-    public int yPos = 500;
+    public int xPos = 150; //75
+    public int yPos = 535;
 
     //average color and hue value
     public double[] avgColor = new double[2];
     public double avgH;
+    public double avgS;
+    public double avgV;
 
 
 
@@ -46,16 +48,25 @@ public class TerraCV extends OpenCvPipeline
         Imgproc.cvtColor(processed, hsv, Imgproc.COLOR_RGB2HSV); //convert to hsv color space
         avgColor = Core.mean(hsv).val; //find the mean value of the colors
         avgH = avgColor[0]; // find the mean hue value
+        avgS = avgColor[1];
+        avgV = avgColor[2];
 
-        if(avgH > 90){ //for zero hue is usually around 100
-            ringNum = RingNum.ZERO;
-        }else if(avgH > 50){ //for one hue is usually around 70
-            ringNum = RingNum.ONE;
-        }else if(avgH > 10){ // for four hue is usually around 30
+//        if(avgH > 90){ //for zero hue is usually around 100
+//            ringNum = RingNum.ZERO;
+//        }else if(avgH > 50){ //for one hue is usually around 70
+//            ringNum = RingNum.ONE;
+//        }else if(avgH > 10){ // for four hue is usually around 30
+//            ringNum = RingNum.FOUR;
+//        }
+        if(avgS > 50){
             ringNum = RingNum.FOUR;
+        }else if(avgS > 30){
+            ringNum = RingNum.ONE;
+        }else if(avgS > 5){
+            ringNum = RingNum.ZERO;
         }
         //Uncomment this line if you want to view fullscreen
-        //Imgproc.resize(processed, processed, input.size());
+//        Imgproc.resize(processed, processed, input.size());
 
         return processed;
     }

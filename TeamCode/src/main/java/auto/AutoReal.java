@@ -11,13 +11,14 @@ import global.TerraBot;
 import globalfunctions.Constants;
 
 
-@Autonomous(name="AutoFour", group="Auto")
-public class AutoFour extends LinearOpMode {
+@Autonomous(name="AutoReal", group="Auto")
+public class AutoReal extends LinearOpMode {
     AutoHandler autoHandler = new AutoHandler(this);
+
     @Override
     public void runOpMode() {
-        autoHandler.initialize(false);
-        autoHandler.auto4();
+       autoHandler.initialize(true);
+       autoHandler.autoAll();
     }
 
 }

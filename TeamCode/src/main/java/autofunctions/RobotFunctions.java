@@ -83,6 +83,7 @@ public class RobotFunctions {
             @Override
             public void run() {
                 bot.moveArmWithEncWithoutWGE(deg, 1);
+                bot.moveArm(0);
             }
         };
     }
@@ -96,6 +97,7 @@ public class RobotFunctions {
                     bot.moveArm(bot.getRestPowArm());
                 }
                 bot.wge.setPower(0);
+                bot.moveArm(0);
             }
         };
     }
