@@ -115,6 +115,8 @@ public abstract class MasterAutonomous extends MasterOpMode {
         double distanceLeft;
         double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double angleDeviation;
+        double turningPower;
+
 
         PIDFilter translationPID;
         translationPID = new PIDFilter(Constants.TRANSLATION_P, Constants.TRANSLATION_I, Constants.TRANSLATION_D);
@@ -130,20 +132,11 @@ public abstract class MasterAutonomous extends MasterOpMode {
             distanceLeft = targetDistance - distanceTraveled;
             translationPID.roll(distanceLeft);
 
-            if (angleDeviation >= 1) {
-                radDriveAngle -= Math.toRadians(angleDeviation);
-            }
-            else if(angleDeviation <= 1){
-                radDriveAngle += Math.toRadians(angleDeviation);
-            }
-
-            telemetry.addData("angleDeviation", angleDeviation);
-            telemetry.addData("degDriveAngle", degDriveAngle);
-            telemetry.addData("startAngle", startAngle);
-            telemetry.update();
+            // Todo - figure out what the optimal value for the "5" should be
+            turningPower = -angleDeviation/5;
 
             // We drive the mecanum wheels with the PID value
-            driveMecanum(radDriveAngle, Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), 0.0);
+            driveMecanum(radDriveAngle, Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), turningPower);
 
             // Update positions using last distance measured by encoders
             xPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() +
