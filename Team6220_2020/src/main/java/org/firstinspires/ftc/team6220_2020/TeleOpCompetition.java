@@ -19,11 +19,11 @@ public class TeleOpCompetition extends MasterTeleOp {
             driver1.update();
             driver2.update();
 
-            driveLauncherWithController();
             driveMecanumWithJoysticks();
+            driveZiptiesWithController();
+            driveBeltWithController();
+            driveLauncherWithController();
             fireLauncherWithTrigger(false);
-            //driveZiptiesWithController();
-            //driveBeltWithController();
 
             telemetry.addData("Launcher RPM", (getMotorTicksPerMinute(motorLauncher, 100)) / Constants.AM_37_TICKS_PER_ROTATION);
             telemetry.addData("IMU: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES));

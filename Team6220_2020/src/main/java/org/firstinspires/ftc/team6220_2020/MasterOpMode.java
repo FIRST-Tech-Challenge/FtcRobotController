@@ -7,9 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team6220_2020.ResourceClasses.DriverInput;
 
-public abstract class MasterOpMode extends LinearOpMode
-{
-    //Motors
+public abstract class MasterOpMode extends LinearOpMode {
+    // Motors
     public static DcMotor motorFrontLeft;
     public static DcMotor motorFrontRight;
     public static DcMotor motorBackLeft;
@@ -20,21 +19,21 @@ public abstract class MasterOpMode extends LinearOpMode
     public static DcMotor motorBelt;
     public static DcMotor motorZiptie;
 
-    //Other Devices
+    // Other Devices
     public static Servo servoLauncher;
 
     // Create drivers
     public DriverInput driver1;
     public DriverInput driver2;
 
-    //Booleans
+    // Booleans
     public boolean isSlowMode = false;
 
     // IMUs
     public BNO055IMU imu;
 
-    //This method initializes the motors.
-    public void Initialize(){
+    // This method initializes the motors.
+    public void Initialize() {
         // Drive train motors
         motorFrontLeft = hardwareMap.dcMotor.get("motorFL");
         motorFrontRight = hardwareMap.dcMotor.get("motorFR");
@@ -45,7 +44,7 @@ public abstract class MasterOpMode extends LinearOpMode
         motorBelt = hardwareMap.dcMotor.get("motorBelt");
         motorZiptie = hardwareMap.dcMotor.get("motorZiptie");
 
-        //Servos
+        // Servos
         servoLauncher = hardwareMap.servo.get("servoLauncher");
 
 
@@ -60,11 +59,8 @@ public abstract class MasterOpMode extends LinearOpMode
         // Todo - move to miscellaneous motors.
         motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLauncher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        //motorBelt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorBelt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBelt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBelt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBelt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorZiptie.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorZiptie.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -84,9 +80,8 @@ public abstract class MasterOpMode extends LinearOpMode
         imu.initialize(parameters);
     }
 
-    //This method drives mecanum when given an angle drive power and turning power
-    public void driveMecanum(double driveAngle, double drivePower, double turningPower)
-    {
+    // This method drives mecanum when given an angle drive power and turning power
+    public void driveMecanum(double driveAngle, double drivePower, double turningPower) {
         double x = drivePower * Math.cos(driveAngle);
         double y = drivePower * Math.sin(driveAngle);
 
@@ -97,12 +92,13 @@ public abstract class MasterOpMode extends LinearOpMode
 
         double scaleFactor = Math.max(Math.max(motorFLPower, motorFRPower), Math.max(motorBLPower, motorBRPower));
 
-        if(scaleFactor > 1){
+        if (scaleFactor > 1) {
             motorFrontLeft.setPower(motorFLPower / scaleFactor);
             motorFrontRight.setPower(motorFRPower / scaleFactor);
             motorBackLeft.setPower(motorBLPower / scaleFactor);
             motorBackRight.setPower(motorBRPower / scaleFactor);
-        } else {
+        }
+        else {
             motorFrontLeft.setPower(motorFLPower);
             motorFrontRight.setPower(motorFRPower);
             motorBackLeft.setPower(motorBLPower);
@@ -110,27 +106,26 @@ public abstract class MasterOpMode extends LinearOpMode
         }
     }
 
-    //Sets the launch motor to a given power
-    public void driveLauncher(double power){
+    // Sets the launch motor to a given power
+    public void driveLauncher(double power) {
         motorLauncher.setPower(power);
     }
 
-    //Sets the belt motor to a given power
-    public void driveBelt(double power){
+    // Sets the belt motor to a given power
+    public void driveBelt(double power) {
         motorBelt.setPower(power);
     }
 
-    //Sets the ziptie motor to a given power
-    public void driveZiptie(double power){
+    // Sets the ziptie motor to a given power
+    public void driveZiptie(double power) {
         motorZiptie.setPower(power);
     }
 
-    //This method returns the speed of a given motor after a delay of delayInMillis
-    //@param motor Input the motor you want to know the RPM of
-    //@param delayInMillis Input the delay you want to measure the change in encoder ticks in milliseconds.
+    // This method returns the speed of a given motor after a delay of delayInMillis
+    // @param motor Input the motor you want to know the RPM of
+    // @param delayInMillis Input the delay you want to measure the change in encoder ticks in milliseconds.
     public double getMotorTicksPerMinute(DcMotor motor, int delayInMillis) {
-
-        //Variables used only in this method
+        // Variables used only in this method
         double startTime = System.currentTimeMillis();
         double startPosition = motor.getCurrentPosition();
         double endTime;
@@ -138,7 +133,7 @@ public abstract class MasterOpMode extends LinearOpMode
         double positionChange;
         double timeChange;
 
-        //Waits delayInMillis milliseconds before recording endTime and endPosition
+        // Waits delayInMillis milliseconds before recording endTime and endPosition
         while (true) {
             if (System.currentTimeMillis() - startTime >= delayInMillis) break;
         }
@@ -146,61 +141,88 @@ public abstract class MasterOpMode extends LinearOpMode
         endTime = System.currentTimeMillis();
         endPosition = motor.getCurrentPosition();
 
-        //Calculates the ▲Position and the ▲Time
+        // Calculates the ▲Position and the ▲Time
         positionChange = endPosition - startPosition;
         timeChange = endTime - startTime;
 
-        //Converts the ▲Time from milliseconds to minutes then finds encoder ticks per minute
+        // Converts the ▲Time from milliseconds to minutes then finds encoder ticks per minute
         double timeChangeInMin = timeChange / Constants.MILLIS_TO_MIN;
 
-        //To avoid divide by zero we need to be sure timeChangeInMin does not equal zero.
+        // To avoid divide by zero we need to be sure timeChangeInMin does not equal zero.
         double ticksPerMinute = 0;
-        if(timeChangeInMin != 0) {
+        if (timeChangeInMin != 0) {
             ticksPerMinute = positionChange / timeChangeInMin;
         }
 
-        //If timeChange is not zero return the motor RPM otherwise return zero.
+        // If timeChange is not zero return the motor RPM otherwise return zero.
         return (ticksPerMinute);
-
     }
 
-    public void fireLauncher(double targetRPM)
-    {
+    /*public void fireLauncher(double targetRPM) {
         if (targetRPM == 0) {
             servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
             pauseMillis(100);
             servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
-        } else {
+        }
+        else {
             boolean firedYet = false;
             int fireTimeOut = 0;
-            while(!firedYet) {
+            while (!firedYet) {
                 double motorRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
                 telemetry.addData("launcher RPM: ", motorRPM);
-                telemetry.addData("Time out: ", fireTimeOut);
                 telemetry.update();
+
                 if (Math.abs(motorRPM - targetRPM) < 50 || fireTimeOut >= 50) {
                     servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
                     pauseMillis(100);
                     servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
                     firedYet = true;
-                } else if (motorRPM > targetRPM) {
+                }
+                else if (motorRPM > targetRPM) {
                     motorLauncher.setPower(motorLauncher.getPower() - 0.05);
-                } else {
+                }
+                else {
                     motorLauncher.setPower(motorLauncher.getPower() + 0.05);
                 }
 
                 fireTimeOut++;
             }
         }
-    }
+    }*/
 
-    //Pauses for time milliseconds
-    public void pauseMillis(double time)
-    {
-        double startTime = System.currentTimeMillis();
-        while(System.currentTimeMillis() - startTime < time && opModeIsActive()){
-            idle();
+    public void betterFireLauncher(double targetRPM, int numberOfShots, double shotDelayMillis) {
+        boolean firedYet = false;
+
+        for (int i = 0; i < numberOfShots; i++) {
+            while (!firedYet) {
+                double motorRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
+
+                if (Math.abs(motorRPM - targetRPM) < 25) {
+                    servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
+                    pauseMillis(100);
+                    servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
+                    firedYet = true;
+                }
+                else if ((motorRPM - targetRPM) > 25) {
+                    motorLauncher.setPower(motorLauncher.getPower() - 0.05);
+                }
+                else if ((motorRPM - targetRPM) < 25) {
+                    motorLauncher.setPower(motorLauncher.getPower() + 0.05);
+                }
+
+                telemetry.addData("launcher RPM: ", motorRPM);
+                telemetry.update();
+            }
+
+            pauseMillis(shotDelayMillis);
         }
     }
 
+    // Pauses for time milliseconds
+    public void pauseMillis(double time) {
+        double startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < time && opModeIsActive()) {
+            idle();
+        }
+    }
 }

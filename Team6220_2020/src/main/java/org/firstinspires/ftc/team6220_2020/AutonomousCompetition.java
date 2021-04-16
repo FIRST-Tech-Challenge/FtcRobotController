@@ -10,7 +10,7 @@ public class AutonomousCompetition extends MasterAutonomous {
         Initialize();
         waitForStart();
 
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             driveInches(20, 90);
             driveInches(20, 0);
             driveInches(20, -90);
@@ -27,6 +27,5 @@ public class AutonomousCompetition extends MasterAutonomous {
         //    fireLauncher(1500);
         //    pauseMillis(1500);
         //}
-
     }
 }

@@ -5,41 +5,38 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.team6220_2020.ResourceClasses.Button;
 import org.firstinspires.ftc.team6220_2020.ResourceClasses.PIDFilter;
 
-//todo add is op mode active breakers
+// todo - add is op mode active breakers
 public abstract class MasterAutonomous extends MasterOpMode {
 
-    // Initialize booleans used in runSetup()--------------------------------------------------
+    // todo - do we need any of the code between lines 14 and 92, because I don't think we do?
+    /*// Initialize booleans used in runSetup()
     // Determines whether or not we park on the line at the end of autonomous.
     boolean parkOnLine = true;
     // Determines what team we are on.
     boolean isRedAlliance = true;
     // Determines whether or not we move the wobble goal
     boolean moveWobbleGoal = false;
-    //-----------------------------------------------------------------------------------------
 
-    // Variables used during setup and running ----------------------------------------------
+    // Variables used during setup and running
     // The number of the rings at start up
     int numRings = 0;
 
-    //Start Position Variables. The various start positions are stored in the array start positions are chosen in runSetup.
+    // Start Position Variables. The various start positions are stored in the array start positions are chosen in runSetup.
     int matchStartPosition = 0;
-    int[][] startPositions = {/*Position 1: X,Y */{4,6},/*Position 2: X,Y */{4,6}};
+    int[][] startPositions = {*//*Position 1: X,Y *//*{4,6},*//*Position 2: X,Y *//*{4,6}};
     int numStartPositions = startPositions.length - 1;
 
-    //Position values to use in navigation
+    // Position values to use in navigation
     double xPos = 0;
     double yPos = 0;
 
-    //PID filters for navigation
-    //PIDFilter translationPID;
-    //-----------------------------------------------------------------------------------------
+    // PID filters for navigation
+    // PIDFilter translationPID;
 
     // Allows the 1st driver to decide which autonomous routine should be run using gamepad input
-    void runSetup()
-    {
+    void runSetup() {
         // Creates the telemetry log
         telemetry.log().add("Red / Blue = B / X");
         telemetry.log().add("Increase / Decrease Delay = DPad Up / Down");
@@ -49,8 +46,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         boolean settingUp = true;
 
-        while(settingUp && opModeIsActive())
-        {
+        while(settingUp && opModeIsActive()) {
             driver1.update();
             driver2.update();
             // Select alliance
@@ -59,21 +55,22 @@ public abstract class MasterAutonomous extends MasterOpMode {
             else if (driver1.isButtonPressed(Button.X))
                 isRedAlliance = false;
 
-            //Toggles through moving wobble goal
+            // Toggles through moving wobble goal
             if(driver1.isButtonJustReleased(Button.Y))
                 moveWobbleGoal = !moveWobbleGoal;
 
-            //Toggles through start positions
-            if(driver1.isButtonJustPressed(Button.X)){
+            // Toggles through start positions
+            if (driver1.isButtonJustPressed(Button.X)) {
                 matchStartPosition++;
-                if(matchStartPosition > numStartPositions){
+                if (matchStartPosition > numStartPositions) {
                     matchStartPosition = 0;
                 }
             }
 
             // If the driver presses start, we exit setup.
-            if (driver1.isButtonJustPressed(Button.A) || opModeIsActive())
+            if (driver1.isButtonJustPressed(Button.A) || opModeIsActive()) {
                 settingUp = false;
+            }
 
             // Display the current setup
             telemetry.addData("a just pressed", driver1.getLeftStickX());
@@ -83,20 +80,18 @@ public abstract class MasterAutonomous extends MasterOpMode {
             telemetry.addData("Start position: ", matchStartPosition);
             telemetry.update();
             idle();
-
         }
 
         telemetry.clearAll();
         telemetry.log().clear();
         telemetry.addData("State: ", "waitForStart()");
         telemetry.update();
-        //Sets the match start position
+        // Sets the match start position
         xPos = startPositions[matchStartPosition][0];
         yPos = startPositions[matchStartPosition][1];
-    }
+    }*/
 
     public void driveInches(double targetDistance, double degDriveAngle) {
-
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -111,12 +106,11 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         double xPosition = 0;
         double yPosition = 0;
-        double radDriveAngle = Math.toRadians(degDriveAngle);
         double distanceLeft;
+        double radDriveAngle = Math.toRadians(degDriveAngle);
         double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double angleDeviation;
         double turningPower;
-
 
         PIDFilter translationPID;
         translationPID = new PIDFilter(Constants.TRANSLATION_P, Constants.TRANSLATION_I, Constants.TRANSLATION_D);
@@ -132,7 +126,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
             distanceLeft = targetDistance - distanceTraveled;
             translationPID.roll(distanceLeft);
 
-            // Todo - figure out what the optimal value for the "5" should be
             turningPower = angleDeviation/100;
 
             // We drive the mecanum wheels with the PID value
