@@ -29,6 +29,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static java.lang.StrictMath.abs;
+
 public class YellowBot implements OdoBot {
     public static double CALIB_SPEED = 0.5;
     protected DcMotorEx frontLeft = null;
@@ -301,6 +303,10 @@ public class YellowBot implements OdoBot {
 
 
             double speedIncrement = 0.05;
+            if (abs(leftPower) > 0.6 && abs(rightPower) > 0.6) {
+                speedIncrement = 0.03;
+            }
+
             if (forward) {
                 speedIncrement = -speedIncrement;
             }
@@ -357,10 +363,17 @@ public class YellowBot implements OdoBot {
                     }
                 }
 
-                this.frontLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLF());
-                this.frontRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRF());
-                this.backLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLB());
-                this.backRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRB());
+                if (abs(leftPower) > 0.6 && abs(rightPower) > 0.6 && forward) {
+                    this.frontLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLF());
+                    this.frontRight.setVelocity(MAX_VELOCITY * rightPower * (mr.getRF() - 0.03));
+                    this.backLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLB());
+                    this.backRight.setVelocity(MAX_VELOCITY * rightPower * (mr.getRB() - 0.03));
+                } else {
+                    this.frontLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLF());
+                    this.frontRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRF());
+                    this.backLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLB());
+                    this.backRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRB());
+                }
 
             }
 
@@ -410,6 +423,11 @@ public class YellowBot implements OdoBot {
 
 
             double speedIncrement = 0.05;
+
+            if (abs(leftPower) > 0.6 && abs(rightPower) > 0.6) {
+                speedIncrement = 0.03;
+            }
+
             if (forward) {
                 speedIncrement = -speedIncrement;
             }
@@ -483,10 +501,17 @@ public class YellowBot implements OdoBot {
                     }
                 }
 
-                this.frontLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLF());
-                this.frontRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRF());
-                this.backLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLB());
-                this.backRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRB());
+                if (abs(leftPower) > 0.6 && abs(rightPower) > 0.6 && forward) {
+                    this.frontLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLF());
+                    this.frontRight.setVelocity(MAX_VELOCITY * rightPower * (mr.getRF() - 0.04));
+                    this.backLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLB());
+                    this.backRight.setVelocity(MAX_VELOCITY * rightPower * (mr.getRB() - 0.04));
+                } else {
+                    this.frontLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLF());
+                    this.frontRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRF());
+                    this.backLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLB());
+                    this.backRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRB());
+                }
 
                 stats.updateVelocity(this.getLeftVelocity(), this.getRightVelocity());
             }
