@@ -1359,7 +1359,20 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (hopper.HopperTimer.milliseconds()>60);
+                        return (hopper.HopperTimer.milliseconds()>30);
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                if (!hopper.magLow.isPressed()) {
+                    hopper.ringLifter.setPower(1);
+                }
+                hopper.HopperTimer.reset();
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (hopper.magLow.isPressed() || (hopper.HopperTimer.seconds()>=0.8));
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
