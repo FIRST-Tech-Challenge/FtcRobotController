@@ -361,7 +361,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.milliseconds()>60);
+                        return (HopperTimer.milliseconds()>30);
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
