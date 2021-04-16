@@ -21,19 +21,25 @@ public class CorgiFinalAutoPower extends LinearOpMode {
         telemetry.update();
         waitForStart();
         if(rings!=1&&rings!=4) {
-            robot.goToPosition(-59,-17.5,0,0.95);
+            robot.goToPosition(-50,-9.5,0,0.95);
 //            robot.moveWobbleGoalToPosition(WobbleGoal.Position.DROP);
             sleep(50);
 //            robot.openWobbleGoalClaw();
-            robot.goToPosition(-54,-17.5,0,0.7);
 //            robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
             sleep(100);
-            robot.goToPosition(-54,24,0,1);
+            robot.goToPosition(-54,24.5,0,1);
             robot.shootThreePowerShot();
-            sleep(250);
+            robot.goToPosition(-23,17,138,1);
+            robot.goToPosition(-71,-3,90,1);
+            sleep(100);
+            robot.goToPosition(-111,-3,90,1);
+            robot.startIntake();
+            robot.startTransfer();
+            robot.goToPosition(-111,40,90,1);
+            robot.stopIntake();
+            robot.stopTransfer();
             stop();
 
-            robot.goToPosition(-48,-15,0,1);
             robot.goToPosition(-56,-17,0,1);
 //            robot.moveWobbleGoalToPosition(WobbleGoal.Position.DROP);
 //            robot.openWobbleGoalClaw();
