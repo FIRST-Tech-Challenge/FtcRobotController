@@ -133,7 +133,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             translationPID.roll(distanceLeft);
 
             // Todo - figure out what the optimal value for the "5" should be
-            turningPower = -angleDeviation/5;
+            turningPower = angleDeviation/100;
 
             // We drive the mecanum wheels with the PID value
             driveMecanum(radDriveAngle, Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), turningPower);
@@ -146,6 +146,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
                     motorBackLeft.getCurrentPosition() + motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
 
             telemetry.addData("Distance Traveled: ", distanceTraveled);
+            telemetry.addData("Deviation: ", angleDeviation);
             telemetry.update();
 
             if (distanceTraveled > targetDistance) {

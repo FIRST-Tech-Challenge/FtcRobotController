@@ -17,6 +17,8 @@ public abstract class MasterOpMode extends LinearOpMode
     // Todo - move to miscellaneous motors.
     // Make sure to declare the 3.7 launch motor as a 20 on the control hub
     public static DcMotor motorLauncher;
+    public static DcMotor motorBelt;
+    public static DcMotor motorZiptie;
 
     //Other Devices
     public static Servo servoLauncher;
@@ -40,6 +42,8 @@ public abstract class MasterOpMode extends LinearOpMode
         motorBackRight = hardwareMap.dcMotor.get("motorBR");
         // Todo - move to miscellaneous motors.
         motorLauncher = hardwareMap.dcMotor.get("motorLauncher");
+        motorBelt = hardwareMap.dcMotor.get("motorBelt");
+        motorZiptie = hardwareMap.dcMotor.get("motorZiptie");
 
         //Servos
         servoLauncher = hardwareMap.servo.get("servoLauncher");
@@ -57,6 +61,12 @@ public abstract class MasterOpMode extends LinearOpMode
         motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLauncher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        //motorBelt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //motorBelt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBelt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorZiptie.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorZiptie.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         driver1 = new DriverInput(gamepad1);
         driver2 = new DriverInput(gamepad2);
@@ -105,6 +115,16 @@ public abstract class MasterOpMode extends LinearOpMode
         motorLauncher.setPower(power);
     }
 
+    //Sets the belt motor to a given power
+    public void driveBelt(double power){
+        motorBelt.setPower(power);
+    }
+
+    //Sets the ziptie motor to a given power
+    public void driveZiptie(double power){
+        motorZiptie.setPower(power);
+    }
+
     //This method returns the speed of a given motor after a delay of delayInMillis
     //@param motor Input the motor you want to know the RPM of
     //@param delayInMillis Input the delay you want to measure the change in encoder ticks in milliseconds.
@@ -144,29 +164,34 @@ public abstract class MasterOpMode extends LinearOpMode
 
     }
 
-    public void fireLauncher(double speed)
+    public void fireLauncher(double targetRPM)
     {
-        if (speed == 0) {
+        if (targetRPM == 0) {
             servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
             pauseMillis(100);
             servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
         } else {
             boolean firedYet = false;
+            int fireTimeOut = 0;
             while(!firedYet) {
                 double motorRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
-                if (Math.abs(motorRPM - speed) < 50) {
+                telemetry.addData("launcher RPM: ", motorRPM);
+                telemetry.addData("Time out: ", fireTimeOut);
+                telemetry.update();
+                if (Math.abs(motorRPM - targetRPM) < 50 || fireTimeOut >= 50) {
                     servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
                     pauseMillis(100);
                     servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
                     firedYet = true;
-                } else if (motorRPM > speed) {
+                } else if (motorRPM > targetRPM) {
                     motorLauncher.setPower(motorLauncher.getPower() - 0.05);
                 } else {
                     motorLauncher.setPower(motorLauncher.getPower() + 0.05);
                 }
+
+                fireTimeOut++;
             }
         }
-
     }
 
     //Pauses for time milliseconds

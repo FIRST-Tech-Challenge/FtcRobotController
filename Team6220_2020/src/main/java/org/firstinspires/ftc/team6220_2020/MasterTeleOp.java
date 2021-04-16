@@ -8,6 +8,8 @@ public abstract class MasterTeleOp extends MasterOpMode
     //Booleans for methods
     boolean justFired = false;
     boolean launcherJustPressed = false;
+    boolean ziptieJustPressed = false;
+    boolean beltJustPressed = false;
     public boolean front = true;
 
     public void driveMecanumWithJoysticks()
@@ -59,6 +61,42 @@ public abstract class MasterTeleOp extends MasterOpMode
             }
         }
 
+    }
+
+    // Drives zipties with controller
+    public void driveZiptiesWithController()
+    {
+        // Todo - migrate to DriverInput class and control to toggle
+        driver2.update();
+
+        if (driver2.isButtonJustPressed(Button.X)) {
+            ziptieJustPressed = !ziptieJustPressed;
+        }
+
+        if(ziptieJustPressed) {
+            driveZiptie(1.0);
+        }
+        else {
+            driveZiptie(0.0);
+        }
+    }
+
+    // Drives belt with controller
+    public void driveBeltWithController()
+    {
+        // Todo - migrate to DriverInput class and control to toggle
+        driver2.update();
+
+        if (driver2.isButtonJustPressed(Button.B)) {
+            beltJustPressed = !beltJustPressed;
+        }
+
+        if(beltJustPressed) {
+            driveBelt(1.0);
+        }
+        else {
+            driveBelt(0.0);
+        }
     }
 
 }
