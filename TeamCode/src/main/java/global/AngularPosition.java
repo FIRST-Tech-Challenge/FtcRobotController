@@ -22,7 +22,7 @@ public class AngularPosition {
     public double addRightGY = 0;
 
     public boolean isFailing = false;
-    public boolean dontUseCompassSensor = false;
+    public boolean dontUseCompassSensor = true;
 
 
     public void init(HardwareMap hwMap){

@@ -31,6 +31,24 @@ public class TimeData {
         this.timeStamps = out2;
     }
 
+    public TimeData(String name, ArrayList<double[]> data, boolean what){
+        ArrayList<String> out = new ArrayList<>();
+        ArrayList<String> out2 = new ArrayList<>();
+
+        for(double[] i: data){
+            if(data.get(0).length == 3) {
+                out.add("(" + Double.toString(i[0]) + "," + Double.toString(i[1]) + "," + Double.toString(i[2]) + ")");
+            }else if(data.get(0).length == 2){
+                out.add("(" + Double.toString(i[0]) + "," + Double.toString(i[1]) +  ")");
+            }else if(data.get(0).length == 1){
+                out.add("(" + Double.toString(i[0]) +  ")");
+            }
+        }
+        this.name = name;
+        this.data = out;
+        this.timeStamps = out2;
+    }
+
     public TimeData(String name, ArrayList<String> data){
         this.name = name;
         this.data = data;

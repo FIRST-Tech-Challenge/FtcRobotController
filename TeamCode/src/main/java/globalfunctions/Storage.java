@@ -58,6 +58,7 @@ public class Storage {
         return timeDataAsString;
     }
 
+
     public void makeOutputFile(String dirname){
         File filepath = Environment.getExternalStorageDirectory();
         File dir = new File(filepath.getAbsolutePath()+"/FTC_Files/");

@@ -22,10 +22,10 @@ public class AutoHandler {
         this.op = op;
     }
 
-    //TODO
-    // MOVEMTENTS ARE WEIRD
-    // SEMI UNRELIABLE SHOOTING
-    // UNRELIABLE IN GENERAL
+//    TODO
+//     MOVEMTENTS ARE WEIRD
+//     SEMI UNRELIABLE SHOOTING
+//     UNRELIABLE IN GENERAL
 
 
 
@@ -48,8 +48,8 @@ public class AutoHandler {
         //move to intake rings
         path.addWGRF(rf.moveWgTo(45));
         path.addRF(rf.controlWGE(0.1));
-        path.addWaypoint(0, -150, 0);
-        path.addSetpoint(0, -55, 0);
+        path.addWaypoint(0, -205, 0);
+//        path.addSetpoint(0, -55, 0);
         path.addSetpoint(35,10, 0);
 
 

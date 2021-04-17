@@ -56,7 +56,7 @@ public class Path {
 
 
     //y coeff used to be 0.2 now 0.3
-    final public double[] ks = {0.05,0.3,0.005};
+    final public double[] ks = {0.05,0.5,0.005};
     final public double[] ds = {0.01,0.01,0.0005};
     final public double[] is = {0.00,0.00,0.0000};
 
@@ -65,7 +65,7 @@ public class Path {
 final public double[] dsS = {0.015,0.015,0.0005};
     final public double[] isS = {0.000,0.000,0.0000};
 
-    public double xRestPow = 0.05;
+    public double xRestPow = 0.03;
     public double yRestPow = 0.03;
     public double hRestPow = 0.05;
 
@@ -169,7 +169,7 @@ final public double[] dsS = {0.015,0.015,0.0005};
         hControl.scaleCoeffs(2);
         xControl.scaleAccs(0.5);
         yControl.scaleAccs(0.5);
-        hControl.scaleAccs(0.25);
+        hControl.scaleAccs(0.5);
 //        xControl.setWayMode(false);
 //        yControl.setWayMode(false);
 //        hControl.setWayMode(false);
@@ -281,7 +281,7 @@ final public double[] dsS = {0.015,0.015,0.0005};
         ans = (-1)*((b - Math.sqrt(disc)) / (2 * a));
 //        second answer = (-1)*((b + Math.sqrt(disc)) / (2 * a));
         if(!Double.isNaN(ans)) {
-            if(ans > 0.9){
+            if(ans > 0.99){
                 next();
             }
             return ans;
@@ -455,10 +455,13 @@ final public double[] dsS = {0.015,0.015,0.0005};
     }
 
     public void saveData(){
+
         TimeData timeData = new TimeData("Current", track, trackTimes);
         TimeData timeData2 = new TimeData("Current2", speeds, trackTimes);
+        TimeData timeData3 = new TimeData("Current3", poses, false);
         storage.saveText(storage.convertToJSON("Today", timeData), timeData.name);
         storage.saveText(storage.convertToJSON("Today", timeData2), timeData2.name);
+        storage.saveText(storage.convertToJSON("Today", timeData3), timeData3.name);
     }
 
     public enum Posetype{

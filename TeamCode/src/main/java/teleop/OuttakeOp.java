@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import global.TerraBot;
 import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
-@Disabled
-@TeleOp(name = "OuttakeOp")
+//@Disabled
+@TeleOp(name = "TestOp")
 public class OuttakeOp extends OpMode {
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
@@ -35,16 +35,15 @@ public class OuttakeOp extends OpMode {
         }
 
 
-//        telemetryHandler.addAutoAimer();
-//        telemetryHandler.addAngularPosition();
-//        telemetry = telemetryHandler.getTelemetry();
-//
-//        telemetry.update();
+        telemetryHandler.addAutoAimer();
+        telemetryHandler.addAngularPosition();
+        telemetry = telemetryHandler.getTelemetry();
+
+        telemetry.update();
 
     }
 
     @Override
     public void stop() {
-        bot.stopAllAutomodules();
     }
 }

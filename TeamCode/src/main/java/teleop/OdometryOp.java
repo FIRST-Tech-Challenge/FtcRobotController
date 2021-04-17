@@ -9,7 +9,7 @@ import global.TerraBot;
 import globalfunctions.Optimizer;
 import globalfunctions.TelemetryHandler;
 
-@Disabled
+//@Disabled
 @TeleOp(name = "TestOdometry")
 public class OdometryOp extends OpMode {
     TerraBot bot = new TerraBot();
@@ -39,11 +39,6 @@ public class OdometryOp extends OpMode {
     public void loop() {
 
         if(!optimizer.show) {
-
-            double forward = -gamepad1.right_stick_y;
-            double strafe = gamepad1.right_stick_x;
-            double turn = -gamepad1.left_stick_x;
-
             bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
             optimizer.update();
             telemetryHandler.addOdometry();
