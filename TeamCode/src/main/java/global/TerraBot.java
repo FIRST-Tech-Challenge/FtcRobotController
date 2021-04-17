@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
-import java.util.function.DoubleFunction;
 
 import globalfunctions.Constants;
 import globalfunctions.Optimizer;
@@ -246,14 +245,11 @@ public class TerraBot {
             } else {
                 move(0.5 * Math.signum(f) * Math.pow(Math.abs(f), 0.5), 0.5 * Math.signum(s) * Math.pow(Math.abs(s), 0.5), 0.4 * Math.signum(t) * Math.pow(Math.abs(t), 0.5));
             }
-
-
-            if (fastModeController.isPressing(rt > 0)) {
-                fastMode = !fastMode;
-            }
         }
-
-
+        if (fastModeController.isPressing(rt > 0)) {
+            fastMode = !fastMode;
+            isMovementAvailable = true;
+        }
     }
 
     public void moveArm(double p){
@@ -417,6 +413,22 @@ public class TerraBot {
         return (outl.getVelocity()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
     }
 
+    public double[] getLocalizerPos() {
+        return localizer.getPos();
+    }
+
+    public void updateLocalizer() {
+        localizer.update(angularPosition.getHeadingGY());
+    }
+
+    public void setHeading(double angle) {
+        localizer.update(angle);
+        odometry.resetHeading(angle);
+    }
+
+    public void updateOdoWithSensors() {
+        odometry.resetPos(getLocalizerPos());
+    }
 
 
     public void outtakeWithCalculations() {
@@ -567,9 +579,12 @@ public class TerraBot {
             @Override
             public void run() {
                 intaking = false;
+                autoAimer.setOuttakePos(getLocalizerPos());
+                autoAimer.updateTargetSpeed();
             }
         });
         shooter.addOuttake(outr, outl, 1300, 1600);
+//        shooter.addOuttake(outr, outl, autoAimer.getOutlTargetVel() * Constants.GO_RAD_TO_TICKS, autoAimer.getOutrTargetVel() * Constants.GO_RAD_TO_TICKS);
         shooter.addStage(rp, pushControl, 1 , 0.5);
         shooter.addStage(rh2, 0);
         shooter.addCustom(new CodeSeg() {
@@ -590,12 +605,12 @@ public class TerraBot {
         }
         shooter.addOuttake(outr, outl, 0, 0);
         shooter.addStage(rp, pushControl, 0,  0.01);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                fastMode = true;
-            }
-        });
+//        shooter.addCustom(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                fastMode = true;
+//            }
+//        });
         shooter.addPause();
         autoModules.add(shooter);
     }
@@ -631,11 +646,19 @@ public class TerraBot {
 
 
     public void definePowershot(){
+        powerShot.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                updateLocalizer();
+                updateOdoWithSensors();
+            }
+        });
         powerShot.addStage(rh2, -1);
         powerShot.addOuttake(outr, outl, 1300, 1600);
         powerShot.addStage(rp, pushControl, 1 , 0.5);
         powerShot.addStage(rh2, 0);
         powerShot.toggleFastMode(this);
+        powerShot.addMoveGlobal(this, new double[]{126, 176, 0});
         powerShot.addWait(1);
         for (int i = 0; i < 3; i++) {
             powerShot.addStage(rp, pushControl, 2, 0.01);
@@ -649,7 +672,7 @@ public class TerraBot {
         }
         powerShot.addOuttake(outr, outl, 0, 0);
         powerShot.addStage(rp, pushControl, 0,  0.01);
-        powerShot.toggleFastMode(this);
+//        powerShot.toggleFastMode(this);
         powerShot.addPause();
         autoModules.add(powerShot);
     }

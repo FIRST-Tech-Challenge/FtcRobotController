@@ -4,6 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Scanner;
+
 import global.TerraBot;
 import globalfunctions.Constants;
 import globalfunctions.Optimizer;
@@ -16,6 +21,7 @@ public class TerraOp extends OpMode {
     TelemetryHandler telemetryHandler = new TelemetryHandler();
     Storage storage = new Storage();
     Optimizer optimizer = new Optimizer();
+    double wgPos;
 
     @Override
     public void init() {
@@ -28,6 +34,8 @@ public class TerraOp extends OpMode {
         telemetry.addData("Ready?", "Yes!");
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
+        storage.makeOutputFile("save");
+        wgPos = Double.parseDouble(storage.readText("wgPos"));
 //        bot.moveArmWithEnc(45, 1);
 //
 
@@ -69,12 +77,8 @@ public class TerraOp extends OpMode {
 //        bot.outtake(gamepad2.right_stick_y);
 //
 
-        if(gamepad1.y){
+        if(gamepad1.b){
             bot.aimer.start();
-        }
-
-        if(gamepad1.x){
-            bot.aimerPos = bot.odometry.getAll();
         }
 
         if(gamepad2.x){
@@ -82,7 +86,7 @@ public class TerraOp extends OpMode {
             bot.wobbleGoal.start();
         }
 
-        if(gamepad2.y){
+        if (gamepad1.y) {
             if(bot.powershotMode){
                 bot.powerShot.start();
             }else{
@@ -102,8 +106,20 @@ public class TerraOp extends OpMode {
         }
 
         bot.optimizeOdometry();
+        if (gamepad1.x) {
+            bot.setHeading(0);
+            bot.updateLocalizer();
+            bot.updateOdoWithSensors();
+            bot.aimerPos = bot.odometry.getAll();
+        }
 //        telemetry.addData("wgStart", bot.wgStartMode);
-//        telemetry.update();
+//        telemetryHandler.addOdometry();
+//        telemetryHandler.addAutoAimer();
+//        telemetry = telemetryHandler.getTelemetry();
+        telemetry.addData("Powershot Mode", bot.powershotMode);
+        telemetry.addData("Can Move", bot.isMovementAvailable);
+        telemetry.addData("Wg Start Pos", wgPos);
+        telemetry.update();
     }
 
     @Override

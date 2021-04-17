@@ -54,15 +54,13 @@ public class Localizer {
         return d * -Math.cos(Math.toRadians(theta) + Constants.pi2 - centThe - phi);
     }
 
-    public double[] getPos(double heading){
-        update(heading);
-        double[] out = new double[2];
-        out[0] = leftDis;
-        out[1] = backDis;
-        return out;
+
+    public double[] getPos(){
+        return new double[] {leftDis, backDis};
     }
+
     public double[] getPos(double[] oldPos, double heading){
-        double[] newPos = getPos(heading);
+        double[] newPos = getPos();
         boolean xAccurate = (Math.abs(newPos[0]-oldPos[0]) < Constants.POS_ACCURACY);
         boolean yAccurate = (Math.abs(newPos[1]-oldPos[1]) < Constants.POS_ACCURACY);
 

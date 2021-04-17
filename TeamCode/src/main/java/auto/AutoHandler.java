@@ -2,12 +2,17 @@ package auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import autofunctions.Path;
 import autofunctions.RobotFunctions;
 import autofunctions.TerraCV;
 import autofunctions.TerraCVHandler;
 import global.TerraBot;
 import globalfunctions.Constants;
+import globalfunctions.Storage;
 
 public class AutoHandler {
     TerraBot bot = new TerraBot();
@@ -21,14 +26,6 @@ public class AutoHandler {
     public AutoHandler(LinearOpMode op){
         this.op = op;
     }
-
-//    TODO
-//     MOVEMTENTS ARE WEIRD
-//     SEMI UNRELIABLE SHOOTING
-//     UNRELIABLE IN GENERAL
-
-
-
 
     public void auto4(){
 
@@ -98,8 +95,16 @@ public class AutoHandler {
 
         path.start(bot, op);
         path.saveData();
+        saveWobbleGoalPos();
 
         bot.stopOdoThread();
+    }
+
+    public void saveWobbleGoalPos() {
+        Storage s = new Storage();
+        s.makeOutputFile("save");
+//        s.saveText(Double.toString(bot.getArmPos()), "wgPos");
+        s.saveText("90.0", "wgPos");
     }
 
     public void auto1(){
@@ -160,12 +165,15 @@ public class AutoHandler {
         path.start(bot, op);
         path.saveData();
 
+        saveWobbleGoalPos();
+
         bot.stopOdoThread();
     }
 
     public void auto0(){
 
 
+        saveWobbleGoalPos();
 
         //Life wobble arm and shoot rings
         path.addWGRF(rf.moveWgTo(80), rf.controlWGE(0.3));
@@ -196,6 +204,8 @@ public class AutoHandler {
 
         path.start(bot, op);
         path.saveData();
+
+        saveWobbleGoalPos();
 
         bot.stopOdoThread();
     }

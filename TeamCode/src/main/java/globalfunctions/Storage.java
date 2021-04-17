@@ -6,13 +6,16 @@ import android.os.Environment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import globalfunctions.TimeData;
 
@@ -77,6 +80,14 @@ public class Storage {
         }catch (FileNotFoundException e){
             e.printStackTrace();
         }
+    }
+
+    public String readText(String name) {
+        try {
+            Scanner scan = new Scanner(new BufferedReader(new FileReader(outputFile.getAbsolutePath()+"/" + name + ".txt")));
+            return scan.nextLine();
+        } catch (IOException ignore) {}
+        return "";
     }
 
     public void saveVidData(TimeData in){

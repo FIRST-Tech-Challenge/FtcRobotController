@@ -54,6 +54,7 @@ public class Constants {
     public static final double NEV_DEGREES_TO_TICKS = NEVEREST256_TICKS/360;
     public static final double GOBUILDA1_Ticks = 28;
     public static final double GO_DEGREES_TO_TICKS = GOBUILDA1_Ticks/360;
+    public static final double GO_RAD_TO_TICKS = GOBUILDA1_Ticks/(2 * Math.PI);
 
     public static final double pi2 = Math.PI*2;
     public static final double halfPi = Math.PI/2;

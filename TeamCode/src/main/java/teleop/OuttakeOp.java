@@ -1,12 +1,9 @@
 package teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import global.TerraBot;
-import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
 //@Disabled
 @TeleOp(name = "TestOp")
@@ -33,6 +30,9 @@ public class OuttakeOp extends OpMode {
         }else if(gamepad1.left_trigger > 0){
             bot.fastMode = false;
         }
+
+        bot.autoAimer.setOuttakePos(bot.getLocalizerPos());
+        bot.autoAimer.updateTargetSpeed();
 
 
         telemetryHandler.addAutoAimer();

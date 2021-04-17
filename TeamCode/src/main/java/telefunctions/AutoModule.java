@@ -377,6 +377,39 @@ public class AutoModule {
             }
         });
     }
+
+    public void addMoveGlobal(final TerraBot bot, final double[] pos){
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.isMovementAvailable = false;
+                path = new Path(bot.odometry.getAll());
+                path.setGlobalMode(true);
+                path.HAcc = 0.25;
+                path.XAcc = 1;
+                path.YAcc = 1;
+                path.addWaypoint(pos[0], pos[1], Optimizer.optimizeHeading(pos[2]));
+                path.addSetpoint(pos[0], pos[1], Optimizer.optimizeHeading(pos[2]));
+                return true;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                double[] pows = path.update(bot.odometry.getAll(), bot);
+                bot.move(pows[1], pows[0], pows[2]);
+                return !path.isExecuting;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.isMovementAvailable = true;
+                bot.move(0,0,0);
+                return true;
+            }
+        });
+    }
 //    public void addPath(final Path path, final TerraBot bot){
 //        stages.add(new Stage() {
 //            @Override
