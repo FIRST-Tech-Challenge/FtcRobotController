@@ -158,7 +158,7 @@ public abstract class MasterOpMode extends LinearOpMode {
         return (ticksPerMinute);
     }
 
-    /*public void fireLauncher(double targetRPM) {
+    public void fireLauncher(double targetRPM) {
         if (targetRPM == 0) {
             servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
             pauseMillis(100);
@@ -188,35 +188,36 @@ public abstract class MasterOpMode extends LinearOpMode {
                 fireTimeOut++;
             }
         }
-    }*/
-
-    public void betterFireLauncher(double targetRPM, int numberOfShots, double shotDelayMillis) {
-        boolean firedYet = false;
-
-        for (int i = 0; i < numberOfShots; i++) {
-            while (!firedYet) {
-                double motorRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
-
-                if (Math.abs(motorRPM - targetRPM) < 25) {
-                    servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
-                    pauseMillis(100);
-                    servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
-                    firedYet = true;
-                }
-                else if ((motorRPM - targetRPM) > 25) {
-                    motorLauncher.setPower(motorLauncher.getPower() - 0.05);
-                }
-                else if ((motorRPM - targetRPM) < 25) {
-                    motorLauncher.setPower(motorLauncher.getPower() + 0.05);
-                }
-
-                telemetry.addData("launcher RPM: ", motorRPM);
-                telemetry.update();
-            }
-
-            pauseMillis(shotDelayMillis);
-        }
     }
+
+    //todo They always say if it aint broke dont fix it. Our other method works so we should stick with it.
+    //public void betterFireLauncher(double targetRPM, int numberOfShots, double shotDelayMillis) {
+    //    boolean firedYet = false;
+//
+    //    for (int i = 0; i < numberOfShots; i++) {
+    //        while (!firedYet) {
+    //            double motorRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
+//
+    //            if (Math.abs(motorRPM - targetRPM) < 25) {
+    //                servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
+    //                pauseMillis(100);
+    //                servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
+    //                firedYet = true;
+    //            }
+    //            else if ((motorRPM - targetRPM) > 25) {
+    //                motorLauncher.setPower(motorLauncher.getPower() - 0.05);
+    //            }
+    //            else if ((motorRPM - targetRPM) < 25) {
+    //                motorLauncher.setPower(motorLauncher.getPower() + 0.05);
+    //            }
+//
+    //            telemetry.addData("launcher RPM: ", motorRPM);
+    //            telemetry.update();
+    //        }
+//
+    //        pauseMillis(shotDelayMillis);
+    //    }
+    //}
 
     // Pauses for time milliseconds
     public void pauseMillis(double time) {
