@@ -37,13 +37,16 @@ public class TerraCV extends OpenCvPipeline
     public double avgS;
     public double avgV;
 
+    public boolean show = false;
+
 
 
     @Override
     public Mat processFrame(Mat input)
     {
-        input.convertTo(input, -1, 2, 100); //Artificially increase brightness
-        Rect rectCrop = new Rect(xPos, yPos, 150,150); //define rect to crop image based on xpos and ypos
+//        input.convertTo(input, -1, 2, 100); //Artificially increase brightness
+        input.convertTo(input, -1, 2, 50);
+        Rect rectCrop = new Rect(xPos, yPos, 100,125); //define rect to crop image based on xpos and ypos
         processed = new Mat(input, rectCrop); //crop
         Imgproc.cvtColor(processed, hsv, Imgproc.COLOR_RGB2HSV); //convert to hsv color space
         avgColor = Core.mean(hsv).val; //find the mean value of the colors
@@ -66,7 +69,9 @@ public class TerraCV extends OpenCvPipeline
             ringNum = RingNum.ZERO;
         }
         //Uncomment this line if you want to view fullscreen
-//        Imgproc.resize(processed, processed, input.size());
+        if(show) {
+            Imgproc.resize(processed, processed, input.size());
+        }
 
         return processed;
     }

@@ -343,13 +343,20 @@ public class AutoModule {
         });
     }
 
-    public void addMove(final TerraBot bot, final double[] move){
+    public void addMove(final TerraBot bot, final double[] move, final boolean way){
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
                 bot.isMovementAvailable = false;
                 path = new Path(bot.odometry.getAll());
-                path.addWaypoint(move[0],move[1],move[2]);
+                if(way) {
+                    path.addWaypoint(move[0], move[1], move[2]);
+                }else{
+                    path.HAcc = 0.25;
+                    path.XAcc = 1;
+                    path.YAcc = 1;
+                    path.addSetpoint(move[0], move[1], move[2]);
+                }
                 return true;
             }
         });

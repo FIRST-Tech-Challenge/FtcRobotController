@@ -41,7 +41,7 @@ public class TerraOp extends OpMode {
 
         optimizer.update();
 
-        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
+        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
 
 //        if(bot.aimer.inited) {
 //            if (!(bot.aimer.isExecuting() && !bot.aimer.pausing)) {
@@ -83,67 +83,27 @@ public class TerraOp extends OpMode {
         }
 
         if(gamepad2.y){
-            bot.shooter.start();
+            if(bot.powershotMode){
+                bot.powerShot.start();
+            }else{
+                bot.shooter.start();
+            }
         }
 
-//
 
-//
-//        if(gamepad2.right_trigger > 0){
-//            bot.extendWobbleGoal(1);
-//        }else if (gamepad2.left_trigger > 0 ){
-//            bot.extendWobbleGoal(-1);
-//        }else{
-//            bot.extendWobbleGoal(0);
-//        }
-//
-//        if (gamepad2.dpad_right){
-//            bot.openClaw();
-//        } else if(gamepad2.dpad_left){
-//            bot.closeClaw();
-//        }
-//
-//
-//        bot.moveArm(-gamepad2.right_stick_y);
-//        telemetry.addData("WGE Target Pos", bot.updateWge());
-
-//        telemetry.addData("Wobble goal pow", -gamepad2.right_stick_y);
-//        telemetry.addData("Wobble goal pos", -bot.arm.getCurrentPosition());
-//        telemetry.addData("Wobble goal pos in deg", bot.getArmPos());
-//        telemetry.addData("WGE Pos", bot.getWgePos());
-
-//        bot.extendWobbleGoal(gamepad2.a);
-
-//        bot.updateOdometry();
+        if(bot.powerShotController.isPressing(gamepad2.left_trigger>0)){
+            bot.powershotMode = !bot.powershotMode;
+            if(bot.powershotMode){
+                bot.definePowershot();
+            }
+//            else{
+//                bot.defineShooterAgain();
+//            }
+        }
 
         bot.optimizeOdometry();
-        
-//        telemetry = telemetryHandler.addAutoAimer(telemetry, bot);
-//        telemetry = telemetryHandler.addOuttake(telemetry, bot);
-
-//        telemetry.addData("cll pos", bot.cll.getPosition());
-//        telemetry.addData("clr pos", bot.clr.getPosition());
-//        telemetryHandler.addAutoAimer();
-////        telemetryHandler.addAngularPosition();
-//        telemetry = telemetryHandler.getTelemetry();
-////
-//        telemetry = telemetryHandler.getTelemetry();
-
-
-//        if(bot.shooter.inited){
-//            telemetry.addData("executing", bot.shooter.autoModuleThread.executing);
-//        }
+//        telemetry.addData("wgStart", bot.wgStartMode);
 //        telemetry.update();
-//
-
-
-//        telemetryHandler.addAngularPosition();
-//        telemetryHandler.addOdometry();
-//        telemetry.addData("avgdeltatime", optimizer.avgDeltaTime);
-//        telemetry.addData("heading", bot.odometry.h);
-//        telemetry.addData("heading", Optimizer.optimizeHeading(bot.odometry.h));
-        telemetry.addData("wgStart", bot.wgStartMode);
-        telemetry.update();
     }
 
     @Override

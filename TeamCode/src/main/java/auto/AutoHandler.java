@@ -74,7 +74,7 @@ public class AutoHandler {
         path.addWaypoint(-5, 15, -20);
         path.addRF(rf.intake(0), rf.overrideShooter(true),  rf.readyShooter(), rf.pauseRfs(1.5),  rf.shootIntoGoal(3), rf.stopOuttake());
         path.addStop(1);
-        path.addShoot(0, 35, 3);
+        path.addShoot(0, 35, 1);
 
         //drop 2nd wobble goal
         path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
@@ -143,7 +143,7 @@ public class AutoHandler {
         path.addWaypoint(-5, 15, -20);
         path.addRF(rf.intake(0), rf.overrideShooter(true),  rf.readyShooter(), rf.pauseRfs(1.5),  rf.shootIntoGoal(1), rf.stopOuttake());
         path.addStop(1);
-        path.addShoot(0, 35, 3);
+        path.addShoot(0, 35, 1);
 
         //drop 2nd wobble goal
         path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
@@ -174,7 +174,7 @@ public class AutoHandler {
         path.addShoot(0,60,0);
 
         //drop 1st wobble goal
-        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(-15));
+        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(-20));
         path.addWaypoint(-20,100, 0);
         path.addSetpoint(-35,50,0);
         path.addWGRF(rf.claw(2, -0.2));
@@ -222,16 +222,25 @@ public class AutoHandler {
         path.startRFThread(op);
         if(scan) {
             //Uncomment this if u want to see the vid
-//            terraCVHandler.init(op.hardwareMap);
-
-            terraCVHandler.init();
+            if(terraCVHandler.terraCV.show) {
+                terraCVHandler.init(op.hardwareMap);
+            }else{
+                terraCVHandler.init();
+            }
+//           //Comment this out if u want to see vid
+//            terraCVHandler.init();
             while (!op.isStarted()) {
                 ringNum = terraCVHandler.getRingNum();
-                op.telemetry.addData("Ready:", ringNum);
-//                op.telemetry.addData("Avgh", terraCVHandler.terraCV.avgH);
-//                op.telemetry.addData("Avgs", terraCVHandler.terraCV.avgS);
-//                op.telemetry.addData("Avgv", terraCVHandler.terraCV.avgV);
-                op.telemetry.update();
+                if(terraCVHandler.terraCV.show) {
+                    op.telemetry.addData("Ready:", ringNum);
+                    op.telemetry.addData("Avgh", terraCVHandler.terraCV.avgH);
+                    op.telemetry.addData("Avgs", terraCVHandler.terraCV.avgS);
+                    op.telemetry.addData("Avgv", terraCVHandler.terraCV.avgV);
+                    op.telemetry.update();
+                }else{
+                    op.telemetry.addData("Ready:", ringNum);
+                    op.telemetry.update();
+                }
             }
             terraCVHandler.stop();
         }else{

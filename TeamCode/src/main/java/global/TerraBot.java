@@ -49,7 +49,7 @@ public class TerraBot {
     public Servo rp;
 
 //
-    public Cycle pushControl = new Cycle(0.1, 0.28, 0.4);
+    public Cycle pushControl = new Cycle(0.1, 0.25, 0.4);
 //    public Cycle pushControl = new Cycle(0.1, 0.27, 0.25);
 
     public Cycle cllControl = new Cycle(0.2, 0.5, 1);
@@ -71,18 +71,20 @@ public class TerraBot {
 
 
 
-    public boolean fastMode = true;
+    public boolean fastMode = false;
     public boolean wgeStartMode = true;
     public int wgStartMode = 0;
 
     public AutoModule shooter = new AutoModule(); // 0
     public AutoModule aimer = new AutoModule();
     public AutoModule wobbleGoal = new AutoModule();
+    public AutoModule powerShot = new AutoModule();
 
     public ArrayList<AutoModule> autoModules = new ArrayList<>();
 
     public ButtonController outtakeButtonController = new ButtonController();
     public ButtonController fastModeController = new ButtonController();
+    public ButtonController powerShotController = new ButtonController();
 
     public Odometry odometry = new Odometry();
 
@@ -94,6 +96,7 @@ public class TerraBot {
 
     public boolean isMovementAvailable = true;
 
+    public boolean powershotMode = false;
 
 
 
@@ -241,7 +244,7 @@ public class TerraBot {
             if (fastMode) {
                 move(Math.signum(f) * Math.pow(Math.abs(f), 0.5), Math.signum(s) * Math.pow(Math.abs(s), 0.5), Math.signum(t) * Math.pow(Math.abs(t), 0.5));
             } else {
-                move(0.4 * Math.signum(f) * Math.pow(Math.abs(f), 0.5), 0.4 * Math.signum(s) * Math.pow(Math.abs(s), 0.5), 0.4 * Math.signum(t) * Math.pow(Math.abs(t), 0.5));
+                move(0.5 * Math.signum(f) * Math.pow(Math.abs(f), 0.5), 0.5 * Math.signum(s) * Math.pow(Math.abs(s), 0.5), 0.4 * Math.signum(t) * Math.pow(Math.abs(t), 0.5));
             }
 
 
@@ -560,6 +563,12 @@ public class TerraBot {
 
     public void defineShooter(){
         shooter.addStage(rh2, -1);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                intaking = false;
+            }
+        });
         shooter.addOuttake(outr, outl, 1300, 1600);
         shooter.addStage(rp, pushControl, 1 , 0.5);
         shooter.addStage(rh2, 0);
@@ -571,11 +580,13 @@ public class TerraBot {
         });
         shooter.addWait(1);
 //        shooter.addPause();
+//        shooter.addStage(rp, pushControl, 2, 0.01);
+//        shooter.addWait(1);
         for (int i = 0; i < 3; i++) {
             shooter.addStage(rp, pushControl, 2, 0.01);
-            shooter.addWait(0.3);
+            shooter.addWait(0.25);
             shooter.addStage(rp, pushControl.getPos(1)-0.03, 0.01);
-            shooter.addWait(0.3);
+            shooter.addWait(0.25);
         }
         shooter.addOuttake(outr, outl, 0, 0);
         shooter.addStage(rp, pushControl, 0,  0.01);
@@ -606,7 +617,7 @@ public class TerraBot {
         wobbleGoal.addWobbleGoal(this, 120, 1);
         wobbleGoal.addControlWGE(this, 0.5);
         wobbleGoal.holdWobbleGoalAndPause(this);
-        wobbleGoal.addMove(this, new double[]{0,20,0});
+        wobbleGoal.addMove(this, new double[]{0,20,0}, true);
         wobbleGoal.addClaw(this, 1);
         wobbleGoal.addWobbleGoal(this, 160, 1);
         wobbleGoal.addClaw(this, 2);
@@ -619,6 +630,28 @@ public class TerraBot {
 
 
 
-
+    public void definePowershot(){
+        powerShot.addStage(rh2, -1);
+        powerShot.addOuttake(outr, outl, 1300, 1600);
+        powerShot.addStage(rp, pushControl, 1 , 0.5);
+        powerShot.addStage(rh2, 0);
+        powerShot.toggleFastMode(this);
+        powerShot.addWait(1);
+        for (int i = 0; i < 3; i++) {
+            powerShot.addStage(rp, pushControl, 2, 0.01);
+            powerShot.addWait(0.3);
+            powerShot.addStage(rp, pushControl.getPos(1) - 0.03, 0.01);
+            powerShot.addWait(0.3);
+            if(i < 2) {
+//                powerShot.addMove(this, new double[]{0, -1, -10}, false);
+                powerShot.addMove(this, new double[]{20, 0, 0}, false);
+            }
+        }
+        powerShot.addOuttake(outr, outl, 0, 0);
+        powerShot.addStage(rp, pushControl, 0,  0.01);
+        powerShot.toggleFastMode(this);
+        powerShot.addPause();
+        autoModules.add(powerShot);
+    }
 
 }

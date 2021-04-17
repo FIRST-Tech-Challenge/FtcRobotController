@@ -6,7 +6,7 @@ import util.Geometry;
 public class Constants {
     public static final double MAX_OUTTAKE_SPEED = 100*2*Math.PI; // rad/s
 
-    public static final double OUTR_SPEED_OFFSET = 0.1*MAX_OUTTAKE_SPEED;
+    public static final double OUTR_SPEED_OFFSET = 0.12*MAX_OUTTAKE_SPEED;
     public static final double OUTL_SPEED_OFFSET = 0.05*MAX_OUTTAKE_SPEED;
 
 
