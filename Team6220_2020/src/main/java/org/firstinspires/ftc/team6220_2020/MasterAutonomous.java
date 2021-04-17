@@ -7,8 +7,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_2020.ResourceClasses.PIDFilter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // todo - add is op mode active breakers
 public abstract class MasterAutonomous extends MasterOpMode {
+
+    public static double ringStackSize = 0;
 
     // todo - do we need any of the code between lines 14 and 92, because I don't think we do?
     /*// Initialize booleans used in runSetup()
@@ -199,4 +204,26 @@ public abstract class MasterAutonomous extends MasterOpMode {
 //            }
 //        }
 //    }
+
+    public int findRingStackSize(double millis){
+        List<Integer> reportedHeights = new ArrayList<>();
+
+        for(int i = 0; i < millis / 100; i++){
+
+            reportedHeights.add(new Integer(RingDetectionPipeline.ringStackHeight));
+
+            sleep(100);
+
+        }
+
+        int total = 0;
+        for(int i = 0; i < reportedHeights.size() - 1; i++){
+            total += reportedHeights.get(1).intValue();;
+        }
+
+        Double average = ((double) total / (double)  reportedHeights.size()) + 0.5;
+
+        return average.intValue();
+
+    }
 }

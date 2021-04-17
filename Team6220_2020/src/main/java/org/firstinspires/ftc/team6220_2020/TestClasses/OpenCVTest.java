@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.team6220_2020.TestClasses;
 
+import android.graphics.Rect;
+import android.graphics.YuvImage;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_2020.MasterTeleOp;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -13,10 +18,15 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @TeleOp(name = "OpenCV Test", group = "TeleOp")
 public class OpenCVTest extends MasterTeleOp {
 
     OpenCvCamera webcam;
+
+    public double ringStackSize = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -104,22 +114,44 @@ public class OpenCVTest extends MasterTeleOp {
              * of this particular frame for later use, you will need to either clone it or copy
              * it to another Mat.
              */
+            double maxArea;
+            int maxAreaContour;
+
+            Mat originalInput = input;
+
             Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2YUV);
 
             Imgproc.medianBlur(input, input, 11);
-            
-            /*
-             * Draw a simple box around the middle 1/2 of the entire frame
-             */
-            Imgproc.rectangle(
-                    input,
-                    new Point(
-                            input.cols()/4,
-                            input.rows()/4),
-                    new Point(
-                            input.cols()*(3f/4f),
-                            input.rows()*(3f/4f)),
-                    new Scalar(0, 255, 0), 4);
+
+            List<Mat> yuvSplit = new ArrayList<>();
+            Core.split(input, yuvSplit);
+
+            Mat u = yuvSplit.get(1);
+
+            Imgproc.threshold(u,u, 147,255, Imgproc.THRESH_BINARY);
+            telemetry.addData("Thresh", gamepad1.right_trigger * 90);
+
+            List<MatOfPoint> contours = new ArrayList<>();
+
+            Mat hierarchy = new Mat();
+
+            Imgproc.findContours(u, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            if(contours.size() > 0){
+                maxArea = 0.0;
+                maxAreaContour = -1;
+
+                for(int i = 0; i < contours.size(); i++){
+
+                    if(Imgproc.contourArea(contours.get(i)) > maxArea){
+                        maxArea = Imgproc.contourArea(contours.get(i));
+                        maxAreaContour = i;
+                    }
+
+                }
+                Imgproc.rectangle(u, Imgproc.boundingRect(contours.get(maxAreaContour)), new Scalar(255, 0, 0));
+                ringStackSize = maxArea;
+            }
 
             /**
              * NOTE: to see how to get data from your pipeline to your OpMode as well as how
@@ -127,7 +159,7 @@ public class OpenCVTest extends MasterTeleOp {
              * tapped, please see {@link PipelineStageSwitchingExample}
              */
 
-            return input;
+            return u;
         }
 
         @Override
