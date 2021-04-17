@@ -1,4 +1,3 @@
-
 //Setup
 package org.firstinspires.ftc.teamcode;
 
@@ -161,14 +160,15 @@ public class OpModeV1 extends LinearOpMode {
                 belt.setPower(0);
             }
 
-            if (armUp > 0){
+            if (armUp > 0 && armUp < 0.5){
                 arm.setPower(armUp);
+            }else if (armUp >= 0.5){
+                arm.setPower(0.5);
             }else if (armDown > 0){
                 arm.setPower(-armDown);
             }else{
                 arm.setPower(0);
             }
-
             telemetry.addData("armUp", armUp);
             telemetry.addData("armDown", armDown);
             telemetry.update();
