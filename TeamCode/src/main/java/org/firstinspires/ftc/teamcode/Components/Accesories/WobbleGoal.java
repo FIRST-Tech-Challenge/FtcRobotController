@@ -114,14 +114,14 @@ public class WobbleGoal {
     }
     // moves the wobble goal servo
     public void openWobbleGoalClaw() {
-            wobbleGoalServoClaw.setPosition(1);
+            wobbleGoalServoClaw.setPosition(0.2);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");
             op.telemetry.update();
 
     }
     public void  closeWobbleGoalClaw() {
-            wobbleGoalServoClaw.setPosition(0.2);
+            wobbleGoalServoClaw.setPosition(1);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");
             op.telemetry.update();
