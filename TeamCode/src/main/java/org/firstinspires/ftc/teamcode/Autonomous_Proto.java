@@ -30,9 +30,10 @@ public class Autonomous_Proto extends LinearOpMode {
     private CRServo SoN;
     private Servo pushover;         //empties hopper
     private DcMotor spindoctor;     //spins wheels
+    
 
-    private ColorSensor CS;         //lower sensor
-    private DistanceSensor DS;      //upper sensor
+    private ColorSensor CS;
+    private DistanceSensor DS;
     double distance;
     double color;
     float hsvValues[] = {0F, 0F, 0F};
@@ -68,71 +69,68 @@ public class Autonomous_Proto extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
 
+            if(CS.red() >= 240 && CS.green() >= 60 && CS.green() <= 170){
+                color = 1;
+            }else {
+                color = 0;
+            }
+
+            if (DS.getDistance(DistanceUnit.CM) <= 5){
+                distance = 1;
+            }else {
+                distance = 0;
+            }
+
             spindoctor.setPower(0);
             SoN.setPower(0);
             lf.setPower(0);
             rf.setPower(0);
             lb.setPower(0);
             rb.setPower(0);
-            pushover.setDirection(Servo.Direction.FORWARD);
             sleep(250);
 
             spindoctor.setPower(0);
             SoN.setPower(0);
-            lf.setPower(1.0);
-            rf.setPower(1.0);
-            lb.setPower(1.0);
-            rb.setPower(1.0);
-            pushover.setDirection(Servo.Direction.FORWARD);
+            lf.setPower(-1.0);
+            rf.setPower(-1.0);
+            lb.setPower(-1.0);
+            rb.setPower(-1.0);
             sleep(500);
 
-            if (color >= 0 && distance <= 0){
+            if (color == 1 && distance == 1){
 
 
-                // Autonomous A: four rings
+                // Autonomous A: four rings; farthest box
                 spindoctor.setPower(0);
                 SoN.setPower(0);
                 lf.setPower(0);
                 rf.setPower(0);
                 lb.setPower(0);
                 rb.setPower(0);
-                pushover.setDirection(Servo.Direction.FORWARD);
                 sleep(1000);
 
             }else {
 
-                // check for Autonomous B
-                spindoctor.setPower(0);
-                SoN.setPower(0);
-                lf.setPower(0);
-                rf.setPower(0);
-                lb.setPower(0);
-                rb.setPower(0);
-                pushover.setDirection(Servo.Direction.FORWARD);
-                sleep(1000);
+                if (color == 1 && distance == 0){
 
-                if (color >= 0 && distance > 0){
-
-                    // Autonomous B: one ring
+                    // Autonomous B: one ring; middle box
                     spindoctor.setPower(0);
                     SoN.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
                     lb.setPower(0);
                     rb.setPower(0);
-                    pushover.setDirection(Servo.Direction.FORWARD);
                     sleep(1000);
 
                 }else {
 
-                    //Autonomous C: no rings
+                    //Autonomous C: no rings; nearest box
                     spindoctor.setPower(0);
                     SoN.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
                     lb.setPower(0);
                     rb.setPower(0);
-                    pushover.setDirection(Servo.Direction.FORWARD);
                     sleep(1000);
 
                 }
