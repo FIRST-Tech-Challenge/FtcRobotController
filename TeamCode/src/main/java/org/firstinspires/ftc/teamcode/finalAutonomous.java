@@ -38,7 +38,8 @@ public class finalAutonomous extends LinearOpMode {
 
     private Servo wobble;
 
-    private boolean shouldShoot = true;
+    private boolean shouldShoot = true
+            ;
     private boolean shouldDrive = true;
     private boolean shouldDetectRings = true;
     private boolean ringDetectTestMode = false;
@@ -60,17 +61,17 @@ public class finalAutonomous extends LinearOpMode {
 
         int zone;
         if (opModeIsActive()) {
-            shoot(0.73);
+            shoot(0.75);
 
             move(-0.4, 500);
             sleep(500);
-            strafeLeft(200);
+            strafeLeft(500);
             do {
                 //zone = determineZone();
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        move(0.4, 3500);
+                        move(0.4, 3750);
                         wobble.setPosition(1.0);
                         sleep(2000);
                         break;
@@ -87,7 +88,7 @@ public class finalAutonomous extends LinearOpMode {
                         strafeLeft(1500);
                         wobble.setPosition(1.0);
                         sleep(2000);
-                        move(-0.4, 3800);
+                        move(-0.4, 3200);
                         break;
                     default:
                         break;
@@ -147,7 +148,7 @@ public class finalAutonomous extends LinearOpMode {
             shooter.setPower(power);
             sleep(1500);
             belt.setPower(.5);
-            sleep(5000);
+            sleep(5500);
             shooter.setPower(0);
             belt.setPower(0);
         }

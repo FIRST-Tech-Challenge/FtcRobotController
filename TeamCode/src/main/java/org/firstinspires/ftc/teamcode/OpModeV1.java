@@ -24,8 +24,6 @@ public class OpModeV1 extends LinearOpMode {
     private DcMotor intake;
 
     private DcMotor arm;
-    private Servo clamp;
-
 
     //code to play once the OpMode is active
     public void runOpMode() {
@@ -41,7 +39,6 @@ public class OpModeV1 extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
-        clamp = hardwareMap.get(Servo.class, "clamp");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -51,8 +48,6 @@ public class OpModeV1 extends LinearOpMode {
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         belt.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        clamp.setDirection(Servo.Direction.REVERSE);
 
         waitForStart();
 
@@ -71,11 +66,8 @@ public class OpModeV1 extends LinearOpMode {
         boolean powerY;
         boolean intakePower;
 
-        boolean armUp;
-        boolean armDown;
-        boolean clampIn;
-        boolean clampOut;
-
+        double armUp;
+        double armDown;
 
         while (opModeIsActive()) {
             // Read in values from controller
@@ -85,7 +77,6 @@ public class OpModeV1 extends LinearOpMode {
             strafeLeft = gamepad1.left_bumper;
             armDrive = gamepad1.right_trigger;
 
-
             beltPower = gamepad2.left_stick_y;
             shooterPower = gamepad2.right_trigger;
             powerA = gamepad2.a;
@@ -94,8 +85,8 @@ public class OpModeV1 extends LinearOpMode {
             powerY = gamepad2.y;
             intakePower = gamepad2.left_bumper;
 
-            armUp = gamepad1.dpad_up;
-            armDown = gamepad1.dpad_down;
+            armUp = gamepad1.right_trigger;
+            armDown = gamepad1.left_trigger;
 
             // Driving
             if (armDrive <= 0.25) {
@@ -170,15 +161,16 @@ public class OpModeV1 extends LinearOpMode {
                 belt.setPower(0);
             }
 
-            if (armUp){
-                arm.setPower(0.5);
-            }else if (armDown){
-                arm.setPower(-0.25);
+            if (armUp > 0){
+                arm.setPower(armUp);
+            }else if (armDown > 0){
+                arm.setPower(-armDown);
             }else{
                 arm.setPower(0);
             }
 
-            telemetry.addData("Arm Front", armDrive);
+            telemetry.addData("armUp", armUp);
+            telemetry.addData("armDown", armDown);
             telemetry.update();
         }
     }
