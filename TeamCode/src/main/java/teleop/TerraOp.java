@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import global.TerraBot;
@@ -19,9 +20,7 @@ import globalfunctions.TelemetryHandler;
 public class TerraOp extends OpMode {
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
-    Storage storage = new Storage();
     Optimizer optimizer = new Optimizer();
-    double wgPos;
 
     @Override
     public void init() {
@@ -31,11 +30,14 @@ public class TerraOp extends OpMode {
         bot.angularPosition.resetGyro(0);
         optimizer.reset();
 
+        bot.readFromAuton();
+//        bot.updateOdoWithSensors();
+
         telemetry.addData("Ready?", "Yes!");
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
-        storage.makeOutputFile("save");
-        wgPos = Double.parseDouble(storage.readText("wgPos"));
+
+
 //        bot.moveArmWithEnc(45, 1);
 //
 
@@ -78,7 +80,7 @@ public class TerraOp extends OpMode {
 //
 
         if(gamepad1.b){
-            bot.aimer.start();
+            bot.aimerPos = Constants.AUTO_SHOOT_POS;
         }
 
         if(gamepad2.x){
@@ -87,11 +89,15 @@ public class TerraOp extends OpMode {
         }
 
         if (gamepad1.y) {
-            if(bot.powershotMode){
-                bot.powerShot.start();
-            }else{
-                bot.shooter.start();
-            }
+                if (bot.powershotMode) {
+                    bot.powerShot.start();
+                } else {
+//                    bot.aimer.start();
+                    bot.shooter.start();
+//                    if(bot.autoAimer.hasReached) {
+//                        bot.shooter.start();
+//                    }
+                }
         }
 
 
@@ -107,7 +113,7 @@ public class TerraOp extends OpMode {
 
         bot.optimizeOdometry();
         if (gamepad1.x) {
-            bot.setHeading(0);
+            bot.updateOdoWithGyro();
             bot.updateLocalizer();
             bot.updateOdoWithSensors();
             bot.aimerPos = bot.odometry.getAll();
@@ -118,7 +124,12 @@ public class TerraOp extends OpMode {
 //        telemetry = telemetryHandler.getTelemetry();
         telemetry.addData("Powershot Mode", bot.powershotMode);
         telemetry.addData("Can Move", bot.isMovementAvailable);
-        telemetry.addData("Wg Start Pos", wgPos);
+        telemetry.addData("hasReached", bot.autoAimer.hasReached);
+        telemetry.addData("pos", Arrays.toString(bot.odometry.getPos()));
+        telemetry.addData("aim", Arrays.toString(bot.aimerPos));
+
+//        telemetry.addData("Wg Start Pos", bot.wgStart);
+//        telemetry.addData("Gyro", bot.angularPosition.getHeadingGY());
         telemetry.update();
     }
 

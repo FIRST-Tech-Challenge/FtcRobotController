@@ -448,7 +448,7 @@ final public double[] dsS = {0.015,0.015,0.0005};
             trackTimes.add(trackTime.seconds());
             bot.move(pows[1], pows[0], pows[2]);
         }
-        op.telemetry.addData("COMPLETED", "");
+        op.telemetry.addData("COMPLETED", Arrays.toString(bot.odometry.getPos()));
         op.telemetry.update();
         bot.move(0,0,0);
         stopRFThread();

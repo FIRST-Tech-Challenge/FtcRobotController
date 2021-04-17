@@ -85,4 +85,13 @@ public class Optimizer {
     public static double[] optimizePos(double[] in){
         return new double[]{in[0], in[1], optimizeHeading(in[2])};
     }
+
+    public static double[] fromString(String string) {
+        String[] strings = string.replace("[", "").replace("]", "").split(", ");
+        double[] result = new double[strings.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = Double.parseDouble(strings[i]);
+        }
+        return result;
+    }
 }

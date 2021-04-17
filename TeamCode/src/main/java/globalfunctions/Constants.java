@@ -35,6 +35,7 @@ public class Constants {
     public static final double WG_LOWER_LIMIT = -5;
     public static final double WG_UPPER_LIMIT = 180;
     public static final double WG_REST_POW = 0.1;
+    public static final double WG_START_POS_AUTON = 12;
 
     public static final double WGE_UPPER_LIMIT = 11.5; // 10.8 cm
     public static final double WGE_START = 8.5; // cm
@@ -79,6 +80,8 @@ public class Constants {
 
     public static final double[] AUTO_START = new double[]{80,21,0};
     public static final double[] TELE_START = new double[]{97,180,0};
+    public static final double[] AUTO_SHOOT_POS = new double[]{85, 126, 0};
+    public static final double[] AUTO_POWERSHOT_POS = new double[]{123, 156, 0};
 
     public static final double GYRO_UPDATE_RATE = 10; //hertz
 

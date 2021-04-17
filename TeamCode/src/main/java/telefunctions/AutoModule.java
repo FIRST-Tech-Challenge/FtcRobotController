@@ -314,8 +314,7 @@ public class AutoModule {
     public void addAimer(final TerraBot bot){
         stages.add(new Stage() {
             @Override
-            public boolean run(double in) {
-                bot.isMovementAvailable = false;
+            public boolean run(double in) { bot.isMovementAvailable = false;
                path = new Path(bot.odometry.getAll());
                path.setGlobalMode(true);
                bot.fastMode = false;
@@ -349,12 +348,12 @@ public class AutoModule {
             public boolean run(double in) {
                 bot.isMovementAvailable = false;
                 path = new Path(bot.odometry.getAll());
+                path.HAcc = 0.25;
+                path.XAcc = 0.5;
+                path.YAcc = 0.5;
                 if(way) {
                     path.addWaypoint(move[0], move[1], move[2]);
                 }else{
-                    path.HAcc = 0.25;
-                    path.XAcc = 1;
-                    path.YAcc = 1;
                     path.addSetpoint(move[0], move[1], move[2]);
                 }
                 return true;
@@ -386,8 +385,8 @@ public class AutoModule {
                 path = new Path(bot.odometry.getAll());
                 path.setGlobalMode(true);
                 path.HAcc = 0.25;
-                path.XAcc = 1;
-                path.YAcc = 1;
+                path.XAcc = 0.5;
+                path.YAcc = 0.5;
                 path.addWaypoint(pos[0], pos[1], Optimizer.optimizeHeading(pos[2]));
                 path.addSetpoint(pos[0], pos[1], Optimizer.optimizeHeading(pos[2]));
                 return true;
@@ -407,6 +406,15 @@ public class AutoModule {
                 bot.isMovementAvailable = true;
                 bot.move(0,0,0);
                 return true;
+            }
+        });
+    }
+
+    public void addWaitForReached(final TerraBot bot) {
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                return bot.autoAimer.hasReached;
             }
         });
     }

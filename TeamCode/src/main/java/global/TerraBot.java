@@ -12,10 +12,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import globalfunctions.Constants;
 import globalfunctions.Optimizer;
+import globalfunctions.Storage;
 import globalfunctions.TerraThread;
 import telefunctions.AutoModule;
 import telefunctions.ButtonController;
@@ -75,7 +78,7 @@ public class TerraBot {
     public int wgStartMode = 0;
 
     public AutoModule shooter = new AutoModule(); // 0
-    public AutoModule aimer = new AutoModule();
+//    public AutoModule aimer = new AutoModule();
     public AutoModule wobbleGoal = new AutoModule();
     public AutoModule powerShot = new AutoModule();
 
@@ -91,11 +94,15 @@ public class TerraBot {
 
     public ElapsedTime odometryTime = new ElapsedTime();
 
-    public double[] aimerPos = Constants.TELE_START;
+    public double[] aimerPos = Constants.AUTO_SHOOT_POS;
 
     public boolean isMovementAvailable = true;
 
     public boolean powershotMode = false;
+
+    public Storage storage = new Storage();
+
+    public double wgStart = 0;
 
 
 
@@ -148,7 +155,7 @@ public class TerraBot {
 
 
         defineShooter();
-        defineAimer();
+//        defineAimer();
         defineWobbleGoal();
     }
 
@@ -262,28 +269,28 @@ public class TerraBot {
         return Constants.WG_REST_POW*Math.cos(Math.toRadians(getArmPos()));
     }
 
-    public void moveArmWithEnc(double deg, double pow){
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setTargetPosition((int) (deg*Constants.NEV_DEGREES_TO_TICKS));
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        moveArm(Math.abs(pow) * Math.signum(deg - getArmPos()));
-        while (arm.isBusy()){
-            if (Math.abs(getArmPos() - deg) < 10) {
-                moveArm(pow * 0.5);
-            }
-            if(isWgeInLimits(pow)) {
-                updateWge();
-            }else{
-                wge.setPower(0);
-            }
-        }
-        moveArm(0);
-        wge.setPower(0);
-        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
+//    public void moveArmWithEnc(double deg, double pow){
+//        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        arm.setTargetPosition((int) ((deg - wgStart)*Constants.NEV_DEGREES_TO_TICKS));
+//        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        moveArm(Math.abs(pow) * Math.signum(deg - getArmPos()));
+//        while (arm.isBusy()){
+//            if (Math.abs(getArmPos() - deg) < 10) {
+//                moveArm(pow * 0.5);
+//            }
+//            if(isWgeInLimits(pow)) {
+//                updateWge();
+//            }else{
+//                wge.setPower(0);
+//            }
+//        }
+//        moveArm(0);
+//        wge.setPower(0);
+//        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//    }
     public void moveArmWithEncWithoutWGE(double deg, double pow){
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setTargetPosition((int) (deg*Constants.NEV_DEGREES_TO_TICKS));
+        arm.setTargetPosition((int) ((deg - wgStart)*Constants.NEV_DEGREES_TO_TICKS));
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         moveArm(Math.abs(pow) * Math.signum(deg - getArmPos()));
         while (arm.isBusy()){
@@ -302,7 +309,7 @@ public class TerraBot {
     }
 
     public double getArmPos(){
-        return (arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS);
+        return ((arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS) + wgStart);
     }
 
     public double getWgePos() { return wgp.getDistance(DistanceUnit.CM) - Constants.WGE_START; }
@@ -430,6 +437,10 @@ public class TerraBot {
         odometry.resetPos(getLocalizerPos());
     }
 
+    public void updateOdoWithGyro(){
+        odometry.resetHeading(angularPosition.getHeadingGY());
+    }
+
 
     public void outtakeWithCalculations() {
         if(outtaking){
@@ -543,7 +554,7 @@ public class TerraBot {
         switch (wgStartMode){
             case 0:
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                arm.setTargetPosition((int) (45*Constants.NEV_DEGREES_TO_TICKS));
+                arm.setTargetPosition((int) ((45 - wgStart)*Constants.NEV_DEGREES_TO_TICKS));
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 moveArm(Math.abs(1) * Math.signum(45 - getArmPos()));
                 wgStartMode++;
@@ -574,6 +585,18 @@ public class TerraBot {
     }
 
     public void defineShooter(){
+
+        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                updateOdoWithGyro();
+                updateLocalizer();
+                updateOdoWithSensors();
+            }
+        });
+        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS);
+
         shooter.addStage(rh2, -1);
         shooter.addCustom(new CodeSeg() {
             @Override
@@ -594,6 +617,7 @@ public class TerraBot {
             }
         });
         shooter.addWait(1);
+//        shooter.addWaitForReached(this);
 //        shooter.addPause();
 //        shooter.addStage(rp, pushControl, 2, 0.01);
 //        shooter.addWait(1);
@@ -611,14 +635,35 @@ public class TerraBot {
 //                fastMode = true;
 //            }
 //        });
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                autoAimer.done();
+            }
+        });
         shooter.addPause();
         autoModules.add(shooter);
     }
-    public void defineAimer(){
-        aimer.addAimer(this);
-        aimer.addPause();
-        autoModules.add(aimer);
-    }
+//    public void defineAimer(){
+//        aimer.addAimer(this);
+//        aimer.addCustom(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                updateLocalizer();
+//                updateOdoWithGyro();
+//                updateOdoWithSensors();
+//            }
+//        });
+//        aimer.addAimer(this);
+//        aimer.addCustom(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                autoAimer.reached();
+//            }
+//        });
+//        aimer.addPause();
+//        autoModules.add(aimer);
+//    }
 
     public void defineWobbleGoal(){
         wobbleGoal.addClaw(this, 2);
@@ -646,19 +691,24 @@ public class TerraBot {
 
 
     public void definePowershot(){
+
+        powerShot.addMoveGlobal(this, Constants.AUTO_POWERSHOT_POS);
         powerShot.addCustom(new CodeSeg() {
             @Override
             public void run() {
+                updateOdoWithGyro();
                 updateLocalizer();
                 updateOdoWithSensors();
             }
         });
+        powerShot.addMoveGlobal(this, Constants.AUTO_POWERSHOT_POS);
+
         powerShot.addStage(rh2, -1);
-        powerShot.addOuttake(outr, outl, 1300, 1600);
+        powerShot.addOuttake(outr, outl, 1100, 1300);
         powerShot.addStage(rp, pushControl, 1 , 0.5);
         powerShot.addStage(rh2, 0);
         powerShot.toggleFastMode(this);
-        powerShot.addMoveGlobal(this, new double[]{126, 176, 0});
+//        powerShot.addWaitForReached(this);
         powerShot.addWait(1);
         for (int i = 0; i < 3; i++) {
             powerShot.addStage(rp, pushControl, 2, 0.01);
@@ -673,8 +723,32 @@ public class TerraBot {
         powerShot.addOuttake(outr, outl, 0, 0);
         powerShot.addStage(rp, pushControl, 0,  0.01);
 //        powerShot.toggleFastMode(this);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                autoAimer.done();
+            }
+        });
         powerShot.addPause();
         autoModules.add(powerShot);
     }
+
+
+    public void saveForTele() {
+        storage.makeOutputFile("save");
+        storage.saveText(Double.toString(getArmPos()), "wgPos");
+        storage.saveText(Double.toString(angularPosition.getHeadingGY()), "heading");
+        storage.saveText(Arrays.toString(odometry.getPos()), "pos");
+    }
+
+    public void readFromAuton() {
+        storage.makeOutputFile("save");
+        wgStart = Double.parseDouble(storage.readText("wgPos"));
+        angularPosition.resetGyro(Double.parseDouble(storage.readText("heading")));
+        odometry.resetPos(Optimizer.fromString(storage.readText("pos")));
+    }
+
+
+
 
 }

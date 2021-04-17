@@ -214,6 +214,15 @@ public class RobotFunctions {
         };
     }
 
+    public CodeSeg saveForTele(){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.saveForTele();
+            }
+        };
+    }
+
 //    public CodeSeg
 
 }
