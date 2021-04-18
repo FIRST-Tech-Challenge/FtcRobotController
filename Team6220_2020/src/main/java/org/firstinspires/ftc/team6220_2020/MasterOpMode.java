@@ -59,10 +59,8 @@ public abstract class MasterOpMode extends LinearOpMode {
         // Todo - move to miscellaneous motors.
         motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBelt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBelt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorZiptie.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorZiptie.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBelt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorZiptie.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         driver1 = new DriverInput(gamepad1);
         driver2 = new DriverInput(gamepad2);

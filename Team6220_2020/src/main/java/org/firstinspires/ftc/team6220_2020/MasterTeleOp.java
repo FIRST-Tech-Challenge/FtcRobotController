@@ -30,8 +30,6 @@ public abstract class MasterTeleOp extends MasterOpMode {
 
     // Drives launcher with controller
     public void driveLauncherWithController() {
-        // Todo - migrate to DriverInput class and control to toggle
-        driver2.update();
 
         if (driver2.isButtonJustPressed(Button.A)) {
             launcherJustPressed = !launcherJustPressed;
@@ -46,7 +44,6 @@ public abstract class MasterTeleOp extends MasterOpMode {
     }
 
     public void fireLauncherWithTrigger(boolean checkSpeed) {
-        driver1.update();
 
         if (!justFired) {
             if (driver1.getRightTriggerValue() > 0.7) {
@@ -63,8 +60,6 @@ public abstract class MasterTeleOp extends MasterOpMode {
 
     // Drives belt with controller
     public void driveBeltWithController() {
-        // Todo - migrate to DriverInput class and control to toggle
-        driver2.update();
 
         if (driver2.isButtonJustPressed(Button.B)) {
             beltJustPressed = !beltJustPressed;
@@ -80,8 +75,6 @@ public abstract class MasterTeleOp extends MasterOpMode {
 
     // Drives zipties with controller
     public void driveZiptiesWithController() {
-        // Todo - migrate to DriverInput class and control to toggle
-        driver2.update();
 
         if (driver2.isButtonJustPressed(Button.X)) {
             ziptieJustPressed = !ziptieJustPressed;

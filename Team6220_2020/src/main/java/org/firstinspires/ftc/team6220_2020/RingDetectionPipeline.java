@@ -15,6 +15,8 @@ import java.util.List;
 public class RingDetectionPipeline extends OpenCvPipeline {
 
     public static int ringStackHeight = 0;
+    public static double ringPixelArea = 0;
+
 
     @Override
     public Mat processFrame(Mat input) {
@@ -33,7 +35,17 @@ public class RingDetectionPipeline extends OpenCvPipeline {
                 new Point(
                         input.cols(),
                         input.rows()),
-                new Scalar(0, 255, 0), 50);
+                new Scalar(0, 0, 0), 25);
+
+        Imgproc.rectangle(
+                input,
+                new Point(
+                        0,
+                        0),
+                new Point(
+                        input.cols(),
+                        0),
+                new Scalar(0, 0, 0), 250);
 
         Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2YUV);
 
@@ -67,15 +79,21 @@ public class RingDetectionPipeline extends OpenCvPipeline {
             Imgproc.rectangle(originalInput, Imgproc.boundingRect(contours.get(maxAreaContour)), new Scalar(255, 0, 0));
 
             //todo modify the max and middle values.
-            if(Imgproc.boundingRect(contours.get(maxAreaContour)).area() > 6000/*Max size*/){
+
+            ringPixelArea = maxArea;
+
+            if(maxArea > 2200/*Max size*/){
+                ringStackHeight = 0;
+            } else if(maxArea > 1200/*Middle size*/){
                 ringStackHeight = 4;
-            } else if(Imgproc.boundingRect(contours.get(maxAreaContour)).area() > 200/*Middle size*/){
+            } else if(maxArea > 300){
                 ringStackHeight = 1;
             } else{
                 ringStackHeight = 0;
             }
         }
 
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_YUV2BGR);
         return input;
     }
 }

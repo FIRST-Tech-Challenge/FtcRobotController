@@ -34,9 +34,21 @@ public class AutonomousCompetition extends MasterAutonomous {
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
+
+        //for(int i = 0; i < 100; i++){
+        //    telemetry.addData("pixel: ", RingDetectionPipeline.ringPixelArea);
+        //    telemetry.update();
+        //    sleep(100);
+        //}
+
+
         waitForStart();
 
-        int ringStackHeight = findRingStackSize(1000);
+        int ringStackHeight = RingDetectionPipeline.ringStackHeight;
+        pauseMillis(100);
+        if(RingDetectionPipeline.ringStackHeight != ringStackHeight){
+            ringStackHeight = RingDetectionPipeline.ringStackHeight;
+        }
         telemetry.addData("Num rings : ", ringStackHeight);
         telemetry.update();
 
@@ -59,13 +71,15 @@ public class AutonomousCompetition extends MasterAutonomous {
                 break;
 
             case 4:
-                driveInches(96,90);
+                driveInches(106,90);
                 pauseMillis(200);
                 driveInches(54,-90);
                 break;
         }
 
         //todo align to left wobble goal
+
+        driveInches(7.5,0);
 
         for(int i = 0; i < 3; i++){
             fireLauncher(1350);
@@ -76,23 +90,23 @@ public class AutonomousCompetition extends MasterAutonomous {
 
         switch (ringStackHeight){
             case 0:
-                driveInches(6,-90);
-                //todo turn left
+                driveInches(6,90);
+                turnToAngle(180);
                 driveInches(64,-90);
                 driveInches(24,90);
                 break;
 
             case 1:
-                driveInches(30,-90);
-                //todo turn left
+                driveInches(30,90);
+                turnToAngle(180);
                 driveInches(40,-90);
                 driveInches(24,90);
                 driveInches(24,180);
                 break;
 
             case 4:
-                driveInches(54,-90);
-                //todo turn left
+                driveInches(60,90);
+                turnToAngle(-179);
                 driveInches(64,-90);
                 driveInches(24,90);
                 driveInches(48,180);

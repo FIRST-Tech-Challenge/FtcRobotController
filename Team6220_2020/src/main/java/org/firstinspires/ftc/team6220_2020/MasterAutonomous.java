@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team6220_2020;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -134,7 +135,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             turningPower = angleDeviation/100;
 
             // We drive the mecanum wheels with the PID value
-            driveMecanum(radDriveAngle, Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), turningPower);
+            driveMecanum(radDriveAngle, Math.max(0.2, Constants.MINIMUM_DRIVE_POWER), turningPower);
 
             // Update positions using last distance measured by encoders
             xPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() +
@@ -156,6 +157,8 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     public void turnDegrees(double degTargetAngle) {
 
+
+
         double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -175,19 +178,22 @@ public abstract class MasterAutonomous extends MasterOpMode {
         PIDFilter translationPID;
         translationPID = new PIDFilter(Constants.ROTATION_P, Constants.ROTATION_I, Constants.ROTATION_D);
 
+        double angleTraveled = 0;
+
         while (!angleReached && opModeIsActive()) {
             // This gets the angle change
             double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            double angleTraveled = currentAngle - startAngle;
+            angleTraveled = currentAngle - startAngle;
 
             // This adds a value to the PID loop so it can update
             angleLeft = degTargetAngle - angleTraveled;
             translationPID.roll(angleLeft);
 
             // We drive the mecanum wheels with the PID value
-            driveMecanum(0, 0, Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER));
+            driveMecanum(0, 0, Math.max(0.075, Constants.MINIMUM_TURNING_POWER));
 
             telemetry.addData("Angle Traveled: ", angleTraveled);
+            telemetry.addData("IMU: ", currentAngle);
             telemetry.update();
 
             if (angleTraveled - degTargetAngle <= 1){
@@ -198,17 +204,39 @@ public abstract class MasterAutonomous extends MasterOpMode {
     }
 
     public void turnToAngle(double targetAngle){
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        if(targetAngle < startAngle){
-            while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
-                driveMecanum(0,0,0.2);
-            }
-        } else{
-            while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
-                driveMecanum(0,0,-0.2);
-            }
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+        pauseMillis(100);
+
+        while(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle  <= targetAngle - 0.5){
+
+            driveMecanum(0,0,-0.2);
+            telemetry.addData("IMU", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.update();
+
         }
+
+        driveMecanum(0,0,0);
+
+        //double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+//
+        //if(targetAngle < startAngle){
+        //    while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
+        //        driveMecanum(0,0,-0.2);
+        //    }
+        //} else{
+        //    while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
+        //        driveMecanum(0,0,0.2);
+        //    }
+        //}
 
 
     }
@@ -234,4 +262,5 @@ public abstract class MasterAutonomous extends MasterOpMode {
         return average.intValue();
 
     }
+
 }
