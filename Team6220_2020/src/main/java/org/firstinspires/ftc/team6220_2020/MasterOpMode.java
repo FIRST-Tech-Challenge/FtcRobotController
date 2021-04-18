@@ -165,26 +165,31 @@ public abstract class MasterOpMode extends LinearOpMode {
         else {
             boolean firedYet = false;
             int fireTimeOut = 0;
-            while (!firedYet) {
-                double motorRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
+            int correctSpeedTick = 0;
+            double motorRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
+            while (correctSpeedTick < 3 || fireTimeOut >= 50) {
                 telemetry.addData("launcher RPM: ", motorRPM);
                 telemetry.update();
 
-                if (Math.abs(motorRPM - targetRPM) < 50 || fireTimeOut >= 50) {
-                    servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
-                    pauseMillis(100);
-                    servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
-                    firedYet = true;
-                }
-                else if (motorRPM > targetRPM) {
+                if (motorRPM - targetRPM > 10) {
                     motorLauncher.setPower(motorLauncher.getPower() - 0.05);
+                    correctSpeedTick = 0;
                 }
-                else {
+                else if(motorRPM - targetRPM < 10){
                     motorLauncher.setPower(motorLauncher.getPower() + 0.05);
+                    correctSpeedTick = 0;
+                } else{
+                    correctSpeedTick++;
                 }
+
+                motorRPM = getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION;
 
                 fireTimeOut++;
             }
+
+            servoLauncher.setPosition(Constants.SERVO_LAUNCH_FIRE);
+            pauseMillis(100);
+            servoLauncher.setPosition(Constants.SERVO_LAUNCH_REST);
         }
     }
 

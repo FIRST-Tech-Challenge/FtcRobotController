@@ -135,7 +135,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             turningPower = angleDeviation/100;
 
             // We drive the mecanum wheels with the PID value
-            driveMecanum(radDriveAngle, Math.max(0.2, Constants.MINIMUM_DRIVE_POWER), turningPower);
+            driveMecanum(radDriveAngle, Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), turningPower);
 
             // Update positions using last distance measured by encoders
             xPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() +
@@ -214,10 +214,11 @@ public abstract class MasterAutonomous extends MasterOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        pauseMillis(100);
+        pauseMillis(1000);
 
-        while(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle  <= targetAngle - 0.5){
+        while(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle  <= targetAngle - 1){
 
+            //todo add proprotional turning.
             driveMecanum(0,0,-0.2);
             telemetry.addData("IMU", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.update();

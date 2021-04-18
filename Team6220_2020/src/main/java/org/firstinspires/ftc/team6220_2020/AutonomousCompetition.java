@@ -55,7 +55,7 @@ public class AutonomousCompetition extends MasterAutonomous {
         webcam.stopStreaming();
         webcam.closeCameraDevice();
 
-        driveInches(12 * Math.sqrt(2.0), 45);
+        driveInches(24 * Math.sqrt(2.0), 45);
 
         switch (ringStackHeight){
             case 0:
@@ -65,51 +65,59 @@ public class AutonomousCompetition extends MasterAutonomous {
                 break;
 
             case 1:
-                driveInches(74,90);
-                pauseMillis(200);
-                driveInches(30,-90);
-                break;
 
             case 4:
-                driveInches(106,90);
+                driveInches(52,90);
                 pauseMillis(200);
-                driveInches(54,-90);
+                driveInches(10,-90);
                 break;
         }
 
-        //todo align to left wobble goal
+        driveInches(4,180);
 
-        driveInches(7.5,0);
+        driveLauncher(0.94);
+
+        pauseMillis(1500);
 
         for(int i = 0; i < 3; i++){
-            fireLauncher(1350);
+            fireLauncher(0);
             driveInches(7.5,0);
+            pauseMillis(750);
         }
 
         driveLauncher(0.0);
 
         switch (ringStackHeight){
             case 0:
-                driveInches(6,90);
-                turnToAngle(180);
-                driveInches(64,-90);
-                driveInches(24,90);
+                driveInches(16,90);
+
+                //turnToAngle(45);
+                turnToAngle(90);
+
+                for(int i = 0; i < 3; i++){
+                    driveInches(54 / 3,90);
+                }
+                driveInches(24,-90);
                 break;
 
             case 1:
-                driveInches(30,90);
-                turnToAngle(180);
-                driveInches(40,-90);
-                driveInches(24,90);
-                driveInches(24,180);
+
+                turnToAngle(43);
+
+                for(int i = 0; i < 2; i++){
+                    driveInches(84 / 4.0,90);
+                }
+                driveInches(30,-90);
                 break;
 
             case 4:
-                driveInches(60,90);
-                turnToAngle(-179);
+
+                turnToAngle(43);
+
+                for(int i = 0; i < 4; i++){
+                    driveInches(90 / 4.0,90);
+                }
                 driveInches(64,-90);
-                driveInches(24,90);
-                driveInches(48,180);
                 break;
         }
 

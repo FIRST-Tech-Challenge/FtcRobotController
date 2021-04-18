@@ -23,6 +23,7 @@ public class AutoCompetition extends MasterAutonomous {
         turnToAngle(45);
         pauseMillis(1000);
         turnToAngle(35);
+        driveMecanum(0,0,0);
 //
         //sleep(2000);
 
