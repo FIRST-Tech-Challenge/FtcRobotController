@@ -390,6 +390,11 @@ public class OdometryChassis extends BasicChassis {
             double[] target_position = {0, 0, 0};
             double anglecorrection = 0;
             double maxpower=0.2;
+            double time=op.getRuntime();
+            double difftime=0;
+            double diffpos=0;
+            double sped=0;
+            double stoptime=0;
             target_position[0] = x;
             target_position[1] = y - 0.15;
             target_position[2] = a;
@@ -406,10 +411,26 @@ public class OdometryChassis extends BasicChassis {
             double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
             double startpower = power;
             double error=0;
-            double max = 0.05;
+            double max = 0.15;
             while (op.opModeIsActive() && (abs(difference) >= 0.5)&&!gotoPosition_off) {
-                op.telemetry.addData("distance", difference);
                 currentPosition = track();
+                difftime=op.getRuntime()-time;
+                time+=difftime;
+                diffpos=sqrt((currentPosition[0]-x)*(currentPosition[0]-x)+(currentPosition[1]-y)*(currentPosition[1]-y));
+                sped=diffpos/difftime;
+                if(sped<0.01){
+                    stoptime+=1;
+                }
+                else if(sped>0.2){
+                    stoptime=0;
+                }
+                if(stoptime>500){
+                    stopAllMotors();
+                    return;
+                }
+                op.telemetry.addData("time",difftime);
+                op.telemetry.addData("sped", sped);
+                op.telemetry.addData("distance", difference);
                 error = currentPosition[2]- target_position[2];
                 error%=360;
                 if(error>180){
@@ -418,14 +439,18 @@ public class OdometryChassis extends BasicChassis {
                 if(error<-180){
                     error+=360;
                 }
-                if(difference<slowdistance*startpower&&difference>7&&max<0.3){
-                    power=startpower*difference/(slowdistance*startpower);
-                    maxpower=0.2;
-                }
-                if(difference<7){
+                if(difference<sped/2&&difference>5&&difference<30&&max<0.3){
                     power=0.2;
                     maxpower=0.2;
-                    max=0.35;
+                    max=0.28;
+                }
+                if(difference>sped){
+                    power=startpower;
+                }
+                if(difference<5){
+                    power=0.2;
+                    maxpower=0.2;
+                    max=0.28;
                 }
                 if (power > startpower) {
                     power = startpower;
@@ -449,6 +474,10 @@ public class OdometryChassis extends BasicChassis {
                 while (power < maxpower) {
                     power *= maxpower / abs(power);
                 }
+                if((abs(anglePower[0])+abs(anglePower[1]))<2&&power<0.4){
+                    double constantinople=2/(abs(anglePower[1])+abs(anglePower[0]));
+                    power*=constantinople;
+                }
                 op.telemetry.addData("power",power);
                 motorRightBack.setPower((power * anglePower[1] + anglecorrection));
                 motorRightFront.setPower(power * anglePower[0] + anglecorrection);
@@ -460,7 +489,10 @@ public class OdometryChassis extends BasicChassis {
 //            op.telemetry.addData("rightFront",power * anglePower[0] + anglecorrection);
 
                     difference=abs(sqrt(x*x+y*y));
+                    x=currentPosition[0];
+                    y=currentPosition[1];
             }
+            turnInPlace(a,0.5);
             stopAllMotors();
         }
     }public void goToPositionWithoutStop(double y, double x, double a, double power){

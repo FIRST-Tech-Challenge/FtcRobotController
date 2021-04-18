@@ -28,9 +28,9 @@ public class WobbleGoal {
 
     protected Servo wobbleGoalServoClaw = null;
 
-    private final int ticksForREST = 50;
+    private final int ticksForREST = 0;
     private final int ticksForGRAB = 750;
-    private final int ticksForRAISE = 300;
+    private final int ticksForRAISE = 280;
     private final int ticksForDriveToWall = 50;
     private final int TicksForAutonomousDrop = 800;
     private final int ticksForAutonomousRaise = 700;
@@ -76,7 +76,7 @@ public class WobbleGoal {
             op.telemetry.update();
             op.sleep(2000);
         }
-        op.sleep(1000);
+//        op.sleep(1000);
         if (p == Position.DROP) {
             wobbleGoalMotor.setPower(wobbleGoalSpeedDrop);
         } else {
@@ -85,7 +85,7 @@ public class WobbleGoal {
 
         wobbleGoalMotor.setTargetPosition(i);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        op.sleep(1000);
+        op.sleep(200);
         op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
 //        op.sleep(2000);

@@ -160,7 +160,7 @@ public class TwoGPTeleop extends LinearOpMode {
                     }
                     // added by Aiden; must have this otherwise if you hold onto the button multiple
                     // actions/movements will be executed by mistake
-                    sleep(500);
+//                    sleep(500);
                     currentWobbleGoalPosition = nextWobbleGoalPosition;
                 }
 

@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Robot;
  * @since   2020-October-26
  *
  */
-public class Shooter {
+public class  Shooter {
     protected LinearOpMode op = null;
 
     private DcMotorEx shooterMotor;
@@ -47,7 +47,7 @@ public class Shooter {
         else{
             servoBack = 0.64;
             servoForward = 0.5;
-            shooterMotor.setVelocityPIDFCoefficients(17, 0, 0.15, 16.5);
+            shooterMotor.setVelocityPIDFCoefficients(17, 0, 0.125, 17.75);//17,0,0.15,16.5
         }
         shooter_Servo.setPosition(servoBack);
 
@@ -105,7 +105,7 @@ public class Shooter {
         }
         op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
-        op.sleep(170);
+        op.sleep(90);//170
     }
 
     public void shootGoalTeleop(int distance) {
