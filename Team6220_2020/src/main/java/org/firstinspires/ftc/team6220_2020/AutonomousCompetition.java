@@ -36,31 +36,68 @@ public class AutonomousCompetition extends MasterAutonomous {
 
         waitForStart();
 
-        //for (int i = 0; i < 4; i++) {
-        //    driveInches(20, 90);
-        //    driveInches(20, 0);
-        //    driveInches(20, -90);
-        //    driveInches(20, 180);
-        //}
-
-        telemetry.addData("Num rings : ", findRingStackSize(2000));
+        int ringStackHeight = findRingStackSize(1000);
+        telemetry.addData("Num rings : ", ringStackHeight);
         telemetry.update();
-        findRingStackSize(2000);
 
         webcam.stopStreaming();
         webcam.closeCameraDevice();
 
-        sleep(5000);
+        driveInches(12 * Math.sqrt(2.0), 45);
 
-        //driveInches(20, 0);
+        switch (ringStackHeight){
+            case 0:
+                driveInches(50,90);
+                pauseMillis(200);
+                driveInches(6,-90);
+                break;
 
-        //driveInches(20, -90);
+            case 1:
+                driveInches(74,90);
+                pauseMillis(200);
+                driveInches(30,-90);
+                break;
 
-        //driveLauncher(0.8);
+            case 4:
+                driveInches(96,90);
+                pauseMillis(200);
+                driveInches(54,-90);
+                break;
+        }
 
-        //for(int i = 0; i < 3; i++){
-        //    fireLauncher(1500);
-        //    pauseMillis(1500);
-        //}
+        //todo align to left wobble goal
+
+        for(int i = 0; i < 3; i++){
+            fireLauncher(1350);
+            driveInches(7.5,0);
+        }
+
+        driveLauncher(0.0);
+
+        switch (ringStackHeight){
+            case 0:
+                driveInches(6,-90);
+                //todo turn left
+                driveInches(64,-90);
+                driveInches(24,90);
+                break;
+
+            case 1:
+                driveInches(30,-90);
+                //todo turn left
+                driveInches(40,-90);
+                driveInches(24,90);
+                driveInches(24,180);
+                break;
+
+            case 4:
+                driveInches(54,-90);
+                //todo turn left
+                driveInches(64,-90);
+                driveInches(24,90);
+                driveInches(48,180);
+                break;
+        }
+
     }
 }
