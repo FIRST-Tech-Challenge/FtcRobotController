@@ -152,7 +152,8 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.openWobbleGoalClaw();
             sleep(2000);
 //            robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
-            robot.moveRightStick(0);
+            robot.moveRightStick(1);
+            robot.moveLeftStick(0);
             sleep(100);
             robot.moveRightStick(1);
             robot.goToPosition(-70,8,0,1);
