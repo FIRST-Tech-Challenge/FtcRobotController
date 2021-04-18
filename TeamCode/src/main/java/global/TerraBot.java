@@ -421,7 +421,7 @@ public class TerraBot {
     }
 
     public double[] getLocalizerPos() {
-        return localizer.getPos();
+        return localizer.getPos(odometry.getPos());
     }
 
     public void updateLocalizer() {
@@ -538,7 +538,7 @@ public class TerraBot {
     }
 
     public void resetPosUsingDisSensors(){
-        odometry.resetPos(localizer.getPos(odometry.getPos(), odometry.h));
+        odometry.resetPos(localizer.getPos(odometry.getPos()));
     }
 
     public void optimizeOdometry(){
@@ -699,10 +699,10 @@ public class TerraBot {
                 updateOdoWithGyro();
                 updateLocalizer();
                 updateOdoWithSensors();
+                powerShot.Hacc = 0.125;
             }
         });
         powerShot.addMoveGlobal(this, Constants.AUTO_POWERSHOT_POS);
-
         powerShot.addStage(rh2, -1);
         powerShot.addOuttake(outr, outl, 1100, 1300);
         powerShot.addStage(rp, pushControl, 1 , 0.5);
@@ -717,7 +717,7 @@ public class TerraBot {
             powerShot.addWait(0.3);
             if(i < 2) {
 //                powerShot.addMove(this, new double[]{0, -1, -10}, false);
-                powerShot.addMove(this, new double[]{20, 0, 0}, false);
+                powerShot.addMove(this, new double[]{18, 0, 0}, false);
             }
         }
         powerShot.addOuttake(outr, outl, 0, 0);

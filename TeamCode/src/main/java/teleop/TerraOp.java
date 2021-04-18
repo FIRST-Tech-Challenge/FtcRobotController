@@ -22,15 +22,20 @@ public class TerraOp extends OpMode {
     TelemetryHandler telemetryHandler = new TelemetryHandler();
     Optimizer optimizer = new Optimizer();
 
+    boolean shouldICareAboutAuton = true;
+
     @Override
     public void init() {
         bot.init(hardwareMap);
         bot.startOdoThreadTele();
-        bot.odometry.resetAll(Constants.TELE_START);
-        bot.angularPosition.resetGyro(0);
+//        bot.odometry.resetAll(Constants.TELE_START);
+//        bot.angularPosition.resetGyro(0);
         optimizer.reset();
 
         bot.readFromAuton();
+        if(!shouldICareAboutAuton){
+            bot.angularPosition.resetGyro(0);
+        }
 //        bot.updateOdoWithSensors();
 
         telemetry.addData("Ready?", "Yes!");
@@ -51,7 +56,7 @@ public class TerraOp extends OpMode {
 
         optimizer.update();
 
-        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad2.right_trigger);
+        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
 
 //        if(bot.aimer.inited) {
 //            if (!(bot.aimer.isExecuting() && !bot.aimer.pausing)) {
@@ -80,28 +85,30 @@ public class TerraOp extends OpMode {
 //
 
         if(gamepad1.b){
-            bot.aimerPos = Constants.AUTO_SHOOT_POS;
+//            bot.aimerPos = Constants.AUTO_SHOOT_POS;
+            bot.powerShot.start();
         }
 
-        if(gamepad2.x){
+        if(gamepad1.x){
 //            optimizer.show();
             bot.wobbleGoal.start();
         }
 
         if (gamepad1.y) {
-                if (bot.powershotMode) {
-                    bot.powerShot.start();
-                } else {
-//                    bot.aimer.start();
-                    bot.shooter.start();
-//                    if(bot.autoAimer.hasReached) {
-//                        bot.shooter.start();
-//                    }
-                }
+//                if (bot.powershotMode) {
+//                    bot.powerShot.start();
+//                } else {
+////                    bot.aimer.start();
+//                    bot.shooter.start();
+////                    if(bot.autoAimer.hasReached) {
+////                        bot.shooter.start();
+////                    }
+//                }
+            bot.shooter.start();
         }
 
 
-        if(bot.powerShotController.isPressing(gamepad2.left_trigger>0)){
+        if(bot.powerShotController.isPressing(gamepad1.left_trigger>0)){
             bot.powershotMode = !bot.powershotMode;
             if(bot.powershotMode){
                 bot.definePowershot();
@@ -112,7 +119,7 @@ public class TerraOp extends OpMode {
         }
 
         bot.optimizeOdometry();
-        if (gamepad1.x) {
+        if (gamepad2.x) {
             bot.updateOdoWithGyro();
             bot.updateLocalizer();
             bot.updateOdoWithSensors();

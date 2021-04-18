@@ -29,6 +29,8 @@ public class AutoModule {
 
     public Path path;
 
+    public double Hacc = 0.25;
+
 
     public CodeSeg updateCode = new CodeSeg() {
         @Override
@@ -348,7 +350,7 @@ public class AutoModule {
             public boolean run(double in) {
                 bot.isMovementAvailable = false;
                 path = new Path(bot.odometry.getAll());
-                path.HAcc = 0.25;
+                path.HAcc = Hacc;
                 path.XAcc = 0.5;
                 path.YAcc = 0.5;
                 if(way) {
@@ -384,10 +386,10 @@ public class AutoModule {
                 bot.isMovementAvailable = false;
                 path = new Path(bot.odometry.getAll());
                 path.setGlobalMode(true);
-                path.HAcc = 0.25;
+                path.HAcc = Hacc;
                 path.XAcc = 0.5;
                 path.YAcc = 0.5;
-                path.addWaypoint(pos[0], pos[1], Optimizer.optimizeHeading(pos[2]));
+//                path.addWaypoint(pos[0], pos[1], Optimizer.optimizeHeading(pos[2]));
                 path.addSetpoint(pos[0], pos[1], Optimizer.optimizeHeading(pos[2]));
                 return true;
             }

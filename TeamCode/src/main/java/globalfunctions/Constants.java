@@ -62,7 +62,7 @@ public class Constants {
     public static final double tfPi = halfPi+Math.PI;
     public static final double ANGLE_ACCURACY = 5; // in degrees
     public static final double COMPASS_START = 343; //in degrees
-    public static final double POS_ACCURACY = 5; //cm
+    public static final double POS_ACCURACY = 20; //cm
 
     public static final double TICKS_FOR_ODOMETRY =  8192; //in ticks
     public static final double ENCODER_WHEEL_RADIUS = 1.75; // in cm //1.75

@@ -9,7 +9,7 @@ import global.TerraBot;
 import globalfunctions.Optimizer;
 import globalfunctions.TelemetryHandler;
 
-//@Disabled
+@Disabled
 @TeleOp(name = "TestOdometry")
 public class OdometryOp extends OpMode {
     TerraBot bot = new TerraBot();

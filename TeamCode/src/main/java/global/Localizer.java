@@ -59,7 +59,7 @@ public class Localizer {
         return new double[] {leftDis, backDis};
     }
 
-    public double[] getPos(double[] oldPos, double heading){
+    public double[] getPos(double[] oldPos){
         double[] newPos = getPos();
         boolean xAccurate = (Math.abs(newPos[0]-oldPos[0]) < Constants.POS_ACCURACY);
         boolean yAccurate = (Math.abs(newPos[1]-oldPos[1]) < Constants.POS_ACCURACY);

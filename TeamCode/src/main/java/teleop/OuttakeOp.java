@@ -1,11 +1,12 @@
 package teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import global.TerraBot;
 import globalfunctions.TelemetryHandler;
-//@Disabled
+@Disabled
 @TeleOp(name = "TestOp")
 public class OuttakeOp extends OpMode {
     TerraBot bot = new TerraBot();
