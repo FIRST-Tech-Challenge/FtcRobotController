@@ -62,7 +62,7 @@ public class Constants {
     public static final double tfPi = halfPi+Math.PI;
     public static final double ANGLE_ACCURACY = 5; // in degrees
     public static final double COMPASS_START = 343; //in degrees
-    public static final double POS_ACCURACY = 20; //cm
+    public static final double POS_ACCURACY = 1000; //cm
 
     public static final double TICKS_FOR_ODOMETRY =  8192; //in ticks
     public static final double ENCODER_WHEEL_RADIUS = 1.75; // in cm //1.75
@@ -74,13 +74,10 @@ public class Constants {
     public static final double DIS_CENTER_TO_RIGHT_ENC = DIS_BEWTEEN_ENCS-DIS_CENTER_TO_LEFT_ENC; //cm
     public static final double DIS_CENTER_ENC_TO_CENTER = HALF_DIS_BETWEEN_ENCS-DIS_CENTER_TO_LEFT_ENC;
 
-//    public static final double START_X = 80;
-//    public static final double START_Y = 21;
-//    public static final double START_H = 0;
-
     public static final double[] AUTO_START = new double[]{80,21,0};
     public static final double[] TELE_START = new double[]{97,180,0};
-    public static final double[] AUTO_SHOOT_POS = new double[]{85, 126, 0};
+    public static final double[] AUTO_SHOOT_POS = new double[]{115, 145, 7};
+    public static final double[] AUTO_SHOOT_POS_NOT_ANGLED = new double[]{115, 145, 0};
     public static final double[] AUTO_POWERSHOT_POS = new double[]{123, 156, 0};
 
     public static final double GYRO_UPDATE_RATE = 10; //hertz

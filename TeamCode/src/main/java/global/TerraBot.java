@@ -586,7 +586,7 @@ public class TerraBot {
 
     public void defineShooter(){
 
-        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS);
+        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS_NOT_ANGLED);
         shooter.addCustom(new CodeSeg() {
             @Override
             public void run() {
@@ -616,12 +616,12 @@ public class TerraBot {
                 fastMode = false;
             }
         });
-        shooter.addWait(1);
+        shooter.addPause();
 //        shooter.addWaitForReached(this);
 //        shooter.addPause();
 //        shooter.addStage(rp, pushControl, 2, 0.01);
 //        shooter.addWait(1);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             shooter.addStage(rp, pushControl, 2, 0.01);
             shooter.addWait(0.25);
             shooter.addStage(rp, pushControl.getPos(1)-0.03, 0.01);
@@ -669,11 +669,15 @@ public class TerraBot {
         wobbleGoal.addClaw(this, 2);
         wobbleGoal.addControlWGE(this, 1);
         wobbleGoal.addWobbleGoal(this, -10, 1);
-        wobbleGoal.toggleFastMode(this);
+        wobbleGoal.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastMode = true;
+            }
+        });
         wobbleGoal.addPause();
         wobbleGoal.addClaw(this, 0);
         wobbleGoal.addWait(1);
-        wobbleGoal.toggleFastMode(this);
         wobbleGoal.addWobbleGoal(this, 120, 1);
         wobbleGoal.addControlWGE(this, 0.5);
         wobbleGoal.holdWobbleGoalAndPause(this);
@@ -709,13 +713,13 @@ public class TerraBot {
         powerShot.addStage(rh2, 0);
         powerShot.toggleFastMode(this);
 //        powerShot.addWaitForReached(this);
-        powerShot.addWait(1);
-        for (int i = 0; i < 3; i++) {
+        powerShot.addPause();
+        for (int i = 0; i < 2; i++) {
             powerShot.addStage(rp, pushControl, 2, 0.01);
-            powerShot.addWait(0.3);
+            powerShot.addWait(0.25);
             powerShot.addStage(rp, pushControl.getPos(1) - 0.03, 0.01);
-            powerShot.addWait(0.3);
-            if(i < 2) {
+            powerShot.addWait(0.25);
+            if(i < 1) {
 //                powerShot.addMove(this, new double[]{0, -1, -10}, false);
                 powerShot.addMove(this, new double[]{18, 0, 0}, false);
             }

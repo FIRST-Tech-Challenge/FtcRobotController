@@ -132,6 +132,8 @@ public class TerraOp extends OpMode {
         telemetry.addData("Powershot Mode", bot.powershotMode);
         telemetry.addData("Can Move", bot.isMovementAvailable);
         telemetry.addData("hasReached", bot.autoAimer.hasReached);
+        telemetry.addData("gyro", bot.angularPosition.getHeadingGY());
+        telemetry.addData("Dpos", Arrays.toString(bot.localizer.getPos()));
         telemetry.addData("pos", Arrays.toString(bot.odometry.getPos()));
         telemetry.addData("aim", Arrays.toString(bot.aimerPos));
 
