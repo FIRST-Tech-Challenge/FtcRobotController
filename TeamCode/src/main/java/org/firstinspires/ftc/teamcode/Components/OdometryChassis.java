@@ -58,10 +58,6 @@ public class OdometryChassis extends BasicChassis {
         odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        track();
-        xpos=0;
-        ypos=0;
-        angle=0;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -83,7 +79,9 @@ public class OdometryChassis extends BasicChassis {
                 vuforia = new VuforiaWebcam(op);
                 vuforia.start();
             }
-
+        track();
+        xpos=0;
+        ypos=0;
         isCorgi=tobeCorgiornottobeCorgi;
         op.sleep(500);
         if(track()[2]>5&&track()[2]<-5){
