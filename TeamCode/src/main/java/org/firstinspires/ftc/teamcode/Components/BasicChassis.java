@@ -10,14 +10,14 @@ public abstract class BasicChassis {
         ENCODER,IMU,ODOMETRY
     }
     //initialize motor
-    protected DcMotorEx motorLeftFront;
-    protected DcMotorEx motorRightFront;
-    protected DcMotorEx motorLeftBack;
-    protected DcMotorEx motorRightBack;
+    protected final DcMotorEx motorLeftFront;
+    protected final DcMotorEx motorRightFront;
+    protected final DcMotorEx motorLeftBack;
+    protected final DcMotorEx motorRightBack;
 
     protected final double robot_diameter = Math.sqrt(619.84);
     protected final double wheel_diameter = 3.93701;
-    protected double[] encoder = new double[4];
+    protected final double[] encoder = new double[4];
     protected double xpos = 0;
     protected double ypos = 0;
 

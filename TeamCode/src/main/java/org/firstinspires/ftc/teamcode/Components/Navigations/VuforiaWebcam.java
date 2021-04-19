@@ -38,9 +38,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.teamcode.Components.OdometryChassis.*;
 
 public class VuforiaWebcam extends Thread {
-    private final OpMode op;
     private static float xpos, ypos, angle;
-    private final double vuforiaAngle = 90.0;
 
     //It is used on line 193 for debugging purposes. This is why it isn't currently in use.
     private String trackable;
@@ -54,10 +52,7 @@ public class VuforiaWebcam extends Thread {
 
     private final float mmPerInch = 25.4f;
 
-    private final VuforiaLocalizer vuforia;
-
     public VuforiaWebcam(OpMode opMode) {
-        op = opMode;
 
         // Vuforia License Key
         final String VUFORIA_KEY = key.key;
@@ -68,10 +63,10 @@ public class VuforiaWebcam extends Thread {
         final float quarterField = 36 * mmPerInch;
         final float mmTargetHeight = 5.75f * mmPerInch;
 
-        WebcamName webcamName = op.hardwareMap.get(WebcamName.class, "WebcamSide");
+        WebcamName webcamName = opMode.hardwareMap.get(WebcamName.class, "WebcamSide");
 
         // Show camera view on RC phone screen
-        int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
+        int cameraMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         // Set parameters
@@ -80,11 +75,11 @@ public class VuforiaWebcam extends Thread {
         parameters.useExtendedTracking = false;
 
         // Start Vuforia
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        VuforiaLocalizer vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        VuforiaTrackables targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
+        VuforiaTrackables targetsUltimateGoal = vuforia.loadTrackablesFromAsset("UltimateGoal");
         VuforiaTrackable blueTowerGoalTarget = targetsUltimateGoal.get(0);
         blueTowerGoalTarget.setName("Blue Tower Goal Target");
         VuforiaTrackable redTowerGoalTarget = targetsUltimateGoal.get(1);
@@ -178,7 +173,7 @@ public class VuforiaWebcam extends Thread {
 //                    op.telemetry.update();
 //                }
                 try {
-                    this.sleep(200);
+                    sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -209,6 +204,7 @@ public class VuforiaWebcam extends Thread {
     }
 
     public double getVuforiaAngle2() {
+        double vuforiaAngle = 90.0;
         return vuforiaAngle;
     }
 

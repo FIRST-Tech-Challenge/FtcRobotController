@@ -75,7 +75,7 @@ public class TwoGPTeleop extends LinearOpMode {
                 boolean move_sticks_up = gamepad2.dpad_down;
                 boolean save_Shooting_Position = gamepad2.a;
                 float goToShootingPosition = gamepad2.left_trigger;
-                OdometryChassis.vuforia_on = gamepad1.y;;
+                OdometryChassis.vuforia_on = gamepad1.y;
                 if(gamepad1.y){
                     robot.stopAllMotors();
                     continue;
