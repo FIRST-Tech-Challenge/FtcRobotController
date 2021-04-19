@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.RedSideAutos;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
@@ -34,17 +32,7 @@ public class RedTestAuto extends UpliftAuto {
     @Override
     public void body() throws InterruptedException {
         robot.odometry.setOdometryPosition(0, 0, 0);
-        drive.driveToPosition(0, 40, 1, 90);
-        Log.i("Odometry", "REACHED FIRST POINT!!!");
-        drive.driveToPosition(40, 40, 1, 180);
-        Log.i("Odometry", "REACHED SECOND POINT!!!");
-        drive.driveToPosition(40, 0 , 1, 180);
-        Log.i("Odometry", "REACHED THIRD POINT!!!");
-        drive.driveToPosition(0, 0, 1, 180);
-        Log.i("Odometry", "REACHED LAST POINT!!!");
-        drive.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
-        Log.i("Odometry", "FINISHED TURNING!!!");
-        drive.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
+        drive.driveToPosition(60, 0, 1, 0);
     }
 
     @Override

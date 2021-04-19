@@ -7,14 +7,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
+import org.firstinspires.ftc.teamcode.toolkit.core.Subsystem;
 import org.firstinspires.ftc.teamcode.toolkit.misc.MathFunctions;
 import org.firstinspires.ftc.teamcode.toolkit.misc.PathPoint;
-import org.firstinspires.ftc.teamcode.toolkit.core.Subsystem;
 import org.firstinspires.ftc.teamcode.toolkit.misc.Point;
 
 import java.util.ArrayList;
 
-import static java.lang.Math.*;
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.hypot;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 public class DriveSubsystem extends Subsystem {
 
@@ -88,7 +94,10 @@ public class DriveSubsystem extends Subsystem {
             yDistanceToPoint = yPosition - robot.worldY;
             distanceToPoint = hypot(xDistanceToPoint, yDistanceToPoint);
             relativeAngle = toDegrees(MathFunctions.atan2UL(yDistanceToPoint, xDistanceToPoint)) - robot.worldAngle;
+            Log.i("OdomDistToPt", distanceToPoint + "");
+            Log.i("OdometryPwr", leftFront.getPower() + " " + leftBack.getPower() + " " + rightFront.getPower() + " " + rightBack.getPower());
         }
+        Log.i("OdometryInfo", "TRUE");
 
         // arrived at point, so stop
         stopMotors();
@@ -143,27 +152,29 @@ public class DriveSubsystem extends Subsystem {
 
         if(turnAngle > 30) {
             if(turnDirection == CLOCKWISE) {
-                turnVal = Range.clip((60 / initialDistToPt) * (180 / Math.abs(turnAngle)), -1, 1);
+                turnVal = Range.clip((60 / initialDistToPt) * (Math.abs(turnAngle) / 180), -1, 1);
             } else if(turnDirection == COUNTER_CLOCKWISE) {
-                turnVal = -Range.clip((60 / initialDistToPt) * (180 / Math.abs(turnAngle)), -1, 1);
+                turnVal = -Range.clip((60 / initialDistToPt) * (Math.abs(turnAngle) / 180), -1, 1);
             } else {
-                turnVal = Range.clip((60 / initialDistToPt) * (180 / Math.abs(turnAngle)), -1, 1);
+                turnVal = Range.clip((60 / initialDistToPt) * (Math.abs(turnAngle) / 180), -1, 1);
             }
         } else if(turnAngle > 5) {
             turnVal = 0.10;
         } else if(turnAngle < -30) {
             if(turnDirection == CLOCKWISE) {
-                turnVal = Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
+                turnVal = Range.clip(60 / initialDistToPt * (Math.abs(turnAngle) / 180), -1, 1);
             } else if(turnDirection == COUNTER_CLOCKWISE) {
-                turnVal = -Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
+                turnVal = -Range.clip(60 / initialDistToPt * (Math.abs(turnAngle) / 180), -1, 1);
             } else {
-                turnVal = Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
+                turnVal = Range.clip(60 / initialDistToPt * (Math.abs(turnAngle) / 180), -1, 1);
             }
         } else if(turnAngle < -5) {
             turnVal = -0.10;
         } else {
             turnVal = 0;
         }
+
+        turnVal = turnVal * speedVal;
 
         double lf = sin(toRadians(90 - relativeAngleToPoint) + (0.25 * PI)) * speedVal + turnVal;
         double rf = sin(toRadians(90 - relativeAngleToPoint) - (0.25 * PI)) * speedVal - turnVal;
@@ -263,7 +274,9 @@ public class DriveSubsystem extends Subsystem {
                     safeDisable();
                     return;
                 }
-                if(abs(degrees) < 10) {
+                if(abs(degrees) < 5) {
+                    spin(-0.15);
+                } else if(abs(degrees) < 10) {
                     spin(-0.2);
                 } else if(abs(degrees) < 30) {
                     spin(-0.4);

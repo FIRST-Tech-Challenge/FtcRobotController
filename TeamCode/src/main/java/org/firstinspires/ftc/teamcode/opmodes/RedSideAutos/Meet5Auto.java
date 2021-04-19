@@ -234,7 +234,7 @@ public class Meet5Auto extends UpliftAuto {
 
     public void getSecondWobble() {
         driveSub.passThroughPosition(112, 50, 0.5, 0, DriveSubsystem.COUNTER_CLOCKWISE, 6);
-        driveSub.turnTo(0, 1, DriveSubsystem.QUICKEST_DIRECTION);
+        driveSub.turnTo(0, 0.75, DriveSubsystem.QUICKEST_DIRECTION);
         driveSub.driveToPosition(112, 37, 0.3, 1, 0, 0);
         wobbleSub.pickUp();
     }

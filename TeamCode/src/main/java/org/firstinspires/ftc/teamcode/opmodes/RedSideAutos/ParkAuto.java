@@ -3,11 +3,10 @@ package org.firstinspires.ftc.teamcode.opmodes.RedSideAutos;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
-import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 
-@Autonomous(name = "Park Auto", group = "opModes")
+@Autonomous(name = "Park Auto Red", group = "opModes")
 public class ParkAuto extends UpliftAuto {
 
     UpliftRobot robot;
@@ -21,7 +20,7 @@ public class ParkAuto extends UpliftAuto {
 
     @Override
     public void initAction() {
-        robot.wobbleSub.dropWobble();
+        robot.wobbleSub.endgameWobble();
     }
 
     @Override
