@@ -32,7 +32,6 @@ public class IMUChassis extends BasicChassis {
     private final BNO055IMU imu;
     private Orientation             lastAngles = new Orientation();
     private double globalAngle;
-    private final double power = .30;
     private double correction;
     private final double IMUgain = -0.15;
 
