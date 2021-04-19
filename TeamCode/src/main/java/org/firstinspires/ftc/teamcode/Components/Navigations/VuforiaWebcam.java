@@ -54,7 +54,7 @@ public class VuforiaWebcam extends Thread {
 
     private final float mmPerInch = 25.4f;
 
-    private VuforiaLocalizer vuforia;
+    private final VuforiaLocalizer vuforia;
 
     public VuforiaWebcam(OpMode opMode) {
         op = opMode;

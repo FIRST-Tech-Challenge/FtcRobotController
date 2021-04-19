@@ -16,7 +16,6 @@ package org.firstinspires.ftc.teamcode.Autonomous.Tests;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 //import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.ObjectDetection.TensorFlow;
 
@@ -76,9 +75,6 @@ public class TensorFlowTest extends LinearOpMode {
 //        sleep(1000);
 
         while(opModeIsActive() && !isStopRequested()) {
-            numOfTime4Rings = 0;
-            numOfTime1Ring = 0;
-            numOfTime0Rings = 0;
 
             tensorFlow.runTensorFlow();
             NumberOfRings.remove(0);
