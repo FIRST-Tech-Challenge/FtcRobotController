@@ -10,7 +10,6 @@ package org.firstinspires.ftc.teamcode.Components.Accesories;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class WobbleGoal {
@@ -20,22 +19,13 @@ public class WobbleGoal {
     }
 
     //declaring the op mode
-    private LinearOpMode op;
+    private final LinearOpMode op;
 
     protected DcMotor wobbleGoalMotor = null;
 
-    protected Servo wobbleGoalServo = null;
+    protected final Servo wobbleGoalServo = null;
 
     protected Servo wobbleGoalServoClaw = null;
-
-    private final int ticksForREST = 0;
-    private final int ticksForGRAB = 750;
-    private final int ticksForRAISE = 280;
-    private final int ticksForDriveToWall = 50;
-    private final int TicksForAutonomousDrop = 800;
-    private final int ticksForAutonomousRaise = 700;
-    private final double wobbleGoalSpeed = 0.4;
-    private final double wobbleGoalSpeedDrop = 0.5;
 
     public WobbleGoal(LinearOpMode opMode) {
         //setting the opmode
@@ -58,18 +48,24 @@ public class WobbleGoal {
     public void goToPosition(Position p) {
         int i = 0;
         if (p == Position.REST) {
+            int ticksForREST = 0;
             i = ticksForREST;
         } else if (p == Position.GRAB) {
+            int ticksForGRAB = 750;
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
+            int ticksForRAISE = 280;
             i = ticksForRAISE;
         } else if (p == Position.AutoRAISE) {
+            int ticksForAutonomousRaise = 700;
             i = ticksForAutonomousRaise;
         }
         else if (p == Position.DRIVETOWALL){
+            int ticksForDriveToWall = 50;
             i = ticksForDriveToWall;
         } else if (p == Position.DROP) {
-            i = TicksForAutonomousDrop;
+            int ticksForAutonomousDrop = 800;
+            i = ticksForAutonomousDrop;
         }
         else {
             op.telemetry.addData("IQ Lvl", "0.00");
@@ -78,8 +74,10 @@ public class WobbleGoal {
         }
 //        op.sleep(1000);
         if (p == Position.DROP) {
+            double wobbleGoalSpeedDrop = 0.5;
             wobbleGoalMotor.setPower(wobbleGoalSpeedDrop);
         } else {
+            double wobbleGoalSpeed = 0.4;
             wobbleGoalMotor.setPower(wobbleGoalSpeed);
         }
 

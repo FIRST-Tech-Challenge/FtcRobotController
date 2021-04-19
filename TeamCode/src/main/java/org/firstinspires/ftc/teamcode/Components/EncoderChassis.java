@@ -24,7 +24,7 @@ public class EncoderChassis extends BasicChassis {
     }
     public double[] track() {
         double[] data = {0, 0, 0};
-        double diff[] = {motorLeftFront.getCurrentPosition() - encoder[0], motorRightFront.getCurrentPosition() - encoder[1], motorLeftBack.getCurrentPosition() - encoder[2], motorRightBack.getCurrentPosition() - encoder[3]};
+        double[] diff = {motorLeftFront.getCurrentPosition() - encoder[0], motorRightFront.getCurrentPosition() - encoder[1], motorLeftBack.getCurrentPosition() - encoder[2], motorRightBack.getCurrentPosition() - encoder[3]};
         encoder[0] += diff[0];
         encoder[1] += diff[1];
         encoder[2] += diff[2];
@@ -48,7 +48,7 @@ public class EncoderChassis extends BasicChassis {
         return data;
     }
     public double getAngle() {
-        double diff[] = {motorLeftFront.getCurrentPosition() - encoder[0], motorRightFront.getCurrentPosition() - encoder[1], motorLeftBack.getCurrentPosition() - encoder[2], motorRightBack.getCurrentPosition() - encoder[3]};
+        double[] diff = {motorLeftFront.getCurrentPosition() - encoder[0], motorRightFront.getCurrentPosition() - encoder[1], motorLeftBack.getCurrentPosition() - encoder[2], motorRightBack.getCurrentPosition() - encoder[3]};
         encoder[0] += diff[0];
         encoder[1] += diff[1];
         encoder[2] += diff[2];
@@ -64,7 +64,6 @@ public class EncoderChassis extends BasicChassis {
         double currentAngle = getAngle();
         int direction = 1;
         double difference = currentAngle - target;
-        double targetAngle = target;
         if (target < 0) {
             direction = -1;
         }
@@ -74,7 +73,7 @@ public class EncoderChassis extends BasicChassis {
         motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         while (op.opModeIsActive() && (difference >= 0.5)) {
             currentAngle = getAngle();
-            difference = targetAngle - currentAngle;
+            difference = target - currentAngle;
             if (difference * direction < 5) {
                 power *= difference / 5;
                 if (power < 0.2) {

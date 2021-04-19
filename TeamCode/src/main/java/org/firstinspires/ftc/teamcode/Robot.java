@@ -24,13 +24,9 @@ public class Robot {
     private Transfer transfer = null;
     private WobbleGoal wobbleGoal = null;
     private Shooter shooter = null;
-    private VuforiaWebcam vuforiaWebcam = null;
+    private final VuforiaWebcam vuforiaWebcam = null;
     private TensorFlow tensorFlow = null;
     private Sticks sticks = null;
-
-    private double vuforiaX = 0;
-    private double vuforiaY = 0;
-    private double robotAngle = 0; //robot angle using vuforia
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean objectDetectionNeeded, boolean vuforiaNAVIGATIONneeded ) {
         op = opMode;
@@ -140,7 +136,7 @@ public class Robot {
 
     public double getVuforiaAngle() {
         if(isCorgi) {
-            return vuforiaWebcam.getVuforiaAngle();
+            return VuforiaWebcam.getVuforiaAngle();
         }
         return 0;
     }
@@ -154,10 +150,11 @@ public class Robot {
 
     public void getVuforiaPosition() {
         if(isCorgi) {
-            vuforiaX = vuforiaWebcam.getVuforiaX();
-            vuforiaY = vuforiaWebcam.getVuforiaY();
+            double vuforiaX = VuforiaWebcam.getVuforiaX();
+            double vuforiaY = VuforiaWebcam.getVuforiaY();
             double vuforiaAngle = vuforiaWebcam.getVuforiaAngle2();
-            robotAngle = vuforiaAngle + 90;
+            //robot angle using vuforia
+            double robotAngle = vuforiaAngle + 90;
             robotAngle = (robotAngle > 180 ? robotAngle - 360 : robotAngle);
         }
     }
@@ -251,7 +248,7 @@ public class Robot {
     }
 
     public void shootLowGoal(int rings){
-        shooter.shootLowGoal(rings);;
+        shooter.shootLowGoal(rings);
     }
 
     public void shootGoalTeleop(int distance) {

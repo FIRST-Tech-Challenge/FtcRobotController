@@ -15,9 +15,7 @@ package org.firstinspires.ftc.teamcode.Autonomous.Tests;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
-import org.firstinspires.ftc.teamcode.Robot;
 
 @Autonomous(name="VuforiaTest ", group="Tests: ")
 //@Disabled

@@ -10,9 +10,8 @@ public class Sticks {
     final Servo rightStick;
 
     public Sticks(LinearOpMode opMode) {
-        LinearOpMode op = opMode;
-        leftStick = op.hardwareMap.servo.get("leftStick");
-        rightStick = op.hardwareMap.servo.get("rightStick");
+        leftStick = opMode.hardwareMap.servo.get("leftStick");
+        rightStick = opMode.hardwareMap.servo.get("rightStick");
 
         moveLeftStick(1);
         moveRightStick(0);

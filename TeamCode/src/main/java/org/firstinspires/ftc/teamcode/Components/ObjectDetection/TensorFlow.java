@@ -40,7 +40,6 @@ public class TensorFlow {
 
     private static final String VUFORIA_KEY = key.key;
 
-    private final VuforiaLocalizer vuforia;
     private final TFObjectDetector tfod;
     private final LinearOpMode op;
 
@@ -60,7 +59,7 @@ public class TensorFlow {
         parameters.cameraName = op.hardwareMap.get(WebcamName.class, "WebcamFront");
 
         //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        VuforiaLocalizer vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         int tfodMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());

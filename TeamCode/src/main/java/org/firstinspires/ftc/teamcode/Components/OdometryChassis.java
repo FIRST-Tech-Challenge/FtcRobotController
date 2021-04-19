@@ -16,7 +16,6 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
-import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
@@ -26,14 +25,14 @@ public class OdometryChassis extends BasicChassis {
     static DcMotorEx odom1;
     static DcMotorEx odom2;
     static DcMotorEx odom3;
-    public static boolean gotoPosition_off=false;
+    public static final boolean gotoPosition_off=false;
     public static boolean vuforia_on=false;
-    int[] odomconst = {-1,1,-1};
-    float ticks_per_inch = (float)(8640*2.54/38*Math.PI)*72/76;
+    final int[] odomconst = {-1,1,-1};
+    final float ticks_per_inch = (float)(8640*2.54/38*Math.PI)*72/76;
     float robot_diameter = (float)sqrt(619.84);
-    static float[] odom = new float[3];
+    static final float[] odom = new float[3];
     private LinearOpMode op = null;
-    private BNO055IMU imu;
+    private final BNO055IMU imu;
     private Orientation lastAngles=null;
     public static float globalAngle=0;
     public static float xpos=0;
@@ -43,7 +42,7 @@ public class OdometryChassis extends BasicChassis {
 
 
     //set true to enable imu vice versa
-    boolean isCorgi;
+    final boolean isCorgi;
 
     public OdometryChassis(LinearOpMode opMode,boolean navigator, boolean tobeCorgiornottobeCorgi) {
         super(opMode);
@@ -157,8 +156,8 @@ public class OdometryChassis extends BasicChassis {
         //return navigation.getAngle();
     }
     public double[] track() {
-        double data[]={0,0,0};
-        double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),
+        double[] data ={0,0,0};
+        double[] diff ={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),
                 odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
         odom[0] += odomconst[0]*diff[0];
         odom[1] += odomconst[1]*diff[1];
@@ -418,7 +417,7 @@ public class OdometryChassis extends BasicChassis {
                 time+=difftime;
                 diffpos=sqrt((currentPosition[0]-x)*(currentPosition[0]-x)+(currentPosition[1]-y)*(currentPosition[1]-y));
                 sped=diffpos/difftime;
-                if(sped<0.01){
+                if(sped<0.05){
                     stoptime+=1;
                 }
                 else if(sped>0.2){
@@ -439,18 +438,13 @@ public class OdometryChassis extends BasicChassis {
                 if(error<-180){
                     error+=360;
                 }
-                if(difference<sped/2&&difference>5&&difference<30&&max<0.3){
+                if(difference<sped/2&&difference<30&&max<0.3){
                     power=0.2;
                     maxpower=0.2;
                     max=0.28;
                 }
                 if(difference>sped){
                     power=startpower;
-                }
-                if(difference<5){
-                    power=0.2;
-                    maxpower=0.2;
-                    max=0.28;
                 }
                 if (power > startpower) {
                     power = startpower;
@@ -751,15 +745,13 @@ public class OdometryChassis extends BasicChassis {
                 }
                 rightPower = -direction*min(abs(power*gain*error),abs(power));
                 leftPower = -rightPower;
-                if(isCorgi) {
                     if (abs(leftPower) < 0.12) {
                         leftPower *= 0.12 / abs(leftPower);
                     }
                     if (abs(rightPower) < 0.12) {
                         rightPower *= 0.12 / abs(rightPower);
                     }
-                }
-                motorLeftBack.setPower(leftPower);
+                    motorLeftBack.setPower(leftPower);
                 motorLeftFront.setPower(leftPower);
                 motorRightBack.setPower(rightPower);
                 motorRightFront.setPower(rightPower);
@@ -860,7 +852,7 @@ public class OdometryChassis extends BasicChassis {
                         motorRightFront.setPower(rightPower);
                     }
                     else{
-                        stopAllMotors();;
+                        stopAllMotors();
                         return true;
                     }
             }

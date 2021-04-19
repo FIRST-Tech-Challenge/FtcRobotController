@@ -29,12 +29,14 @@ public class IMUChassis extends BasicChassis {
 
     /* local OpMode members. */
 
-    private BNO055IMU imu;
+    private final BNO055IMU imu;
     private Orientation             lastAngles = new Orientation();
-    private double globalAngle, power = .30, correction;
-    private double IMUgain = -0.15;
+    private double globalAngle;
+    private final double power = .30;
+    private double correction;
+    private final double IMUgain = -0.15;
 
-    double[] encoder = new double[4];
+    final double[] encoder = new double[4];
     double xpos = 0;
     double ypos = 0;
 
@@ -119,7 +121,7 @@ public class IMUChassis extends BasicChassis {
 
         correction = correction * gain;*/
 
-        if (enableIMU == false) {
+        if (!enableIMU) {
             correction = 0;
         } else {
             correction = angle * (-gain);
@@ -283,7 +285,6 @@ public class IMUChassis extends BasicChassis {
         double currentPosition = 0;
         double deltaPosition = 0;
         double currentAngle = 0;
-        double maxcorrection = power;
 
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -298,11 +299,11 @@ public class IMUChassis extends BasicChassis {
             deltaPosition = newLeftBackTargetPosition - currentPosition;
             currentAngle = getAngle();
             correction = (currentAngle - getAngle()) * IMUgain * power;//gain is 0.06 for power 0.85
-            if (correction > maxcorrection) {
-                correction = maxcorrection;
+            if (correction > power) {
+                correction = power;
             }
-            if (correction < -maxcorrection) {
-                correction = -maxcorrection;
+            if (correction < -power) {
+                correction = -power;
             }
             motorRightBack.setPower(-power - correction);
             motorRightFront.setPower(power - correction);
@@ -320,7 +321,6 @@ public class IMUChassis extends BasicChassis {
         double currentPosition = 0;
         double deltaPosition = 0;
         double currentAngle = 0;
-        double maxcorrection = power;
 
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -335,11 +335,11 @@ public class IMUChassis extends BasicChassis {
             deltaPosition = currentPosition - newLeftBackTargetPosition;
             currentAngle = getAngle();
             correction = (currentAngle - getAngle()) * IMUgain * power;//gain=0.06 for power 0.85
-            if (correction > maxcorrection) {
-                correction = maxcorrection;
+            if (correction > power) {
+                correction = power;
             }
-            if (correction < -maxcorrection) {
-                correction = -maxcorrection;
+            if (correction < -power) {
+                correction = -power;
             }
             motorRightBack.setPower(power - correction);
             motorRightFront.setPower(-power - correction);
@@ -351,7 +351,7 @@ public class IMUChassis extends BasicChassis {
 
     public double[] track() {
             double[] data = {0, 0, 0};
-            double diff[] = {motorLeftFront.getCurrentPosition() - encoder[0], motorRightFront.getCurrentPosition() - encoder[1], motorLeftBack.getCurrentPosition() - encoder[2], motorRightBack.getCurrentPosition() - encoder[3]};
+            double[] diff = {motorLeftFront.getCurrentPosition() - encoder[0], motorRightFront.getCurrentPosition() - encoder[1], motorLeftBack.getCurrentPosition() - encoder[2], motorRightBack.getCurrentPosition() - encoder[3]};
             encoder[0] += diff[0];
             encoder[1] += diff[1];
             encoder[2] += diff[2];

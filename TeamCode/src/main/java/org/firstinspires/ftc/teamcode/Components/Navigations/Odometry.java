@@ -4,8 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -19,19 +17,21 @@ import static org.firstinspires.ftc.teamcode.Components.Navigations.Navigation.*
 
 
 public class Odometry extends Thread {
-    DcMotorEx odom1;
-    DcMotorEx odom2;
-    DcMotorEx odom3;
-    int[] odomconst = {-1,1,-1};
-    float ticks_per_inch = (float)(8640*2.54/38*Math.PI)*72/76;
+    final DcMotorEx odom1;
+    final DcMotorEx odom2;
+    final DcMotorEx odom3;
+    final int[] odomconst = {-1,1,-1};
+    final float ticks_per_inch = (float)(8640*2.54/38*Math.PI)*72/76;
     float robot_diameter = (float)sqrt(619.84);
-    float[] odom = new float[3];
+    final float[] odom = new float[3];
     private LinearOpMode op = null;
-    private BNO055IMU imu;
+    private final BNO055IMU imu;
     private Orientation lastAngles = new Orientation();
-    private float globalAngle;
     double power = .30, correction;
-    float a,x,y,diff[];
+    float a;
+    float x;
+    float y;
+    float[] diff;
 
     public Odometry(LinearOpMode opMode) {
 
@@ -101,7 +101,7 @@ public class Odometry extends Thread {
         else if (deltaAngle > 180)
             deltaAngle -= 360;
 
-        globalAngle = (float) (Navigation.getAngle()-deltaAngle);
+        float globalAngle = (float) (Navigation.getAngle() - deltaAngle);
 
         lastAngles = angles;
 

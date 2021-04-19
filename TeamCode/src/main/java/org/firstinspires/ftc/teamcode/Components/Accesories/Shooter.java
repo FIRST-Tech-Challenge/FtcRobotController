@@ -3,11 +3,8 @@ package org.firstinspires.ftc.teamcode.Components.Accesories;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 
 /**
@@ -21,17 +18,17 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class  Shooter {
     protected LinearOpMode op = null;
 
-    private DcMotorEx shooterMotor;
+    private final DcMotorEx shooterMotor;
 
-    Servo shooter_Servo;
+    final Servo shooter_Servo;
 
-    protected double highGoalVelocity = 1675;
-    protected double middleGoalVelocity = 1600;
-    protected double lowGoalVelocity = 1500;
-    protected double powershotVelocity = 1725;
+    protected final double highGoalVelocity = 1675;
+    protected final double middleGoalVelocity = 1600;
+    protected final double lowGoalVelocity = 1500;
+    protected final double powershotVelocity = 1725;
     protected double veloThreshold = 50;
-    double servoBack;
-    double servoForward;
+    final double servoBack;
+    final double servoForward;
 
     public Shooter(LinearOpMode opMode) {
         op = opMode;
@@ -69,8 +66,7 @@ public class  Shooter {
     public double getRPM() {
         double ticksPerSecond = shooterMotor.getVelocity();
         double rotationsPerSecond = ticksPerSecond / 28;
-        double rotationsPerMinute = rotationsPerSecond * 60;
-        return rotationsPerMinute;
+        return rotationsPerSecond * 60;
     }
 
 
@@ -98,7 +94,7 @@ public class  Shooter {
     }
 
     public void moveServo(boolean direction) {
-        if (direction == true) {
+        if (direction) {
             shooter_Servo.setPosition(servoBack);
         } else {
             shooter_Servo.setPosition(servoForward);
