@@ -45,7 +45,7 @@ public class Robot {
 //        }
             intake = new Intake(op);
             transfer = new Transfer(op);
-            wobbleGoal = new WobbleGoal(op);
+            wobbleGoal = new WobbleGoal(op,vuforiaNAVIGATIONneeded);
             shooter = new Shooter(op);
             sticks = new Sticks(op);
 
@@ -262,6 +262,7 @@ public class Robot {
     public void stopShooter(){
         shooter.stopShooter();
     }
+    public void setVelocity(double velocity, int distance){shooter.setVelocity(velocity,distance);}
 
     public void shootThreePowerShot() {
         ElapsedTime runtime = new ElapsedTime();
@@ -279,7 +280,7 @@ public class Robot {
         shooter.moveServo(false);
         shooter.moveServo(true);
         shooter.setVelocity(1355, 1000);
-        drivetrain.turnInPlace(2.9,0.6);
+        drivetrain.turnInPlace(3.1,0.6);
         shooter.moveServo(false);
         shooter.moveServo(true);
         drivetrain.turnInPlace(-7.0,0.5);

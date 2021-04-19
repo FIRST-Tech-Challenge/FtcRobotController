@@ -16,7 +16,7 @@ public class WobbleGoalAutonomousTest extends LinearOpMode {
 
 
     public void runOpMode(){
-        WobbleGoal wobbleGoal = new WobbleGoal(this);
+        WobbleGoal wobbleGoal = new WobbleGoal(this,false);
         waitForStart();
         wobbleGoal.goToPosition(WobbleGoal.Position.DROP);
         sleep(1000);

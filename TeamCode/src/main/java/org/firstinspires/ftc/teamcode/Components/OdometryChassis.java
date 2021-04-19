@@ -58,6 +58,10 @@ public class OdometryChassis extends BasicChassis {
         odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        track();
+        xpos=0;
+        ypos=0;
+        angle=0;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -85,6 +89,9 @@ public class OdometryChassis extends BasicChassis {
         if(track()[2]>5&&track()[2]<-5){
             globalAngle=0;
         }
+        xpos=0;
+        ypos=0;
+        angle=0;
     }
     public static float getXpos(){
         return xpos;
@@ -439,11 +446,11 @@ public class OdometryChassis extends BasicChassis {
                     error+=360;
                 }
                 if(difference<sped/2&&difference<30&&max<0.3){
-                    power=0.2;
-                    maxpower=0.2;
+                    power=0.25;
+                    maxpower=0.25;
                     max=0.28;
                 }
-                if(difference>sped){
+                if(difference>sped/2){
                     power=startpower;
                 }
                 if (power > startpower) {
@@ -486,7 +493,6 @@ public class OdometryChassis extends BasicChassis {
                     x=currentPosition[0];
                     y=currentPosition[1];
             }
-            turnInPlace(a,0.5);
             stopAllMotors();
         }
     }public void goToPositionWithoutStop(double y, double x, double a, double power){

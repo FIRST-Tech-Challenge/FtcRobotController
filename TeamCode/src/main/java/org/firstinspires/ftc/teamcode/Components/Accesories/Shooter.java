@@ -86,7 +86,7 @@ public class  Shooter {
         for (int i = 0; i < rings; i++) {
             moveServo(false);
             moveServo(true);
-            op.sleep(25);
+            op.sleep(50);
         }
         if(op.getRuntime()>3){
             stopShooter();

@@ -27,7 +27,7 @@ public class WobbleGoal {
 
     protected Servo wobbleGoalServoClaw = null;
 
-    public WobbleGoal(LinearOpMode opMode) {
+    public WobbleGoal(LinearOpMode opMode, boolean teleOp) {
         //setting the opmode
         this.op = opMode;
 
@@ -36,7 +36,9 @@ public class WobbleGoal {
         wobbleGoalServoClaw = op.hardwareMap.servo.get("wobbleGoalServoClaw");
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if(!teleOp) {
+            wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         closeWobbleGoalClaw();
         goToPosition(Position.REST);
@@ -51,7 +53,7 @@ public class WobbleGoal {
             int ticksForREST = 0;
             i = ticksForREST;
         } else if (p == Position.GRAB) {
-            int ticksForGRAB = 750;
+            int ticksForGRAB = 730;
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
             int ticksForRAISE = 280;
@@ -66,6 +68,9 @@ public class WobbleGoal {
         } else if (p == Position.DROP) {
             int ticksForAutonomousDrop = 800;
             i = ticksForAutonomousDrop;
+        } else if(p==Position.RUN){
+            int ticksForRun=600;
+            i=ticksForRun;
         }
         else {
             op.telemetry.addData("IQ Lvl", "0.00");
@@ -74,16 +79,15 @@ public class WobbleGoal {
         }
 //        op.sleep(1000);
         if (p == Position.DROP) {
-            double wobbleGoalSpeedDrop = 0.5;
+            double wobbleGoalSpeedDrop = 0.7;
             wobbleGoalMotor.setPower(wobbleGoalSpeedDrop);
         } else {
-            double wobbleGoalSpeed = 0.4;
+            double wobbleGoalSpeed = 0.7;
             wobbleGoalMotor.setPower(wobbleGoalSpeed);
         }
 
         wobbleGoalMotor.setTargetPosition(i);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        op.sleep(200);
         op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
 //        op.sleep(2000);
