@@ -10,34 +10,24 @@ package org.firstinspires.ftc.teamcode.Components.Accesories;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class WobbleGoal {
 
     public enum Position {
-        REST, GRAB, RAISE, RUN, DROP, AutoGRAB, DRIVETOWALL
+        REST, GRAB, RAISE, RUN, DROP, AutoGRAB, DRIVETOWALL, AutoRAISE
     }
 
     //declaring the op mode
-    private LinearOpMode op;
+    private final LinearOpMode op;
 
     protected DcMotor wobbleGoalMotor = null;
 
-    protected Servo wobbleGoalServo = null;
+    protected final Servo wobbleGoalServo = null;
 
     protected Servo wobbleGoalServoClaw = null;
 
-    private final int ticksForREST = 50;
-    private final int ticksForGRAB = 750;
-    private final int ticksForRAISE = 300;
-    private final int ticksForDriveToWall = 50;
-    private final int ticksForAutonomousRUN = -350;
-    private final int ticksForAutonomousGRAB = -500;
-    private final double wobbleGoalSpeed = 0.4;
-    private final double wobbleGoalSpeedDrop = 0.5;
-
-    public WobbleGoal(LinearOpMode opMode) {
+    public WobbleGoal(LinearOpMode opMode, boolean teleOp) {
         //setting the opmode
         this.op = opMode;
 
@@ -46,9 +36,11 @@ public class WobbleGoal {
         wobbleGoalServoClaw = op.hardwareMap.servo.get("wobbleGoalServoClaw");
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if(!teleOp) {
+            wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wobbleGoalServoClaw.setPosition(1);
+        closeWobbleGoalClaw();
         goToPosition(Position.REST);
         opMode.sleep(500);
 
@@ -58,35 +50,44 @@ public class WobbleGoal {
     public void goToPosition(Position p) {
         int i = 0;
         if (p == Position.REST) {
+            int ticksForREST = 0;
             i = ticksForREST;
         } else if (p == Position.GRAB) {
+            int ticksForGRAB = 730;
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
+            int ticksForRAISE = 280;
             i = ticksForRAISE;
-        } else if (p == Position.RUN) {
-            i = ticksForAutonomousRUN;
-        }
-        else if (p == Position.AutoGRAB) {
-            i = ticksForAutonomousGRAB;
+        } else if (p == Position.AutoRAISE) {
+            int ticksForAutonomousRaise = 700;
+            i = ticksForAutonomousRaise;
         }
         else if (p == Position.DRIVETOWALL){
+            int ticksForDriveToWall = 50;
             i = ticksForDriveToWall;
+        } else if (p == Position.DROP) {
+            int ticksForAutonomousDrop = 800;
+            i = ticksForAutonomousDrop;
+        } else if(p==Position.RUN){
+            int ticksForRun=600;
+            i=ticksForRun;
         }
         else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();
             op.sleep(2000);
         }
+//        op.sleep(1000);
+        if (p == Position.DROP) {
+            double wobbleGoalSpeedDrop = 0.7;
+            wobbleGoalMotor.setPower(wobbleGoalSpeedDrop);
+        } else {
+            double wobbleGoalSpeed = 0.7;
+            wobbleGoalMotor.setPower(wobbleGoalSpeed);
+        }
 
         wobbleGoalMotor.setTargetPosition(i);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        op.sleep(1000);
-        if (p == Position.DROP) {
-            wobbleGoalMotor.setPower(wobbleGoalSpeedDrop);
-        } else {
-            wobbleGoalMotor.setPower(wobbleGoalSpeed);
-        }
-//        op.sleep(1000);
         op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
 //        op.sleep(2000);
@@ -114,14 +115,14 @@ public class WobbleGoal {
     }
     // moves the wobble goal servo
     public void openWobbleGoalClaw() {
-            wobbleGoalServoClaw.setPosition(1);
+            wobbleGoalServoClaw.setPosition(0.2);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");
             op.telemetry.update();
 
     }
     public void  closeWobbleGoalClaw() {
-            wobbleGoalServoClaw.setPosition(0.2);
+            wobbleGoalServoClaw.setPosition(1);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");
             op.telemetry.update();

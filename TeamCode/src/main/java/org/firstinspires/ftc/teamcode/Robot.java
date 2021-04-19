@@ -24,13 +24,9 @@ public class Robot {
     private Transfer transfer = null;
     private WobbleGoal wobbleGoal = null;
     private Shooter shooter = null;
-    private VuforiaWebcam vuforiaWebcam = null;
+    private final VuforiaWebcam vuforiaWebcam = null;
     private TensorFlow tensorFlow = null;
     private Sticks sticks = null;
-
-    private double vuforiaX = 0;
-    private double vuforiaY = 0;
-    private double robotAngle = 0; //robot angle using vuforia
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean objectDetectionNeeded, boolean vuforiaNAVIGATIONneeded ) {
         op = opMode;
@@ -49,7 +45,7 @@ public class Robot {
 //        }
             intake = new Intake(op);
             transfer = new Transfer(op);
-            wobbleGoal = new WobbleGoal(op);
+            wobbleGoal = new WobbleGoal(op,vuforiaNAVIGATIONneeded);
             shooter = new Shooter(op);
             sticks = new Sticks(op);
 
@@ -140,7 +136,7 @@ public class Robot {
 
     public double getVuforiaAngle() {
         if(isCorgi) {
-            return vuforiaWebcam.getVuforiaAngle();
+            return VuforiaWebcam.getVuforiaAngle();
         }
         return 0;
     }
@@ -154,10 +150,11 @@ public class Robot {
 
     public void getVuforiaPosition() {
         if(isCorgi) {
-            vuforiaX = vuforiaWebcam.getVuforiaX();
-            vuforiaY = vuforiaWebcam.getVuforiaY();
+            double vuforiaX = VuforiaWebcam.getVuforiaX();
+            double vuforiaY = VuforiaWebcam.getVuforiaY();
             double vuforiaAngle = vuforiaWebcam.getVuforiaAngle2();
-            robotAngle = vuforiaAngle + 90;
+            //robot angle using vuforia
+            double robotAngle = vuforiaAngle + 90;
             robotAngle = (robotAngle > 180 ? robotAngle - 360 : robotAngle);
         }
     }
@@ -251,7 +248,7 @@ public class Robot {
     }
 
     public void shootLowGoal(int rings){
-        shooter.shootLowGoal(rings);;
+        shooter.shootLowGoal(rings);
     }
 
     public void shootGoalTeleop(int distance) {
@@ -265,13 +262,14 @@ public class Robot {
     public void stopShooter(){
         shooter.stopShooter();
     }
+    public void setVelocity(double velocity, int distance){shooter.setVelocity(velocity,distance);}
 
     public void shootThreePowerShot() {
         ElapsedTime runtime = new ElapsedTime();
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
         drivetrain.turnInPlace(-1.6,1.0);
-        shooter.setVelocity(1450, 1000);
+        shooter.setVelocity(1330, 1000);
         op.sleep(1600);
         if (shooter.getRPM()*28/60 > 0) {
             op.sleep(100);
@@ -281,8 +279,8 @@ public class Robot {
         }
         shooter.moveServo(false);
         shooter.moveServo(true);
-        shooter.setVelocity(1475, 1000);
-        drivetrain.turnInPlace(2.9,0.6);
+        shooter.setVelocity(1355, 1000);
+        drivetrain.turnInPlace(3.1,0.6);
         shooter.moveServo(false);
         shooter.moveServo(true);
         drivetrain.turnInPlace(-7.0,0.5);

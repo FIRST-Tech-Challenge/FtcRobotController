@@ -75,7 +75,7 @@ public class TwoGPTeleop extends LinearOpMode {
                 boolean move_sticks_up = gamepad2.dpad_down;
                 boolean save_Shooting_Position = gamepad2.a;
                 float goToShootingPosition = gamepad2.left_trigger;
-                OdometryChassis.vuforia_on = gamepad1.y;;
+                OdometryChassis.vuforia_on = gamepad1.y;
                 if(gamepad1.y){
                     robot.stopAllMotors();
                     continue;
@@ -160,7 +160,7 @@ public class TwoGPTeleop extends LinearOpMode {
                     }
                     // added by Aiden; must have this otherwise if you hold onto the button multiple
                     // actions/movements will be executed by mistake
-                    sleep(500);
+                   sleep(200);
                     currentWobbleGoalPosition = nextWobbleGoalPosition;
                 }
 

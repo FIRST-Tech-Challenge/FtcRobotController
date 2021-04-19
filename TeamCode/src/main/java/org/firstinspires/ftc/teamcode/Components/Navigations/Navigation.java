@@ -39,8 +39,7 @@ public class Navigation {
     }
 
     public double[] getPosition(){
-        double pos[] = {xPosition,yPosition,angle};
-        return pos;
+        return new double[]{xPosition,yPosition,angle};
     }
 
     public static void setPosition(double x, double y, float newAngle){
