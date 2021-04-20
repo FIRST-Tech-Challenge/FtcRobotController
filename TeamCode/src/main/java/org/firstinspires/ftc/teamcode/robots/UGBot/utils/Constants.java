@@ -98,7 +98,7 @@ public class Constants {
     public static int LAUNCHER_TRIGGER_STOWED = 1900;
     public static int LAUNCHER_TRIGGER_SHOOT = 2200;
     public static int LAUNCHER_TRIGGER_BACK = 1780;
-    public static double autoLaunchTime = .2;
+    public static double autoLaunchTime = .3;
 
     public static double __ATMEP = 1;
     public static double __ATMEP2 = -1;
@@ -156,8 +156,8 @@ public class Constants {
         //sweep needs to be very slow
         RING_STACK_SWEEPTO(36/INCHES_PER_METER, (48-10+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1, DirectionOfTurn.I_REALLY_DONT_CARE),
         WOBBLE_TWO(24/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1,1, DirectionOfTurn.I_REALLY_DONT_CARE),
-        WOBBLE_TWO_APPROACH(40/INCHES_PER_METER, (23+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, -1, 270,0, .5, DirectionOfTurn.I_REALLY_DONT_CARE),
-        WOBBLE_TWO_GRAB (40/INCHES_PER_METER, (23)/INCHES_PER_METER, -1, -1,0,0, DirectionOfTurn.I_REALLY_DONT_CARE),
+        WOBBLE_TWO_APPROACH(49/INCHES_PER_METER, (2)/INCHES_PER_METER, 90, -1,-1, .5, DirectionOfTurn.I_REALLY_DONT_CARE),
+        WOBBLE_TWO_GRAB (40/INCHES_PER_METER, (23)/INCHES_PER_METER, 90, 270,0,0, DirectionOfTurn.I_REALLY_DONT_CARE),
         NAVIGATE(49/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5, DirectionOfTurn.I_REALLY_DONT_CARE), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
         LAUNCH_PREFERRED(47.2441/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0, DirectionOfTurn.I_REALLY_DONT_CARE), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
         TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10, .5, DirectionOfTurn.I_REALLY_DONT_CARE);

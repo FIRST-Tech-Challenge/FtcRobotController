@@ -546,7 +546,7 @@ public class PoseUG {
         packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
         packet.put("rotVelBase", rotVelBase);
         packet.put("zero indicator", 0);
-        packet.put("tent", isTented);
+        packet.put("turret error", turret.turnError);
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -701,17 +701,6 @@ public class PoseUG {
 
         //turret.setTurntableAngle(model.getTurretHeading());
 
-        ringChambered = true; //todo- when the color sensor is implemented, this is where it will be updated
-        //we might not need this when we get the color sensor implemented
-
-        if(autoLaunchActive &&
-                ringChambered &&
-                System.nanoTime() - autoLaunchTimer > Constants.autoLaunchTime * 1E9 &&
-                poseX < 1.35 &&
-                target != Constants.Target.NONE){
-            articulate(Articulation.toggleTrigger);
-        }
-        autoLaunchTimer = System.nanoTime();
 
         trajCalc.updatePos(poseX, poseY);
         trajCalc.updateVel(velocityX, velocityY);
@@ -725,6 +714,10 @@ public class PoseUG {
 
 
         sendTelemetry();
+    }
+
+    public void setAutoLaunchActive(boolean autoLaunchActive){
+        this.autoLaunchActive = autoLaunchActive;
     }
 
     public void setTarget(Constants.Target target) {
@@ -745,6 +738,20 @@ public class PoseUG {
                     turret.setTurntableAngle(goalHeading + Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
 
                     launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.HEIGHT_MULTIPLIER);
+
+                    ringChambered = true; //todo- when the color sensor is implemented, this is where it will be updated
+                    //we might not need this when we get the color sensor implemented
+
+                    if(autoLaunchActive &&
+                            ringChambered &&
+                            System.nanoTime() - autoLaunchTimer > Constants.autoLaunchTime * 1E9 &&
+                            poseY < 66/Constants.INCHES_PER_METER &&
+                            target != Constants.Target.NONE){
+                        flywheelIsActive = true;
+                        if(toggleTriggerArticulation()){
+                            autoLaunchTimer = System.nanoTime();
+                        }
+                    }
 
                     if (flywheelIsActive) {
                         launcher.setFlywheelActivePID(true);
@@ -1034,7 +1041,7 @@ public class PoseUG {
                 }
 
                 if(targetPose.baseHeading > -.01) {
-                    if (driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, targetPose.baseHeading)) {
+                    if (driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, closeEnoughDist, targetPose.baseHeading)) {
                         getFieldPosStateThree++;
                     }
                 }

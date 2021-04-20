@@ -192,6 +192,7 @@ public class Turret{
     public boolean rotateCardinalTurret(boolean right){
 
         setTurntableAngle(nextCardinal(getHeading(),right,10));
+
         return true;
     }
 
@@ -214,6 +215,7 @@ public class Turret{
         motor.setPower(pwr);
     }
 
+    double turnError = 0;
     public void movePIDTurret(double Kp, double Ki, double Kd, double currentAngle, double targetAngle) {
 
         //initialization of the PID calculator's output range, target value and multipliers
@@ -226,6 +228,8 @@ public class Turret{
         turretPID.setInputRange(0, 360);
         turretPID.setContinuous();
         turretPID.setInput(currentAngle);
+
+        turnError = diffAngle2(targetAngle, currentAngle);
 
         //calculates the angular correction to apply
         correction = turretPID.performPID();

@@ -653,6 +653,10 @@ public class UG_6832 extends OpMode {
             pwrDamper = .3 * .75;
         }
 
+        if(toggleAllowed(gamepad1.right_bumper, right_bumper, 1)){
+            robot.setAutoLaunchActive(!robot.autoLaunchActive);
+        }
+
         if (notdeadzone(gamepad1.left_stick_y)) {
             pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
         }

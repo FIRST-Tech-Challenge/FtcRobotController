@@ -101,6 +101,8 @@ public class Autonomous {
 
 //            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
+
+
             .addMineralState(ugStateProvider,
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true,  .8,.1),
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .8,.1),
@@ -108,22 +110,19 @@ public class Autonomous {
 
 //            .addState(() -> robot.launcher.WobbleRelease())
 //            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
+            .addSingleState(() -> robot.setAutoLaunchActive(true))
 
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,false, .8,.1))
-            .addState(()-> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true, .6,.1))
 
-//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-//            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, true ,.5))
-//            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB, true, .5))
-//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-//            .addState(() -> robot.launcher.WobbleGrip())
-//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-//            .addState(() -> robot.launcher.setElbowTargetAngle(10))
-//            .addMineralState(ugStateProvider,
-//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_2,false,  .5),
-//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_2, false, .5),
-//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_2, false, .5))
-//
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB,true, .4,.1))
+
+            .addMineralState(ugStateProvider,
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_2,false,  .8,.1),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_2,false,  .8,.1),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_2,false,  .8,.1))
+
 //            .addState(() -> robot.launcher.WobbleRelease())
 //            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
@@ -132,10 +131,9 @@ public class Autonomous {
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-//            .addState(() -> robot.driveToFieldPosition(Constants.Position.TEST_POS_FOR_TESTING,true,.5, .5))
-            .addState(() -> robot.turret.rotateCardinalTurret(false))
-            .addTimedState(6f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
+            .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
+            .addSingleState(()->robot.setAutoLaunchActive(true))
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,true,.2, .1))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
