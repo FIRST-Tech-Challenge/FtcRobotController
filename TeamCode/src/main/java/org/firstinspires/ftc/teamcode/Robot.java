@@ -286,6 +286,7 @@ public class Robot {
         drivetrain.turnInPlace(-7.0,0.5);
         shooter.moveServo(false);
         shooter.moveServo(true);
+        transfer.stopTransfer();
         if(op.getRuntime()>3){
             stopShooter();
         }
