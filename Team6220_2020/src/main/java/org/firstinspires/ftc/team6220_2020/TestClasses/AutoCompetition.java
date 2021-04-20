@@ -2,84 +2,118 @@ package org.firstinspires.ftc.team6220_2020.TestClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_2020.MasterAutonomous;
+import org.firstinspires.ftc.team6220_2020.RingDetectionPipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "Test Autonomous", group = "Autonomous")
 public class AutoCompetition extends MasterAutonomous {
+
+    OpenCvCamera webcam;
+
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         Initialize();
 
-        //turnDegrees(90);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
+        webcam.setPipeline(new RingDetectionPipeline());
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+        });
 
         waitForStart();
 
+        int ringStackHeight = RingDetectionPipeline.ringStackHeight;
 
-        //**this moves it 90*/
-        turnToAngle(45);
-        pauseMillis(1000);
-        turnToAngle(35);
-        driveMecanum(0,0,0);
-//
-        //sleep(2000);
+        pauseMillis(100);
 
-        //while(true){
-        //    telemetry.addData("IMU:",imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-        //    telemetry.update();
-        //}
+        if (RingDetectionPipeline.ringStackHeight != ringStackHeight) {
+            ringStackHeight = RingDetectionPipeline.ringStackHeight;
+        }
 
+        telemetry.addData("Num rings: ", ringStackHeight);
+        telemetry.update();
 
-        //turnDegrees(-270);
+        webcam.stopStreaming();
+        webcam.closeCameraDevice();
 
-        //turnToAngle(75);
-        ////telemetry.addData("Status : ", "Pre Setup");
-        ////telemetry.update();
-        ////runSetup();
-//
-        //telemetry.addData("RPM: ", getMotorTicksPerMinute(motorLauncher, 100));
-        //telemetry.update();
-        //waitForStart();
-//
-        ////telemetry.addData("Status : ", "12 90");
-        ////telemetry.update();
-        ////driveInches(60, 90);
-//
-        ////old 1700 millis
-        //driveMillis(4000,90, 0.25);
-        ////driveMillis(10,180);
-        //pauseMillis(2000);
-//
-//
-        ////driveMillis(800, 180, 0.3);
-//
-        //driveLauncher(1.0);
-        ////driveLauncher(-1.0);
-        //pauseMillis(2200);
-//
-        //fireLauncher(1400);
-        //pauseMillis(2200);
-        //driveMillis(600, 0, 0.25);
-        //pauseMillis(4000);
-//
-        //fireLauncher(1400);
-        //driveMillis(600, 0, 0.25);
-        //pauseMillis(2200);
-//
-        //fireLauncher(1400);
-        //pauseMillis(2000);
-//
-        //driveLauncher(0.0);
-        //driveMillis(500,90, 0.5);
-    }
+        switch (ringStackHeight) {
+            case 0:
+                driveInches(72, 90);
+                pauseMillis(250);
+                driveInches(40, 0);
+                driveLauncher(0.8);
+                pauseMillis(500);
+                fireLauncher();
+                driveInches(7.5, 0);
+                pauseMillis(500);
+                fireLauncher();
+                driveInches(7.5, 0);
+                pauseMillis(500);
+                fireLauncher();
+                driveLauncher(0.0);
+                driveInches(6, 90);
+                break;
 
-    public void driveMillis(double millis, double direction, double power){
-        driveMecanum(Math.toRadians(direction), power, 0.0);
-        pauseMillis(millis);
-        driveMecanum(0.0,0.0,0.0);
+            case 1:
+                driveInches(72, 90);
+                pauseMillis(250);
+                driveInches((24 * Math.sqrt(2.0)), 45);
+                pauseMillis(250);
+                driveInches(24, 270);
+                pauseMillis(250);
+                driveLauncher(0.9);
+                pauseMillis(500);
+                fireLauncher();
+                driveLauncher(0.0);
+                driveInches(12, 270);
+                driveZiptie(1.0);
+                driveBelt(1.0);
+                pauseMillis(1000);
+                driveZiptie(0.0);
+                driveBelt(0.0);
+                driveInches(12, 90);
+                driveInches(16, 0);
+                driveLauncher(0.8);
+                pauseMillis(500);
+                fireLauncher();
+                driveInches(7.5, 0);
+                pauseMillis(500);
+                fireLauncher();
+                driveInches(7.5, 0);
+                pauseMillis(500);
+                fireLauncher();
+                driveLauncher(0.0);
+                driveInches(6, 90);
+                break;
 
+            case 4:
+                driveInches(120, 90);
+                pauseMillis(250);
+                driveInches(48, 270);
+                pauseMillis(250);
+                driveInches(40, 0);
+                driveLauncher(0.8);
+                pauseMillis(500);
+                fireLauncher();
+                driveInches(7.5, 0);
+                pauseMillis(500);
+                fireLauncher();
+                driveInches(7.5, 0);
+                pauseMillis(500);
+                fireLauncher();
+                driveLauncher(0.0);
+                driveInches(6, 90);
+                break;
+        }
     }
 }

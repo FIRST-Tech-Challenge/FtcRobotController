@@ -135,7 +135,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             turningPower = angleDeviation/100;
 
             // We drive the mecanum wheels with the PID value
-            driveMecanum(radDriveAngle, Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), turningPower);
+            driveMecanum(radDriveAngle, Math.max((translationPID.getFilteredValue() / 2), Constants.MINIMUM_DRIVE_POWER), turningPower);
 
             // Update positions using last distance measured by encoders
             xPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() +
@@ -155,12 +155,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
         }
     }
 
-    public void turnDegrees(double degTargetAngle) {
-
-
-
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
+    public void turnDegrees(double targetAngle) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -171,14 +166,15 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
         boolean angleReached = false;
 
         double angleLeft;
+        double angleTraveled;
 
         PIDFilter translationPID;
         translationPID = new PIDFilter(Constants.ROTATION_P, Constants.ROTATION_I, Constants.ROTATION_D);
-
-        double angleTraveled = 0;
 
         while (!angleReached && opModeIsActive()) {
             // This gets the angle change
@@ -186,18 +182,18 @@ public abstract class MasterAutonomous extends MasterOpMode {
             angleTraveled = currentAngle - startAngle;
 
             // This adds a value to the PID loop so it can update
-            angleLeft = degTargetAngle - angleTraveled;
+            angleLeft = targetAngle - angleTraveled;
             translationPID.roll(angleLeft);
 
             // We drive the mecanum wheels with the PID value
-            driveMecanum(0, 0, Math.max(0.075, Constants.MINIMUM_TURNING_POWER));
+            driveMecanum(0.0, 0.0, Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER));
 
             telemetry.addData("Angle Traveled: ", angleTraveled);
             telemetry.addData("IMU: ", currentAngle);
             telemetry.update();
 
-            if (angleTraveled - degTargetAngle <= 1){
-                driveMecanum(0, 0.0, 0.0);
+            if (angleTraveled - targetAngle <= 1) {
+                driveMecanum(0.0, 0.0, 0.0);
                 angleReached = true;
             }
         }
