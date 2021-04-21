@@ -20,17 +20,23 @@ public class TeleOpCompetition extends MasterTeleOp {
             driver1.update();
             driver2.update();
 
+            testLauncher();
+
             driveMecanumWithJoysticks();
             driveZiptiesWithController();
             driveBeltWithController();
             driveLauncherWithController();
             fireLauncherWithTrigger(false);
 
-            if(driver1.isButtonPressed(Button.Y) && driver2.isButtonPressed(Button.Y)){
-                shootPowerShot();
+            if (driver1.isButtonPressed(Button.DPAD_RIGHT) && driver2.isButtonPressed(Button.DPAD_RIGHT)) {
+                powerShotTeleOp();
             }
 
-            if(driver1.isButtonJustPressed(Button.DPAD_UP)){
+            if (driver1.isButtonPressed(Button.DPAD_LEFT) && driver2.isButtonPressed(Button.DPAD_LEFT)) {
+                highGoalTeleOp();
+            }
+
+            if (driver1.isButtonJustPressed(Button.DPAD_UP)) {
                 front = !front;
             }
 

@@ -31,16 +31,16 @@ public abstract class MasterTeleOp extends MasterOpMode {
     public void driveMecanumWithJoysticksSwitchSticks() {
         if (front) {
             // Negated the inputs to flip the front of the robot
-            double turningPower = gamepad1.right_stick_x;
-            double driveAngle = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x);
-            double drivePower = Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x);
+            double turningPower = gamepad1.right_stick_y;
+            double driveAngle = Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            double drivePower = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             driveMecanum(driveAngle, drivePower, turningPower);
         }
         else {
             // Negated the inputs to flip the front of the robot
-            double turningPower = gamepad1.right_stick_x;
-            double driveAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-            double drivePower = Math.hypot(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
+            double turningPower = gamepad1.right_stick_y;
+            double driveAngle = Math.atan2(-gamepad1.left_stick_x, gamepad1.left_stick_y);
+            double drivePower = Math.hypot(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
             driveMecanum(driveAngle, drivePower, turningPower);
         }
     }
@@ -110,19 +110,36 @@ public abstract class MasterTeleOp extends MasterOpMode {
         }
     }
 
-    public void shootPowerShot(){
-        driveInches(180, 26, 0.5);
-
-        driveLauncher(0.94);
-
+    public void powerShotTeleOp() {
+        driveInches(25, 180, 1.0);
+        driveLauncher(0.90);
         pauseMillis(1500);
-
-        for(int i = 0; i < 3; i++){
-            fireLauncher(0);
-            driveInches(7.5,0, 0.2);
-            pauseMillis(750);
-        }
-
+        fireLauncher();
+        driveInches(7.5, 180, 1.0);
+        pauseMillis(1000);
+        fireLauncher();
+        driveInches(7.5, 180, 1.0);
+        pauseMillis(1000);
+        fireLauncher();
+        pauseMillis(1000);
         driveLauncher(0.0);
+    }
+
+    public void highGoalTeleOp() {
+        driveInches(24, 0, 1.0);
+        driveLauncher(0.95);
+        pauseMillis(1500);
+        fireLauncher();
+        pauseMillis(1000);
+        fireLauncher();
+        pauseMillis(1000);
+        fireLauncher();
+        pauseMillis(1000);
+        driveLauncher(0.0);
+    }
+
+    public void testLauncher() {
+        driveLauncher(1.0);
+        telemetry.addData("Motor RPM", getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION);
     }
 }

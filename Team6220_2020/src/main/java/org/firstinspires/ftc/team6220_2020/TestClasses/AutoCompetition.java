@@ -51,7 +51,7 @@ public class AutoCompetition extends MasterAutonomous {
                 driveInches(72, 90, 0.5);
                 pauseMillis(250);
                 driveInches(40, 0, 1.0);
-                driveLauncher(0.8);
+                driveLauncher(0.9);
                 pauseMillis(500);
                 fireLauncher();
                 driveInches(7.5, 0, 1.0);
@@ -83,7 +83,7 @@ public class AutoCompetition extends MasterAutonomous {
                 driveBelt(0.0);
                 driveInches(12, 90, 1.0);
                 driveInches(16, 0, 1.0);
-                driveLauncher(0.8);
+                driveLauncher(0.9);
                 pauseMillis(500);
                 fireLauncher();
                 driveInches(7.5, 0, 1.0);
@@ -102,7 +102,7 @@ public class AutoCompetition extends MasterAutonomous {
                 driveInches(48, 270, 1.0);
                 pauseMillis(250);
                 driveInches(40, 0, 1.0);
-                driveLauncher(0.8);
+                driveLauncher(0.9);
                 pauseMillis(500);
                 fireLauncher();
                 driveInches(7.5, 0, 1.0);
