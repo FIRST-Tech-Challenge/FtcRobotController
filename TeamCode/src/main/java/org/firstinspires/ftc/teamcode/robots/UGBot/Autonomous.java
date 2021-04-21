@@ -115,18 +115,21 @@ public class Autonomous {
 
             .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true, .6,.1))
 
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB,true, .4,.1))
+            .addSingleState(() -> robot.setTarget(Constants.Target.NONE))
+            .addSingleState(() -> robot.setAutoLaunchActive(false))
+
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB,false, .4,.1))
+
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true, .8,.1))
+
 
             .addMineralState(ugStateProvider,
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_2,false,  .8,.1),
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_2,false,  .8,.1),
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_2,false,  .8,.1))
 
-//            .addState(() -> robot.launcher.WobbleRelease())
-//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.NAVIGATE, false, .5,.1))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.NAVIGATE, false, 1,.1))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 

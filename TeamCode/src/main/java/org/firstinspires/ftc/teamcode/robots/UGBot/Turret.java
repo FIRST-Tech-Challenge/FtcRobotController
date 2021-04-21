@@ -117,14 +117,14 @@ public class Turret{
 
             switch (DoT) {
                 case LEFT:
-                    if(diffAngle2(finalHeading, turretHeading) < 90){
+                    if(diffAngle2(finalHeading, turretHeading) < 90 && diffAngle2(finalHeading, turretHeading) > 0){
                         turretTargetHeading = finalHeading;
                         return true;
                     }
                     turretTargetHeading = wrap360(turretHeading - turnIncrement);
                     break;
                 case RIGHT:
-                    if(diffAngle2(finalHeading, turretHeading) > 270){
+                    if(diffAngle2(finalHeading, turretHeading) > 270 && diffAngle2(finalHeading, turretHeading) < 360){
                         turretTargetHeading = finalHeading;
                         return true;
                     }

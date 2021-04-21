@@ -753,6 +753,10 @@ public class PoseUG {
                         }
                     }
 
+                    if(autoLaunchActive && target != Constants.Target.NONE){
+                        flywheelIsActive = true;
+                    }
+
                     if (flywheelIsActive) {
                         launcher.setFlywheelActivePID(true);
                         launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity() * Constants.RPS_MULTIPLIER);
