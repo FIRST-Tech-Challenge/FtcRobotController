@@ -26,6 +26,14 @@ public class TeleOpCompetition extends MasterTeleOp {
             driveLauncherWithController();
             fireLauncherWithTrigger(false);
 
+            if(driver1.isButtonPressed(Button.Y) && driver2.isButtonPressed(Button.Y)){
+                shootPowerShot();
+            }
+
+            if(driver1.isButtonJustPressed(Button.DPAD_UP)){
+                front = !front;
+            }
+
             telemetry.addData("Launcher RPM", (getMotorTicksPerMinute(motorLauncher, 100)) / Constants.AM_37_TICKS_PER_ROTATION);
             telemetry.addData("IMU: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES));
             telemetry.update();

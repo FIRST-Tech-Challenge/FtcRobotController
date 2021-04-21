@@ -80,7 +80,7 @@ public class AutonomousCompetition extends MasterAutonomous {
 
         for(int i = 0; i < 3; i++){
             fireLauncher(0);
-            driveInches(7.5,0);
+            driveInches(7.5,0, 0.2);
             pauseMillis(750);
         }
 
@@ -93,9 +93,9 @@ public class AutonomousCompetition extends MasterAutonomous {
                 //turnToAngle(45);
                 turnToAngle(90);
 
-                for(int i = 0; i < 3; i++){
-                    driveInches(54 / 3,90);
-                }
+                //New method
+                driveInches(54,90, 0.5);
+
                 driveInches(24,-90);
                 break;
 
@@ -103,9 +103,9 @@ public class AutonomousCompetition extends MasterAutonomous {
 
                 turnToAngle(43);
 
-                for(int i = 0; i < 2; i++){
-                    driveInches(84 / 4.0,90);
-                }
+                //New method
+                driveInches(42,90, 0.5);
+
                 driveInches(30,-90);
                 break;
 
@@ -113,9 +113,9 @@ public class AutonomousCompetition extends MasterAutonomous {
 
                 turnToAngle(43);
 
-                for(int i = 0; i < 4; i++){
-                    driveInches(90 / 4.0,90);
-                }
+                //New method
+                driveInches(80,90, 0.5);
+
                 driveInches(64,-90);
                 break;
         }

@@ -97,64 +97,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
         yPos = startPositions[matchStartPosition][1];
     }*/
 
-    public void driveInches(double targetDistance, double degDriveAngle) {
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        boolean distanceReached = false;
-
-        double xPosition = 0;
-        double yPosition = 0;
-        double distanceLeft;
-        double radDriveAngle = Math.toRadians(degDriveAngle);
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        double angleDeviation;
-        double turningPower;
-
-        PIDFilter translationPID;
-        translationPID = new PIDFilter(Constants.TRANSLATION_P, Constants.TRANSLATION_I, Constants.TRANSLATION_D);
-
-        while (!distanceReached && opModeIsActive()) {
-            // This calculates the angle deviation
-            angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle;
-
-            // This calculates the distance traveled in inches
-            double distanceTraveled = Math.sqrt(Math.pow((xPosition - 0), 2) + Math.pow((yPosition - 0), 2));
-
-            // This adds a value to the PID loop so it can update
-            distanceLeft = targetDistance - distanceTraveled;
-            translationPID.roll(distanceLeft);
-
-            turningPower = angleDeviation/100;
-
-            // We drive the mecanum wheels with the PID value
-            driveMecanum(radDriveAngle, Math.max((translationPID.getFilteredValue() / 2), Constants.MINIMUM_DRIVE_POWER), turningPower);
-
-            // Update positions using last distance measured by encoders
-            xPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() +
-                    motorBackLeft.getCurrentPosition() - motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
-
-            yPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() -
-                    motorBackLeft.getCurrentPosition() + motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
-
-            telemetry.addData("Distance Traveled: ", distanceTraveled);
-            telemetry.addData("Deviation: ", angleDeviation);
-            telemetry.update();
-
-            if (distanceTraveled > targetDistance) {
-                driveMecanum(radDriveAngle, 0.0, 0.0);
-                distanceReached = true;
-            }
-        }
-    }
-
     public void turnDegrees(double targetAngle) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

@@ -48,7 +48,7 @@ public class AutoCompetition extends MasterAutonomous {
 
         switch (ringStackHeight) {
             case 0:
-                driveInches(72, 90);
+                driveInches(72, 90, 0.5);
                 pauseMillis(250);
                 driveInches(40, 0);
                 driveLauncher(0.8);
@@ -65,9 +65,9 @@ public class AutoCompetition extends MasterAutonomous {
                 break;
 
             case 1:
-                driveInches(72, 90);
+                driveInches(72, 90, 0.5);
                 pauseMillis(250);
-                driveInches((24 * Math.sqrt(2.0)), 45);
+                driveInches((24 * Math.sqrt(2.0)), 45, 0.5);
                 pauseMillis(250);
                 driveInches(24, 270);
                 pauseMillis(250);
@@ -97,7 +97,7 @@ public class AutoCompetition extends MasterAutonomous {
                 break;
 
             case 4:
-                driveInches(120, 90);
+                driveInches(120, 90,  0.5);
                 pauseMillis(250);
                 driveInches(48, 270);
                 pauseMillis(250);
