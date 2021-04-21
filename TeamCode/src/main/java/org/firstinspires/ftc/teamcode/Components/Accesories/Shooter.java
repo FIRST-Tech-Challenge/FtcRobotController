@@ -76,6 +76,7 @@ public class  Shooter {
 //        op.telemetry.update();
 //        op.sleep(100);
         setVelocity(speed, distance);
+        op.sleep(750);
         if (shooterMotor.getVelocity() > 0) {
 //            op.sleep(100);
 //            op.telemetry.clear();
