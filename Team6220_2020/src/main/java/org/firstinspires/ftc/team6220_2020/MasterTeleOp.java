@@ -11,8 +11,6 @@ public abstract class MasterTeleOp extends MasterOpMode {
     boolean beltJustPressed = false;
     public boolean front = true;
 
-    AutonomousCompetition autoMethods = new AutonomousCompetition();
-
     public void driveMecanumWithJoysticks() {
         if (front) {
             // Negated the inputs to flip the front of the robot

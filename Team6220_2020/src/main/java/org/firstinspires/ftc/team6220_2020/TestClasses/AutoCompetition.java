@@ -50,18 +50,18 @@ public class AutoCompetition extends MasterAutonomous {
             case 0:
                 driveInches(72, 90, 0.5);
                 pauseMillis(250);
-                driveInches(40, 0);
+                driveInches(40, 0, 1.0);
                 driveLauncher(0.8);
                 pauseMillis(500);
                 fireLauncher();
-                driveInches(7.5, 0);
+                driveInches(7.5, 0, 1.0);
                 pauseMillis(500);
                 fireLauncher();
-                driveInches(7.5, 0);
+                driveInches(7.5, 0, 1.0);
                 pauseMillis(500);
                 fireLauncher();
                 driveLauncher(0.0);
-                driveInches(6, 90);
+                driveInches(6, 90, 1.0);
                 break;
 
             case 1:
@@ -69,50 +69,50 @@ public class AutoCompetition extends MasterAutonomous {
                 pauseMillis(250);
                 driveInches((24 * Math.sqrt(2.0)), 45, 0.5);
                 pauseMillis(250);
-                driveInches(24, 270);
+                driveInches(24, 270, 1.0);
                 pauseMillis(250);
                 driveLauncher(0.9);
                 pauseMillis(500);
                 fireLauncher();
                 driveLauncher(0.0);
-                driveInches(12, 270);
+                driveInches(12, 270, 1.0);
                 driveZiptie(1.0);
                 driveBelt(1.0);
                 pauseMillis(1000);
                 driveZiptie(0.0);
                 driveBelt(0.0);
-                driveInches(12, 90);
-                driveInches(16, 0);
+                driveInches(12, 90, 1.0);
+                driveInches(16, 0, 1.0);
                 driveLauncher(0.8);
                 pauseMillis(500);
                 fireLauncher();
-                driveInches(7.5, 0);
+                driveInches(7.5, 0, 1.0);
                 pauseMillis(500);
                 fireLauncher();
-                driveInches(7.5, 0);
+                driveInches(7.5, 0, 1.0);
                 pauseMillis(500);
                 fireLauncher();
                 driveLauncher(0.0);
-                driveInches(6, 90);
+                driveInches(6, 90, 1.0);
                 break;
 
             case 4:
                 driveInches(120, 90,  0.5);
                 pauseMillis(250);
-                driveInches(48, 270);
+                driveInches(48, 270, 1.0);
                 pauseMillis(250);
-                driveInches(40, 0);
+                driveInches(40, 0, 1.0);
                 driveLauncher(0.8);
                 pauseMillis(500);
                 fireLauncher();
-                driveInches(7.5, 0);
+                driveInches(7.5, 0, 1.0);
                 pauseMillis(500);
                 fireLauncher();
-                driveInches(7.5, 0);
+                driveInches(7.5, 0, 1.0);
                 pauseMillis(500);
                 fireLauncher();
                 driveLauncher(0.0);
-                driveInches(6, 90);
+                driveInches(6, 90, 1.0);
                 break;
         }
     }

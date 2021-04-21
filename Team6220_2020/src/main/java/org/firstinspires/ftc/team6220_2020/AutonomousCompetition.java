@@ -33,14 +33,6 @@ public class AutonomousCompetition extends MasterAutonomous {
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
-
-        //for(int i = 0; i < 100; i++){
-        //    telemetry.addData("pixel: ", RingDetectionPipeline.ringPixelArea);
-        //    telemetry.update();
-        //    sleep(100);
-        //}
-
-
         waitForStart();
 
         int ringStackHeight = RingDetectionPipeline.ringStackHeight;
@@ -54,25 +46,25 @@ public class AutonomousCompetition extends MasterAutonomous {
         webcam.stopStreaming();
         webcam.closeCameraDevice();
 
-        driveInches(24 * Math.sqrt(2.0), 45);
+        driveInches(24 * Math.sqrt(2.0), 45, 1.0);
 
         switch (ringStackHeight){
             case 0:
-                driveInches(50,90);
+                driveInches(50,90, 1.0);
                 pauseMillis(200);
-                driveInches(6,-90);
+                driveInches(6,-90, 1.0);
                 break;
 
             case 1:
 
             case 4:
-                driveInches(52,90);
+                driveInches(52,90, 1.0);
                 pauseMillis(200);
-                driveInches(10,-90);
+                driveInches(10,-90, 1.0);
                 break;
         }
 
-        driveInches(4,180);
+        driveInches(4,180, 1.0);
 
         driveLauncher(0.94);
 
@@ -88,7 +80,7 @@ public class AutonomousCompetition extends MasterAutonomous {
 
         switch (ringStackHeight){
             case 0:
-                driveInches(16,90);
+                driveInches(16,90, 1.0);
 
                 //turnToAngle(45);
                 turnToAngle(90);
@@ -96,7 +88,7 @@ public class AutonomousCompetition extends MasterAutonomous {
                 //New method
                 driveInches(54,90, 0.5);
 
-                driveInches(24,-90);
+                driveInches(24,-90, 1.0);
                 break;
 
             case 1:
@@ -106,7 +98,7 @@ public class AutonomousCompetition extends MasterAutonomous {
                 //New method
                 driveInches(42,90, 0.5);
 
-                driveInches(30,-90);
+                driveInches(30,-90, 1.0);
                 break;
 
             case 4:
@@ -116,7 +108,7 @@ public class AutonomousCompetition extends MasterAutonomous {
                 //New method
                 driveInches(80,90, 0.5);
 
-                driveInches(64,-90);
+                driveInches(64,-90, 1.0);
                 break;
         }
 
