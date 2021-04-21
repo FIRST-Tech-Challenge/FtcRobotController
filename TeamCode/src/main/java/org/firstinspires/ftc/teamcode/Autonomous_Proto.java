@@ -28,9 +28,11 @@ public class Autonomous_Proto extends LinearOpMode {
     private DcMotor lb;
     private DcMotor rb;
     private CRServo SoN;
-    private Servo pushover;         //empties hopper
-    private DcMotor spindoctor;     //spins wheels
-    
+    private Servo pushover = null;  //empties hopper
+    private Servo wobble = null;    //wobble goal arm
+    private DcMotor spindoctorL;    //spins wheels
+    private DcMotor spindoctorR;    //spins wheels
+    private DcMotor factory;
 
     private ColorSensor CS;
     private DistanceSensor DS;
@@ -48,22 +50,27 @@ public class Autonomous_Proto extends LinearOpMode {
         telemetry.addData("Status", "Ready to run");
         telemetry.update();
 
-        lf  = hardwareMap.get(DcMotor.class, "lf");
+        lf = hardwareMap.get(DcMotor.class, "lf");
         rf = hardwareMap.get(DcMotor.class, "rf");
-        lb  = hardwareMap.get(DcMotor.class, "lb");
+        lb = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
         SoN = hardwareMap.get(CRServo.class, "SoN");
-        spindoctor = hardwareMap.get(DcMotorEx.class, "spindoctor");
         pushover = hardwareMap.get(Servo.class, "pushover");
+        wobble = hardwareMap.get(Servo.class, "wobble");
+        spindoctorL = hardwareMap.get(DcMotor.class, "spinL");
+        spindoctorR = hardwareMap.get(DcMotor.class, "spinR");
+        factory = hardwareMap.get(DcMotor.class,"factory");
         CS = hardwareMap.get(ColorSensor.class, "cs");
         DS = hardwareMap.get(DistanceSensor.class, "ds");
 
-        lf.setDirection(DcMotor.Direction.FORWARD);
-        rf.setDirection(DcMotor.Direction.REVERSE);
-        lb.setDirection(DcMotor.Direction.FORWARD);
+        lf.setDirection(DcMotor.Direction.REVERSE);
+        rf.setDirection(DcMotor.Direction.FORWARD);
+        lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
         SoN.setDirection(CRServo.Direction.FORWARD);
-        spindoctor.setDirection(DcMotor.Direction.FORWARD);
+        spindoctorL.setDirection(DcMotorSimple.Direction.FORWARD);
+        spindoctorR.setDirection(DcMotorSimple.Direction.REVERSE);
+        factory.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
         runtime.reset();
@@ -81,28 +88,46 @@ public class Autonomous_Proto extends LinearOpMode {
                 distance = 0;
             }
 
-            spindoctor.setPower(0);
+            spindoctorL.setPower(0);
+            spindoctorR.setPower(0);
             SoN.setPower(0);
+            lf.setPower(0);
+            rf.setPower(0);
+            lb.setPower(0);
+            rb.setPower(0);
+            factory.setPower(0);
+            sleep(250);
+
+            spindoctorL.setPower(0);
+            spindoctorR.setPower(0);
+            lf.setPower(-1.0);
+            rf.setPower(-1.0);
+            lb.setPower(-1.0);
+            rb.setPower(-1.0);
+            sleep(1000);
+
+            spindoctorL.setPower(0);
+            spindoctorR.setPower(0);
             lf.setPower(0);
             rf.setPower(0);
             lb.setPower(0);
             rb.setPower(0);
             sleep(250);
 
-            spindoctor.setPower(0);
-            SoN.setPower(0);
-            lf.setPower(-1.0);
-            rf.setPower(-1.0);
-            lb.setPower(-1.0);
-            rb.setPower(-1.0);
-            sleep(500);
+            spindoctorL.setPower(0);
+            spindoctorR.setPower(0);
+            lf.setPower(0);
+            rf.setPower(0);
+            lb.setPower(0);
+            rb.setPower(0);
+            sleep(250);
 
             if (color == 1 && distance == 1){
 
 
                 // Autonomous A: four rings; farthest box
-                spindoctor.setPower(0);
-                SoN.setPower(0);
+                spindoctorL.setPower(0);
+                spindoctorR.setPower(0);
                 lf.setPower(0);
                 rf.setPower(0);
                 lb.setPower(0);
@@ -114,8 +139,8 @@ public class Autonomous_Proto extends LinearOpMode {
                 if (color == 1 && distance == 0){
 
                     // Autonomous B: one ring; middle box
-                    spindoctor.setPower(0);
-                    SoN.setPower(0);
+                    spindoctorL.setPower(0);
+                    spindoctorR.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
                     lb.setPower(0);
@@ -125,8 +150,8 @@ public class Autonomous_Proto extends LinearOpMode {
                 }else {
 
                     //Autonomous C: no rings; nearest box
-                    spindoctor.setPower(0);
-                    SoN.setPower(0);
+                    spindoctorL.setPower(0);
+                    spindoctorR.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
                     lb.setPower(0);
