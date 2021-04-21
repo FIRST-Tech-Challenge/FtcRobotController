@@ -20,19 +20,23 @@ public class CorgiFinalAutoHighGoal extends LinearOpMode {
         telemetry.update();
         if(rings!=1&&rings!=4) {
         // 0 RING AUTO
-            robot.goToPosition(-54,4,0,0.9);
+            robot.goToPosition(-54,4,0,0.8);
             robot.shootHighGoal(3);
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGRAB);
             robot.goToPosition(-62,-15,0,1);
             robot.openWobbleGoalClaw();
-            robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGRAB);
+            sleep(100);
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
             robot.turnInPlace(0, 1.0);
 //            robot.goToPosition(-5,39,45,0.8);
-            robot.goToPosition(-11,25,90,0.8);
+            robot.goToPosition(-13.5,25,90,0.75);
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
             robot.closeWobbleGoalClaw();
             sleep(600);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-            robot.goToPosition(-62,-12,0,0.8);
+            robot.goToPosition(-64,-14,0,0.8);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGRAB);
+            sleep(100);
             robot.openWobbleGoalClaw();
             sleep(250);
             robot.goToPosition(-66, -12,0,0.5);
