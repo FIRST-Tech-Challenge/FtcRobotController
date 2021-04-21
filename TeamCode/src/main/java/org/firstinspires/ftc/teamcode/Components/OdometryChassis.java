@@ -749,11 +749,11 @@ public class OdometryChassis extends BasicChassis {
                 }
                 rightPower = -direction*min(abs(power*gain*error),abs(power));
                 leftPower = -rightPower;
-                    if (abs(leftPower) < 0.12) {
-                        leftPower *= 0.12 / abs(leftPower);
+                    if (abs(leftPower) < 0.14) {
+                        leftPower *= 0.14 / abs(leftPower);
                     }
-                    if (abs(rightPower) < 0.12) {
-                        rightPower *= 0.12 / abs(rightPower);
+                    if (abs(rightPower) < 0.14) {
+                        rightPower *= 0.14 / abs(rightPower);
                     }
                     motorLeftBack.setPower(leftPower);
                 motorLeftFront.setPower(leftPower);

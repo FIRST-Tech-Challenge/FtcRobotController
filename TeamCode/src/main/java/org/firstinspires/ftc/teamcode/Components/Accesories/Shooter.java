@@ -76,7 +76,6 @@ public class  Shooter {
 //        op.telemetry.update();
 //        op.sleep(100);
         setVelocity(speed, distance);
-        op.sleep(1000);
         if (shooterMotor.getVelocity() > 0) {
 //            op.sleep(100);
 //            op.telemetry.clear();
@@ -84,13 +83,13 @@ public class  Shooter {
 //            op.telemetry.update();
         }
         for (int i = 0; i < rings; i++) {
+            if(i>0) {
+                op.sleep(50);
+            }
             moveServo(false);
             moveServo(true);
-            op.sleep(50);
         }
-        if(op.getRuntime()>3){
-            stopShooter();
-        }
+        return;
     }
 
     public void moveServo(boolean direction) {
