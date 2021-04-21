@@ -189,9 +189,9 @@ public class Final_Teleop extends LinearOpMode {
 
             //shooter power set
             if (gamepad2.right_trigger >= deadzone) {
-                spinPower = 1;
+                spinPower = 0.75;
             } else if (gamepad2.right_bumper) {
-                spinPower = -1;
+                spinPower = -0.75;
             }
             // JH: no else condition needed, they're set to 0 at the beginning of the cycle
 
