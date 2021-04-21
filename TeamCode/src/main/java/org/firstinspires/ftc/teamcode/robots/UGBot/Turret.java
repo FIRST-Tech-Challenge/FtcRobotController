@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
+import static org.firstinspires.ftc.teamcode.util.Conversions.between360;
+import static org.firstinspires.ftc.teamcode.util.Conversions.diffAngle2;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
@@ -83,7 +85,7 @@ public class Turret{
 
     }
 
-    public void update(){
+    public void update(double baseHeading){
 
 
         //IMU Update
@@ -96,6 +98,33 @@ public class Turret{
             offsetPitch = wrapAngleMinus(imuAngles.thirdAngle, turretPitch);
             initialized = true;
         }
+
+        double degreesOfSeparationForBase = diffAngle2(turretHeading, baseHeading);
+        double degreesOfSeparationForTarget = diffAngle2(turretHeading, turretTargetHeading);
+        double dangerLeft = wrapAngleMinus(baseHeading,Constants.DANGER_ZONE_WIDTH/2);
+        double dangerRight = (baseHeading + Constants.DANGER_ZONE_WIDTH/2) % 360;
+        double theMrVsSpecialVariable = Math.min(diffAngle2(turretHeading,dangerLeft), diffAngle2(turretHeading,dangerRight));
+        double directionOfTurn = degreesOfSeparationForTarget - 180;
+        double directionOfDanger = degreesOfSeparationForBase - 180;
+
+        if(between360(turretTargetHeading, dangerLeft, dangerRight)){
+            if(directionOfDanger > 0){
+                turretTargetHeading = (dangerLeft - Constants.DANGER_ZONE_WIDTH/4) % 360;
+            }
+            else{
+                turretTargetHeading = (dangerRight + Constants.DANGER_ZONE_WIDTH/4) % 360;
+            }
+        }
+
+        if(between360(dangerLeft, turretHeading, turretTargetHeading) && between360(dangerRight, turretHeading, turretTargetHeading)){
+            if(directionOfTurn > 0){
+                turretTargetHeading = (turretHeading + 20) % 360;
+            }
+            else{
+                turretTargetHeading = (turretHeading - 20) % 360;
+            }
+        }
+
 
 
         turretHeading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
@@ -117,14 +146,14 @@ public class Turret{
 
             switch (DoT) {
                 case LEFT:
-                    if(diffAngle2(finalHeading, turretHeading) < 90 && diffAngle2(finalHeading, turretHeading) > 0){
+                    if(diffAngle2(finalHeading, turretHeading) < 90 ){
                         turretTargetHeading = finalHeading;
                         return true;
                     }
                     turretTargetHeading = wrap360(turretHeading - turnIncrement);
                     break;
                 case RIGHT:
-                    if(diffAngle2(finalHeading, turretHeading) > 270 && diffAngle2(finalHeading, turretHeading) < 360){
+                    if(diffAngle2(finalHeading, turretHeading) > 270 ){
                         turretTargetHeading = finalHeading;
                         return true;
                     }
@@ -137,25 +166,6 @@ public class Turret{
 
         return false;
     }
-
-    public double diffAngle2(double angle1, double angle2){
-
-        double diff = angle1 - angle2;
-
-        //allow wrap around
-
-        if (Math.abs(diff) > 180)
-        {
-            if (diff > 0) {
-                diff -= 360;
-            } else {
-                diff += 360;
-            }
-        }
-        return diff;
-    }
-
-
 
     /**
      * assign the current heading of the robot to a specific angle

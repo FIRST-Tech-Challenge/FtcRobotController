@@ -628,9 +628,9 @@ public class UG_6832 extends OpMode {
                 robot.articulate(PoseUG.Articulation.autoIntake);
         }
 
-        robot.launcher.update();
-        robot.turret.update();
-        robot.intake.update();
+//        robot.launcher.update();
+//        robot.turret.update(); //todo- make sure there wasn't a reason this was here
+//        robot.intake.update();
     }
 
     private void joystickDrive() { //apple
@@ -752,9 +752,9 @@ public class UG_6832 extends OpMode {
         }
 
 
-        robot.launcher.update();
-        robot.turret.update();
-        robot.intake.update();
+//        robot.launcher.update();
+//        robot.turret.update(); //todo- make sure there wasn't a reason this was here
+//        robot.intake.update();
     }
 
     private void joystickDrivePregameMode() {

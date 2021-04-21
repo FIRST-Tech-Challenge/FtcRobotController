@@ -22,11 +22,11 @@ public class Conversions {
      * @param angle2
      * @return
      */
-    public double diffAngle(double angle1, double angle2){
+    public static double diffAngle(double angle1, double angle2){
         return Math.abs(angle1 - angle2) < Math.abs(angle2-angle1) ? Math.abs(angle1 - angle2) : Math.abs(angle2-angle1);
     }
 
-    public double diffAngle2(double angle1, double angle2){
+    public static double diffAngle2(double angle1, double angle2){
 
         double diff = angle1 - angle2;
 
@@ -55,6 +55,10 @@ public class Conversions {
 
     public static boolean between(double value, double minValue, double maxValue){
         return (value>=minValue && value<=maxValue);
+    }
+
+    public static boolean between360(double value, double leftAngle, double rightAngle){
+        return (diffAngle2(leftAngle, value) > 0 && diffAngle2(rightAngle, value) < 0);
     }
 
     public static double wrapAngle(double angle){

@@ -5,7 +5,7 @@
             <RevRobotics40HDHexMotor name="elbow" port="1" />
             <RevRobotics40HDHexMotor name="flywheelMotor" port="2" />
             <RevRobotics40HDHexMotor name="turret" port="0" />
-            <RevRobotics40HDHexMotor name="headlight" port="3" />
+            <RevRobotics40HDHexMotor name="gripperExtendABob" port="3" />
 
             <Servo name="triggerServo" port="0" />
             <Servo name="gripperServo" port="4" />

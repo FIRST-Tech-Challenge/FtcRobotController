@@ -63,7 +63,6 @@ public class PoseUG {
     PIDController alignPID = new PIDController(ALIGN_P, ALIGN_I, ALIGN_D);
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
-    public double brightness = 0.0; //headlamp brightness - max value should be .8 on a fully charged battery
     public static double turnP = 0.0055; // proportional constant applied to error in degrees
     public static double turnI = 0.0; // integral constant
     public static double turnD = .13; // derivative constant
@@ -86,11 +85,11 @@ public class PoseUG {
     private DcMotor motorFrontLeft = null;
     private DcMotor motorBackRight = null;
     private DcMotor elbow = null;
-    private DcMotor headlight = null;
     private DcMotor intakeMotor = null;
     private Servo tiltServo = null;
     private Servo outServo = null;
     private DcMotorEx flywheelMotor = null;
+    private DcMotor gripperExtendABob = null;
     private DcMotor turretMotor = null;
     private Servo triggerServo = null;
     private Servo gripperServo = null;
@@ -318,10 +317,7 @@ public class PoseUG {
         this.elbow = this.hwMap.dcMotor.get("elbow");
 
         this.flywheelMotor = (DcMotorEx) this.hwMap.dcMotor.get("flywheelMotor");
-        this.headlight = this.hwMap.dcMotor.get("headlight");
-        this.headlight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        brightness = .8;
-
+        this.gripperExtendABob = (DcMotor) this.hwMap.dcMotor.get("gripperExtendABob");
         this.triggerServo = this.hwMap.servo.get("triggerServo");
         this.gripperServo = this.hwMap.servo.get("gripperServo");
 
@@ -365,7 +361,7 @@ public class PoseUG {
          * driveRight.setDirection(DcMotorSimple.Direction.FORWARD); }
          */
         // setup subsystems
-        launcher = new Launcher(elbow, flywheelMotor, triggerServo, gripperServo);
+        launcher = new Launcher(elbow, flywheelMotor, gripperExtendABob, triggerServo, gripperServo);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
         intake = new Intake(intakeMotor, tiltServo, outServo);
@@ -708,7 +704,7 @@ public class PoseUG {
         trajSol = trajCalc.getTrajectorySolution();
 
         launcher.update();
-        turret.update();
+        turret.update(getHeading());
         intake.update(); //watermelon
         maintainTarget();
 
@@ -768,7 +764,6 @@ public class PoseUG {
     }
 
     public void updateSensors(boolean isActive) {
-        headlight.setPower(Math.max(-brightness, -.8));
         update(imu, 0, 0, isActive);
     }
 

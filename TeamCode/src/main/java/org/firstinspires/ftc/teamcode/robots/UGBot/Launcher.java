@@ -25,6 +25,7 @@ public class Launcher {
     //actuators
     DcMotor elbow = null;
     DcMotorEx flywheelMotor = null;
+    DcMotor gripperExtendABob = null;
     Servo servoTrigger = null;
     Servo servoGripper = null;
 
@@ -56,20 +57,23 @@ public class Launcher {
     public int actualElbowMax = 1465;
     public int elbowMid = (actualElbowMax + elbowMin)/2;
     public int elbowMaxSafetyOffset = 70; //makes sure that the robot doesn't try and extend to the elbow max exactly
+    public int gripperOutTargetPos = 0;
 
-    public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, Servo servoTrigger, Servo servoGripper){
+    public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, DcMotor gripperExtendABob, Servo servoTrigger, Servo servoGripper){
 
         this.elbow = elbow;
         this.flywheelMotor = flywheelMotor;
         this.servoTrigger = servoTrigger;
         this.servoGripper = servoGripper;
+        this.gripperExtendABob = gripperExtendABob;
 
         this.elbow.setTargetPosition(elbow.getCurrentPosition());
         this.elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        this.gripperExtendABob.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;
+
 
         //PID
         lastUpdateTime = System.currentTimeMillis();
@@ -96,6 +100,7 @@ public class Launcher {
 
             servoTrigger.setPosition(servoNormalize(triggerTargetPos));
             servoGripper.setPosition(servoNormalize(gripperTargetPos));
+            gripperExtendABob.setTargetPosition(gripperOutTargetPos);
 
             flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) / 1E9);
 
@@ -134,6 +139,21 @@ public class Launcher {
         elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //flywheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
+    //gripper mehtods
+
+    public void setGripperOutTargetPos(int pos){
+        if(pos != Constants.GRIPPER_IN_POS){
+            Constants.GRIPPER_IS_OUT = true;
+            gripperOutTargetPos = pos;
+        }
+        else{
+            Constants.GRIPPER_IS_OUT = false;
+            gripperOutTargetPos = pos;
+        }
+    }
+
+
 
     public boolean WobbleGrip(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;return true;}
     public boolean WobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;return true;}
