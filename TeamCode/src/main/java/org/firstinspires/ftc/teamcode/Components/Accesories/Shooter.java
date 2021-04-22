@@ -76,7 +76,7 @@ public class  Shooter {
 //        op.telemetry.update();
 //        op.sleep(100);
         setVelocity(speed, distance);
-        op.sleep(1000);
+        op.sleep(750);
         if (shooterMotor.getVelocity() > 0) {
 //            op.sleep(100);
 //            op.telemetry.clear();
@@ -84,13 +84,13 @@ public class  Shooter {
 //            op.telemetry.update();
         }
         for (int i = 0; i < rings; i++) {
+            if(i>0) {
+                op.sleep(50);
+            }
             moveServo(false);
             moveServo(true);
-            op.sleep(50);
         }
-        if(op.getRuntime()>3){
-            stopShooter();
-        }
+        return;
     }
 
     public void moveServo(boolean direction) {
@@ -101,7 +101,7 @@ public class  Shooter {
         }
         op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
-        op.sleep(90);//170
+        op.sleep(130);//170
     }
 
     public void shootGoalTeleop(int distance) {

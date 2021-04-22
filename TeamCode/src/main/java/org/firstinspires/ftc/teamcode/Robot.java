@@ -269,7 +269,7 @@ public class Robot {
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
         drivetrain.turnInPlace(-1.6,1.0);
-        shooter.setVelocity(1330, 1000);
+        shooter.setVelocity(1375, 1000);
         op.sleep(1600);
         if (shooter.getRPM()*28/60 > 0) {
             op.sleep(100);
@@ -279,8 +279,8 @@ public class Robot {
         }
         shooter.moveServo(false);
         shooter.moveServo(true);
-        shooter.setVelocity(1355, 1000);
-        drivetrain.turnInPlace(3.1,0.6);
+        shooter.setVelocity(1375, 1000);
+        drivetrain.turnInPlace(3.3,0.6);
         shooter.moveServo(false);
         shooter.moveServo(true);
         drivetrain.turnInPlace(-7.0,0.5);
@@ -291,6 +291,64 @@ public class Robot {
             stopShooter();
         }
     }
+    public void shootThreePowerShotBounceBack() {
+        ElapsedTime runtime = new ElapsedTime();
+        op.telemetry.addData("speed: ", shooter.getRPM());
+        op.telemetry.update();
+        drivetrain.turnInPlace(-1.6,1.0);
+        shooter.setVelocity(1330, 1000);
+        op.sleep(1600);
+        if (shooter.getRPM()*28/60 > 0) {
+            op.sleep(100);
+            op.telemetry.clear();
+            op.telemetry.addData("status", shooter.getRPM());
+            op.telemetry.update();
+        }
+        shooter.moveServo(false);
+        shooter.moveServo(true);
+        shooter.setVelocity(1330, 1000);
+        drivetrain.turnInPlace(3.3,0.6);
+        shooter.moveServo(false);
+        shooter.moveServo(true);
+        drivetrain.turnInPlace(-7.0,0.5);
+        shooter.moveServo(false);
+        shooter.moveServo(true);
+        transfer.stopTransfer();
+        if(op.getRuntime()>3){
+            stopShooter();
+        }
+    }
+
+    public void shootThreePowerShotTransfer() {
+        ElapsedTime runtime = new ElapsedTime();
+        op.telemetry.addData("speed: ", shooter.getRPM());
+        op.telemetry.update();
+        drivetrain.turnInPlace(-1.6,1.0);
+        shooter.setVelocity(1350, 1000);
+        op.sleep(1600);
+        if (shooter.getRPM()*28/60 > 0) {
+            op.sleep(100);
+            op.telemetry.clear();
+            op.telemetry.addData("status", shooter.getRPM());
+            op.telemetry.update();
+        }
+        transfer.reverseTransfer();
+        shooter.moveServo(false);
+        shooter.moveServo(true);
+        shooter.setVelocity(1375, 1000);
+        drivetrain.turnInPlace(3.1,0.6);
+        shooter.moveServo(false);
+        shooter.moveServo(true);
+        transfer.startTransfer();
+        drivetrain.turnInPlace(-7.2,0.5);
+        shooter.moveServo(false);
+        shooter.moveServo(true);
+        transfer.stopTransfer();
+        if(op.getRuntime()>3){
+            stopShooter();
+        }
+    }
+
     public void intakeAndShootHighGoal(){
         ElapsedTime runtime = new ElapsedTime();
         shooter.setVelocity(1675, 1000);
