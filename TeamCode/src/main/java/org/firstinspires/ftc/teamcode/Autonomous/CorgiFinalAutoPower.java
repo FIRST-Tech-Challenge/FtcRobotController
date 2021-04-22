@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
-@Autonomous(name= "CorgiFinalAutoPower", preselectTeleOp = "OneGPTeleop")
+@Autonomous(name= "CorgiFinalAutoPower", preselectTeleOp = "TwoGPTeleop")
 
 public class CorgiFinalAutoPower extends LinearOpMode {
     @Override
@@ -30,7 +30,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
 //            robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
             robot.goToPosition(-54,22,0,1);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-            robot.shootThreePowerShot();
+            robot.shootThreePowerShotBounceBack();
             robot.goToPosition(-22,14,160,0.7);
             robot.closeWobbleGoalClaw();
             sleep(250);
@@ -44,13 +44,13 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.goToPosition(-117.5,-3,90,1);
             robot.startIntake();
             robot.startTransfer();
-            robot.goToPosition(-117.5,44,90,0.5);
+            robot.goToPosition(-116.5,47,90,0.5);
             robot.reverseTransfer();
             sleep(100);
             robot.startTransfer();
-            robot.stopIntake();
             robot.setVelocity(1650,1000);
             robot.goToPosition(-56,4,0,1);
+            robot.stopIntake();
             robot.stopTransfer();
             robot.shootHighGoal(3);
             robot.goToPosition(-68,6,0,0.8);
@@ -58,7 +58,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
         }
         else if(rings==1) {
             robot.goToPosition(-55,-16,0,1);
-            robot.goToPosition(-75,8,0,1);
+            robot.goToPosition(-77,6,0,1);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
             sleep(300);
             robot.openWobbleGoalClaw();
@@ -68,11 +68,11 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.startIntake();
             robot.startTransfer();
             robot.goToPosition(-51,4,0,1);
-            robot.setVelocity(1330,1000);
+            robot.setVelocity(1350,1000);
             robot.stopIntake();
             robot.goToPosition(-54,22,0,1);
 //            robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-            robot.shootThreePowerShot();
+            robot.shootThreePowerShotBounceBack();
             robot.stopTransfer();
             robot.turnInPlace(180,0.7);
             robot.goToPosition(-23,9,180,0.95);
@@ -84,20 +84,21 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.openWobbleGoalClaw();
             sleep(100);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
-            robot.goToPosition(-116,14,90,1);
+            robot.goToPosition(-117.5,14,90,1);
             robot.startIntake();
             robot.startTransfer();
-            robot.goToPosition(-116,44,90,0.7);
+            robot.goToPosition(-116.5,47,90,0.7);
             robot.reverseTransfer();
             robot.setVelocity(1650,1000);
             robot.startTransfer();
-            robot.stopIntake();
+            //robot.stopIntake();
             //            robot.setVelocity(1600,1000);
 //            robot.goToPosition(-60,18,9,1);
 //            robot.stopTransfer();
 //            robot.shootHighGoalTest(1600,1000,2);
-            robot.goToPosition(-56,4,0,1);
+            robot.goToPosition(-54,4,0,1);
             robot.stopTransfer();
+            robot.stopIntake();
             robot.shootHighGoal(3);
             robot.goToPosition(-70,4,0,0.1);
             stop();
@@ -146,7 +147,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
         else if(rings==4) {
             robot.goToPosition(-55,-16,0,0.95);
             robot.goToPosition(-106,-16,0,0.6);
-            robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
             sleep(250);
             robot.openWobbleGoalClaw();
             sleep(50);
