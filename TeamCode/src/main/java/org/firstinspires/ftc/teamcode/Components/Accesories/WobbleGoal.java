@@ -10,6 +10,7 @@ package org.firstinspires.ftc.teamcode.Components.Accesories;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class WobbleGoal {
@@ -32,14 +33,14 @@ public class WobbleGoal {
         this.op = opMode;
 
         //getting the motor & servo from the hardware map
-        wobbleGoalMotor = (DcMotor) opMode.hardwareMap.get("wobbleGoalMotor");
+        wobbleGoalMotor = (DcMotorEx) opMode.hardwareMap.get("wobbleGoalMotor");
         wobbleGoalServoClaw = op.hardwareMap.servo.get("wobbleGoalServoClaw");
-        wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
+        wobbleGoalMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        wobbleGoalMotor.setDirection(DcMotorEx.Direction.FORWARD);
         if(!teleOp) {
-            wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wobbleGoalMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         }
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         closeWobbleGoalClaw();
         goToPosition(Position.REST);
         opMode.sleep(500);
@@ -52,8 +53,11 @@ public class WobbleGoal {
         if (p == Position.REST) {
             int ticksForREST = 0;
             i = ticksForREST;
+        } else if (p == Position.AutoGRAB) {
+            int ticksForGRAB = 700;
+            i = ticksForGRAB;
         } else if (p == Position.GRAB) {
-            int ticksForGRAB = 730;
+            int ticksForGRAB = 700;
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
             int ticksForRAISE = 280;

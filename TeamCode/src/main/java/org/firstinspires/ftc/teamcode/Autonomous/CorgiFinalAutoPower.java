@@ -22,7 +22,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.goToPosition(-56,-15,0,1.0);
 //            robot.moveWobbleGoalToPosition(WobbleGoal.Position.DROP);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-            sleep(350);
+            sleep(380);
             robot.openWobbleGoalClaw();
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
             sleep(150);
@@ -59,8 +59,8 @@ public class CorgiFinalAutoPower extends LinearOpMode {
         else if(rings==1) {
             robot.goToPosition(-55,-16,0,1);
             robot.goToPosition(-77,6,0,1);
-            robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-            sleep(300);
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
+            sleep(370);
             robot.openWobbleGoalClaw();
             robot.setVelocity(1650,1000);
             robot.goToPosition(-57,4,0,1);
@@ -71,7 +71,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.setVelocity(1350,1000);
             robot.stopIntake();
             robot.goToPosition(-54,22,0,1);
-//            robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
             robot.shootThreePowerShotBounceBack();
             robot.stopTransfer();
             robot.turnInPlace(180,0.7);
@@ -146,7 +146,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
         }
         else if(rings==4) {
             robot.goToPosition(-55,-16,0,0.95);
-            robot.goToPosition(-106,-16,0,0.6);
+            robot.goToPosition(-106,-16,0,0.9);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
             sleep(250);
             robot.openWobbleGoalClaw();
@@ -181,7 +181,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.turnInPlace(180,0.7);
             robot.goToPosition(-30,9,180,1);
             robot.turnInPlace(180,0.7);
-            robot.goToPosition(-20.5,8.5,178,0.9);
+            robot.goToPosition(-23.5,8.5,178,0.9);
             robot.closeWobbleGoalClaw();
             sleep(250);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);

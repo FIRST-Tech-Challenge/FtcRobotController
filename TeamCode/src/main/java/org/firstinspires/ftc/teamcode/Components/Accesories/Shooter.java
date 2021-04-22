@@ -101,7 +101,7 @@ public class  Shooter {
         }
         op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
-        op.sleep(90);//170
+        op.sleep(130);//170
     }
 
     public void shootGoalTeleop(int distance) {
