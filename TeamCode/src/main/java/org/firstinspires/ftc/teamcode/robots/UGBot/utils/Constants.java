@@ -76,12 +76,12 @@ public class Constants {
     public static int  ELBOW_ZERO_DEGREES_OFFSET = 141;
     public static double ILLEGAL_SHOOTING_DISTANCE = 1.8288;
 
-    public static int WOBBLE_GRIPPER_CLOSED = 900;
-    public static int WOBBLE_GRIPPER_STOWED = 2100;
+    public static int WOBBLE_GRIPPER_CLOSED = 2100;
+    public static int WOBBLE_GRIPPER_OPEN = 900;
     public static int GRIPPER_IN_POS = 0;
-    public static int GRIPPER_OUT_POS = 0; //todo-fix this
+    public static int GRIPPER_OUT_POS = 550; //todo-fix this
     public static boolean GRIPPER_IS_OUT = false;
-    public static int DANGER_ZONE_WIDTH = 0; //todo-fix this
+    public static int DANGER_ZONE_WIDTH = 10; //todo-fix this
 
     public static int INTAKE_TILT_SERVO_TRAVEL = 1600;
     public static int INTAKE_TILT_SERVO_HANDOFF = 1300;

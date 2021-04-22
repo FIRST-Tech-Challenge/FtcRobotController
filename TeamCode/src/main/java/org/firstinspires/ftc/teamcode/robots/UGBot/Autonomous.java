@@ -121,7 +121,7 @@ public class Autonomous {
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB,false, .4,.1))
 
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true, .8,.1))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true, 1,.3048))
 
 
             .addMineralState(ugStateProvider,

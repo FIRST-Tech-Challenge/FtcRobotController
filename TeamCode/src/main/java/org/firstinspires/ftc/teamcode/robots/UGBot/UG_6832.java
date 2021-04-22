@@ -34,7 +34,6 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -44,7 +43,6 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.OpenCVIntegration;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
@@ -633,6 +631,8 @@ public class UG_6832 extends OpMode {
 //        robot.intake.update();
     }
 
+
+
     private void joystickDrive() { //apple
 
         if (!joystickDriveStarted) {
@@ -649,12 +649,18 @@ public class UG_6832 extends OpMode {
         pwrFwd = 0;
         pwrRot = 0;
 
-        if(gamepad1.left_bumper){
-            pwrDamper = .3 * .75;
+        if(toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
+            if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN)
+                robot.launcher.wobbleRelease();
+            else
+                robot.launcher.wobbleGrip();
         }
 
         if(toggleAllowed(gamepad1.right_bumper, right_bumper, 1)){
-            robot.setAutoLaunchActive(!robot.autoLaunchActive);
+            if(Constants.GRIPPER_IS_OUT)
+                robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
+            else
+                robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
         }
 
         if (notdeadzone(gamepad1.left_stick_y)) {

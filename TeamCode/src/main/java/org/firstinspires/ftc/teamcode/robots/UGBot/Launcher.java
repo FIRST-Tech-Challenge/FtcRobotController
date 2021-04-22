@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
@@ -69,10 +69,15 @@ public class Launcher {
 
         this.elbow.setTargetPosition(elbow.getCurrentPosition());
         this.elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        this.gripperExtendABob.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.gripperExtendABob.setTargetPosition(Constants.GRIPPER_IN_POS);
         this.gripperExtendABob.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.gripperExtendABob.setPower(1);
+
         this.flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;
+        gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;
 
 
         //PID
@@ -89,7 +94,7 @@ public class Launcher {
 
     long prevNanoTime;
     int prevMotorTicks;
-    int gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;
+    int gripperTargetPos = Constants.WOBBLE_GRIPPER_OPEN;
     int triggerTargetPos = Constants.LAUNCHER_TRIGGER_STOWED;
     public void update(){
         if(active) {
@@ -155,8 +160,8 @@ public class Launcher {
 
 
 
-    public boolean WobbleGrip(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;return true;}
-    public boolean WobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;return true;}
+    public boolean wobbleGrip(){gripperTargetPos = Constants.WOBBLE_GRIPPER_OPEN;return true;}
+    public boolean wobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;return true;}
 
     //trigger methods
 

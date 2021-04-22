@@ -542,7 +542,10 @@ public class PoseUG {
         packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
         packet.put("rotVelBase", rotVelBase);
         packet.put("zero indicator", 0);
-        packet.put("turret error", turret.turnError);
+        packet.put("turret error", turret.turretPID.getError());
+        packet.put("turret integrated error", turret.turretPID.getTotalError());
+        packet.put("turret derivative error", turret.turretPID.getDeltaError());
+
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
