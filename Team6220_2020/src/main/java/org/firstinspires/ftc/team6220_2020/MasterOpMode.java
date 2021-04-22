@@ -51,7 +51,6 @@ public abstract class MasterOpMode extends LinearOpMode {
         // Servos
         servoLauncher = hardwareMap.servo.get("servoLauncher");
 
-
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -227,7 +226,6 @@ public abstract class MasterOpMode extends LinearOpMode {
         double yPosition = 0;
         double distanceLeft;
         double radDriveAngle = Math.toRadians(degDriveAngle);
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double angleDeviation;
         double turningPower;
 
@@ -236,7 +234,7 @@ public abstract class MasterOpMode extends LinearOpMode {
 
         while (!distanceReached && opModeIsActive()) {
             // This calculates the angle deviation
-            angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle;
+            angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - degDriveAngle;
 
             // This calculates the distance traveled in inches
             double distanceTraveled = Math.sqrt(Math.pow((xPosition - 0), 2) + Math.pow((yPosition - 0), 2));
@@ -245,21 +243,16 @@ public abstract class MasterOpMode extends LinearOpMode {
             distanceLeft = targetDistance - distanceTraveled;
             translationPID.roll(distanceLeft);
 
-            turningPower = angleDeviation/100;
+            // Todo - "10"
+            turningPower = angleDeviation/10;
 
             // We drive the mecanum wheels with the PID value
             driveMecanum(radDriveAngle, Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed), turningPower);
 
             // Update positions using last distance measured by encoders
-            xPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() +
-                    motorBackLeft.getCurrentPosition() - motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
+            xPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() - motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
 
-            yPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() -
-                    motorBackLeft.getCurrentPosition() + motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
-
-            telemetry.addData("Distance Traveled: ", distanceTraveled);
-            telemetry.addData("Deviation: ", angleDeviation);
-            telemetry.update();
+            yPosition = (Constants.IN_PER_ANDYMARK_TICK * (-motorFrontLeft.getCurrentPosition() - motorBackLeft.getCurrentPosition() + motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4);
 
             if (distanceTraveled > targetDistance) {
                 driveMecanum(radDriveAngle, 0.0, 0.0);
@@ -267,5 +260,4 @@ public abstract class MasterOpMode extends LinearOpMode {
             }
         }
     }
-
 }

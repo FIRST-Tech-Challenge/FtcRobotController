@@ -28,23 +28,6 @@ public abstract class MasterTeleOp extends MasterOpMode {
         }
     }
 
-    public void driveMecanumWithJoysticksSwitchSticks() {
-        if (front) {
-            // Negated the inputs to flip the front of the robot
-            double turningPower = gamepad1.right_stick_y;
-            double driveAngle = Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-            double drivePower = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            driveMecanum(driveAngle, drivePower, turningPower);
-        }
-        else {
-            // Negated the inputs to flip the front of the robot
-            double turningPower = gamepad1.right_stick_y;
-            double driveAngle = Math.atan2(-gamepad1.left_stick_x, gamepad1.left_stick_y);
-            double drivePower = Math.hypot(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
-            driveMecanum(driveAngle, drivePower, turningPower);
-        }
-    }
-
     // Drives launcher with controller
     public void driveLauncherWithController() {
 
@@ -113,7 +96,7 @@ public abstract class MasterTeleOp extends MasterOpMode {
     public void powerShotTeleOp() {
         driveInches(25, 180, 1.0);
         driveLauncher(0.90);
-        pauseMillis(1500);
+        pauseMillis(1000);
         fireLauncher();
         driveInches(7.5, 180, 1.0);
         pauseMillis(1000);
@@ -128,7 +111,7 @@ public abstract class MasterTeleOp extends MasterOpMode {
     public void highGoalTeleOp() {
         driveInches(24, 0, 1.0);
         driveLauncher(0.95);
-        pauseMillis(1500);
+        pauseMillis(1000);
         fireLauncher();
         pauseMillis(1000);
         fireLauncher();
@@ -136,10 +119,5 @@ public abstract class MasterTeleOp extends MasterOpMode {
         fireLauncher();
         pauseMillis(1000);
         driveLauncher(0.0);
-    }
-
-    public void testLauncher() {
-        driveLauncher(1.0);
-        telemetry.addData("Motor RPM", getMotorTicksPerMinute(motorLauncher, 100) / Constants.AM_37_TICKS_PER_ROTATION);
     }
 }

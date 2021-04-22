@@ -71,7 +71,7 @@ public class AutoCompetition extends MasterAutonomous {
                 pauseMillis(250);
                 driveInches(24, 270, 1.0);
                 pauseMillis(250);
-                driveLauncher(0.9);
+                driveLauncher(0.95);
                 pauseMillis(500);
                 fireLauncher();
                 driveLauncher(0.0);

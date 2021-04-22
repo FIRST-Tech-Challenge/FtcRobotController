@@ -20,8 +20,6 @@ public class TeleOpCompetition extends MasterTeleOp {
             driver1.update();
             driver2.update();
 
-            testLauncher();
-
             driveMecanumWithJoysticks();
             driveZiptiesWithController();
             driveBeltWithController();
@@ -36,7 +34,7 @@ public class TeleOpCompetition extends MasterTeleOp {
                 highGoalTeleOp();
             }
 
-            if (driver1.isButtonJustPressed(Button.DPAD_UP)) {
+            if (driver1.isButtonJustPressed(Button.Y)) {
                 front = !front;
             }
 
