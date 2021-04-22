@@ -123,4 +123,8 @@ public class Storage {
     }
 
 
+    public void saveTimeData(TimeData in){
+        saveText(convertToJSON("Today", in), in.name);
+    }
+
 }

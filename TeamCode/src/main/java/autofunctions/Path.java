@@ -27,9 +27,6 @@ public class Path {
     public ElapsedTime globalTime = new ElapsedTime();
     public ElapsedTime endTimer = new ElapsedTime();
 
-
-
-
     public double maxRadius = 25;
     public double radius = 5;
     public double t = 0;
@@ -53,16 +50,12 @@ public class Path {
 
     public boolean isExecuting = true;
 
-
-
-    //y coeff used to be 0.2 now 0.3
     final public double[] ks = {0.05,0.5,0.005};
     final public double[] ds = {0.01,0.01,0.0005};
     final public double[] is = {0.00,0.00,0.0000};
 
     final public double[] ksS = {0.05,0.05,0.012};
-//    final public double[] dsS = {0.008,0.008,0.0005};
-final public double[] dsS = {0.015,0.015,0.0005};
+    final public double[] dsS = {0.015,0.015,0.0005};
     final public double[] isS = {0.000,0.000,0.0000};
 
     public double xRestPow = 0.03;
@@ -80,6 +73,7 @@ final public double[] dsS = {0.015,0.015,0.0005};
 
     public Storage storage = new Storage();
     public ArrayList<double[]> track = new ArrayList<>();
+    public ArrayList<double[]> targets = new ArrayList<>();
     public ArrayList<Double> trackTimes = new ArrayList<>();
 
     public ArrayList<double[]> speeds = new ArrayList<>();
@@ -115,9 +109,6 @@ final public double[] dsS = {0.015,0.015,0.0005};
         xControl.setMaxD(0.05);
         yControl.setMaxD(0.05);
         hControl.setMaxD(0.05);
-//        xControl.setWayPow(0.5);
-//        yControl.setWayPow(0.5);
-//        hControl.setWayPow(0.2);
         globalTime.reset();
         addStop(0.01);
     }
@@ -136,9 +127,6 @@ final public double[] dsS = {0.015,0.015,0.0005};
         xControl.scaleAccs(2);
         yControl.scaleAccs(2);
         hControl.scaleAccs(2);
-//        xControl.setWayMode(false);
-//        yControl.setWayMode(false);
-//        hControl.setWayMode(false);
     }
     public void setCoeffsForWaypoint(){
         xControl.setCoefficients(ks[0], ds[0], is[0]);
@@ -150,9 +138,6 @@ final public double[] dsS = {0.015,0.015,0.0005};
         xControl.scaleAccs(1);
         yControl.scaleAccs(1);
         hControl.scaleAccs(1);
-//        xControl.setWayMode(true);
-//        yControl.setWayMode(true);
-//        hControl.setWayMode(true);
     }
 
     public void setCoeffsForShoot(double dis){
@@ -170,19 +155,11 @@ final public double[] dsS = {0.015,0.015,0.0005};
         xControl.scaleAccs(0.5);
         yControl.scaleAccs(0.5);
         hControl.scaleAccs(0.5);
-//        xControl.setWayMode(false);
-//        yControl.setWayMode(false);
-//        hControl.setWayMode(false);
     }
-
-
     public void updateRadius(double dis){ radius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis))); }
-
     public void setGlobalMode(boolean val){
         globalMode = val;
     }
-
-
     public void addNewPose(double x, double y, double h){
         if(!globalMode) {
             double[] lastPose = poses.get(poses.size() - 1);
@@ -196,15 +173,12 @@ final public double[] dsS = {0.015,0.015,0.0005};
             lines.add(new Line(lastPose[0], lastPose[1], currPose[0], currPose[1]));
         }
     }
-
-
     public void addWaypoint(double x, double y, double h){
         addNewPose(x,y,h);
         posetypes.add(Posetype.WAYPOINT);
         rfsHandler.notRF();
         wobbleGoalHandler.notRF();
     }
-
     public void addSetpoint(double x, double y, double h){
         addNewPose(x,y,h);
         posetypes.add(Posetype.SETPOINT);
@@ -227,10 +201,6 @@ final public double[] dsS = {0.015,0.015,0.0005};
         wobbleGoalHandler.notRF();
     }
 
-    public void addShoot() {
-        addShoot(0.0001, 0.0001, 0);
-    }
-
     public void addRF(CodeSeg... segs){
         rfsHandler.addRFs(segs);
     }
@@ -238,7 +208,6 @@ final public double[] dsS = {0.015,0.015,0.0005};
     public void addWGRF(CodeSeg... segs) {
         wobbleGoalHandler.addRFs(segs);
     }
-
 
     public void startRFThread(LinearOpMode op){
        rfsHandler.start(op);
@@ -279,7 +248,6 @@ final public double[] dsS = {0.015,0.015,0.0005};
         double c = (dx*dx)+(dy*dy)-(radius*radius);
         double disc = (b * b) - (4 * a * c);
         ans = (-1)*((b - Math.sqrt(disc)) / (2 * a));
-//        second answer = (-1)*((b + Math.sqrt(disc)) / (2 * a));
         if(!Double.isNaN(ans)) {
             if(ans > 0.99){
                 next();
@@ -313,6 +281,8 @@ final public double[] dsS = {0.015,0.015,0.0005};
         xControl.update(disVect.x);
         yControl.update(disVect.y);
         hControl.update(herr);
+
+        //CHECK PLS PLS PPLSPLSPLSPL
     }
 
     public void resetControls(){
@@ -326,6 +296,7 @@ final public double[] dsS = {0.015,0.015,0.0005};
             case WAYPOINT:
                 setCoeffsForWaypoint();
                 double[] target = getTargetPos(currentPos);
+                targets.add(target);
                 updateControls(currentPos,target, false);
                 updateRadius(lines.get(curIndex).getDis());
                 return calcPows();
@@ -389,9 +360,9 @@ final public double[] dsS = {0.015,0.015,0.0005};
 
     public double[] calcPows(){
         double[] out = new double[3];
-        out[0] = -Range.clip(xControl.getPower(),-0.5,0.5);
-        out[1] = -Range.clip(yControl.getPower(),-0.5,0.5);
-        out[2] = -Range.clip(hControl.getPower(),-0.5,0.5);
+        out[0] = -Range.clip(xControl.getPower(),-1,1);
+        out[1] = -Range.clip(yControl.getPower(),-1,1);
+        out[2] = -Range.clip(hControl.getPower(),-1,1);
         return out;
     }
 
@@ -402,7 +373,6 @@ final public double[] dsS = {0.015,0.015,0.0005};
         }else{
             return in;
         }
-
     }
 
 
@@ -414,37 +384,10 @@ final public double[] dsS = {0.015,0.015,0.0005};
         bot.odometry.resetAll(poses.get(0));
         trackTime.reset();
         while (op.opModeIsActive() && isExecuting){
-//            op.telemetry = telemetryHandler.addAutoAimer(op.telemetry, bot);
-//            op.telemetry = telemetryHandler.addOuttake(op.telemetry, bot);
-//            op.telemetry = telemetryHandler.addOdometry(op.telemetry, bot);
-//
-//            op.telemetry.addData("yControl", yControl.getPower());
-//            op.telemetry.addData("error", hControl.error);
-//            op.telemetry.addData("h", bot.odometry.h);
-//            op.telemetry.addData("x", bot.odometry.x);
-//            op.telemetry.addData("y", bot.odometry.y);
-//            op.telemetry.addData("rfs index", rfsHandler.rfsIndex);
-//
-//            telemetryHandler.addAuton(this);
-//            telemetryHandler.addAutoAimer();
-//            op.telemetry = telemetryHandler.getTelemetry();
-//            op.telemetry.addData("Odometry pos", Arrays.toString(bot.odometry.getPos())); 87, 71 FINE
-//            op.telemetry.addData("Target speed L", bot.autoAimer.outlController.targetSpeed);
-//            op.telemetry.addData("Target speed R", bot.autoAimer.outrController.targetSpeed);// 213.5 CORRECT
-//            op.telemetry.addData("Outr speed", bot.autoAimer.outrController.currSpeed);
-//            op.telemetry.addData("targetPos", Arrays.toString(bot.autoAimer.outtakePos));
-//            op.telemetry.addData("oldtargetPos", Arrays.toString(bot.autoAimer.oldOuttakePos));
-//            op.telemetry.addData("isDone", bot.autoAimer.isDone);
-//            op.telemetry.addData("hasreached", bot.autoAimer.hasReached);
-//            op.telemetry.addData("outtaking", bot.outtaking);
-//            op.telemetry.addData("wg distance sensor", bot.getWgePos());
-//            op.telemetry.addData("RightVel", bot.getRightAngVel());
-//            op.telemetry.addData("LeftVel", bot.getLeftAngVel());
-//            op.telemetry.update();
 
             double[] pows = update(bot.odometry.getAll(), bot);
             track.add(bot.odometry.getAll());
-            speeds.add(new double[] {bot.getRightAngVel(), bot.getLeftAngVel()});
+//            speeds.add(new double[] {bot.getRightAngVel(), bot.getLeftAngVel()});
             trackTimes.add(trackTime.seconds());
             bot.move(pows[1], pows[0], pows[2]);
         }
@@ -455,13 +398,10 @@ final public double[] dsS = {0.015,0.015,0.0005};
     }
 
     public void saveData(){
-
-        TimeData timeData = new TimeData("Current", track, trackTimes);
-        TimeData timeData2 = new TimeData("Current2", speeds, trackTimes);
-        TimeData timeData3 = new TimeData("Current3", poses, false);
-        storage.saveText(storage.convertToJSON("Today", timeData), timeData.name);
-        storage.saveText(storage.convertToJSON("Today", timeData2), timeData2.name);
-        storage.saveText(storage.convertToJSON("Today", timeData3), timeData3.name);
+        storage.saveTimeData(new TimeData("Current", track, trackTimes));
+//        storage.saveTimeData(new TimeData("Current2", speeds, trackTimes));
+        storage.saveTimeData(new TimeData("Current3", poses, false));
+        storage.saveTimeData(new TimeData("Current4", targets, trackTimes));
     }
 
     public enum Posetype{
