@@ -379,7 +379,7 @@ public class HzAutoStateChampionship extends LinearOpMode {
 
                     if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToLinearHeading(new Pose2d(-8, af * 37, Math.toRadians(10))) //STATE y: 31
+                                .lineToLinearHeading(new Pose2d(-8, af * 37, Math.toRadians(5))) //STATE y: 31
                                 .build();
                         hzDrive.followTrajectory(traj);
                     } else {
@@ -422,12 +422,13 @@ public class HzAutoStateChampionship extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(48, af * 30, Math.toRadians(af * -45)))
                     .build();
             hzDrive.followTrajectory(traj);
+        } else {
+            //Move towards base line away from other robot and Park
+            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(53, af * 15, Math.toRadians(af * -45))) //STATE x:50 y:15
+                    .build();
+            hzDrive.followTrajectory(traj);
         }
-        //Move towards base line away from other robot and Park
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(53, af * 15, Math.toRadians(af * -45))) //STATE x:50 y:15
-                .build();
-        hzDrive.followTrajectory(traj);
         hzWait(waitInBetween);
         if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -596,7 +597,7 @@ public class HzAutoStateChampionship extends LinearOpMode {
                             hzDrive.followTrajectory(traj);
                         } else {
                             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(16, 36, Math.toRadians(180)))
+                                    .lineToSplineHeading(new Pose2d(18, 36, Math.toRadians(180)))
                                     .build();
                             hzDrive.followTrajectory(traj);
                         }
@@ -657,7 +658,7 @@ public class HzAutoStateChampionship extends LinearOpMode {
                     hzAutoControl.setLaunchTargetHighGoal();
 
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-8, af * 31, Math.toRadians(5))) //STATE x: -13
+                            .lineToLinearHeading(new Pose2d(-8, af * 31, Math.toRadians(2))) //STATE x: -13
                             .build();
                     hzDrive.followTrajectory(traj);
 
@@ -722,16 +723,17 @@ public class HzAutoStateChampionship extends LinearOpMode {
 
             if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                        //.lineToLinearHeading(new Pose2d(-22, af * 34.5, Math.toRadians(af * -180)))
                         .lineToLinearHeading(new Pose2d(-22, af * 34.5, Math.toRadians(af * -180)))
                         .build();
                 hzDrive.followTrajectory(traj);
             }
 
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+            /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                     //.lineToLinearHeading(new Pose2d(-33, af * 34.5, Math.toRadians(af * -180))) //x33
                     .lineToLinearHeading(new Pose2d(-30, af * 34.5, Math.toRadians(af * -180))) //x33
                     .build();
-            hzDrive.followTrajectory(traj);
+            hzDrive.followTrajectory(traj);*/
         }
         hzWait(300);
     }
@@ -875,12 +877,12 @@ public class HzAutoStateChampionship extends LinearOpMode {
         hzAutoControl.setRunLauncherTrue();
 
         // Run 4th just in case
-        if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+        /*if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
             hzAutoControl.setLaunchTargetHighGoal();
             hzAutoControl.setRunLauncherTrue();
             hzAutoControl.setLaunchTargetHighGoal();
             hzAutoControl.setRunLauncherTrue();
-        }
+        }*/
         hzWait(400);
 
         hzAutoControl.setLaunchTargetOff();
