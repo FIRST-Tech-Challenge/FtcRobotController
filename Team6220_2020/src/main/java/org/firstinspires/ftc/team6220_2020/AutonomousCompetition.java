@@ -30,6 +30,8 @@ public class AutonomousCompetition extends MasterAutonomous {
             }
         });
 
+        pauseMillis(3000);
+
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
@@ -46,27 +48,27 @@ public class AutonomousCompetition extends MasterAutonomous {
         webcam.stopStreaming();
         webcam.closeCameraDevice();
 
-        driveInches(24 * Math.sqrt(2.0), 45, 1.0);
+        driveInches(24 * Math.sqrt(2.0), 45, 0.5);
 
         switch (ringStackHeight){
             case 0:
-                driveInches(50,90, 1.0);
+                driveInches(48,90, 0.5);
                 pauseMillis(200);
-                driveInches(6,-90, 1.0);
+                driveInches(6,-90, 0.5);
                 break;
 
             case 1:
 
             case 4:
-                driveInches(52,90, 1.0);
+                driveInches(50,90, 0.5);
                 pauseMillis(200);
-                driveInches(10,-90, 1.0);
+                driveInches(10,-90, 0.5);
                 break;
         }
 
-        driveInches(4,180, 1.0);
+        driveInches(5,180, 1.0);
 
-        driveLauncher(0.94);
+        driveLauncher(0.93);
 
         pauseMillis(1500);
 
@@ -86,7 +88,7 @@ public class AutonomousCompetition extends MasterAutonomous {
                 turnToAngle(90);
 
                 //New method
-                driveInches(54,90, 0.5);
+                driveInches(54,90, 0.4);
 
                 driveInches(24,-90, 1.0);
                 break;
@@ -96,7 +98,7 @@ public class AutonomousCompetition extends MasterAutonomous {
                 turnToAngle(43);
 
                 //New method
-                driveInches(42,90, 0.5);
+                driveInches(42,90, 0.4);
 
                 driveInches(30,-90, 1.0);
                 break;
@@ -106,7 +108,7 @@ public class AutonomousCompetition extends MasterAutonomous {
                 turnToAngle(43);
 
                 //New method
-                driveInches(80,90, 0.5);
+                driveInches(80,90, 0.4);
 
                 driveInches(64,-90, 1.0);
                 break;

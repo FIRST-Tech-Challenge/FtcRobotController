@@ -225,6 +225,7 @@ public abstract class MasterOpMode extends LinearOpMode {
         double xPosition = 0;
         double yPosition = 0;
         double distanceLeft;
+        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double radDriveAngle = Math.toRadians(degDriveAngle);
         double angleDeviation;
         double turningPower;
@@ -234,7 +235,7 @@ public abstract class MasterOpMode extends LinearOpMode {
 
         while (!distanceReached && opModeIsActive()) {
             // This calculates the angle deviation
-            angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - degDriveAngle;
+            angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle;
 
             // This calculates the distance traveled in inches
             double distanceTraveled = Math.sqrt(Math.pow((xPosition - 0), 2) + Math.pow((yPosition - 0), 2));
@@ -244,7 +245,7 @@ public abstract class MasterOpMode extends LinearOpMode {
             translationPID.roll(distanceLeft);
 
             // Todo - "10"
-            turningPower = angleDeviation/10;
+            turningPower = angleDeviation/100;
 
             // We drive the mecanum wheels with the PID value
             driveMecanum(radDriveAngle, Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed), turningPower);

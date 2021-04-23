@@ -21,6 +21,7 @@ public class TeleOpCompetition extends MasterTeleOp {
             driver2.update();
 
             driveMecanumWithJoysticks();
+            //driveMecanumWithJoysticksReverse();
             driveZiptiesWithController();
             driveBeltWithController();
             driveLauncherWithController();
@@ -34,8 +35,18 @@ public class TeleOpCompetition extends MasterTeleOp {
                 highGoalTeleOp();
             }
 
-            if (driver1.isButtonJustPressed(Button.Y)) {
-                front = !front;
+            if (driver1.isButtonPressed(Button.DPAD_UP)) {
+                double beltSave = motorBelt.getPower();
+                double zipSave = motorBelt.getPower();
+                driveBelt(1.0);
+                driveZiptie(1.0);
+                driveMecanum(-90,1.0,0);
+
+                pauseMillis(500);
+
+                driveMecanum(0,0,0);
+                driveBelt(beltSave);
+                driveZiptie(zipSave);
             }
 
             telemetry.addData("Launcher RPM", (getMotorTicksPerMinute(motorLauncher, 100)) / Constants.AM_37_TICKS_PER_ROTATION);

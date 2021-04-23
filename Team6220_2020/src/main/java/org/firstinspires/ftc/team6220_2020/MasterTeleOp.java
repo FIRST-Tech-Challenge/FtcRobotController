@@ -17,14 +17,31 @@ public abstract class MasterTeleOp extends MasterOpMode {
             double turningPower = gamepad1.left_stick_x;
             double driveAngle = Math.atan2(gamepad1.right_stick_y, -gamepad1.right_stick_x);
             double drivePower = Math.hypot(gamepad1.right_stick_y, gamepad1.right_stick_x);
-            driveMecanum(driveAngle, drivePower, turningPower);
+            driveMecanum(driveAngle, drivePower, turningPower * 0.8);
         }
         else {
             // Negated the inputs to flip the front of the robot
             double turningPower = gamepad1.left_stick_x;
             double driveAngle = Math.atan2(-gamepad1.right_stick_y, gamepad1.right_stick_x);
             double drivePower = Math.hypot(-gamepad1.right_stick_y, -gamepad1.right_stick_x);
-            driveMecanum(driveAngle, drivePower, turningPower);
+            driveMecanum(driveAngle, drivePower, turningPower * 0.8);
+        }
+    }
+
+    public void driveMecanumWithJoysticksReverse() {
+        if (front) {
+            // Negated the inputs to flip the front of the robot
+            double turningPower = gamepad1.right_stick_x;
+            double driveAngle = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x);
+            double drivePower = Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x);
+            driveMecanum(driveAngle, drivePower, turningPower * 0.8);
+        }
+        else {
+            // Negated the inputs to flip the front of the robot
+            double turningPower = gamepad1.right_stick_x;
+            double driveAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
+            double drivePower = Math.hypot(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
+            driveMecanum(driveAngle, drivePower, turningPower * 0.8);
         }
     }
 
@@ -109,7 +126,7 @@ public abstract class MasterTeleOp extends MasterOpMode {
     }
 
     public void highGoalTeleOp() {
-        driveInches(24, 0, 1.0);
+        driveInches(30, 0, 1.0);
         driveLauncher(0.95);
         pauseMillis(1000);
         fireLauncher();
