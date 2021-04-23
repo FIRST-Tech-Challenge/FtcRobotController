@@ -69,12 +69,18 @@ public class OneGPTeleop extends LinearOpMode {
             boolean wobble_goal_arm2=gamepad1.dpad_left;
             boolean wobble_goal_servo = gamepad1.y;
             boolean quick_reverse = gamepad1.a;
+            boolean move_sticks_down = gamepad1.dpad_up;
+            boolean move_sticks_up = gamepad1.dpad_down;
             boolean move_sticks = gamepad1.dpad_down;
 
 
-            angleInRadian = Math.atan2(left_stick_y, left_stick_x);
+            if(!Robot.isCorgi){
+                angleInRadian = Math.atan2(left_stick_y*-1, left_stick_x*2);
+            }
+            else{
+                angleInRadian = Math.atan2(left_stick_y, left_stick_x*-2);
+            }
             angleInDegree = Math.toDegrees(angleInRadian);
-
             /**Powershots**/
             if(odo_powershots){
                 //robot.setPosition(0,0,0);
@@ -97,6 +103,18 @@ public class OneGPTeleop extends LinearOpMode {
                 }
             }
 
+            /**Sticks**/
+
+            if (move_sticks_down) {
+                robot.moveLeftStick(0);
+                robot.moveRightStick(1);
+            }
+
+            if (move_sticks_up){
+                robot.moveLeftStick(1);
+                robot.moveRightStick(0.0);
+            }
+
             /**Shooter**/
             if (shooter_servo){
                 //telemetry.addData("Servo", " SERVO Forward and Backward");
@@ -113,33 +131,28 @@ public class OneGPTeleop extends LinearOpMode {
 
             magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
-            robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
+            robot.moveMultidirectional(magnitude, angleInDegree, (float)(right_stick_x*0.6), slowMode); // It is 0.95, because the robot DCs at full power.
 
             // wobble goal movements
             //telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
             //telemetry.update();
+            WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.GRAB;
+            // wobble goal movements
             if (move_wobble_goal_arm){
-                WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.REST;
                 if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DRIVETOWALL);
+                } else if (currentWobbleGoalPosition == WobbleGoal.Position.DRIVETOWALL) {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE) {
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
-                } else {
-                    //telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
-                    //telemetry.update();
-                    sleep(500);
+                }
+                else if(currentWobbleGoalPosition == WobbleGoal.Position.RAISE){
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 }
                 // added by Aiden; must have this otherwise if you hold onto the button multiple
                 // actions/movements will be executed by mistake
-                sleep(500);
+                sleep(200);
                 currentWobbleGoalPosition = nextWobbleGoalPosition;
-            }
-            if (wobble_goal_arm2){
-                robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-                sleep(500);
-                robot.openWobbleGoalClaw();
             }
 
             if (wobble_goal_servo) {
@@ -156,12 +169,8 @@ public class OneGPTeleop extends LinearOpMode {
 
             if (move_wobble_goal_servo) {
                 if (wobble_goal_servo_is_up) {
-                   // telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
-                    //telemetry.update();
                     robot.closeWobbleGoalClaw();
                 } else if (!wobble_goal_servo_is_up) {
-                   // telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
-                    //telemetry.update();
                     robot.openWobbleGoalClaw();
                 }
             }

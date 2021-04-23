@@ -74,12 +74,13 @@ public class TwoGPTeleop extends LinearOpMode {
                 boolean move_sticks_down = gamepad2.dpad_up;
                 boolean move_sticks_up = gamepad2.dpad_down;
                 boolean save_Shooting_Position = gamepad2.a;
+                boolean auto_powershots = gamepad2.x;
                 float goToShootingPosition = gamepad2.left_trigger;
-                OdometryChassis.vuforia_on = gamepad1.y;
+                /*OdometryChassis.vuforia_on = gamepad1.y;
                 if(gamepad1.y){
                     robot.stopAllMotors();
                     continue;
-                }
+                }*/
 
 
                 if(!Robot.isCorgi){
@@ -117,6 +118,13 @@ public class TwoGPTeleop extends LinearOpMode {
                     robot.stopAllMotors();
                     goingToPosition=0;
                 }*/
+
+                /**Powershots**/
+                if(auto_powershots){
+                    robot.setPosition(0,0,0);
+                    robot.goToPosition(6.127,-33.15,0,0.9);
+                    robot.shootThreePowerShot();
+                }
 
                 /**Sticks**/
 

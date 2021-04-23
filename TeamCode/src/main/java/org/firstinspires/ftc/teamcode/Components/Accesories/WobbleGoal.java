@@ -43,7 +43,7 @@ public class WobbleGoal {
         wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         closeWobbleGoalClaw();
         goToPosition(Position.REST);
-        opMode.sleep(500);
+        opMode.sleep(250);
 
     }
 
