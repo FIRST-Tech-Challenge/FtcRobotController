@@ -93,8 +93,8 @@ public class TwoGPTeleop extends LinearOpMode {
                 if(odo_powershots){
                         //robot.setPosition(0,0,0);
                         goingToPosition=1;
-                        robot.goToPosition(5,-19.5 ,0,0.7);
-                        robot.shootThreePowerShot();
+                        robot.goToPosition(5,-28.0 ,0,0.7);
+                        robot.shootThreePowerShotBounceBack();
                         //robot.goToPosition(40,-40,-88,0.7);
                     continue;
                 }
@@ -107,7 +107,7 @@ public class TwoGPTeleop extends LinearOpMode {
                     goingToPosition=1;
                     robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 1.0);
                     robot.turnInPlace(angleShootingPosition,1.0);
-                    /*if(robot.goToPositionTeleop(yShootingPosition, xShootingPosition, angleShootingPosition, 0.8)){
+                    /*if(robot.goToPositionTeleop(yShootingPosition, xShootingPosition, , 0.8)){
                         robot.turnInPlace(angleShootingPosition,0.8);
                     }*/
                     //continue;
