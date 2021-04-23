@@ -593,7 +593,7 @@ public class HzAutoStateChampionship extends LinearOpMode {
                             hzDrive.followTrajectory(traj);
                         } else {
                             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(11, 43, Math.toRadians(180)))
+                                    .lineToSplineHeading(new Pose2d(16, 36, Math.toRadians(180)))
                                     .build();
                             hzDrive.followTrajectory(traj);
                         }

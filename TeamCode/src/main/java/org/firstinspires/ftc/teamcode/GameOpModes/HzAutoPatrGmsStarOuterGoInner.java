@@ -37,7 +37,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * The code for Red and Blue are written as reflection of each other.<BR>
  * Camera on either side is used using Vuforia to determine target for Wobble Goal<BR>
  */
-@Autonomous(name = "Hazmat StartOuterGoInner", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
+@Autonomous(name = "Hazmat XXX StartOuterGoInner", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
 public class HzAutoPatrGmsStarOuterGoInner extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
@@ -171,20 +171,39 @@ public class HzAutoPatrGmsStarOuterGoInner extends LinearOpMode {
             hzDrive.followTrajectory(traj);
             return;
         } else {
+
             // Move to launch position and launch rings to High Goal or Powershots
             if (hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.HIGHGOAL) {
                 // Set magazine to Launch in case it slipped
                 hzAutoControl.setMagazineToLaunch();
                 hzAutoControl.setLaunchTargetHighGoal();
 
+                //Intermediary position to move away from alliance robot.
+                //For option of second wobble goal drop, this is avoided to save time
+                if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+                    if (!hzAutoControl.dropFirstWobbleGoal) {
+                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                                .lineToLinearHeading(new Pose2d(-54, af *10, Math.toRadians(af * 90))) //-40,6
+                                .build();
+                        hzDrive.followTrajectory(traj);
+                    } else {
+                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                                .lineToLinearHeading(new Pose2d(-34, af * 14, Math.toRadians(af * 45))) //-40,6
+                                .build();
+                        hzDrive.followTrajectory(traj);
+                    }
+                }
+                hzAutoControl.setMagazineToLaunch();
                 //Move to position to launch rings
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-10, 14, Math.toRadians(18)))//-10
+                            //.lineToLinearHeading(new Pose2d(-10, 14, Math.toRadians(19)))//-10  ORIGINAL.. IST RING NOT WORKING
+                            .lineToLinearHeading(new Pose2d(-6, 14, Math.toRadians(22)))//-10
                             .build();
                 } else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-10, -14, Math.toRadians(-12)))//-10
+                            //.lineToLinearHeading(new Pose2d(-10, -14, Math.toRadians(-12)))//-10 ORIGINAL.. IST RING NOT WORKING
+                            .lineToLinearHeading(new Pose2d(-13, -12, Math.toRadians(-13))) //STATE TESTING
                             .build();
                 }
                 hzDrive.followTrajectory(traj);
@@ -205,19 +224,23 @@ public class HzAutoPatrGmsStarOuterGoInner extends LinearOpMode {
 
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-10, af * 15, Math.toRadians(af * 5)))
+                            //.lineToLinearHeading(new Pose2d(-10, af * 15, Math.toRadians(af * 5)))
+                            .lineToLinearHeading(new Pose2d(-10, af * 19, Math.toRadians(af * 5)))
                             .build();
                     hzDrive.followTrajectory(traj);
+                    //Set turn angles prior to launching for each of the power shorts
+                    turnAnglePowershot12 = Math.toRadians(af * -5);
+                    turnAnglePowershot23 = Math.toRadians(af * -7);
                 } else {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             .lineToLinearHeading(new Pose2d(-10, af * 15, Math.toRadians(af * 0)))
                             .build();
                     hzDrive.followTrajectory(traj);
+                    //Set turn angles prior to launching for each of the power shorts
+                    turnAnglePowershot12 = Math.toRadians(af * -5);
+                    turnAnglePowershot23 = Math.toRadians(af * -7);
                 }
 
-                //Set turn angles prior to launching for each of the power shorts
-                turnAnglePowershot12 = Math.toRadians(af * -5);
-                turnAnglePowershot23 = Math.toRadians(af * -7);
                 launch3RingsToPowerShots();
             }
         }
