@@ -92,6 +92,9 @@ public class HzAutoStateChampionship extends LinearOpMode {
         hzIntake.setIntakeReleaseHold();
         hzAutoControl.setMagazineToLaunch();
 
+        hzLauncher.flyWheelVelocityHighGoal = 1430;
+        hzLauncher.flyWheelVelocityPowerShot = 1330;
+
         while (hzMagazine.magazineLaunchTouchSensor.isPressed() == false) {
             hzAutoControl.setMagazineToLaunch();
             if (isStopRequested()) return;
@@ -711,6 +714,12 @@ public class HzAutoStateChampionship extends LinearOpMode {
                     .build();
             hzDrive.followTrajectory(traj);
 
+            //TEST
+            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(-11, af * 34.5, Math.toRadians(af * -180)))
+                    .build();
+            hzDrive.followTrajectory(traj);
+
             if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(-22, af * 34.5, Math.toRadians(af * -180)))
@@ -719,7 +728,8 @@ public class HzAutoStateChampionship extends LinearOpMode {
             }
 
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(-33, af * 34.5, Math.toRadians(af * -180))) //x33
+                    //.lineToLinearHeading(new Pose2d(-33, af * 34.5, Math.toRadians(af * -180))) //x33
+                    .lineToLinearHeading(new Pose2d(-30, af * 34.5, Math.toRadians(af * -180))) //x33
                     .build();
             hzDrive.followTrajectory(traj);
         }
