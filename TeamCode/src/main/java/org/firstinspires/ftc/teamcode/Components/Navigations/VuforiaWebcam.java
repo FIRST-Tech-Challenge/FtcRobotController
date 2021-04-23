@@ -113,9 +113,9 @@ public class VuforiaWebcam extends Thread {
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
 
         // Set Webcam Location
-        final float CAMERA_FORWARD_DISPLACEMENT = -4.75f;//-1.625f
-        final float CAMERA_VERTICAL_DISPLACEMENT = 5.5625f;//9.125f
-        final float CAMERA_LEFT_DISPLACEMENT = -8.9375f;//-8.9375f
+        final float CAMERA_FORWARD_DISPLACEMENT = -5.55f;//-1.625f
+        final float CAMERA_VERTICAL_DISPLACEMENT = 6.625f;//9.125f
+        final float CAMERA_LEFT_DISPLACEMENT = -8.625f;//-8.9375f
 
         OpenGLMatrix phoneLocationOnRobot = OpenGLMatrix.translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 180, -90, 0)); //YZX 0, 90, -90 //XYZ 0, -90, 0
