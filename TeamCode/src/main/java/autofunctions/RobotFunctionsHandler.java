@@ -45,6 +45,7 @@ public class RobotFunctionsHandler {
         this.op = op;
         rfsThread = new TerraThread(updateCode, exit);
 //        rfsThread = new TerraThread(updateCode);
+        rfsThread.changeRefreshRate(10);
         Thread t = new Thread(rfsThread);
         t.start();
     }

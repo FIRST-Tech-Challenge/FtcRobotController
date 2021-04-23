@@ -71,10 +71,8 @@ public class PID {
             integral += error * deltaTime;
         }
 
-        if(Kd*abs(derivative) < maxD) {
-
-        }else{
-            derivative = 0;
+        if(Kd*abs(derivative) > maxD) {
+            derivative = maxD * Math.signum(derivative);
         }
 
     }

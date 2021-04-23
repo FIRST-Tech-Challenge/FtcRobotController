@@ -170,34 +170,47 @@ public class AutoHandler {
     public void auto0(){
 
         //Life wobble arm and shoot rings
-        path.addWGRF(rf.moveWgTo(80), rf.controlWGE(0.3));
-        path.addRF(rf.readyShooter(), rf.shootIntoGoal(3), rf.stopOuttake());
+//        path.addWGRF(rf.moveWgTo(80), rf.controlWGE(0.3));
+//        path.addRF(rf.readyShooter(), rf.shootIntoGoal(3), rf.stopOuttake());
         path.addWaypoint(0, 50, 0);
-        path.addShoot(0,60,0);
+//        path.addShoot(0,30,0);
+        path.addSetpoint(0,60,0);
 
         //drop 1st wobble goal
-        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(-10));
-        path.addWaypoint(-20,100, 0);
-        path.addSetpoint(-35,50,0);
-        path.addWGRF(rf.claw(2, -0.2));
-        path.addStop(1);
+//        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(-10));
+//        path.addWaypoint(-20,100, 0);
+//        path.addSetpoint(-35,50,0);
+//        path.addWGRF(rf.claw(2, -0.2));
+//        path.addStop(1);
+//
+//        path.addWaypoint(25, -100, 0);
+//        path.addSetpoint(50, -60, 175);
+//        path.addSetpoint(0, -60, 0);
+//        path.addWGRF(rf.claw(0), rf.pauseRfs(0.5), rf.moveWgTo(60));
+//        path.addStop(1);
+//        path.addWaypoint(0, 60, 0);
+//        path.addSetpoint(-50, 60, -175);
+//        path.addWGRF(rf.moveWgTo(12));
+//        path.addSetpoint(-10, 100, 0);
+//        path.addWGRF(rf.claw(2, -0.2));
+//        path.addStop(1);
+//
+//        path.addSetpoint(50, -90, 0);
+//
+//        path.addRF(rf.saveForTele());
+//        path.addStop(1);
 
-        path.addWaypoint(25, -100, 0);
-        path.addSetpoint(50, -60, 175);
-        path.addSetpoint(0, -60, 0);
-        path.addWGRF(rf.claw(0), rf.pauseRfs(0.5), rf.moveWgTo(60));
-        path.addStop(1);
-        path.addWaypoint(0, 60, 0);
-        path.addSetpoint(-50, 60, -175);
-        path.addWGRF(rf.moveWgTo(12));
-        path.addSetpoint(-10, 100, 0);
-        path.addWGRF(rf.claw(2, -0.2));
-        path.addStop(1);
+        path.start(bot, op);
+        path.saveData();
 
-        path.addSetpoint(50, -90, 0);
+        bot.stopOdoThread();
+    }
 
-        path.addRF(rf.saveForTele());
-        path.addStop(1);
+    public void autoT(){
+//        path.addWaypoint(10,20,0);
+//        path.addWaypoint(-20,50,0);
+//        path.addWaypoint(-20,50,0);
+//        path.addSetpoint(0,60,0);
 
         path.start(bot, op);
         path.saveData();
@@ -250,7 +263,7 @@ public class AutoHandler {
             }
             terraCVHandler.stop();
         }else{
-            op.telemetry.addData("Ready:", "Yes?s");
+            op.telemetry.addData("Ready:", "Yes?");
             op.telemetry.update();
         }
         op.waitForStart();

@@ -27,7 +27,7 @@ public class Path {
     public ElapsedTime globalTime = new ElapsedTime();
     public ElapsedTime endTimer = new ElapsedTime();
 
-    public double maxRadius = 25;
+    public double maxRadius = 15;
     public double radius = 5;
     public double t = 0;
     public double ans = 0;
@@ -50,16 +50,17 @@ public class Path {
 
     public boolean isExecuting = true;
 
-    final public double[] ks = {0.05,0.5,0.005};
-    final public double[] ds = {0.01,0.01,0.0005};
+    final public double[] ks = {0.05,0.05,0.012};
+//    final public double[] ds = {0.006,0.008,0.0005};
+    final public double[] ds = {0.006,0.008,0.0005};
     final public double[] is = {0.00,0.00,0.0000};
 
-    final public double[] ksS = {0.05,0.05,0.012};
-    final public double[] dsS = {0.015,0.015,0.0005};
+    final public double[] ksS = {0.02,0.02,0.012};
+    final public double[] dsS = {0.006,0.008,0.0005};
     final public double[] isS = {0.000,0.000,0.0000};
 
-    public double xRestPow = 0.03;
-    public double yRestPow = 0.03;
+    public double xRestPow = 0.05;
+    public double yRestPow = 0.05;
     public double hRestPow = 0.05;
 
 
@@ -106,52 +107,31 @@ public class Path {
         xControl.setMaxI(0.05);
         yControl.setMaxI(0.05);
         hControl.setMaxI(0.05);
-        xControl.setMaxD(0.05);
-        yControl.setMaxD(0.05);
-        hControl.setMaxD(0.05);
+        xControl.setMaxD(0.5);
+        yControl.setMaxD(0.55);
+        hControl.setMaxD(0.5);
         globalTime.reset();
         addStop(0.01);
     }
 
-    public void setCoeffsForSetpoint(double dis){
+    public void setCoeffsForSetpoint(){
         xControl.setCoefficients(ksS[0], dsS[0], isS[0]);
         yControl.setCoefficients(ksS[1], dsS[1], isS[1]);
         hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
-        if(dis > 40) {
-            xControl.scaleCoeffs(40 / dis);
-            yControl.scaleCoeffs(40 / dis);
-        }else{
-            xControl.scaleCoeffs(1);
-            yControl.scaleCoeffs(1);
-        }
-        xControl.scaleAccs(2);
-        yControl.scaleAccs(2);
-        hControl.scaleAccs(2);
+        xControl.scaleAccs(1);
+        yControl.scaleAccs(1);
+        hControl.scaleAccs(1);
     }
     public void setCoeffsForWaypoint(){
         xControl.setCoefficients(ks[0], ds[0], is[0]);
         yControl.setCoefficients(ks[1], ds[1], is[1]);
         hControl.setCoefficients(ks[2], ds[2], is[2]);
-        xControl.scaleCoeffs(1);
-        yControl.scaleCoeffs(1);
-        hControl.scaleCoeffs(1);
-        xControl.scaleAccs(1);
-        yControl.scaleAccs(1);
-        hControl.scaleAccs(1);
     }
 
-    public void setCoeffsForShoot(double dis){
+    public void setCoeffsForShoot(){
         xControl.setCoefficients(ksS[0], dsS[0], isS[0]);
         yControl.setCoefficients(ksS[1], dsS[1], isS[1]);
         hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
-        if(dis > 40) {
-            xControl.scaleCoeffs(40 / dis);
-            yControl.scaleCoeffs(40 / dis);
-        }else{
-            xControl.scaleCoeffs(1.3);
-            yControl.scaleCoeffs(1.3);
-        }
-        hControl.scaleCoeffs(2);
         xControl.scaleAccs(0.5);
         yControl.scaleAccs(0.5);
         hControl.scaleAccs(0.5);
@@ -251,8 +231,10 @@ public class Path {
         if(!Double.isNaN(ans)) {
             if(ans > 0.99){
                 next();
+                return 1;
+            }else {
+                return ans;
             }
-            return ans;
         }else{
             return 0;
         }
@@ -301,7 +283,7 @@ public class Path {
                 updateRadius(lines.get(curIndex).getDis());
                 return calcPows();
             case SETPOINT:
-                setCoeffsForSetpoint(lines.get(curIndex).getDis());
+                setCoeffsForSetpoint();
                 double[] target1 = poses.get(curIndex+1);
                 updateControls(currentPos,target1, false);
                 hasReachedSetpoint();
@@ -316,7 +298,7 @@ public class Path {
                 if(!bot.autoAimer.hasPosBeenUpdated()) {
                     bot.autoAimer.setOuttakePos(Arrays.copyOf(poses.get(curIndex+1), 2));
                 }
-                setCoeffsForShoot(lines.get(curIndex).getDis());
+                setCoeffsForShoot();
                 double[] target2 = poses.get(curIndex+1);
                 if(!bot.autoAimer.override) {
                     target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
@@ -401,7 +383,7 @@ public class Path {
         storage.saveTimeData(new TimeData("Current", track, trackTimes));
 //        storage.saveTimeData(new TimeData("Current2", speeds, trackTimes));
         storage.saveTimeData(new TimeData("Current3", poses, false));
-        storage.saveTimeData(new TimeData("Current4", targets, trackTimes));
+        storage.saveTimeData(new TimeData("Current4", targets, false));
     }
 
     public enum Posetype{
