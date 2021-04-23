@@ -118,6 +118,9 @@ public class HzAutoPatrGmsStarOuterGoInner extends LinearOpMode {
             }
             hzLaunchController.launchMode = HzLaunchController.LAUNCH_MODE.MANUAL;
 
+            hzLauncher.flyWheelVelocityHighGoal = 1430;
+            hzLauncher.flyWheelVelocityPowerShot = 1330;
+
             //Game Play is pressed
             while (opModeIsActive() && !isStopRequested() && !parked) {
 
@@ -171,7 +174,6 @@ public class HzAutoPatrGmsStarOuterGoInner extends LinearOpMode {
             hzDrive.followTrajectory(traj);
             return;
         } else {
-
             // Move to launch position and launch rings to High Goal or Powershots
             if (hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.HIGHGOAL) {
                 // Set magazine to Launch in case it slipped
@@ -240,8 +242,8 @@ public class HzAutoPatrGmsStarOuterGoInner extends LinearOpMode {
                     turnAnglePowershot12 = Math.toRadians(af * -5);
                     turnAnglePowershot23 = Math.toRadians(af * -7);
                 }
-
                 launch3RingsToPowerShots();
+
             }
         }
 
