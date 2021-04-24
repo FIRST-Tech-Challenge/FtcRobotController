@@ -51,7 +51,6 @@ public class Turret{
     Orientation imuAngles;
     boolean maintainHeadingInit;
     private final double angleIncrement = 10;
-    public boolean isMaintainingHeading = true;
 
     //sensors
     //DigitalChannel magSensor;
@@ -85,6 +84,7 @@ public class Turret{
 
     }
 
+    double baseHeading = 0.0;
     public void update(double baseHeading){
 
 
@@ -99,46 +99,42 @@ public class Turret{
             initialized = true;
         }
 
-        double degreesOfSeparationForBase = diffAngle2(turretHeading, baseHeading);
-        double degreesOfSeparationForTarget = diffAngle2(turretHeading, turretTargetHeading);
-        double dangerLeft = wrapAngleMinus(baseHeading,Constants.DANGER_ZONE_WIDTH/2);
-        double dangerRight = (baseHeading + Constants.DANGER_ZONE_WIDTH/2) % 360;
-        double theMrVsSpecialVariable = Math.min(diffAngle2(turretHeading,dangerLeft), diffAngle2(turretHeading,dangerRight));
-        double directionOfTurn = degreesOfSeparationForTarget - 180;
-        double directionOfDanger = degreesOfSeparationForBase - 180;
-
-        if(between360(turretTargetHeading, dangerLeft, dangerRight)){
-            if(directionOfDanger > 0){
-                turretTargetHeading = (dangerLeft - Constants.DANGER_ZONE_WIDTH/4) % 360;
-            }
-            else{
-                turretTargetHeading = (dangerRight + Constants.DANGER_ZONE_WIDTH/4) % 360;
-            }
-        }
-
-        if(between360(dangerLeft, turretHeading, turretTargetHeading) && between360(dangerRight, turretHeading, turretTargetHeading)){
-            if(directionOfTurn > 0){
-                turretTargetHeading = (turretHeading + 20) % 360;
-            }
-            else{
-                turretTargetHeading = (turretHeading - 20) % 360;
-            }
-        }
-
-
-
+        //update current heading before doing any other calculations
         turretHeading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
+        this.baseHeading = baseHeading;
+
+//        double degreesOfSeparationForBase = diffAngle2(turretHeading, baseHeading);
+//        double degreesOfSeparationForTarget = diffAngle2(turretHeading, turretTargetHeading);
+//        double dangerLeft = wrapAngleMinus(baseHeading,Constants.DANGER_ZONE_WIDTH/2);
+//        double dangerRight = (baseHeading + Constants.DANGER_ZONE_WIDTH/2) % 360;
+//        double theMrVsSpecialVariable = Math.min(diffAngle2(turretHeading,dangerLeft), diffAngle2(turretHeading,dangerRight));
+//        double directionOfTurn = degreesOfSeparationForTarget - 180;
+//        double directionOfDanger = degreesOfSeparationForBase - 180;
+//
+//        if(between360(turretTargetHeading, dangerLeft, dangerRight)){
+//            if(directionOfDanger > 0){
+//                turretTargetHeading = (dangerLeft - Constants.DANGER_ZONE_WIDTH/4) % 360;
+//            }
+//            else{
+//                turretTargetHeading = (dangerRight + Constants.DANGER_ZONE_WIDTH/4) % 360;
+//            }
+//        }
+//
+//        if(between360(dangerLeft, turretHeading, turretTargetHeading) && between360(dangerRight, turretHeading, turretTargetHeading)){
+//            if(directionOfTurn > 0){
+//                turretTargetHeading = (turretHeading + 20) % 360;
+//            }
+//            else{
+//                turretTargetHeading = (turretHeading - 20) % 360;
+//            }
+//        }
+
 
         if(active) {
-            //execute PID calcs
-            if (isMaintainingHeading)
-                maintainHeadingTurret(true);
-            else
-                maintainHeadingTurret(false);
+            maintainHeadingTurret();
         }
         else
             motor.setPower(0);
-
     }
 
     double turnIncrement = 20;
@@ -256,56 +252,25 @@ public class Turret{
 
     }
 
-    /**
-     * Rotate to a specific heading with a time cutoff in case the robot gets stuck and cant complete the turn otherwise
-     * @param targetAngle the heading the robot will attempt to turn to
-     * @param maxTime the maximum amount of time allowed to pass before the sequence ends
-     */
-    public boolean rotateIMUTurret(double targetAngle, double maxTime){
-        setTurretMotorMode(true);
-        turretTargetHeading = turretHeading;
-        if(!turnTimerInit){ //intiate the timer that the robot will use to cut of the sequence if it takes too long; only happens on the first cycle
-            turnTimer = System.nanoTime() + (long)(maxTime * (long) 1e9);
-            turnTimerInit = true;
-        }
-        if (isMaintainingHeading) setTurntableAngle(targetAngle);
-        else movePIDTurret(kpTurret, kiTurret, kdTurret, turretHeading, targetAngle);
-
-        //check to see if the robot turns within a threshold of the target
-        if(Math.abs(turretHeading - targetAngle) < minTurnError) {
-            turnTimerInit = false;
-            setPower(0);
-            return true;
-        }
-        if(turnTimer < System.nanoTime()){ //check to see if the robot takes too long to turn within a threshold of the target (e.g. it gets stuck)
-            turnTimerInit = false;
-            setPower(0);
-            return true;
-        }
-        return false;
-    }
-
-    public void maintainHeadingTurret(boolean buttonState){
-
-        //if the button is currently down, maintain the set heading
-        if(buttonState) {
+    public void maintainHeadingTurret(){
             //if this is the first time the button has been down, then save the heading that the robot will hold at and set a variable to tell that the heading has been saved
             if (!maintainHeadingInit) {
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                //turretTargetHeading = turretHeading;
                 maintainHeadingInit = true;
             }
+
             //hold the saved heading with PID
-            movePIDTurret(kpTurret,kiTurret,kdTurret,turretHeading,turretTargetHeading);
+            switch (currentMode){
+                case normalMode:
+                    movePIDTurret(kpTurret,kiTurret,kdTurret,turretHeading,turretTargetHeading);
+                    break;
+                case baseBound:
+                    movePIDTurret(kpTurret,kiTurret,kdTurret,baseHeading,turretTargetHeading);
+                    break;
+            }
         }
 
-
-        //if the button is not down, set to make sure the correct heading will be saved on the next button press
-        if(!buttonState){
-            maintainHeadingInit = false;
-            setPower(0);
-        }
-    }
 
     public double getHeading(){
         return turretHeading;
@@ -317,4 +282,18 @@ public class Turret{
     public double getMotorPwr(){return motorPwr;}
     public double getMotorPwrActual(){return motor.getPower();}
 
+    public TurretMode getCurrentMode() {
+        return currentMode;
+    }
+
+    public void setCurrentMode(TurretMode mode) {
+        this.currentMode = mode;
+        turretTargetHeading = Conversions.diffAngle2(baseHeading,turretTargetHeading);
+    }
+
+    private TurretMode currentMode = TurretMode.normalMode;
+    public enum TurretMode {
+        normalMode, // uses the turrets IMU in some way
+        baseBound
+    }
 }

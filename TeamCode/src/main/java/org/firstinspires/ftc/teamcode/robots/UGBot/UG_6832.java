@@ -546,7 +546,7 @@ public class UG_6832 extends OpMode {
         if (gamepad1.x)
             robot.maintainHeading(gamepad1.x);
         if (gamepad1.y)
-            robot.turret.maintainHeadingTurret(gamepad1.y);
+            robot.turret.maintainHeadingTurret();
     }
 
     int reverse = 1;
@@ -757,10 +757,50 @@ public class UG_6832 extends OpMode {
             }
         }
 
-
 //        robot.launcher.update();
 //        robot.turret.update(); //todo- make sure there wasn't a reason this was here
 //        robot.intake.update();
+    }
+
+    private void gripperJoystickDrive() {
+        pwrDamper = .70;
+
+        pwrFwd = 0;
+        pwrRot = 0;
+
+        if (notdeadzone(gamepad1.left_stick_y)) {
+            pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
+            robot.articulate(PoseUG.Articulation.manual);
+        }
+
+        if (notdeadzone(gamepad1.right_stick_x)) {
+            pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
+            robot.articulate(PoseUG.Articulation.manual);
+        }
+
+        if (nearZero(pwrFwd) && nearZero(pwrRot) && robot.getArticulation() != PoseUG.Articulation.manual) {
+            robot.driveMixerDiffSteer(0, 0);
+        } else {
+            robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
+        }
+
+
+        if(toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
+            if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN)
+                robot.launcher.wobbleRelease();
+            else
+                robot.launcher.wobbleGrip();
+        }
+
+        if (notdeadzone(gamepad1.right_stick_y)) {
+            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
+        }
+
+        if(toggleAllowed(gamepad1.right_bumper, right_bumper, 1))
+            robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS); //todo-write the articulations
+
+        if(toggleAllowed(gamepad1.b,b,1))
+            robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS); //todo-write the articulations
     }
 
     private void joystickDrivePregameMode() {

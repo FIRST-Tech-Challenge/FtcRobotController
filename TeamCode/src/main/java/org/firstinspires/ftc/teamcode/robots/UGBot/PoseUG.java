@@ -193,7 +193,8 @@ public class PoseUG {
         testShot,
         makeIntakeOuttake,
         setUpTent,
-        intakeDisk
+        intakeDisk,
+        dumpWobbleGoal
     }
 
     public enum RobotType {
@@ -729,7 +730,7 @@ public class PoseUG {
     public void maintainTarget() {
         switch(target) {
             case NONE:
-                //turret.setTurntableAngle(turret.getTurretTargetHeading());
+//                turret.setTurntableAngle(turret.getTurretTargetHeading());
                 launcher.setFlywheelActivePID(false);
                 break;
             default:
@@ -1294,6 +1295,27 @@ public class PoseUG {
         return false;
     }
 
+    int dumpWobbleGoalState = 0;
+    double wobbleGoalDumpTimer = 0.0;
+    boolean dumpWobbleGoalCompleted = true;
+    public boolean dumpWobbleGoal(){
+        if(!dumpWobbleGoalCompleted){
+            dumpWobbleGoalState = 0;
+        }
+
+        switch (dumpWobbleGoalState){
+            case 0:
+                dumpWobbleGoalCompleted = false;
+                launcher.setElbowTargetAngle(45);
+                turret.setCurrentMode(Turret.TurretMode.baseBound);
+                dumpWobbleGoalState++;
+                break;
+            case 1:
+                return true;//todo-finish
+        }
+        return false;
+    }
+
     int outtakeState = 0;
     double outtakeTimer = 0.0;
     public boolean makeIntakeOuttake(){
@@ -1399,6 +1421,10 @@ public class PoseUG {
                     articulation = PoseUG.Articulation.manual;
                 }
                 break;
+            case dumpWobbleGoal:
+                if(dumpWobbleGoal()){
+                    articulation = PoseUG.Articulation.manual;
+                }
             default:
                 return target;
 
