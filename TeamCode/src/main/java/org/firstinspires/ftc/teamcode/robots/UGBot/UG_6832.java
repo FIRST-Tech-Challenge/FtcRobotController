@@ -472,7 +472,10 @@ public class UG_6832 extends OpMode {
             if (active) {
                 switch (state) {
                     case 0: // auton full
-                        joystickDrive();
+                        if(!Constants.IN_WOBBLE_MODE)
+                            joystickDrive();
+                        else
+                            gripperJoystickDrive();
                         break;
                     case 1: // teleop
                         if (auto.AutoFull.execute()) {
@@ -485,6 +488,8 @@ public class UG_6832 extends OpMode {
                             active = false;
                             state = 0;
                         }
+                        break;
+                    case 3:
                         break;
                     case 4:
                         testRamp();
@@ -649,18 +654,8 @@ public class UG_6832 extends OpMode {
         pwrFwd = 0;
         pwrRot = 0;
 
-        if(toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
-            if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN)
-                robot.launcher.wobbleRelease();
-            else
-                robot.launcher.wobbleGrip();
-        }
-
         if(toggleAllowed(gamepad1.right_bumper, right_bumper, 1)){
-            if(Constants.GRIPPER_IS_OUT)
-                robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
-            else
-                robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
+            robot.enterWobbleGoalMode();
         }
 
         if (notdeadzone(gamepad1.left_stick_y)) {
@@ -763,19 +758,29 @@ public class UG_6832 extends OpMode {
     }
 
     private void gripperJoystickDrive() {
+
+
         pwrDamper = .70;
 
         pwrFwd = 0;
         pwrRot = 0;
 
+        if(robot.gripperModeIsInReverse == true){
+            reverse = 1;
+        }
+        else
+            reverse = -1;
+
         if (notdeadzone(gamepad1.left_stick_y)) {
             pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
-            robot.articulate(PoseUG.Articulation.manual);
+            if(robot.getArticulation() != PoseUG.Articulation.secondaryGripperModeSetup)
+                robot.articulate(PoseUG.Articulation.manual);
         }
 
         if (notdeadzone(gamepad1.right_stick_x)) {
             pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
-            robot.articulate(PoseUG.Articulation.manual);
+            if(robot.getArticulation() != PoseUG.Articulation.secondaryGripperModeSetup)
+                robot.articulate(PoseUG.Articulation.manual);
         }
 
         if (nearZero(pwrFwd) && nearZero(pwrRot) && robot.getArticulation() != PoseUG.Articulation.manual) {
@@ -784,7 +789,6 @@ public class UG_6832 extends OpMode {
             robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
         }
 
-
         if(toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
             if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN)
                 robot.launcher.wobbleRelease();
@@ -792,15 +796,16 @@ public class UG_6832 extends OpMode {
                 robot.launcher.wobbleGrip();
         }
 
-        if (notdeadzone(gamepad1.right_stick_y)) {
-            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
+        if(toggleAllowed(gamepad1.right_bumper, right_bumper, 1)){
+            robot.exitWobbleGoalMode();
         }
 
-        if(toggleAllowed(gamepad1.right_bumper, right_bumper, 1))
-            robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS); //todo-write the articulations
-
         if(toggleAllowed(gamepad1.b,b,1))
-            robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS); //todo-write the articulations
+            robot.articulate(PoseUG.Articulation.dumpWobbleGoal);
+
+        if(toggleAllowed(gamepad1.y,y,1))
+            robot.articulate(PoseUG.Articulation.dumpWobbleGoal);
+
     }
 
     private void joystickDrivePregameMode() {

@@ -70,6 +70,7 @@ public class Launcher {
         this.elbow.setTargetPosition(elbow.getCurrentPosition());
         this.elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        this.gripperExtendABob.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.gripperExtendABob.setDirection(DcMotorSimple.Direction.REVERSE);
         this.gripperExtendABob.setTargetPosition(Constants.GRIPPER_IN_POS);
         this.gripperExtendABob.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -94,7 +95,7 @@ public class Launcher {
 
     long prevNanoTime;
     int prevMotorTicks;
-    int gripperTargetPos = Constants.WOBBLE_GRIPPER_OPEN;
+    int gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;
     int triggerTargetPos = Constants.LAUNCHER_TRIGGER_STOWED;
     public void update(){
         if(active) {
@@ -104,8 +105,8 @@ public class Launcher {
                 elbow.setPower(0);
 
             servoTrigger.setPosition(servoNormalize(triggerTargetPos));
-            servoGripper.setPosition(servoNormalize(gripperTargetPos));
-            gripperExtendABob.setTargetPosition(gripperOutTargetPos);
+//            servoGripper.setPosition(servoNormalize(gripperTargetPos));
+//            gripperExtendABob.setTargetPosition(gripperOutTargetPos);
 
             flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) / 1E9);
 
@@ -147,21 +148,12 @@ public class Launcher {
 
     //gripper mehtods
 
-    public void setGripperOutTargetPos(int pos){
-        if(pos != Constants.GRIPPER_IN_POS){
-            Constants.GRIPPER_IS_OUT = true;
-            gripperOutTargetPos = pos;
-        }
-        else{
-            Constants.GRIPPER_IS_OUT = false;
-            gripperOutTargetPos = pos;
-        }
-    }
+    public void setGripperOutTargetPos(int pos){gripperOutTargetPos = pos;}
 
 
 
-    public boolean wobbleGrip(){gripperTargetPos = Constants.WOBBLE_GRIPPER_OPEN;return true;}
-    public boolean wobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;return true;}
+    public boolean wobbleGrip(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;return true;}
+    public boolean wobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_OPEN;return true;}
 
     //trigger methods
 

@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.KinematicModel;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
@@ -194,7 +195,8 @@ public class PoseUG {
         makeIntakeOuttake,
         setUpTent,
         intakeDisk,
-        dumpWobbleGoal
+        dumpWobbleGoal,
+        secondaryGripperModeSetup
     }
 
     public enum RobotType {
@@ -1303,17 +1305,72 @@ public class PoseUG {
             dumpWobbleGoalState = 0;
         }
 
-        switch (dumpWobbleGoalState){
+        switch (dumpWobbleGoalState) {
             case 0:
                 dumpWobbleGoalCompleted = false;
                 launcher.setElbowTargetAngle(45);
-                turret.setCurrentMode(Turret.TurretMode.baseBound);
-                dumpWobbleGoalState++;
+                launcher.wobbleGrip();
+                if (launcher.getCurrentAngle() > 30) {
+                    dumpWobbleGoalState++;
+                }
                 break;
             case 1:
-                return true;//todo-finish
+                if (driveToFieldPosition(Constants.Position.WOBBLE_GOAL_DUMP, false, .8, .1)) {
+                    launcher.wobbleRelease();
+                    wobbleGoalDumpTimer = System.nanoTime();
+                    dumpWobbleGoalState++;
+                }
+                break;
+            case 2:
+                if (System.nanoTime() - wobbleGoalDumpTimer > .7 * 1E9) {
+                    dumpWobbleGoalCompleted = true;
+                    dumpWobbleGoalState = 0;
+                    exitWobbleGoalMode();
+                    return true;
+                }
         }
         return false;
+    }
+
+    boolean gripperModeIsInReverse = false;
+    int secondaryGripperModeSetupState = 0;
+    double secondaryGripperModeSetupTimer = 0.0;
+    public boolean secondaryGripperModeSetup() {
+        switch (secondaryGripperModeSetupState) {
+            case 1:
+                launcher.setElbowTargetAngle(25);
+                secondaryGripperModeSetupState++;
+                break;
+            case 2:
+                if(launcher.getElbowAngle() > 20){
+                    if(Conversions.between360(turret.getHeading(), 180 + 10, 180 - 10)){
+                        launcher.setElbowTargetAngle(0);
+                        secondaryGripperModeSetupState++;
+                    }
+                }
+                break;
+            case 3:
+                if(launcher.getElbowAngle() < 5) {
+                    secondaryGripperModeSetupState = 0;
+                    gripperModeIsInReverse = true;
+                }
+        }
+        return false;
+    }
+
+    public void enterWobbleGoalMode(){
+        turret.setCurrentMode(Turret.TurretMode.baseBound);
+        launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
+        launcher.wobbleRelease();
+        Constants.IN_WOBBLE_MODE = true;
+    }
+
+    public void exitWobbleGoalMode(){
+        turret.setCurrentMode(Turret.TurretMode.baseBound);
+        launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
+        launcher.wobbleGrip();
+        gripperModeIsInReverse = false;
+        Constants.IN_WOBBLE_MODE = false;
     }
 
     int outtakeState = 0;
@@ -1425,6 +1482,12 @@ public class PoseUG {
                 if(dumpWobbleGoal()){
                     articulation = PoseUG.Articulation.manual;
                 }
+                break;
+            case secondaryGripperModeSetup:
+                if(secondaryGripperModeSetup()){
+                    articulation = PoseUG.Articulation.manual;
+                }
+                break;
             default:
                 return target;
 

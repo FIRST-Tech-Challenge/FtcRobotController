@@ -7,7 +7,7 @@ public class Constants {
     //misc
 
     public static int visionView = 0;
-    public static final double LAUNCH_HEIGHT = 0.41;
+    public static double LAUNCH_HEIGHT = 0.41;
     public static final int ENCODER_TICKS_PER_REVOLUTION = 28;
     public static final double FLYWHEEL_RADIUS = 0.0765;
     public static final double GRAVITY = 9.80665;
@@ -80,8 +80,9 @@ public class Constants {
     public static int WOBBLE_GRIPPER_OPEN = 900;
     public static int GRIPPER_IN_POS = 0;
     public static int GRIPPER_OUT_POS = 550; //todo-fix this
-    public static boolean GRIPPER_IS_OUT = false;
+    public static boolean IN_WOBBLE_MODE = false;
     public static int DANGER_ZONE_WIDTH = 10; //todo-fix this
+    public static int GRIPPER_HEADING_OFFSET = 60;
 
     public static int INTAKE_TILT_SERVO_TRAVEL = 1600;
     public static int INTAKE_TILT_SERVO_HANDOFF = 1300;
@@ -164,6 +165,7 @@ public class Constants {
         WOBBLE_TWO_GRAB (40/INCHES_PER_METER, (26)/INCHES_PER_METER, 90, 270,0,0, DirectionOfTurn.I_REALLY_DONT_CARE),
         NAVIGATE(49/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5, DirectionOfTurn.I_REALLY_DONT_CARE), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
         LAUNCH_PREFERRED(47.2441/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0, DirectionOfTurn.I_REALLY_DONT_CARE), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
+        WOBBLE_GOAL_DUMP(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES + 3)/INCHES_PER_METER, -1, 180 + GRIPPER_HEADING_OFFSET, 45, .6, DirectionOfTurn.I_REALLY_DONT_CARE),
         TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10, .5, DirectionOfTurn.I_REALLY_DONT_CARE);
 
         public double x, y, baseHeading, launchHeading, launchElevation, launchStart;

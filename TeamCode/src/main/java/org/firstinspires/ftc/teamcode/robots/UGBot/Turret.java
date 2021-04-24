@@ -266,7 +266,7 @@ public class Turret{
                     movePIDTurret(kpTurret,kiTurret,kdTurret,turretHeading,turretTargetHeading);
                     break;
                 case baseBound:
-                    movePIDTurret(kpTurret,kiTurret,kdTurret,baseHeading,turretTargetHeading);
+                    movePIDTurret(kpTurret,kiTurret,kdTurret,turretHeading,baseHeading);
                     break;
             }
         }
@@ -288,7 +288,7 @@ public class Turret{
 
     public void setCurrentMode(TurretMode mode) {
         this.currentMode = mode;
-        turretTargetHeading = Conversions.diffAngle2(baseHeading,turretTargetHeading);
+        turretTargetHeading = wrap360(turretTargetHeading + Conversions.diffAngle2(baseHeading,turretTargetHeading));
     }
 
     private TurretMode currentMode = TurretMode.normalMode;
