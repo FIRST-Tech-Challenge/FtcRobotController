@@ -200,7 +200,7 @@ public class HzAutoPatrGmsStarOuterGoInner extends LinearOpMode {
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             //.lineToLinearHeading(new Pose2d(-10, 14, Math.toRadians(19)))//-10  ORIGINAL.. IST RING NOT WORKING
-                            .lineToLinearHeading(new Pose2d(-6, 14, Math.toRadians(22)))//-10
+                            .lineToLinearHeading(new Pose2d(-6, 14, Math.toRadians(19)))//-10
                             .build();
                 } else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())

@@ -62,7 +62,7 @@ public class HzArm {
         CLOSED
     };
 
-    public static final double GRIP_OPEN = 1.0, GRIP_CLOSE = 0.53;
+    public static final double GRIP_OPEN = 1.0, GRIP_CLOSE = 0.51;
 
     public GRIP_SERVO_STATE gripServoState = GRIP_SERVO_STATE.OPENED ;
 
