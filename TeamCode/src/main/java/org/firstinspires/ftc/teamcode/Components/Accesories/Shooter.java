@@ -44,7 +44,7 @@ public class  Shooter {
         else{
             servoBack = 0.64;
             servoForward = 0.5;
-            shooterMotor.setVelocityPIDFCoefficients(17, 0, 0.125, 17.75);//17,0,0.15,16.5
+            shooterMotor.setVelocityPIDFCoefficients(17, 0, 0.12, 18);
         }
         shooter_Servo.setPosition(servoBack);
 
@@ -101,7 +101,7 @@ public class  Shooter {
         }
         op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
-        op.sleep(130);//170
+        op.sleep(100);//130
     }
 
     public void shootGoalTeleop(int distance) {
