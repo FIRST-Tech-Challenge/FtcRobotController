@@ -45,6 +45,10 @@ public class OneGPTeleop extends LinearOpMode {
         boolean move_wobble_goal_servo = true;
         robot.openWobbleGoalClaw();
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
+        double yShootingPosition = 0;
+        double xShootingPosition = 0;
+        double angleShootingPosition = 0;
+        int goingToPosition = 0;
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
@@ -64,14 +68,15 @@ public class OneGPTeleop extends LinearOpMode {
             boolean move_wobble_goal_arm = gamepad1.left_bumper;
             boolean start_transfer_sys = gamepad1.right_bumper;
             float shooter = gamepad1.right_trigger;
-            boolean odo_powershots = gamepad1.b;
+            float goToShootingPosition = gamepad1.left_trigger;
+            boolean auto_powershots = gamepad1.b;
             boolean shooter_servo = gamepad1.x;
-            boolean wobble_goal_arm2=gamepad1.dpad_left;
             boolean wobble_goal_servo = gamepad1.y;
             boolean quick_reverse = gamepad1.a;
             boolean move_sticks_down = gamepad1.dpad_up;
             boolean move_sticks_up = gamepad1.dpad_down;
             boolean move_sticks = gamepad1.dpad_down;
+            boolean save_Shooting_Position = gamepad1.dpad_right;
 
 
             if(!Robot.isCorgi){
@@ -81,11 +86,35 @@ public class OneGPTeleop extends LinearOpMode {
                 angleInRadian = Math.atan2(left_stick_y, left_stick_x*-2);
             }
             angleInDegree = Math.toDegrees(angleInRadian);
+
+            if (save_Shooting_Position){
+                yShootingPosition = robot.track()[0];
+                xShootingPosition = robot.track()[1];
+                angleShootingPosition = robot.track()[2];
+            }
+
+            if (goToShootingPosition==1){
+                //robot.shootGoalTeleop(1000);
+                goingToPosition=1;
+                robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 1.0);
+                robot.turnInPlace(angleShootingPosition,1.0);
+                sleep(50);
+                robot.shootHighGoal(3);
+                    /*if(robot.goToPositionTeleop(yShootingPosition, xShootingPosition, , 0.8)){
+                        robot.turnInPlace(angleShootingPosition,0.8);
+                    }*/
+                //continue;
+
+            }
+                /*else if(goingToPosition==1&&goToShootingPosition!=1&&!odo_powershots){
+                    robot.stopAllMotors();
+                    goingToPosition=0;
+                }*/
+
             /**Powershots**/
-            if(odo_powershots){
-                //robot.setPosition(0,0,0);
-                robot.goToPosition(4,-20 ,0,0.8);
-                //robot.goToPosition(40,-40,-88,0.7);
+            if(auto_powershots){
+                robot.setPosition(0,0,0);
+                robot.goToPosition(6.127,-33.15,0,0.9);
                 robot.shootThreePowerShot();
             }
 
@@ -133,9 +162,6 @@ public class OneGPTeleop extends LinearOpMode {
 
             robot.moveMultidirectional(magnitude, angleInDegree, (float)(right_stick_x*0.6), slowMode); // It is 0.95, because the robot DCs at full power.
 
-            // wobble goal movements
-            //telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
-            //telemetry.update();
             WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.GRAB;
             // wobble goal movements
             if (move_wobble_goal_arm){
