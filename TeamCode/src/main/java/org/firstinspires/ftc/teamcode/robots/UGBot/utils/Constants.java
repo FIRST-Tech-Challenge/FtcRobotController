@@ -91,6 +91,9 @@ public class Constants {
     public static int INTAKE_TILT_FOR_OUTTAKE_TOO = 1600;
     public static int INTAKE_TILT_INIT_POS = 899;
 
+    public static double ____A = 0.0;
+    public static double ____B = 0.0;
+
     public static int INTAKE_OUT_SERVO_OUT = 1690;
     public static int INTAKE_OUT_SERVO_IN = 900;
 

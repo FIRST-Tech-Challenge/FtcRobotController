@@ -64,7 +64,7 @@ public class Turret{
         //this.magSensor = magSensor;
 
         this.motor = motor;
-        turretTargetHeading=0;
+        turretTargetHeading = 0.0;
         turretPID = new PIDController(0,0,0);
         initIMU(turretIMU);
     }
@@ -251,7 +251,6 @@ public class Turret{
         else{motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);}
 
     }
-
     public void maintainHeadingTurret(){
             //if this is the first time the button has been down, then save the heading that the robot will hold at and set a variable to tell that the heading has been saved
             if (!maintainHeadingInit) {
@@ -266,7 +265,11 @@ public class Turret{
                     movePIDTurret(kpTurret,kiTurret,kdTurret,turretHeading,turretTargetHeading);
                     break;
                 case baseBound:
-                    movePIDTurret(kpTurret,kiTurret,kdTurret,turretHeading,baseHeading);
+                    turretTargetHeading = wrap360(baseHeading - Conversions.diffAngle2(baseHeading,turretTargetHeading));
+
+                    movePIDTurret(kpTurret,kiTurret,kdTurret,turretHeading, wrap360(baseHeading + turretTargetHeading));
+
+                    //movePIDTurret(kpTurret,kiTurret,kdTurret,baseHeading,turretTargetHeading);
                     break;
             }
         }
@@ -288,7 +291,6 @@ public class Turret{
 
     public void setCurrentMode(TurretMode mode) {
         this.currentMode = mode;
-        turretTargetHeading = wrap360(turretTargetHeading + Conversions.diffAngle2(baseHeading,turretTargetHeading));
     }
 
     private TurretMode currentMode = TurretMode.normalMode;

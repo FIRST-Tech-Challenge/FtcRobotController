@@ -697,6 +697,7 @@ public class UG_6832 extends OpMode {
 //            cacheValidated = false;
 //        }
         //endregion
+
         if(toggleAllowed(gamepad1.b, b, 1))
             robot.articulate(PoseUG.Articulation.toggleTrigger);
         if(toggleAllowed(gamepad1.a, a, 1))
@@ -711,8 +712,6 @@ public class UG_6832 extends OpMode {
         if (notdeadzone(gamepad1.right_stick_y)) {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
         }
-
-
 
         if (gamepad1.right_trigger > .01)
             robot.turret.rotateRight(gamepad1.right_trigger * 2);
@@ -773,14 +772,18 @@ public class UG_6832 extends OpMode {
 
         if (notdeadzone(gamepad1.left_stick_y)) {
             pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
-            if(robot.getArticulation() != PoseUG.Articulation.secondaryGripperModeSetup)
+            if(robot.getArticulation() != PoseUG.Articulation.secondaryGripperModeSetup) {
                 robot.articulate(PoseUG.Articulation.manual);
+                robot.dumpWobbleGoalState = 0;
+            }
         }
 
         if (notdeadzone(gamepad1.right_stick_x)) {
             pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
-            if(robot.getArticulation() != PoseUG.Articulation.secondaryGripperModeSetup)
+            if(robot.getArticulation() != PoseUG.Articulation.secondaryGripperModeSetup) {
+                robot.dumpWobbleGoalState = 0;
                 robot.articulate(PoseUG.Articulation.manual);
+            }
         }
 
         if (nearZero(pwrFwd) && nearZero(pwrRot) && robot.getArticulation() != PoseUG.Articulation.manual) {
@@ -804,7 +807,7 @@ public class UG_6832 extends OpMode {
             robot.articulate(PoseUG.Articulation.dumpWobbleGoal);
 
         if(toggleAllowed(gamepad1.y,y,1))
-            robot.articulate(PoseUG.Articulation.dumpWobbleGoal);
+            robot.articulate(PoseUG.Articulation.secondaryGripperModeSetup);
 
     }
 

@@ -548,6 +548,7 @@ public class PoseUG {
         packet.put("turret error", turret.turretPID.getError());
         packet.put("turret integrated error", turret.turretPID.getTotalError());
         packet.put("turret derivative error", turret.turretPID.getDeltaError());
+        packet.put("diffshmiff", Conversions.diffAngle2(Constants.____A,Constants.____B));
 
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
@@ -1299,31 +1300,26 @@ public class PoseUG {
 
     int dumpWobbleGoalState = 0;
     double wobbleGoalDumpTimer = 0.0;
-    boolean dumpWobbleGoalCompleted = true;
     public boolean dumpWobbleGoal(){
-        if(!dumpWobbleGoalCompleted){
-            dumpWobbleGoalState = 0;
-        }
 
         switch (dumpWobbleGoalState) {
             case 0:
-                dumpWobbleGoalCompleted = false;
                 launcher.setElbowTargetAngle(45);
                 launcher.wobbleGrip();
-                if (launcher.getCurrentAngle() > 30) {
-                    dumpWobbleGoalState++;
-                }
+                wobbleGoalDumpTimer = System.nanoTime();
+                dumpWobbleGoalState++;
                 break;
             case 1:
-                if (driveToFieldPosition(Constants.Position.WOBBLE_GOAL_DUMP, false, .8, .1)) {
-                    launcher.wobbleRelease();
-                    wobbleGoalDumpTimer = System.nanoTime();
-                    dumpWobbleGoalState++;
+                if(System.nanoTime() - wobbleGoalDumpTimer > 1 * 1E9) {
+                    if (driveToFieldPosition(Constants.Position.WOBBLE_GOAL_DUMP, false, .8, .1)) {
+                        launcher.wobbleRelease();
+                        wobbleGoalDumpTimer = System.nanoTime();
+                        dumpWobbleGoalState++;
+                    }
                 }
                 break;
             case 2:
                 if (System.nanoTime() - wobbleGoalDumpTimer > .7 * 1E9) {
-                    dumpWobbleGoalCompleted = true;
                     dumpWobbleGoalState = 0;
                     exitWobbleGoalMode();
                     return true;
@@ -1337,23 +1333,26 @@ public class PoseUG {
     double secondaryGripperModeSetupTimer = 0.0;
     public boolean secondaryGripperModeSetup() {
         switch (secondaryGripperModeSetupState) {
-            case 1:
+            case 0:
                 launcher.setElbowTargetAngle(25);
+                turret.setTurntableAngle(180);
+                secondaryGripperModeSetupTimer = System.nanoTime();
                 secondaryGripperModeSetupState++;
                 break;
-            case 2:
-                if(launcher.getElbowAngle() > 20){
-                    if(Conversions.between360(turret.getHeading(), 180 + 10, 180 - 10)){
-                        launcher.setElbowTargetAngle(0);
-                        secondaryGripperModeSetupState++;
-                    }
+            case 1:
+                if(System.nanoTime() - secondaryGripperModeSetupTimer > 2 * 1E9) {
+                    launcher.setElbowTargetAngle(0);
+                    secondaryGripperModeSetupTimer = System.nanoTime();
+                    secondaryGripperModeSetupState++;
                 }
                 break;
-            case 3:
-                if(launcher.getElbowAngle() < 5) {
+            case 2:
+                if(System.nanoTime() - secondaryGripperModeSetupTimer > 1 * 1E9) {
                     secondaryGripperModeSetupState = 0;
                     gripperModeIsInReverse = true;
+                    return true;
                 }
+                break;
         }
         return false;
     }
@@ -1366,7 +1365,7 @@ public class PoseUG {
     }
 
     public void exitWobbleGoalMode(){
-        turret.setCurrentMode(Turret.TurretMode.baseBound);
+        turret.setCurrentMode(Turret.TurretMode.normalMode);
         launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
         launcher.wobbleGrip();
         gripperModeIsInReverse = false;

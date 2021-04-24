@@ -54,7 +54,7 @@ public class Launcher {
     public int elbowStart = 180; //put arm just under 18" from ground
     public int elbowLow = 300;
     public int elbowMinCalibration = -1340; //measure this by turning on the robot with the elbow fully opened and then physically push it down to the fully closed position and read the encoder value, dropping the minus sign
-    public int actualElbowMax = 1465;
+    public int actualElbowMax = 1400;
     public int elbowMid = (actualElbowMax + elbowMin)/2;
     public int elbowMaxSafetyOffset = 70; //makes sure that the robot doesn't try and extend to the elbow max exactly
     public int gripperOutTargetPos = 0;
@@ -231,8 +231,8 @@ public class Launcher {
     }
 
     public double getElbowAngle() {
-        return (getElbowCurrentPos() - Constants.ELBOW_ZERO_DEGREES_OFFSET) / ticksPerDegree; //plus the offset to zero
-    }
+        return ((double) (getElbowCurrentPos() - Constants.ELBOW_ZERO_DEGREES_OFFSET)) / ticksPerDegree; //plus the offset to zero
+         }
 
     public int getElbowTargetPos(){
         return elbowPos;
