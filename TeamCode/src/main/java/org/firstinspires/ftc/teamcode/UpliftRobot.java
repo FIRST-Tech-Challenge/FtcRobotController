@@ -79,6 +79,7 @@ public class UpliftRobot {
     public double worldY = 0;
     public double rawAngle = 0;
     public double worldAngle = 0;
+    public double imuAngle = 0;
     public int shotCount = 0;
     public double constant = 0;
     public boolean slowMode = false;

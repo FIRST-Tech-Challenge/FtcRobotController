@@ -48,6 +48,10 @@ public class DriveCommands extends Command {
             aPressed = false;
         }
 
+        if(opMode.gamepad1.b) {
+            drive.imuStraighten();
+        }
+
 //        // if x is pressed on DRIVER gamepad (when robot is up to the line and pressed against wall)
 //        if(opMode.gamepad1.x) {
 //            // set shooting state to PREPARING_POWERSHOT in order to raise transfer and set shooter vel to the powershot target vel

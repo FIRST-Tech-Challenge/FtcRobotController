@@ -336,6 +336,11 @@ public class DriveSubsystem extends Subsystem {
 
     }
 
+    public void imuStraighten() {
+        double turnAngle = robot.imuAngle;
+        turn(-turnAngle, 0.4);
+    }
+
     // method to stop all of the drive motors
     public void stopMotors() {
         leftFront.setPower(0);
