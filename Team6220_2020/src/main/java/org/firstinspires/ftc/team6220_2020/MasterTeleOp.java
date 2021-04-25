@@ -9,6 +9,7 @@ public abstract class MasterTeleOp extends MasterOpMode {
     boolean launcherJustPressed = false;
     boolean ziptieJustPressed = false;
     boolean beltJustPressed = false;
+    boolean grabberJustPressed = false;
     public boolean front = true;
 
     public void driveMecanumWithJoysticks() {
@@ -107,6 +108,37 @@ public abstract class MasterTeleOp extends MasterOpMode {
         }
         else {
             driveZiptie(0.0);
+        }
+    }
+
+    // Drives grabber servo with controller
+    public void driveGrabberServoWithController() {
+
+        if (driver2.isButtonJustPressed(Button.Y)) {
+            grabberJustPressed = !grabberJustPressed;
+        }
+
+        if (grabberJustPressed){
+            openGrabber();
+        } else{
+            closeGrabber();
+        }
+    }
+
+    public void driveGrabberWithController() {
+        double stickPosition = driver2.getLeftStickX();
+        telemetry.addData("stick", stickPosition);
+
+        if (stickPosition > 0.3) {
+            if(motorGrabber.getCurrentPosition() < 100){
+                driveGrabber(0.5);
+            }
+        } else if(stickPosition < -0.3){
+            if(motorGrabber.getCurrentPosition() > 10){
+                driveGrabber(0.5);
+            }
+        } else{
+            driveGrabber(0.0);
         }
     }
 

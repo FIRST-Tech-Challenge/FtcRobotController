@@ -22,9 +22,11 @@ public abstract class MasterOpMode extends LinearOpMode {
     public static DcMotor motorLauncher;
     public static DcMotor motorBelt;
     public static DcMotor motorZiptie;
+    public static DcMotor motorGrabber;
 
     // Other Devices
     public static Servo servoLauncher;
+    public static Servo servoGrabber;
 
     // Create drivers
     public DriverInput driver1;
@@ -47,9 +49,11 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorLauncher = hardwareMap.dcMotor.get("motorLauncher");
         motorBelt = hardwareMap.dcMotor.get("motorBelt");
         motorZiptie = hardwareMap.dcMotor.get("motorZiptie");
+        motorGrabber = hardwareMap.dcMotor.get("motorGrabber");
 
         // Servos
         servoLauncher = hardwareMap.servo.get("servoLauncher");
+        servoGrabber = hardwareMap.servo.get("servoGrabber");
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -64,6 +68,8 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBelt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorZiptie.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorGrabber.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorGrabber.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         driver1 = new DriverInput(gamepad1);
         driver2 = new DriverInput(gamepad2);
@@ -121,6 +127,17 @@ public abstract class MasterOpMode extends LinearOpMode {
     public void driveZiptie(double power) {
         motorZiptie.setPower(power);
     }
+
+    // Sets the grabber motor to a given power
+    public void driveGrabber(double power) {
+        motorGrabber.setPower(power);
+    }
+
+    // Opens the grabber servo
+    public void openGrabber(){ servoGrabber.setPosition(0.8); }
+
+    // Closes the grabber servo
+    public void closeGrabber(){ servoGrabber.setPosition(0.1); }
 
     // This method returns the speed of a given motor after a delay of delayInMillis
     // @param motor Input the motor you want to know the RPM of

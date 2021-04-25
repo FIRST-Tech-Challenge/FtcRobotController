@@ -9,22 +9,31 @@ import org.firstinspires.ftc.team6220_2020.ResourceClasses.Button;
 
 @TeleOp(name = "TeleOp Competition", group = "TeleOp")
 public class TeleOpCompetition extends MasterTeleOp {
+    boolean southpaw = false;
 
     @Override
     public void runOpMode() {
         Initialize();
         waitForStart();
 
+        closeGrabber();
+
         while (opModeIsActive()) {
 
             driver1.update();
             driver2.update();
 
-            driveMecanumWithJoysticks();
-            //driveMecanumWithJoysticksReverse();
+            if (southpaw) {
+                driveMecanumWithJoysticksReverse();
+            } else{
+                driveMecanumWithJoysticks();
+            }
+
             driveZiptiesWithController();
             driveBeltWithController();
             driveLauncherWithController();
+            driveGrabberWithController();
+            driveGrabberServoWithController();
             fireLauncherWithTrigger(false);
 
             if (driver1.isButtonPressed(Button.DPAD_RIGHT) && driver2.isButtonPressed(Button.DPAD_RIGHT)) {
@@ -49,8 +58,16 @@ public class TeleOpCompetition extends MasterTeleOp {
                 driveZiptie(zipSave);
             }
 
+            if(driver1.isButtonPressed(Button.RIGHT_BUMPER)){
+                southpaw = false;
+            }
+            if(driver1.isButtonPressed(Button.LEFT_BUMPER)){
+                southpaw = true;
+            }
+
             telemetry.addData("Launcher RPM", (getMotorTicksPerMinute(motorLauncher, 100)) / Constants.AM_37_TICKS_PER_ROTATION);
             telemetry.addData("IMU: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES));
+            telemetry.addData("Grabber: ", motorGrabber.getCurrentPosition());
             telemetry.update();
         }
     }
