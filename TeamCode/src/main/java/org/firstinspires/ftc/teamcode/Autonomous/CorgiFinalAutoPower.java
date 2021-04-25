@@ -58,9 +58,9 @@ public class CorgiFinalAutoPower extends LinearOpMode {
         }
         else if(rings==1) {
             robot.goToPosition(-55,-16,0,1);
-            robot.goToPosition(-77.5,7.5,0,1);
+            robot.goToPosition(-77.5,8.0,0,1);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-            sleep(300);
+            sleep(380);
             robot.openWobbleGoalClaw();
             robot.setVelocity(1650,1000);
             robot.goToPosition(-57,5,1.5,1);
@@ -69,8 +69,8 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.startTransfer();
             robot.goToPosition(-51,4,0,1);
             robot.setVelocity(1350,1000);
-            robot.stopIntake();
             robot.goToPosition(-54,22,0,1);
+            robot.stopIntake();
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
             robot.shootThreePowerShotBounceBack();
             robot.stopTransfer();
@@ -80,9 +80,9 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             sleep(250);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
             //robot.goToPosition(-105, 20,90, 1);
-            robot.goToPosition(-107, 22,90, 1);
+            robot.goToPosition(-105, 22,90, 1);
             robot.openWobbleGoalClaw();
-            sleep(100);
+            sleep(200);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
             robot.goToPosition(-117.5,14,90,1);
             robot.startIntake();
@@ -90,12 +90,14 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.goToPosition(-116.5,47,90,0.7);
             robot.reverseTransfer();
             robot.setVelocity(1650,1000);
+            sleep(50);
             robot.startTransfer();
             //robot.stopIntake();
             //            robot.setVelocity(1600,1000);
 //            robot.goToPosition(-60,18,9,1);
 //            robot.stopTransfer();
 //            robot.shootHighGoalTest(1600,1000,2);
+            robot.goToPosition(-75,20,0,1);
             robot.goToPosition(-54,4,0,1);
             robot.stopTransfer();
             robot.stopIntake();
@@ -173,12 +175,14 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.setVelocity(1360,1000);
             robot.stopTransfer();
             robot.goToPosition(-54,21,0,1);
+            robot.startIntake();
             robot.reverseTransfer();
             sleep(25);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-            robot.startIntake();
             robot.startTransfer();
             robot.shootThreePowerShotTransfer();
+            robot.stopTransfer();
+            robot.stopIntake();
             robot.turnInPlace(180,0.7);
             robot.goToPosition(-30,9,180,1);
             robot.turnInPlace(180,0.7);

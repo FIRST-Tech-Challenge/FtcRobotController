@@ -57,7 +57,7 @@ public class WobbleGoal {
             int ticksForGRAB = 700;
             i = ticksForGRAB;
         } else if (p == Position.GRAB) {
-            int ticksForGRAB = 680;
+            int ticksForGRAB = 735;
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
             int ticksForRAISE = 280;

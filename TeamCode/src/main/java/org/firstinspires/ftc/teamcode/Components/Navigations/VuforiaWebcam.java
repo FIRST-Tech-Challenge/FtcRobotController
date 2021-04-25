@@ -132,6 +132,7 @@ public class VuforiaWebcam extends Thread {
     public void run() {
         // Run until Thread is Interrupted
         while (!isInterrupted()) {
+            if(vuforia_on){
             targetVisible = false;
             // Look for Trackable, Update Robot Location if Possible
             for (VuforiaTrackable trackable : allTrackables) {
@@ -158,15 +159,15 @@ public class VuforiaWebcam extends Thread {
 //                    setXposition(translation.get(0) / mmPerInch);
 //                    setYposition((translation.get(1) / mmPerInch));
 //                    op.telemetry.addData("PosIf (in)", "{X, Y, getX, getY} = %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getVuforiaX(), getVuforiaY());
-                    xpos = translation.get(0) / mmPerInch;
-                    ypos = translation.get(1) / mmPerInch;
-                    angle = (rotation.thirdAngle+180)%360;
-                    if(xpos>-15&&xpos<15&&ypos>-60&&ypos<-38&&vuforia_on) {
-                        OdometryChassis.setXpos(-xpos);
-                        OdometryChassis.setYpos(ypos);
-                        OdometryChassis.setAngle(angle);
+                xpos = translation.get(0) / mmPerInch;
+                ypos = translation.get(1) / mmPerInch;
+                angle = (rotation.thirdAngle + 180) % 360;
+                if (xpos > -15 && xpos < 15 && ypos > -60 && ypos < -38 && vuforia_on) {
+                    OdometryChassis.setXpos(-xpos);
+                    OdometryChassis.setYpos(ypos);
+                    OdometryChassis.setAngle(angle);
 
-                    }
+                }
 //                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getCurrentAngle(), getXpos(), getYpos());
 
 //                    op.telemetry.addData("OVERWRITING...", null);
@@ -177,6 +178,7 @@ public class VuforiaWebcam extends Thread {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
 
                 //setInVuforia(false);
                 //op.telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
