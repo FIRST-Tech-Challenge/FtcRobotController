@@ -2,18 +2,11 @@ package teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Scanner;
 
 import global.TerraBot;
-import globalfunctions.Constants;
 import globalfunctions.Optimizer;
-import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
 
 @TeleOp(name = "TerraOp")
@@ -119,11 +112,11 @@ public class TerraOp extends OpMode {
 //            }
         }
 
-        bot.optimizeOdometry();
+        bot.optimizeOdometryHeading();
         if (gamepad2.x) {
             bot.updateOdoWithGyro();
-            bot.updateLocalizer();
-            bot.updateOdoWithSensors();
+            bot.updateLocalizerWithHeading();
+            bot.updateOdoWithLocalizer();
             bot.aimerPos = bot.odometry.getAll();
         }
 //        telemetry.addData("wgStart", bot.wgStartMode);

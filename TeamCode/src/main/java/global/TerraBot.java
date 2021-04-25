@@ -2,17 +2,16 @@ package global;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -29,98 +28,120 @@ import util.CodeSeg;
 
 public class TerraBot {
 
+    //Drive train Motors
     public DcMotor r1;
     public DcMotor l1;
     public DcMotor r2;
     public DcMotor l2;
+
+    //Outtake Motors
     public DcMotorEx outr;
     public DcMotorEx outl;
+
+    //Wobble goal motor
     public DcMotor arm;
 
-
+    //Intake motor
     public DcMotor in;
 
-//    public CRServo rh;
-//    public CRServo rh2;
+    //Ring Shooter crservo
     public CRServo rs;
-
+    //Ring Knocker crservo
+    public CRServo rk;
+    //Wobble goal extender crservo
     public CRServo wge;
+    //Wobble goal pos distance sensor
     public Rev2mDistanceSensor wgp;
 
+    //Wobble goal claw servos
     public Servo cll;
     public Servo clr;
-//    public Servo rp;
 
-//
-    public Cycle pushControl = new Cycle(0.1, 0.25, 0.4);
-//    public Cycle pushControl = new Cycle(0.1, 0.27, 0.25);
-
+    //Wobble goal claw controls
     public Cycle cllControl = new Cycle(0.2, 0.5, 1);
     public Cycle clrControl = new Cycle(1, 0.5, 0.0);
-//    public Cycle cllControl = new Cycle(0.2, 1);
-//    public Cycle clrControl = new Cycle(1, 0.0);
 
-
+    //AutoAimer - Has methods for angle to target and shooting
     public AutoAimer autoAimer = new AutoAimer();
-
+    //Angular Position - Has methods for gyro sensors
     public AngularPosition angularPosition = new AngularPosition();
-
+    //Localizer - Has methods for distance sensors
     public Localizer localizer = new Localizer();
-
+    //Limits - stops motors in range
     public Limits limits = new Limits();
 
+    //Is the robot intaking?
     public boolean intaking = false;
+    //Is the robot outtaking?
     public boolean outtaking = false;
 
 
-
+    //Is the robot in fastMode?
     public boolean fastMode = false;
+    //Has the wobble goal not been initialized yet?
     public boolean wgeStartMode = true;
+    //What stage is the initalization of the wobble goal at?
     public int wgStartMode = 0;
+    //Start Position of wobble goal in degs
+    public double wgStart = 0;
 
+
+    //Automodule for shooting
     public AutoModule shooter = new AutoModule(); // 0
-//    public AutoModule aimer = new AutoModule();
+
+    //Automodule for wobble goal
     public AutoModule wobbleGoal = new AutoModule();
+
+    //Automodule for powershot
     public AutoModule powerShot = new AutoModule();
 
+    //List of AutoModules
     public ArrayList<AutoModule> autoModules = new ArrayList<>();
 
+    //Button Controls - Make delay between clicks to only count them once
     public ButtonController outtakeButtonController = new ButtonController();
     public ButtonController fastModeController = new ButtonController();
     public ButtonController powerShotController = new ButtonController();
 
+    //Odomotry for position of robot
+    //TODO
+    // Make this more accurate pls?
     public Odometry odometry = new Odometry();
 
+    //Thread for odometry at 100 htz
     public TerraThread odometryThread;
+    //odometry timer - used for optimizing odometry using gyro
+//    public ElapsedTime odometryTime = new ElapsedTime();
 
-    public ElapsedTime odometryTime = new ElapsedTime();
-
+    //Target Position for Aimer
     public double[] aimerPos = Constants.AUTO_SHOOT_POS;
 
+    //Is movement avaiblible in teleop?
     public boolean isMovementAvailable = true;
 
+    //Is in powershot mode?
     public boolean powershotMode = false;
 
+    //Storage - Used to save files
     public Storage storage = new Storage();
-
-    public double wgStart = 0;
 
 
 
 
     public void init(HardwareMap hwMap) {
-
+        //Get drivetrain
         l1 = getMotor(hwMap, "l1", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         l2 = getMotor(hwMap, "l2", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         r1 = getMotor(hwMap, "r1", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         r2 = getMotor(hwMap, "r2", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        //Get Intake, Outtake, Wobble Goal
         in = getMotor(hwMap, "in", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outr = getMotorEx(hwMap, "outr", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl = getMotorEx(hwMap, "outl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm = getMotor(hwMap, "arm", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
+        //Reset encoders for outtake and wobble goal
         outr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -128,46 +149,45 @@ public class TerraBot {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rs = getCRServo(hwMap, "rs", DcMotorSimple.Direction.FORWARD);
-//        rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
-//        rh2 = getCRServo(hwMap, "rh2", CRServo.Direction.FORWARD);
-        cll = getServo(hwMap, "cll", Servo.Direction.FORWARD, Constants.CLL_GRAB);
-        clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLL_OPEN);
-//        rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, Constants.RP_START);
+        //Get CR Servos - Ring Shooter, Ring knocker, Wobble goal extender
+        rs = getCRServo(hwMap, "rs", CRServo.Direction.FORWARD);
+        rk = getCRServo(hwMap, "rs", CRServo.Direction.FORWARD);
         wge = getCRServo(hwMap, "wge", CRServo.Direction.REVERSE);
 
+        //Get claw Servos
+        cll = getServo(hwMap, "cll", Servo.Direction.FORWARD, Constants.CLL_GRAB);
+        clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLL_OPEN);
+
+        //Get wobble goal pos distance sensor
         wgp = hwMap.get(Rev2mDistanceSensor.class, "wgp");
 
+        //Initialize angular position and localizer
         angularPosition.init(hwMap);
         localizer.init(hwMap);
 
+        //Update odometry positions
         odometry.updateEncoderPositions(getLeftOdo(), getCenterOdo(), getRightOdo());
 
+        //Add limits for wobble goal arm and extender
         limits.addLimit(arm, Constants.WG_LOWER_LIMIT, Constants.WG_UPPER_LIMIT);
         limits.addLimit(wge, 0, Constants.WGE_UPPER_LIMIT);
 
-
-
+        //Set coeffs for shooter
         outr.setVelocityPIDFCoefficients(54, 0, 0, 14);
         outl.setVelocityPIDFCoefficients(54, 0, 0, 14);
-//
-//        outr.setVelocityPIDFCoefficients(1, 1, 10, 20);
-//        outl.setVelocityPIDFCoefficients(100, 1, 10, 20);
 
-
-
+        //Define Automodules
         defineShooter();
-//        defineAimer();
         defineWobbleGoal();
     }
 
+    //Helper methods for getting hardware
     public DcMotor getMotor(HardwareMap hwMap, String name, DcMotor.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode){
         DcMotor dcMotor = hwMap.get(DcMotor.class, name);
         dcMotor.setPower(0);
         dcMotor.setDirection(dir);
         dcMotor.setZeroPowerBehavior(zpb);
         dcMotor.setMode(mode);
-
         return dcMotor;
     }
 
@@ -177,7 +197,6 @@ public class TerraBot {
         dcMotor.setDirection(dir);
         dcMotor.setZeroPowerBehavior(zpb);
         dcMotor.setMode(mode);
-
         return dcMotor;
     }
 
@@ -195,48 +214,50 @@ public class TerraBot {
         return crServo;
     }
 
-
+    //Method for moving
     public void move(double f, double s, double t){
         l1.setPower(f+s-t);
         l2.setPower(-f+s+t);
         r1.setPower(f-s+t);
         r2.setPower(-f-s-t);
     }
-
+    //Intake power p and check if not outtake to control ring shooter
     public void intake(double p){
         in.setPower(p);
         if (!outtaking) { rs.setPower(-Math.signum(p)); }
-//        rh.setPower(p);
-//        rh2.setPower(p);
     }
-
-//    public void pushRings(double pos){
-//        rp.setPosition(pos);
-//    }
-
-
+    //Outtake at power p
     public void outtake(double p){
-        outtaking = p != 0;
         outr.setPower(p);
         outl.setPower(p);
-//        if (!intaking) { rs.setPower(Math.signum(p)); }
     }
-
+    //Claw to posleft and posright
     public void claw(double posLeft, double posRight){
         cll.setPosition(posLeft);
         clr.setPosition(posRight);
-
+    }
+    //Set claw to controler positions based on index
+    public void setClawPos(int ind) {
+        cllControl.changeCurr(ind);
+        clrControl.changeCurr(ind);
+        claw(cllControl.getPos(ind), clrControl.getPos(ind));
+    }
+    //Update claw for teleop
+    public void updateClaw(boolean dpl, boolean dpr) {
+        if (dpr) {
+            claw(cllControl.getPos(0), clrControl.getPos(0));
+        } else if (dpl) {
+            claw(cllControl.getPos(2), clrControl.getPos(2));
+        }
+    }
+    //Extend WGE at pow p
+    public void extendWobbleGoal(double pow) {
+        wge.setPower(pow);
     }
 
-//    public void openClaw() {
-//        claw(Constants.CLL_OPEN, Constants.CLR_OPEN);
-//    }
-//
-//    public void closeClaw() {
-//        claw(Constants.CLL_GRAB, Constants.CLR_GRAB);
-//    }
-
+    //Update intake for teleop
     public void updateIntake(boolean left_bumper, boolean right_bumper) {
+        //Set intake on with right bumper and turn it off with left bumper and also go backward with left bumper
         if(right_bumper){
             intaking = true;
         }else if(left_bumper){
@@ -246,105 +267,68 @@ public class TerraBot {
             intake(1);
         }else{
             intake(0);
-//            if (!outtaking) { rh.setPower(0); }
         }
     }
 
+    //Move for teleop
     public void moveTeleOp(double f, double s, double t, double rt){
+        //If movement is availible in teleop then move
         if(isMovementAvailable){
+            //Fastmode movements are about twice as fast as not fastmode
             if (fastMode) {
                 move(Math.signum(f) * Math.pow(Math.abs(f), 0.5), Math.signum(s) * Math.pow(Math.abs(s), 0.5), Math.signum(t) * Math.pow(Math.abs(t), 0.5));
             } else {
                 move(0.5 * Math.signum(f) * Math.pow(Math.abs(f), 0.5), 0.5 * Math.signum(s) * Math.pow(Math.abs(s), 0.5), 0.4 * Math.signum(t) * Math.pow(Math.abs(t), 0.5));
             }
         }
+        //Swicth fastmode using button controler
         if (fastModeController.isPressing(rt > 0)) {
             fastMode = !fastMode;
             isMovementAvailable = true;
         }
     }
-
+    //Move wobble goal arm at pow p with restpow
     public void moveArm(double p){
         if (isArmInLimits(p)) {
             arm.setPower(p + getRestPowArm());
         }
     }
-
+    //Get rest pow for arm
     public double getRestPowArm(){
         return Constants.WG_REST_POW*Math.cos(Math.toRadians(getArmPos()));
     }
 
-//    public void moveArmWithEnc(double deg, double pow){
-//        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        arm.setTargetPosition((int) ((deg - wgStart)*Constants.NEV_DEGREES_TO_TICKS));
-//        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        moveArm(Math.abs(pow) * Math.signum(deg - getArmPos()));
-//        while (arm.isBusy()){
-//            if (Math.abs(getArmPos() - deg) < 10) {
-//                moveArm(pow * 0.5);
-//            }
-//            if(isWgeInLimits(pow)) {
-//                updateWge();
-//            }else{
-//                wge.setPower(0);
-//            }
-//        }
-//        moveArm(0);
-//        wge.setPower(0);
-//        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//    }
+    //Move wobble goal arm with encoder and without wobble goal extender to pos deg and at pow p
     public void moveArmWithEncWithoutWGE(double deg, double pow){
+        //Set arm to use encoder
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setTargetPosition((int) ((deg - wgStart)*Constants.NEV_DEGREES_TO_TICKS));
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Move arm at pow based on pos
         moveArm(Math.abs(pow) * Math.signum(deg - getArmPos()));
-        while (arm.isBusy()){
-            if (Math.abs(getArmPos() - deg) < 10) {
-                moveArm(pow * 0.5);
-            }
-        }
+        while (arm.isBusy()){}
         moveArm(0);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void setClawPos(int ind) {
-        cllControl.changeCurr(ind);
-        clrControl.changeCurr(ind);
-        claw(cllControl.getPos(ind), clrControl.getPos(ind));
-    }
-
+    //Get arm pos in degs using wgStart pos
     public double getArmPos(){
         return ((arm.getCurrentPosition()/Constants.NEV_DEGREES_TO_TICKS) + wgStart);
     }
-
+    //Use distance sensor to get distance of wge
     public double getWgePos() { return wgp.getDistance(DistanceUnit.CM) - Constants.WGE_START; }
-
+    //Check if the wobble goal arm is in limits
     public boolean isArmInLimits(double dir){
         return limits.isInLimits(arm, dir, getArmPos());
     }
-
+    //Chek if the wobble goal extender is in limits
     public boolean isWgeInLimits(double dir) { return limits.isInLimits(wge, dir, getWgePos()) && !Optimizer.inRange(getArmPos(), Constants.WGE_IGNORE_RANGE); }
 
-    public double updateWge() {
-        if (!wgeStartMode) {
-            double wgePos = getWgePos();
-            double armPos = getArmPos();
-            double c = 0.05;
-            double targetPos = (Constants.WGE_UPPER_LIMIT + Constants.WGE_ACC) - (Constants.WGE_UPPER_LIMIT + Constants.WGE_ACC) / (1 + Math.pow(Math.E, -c * (getArmPos() - 0.5 * Constants.WG_UPPER_LIMIT - Constants.WG_LOWER_LIMIT)));
-            if (Math.abs(targetPos - wgePos) < Constants.WGE_ACC) {
-                wge.setPower(0);
-            } else {
-                wge.setPower(Math.signum(targetPos - wgePos));
-            }
-            return targetPos;
-        } else {
-            wgeStartMode = getArmPos() < 40;
-            return 0;
-        }
-    }
-
+    //Control wobble goal extender to a certian pos
     public void controlWGE(double pos){
+        //If its not in start mode then move it
         if (!wgeStartMode) {
+            //Move it until it reaches within a certian accuracy
             double wgePos = getWgePos();
             double targetPos =  Constants.WGE_UPPER_LIMIT*pos;
             if (Math.abs(targetPos - wgePos) < Constants.WGE_ACC) {
@@ -353,20 +337,16 @@ public class TerraBot {
                 wge.setPower(Math.signum(targetPos - wgePos));
             }
         } else {
+            //Set startmode to true when arm pos is greater than 40 degs
             wgeStartMode = getArmPos() < 40;
         }
     }
+    //Is controling the wobble goal extender done?
     public boolean isControlWgeDone(double pos){
         double targetPos =  Constants.WGE_UPPER_LIMIT*pos;
         return Math.abs(targetPos - getWgePos()) < Constants.WGE_ACC;
     }
-
-    public boolean isWgeDone(){
-        double c = 0.05;
-        double targetPos = (Constants.WGE_UPPER_LIMIT + Constants.WGE_ACC) - (Constants.WGE_UPPER_LIMIT + Constants.WGE_ACC) / (1 + Math.pow(Math.E, -c * (getArmPos() - 0.5 * Constants.WG_UPPER_LIMIT - Constants.WG_LOWER_LIMIT)));
-        return Math.abs(targetPos - getWgePos()) < Constants.WGE_ACC;
-    }
-
+    //Are any automodules running checks if they are inited
     public boolean areAutomodulesRunning(){
         for (AutoModule a: autoModules) {
             if(a.inited) {
@@ -377,7 +357,7 @@ public class TerraBot {
         }
         return false;
     }
-
+    //Stops all automodules
     public void stopAllAutomodules(){
         for (AutoModule a: autoModules) {
             if(a.inited) {
@@ -385,68 +365,47 @@ public class TerraBot {
             }
         }
     }
+    //Get angular position of outtake motors
+    public double getRightAngPos() {return (outr.getCurrentPosition() / Constants.GOBUILDA1_Ticks) * Constants.pi2; }
+    public double getLeftAngPos(){ return (outl.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2; }
 
-    public void toggleOuttake(boolean in) {
-        if (outtakeButtonController.isPressing(in)) {
-            outtaking = !outtaking;
-//            resetOuttake();
-        }
-    }
+    //Get angular velocites of outtake motors
+    public double getRightAngVel(){ return (outr.getVelocity()/Constants.GOBUILDA1_Ticks)*Constants.pi2;}
+    public double getLeftAngVel(){ return (outl.getVelocity()/Constants.GOBUILDA1_Ticks)*Constants.pi2; }
 
-//    public void updateRP(boolean lb, boolean rb){
-//        rp.setPosition(pushControl.update(lb, rb));
-//    }
-    public void updateClaw(boolean dpl, boolean dpr){
-        if(dpr) {
-            claw(cllControl.getPos(0), clrControl.getPos(0));
-        }else if(dpl){
-            claw(cllControl.getPos(2), clrControl.getPos(2));
-        }
-    }
-
-//    public void resetOuttake() {
-////        autoAimer.update(odometry.getPos());
-//        autoAimer.resetOuttake(getLeftAngPos(), getRightAngPos());
-//    }
-
-    public double getRightAngPos(){
-        return (outr.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
-    }
-
-    public double getLeftAngPos(){
-        return (outl.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
-    }
-
-    public double getRightAngVel(){
-        return (outr.getVelocity()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
-    }
-
-    public double getLeftAngVel(){
-        return (outl.getVelocity()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
-    }
-
+    //Get position of the robot using localizer
     public double[] getLocalizerPos() {
-        return localizer.getPos(odometry.getPos());
+        return localizer.getPos();
     }
 
-    public void updateLocalizer() {
+    //Updates localizer with gyro heading
+    public void updateLocalizerWithHeading() {
         localizer.update(angularPosition.getHeadingGY());
     }
-
+    //Sets heading of the robot by updating localizer, odometry, and angular position
     public void setHeading(double angle) {
         localizer.update(angle);
         odometry.resetHeading(angle);
+        angularPosition.resetGyro(angle);
     }
-
-    public void updateOdoWithSensors() {
+    //Update odometry with localizer pos
+    public void updateOdoWithLocalizer() {
         odometry.resetPos(getLocalizerPos());
     }
-
+    //Update odometry with localizer and
+    public void updateOdoWithLocalizerAndCheck(){
+        odometry.resetPos(localizer.getPos(odometry.getPos()));
+    }
+    //Update odometry with gyro heading
     public void updateOdoWithGyro(){
         odometry.resetHeading(angularPosition.getHeadingGY());
     }
+    //Update odometry with gyro heading and check if odometry heading is already close
+    public void updateOdoWithGyroAndCheck(){
+        odometry.resetHeading(angularPosition.getHeading(odometry.h));
+    }
 
-
+    //Outtake with autoAimer calculations
     public void outtakeWithCalculations() {
         if(outtaking){
             if(outr.getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)){
@@ -458,7 +417,6 @@ public class TerraBot {
                 outr.setVelocity(autoAimer.getOutrTargetVel());
                 outl.setVelocity(autoAimer.getOutlTargetVel());
             }
-
         }else{
             if(outr.getMode().equals(DcMotor.RunMode.RUN_USING_ENCODER)){
                 outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -471,35 +429,19 @@ public class TerraBot {
             if (!intaking) { rs.setPower(0); }
         }
     }
+    //Get odometry positions in ticks
+    public int getLeftOdo() { return r1.getCurrentPosition(); }
+    public int getRightOdo() { return l2.getCurrentPosition(); }
+    public int getCenterOdo() {return r2.getCurrentPosition();}
 
-    public int getLeftOdo() {
-        return r1.getCurrentPosition();
-    }
+    //Update Odometry positions
+    public void updateOdometry() { odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo()); }
 
-    public int getRightOdo() {
-        return l2.getCurrentPosition();
-    }
+    //Optime odometry Heading to [-180,180] range
+    public void optimizeOdometryHeading(){ odometry.resetHeading(Optimizer.optimizeHeading(odometry.h)); }
 
-    public int getCenterOdo() {
-        return r2.getCurrentPosition();
-    }
 
-    public void updateOdometry() {
-        odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
-    }
-    public void optimizeHeading(){
-        odometry.resetHeading(Optimizer.optimizeHeading(odometry.h));
-    }
-
-    public void extendWobbleGoal(double pow) {
-        wge.setPower(pow);
-    }
-
-    public void stopWobbleGoal() {
-        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm.setPower(0);
-    }
-
+    //Start odometry thread for autonomous
     public void startOdoThreadAuto(final LinearOpMode op){
         CodeSeg run = new CodeSeg() {
             @Override
@@ -513,12 +455,12 @@ public class TerraBot {
                 return op.isStopRequested();
             }
         };
-//        odometryThread = new TerraThread(run, exit);
         odometryThread = new TerraThread(run, exit);
         Thread t = new Thread(odometryThread);
         t.start();
     }
 
+    //Start odometry thread for teleop
     public void startOdoThreadTele(){
         CodeSeg run = new CodeSeg() {
             @Override
@@ -529,35 +471,32 @@ public class TerraBot {
         odometryThread = new TerraThread(run);
         Thread t = new Thread(odometryThread);
         t.start();
-
     }
 
+    //Stop odometry thread
     public void stopOdoThread() {
         if(odometryThread != null) {
             odometryThread.stop();
         }
     }
 
-    public void resetHeadingUsingGyro(){
-        odometry.resetHeading(angularPosition.getHeading(odometry.h));
-    }
-
-    public void resetPosUsingDisSensors(){
-        odometry.resetPos(localizer.getPos(odometry.getPos()));
-    }
-
-    public void optimizeOdometry(){
-        if(odometryTime.seconds() > (1/Constants.GYRO_UPDATE_RATE)){
-            odometryTime.reset();
+    //TODO
+    // Fix this and make odomtery automatically update with localize and gyro
+//    public void optimizeOdometry(){
+//        optimizeOdometryHeading();
+//        if(odometryTime.seconds() > (1/Constants.GYRO_UPDATE_RATE)){
+//            odometryTime.reset();
 //            resetHeadingUsingGyro();
-            //SKETYCHHHHHHHHHHHHHHHHHHHHH WHYYYYYYYYYYYYYYYYYYYYYYYYYYY????
-            optimizeHeading();
-        }
-    }
+//
+//            optimizeOdometryHeading();
+//        }
+//    }
 
+    //Intitialize Wobbleg goal
     public void initWobbleGoal(){
         switch (wgStartMode){
             case 0:
+                //Move arm to 45 degs
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 arm.setTargetPosition((int) ((45 - wgStart)*Constants.NEV_DEGREES_TO_TICKS));
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -565,18 +504,21 @@ public class TerraBot {
                 wgStartMode++;
                 break;
             case 1:
+                //Move wge to all the way out and stop moving arm
                 controlWGE(1);
                 if(!arm.isBusy()){
                     wgStartMode++;
                 }
                 break;
             case 2:
+                //Stop moving arm and wobble goal extender
                 moveArm(0);
                 wge.setPower(0);
                 arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 wgStartMode++;
                 break;
             case 3:
+                //Move wge to right pos
                 controlWGE(1);
                 if(isControlWgeDone(1)) {
                     wgStartMode++;
@@ -589,8 +531,10 @@ public class TerraBot {
 
     }
 
+    //TODO
+    // Define shooter and powershot
     public void defineShooter(){
-
+//
 //        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS_NOT_ANGLED);
 //        shooter.addCustom(new CodeSeg() {
 //            @Override
@@ -649,55 +593,6 @@ public class TerraBot {
 //        shooter.addPause();
 //        autoModules.add(shooter);
     }
-//    public void defineAimer(){
-//        aimer.addAimer(this);
-//        aimer.addCustom(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                updateLocalizer();
-//                updateOdoWithGyro();
-//                updateOdoWithSensors();
-//            }
-//        });
-//        aimer.addAimer(this);
-//        aimer.addCustom(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                autoAimer.reached();
-//            }
-//        });
-//        aimer.addPause();
-//        autoModules.add(aimer);
-//    }
-
-    public void defineWobbleGoal(){
-        wobbleGoal.addClaw(this, 2);
-        wobbleGoal.addControlWGE(this, 1);
-        wobbleGoal.addWobbleGoal(this, -10, 1);
-        wobbleGoal.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                fastMode = true;
-            }
-        });
-        wobbleGoal.addPause();
-        wobbleGoal.addClaw(this, 0);
-        wobbleGoal.addWait(1);
-        wobbleGoal.addWobbleGoal(this, 120, 1);
-        wobbleGoal.addControlWGE(this, 0.5);
-        wobbleGoal.holdWobbleGoalAndPause(this);
-        wobbleGoal.addMove(this, new double[]{0,20,0}, true);
-        wobbleGoal.addClaw(this, 1);
-        wobbleGoal.addWobbleGoal(this, 160, 1);
-        wobbleGoal.addClaw(this, 2);
-        wobbleGoal.addWait(0.7);
-        wobbleGoal.addWobbleGoal(this, 45, 1);
-        wobbleGoal.addPause();
-
-        autoModules.add(wobbleGoal);
-    }
-
-
 
     public void definePowershot(){
 
@@ -742,14 +637,42 @@ public class TerraBot {
 //        autoModules.add(powerShot);
     }
 
+    //Define wobble goal automodule
+    public void defineWobbleGoal(){
+        wobbleGoal.addClaw(this, 2); //Open claw
+        wobbleGoal.addControlWGE(this, 1); //Mode wge out
+        wobbleGoal.addWobbleGoal(this, -10, 1); //Move wg arm down
+        wobbleGoal.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastMode = true;
+            }
+        }); //Set to slowmode
+        wobbleGoal.addPause(); // Wait for driver
+        wobbleGoal.addClaw(this, 0); //Close claw
+        wobbleGoal.addWait(0.5); // Wait 0.5
+        wobbleGoal.addWobbleGoal(this, 120, 1); //Move wg arm up
+        wobbleGoal.addControlWGE(this, 0.5); //move wge in to halfway
+        wobbleGoal.holdWobbleGoalAndPause(this); //Hold wobble gaol arm pause
+        wobbleGoal.addMove(this, new double[]{0,20,0}, true); //Move forward 20 cm
+        wobbleGoal.addClaw(this, 1); //open claw halfway
+        wobbleGoal.addWobbleGoal(this, 160, 1); //Move woggle goal arm down
+        wobbleGoal.addClaw(this, 2); //open claw
+        wobbleGoal.addWait(0.7); //wait to drop
+        wobbleGoal.addWobbleGoal(this, 45, 1); //Move arm forward
+        wobbleGoal.addPause(); //Pause for next time
+        autoModules.add(wobbleGoal);
+    }
 
+
+    //Save data for telop in auton
     public void saveForTele() {
         storage.makeOutputFile("save");
         storage.saveText(Double.toString(getArmPos()), "wgPos");
         storage.saveText(Double.toString(angularPosition.getHeadingGY()), "heading");
         storage.saveText(Arrays.toString(odometry.getPos()), "pos");
     }
-
+    //Read date from auton in telop
     public void readFromAuton() {
         storage.makeOutputFile("save");
         wgStart = Double.parseDouble(storage.readText("wgPos"));

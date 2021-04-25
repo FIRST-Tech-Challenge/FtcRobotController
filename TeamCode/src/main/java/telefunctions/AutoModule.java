@@ -160,17 +160,17 @@ public class AutoModule {
             });
         }
     }
-    public void addWGE(final TerraBot bot){
-        stages.add(new Stage() {
-            @Override
-            public boolean run(double in) {
-                if(bot.isWgeInLimits(1)){
-                    bot.updateWge();
-                }
-                return bot.isWgeDone();
-            }
-        });
-    }
+//    public void addWGE(final TerraBot bot){
+//        stages.add(new Stage() {
+//            @Override
+//            public boolean run(double in) {
+//                if(bot.isWgeInLimits(1)){
+//                    bot.updateWge();
+//                }
+//                return bot.isWgeDone();
+//            }
+//        });
+//    }
     public void addControlWGE(final TerraBot bot, final double pos){
         stages.add(new Stage() {
             @Override

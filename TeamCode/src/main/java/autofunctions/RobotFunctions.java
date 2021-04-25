@@ -30,14 +30,14 @@ public class RobotFunctions {
             }
         };
     }
-    public CodeSeg stopArm () {
-        return new CodeSeg() {
-            @Override
-            public void run() {
-                bot.stopWobbleGoal();
-            }
-        };
-    }
+//    public CodeSeg stopArm () {
+//        return new CodeSeg() {
+//            @Override
+//            public void run() {
+//                bot.stopWobbleGoal();
+//            }
+//        };
+//    }
     public CodeSeg wgMoveFront() {
         return moveWgTo(Constants.WG_LOWER_LIMIT);
     }
@@ -108,7 +108,7 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.resetHeadingUsingGyro();
+                bot.updateOdoWithGyroAndCheck();
             }
         };
     }
@@ -117,7 +117,7 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.resetPosUsingDisSensors();
+                bot.updateOdoWithLocalizerAndCheck();
             }
         };
     }
@@ -125,8 +125,8 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.resetHeadingUsingGyro();
-                bot.resetPosUsingDisSensors();
+                bot.updateOdoWithGyroAndCheck();
+                bot.updateOdoWithLocalizerAndCheck();
             }
         };
     }
