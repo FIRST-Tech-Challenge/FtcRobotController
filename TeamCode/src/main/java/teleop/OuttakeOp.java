@@ -24,7 +24,7 @@ public class OuttakeOp extends OpMode {
     @Override
     public void loop() {
 
-        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
+//        bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
 
         if(gamepad1.right_trigger > 0){
             bot.fastMode = true;

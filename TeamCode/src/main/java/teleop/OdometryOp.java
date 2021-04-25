@@ -39,7 +39,7 @@ public class OdometryOp extends OpMode {
     public void loop() {
 
         if(!optimizer.show) {
-            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
+//            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
             optimizer.update();
             telemetryHandler.addOdometry();
             telemetry = telemetryHandler.getTelemetry();

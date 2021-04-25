@@ -151,7 +151,7 @@ public class TerraBot {
 
         //Get CR Servos - Ring Shooter, Ring knocker, Wobble goal extender
         rs = getCRServo(hwMap, "rs", CRServo.Direction.FORWARD);
-        rk = getCRServo(hwMap, "rs", CRServo.Direction.FORWARD);
+        rk = getCRServo(hwMap, "rk", CRServo.Direction.FORWARD);
         wge = getCRServo(hwMap, "wge", CRServo.Direction.REVERSE);
 
         //Get claw Servos
@@ -179,6 +179,7 @@ public class TerraBot {
         //Define Automodules
         defineShooter();
         defineWobbleGoal();
+        definePowershot();
     }
 
     //Helper methods for getting hardware
@@ -224,7 +225,7 @@ public class TerraBot {
     //Intake power p and check if not outtake to control ring shooter
     public void intake(double p){
         in.setPower(p);
-        if (!outtaking) { rs.setPower(-Math.signum(p)); }
+        if (!outtaking) { shootRings(-Math.signum(p));}
     }
     //Outtake at power p
     public void outtake(double p){
@@ -254,6 +255,9 @@ public class TerraBot {
     public void extendWobbleGoal(double pow) {
         wge.setPower(pow);
     }
+    public void shootRings(double pow){
+        rs.setPower(pow);
+    }
 
     //Update intake for teleop
     public void updateIntake(boolean left_bumper, boolean right_bumper) {
@@ -271,7 +275,7 @@ public class TerraBot {
     }
 
     //Move for teleop
-    public void moveTeleOp(double f, double s, double t, double rt){
+    public void moveTeleOp(double f, double s, double t, double rt, double lt){
         //If movement is availible in teleop then move
         if(isMovementAvailable){
             //Fastmode movements are about twice as fast as not fastmode
@@ -285,6 +289,10 @@ public class TerraBot {
         if (fastModeController.isPressing(rt > 0)) {
             fastMode = !fastMode;
             isMovementAvailable = true;
+        }
+
+        if(powerShotController.isPressing(lt > 0)){
+            powershotMode = !powershotMode;
         }
     }
     //Move wobble goal arm at pow p with restpow
@@ -426,7 +434,7 @@ public class TerraBot {
                 outr.setPower(0);
                 outl.setPower(0);
             }
-            if (!intaking) { rs.setPower(0); }
+            if (!intaking) { shootRings(0); }
         }
     }
     //Get odometry positions in ticks
@@ -534,107 +542,29 @@ public class TerraBot {
     //TODO
     // Define shooter and powershot
     public void defineShooter(){
-//
-//        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS_NOT_ANGLED);
-//        shooter.addCustom(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                updateOdoWithGyro();
-//                updateLocalizer();
-//                updateOdoWithSensors();
-//            }
-//        });
-//        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS);
-//
-//        shooter.addStage(rh2, -1);
-//        shooter.addCustom(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                intaking = false;
-//                autoAimer.setOuttakePos(getLocalizerPos());
-//                autoAimer.updateTargetSpeed();
-//            }
-//        });
-//        shooter.addOuttake(outr, outl, 1300, 1600);
-////        shooter.addOuttake(outr, outl, autoAimer.getOutlTargetVel() * Constants.GO_RAD_TO_TICKS, autoAimer.getOutrTargetVel() * Constants.GO_RAD_TO_TICKS);
-//        shooter.addStage(rp, pushControl, 1 , 0.5);
-//        shooter.addStage(rh2, 0);
-//        shooter.addCustom(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                fastMode = false;
-//            }
-//        });
-//        shooter.addPause();
-////        shooter.addWaitForReached(this);
-////        shooter.addPause();
-////        shooter.addStage(rp, pushControl, 2, 0.01);
-////        shooter.addWait(1);
-//        for (int i = 0; i < 2; i++) {
-//            shooter.addStage(rp, pushControl, 2, 0.01);
-//            shooter.addWait(0.25);
-//            shooter.addStage(rp, pushControl.getPos(1)-0.03, 0.01);
-//            shooter.addWait(0.25);
-//        }
-//        shooter.addOuttake(outr, outl, 0, 0);
-//        shooter.addStage(rp, pushControl, 0,  0.01);
-////        shooter.addCustom(new CodeSeg() {
-////            @Override
-////            public void run() {
-////                fastMode = true;
-////            }
-////        });
-//        shooter.addCustom(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                autoAimer.done();
-//            }
-//        });
-//        shooter.addPause();
-//        autoModules.add(shooter);
+        shooter.addOuttake(outr, outl, 1300, 1600);
+        shooter.addPause();
+        shooter.addStage(rs, 0.1);
+        shooter.addWait(1);
+        shooter.addStage(0, outr, outl);
+        shooter.addPause();
+        autoModules.add(shooter);
     }
 
     public void definePowershot(){
-
-//        powerShot.addMoveGlobal(this, Constants.AUTO_POWERSHOT_POS);
-//        powerShot.addCustom(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                updateOdoWithGyro();
-//                updateLocalizer();
-//                updateOdoWithSensors();
-//                powerShot.Hacc = 0.125;
-//            }
-//        });
-//        powerShot.addMoveGlobal(this, Constants.AUTO_POWERSHOT_POS);
-//        powerShot.addStage(rh2, -1);
-//        powerShot.addOuttake(outr, outl, 1100, 1300);
-//        powerShot.addStage(rp, pushControl, 1 , 0.5);
-//        powerShot.addStage(rh2, 0);
-//        powerShot.toggleFastMode(this);
-////        powerShot.addWaitForReached(this);
-//        powerShot.addPause();
-//        for (int i = 0; i < 2; i++) {
-//            powerShot.addStage(rp, pushControl, 2, 0.01);
-//            powerShot.addWait(0.25);
-//            powerShot.addStage(rp, pushControl.getPos(1) - 0.03, 0.01);
-//            powerShot.addWait(0.25);
-//            if(i < 1) {
-////                powerShot.addMove(this, new double[]{0, -1, -10}, false);
-//                powerShot.addMove(this, new double[]{18, 0, 0}, false);
-//            }
-//        }
-//        powerShot.addOuttake(outr, outl, 0, 0);
-//        powerShot.addStage(rp, pushControl, 0,  0.01);
-////        powerShot.toggleFastMode(this);
-//        shooter.addCustom(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                autoAimer.done();
-//            }
-//        });
-//        powerShot.addPause();
-//        autoModules.add(powerShot);
+        powerShot.addOuttake(outr, outl, 1100, 1300);
+        powerShot.toggleFastMode(this);
+        powerShot.addPause();
+        for (int i = 0; i < 2; i++) {
+            shooter.addStage(rs, 0.1);
+            shooter.addWait(0.3);
+            if(i < 1) {
+                powerShot.addMove(this, new double[]{18, 0, 0}, false);
+            }
+        }
+        powerShot.addOuttake(outr, outl, 0, 0);
+        powerShot.addPause();
+        autoModules.add(powerShot);
     }
 
     //Define wobble goal automodule
