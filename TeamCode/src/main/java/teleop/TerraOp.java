@@ -73,7 +73,7 @@ public class TerraOp extends OpMode {
 //            bot.toggleOuttake(gamepad2.x);
 //            bot.outtakeWithCalculations();
 
-            bot.updateRP(gamepad2.left_bumper, gamepad2.right_bumper);
+//            bot.updateRP(gamepad2.left_bumper, gamepad2.right_bumper);
             bot.updateClaw(gamepad2.dpad_left, gamepad2.dpad_right);
 //            if(bot.wgStartMode > 2) {
 //                bot.moveArm(-gamepad2.right_stick_y);
@@ -81,13 +81,14 @@ public class TerraOp extends OpMode {
 
         }
 
-//        bot.outtake(gamepad2.right_stick_y);
+        bot.outtake(gamepad2.right_stick_y);
+        if (!bot.intaking) { bot.rs.setPower(Math.signum(gamepad2.left_stick_y/5    )); }
 //
 
-        if(gamepad1.b){
-//            bot.aimerPos = Constants.AUTO_SHOOT_POS;
-            bot.powerShot.start();
-        }
+//        if(gamepad1.b){
+////            bot.aimerPos = Constants.AUTO_SHOOT_POS;
+//            bot.powerShot.start();
+//        }
 
         if(gamepad1.x){
 //            optimizer.show();

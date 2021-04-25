@@ -40,15 +40,16 @@ public class TerraBot {
 
     public DcMotor in;
 
-    public CRServo rh;
-    public CRServo rh2;
+//    public CRServo rh;
+//    public CRServo rh2;
+    public CRServo rs;
 
     public CRServo wge;
     public Rev2mDistanceSensor wgp;
 
     public Servo cll;
     public Servo clr;
-    public Servo rp;
+//    public Servo rp;
 
 //
     public Cycle pushControl = new Cycle(0.1, 0.25, 0.4);
@@ -127,11 +128,12 @@ public class TerraBot {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
-        rh2 = getCRServo(hwMap, "rh2", CRServo.Direction.FORWARD);
+        rs = getCRServo(hwMap, "rs", DcMotorSimple.Direction.FORWARD);
+//        rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
+//        rh2 = getCRServo(hwMap, "rh2", CRServo.Direction.FORWARD);
         cll = getServo(hwMap, "cll", Servo.Direction.FORWARD, Constants.CLL_GRAB);
         clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLL_OPEN);
-        rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, Constants.RP_START);
+//        rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, Constants.RP_START);
         wge = getCRServo(hwMap, "wge", CRServo.Direction.REVERSE);
 
         wgp = hwMap.get(Rev2mDistanceSensor.class, "wgp");
@@ -203,18 +205,21 @@ public class TerraBot {
 
     public void intake(double p){
         in.setPower(p);
-        rh.setPower(p);
-        rh2.setPower(p);
+        if (!outtaking) { rs.setPower(-Math.signum(p)); }
+//        rh.setPower(p);
+//        rh2.setPower(p);
     }
 
-    public void pushRings(double pos){
-        rp.setPosition(pos);
-    }
+//    public void pushRings(double pos){
+//        rp.setPosition(pos);
+//    }
 
 
     public void outtake(double p){
+        outtaking = p != 0;
         outr.setPower(p);
         outl.setPower(p);
+//        if (!intaking) { rs.setPower(Math.signum(p)); }
     }
 
     public void claw(double posLeft, double posRight){
@@ -241,7 +246,7 @@ public class TerraBot {
             intake(1);
         }else{
             intake(0);
-            if (!outtaking) { rh.setPower(0); }
+//            if (!outtaking) { rh.setPower(0); }
         }
     }
 
@@ -388,9 +393,9 @@ public class TerraBot {
         }
     }
 
-    public void updateRP(boolean lb, boolean rb){
-        rp.setPosition(pushControl.update(lb, rb));
-    }
+//    public void updateRP(boolean lb, boolean rb){
+//        rp.setPosition(pushControl.update(lb, rb));
+//    }
     public void updateClaw(boolean dpl, boolean dpr){
         if(dpr) {
             claw(cllControl.getPos(0), clrControl.getPos(0));
@@ -463,7 +468,7 @@ public class TerraBot {
                 outr.setPower(0);
                 outl.setPower(0);
             }
-            if (!intaking) { rh.setPower(0); }
+            if (!intaking) { rs.setPower(0); }
         }
     }
 
@@ -586,63 +591,63 @@ public class TerraBot {
 
     public void defineShooter(){
 
-        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS_NOT_ANGLED);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                updateOdoWithGyro();
-                updateLocalizer();
-                updateOdoWithSensors();
-            }
-        });
-        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS);
-
-        shooter.addStage(rh2, -1);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                intaking = false;
-                autoAimer.setOuttakePos(getLocalizerPos());
-                autoAimer.updateTargetSpeed();
-            }
-        });
-        shooter.addOuttake(outr, outl, 1300, 1600);
-//        shooter.addOuttake(outr, outl, autoAimer.getOutlTargetVel() * Constants.GO_RAD_TO_TICKS, autoAimer.getOutrTargetVel() * Constants.GO_RAD_TO_TICKS);
-        shooter.addStage(rp, pushControl, 1 , 0.5);
-        shooter.addStage(rh2, 0);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                fastMode = false;
-            }
-        });
-        shooter.addPause();
-//        shooter.addWaitForReached(this);
-//        shooter.addPause();
-//        shooter.addStage(rp, pushControl, 2, 0.01);
-//        shooter.addWait(1);
-        for (int i = 0; i < 2; i++) {
-            shooter.addStage(rp, pushControl, 2, 0.01);
-            shooter.addWait(0.25);
-            shooter.addStage(rp, pushControl.getPos(1)-0.03, 0.01);
-            shooter.addWait(0.25);
-        }
-        shooter.addOuttake(outr, outl, 0, 0);
-        shooter.addStage(rp, pushControl, 0,  0.01);
+//        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS_NOT_ANGLED);
 //        shooter.addCustom(new CodeSeg() {
 //            @Override
 //            public void run() {
-//                fastMode = true;
+//                updateOdoWithGyro();
+//                updateLocalizer();
+//                updateOdoWithSensors();
 //            }
 //        });
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                autoAimer.done();
-            }
-        });
-        shooter.addPause();
-        autoModules.add(shooter);
+//        shooter.addMoveGlobal(this, Constants.AUTO_SHOOT_POS);
+//
+//        shooter.addStage(rh2, -1);
+//        shooter.addCustom(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                intaking = false;
+//                autoAimer.setOuttakePos(getLocalizerPos());
+//                autoAimer.updateTargetSpeed();
+//            }
+//        });
+//        shooter.addOuttake(outr, outl, 1300, 1600);
+////        shooter.addOuttake(outr, outl, autoAimer.getOutlTargetVel() * Constants.GO_RAD_TO_TICKS, autoAimer.getOutrTargetVel() * Constants.GO_RAD_TO_TICKS);
+//        shooter.addStage(rp, pushControl, 1 , 0.5);
+//        shooter.addStage(rh2, 0);
+//        shooter.addCustom(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                fastMode = false;
+//            }
+//        });
+//        shooter.addPause();
+////        shooter.addWaitForReached(this);
+////        shooter.addPause();
+////        shooter.addStage(rp, pushControl, 2, 0.01);
+////        shooter.addWait(1);
+//        for (int i = 0; i < 2; i++) {
+//            shooter.addStage(rp, pushControl, 2, 0.01);
+//            shooter.addWait(0.25);
+//            shooter.addStage(rp, pushControl.getPos(1)-0.03, 0.01);
+//            shooter.addWait(0.25);
+//        }
+//        shooter.addOuttake(outr, outl, 0, 0);
+//        shooter.addStage(rp, pushControl, 0,  0.01);
+////        shooter.addCustom(new CodeSeg() {
+////            @Override
+////            public void run() {
+////                fastMode = true;
+////            }
+////        });
+//        shooter.addCustom(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                autoAimer.done();
+//            }
+//        });
+//        shooter.addPause();
+//        autoModules.add(shooter);
     }
 //    public void defineAimer(){
 //        aimer.addAimer(this);
@@ -696,45 +701,45 @@ public class TerraBot {
 
     public void definePowershot(){
 
-        powerShot.addMoveGlobal(this, Constants.AUTO_POWERSHOT_POS);
-        powerShot.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                updateOdoWithGyro();
-                updateLocalizer();
-                updateOdoWithSensors();
-                powerShot.Hacc = 0.125;
-            }
-        });
-        powerShot.addMoveGlobal(this, Constants.AUTO_POWERSHOT_POS);
-        powerShot.addStage(rh2, -1);
-        powerShot.addOuttake(outr, outl, 1100, 1300);
-        powerShot.addStage(rp, pushControl, 1 , 0.5);
-        powerShot.addStage(rh2, 0);
-        powerShot.toggleFastMode(this);
-//        powerShot.addWaitForReached(this);
-        powerShot.addPause();
-        for (int i = 0; i < 2; i++) {
-            powerShot.addStage(rp, pushControl, 2, 0.01);
-            powerShot.addWait(0.25);
-            powerShot.addStage(rp, pushControl.getPos(1) - 0.03, 0.01);
-            powerShot.addWait(0.25);
-            if(i < 1) {
-//                powerShot.addMove(this, new double[]{0, -1, -10}, false);
-                powerShot.addMove(this, new double[]{18, 0, 0}, false);
-            }
-        }
-        powerShot.addOuttake(outr, outl, 0, 0);
-        powerShot.addStage(rp, pushControl, 0,  0.01);
+//        powerShot.addMoveGlobal(this, Constants.AUTO_POWERSHOT_POS);
+//        powerShot.addCustom(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                updateOdoWithGyro();
+//                updateLocalizer();
+//                updateOdoWithSensors();
+//                powerShot.Hacc = 0.125;
+//            }
+//        });
+//        powerShot.addMoveGlobal(this, Constants.AUTO_POWERSHOT_POS);
+//        powerShot.addStage(rh2, -1);
+//        powerShot.addOuttake(outr, outl, 1100, 1300);
+//        powerShot.addStage(rp, pushControl, 1 , 0.5);
+//        powerShot.addStage(rh2, 0);
 //        powerShot.toggleFastMode(this);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                autoAimer.done();
-            }
-        });
-        powerShot.addPause();
-        autoModules.add(powerShot);
+////        powerShot.addWaitForReached(this);
+//        powerShot.addPause();
+//        for (int i = 0; i < 2; i++) {
+//            powerShot.addStage(rp, pushControl, 2, 0.01);
+//            powerShot.addWait(0.25);
+//            powerShot.addStage(rp, pushControl.getPos(1) - 0.03, 0.01);
+//            powerShot.addWait(0.25);
+//            if(i < 1) {
+////                powerShot.addMove(this, new double[]{0, -1, -10}, false);
+//                powerShot.addMove(this, new double[]{18, 0, 0}, false);
+//            }
+//        }
+//        powerShot.addOuttake(outr, outl, 0, 0);
+//        powerShot.addStage(rp, pushControl, 0,  0.01);
+////        powerShot.toggleFastMode(this);
+//        shooter.addCustom(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                autoAimer.done();
+//            }
+//        });
+//        powerShot.addPause();
+//        autoModules.add(powerShot);
     }
 
 
