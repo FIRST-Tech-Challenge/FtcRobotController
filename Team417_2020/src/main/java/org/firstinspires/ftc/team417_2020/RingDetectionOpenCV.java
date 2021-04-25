@@ -26,7 +26,7 @@ public class RingDetectionOpenCV extends OpenCvPipeline {
     Rect rect = new Rect();
     Rect maxRect = new Rect(0,0,1,1);
 
-    int uThreshold = 110;
+    int uThreshold = 115;
 
     @Override
     public Mat processFrame(Mat input) {

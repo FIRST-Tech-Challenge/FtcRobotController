@@ -8,8 +8,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Competition Auto")
-public class AutoCompetition extends MasterAutonomous {
+@Autonomous(name="2 Goal Auto")
+public class TwoWobbleGoalAutoComp extends MasterAutonomous {
 
     int allianceSide = 1;
     Toggler rightBumper = new Toggler();
@@ -17,10 +17,10 @@ public class AutoCompetition extends MasterAutonomous {
     // Constants
     static final int MINIMUM_RING_AREA = 1800;
     static final int PARKING_Y_POSITION = -72;
-    static final int A_C_TARGET_ZONE_X_POSITION = 12;
+    static final int A_C_TARGET_ZONE_X_POSITION = 11;
     static final int A_TARGET_ZONE_Y_POSITION = -68;
-    static final int B_TARGET_ZONE_Y_POSITION = -86;
-    static final int C_TARGET_ZONE_Y_POSITION = -110;
+    static final int B_TARGET_ZONE_Y_POSITION = -93;
+    static final int C_TARGET_ZONE_Y_POSITION = -113;
 
     RingDetectionOpenCV ringDetector = new RingDetectionOpenCV();
     OpenCvCamera webcam;
@@ -51,69 +51,59 @@ public class AutoCompetition extends MasterAutonomous {
         deliverWobbleGoal();
 
 
+        move(11, 2, 0.9);
 
-        //Returning to get second wobble goal
+        switch (numRings) {
+            case 0:
+                move(-21, 2, 0.9);
+                break;
+            case 1:
+                move(-25, 2, 0.9);
+                break;
+            case 4:
+                move(-20, 4, 0.7);
+                break;
+        }
+
+
+
+        move(-22, -8, 0.3);
+
+
+        switch (numRings) {
+            case 0:
+                move(13, -64, 0.9);
+                move(13,-47, 0.9);
+                break;
+
+            case 1:
+                // Navigate to Zone B
+                move(-30, -41, 0.9);
+                move(-12, -90, 0.9);
+                //OpenWobbleGoalGrabber();
+
+                break;
+
+            case 4:
+                // Navigate to Zone C
+                move(-30, -41, 0.9);
+                move(A_C_TARGET_ZONE_X_POSITION, -115, 0.9);
+                //OpenWobbleGoalGrabber();
+                break;
+
+        }
+
+        move(-12, -72, 0.4);
+
+
 
         /*
-        //move left
-        move(-20, A_TARGET_ZONE_Y_POSITION, 0.9);
-        move(-20, 24, 0.9);
-        pivot(180,0.7);
-        //wobbleGoalGrabber
-        pivot(180,0.7);
-        move(0, 0, 0.9);
-
-        deliverWobbleGoal();
-        */
-        //grab
-        //pivot
-        //move - tbd
-
-        //deliverWobbleGoal
-
-
-        // Park over white line
-        move(-12, PARKING_Y_POSITION, 0.9);
-
-        pivot(90, 0.9);
-        // navigate to other goal
-        move(18, -88, 0.9);
-        move(18, -120, 0.9); // x: -24
-        move(10, -120, 0.9);
-
-        //move(-20, -18, 0.9);
-
-        // lift arm
-        sleep(300);
-
-        //runMotorForSeconds(300, -0.2);
-
-
-
-        //move toward wobble goal
-        move(10, -122, 0.5); //-18
-
         wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
         runMotorToPosition(motorWobbleGoalArm, -250, 0.5);
 
         sleep(300);
         // close the grabber
         wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_IN);
-
-        sleep(400);
-        /*
-        //
-        // back up
-        //move(-20, -18, 0.7);
-
-        //go to starting position
-        pivot(-90, 0.7);
-        move(-22, -90, 0.7);
-
-        deliverWobbleGoal();
-
-        //parking on white line
-        move(-13, -68, 0.9);
         */
 
     }
@@ -121,8 +111,6 @@ public class AutoCompetition extends MasterAutonomous {
     // todo program Wobble Goal arm
     public void OpenWobbleGoalGrabber() {
         wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
-
-
 
     }
 
@@ -198,6 +186,8 @@ public class AutoCompetition extends MasterAutonomous {
                 move(A_C_TARGET_ZONE_X_POSITION, -24, 0.9);
                 move(-12, B_TARGET_ZONE_Y_POSITION, 0.9);
                 OpenWobbleGoalGrabber();
+                move(-12, -85, 0.9);
+                move(11, -85, 0.9);
                 break;
 
             case 4:
@@ -223,5 +213,3 @@ public class AutoCompetition extends MasterAutonomous {
 
 
 }
-
-
