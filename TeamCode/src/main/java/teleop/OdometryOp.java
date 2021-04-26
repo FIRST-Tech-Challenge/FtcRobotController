@@ -12,6 +12,8 @@ import globalfunctions.TelemetryHandler;
 @Disabled
 @TeleOp(name = "TestOdometry")
 public class OdometryOp extends OpMode {
+
+    // define our bot, telemetryHandler, and optimizer
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
 
@@ -24,12 +26,14 @@ public class OdometryOp extends OpMode {
 
     @Override
     public void init() {
+        // initialize the bot and telemetryHandler
         bot.init(hardwareMap);
         telemetryHandler.init(telemetry, bot);
 
 
     }
 
+    // Start the odometry thread
     @Override
     public void start() {
         bot.startOdoThreadTele();
@@ -38,12 +42,17 @@ public class OdometryOp extends OpMode {
     @Override
     public void loop() {
 
+        // If !optimizer.show, show different telemetry than if optimizer.show
         if(!optimizer.show) {
+            // move bot with gamepad1 joysticks
 //            bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger);
+
+            // update optimizer and display odometry telemetry
             optimizer.update();
             telemetryHandler.addOdometry();
             telemetry = telemetryHandler.getTelemetry();
         }else{
+            // get optimizer values and telemetry them
             double ydebA = optimizer.calcAvg(bot.odometry.Ydebug);
             double xdebA = optimizer.calcAvg(bot.odometry.Xdebug);
             double hdebA = optimizer.calcAvg(bot.odometry.Hdebug);
@@ -63,17 +72,20 @@ public class OdometryOp extends OpMode {
             telemetry.update();
         }
 
+        // when you press gamepad1.a, show the second set of telemetry
         if(gamepad1.a && !optimizer.show){
             optimizer.show();
         }
 
 
+        // update telemetry
         telemetry.update();
 
 
 
     }
 
+    // stop odometry thread
     @Override
     public void stop() {
         bot.stopOdoThread();
