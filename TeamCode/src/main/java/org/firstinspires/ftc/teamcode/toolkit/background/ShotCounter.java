@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.toolkit.background;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
