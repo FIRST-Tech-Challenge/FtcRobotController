@@ -7,20 +7,20 @@ public class Constants {
     public static final double MAX_OUTTAKE_SPEED = 100*2*Math.PI; // rad/s
 
     public static final double OUTR_SPEED_OFFSET = 0.12*MAX_OUTTAKE_SPEED;
-    public static final double OUTL_SPEED_OFFSET = 0.05*MAX_OUTTAKE_SPEED;
+    public static final double OUTL_SPEED_OFFSET = 0.08*MAX_OUTTAKE_SPEED;
 
 
 //    public static final double OUTR_SPEED_OFFSET = 0.5*MAX_OUTTAKE_SPEED;
 //    public static final double OUTL_SPEED_OFFSET = -0.1*MAX_OUTTAKE_SPEED;
 
-    public static final double OUTTAKE_ANGLE = 20 * Math.PI/180; // degrees -> radians
+    public static final double OUTTAKE_ANGLE = 26 * Math.PI/180; // degrees -> radians
     public static final double GOAL_FROM_LEFT = 0.9; // meters
     public static final double GOAL_HEIGHT = 0.9; // meters
     public static final double POWERSHOT_HEIGHT = 0.8; // meters
     public static final double POWERSHOT_FROM_LEFT = 1.2; //meters
     public static final double DIS_BETWEEN_POWERSHOTS = 0.05; //meters
 
-    public static final double SHOOTER_HEIGHT = 0.25; // meters
+    public static final double SHOOTER_HEIGHT = 0.19; // meters
     public static final double SHOOTER_WHEEL_RADIUS = 0.05; // meters
     public static final double FIELD_LENGTH = 3.6576; //meters
     public static final double CURVATURE_TAN_THETA = Math.tan(0/294.76); // used to be 12 now 0
@@ -80,7 +80,7 @@ public class Constants {
     public static final double[] AUTO_SHOOT_POS_NOT_ANGLED = new double[]{115, 141, 0};
     public static final double[] AUTO_POWERSHOT_POS = new double[]{123, 156, 0};
 
-    public static final double GYRO_UPDATE_RATE = 10; //hertz
+    public static final double UPDATE_ODOMETRY_WITH_SENSORS_RATE = 4; //hertz
 
 
 }

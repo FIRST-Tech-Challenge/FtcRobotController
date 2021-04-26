@@ -80,9 +80,16 @@ public class TelemetryHandler {
         telemetry.addData("h", bot.angularPosition.getHeading());
         telemetry.addData("back distance", bot.localizer.getBackDistance());
         telemetry.addData("left distance", bot.localizer.getLeftDistance());
+        telemetry.addData("General Target Speed", bot.autoAimer.targetSpeed);
         telemetry.addData("Outl Target Speed", bot.autoAimer.getOutlTargetVel());
         telemetry.addData("Outr Target Speed", bot.autoAimer.getOutrTargetVel());
         telemetry.addData("Angle to goal", bot.autoAimer.getRobotToGoalAngle(bot.getLocalizerPos()));
+    }
+
+    public void addOdometryRaw() {
+        telemetry.addData("right odometry raw", bot.getRightOdo());
+        telemetry.addData("left odometry raw", bot.getLeftOdo());
+        telemetry.addData("center odometry raw", bot.getCenterOdo());
     }
 
     public Telemetry getTelemetry(){

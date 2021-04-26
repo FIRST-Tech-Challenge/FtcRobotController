@@ -2,13 +2,13 @@ package global;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -103,7 +103,7 @@ public class TerraBot {
     public ButtonController fastModeController = new ButtonController();
     public ButtonController powerShotController = new ButtonController();
 
-    //Odomotry for position of robot
+    //Odometry for position of robot
     //TODO
     // Make this more accurate pls?
     public Odometry odometry = new Odometry();
@@ -111,12 +111,12 @@ public class TerraBot {
     //Thread for odometry at 100 htz
     public TerraThread odometryThread;
     //odometry timer - used for optimizing odometry using gyro
-//    public ElapsedTime odometryTime = new ElapsedTime();
+    public ElapsedTime odometryTime = new ElapsedTime();
 
     //Target Position for Aimer
     public double[] aimerPos = Constants.AUTO_SHOOT_POS;
 
-    //Is movement avaiblible in teleop?
+    //Is movement available in teleop?
     public boolean isMovementAvailable = true;
 
     //Is in powershot mode?
@@ -237,7 +237,7 @@ public class TerraBot {
         cll.setPosition(posLeft);
         clr.setPosition(posRight);
     }
-    //Set claw to controler positions based on index
+    //Set claw to controller positions based on index
     public void setClawPos(int ind) {
         cllControl.changeCurr(ind);
         clrControl.changeCurr(ind);
@@ -276,7 +276,7 @@ public class TerraBot {
 
     //Move for teleop
     public void moveTeleOp(double f, double s, double t, double rt, double lt){
-        //If movement is availible in teleop then move
+        //If movement is available in teleop then move
         if(isMovementAvailable){
             //Fastmode movements are about twice as fast as not fastmode
             if (fastMode) {
@@ -285,7 +285,7 @@ public class TerraBot {
                 move(0.5 * Math.signum(f) * Math.pow(Math.abs(f), 0.5), 0.5 * Math.signum(s) * Math.pow(Math.abs(s), 0.5), 0.4 * Math.signum(t) * Math.pow(Math.abs(t), 0.5));
             }
         }
-        //Swicth fastmode using button controler
+        //Switch fastmode using button controller
         if (fastModeController.isPressing(rt > 0)) {
             fastMode = !fastMode;
             isMovementAvailable = true;
@@ -329,14 +329,14 @@ public class TerraBot {
     public boolean isArmInLimits(double dir){
         return limits.isInLimits(arm, dir, getArmPos());
     }
-    //Chek if the wobble goal extender is in limits
+    //Check if the wobble goal extender is in limits
     public boolean isWgeInLimits(double dir) { return limits.isInLimits(wge, dir, getWgePos()) && !Optimizer.inRange(getArmPos(), Constants.WGE_IGNORE_RANGE); }
 
-    //Control wobble goal extender to a certian pos
+    //Control wobble goal extender to a certain pos
     public void controlWGE(double pos){
         //If its not in start mode then move it
         if (!wgeStartMode) {
-            //Move it until it reaches within a certian accuracy
+            //Move it until it reaches within a certain accuracy
             double wgePos = getWgePos();
             double targetPos =  Constants.WGE_UPPER_LIMIT*pos;
             if (Math.abs(targetPos - wgePos) < Constants.WGE_ACC) {
@@ -349,7 +349,7 @@ public class TerraBot {
             wgeStartMode = getArmPos() < 40;
         }
     }
-    //Is controling the wobble goal extender done?
+    //Is controlling the wobble goal extender done?
     public boolean isControlWgeDone(double pos){
         double targetPos =  Constants.WGE_UPPER_LIMIT*pos;
         return Math.abs(targetPos - getWgePos()) < Constants.WGE_ACC;
@@ -377,7 +377,7 @@ public class TerraBot {
     public double getRightAngPos() {return (outr.getCurrentPosition() / Constants.GOBUILDA1_Ticks) * Constants.pi2; }
     public double getLeftAngPos(){ return (outl.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2; }
 
-    //Get angular velocites of outtake motors
+    //Get angular velocities of outtake motors
     public double getRightAngVel(){ return (outr.getVelocity()/Constants.GOBUILDA1_Ticks)*Constants.pi2;}
     public double getLeftAngVel(){ return (outl.getVelocity()/Constants.GOBUILDA1_Ticks)*Constants.pi2; }
 
@@ -398,6 +398,7 @@ public class TerraBot {
     }
     //Update odometry with localizer pos
     public void updateOdoWithLocalizer() {
+        updateLocalizerWithHeading();
         odometry.resetPos(getLocalizerPos());
     }
     //Update odometry with localizer and
@@ -424,6 +425,8 @@ public class TerraBot {
                 autoAimer.updateTargetSpeed();
                 outr.setVelocity(autoAimer.getOutrTargetVel());
                 outl.setVelocity(autoAimer.getOutlTargetVel());
+            } else {
+                autoAimer.setOuttakePos(odometry.getPos());
             }
         }else{
             if(outr.getMode().equals(DcMotor.RunMode.RUN_USING_ENCODER)){
@@ -438,9 +441,9 @@ public class TerraBot {
         }
     }
     //Get odometry positions in ticks
-    public int getLeftOdo() { return r1.getCurrentPosition(); }
+    public int getLeftOdo() { return in.getCurrentPosition(); }
     public int getRightOdo() { return l2.getCurrentPosition(); }
-    public int getCenterOdo() {return r2.getCurrentPosition();}
+    public int getCenterOdo() {return r2.getCurrentPosition(); }
 
     //Update Odometry positions
     public void updateOdometry() { odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo()); }
@@ -489,16 +492,14 @@ public class TerraBot {
     }
 
     //TODO
-    // Fix this and make odomtery automatically update with localize and gyro
-//    public void optimizeOdometry(){
-//        optimizeOdometryHeading();
-//        if(odometryTime.seconds() > (1/Constants.GYRO_UPDATE_RATE)){
-//            odometryTime.reset();
-//            resetHeadingUsingGyro();
-//
-//            optimizeOdometryHeading();
-//        }
-//    }
+    // Fix this and make odometry automatically update with localize and gyro
+    public void updateOdometryUsingSensors(){
+        if(odometryTime.seconds() > (1/Constants.UPDATE_ODOMETRY_WITH_SENSORS_RATE)){
+            odometryTime.reset();
+            updateOdoWithGyro();
+            updateOdoWithLocalizer();
+        }
+    }
 
     //Intitialize Wobbleg goal
     public void initWobbleGoal(){
@@ -542,11 +543,25 @@ public class TerraBot {
     //TODO
     // Define shooter and powershot
     public void defineShooter(){
-        shooter.addOuttake(outr, outl, 1300, 1600);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                outtaking = true;
+            }
+        });
+//        shooter.addOuttake(outr, outl, 1300, 1600);
+        shooter.addWait(0.5);
         shooter.addPause();
-        shooter.addStage(rs, 0.1);
+        shooter.addStage(rs, 0.5);
         shooter.addWait(1);
         shooter.addStage(0, outr, outl);
+        shooter.addStage(rs, 0);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                outtaking = false;
+            }
+        });
         shooter.addPause();
         autoModules.add(shooter);
     }

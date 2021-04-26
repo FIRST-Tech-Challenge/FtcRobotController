@@ -15,7 +15,7 @@ public class TerraOp extends OpMode {
     TelemetryHandler telemetryHandler = new TelemetryHandler();
     Optimizer optimizer = new Optimizer();
 
-    boolean shouldICareAboutAuton = true;
+    boolean shouldICareAboutAuton = false;
 
     @Override
     public void init() {
@@ -25,7 +25,7 @@ public class TerraOp extends OpMode {
 //        bot.angularPosition.resetGyro(0);
         optimizer.reset();
 
-        bot.readFromAuton();
+//        bot.readFromAuton();
         if(!shouldICareAboutAuton){
             bot.angularPosition.resetGyro(0);
         }
@@ -56,7 +56,7 @@ public class TerraOp extends OpMode {
             }
 
             bot.outtake(-gamepad2.right_stick_y);
-            bot.shootRings(-gamepad2.left_stick_y/5);
+            bot.shootRings(-gamepad2.left_stick_y);
         }
 
         if(gamepad1.x){
@@ -67,14 +67,23 @@ public class TerraOp extends OpMode {
             bot.shooter.start();
         }
 
+        bot.outtakeWithCalculations();
+
         bot.optimizeOdometryHeading();
-        telemetry.addData("Powershot Mode", bot.powershotMode);
-        telemetry.addData("Can Move", bot.isMovementAvailable);
-        telemetry.addData("hasReached", bot.autoAimer.hasReached);
-        telemetry.addData("gyro", bot.angularPosition.getHeadingGY());
-        telemetry.addData("Dpos", Arrays.toString(bot.localizer.getPos()));
-        telemetry.addData("pos", Arrays.toString(bot.odometry.getPos()));
-        telemetry.addData("aim", Arrays.toString(bot.aimerPos));
+        bot.updateOdometryUsingSensors();
+//        telemetry.addData("Powershot Mode", bot.powershotMode);
+//        telemetry.addData("Can Move", bot.isMovementAvailable);
+//        telemetry.addData("hasReached", bot.autoAimer.hasReached);
+//        telemetry.addData("gyro", bot.angularPosition.getHeadingGY());
+//        telemetry.addData("Dpos", Arrays.toString(bot.localizer.getPos()));
+//        telemetry.addData("pos", Arrays.toString(bot.odometry.getPos()));
+//        telemetry.addData("aim", Arrays.toString(bot.aimerPos));
+        telemetryHandler.addAutoAimer();
+//        telemetryHandler.addOdometry();
+//        telemetryHandler.addAngularPosition();
+//        telemetryHandler.addOuttake();
+//        telemetryHandler.addOdometryRaw();
+        telemetry = telemetryHandler.getTelemetry();
         telemetry.update();
     }
 
