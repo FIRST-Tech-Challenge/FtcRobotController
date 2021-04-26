@@ -27,7 +27,6 @@ import org.firstinspires.ftc.teamcode.toolkit.background.ShotCounter;
 import org.firstinspires.ftc.teamcode.toolkit.background.UpliftTelemetry;
 import org.firstinspires.ftc.teamcode.toolkit.background.VelocityData;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
-import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -98,7 +97,7 @@ public class UpliftRobot {
     public double kD = 0;
     public double kF = 15;
 
-    public File odometryFileWorldX, odometryFileWorldY, odometryFileWorldAngle, transferFile;
+    public File odometryFileWorldX, odometryFileWorldY, odometryFileWorldAngle, transferFile, imuFile;
 
     public boolean driveInitialized, flickerInitialized, intakeInitialized, shooterInitialized, transferInitialized, wobbleInitialized, imuInitialized, visionInitialized;
 
@@ -268,6 +267,7 @@ public class UpliftRobot {
         odometryFileWorldY = AppUtil.getInstance().getSettingsFile("odometryY.txt");
         odometryFileWorldAngle = AppUtil.getInstance().getSettingsFile("odometryTheta.txt");
         transferFile = AppUtil.getInstance().getSettingsFile("transferFile.txt");
+        imuFile = AppUtil.getInstance().getSettingsFile("imuFile.txt");
 
     }
 
@@ -314,12 +314,14 @@ public class UpliftRobot {
         ReadWriteFile.writeFile(odometryFileWorldX, String.valueOf(worldX));
         ReadWriteFile.writeFile(odometryFileWorldY, String.valueOf(worldY));
         ReadWriteFile.writeFile(odometryFileWorldAngle, String.valueOf(worldAngle));
+        ReadWriteFile.writeFile(imuFile, String.valueOf(imuAngle));
     }
 
     public void readPositionFiles() {
         String xStr = ReadWriteFile.readFile(odometryFileWorldX).trim();
         String yStr = ReadWriteFile.readFile(odometryFileWorldY).trim();
         String angleStr = ReadWriteFile.readFile(odometryFileWorldAngle).trim();
+        String imuStr = ReadWriteFile.readFile(imuFile).trim();
         if(!xStr.isEmpty()){
             worldX = Double.parseDouble(ReadWriteFile.readFile(odometryFileWorldX).trim());
         }
@@ -329,12 +331,16 @@ public class UpliftRobot {
         if(!angleStr.isEmpty()) {
             worldAngle = Double.parseDouble(ReadWriteFile.readFile(odometryFileWorldAngle).trim());
         }
+        if(!imuStr.isEmpty()) {
+            imuAngle = Double.parseDouble(ReadWriteFile.readFile(imuFile).trim());
+        }
     }
 
     public void clearPositionFiles() {
         ReadWriteFile.writeFile(odometryFileWorldX, String.valueOf(0.0));
         ReadWriteFile.writeFile(odometryFileWorldY, String.valueOf(0.0));
         ReadWriteFile.writeFile(odometryFileWorldAngle, String.valueOf(0.0));
+        ReadWriteFile.writeFile(imuFile, String.valueOf(0.0));
     }
 
     public boolean safeSleep(long millis) {

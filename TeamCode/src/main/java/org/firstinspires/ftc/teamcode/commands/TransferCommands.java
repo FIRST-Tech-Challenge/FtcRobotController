@@ -54,7 +54,7 @@ public class TransferCommands extends Command {
                 robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_HIGHGOAL);
             }
 //        else {
-        if(opMode.gamepad2.x) {
+        if(opMode.gamepad2.x || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
             robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
             transfer.teleRaiseTransfer();
         }

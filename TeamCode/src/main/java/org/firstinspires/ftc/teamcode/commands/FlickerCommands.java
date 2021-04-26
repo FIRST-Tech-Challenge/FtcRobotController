@@ -41,7 +41,7 @@ public class FlickerCommands extends Command {
         if(opMode.gamepad1.y) {
             for(int i = 0; i < 3; i++) {
                 double initialTime = System.currentTimeMillis();
-                while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel) {
+                while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel && opMode.opModeIsActive()) {
                     robot.safeSleep(1);
                     if(robot.driverCancel || robot.operatorCancel) {
                         flicker.setFlickerOut();
@@ -56,20 +56,29 @@ public class FlickerCommands extends Command {
             }
         }
 
-//        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS1) {
-//            flicker.flickRing();
-//            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS1);
-//        }
-//
-//        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS2) {
-//            flicker.flickRing();
-//            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS2);
-//        }
-//
-//        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS3) {
-//            flicker.flickRing();
-//            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS3);
-//        }
+        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS1) {
+            while(robot.velocityData.isPowerShotShooterReady() && opMode.opModeIsActive()) {
+                if(!robot.safeSleep(1)) return;
+            }
+            flicker.flickRing();
+            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS1);
+        }
+
+        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS2) {
+            while(robot.velocityData.isPowerShotShooterReady() && opMode.opModeIsActive()) {
+                if(!robot.safeSleep(1)) return;
+            }
+            flicker.flickRing();
+            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS2);
+        }
+
+        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS3) {
+            while(robot.velocityData.isPowerShotShooterReady() && opMode.opModeIsActive()) {
+                if(!robot.safeSleep(1)) return;
+            }
+            flicker.flickRing();
+            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS3);
+        }
 
     }
 

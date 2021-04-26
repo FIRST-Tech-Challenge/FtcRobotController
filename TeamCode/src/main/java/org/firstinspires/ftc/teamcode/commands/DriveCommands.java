@@ -8,10 +8,6 @@ import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 import org.firstinspires.ftc.teamcode.toolkit.misc.MathFunctions;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.toRadians;
-
 public class DriveCommands extends Command {
 
     public DriveSubsystem drive;
@@ -52,41 +48,41 @@ public class DriveCommands extends Command {
             drive.imuStraighten();
         }
 
-//        // if x is pressed on DRIVER gamepad (when robot is up to the line and pressed against wall)
-//        if(opMode.gamepad1.x) {
-//            // set shooting state to PREPARING_POWERSHOT in order to raise transfer and set shooter vel to the powershot target vel
-//            robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
-//
-//            // set the odometry position (CHANGE/CHECK THESE VALUES LATER)
-//            drive.robot.odometry.setOdometryPosition(9.25, 63.5,0);
-//
-//            // move to the first powershot shooting position
-//            drive.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 0.5, 0);
-//            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS1);
-//            while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS1 && !robot.driverCancel && opMode.opModeIsActive()) {
-//                // while shooter not done with first powershot, wait
-//                robot.safeSleep(5);
-//            }
-//
-//            // move to second powershot shooting position and set the shooter state to SHOOTING_PS2 to tell the flicker to flick the ring
-//            drive.driveToPosition(DriveSubsystem.powershotShootingPt2.x, DriveSubsystem.powershotShootingPt2.y, 0.5, 0);
-//            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS2);
-//            while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS2 && !robot.driverCancel && opMode.opModeIsActive()) {
-//                // while shooter not done with second powershot, wait
-//                robot.safeSleep(5);
-//            }
-//
-//            // move to third powershot shooting position and set the shooter state to SHOOTING_PS3 to tell the flicker to flick the ring
-//            drive.driveToPosition(DriveSubsystem.powershotShootingPt3.x, DriveSubsystem.powershotShootingPt3.y, 0.5, 0);
-//            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS3);
-//            while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS3 && !robot.driverCancel && opMode.opModeIsActive()) {
-//                // while shooter not done with third powershot, wait
-//                robot.safeSleep(5);
-//            }
-//
-//            // set the shooting state to DONE_SHOOTING in order to move the shooter to an idle speed and drop the transfer
-//            robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
-//        }
+        // if x is pressed on DRIVER gamepad (when robot is up to the line and pressed against wall)
+        if(opMode.gamepad1.x) {
+            // set shooting state to PREPARING_POWERSHOT in order to raise transfer and set shooter vel to the powershot target vel
+            robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
+
+            // set the odometry position (CHANGE/CHECK THESE VALUES LATER)
+            drive.robot.odometry.setOdometryPosition(57.5, 70,0);
+
+            // move to the first powershot shooting position
+            drive.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 0.6, 0);
+            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS1);
+            while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS1 && opMode.opModeIsActive()) {
+                // while shooter not done with first powershot, wait
+                if(!robot.safeSleep(1)) return;
+            }
+
+            // move to second powershot shooting position and set the shooter state to SHOOTING_PS2 to tell the flicker to flick the ring
+            drive.driveToPosition(DriveSubsystem.powershotShootingPt2.x, DriveSubsystem.powershotShootingPt2.y, 0.6, 0);
+            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS2);
+            while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS2 && opMode.opModeIsActive()) {
+                // while shooter not done with second powershot, wait
+                if(!robot.safeSleep(1)) return;
+            }
+
+            // move to third powershot shooting position and set the shooter state to SHOOTING_PS3 to tell the flicker to flick the ring
+            drive.driveToPosition(DriveSubsystem.powershotShootingPt3.x, DriveSubsystem.powershotShootingPt3.y, 0.6, 0);
+            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS3);
+            while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS3 && opMode.opModeIsActive()) {
+                // while shooter not done with third powershot, wait
+                if(!robot.safeSleep(1)) return;
+            }
+
+            // set the shooting state to DONE_SHOOTING in order to move the shooter to an idle speed and drop the transfer
+            robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
+        }
 
         teleOpDrive();
 

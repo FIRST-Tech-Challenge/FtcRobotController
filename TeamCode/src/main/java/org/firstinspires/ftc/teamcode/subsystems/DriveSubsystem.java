@@ -30,9 +30,9 @@ public class DriveSubsystem extends Subsystem {
 
     // shooting positions
     public static Point highGoalShootingPt = new Point(106, 70, 0);
-    public static Point powershotShootingPt1 = new Point(67.5, 70,0);
-    public static Point powershotShootingPt2 = new Point(74.5, 70,0);
-    public static Point powershotShootingPt3 = new Point(81.5, 70,0);
+    public static Point powershotShootingPt1 = new Point(77.5, 70,0);
+    public static Point powershotShootingPt2 = new Point(85, 70,0);
+    public static Point powershotShootingPt3 = new Point(92.5, 70,0);
 
 
     // direction constants
@@ -338,7 +338,7 @@ public class DriveSubsystem extends Subsystem {
 
     public void imuStraighten() {
         double turnAngle = robot.imuAngle;
-        turn(-turnAngle, 0.4);
+        turn(-turnAngle, 0.25);
     }
 
     // method to stop all of the drive motors

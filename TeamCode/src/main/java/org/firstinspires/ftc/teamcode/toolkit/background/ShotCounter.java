@@ -31,6 +31,6 @@ public class ShotCounter extends Background {
             }
             robot.shotCount += 1;
         }
-        Log.i("Shot count", robot.shotCount + "");
+//        Log.i("Shot count", robot.shotCount + "");
     }
 }

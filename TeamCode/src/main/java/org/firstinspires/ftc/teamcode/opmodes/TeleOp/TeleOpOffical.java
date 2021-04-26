@@ -60,6 +60,9 @@ public class TeleOpOffical extends UpliftTele {
     public void initAction() {
 
         robot.readPositionFiles();
+        if(robot.imuInitialized) {
+            robot.imuAngle = robot.worldAngle;
+        }
 
     }
 

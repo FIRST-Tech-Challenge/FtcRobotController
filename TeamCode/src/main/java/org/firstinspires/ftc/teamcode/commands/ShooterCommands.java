@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.core.Command;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
-import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 
 public class ShooterCommands extends Command {
 
@@ -36,23 +34,12 @@ public class ShooterCommands extends Command {
     public void loop() {
 
         // Toggle Button for shooter type (highgoal if true, powershot if false)
-        if(opMode.gamepad2.x) {
+        if(opMode.gamepad2.x || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
              shooter.setShooterVelocity(robot.powerShotVelocity);
-
-//            if(!shooterSwitchPressed) {
-//                robot.highGoalMode = !robot.highGoalMode;
-//                shooterSwitchPressed = true;
-//            }
-//        } else {
-//            shooterSwitchPressed = false;
         }
 
         if(opMode.gamepad2.a || opMode.gamepad2.y) {
-//            if(robot.highGoalMode) {
-                shooter.setShooterVelocity(robot.highGoalVelocity);
-//            } else {
-//                shooter.setShooterVelocity(robot.powerShotVelocity);
-//            }
+            shooter.setShooterVelocity(robot.highGoalVelocity);
         }
 
         if(opMode.gamepad2.b) {

@@ -66,7 +66,7 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void dropRoller() {
-        intakeLifter.setPosition(0.57);
+        intakeLifter.setPosition(0.60);
     }
 
     public void initStick() {
