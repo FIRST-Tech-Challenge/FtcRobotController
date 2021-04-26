@@ -57,7 +57,7 @@ public class FlickerCommands extends Command {
         }
 
         if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS1) {
-            while(robot.velocityData.isPowerShotShooterReady() && opMode.opModeIsActive()) {
+            while(!robot.velocityData.isPowerShotShooterReady() && opMode.opModeIsActive()) {
                 if(!robot.safeSleep(1)) return;
             }
             flicker.flickRing();
@@ -65,7 +65,7 @@ public class FlickerCommands extends Command {
         }
 
         if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS2) {
-            while(robot.velocityData.isPowerShotShooterReady() && opMode.opModeIsActive()) {
+            while(!robot.velocityData.isPowerShotShooterReady() && opMode.opModeIsActive()) {
                 if(!robot.safeSleep(1)) return;
             }
             flicker.flickRing();
@@ -73,7 +73,7 @@ public class FlickerCommands extends Command {
         }
 
         if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS3) {
-            while(robot.velocityData.isPowerShotShooterReady() && opMode.opModeIsActive()) {
+            while(!robot.velocityData.isPowerShotShooterReady() && opMode.opModeIsActive()) {
                 if(!robot.safeSleep(1)) return;
             }
             flicker.flickRing();

@@ -89,7 +89,7 @@ public class TransferSubsystem extends Subsystem {
         transfer.setPower(0.65);
         robot.setTransferState(UpliftRobot.TransferState.MOVING);
         double initialTime = System.currentTimeMillis();
-        while(transfer.isBusy() && !robot.operatorCancel && robot.opMode.opModeIsActive()) {
+        while(transfer.isBusy() && !robot.operatorCancel && robot.opMode.opModeIsActive() && robot.opMode.gamepad2.right_stick_y < 0.25) {
             robot.safeSleep(5);
         }
         Log.i("Transfer Busy", transfer.isBusy() + "");
