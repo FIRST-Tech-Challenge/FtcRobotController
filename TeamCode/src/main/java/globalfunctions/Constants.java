@@ -82,5 +82,7 @@ public class Constants {
 
     public static final double UPDATE_ODOMETRY_WITH_SENSORS_RATE = 4; //hertz
 
+    public static final double RS_POW = 0.5;
+
 
 }

@@ -49,7 +49,7 @@ public class OdometryOp extends OpMode {
 
             // update optimizer and display odometry telemetry
             optimizer.update();
-            telemetryHandler.addOdometry();
+            telemetryHandler.addOdometry(4);
             telemetry = telemetryHandler.getTelemetry();
         }else{
             // get optimizer values and telemetry them

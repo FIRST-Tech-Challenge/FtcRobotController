@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.Arrays;
 
 import global.TerraBot;
+import globalfunctions.Constants;
 import globalfunctions.Optimizer;
 import globalfunctions.TelemetryHandler;
 
@@ -75,14 +76,20 @@ public class TerraOp extends OpMode {
 
             // if the wobble goal is past stage two of initialization, the driver can move the arm using gamepad2 right joystick
             if(bot.wgStartMode > 2) {
-                bot.moveArm(-gamepad2.right_stick_y);
+                bot.moveArm(-gamepad2.left_stick_y);
             }
 
             // update outtake wheels manually with gamepad2's right stick y
             bot.outtake(-gamepad2.right_stick_y);
 
             // update the outtake servo manually with gamepad2's left stick y
-            bot.shootRings(-gamepad2.left_stick_y);
+            if(gamepad2.right_bumper) {
+                bot.shootRings(Constants.RS_POW);
+            }else if(gamepad2.left_bumper){
+                bot.shootRings(-Constants.RS_POW);
+            }else{
+                bot.shootRings(0);
+            }
         }
 
         // when the driver presses gamepad1.x, start the wobble goal automodule
@@ -105,19 +112,7 @@ public class TerraOp extends OpMode {
         bot.updateOdometryUsingSensors();
 
         // TELEMETRY BLOCK:
-
-//        telemetry.addData("Powershot Mode", bot.powershotMode);
-//        telemetry.addData("Can Move", bot.isMovementAvailable);
-//        telemetry.addData("hasReached", bot.autoAimer.hasReached);
-//        telemetry.addData("gyro", bot.angularPosition.getHeadingGY());
-//        telemetry.addData("Dpos", Arrays.toString(bot.localizer.getPos()));
-//        telemetry.addData("pos", Arrays.toString(bot.odometry.getPos()));
-//        telemetry.addData("aim", Arrays.toString(bot.aimerPos));
-        telemetryHandler.addAutoAimer();
-//        telemetryHandler.addOdometry();
-//        telemetryHandler.addAngularPosition();
-//        telemetryHandler.addOuttake();
-//        telemetryHandler.addOdometryRaw();
+        telemetryHandler.addTele(0,0,0,0,0);
         telemetry = telemetryHandler.getTelemetry();
         telemetry.update();
     }

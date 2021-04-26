@@ -225,7 +225,7 @@ public class TerraBot {
     //Intake power p and check if not outtake to control ring shooter
     public void intake(double p){
         in.setPower(p);
-        if (!outtaking) { shootRings(-Math.signum(p));}
+        if (!outtaking) { shootRings(-Math.signum(p)*Constants.RS_POW);}
     }
     //Outtake at power p
     public void outtake(double p){
@@ -552,7 +552,7 @@ public class TerraBot {
 //        shooter.addOuttake(outr, outl, 1300, 1600);
         shooter.addWait(0.5);
         shooter.addPause();
-        shooter.addStage(rs, 0.5);
+        shooter.addStage(rs, Constants.RS_POW);
         shooter.addWait(1);
         shooter.addStage(0, outr, outl);
         shooter.addStage(rs, 0);

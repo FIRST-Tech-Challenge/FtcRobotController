@@ -35,9 +35,7 @@ public class OuttakeOp extends OpMode {
         bot.autoAimer.setOuttakePos(bot.getLocalizerPos());
         bot.autoAimer.updateTargetSpeed();
 
-
-        telemetryHandler.addAutoAimer();
-        telemetryHandler.addAngularPosition();
+        telemetryHandler.addTele(0,1,0,1,0);
         telemetry = telemetryHandler.getTelemetry();
 
         telemetry.update();
