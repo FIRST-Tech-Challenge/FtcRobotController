@@ -58,7 +58,6 @@ public class DriveCommands extends Command {
 
             // move to the first powershot shooting position
             drive.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 0.6, 0);
-            drive.imuStraighten();
             robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS1);
             while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS1 && opMode.opModeIsActive()) {
                 // while shooter not done with first powershot, wait
@@ -67,7 +66,6 @@ public class DriveCommands extends Command {
 
             // move to second powershot shooting position and set the shooter state to SHOOTING_PS2 to tell the flicker to flick the ring
             drive.driveToPosition(DriveSubsystem.powershotShootingPt2.x, DriveSubsystem.powershotShootingPt2.y, 0.6, 0);
-            drive.imuStraighten();
             robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS2);
             while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS2 && opMode.opModeIsActive()) {
                 // while shooter not done with second powershot, wait
@@ -76,7 +74,6 @@ public class DriveCommands extends Command {
 
             // move to third powershot shooting position and set the shooter state to SHOOTING_PS3 to tell the flicker to flick the ring
             drive.driveToPosition(DriveSubsystem.powershotShootingPt3.x, DriveSubsystem.powershotShootingPt3.y, 0.6, 0);
-            drive.imuStraighten();
             robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS3);
             while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS3 && opMode.opModeIsActive()) {
                 // while shooter not done with third powershot, wait

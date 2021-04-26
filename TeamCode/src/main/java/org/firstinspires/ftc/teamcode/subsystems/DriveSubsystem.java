@@ -30,9 +30,9 @@ public class DriveSubsystem extends Subsystem {
 
     // shooting positions
     public static Point highGoalShootingPt = new Point(106, 70, 0);
-    public static Point powershotShootingPt1 = new Point(77.5, 70,0);
-    public static Point powershotShootingPt2 = new Point(85, 70,0);
-    public static Point powershotShootingPt3 = new Point(92.5, 70,0);
+    public static Point powershotShootingPt1 = new Point(73.5, 70,0);
+    public static Point powershotShootingPt2 = new Point(81, 70,0);
+    public static Point powershotShootingPt3 = new Point(88.5, 70,0);
 
 
     // direction constants
@@ -268,7 +268,7 @@ public class DriveSubsystem extends Subsystem {
         double initialAngle = robot.rawAngle;
         // if turning counter-clockwise
         if(degrees < 0) {
-            while(robot.rawAngle > (initialAngle + degrees)) {
+            while(robot.rawAngle > (initialAngle + degrees + 0.5)) {
                 if (robot.driverCancel || !opMode.opModeIsActive() || opMode.isStopRequested()) {
                     // breakaway statement for teleop
                     safeDisable();
@@ -286,7 +286,7 @@ public class DriveSubsystem extends Subsystem {
             }
             // if turning clockwise
         } else if(degrees > 0) {
-            while(robot.rawAngle < (initialAngle + degrees)) {
+            while(robot.rawAngle < (initialAngle + degrees - 0.5)) {
                 if (robot.driverCancel || !opMode.opModeIsActive() || opMode.isStopRequested()) {
                     // breakaway statement for teleop
                     safeDisable();
