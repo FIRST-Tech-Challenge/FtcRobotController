@@ -89,7 +89,13 @@ public class Odometry {
 
     //Calculates deltah using right and left encoder readings
     public void calcDeltaH() {
-        deltaH = Math.asin((deltaRP - deltaLP) / (2 * d));
+        //TODO
+        // Make this better
+        // Check which ones better pls?
+//
+//        deltaH = Math.asin((deltaRP - deltaLP) / (2 * d));
+
+        deltaH = (deltaRP - deltaLP) / (2 * d);
     }
 
     //update delta x and y

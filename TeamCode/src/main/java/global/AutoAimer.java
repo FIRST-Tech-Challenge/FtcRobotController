@@ -71,9 +71,27 @@ public class AutoAimer {
             deltaHeight = Constants.POWERSHOT_HEIGHT - Constants.SHOOTER_HEIGHT;
             disToGoal = Geometry.pythagoreanC(disFromFront, disFromLeft - Constants.POWERSHOT_FROM_LEFT - (Constants.DIS_BETWEEN_POWERSHOTS*(shotMode-1)));
         }
-        double linearSpeed = disToGoal/Math.cos(Constants.OUTTAKE_ANGLE) * Math.sqrt(4.9/(disToGoal * Math.tan(Constants.OUTTAKE_ANGLE) - deltaHeight));
-        return linearSpeed/Constants.SHOOTER_WHEEL_RADIUS;
+        return reverseCalcLinearSpeed(disToGoal, deltaHeight)/Constants.SHOOTER_WHEEL_RADIUS;
     }
+
+    public double calcHeight(double vel, double disTo){
+        double horzVel = vel*Math.cos(Constants.OUTTAKE_ANGLE);
+        double vertVe = vel*Math.sin(Constants.OUTTAKE_ANGLE);
+        double time = disTo/horzVel;
+        return Constants.SHOOTER_HEIGHT + (vertVe*time) - (0.5*9.81*time*time);
+    }
+
+    public double reverseCalcLinearSpeed(double disToGoal, double deltaHeight){
+        return disToGoal/Math.cos(Constants.OUTTAKE_ANGLE) * Math.sqrt(4.9/(disToGoal * Math.tan(Constants.OUTTAKE_ANGLE) - deltaHeight));
+    }
+
+    public double velToAccel(double vel){
+        return (vel*vel)/(2*Constants.SHOOT_DIS);
+    }
+    public double accelToVel(double accel){
+        return Math.sqrt(2*accel*Constants.SHOOT_DIS);
+    }
+
 
     public double getRobotToGoalAngle(double[] pos) {
         double offset = Constants.CURVATURE_TAN_THETA * pos[1]/100;
