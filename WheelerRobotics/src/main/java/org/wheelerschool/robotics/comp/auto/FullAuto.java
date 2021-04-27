@@ -26,6 +26,7 @@ public class FullAuto extends LinearOpMode {
 
         waitForStart();
 
+        // strafe sideways
         bot.setDriveEncTranslate(0.75f, 0, 500);
 
         while (!bot.atDriveTarget() && opModeIsActive()) {
