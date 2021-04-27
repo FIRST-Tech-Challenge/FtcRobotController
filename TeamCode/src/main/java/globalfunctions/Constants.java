@@ -7,7 +7,7 @@ public class Constants {
     public static final double MAX_OUTTAKE_SPEED = 100*2*Math.PI; // rad/s
 //
 //    public static final double OUTR_SPEED_OFFSET = 0.12*MAX_OUTTAKE_SPEED;
-    public static final double OUT_SPEED_OFFSET = 0.01*MAX_OUTTAKE_SPEED;
+    public static final double OUT_SPEED_OFFSET = 0.03*MAX_OUTTAKE_SPEED;
 
     public static final double OUTTAKE_ANGLE = 26 * Math.PI/180; // degrees -> radians
     public static final double GOAL_FROM_LEFT = 0.9; // meters
@@ -80,12 +80,12 @@ public class Constants {
 
     public static final double RS_POW = 0.5;
 
-    public static final double SHOOT_DIS = 0.05; //m
-    public static final double Y_DIFF = 14; //cm
-    public static final double X_DIFF = 6; //cm
+    public static final double SHOOT_DIS = 0.06; //m
 
-    public static final double LEFT_DIS_OFFSET = 0;
-    public static final double BACK_DIS_OFFSET = 0;
+    public static final double FRICTION_ACCEL = 360; // m/s^2
+    public static final double MASS_OF_RING = 0.0295; //kg
+
+    //Friction Force = 10.32 N
 
 
 }

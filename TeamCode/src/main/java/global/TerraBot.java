@@ -424,8 +424,8 @@ public class TerraBot {
             }
             if(autoAimer.hasPosBeenUpdated()){
                 autoAimer.updateTargetSpeed();
-                outr.setVelocity(1500); //autoAimer.getOutrTargetVel());
-                outl.setVelocity(0); //autoAimer.getOutlTargetVel());
+                outr.setVelocity(autoAimer.getOutrTargetVel());
+                outl.setVelocity(autoAimer.getOutlTargetVel());
             }
         }else{
             if(outr.getMode().equals(DcMotor.RunMode.RUN_USING_ENCODER)){

@@ -21,7 +21,7 @@ public class AutoAimer {
         return !((outtakePos[0] == oldOuttakePos[0]) && (outtakePos[1] == oldOuttakePos[1]));
     }
     public void setOuttakePos(double[] pos){
-        outtakePos = convertOdoPosToAimerPos(pos);
+        outtakePos = pos;
     }
 
     public void done(){
@@ -43,13 +43,19 @@ public class AutoAimer {
     }
 
     public double getOutrTargetVel(){
-        return (((targetSpeed+Constants.OUT_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
+
+
+
+
+//        return (((targetSpeed+Constants.OUT_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
+        return (((considerFriction(targetSpeed+Constants.OUT_SPEED_OFFSET))/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
     public double getOutlTargetVel(){
         // 29584 -> 59168
         //
-        double speed_offset = targetSpeed - Math.sqrt(2 * Math.pow(targetSpeed, 2) - Math.pow(targetSpeed + Constants.OUT_SPEED_OFFSET, 2));
-        return (((targetSpeed-speed_offset)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
+//        double speed_offset = targetSpeed - Math.sqrt(2 * Math.pow(targetSpeed, 2) - Math.pow(targetSpeed + Constants.OUT_SPEED_OFFSET, 2));
+//        return (((targetSpeed-speed_offset)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
+        return (((considerFriction(targetSpeed-Constants.OUT_SPEED_OFFSET))/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
 
     public void nextShotMode(){
@@ -93,6 +99,15 @@ public class AutoAimer {
         return Math.sqrt(2*accel*Constants.SHOOT_DIS);
     }
 
+    public double considerFriction(double targetSpeed){
+        double vtheo = targetSpeed*Constants.SHOOTER_WHEEL_RADIUS;
+        double stheo = velToAccel(vtheo);
+        double f = Constants.FRICTION_ACCEL;
+        double sshouldapply = stheo + f;
+        double vshouldapply = accelToVel(sshouldapply);
+        return vshouldapply/Constants.SHOOTER_WHEEL_RADIUS;
+    }
+
 
     public double getRobotToGoalAngle(double[] pos) {
         double offset = Constants.CURVATURE_TAN_THETA * pos[1]/100;
@@ -103,10 +118,6 @@ public class AutoAimer {
         }else{
             return Math.toDegrees(Constants.halfPi - Math.atan2(disFromFront, disFromLeft - Constants.POWERSHOT_FROM_LEFT - (Constants.DIS_BETWEEN_POWERSHOTS*(shotMode-1)) - offset));
         }
-    }
-
-    public double[] convertOdoPosToAimerPos(double[] in){
-        return new double[]{in[0]+Constants.X_DIFF, in[1]+Constants.Y_DIFF};
     }
 
 
