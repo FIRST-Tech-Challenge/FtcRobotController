@@ -61,7 +61,7 @@ public class OuttakeOp extends OpMode {
 //        telemetry.addData("targetSpeedReal", targetSpeedReal);
 //        telemetry.addData("-------------------------------------", "");
 
-        telemetryHandler.addTele(2,1,0,1,2);
+        telemetryHandler.addTele(2,1,0,3,2);
         telemetry = telemetryHandler.getTelemetry();
 
         telemetry.update();

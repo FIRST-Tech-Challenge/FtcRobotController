@@ -46,7 +46,10 @@ public class AutoAimer {
         return (((targetSpeed+Constants.OUT_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
     public double getOutlTargetVel(){
-        return (((targetSpeed-Constants.OUT_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
+        // 29584 -> 59168
+        //
+        double speed_offset = targetSpeed - Math.sqrt(2 * Math.pow(targetSpeed, 2) - Math.pow(targetSpeed + Constants.OUT_SPEED_OFFSET, 2));
+        return (((targetSpeed-speed_offset)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
 
     public void nextShotMode(){
