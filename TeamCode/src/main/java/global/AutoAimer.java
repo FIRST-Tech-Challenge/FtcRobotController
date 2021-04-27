@@ -110,8 +110,8 @@ public class AutoAimer {
 
 
     public double getRobotToGoalAngle(double[] pos) {
-        double offset = Constants.CURVATURE_TAN_THETA * pos[1]/100;
         double disFromFront = (Constants.FIELD_LENGTH - pos[1]/100);
+        double offset = disFromFront*Constants.CURVATURE_TAN_THETA;
         double disFromLeft = pos[0]/100;
         if(shotMode == 0) {
             return Math.toDegrees(Constants.halfPi - Math.atan2(disFromFront, disFromLeft - Constants.GOAL_FROM_LEFT - offset));

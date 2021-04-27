@@ -24,6 +24,8 @@ public class AngularPosition {
     public boolean isFailing = false;
     public boolean dontUseCompassSensor = true;
 
+    public int checksFailed = 0;
+
 
     public void init(HardwareMap hwMap){
 //        compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "cp");
@@ -45,14 +47,12 @@ public class AngularPosition {
         double headingGY = getHeadingGY();
         double headingCS = getHeadingCS();
         boolean gyAccurate = Math.abs(oldHeading - headingGY) < Constants.ANGLE_ACCURACY;
-        boolean csAccurate = Math.abs(oldHeading - headingCS) < Constants.ANGLE_ACCURACY;
-        isFailing = !gyAccurate && !csAccurate;
-        if (gyAccurate && csAccurate) {
+        isFailing = !gyAccurate;
+        if(isFailing){
+            checksFailed +=1;
+        }
+        if (gyAccurate) {
             return 0.5 * (headingGY + headingCS);
-        } else if (gyAccurate) {
-            return headingGY;
-        } else if (csAccurate) {
-            return headingCS;
         }else{
             return oldHeading;
         }

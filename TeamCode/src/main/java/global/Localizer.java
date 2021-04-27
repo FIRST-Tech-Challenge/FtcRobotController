@@ -22,6 +22,8 @@ public class Localizer {
 
     public boolean isFailing = false;
 
+    public int checksFailed = 0;
+
 
 
     public void init(HardwareMap hwMap){
@@ -73,6 +75,9 @@ public class Localizer {
         boolean yAccurate = (Math.abs(newPos[1]-oldPos[1]) < Constants.POS_ACCURACY);
 
         isFailing = !xAccurate && !yAccurate;
+        if(isFailing){
+            checksFailed +=1 ;
+        }
         if (xAccurate && yAccurate) {
             return newPos;
         } else if (xAccurate) {

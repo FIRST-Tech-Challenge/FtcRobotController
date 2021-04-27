@@ -31,6 +31,8 @@ public class AutoModule {
 
     public double Hacc = 0.25;
 
+    public TerraBot bot;
+
 
     public CodeSeg updateCode = new CodeSeg() {
         @Override
@@ -49,6 +51,10 @@ public class AutoModule {
 
     public TerraThread autoModuleThread;
     public boolean inited = false;
+
+    public void init(TerraBot bot){
+        this.bot = bot;
+    }
 
     public void start(){
         if(!inited) {
@@ -171,7 +177,7 @@ public class AutoModule {
 //            }
 //        });
 //    }
-    public void addControlWGE(final TerraBot bot, final double pos){
+    public void addControlWGE(final double pos){
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
@@ -190,7 +196,7 @@ public class AutoModule {
     }
 
 
-    public void addWobbleGoal(final TerraBot bot, final double deg, final double pow){
+    public void addWobbleGoal(final double deg, final double pow){
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
@@ -199,7 +205,7 @@ public class AutoModule {
             }
         });
     }
-    public void holdWobbleGoalAndPause(final TerraBot bot){
+    public void holdWobbleGoalAndPause(){
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
@@ -215,7 +221,7 @@ public class AutoModule {
             }
         });
     }
-    public void addClaw(final TerraBot bot, final int idx){
+    public void addClaw(final int idx){
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
@@ -303,7 +309,7 @@ public class AutoModule {
         });
     }
 
-    public void toggleFastMode(final TerraBot bot){
+    public void toggleFastMode(){
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
@@ -313,16 +319,14 @@ public class AutoModule {
         });
     }
 
-    public void addAimer(final TerraBot bot){
+    public void addTurnToGoal(){
         stages.add(new Stage() {
             @Override
             public boolean run(double in) { bot.isMovementAvailable = false;
-               path = new Path(bot.odometry.getAll());
-               path.setGlobalMode(true);
-               bot.fastMode = false;
-//               path.addSetpoint(Constants.TELE_START[0],Constants.TELE_START[1], Constants.TELE_START[2] );
-                path.addWaypoint(bot.aimerPos[0], bot.aimerPos[1], Optimizer.optimizeHeading(bot.aimerPos[2]));
-                path.addSetpoint(bot.aimerPos[0], bot.aimerPos[1], Optimizer.optimizeHeading(bot.aimerPos[2]));
+                path = new Path(bot.odometry.getAll());
+                path.HAcc = 0.25;
+                bot.fastMode = false;
+                path.addSetpoint(0, 0, (bot.getRobotToGoalAngle()-Optimizer.optimizeHeading(bot.odometry.h)));
                 return true;
             }
         });
@@ -344,7 +348,7 @@ public class AutoModule {
         });
     }
 
-    public void addMove(final TerraBot bot, final double[] move, final boolean way){
+    public void addMove(final double[] move, final boolean way){
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
@@ -379,7 +383,7 @@ public class AutoModule {
         });
     }
 
-    public void addMoveGlobal(final TerraBot bot, final double[] pos){
+    public void addMoveGlobal(final double[] pos){
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
@@ -411,8 +415,38 @@ public class AutoModule {
             }
         });
     }
+//    public void addAimer(){
+//        stages.add(new Stage() {
+//            @Override
+//            public boolean run(double in) { bot.isMovementAvailable = false;
+//               path = new Path(bot.odometry.getAll());
+//               path.setGlobalMode(true);
+//               bot.fastMode = false;
+////               path.addSetpoint(Constants.TELE_START[0],Constants.TELE_START[1], Constants.TELE_START[2] );
+//                path.addWaypoint(bot.aimerPos[0], bot.aimerPos[1], Optimizer.optimizeHeading(bot.aimerPos[2]));
+//                path.addSetpoint(bot.aimerPos[0], bot.aimerPos[1], Optimizer.optimizeHeading(bot.aimerPos[2]));
+//                return true;
+//            }
+//        });
+//        stages.add(new Stage() {
+//            @Override
+//            public boolean run(double in) {
+//                double[] pows = path.update(bot.odometry.getAll(), bot);
+//                bot.move(pows[1], pows[0], pows[2]);
+//                return !path.isExecuting;
+//            }
+//        });
+//        stages.add(new Stage() {
+//            @Override
+//            public boolean run(double in) {
+//                bot.isMovementAvailable = true;
+//                bot.move(0,0,0);
+//                return true;
+//            }
+//        });
+//    }
 
-    public void addWaitForReached(final TerraBot bot) {
+    public void addWaitForReached() {
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {

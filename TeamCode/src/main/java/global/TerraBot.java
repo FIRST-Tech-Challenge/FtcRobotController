@@ -495,9 +495,14 @@ public class TerraBot {
     public void updateOdometryUsingSensors(){
         if(odometryTime.seconds() > (1/Constants.UPDATE_ODOMETRY_WITH_SENSORS_RATE)){
             odometryTime.reset();
-            updateOdoWithGyro();
-            updateOdoWithLocalizer();
+            updateOdoWithGyroAndCheck();
+            updateOdoWithLocalizerAndCheck();
         }
+    }
+
+    //Get Angle to Goal
+    public double getRobotToGoalAngle(){
+        return autoAimer.getRobotToGoalAngle(odometry.getPos());
     }
 
     //Intitialize Wobbleg goal
@@ -548,7 +553,9 @@ public class TerraBot {
                 outtaking = true;
             }
         });
-        shooter.addWait(0.5);
+        shooter.addWait(0.1);
+        shooter.addTurnToGoal();
+        shooter.addWait(0.1);
         shooter.addPause();
         shooter.addStage(rs, Constants.RS_POW);
         shooter.addWait(1);
@@ -566,13 +573,13 @@ public class TerraBot {
 
     public void definePowershot(){
         powerShot.addOuttake(outr, outl, 1100, 1300);
-        powerShot.toggleFastMode(this);
+        powerShot.toggleFastMode();
         powerShot.addPause();
         for (int i = 0; i < 2; i++) {
             powerShot.addStage(rs, 0.1);
             powerShot.addWait(0.3);
             if(i < 1) {
-                powerShot.addMove(this, new double[]{18, 0, 0}, false);
+                powerShot.addMove(new double[]{18, 0, 0}, false);
             }
         }
         powerShot.addOuttake(outr, outl, 0, 0);
@@ -582,9 +589,10 @@ public class TerraBot {
 
     //Define wobble goal automodule
     public void defineWobbleGoal(){
-        wobbleGoal.addClaw(this, 2); //Open claw
-        wobbleGoal.addControlWGE(this, 1); //Mode wge out
-        wobbleGoal.addWobbleGoal(this, -10, 1); //Move wg arm down
+        wobbleGoal.init(this);
+        wobbleGoal.addClaw( 2); //Open claw
+        wobbleGoal.addControlWGE(1); //Mode wge out
+        wobbleGoal.addWobbleGoal(-10, 1); //Move wg arm down
         wobbleGoal.addCustom(new CodeSeg() {
             @Override
             public void run() {
@@ -592,17 +600,17 @@ public class TerraBot {
             }
         }); //Set to slowmode
         wobbleGoal.addPause(); // Wait for driver
-        wobbleGoal.addClaw(this, 0); //Close claw
+        wobbleGoal.addClaw( 0); //Close claw
         wobbleGoal.addWait(0.5); // Wait 0.5
-        wobbleGoal.addWobbleGoal(this, 120, 1); //Move wg arm up
-        wobbleGoal.addControlWGE(this, 0.5); //move wge in to halfway
-        wobbleGoal.holdWobbleGoalAndPause(this); //Hold wobble gaol arm pause
-        wobbleGoal.addMove(this, new double[]{0,20,0}, true); //Move forward 20 cm
-        wobbleGoal.addClaw(this, 1); //open claw halfway
-        wobbleGoal.addWobbleGoal(this, 160, 1); //Move woggle goal arm down
-        wobbleGoal.addClaw(this, 2); //open claw
+        wobbleGoal.addWobbleGoal( 120, 1); //Move wg arm up
+        wobbleGoal.addControlWGE( 0.5); //move wge in to halfway
+        wobbleGoal.holdWobbleGoalAndPause(); //Hold wobble gaol arm pause
+        wobbleGoal.addMove(new double[]{0,20,0}, true); //Move forward 20 cm
+        wobbleGoal.addClaw( 1); //open claw halfway
+        wobbleGoal.addWobbleGoal( 160, 1); //Move woggle goal arm down
+        wobbleGoal.addClaw( 2); //open claw
         wobbleGoal.addWait(0.7); //wait to drop
-        wobbleGoal.addWobbleGoal(this, 45, 1); //Move arm forward
+        wobbleGoal.addWobbleGoal( 45, 1); //Move arm forward
         wobbleGoal.addPause(); //Pause for next time
         autoModules.add(wobbleGoal);
     }
@@ -621,6 +629,8 @@ public class TerraBot {
         wgStart = Double.parseDouble(storage.readText("wgPos"));
         angularPosition.resetGyro(Double.parseDouble(storage.readText("heading")));
         odometry.resetPos(Optimizer.fromString(storage.readText("pos")));
+        odometry.resetHeading(angularPosition.getHeadingGY());
+        updateOdoWithLocalizerAndCheck();
     }
 
 

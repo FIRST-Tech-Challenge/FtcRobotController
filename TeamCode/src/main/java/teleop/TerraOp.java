@@ -41,7 +41,10 @@ public class TerraOp extends OpMode {
         // If we don't want to use the last auton's data, reset the gyro to heading 0
         if(!shouldICareAboutAuton){
             bot.angularPosition.resetGyro(0);
+            bot.updateLocalizerWithHeading();
         }
+
+
 
         // Initialize telemetryHandler and tell the driver that initialization is done
         telemetry.addData("Ready?", "Yes!");
@@ -56,7 +59,7 @@ public class TerraOp extends OpMode {
     public void loop() {
 
         // initialize the wobble goal arm (with several stages)
-        bot.initWobbleGoal();
+//        bot.initWobbleGoal();
 
         // update optimizer
         optimizer.update();
@@ -112,6 +115,9 @@ public class TerraOp extends OpMode {
         bot.updateOdometryUsingSensors();
 
         // TELEMETRY BLOCK:
+        telemetry.addData("localizerChecksFailed", bot.localizer.checksFailed);
+        telemetry.addData("gyroChecksFailed", bot.angularPosition.checksFailed);
+
         telemetryHandler.addTele(0,0,0,0,0);
         telemetry = telemetryHandler.getTelemetry();
         telemetry.update();
