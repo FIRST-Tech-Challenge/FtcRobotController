@@ -12,7 +12,7 @@ public class Constants {
     public static final double OUTTAKE_ANGLE = 26 * Math.PI/180; // degrees -> radians
     public static final double GOAL_FROM_LEFT = 0.9; // meters
     public static final double GOAL_HEIGHT = 0.9; // meters
-    public static final double POWERSHOT_HEIGHT = 0.8; // meters
+    public static final double POWERSHOT_HEIGHT = 0.77; // meters
     public static final double POWERSHOT_FROM_LEFT = 1.3; //meters
     public static final double DIS_BETWEEN_POWERSHOTS = 0.2; //meters
 
