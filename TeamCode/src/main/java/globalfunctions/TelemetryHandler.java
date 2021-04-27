@@ -118,6 +118,9 @@ public class TelemetryHandler {
                 telemetry.addData("odometryPos", Arrays.toString(bot.odometry.getPos()));
                 telemetry.addData("aimerPos", Arrays.toString(bot.aimerPos));
                 telemetry.addData("autoAimerPos", Arrays.toString(bot.autoAimer.outtakePos));
+            case 3:
+                telemetry.addData("localizerChecksFailed", bot.localizer.checksFailed);
+                telemetry.addData("gyroChecksFailed", bot.angularPosition.checksFailed);
         }
 
     }

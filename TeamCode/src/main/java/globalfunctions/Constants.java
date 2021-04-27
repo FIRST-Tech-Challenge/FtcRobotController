@@ -13,8 +13,8 @@ public class Constants {
     public static final double GOAL_FROM_LEFT = 0.9; // meters
     public static final double GOAL_HEIGHT = 0.9; // meters
     public static final double POWERSHOT_HEIGHT = 0.8; // meters
-    public static final double POWERSHOT_FROM_LEFT = 1.2; //meters
-    public static final double DIS_BETWEEN_POWERSHOTS = 0.05; //meters
+    public static final double POWERSHOT_FROM_LEFT = 1.3; //meters
+    public static final double DIS_BETWEEN_POWERSHOTS = 0.2; //meters
 
     public static final double SHOOTER_HEIGHT = 0.19; // meters
     public static final double SHOOTER_WHEEL_RADIUS = 0.05; // meters
@@ -80,7 +80,7 @@ public class Constants {
 
     public static final double UPDATE_ODOMETRY_WITH_SENSORS_RATE = 4; //hertz
 
-    public static final double RS_POW = 0.5;
+    public static final double RS_POW = 1; //0.5
 
     public static final double SHOOT_DIS = 0.06; //m
 

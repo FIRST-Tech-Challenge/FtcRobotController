@@ -112,6 +112,8 @@ public class TerraBot {
     public TerraThread odometryThread;
     //odometry timer - used for optimizing odometry using gyro
     public ElapsedTime odometryTime = new ElapsedTime();
+    //Game time - used for telling the game time
+    public ElapsedTime gameTime = new ElapsedTime();
 
     //Target Position for Aimer
     public double[] aimerPos = Constants.AUTO_SHOOT_POS;
@@ -553,12 +555,12 @@ public class TerraBot {
             @Override
             public void run() {
                 outtaking = true;
+                autoAimer.shotMode = 0;
             }
         });
         shooter.addWait(0.1);
         shooter.addTurnToGoal();
-        shooter.addWait(0.1);
-        shooter.addPause();
+        shooter.addWait(0.2);
         shooter.addStage(rs, Constants.RS_POW);
         shooter.addWait(1);
         shooter.addStage(0, outr, outl);
@@ -575,17 +577,29 @@ public class TerraBot {
 
     public void definePowershot(){
         powerShot.init(this);
-        powerShot.addOuttake(outr, outl, 1100, 1300);
-        powerShot.toggleFastMode();
-        powerShot.addPause();
-        for (int i = 0; i < 2; i++) {
-            powerShot.addStage(rs, 0.1);
-            powerShot.addWait(0.3);
-            if(i < 1) {
-                powerShot.addMove(new double[]{18, 0, 0}, false);
+        powerShot.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                outtaking = true;
             }
+        });
+
+        for (int i = 1; i < 4; i++) {
+            powerShot.changeAutoAimerMode(i);
+            powerShot.addWait(0.2);
+            powerShot.addTurnToGoal();
+            powerShot.addStage(rs, Constants.RS_POW);
+            powerShot.addWait(0.2);
+            powerShot.addStage(rs, 0);
         }
-        powerShot.addOuttake(outr, outl, 0, 0);
+        powerShot.addStage(0, outr, outl);
+        powerShot.addStage(rs, 0);
+        powerShot.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                outtaking = false;
+            }
+        });
         powerShot.addPause();
         autoModules.add(powerShot);
     }

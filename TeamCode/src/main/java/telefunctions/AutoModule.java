@@ -473,4 +473,14 @@ public class AutoModule {
 //            }
 //        });
 //    }
+    public void changeAutoAimerMode(final int mode){
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.autoAimer.shotMode = mode;
+                return true;
+            }
+        });
+    }
+
 }

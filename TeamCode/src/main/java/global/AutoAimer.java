@@ -28,6 +28,7 @@ public class AutoAimer {
         isDone = true;
         hasReached = false;
     }
+
     public void ready(){
         isDone = false;
     }
@@ -36,25 +37,14 @@ public class AutoAimer {
 
 
     public void updateTargetSpeed(){
-        // 0.222520388095038
-        // 9.25 m/s -> 8.31 m/s ->
         targetSpeed = calcSpeed((Constants.FIELD_LENGTH - outtakePos[1]/100), outtakePos[0]/100);
         oldOuttakePos = outtakePos;
     }
 
     public double getOutrTargetVel(){
-
-
-
-
-//        return (((targetSpeed+Constants.OUT_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
         return (((considerFriction(targetSpeed+Constants.OUT_SPEED_OFFSET))/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
     public double getOutlTargetVel(){
-        // 29584 -> 59168
-        //
-//        double speed_offset = targetSpeed - Math.sqrt(2 * Math.pow(targetSpeed, 2) - Math.pow(targetSpeed + Constants.OUT_SPEED_OFFSET, 2));
-//        return (((targetSpeed-speed_offset)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
         return (((considerFriction(targetSpeed-Constants.OUT_SPEED_OFFSET))/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
 
@@ -110,11 +100,7 @@ public class AutoAimer {
 
 
     public double getRobotToGoalAngle(double[] pos) {
-
-
         double disFromFront = (Constants.FIELD_LENGTH - pos[1]/100);
-//        double offset = disFromFront*Constants.CURVATURE_TAN_THETA;
-
         double disFromLeft = pos[0]/100;
         if(shotMode == 0) {
             return Math.toDegrees(Constants.halfPi - Math.atan2(disFromFront, disFromLeft - Constants.GOAL_FROM_LEFT));

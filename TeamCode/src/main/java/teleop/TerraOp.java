@@ -2,6 +2,7 @@ package teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Arrays;
 
@@ -16,6 +17,7 @@ public class TerraOp extends OpMode {
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
     Optimizer optimizer = new Optimizer();
+
 
     // Should the robot use the data stored from the last auton run?
     boolean shouldICareAboutAuton = false;
@@ -51,6 +53,7 @@ public class TerraOp extends OpMode {
         telemetry.addData("Ready?", "Yes!");
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
+        bot.gameTime.reset();
 
     }
 
@@ -103,7 +106,14 @@ public class TerraOp extends OpMode {
 
         // when the driver presses gamepad1.y, start the shooting automodule
         if (gamepad1.y) {
-            bot.shooter.start();
+            if(!bot.powershotMode) {
+                bot.shooter.start();
+            }else{
+                bot.powerShot.start();
+            }
+        }
+        if(Optimizer.inRange(bot.gameTime.seconds(), new double[]{90,92})){
+            bot.powershotMode = true;
         }
 
         // update the outtake motor speeds if the automodule is running
@@ -116,9 +126,8 @@ public class TerraOp extends OpMode {
         bot.updateOdometryUsingSensors();
 
         // TELEMETRY BLOCK:
-        telemetry.addData("localizerChecksFailed", bot.localizer.checksFailed);
-        telemetry.addData("gyroChecksFailed", bot.angularPosition.checksFailed);
 
+        telemetry.addData("GameTime:", bot.gameTime.seconds());
         telemetryHandler.addTele(0,0,0,0,0);
         telemetry = telemetryHandler.getTelemetry();
         telemetry.update();
