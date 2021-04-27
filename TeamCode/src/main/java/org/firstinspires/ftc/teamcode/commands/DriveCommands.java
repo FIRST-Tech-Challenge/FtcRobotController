@@ -54,10 +54,13 @@ public class DriveCommands extends Command {
             robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
 
             // set the odometry position (CHANGE/CHECK THESE VALUES LATER)
-            drive.robot.odometry.setOdometryPosition(57.5, 70,0);
+            drive.robot.odometry.setOdometryPosition(54, 70,0);
 
             // move to the first powershot shooting position
             drive.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 0.6, 0);
+            while(robot.transferState != UpliftRobot.TransferState.UP && opMode.opModeIsActive()) {
+                if(!robot.safeSleep(5)) return;
+            }
             robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS1);
             while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS1 && opMode.opModeIsActive()) {
                 // while shooter not done with first powershot, wait

@@ -30,9 +30,9 @@ public class DriveSubsystem extends Subsystem {
 
     // shooting positions
     public static Point highGoalShootingPt = new Point(106, 70, 0);
-    public static Point powershotShootingPt1 = new Point(73.5, 70,0);
-    public static Point powershotShootingPt2 = new Point(81, 70,0);
-    public static Point powershotShootingPt3 = new Point(88.5, 70,0);
+    public static Point powershotShootingPt1 = new Point(74.5, 70,0);
+    public static Point powershotShootingPt2 = new Point(82, 70,0);
+    public static Point powershotShootingPt3 = new Point(89.5, 70,0);
 
 
     // direction constants

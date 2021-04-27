@@ -35,12 +35,9 @@ public class TransferCommands extends Command {
     public void loop() {
 
         // if transfer going down and bottom touch sensor is pressed, stop
-        if (!transfer.transferTouchBottom.getState() && opMode.gamepad2.right_stick_y < 0) {
+        if (!transfer.transferTouchBottom.getState() && opMode.gamepad2.right_stick_y > 0) {
             transfer.setTransferPower(0);
-        // if transfer going up and top touch sensor is pressed, stop
-//        } else if (!transfer.transferTouchTop.getState() && opMode.gamepad2.right_stick_y > 0) {
-//            transfer.setTransferPower(0);
-//        // else, set the transfer power to 1/2 of the joystick val
+        // else, set the transfer power to 1/2 of the joystick val
         } else {
             transfer.setTransferPower(Range.clip(opMode.gamepad2.right_stick_y/1.5, -1, 1));
         }
@@ -56,7 +53,9 @@ public class TransferCommands extends Command {
 //        else {
         if(opMode.gamepad2.x || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
             robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
-            transfer.teleRaiseTransfer();
+            if(robot.transferState != UpliftRobot.TransferState.UP) {
+                transfer.teleRaiseTransfer();
+            }
         }
 //            }
 //        }

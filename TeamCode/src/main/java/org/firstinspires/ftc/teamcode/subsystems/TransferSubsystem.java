@@ -92,10 +92,6 @@ public class TransferSubsystem extends Subsystem {
         while(transfer.isBusy() && !robot.operatorCancel && robot.opMode.opModeIsActive() && robot.opMode.gamepad2.right_stick_y < 0.25) {
             robot.safeSleep(5);
         }
-        Log.i("Transfer Busy", transfer.isBusy() + "");
-        Log.i("Transfer cancel", robot.operatorCancel + "");
-        Log.i("Opmode active", robot.opMode.opModeIsActive() + "");
-        Log.i("Transfer current", robot.transfer.getCurrent(CurrentUnit.MILLIAMPS) + "");
         transfer.setPower(0);
         transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.setTransferState(UpliftRobot.TransferState.UP);
