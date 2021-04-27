@@ -420,13 +420,12 @@ public class TerraBot {
             if(outr.getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)){
                 outr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 outl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                autoAimer.setOuttakePos(odometry.getPos());
             }
             if(autoAimer.hasPosBeenUpdated()){
                 autoAimer.updateTargetSpeed();
                 outr.setVelocity(autoAimer.getOutrTargetVel());
                 outl.setVelocity(autoAimer.getOutlTargetVel());
-            } else {
-                autoAimer.setOuttakePos(odometry.getPos());
             }
         }else{
             if(outr.getMode().equals(DcMotor.RunMode.RUN_USING_ENCODER)){
@@ -549,7 +548,6 @@ public class TerraBot {
                 outtaking = true;
             }
         });
-//        shooter.addOuttake(outr, outl, 1300, 1600);
         shooter.addWait(0.5);
         shooter.addPause();
         shooter.addStage(rs, Constants.RS_POW);
@@ -571,8 +569,8 @@ public class TerraBot {
         powerShot.toggleFastMode(this);
         powerShot.addPause();
         for (int i = 0; i < 2; i++) {
-            shooter.addStage(rs, 0.1);
-            shooter.addWait(0.3);
+            powerShot.addStage(rs, 0.1);
+            powerShot.addWait(0.3);
             if(i < 1) {
                 powerShot.addMove(this, new double[]{18, 0, 0}, false);
             }

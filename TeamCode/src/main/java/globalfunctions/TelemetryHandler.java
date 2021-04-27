@@ -96,6 +96,7 @@ public class TelemetryHandler {
             case 2:
                 telemetry.addData("back distance", bot.localizer.getBackDistance());
                 telemetry.addData("left distance", bot.localizer.getLeftDistance());
+                break;
             case 3:
                 telemetry.addData("General Target Speed", bot.autoAimer.targetSpeed);
                 telemetry.addData("Outl Target Speed", bot.autoAimer.getOutlTargetVel());
@@ -114,8 +115,9 @@ public class TelemetryHandler {
             case 2:
                 telemetry.addData("hasReached", bot.autoAimer.hasReached);
                 telemetry.addData("Dpos", Arrays.toString(bot.localizer.getPos()));
-                telemetry.addData("pos", Arrays.toString(bot.odometry.getPos()));
-                telemetry.addData("aim", Arrays.toString(bot.aimerPos));
+                telemetry.addData("odometryPos", Arrays.toString(bot.odometry.getPos()));
+                telemetry.addData("aimerPos", Arrays.toString(bot.aimerPos));
+                telemetry.addData("autoAimerPos", Arrays.toString(bot.autoAimer.outtakePos));
         }
 
     }

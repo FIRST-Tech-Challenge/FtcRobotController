@@ -2,6 +2,7 @@ package global;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.vuforia.EyewearUserCalibrator;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -29,11 +30,18 @@ public class Localizer {
     }
 
     public double getLeftDistance(){
-        return lr.getDistance(DistanceUnit.CM);
+        return correctDisForLeft(lr.getDistance(DistanceUnit.CM));
     }
 
     public double getBackDistance(){
-        return br.getDistance(DistanceUnit.CM);
+        return correctDisForBack(br.getDistance(DistanceUnit.CM));
+    }
+
+    public double correctDisForBack(double in){
+        return (in*1.07)-0.791;
+    }
+    public double correctDisForLeft(double in){
+        return (in*1.08)-1.09;
     }
 
     public void update(double heading){

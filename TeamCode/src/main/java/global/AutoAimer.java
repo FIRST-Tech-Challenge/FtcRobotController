@@ -15,15 +15,13 @@ public class AutoAimer {
     public boolean isDone = false;
     public boolean hasReached = false;
 
-    public double debug = 0;
-
     public boolean override = false;
 
     public boolean hasPosBeenUpdated(){
         return !((outtakePos[0] == oldOuttakePos[0]) && (outtakePos[1] == oldOuttakePos[1]));
     }
     public void setOuttakePos(double[] pos){
-        outtakePos = pos;
+        outtakePos = convertOdoPosToAimerPos(pos);
     }
 
     public void done(){
@@ -45,10 +43,10 @@ public class AutoAimer {
     }
 
     public double getOutrTargetVel(){
-        return (((targetSpeed+Constants.OUTR_SPEED_OFFSET + debug)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
+        return (((targetSpeed+Constants.OUT_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
     public double getOutlTargetVel(){
-        return (((targetSpeed+Constants.OUTL_SPEED_OFFSET + debug)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
+        return (((targetSpeed-Constants.OUT_SPEED_OFFSET)/Constants.pi2)*Constants.GOBUILDA1_Ticks);
     }
 
     public void nextShotMode(){
@@ -102,6 +100,10 @@ public class AutoAimer {
         }else{
             return Math.toDegrees(Constants.halfPi - Math.atan2(disFromFront, disFromLeft - Constants.POWERSHOT_FROM_LEFT - (Constants.DIS_BETWEEN_POWERSHOTS*(shotMode-1)) - offset));
         }
+    }
+
+    public double[] convertOdoPosToAimerPos(double[] in){
+        return new double[]{in[0]+Constants.X_DIFF, in[1]+Constants.Y_DIFF};
     }
 
 

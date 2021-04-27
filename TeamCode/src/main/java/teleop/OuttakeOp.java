@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import global.TerraBot;
 import globalfunctions.Constants;
 import globalfunctions.TelemetryHandler;
-@Disabled
+//@Disabled
 @TeleOp(name = "TestOp")
 public class OuttakeOp extends OpMode {
     TerraBot bot = new TerraBot();
@@ -38,29 +38,30 @@ public class OuttakeOp extends OpMode {
         bot.optimizeOdometryHeading();
         bot.updateOdometryUsingSensors();
 
-        double dis = 2.3; //m
+        //2.42, 3.6576-1.08 = 2.57
+//        double dis = 2.43; //m
         double targetSpeed = bot.autoAimer.targetSpeed;
-        double vtheo = targetSpeed*Constants.SHOOTER_WHEEL_RADIUS;
-        double vreal = bot.autoAimer.reverseCalcLinearSpeed(dis,0.9 - Constants.SHOOTER_HEIGHT);
-        double stheo = bot.autoAimer.velToAccel(vtheo);
-        double sreal = bot.autoAimer.velToAccel(vreal);
-        double f = stheo-sreal;
-        double sshouldapply = stheo + f;
-        double vshouldapply = bot.autoAimer.accelToVel(sshouldapply);
-        double targetSpeedReal = vshouldapply/Constants.SHOOTER_WHEEL_RADIUS;
-
+//        double vtheo = targetSpeed*Constants.SHOOTER_WHEEL_RADIUS;
+//        double vreal = bot.autoAimer.reverseCalcLinearSpeed(dis,0.9 - Constants.SHOOTER_HEIGHT);
+//        double stheo = bot.autoAimer.velToAccel(vtheo);
+//        double sreal = bot.autoAimer.velToAccel(vreal);
+//        double f = stheo-sreal;
+//        double sshouldapply = stheo + f;
+//        double vshouldapply = bot.autoAimer.accelToVel(sshouldapply);
+//        double targetSpeedReal = vshouldapply/Constants.SHOOTER_WHEEL_RADIUS;
+//
         telemetry.addData("targetSpeed", targetSpeed);
-        telemetry.addData("v_theo", vtheo);
-        telemetry.addData("v_real", vreal);
-        telemetry.addData("s_theo", stheo);
-        telemetry.addData("s_real", sreal);
-        telemetry.addData("f", stheo-sreal);
-        telemetry.addData("sshouldapply", sshouldapply);
-        telemetry.addData("vshouldapply", vshouldapply);
-        telemetry.addData("targetSpeedReal", targetSpeedReal);
-        telemetry.addData("-------------------------------------", "");
+//        telemetry.addData("v_theo", vtheo);
+//        telemetry.addData("v_real", vreal);
+//        telemetry.addData("s_theo", stheo);
+//        telemetry.addData("s_real", sreal);
+//        telemetry.addData("f", stheo-sreal);
+//        telemetry.addData("sshouldapply", sshouldapply);
+//        telemetry.addData("vshouldapply", vshouldapply);
+//        telemetry.addData("targetSpeedReal", targetSpeedReal);
+//        telemetry.addData("-------------------------------------", "");
 
-        telemetryHandler.addTele(0,1,0,3,0);
+        telemetryHandler.addTele(2,1,0,1,2);
         telemetry = telemetryHandler.getTelemetry();
 
         telemetry.update();
