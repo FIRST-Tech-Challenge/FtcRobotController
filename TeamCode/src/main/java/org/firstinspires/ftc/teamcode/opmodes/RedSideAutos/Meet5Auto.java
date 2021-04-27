@@ -105,16 +105,36 @@ public class Meet5Auto extends UpliftAuto {
                 intakeSub.setIntakePower(0);
                 autoHighGoalShoot();
 
-//                // intake last ring
-//                intakeSub.setIntakePower(1);
-//                driveSub.driveToPosition(108, 28, 0.5, 0);
-//                intakeSub.setIntakePower(0);
+//                if(robot.shotCount >= 4) {
+//                    // pick up last ring
+//                    while (robot.transferState != UpliftRobot.TransferState.DOWN && opModeIsActive()) {
+//                        robot.safeSleep(5);
+//                    }
+//                    shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
+//                    intakeSub.dropRoller();
+//                    intakeSub.setIntakePower(1);
+//                    driveSub.driveToPosition(109, shootingActualY + 2.5, 0.3, 1, 0, DriveSubsystem.QUICKEST_DIRECTION);
+//                    robot.safeSleep(400);
+//                    intakeSub.setIntakePower(0);
 //
-//                // shoot last ring
-//                transferSub.autoRaiseTransfer();
-//                driveSub.driveToPosition(105.25, 12, 0.5, 0);
-//                flickerSub.flickRing();
-
+//                    // shoot last ring
+//                    intakeSub.setIntakePower(-1);
+//                    robot.safeSleep(100);
+//                    transferSub.autoRaiseTransfer();
+//                    intakeSub.liftRoller();
+//                    driveSub.driveToPosition(109, 48, 0.7, 0);
+//                    driveSub.turnTo(0,0.3, DriveSubsystem.QUICKEST_DIRECTION);
+//                    intakeSub.setIntakePower(0);
+//                    while(robot.transferState != UpliftRobot.TransferState.UP && opModeIsActive()) {
+//                        Utils.sleep(5);
+//                    }
+//                    flickerSub.flickRing();
+//                    if(robot.shotCount <= 6) {
+//                        flickerSub.flickRing();
+//                    }
+//                    transferSub.autoDropTransfer();
+//                    shooterSub.setShooterPower(0);
+//                }
             }
 
             // drive to drop off first wobble
