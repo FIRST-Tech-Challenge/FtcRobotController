@@ -81,7 +81,9 @@ public class Constants {
     public static int GRIPPER_IN_POS = 0;
     public static int GRIPPER_OUT_POS = 550; //todo-fix this
     public static boolean IN_WOBBLE_MODE = false;
-    public static int DANGER_ZONE_WIDTH = 10; //todo-fix this
+    public static double DANGER_ZONE_CENTER = 30; //todo-fix this
+    public static int DANGER_ZONE_WIDTH = 120; //todo-fix this
+    public static double DANGER_ZONE_SAFTEY_BUFFER = 3; //todo-test this
     public static int GRIPPER_HEADING_OFFSET = 60;
 
     public static int INTAKE_TILT_SERVO_TRAVEL = 1600;
@@ -139,49 +141,40 @@ public class Constants {
         }
     }
 
-    public enum DirectionOfTurn{
-        LEFT,
-        RIGHT,
-        I_REALLY_DONT_CARE
-    }
-
     public enum Position {
         //headings and elevations that are negative means don't apply them to ending position - let other behaviors control
-        START(49/INCHES_PER_METER, ROBOT_RADIUS_INCHES/INCHES_PER_METER,0,0,0, 1, DirectionOfTurn.I_REALLY_DONT_CARE),
+        START(49/INCHES_PER_METER, ROBOT_RADIUS_INCHES/INCHES_PER_METER,0,0,0, 1),
         //WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (ROBOT_RADIUS_INCHES+3)/INCHES_PER_METER,0,340,0),
-        WOBBLE_ONE_GRAB(49/INCHES_PER_METER, (8 + ROBOT_RADIUS_INCHES)/INCHES_PER_METER,0,0,1,1, DirectionOfTurn.I_REALLY_DONT_CARE),
+        WOBBLE_ONE_GRAB(49/INCHES_PER_METER, (8 + ROBOT_RADIUS_INCHES)/INCHES_PER_METER,0,0,1,1),
         //340, 45
-        ALIGNMENT_RESET(49/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1,1, DirectionOfTurn.I_REALLY_DONT_CARE),
+        ALIGNMENT_RESET(49/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1,1),
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
-        TARGET_C_1(49/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,90,-1,.5, DirectionOfTurn.LEFT),
-        TARGET_C_2((49+7)/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,45+45,5,0, DirectionOfTurn.RIGHT),
-        TARGET_B_1((49)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,.5, DirectionOfTurn.I_REALLY_DONT_CARE), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
-        TARGET_B_2((49+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, -1,0,5,1, DirectionOfTurn.I_REALLY_DONT_CARE),
-        TARGET_A_1((49+7)/INCHES_PER_METER, 7.75*12/INCHES_PER_METER, 0,90,5,.5, DirectionOfTurn.LEFT),
-        TARGET_A_2((49-7)/INCHES_PER_METER, 7*12/INCHES_PER_METER, -1,45+45,5,1, DirectionOfTurn.RIGHT),
-        RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1,0, DirectionOfTurn.I_REALLY_DONT_CARE),
-        RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1, DirectionOfTurn.I_REALLY_DONT_CARE),
-        //sweep needs to be very slow
-        RING_STACK_SWEEPTO(36/INCHES_PER_METER, (48-10+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1, DirectionOfTurn.I_REALLY_DONT_CARE),
-        WOBBLE_TWO(24/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1,1, DirectionOfTurn.I_REALLY_DONT_CARE),
-        WOBBLE_TWO_APPROACH(49/INCHES_PER_METER, (26)/INCHES_PER_METER, 90, -1,-1, .5, DirectionOfTurn.I_REALLY_DONT_CARE),
-        WOBBLE_TWO_GRAB (40/INCHES_PER_METER, (26)/INCHES_PER_METER, 90, 270,0,0, DirectionOfTurn.I_REALLY_DONT_CARE),
-        NAVIGATE(49/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5, DirectionOfTurn.I_REALLY_DONT_CARE), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
-        LAUNCH_PREFERRED(47.2441/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0, DirectionOfTurn.I_REALLY_DONT_CARE), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
-        WOBBLE_GOAL_DUMP(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES + 3)/INCHES_PER_METER, -1, 180 + GRIPPER_HEADING_OFFSET, 45, .6, DirectionOfTurn.I_REALLY_DONT_CARE),
-        TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10, .5, DirectionOfTurn.I_REALLY_DONT_CARE);
+        TARGET_C_1(49/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,90,-1,.5),
+        TARGET_C_2((49+7)/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,45+45,5,0),
+        TARGET_B_1((49)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,.5), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
+        TARGET_B_2((49+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, -1,0,5,1),
+        TARGET_A_1((49+7)/INCHES_PER_METER, 7.75*12/INCHES_PER_METER, 0,90,5,.5),
+        TARGET_A_2((49-7)/INCHES_PER_METER, 7*12/INCHES_PER_METER, -1,45+45,5,1),
+        RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1,0),
+        RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1), //sweep needs to be very slow
+        RING_STACK_SWEEPTO(36/INCHES_PER_METER, (48-10+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1),
+        WOBBLE_TWO(24/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1,1),
+        WOBBLE_TWO_APPROACH(49/INCHES_PER_METER, (26)/INCHES_PER_METER, 90, -1,-1, .5),
+        WOBBLE_TWO_GRAB (40/INCHES_PER_METER, (26)/INCHES_PER_METER, 90, 270,0,0),
+        NAVIGATE(49/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
+        LAUNCH_PREFERRED(47.2441/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
+        WOBBLE_GOAL_DUMP(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES + 3)/INCHES_PER_METER, -1, 180 + GRIPPER_HEADING_OFFSET, 45, .6),
+        TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10, .5);
 
         public double x, y, baseHeading, launchHeading, launchElevation, launchStart;
-        public DirectionOfTurn DoT;
 
-        private Position(double x, double y, double baseHeading, double launchHeading, double launchElevation, double launchStart, DirectionOfTurn DoT) {
+        private Position(double x, double y, double baseHeading, double launchHeading, double launchElevation, double launchStart) {
             this.x = x;
             this.y = y;
             this.baseHeading=baseHeading; //-1 means take no action on changing
             this.launchHeading=launchHeading; //-1 means take no action on changing
             this.launchElevation=launchElevation; //-1 means take no action on changing
             this.launchStart=launchStart;  //number 0.0 to 1.0 - progression of travel where launcher actions should start
-            this.DoT = DoT;
         }
     }
 }

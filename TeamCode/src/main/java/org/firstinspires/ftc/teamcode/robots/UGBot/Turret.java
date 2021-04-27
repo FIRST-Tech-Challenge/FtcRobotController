@@ -13,8 +13,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
+import org.opencv.core.Mat;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.between360;
+import static org.firstinspires.ftc.teamcode.util.Conversions.diffAngle;
 import static org.firstinspires.ftc.teamcode.util.Conversions.diffAngle2;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
@@ -54,6 +55,12 @@ public class Turret{
 
     //sensors
     //DigitalChannel magSensor;
+
+    //a single supported Danger Zone - where the chassis is not allow to point when it is active
+    private boolean dangerModeActive = false;
+    private double dangerZoneCenter = Constants.DANGER_ZONE_CENTER;
+    private double dangerZoneWidth = Constants.DANGER_ZONE_WIDTH;
+
 
 
     public Turret(DcMotor motor, BNO055IMU turretIMU) {
@@ -101,6 +108,9 @@ public class Turret{
 
         //update current heading before doing any other calculations
         turretHeading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
+
+        remapHeadingToSafe(turretTargetHeading);
+
         this.baseHeading = baseHeading;
 
 //        double degreesOfSeparationForBase = diffAngle2(turretHeading, baseHeading);
@@ -129,7 +139,6 @@ public class Turret{
 //            }
 //        }
 
-
         if(active) {
             maintainHeadingTurret();
         }
@@ -137,31 +146,67 @@ public class Turret{
             motor.setPower(0);
     }
 
-    double turnIncrement = 20;
-    public boolean setTurretHeadingDirectional(double finalHeading, Constants.DirectionOfTurn DoT){
-
-            switch (DoT) {
-                case LEFT:
-                    if(diffAngle2(finalHeading, turretHeading) < 90 ){
-                        turretTargetHeading = finalHeading;
-                        return true;
-                    }
-                    turretTargetHeading = wrap360(turretHeading - turnIncrement);
-                    break;
-                case RIGHT:
-                    if(diffAngle2(finalHeading, turretHeading) > 270 ){
-                        turretTargetHeading = finalHeading;
-                        return true;
-                    }
-                    turretTargetHeading = wrap360(turretHeading + turnIncrement);
-                    break;
-                case I_REALLY_DONT_CARE:
-                    turretTargetHeading = finalHeading;
-                    return true;
-            }
-
-        return false;
+    //returns whether the turretTargetHeading is within the passed in danger zone
+    public boolean isInDangerZone(){
+        return Conversions.between360(turretTargetHeading,getDangerZoneLeft(), getDangerZoneRight());
     }
+
+    public double remapHeadingToSafe(double heading){
+        if(isInDangerZone() && dangerModeActive){
+            if(-diffAngle2(getDangerZoneCenter(),heading) > 0){
+                return wrap360(getDangerZoneRight(),Constants.DANGER_ZONE_SAFTEY_BUFFER);
+            }
+            else{
+                return wrap360(getDangerZoneLeft(),-Constants.DANGER_ZONE_SAFTEY_BUFFER);
+            }
+        }
+        else{
+            return heading;
+        }
+    }
+
+    public boolean crossesDangerZone(){
+        double targetDist = Math.abs(diffAngle2(turretHeading,turretTargetHeading));
+
+        return (Math.abs(diffAngle2(turretHeading, getDangerZoneLeft())) <  targetDist
+                && Math.abs(diffAngle2(turretHeading, getDangerZoneRight())) <  targetDist
+                && targetDist < 180);
+    }
+
+    private int directionToDZ(){
+        if(-diffAngle2(turretHeading, dangerZoneCenter) < 0){
+            return -1;
+        }
+        else{
+            return 1;
+        }
+    }
+
+    public double approachSafe(double heading){
+        if(crossesDangerZone() && dangerModeActive){
+            return directionToDZ() * 170;
+        }
+        else{
+            return 0;
+        }
+    }
+
+    public boolean isDangerModeActive(){return dangerModeActive;}
+
+    public void setDangerModeActive(boolean dangerModeActive){this.dangerModeActive = dangerModeActive;}
+
+    public double getDangerZoneCenter(){return dangerZoneCenter;}
+
+    public void setDangerZoneCenter(double dangerZoneCenter){this.dangerZoneCenter = dangerZoneCenter;}
+
+    public double getDangerZoneWidth(){return dangerZoneWidth;}
+
+    public void setDangerZoneWidth(double dangerZoneWidth){this.dangerZoneWidth = dangerZoneWidth;}
+
+    public double getDangerZoneLeft(){return wrap360(dangerZoneCenter, -dangerZoneWidth / 2);}
+
+    public double getDangerZoneRight(){return wrap360(dangerZoneCenter, dangerZoneWidth / 2);}
+
 
     /**
      * assign the current heading of the robot to a specific angle
@@ -251,28 +296,20 @@ public class Turret{
         else{motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);}
 
     }
-    public void maintainHeadingTurret(){
-            //if this is the first time the button has been down, then save the heading that the robot will hold at and set a variable to tell that the heading has been saved
-            if (!maintainHeadingInit) {
-                motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-               //turretTargetHeading = turretHeading;
-                maintainHeadingInit = true;
-            }
-
-            //hold the saved heading with PID
-            switch (currentMode){
-                case normalMode:
-                    movePIDTurret(kpTurret,kiTurret,kdTurret,turretHeading,turretTargetHeading);
-                    break;
-                case baseBound:
-                    turretTargetHeading = wrap360(baseHeading - Conversions.diffAngle2(baseHeading,turretTargetHeading));
-
-                    movePIDTurret(kpTurret,kiTurret,kdTurret,turretHeading, wrap360(baseHeading + turretTargetHeading));
-
-                    //movePIDTurret(kpTurret,kiTurret,kdTurret,baseHeading,turretTargetHeading);
-                    break;
-            }
+    public void maintainHeadingTurret() {
+        //if this is the first time the button has been down, then save the heading that the robot will hold at and set a variable to tell that the heading has been saved
+        if (!maintainHeadingInit) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            //turretTargetHeading = turretHeading;
+            maintainHeadingInit = true;
         }
+
+        if (currentMode == TurretMode.chassisRelative) {
+            turretTargetHeading = toChassisRelative();
+        }
+
+        movePIDTurret(kpTurret, kiTurret, kdTurret, turretHeading, turretTargetHeading + approachSafe(baseHeading));
+    }
 
 
     public double getHeading(){
@@ -288,14 +325,33 @@ public class Turret{
     public TurretMode getCurrentMode() {
         return currentMode;
     }
-
+    private TurretMode previousMode = TurretMode.fieldRelative; //default mode
     public void setCurrentMode(TurretMode mode) {
         this.currentMode = mode;
+        if (previousMode!=currentMode){ //we've just changed modes
+            if (currentMode == TurretMode.fieldRelative) {
+                //on entering fieldRelative from chassisRelative, stop movement and set the current target value
+                turretTargetHeading = toFieldRelative();
+            }
+            if (currentMode == TurretMode.fieldRelative) {
+                //on entering chassisRelative from fieldRelative, stop movement and set the current target value
+                turretTargetHeading = toChassisRelative();
+            }
+            previousMode=currentMode;
+
+        }
     }
 
-    private TurretMode currentMode = TurretMode.normalMode;
+    private double toFieldRelative() {return turretHeading;}
+
+    private double toChassisRelative() {return wrap360(baseHeading,turretHeading);}
+
+    private TurretMode currentMode = TurretMode.fieldRelative;
     public enum TurretMode {
-        normalMode, // uses the turrets IMU in some way
-        baseBound
+        fieldRelative, // normal mode - requested angles are relative to the field (starting orientation of turret imu)
+        chassisRelative // requested angles are relative to the chassis heading
     }
+
+
+
 }

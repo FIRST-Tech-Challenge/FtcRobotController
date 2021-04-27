@@ -32,7 +32,6 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 import java.util.Arrays;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
-import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
@@ -1042,7 +1041,7 @@ public class PoseUG {
                         launcher.setElbowTargetAngle(targetPose.launchElevation);
                     }
                     if(targetPose.launchHeading > -.01) {
-                        turret.setTurretHeadingDirectional(targetPose.launchHeading, targetPose.DoT);
+                        turret.setTurntableAngle(targetPose.launchHeading);
                     }
                 }
 
@@ -1064,18 +1063,10 @@ public class PoseUG {
                     }
 
                 if(targetPose.launchHeading > -.01 && targetPose.launchStart > .99) {
-                    if(turret.setTurretHeadingDirectional(targetPose.launchHeading, targetPose.DoT)){
-                        getFieldPosStateThree = 0;
-                        return true;
-                    }
+                    turret.setTurntableAngle(targetPose.launchHeading);
                 }
-                else{
                     getFieldPosStateThree = 0;
                     return true;
-                }
-                break;
-
-
                 }
         return false;
     }
@@ -1358,14 +1349,14 @@ public class PoseUG {
     }
 
     public void enterWobbleGoalMode(){
-        turret.setCurrentMode(Turret.TurretMode.baseBound);
+        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
         launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
         launcher.wobbleRelease();
         Constants.IN_WOBBLE_MODE = true;
     }
 
     public void exitWobbleGoalMode(){
-        turret.setCurrentMode(Turret.TurretMode.normalMode);
+        turret.setCurrentMode(Turret.TurretMode.fieldRelative);
         launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
         launcher.wobbleGrip();
         gripperModeIsInReverse = false;

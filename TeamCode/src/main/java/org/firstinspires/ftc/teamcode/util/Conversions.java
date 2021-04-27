@@ -42,15 +42,18 @@ public class Conversions {
         }
         return diff;
     }
+
     public static double wrap360(double angle){
         double tmp;
         tmp = wrapAngle(angle);
         if (tmp < 0.0) return 360+tmp;
         return tmp;
     }
+
     public static double wrap360(double angleCurrent, double angleChange){
 
-        return wrap360(angleCurrent + angleChange);
+        return Math.abs(wrap360(angleCurrent + angleChange));
+        //added abs() to fix case where you could get a negative zero. eg wrap360(-460, 100)
     }
 
     public static boolean between(double value, double minValue, double maxValue){
@@ -58,7 +61,31 @@ public class Conversions {
     }
 
     public static boolean between360(double value, double leftAngle, double rightAngle){
-        return (diffAngle2(leftAngle, value) > 0 && diffAngle2(rightAngle, value) < 0);
+        if(wrap360(value) == wrap360(leftAngle) || wrap360(value) == wrap360(rightAngle)){
+            return true;
+        }
+
+        double shift = -diffAngle2(0,leftAngle);
+
+        leftAngle = wrap360(leftAngle, shift);
+        rightAngle = wrap360(rightAngle, shift);
+        value = wrap360(value, shift);
+
+        return (between(value, leftAngle, rightAngle));
+    }
+
+    public static boolean between360NonDirectional(double value, double leftAngle, double rightAngle){
+        if(wrap360(value) == wrap360(leftAngle) || wrap360(value) == wrap360(rightAngle)){
+            return true;
+        }
+
+        double shift = -diffAngle2(0,leftAngle);
+
+        leftAngle = wrap360(leftAngle, shift);
+        rightAngle = wrap360(rightAngle, shift);
+        value = wrap360(value, shift);
+
+        return (between(value, leftAngle, rightAngle));
     }
 
     public static double wrapAngle(double angle){
