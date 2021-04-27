@@ -322,11 +322,13 @@ public class AutoModule {
     public void addTurnToGoal(){
         stages.add(new Stage() {
             @Override
-            public boolean run(double in) { bot.isMovementAvailable = false;
+            public boolean run(double in) {
+                bot.isMovementAvailable = false;
+                bot.fastMode = false;
                 path = new Path(bot.odometry.getAll());
                 path.HAcc = 0.25;
-                bot.fastMode = false;
-                path.addSetpoint(0, 0, (bot.getRobotToGoalAngle()-Optimizer.optimizeHeading(bot.odometry.h)));
+                path.scaleControls(2);
+                path.addSetpoint(0, 0, (bot.getRobotToGoalAngle()-bot.odometry.h));
                 return true;
             }
         });

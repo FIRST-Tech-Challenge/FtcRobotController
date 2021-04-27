@@ -45,28 +45,18 @@ public class AngularPosition {
 
     public double getHeading(double oldHeading) {
         double headingGY = getHeadingGY();
-        double headingCS = getHeadingCS();
         boolean gyAccurate = Math.abs(oldHeading - headingGY) < Constants.ANGLE_ACCURACY;
         isFailing = !gyAccurate;
         if(isFailing){
             checksFailed +=1;
         }
         if (gyAccurate) {
-            return 0.5 * (headingGY + headingCS);
+            return headingGY;
         }else{
             return oldHeading;
         }
     }
 
-    public double getHeading() {
-        double gy = getHeadingGY();
-        double cs = getHeadingCS();
-        if(Math.abs(gy-cs) < 20) {
-            return Optimizer.weightedAvg(new double[]{gy, cs}, new double[]{1, 0.5});
-        }else{
-            return gy;
-        }
-    }
 //
     public double getHeadingCS(){
 //        double dir = Constants.COMPASS_START - compassSensor.getDirection();

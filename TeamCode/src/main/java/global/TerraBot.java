@@ -403,6 +403,7 @@ public class TerraBot {
     }
     //Update odometry with localizer and
     public void updateOdoWithLocalizerAndCheck(){
+        updateLocalizerWithHeading();
         odometry.resetPos(localizer.getPos(odometry.getPos()));
     }
     //Update odometry with gyro heading
@@ -440,7 +441,7 @@ public class TerraBot {
         }
     }
     //Get odometry positions in ticks
-    public int getLeftOdo() { return in.getCurrentPosition(); }
+    public int getLeftOdo() { return -in.getCurrentPosition(); }
     public int getRightOdo() { return l2.getCurrentPosition(); }
     public int getCenterOdo() {return r2.getCurrentPosition(); }
 
@@ -547,6 +548,7 @@ public class TerraBot {
     //TODO
     // Define shooter and powershot
     public void defineShooter(){
+        shooter.init(this);
         shooter.addCustom(new CodeSeg() {
             @Override
             public void run() {
@@ -572,6 +574,7 @@ public class TerraBot {
     }
 
     public void definePowershot(){
+        powerShot.init(this);
         powerShot.addOuttake(outr, outl, 1100, 1300);
         powerShot.toggleFastMode();
         powerShot.addPause();

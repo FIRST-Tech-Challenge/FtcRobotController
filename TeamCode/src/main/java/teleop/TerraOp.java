@@ -41,7 +41,8 @@ public class TerraOp extends OpMode {
         // If we don't want to use the last auton's data, reset the gyro to heading 0
         if(!shouldICareAboutAuton){
             bot.angularPosition.resetGyro(0);
-            bot.updateLocalizerWithHeading();
+            bot.odometry.resetHeading(0);
+            bot.updateOdoWithLocalizer();
         }
 
 

@@ -101,7 +101,7 @@ public class TelemetryHandler {
                 telemetry.addData("General Target Speed", bot.autoAimer.targetSpeed);
                 telemetry.addData("Outl Target Speed", bot.autoAimer.getOutlTargetVel() * Constants.pi2/Constants.GOBUILDA1_Ticks); // 166
                 telemetry.addData("Outr Target Speed", bot.autoAimer.getOutrTargetVel() * Constants.pi2/Constants.GOBUILDA1_Ticks); // 179
-                telemetry.addData("Angle to goal", bot.autoAimer.getRobotToGoalAngle(bot.getLocalizerPos()));
+                telemetry.addData("Angle to goal", bot.getRobotToGoalAngle());
         }
 
     }

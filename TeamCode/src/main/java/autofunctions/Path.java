@@ -264,13 +264,18 @@ public class Path {
         yControl.update(disVect.y);
         hControl.update(herr);
 
-        //CHECK PLS PLS PPLSPLSPLSPL
     }
 
     public void resetControls(){
         xControl.reset();
         yControl.reset();
         hControl.reset();
+    }
+
+    public void scaleControls(double scale){
+        xControl.scaleCoeffs(scale);
+        yControl.scaleCoeffs(scale);
+        hControl.scaleCoeffs(scale);
     }
 
     public double[] update(double[] currentPos, TerraBot bot){

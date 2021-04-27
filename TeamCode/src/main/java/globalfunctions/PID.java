@@ -20,6 +20,8 @@ public class PID {
     public double deltaTime = 0;
 
 
+    public double scale = 1;
+
 
 
     public double deltaError = 0;
@@ -40,7 +42,7 @@ public class PID {
         sKp = k;
         sKd = d;
         sKi = i;
-        scaleCoeffs(1);
+        scaleCoeffs(scale);
     }
     public void setRestPow(double pow){
         restPow = pow;
@@ -101,6 +103,7 @@ public class PID {
 
     public void scaleCoeffs(double scale) {
         if (scale < 100) {
+            this.scale = scale;
             Kp = sKp * scale;
             Kd = sKd * scale;
             Ki = sKi * scale;

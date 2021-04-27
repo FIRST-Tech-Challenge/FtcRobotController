@@ -8,7 +8,7 @@ import global.TerraBot;
 import globalfunctions.Constants;
 import globalfunctions.TelemetryHandler;
 //@Disabled
-@TeleOp(name = "TestOp")
+@TeleOp(name = "OuttakeOp")
 public class OuttakeOp extends OpMode {
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
@@ -22,6 +22,10 @@ public class OuttakeOp extends OpMode {
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
 
+        bot.angularPosition.resetGyro(0);
+        bot.odometry.resetHeading(0);
+        bot.updateOdoWithLocalizer();
+
 
     }
 
@@ -34,35 +38,36 @@ public class OuttakeOp extends OpMode {
             bot.shooter.start();
         }
         bot.outtakeWithCalculations();
-
+//
         bot.optimizeOdometryHeading();
         bot.updateOdometryUsingSensors();
 
-        double dis = 2.52; //m
-        double targetSpeed = bot.autoAimer.targetSpeed;
-        double vtheo = targetSpeed*Constants.SHOOTER_WHEEL_RADIUS;
-        double vreal = bot.autoAimer.reverseCalcLinearSpeed(dis,0.53 - Constants.SHOOTER_HEIGHT);
-        double stheo = bot.autoAimer.velToAccel(vtheo);
-        double sreal = bot.autoAimer.velToAccel(vreal);
-        double f = stheo-sreal;
-        double sshouldapply = stheo + f;
-        double vshouldapply = bot.autoAimer.accelToVel(sshouldapply);
-        double targetSpeedReal = vshouldapply/Constants.SHOOTER_WHEEL_RADIUS;
 //
-        telemetry.addData("targetSpeed", targetSpeed);
-        telemetry.addData("calcHeight", bot.autoAimer.calcHeight(targetSpeed*Constants.SHOOTER_WHEEL_RADIUS, dis));
-        telemetry.addData("v_theo", vtheo);
-        telemetry.addData("v_real", vreal);
-        telemetry.addData("s_theo", stheo);
-        telemetry.addData("s_real", sreal);
-        telemetry.addData("f", stheo-sreal);
-        telemetry.addData("sshouldapply", sshouldapply);
-        telemetry.addData("vshouldapply", vshouldapply);
-        telemetry.addData("targetSpeedReal", targetSpeedReal);
-        telemetry.addData("-------------------------------------", "");
-
-        telemetryHandler.addTele(2,1,2,3,2);
-        telemetry = telemetryHandler.getTelemetry();
+//        double dis = 2.52; //m
+//        double targetSpeed = bot.autoAimer.targetSpeed;
+//        double vtheo = targetSpeed*Constants.SHOOTER_WHEEL_RADIUS;
+//        double vreal = bot.autoAimer.reverseCalcLinearSpeed(dis,0.53 - Constants.SHOOTER_HEIGHT);
+//        double stheo = bot.autoAimer.velToAccel(vtheo);
+//        double sreal = bot.autoAimer.velToAccel(vreal);
+//        double f = stheo-sreal;
+//        double sshouldapply = stheo + f;
+//        double vshouldapply = bot.autoAimer.accelToVel(sshouldapply);
+//        double targetSpeedReal = vshouldapply/Constants.SHOOTER_WHEEL_RADIUS;
+////
+//        telemetry.addData("targetSpeed", targetSpeed);
+//        telemetry.addData("calcHeight", bot.autoAimer.calcHeight(targetSpeed*Constants.SHOOTER_WHEEL_RADIUS, dis));
+//        telemetry.addData("v_theo", vtheo);
+//        telemetry.addData("v_real", vreal);
+//        telemetry.addData("s_theo", stheo);
+//        telemetry.addData("s_real", sreal);
+//        telemetry.addData("f", stheo-sreal);
+//        telemetry.addData("sshouldapply", sshouldapply);
+//        telemetry.addData("vshouldapply", vshouldapply);
+//        telemetry.addData("targetSpeedReal", targetSpeedReal);
+//        telemetry.addData("-------------------------------------", "");
+//
+//        telemetryHandler.addTele(1,1,2,3,2);
+//        telemetry = telemetryHandler.getTelemetry();
 
         telemetry.update();
 
