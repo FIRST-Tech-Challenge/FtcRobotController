@@ -23,7 +23,6 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.KinematicModel;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
-import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
@@ -744,7 +743,7 @@ public class PoseUG {
                 break;
             default:
                     goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
-                    turret.setTurntableAngle(goalHeading + Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
+                    turret.setTurretAngle(goalHeading + Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
 
                     launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.HEIGHT_MULTIPLIER);
 
@@ -1048,7 +1047,7 @@ public class PoseUG {
                         launcher.setElbowTargetAngle(targetPose.launchElevation);
                     }
                     if(targetPose.launchHeading > -.01) {
-                        turret.setTurntableAngle(targetPose.launchHeading);
+                        turret.setTurretAngle(targetPose.launchHeading);
                     }
                 }
 
@@ -1070,7 +1069,7 @@ public class PoseUG {
                     }
 
                 if(targetPose.launchHeading > -.01 && targetPose.launchStart > .99) {
-                    turret.setTurntableAngle(targetPose.launchHeading);
+                    turret.setTurretAngle(targetPose.launchHeading);
                 }
                     getFieldPosStateThree = 0;
                     return true;
@@ -1278,7 +1277,7 @@ public class PoseUG {
         switch(returnHomeState){
             case 0:
                 setTarget(Constants.Target.NONE);
-                turret.setTurntableAngle(0);
+                turret.setTurretAngle(0);
                 launcher.setElbowTargetAngle(0);
                 returnHomeState++;
                 break;
@@ -1333,7 +1332,7 @@ public class PoseUG {
         switch (secondaryGripperModeSetupState) {
             case 0:
                 launcher.setElbowTargetAngle(25);
-                turret.setTurntableAngle(180);
+                turret.setTurretAngle(180);
                 secondaryGripperModeSetupTimer = System.nanoTime();
                 secondaryGripperModeSetupState++;
                 break;
@@ -1400,6 +1399,7 @@ public class PoseUG {
                 if(System.nanoTime() - outtakeTimer > .2 * 1E9){
                     intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
                     intake.setIntakeSpeed(0);
+                    outtakeState=0;
                     return true;
                 }
                 break;

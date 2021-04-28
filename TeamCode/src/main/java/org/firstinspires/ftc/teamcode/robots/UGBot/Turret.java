@@ -110,32 +110,6 @@ public class Turret{
 
         this.baseHeading = baseHeading;
 
-//        double degreesOfSeparationForBase = diffAngle2(turretHeading, baseHeading);
-//        double degreesOfSeparationForTarget = diffAngle2(turretHeading, turretTargetHeading);
-//        double dangerLeft = wrapAngleMinus(baseHeading,Constants.DANGER_ZONE_WIDTH/2);
-//        double dangerRight = (baseHeading + Constants.DANGER_ZONE_WIDTH/2) % 360;
-//        double theMrVsSpecialVariable = Math.min(diffAngle2(turretHeading,dangerLeft), diffAngle2(turretHeading,dangerRight));
-//        double directionOfTurn = degreesOfSeparationForTarget - 180;
-//        double directionOfDanger = degreesOfSeparationForBase - 180;
-//
-//        if(between360(turretTargetHeading, dangerLeft, dangerRight)){
-//            if(directionOfDanger > 0){
-//                turretTargetHeading = (dangerLeft - Constants.DANGER_ZONE_WIDTH/4) % 360;
-//            }
-//            else{
-//                turretTargetHeading = (dangerRight + Constants.DANGER_ZONE_WIDTH/4) % 360;
-//            }
-//        }
-//
-//        if(between360(dangerLeft, turretHeading, turretTargetHeading) && between360(dangerRight, turretHeading, turretTargetHeading)){
-//            if(directionOfTurn > 0){
-//                turretTargetHeading = (turretHeading + 20) % 360;
-//            }
-//            else{
-//                turretTargetHeading = (turretHeading - 20) % 360;
-//            }
-//        }
-
         if(active) {
             maintainHeadingTurret();
         }
@@ -225,23 +199,23 @@ public class Turret{
     public void setActive(boolean active){this.active = active;}
 
     public void adjust(double speed) {
-        setTurntableAngle(getHeading(), 7.0 * speed);
+        setTurretAngle(getHeading(), 7.0 * speed);
     }
 
     public void rotateRight(double speed) {
-        setTurntableAngle(getHeading(), angleIncrement * speed);
+        setTurretAngle(getHeading(), angleIncrement * speed);
     }
 
     public void rotateLeft(double speed){
 
-        setTurntableAngle(getHeading(), angleIncrement * -speed);
+        setTurretAngle(getHeading(), angleIncrement * -speed);
 
     }
 
 
     public boolean rotateCardinalTurret(boolean right){
 
-        setTurntableAngle(nextCardinal(getHeading(),right,10));
+        setTurretAngle(nextCardinal(getHeading(),right,10));
 
         return true;
     }
@@ -251,11 +225,11 @@ public class Turret{
         active = false;
     }
 
-    public void setTurntableAngle(double currentAngle, double adjustAngle){
+    public void setTurretAngle(double currentAngle, double adjustAngle){
         turretTargetHeading=wrap360(currentAngle, adjustAngle);
     }
 
-    public boolean setTurntableAngle(double angle){
+    public boolean setTurretAngle(double angle){
         turretTargetHeading=wrap360(angle);
         return Conversions.between(getHeading(), angle - Constants.TURRET_TOLERANCE, angle + Constants.TURRET_TOLERANCE);
     }
