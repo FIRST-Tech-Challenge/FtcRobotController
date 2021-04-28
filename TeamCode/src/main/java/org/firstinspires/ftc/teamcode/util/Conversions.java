@@ -56,22 +56,35 @@ public class Conversions {
         //added abs() to fix case where you could get a negative zero. eg wrap360(-460, 100)
     }
 
-    public static boolean between(double value, double minValue, double maxValue){
-        return (value>=minValue && value<=maxValue);
+    //this version of between is inclusive and non-directional
+    public static boolean between(double value, double value1, double value2){
+        return (Math.min(value1, value2)<= value && value<=Math.max(value1,value2));
     }
 
-    public static boolean between360(double value, double leftAngle, double rightAngle){
-        if(nearZero(Math.abs(value - leftAngle)) || nearZero(Math.abs(value - rightAngle))){
+    //is the supplied angle between angle1 proceeding to angle2 clockwise
+    public static boolean between360Clockwise(double angle, double angle1, double angle2){
+        //force inclusive if either edge is practically equal to input angle
+        if(nearZero(Math.abs(angle - angle1)) || nearZero(Math.abs(angle - angle2))){
             return true;
         }
 
-        double shift = -diffAngle2(0,leftAngle);
+        double shift = diffAngle2(0,angle1);
 
-        leftAngle = wrap360(leftAngle, shift);
-        rightAngle = wrap360(rightAngle, shift);
-        value = wrap360(value, shift);
+        angle1 = wrap360(angle1, shift);
+        angle2 = wrap360(angle2, shift);
+        angle = wrap360(angle, shift);
 
-        return (between(value, leftAngle, rightAngle));
+        return (between(angle, angle1, angle2));
+    }
+
+    //is the supplied angle between angle1 proceeding to angle2 counter clockwise
+    public static boolean between360CounterClockwise(double angle, double angle1, double angle2){
+        //force inclusive if either edge is practically equal to input angle
+        if(nearZero(Math.abs(angle - angle1)) || nearZero(Math.abs(angle - angle2))){
+            return true;
+        }
+
+        return !between360Clockwise(angle, angle1, angle2);
     }
 
     public static double wrapAngle(double angle){

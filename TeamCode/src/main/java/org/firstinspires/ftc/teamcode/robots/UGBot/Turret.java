@@ -13,10 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.opencv.core.Mat;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.between360;
-import static org.firstinspires.ftc.teamcode.util.Conversions.diffAngle;
+import static org.firstinspires.ftc.teamcode.util.Conversions.between360Clockwise;
 import static org.firstinspires.ftc.teamcode.util.Conversions.diffAngle2;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
@@ -148,7 +146,7 @@ public class Turret{
     //returns whether the turretTargetHeading is within the danger zone
     //this is currently calculated relative to the chassis
     public boolean isInDangerZone(){
-        return between360(turretTargetHeading,getDangerZoneLeft(), getDangerZoneRight());
+        return between360Clockwise(turretTargetHeading,getDangerZoneLeft(), getDangerZoneRight());
     }
 
     public double remapHeadingToSafe(double heading){
