@@ -324,7 +324,8 @@ public class Robot {
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
         drivetrain.turnInPlace(-1.6,1.0);
-        shooter.setVelocity(1350, 1000);
+        shooter.setVelocity(1360, 1000);
+        transfer.stopTransfer();
         op.sleep(1600);
         if (shooter.getRPM()*28/60 > 0) {
             op.sleep(100);
@@ -332,11 +333,13 @@ public class Robot {
             op.telemetry.addData("status", shooter.getRPM());
             op.telemetry.update();
         }
-        transfer.reverseTransfer();
+        intake.stopIntake();
+        transfer.startTransfer();
         shooter.moveServo(false);
         shooter.moveServo(true);
-        shooter.setVelocity(1375, 1000);
-        drivetrain.turnInPlace(3.1,0.6);
+        transfer.reverseTransfer();
+        shooter.setVelocity(1385, 1000);
+        drivetrain.turnInPlace(3.3,0.6);
         shooter.moveServo(false);
         shooter.moveServo(true);
         transfer.startTransfer();
