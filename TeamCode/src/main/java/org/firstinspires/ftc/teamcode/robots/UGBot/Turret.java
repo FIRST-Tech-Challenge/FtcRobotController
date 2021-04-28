@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.opencv.core.Mat;
 
+import static org.firstinspires.ftc.teamcode.util.Conversions.between360;
 import static org.firstinspires.ftc.teamcode.util.Conversions.diffAngle;
 import static org.firstinspires.ftc.teamcode.util.Conversions.diffAngle2;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
@@ -109,8 +110,6 @@ public class Turret{
         //update current heading before doing any other calculations
         turretHeading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
 
-        remapHeadingToSafe(turretTargetHeading);
-
         this.baseHeading = baseHeading;
 
 //        double degreesOfSeparationForBase = diffAngle2(turretHeading, baseHeading);
@@ -146,9 +145,10 @@ public class Turret{
             motor.setPower(0);
     }
 
-    //returns whether the turretTargetHeading is within the passed in danger zone
+    //returns whether the turretTargetHeading is within the danger zone
+    //this is currently calculated relative to the chassis
     public boolean isInDangerZone(){
-        return Conversions.between360(turretTargetHeading,getDangerZoneLeft(), getDangerZoneRight());
+        return between360(turretTargetHeading,getDangerZoneLeft(), getDangerZoneRight());
     }
 
     public double remapHeadingToSafe(double heading){
@@ -182,9 +182,10 @@ public class Turret{
         }
     }
 
+    //todo - this can't work it neads to be relative to the current heading
     public double approachSafe(double heading){
         if(crossesDangerZone() && dangerModeActive){
-            return directionToDZ() * 170;
+            return -directionToDZ() * 170;
         }
         else{
             return 0;
@@ -305,10 +306,12 @@ public class Turret{
         }
 
         if (currentMode == TurretMode.chassisRelative) {
-            turretTargetHeading = toChassisRelative();
+            turretTargetHeading = toFieldRelative();
         }
 
-        movePIDTurret(kpTurret, kiTurret, kdTurret, turretHeading, turretTargetHeading + approachSafe(baseHeading));
+        remapHeadingToSafe(turretTargetHeading);
+
+        movePIDTurret(kpTurret, kiTurret, kdTurret, turretHeading, wrap360(turretTargetHeading,approachSafe(baseHeading)));
     }
 
 

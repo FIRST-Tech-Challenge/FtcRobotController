@@ -81,10 +81,11 @@ public class Constants {
     public static int GRIPPER_IN_POS = 0;
     public static int GRIPPER_OUT_POS = 550; //todo-fix this
     public static boolean IN_WOBBLE_MODE = false;
-    public static double DANGER_ZONE_CENTER = 30; //todo-fix this
-    public static int DANGER_ZONE_WIDTH = 120; //todo-fix this
-    public static double DANGER_ZONE_SAFTEY_BUFFER = 3; //todo-test this
-    public static int GRIPPER_HEADING_OFFSET = 60;
+    //Dangerzone runs from turret at 8 degrees to 104 degrees relative to chassis
+    public static double DANGER_ZONE_CENTER = 56;
+    public static int DANGER_ZONE_WIDTH = 96;
+    public static double DANGER_ZONE_SAFTEY_BUFFER = 3;
+    public static int GRIPPER_HEADING_OFFSET = 60; //todo - what is this?????
 
     public static int INTAKE_TILT_SERVO_TRAVEL = 1600;
     public static int INTAKE_TILT_SERVO_HANDOFF = 1300;

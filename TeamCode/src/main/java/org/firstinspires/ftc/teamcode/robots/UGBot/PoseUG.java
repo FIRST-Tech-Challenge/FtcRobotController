@@ -1349,14 +1349,14 @@ public class PoseUG {
     }
 
     public void enterWobbleGoalMode(){
-        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
+//        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
         launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
         launcher.wobbleRelease();
         Constants.IN_WOBBLE_MODE = true;
     }
 
     public void exitWobbleGoalMode(){
-        turret.setCurrentMode(Turret.TurretMode.fieldRelative);
+//        turret.setCurrentMode(Turret.TurretMode.fieldRelative);
         launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
         launcher.wobbleGrip();
         gripperModeIsInReverse = false;
