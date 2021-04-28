@@ -448,7 +448,10 @@ public class TerraBot {
     public int getCenterOdo() {return r2.getCurrentPosition(); }
 
     //Update Odometry positions
-    public void updateOdometry() { odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo()); }
+    public void updateOdometry() {
+        odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo());
+
+    }
 
     //Optime odometry Heading to [-180,180] range
     public void optimizeOdometryHeading(){ odometry.resetHeading(Optimizer.optimizeHeading(odometry.h)); }
@@ -460,6 +463,7 @@ public class TerraBot {
             @Override
             public void run() {
                 updateOdometry();
+                updateOdometryUsingSensors();
             }
         };
         Stage exit = new Stage() {
@@ -479,6 +483,7 @@ public class TerraBot {
             @Override
             public void run() {
                 updateOdometry();
+                updateOdometryUsingSensors();
             }
         };
         odometryThread = new TerraThread(run);
@@ -493,8 +498,6 @@ public class TerraBot {
         }
     }
 
-    //TODO
-    // Fix this and make odometry automatically update with localize and gyro
     public void updateOdometryUsingSensors(){
         if(odometryTime.seconds() > (1/Constants.UPDATE_ODOMETRY_WITH_SENSORS_RATE)){
             odometryTime.reset();
@@ -508,7 +511,7 @@ public class TerraBot {
         return autoAimer.getRobotToGoalAngle(odometry.getPos());
     }
 
-    //Intitialize Wobbleg goal
+    //Initialize Wobble goal
     public void initWobbleGoal(){
         switch (wgStartMode){
             case 0:

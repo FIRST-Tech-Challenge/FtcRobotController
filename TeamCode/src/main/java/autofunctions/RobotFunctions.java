@@ -9,27 +9,27 @@ public class RobotFunctions {
     public void init(TerraBot t) {
         bot = t;
     }
-    public CodeSeg intake(final double pow) {
-        return new CodeSeg() {
-            @Override
-            public void run() {
-                bot.intake(pow);
-            }
-        };
-    }
-    public CodeSeg shootRF(int rings) {
-        return RobotFunctionsHandler.combineSegs(new CodeSeg[]{
-                intake(0), readyShooter(), shootIntoGoal(rings), stopOuttake()
-        });
-    }
-    public CodeSeg stopOuttake() {
-        return new CodeSeg() {
-            @Override
-            public void run() {
-                bot.outtaking = false;
-            }
-        };
-    }
+//    public CodeSeg intake(final double pow) {
+//        return new CodeSeg() {
+//            @Override
+//            public void run() {
+//                bot.intake(pow);
+//            }
+//        };
+//    }
+//    public CodeSeg shootRF(int rings) {
+//        return RobotFunctionsHandler.combineSegs(new CodeSeg[]{
+//                shootIntoGoal(rings)
+//        });
+//    }
+//    public CodeSeg stopOuttake() {
+//        return new CodeSeg() {
+//            @Override
+//            public void run() {
+//                bot.outtaking = false;
+//            }
+//        };
+//    }
 //    public CodeSeg stopArm () {
 //        return new CodeSeg() {
 //            @Override
@@ -172,21 +172,23 @@ public class RobotFunctions {
     }
 
 
-    public CodeSeg shootIntoGoal(final int numRings){
+    public CodeSeg shootRF(final int numRings){
         return new CodeSeg() {
             @Override
             public void run() {
-//                while (!bot.autoAimer.hasReached){}
-//                pause(0.1);
-//                for (int i = 0; i < numRings; i++) {
-//                    bot.rp.setPosition(bot.pushControl.getPos(2));
-//                    pause(0.25);
-//                    bot.rp.setPosition(bot.pushControl.getPos(1)-0.03);
-//                    pause(0.25);
-//                }
-//                pause(0.1);
-//                bot.rp.setPosition(bot.pushControl.getPos(0));
-//                bot.autoAimer.done();
+                bot.intake(0);
+                while (!bot.autoAimer.hasPosBeenUpdated()){}
+                bot.outtaking = true;
+                bot.autoAimer.shotMode = 0;
+                while (!bot.autoAimer.hasReached) {}
+                pause(0.7);
+                bot.rs.setPower(Constants.RS_POW);
+                pause(((double)numRings)/3);
+                bot.outr.setPower(0);
+                bot.outl.setPower(0);
+                bot.rs.setPower(0);
+                bot.outtaking = false;
+                bot.autoAimer.done();
             }
         };
     }

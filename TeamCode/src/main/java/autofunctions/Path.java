@@ -174,8 +174,8 @@ public class Path {
         wobbleGoalHandler.notRF();
     }
 
-    public void addShoot(double x, double y, double h){
-        addNewPose(x,y,h);
+    public void addShoot(){
+        addNewPose(0, 0, 0);
         posetypes.add(Posetype.SHOOT);
         rfsHandler.notRF();
         wobbleGoalHandler.notRF();
@@ -306,7 +306,7 @@ public class Path {
                 setCoeffsForShoot();
                 double[] target2 = poses.get(curIndex+1);
                 if(!bot.autoAimer.override) {
-                    target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
+                    target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos()) - bot.odometry.h;
                     updateControls(currentPos,target2, true);
                 }else{
                     updateControls(currentPos,target2, false);
@@ -374,7 +374,6 @@ public class Path {
 
             double[] pows = update(bot.odometry.getAll(), bot);
             track.add(bot.odometry.getAll());
-//            speeds.add(new double[] {bot.getRightAngVel(), bot.getLeftAngVel()});
             trackTimes.add(trackTime.seconds());
             bot.move(pows[1], pows[0], pows[2]);
         }

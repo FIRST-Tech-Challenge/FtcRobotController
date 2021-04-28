@@ -122,9 +122,6 @@ public class TerraOp extends OpMode {
         // use optimizer to fix odometry heading
         bot.optimizeOdometryHeading();
 
-        // use the distance sensors and gyro to update odometry every once in a while
-        bot.updateOdometryUsingSensors();
-
         // TELEMETRY BLOCK:
 
         telemetry.addData("GameTime:", bot.gameTime.seconds());

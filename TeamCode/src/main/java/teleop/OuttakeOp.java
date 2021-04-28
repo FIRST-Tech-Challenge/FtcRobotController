@@ -44,7 +44,6 @@ public class OuttakeOp extends OpMode {
 
         bot.outtakeWithCalculations();
         bot.optimizeOdometryHeading();
-        bot.updateOdometryUsingSensors();
 //        telemetryHandler.addTele(1,1,2,3,2);
 //        telemetry = telemetryHandler.getTelemetry();
 
