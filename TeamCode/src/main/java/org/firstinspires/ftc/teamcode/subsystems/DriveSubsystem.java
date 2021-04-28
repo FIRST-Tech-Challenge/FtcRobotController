@@ -264,76 +264,120 @@ public class DriveSubsystem extends Subsystem {
     }
 
     // method to turn a certain number of degrees ( [+] for clockwise and [-] for counter-clockwise )
-    public void turn(double degrees, double speed) {
+//    public void oldTurn(double degrees, double speed) {
+//        double initialAngle = robot.rawAngle;
+//        // if turning counter-clockwise
+//        if(degrees < 0) {
+//            while(robot.rawAngle > (initialAngle + degrees + 0.5)) {
+//                if (robot.driverCancel || !opMode.opModeIsActive() || opMode.isStopRequested()) {
+//                    // breakaway statement for teleop
+//                    safeDisable();
+//                    return;
+//                }
+//                if(abs(degrees) < 5) {
+//                    spin(-0.15);
+//                } else if(abs(degrees) < 10) {
+//                    spin(-0.2);
+//                } else if(abs(degrees) < 30) {
+//                    spin(-0.4);
+//                } else {
+//                    spin(-speed);
+//                }
+//            }
+//            // if turning clockwise
+//        } else if(degrees > 0) {
+//            while(robot.rawAngle < (initialAngle + degrees - 0.5)) {
+//                if (robot.driverCancel || !opMode.opModeIsActive() || opMode.isStopRequested()) {
+//                    // breakaway statement for teleop
+//                    safeDisable();
+//                    return;
+//                }
+//                if(abs(degrees) < 5) {
+//                    spin(0.15);
+//                } else if(abs(degrees) < 10) {
+//                    spin(0.2);
+//                } else if(abs(degrees) < 30) {
+//                    spin(0.4);
+//                } else {
+//                    spin(speed);
+//                }
+//            }
+//        } else {
+//            // either a value of 0 was passed into the method, or some null/NA value [do nothing]
+//        }
+//
+//        stopMotors();
+//    }
+
+
+    // method to turn a certain number of degrees ( [+] for clockwise and [-] for counter-clockwise )
+    public void turn(double degrees, double speed, double tolerance) {
         double initialAngle = robot.rawAngle;
+        double targetAngle = initialAngle + degrees;
         // if turning counter-clockwise
-        if(degrees < 0) {
-            while(robot.rawAngle > (initialAngle + degrees + 0.5)) {
-                if (robot.driverCancel || !opMode.opModeIsActive() || opMode.isStopRequested()) {
-                    // breakaway statement for teleop
-                    safeDisable();
-                    return;
-                }
-                if(abs(degrees) < 5) {
-                    spin(-0.15);
-                } else if(abs(degrees) < 10) {
-                    spin(-0.2);
-                } else if(abs(degrees) < 30) {
-                    spin(-0.4);
-                } else {
-                    spin(-speed);
-                }
+        while(Math.abs(degrees) > tolerance) {
+            if(degrees > 30) {
+                spin(speed);
+            } else if(degrees > 10) {
+                spin(0.4);
+            } else if(degrees > 5) {
+                spin(0.2);
+            } else if(degrees > 0) {
+                spin(0.15);
+            } else if(degrees < -30) {
+                spin(-speed);
+            } else if(degrees < -10) {
+                spin(-0.4);
+            } else if(degrees < -5) {
+                spin(-0.2);
+            } else if(degrees < 0) {
+                spin(-0.15);
+            } else {
+                stopMotors();
+                return;
             }
-            // if turning clockwise
-        } else if(degrees > 0) {
-            while(robot.rawAngle < (initialAngle + degrees - 0.5)) {
-                if (robot.driverCancel || !opMode.opModeIsActive() || opMode.isStopRequested()) {
-                    // breakaway statement for teleop
-                    safeDisable();
-                    return;
-                }
-                if(abs(degrees) < 5) {
-                    spin(0.15);
-                } else if(abs(degrees) < 10) {
-                    spin(0.2);
-                } else if(abs(degrees) < 30) {
-                    spin(0.4);
-                } else {
-                    spin(speed);
-                }
-            }
-        } else {
-            // either a value of 0 was passed into the method, or some null/NA value [do nothing]
+            degrees = targetAngle - robot.rawAngle;
         }
 
         stopMotors();
 
     }
 
+    // overloaded method for turning (default tolerance)
+    public void turn(double degrees, double speed) {
+        turn(degrees, speed, 1);
+    }
+
+
     // method to turn TO a certain angle (within the angle restrictions), with either the shortest path (technique 0) or through a specified direction in the direction indicator (clockwise for 1, counter-clockwise for 2)
-    public void turnTo(double targetAngle, double speed, int directionIndex) {
+    public void turnTo(double targetAngle, double speed, double tolerance, int directionIndex) {
         double initialAngle = robot.worldAngle;
         double quickestTurnAngle = MathFunctions.angleRestrictions(targetAngle - initialAngle);
         if(quickestTurnAngle > 0) {
             if(directionIndex == CLOCKWISE) {
-                turn(quickestTurnAngle, speed);
+                turn(quickestTurnAngle, speed, tolerance);
             } else if(directionIndex == COUNTER_CLOCKWISE) {
-                turn(quickestTurnAngle - 360, speed);
+                turn(quickestTurnAngle - 360, speed, tolerance);
             } else {
-                turn(quickestTurnAngle, speed);
+                turn(quickestTurnAngle, speed, tolerance);
             }
         } else if(quickestTurnAngle < 0) {
             if(directionIndex == CLOCKWISE) {
-                turn(quickestTurnAngle + 360, speed);
+                turn(quickestTurnAngle + 360, speed, tolerance);
             } else if(directionIndex == COUNTER_CLOCKWISE) {
-                turn(quickestTurnAngle, speed);
+                turn(quickestTurnAngle, speed, tolerance);
             } else {
-                turn(quickestTurnAngle, speed);
+                turn(quickestTurnAngle, speed, tolerance);
             }
         } else {
             // NOTHING
         }
 
+    }
+
+    // overloaded turnTo method
+    public void turnTo(double target, double speed, int turnDirection) {
+        turnTo(target, speed, 1, turnDirection);
     }
 
     public void imuStraighten() {
