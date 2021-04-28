@@ -9,14 +9,14 @@ public class RobotFunctions {
     public void init(TerraBot t) {
         bot = t;
     }
-//    public CodeSeg intake(final double pow) {
-//        return new CodeSeg() {
-//            @Override
-//            public void run() {
-//                bot.intake(pow);
-//            }
-//        };
-//    }
+    public CodeSeg intake(final double pow) {
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.intake(pow);
+            }
+        };
+    }
 //    public CodeSeg shootRF(int rings) {
 //        return RobotFunctionsHandler.combineSegs(new CodeSeg[]{
 //                shootIntoGoal(rings)

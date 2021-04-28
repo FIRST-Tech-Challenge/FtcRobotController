@@ -29,6 +29,34 @@ public class AutoHandler {
 
     public void auto4(){
 
+        // Shoot the first 3 rings
+        path.addWaypoint(10, 30, 0);
+        path.addRF(rf.shootRF(3));
+        path.addShoot(0,30);
+
+
+        // Knock down tower, intake 1 ring, and outtake 1 ring
+        path.addRF(rf.intake(1));
+        path.addWaypoint(0,25,0);
+        path.addStop(1.3);
+        path.addRF(rf.shootRF(1));
+        path.addShoot(0,0);
+
+        // Intake 3 more rings, outtake them
+        path.addRF(rf.intake(1));
+        for (int i = 0; i < 3; i++) {
+            path.addWaypoint(0, 15, 0);
+            path.addStop(1);
+        }
+        path.addRF(rf.intake(0));
+//        path.addRF(rf.shootRF(3));
+//        path.addShoot(0,0);
+
+        path.start(bot, op);
+        path.saveData();
+
+        bot.stopOdoThread();
+
 //        //Life wobble arm and shoot rings
 //        path.addWGRF(rf.moveWgTo(60), rf.controlWGE(0.3));
 //        path.addRF(rf.readyShooter(), rf.shootIntoGoal(3), rf.stopOuttake());
@@ -207,14 +235,14 @@ public class AutoHandler {
     }
 
     public void autoT(){
-        path.addWaypoint(0, 10, 0);
-        path.addRF(rf.shootRF(3));
-        path.addShoot();
-
-        path.start(bot, op);
-        path.saveData();
-
-        bot.stopOdoThread();
+//        path.addWaypoint(0, 10, 0);
+//        path.addRF(rf.shootRF(3));
+//        path.addShoot();
+//
+//        path.start(bot, op);
+//        path.saveData();
+//
+//        bot.stopOdoThread();
     }
 
     public void autoAll(){

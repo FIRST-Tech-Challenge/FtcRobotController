@@ -10,7 +10,7 @@ import autofunctions.TerraCV;
 import global.TerraBot;
 import globalfunctions.Constants;
 
-
+@Disabled
 @Autonomous(name="AutoReal", group="Auto")
 public class AutoReal extends LinearOpMode {
     AutoHandler autoHandler = new AutoHandler(this);

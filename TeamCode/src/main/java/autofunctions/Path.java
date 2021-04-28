@@ -56,7 +56,7 @@ public class Path {
     final public double[] is = {0.00,0.00,0.0000};
 
     final public double[] ksS = {0.02,0.02,0.012};
-    final public double[] dsS = {0.006,0.008,0.0005};
+    final public double[] dsS = {0.003,0.008,0.0005}; // {0.006,0.008,0.0005};
     final public double[] isS = {0.000,0.000,0.0000};
 
     public double xRestPow = 0.05;
@@ -70,7 +70,7 @@ public class Path {
     public double HAcc = 2;
 
 
-    final public double endWait = 0.2;
+    final public double endWait = 0.05; // 0.2
 
     public Storage storage = new Storage();
     public ArrayList<double[]> track = new ArrayList<>();
@@ -108,7 +108,7 @@ public class Path {
         yControl.setMaxI(0.05);
         hControl.setMaxI(0.05);
         xControl.setMaxD(0.5);
-        yControl.setMaxD(0.55);
+        yControl.setMaxD(0.65); // 0.55
         hControl.setMaxD(0.5);
         globalTime.reset();
         addStop(0.01);
@@ -134,7 +134,7 @@ public class Path {
         hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
         xControl.scaleAccs(0.5);
         yControl.scaleAccs(0.5);
-        hControl.scaleAccs(0.5);
+        hControl.scaleAccs(0.25);
     }
     public void updateRadius(double dis){ radius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis))); }
     public void setGlobalMode(boolean val){
@@ -174,8 +174,8 @@ public class Path {
         wobbleGoalHandler.notRF();
     }
 
-    public void addShoot(){
-        addNewPose(0, 0, 0);
+    public void addShoot(double x, double y){
+        addNewPose(x, y, 0);
         posetypes.add(Posetype.SHOOT);
         rfsHandler.notRF();
         wobbleGoalHandler.notRF();

@@ -9,7 +9,8 @@ import autofunctions.RobotFunctions;
 import autofunctions.TerraCV;
 import global.TerraBot;
 import globalfunctions.Constants;
-//@Disabled
+
+@Disabled
 @Autonomous(name="AutoTest", group="Auto")
 public class AutoTest extends LinearOpMode {
     AutoHandler autoHandler = new AutoHandler(this);
