@@ -61,7 +61,7 @@ public class Conversions {
     }
 
     public static boolean between360(double value, double leftAngle, double rightAngle){
-        if(wrap360(value) == wrap360(leftAngle) || wrap360(value) == wrap360(rightAngle)){
+        if(nearZero(Math.abs(value - leftAngle)) || nearZero(Math.abs(value - rightAngle))){
             return true;
         }
 

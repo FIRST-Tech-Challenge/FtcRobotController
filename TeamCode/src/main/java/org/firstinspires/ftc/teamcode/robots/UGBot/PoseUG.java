@@ -546,8 +546,13 @@ public class PoseUG {
         packet.put("zero indicator", 0);
         packet.put("turret error", turret.turretPID.getError());
         packet.put("turret integrated error", turret.turretPID.getTotalError());
-        packet.put("turret derivative error", turret.turretPID.getDeltaError());
-        packet.put("diffshmiff", Conversions.diffAngle2(Constants.____A,Constants.____B));
+        packet.put("turret derivative error", turret.turretPID.getDeltaError());//ben was here
+        packet.put("dangerCenter", turret.getDangerZoneCenter());
+        packet.put("Direction of Danger", turret.directionToDZ());
+        packet.put("is in gripper", Constants.IN_WOBBLE_MODE ? 1 : 0);
+        packet.put("is in dangermode", turret.isDangerModeActive() ? 1 : 0);
+        packet.put("is in dangerzone", turret.isInDangerZone() ? 1 : 0);
+        packet.put("is in passes danger", turret.crossesDangerZone() ? 1 : 0);
 
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
@@ -708,6 +713,8 @@ public class PoseUG {
         trajCalc.updateVel(velocityX, velocityY);
         trajCalc.setTarget(target);
         trajSol = trajCalc.getTrajectorySolution();
+
+
 
         launcher.update();
         turret.update(getHeading());
@@ -1350,12 +1357,14 @@ public class PoseUG {
 
     public void enterWobbleGoalMode(){
 //        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
+        turret.setDangerModeActive(true);
         launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
         launcher.wobbleRelease();
         Constants.IN_WOBBLE_MODE = true;
     }
 
     public void exitWobbleGoalMode(){
+        turret.setDangerModeActive(false);
 //        turret.setCurrentMode(Turret.TurretMode.fieldRelative);
         launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
         launcher.wobbleGrip();

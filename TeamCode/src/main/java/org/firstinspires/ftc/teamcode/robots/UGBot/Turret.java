@@ -173,8 +173,8 @@ public class Turret{
                 && targetDist < 180);
     }
 
-    private int directionToDZ(){
-        if(-diffAngle2(turretHeading, dangerZoneCenter) < 0){
+    public int directionToDZ(){
+        if(-diffAngle2(turretHeading, getDangerZoneCenter()) < 0){
             return -1;
         }
         else{
@@ -182,7 +182,7 @@ public class Turret{
         }
     }
 
-    //todo - this can't work it neads to be relative to the current heading
+
     public double approachSafe(double heading){
         if(crossesDangerZone() && dangerModeActive){
             return -directionToDZ() * 170;
@@ -196,7 +196,7 @@ public class Turret{
 
     public void setDangerModeActive(boolean dangerModeActive){this.dangerModeActive = dangerModeActive;}
 
-    public double getDangerZoneCenter(){return dangerZoneCenter;}
+    public double getDangerZoneCenter(){return wrap360(dangerZoneCenter, baseHeading);}
 
     public void setDangerZoneCenter(double dangerZoneCenter){this.dangerZoneCenter = dangerZoneCenter;}
 
@@ -204,9 +204,9 @@ public class Turret{
 
     public void setDangerZoneWidth(double dangerZoneWidth){this.dangerZoneWidth = dangerZoneWidth;}
 
-    public double getDangerZoneLeft(){return wrap360(dangerZoneCenter, -dangerZoneWidth / 2);}
+    public double getDangerZoneLeft(){return wrap360(getDangerZoneCenter(), -dangerZoneWidth / 2);}
 
-    public double getDangerZoneRight(){return wrap360(dangerZoneCenter, dangerZoneWidth / 2);}
+    public double getDangerZoneRight(){return wrap360(getDangerZoneCenter(), dangerZoneWidth / 2);}
 
 
     /**
@@ -309,7 +309,7 @@ public class Turret{
             turretTargetHeading = toFieldRelative();
         }
 
-        remapHeadingToSafe(turretTargetHeading);
+        turretTargetHeading = remapHeadingToSafe(turretTargetHeading);
 
         movePIDTurret(kpTurret, kiTurret, kdTurret, turretHeading, wrap360(turretTargetHeading,approachSafe(baseHeading)));
     }

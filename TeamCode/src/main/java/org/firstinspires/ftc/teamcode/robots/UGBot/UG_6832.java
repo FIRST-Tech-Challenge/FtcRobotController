@@ -803,6 +803,14 @@ public class UG_6832 extends OpMode {
             robot.exitWobbleGoalMode();
         }
 
+
+        if (gamepad1.right_trigger > .01)
+            robot.turret.rotateRight(gamepad1.right_trigger * 2);
+
+        if (gamepad1.left_trigger > .01)
+            robot.turret.rotateLeft(gamepad1.left_trigger * 2);
+
+
         if(toggleAllowed(gamepad1.b,b,1))
             robot.articulate(PoseUG.Articulation.dumpWobbleGoal);
 
