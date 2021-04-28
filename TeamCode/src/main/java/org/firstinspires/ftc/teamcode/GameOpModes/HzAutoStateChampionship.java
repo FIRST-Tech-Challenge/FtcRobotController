@@ -299,7 +299,7 @@ public class HzAutoStateChampionship extends LinearOpMode {
                             hzDrive.followTrajectory(traj);
                         } else {
                             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(20, af * 30, Math.toRadians(af * -135)))
+                                    .lineToSplineHeading(new Pose2d(17, af * 30, Math.toRadians(af * -135)))
                                     .build();
                             hzDrive.followTrajectory(traj);
                         }
@@ -586,7 +586,7 @@ public class HzAutoStateChampionship extends LinearOpMode {
                     case A:
                         //patgames
                         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToLinearHeading(new Pose2d(-5, 52, Math.toRadians(-150)))
+                                .lineToLinearHeading(new Pose2d(-3, 52, Math.toRadians(-150)))
                                 .build();
                         hzDrive.followTrajectory(traj);
                         break;
@@ -598,7 +598,7 @@ public class HzAutoStateChampionship extends LinearOpMode {
                             hzDrive.followTrajectory(traj);
                         } else {
                             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(18, 36, Math.toRadians(180)))
+                                    .lineToSplineHeading(new Pose2d(18, 33, Math.toRadians(180)))
                                     .build();
                             hzDrive.followTrajectory(traj);
                         }
@@ -614,20 +614,20 @@ public class HzAutoStateChampionship extends LinearOpMode {
                 switch (targetZone) {
                     case A:
                         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToLinearHeading(new Pose2d(-3, -53, Math.toRadians(180)))
+                                .lineToLinearHeading(new Pose2d(0, -53, Math.toRadians(180)))
                                 .build();
                         hzDrive.followTrajectory(traj);
                         break;
                     case B:
                         if (!hzAutoControl.pickRingFromTargetMarker){
                             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(29, -50, Math.toRadians(-90))) //STATE x:32
+                                    .lineToSplineHeading(new Pose2d(31, -50, Math.toRadians(-90))) //STATE x:32
                                     .build();
                             hzDrive.followTrajectory(traj);
                         } else {
                             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                                     //.lineToSplineHeading(new Pose2d(18, -30, Math.toRadians(180)))
-                                    .lineToSplineHeading(new Pose2d(14, -36, Math.toRadians(180)))
+                                    .lineToSplineHeading(new Pose2d(18, -36, Math.toRadians(180)))
                                     .build();
                             hzDrive.followTrajectory(traj);
                         }
@@ -740,7 +740,7 @@ public class HzAutoStateChampionship extends LinearOpMode {
                 if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             //.lineToLinearHeading(new Pose2d(-22, af * 34.5, Math.toRadians(af * -180)))
-                            .lineToLinearHeading(new Pose2d(-22, af * 33.5, Math.toRadians(af * -180)))
+                            .lineToLinearHeading(new Pose2d(-22, af * 35.5, Math.toRadians(af * -180)))
                             .build();
                     hzDrive.followTrajectory(traj);
                 }
@@ -757,7 +757,7 @@ public class HzAutoStateChampionship extends LinearOpMode {
                 if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             //.lineToLinearHeading(new Pose2d(-22, af * 34.5, Math.toRadians(af * -180)))
-                            .lineToLinearHeading(new Pose2d(-26, af * 35.5, Math.toRadians(af * -180)))
+                            .lineToLinearHeading(new Pose2d(-22, af * 35.5, Math.toRadians(af * -180)))
                             .build();
                     hzDrive.followTrajectory(traj);
                 }
