@@ -1,7 +1,5 @@
 package globalfunctions;
 
-import android.net.IpSecManager;
-
 import util.Stage;
 import util.CodeSeg;
 
@@ -57,7 +55,8 @@ public class TerraThread implements Runnable {
     public void run() {
         while (isExecuting()) {
             update();
-            try {Thread.sleep(1000/refreshRate); } catch (InterruptedException e) {}
+            Sleep.trySleep(() -> Thread.sleep(1000/refreshRate));
+//            try {Thread.sleep(1000/refreshRate); } catch (InterruptedException e) {}
         }
     }
 

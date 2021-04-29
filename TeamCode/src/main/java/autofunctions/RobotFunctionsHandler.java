@@ -17,14 +17,11 @@ public class RobotFunctionsHandler {
 
     public LinearOpMode op;
 
-    public CodeSeg updateCode = new CodeSeg() {
-        @Override
-        public void run() {
-            if(rfsIndex < rfs.size()) {
-                if(rfsQueue.size() > rfsQueueIndex){
-                    rfsQueue.get(rfsQueueIndex).run();
-                    rfsQueueIndex++;
-                }
+    public CodeSeg updateCode = () -> {
+        if(rfsIndex < rfs.size()) {
+            if(rfsQueue.size() > rfsQueueIndex){
+                rfsQueue.get(rfsQueueIndex).run();
+                rfsQueueIndex++;
             }
         }
     };
@@ -72,19 +69,13 @@ public class RobotFunctionsHandler {
         isRf.add(false);
     }
 
-    public static CodeSeg nullCode(){ return new CodeSeg() {
-        @Override
-        public void run() {
+    public static CodeSeg nullCode(){ return () -> {
 
-        }
     }; }
     public static CodeSeg combineSegs(final CodeSeg[] segs){
-        return new CodeSeg() {
-            @Override
-            public void run() {
-                for(CodeSeg seg:segs) {
-                    seg.run();
-                }
+        return () -> {
+            for(CodeSeg seg:segs) {
+                seg.run();
             }
         };
     }

@@ -53,12 +53,12 @@ public class OdometryOp extends OpMode {
             telemetry = telemetryHandler.getTelemetry();
         }else{
             // get optimizer values and telemetry them
-            double ydebA = optimizer.calcAvg(bot.odometry.Ydebug);
-            double xdebA = optimizer.calcAvg(bot.odometry.Xdebug);
-            double hdebA = optimizer.calcAvg(bot.odometry.Hdebug);
-            double ydebM = optimizer.max(bot.odometry.Ydebug);
-            double xdebM = optimizer.max(bot.odometry.Xdebug);
-            double hdebM = optimizer.max(bot.odometry.Hdebug);
+            double ydebA = Optimizer.calcAvg(bot.odometry.Ydebug);
+            double xdebA = Optimizer.calcAvg(bot.odometry.Xdebug);
+            double hdebA = Optimizer.calcAvg(bot.odometry.Hdebug);
+            double ydebM = Optimizer.max(bot.odometry.Ydebug);
+            double xdebM = Optimizer.max(bot.odometry.Xdebug);
+            double hdebM = Optimizer.max(bot.odometry.Hdebug);
 
 
             telemetry.addData("avgDeltaTime", optimizer.avgDeltaTime);

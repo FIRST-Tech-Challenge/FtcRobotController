@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import global.TerraBot;
-import globalfunctions.Constants;
 import globalfunctions.TelemetryHandler;
+
 //@Disabled
 @TeleOp(name = "OuttakeOp")
 public class OuttakeOp extends OpMode {

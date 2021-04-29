@@ -1,17 +1,13 @@
 package telefunctions;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
 import autofunctions.Path;
 import global.TerraBot;
-import globalfunctions.Optimizer;
 import globalfunctions.TerraThread;
 import globalfunctions.Constants;
 import util.CodeSeg;
@@ -34,17 +30,14 @@ public class AutoModule {
     public TerraBot bot;
 
     //Code that updates in the loop
-    public CodeSeg updateCode = new CodeSeg() {
-        @Override
-        public void run() {
-            Stage s = stages.get(stageNum);
-            if (s.run(timer.seconds())) {
-                stageNum+=1;
-                timer.reset();
-            }
-            if (stageNum == (stages.size())) {
-                stageNum = 0;
-            }
+    public CodeSeg updateCode = () -> {
+        Stage s = stages.get(stageNum);
+        if (s.run(timer.seconds())) {
+            stageNum+=1;
+            timer.reset();
+        }
+        if (stageNum == (stages.size())) {
+            stageNum = 0;
         }
     };
 

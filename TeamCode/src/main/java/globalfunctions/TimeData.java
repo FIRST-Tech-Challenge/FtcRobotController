@@ -21,11 +21,11 @@ public class TimeData {
 
         for(double[] i: data){
             if(data.get(0).length == 3) {
-                out.add("(" + Double.toString(i[0]) + "," + Double.toString(i[1]) + "," + Double.toString(i[2]) + ")");
+                out.add("(" + i[0] + "," + i[1] + "," + i[2] + ")");
             }else if(data.get(0).length == 2){
-                out.add("(" + Double.toString(i[0]) + "," + Double.toString(i[1]) +  ")");
+                out.add("(" + i[0] + "," + i[1] +  ")");
             }else if(data.get(0).length == 1){
-                out.add("(" + Double.toString(i[0]) +  ")");
+                out.add("(" + i[0] +  ")");
             }
         }
         for(double j: timeStamps){
@@ -42,11 +42,11 @@ public class TimeData {
 
         for(double[] i: data){
             if(data.get(0).length == 3) {
-                out.add("(" + Double.toString(i[0]) + "," + Double.toString(i[1]) + "," + Double.toString(i[2]) + ")");
+                out.add("(" + i[0] + "," + i[1] + "," + i[2] + ")");
             }else if(data.get(0).length == 2){
-                out.add("(" + Double.toString(i[0]) + "," + Double.toString(i[1]) +  ")");
+                out.add("(" + i[0] + "," + i[1] +  ")");
             }else if(data.get(0).length == 1){
-                out.add("(" + Double.toString(i[0]) +  ")");
+                out.add("(" + i[0] +  ")");
             }
         }
         this.name = name;
