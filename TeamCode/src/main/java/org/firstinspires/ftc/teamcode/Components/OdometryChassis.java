@@ -604,7 +604,7 @@ public class OdometryChassis extends BasicChassis {
             double startpower = power;
             double error = 0;
             double max = 0.15;
-            while (op.opModeIsActive() && (abs(difference) >= 0.5) && !gotoPosition_off) {
+            while (op.opModeIsActive() && (abs(difference) >= 3) && !gotoPosition_off) {
                 currentPosition = track();
                 difftime = op.getRuntime() - time;
                 time += difftime;
@@ -630,8 +630,8 @@ public class OdometryChassis extends BasicChassis {
                 if (error < -180) {
                     error += 360;
                 }
-                if (difference < sped / 2 && difference < 30 && max < 0.3) {
-                    power = 0.25;
+                if (difference < sped / 3 && difference < 30 && max < 0.3) {
+                    power = 0.5;
                     maxpower = 0.25;
                 }
                 if (difference > sped / 2) {
@@ -677,7 +677,6 @@ public class OdometryChassis extends BasicChassis {
                 x = currentPosition[0];
                 y = currentPosition[1];
             }
-            stopAllMotors();
         }
     }
     public void turnInPlace(double target, double power) {
@@ -742,7 +741,7 @@ public class OdometryChassis extends BasicChassis {
                     rightPower = direction * min(abs(power * gain * error), abs(power));
                     leftPower = -rightPower;
 
-                        if (abs(leftPower) < 0.18) {
+                        if (abs(leftPower) < 0.19) {
                             leftPower *= 0.18 / abs(leftPower);
                         }
                         if (abs(rightPower) < 0.18) {
@@ -787,8 +786,8 @@ public class OdometryChassis extends BasicChassis {
                     direction = 1;
                 }
                 rightPower = -direction*min(abs(power*gain*error),abs(power));
-                    if (abs(rightPower) < 0.15) {
-                        rightPower *= 0.15 / abs(rightPower);
+                    if (abs(rightPower) < 0.16) {
+                        rightPower *= 0.16 / abs(rightPower);
                     }
                 leftPower = -rightPower;
                     motorLeftBack.setPower(leftPower);

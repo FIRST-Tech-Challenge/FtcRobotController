@@ -85,7 +85,7 @@ public class  Shooter {
         }
         for (int i = 0; i < rings; i++) {
             if(i>0) {
-                op.sleep(50);
+                op.sleep(130);
             }
             moveServo(false);
             moveServo(true);
