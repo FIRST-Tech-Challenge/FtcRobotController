@@ -31,7 +31,7 @@ public class Constants {
     public static final double WG_LOWER_LIMIT = -5;
     public static final double WG_UPPER_LIMIT = 180;
     public static final double WG_REST_POW = 0.1;
-    public static final double WG_START_POS_AUTON = 12;
+    public static final double WG_START_POS_AUTON = -3;
 
     public static final double WGE_UPPER_LIMIT = 11.5; // 10.8 cm
     public static final double WGE_START = 8.5; // cm

@@ -30,14 +30,15 @@ public class AutoHandler {
     public void auto4(){
 
         // Shoot the first 3 rings
-        path.addWaypoint(10, 30, 0);
+        path.addWGRF(rf.moveWgTo(55), rf.controlWGE(0.5));
+        path.addWaypoint(10, 20, 0);
         path.addRF(rf.shootRF(3));
-        path.addShoot(0,30);
+        path.addShoot(0,40);
 
 
         // Knock down tower, intake 1 ring, and outtake 1 ring
         path.addRF(rf.intake(1));
-        path.addWaypoint(0,25,0);
+        path.addWaypoint(0,22,0);
         path.addStop(1.3);
         path.addRF(rf.shootRF(1));
         path.addShoot(0,0);
@@ -48,9 +49,36 @@ public class AutoHandler {
             path.addWaypoint(0, 15, 0);
             path.addStop(1);
         }
-        path.addRF(rf.intake(0));
-//        path.addRF(rf.shootRF(3));
-//        path.addShoot(0,0);
+        path.addStop(0.5);
+        path.addRF(rf.shootRF(3));
+        path.addShoot(0,-10);
+        //Place first wobble goal
+        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
+        path.addWaypoint(-55, 110, 0);
+        path.addWGRF(rf.claw(2, -0.2));
+        path.addSetpoint(0,30,0);
+        //Go to 2nd wobble goal
+        path.addWaypoint(10, -20,0);
+        path.addWGRF(rf.moveWgTo(180));
+        path.addWaypoint(70, -120,0);
+        path.addWaypoint(0,-30,0);
+        //Grab it and move to place
+        path.addWGRF(rf.claw(0));
+        path.addStop(1);
+        path.addWGRF(rf.moveWgTo(130));
+        path.addWaypoint(0,20,0);
+        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
+        path.addWaypoint(-80, 115, 0);
+        path.addWGRF(rf.claw(2, -0.2));
+        //Drop 2nd wobble goal
+        path.addSetpoint(0,30,0);
+        path.addStop(0.5);
+        //Park
+        path.addWaypoint(40,-60,0);
+        path.addSetpoint(10,-20,0);
+
+
+
 
         path.start(bot, op);
         path.saveData();

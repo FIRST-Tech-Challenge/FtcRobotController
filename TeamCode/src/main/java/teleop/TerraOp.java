@@ -124,6 +124,7 @@ public class TerraOp extends OpMode {
 
         // TELEMETRY BLOCK:
 
+        telemetry.addData("dis", bot.getWgePos());
         telemetry.addData("GameTime:", bot.gameTime.seconds());
         telemetryHandler.addTele(0,0,0,0,3);
         telemetry = telemetryHandler.getTelemetry();
