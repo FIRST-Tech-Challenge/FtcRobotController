@@ -41,6 +41,8 @@ public class TwoGPTeleop extends LinearOpMode {
             boolean slowMode = false;
             boolean wobble_goal_servo_is_up = true;
             boolean move_wobble_goal_servo = true;
+            int leftStickPos = 0;
+            int rightStickPos = 1;
             robot.openWobbleGoalClaw();
             WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
             robot.moveLeftStick(0);
@@ -76,6 +78,8 @@ public class TwoGPTeleop extends LinearOpMode {
                 boolean save_Shooting_Position = gamepad2.a;
                 boolean auto_powershots = gamepad2.x;
                 float goToShootingPosition = gamepad2.left_trigger;
+                boolean moveLeftStick = gamepad2.dpad_left;
+                boolean moveRightStick = gamepad2.dpad_right;
                 /*OdometryChassis.vuforia_on = gamepad1.y;
                 if(gamepad1.y){
                     robot.stopAllMotors();
@@ -137,6 +141,30 @@ public class TwoGPTeleop extends LinearOpMode {
                 if (move_sticks_up){
                     robot.moveLeftStick(1);
                     robot.moveRightStick(0.0);
+                }
+
+                if(moveLeftStick){
+                    if(leftStickPos==0){
+                        robot.moveLeftStick(1);
+                        leftStickPos = 1;
+                    }
+                    else if(leftStickPos==1){
+                        robot.moveLeftStick(0);
+                        leftStickPos = 0;
+                    }
+                    sleep(250);
+                }
+
+                if(moveRightStick){
+                    if(rightStickPos==1){
+                        robot.moveRightStick(0);
+                        rightStickPos = 0;
+                    }
+                    else if(rightStickPos==0){
+                        robot.moveRightStick(1);
+                        rightStickPos = 1;
+                    }
+                    sleep(250);
                 }
 
                 /**Shooter**/

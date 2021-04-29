@@ -106,7 +106,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
 
         }
         else if(rings==4) {
-            robot.goToPositionWithoutStop(-55,-16,0,(float)0.95);
+            /*robot.goToPositionWithoutStop(-55,-16,0,(float)0.95);
             robot.goToPosition(-104,-16,0,0.9);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
             sleep(250);
@@ -216,7 +216,53 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.goToPosition(-72,23,0,1);
 //            robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
             sleep(200);
+            robot.turnInPlace(180,0.7);*/
+            robot.goToPositionWithoutStop(-55,-16,0,1);
+            robot.goToPosition(-106,-16,0,1);
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
+            sleep(400);
+            robot.openWobbleGoalClaw();
+            sleep(50);
+            robot.setVelocity(1650,1000);
+            robot.goToPosition(-55.5,3,2.5,1.0);
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
+            robot.shootHighGoal(3);
+            sleep(100);
+            robot.startIntake();
+            robot.startTransfer();
+            robot.goToPosition(-49,3,0.5,0.8);
+            sleep(250);
+            robot.goToPosition(-55.5, 3, 2.5, 0.8);
+            robot.reverseTransfer();
+            sleep(40);
+            robot.startTransfer();
+            robot.shootHighGoal(1);
+            sleep(100);
+            robot.goToPosition(-30,4,0,0.4);//40
+            sleep(250);
+            robot.reverseTransfer();
+            sleep(50);
+            robot.startTransfer();
+            robot.goToPosition(-56.5,2.5,2.5,0.8);
+            robot.reverseTransfer();
+            sleep(40);
+            robot.startTransfer();
+            robot.shootHighGoal(3);
+            robot.setVelocity(0,1000);
+            robot.stopIntake();
+            robot.stopTransfer();
             robot.turnInPlace(180,0.7);
+            robot.goToPosition(-30,9,180,1);
+            robot.goToPosition(-23.75,8.5,172.5,0.9);
+            robot.closeWobbleGoalClaw();
+            sleep(250);
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
+            robot.turnInPlace(0,0.7);
+            robot.goToPosition(-104, -12,0,1);
+            robot.openWobbleGoalClaw();
+            robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
+            sleep(50);
+            robot.goToPosition(-74, -8.5,0,1);
         }
         stop();
     }
