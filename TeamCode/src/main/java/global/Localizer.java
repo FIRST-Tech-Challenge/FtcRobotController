@@ -74,7 +74,7 @@ public class Localizer {
         boolean xAccurate = (Math.abs(newPos[0]-oldPos[0]) < Constants.POS_ACCURACY);
         boolean yAccurate = (Math.abs(newPos[1]-oldPos[1]) < Constants.POS_ACCURACY);
 
-        isFailing = !xAccurate && !yAccurate;
+        isFailing = !xAccurate || !yAccurate;
         if(isFailing){
             checksFailed +=1 ;
         }

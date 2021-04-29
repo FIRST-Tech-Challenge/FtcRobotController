@@ -367,6 +367,7 @@ public class Path {
         op.telemetry.update();
         telemetryHandler.init(op.telemetry, bot);
         bot.odometry.resetAll(poses.get(0));
+        bot.angularPosition.resetGyro(poses.get(0)[2]);
         trackTime.reset();
         while (op.opModeIsActive() && isExecuting){
 

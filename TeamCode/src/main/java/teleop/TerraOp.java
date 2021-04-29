@@ -132,7 +132,7 @@ public class TerraOp extends OpMode {
         // TELEMETRY
 
 //        telemetryHandler.addTele(1,1,1,1,1);
-        telemetryHandler.addTele(0,0,0,0,4);
+        telemetryHandler.addTele(0,0,0,1,4);
         telemetry = telemetryHandler.getTelemetry();
         telemetry.update();
     }

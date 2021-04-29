@@ -72,11 +72,7 @@ public class Constants {
     public static final double DIS_CENTER_TO_RIGHT_ENC = DIS_BEWTEEN_ENCS-DIS_CENTER_TO_LEFT_ENC; //cm
     public static final double DIS_CENTER_ENC_TO_CENTER = HALF_DIS_BETWEEN_ENCS-DIS_CENTER_TO_LEFT_ENC;
 
-    public static final double[] AUTO_START = new double[]{80,21,0};
-    public static final double[] TELE_START = new double[]{97,180,0};
-    public static final double[] AUTO_SHOOT_POS = new double[]{115, 141, 7};
-    public static final double[] AUTO_SHOOT_POS_NOT_ANGLED = new double[]{115, 141, 0};
-    public static final double[] AUTO_POWERSHOT_POS = new double[]{123, 156, 0};
+    public static final double[] AUTO_START = new double[]{78,21,0};
 
     public static final double UPDATE_ODOMETRY_WITH_SENSORS_RATE = 4; //hertz
 

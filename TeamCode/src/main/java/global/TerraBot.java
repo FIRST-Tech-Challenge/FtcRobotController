@@ -123,8 +123,6 @@ public class TerraBot {
     //Game time - used for telling the game time
     public ElapsedTime gameTime = new ElapsedTime();
 
-    //Target Position for Aimer
-    public double[] aimerPos = Constants.AUTO_SHOOT_POS;
 
     //Is movement available in teleop?
     public boolean isMovementAvailable = true;
@@ -415,7 +413,7 @@ public class TerraBot {
         updateLocalizerWithHeading();
         odometry.resetPos(getLocalizerPos());
     }
-    //Update odometry with localizer and
+    //Update odometry with localizer and check
     public void updateOdoWithLocalizerAndCheck(){
         updateLocalizerWithHeading();
         odometry.resetPos(localizer.getPos(odometry.getPos()));

@@ -123,7 +123,6 @@ public class TelemetryHandler {
                 telemetry.addData("hasReached", bot.autoAimer.hasReached);
                 telemetry.addData("Dpos", Arrays.toString(bot.localizer.getPos()));
                 telemetry.addData("odometryPos", Arrays.toString(bot.odometry.getPos()));
-                telemetry.addData("aimerPos", Arrays.toString(bot.aimerPos));
                 telemetry.addData("autoAimerPos", Arrays.toString(bot.autoAimer.outtakePos));
             case 3:
                 telemetry.addData("localizerChecksFailed", bot.localizer.checksFailed);
