@@ -102,6 +102,7 @@ public class AutoHandler {
 
     public void autoT(){
         path.addSetpoint(0, 50, 0);
+        path.addStop(1);
 //        path.addRF(rf.shootRF(3));
 //        path.addShoot();
 //

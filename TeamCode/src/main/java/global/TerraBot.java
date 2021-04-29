@@ -168,7 +168,7 @@ public class TerraBot {
 
         // Get ring knock-down servos
         fls = getServo(hwMap, "fls", Servo.Direction.FORWARD, Constants.FLS_CLOSED);
-        frs = getServo(hwMap, "flr", Servo.Direction.REVERSE, Constants.FRS_CLOSED);
+        frs = getServo(hwMap, "frs", Servo.Direction.REVERSE, Constants.FRS_CLOSED);
 
         //Get wobble goal pos distance sensor
         wgp = hwMap.get(Rev2mDistanceSensor.class, "wgp");

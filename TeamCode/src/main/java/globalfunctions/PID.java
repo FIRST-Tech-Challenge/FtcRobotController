@@ -38,6 +38,8 @@ public class PID {
     public double acc = 0;
     //MaxI value
     public double maxI = 1000;
+    //I range value
+    public double rangeI = 0;
     //MaxD value
     public double maxD = 1000;
 
@@ -52,9 +54,11 @@ public class PID {
     public void setRestPow(double pow){
         restPow = pow;
     }
+    //Sets range of I
+    public void setRangeI(double ri){rangeI = ri; }
     //Sets accuracies
     public void setAcc(double in){
-        acc = in;
+        sacc = in;
         scaleAccs(AccScale);
     }
     //Gets the power for the motor
@@ -76,8 +80,10 @@ public class PID {
 
         derivative = deltaError/deltaTime;
 
-        if(Ki*abs(integral) < maxI || Math.signum(integral*error) == -1) {
-            integral += error * deltaTime;
+        if(abs(error) < rangeI) {
+            if (Ki * abs(integral) < maxI || Math.signum(integral * error) == -1) {
+                integral += error * deltaTime;
+            }
         }
 
         if(Kd*abs(derivative) > maxD) {
@@ -96,7 +102,7 @@ public class PID {
         deltaError = 0;
     }
     //Error is within accuracy
-    public boolean done(){
+    public boolean isDone(){
         return abs(error) < acc;
     }
     //Sets max I

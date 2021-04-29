@@ -62,6 +62,14 @@ public class TelemetryHandler {
                 telemetry.addData("y integral", path.yControl.integral);
                 telemetry.addData("x integral", path.xControl.integral);
                 telemetry.addData("h integral", path.hControl.integral);
+            case 6:
+                telemetry.addData("x done", path.xControl.isDone());
+                telemetry.addData("y done", path.yControl.isDone());
+                telemetry.addData("h done", path.hControl.isDone());
+            case 7:
+                telemetry.addData("x acc", path.xControl.acc);
+                telemetry.addData("y acc", path.yControl.acc);
+                telemetry.addData("h acc", path.hControl.acc);
         }
     }
     //Adds angular position
