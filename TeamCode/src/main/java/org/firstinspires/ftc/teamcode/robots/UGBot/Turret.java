@@ -234,6 +234,11 @@ public class Turret{
         return Conversions.between(getHeading(), angle - Constants.TURRET_TOLERANCE, angle + Constants.TURRET_TOLERANCE);
     }
 
+    public boolean setTurretAngleNoCheck(double angle){
+        turretTargetHeading=wrap360(angle);
+        return true;
+    }
+
 
     public void setPower(double pwr){
         motorPwr = pwr;

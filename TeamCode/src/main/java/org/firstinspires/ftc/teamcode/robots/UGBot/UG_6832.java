@@ -699,7 +699,8 @@ public class UG_6832 extends OpMode {
         //endregion
 
         if(toggleAllowed(gamepad1.b, b, 1))
-            robot.articulate(PoseUG.Articulation.toggleTrigger);
+            robot.setAutoLaunchActive(true);
+            //robot.articulate(PoseUG.Articulation.toggleTrigger);
         if(toggleAllowed(gamepad1.a, a, 1))
             robot.flywheelIsActive = !robot.flywheelIsActive;
         if(toggleAllowed(gamepad1.y, y, 1)) {

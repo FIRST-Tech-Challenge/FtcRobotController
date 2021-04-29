@@ -1396,10 +1396,12 @@ public class PoseUG {
                 break;
             case 3:
                 if(System.nanoTime() - outtakeTimer > .2 * 1E9){
-                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
-                    intake.setIntakeSpeed(0);
-                    outtakeState=0;
-                    return true;
+                    if(autoIntake()) {
+                        intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
+                        intake.setIntakeSpeed(0);
+                        outtakeState = 0;
+                        return true;
+                    }
                 }
                 break;
         }
