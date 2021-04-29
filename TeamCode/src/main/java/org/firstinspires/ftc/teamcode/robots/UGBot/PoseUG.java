@@ -1234,7 +1234,7 @@ public class PoseUG {
                     shootRingStage++;
                 }
 
-                if(System.nanoTime() - shootTime > 2 * 1E9){
+                if(System.nanoTime() - shootTime > 1.1 * 1E9){
                     shootRingStage--;//ben was here
                 }
                 break;
@@ -1372,7 +1372,7 @@ public class PoseUG {
 
     int outtakeState = 0;
     double outtakeTimer = 0.0;
-    public boolean makeIntakeOuttake(){
+    public boolean deployIntake(){
         switch (outtakeState){
             case 0:
                 intake.setIntakeSpeed(1);
@@ -1464,7 +1464,7 @@ public class PoseUG {
                 }
                 break;
             case makeIntakeOuttake:
-                if(makeIntakeOuttake()){
+                if(deployIntake()){
                     articulation = PoseUG.Articulation.manual;
                 }
                 break;

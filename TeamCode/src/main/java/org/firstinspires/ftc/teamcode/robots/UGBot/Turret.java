@@ -239,6 +239,11 @@ public class Turret{
         return true;
     }
 
+    public boolean getTurretNearTarget(){
+        return between360Clockwise(getHeading(), turretTargetHeading - Constants.TURRET_TOLERANCE, turretTargetHeading + Constants.TURRET_TOLERANCE);
+
+    }
+
 
     public void setPower(double pwr){
         motorPwr = pwr;

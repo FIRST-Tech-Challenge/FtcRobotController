@@ -85,7 +85,7 @@ public class Constants {
     public static double DANGER_ZONE_CENTER = 56;
     public static int DANGER_ZONE_WIDTH = 96;
     public static double DANGER_ZONE_SAFTEY_BUFFER = 3;
-    public static int GRIPPER_HEADING_OFFSET = 60; //todo - what is this?????
+    public static int GRIPPER_HEADING_OFFSET = 42; //add this to the desired turret angle to actually point the open gripper that way and not the turret
 
     public static int INTAKE_TILT_SERVO_TRAVEL = 1600;
     public static int INTAKE_TILT_SERVO_HANDOFF = 1300;
@@ -104,7 +104,7 @@ public class Constants {
     public static double AUTO_INTAKE_FIRST = .65;
     public static double AUTO_INTAKE_SECOND = 1.1;
 
-    public static double TURRET_TOLERANCE = 0.5;
+    public static double TURRET_TOLERANCE = 1.5; //accuracy wiggle room
 
     public static int LAUNCHER_TRIGGER_STOWED = 1900;
     public static int LAUNCHER_TRIGGER_SHOOT = 2030;
@@ -164,7 +164,7 @@ public class Constants {
         WOBBLE_TWO_EXIT(49/INCHES_PER_METER, (26)/INCHES_PER_METER, -1, -1,25, 1),
         WOBBLE_TWO_GRAB (40/INCHES_PER_METER, (26)/INCHES_PER_METER, 90, 270,0,0),
         NAVIGATE(49/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .2), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
-        LAUNCH_PREFERRED(49/INCHES_PER_METER, (5*12)/INCHES_PER_METER,-1,-1, -1,0), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
+        LAUNCH_PREFERRED(49/INCHES_PER_METER, (4.5*12)/INCHES_PER_METER,-1,-1, -1,0), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
         WOBBLE_GOAL_DUMP(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES + 3)/INCHES_PER_METER, -1, 180 + GRIPPER_HEADING_OFFSET, 45, .6),
         TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10, .2);
 

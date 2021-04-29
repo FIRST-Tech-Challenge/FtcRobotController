@@ -95,7 +95,7 @@ public class Autonomous {
             //raise elbow to minimum distance for clear gripper extension
             .addSingleState(() -> robot.launcher.setElbowTargetAngle(5))
             //deploy intake
-            .addState(()-> robot.makeIntakeOuttake())
+            .addState(()-> robot.deployIntake())
             //open then extend the gripper
             .addTimedState(1f, ()->robot.launcher.wobbleRelease(),()->robot.launcher.wobbleGrip())
             //simulate dangerzone
@@ -106,8 +106,6 @@ public class Autonomous {
 
 //            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-
-
             .addMineralState(ugStateProvider,
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true,  .8,.1),
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .8,.1),
@@ -117,10 +115,19 @@ public class Autonomous {
                     ()-> robot.turret.setTurretAngleNoCheck(270 + Constants.GRIPPER_HEADING_OFFSET),
                     ()-> robot.turret.setTurretAngleNoCheck(90 + Constants.GRIPPER_HEADING_OFFSET),
                     ()-> robot.turret.setTurretAngleNoCheck(270 + Constants.GRIPPER_HEADING_OFFSET))
-            .addTimedState(1.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-//            .addState(() -> robot.launcher.WobbleRelease())
+            //is it there yet?
+            .addState(()-> robot.turret.getTurretNearTarget())
+            //release the wobble goal
+            .addState(() -> robot.launcher.wobbleRelease())
+            //spin up the flywheel
+            .addSingleState(() -> robot.launcher.setFlywheelActivePID(true))
 
-//            .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            //todo: should gripper/elbow be elevated here? To not disturb wobble as it comes back?
+//                .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
+
+            //launch preferred since we can't seem to launch while driving away from goal at speed
             .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,false,  .8,.1))
             .addTimedState(1.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
@@ -149,7 +156,7 @@ public class Autonomous {
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(()-> robot.makeIntakeOuttake())
+            .addState(()-> robot.deployIntake())
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset,Constants.startingYOffset+1.5,true,.6,.1))
             .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
