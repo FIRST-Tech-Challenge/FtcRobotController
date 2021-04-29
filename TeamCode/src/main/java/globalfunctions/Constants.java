@@ -44,7 +44,7 @@ public class Constants {
     public static final double ROBOT_RADIUS = Geometry.pythagoreanC(ROBOT_WIDTH, ROBOT_LENGTH)/2; // meters
     public static final double CENTER_THETA = Math.PI - Math.atan2(ROBOT_LENGTH, ROBOT_WIDTH); // radians
 
-    public static final int AUTOMODULE_REFRESH_RATE = 100; // hertz
+    public static final int AUTOMODULE_REFRESH_RATE = 20; // hertz
     public static final int ODOMETRY_REFRESH_RATE = 100; //hertz
 
     public static final double NEVEREST256_TICKS = 7168;

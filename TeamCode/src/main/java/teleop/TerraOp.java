@@ -22,33 +22,31 @@ public class TerraOp extends OpMode {
     // Should the robot use the data stored from the last auton run?
     boolean shouldICareAboutAuton = false;
 
-    boolean shouldILag = false;
-
     @Override
     public void init() {
+        telemetry.addData("Ready?", "No.");
+        telemetry.update();
         // Initialize the robot
         bot.init(hardwareMap);
         // Start the odometry thread
         bot.startOdoThreadTele();
 
-        // Reset odometry and angular position
-//        bot.odometry.resetAll(Constants.TELE_START);
-//        bot.angularPosition.resetGyro(0);
-
         // Reset optimizer
         optimizer.reset();
 
+        //Increase Accel for teleop
         Constants.FRICTION_ACCEL = 400;
 
 
-        // Use readings from last auton to find wg, robot, and angular positions
-//        bot.readFromAuton();
 
         // If we don't want to use the last auton's data, reset the gyro to heading 0
         if(!shouldICareAboutAuton){
             bot.angularPosition.resetGyro(0);
             bot.odometry.resetHeading(0);
             bot.updateOdoWithLocalizer();
+        }else{
+            // Use readings from last auton to find wg, robot, and angular positions
+            bot.readFromAuton();
         }
 
 
@@ -57,8 +55,12 @@ public class TerraOp extends OpMode {
         telemetry.addData("Ready?", "Yes!");
         telemetry.update();
         telemetryHandler.init(telemetry, bot);
-        bot.gameTime.reset();
 
+    }
+
+    @Override
+    public void start(){
+        bot.gameTime.reset();
     }
 
 
@@ -68,7 +70,9 @@ public class TerraOp extends OpMode {
         bot.fastMode = true;
 
         // initialize the wobble goal arm (with several stages)
-//        bot.initWobbleGoal();
+        if(shouldICareAboutAuton) {
+            bot.initWobbleGoal();
+        }
 
         // update optimizer
         optimizer.update();
@@ -117,9 +121,6 @@ public class TerraOp extends OpMode {
                 bot.powerShot.start();
             }
         }
-//        if(Optimizer.inRange(bot.gameTime.seconds(), new double[]{90,92})){
-//            bot.powershotMode = true;
-//        }
 
         // update the outtake motor speeds if the automodule is running
         bot.outtakeWithCalculations();
@@ -127,29 +128,8 @@ public class TerraOp extends OpMode {
         // use optimizer to fix odometry heading
         bot.optimizeOdometryHeading();
 
-//
-//        if(shouldILag) {
-//            bot.getWgePos();
-//            bot.getLeftAngVel();
-//            bot.getRightAngVel();
-//            bot.getArmPos();
-//            bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
-//            bot.autoAimer.reverseCalcLinearSpeed(10, 10);
-//            bot.updateOdoWithLocalizerAndCheck();
-//            bot.updateOdoWithGyroAndCheck();
-//            bot.outtakeWithCalculations();
-//            bot.optimizeOdometryHeading();
-//            bot.definePowershot();
-//            bot.defineShooter();
-//            bot.defineWobbleGoal();
-//            bot.init(hardwareMap);
-//            bot.isControlWgeDone(10);
-//            bot.isWgeInLimits(10);
-//        }
 
-        // TELEMETRY BLOCK:
-
-//        telemetry.addData("dis", bot.getWgePos());
+        // TELEMETRY
 
 //        telemetryHandler.addTele(1,1,1,1,1);
         telemetryHandler.addTele(0,0,0,0,4);
