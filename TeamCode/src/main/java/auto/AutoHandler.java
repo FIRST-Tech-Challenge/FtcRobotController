@@ -31,14 +31,18 @@ public class AutoHandler {
 
         // Shoot the first 3 rings
         path.addWGRF(rf.moveWgTo(55), rf.controlWGE(0.5));
-        path.addWaypoint(10, 20, 0);
+//        path.addWaypoint(10, 20, 0);
+//        path.addShoot(0,40);
+
+        path.addSetpoint(0,50,0);
         path.addRF(rf.shootRF(3));
-        path.addShoot(0,40);
+        path.addShoot(0,0);
+
 
 
         // Knock down tower, intake 1 ring, and outtake 1 ring
         path.addRF(rf.intake(1));
-        path.addWaypoint(0,22,0);
+        path.addWaypoint(10,32,0);
         path.addStop(1.3);
         path.addRF(rf.shootRF(1));
         path.addShoot(0,0);
@@ -50,11 +54,12 @@ public class AutoHandler {
             path.addStop(1);
         }
         path.addStop(0.5);
+        path.addWaypoint(0,-10,0);
         path.addRF(rf.shootRF(3));
-        path.addShoot(0,-10);
+        path.addShoot(0,-5);
         //Place first wobble goal
         path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
-        path.addWaypoint(-55, 110, 0);
+        path.addWaypoint(-55, 115, 0);
         path.addWGRF(rf.claw(2, -0.2));
         path.addSetpoint(0,30,0);
         //Go to 2nd wobble goal
@@ -81,7 +86,7 @@ public class AutoHandler {
 
 
         path.start(bot, op);
-        path.saveData();
+//        path.saveData();
 
         bot.stopOdoThread();
 

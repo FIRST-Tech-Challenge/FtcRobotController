@@ -22,6 +22,8 @@ public class TerraOp extends OpMode {
     // Should the robot use the data stored from the last auton run?
     boolean shouldICareAboutAuton = false;
 
+    boolean shouldILag = false;
+
     @Override
     public void init() {
         // Initialize the robot
@@ -35,6 +37,8 @@ public class TerraOp extends OpMode {
 
         // Reset optimizer
         optimizer.reset();
+
+        Constants.FRICTION_ACCEL = 400;
 
 
         // Use readings from last auton to find wg, robot, and angular positions
@@ -61,6 +65,7 @@ public class TerraOp extends OpMode {
 
     @Override
     public void loop() {
+        bot.fastMode = true;
 
         // initialize the wobble goal arm (with several stages)
 //        bot.initWobbleGoal();
@@ -112,9 +117,9 @@ public class TerraOp extends OpMode {
                 bot.powerShot.start();
             }
         }
-        if(Optimizer.inRange(bot.gameTime.seconds(), new double[]{90,92})){
-            bot.powershotMode = true;
-        }
+//        if(Optimizer.inRange(bot.gameTime.seconds(), new double[]{90,92})){
+//            bot.powershotMode = true;
+//        }
 
         // update the outtake motor speeds if the automodule is running
         bot.outtakeWithCalculations();
@@ -122,11 +127,32 @@ public class TerraOp extends OpMode {
         // use optimizer to fix odometry heading
         bot.optimizeOdometryHeading();
 
+//
+//        if(shouldILag) {
+//            bot.getWgePos();
+//            bot.getLeftAngVel();
+//            bot.getRightAngVel();
+//            bot.getArmPos();
+//            bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos());
+//            bot.autoAimer.reverseCalcLinearSpeed(10, 10);
+//            bot.updateOdoWithLocalizerAndCheck();
+//            bot.updateOdoWithGyroAndCheck();
+//            bot.outtakeWithCalculations();
+//            bot.optimizeOdometryHeading();
+//            bot.definePowershot();
+//            bot.defineShooter();
+//            bot.defineWobbleGoal();
+//            bot.init(hardwareMap);
+//            bot.isControlWgeDone(10);
+//            bot.isWgeInLimits(10);
+//        }
+
         // TELEMETRY BLOCK:
 
-        telemetry.addData("dis", bot.getWgePos());
-        telemetry.addData("GameTime:", bot.gameTime.seconds());
-        telemetryHandler.addTele(0,0,0,0,3);
+//        telemetry.addData("dis", bot.getWgePos());
+
+//        telemetryHandler.addTele(1,1,1,1,1);
+        telemetryHandler.addTele(0,0,0,0,4);
         telemetry = telemetryHandler.getTelemetry();
         telemetry.update();
     }

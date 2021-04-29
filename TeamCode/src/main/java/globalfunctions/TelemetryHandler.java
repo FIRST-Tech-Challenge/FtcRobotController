@@ -121,6 +121,8 @@ public class TelemetryHandler {
             case 3:
                 telemetry.addData("localizerChecksFailed", bot.localizer.checksFailed);
                 telemetry.addData("gyroChecksFailed", bot.angularPosition.checksFailed);
+            case 4:
+                telemetry.addData("GameTime:", bot.gameTime.seconds());
         }
 
     }
