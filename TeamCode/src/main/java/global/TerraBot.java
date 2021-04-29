@@ -288,12 +288,12 @@ public class TerraBot {
             }
         }
         //Switch fastmode using button controller
-        if (fastModeController.isPressing(rt > 0)) {
+        if (fastModeController.isPressedOnce(rt > 0)) {
             fastMode = !fastMode;
             isMovementAvailable = true;
         }
 
-        if(powerShotController.isPressing(lt > 0)){
+        if(powerShotController.isPressedOnce(lt > 0)){
             powershotMode = !powershotMode;
         }
     }

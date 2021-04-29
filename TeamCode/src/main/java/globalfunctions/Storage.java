@@ -19,11 +19,12 @@ import java.util.Scanner;
 
 import globalfunctions.TimeData;
 
+//Class used to store data
 public class Storage {
     public int num = 0;
     File outputFile;
 
-
+    //Saves a bitmap with name name
     public void saveBitmap(Bitmap in, String name){
         File f = new File(outputFile, name + ".png");
         try {
@@ -47,7 +48,7 @@ public class Storage {
         }
 
     }
-
+    //Converts the input string into JSON
     public String convertToJSON(String dirname, TimeData in){
         makeOutputFile(dirname);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -61,7 +62,7 @@ public class Storage {
         return timeDataAsString;
     }
 
-
+    //Makes an output file
     public void makeOutputFile(String dirname){
         File filepath = Environment.getExternalStorageDirectory();
         File dir = new File(filepath.getAbsolutePath()+"/FTC_Files/");
@@ -70,7 +71,7 @@ public class Storage {
         dir1.mkdir();
         outputFile = dir1;
     }
-
+    //Saves text to the output file
     public void saveText(String in,String name)  {
         try {
             PrintWriter out = new PrintWriter(outputFile.getAbsolutePath()+"/" + name + ".txt");
@@ -81,7 +82,7 @@ public class Storage {
             e.printStackTrace();
         }
     }
-
+    //Reads text from the output file
     public String readText(String name) {
         try {
             Scanner scan = new Scanner(new BufferedReader(new FileReader(outputFile.getAbsolutePath()+"/" + name + ".txt")));
@@ -89,7 +90,7 @@ public class Storage {
         } catch (IOException ignore) {}
         return "";
     }
-
+    //Saves video data
     public void saveVidData(TimeData in){
         try {
             PrintWriter out = new PrintWriter(outputFile.getAbsolutePath() + "/"+ in.name + ".txt");
@@ -108,7 +109,7 @@ public class Storage {
             e.printStackTrace();
         }
     }
-
+    //Saves a video
     public void saveVideo(ArrayList<Bitmap> vid, ArrayList<String> vidData, String dirname, double vidTime){
         makeOutputFile(dirname);
         saveText(Double.toString(vidTime/vid.size()), "time");
@@ -122,7 +123,7 @@ public class Storage {
         }
     }
 
-
+    //Saves timedata
     public void saveTimeData(TimeData in){
         saveText(convertToJSON("Today", in), in.name);
     }

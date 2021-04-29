@@ -8,13 +8,15 @@ import autofunctions.Path;
 import global.TerraBot;
 
 public class TelemetryHandler {
+    //Telemetry and bot
     Telemetry telemetry;
     TerraBot bot;
+    //Init with variables
     public void init(Telemetry telemetry, TerraBot bot){
         this.telemetry = telemetry;
         this.bot = bot;
     }
-
+    //Adds odometry
     public void addOdometry(int howMany) {
         switch (howMany) {
             case 0:
@@ -36,6 +38,7 @@ public class TelemetryHandler {
                 telemetry.addData("deltaLP", bot.odometry.deltaLP);
         }
     }
+    //Adds auton
     public void addAuton(Path path, int howMany){
         switch (howMany) {
             case 0:
@@ -61,6 +64,7 @@ public class TelemetryHandler {
                 telemetry.addData("h integral", path.hControl.integral);
         }
     }
+    //Adds angular position
     public void addAngularPosition(int howMany) {
         switch (howMany) {
             case 0:
@@ -74,6 +78,7 @@ public class TelemetryHandler {
                 telemetry.addData("compass sensor", bot.angularPosition.getHeadingCS());
         }
     }
+    //Adds outtake
     public void addOuttake(int howMany) {
         switch (howMany) {
             case 0:
@@ -86,6 +91,7 @@ public class TelemetryHandler {
                 telemetry.addData("Left Outtake Angular Velocity", bot.getLeftAngVel());
         }
     }
+    //Adds autoaimer
     public void addAutoAimer(int howMany) {
         switch (howMany) {
             case 0:
@@ -105,6 +111,7 @@ public class TelemetryHandler {
         }
 
     }
+    //Adds other
     public void addOther(int howMany) {
         switch (howMany) {
             case 0:
@@ -126,7 +133,7 @@ public class TelemetryHandler {
         }
 
     }
-
+    //Adds everything for teleop
     public void addTele(int odometry, int angpos, int outtake, int autoaimer, int other){
         addOdometry(odometry);
         addAngularPosition(angpos);
