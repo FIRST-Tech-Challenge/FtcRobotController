@@ -9,10 +9,6 @@ import util.CodeSeg;
 //Used to make threads
 public class TerraThread implements Runnable {
 
-    CodeSeg test = () -> {
-
-    };
-
     CodeSeg cs;
     Stage st;
     public boolean executing = true;
@@ -56,6 +52,7 @@ public class TerraThread implements Runnable {
         }
     }
 
+    //Overrides the run method of runnable and sleeps for the desired refresh rate
     @Override
     public void run() {
         while (isExecuting()) {
