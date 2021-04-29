@@ -157,7 +157,7 @@ public class Turret{
 
     public double approachSafe(double heading){
         if(crossesDangerZone() && dangerModeActive){
-            return -directionToDZ() * 170;
+            return  wrap360((-directionToDZ() * 170),turretHeading);
         }
         else{
             return 0;
@@ -233,6 +233,7 @@ public class Turret{
         turretTargetHeading=wrap360(angle);
         return Conversions.between(getHeading(), angle - Constants.TURRET_TOLERANCE, angle + Constants.TURRET_TOLERANCE);
     }
+
 
     public void setPower(double pwr){
         motorPwr = pwr;

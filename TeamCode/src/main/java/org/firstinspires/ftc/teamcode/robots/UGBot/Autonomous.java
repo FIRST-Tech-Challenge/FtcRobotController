@@ -92,10 +92,15 @@ public class Autonomous {
     private Constants.Position targetPose;
 
     public StateMachine AutoFull = getStateMachine(autoStage)
+            //raise elbow to minimum distance for clear gripper extension
+            .addSingleState(() -> robot.launcher.setElbowTargetAngle(5))
+            //deploy intake
             .addState(()-> robot.makeIntakeOuttake())
-//            .addState(() -> robot.launcher.setElbowTargetAngle(0))
-//            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-//            .addState(() -> robot.launcher.WobbleGrip())
+            //open then extend the gripper
+            .addTimedState(1f, ()->robot.launcher.wobbleRelease(),()->robot.launcher.wobbleGrip())
+            //simulate dangerzone
+//            .addSingleState(()->robot.turret.setDangerModeActive(true))
+            .addState(() -> robot.launcher.wobbleGrip()) //close gripper
 //            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.launcher.setElbowTargetAngle(15))
 
@@ -108,35 +113,43 @@ public class Autonomous {
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .8,.1),
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .8,.1))
 
+            .addMineralState(ugStateProvider,
+                    ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET),
+                    ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET),
+                    ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET))
 //            .addState(() -> robot.launcher.WobbleRelease())
-//            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addTimedState(1.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
+
             .addSingleState(() -> robot.setAutoLaunchActive(true))
 
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true, .6,.1))
+
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,false, .4,.1))
 
             .addSingleState(() -> robot.setTarget(Constants.Target.NONE))
             .addSingleState(() -> robot.setAutoLaunchActive(false))
 
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB,false, .4,.1))
-
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true, 1,.3048))
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true, 1,.2))
 
 
             .addMineralState(ugStateProvider,
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_2,false,  .8,.1),
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_2,false,  .8,.1),
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_2,false,  .8,.1))
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_2,true,  .8,.1),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_2,true,  .8,.1),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_2,true,  .8,.1))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addState(()-> robot.driveToFieldPosition(Constants.Position.NAVIGATE, false, 1,.1))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.TARGET_A_2,true,.2, .1))
             .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
             .addSingleState(()->robot.setAutoLaunchActive(true))
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,true,.2, .1))
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true,.1, .1))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

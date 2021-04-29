@@ -714,13 +714,12 @@ public class PoseUG {
         trajSol = trajCalc.getTrajectorySolution();
 
 
+        maintainTarget();
 
+        //subsystem updates should be the very last movement methods called in this update cycle
         launcher.update();
         turret.update(getHeading());
         intake.update(); //watermelon
-        maintainTarget();
-
-
         sendTelemetry();
     }
 
@@ -1041,7 +1040,7 @@ public class PoseUG {
 
                 break;
             case 1: //driving to target location
-                if(getDistanceTo(targetPose.x, targetPose.y)<=launchMoveDist){
+                if(getDistanceTo(targetPose.x, targetPose.y) <= launchMoveDist){
                     //kick in launcher adjustments if requested
                     if(targetPose.launchElevation > -.01) { //set elevation{
                         launcher.setElbowTargetAngle(targetPose.launchElevation);
