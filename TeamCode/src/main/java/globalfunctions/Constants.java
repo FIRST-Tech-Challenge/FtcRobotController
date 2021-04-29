@@ -84,10 +84,13 @@ public class Constants {
 
     public static final double SHOOT_DIS = 0.06; //m
 
-    public static double FRICTION_ACCEL = 340; // 360 m/s^2
+    public static final double FRICTION_ACCEL = 340; // 360 m/s^2
     public static final double MASS_OF_RING = 0.0295; //kg
 
     //Friction Force = 10.32 N
+
+    public static final double FLS_CLOSED = 0.1;
+    public static final double FRS_CLOSED = 0.1;
 
 
 }

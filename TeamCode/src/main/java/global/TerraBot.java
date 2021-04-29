@@ -61,6 +61,14 @@ public class TerraBot {
     public Cycle cllControl = new Cycle(0.2, 0.5, 1);
     public Cycle clrControl = new Cycle(1, 0.5, 0.0);
 
+    // Ring knock-down servos
+    public Servo fls;
+    public Servo frs;
+
+    // Ring knock-down servos controls
+    public Cycle flsControl = new Cycle(Constants.FLS_CLOSED, 0.5);
+    public Cycle frsControl = new Cycle(Constants.FRS_CLOSED, 0.5);
+
     //AutoAimer - Has methods for angle to target and shooting
     public AutoAimer autoAimer = new AutoAimer();
     //Angular Position - Has methods for gyro sensors
@@ -159,6 +167,10 @@ public class TerraBot {
         //Get claw Servos
         cll = getServo(hwMap, "cll", Servo.Direction.FORWARD, Constants.CLL_GRAB);
         clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLL_OPEN);
+
+        // Get ring knock-down servos
+        fls = getServo(hwMap, "fls", Servo.Direction.FORWARD, Constants.FLS_CLOSED);
+        frs = getServo(hwMap, "flr", Servo.Direction.REVERSE, Constants.FRS_CLOSED);
 
         //Get wobble goal pos distance sensor
         wgp = hwMap.get(Rev2mDistanceSensor.class, "wgp");
@@ -459,12 +471,9 @@ public class TerraBot {
 
     //Start odometry thread for autonomous
     public void startOdoThreadAuto(final LinearOpMode op){
-        CodeSeg run = new CodeSeg() {
-            @Override
-            public void run() {
-                updateOdometry();
-                updateOdometryUsingSensors();
-            }
+        CodeSeg run = () -> {
+            updateOdometry();
+            updateOdometryUsingSensors();
         };
         Stage exit = new Stage() {
             @Override
@@ -479,12 +488,9 @@ public class TerraBot {
 
     //Start odometry thread for teleop
     public void startOdoThreadTele(){
-        CodeSeg run = new CodeSeg() {
-            @Override
-            public void run() {
-                updateOdometry();
-                updateOdometryUsingSensors();
-            }
+        CodeSeg run = () -> {
+            updateOdometry();
+            updateOdometryUsingSensors();
         };
         odometryThread = new TerraThread(run);
         Thread t = new Thread(odometryThread);
@@ -554,12 +560,9 @@ public class TerraBot {
     // Define shooter and powershot
     public void defineShooter(){
         shooter.init(this);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                outtaking = true;
-                autoAimer.shotMode = 0;
-            }
+        shooter.addCustom(() -> {
+            outtaking = true;
+            autoAimer.shotMode = 0;
         });
         shooter.addWait(0.1);
         shooter.addTurnToGoal();
@@ -568,24 +571,14 @@ public class TerraBot {
         shooter.addWait(1);
         shooter.addStage(0, outr, outl);
         shooter.addStage(rs, 0);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                outtaking = false;
-            }
-        });
+        shooter.addCustom(() -> outtaking = false);
         shooter.addPause();
         autoModules.add(shooter);
     }
 
     public void definePowershot(){
         powerShot.init(this);
-        powerShot.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                outtaking = true;
-            }
-        });
+        powerShot.addCustom(() -> outtaking = true);
 
         for (int i = 1; i < 4; i++) {
             powerShot.changeAutoAimerMode(i);
@@ -597,12 +590,7 @@ public class TerraBot {
         }
         powerShot.addStage(0, outr, outl);
         powerShot.addStage(rs, 0);
-        powerShot.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                outtaking = false;
-            }
-        });
+        powerShot.addCustom(() -> outtaking = false);
         powerShot.addPause();
         autoModules.add(powerShot);
     }
@@ -613,12 +601,7 @@ public class TerraBot {
         wobbleGoal.addClaw( 2); //Open claw
         wobbleGoal.addControlWGE(1); //Mode wge out
         wobbleGoal.addWobbleGoal(-10, 1); //Move wg arm down
-        wobbleGoal.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                fastMode = true;
-            }
-        }); //Set to slowmode
+        wobbleGoal.addCustom(() -> fastMode = true); //Set to slowmode
         wobbleGoal.addPause(); // Wait for driver
         wobbleGoal.addClaw( 0); //Close claw
         wobbleGoal.addWait(0.5); // Wait 0.5
