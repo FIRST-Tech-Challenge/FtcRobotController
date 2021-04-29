@@ -67,7 +67,7 @@ public class TerraOp extends OpMode {
 
     @Override
     public void loop() {
-        bot.fastMode = true;
+//        bot.fastMode = true;
 
         // initialize the wobble goal arm (with several stages)
         if(shouldICareAboutAuton) {

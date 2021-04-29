@@ -268,7 +268,7 @@ public class AutoHandler {
     }
 
     public void autoT(){
-//        path.addWaypoint(0, 10, 0);
+        path.addWaypoint(0, 50, 0);
 //        path.addRF(rf.shootRF(3));
 //        path.addShoot();
 //
