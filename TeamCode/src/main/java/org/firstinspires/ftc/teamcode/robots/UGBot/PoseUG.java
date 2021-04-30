@@ -63,7 +63,7 @@ public class PoseUG {
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
     public static double turnP = 0.0055; // proportional constant applied to error in degrees
-    public static double turnI = 0.0; // integral constant
+    public static double turnI = 0.2; // integral constant
     public static double turnD = .13; // derivative constant
     public static double distP = 0.5; // proportional constant applied to error in meters
     public static double distI = 0.0; // integral constant
@@ -700,7 +700,7 @@ public class PoseUG {
         //turret.setTurntableAngle(model.getTurretHeading());
 
 
-        trajCalc.updatePos(Constants.ALLIANCE_INT_MOD * poseX, poseY);
+        trajCalc.updatePos(poseX, poseY);
         trajCalc.updateVel(velocityX, velocityY);
         trajCalc.setTarget(target);
         trajSol = trajCalc.getTrajectorySolution();

@@ -699,7 +699,7 @@ public class UG_6832 extends OpMode {
         //endregion
 
         if(toggleAllowed(gamepad1.b, b, 1))
-            robot.setAutoLaunchActive(true);
+            robot.articulate(PoseUG.Articulation.toggleTrigger);
             //robot.articulate(PoseUG.Articulation.toggleTrigger);
         if(toggleAllowed(gamepad1.a, a, 1))
             robot.flywheelIsActive = !robot.flywheelIsActive;
@@ -851,11 +851,16 @@ public class UG_6832 extends OpMode {
             robot.turret.adjust(gamepad1.left_stick_x);
         }
 
-        if(toggleAllowed(gamepad1.x,x,1))
+        if(toggleAllowed(gamepad1.x,x,1)) {
+            if(Constants.ALLIANCE != Constants.Alliance.BLUE)
+                robot.setPoseX(-robot.getX());
             Constants.ALLIANCE = Constants.Alliance.BLUE;
-        if(toggleAllowed(gamepad1.b,b,1)){
-            Constants.ALLIANCE = Constants.Alliance.RED;
         }
+        if(toggleAllowed(gamepad1.b,b,1)) {
+            Constants.ALLIANCE = Constants.Alliance.RED;
+            robot.setPoseX(Math.abs(robot.getX()));
+        }
+
         if(toggleAllowed(gamepad1.y,y,1)){
             robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
         }

@@ -99,7 +99,7 @@ public class Constants {
     public static double ____A = 0.0;
     public static double ____B = 0.0;
 
-    public static int INTAKE_OUT_SERVO_OUT = 1580;
+    public static int INTAKE_OUT_SERVO_OUT = 1600;
     public static int INTAKE_OUT_SERVO_IN = 900;
 
     public static double AUTO_INTAKE_SPEED = .8;

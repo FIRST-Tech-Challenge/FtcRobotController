@@ -105,8 +105,8 @@ public class Launcher {
                 elbow.setPower(0);
 
             servoTrigger.setPosition(servoNormalize(triggerTargetPos));
-//            servoGripper.setPosition(servoNormalize(gripperTargetPos));
-//            gripperExtendABob.setTargetPosition(gripperOutTargetPos);
+            servoGripper.setPosition(servoNormalize(gripperTargetPos));
+            gripperExtendABob.setTargetPosition(gripperOutTargetPos);
 
             flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) / 1E9);
 
