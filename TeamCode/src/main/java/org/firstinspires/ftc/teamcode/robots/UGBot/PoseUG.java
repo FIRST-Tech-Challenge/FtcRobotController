@@ -532,26 +532,18 @@ public class PoseUG {
         packet.put("velocity y", velocityY);
         packet.put("target angle for the thing", goalHeading);
         packet.put("avg ticks",getAverageTicks());
-        packet.put("target", target);
-        packet.put("right dist", getDistRightDist());
-        packet.put("outliers", countOutliers);
         packet.put("voltage", getBatteryVoltage());
-        packet.put("x offset", trajSol.getxOffset());
-        packet.put("disk speed", trajSol.getVelocity());
-        packet.put("pose speed", poseSpeed);
-        packet.put("bearing to", (360-Math.abs(getBearingTo(Constants.startingXOffset-.25, 1))));
-        packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
-        packet.put("rotVelBase", rotVelBase);
+//        packet.put("x offset", trajSol.getxOffset());
+//        packet.put("disk speed", trajSol.getVelocity());
+//        packet.put("pose speed", poseSpeed);
+//        packet.put("rotVelBase", rotVelBase);
         packet.put("zero indicator", 0);
         packet.put("turret error", turret.turretPID.getError());
         packet.put("turret integrated error", turret.turretPID.getTotalError());
         packet.put("turret derivative error", turret.turretPID.getDeltaError());//ben was here
-        packet.put("dangerCenter", turret.getDangerZoneCenter());
-        packet.put("Direction of Danger", turret.directionToDZ());
-        packet.put("is in gripper", Constants.IN_WOBBLE_MODE ? 1 : 0);
-        packet.put("is in dangermode", turret.isDangerModeActive() ? 1 : 0);
-        packet.put("is in dangerzone", turret.isInDangerZone() ? 1 : 0);
-        packet.put("is in passes danger", turret.crossesDangerZone() ? 1 : 0);
+        packet.put("base error", turnPID.getError());
+        packet.put("base integrated error", turnPID.getTotalError());
+        packet.put("base derivative error", turnPID.getDeltaError());
 
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));

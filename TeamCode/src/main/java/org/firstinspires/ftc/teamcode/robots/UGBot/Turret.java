@@ -231,7 +231,7 @@ public class Turret{
 
     public boolean setTurretAngle(double angle){
         turretTargetHeading=wrap360(angle);
-        return Conversions.between(getHeading(), angle - Constants.TURRET_TOLERANCE, angle + Constants.TURRET_TOLERANCE);
+        return isTurretNearTarget();
     }
 
     public boolean setTurretAngleNoCheck(double angle){
@@ -239,7 +239,7 @@ public class Turret{
         return true;
     }
 
-    public boolean getTurretNearTarget(){
+    public boolean isTurretNearTarget(){
         return between360Clockwise(getHeading(), turretTargetHeading - Constants.TURRET_TOLERANCE, turretTargetHeading + Constants.TURRET_TOLERANCE);
 
     }

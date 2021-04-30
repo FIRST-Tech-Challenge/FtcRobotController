@@ -112,15 +112,13 @@ public class Autonomous {
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .8,.1))
 
             .addMineralState(ugStateProvider,
-                    ()-> robot.turret.setTurretAngleNoCheck(270 + Constants.GRIPPER_HEADING_OFFSET),
-                    ()-> robot.turret.setTurretAngleNoCheck(90 + Constants.GRIPPER_HEADING_OFFSET),
-                    ()-> robot.turret.setTurretAngleNoCheck(270 + Constants.GRIPPER_HEADING_OFFSET))
-            //is it there yet?
-            .addState(()-> robot.turret.getTurretNearTarget())
+                    ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET),
+                    ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET),
+                    ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET))
             //release the wobble goal
             .addState(() -> robot.launcher.wobbleRelease())
             //spin up the flywheel
-            .addSingleState(() -> robot.launcher.setFlywheelActivePID(true))
+            .addSingleState(() -> robot.launcher.preSpinFlywheel(900))
 
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 

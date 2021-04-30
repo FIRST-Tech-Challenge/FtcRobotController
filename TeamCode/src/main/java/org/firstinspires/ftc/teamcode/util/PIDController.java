@@ -128,11 +128,12 @@ public class PIDController {
 
             //integrate with windup prevention
             //reset total error if we are outside the integral control regime or if current error crosses zero
-            if (Math.abs(m_integralCutIn) < 2 * Double.MIN_VALUE) { //this is just a check if integralCutIn is zero - zero actually means we ignore cut-in and allow total error to accumulate regardless of current error magnitude
-                if (Math.abs(m_integralCutIn) > Math.abs(m_error)) //we are outside of intended integral regime - reset accumulated error
+//            if (!(Math.abs(m_integralCutIn) < .00000000001)) { //this is just a check if integralCutIn is zero - zero actually means we ignore cut-in and allow total error to accumulate regardless of current error magnitude
+                if (Math.abs(m_integralCutIn) < Math.abs(m_error)){ //we are outside of intended integral regime - reset accumulated error
                     m_totalError = 0.0;
             }
-            else if(between(m_I * m_totalError, m_minimumOutput, m_maximumOutput)){ //extra sanity check - only accumulate error if the integral output on it's own is inside the output range
+
+            if(between(m_I * m_totalError, m_minimumOutput, m_maximumOutput)){ //extra sanity check - only accumulate error if the integral output on it's own is inside the output range
                 //integral calculation factored for time
                 m_totalError += (m_error * m_deltaTime);
             }

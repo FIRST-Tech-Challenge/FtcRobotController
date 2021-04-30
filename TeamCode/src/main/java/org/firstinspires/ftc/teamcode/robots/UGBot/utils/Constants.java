@@ -104,7 +104,7 @@ public class Constants {
     public static double AUTO_INTAKE_FIRST = .65;
     public static double AUTO_INTAKE_SECOND = 1.1;
 
-    public static double TURRET_TOLERANCE = 1.5; //accuracy wiggle room
+    public static double TURRET_TOLERANCE = 2; //accuracy wiggle room
 
     public static int LAUNCHER_TRIGGER_STOWED = 1900;
     public static int LAUNCHER_TRIGGER_SHOOT = 2030;

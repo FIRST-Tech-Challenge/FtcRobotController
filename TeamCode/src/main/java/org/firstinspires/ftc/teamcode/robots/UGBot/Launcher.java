@@ -213,6 +213,11 @@ public class Launcher {
 
     public void setFlywheelActivePID(boolean isActive){FlywheelActivePID = isActive;}
 
+    public void preSpinFlywheel(int TPS){
+        FlywheelActivePID = true;
+        flywheelTargetTPS = TPS;
+    }
+
     private void setElbowTargetPos(int pos){elbowPos = Math.min(Math.max(pos, elbowMin), actualElbowMax -elbowMaxSafetyOffset);}
 
     public void setElbowTargetPosNoCap(int pos){elbowPos = pos;}
