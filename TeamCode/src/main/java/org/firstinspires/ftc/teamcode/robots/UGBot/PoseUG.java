@@ -700,7 +700,7 @@ public class PoseUG {
         //turret.setTurntableAngle(model.getTurretHeading());
 
 
-        trajCalc.updatePos(poseX, poseY);
+        trajCalc.updatePos(Constants.ALLIANCE_INT_MOD * poseX, poseY);
         trajCalc.updateVel(velocityX, velocityY);
         trajCalc.setTarget(target);
         trajSol = trajCalc.getTrajectorySolution();
@@ -1032,7 +1032,7 @@ public class PoseUG {
 
                 break;
             case 1: //driving to target location
-                if(getDistanceTo(targetPose.x, targetPose.y) <= launchMoveDist){
+                if(getDistanceTo((Constants.ALLIANCE_INT_MOD) * targetPose.x, targetPose.y) <= launchMoveDist){
                     //kick in launcher adjustments if requested
                     if(targetPose.launchElevation > -.01) { //set elevation{
                         launcher.setElbowTargetAngle(targetPose.launchElevation);
@@ -1043,12 +1043,12 @@ public class PoseUG {
                 }
 
                 if(targetPose.baseHeading > -.01) {
-                    if (driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, closeEnoughDist, targetPose.baseHeading)) {
+                    if (driveToFieldPosition((Constants.ALLIANCE_INT_MOD) * targetPose.x, targetPose.y, forward, maxPower, closeEnoughDist, targetPose.baseHeading)) {
                         getFieldPosStateThree++;
                     }
                 }
                 else{
-                    if (driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, closeEnoughDist)) {
+                    if (driveToFieldPosition((Constants.ALLIANCE_INT_MOD) * targetPose.x, targetPose.y, forward, maxPower, closeEnoughDist)) {
                         getFieldPosStateThree++;
                     }
                 }

@@ -852,8 +852,11 @@ public class UG_6832 extends OpMode {
         }
 
         if(toggleAllowed(gamepad1.x,x,1))
-            robot.alignmentRun(.5,-0.4572 * Constants.WALL_FOLLOW_MULTIPLIER, -robot.getDistRightDist() * Constants.WALL_FOLLOW_MULTIPLIER,true, 2.7432);
-        if(toggleAllowed(gamepad1.a,a,1)){
+            Constants.ALLIANCE = Constants.Alliance.BLUE;
+        if(toggleAllowed(gamepad1.b,b,1)){
+            Constants.ALLIANCE = Constants.Alliance.RED;
+        }
+        if(toggleAllowed(gamepad1.y,y,1)){
             robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
         }
     }
