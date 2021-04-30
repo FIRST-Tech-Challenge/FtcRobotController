@@ -32,7 +32,7 @@ public class AutoMP extends LinearOpMode {
 //        globalTime.reset();
         boolean isExecuting = true;
         double distance = 0.1;
-        motionPlanner.setTarget(distance, 0);
+        motionPlanner.setTarget(distance, 0, 0);
         bot.odometry.resetAll(new double[]{0,0,0});
         double oldypos = 0;
         double oldtime = 0;
@@ -52,7 +52,8 @@ public class AutoMP extends LinearOpMode {
             double yvel = deltaYpos/deltaTime;
 
             double yerr = distance - ypos;
-            double ypow = motionPlanner.getPow(yerr, yvel,curtime);
+            motionPlanner.update(yerr, yvel,curtime);
+            double ypow = motionPlanner.getPower();
 
             bot.move(ypow, 0, 0);
 
@@ -63,7 +64,7 @@ public class AutoMP extends LinearOpMode {
             telemetry.addData("ypow", ypow);
             telemetry.addData("curTime", curtime);
 
-            telemetry.addData("dis", motionPlanner.dis);
+            telemetry.addData("dis", motionPlanner.startDis);
             telemetry.addData("startVel", motionPlanner.startVel);
             telemetry.addData("a", motionPlanner.a);
             telemetry.addData("b", motionPlanner.b);

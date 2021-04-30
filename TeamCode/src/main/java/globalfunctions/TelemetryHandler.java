@@ -4,7 +4,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
 
-import autofunctions.Path;
+import autofunctions.Path2;
 import global.TerraBot;
 
 public class TelemetryHandler {
@@ -39,7 +39,7 @@ public class TelemetryHandler {
         }
     }
     //Adds auton
-    public void addAuton(Path path, int howMany){
+    public void addAuton(Path2 path, int howMany){
         switch (howMany) {
             case 0:
                 break;

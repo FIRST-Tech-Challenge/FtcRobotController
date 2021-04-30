@@ -1,17 +1,24 @@
 package developing;
 
 public class MotionPlanner {
-    public double dis = 0;
-    public double startVel = 0;
+    //Distance to target
+    public double startDis = 0;
 
+    public double startTime = 0;
+    //Starting velocity
+    public double startVel = 0;
+    //a coeff
     public double a = 0;
+    //b coeff
     public double b = 0;
+    //c coeff
     public double c = 0;
 
+    //time A when half way
     public double tA = 0;
+    //Time b when reached
     public double tB = 0;
-
-    public double maxAccelScale = 1;
+    //Sc
     public double switchOverPoint = 0.8;
 
 
@@ -23,26 +30,40 @@ public class MotionPlanner {
     //Max Accel = 9.4 m/s^2
     public double maxAccel = 2; // m/s^2
 
+    public double curPow = 0;
+
     //Weight required to pull = 2.5 kg
     //Force required to pull = 24.5 N
     //Max Friction Accel = 2.33
 //    public double frictionAccel = 0.2; // m/s^2
 
 //    public double frictionAccel = 0.2;
+
+    //Friction Accel
     public double frictionAccel = 0.1;
 
-
+    //Slow Range
     public double slowRange = 0.03;
 
     public double Acc = 0.005;
 
+    public boolean hasTargetBeenSet = false;
 
 
-    public void setTarget(double dis, double startVel){
-        this.dis = dis;
+
+    public void setTarget(double dis, double startVel, double startTime){
+        this.startDis = dis;
         this.startVel = startVel;
-        this.tA = -((2*startVel)-Math.sqrt(2*(2*Math.pow(startVel,2)+(3*maxAccel*maxAccelScale*dis)))/(maxAccel*maxAccelScale));
+        this.startTime = startTime;
+        this.tA = -((2*startVel)-Math.sqrt(2*(2*Math.pow(startVel,2)+(3*maxAccel*dis)))/(maxAccel));
         calcABCs(dis, startVel, tA);
+        hasTargetBeenSet = true;
+    }
+
+    public void setFMS(double fric, double maxAccel, double slowRange){
+        this.frictionAccel = fric;
+        this.maxAccel = maxAccel;
+        this.slowRange = slowRange;
     }
 
     public void calcABCs(double d, double v, double t){
@@ -52,8 +73,8 @@ public class MotionPlanner {
     }
 
     public double calcAccel(double curDis, double curVel, double curTime){
-        if(curDis/dis > (1-switchOverPoint)){
-            return considerFric(calcAccelA(curTime), curDis);
+        if((curDis/startDis) > (1-switchOverPoint)){
+            return considerFric(calcAccelA(curTime-startTime), curDis);
         }else{
             return considerFric(calcAccelB(curDis, curVel), curDis);
         }
@@ -78,9 +99,17 @@ public class MotionPlanner {
         return accel + (Math.signum(dis)*frictionAccel);
     }
 
-    public double getPow(double curDis, double curVel, double curTime){
+    public void update(double curDis, double curVel, double curTime){
         double accel = calcAccel(curDis, curVel, curTime);
-        return (accel/maxAccel);
+        curPow = (accel/maxAccel);
+    }
+
+    public double getPower(){
+        return curPow;
+    }
+
+    public void reset(){
+        hasTargetBeenSet = false;
     }
 
 

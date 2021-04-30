@@ -24,26 +24,16 @@ public class PID {
     public double scale = 1;
     //Scale to scale accs
     public double AccScale = 1;
-
-
     //Change in error
     public double deltaError = 0;
-    //Rest power to have
-    public double restPow = 0;
     //Timer
     public ElapsedTime timer = new ElapsedTime();
     //starting accuracy
     public double sacc = 0;
     //Current accuracy
     public double acc = 0;
-    //MaxI value
-    public double maxI = 1000;
-    //I range value
-    public double rangeI = 0;
     //MaxD value
     public double maxD = 1000;
-
-    public boolean disableI = false;
 
     //Sets coeffs
     public void setCoefficients(double k, double d, double i){
@@ -52,12 +42,6 @@ public class PID {
         sKi = i;
         scaleCoeffs(scale);
     }
-    //Sets rest pow
-    public void setRestPow(double pow){
-        restPow = pow;
-    }
-    //Sets range of I
-    public void setRangeI(double ri){rangeI = ri; }
     //Sets accuracies
     public void setAcc(double in){
         sacc = in;
@@ -65,7 +49,7 @@ public class PID {
     }
     //Gets the power for the motor
     public double getPower(){
-        return Math.signum(error) * (Kp * abs(error) - Kd * abs(derivative) + Ki * abs(integral) + restPow);
+        return Math.signum(error) * (Kp * abs(error) - Kd * abs(derivative) + Ki * abs(integral));
 //        return 0;
     }
     //Absolute value
@@ -83,18 +67,7 @@ public class PID {
 
         derivative = deltaError/deltaTime;
 
-        if(!disableI) {
-            if (abs(error) < rangeI) {
-                //|| Math.signum(integral * error) == -1
-                if (Ki * abs(integral + error * deltaTime) < maxI) {
-                    integral += error * deltaTime;
-                } else {
-                    integral = 0;
-                }
-            }
-        }else{
-            integral = 0;
-        }
+        integral += error * deltaTime;
 
         if(Kd*abs(derivative) > maxD) {
             derivative = maxD * Math.signum(derivative);
@@ -115,10 +88,6 @@ public class PID {
     //Error is within accuracy
     public boolean isDone(){
         return abs(error) < acc;
-    }
-    //Sets max I
-    public void setMaxI(double maxI){
-        this.maxI = maxI;
     }
     //Sets max D
     public void setMaxD(double maxD){
