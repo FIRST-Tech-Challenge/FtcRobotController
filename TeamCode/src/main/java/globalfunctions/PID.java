@@ -43,6 +43,8 @@ public class PID {
     //MaxD value
     public double maxD = 1000;
 
+    public boolean disableI = false;
+
     //Sets coeffs
     public void setCoefficients(double k, double d, double i){
         sKp = k;
@@ -63,8 +65,7 @@ public class PID {
     }
     //Gets the power for the motor
     public double getPower(){
-//        return Math.signum(error) * (Kp * abs(error) - Kd * abs(derivative) + Ki * abs(integral) + restPow);
-        return Math.signum(error) * (Kp * abs(error)- Kd * abs(derivative)+  Ki * abs(integral)+ restPow);
+        return Math.signum(error) * (Kp * abs(error) - Kd * abs(derivative) + Ki * abs(integral) + restPow);
 //        return 0;
     }
     //Absolute value
@@ -82,14 +83,18 @@ public class PID {
 
         derivative = deltaError/deltaTime;
 
-//        if(abs(error) < rangeI) {
-//            //|| Math.signum(integral * error) == -1
-//            if (Ki * abs(integral + error*deltaTime) < maxI) {
-//                integral += error * deltaTime;
-//            }else{
-//                integral = 0;
-//            }
-//        }
+        if(!disableI) {
+            if (abs(error) < rangeI) {
+                //|| Math.signum(integral * error) == -1
+                if (Ki * abs(integral + error * deltaTime) < maxI) {
+                    integral += error * deltaTime;
+                } else {
+                    integral = 0;
+                }
+            }
+        }else{
+            integral = 0;
+        }
 
         if(Kd*abs(derivative) > maxD) {
             derivative = maxD * Math.signum(derivative);

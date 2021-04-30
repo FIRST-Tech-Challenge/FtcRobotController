@@ -50,6 +50,8 @@ public class TerraOp extends OpMode {
 
 
 
+
+
         // Initialize telemetryHandler and tell the driver that initialization is done
         telemetry.addData("Ready?", "Yes!");
         telemetry.update();
@@ -60,6 +62,7 @@ public class TerraOp extends OpMode {
     @Override
     public void start(){
         bot.gameTime.reset();
+        bot.toggleKnockdown(true);
     }
 
 

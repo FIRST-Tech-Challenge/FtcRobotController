@@ -194,6 +194,12 @@ public class Path {
         wobbleGoalHandler.notRF();
     }
 
+    public void disableIs(){
+        xControl.disableI = true;
+        yControl.disableI = true;
+        hControl.disableI = true;
+    }
+
     public void addShoot(double x, double y, TerraBot bot){
         double[] last = Arrays.copyOf(poses.get(poses.size()-1), 2);
         last[0] += x;

@@ -201,6 +201,7 @@ public class AutoModule {
                 path.yRestPow = 0.05;
                 path.hRestPow = 0.05;
                 path.HAcc = 2;
+                path.disableIs();
                 path.init2();
                 path.addSetpoint(0, 0, (bot.getRobotToGoalAngle()-bot.odometry.h));
                 return true;
