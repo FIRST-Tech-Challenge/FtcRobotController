@@ -181,7 +181,7 @@ public class AutoHandler {
         bot.init(op.hardwareMap);
         bot.wgStart = Constants.WG_START_POS_AUTON;
         rf.init(bot);
-        bot.startOdoThreadAuto(op);
+        bot.startOdoThreadAuto(op, true);
         path.startRFThread(op);
         if(scan) {
             //Uncomment this if u want to see the vid

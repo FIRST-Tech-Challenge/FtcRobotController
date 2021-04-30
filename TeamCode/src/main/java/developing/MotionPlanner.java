@@ -11,8 +11,8 @@ public class MotionPlanner {
     public double tA = 0;
     public double tB = 0;
 
-    public double maxAccelScale = 0.5;
-    public double switchOverPoint = 0.5;
+    public double maxAccelScale = 1;
+    public double switchOverPoint = 0.8;
 
 
     //Orbital max torques = 1.23 Nm
@@ -21,12 +21,20 @@ public class MotionPlanner {
     //Force from wheels = 98.86 N
     //Mass of robot = 10.5 kg
     //Max Accel = 9.4 m/s^2
-    public double maxAccel = 9.4; // m/s^2
+    public double maxAccel = 2; // m/s^2
 
     //Weight required to pull = 2.5 kg
     //Force required to pull = 24.5 N
     //Max Friction Accel = 2.33
-    public double frictionAccel = 2; // m/s^2
+//    public double frictionAccel = 0.2; // m/s^2
+
+//    public double frictionAccel = 0.2;
+    public double frictionAccel = 0.1;
+
+
+    public double slowRange = 0.03;
+
+    public double Acc = 0.005;
 
 
 
@@ -44,10 +52,10 @@ public class MotionPlanner {
     }
 
     public double calcAccel(double curDis, double curVel, double curTime){
-        if(curDis/dis > switchOverPoint){
-            return considerFric(calcAccelA(curTime));
+        if(curDis/dis > (1-switchOverPoint)){
+            return considerFric(calcAccelA(curTime), curDis);
         }else{
-            return considerFric(calcAccelB(curDis, curVel));
+            return considerFric(calcAccelB(curDis, curVel), curDis);
         }
     }
 
@@ -56,19 +64,32 @@ public class MotionPlanner {
     }
 
     public double calcAccelB(double curDis, double curVel){
-        tB = (3*curDis)/curVel;
+        if(Math.abs(curDis) > slowRange) {
+            tB = Math.abs((3 * curDis) / curVel);
+        }else{
+            tB = Math.abs((3 * 0.1) / curVel);
+        }
         calcABCs(curDis, curVel, tB);
         return b;
     }
 
 
-    public double considerFric(double accel){
-        return Math.signum(accel)*(Math.abs(accel)+frictionAccel);
+    public double considerFric(double accel, double dis){
+        return accel + (Math.signum(dis)*frictionAccel);
     }
 
     public double getPow(double curDis, double curVel, double curTime){
         double accel = calcAccel(curDis, curVel, curTime);
         return (accel/maxAccel);
+    }
+
+
+    public boolean isDone(double dis){
+        return Math.abs(dis) < Acc;
+    }
+
+    public void setAcc(double acc){
+        Acc = acc;
     }
 
 

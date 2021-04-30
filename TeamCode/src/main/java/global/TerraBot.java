@@ -165,7 +165,7 @@ public class TerraBot {
 
         //Get claw Servos
         cll = getServo(hwMap, "cll", Servo.Direction.FORWARD, Constants.CLL_GRAB);
-        clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLL_OPEN);
+        clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLR_GRAB);
 
         // Get ring knock-down servos
         fls = getServo(hwMap, "fls", Servo.Direction.FORWARD, Constants.FLS_CLOSED);
@@ -481,10 +481,12 @@ public class TerraBot {
 
 
     //Start odometry thread for autonomous
-    public void startOdoThreadAuto(final LinearOpMode op){
+    public void startOdoThreadAuto(final LinearOpMode op, final boolean useSensors){
         CodeSeg run = () -> {
             updateOdometry();
-            updateOdometryUsingSensors();
+            if(useSensors) {
+                updateOdometryUsingSensors();
+            }
         };
         Stage exit = new Stage() {
             @Override
