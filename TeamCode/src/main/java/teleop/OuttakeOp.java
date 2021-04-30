@@ -42,7 +42,7 @@ public class OuttakeOp extends OpMode {
             }
         }
 
-        bot.outtakeWithCalculations();
+        bot.outtakeWithCalculations(true);
         bot.optimizeOdometryHeading();
 //        telemetryHandler.addTele(1,1,2,3,2);
 //        telemetry = telemetryHandler.getTelemetry();

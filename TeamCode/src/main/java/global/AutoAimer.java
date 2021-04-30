@@ -15,8 +15,6 @@ public class AutoAimer {
     public boolean isDone = false;
     public boolean hasReached = false;
 
-    public boolean override = false;
-
     public boolean hasPosBeenUpdated(){
         return !((outtakePos[0] == oldOuttakePos[0]) && (outtakePos[1] == oldOuttakePos[1]));
     }
@@ -38,6 +36,8 @@ public class AutoAimer {
 
     public void updateTargetSpeed(){
         targetSpeed = calcSpeed((Constants.FIELD_LENGTH - outtakePos[1]/100), outtakePos[0]/100);
+    }
+    public void resetOuttakePos(){
         oldOuttakePos = outtakePos;
     }
 

@@ -66,8 +66,8 @@ public class TerraBot {
     public Servo frs;
 
     // Ring knock-down servos controls
-    public Cycle flsControl = new Cycle(Constants.FLS_CLOSED, 0.5);
-    public Cycle frsControl = new Cycle(Constants.FRS_CLOSED, 0.5);
+    public Cycle flsControl = new Cycle(Constants.FLS_CLOSED, Constants.FLS_OPEN);
+    public Cycle frsControl = new Cycle(Constants.FRS_CLOSED, Constants.FRS_OPEN);
 
     //AutoAimer - Has methods for angle to target and shooting
     public AutoAimer autoAimer = new AutoAimer();
@@ -110,6 +110,7 @@ public class TerraBot {
     public ButtonController outtakeButtonController = new ButtonController();
     public ButtonController fastModeController = new ButtonController();
     public ButtonController powerShotController = new ButtonController();
+    public ButtonController knockdownController = new ButtonController();
 
     //Odometry for position of robot
     //TODO
@@ -167,8 +168,8 @@ public class TerraBot {
         clr = getServo(hwMap, "clr", Servo.Direction.REVERSE, Constants.CLL_OPEN);
 
         // Get ring knock-down servos
-        fls = getServo(hwMap, "fls", Servo.Direction.FORWARD, Constants.FLS_CLOSED);
-        frs = getServo(hwMap, "frs", Servo.Direction.REVERSE, Constants.FRS_CLOSED);
+        fls = getServo(hwMap, "fls", Servo.Direction.FORWARD, Constants.FLS_OPEN);
+        frs = getServo(hwMap, "frs", Servo.Direction.REVERSE, Constants.FRS_OPEN);
 
         //Get wobble goal pos distance sensor
         wgp = hwMap.get(Rev2mDistanceSensor.class, "wgp");
@@ -238,6 +239,15 @@ public class TerraBot {
     public void intake(double p){
         in.setPower(p);
         if (!outtaking) { shootRings(-Math.signum(p)*Constants.RS_POW);}
+    }
+    public void toggleKnockdown(boolean hasPressed) {
+        if (knockdownController.isPressedOnce(hasPressed)) {
+            knockdownRings(flsControl.update(false, true), frsControl.update(false, true));
+        }
+    }
+    public void knockdownRings(double lPos, double rPos) {
+        fls.setPosition(lPos);
+        frs.setPosition(rPos);
     }
     //Outtake at power p
     public void outtake(double p){
@@ -428,15 +438,18 @@ public class TerraBot {
     }
 
     //Outtake with autoAimer calculations
-    public void outtakeWithCalculations() {
+    public void outtakeWithCalculations(boolean isTele) {
         if(outtaking){
             if(outr.getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)){
                 outr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 outl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                autoAimer.setOuttakePos(odometry.getPos());
+                if(isTele) {
+                    autoAimer.setOuttakePos(odometry.getPos());
+                }
             }
-            if(autoAimer.hasPosBeenUpdated()){
+            if (autoAimer.hasPosBeenUpdated()) {
                 autoAimer.updateTargetSpeed();
+                autoAimer.resetOuttakePos();
                 outr.setVelocity(autoAimer.getOutrTargetVel());
                 outl.setVelocity(autoAimer.getOutlTargetVel());
             }

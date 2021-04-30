@@ -49,20 +49,18 @@ public class Path {
     public boolean isExecuting = true;
 
     final public double[] ks = {0.05,0.05,0.012};
-//    final public double[] ds = {0.006,0.008,0.0005};
-    final public double[] ds = {0.006,0.008,0.0005};
+    final public double[] ds = {0.0003,0.0006,0.0005};
     final public double[] is = {0.000,0.000,0.0000};
 
-    final public double[] ksS = {0.02,0.02,0.012};
-    final public double[] dsS = {0.0001,0.0001,0.0005}; // {0.006,0.008,0.0005};
-    final public double[] isS = {0.05,0.05,0.05};
+    public double[] ksS = {0.02,0.01,0.012};
+    public double[] dsS = {0.0003,0.0008,0.0005};
+//    final public double[] isS = {0.0,0.0,0.0};
 
-//    public double xRestPow = 0.05;
-//    public double yRestPow = 0.05;
-//    public double hRestPow = 0.05;
+    public double[] isS = {0.1,0.08,0.1};
+
     public double xRestPow = 0.00;
     public double yRestPow = 0.00;
-    public double hRestPow = 0.00;
+    public double hRestPow = 0.02;
 
 
 
@@ -71,7 +69,7 @@ public class Path {
     public double HAcc = 1;
 
 
-    final public double endWait = 0.05; // 0.2
+    final public double endWait = 0.1; // 0.2
 
     public Storage storage = new Storage();
     public ArrayList<double[]> track = new ArrayList<>();
@@ -96,7 +94,7 @@ public class Path {
         poses.add(pos);
         init();
     }
-    private void init(){
+    public void init(){
         posetypes.add(Posetype.SETPOINT);
         setCoeffsForWaypoint();
         xControl.setAcc(XAcc);
@@ -105,17 +103,35 @@ public class Path {
         xControl.setRestPow(xRestPow);
         yControl.setRestPow(yRestPow);
         hControl.setRestPow(hRestPow);
-        xControl.setMaxI(0.1);
-        yControl.setMaxI(0.1);
-        hControl.setMaxI(0.1);
-        xControl.setMaxD(100);
-        yControl.setMaxD(100); // 0.55
-        hControl.setMaxD(100);
+        xControl.setMaxI(0.15);
+        yControl.setMaxI(0.15);
+        hControl.setMaxI(0.15);
+        xControl.setMaxD(1);
+        yControl.setMaxD(1); // 0.55
+        hControl.setMaxD(1);
         xControl.setRangeI(5);
         yControl.setRangeI(5);
         hControl.setRangeI(5);
         globalTime.reset();
         addStop(0.01);
+    }
+
+    public void init2() {
+        xControl.setAcc(XAcc);
+        yControl.setAcc(YAcc);
+        hControl.setAcc(HAcc);
+        xControl.setRestPow(xRestPow);
+        yControl.setRestPow(yRestPow);
+        hControl.setRestPow(hRestPow);
+        xControl.setMaxI(0.15);
+        yControl.setMaxI(0.15);
+        hControl.setMaxI(0.15);
+        xControl.setMaxD(1);
+        yControl.setMaxD(1); // 0.55
+        hControl.setMaxD(1);
+        xControl.setRangeI(5);
+        yControl.setRangeI(5);
+        hControl.setRangeI(5);
     }
 
     public void setCoeffsForSetpoint(){
@@ -136,9 +152,9 @@ public class Path {
         xControl.setCoefficients(ksS[0], dsS[0], isS[0]);
         yControl.setCoefficients(ksS[1], dsS[1], isS[1]);
         hControl.setCoefficients(ksS[2], dsS[2], isS[2]);
-        xControl.scaleAccs(0.5);
-        yControl.scaleAccs(0.5);
-        hControl.scaleAccs(0.5);
+        xControl.scaleAccs(1);
+        yControl.scaleAccs(1);
+        hControl.scaleAccs(1);
     }
     public void updateRadius(double dis){ radius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis))); }
     public void setGlobalMode(boolean val){
@@ -178,11 +194,16 @@ public class Path {
         wobbleGoalHandler.notRF();
     }
 
-    public void addShoot(double x, double y){
-        addNewPose(x, y, 0);
+    public void addShoot(double x, double y, TerraBot bot){
+        double[] last = Arrays.copyOf(poses.get(poses.size()-1), 2);
+        last[0] += x;
+        last[1] += y;
+        addNewPose(x, y, bot.autoAimer.getRobotToGoalAngle(last));
+        //LOOK HERE
         posetypes.add(Posetype.SHOOT);
         rfsHandler.notRF();
         wobbleGoalHandler.notRF();
+        addSetpoint(0,0,-bot.autoAimer.getRobotToGoalAngle(last));
     }
 
     public void addRF(CodeSeg... segs){
@@ -304,22 +325,18 @@ public class Path {
                 }
                 return new double[]{0,0,0};
             case SHOOT:
-                if(!bot.autoAimer.hasPosBeenUpdated()) {
-                    bot.autoAimer.setOuttakePos(Arrays.copyOf(poses.get(curIndex+1), 2));
-                }
                 setCoeffsForShoot();
                 double[] target2 = poses.get(curIndex+1);
-                if(!bot.autoAimer.override) {
-                    target2[2] = bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos()) - bot.odometry.h;
-                    updateControls(currentPos,target2, true);
-                }else{
-                    updateControls(currentPos,target2, false);
+                if(!bot.autoAimer.hasPosBeenUpdated()) {
+                    bot.autoAimer.setOuttakePos(Arrays.copyOf(target2, 2));
                 }
+                updateControls(currentPos, target2, true);
+
                 if(bot.autoAimer.isDone){
                     bot.autoAimer.ready();
                     next();
                 }
-                bot.outtakeWithCalculations();
+                bot.outtakeWithCalculations(false);
                 if(xControl.isDone() && yControl.isDone() && hControl.isDone()){
                     if(endTimer.seconds() > endWait) {
                         bot.autoAimer.reached();
@@ -383,7 +400,8 @@ public class Path {
             telemetryHandler.addAuton(this, 1);
             op.telemetry.update();
         }
-        op.telemetry.addData("COMPLETED", Arrays.toString(bot.odometry.getPos()));
+//        op.telemetry.addData("COMPLETED", Arrays.toString(bot.odometry.getPos()));
+        op.telemetry.addData("Status:", "Done");
         op.telemetry.update();
         bot.move(0,0,0);
         stopRFThread();

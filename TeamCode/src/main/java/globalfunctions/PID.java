@@ -63,7 +63,9 @@ public class PID {
     }
     //Gets the power for the motor
     public double getPower(){
-        return Math.signum(error) * (Kp * abs(error) - Kd * abs(derivative) + Ki * abs(integral) + restPow);
+//        return Math.signum(error) * (Kp * abs(error) - Kd * abs(derivative) + Ki * abs(integral) + restPow);
+        return Math.signum(error) * (Kp * abs(error)- Kd * abs(derivative)+  Ki * abs(integral)+ restPow);
+//        return 0;
     }
     //Absolute value
     public double  abs(double in){
@@ -80,11 +82,14 @@ public class PID {
 
         derivative = deltaError/deltaTime;
 
-        if(abs(error) < rangeI) {
-            if (Ki * abs(integral) < maxI || Math.signum(integral * error) == -1) {
-                integral += error * deltaTime;
-            }
-        }
+//        if(abs(error) < rangeI) {
+//            //|| Math.signum(integral * error) == -1
+//            if (Ki * abs(integral + error*deltaTime) < maxI) {
+//                integral += error * deltaTime;
+//            }else{
+//                integral = 0;
+//            }
+//        }
 
         if(Kd*abs(derivative) > maxD) {
             derivative = maxD * Math.signum(derivative);
@@ -100,6 +105,7 @@ public class PID {
         lastTime = -0.01;
         deltaTime = 0;
         deltaError = 0;
+        timer.reset();
     }
     //Error is within accuracy
     public boolean isDone(){

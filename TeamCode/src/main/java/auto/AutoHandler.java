@@ -31,23 +31,21 @@ public class AutoHandler {
 
         // Shoot the first 3 rings
         path.addWGRF(rf.moveWgTo(55), rf.controlWGE(0.5));
-//        path.addWaypoint(10, 20, 0);
-//        path.addShoot(0,40);
 
-        path.addSetpoint(0,50,0);
+        path.addWaypoint(0,10,0);
         path.addRF(rf.shootRF(3));
-        path.addShoot(0,0);
+        path.addShoot(0,40, bot);
 
 
-
-        // Knock down tower, intake 1 ring, and outtake 1 ring
+//
+//        // Knock down tower, intake 1 ring, and outtake 1 ring
         path.addRF(rf.intake(1));
         path.addWaypoint(10,32,0);
         path.addStop(1.3);
         path.addRF(rf.shootRF(1));
-        path.addShoot(0,0);
-
-        // Intake 3 more rings, outtake them
+        path.addShoot(0,0, bot);
+//
+//        // Intake 3 more rings, outtake them
         path.addRF(rf.intake(1));
         for (int i = 0; i < 3; i++) {
             path.addWaypoint(0, 15, 0);
@@ -56,12 +54,12 @@ public class AutoHandler {
         path.addStop(0.5);
         path.addWaypoint(0,-10,0);
         path.addRF(rf.shootRF(3));
-        path.addShoot(0,-5);
+        path.addShoot(0,-5, bot);
         //Place first wobble goal
         path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
         path.addWaypoint(-55, 115, 0);
         path.addWGRF(rf.claw(2, -0.2));
-        path.addSetpoint(0,30,0);
+        path.addWaypoint(0,30,0);
         //Go to 2nd wobble goal
         path.addWaypoint(10, -20,0);
         path.addWGRF(rf.moveWgTo(180));
@@ -76,7 +74,7 @@ public class AutoHandler {
         path.addWaypoint(-80, 115, 0);
         path.addWGRF(rf.claw(2, -0.2));
         //Drop 2nd wobble goal
-        path.addSetpoint(0,30,0);
+        path.addWaypoint(0,30,0);
         path.addStop(0.5);
         //Park
         path.addWaypoint(40,-60,0);
@@ -94,6 +92,57 @@ public class AutoHandler {
 
     public void auto1(){
 
+        // Shoot the first 3 rings
+        path.addWGRF(rf.moveWgTo(55), rf.controlWGE(0.5));
+
+        path.addWaypoint(0,10,0);
+        path.addRF(rf.shootRF(3));
+        path.addShoot(0,40, bot);
+
+
+//
+//        // Knock down tower, intake 1 ring, and outtake 1 ring
+        path.addRF(rf.intake(1));
+        path.addWaypoint(10,32,0);
+        path.addStop(2);
+        path.addRF(rf.shootRF(1));
+        path.addShoot(0,0, bot);
+
+        //Place first wobble goal
+        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
+        path.addWaypoint(-5, 95, 0);
+        path.addWGRF(rf.claw(2, -0.2));
+        path.addWaypoint(0,30,0);
+        path.addStop(1);
+
+        //Go to 2nd wobble goal
+        path.addWaypoint(0, -20,0);
+        path.addWGRF(rf.moveWgTo(190));
+        path.addSetpoint(35, -10,0);
+        path.addWaypoint(0, -80,0);
+        //Grab it and move to place
+        path.addWGRF(rf.claw(0));
+        path.addStop(1);
+        path.addWGRF(rf.moveWgTo(130));
+        path.addWaypoint(0,20,0);
+
+        path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));
+        path.addWaypoint(-40, 40, 0);
+        path.addWGRF(rf.claw(2, -0.2));
+        //Drop 2nd wobble goal
+        path.addWaypoint(0,30,0);
+        path.addStop(0.5);
+        //Park
+        path.addSetpoint(0,-20,0);
+//        path.addSetpoint(10,-20,0);
+
+
+
+
+        path.start(bot, op);
+//        path.saveData();
+
+        bot.stopOdoThread();
     }
 
     public void auto0(){
@@ -101,21 +150,13 @@ public class AutoHandler {
     }
 
     public void autoT(){
+        path.addWaypoint(0, 30, 0);
         path.addSetpoint(0, 50, 0);
-        path.addStop(1);
+//        path.addStop(1);
 //        path.addRF(rf.shootRF(3));
 //        path.addShoot();
 //
         path.start(bot, op);
-
-        op.telemetry.addData("localizer checks failed", bot.localizer.checksFailed);
-        op.telemetry.addData("angle checks failed", bot.angularPosition.checksFailed);
-        op.telemetry.update();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 //        path.saveData();
 //
         bot.stopOdoThread();

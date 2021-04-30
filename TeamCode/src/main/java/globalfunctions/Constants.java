@@ -85,8 +85,10 @@ public class Constants {
 
     //Friction Force = 10.32 N
 
-    public static final double FLS_CLOSED = 0.1;
+    public static final double FLS_CLOSED = 0.02;
     public static final double FRS_CLOSED = 0.1;
+    public static final double FLS_OPEN = 0.62;
+    public static final double FRS_OPEN = 0.7;
 
 
 }

@@ -116,7 +116,8 @@ public class RobotFunctions {
     public CodeSeg shootRF(final int numRings){
         return () -> {
             bot.intake(0);
-            while (!bot.autoAimer.hasPosBeenUpdated()){}
+//            while (!bot.autoAimer.hasPosBeenUpdated()){}
+//            bot.autoAimer.resetOuttakePos();
             bot.outtaking = true;
             bot.autoAimer.shotMode = 0;
             while (!bot.autoAimer.hasReached) {}
@@ -141,9 +142,6 @@ public class RobotFunctions {
 //        try { Thread.sleep((long)(secs * 1000)); } catch (InterruptedException ignore) {}
     }
 
-    public CodeSeg overrideShooter(final boolean val){
-        return () -> bot.autoAimer.override = val;
-    }
 
     public CodeSeg saveForTele(){
         return () -> bot.saveForTele();

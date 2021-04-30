@@ -38,7 +38,6 @@ public class TerraOp extends OpMode {
         Constants.FRICTION_ACCEL = 400;
 
 
-
         // If we don't want to use the last auton's data, reset the gyro to heading 0
         if(!shouldICareAboutAuton){
             bot.angularPosition.resetGyro(0);
@@ -115,23 +114,29 @@ public class TerraOp extends OpMode {
 
         // when the driver presses gamepad1.y, start the shooting automodule
         if (gamepad1.y) {
-            if(!bot.powershotMode) {
+            if (!bot.powershotMode) {
                 bot.shooter.start();
-            }else{
+            } else {
                 bot.powerShot.start();
             }
         }
 
+        bot.toggleKnockdown(gamepad2.right_trigger > 0);
+
         // update the outtake motor speeds if the automodule is running
-        bot.outtakeWithCalculations();
+        bot.outtakeWithCalculations(true);
 
         // use optimizer to fix odometry heading
         bot.optimizeOdometryHeading();
 
+        //
 
         // TELEMETRY
 
 //        telemetryHandler.addTele(1,1,1,1,1);
+        if(bot.shooter.path != null) {
+            telemetryHandler.addAuton(bot.shooter.path, 1);
+        }
         telemetryHandler.addTele(0,0,0,1,4);
         telemetry.update();
     }
