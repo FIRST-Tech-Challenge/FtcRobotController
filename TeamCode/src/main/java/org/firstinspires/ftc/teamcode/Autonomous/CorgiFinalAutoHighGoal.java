@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
 @Autonomous(name= "CorgiFinalAutoHighGoal", preselectTeleOp = "OneGPTeleop")
-
+@Disabled
 public class CorgiFinalAutoHighGoal extends LinearOpMode {
     @Override
     public void runOpMode(){

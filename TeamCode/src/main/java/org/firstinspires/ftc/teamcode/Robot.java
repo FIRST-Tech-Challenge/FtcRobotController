@@ -280,7 +280,7 @@ public class Robot {
         shooter.moveServo(false);
         shooter.moveServo(true);
         shooter.setVelocity(1385, 1000);
-        drivetrain.turnInPlace(3.3,0.6);
+        drivetrain.turnInPlace(3.1,0.6);
         shooter.moveServo(false);
         shooter.moveServo(true);
         drivetrain.turnInPlace(-7.0,0.5);

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -51,7 +53,6 @@ public class TwoGPTeleop extends LinearOpMode {
             double xShootingPosition = 0;
             double angleShootingPosition = 0;
             int goingToPosition = 0;
-
             telemetry.addData("Status", "Ready to go");
             telemetry.update();
 
@@ -66,6 +67,7 @@ public class TwoGPTeleop extends LinearOpMode {
                 float left_stick_y = -gamepad1.left_stick_y;
                 float left_stick_x = -gamepad1.left_stick_x;
                 float right_stick_x = -gamepad1.right_stick_x;
+                double wobblepower= gamepad2.left_stick_y;
                 boolean move_wobble_goal_arm = gamepad2.b;
                 boolean start_transfer_sys = gamepad1.right_bumper;
                 float shooter = gamepad2.right_trigger;
@@ -86,6 +88,7 @@ public class TwoGPTeleop extends LinearOpMode {
                     continue;
                 }*/
 
+                WobbleGoal.wobbleGoalMotor.setPower(wobblepower/2);
 
                 if(!Robot.isCorgi){
                     angleInRadian = Math.atan2(left_stick_y*-1, left_stick_x*2);
@@ -127,6 +130,7 @@ public class TwoGPTeleop extends LinearOpMode {
                 /**Powershots**/
                 if(auto_powershots){
                     robot.setPosition(0,0,0);
+                    robot.setVelocity(1380,3000);
                     robot.goToPosition(6.127,-33.15,0,0.9);
                     robot.shootThreePowerShot();
                 }

@@ -22,7 +22,7 @@ public class WobbleGoal {
     //declaring the op mode
     private final LinearOpMode op;
 
-    protected DcMotor wobbleGoalMotor = null;
+    public static DcMotor wobbleGoalMotor = null;
 
     protected final Servo wobbleGoalServo = null;
 
@@ -39,12 +39,15 @@ public class WobbleGoal {
         wobbleGoalMotor.setDirection(DcMotorEx.Direction.FORWARD);
         if(!teleOp) {
             wobbleGoalMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            goToPosition(Position.REST);
+            opMode.sleep(250);
+            closeWobbleGoalClaw();
         }
-        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        closeWobbleGoalClaw();
-        goToPosition(Position.REST);
-        opMode.sleep(250);
+        else{
+            wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
+        }
     }
 
     //tells motor to go to a specified position based on ticks(i)
@@ -57,7 +60,7 @@ public class WobbleGoal {
             int ticksForGRAB = 700;
             i = ticksForGRAB;
         } else if (p == Position.GRAB) {
-            int ticksForGRAB = 725;
+            int ticksForGRAB = 630;
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
             int ticksForRAISE = 280;
@@ -73,7 +76,7 @@ public class WobbleGoal {
             int ticksForAutonomousDrop = 800;
             i = ticksForAutonomousDrop;
         } else if(p==Position.RUN){
-            int ticksForRun=600;
+            int ticksForRun=570;
             i=ticksForRun;
         }
         else {
