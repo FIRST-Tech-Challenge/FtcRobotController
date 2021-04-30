@@ -90,9 +90,9 @@ public class Constants {
     public static double DANGER_ZONE_SAFTEY_BUFFER = 3;
     public static int GRIPPER_HEADING_OFFSET = 42; //add this to the desired turret angle to actually point the open gripper that way and not the turret
 
-    public static int INTAKE_TILT_SERVO_TRAVEL = 1600;
+    public static int INTAKE_TILT_SERVO_TRAVEL = 1450;
     public static int INTAKE_TILT_SERVO_HANDOFF = 1300;
-    public static int INTAKE_TILT_SERVO_PICKUP = 1750;
+    public static int INTAKE_TILT_SERVO_PICKUP = 1550;
     public static int INTAKE_TILT_FOR_OUTTAKE = 1300;
     public static int INTAKE_TILT_FOR_OUTTAKE_TOO = 1600;
     public static int INTAKE_TILT_INIT_POS = 899;
