@@ -12,6 +12,8 @@ public class Constants {
     public static final double FLYWHEEL_RADIUS = 0.0765;
     public static final double GRAVITY = 9.80665;
     public static final double INCHES_PER_METER = 39.3701;
+    public static Alliance ALLIANCE = Alliance.RED;
+    public static int ALLIANCE_INT_MOD = (ALLIANCE == Alliance.RED ? 1 : -1);
 
 
     //BEGIN Proteus Kinematics
@@ -119,6 +121,11 @@ public class Constants {
     public static double ELBOW_LEGAL_ANGLE = 35;
 
     public static int WALL_FOLLOW_MULTIPLIER = 50;
+
+    public enum Alliance {
+        RED,
+        BLUE;
+    }
 
 
     public enum Target {

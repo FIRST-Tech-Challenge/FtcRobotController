@@ -137,6 +137,7 @@ public class Turret{
         }
     }
 
+    //todo check this
     public boolean crossesDangerZone(){
         double targetDist = Math.abs(diffAngle2(turretHeading,turretTargetHeading));
 
