@@ -47,6 +47,8 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.vision.OpenCVIntegration;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
 
@@ -850,15 +852,17 @@ public class UG_6832 extends OpMode {
         if (notdeadzone(gamepad1.left_stick_x)) {
             robot.turret.adjust(gamepad1.left_stick_x);
         }
-
+        //press blue button to set blue alliance
         if(toggleAllowed(gamepad1.x,x,1)) {
-            if(Constants.ALLIANCE != Constants.Alliance.BLUE)
-                robot.setPoseX(-robot.getX());
-            Constants.ALLIANCE = Constants.Alliance.BLUE;
+            ALLIANCE = Constants.Alliance.BLUE;
+            ALLIANCE_INT_MOD=-1;
+            robot.setPoseX(Constants.Position.START.getX());
         }
+        //press red button to set red alliance
         if(toggleAllowed(gamepad1.b,b,1)) {
-            Constants.ALLIANCE = Constants.Alliance.RED;
-            robot.setPoseX(Math.abs(robot.getX()));
+            ALLIANCE = Constants.Alliance.RED;
+            ALLIANCE_INT_MOD=1;
+            robot.setPoseX(Constants.Position.START.getX());
         }
 
         if(toggleAllowed(gamepad1.y,y,1)){

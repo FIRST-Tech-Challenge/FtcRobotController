@@ -461,7 +461,7 @@ public class PoseUG {
         Point posePoint = new Point(getPoseX(), getPoseY());
 
         // goal location
-        Point goalCanvasPoint = CanvasUtils.toCanvasPoint(new Point(Constants.goalX, Constants.goalY));
+        Point goalCanvasPoint = CanvasUtils.toCanvasPoint(new Point(Constants.Target.HIGH_GOAL.getX(), Constants.goalY));
         fieldOverlay.strokeCircle(goalCanvasPoint.getX(), goalCanvasPoint.getY(), Constants.GOAL_RADIUS);
 
         // robot location
@@ -483,22 +483,22 @@ public class PoseUG {
         fieldOverlay.strokeCircle(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), 2.5);
 
         // power shots
-        Point firstPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.FIRST_POWER_SHOT.x, Constants.Target.FIRST_POWER_SHOT.y));
-        Point secondPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.SECOND_POWER_SHOT.x, Constants.Target.SECOND_POWER_SHOT.y));
-        Point thirdPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.THIRD_POWER_SHOT.x, Constants.Target.THIRD_POWER_SHOT.y));
+        Point firstPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.FIRST_POWER_SHOT.getX(), Constants.Target.FIRST_POWER_SHOT.y));
+        Point secondPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.SECOND_POWER_SHOT.getX(), Constants.Target.SECOND_POWER_SHOT.y));
+        Point thirdPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.THIRD_POWER_SHOT.getX(), Constants.Target.THIRD_POWER_SHOT.y));
 
         fieldOverlay.strokeCircle(firstPowerShot.getX(), firstPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
         fieldOverlay.strokeCircle(secondPowerShot.getX(), secondPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
         fieldOverlay.strokeCircle(thirdPowerShot.getX(), thirdPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
 
         if(!target.equals(Constants.Target.NONE)) {
-            // bearing to offset (speed corrected) target (light green)
+            // bearing to offset (speed corrected) target (dark green)
             Point offsetTargetPoint = CanvasUtils.toCanvasPoint(new Point(trajSol.getxOffset(), getTarget().y));
             fieldOverlay.setStroke("#4D934D");
             fieldOverlay.strokeLine(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), offsetTargetPoint.getX(), offsetTargetPoint.getY());
 
             // bearing to target (neon green)
-            Point targetPoint = CanvasUtils.toCanvasPoint(new Point(getTarget().x, getTarget().y));
+            Point targetPoint = CanvasUtils.toCanvasPoint(new Point(getTarget().getX(), getTarget().y));
             fieldOverlay.setStroke("#39FF14");
             fieldOverlay.strokeLine(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), targetPoint.getX(), targetPoint.getY());
         }

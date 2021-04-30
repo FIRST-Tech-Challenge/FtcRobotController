@@ -13,7 +13,8 @@ public class Constants {
     public static final double GRAVITY = 9.80665;
     public static final double INCHES_PER_METER = 39.3701;
     public static Alliance ALLIANCE = Alliance.RED;
-    public static int ALLIANCE_INT_MOD = (ALLIANCE == Alliance.RED ? 1 : -1);
+    //public static int ALLIANCE_INT_MOD = (ALLIANCE == Alliance.RED ? 1 : -1); //todo don't know what this is, evaluates only on load, not in a loop
+    public static int ALLIANCE_INT_MOD = 1;
 
 
     //BEGIN Proteus Kinematics
@@ -127,6 +128,9 @@ public class Constants {
         BLUE;
     }
 
+    public double getX(Target targ){
+        return targ.x * ALLIANCE_INT_MOD;
+}
 
     public enum Target {
         NONE(0, 0, 0),
@@ -139,14 +143,18 @@ public class Constants {
         THIRD_POWER_SHOT(.4826,3.6576,.8);
 
 
+        public double getX(){
+            return x  * ALLIANCE_INT_MOD;
+        }
 
         public double x, y, height;
 
         private Target(double x, double y, double height) {
-            this.x = x;
+            this.x = x * ALLIANCE_INT_MOD;
             this.y = y;
             this.height = height;
         }
+
     }
 
     public enum Position {
@@ -176,6 +184,8 @@ public class Constants {
         TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10, .2);
 
         public double x, y, baseHeading, launchHeading, launchElevation, launchStart;
+
+        public double getX(){return x * ALLIANCE_INT_MOD;}
 
         private Position(double x, double y, double baseHeading, double launchHeading, double launchElevation, double launchStart) {
             this.x = x;

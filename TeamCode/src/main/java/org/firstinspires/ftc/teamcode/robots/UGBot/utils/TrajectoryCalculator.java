@@ -54,7 +54,7 @@ public class TrajectoryCalculator {
         double flightTime = Math.sqrt((2 * travelHeight) / Constants.GRAVITY);
 
         // accounting for velocity of robot in x axis
-        double xOffset = target.x - vx * flightTime;
+        double xOffset = target.getX() - vx * flightTime;
         // horizontal distance in meters the disk has to travel
         distance = Math.hypot(xOffset - x, target.y - y);
         distance = Math.max(distance, Constants.ILLEGAL_SHOOTING_DISTANCE);
