@@ -2,12 +2,10 @@ package developing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import autofunctions.Path2;
+import autofunctions.Path;
 import global.TerraBot;
 import globalfunctions.Constants;
-import globalfunctions.Sleep;
 import globalfunctions.TelemetryHandler;
 
 //@Disabled
@@ -16,7 +14,7 @@ public class AutoMP2 extends LinearOpMode {
 
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
-    Path2 path = new Path2(Constants.AUTO_START[0],Constants.AUTO_START[1],Constants.AUTO_START[2]);
+    Path path = new Path(Constants.AUTO_START[0],Constants.AUTO_START[1],Constants.AUTO_START[2]);
 
     @Override
     public void runOpMode() {
@@ -26,7 +24,7 @@ public class AutoMP2 extends LinearOpMode {
         telemetry.addData("Ready:", "Yes?");
         telemetry.update();
         waitForStart();
-        path.addSetpoint(30,30,0);
+        path.addSetpoint(0,10,0);
         path.start(bot, this);
 
 

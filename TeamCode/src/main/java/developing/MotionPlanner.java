@@ -21,6 +21,8 @@ public class MotionPlanner {
     //Sc
     public double switchOverPoint = 0.8;
 
+    public double restAccel = 0;
+
 
     //Orbital max torques = 1.23 Nm
     //Four motors = 4.94 Nm
@@ -56,7 +58,7 @@ public class MotionPlanner {
 
 
     public void setTarget(double dis, double startVel, double startTime){
-        this.sign = (int) Math.signum(dis);
+        this.sign = (int)Math.signum(dis);
         dis = Math.abs(dis);
         startVel = Math.abs(startVel);
         this.startDis = dis;
@@ -73,6 +75,10 @@ public class MotionPlanner {
         this.slowRange = slowRange;
     }
 
+    public void setRestAccel(double restAccel) {
+        this.restAccel = restAccel;
+    }
+
     public void calcABCs(double d, double v, double t){
         this.a = -(6*d)/Math.pow(t,3) + (3*v)/(Math.pow(t,2));
         this.b = (6*d)/(Math.pow(t,2)) - (4*v)/t;
@@ -82,7 +88,8 @@ public class MotionPlanner {
     public double calcAccel(double curDis, double curVel, double curTime){
 //
 
-        if(((Math.abs(curDis)/startDis) > (1-switchOverPoint)) && !swi){
+//        if (sign == 0) { swi = true; }
+        if(((Math.abs(curDis)/startDis) > (1-switchOverPoint)) && !swi && sign != 0){
             double accel = calcAccelA(curTime-startTime);
             if(Math.signum(accel*curDis) == -1.0){
                 swi = true;
@@ -103,7 +110,7 @@ public class MotionPlanner {
             tB = Math.abs((3 * curDis) / curVel);
 
         }else{
-            tB = Math.abs((3 * 0.1) / curVel);
+            tB = Math.abs((3 * restAccel) / curVel);
         }
         calcABCs(curDis, curVel, tB);
         return b;
@@ -120,7 +127,7 @@ public class MotionPlanner {
     }
 
     public double getPower(){
-        return sign*curPow;
+        return (sign == 0 ? 1 : sign)*curPow;
     }
 
     public void reset(){

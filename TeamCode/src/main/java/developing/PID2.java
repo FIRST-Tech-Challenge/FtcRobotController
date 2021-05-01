@@ -1,8 +1,8 @@
-package globalfunctions;
+package developing;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class PID {
+public class PID2 {
     //starting coeffs
     public double sKp = 0;
     public double sKd = 0;

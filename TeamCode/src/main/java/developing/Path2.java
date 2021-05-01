@@ -1,4 +1,4 @@
-package autofunctions;
+package developing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
+import autofunctions.RobotFunctionsHandler;
 import developing.MotionPlanner;
 import global.TerraBot;
 import globalfunctions.Optimizer;
@@ -58,14 +59,14 @@ public class Path2 {
     final public double[] ds = {0.0003,0.0006,0.0005};
     final public double[] is = {0.000,0.000,0.0000};
 
-    final public double[] fs = {0.15,0.15,0.1}; // m/s^2
-    final public double[] ms = {1,2,2}; // m/s^2
-    final public double[] ss = {0.01,0.01,0.03}; //m
+    final public double[] fs = {0.15,0.15,0.27}; // {0.15,0.15,0.27}; // m/s^2, m/s^2, deg/s^2
+    final public double[] ms = {1,2,3}; // m/s^2, m/s^2, deg/s^2
+    final public double[] ss = {0.03,0.03,5}; //m, m, deg 0.01
 
     //Accs in meters
     public double XAcc = 0.5/100;
     public double YAcc = 0.5/100;
-    public double HAcc = 0.5/100;
+    public double HAcc = 1;
 
     public Storage storage = new Storage();
     public ArrayList<double[]> track = new ArrayList<>();
@@ -102,6 +103,9 @@ public class Path2 {
         xMP.setAcc(XAcc);
         yMP.setAcc(YAcc);
         hMP.setAcc(HAcc);
+        xMP.setRestAccel(0.1);
+        yMP.setRestAccel(0.1);
+        hMP.setRestAccel(1000000);
         globalTime.reset();
         addStop(0.01);
     }
@@ -267,7 +271,7 @@ public class Path2 {
         }else{
             yMP.update(yerr, yvel, curTime);
         }
-        if(!hMP.hasTargetBeenSet && Math.abs(hvel) < 1){
+        if(!hMP.hasTargetBeenSet && Math.abs(hvel) < 10){
             hMP.setTarget(herr, hvel, curTime);
             hMP.curPow = 0;
             globalTime.reset();
@@ -329,17 +333,6 @@ public class Path2 {
                     next();
                 }
                 bot.outtakeWithCalculations(false);
-//                if(xControl.isDone() && yControl.isDone() && hControl.isDone()){
-//                    if(endTimer.seconds() > endWait) {
-//                        bot.autoAimer.reached();
-//                        return new double[]{0, 0, 0};
-//                    }else{
-//                        return calcPows();
-//                    }
-//                }else {
-//                    endTimer.reset();
-//                    return calcPows();
-//                }
 
             default:
                 return new double[]{0,0,0};
@@ -358,7 +351,7 @@ public class Path2 {
     }
 
     public double[] calcPows(boolean isWay){
-        if(isWay) {
+        if (isWay) {
             double[] out = new double[3];
             out[0] = -Range.clip(xControl.getPower(), -1, 1);
             out[1] = -Range.clip(yControl.getPower(), -1, 1);
@@ -366,12 +359,12 @@ public class Path2 {
             return out;
         }else{
             double[] out = new double[3];
-            out[0] = Range.clip(xMP.getPower(), -1, 1);
-            out[1] = Range.clip(yMP.getPower(), -1, 1);
+            out[0] = Math.min(Math.max(-1, xMP.getPower()), 1);
+            out[1] = Math.min(Math.max(-1, yMP.getPower()), 1);
+            out[2] = Math.min(Math.max(-1, hMP.getPower()), 1);
+//            out[0] = Range.clip(xMP.getPower(), -1, 1);
+//            out[1] = Range.clip(yMP.getPower(), -1, 1);
 //            out[2] = Range.clip(hMP.getPower(), -1, 1);
-//            out[0] = 0;
-//            out[1] = 0;
-            out[2] = 0;
             return out;
         }
     }
@@ -393,17 +386,28 @@ public class Path2 {
 //            track.add(bot.odometry.getAll());
 //            trackTimes.add(trackTime.seconds());
 
-            op.telemetry.addData("swi", yMP.swi);
-            op.telemetry.addData("dis", yMP.startDis);
-            op.telemetry.addData("startVel", yMP.startVel);
-            op.telemetry.addData("a", yMP.a);
-            op.telemetry.addData("b", yMP.b);
-            op.telemetry.addData("c", yMP.c);
-            op.telemetry.addData("tA", yMP.tA);
-            op.telemetry.addData("tB", yMP.tB);
-            op.telemetry.addData("time", globalTime.seconds());
+//            op.telemetry.addData("swi", yMP.swi);
+//            op.telemetry.addData("dis", yMP.startDis);
+//            op.telemetry.addData("startVel", yMP.startVel);
+//            op.telemetry.addData("a", yMP.a);
+//            op.telemetry.addData("b", yMP.b);
+//            op.telemetry.addData("c", yMP.c);
+//            op.telemetry.addData("tA", yMP.tA);
+//            op.telemetry.addData("tB", yMP.tB);
+//            op.telemetry.addData("time", globalTime.seconds());
+            op.telemetry.addData("xerr", lxerr);
             op.telemetry.addData("yerr", lyerr);
-            op.telemetry.addData("ypow", yMP.curPow);
+            op.telemetry.addData("herr", lherr);
+            op.telemetry.addData("xpow", pows[0]);
+            op.telemetry.addData("ypow", pows[1]);
+            op.telemetry.addData("hpow", pows[2]);
+            op.telemetry.addData("ypow2", yMP.getPower());
+            op.telemetry.addData("xpow2", xMP.getPower());
+            op.telemetry.addData("hpow2", hMP.getPower());
+            op.telemetry.addData("h sign", hMP.sign);
+            op.telemetry.addData("x sign", xMP.sign);
+            op.telemetry.addData("y sign", yMP.sign);
+//            op.telemetry.addData("ypow", yMP.curPow);
 //            op.telemetry.addData("startDis", yMP.startDis);
 
             optimizer.update();

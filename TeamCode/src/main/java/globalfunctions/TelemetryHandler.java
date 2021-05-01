@@ -4,7 +4,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
 
-import autofunctions.Path2;
+import developing.Path2;
 import global.TerraBot;
 
 public class TelemetryHandler {

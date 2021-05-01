@@ -221,12 +221,12 @@ public class Path {
     }
 
     public void startRFThread(LinearOpMode op){
-       rfsHandler.start(op);
-       wobbleGoalHandler.start(op);
+        rfsHandler.start(op);
+        wobbleGoalHandler.start(op);
     }
     public void stopRFThread(){
-       rfsHandler.stop();
-       wobbleGoalHandler.stop();
+        rfsHandler.stop();
+        wobbleGoalHandler.stop();
     }
 
     public void next(){
