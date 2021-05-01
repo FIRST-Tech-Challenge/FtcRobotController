@@ -205,6 +205,7 @@ public class Turret{
     }
 
     public void rotateRight(double speed) {
+
         setTurretAngle(getHeading(), angleIncrement * speed);
     }
 
@@ -228,11 +229,14 @@ public class Turret{
     }
 
     public void setTurretAngle(double currentAngle, double adjustAngle){
-        turretTargetHeading=wrap360(currentAngle, adjustAngle);
+         setTurretAngle( wrap360(currentAngle, adjustAngle));
     }
 
     public boolean setTurretAngle(double angle){
-        turretTargetHeading=wrap360(angle);
+        if (currentMode==TurretMode.chassisRelative)
+            turretChassisTarget = wrap360(angle);
+        else
+            turretTargetHeading=wrap360(angle);
         return isTurretNearTarget();
     }
 
@@ -242,11 +246,8 @@ public class Turret{
     }
 
     public boolean isTurretNearTarget(){
-        return between360Clockwise(getHeading(), turretTargetHeading - Constants.TURRET_TOLERANCE, turretTargetHeading + Constants.TURRET_TOLERANCE);
-
+        return between360Clockwise(getHeading(), getTargetHeading() - Constants.TURRET_TOLERANCE, getTargetHeading() + Constants.TURRET_TOLERANCE);
     }
-
-
 
 
     public void setPower(double pwr){
@@ -278,7 +279,6 @@ public class Turret{
     }
 
 
-
     public void setTurretMotorMode(boolean IMUMODE){
         if(IMUMODE) {motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);}
         else{motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);}
@@ -305,8 +305,18 @@ public class Turret{
 
 
     public double getHeading(){
+        if (currentMode==TurretMode.chassisRelative)
+            return baseHeading;
+        else
         return turretHeading;
     }
+    public double getTargetHeading(){
+        if (currentMode==TurretMode.chassisRelative)
+            return turretChassisTarget;
+        else
+            return turretTargetHeading;
+    }
+
     public double getTurretTargetHeading(){
         return turretTargetHeading;
     }

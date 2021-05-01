@@ -30,6 +30,8 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import java.util.Arrays;
 
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ANGLE;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ELEVATION;
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
@@ -727,6 +729,14 @@ public class PoseUG {
 
     public void setTarget(Constants.Target target) {
         this.target = target;
+        //when we come out of targeting, go to chassis relative mode and set up for catching rings
+        if (target == Constants.Target.NONE){
+            turret.setCurrentMode(Turret.TurretMode.chassisRelative);
+            turret.setTurretAngle(INTAKE_TO_TURRET_XFER_ANGLE);
+            //todo test - probably want a preset elbow angle too
+            launcher.setElbowTargetAngle(INTAKE_TO_TURRET_XFER_ELEVATION);
+        }
+        else turret.setCurrentMode(Turret.TurretMode.fieldRelative);
     }
 
     public Constants.Target getTarget() {
