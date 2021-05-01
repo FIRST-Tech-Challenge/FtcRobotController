@@ -123,7 +123,7 @@ public class RobotFunctions {
             op.telemetry.addData("Starting loop", "");
             op.telemetry.update();
             while (!bot.autoAimer.hasReached) {
-                Sleep.trySleep(() -> Thread.sleep(10));
+                Sleep.trySleep(() -> Thread.sleep(50));
 //                op.telemetry.addData("Reached T2", bot.autoAimer.hasReached);
             }
             op.telemetry.addData("Ending loop", "");

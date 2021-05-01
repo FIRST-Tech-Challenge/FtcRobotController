@@ -72,9 +72,10 @@ public class TerraOp extends OpMode {
 //        bot.fastMode = true;
 
         // initialize the wobble goal arm (with several stages)
-        if(shouldICareAboutAuton) {
-            bot.initWobbleGoal();
-        }
+//        if(shouldICareAboutAuton) {
+//            bot.initWobbleGoal();
+//        }
+        bot.initWobbleGoal();
 
         // update optimizer
         optimizer.update();
@@ -111,17 +112,21 @@ public class TerraOp extends OpMode {
         }
 
         // when the driver presses gamepad1.x, start the wobble goal automodule
+//        if(gamepad1.x){
+//            bot.wobbleGoal.start();
+//        }
         if(gamepad1.x){
-            bot.wobbleGoal.start();
+            bot.powerShot.start();
         }
 
         // when the driver presses gamepad1.y, start the shooting automodule
         if (gamepad1.y) {
-            if (!bot.powershotMode) {
-                bot.shooter.start();
-            } else {
-                bot.powerShot.start();
-            }
+//            if (!bot.powershotMode) {
+//                bot.shooter.start();
+//            } else {
+//                bot.powerShot.start();
+//            }
+            bot.shooter.start();
         }
 
         bot.toggleKnockdown(gamepad2.right_trigger > 0);

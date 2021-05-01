@@ -63,7 +63,7 @@ public class AutoHandler {
         path.addWaypoint(0,-40,0);
         //Grab it and move to place
         path.addWGRF(rf.claw(0));
-        path.addStop(1);
+        path.addStop(2);
         path.addWGRF(rf.moveWgTo(130));
         path.addWaypoint(0,20,0);
         path.addWGRF(rf.controlWGE(1), rf.moveWgTo(0));

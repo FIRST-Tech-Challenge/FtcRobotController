@@ -578,7 +578,7 @@ public class TerraBot {
             autoAimer.shotMode = 0;
         });
         shooter.addWait(0.1);
-        shooter.addTurnToGoal();
+//        shooter.addTurnToGoal();
         shooter.addWait(0.2);
         shooter.addStage(rs, Constants.RS_POW);
         shooter.addWait(1);
@@ -596,10 +596,13 @@ public class TerraBot {
         for (int i = 1; i < 4; i++) {
             powerShot.changeAutoAimerMode(i);
             powerShot.addWait(0.2);
-            powerShot.addTurnToGoal();
+//            powerShot.addTurnToGoal();
             powerShot.addStage(rs, Constants.RS_POW);
             powerShot.addWait(0.2);
             powerShot.addStage(rs, 0);
+            if(i < 3) {
+                powerShot.addPause();
+            }
         }
         powerShot.addStage(0, outr, outl);
         powerShot.addStage(rs, 0);

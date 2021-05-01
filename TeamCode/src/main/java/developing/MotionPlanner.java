@@ -1,5 +1,7 @@
 package developing;
 
+import globalfunctions.Optimizer;
+
 public class MotionPlanner {
     //a coeff
     public double a = 0;
@@ -18,6 +20,8 @@ public class MotionPlanner {
     public double lookAheadTime = 1;
 
     public double aclP = 0;
+
+    public double lpow = 0;
 
     public void setFML(double fric, double maxAccel, double lookAheadTime){
         this.frictionAccel = fric;
@@ -52,7 +56,10 @@ public class MotionPlanner {
     public void update(double curDis, double curVel, double curAcl){
         double accel = calcAccel(curDis, curVel);
         curPow = (accel/maxAccel) - (aclP*(curAcl-accel));
+        curPow = Optimizer.weightedAvg(new double[]{curPow, lpow}, new double[]{2,1});
+        lpow = curPow;
 //        curPow = (accel/maxAccel);
+
     }
 
     public double getPower(){

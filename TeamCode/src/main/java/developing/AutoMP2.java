@@ -26,7 +26,7 @@ public class AutoMP2 extends LinearOpMode {
         telemetry.addData("Ready:", "Yes?");
         telemetry.update();
         waitForStart();
-        path.addSetpoint(0,0,10);
+        path.addSetpoint(0,40,0);
 //        path.addSetpoint(-30,-30,-30);
 //        path.addSetpoint(-30,30,-30);
 //        path.addSetpoint(30,30,-30);
