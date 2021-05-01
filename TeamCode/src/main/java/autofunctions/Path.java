@@ -100,18 +100,18 @@ public class Path {
         xControl.setAcc(XAcc);
         yControl.setAcc(YAcc);
         hControl.setAcc(HAcc);
-        xControl.setRestPow(xRestPow);
-        yControl.setRestPow(yRestPow);
-        hControl.setRestPow(hRestPow);
-        xControl.setMaxI(0.15);
-        yControl.setMaxI(0.15);
-        hControl.setMaxI(0.15);
+//        xControl.setRestPow(xRestPow);
+//        yControl.setRestPow(yRestPow);
+//        hControl.setRestPow(hRestPow);
+//        xControl.setMaxI(0.15);
+//        yControl.setMaxI(0.15);
+//        hControl.setMaxI(0.15);
         xControl.setMaxD(1);
         yControl.setMaxD(1); // 0.55
         hControl.setMaxD(1);
-        xControl.setRangeI(5);
-        yControl.setRangeI(5);
-        hControl.setRangeI(5);
+//        xControl.setRangeI(5);
+//        yControl.setRangeI(5);
+//        hControl.setRangeI(5);
         globalTime.reset();
         addStop(0.01);
     }
@@ -120,18 +120,18 @@ public class Path {
         xControl.setAcc(XAcc);
         yControl.setAcc(YAcc);
         hControl.setAcc(HAcc);
-        xControl.setRestPow(xRestPow);
-        yControl.setRestPow(yRestPow);
-        hControl.setRestPow(hRestPow);
-        xControl.setMaxI(0.15);
-        yControl.setMaxI(0.15);
-        hControl.setMaxI(0.15);
+//        xControl.setRestPow(xRestPow);
+//        yControl.setRestPow(yRestPow);
+//        hControl.setRestPow(hRestPow);
+//        xControl.setMaxI(0.15);
+//        yControl.setMaxI(0.15);
+//        hControl.setMaxI(0.15);
         xControl.setMaxD(1);
         yControl.setMaxD(1); // 0.55
         hControl.setMaxD(1);
-        xControl.setRangeI(5);
-        yControl.setRangeI(5);
-        hControl.setRangeI(5);
+//        xControl.setRangeI(5);
+//        yControl.setRangeI(5);
+//        hControl.setRangeI(5);
     }
 
     public void setCoeffsForSetpoint(){
@@ -195,9 +195,9 @@ public class Path {
     }
 
     public void disableIs(){
-        xControl.disableI = true;
-        yControl.disableI = true;
-        hControl.disableI = true;
+//        xControl.disableI = true;
+//        yControl.disableI = true;
+//        hControl.disableI = true;
     }
 
     public void addShoot(double x, double y, TerraBot bot){
@@ -403,7 +403,7 @@ public class Path {
             track.add(bot.odometry.getAll());
             trackTimes.add(trackTime.seconds());
             bot.move(pows[1], pows[0], pows[2]);
-            telemetryHandler.addAuton(this, 1);
+//            telemetryHandler.addAuton(this, 1);
             op.telemetry.update();
         }
 //        op.telemetry.addData("COMPLETED", Arrays.toString(bot.odometry.getPos()));

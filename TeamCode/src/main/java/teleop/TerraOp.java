@@ -138,7 +138,7 @@ public class TerraOp extends OpMode {
 
 //        telemetryHandler.addTele(1,1,1,1,1);
         if(bot.shooter.path != null) {
-            telemetryHandler.addAuton(bot.shooter.path, 1);
+//            telemetryHandler.addAuton(bot.shooter.path, 1);
         }
         telemetryHandler.addTele(0,0,0,1,4);
         telemetry.update();

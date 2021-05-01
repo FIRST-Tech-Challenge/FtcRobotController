@@ -31,16 +31,17 @@ public class AutoMP extends LinearOpMode {
         waitForStart();
 //        globalTime.reset();
         boolean isExecuting = true;
-        double distance = 0.1;
+        double distance = 0.3;
         motionPlanner.setTarget(distance, 0, 0);
         bot.odometry.resetAll(new double[]{0,0,0});
         double oldypos = 0;
         double oldtime = 0;
         globalTime.reset();
         motionPlanner.setAcc(0.005);
+        motionPlanner.setFMS(0.15, 1, 0.04);
         while (opModeIsActive() && isExecuting) {
 
-            double ypos = (bot.odometry.y/100);
+            double ypos = (bot.odometry.x/100);
             double deltaYpos = ypos - oldypos;
             oldypos = ypos;
 
@@ -55,7 +56,7 @@ public class AutoMP extends LinearOpMode {
             motionPlanner.update(yerr, yvel,curtime);
             double ypow = motionPlanner.getPower();
 
-            bot.move(ypow, 0, 0);
+            bot.move(0, ypow, 0);
 
             telemetry.addData("ypos", ypos);
             telemetry.addData("yerr", yerr);

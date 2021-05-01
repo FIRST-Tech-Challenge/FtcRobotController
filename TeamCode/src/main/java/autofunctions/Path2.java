@@ -10,7 +10,9 @@ import java.util.Objects;
 
 import developing.MotionPlanner;
 import global.TerraBot;
+import globalfunctions.Optimizer;
 import globalfunctions.PID;
+import globalfunctions.Sleep;
 import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
 import globalfunctions.TimeData;
@@ -56,9 +58,9 @@ public class Path2 {
     final public double[] ds = {0.0003,0.0006,0.0005};
     final public double[] is = {0.000,0.000,0.0000};
 
-    final public double[] fs = {0.1,0.1,0.1}; // m/s^2
-    final public double[] ms = {2,2,2}; // m/s^2
-    final public double[] ss = {0.03,0.03,0.03}; //m
+    final public double[] fs = {0.15,0.15,0.1}; // m/s^2
+    final public double[] ms = {1,2,2}; // m/s^2
+    final public double[] ss = {0.01,0.01,0.03}; //m
 
     //Accs in meters
     public double XAcc = 0.5/100;
@@ -81,7 +83,6 @@ public class Path2 {
     public double lherr = 0;
 
     public double ltime = 0;
-
 
     public Path2(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
@@ -235,8 +236,8 @@ public class Path2 {
 
     public void updateControlsForSetPoint(double[] currentPos, double[] target, double curTime){
 
-        double xerr = target[0] - currentPos[0];
-        double yerr = target[1]- currentPos[1];
+        double xerr = (target[0] - currentPos[0])/100;
+        double yerr = (target[1]- currentPos[1])/100;
         double herr = target[2] - currentPos[2];
         double deltaX = lxerr - xerr;
         double deltaY = lyerr - yerr;
@@ -252,26 +253,32 @@ public class Path2 {
         double yvel = deltaY/deltaT;
         double hvel = deltaH/deltaT;
 
-        if(!xMP.hasTargetBeenSet && Math.abs(deltaX) < 2){
-            xMP.setTarget(xerr/100, xvel/100, curTime);
+        if(!xMP.hasTargetBeenSet && Math.abs(xvel) < 0.5){
+            xMP.setTarget(xerr, 0, curTime);
             xMP.curPow = 0;
+            globalTime.reset();
         }else{
             xMP.update(xerr, xvel, curTime);
         }
-        if(!yMP.hasTargetBeenSet && Math.abs(deltaY) < 2){
-            yMP.setTarget(yerr/100, yvel/100, curTime);
+        if(!yMP.hasTargetBeenSet && Math.abs(yvel) < 0.5){
+            yMP.setTarget(yerr,  0, curTime);
             yMP.curPow = 0;
+            globalTime.reset();
         }else{
             yMP.update(yerr, yvel, curTime);
         }
-        if(!hMP.hasTargetBeenSet && Math.abs(deltaH) < 2){
-            hMP.setTarget(herr/100, hvel/100, curTime);
+        if(!hMP.hasTargetBeenSet && Math.abs(hvel) < 1){
+            hMP.setTarget(herr, hvel, curTime);
             hMP.curPow = 0;
+            globalTime.reset();
         }else{
             hMP.update(herr, hvel, curTime);
         }
 
-        hasReachedSetpoint(xerr, yerr, herr);
+        if(hasReachedSetpoint(xerr, yerr, herr)){
+            next();
+        }
+
     }
 
     public void resetControls(){
@@ -303,7 +310,6 @@ public class Path2 {
             case SETPOINT:
                 double[] targetS = poses.get(curIndex+1);
                 updateControlsForSetPoint(currentPos, targetS, globalTime.seconds());
-
                 return calcPows(false);
             case STOP:
                 if(globalTime.seconds() > stops.get(stopIndex)){
@@ -362,7 +368,10 @@ public class Path2 {
             double[] out = new double[3];
             out[0] = Range.clip(xMP.getPower(), -1, 1);
             out[1] = Range.clip(yMP.getPower(), -1, 1);
-            out[2] = Range.clip(hMP.getPower(), -1, 1);
+//            out[2] = Range.clip(hMP.getPower(), -1, 1);
+//            out[0] = 0;
+//            out[1] = 0;
+            out[2] = 0;
             return out;
         }
     }
@@ -375,12 +384,36 @@ public class Path2 {
         bot.odometry.resetAll(poses.get(0));
         bot.angularPosition.resetGyro(poses.get(0)[2]);
         globalTime.reset();
+        Optimizer optimizer = new Optimizer();
+        optimizer.reset();
         while (op.opModeIsActive() && isExecuting) {
             double[] pows = update(bot.odometry.getAll(), bot);
             bot.move(pows[1], pows[0], pows[2]);
             op.telemetry.update();
 //            track.add(bot.odometry.getAll());
 //            trackTimes.add(trackTime.seconds());
+
+            op.telemetry.addData("swi", yMP.swi);
+            op.telemetry.addData("dis", yMP.startDis);
+            op.telemetry.addData("startVel", yMP.startVel);
+            op.telemetry.addData("a", yMP.a);
+            op.telemetry.addData("b", yMP.b);
+            op.telemetry.addData("c", yMP.c);
+            op.telemetry.addData("tA", yMP.tA);
+            op.telemetry.addData("tB", yMP.tB);
+            op.telemetry.addData("time", globalTime.seconds());
+            op.telemetry.addData("yerr", lyerr);
+            op.telemetry.addData("ypow", yMP.curPow);
+//            op.telemetry.addData("startDis", yMP.startDis);
+
+            optimizer.update();
+
+            if(op.gamepad1.a){
+                optimizer.show();
+                op.telemetry.addData("avgDeltaTime", optimizer.deltaTime);
+
+            }
+
 
         }
         op.telemetry.addData("Status:", "Done");

@@ -49,9 +49,16 @@ public class MotionPlanner {
 
     public boolean hasTargetBeenSet = false;
 
+    public int sign = 0;
+
+    public boolean swi = false;
+
 
 
     public void setTarget(double dis, double startVel, double startTime){
+        this.sign = (int) Math.signum(dis);
+        dis = Math.abs(dis);
+        startVel = Math.abs(startVel);
         this.startDis = dis;
         this.startVel = startVel;
         this.startTime = startTime;
@@ -73,7 +80,14 @@ public class MotionPlanner {
     }
 
     public double calcAccel(double curDis, double curVel, double curTime){
-        if((curDis/startDis) > (1-switchOverPoint)){
+//
+
+        if(((Math.abs(curDis)/startDis) > (1-switchOverPoint)) && !swi){
+            double accel = calcAccelA(curTime-startTime);
+            if(Math.signum(accel*curDis) == -1.0){
+                swi = true;
+            }
+            curDis = Math.abs(curDis);
             return considerFric(calcAccelA(curTime-startTime), curDis);
         }else{
             return considerFric(calcAccelB(curDis, curVel), curDis);
@@ -87,6 +101,7 @@ public class MotionPlanner {
     public double calcAccelB(double curDis, double curVel){
         if(Math.abs(curDis) > slowRange) {
             tB = Math.abs((3 * curDis) / curVel);
+
         }else{
             tB = Math.abs((3 * 0.1) / curVel);
         }
@@ -105,11 +120,12 @@ public class MotionPlanner {
     }
 
     public double getPower(){
-        return curPow;
+        return sign*curPow;
     }
 
     public void reset(){
         hasTargetBeenSet = false;
+        swi = false;
     }
 
 
