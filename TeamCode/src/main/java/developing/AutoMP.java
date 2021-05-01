@@ -31,18 +31,21 @@ public class AutoMP extends LinearOpMode {
         waitForStart();
 //        globalTime.reset();
         boolean isExecuting = true;
-        double distance = 90;
-        motionPlanner.setTarget(distance, 0, 0);
+        double distance = 0.3;
         bot.odometry.resetAll(new double[]{0,0,0});
         double oldypos = 0;
         double oldtime = 0;
         globalTime.reset();
-        motionPlanner.setAcc(1);
-        motionPlanner.setRestAccel(1000000);
-        motionPlanner.setFMS(0.27, 3, 5);
+        motionPlanner.setAcc(0.01);
+
+        //MOI = 0.305  Torque = 5.76 Nm  a = 18.8 rad/s^2 , 3 rev/s^2
+        //2, 9.4, 0.4 acc = 0.01
+        //3.5 , 8, 0.4 acc = 0.01
+        //
+        motionPlanner.setFML(0.5, 9.4, 0.4);
         while (opModeIsActive() && isExecuting) {
 
-            double ypos = (bot.odometry.h);
+            double ypos = (bot.odometry.y/100);
             double deltaYpos = ypos - oldypos;
             oldypos = ypos;
 
@@ -54,10 +57,10 @@ public class AutoMP extends LinearOpMode {
             double yvel = deltaYpos/deltaTime;
 
             double yerr = distance - ypos;
-            motionPlanner.update(yerr, yvel,curtime);
+            motionPlanner.update(yerr, yvel);
             double ypow = motionPlanner.getPower();
 
-            bot.move(0, 0, ypow);
+            bot.move(ypow, 0,0);
 
             telemetry.addData("ypos", ypos);
             telemetry.addData("yerr", yerr);
@@ -66,17 +69,13 @@ public class AutoMP extends LinearOpMode {
             telemetry.addData("ypow", ypow);
             telemetry.addData("curTime", curtime);
 
-            telemetry.addData("dis", motionPlanner.startDis);
-            telemetry.addData("startVel", motionPlanner.startVel);
             telemetry.addData("a", motionPlanner.a);
             telemetry.addData("b", motionPlanner.b);
             telemetry.addData("c", motionPlanner.c);
-            telemetry.addData("tA", motionPlanner.tA);
-            telemetry.addData("tB", motionPlanner.tB);
 
-            if(motionPlanner.isDone(yerr)){
-                isExecuting = false;
-            }
+//            if(motionPlanner.isDone(yerr)){
+//                isExecuting = false;
+//            }
 
 
             telemetryHandler.addOdometry(0);
