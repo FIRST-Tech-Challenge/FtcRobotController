@@ -93,16 +93,14 @@ public class Autonomous {
 
     public StateMachine AutoFull = getStateMachine(autoStage)
             //raise elbow to minimum distance for clear gripper extension
+            .addSingleState(()->robot.launcher.wobbleRelease())
             .addSingleState(() -> robot.launcher.setElbowTargetAngle(5))
+            .addSingleState(()->robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS))
             //deploy intake
             .addState(()-> robot.deployIntake())
+
             //open then extend the gripper
-            .addTimedState(1f, ()->robot.launcher.wobbleRelease(),()->robot.launcher.wobbleGrip())
-            //simulate dangerzone
-//            .addSingleState(()->robot.turret.setDangerModeActive(true))
-            .addState(() -> robot.launcher.wobbleGrip()) //close gripper
-//            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.launcher.setElbowTargetAngle(15))
+            .addTimedState(1f, ()->robot.launcher.wobbleGrip(),()->robot.launcher.setElbowTargetAngle(15))
 
 //            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
@@ -112,11 +110,13 @@ public class Autonomous {
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .8,.1))
 
             .addMineralState(ugStateProvider,
-                    ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET),
                     ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET),
-                    ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET))
+                    ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET),
+                    ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET))
             //release the wobble goal
             .addState(() -> robot.launcher.wobbleRelease())
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(() -> robot.launcher.wobbleGrip())
             //spin up the flywheel
             .addSingleState(() -> robot.launcher.preSpinFlywheel(900))
 

@@ -370,6 +370,7 @@ public class UG_6832 extends OpMode {
                         robot.setPipelineTimeMs(vp.camera.getPipelineTimeMs());
                         robot.setOverheadTimeMs(vp.camera.getOverheadTimeMs());
                         robot.setCurrentPipelineMaxFps(vp.camera.getCurrentPipelineMaxFps());
+                        robot.setAspectRatio(vp.pipeline.lastRatio);
 
                     }
                 }

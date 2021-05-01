@@ -63,7 +63,7 @@ public class PoseUG {
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
     public static double turnP = 0.0055; // proportional constant applied to error in degrees
-    public static double turnI = 0.2; // integral constant
+    public static double turnI = 0.0; // integral constant
     public static double turnD = .13; // derivative constant
     public static double distP = 0.5; // proportional constant applied to error in meters
     public static double distI = 0.0; // integral constant
@@ -454,6 +454,11 @@ public class PoseUG {
         this.currentPipelineMaxFps = currentPipelineMaxFps;
     }
 
+    private double aspectRatio;
+    public void setAspectRatio(double aspectRatio) {
+        this.aspectRatio = aspectRatio;
+    }
+
     public void sendTelemetry() {
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
@@ -516,6 +521,7 @@ public class PoseUG {
         packet.put("Pipeline time ms", pipelineTimeMs);
         packet.put("Overhead time ms", overheadTimeMs);
         packet.put("Theoretical max FPS", currentPipelineMaxFps);
+        packet.put("Aspect ratio", aspectRatio);
 
         packet.put("detection", detection);
         packet.put("vision times", Arrays.toString(visionTimes));
@@ -726,13 +732,18 @@ public class PoseUG {
     public Constants.Target getTarget() {
         return target; }
 
+        private boolean noneInit = false;
     public void maintainTarget() {
         switch(target) {
             case NONE:
-//                turret.setTurntableAngle(turret.getTurretTargetHeading());
-                launcher.setFlywheelActivePID(false);
+                if(noneInit == false) {
+                    launcher.setFlywheelActivePID(false);
+                    noneInit = true;
+                }
+
                 break;
             default:
+                    noneInit = false;
                     goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
                     turret.setTurretAngle(goalHeading + Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
 
@@ -1388,14 +1399,20 @@ public class PoseUG {
                 break;
             case 3:
                 if(System.nanoTime() - outtakeTimer > .2 * 1E9){
-                    if(autoIntake()) {
-                        intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
-                        intake.setIntakeSpeed(0);
-                        outtakeState = 0;
-                        return true;
-                    }
+//                    if(autoIntake()) {
+                        intake.setIntakeSpeed(-.5);
+                        outtakeTimer = System.nanoTime();
+                        outtakeState++;
+//                    }
                 }
                 break;
+            case 4:
+                if(System.nanoTime() - outtakeTimer > .7 * 1E9) {
+                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
+                    intake.setIntakeSpeed(0);
+                    outtakeState = 0;
+                    return true;
+                }
         }
         return false;
     }

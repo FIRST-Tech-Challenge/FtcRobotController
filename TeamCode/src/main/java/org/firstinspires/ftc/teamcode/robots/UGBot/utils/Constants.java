@@ -62,6 +62,7 @@ public class Constants {
     public static double MIN_CONTOUR_AREA = .1;
 
     public static double MIN_BLOB_SIZE = 4000;
+    public static double VISION_ONE_TO_FOUR_ASPECT = 1.5;
 
     public static int WEBCAM_WIDTH = 320;
     public static int WEBCAM_HEIGHT = 240;

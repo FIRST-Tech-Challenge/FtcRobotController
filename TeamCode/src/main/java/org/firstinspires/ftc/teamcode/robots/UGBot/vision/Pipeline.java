@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.VISION_ONE_TO_FOUR_ASPECT;
+
 public class Pipeline extends OpenCvPipeline {
 
     private List<BlobStats> blobs = new ArrayList<>();
@@ -38,6 +40,7 @@ public class Pipeline extends OpenCvPipeline {
     List<MatOfPoint> filterContoursOutput = new ArrayList<>();
     public long cropTime, hsvTime, normalizeTime, blurTime, momentsTime, contourTime;
     private StackHeight lastStackHeight = StackHeight.NONE_FOUND;
+    public double lastRatio = 0.0;
     private boolean enableDashboard;
     private FtcDashboard dashboard;
 
@@ -131,9 +134,11 @@ public class Pipeline extends OpenCvPipeline {
                 if(blob.area > largestBlob.area)
                     largestBlob = blob;
             }
-            if((largestBlob.width / (double) largestBlob.height) > 2)
+            lastRatio = ((double)largestBlob.width / (double) largestBlob.height);
+            if(lastRatio > VISION_ONE_TO_FOUR_ASPECT)
                 lastStackHeight = StackHeight.ONE;
-            lastStackHeight =  StackHeight.FOUR;
+            else
+                lastStackHeight =  StackHeight.FOUR;
         }
 
         switch(Constants.visionView) {
