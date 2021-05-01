@@ -52,6 +52,7 @@ public class MotionPlanner {
     public void update(double curDis, double curVel, double curAcl){
         double accel = calcAccel(curDis, curVel);
         curPow = (accel/maxAccel) - (aclP*(curAcl-accel));
+//        curPow = (accel/maxAccel);
     }
 
     public double getPower(){

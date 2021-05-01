@@ -59,12 +59,12 @@ public class Path {
     final public double[] ds = {0.0003,0.0006,0.0005};
     final public double[] is = {0.000,0.000,0.0000};
 
-    final public double[] fs = {3,2, 100}; // {0.15,0.15,0.27}; // m/s^2, m/s^2, deg/s^2
+    final public double[] fs = {0.5,0.5, 100}; // {0.15,0.15,0.27}; // m/s^2, m/s^2, deg/s^2
     final public double[] ms = {8,9.4,2500}; // m/s^2, m/s^2, deg/s^2
-    final public double[] ls = {0.6,0.6,0.6}; //s, s, s
+    final public double[] ls = {0.35,0.35,0.35}; //s, s, s
 
-    public double xp = 0.0;
-    public double yp = 0.0;
+    public double xp = 0.005;
+    public double yp = 0.005;
     public double hp = 0.0;
 
     //Accs in meters
@@ -380,9 +380,9 @@ public class Path {
             return out;
         }else{
             double[] out = new double[3];
-            out[0] = Range.clip(xMP.getPower(), -1, 1);
-            out[1] = Range.clip(yMP.getPower(), -1, 1);
-            out[2] = Range.clip(hMP.getPower(), -1, 1);
+            out[0] = Range.clip(xMP.getPower(), -0.5, 0.5);
+            out[1] = Range.clip(yMP.getPower(), -0.5, 0.5);
+            out[2] = Range.clip(hMP.getPower(), -0.5, 0.5);
             return out;
         }
     }
