@@ -12,7 +12,6 @@ import global.TerraBot;
 import globalfunctions.Sleep;
 import globalfunctions.TelemetryHandler;
 
-@Disabled
 @Autonomous(name="AutoMP", group="Auto")
 public class AutoMP extends LinearOpMode {
 
@@ -35,6 +34,7 @@ public class AutoMP extends LinearOpMode {
         bot.odometry.resetAll(new double[]{0,0,0});
         double oldypos = 0;
         double oldtime = 0;
+        double oldvel = 0;
         globalTime.reset();
         motionPlanner.setAcc(0.01);
 
@@ -55,9 +55,14 @@ public class AutoMP extends LinearOpMode {
 
 
             double yvel = deltaYpos/deltaTime;
+            double deltaYvel = yvel-oldvel;
+            oldvel=yvel;
+
+            double yacl = deltaYvel/deltaTime;
+
 
             double yerr = distance - ypos;
-            motionPlanner.update(yerr, yvel);
+            motionPlanner.update(yerr, yvel,yacl );
             double ypow = motionPlanner.getPower();
 
             bot.move(ypow, 0,0);

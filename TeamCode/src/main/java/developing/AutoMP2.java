@@ -9,13 +9,13 @@ import global.TerraBot;
 import globalfunctions.Constants;
 import globalfunctions.TelemetryHandler;
 
-@Disabled
+//@Disabled
 @Autonomous(name="AutoMP2", group="Auto")
 public class AutoMP2 extends LinearOpMode {
 
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
-    Path2 path = new Path2(Constants.AUTO_START[0],Constants.AUTO_START[1],Constants.AUTO_START[2]);
+    Path path = new Path(Constants.AUTO_START[0],Constants.AUTO_START[1],Constants.AUTO_START[2]);
 
     @Override
     public void runOpMode() {
@@ -26,6 +26,7 @@ public class AutoMP2 extends LinearOpMode {
         telemetry.addData("Ready:", "Yes?");
         telemetry.update();
         waitForStart();
+        path.addSetpoint(0,40,0);
 //        path.addSetpoint(-30,-30,-30);
 //        path.addSetpoint(-30,30,-30);
 //        path.addSetpoint(30,30,-30);

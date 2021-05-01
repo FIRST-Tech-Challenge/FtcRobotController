@@ -17,10 +17,16 @@ public class MotionPlanner {
 
     public double lookAheadTime = 1;
 
+    public double aclP = 0;
+
     public void setFML(double fric, double maxAccel, double lookAheadTime){
         this.frictionAccel = fric;
         this.maxAccel = maxAccel;
         this.lookAheadTime = lookAheadTime;
+    }
+
+    public void setAclP(double p){
+        aclP = p;
     }
 
     public void calcABCs(double d, double v, double t){
@@ -43,9 +49,9 @@ public class MotionPlanner {
         return accel + (Math.signum(vel)*frictionAccel);
     }
 
-    public void update(double curDis, double curVel){
+    public void update(double curDis, double curVel, double curAcl){
         double accel = calcAccel(curDis, curVel);
-        curPow = (accel/maxAccel);
+        curPow = (accel/maxAccel) - (aclP*(curAcl-accel));
     }
 
     public double getPower(){

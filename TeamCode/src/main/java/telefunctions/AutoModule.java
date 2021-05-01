@@ -194,15 +194,7 @@ public class AutoModule {
                 bot.isMovementAvailable = false;
                 bot.fastMode = false;
                 path = new Path(bot.odometry.getAll());
-                path.isS = new double[]{0,0,0};
-                path.ksS = new double[]{0.02,0.02,0.012};
-                path.dsS = new double[]{0.003,0.008,0.0005};
-                path.xRestPow = 0.05;
-                path.yRestPow = 0.05;
-                path.hRestPow = 0.05;
-                path.HAcc = 2;
-                path.disableIs();
-                path.init2();
+                path.HAcc = 1;
                 path.addSetpoint(0, 0, (bot.getRobotToGoalAngle()-bot.odometry.h));
                 return true;
             }
