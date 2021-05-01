@@ -13,11 +13,9 @@ public class CorgiFinalAutoPower extends LinearOpMode {
     @Override
     public void runOpMode(){
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
+        robot.setPosition(0,0,0);
         int rings = robot.getRingsAndWaitForStart();
         robot.stopRingDetection();
-//        robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-        telemetry.addData("ReadyToStart",0);
-        telemetry.update();
         if(rings!=1&&rings!=4) {
             robot.goToPosition(-56,-15,0,1.0);
 //            robot.moveWobbleGoalToPosition(WobbleGoal.Position.DROP);

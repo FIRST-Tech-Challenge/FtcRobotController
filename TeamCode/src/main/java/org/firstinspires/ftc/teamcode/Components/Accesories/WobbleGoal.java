@@ -40,6 +40,8 @@ public class WobbleGoal {
         if(!teleOp) {
             wobbleGoalMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
             goToPosition(Position.REST);
             opMode.sleep(250);
             closeWobbleGoalClaw();
@@ -54,7 +56,7 @@ public class WobbleGoal {
     public void goToPosition(Position p) {
         int i = 0;
         if (p == Position.REST) {
-            int ticksForREST = 0;
+            int ticksForREST = 40;
             i = ticksForREST;
         } else if (p == Position.AutoGRAB) {
             int ticksForGRAB = 700;
@@ -84,6 +86,7 @@ public class WobbleGoal {
             op.telemetry.update();
             op.sleep(2000);
         }
+        i-=40;
 //        op.sleep(1000);
         if (p == Position.DROP) {
             double wobbleGoalSpeedDrop = 0.7;
@@ -94,7 +97,7 @@ public class WobbleGoal {
         }
 
         wobbleGoalMotor.setTargetPosition(i);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
 //        op.sleep(2000);
