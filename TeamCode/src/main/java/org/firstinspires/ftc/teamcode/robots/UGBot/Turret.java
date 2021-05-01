@@ -48,6 +48,7 @@ public class Turret{
     private double offsetRoll;
     private double offsetPitch;
     private double turretTargetHeading = 0.0;
+    private double turretChassisTarget = 0; //This is the target to set when you want to be in chassis relative mode
     Orientation imuAngles;
     boolean maintainHeadingInit;
     private final double angleIncrement = 10;
@@ -246,6 +247,8 @@ public class Turret{
     }
 
 
+
+
     public void setPower(double pwr){
         motorPwr = pwr;
         motor.setPower(pwr);
@@ -290,7 +293,9 @@ public class Turret{
         }
 
         if (currentMode == TurretMode.chassisRelative) {
-            turretTargetHeading = toFieldRelative();
+            //every time we come in, the targetHeading might need to shift if the base has rotated and the targetHeading
+            //has not changed
+            turretTargetHeading = fromChassisRelative(turretChassisTarget);
         }
 
         turretTargetHeading = remapHeadingToSafe(turretTargetHeading);
@@ -313,30 +318,37 @@ public class Turret{
         return currentMode;
     }
     private TurretMode previousMode = TurretMode.fieldRelative; //default mode
+
     public void setCurrentMode(TurretMode mode) {
         this.currentMode = mode;
         if (previousMode!=currentMode){ //we've just changed modes
             if (currentMode == TurretMode.fieldRelative) {
                 //on entering fieldRelative from chassisRelative, stop movement and set the current target value
-                turretTargetHeading = toFieldRelative();
+                turretTargetHeading = chassisToFieldRelative();
             }
-            if (currentMode == TurretMode.fieldRelative) {
-                //on entering chassisRelative from fieldRelative, stop movement and set the current target value
-                turretTargetHeading = toChassisRelative();
+            if (currentMode == TurretMode.chassisRelative) {
+                //on entering chassisRelative from fieldRelative, stop movement and set the current target va
+                turretTargetHeading = fieldToChassisRelative();
             }
             previousMode=currentMode;
 
         }
     }
 
-    private double toFieldRelative() {return turretHeading;}
+    private double chassisToFieldRelative() {return wrap360(turretHeading, baseHeading);}
 
-    private double toChassisRelative() {return wrap360(baseHeading,turretHeading);}
+    private double fieldToChassisRelative() {return wrap360(turretHeading, -baseHeading);}
+
+    //convert the requested angle that is relative to chassis center/forward line
+    //into a field-relative angle
+    private double fromChassisRelative(double requestAngle){
+        return wrap360(baseHeading, requestAngle);
+    }
 
     private TurretMode currentMode = TurretMode.fieldRelative;
     public enum TurretMode {
         fieldRelative, // normal mode - requested angles are relative to the field (starting orientation of turret imu)
-        chassisRelative // requested angles are relative to the chassis heading
+        chassisRelative, // requested angles are relative to the chassis headi
     }
 
 

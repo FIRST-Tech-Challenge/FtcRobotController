@@ -98,8 +98,8 @@ public class Constants {
     public static int INTAKE_TILT_FOR_OUTTAKE_TOO = 1600;
     public static int INTAKE_TILT_INIT_POS = 899;
 
-    public static double ____A = 0.0;
-    public static double ____B = 0.0;
+    //chassis-relative angle that places the transfer tray into a good position to receive rings from the intake
+    public static int INTAKE_TO_TURRENT_XFER_ANGLE = 360-25;
 
     public static int INTAKE_OUT_SERVO_OUT = 1600;
     public static int INTAKE_OUT_SERVO_IN = 900;
