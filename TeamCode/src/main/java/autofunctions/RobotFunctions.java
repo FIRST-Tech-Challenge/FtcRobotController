@@ -1,5 +1,7 @@
 package autofunctions;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import global.TerraBot;
 import globalfunctions.Constants;
 import globalfunctions.Sleep;
@@ -113,14 +115,19 @@ public class RobotFunctions {
     }
 
 
-    public CodeSeg shootRF(final int numRings){
+    public CodeSeg shootRF(final int numRings, final LinearOpMode op){
         return () -> {
             bot.intake(0);
-//            while (!bot.autoAimer.hasPosBeenUpdated()){}
-//            bot.autoAimer.resetOuttakePos();
             bot.outtaking = true;
             bot.autoAimer.shotMode = 0;
-            while (!bot.autoAimer.hasReached) {}
+            op.telemetry.addData("Starting loop", "");
+            op.telemetry.update();
+            while (!bot.autoAimer.hasReached) {
+                Sleep.trySleep(() -> Thread.sleep(10));
+//                op.telemetry.addData("Reached T2", bot.autoAimer.hasReached);
+            }
+            op.telemetry.addData("Ending loop", "");
+            op.telemetry.update();
             pause(0.7);
             bot.rs.setPower(Constants.RS_POW);
             pause(((double)numRings)/3);

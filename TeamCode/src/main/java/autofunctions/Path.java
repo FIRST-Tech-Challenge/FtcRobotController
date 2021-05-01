@@ -256,7 +256,7 @@ public class Path {
         hControl.update(herr);
     }
 
-    public void updateControlsForSetPoint(double[] currentPos, double[] target){
+    public void updateControlsForSetPoint(double[] currentPos, double[] target, boolean isShoot, TerraBot bot){
         xerr = (target[0]-currentPos[0])/100;
         yerr = (target[1]-currentPos[1])/100;
 
@@ -304,9 +304,14 @@ public class Path {
             updateNum++;
         }
 
-        if(hasReachedSetpoint(xerr, yerr, herr)){
-            next();
+        if (hasReachedSetpoint(xerr, yerr, herr)) {
+            if(!isShoot) {
+                next();
+            }else{
+                bot.autoAimer.reached();
+            }
         }
+
 
     }
 
@@ -334,7 +339,8 @@ public class Path {
                 return calcPows(true);
             case SETPOINT:
                 double[] targetS = poses.get(curIndex+1);
-                updateControlsForSetPoint(currentPos, targetS);
+
+                updateControlsForSetPoint(currentPos, targetS, false, bot);
                 return calcPows(false);
             case STOP:
                 if(globalTime.seconds() > stops.get(stopIndex)){
@@ -345,10 +351,10 @@ public class Path {
             case SHOOT:
                 double[] targetSh = poses.get(curIndex+1);
                 targetSh = new double[]{targetSh[0], targetSh[1], angleToGoal};
-                updateControlsForSetPoint(currentPos, targetSh);
+                updateControlsForSetPoint(currentPos, targetSh, true, bot);
                 if(!bot.autoAimer.hasPosBeenUpdated()) {
-                    bot.autoAimer.setOuttakePos(Arrays.copyOf(targetSh, 2));
                     angleToGoal = bot.autoAimer.getRobotToGoalAngle(targetSh);
+                    bot.autoAimer.setOuttakePos(Arrays.copyOf(targetSh, 2));
                 }
                 if(bot.autoAimer.isDone){
                     bot.autoAimer.ready();
@@ -402,14 +408,16 @@ public class Path {
         while (op.opModeIsActive() && isExecuting) {
             double[] pows = update(bot.odometry.getAll(), bot);
             bot.move(pows[1], pows[0], pows[2]);
-//
 //            op.telemetry.addData("xerr", xerr);
 //            op.telemetry.addData("yerr", yerr);
 //            op.telemetry.addData("herr", herr);
+            op.telemetry.addData("reached T1", bot.autoAimer.hasReached);
+//            op.telemetry.addData("done", bot.autoAimer.isDone);
+//            op.telemetry.update();
 //            op.telemetry.addData("xdone", xdone);
 //            op.telemetry.addData("ydone", ydone);
 //            op.telemetry.addData("hdone", hdone);
-//            op.telemetry.update();
+            op.telemetry.update();
 //
 //            Sleep.trySleep(() -> Thread.sleep(10));
         }
