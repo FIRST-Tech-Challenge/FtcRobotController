@@ -268,7 +268,7 @@ public class Robot {
         ElapsedTime runtime = new ElapsedTime();
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
-        drivetrain.turnInPlace(-1.6,1.0);
+        drivetrain.turnInPlace(-1.4,1.0);
         shooter.setVelocity(1375, 1000);
         op.sleep(300);
         if (shooter.getRPM()*28/60 > 0) {
