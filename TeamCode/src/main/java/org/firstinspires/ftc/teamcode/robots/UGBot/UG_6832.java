@@ -798,15 +798,18 @@ public class UG_6832 extends OpMode {
 
         if(toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
             if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN)
-                robot.launcher.wobbleRelease();
-            else
                 robot.launcher.wobbleGrip();
+            else
+                robot.launcher.wobbleRelease();
         }
 
         if(toggleAllowed(gamepad1.right_bumper, right_bumper, 1)){
             robot.exitWobbleGoalMode();
         }
 
+        if (notdeadzone(gamepad1.right_stick_y)) {
+            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
+        }
 
         if (gamepad1.right_trigger > .01)
             robot.turret.rotateRight(gamepad1.right_trigger * 2);
@@ -815,11 +818,11 @@ public class UG_6832 extends OpMode {
             robot.turret.rotateLeft(gamepad1.left_trigger * 2);
 
 
-        if(toggleAllowed(gamepad1.b,b,1))
-            robot.articulate(PoseUG.Articulation.dumpWobbleGoal);
-
-        if(toggleAllowed(gamepad1.y,y,1))
-            robot.articulate(PoseUG.Articulation.secondaryGripperModeSetup);
+//        if(toggleAllowed(gamepad1.b,b,1))
+//            robot.articulate(PoseUG.Articulation.dumpWobbleGoal);
+//
+//        if(toggleAllowed(gamepad1.y,y,1))
+//            robot.articulate(PoseUG.Articulation.secondaryGripperModeSetup);
 
     }
 
@@ -964,6 +967,7 @@ public class UG_6832 extends OpMode {
 
         telemetry.addLine().addData("active", () -> active);
         telemetry.addLine().addData("state", () -> state);
+        telemetry.addLine().addData("Alliance", () -> ALLIANCE);
         telemetry.addLine() .addData("autoStage", () -> auto.autoStage).addData("Game Mode", () -> GAME_MODES[gameMode]);
         telemetry.addLine() .addData("Articulation", () -> robot.getArticulation());
         telemetry.addLine().addData("elbow Current Position", () -> robot.launcher.getElbowCurrentPos());

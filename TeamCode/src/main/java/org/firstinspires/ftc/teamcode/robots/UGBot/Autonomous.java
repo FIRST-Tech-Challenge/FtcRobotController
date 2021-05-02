@@ -110,13 +110,15 @@ public class Autonomous {
                     ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .8,.1))
 
             .addMineralState(ugStateProvider,
-                    ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET),
+                    ()-> robot.turret.setTurretAngle( 90 + Constants.GRIPPER_HEADING_OFFSET),
                     ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET),
                     ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET))
             //release the wobble goal
             .addState(() -> robot.launcher.wobbleRelease())
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.launcher.wobbleGrip())
+            .addSingleState(()->robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS))
+
             //spin up the flywheel
             .addSingleState(() -> robot.launcher.preSpinFlywheel(900))
 
@@ -127,7 +129,7 @@ public class Autonomous {
 
             //launch preferred since we can't seem to launch while driving away from goal at speed
             .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,false,  .8,.1))
-            .addTimedState(1.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
 //

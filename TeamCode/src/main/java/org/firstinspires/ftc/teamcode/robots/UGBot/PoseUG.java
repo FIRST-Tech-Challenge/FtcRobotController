@@ -382,6 +382,8 @@ public class PoseUG {
         imu = hwMap.get(BNO055IMU.class, "baseIMU");
         imu.initialize(parametersIMU);
 
+        Constants.ALLIANCE_INT_MOD = Math.abs(Constants.ALLIANCE_INT_MOD);
+
         // initialize vision
 
 //        VuforiaLocalizer vuforia;
@@ -1247,7 +1249,7 @@ public class PoseUG {
                     shootRingStage++;
                 }
 
-                if(System.nanoTime() - shootTime > 1.1 * 1E9){
+                if(System.nanoTime() - shootTime > 1.7 * 1E9){
                     shootRingStage--;//ben was here
                 }
                 break;
@@ -1368,6 +1370,7 @@ public class PoseUG {
 
     public void enterWobbleGoalMode(){
 //        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
+        turret.setCurrentMode(Turret.TurretMode.fieldRelative);
         turret.setDangerModeActive(true);
         launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
         launcher.wobbleRelease();
@@ -1376,7 +1379,7 @@ public class PoseUG {
 
     public void exitWobbleGoalMode(){
         turret.setDangerModeActive(false);
-//        turret.setCurrentMode(Turret.TurretMode.fieldRelative);
+        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
         launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
         launcher.wobbleGrip();
         gripperModeIsInReverse = false;
