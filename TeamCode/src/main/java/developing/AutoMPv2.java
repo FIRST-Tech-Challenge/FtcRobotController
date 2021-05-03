@@ -12,13 +12,13 @@ import global.TerraBot;
 import globalfunctions.Sleep;
 import globalfunctions.TelemetryHandler;
 @Disabled
-@Autonomous(name="AutoMP", group="Auto")
-public class AutoMP extends LinearOpMode {
+@Autonomous(name="AutoMPv2", group="Auto")
+public class AutoMPv2 extends LinearOpMode {
 
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
     ElapsedTime globalTime = new ElapsedTime();
-    MotionPlanner motionPlanner = new MotionPlanner();
+    MotionPlanner2 motionPlanner2 = new MotionPlanner2();
 
     @Override
     public void runOpMode() {
@@ -28,57 +28,46 @@ public class AutoMP extends LinearOpMode {
         telemetry.addData("Ready:", "Yes?");
         telemetry.update();
         waitForStart();
-//        globalTime.reset();
-        boolean isExecuting = true;
-        double distance = 0.3;
-        bot.odometry.resetAll(new double[]{0,0,0});
-        double oldypos = 0;
-        double oldtime = 0;
-        double oldvel = 0;
-        globalTime.reset();
-        motionPlanner.setAcc(0.01);
 
-        //MOI = 0.305  Torque = 5.76 Nm  a = 18.8 rad/s^2 , 3 rev/s^2
-        //2, 9.4, 0.4 acc = 0.01
-        //3.5 , 8, 0.4 acc = 0.01
-        //
-        motionPlanner.setFML(0.5, 9.4, 0.4);
+        boolean isExecuting = true;
+        double distance = 30;
+        bot.odometry.resetAll(new double[]{0,0,0});
+        double oldpos = 0;
+        double oldtime = 0;
+        globalTime.reset();
+
+
+        motionPlanner2.setPAR(0.001,1,0);
+        motionPlanner2.setTargetDis(distance);
+
         while (opModeIsActive() && isExecuting) {
 
-            double ypos = (bot.odometry.y/100);
-            double deltaYpos = ypos - oldypos;
-            oldypos = ypos;
+            double pos = (bot.odometry.y);
+            double deltaYpos = pos - oldpos;
+            oldpos = pos;
 
             double curtime = globalTime.seconds();
             double deltaTime = curtime - oldtime;
             oldtime = curtime;
 
 
-            double yvel = deltaYpos/deltaTime;
-            double deltaYvel = yvel-oldvel;
-            oldvel=yvel;
+            double vel = deltaYpos/deltaTime;
+            motionPlanner2.update(pos, vel);
+            double pow = motionPlanner2.getPower();
 
-            double yacl = deltaYvel/deltaTime;
+            bot.move(pow, 0,0);
 
-
-            double yerr = distance - ypos;
-            motionPlanner.update(yerr, yvel,yacl );
-            double ypow = motionPlanner.getPower();
-
-            bot.move(ypow, 0,0);
-
-            telemetry.addData("ypos", ypos);
-            telemetry.addData("yerr", yerr);
+            telemetry.addData("ypos", pos);
             telemetry.addData("deltaYpos", deltaYpos);
-            telemetry.addData("yvel", yvel);
-            telemetry.addData("ypow", ypow);
+            telemetry.addData("yvel", vel);
+            telemetry.addData("ypow", pow);
             telemetry.addData("curTime", curtime);
 
-            telemetry.addData("a", motionPlanner.a);
-            telemetry.addData("b", motionPlanner.b);
-            telemetry.addData("c", motionPlanner.c);
+            telemetry.addData("pow", motionPlanner2.getPower());
+            telemetry.addData("v(s)", motionPlanner2.VofS(pos));
+            telemetry.addData("restPow", motionPlanner2.getRestPow(pos));
 
-//            if(motionPlanner.isDone(yerr)){
+//            if(motionPlanner.isDone(dis-ypos)){
 //                isExecuting = false;
 //            }
 

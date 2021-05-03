@@ -9,7 +9,7 @@ import global.TerraBot;
 import globalfunctions.Constants;
 import globalfunctions.TelemetryHandler;
 
-//@Disabled
+@Disabled
 @Autonomous(name="AutoMP2", group="Auto")
 public class AutoMP2 extends LinearOpMode {
 

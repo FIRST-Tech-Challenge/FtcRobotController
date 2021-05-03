@@ -6,14 +6,10 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
-import autofunctions.RobotFunctionsHandler;
 import developing.MotionPlanner;
 import global.TerraBot;
-import globalfunctions.Optimizer;
 import globalfunctions.PID;
-import globalfunctions.Sleep;
 import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
 import globalfunctions.TimeData;
