@@ -1,6 +1,8 @@
 
 package org.wheelerschool.robotics.comp.auto;
 import android.util.Log;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
@@ -8,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.wheelerschool.robotics.comp.BotVision;
 import org.wheelerschool.robotics.comp.CompBot;
+@Autonomous
+
 
 public class PostSeason2020to21 {
     CompBot bot;
