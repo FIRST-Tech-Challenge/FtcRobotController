@@ -46,7 +46,7 @@ public class DriveTrain {
         for (String name : DeviceNames.LEFT_DRIVE) {
             DcMotor motor = hardwareMap.get(DcMotor.class, name);
             // TODO See if this is the one to be in reverse or the other side
-            motor.setDirection(DcMotorSimple.Direction.REVERSE);
+            motor.setDirection(DcMotorSimple.Direction.FORWARD);
             leftMotorsArrayList.add(motor);
         }
         leftMotors = leftMotorsArrayList.toArray(new DcMotor[leftMotorsArrayList.size()]);
@@ -55,7 +55,7 @@ public class DriveTrain {
         ArrayList<DcMotor> rightMotorsArrayList = new ArrayList<DcMotor>();
         for (String name : DeviceNames.RIGHT_DRIVE) {
             DcMotor motor = hardwareMap.get(DcMotor.class, name);
-            motor.setDirection(DcMotorSimple.Direction.FORWARD);
+            motor.setDirection(DcMotorSimple.Direction.REVERSE);
             rightMotorsArrayList.add(motor);
         }
         rightMotors = rightMotorsArrayList.toArray(new DcMotor[rightMotorsArrayList.size()]);
@@ -144,11 +144,11 @@ public class DriveTrain {
                 power *= -1;
             case CLOCKWISE:
                 for (DcMotor leftMotor : leftMotors) {
-                    leftMotor.setPower(-power);
+                    leftMotor.setPower(power);
                 }
 
                 for (DcMotor rightMotor : rightMotors) {
-                    rightMotor.setPower(power);
+                    rightMotor.setPower(-power);
                 }
                 break;
         }
