@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.driver;
 public enum DriveMode {
     TWO_STICK,
     ARCADE,
-    GTA;
+    GTA,
+    FORZA;
 
     private static final DriveMode[] vals = values();
     public DriveMode next()
