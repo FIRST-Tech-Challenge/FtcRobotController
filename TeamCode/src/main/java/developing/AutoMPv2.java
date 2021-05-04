@@ -11,14 +11,17 @@ import auto.AutoHandler;
 import global.TerraBot;
 import globalfunctions.Sleep;
 import globalfunctions.TelemetryHandler;
-@Disabled
+import util.Vector;
+
+//@Disabled
 @Autonomous(name="AutoMPv2", group="Auto")
 public class AutoMPv2 extends LinearOpMode {
 
     TerraBot bot = new TerraBot();
     TelemetryHandler telemetryHandler = new TelemetryHandler();
-    ElapsedTime globalTime = new ElapsedTime();
-    MotionPlanner2 motionPlanner2 = new MotionPlanner2();
+    MotionPlanner2 yMP = new MotionPlanner2();
+    MotionPlanner2 xMP = new MotionPlanner2();
+    MotionPlanner2 hMP = new MotionPlanner2();
 
     @Override
     public void runOpMode() {
@@ -29,51 +32,26 @@ public class AutoMPv2 extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        boolean isExecuting = true;
-        double distance = 30;
         bot.odometry.resetAll(new double[]{0,0,0});
-        double oldpos = 0;
-        double oldtime = 0;
-        globalTime.reset();
 
+        yMP.setPAR(0.005,0.5,0.07);
+        xMP.setPAR(0.01, 0.5, 0.15);
+        hMP.setPAR(0.001, 0.5, 0.1);
 
-        motionPlanner2.setPAR(0.001,1,0);
-        motionPlanner2.setTargetDis(distance);
+        yMP.setAcc(1);
+        xMP.setAcc(1);
+        hMP.setAcc(1);
+        yMP.setTargetDis(-20);
+        xMP.setTargetDis(-30);
+        hMP.setTargetDis(-40);
+        while (opModeIsActive() && !isDone()) {
 
-        while (opModeIsActive() && isExecuting) {
-
-            double pos = (bot.odometry.y);
-            double deltaYpos = pos - oldpos;
-            oldpos = pos;
-
-            double curtime = globalTime.seconds();
-            double deltaTime = curtime - oldtime;
-            oldtime = curtime;
-
-
-            double vel = deltaYpos/deltaTime;
-            motionPlanner2.update(pos, vel);
-            double pow = motionPlanner2.getPower();
-
-            bot.move(pow, 0,0);
-
-            telemetry.addData("ypos", pos);
-            telemetry.addData("deltaYpos", deltaYpos);
-            telemetry.addData("yvel", vel);
-            telemetry.addData("ypow", pow);
-            telemetry.addData("curTime", curtime);
-
-            telemetry.addData("pow", motionPlanner2.getPower());
-            telemetry.addData("v(s)", motionPlanner2.VofS(pos));
-            telemetry.addData("restPow", motionPlanner2.getRestPow(pos));
-
-//            if(motionPlanner.isDone(dis-ypos)){
-//                isExecuting = false;
-//            }
-
-
-            telemetryHandler.addOdometry(0);
-            telemetry.update();
+            Vector disVect = new Vector(bot.odometry.x,bot.odometry.y);
+            disVect.rotate(-bot.odometry.h, Vector.angle.DEGREES);
+            yMP.update(disVect.y);
+            xMP.update(disVect.x);
+            hMP.update(bot.odometry.h);
+            bot.move(yMP.getPower(), xMP.getPower(),hMP.getPower());
 
             Sleep.trySleep(() -> Thread.sleep(10));
         }
@@ -81,5 +59,9 @@ public class AutoMPv2 extends LinearOpMode {
 
 
         bot.stopOdoThread();
+    }
+
+    public boolean isDone(){
+        return yMP.isDone() && xMP.isDone() && hMP.isDone();
     }
 }

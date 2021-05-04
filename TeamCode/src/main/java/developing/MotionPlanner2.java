@@ -1,5 +1,7 @@
 package developing;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 public class MotionPlanner2 {
 
     public double restPow = 0;
@@ -8,36 +10,76 @@ public class MotionPlanner2 {
 
     public double targetDis = 0;
 
+    public double curDis = 0;
     public double curPow = 0;
+
+    public double lastDis = 0;
+    public double lastTime = -0.1;
+
+    public double curVel = 0;
+
+    public double acc = 0;
+
+    public ElapsedTime timer = new ElapsedTime();
 
 
     public void setPAR(double p, double a, double r){
-        restPow = p;
+        proportionalCoeff = p;
         approachRate = a;
         restPow = r;
+    }
+
+    public void setAcc(double a){
+        acc = a;
     }
 
 
 
     public void setTargetDis(double td){
         targetDis = td;
+        timer.reset();
+        lastTime = -0.1;
     }
 
 
-    public double VofS(double s){
-        return approachRate*Math.pow(Math.abs(targetDis-s), 1/approachRate)*Math.signum(targetDis-s);
+    public double VofS(){
+        return approachRate*Math.pow(Math.abs(targetDis-curDis), 1/approachRate)*Math.signum(targetDis-curDis);
     }
 
-    public double getRestPow(double curDis){
+
+
+    public double getRestPow(){
         return Math.signum(targetDis-curDis)*restPow;
     }
 
-    public void update(double curDis, double curVel){
-        double targetVel = VofS(curDis);
-        curPow = (proportionalCoeff*(targetVel-curVel))+getRestPow(curDis);
+    public void update(double curPos){
+        curDis = curPos;
+        updateValues(curDis);
+        double targetVel = VofS();
+        curPow = (proportionalCoeff*(targetVel-curVel))+getRestPow();
     }
+
+
+    public void updateValues(double curDis){
+        double deltaDis = curDis - lastDis;
+        lastDis = curDis;
+
+        double curtime = timer.seconds();
+        double deltaTime = curtime - lastTime;
+        lastTime = curtime;
+
+        curVel = deltaDis/deltaTime;
+    }
+
+
+
 
     public double getPower(){
         return curPow;
+    }
+
+
+    public boolean isDone(){
+        return Math.abs(targetDis-curDis) < acc;
     }
 }
