@@ -11,7 +11,7 @@ import auto.AutoHandler;
 import global.TerraBot;
 import globalfunctions.Sleep;
 import globalfunctions.TelemetryHandler;
-//@Disabled
+@Disabled
 @Autonomous(name="AutoRP", group="Auto")
 public class AutoRP extends LinearOpMode {
 

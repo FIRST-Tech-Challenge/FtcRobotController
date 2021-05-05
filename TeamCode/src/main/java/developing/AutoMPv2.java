@@ -41,9 +41,9 @@ public class AutoMPv2 extends LinearOpMode {
         yMP.setAcc(1);
         xMP.setAcc(1);
         hMP.setAcc(1);
-        yMP.setTargetDis(-20);
-        xMP.setTargetDis(-30);
-        hMP.setTargetDis(-40);
+        yMP.setTargetDis(40, 0);
+        xMP.setTargetDis(0, 0);
+        hMP.setTargetDis(90, 0);
         while (opModeIsActive() && !isDone()) {
 
             Vector disVect = new Vector(bot.odometry.x,bot.odometry.y);
@@ -52,6 +52,12 @@ public class AutoMPv2 extends LinearOpMode {
             xMP.update(disVect.x);
             hMP.update(bot.odometry.h);
             bot.move(yMP.getPower(), xMP.getPower(),hMP.getPower());
+
+
+            //MAKE A POW VECT PLS PLS PLS PLS PLS PLS
+            // TODO:
+            //  MASSIVE PLS
+
 
             Sleep.trySleep(() -> Thread.sleep(10));
         }
