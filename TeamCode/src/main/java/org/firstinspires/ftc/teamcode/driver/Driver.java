@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.drivetrain.wheels.WheelTypes;
 
 /**
  * Drive code for a person controlling the robot, this is a very dumb-downed version.
+ * @author 22jmiller
  */
 public class Driver {
     private boolean aPressing = false;
@@ -95,9 +96,8 @@ public class Driver {
                 robot.driveTrain.turn(Turn.CLOCKWISE, robot.gamepad1.left_stick_x); // Turning
                 break;
             case FORZA:
-                double backwardsPower = 1;
-                if (robot.gamepad1.y) robot.driveTrain.move(Movement.BACKWARDS, backwardsPower); // Backwards
-                robot.driveTrain.move(Movement.FORWARDS, robot.gamepad1.right_trigger); // Forwards
+                if (robot.gamepad1.y) robot.driveTrain.move(Movement.BACKWARDS, robot.gamepad1.right_trigger); // Backwards
+                else robot.driveTrain.move(Movement.FORWARDS, robot.gamepad1.right_trigger); // Forwards
                 robot.driveTrain.turn(Turn.CLOCKWISE, robot.gamepad1.left_stick_x); // Turning
                 break;
             default:
