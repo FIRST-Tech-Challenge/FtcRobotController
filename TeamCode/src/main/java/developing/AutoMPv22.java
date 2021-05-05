@@ -3,13 +3,8 @@ package developing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import autofunctions.Path;
-import autofunctions.Path2;
 import global.TerraBot;
 import globalfunctions.Constants;
-import globalfunctions.Sleep;
-import globalfunctions.TelemetryHandler;
-import util.Vector;
 
 //@Disabled
 @Autonomous(name="AutoMPv22", group="Auto")

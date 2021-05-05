@@ -1,4 +1,4 @@
-package autofunctions;
+package developing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import developing.MotionPlanner;
+import autofunctions.RobotFunctionsHandler;
 import developing.MotionPlanner2;
 import global.TerraBot;
 import globalfunctions.PID;
@@ -24,9 +24,7 @@ public class Path2 {
     public PID yControl = new PID();
     public PID hControl = new PID();
 
-    public MotionPlanner2 xMP = new MotionPlanner2();
-    public MotionPlanner2 yMP = new MotionPlanner2();
-    public MotionPlanner2 hMP = new MotionPlanner2();
+    public SetpointController setpointController = new SetpointController();
 
     public ElapsedTime globalTime = new ElapsedTime();
 
@@ -55,15 +53,6 @@ public class Path2 {
     final public double[] ds = {0.0003,0.0006,0.0005};
     final public double[] is = {0.000,0.000,0.0000};
 
-    final public double[] ps = {0.01,0.005, 0.001};
-    final public double[] as = {0.5,0.5,0.5};
-    final public double[] rs = {0.15,0.07,0.1};
-
-    //Accs in meters
-    public double XAcc = 1;
-    public double YAcc = 1;
-    public double HAcc = 1;
-
     public Storage storage = new Storage();
     public ArrayList<double[]> track = new ArrayList<>();
     public ArrayList<double[]> targets = new ArrayList<>();
@@ -74,24 +63,6 @@ public class Path2 {
     public boolean globalMode = false;
 
     public double angleToGoal = 0;
-
-    public double lxpos = 0;
-    public double lypos = 0;
-    public double lhpos = 0;
-
-    public double lxvel = 0;
-    public double lyvel = 0;
-    public double lhvel = 0;
-
-    public double xerr = 0;
-    public double yerr = 0;
-    public double herr = 0;
-
-    public boolean xdone = false;
-    public boolean ydone = false;
-    public boolean hdone = false;
-
-    public double ltime = 0;
 
     public int updateNum = 0;
 
@@ -111,12 +82,7 @@ public class Path2 {
         xControl.setMaxD(1);
         yControl.setMaxD(1);
         hControl.setMaxD(1);
-        xMP.setPAR(ps[0], as[0], rs[0]);
-        yMP.setPAR(ps[1], as[1], rs[1]);
-        hMP.setPAR(ps[2], as[2], rs[2]);
-        xMP.setAcc(XAcc);
-        yMP.setAcc(YAcc);
-        hMP.setAcc(HAcc);
+        setpointController.init();
         globalTime.reset();
         addStop(0.01);
     }
@@ -246,30 +212,9 @@ public class Path2 {
     }
 
     public void updateControlsForSetPoint(double[] currentPos, double[] target, boolean isShoot, TerraBot bot){
-        Vector disVect = new Vector(currentPos[0] , currentPos[1]);
-        disVect.rotate(-currentPos[2], Vector.angle.DEGREES);
+        setpointController.update(currentPos, target);
 
-        if(!yMP.hasTargetBeenSet){
-            yMP.setTargetDis(target[1], disVect.y);
-        }else{
-            yMP.update(disVect.y);
-        }
-        if(!xMP.hasTargetBeenSet){
-            xMP.setTargetDis(target[0], disVect.x);
-        }else{
-            xMP.update(disVect.x);
-        }
-        if(!hMP.hasTargetBeenSet){
-            hMP.setTargetDis(target[2], currentPos[2]);
-        }else{
-            hMP.update(currentPos[2]);
-        }
-
-
-
-
-
-        if (hasReachedSetpoint()) {
+        if (setpointController.isDone()) {
             if(!isShoot) {
                 next();
             }else{
@@ -284,9 +229,7 @@ public class Path2 {
         xControl.reset();
         yControl.reset();
         hControl.reset();
-        xMP.reset();
-        yMP.reset();
-        hMP.reset();
+        setpointController.reset();
     }
 
 
@@ -337,13 +280,6 @@ public class Path2 {
 
     }
 
-    public boolean hasReachedSetpoint(){
-        xdone = xMP.isDone();
-        ydone = yMP.isDone();
-        hdone = hMP.isDone();
-        return xdone && ydone && hdone;
-    }
-
     public double[] calcPows(boolean isWay){
         if (isWay) {
             double[] out = new double[3];
@@ -352,11 +288,7 @@ public class Path2 {
             out[2] = -Range.clip(hControl.getPower(), -1, 1);
             return out;
         }else{
-            double[] out = new double[3];
-            out[0] = Range.clip(xMP.getPower(), -1, 1);
-            out[1] = Range.clip(yMP.getPower(), -1, 1);
-            out[2] = Range.clip(hMP.getPower(), -1, 1);
-            return out;
+            return setpointController.getPowers();
         }
     }
 

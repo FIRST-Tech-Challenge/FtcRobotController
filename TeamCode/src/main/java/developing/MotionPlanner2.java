@@ -22,7 +22,7 @@ public class MotionPlanner2 {
     public double acc = 0;
 
 
-    public boolean hasTargetBeenSet = false;
+    public boolean hasStartDisBeenSet = false;
 
     public ElapsedTime timer = new ElapsedTime();
 
@@ -39,16 +39,16 @@ public class MotionPlanner2 {
 
 
 
-    public void setTargetDis(double td, double sd){
+    public void setStartDis(double sd){
         startDis = sd;
-        targetDis = td-sd;
         timer.reset();
         lastTime = -0.1;
-        hasTargetBeenSet = true;
+        hasStartDisBeenSet = true;
     }
 
-
-
+    public void setTargetDis(double td){
+        targetDis = td;
+    }
 
     public double VofS(){
         return approachRate*Math.pow(Math.abs(targetDis-curDis), 1/approachRate)*Math.signum(targetDis-curDis);
@@ -57,10 +57,16 @@ public class MotionPlanner2 {
         return Math.signum(targetDis-curDis)*restPow;
     }
 
-    public void update(double curPos){
-        curDis = (curPos-startDis);
-        updateValues();
-        curPow = (proportionalCoeff*(VofS()-curVel))+getRestPow();
+    public void update(double curPos, double target){
+        if(!hasStartDisBeenSet){
+            setStartDis(curPos);
+            hasStartDisBeenSet = true;
+        }else {
+            setTargetDis(target);
+            curDis = (curPos - startDis);
+            updateValues();
+            curPow = (proportionalCoeff * (VofS() - curVel)) + getRestPow();
+        }
     }
 
 
@@ -89,6 +95,6 @@ public class MotionPlanner2 {
 
 
     public void reset(){
-        hasTargetBeenSet = false;
+        hasStartDisBeenSet = false;
     }
 }

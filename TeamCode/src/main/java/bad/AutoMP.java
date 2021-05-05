@@ -1,13 +1,10 @@
-package developing;
+package bad;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import auto.AutoHandler;
 import global.TerraBot;
 import globalfunctions.Sleep;
 import globalfunctions.TelemetryHandler;
