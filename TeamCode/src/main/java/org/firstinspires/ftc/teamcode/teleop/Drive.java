@@ -93,7 +93,6 @@ public class Drive extends OpMode {
         }
 
         telemetry.addData("Motors ", lPower + "l | " + rPower + "r");
-
         telemetry.addData("Controller", gamepad1.left_stick_x + "x | " + gamepad1.left_stick_y);
     }
 }
