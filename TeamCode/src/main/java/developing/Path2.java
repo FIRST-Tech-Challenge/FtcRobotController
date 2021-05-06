@@ -307,10 +307,16 @@ public class Path2 {
         while (op.opModeIsActive() && isExecuting) {
             double[] pows = update(bot.odometry.getAll(), bot);
             bot.move(pows[1], pows[0], pows[2]);
+            op.telemetry.addData("xcurdis", setpointController.xMP.curDis);
+            op.telemetry.addData("ycurdis", setpointController.yMP.curDis);
+            op.telemetry.addData("hcurdis", setpointController.hMP.curDis);
+            op.telemetry.addData("xtarget", setpointController.xMP.targetDis);
+            op.telemetry.addData("ytarget", setpointController.yMP.targetDis);
+            op.telemetry.addData("htarget", setpointController.hMP.targetDis);
 //            op.telemetry.addData("xerr", xerr);
 //            op.telemetry.addData("yerr", yerr);
 //            op.telemetry.addData("herr", herr);
-            op.telemetry.addData("reached T1", bot.autoAimer.hasReached);
+//            op.telemetry.addData("reached T1", bot.autoAimer.hasReached);
 //            op.telemetry.addData("done", bot.autoAimer.isDone);
 //            op.telemetry.update();
 //            op.telemetry.addData("xdone", xdone);

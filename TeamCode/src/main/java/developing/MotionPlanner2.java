@@ -59,11 +59,12 @@ public class MotionPlanner2 {
 
     public void update(double curPos, double target){
         if(!hasStartDisBeenSet){
+            setTargetDis(target);
             setStartDis(curPos);
             hasStartDisBeenSet = true;
         }else {
             setTargetDis(target);
-            curDis = (curPos - startDis);
+            curDis = (curPos);
             updateValues();
             curPow = (proportionalCoeff * (VofS() - curVel)) + getRestPow();
         }

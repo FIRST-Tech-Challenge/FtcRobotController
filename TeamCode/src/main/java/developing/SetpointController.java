@@ -30,18 +30,24 @@ public class SetpointController {
     public void update(double[] currentPos, double[] target){
 
         if(xMP.hasStartDisBeenSet && yMP.hasStartDisBeenSet && hMP.hasStartDisBeenSet){
-            Vector disVect = new Vector(currentPos[0] , currentPos[1]);
-            disVect.rotate(-currentPos[2], Vector.angle.DEGREES);
+            Vector curPosVect = new Vector(currentPos[0] , currentPos[1]);
+            curPosVect.rotate(-currentPos[2], Vector.angle.DEGREES);
 
-            double targetx = target[0] - xMP.startDis;
-            double targety = target[1] - yMP.startDis;
-            double targeth = target[2] - hMP.startDis;
+            Vector startVect = new Vector(xMP.startDis, yMP.startDis);
+            startVect.rotate(-currentPos[2], Vector.angle.DEGREES);
 
-            Vector targetVect = new Vector(targetx, targety);
+            Vector targetVect = new Vector(target[0], target[1]);
             targetVect.rotate(-currentPos[2], Vector.angle.DEGREES);
-            xMP.update(disVect.x, targetVect.x);
-            yMP.update(disVect.y, targetVect.y);
-            hMP.update(currentPos[2], targeth);
+
+
+            Vector localDis = curPosVect.subtract(startVect);
+            Vector localTarget = targetVect.subtract(startVect);
+
+
+            targetVect.rotate(-currentPos[2], Vector.angle.DEGREES);
+            xMP.update(localDis.x, localTarget.x);
+            yMP.update(localDis.y, localTarget.y);
+            hMP.update(currentPos[2]-hMP.startDis, target[2]-hMP.startDis);
         }else{
             xMP.update(currentPos[0], target[0]);
             yMP.update(currentPos[1], target[1]);
@@ -57,6 +63,7 @@ public class SetpointController {
 
     public double[] getPowers(){
         return new double[]{Range.clip(xMP.getPower(), -1, 1), Range.clip(yMP.getPower(), -1, 1), Range.clip(hMP.getPower(), -1, 1)};
+//        return new double[]{0,0,0};
     }
 
     public void reset(){

@@ -69,6 +69,15 @@ public class Vector {
         return "x: " + this.getX() + ", y: " + this.getY() + ", angle: " + this.getAngle(Vector.angle.DEGREES) + ", length: " + this.getLen();
     }
 
+
+    public Vector add(Vector in){
+        return new Vector(x+in.x, y+in.y);
+    }
+
+    public Vector subtract(Vector in){
+        return new Vector(x-in.x, y-in.y);
+    }
+
     //Enum for angle type
     public enum angle {
         DEGREES,

@@ -41,16 +41,16 @@ public class AutoMPv2 extends LinearOpMode {
         yMP.setAcc(1);
         xMP.setAcc(1);
         hMP.setAcc(1);
-        yMP.setTargetDis(40, 0);
-        xMP.setTargetDis(0, 0);
-        hMP.setTargetDis(90, 0);
+        yMP.setTargetDis(40);
+        xMP.setTargetDis(0);
+        hMP.setTargetDis(90);
         while (opModeIsActive() && !isDone()) {
 
             Vector disVect = new Vector(bot.odometry.x,bot.odometry.y);
             disVect.rotate(-bot.odometry.h, Vector.angle.DEGREES);
-            yMP.update(disVect.y);
-            xMP.update(disVect.x);
-            hMP.update(bot.odometry.h);
+            yMP.update(disVect.y, 40);
+            xMP.update(disVect.x, 0);
+            hMP.update(bot.odometry.h, 90);
             bot.move(yMP.getPower(), xMP.getPower(),hMP.getPower());
 
 

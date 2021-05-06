@@ -22,9 +22,9 @@ public class AutoMPv22 extends LinearOpMode {
         telemetry.update();
         waitForStart();
         path2.addSetpoint(0,40,90);
-//        path2.addSetpoint(40,0,-90);
-//        path2.addSetpoint(-10,-10,45);
-//        path2.addSetpoint(0,0,-45);
+        path2.addSetpoint(40,0,-90);
+        path2.addSetpoint(-10,-10,45);
+        path2.addSetpoint(0,0,-45);
         path2.start(bot, this);
 
 
