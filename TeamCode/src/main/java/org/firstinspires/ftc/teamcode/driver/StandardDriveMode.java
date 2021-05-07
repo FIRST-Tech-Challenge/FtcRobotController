@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.driver;
 
 /**
- * Ways to drive the car using the remote
+ * Ways to drive the car that you can use with StandardDrive
+ * @author 22jmiller
  */
-public enum DriveMode {
+public enum StandardDriveMode {
     /**
      * Left Stick y: Forwards/Backwards |
      * Right Stick x: Left/Right
@@ -27,8 +28,8 @@ public enum DriveMode {
      */
     FORZA;
 
-    private static final DriveMode[] vals = values();
-    public DriveMode next()
+    private static final StandardDriveMode[] vals = values();
+    public StandardDriveMode next()
     {
         return vals[(this.ordinal()+1) % vals.length];
     }
