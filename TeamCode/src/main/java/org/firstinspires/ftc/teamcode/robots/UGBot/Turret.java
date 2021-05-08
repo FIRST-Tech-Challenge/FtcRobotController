@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.between360Clockwise;
@@ -51,16 +50,20 @@ public class Turret{
     private double turretChassisTarget = 0; //This is the target to set when you want to be in chassis relative mode
     Orientation imuAngles;
     boolean maintainHeadingInit;
-    private final double angleIncrement = 10;
+
 
     //sensors
     //DigitalChannel magSensor;
 
-    //a single supported Danger Zone - where the chassis is not allow to point when it is active
+    //a single supported Danger Zone - where the chassis is not allowed to point when it is active
     private boolean dangerModeActive = false;
     private double dangerZoneCenter = Constants.DANGER_ZONE_CENTER;
     private double dangerZoneWidth = Constants.DANGER_ZONE_WIDTH;
 
+
+    //manual steering
+    private double manualOffset = 0; //positive/negative angle by which drivers want the turret offset - should reset to zero each time the mode changes
+    private final double speedBoost = 10/7; //boosted speed at which drivers change target heading through calls to rotateRight or rotateLeft
 
 
     public Turret(DcMotor motor, BNO055IMU turretIMU) {
@@ -119,13 +122,13 @@ public class Turret{
     }
 
     //returns whether the turretTargetHeading is within the danger zone
-    //this is currently calculated relative to the chassis
+    //this is currently calculated relative to the chassis center line
     public boolean isInDangerZone(){
         return between360Clockwise(turretTargetHeading,getDangerZoneLeft(), getDangerZoneRight());
     }
 
     public double remapHeadingToSafe(double heading){
-        if(isInDangerZone() && dangerModeActive){
+        if(isInDangerZone() && isDangerModeActive()){
             if(-diffAngle2(getDangerZoneCenter(),heading) > 0){
                 return wrap360(getDangerZoneRight(),Constants.DANGER_ZONE_SAFTEY_BUFFER);
             }
@@ -158,7 +161,8 @@ public class Turret{
 
 
     public double approachSafe(double heading){
-        if(crossesDangerZone() && dangerModeActive){
+        if(crossesDangerZone() && isDangerModeActive()){
+            //start taking the longer path so turret won't cross the danger zone
             return  wrap360((-directionToDZ() * 170),turretHeading);
         }
         else{
@@ -178,9 +182,18 @@ public class Turret{
 
     public void setDangerZoneWidth(double dangerZoneWidth){this.dangerZoneWidth = dangerZoneWidth;}
 
-    public double getDangerZoneLeft(){return wrap360(getDangerZoneCenter(), -dangerZoneWidth / 2);}
+    public double getDangerZoneLeft(){return wrap360(getDangerZoneCenter(), -getDangerZoneWidth() / 2);}
 
-    public double getDangerZoneRight(){return wrap360(getDangerZoneCenter(), dangerZoneWidth / 2);}
+    public double getDangerZoneRight(){return wrap360(getDangerZoneCenter(), getDangerZoneWidth() / 2);}
+
+    public double getManualOffset() {
+        return manualOffset;
+    }
+
+    public void setManualOffset(double manualOffset) {
+        this.manualOffset = manualOffset;
+    }
+
 
 
     /**
@@ -200,22 +213,37 @@ public class Turret{
 
     public void setActive(boolean active){this.active = active;}
 
+    //seems to have been used for finer/slower turret manual controls
+//    public void adjust(double speed) {
+//        setTurretOffset(getHeading(), 7.0 * speed);
+//    }
+    //speed here should be in degrees per second
+    long lastTime = System.nanoTime();
     public void adjust(double speed) {
-        setTurretAngle(getHeading(), 7.0 * speed);
+
+        // if last time this was called was more than x seconds ago reset - this must be a new application
+        if (lastTime>2*1E9+System.nanoTime()) lastTime=System.nanoTime();
+        long elapsedTime = System.nanoTime()-lastTime; //kind of assuming that the elapsed time represents roughly the current loop speed
+        double timeFactoredSpeed = speed * elapsedTime/1E9; //this is actually angle difference to add, factored for time
+        setManualOffset(getHeading() + manualOffset + timeFactoredSpeed);
     }
 
     public void rotateRight(double speed) {
 
-        setTurretAngle(getHeading(), angleIncrement * speed);
+        //setTurretOffset(getHeading()+ manualOffset, angleIncrement * speed);
+        adjust(speedBoost *speed);
     }
 
     public void rotateLeft(double speed){
 
-        setTurretAngle(getHeading(), angleIncrement * -speed);
+        //setTurretOffset(getHeading()+ manualOffset, angleIncrement * -speed);
+        adjust(speedBoost *-speed);
 
     }
 
-
+    //*************** WARNING ************************
+    //rotate cardinal has not been updated to work with dangerZones or driverOffsets
+    //only use if there is no chance of danger and in fieldRelativeMode
     public boolean rotateCardinalTurret(boolean right){
 
         setTurretAngle(nextCardinal(getHeading(),right,10));
@@ -228,9 +256,9 @@ public class Turret{
         active = false;
     }
 
-    public void setTurretAngle(double currentAngle, double adjustAngle){
-         setTurretAngle( wrap360(currentAngle, adjustAngle));
-    }
+//    public void setTurretOffset(double currentAngle, double adjustAngle){
+//         //setTurretAngle( wrap360(currentAngle, adjustAngle));
+//    }
 
     public boolean setTurretAngle(double angle){
         if (currentMode==TurretMode.chassisRelative)
@@ -250,7 +278,7 @@ public class Turret{
     }
 
 
-    public void setPower(double pwr){
+    private void setPower(double pwr){
         motorPwr = pwr;
         motor.setPower(pwr);
     }
@@ -278,14 +306,18 @@ public class Turret{
         setPower(correction);
     }
 
-
+    //todo: should we keep this old code? - we are now doing our own custom PID
+    // and it's always IMU relative in some way, so this should not be used
     public void setTurretMotorMode(boolean IMUMODE){
         if(IMUMODE) {motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);}
         else{motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);}
 
     }
+
     public void maintainHeadingTurret() {
-        //if this is the first time the button has been down, then save the heading that the robot will hold at and set a variable to tell that the heading has been saved
+
+        //if this is the first time the button has been down, then save the heading that the robot will hold at
+        // and set a variable to tell that the heading has been saved
         if (!maintainHeadingInit) {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             //turretTargetHeading = turretHeading;
@@ -293,14 +325,16 @@ public class Turret{
         }
 
         if (currentMode == TurretMode.chassisRelative) {
-            //every time we come in, the targetHeading might need to shift if the base has rotated and the targetHeading
-            //has not changed
+            //every time we come in, the targetHeading might need to shift if the base has rotated, regardless of changes to targetHeading
             turretTargetHeading = fromChassisRelative(turretChassisTarget);
         }
 
-        turretTargetHeading = remapHeadingToSafe(turretTargetHeading);
 
-        movePIDTurret(kpTurret, kiTurret, kdTurret, turretHeading, wrap360(turretTargetHeading,approachSafe(baseHeading)));
+        turretTargetHeading = remapHeadingToSafe(turretTargetHeading);
+        double offsetTargetHeading = wrap360(turretTargetHeading, getManualOffset()); //alter by driver input if any present
+        offsetTargetHeading = remapHeadingToSafe(offsetTargetHeading); //remap safe since the offset could have put it back in the danger zone
+
+        movePIDTurret(kpTurret, kiTurret, kdTurret, turretHeading, wrap360(offsetTargetHeading,approachSafe(baseHeading)));
     }
 
 
@@ -341,6 +375,7 @@ public class Turret{
                 //on entering chassisRelative from fieldRelative, stop movement and set the current target va
                 turretTargetHeading = fieldToChassisRelative();
             }
+            setManualOffset(0); //reset any driver offset any time TurretMode is changed
             previousMode=currentMode;
 
         }

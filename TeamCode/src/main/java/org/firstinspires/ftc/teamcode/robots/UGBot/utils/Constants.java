@@ -110,6 +110,7 @@ public class Constants {
     public static double AUTO_INTAKE_FIRST = .65;
     public static double AUTO_INTAKE_SECOND = 1.1;
 
+    public static double TURRET_SPEED= 90; //max degrees per second to manually adjust turret targetAngle
     public static double TURRET_TOLERANCE = 2; //accuracy wiggle room
 
     public static int LAUNCHER_TRIGGER_STOWED = 1900;

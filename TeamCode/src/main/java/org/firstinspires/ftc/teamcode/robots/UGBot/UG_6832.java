@@ -49,6 +49,7 @@ import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.TURRET_SPEED;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
 
@@ -859,7 +860,7 @@ public class UG_6832 extends OpMode {
         // fine adjustment of turret - this is on gamepad2 right stick in teleop - but
         // on gamepad 1 for prematch setup
         if (notdeadzone(gamepad1.left_stick_x)) {
-            robot.turret.adjust(gamepad1.left_stick_x);
+            robot.turret.adjust(gamepad1.left_stick_x * TURRET_SPEED);
         }
         //press blue button to set blue alliance
         if(toggleAllowed(gamepad1.x,x,1)) {
