@@ -159,7 +159,7 @@ public class PoseUG {
 
     private long turnTimer = 0;
     private boolean turnTimerInit = false;
-    private double minTurnError = 1.0;
+    private double minTurnError = 2.0;
     public boolean maintainHeadingInit = false;
 
     private double poseSavedHeading = 0.0;
@@ -1290,21 +1290,13 @@ public class PoseUG {
     public boolean returnHome(){
         switch(returnHomeState){
             case 0:
-                setTarget(Constants.Target.NONE);
-                turret.setTurretAngle(0);
-                launcher.setElbowTargetAngle(0);
-                returnHomeState++;
-                break;
-            case 1:
-                if(driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset+.25,true,.5, 0))
+                if(driveToFieldPosition(Constants.Position.HOME,false,  .3,.08)){
                     returnHomeState++;
-                break;
-            case 2:
-                if(driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset,true,0.5, 0)){
-                    returnHomeState = 0;
-                    return true;
                 }
                 break;
+            case 1:
+                returnHomeState = 0;
+                return true;
         }
         return false;
     }
@@ -1436,7 +1428,7 @@ public class PoseUG {
         switch (tentSetup){
             case 0:
                 intake.setIntakeSpeed(1);
-                intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_PICKUP);
+                intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TENT);
                 intake.setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT - 200);
                 outtakeTimer = System.nanoTime();
                 tentSetup++;

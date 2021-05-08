@@ -683,6 +683,11 @@ public class UG_6832 extends OpMode {
                 robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
                 }
 
+        if(toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
+            robot.returnHomeState = 0;
+            robot.articulate(PoseUG.Articulation.returnHome);
+        }
+
         //region good logging example
 
 //        if(toggleAllowed(gamepad1.a, a, 1) && gamepad1.y){

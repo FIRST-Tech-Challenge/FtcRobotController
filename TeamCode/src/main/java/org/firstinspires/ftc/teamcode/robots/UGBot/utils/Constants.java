@@ -94,6 +94,7 @@ public class Constants {
     public static int INTAKE_TILT_SERVO_TRAVEL = 1450;
     public static int INTAKE_TILT_SERVO_HANDOFF = 1100;
     public static int INTAKE_TILT_SERVO_PICKUP = 1600;
+    public static int INTAKE_TILT_SERVO_TENT = 1900;
     public static int INTAKE_TILT_FOR_OUTTAKE = 1300;
     public static int INTAKE_TILT_FOR_OUTTAKE_TOO = 1600;
     public static int INTAKE_TILT_INIT_POS = 899;
@@ -162,6 +163,7 @@ public class Constants {
     public enum Position {
         //headings and elevations that are negative means don't apply them to ending position - let other behaviors control
         START(49/INCHES_PER_METER, ROBOT_RADIUS_INCHES/INCHES_PER_METER,0,0,0, 1),
+        HOME(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES)/INCHES_PER_METER,0,0,0, 0),
         //WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (ROBOT_RADIUS_INCHES+3)/INCHES_PER_METER,0,340,0),
         WOBBLE_ONE_GRAB(49/INCHES_PER_METER, (8 + ROBOT_RADIUS_INCHES)/INCHES_PER_METER,0,0,1,1),
         //340, 45

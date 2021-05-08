@@ -157,15 +157,23 @@ public class Autonomous {
 
     public StateMachine AutoTest = getStateMachine(autoStage)
             .addState(()-> robot.deployIntake())
+            .addSingleState(()->robot.launcher.wobbleRelease())
+            .addSingleState(() -> robot.launcher.setElbowTargetAngle(0))
+            .addSingleState(()->robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset,Constants.startingYOffset+1.5,true,.6,.1))
-            .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
-            .addSingleState(()->robot.setAutoLaunchActive(true))
-            .addTimedState(7f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset,Constants.startingYOffset,false,.2,.1))
-
-            .addTimedState(10f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
+            .addSingleState(()->robot.launcher.wobbleGrip())
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addSingleState(() -> robot.launcher.setElbowTargetAngle(15))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1,true,  .8,.1))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addSingleState(()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET))
+            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addSingleState(()->robot.launcher.wobbleRelease())
+            .addSingleState(()->robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS))
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addSingleState(()->robot.launcher.wobbleGrip())
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.HOME,false,  .8,.07))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
