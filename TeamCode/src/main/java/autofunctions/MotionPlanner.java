@@ -1,8 +1,8 @@
-package developing;
+package autofunctions;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class MotionPlanner2 {
+public class MotionPlanner {
 
     public double restPow = 0;
     public double approachRate = 0;

@@ -1,8 +1,9 @@
-package developing;
+package autofunctions;
 
 
 import com.qualcomm.robotcore.util.Range;
 
+import autofunctions.MotionPlanner;
 import util.Vector;
 
 public class SetpointController {
@@ -14,9 +15,9 @@ public class SetpointController {
     public double YAcc = 1; //cm
     public double HAcc = 1; //deg
 
-    public MotionPlanner2 xMP = new MotionPlanner2();
-    public MotionPlanner2 yMP = new MotionPlanner2();
-    public MotionPlanner2 hMP = new MotionPlanner2();
+    public MotionPlanner xMP = new MotionPlanner();
+    public MotionPlanner yMP = new MotionPlanner();
+    public MotionPlanner hMP = new MotionPlanner();
 
     public void init(){
         xMP.setPAR(ps[0], as[0], rs[0]);

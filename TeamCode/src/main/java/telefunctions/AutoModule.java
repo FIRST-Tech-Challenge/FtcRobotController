@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
-import autofunctions.Path;
 import global.TerraBot;
 import globalfunctions.TerraThread;
 import globalfunctions.Constants;
