@@ -57,7 +57,8 @@ public class RobotFunctionsHandler2 {
     }
 
 
-    public void addRFs(int index, ArrayList<Stage>... stages){
+    @SafeVarargs
+    public final void addRFs(int index, ArrayList<Stage>... stages){
         allRFs.put(index, combineStages(stages));
     }
 
@@ -72,16 +73,5 @@ public class RobotFunctionsHandler2 {
 
     public int size(){
         return allRFs.size();
-    }
-
-
-    public static CodeSeg nullCode(){ return () -> {
-    }; }
-    public static CodeSeg combineSegs(final CodeSeg[] segs){
-        return () -> {
-            for(CodeSeg seg:segs) {
-                seg.run();
-            }
-        };
     }
 }
