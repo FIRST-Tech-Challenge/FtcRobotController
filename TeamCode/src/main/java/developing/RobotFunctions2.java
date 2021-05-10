@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import autofunctions.Path;
 import global.TerraBot;
+import util.CodeSeg;
 import util.Stage;
 
 public class RobotFunctions2 {
@@ -96,6 +97,55 @@ public class RobotFunctions2 {
         });
         return stages;
     }
+
+    public ArrayList<Stage> addCustom(final CodeSeg cs){
+        ArrayList<Stage> stages = new ArrayList<>();
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                cs.run();
+                return true;
+            }
+        });
+        return stages;
+    }
+
+    public ArrayList<Stage> addWait(final double time){
+        ArrayList<Stage> stages = new ArrayList<>();
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                return in > time;
+            }
+        });
+        return stages;
+    }
+
+    public ArrayList<Stage> moveRS(final double pow){
+        ArrayList<Stage> stages = new ArrayList<>();
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.rs.setPower(pow);
+                return true;
+            }
+        });
+        return stages;
+    }
+
+    public ArrayList<Stage> outtake(final double pow){
+        ArrayList<Stage> stages = new ArrayList<>();
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.outr.setPower(pow);
+                bot.outl.setPower(pow);
+                return true;
+            }
+        });
+        return stages;
+    }
+
 
 
 }
