@@ -3,6 +3,7 @@ package autofunctions;
 import java.util.ArrayList;
 
 import global.TerraBot;
+import globalfunctions.Constants;
 import util.CodeSeg;
 import util.Stage;
 
@@ -48,12 +49,12 @@ public class RobotFunctions {
         return stages;
     }
     //Move the wobble goal claw
-    public ArrayList<Stage> moveClaw(final int idx){
+    public ArrayList<Stage> moveClaw(final int idx, final double offset){
         ArrayList<Stage> stages = new ArrayList<>();
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
-                bot.claw(bot.cllControl.getPos(idx), bot.clrControl.getPos(idx));
+                bot.claw(bot.cllControl.getPos(idx)+offset, bot.clrControl.getPos(idx)-offset);
                 return true;
             }
         });
@@ -146,6 +147,56 @@ public class RobotFunctions {
             public boolean run(double in) {
                 bot.outr.setPower(pow);
                 bot.outl.setPower(pow);
+                return true;
+            }
+        });
+        return stages;
+    }
+    //Intake the rings
+    public ArrayList<Stage> intake(final double pow){
+        ArrayList<Stage> stages = new ArrayList<>();
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.intake(pow);
+                return true;
+            }
+        });
+        return stages;
+    }
+    public ArrayList<Stage> shoot(final int numRings){
+        ArrayList<Stage> stages = new ArrayList<>();
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.intake(0);
+                bot.outtaking = true;
+                bot.autoAimer.shotMode = 0;
+                return true;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                return !bot.autoAimer.hasReached;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.rs.setPower(Constants.RS_POW);
+                return true;
+            }
+        });
+        stages.addAll(addWait(0.7));
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.outr.setPower(0);
+                bot.outl.setPower(0);
+                bot.rs.setPower(0);
+                bot.outtaking = false;
+                bot.autoAimer.done();
                 return true;
             }
         });

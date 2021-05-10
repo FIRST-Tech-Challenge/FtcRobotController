@@ -86,12 +86,14 @@ public class Path {
         posetypes.add(Posetype.SHOOT);
     }
     //Add a robot function
-    public void addRF(ArrayList<Stage> stages){
+    @SafeVarargs
+    public final void addRF(ArrayList<Stage>... stages){
         bot.rfh1.addRFs(defineIndex, stages);
         defineIndex++;
     }
     //Add a robot function to the 2nd thread
-    public void addRF2(ArrayList<Stage> stages){
+    @SafeVarargs
+    public final void addRF2(ArrayList<Stage>... stages){
         bot.rfh2.addRFs(defineIndex, stages);
         defineIndex++;
     }
