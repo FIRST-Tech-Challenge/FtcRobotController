@@ -2,11 +2,8 @@ package auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import autofunctions.Path;
-import autofunctions.RobotFunctions;
 import autofunctions.TerraCV;
 import autofunctions.TerraCVHandler;
-import global.TerraBot;
 import globalfunctions.Constants;
 
 public class AutoHandler {

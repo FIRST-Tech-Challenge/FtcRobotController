@@ -3,10 +3,6 @@ package globalfunctions;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PID {
-    //starting coeffs
-    public double sKp = 0;
-    public double sKd = 0;
-    public double sKi = 0;
     //Current coeffs
     public double Kp = 0;
     public double Kd = 0;
@@ -22,35 +18,30 @@ public class PID {
 
     //Scale to scale ks
     public double scale = 1;
-    //Scale to scale accs
-    public double AccScale = 1;
     //Change in error
     public double deltaError = 0;
     //Timer
     public ElapsedTime timer = new ElapsedTime();
-    //starting accuracy
-    public double sacc = 0;
     //Current accuracy
     public double acc = 0;
-    //MaxD value
-    public double maxD = 1000;
 
     //Sets coeffs
     public void setCoefficients(double k, double d, double i){
-        sKp = k;
-        sKd = d;
-        sKi = i;
-        scaleCoeffs(scale);
+        Kp = k;
+        Kd = d;
+        Ki = i;
     }
     //Sets accuracies
     public void setAcc(double in){
-        sacc = in;
-        scaleAccs(AccScale);
+        acc = in;
+    }
+    //Sets accuracies
+    public void setScale(double in){
+        scale = in;
     }
     //Gets the power for the motor
     public double getPower(){
-        return Math.signum(error) * (Kp * abs(error) - Kd * abs(derivative) + Ki * abs(integral));
-//        return 0;
+        return Math.signum(error) * (Kp* scale * abs(error) - Kd * abs(derivative) + Ki * abs(integral));
     }
     //Absolute value
     public double  abs(double in){
@@ -68,13 +59,8 @@ public class PID {
         derivative = deltaError/deltaTime;
 
         integral += error * deltaTime;
-
-        if(Kd*abs(derivative) > maxD) {
-            derivative = maxD * Math.signum(derivative);
-        }
-
     }
-    //Resets eberything
+    //Resets everything
     public void reset(){
         error = 0;
         lastError = 0;
@@ -88,24 +74,6 @@ public class PID {
     //Error is within accuracy
     public boolean isDone(){
         return abs(error) < acc;
-    }
-    //Sets max D
-    public void setMaxD(double maxD){
-        this.maxD = maxD;
-    }
-    //Scales coeefs by scale
-    public void scaleCoeffs(double scale) {
-        if (scale < 100) {
-            this.scale = scale;
-            Kp = sKp * scale;
-            Kd = sKd * scale;
-            Ki = sKi * scale;
-        }
-    }
-    //Scales accuracies
-    public void scaleAccs(double scale){
-        this.AccScale = scale;
-        acc = sacc * scale;
     }
 
 

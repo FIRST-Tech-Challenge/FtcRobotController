@@ -4,6 +4,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
 
+import autofunctions.Path;
 import global.TerraBot;
 
 public class TelemetryHandler {
@@ -46,29 +47,29 @@ public class TelemetryHandler {
                 telemetry.addData("auto angle", bot.autoAimer.getRobotToGoalAngle(bot.odometry.getPos()));
                 telemetry.addData("shotmode", bot.autoAimer.shotMode);
             case 2:
-                telemetry.addData("y pow", path.yControl.getPower());
-                telemetry.addData("x pow", path.xControl.getPower());
-                telemetry.addData("h pow", path.hControl.getPower());
+                telemetry.addData("y pow", path.waypointController.yControl.getPower());
+                telemetry.addData("x pow", path.waypointController.xControl.getPower());
+                telemetry.addData("h pow", path.waypointController.hControl.getPower());
             case 3:
-                telemetry.addData("y error", path.yControl.error);
-                telemetry.addData("x error", path.xControl.error);
-                telemetry.addData("h error", path.hControl.error);
+                telemetry.addData("y error", path.waypointController.yControl.error);
+                telemetry.addData("x error", path.waypointController.xControl.error);
+                telemetry.addData("h error", path.waypointController.hControl.error);
             case 4:
-                telemetry.addData("y derivative", path.yControl.derivative);
-                telemetry.addData("x derivative", path.xControl.derivative);
-                telemetry.addData("h derivative", path.hControl.derivative);
+                telemetry.addData("y derivative", path.waypointController.yControl.derivative);
+                telemetry.addData("x derivative", path.waypointController.xControl.derivative);
+                telemetry.addData("h derivative", path.waypointController.hControl.derivative);
             case 5:
-                telemetry.addData("y integral", path.yControl.integral);
-                telemetry.addData("x integral", path.xControl.integral);
-                telemetry.addData("h integral", path.hControl.integral);
+                telemetry.addData("y integral", path.waypointController.yControl.integral);
+                telemetry.addData("x integral", path.waypointController.xControl.integral);
+                telemetry.addData("h integral", path.waypointController.hControl.integral);
             case 6:
-                telemetry.addData("x done", path.xControl.isDone());
-                telemetry.addData("y done", path.yControl.isDone());
-                telemetry.addData("h done", path.hControl.isDone());
+                telemetry.addData("x done", path.waypointController.xControl.isDone());
+                telemetry.addData("y done", path.waypointController.yControl.isDone());
+                telemetry.addData("h done", path.waypointController.hControl.isDone());
             case 7:
-                telemetry.addData("x acc", path.xControl.acc);
-                telemetry.addData("y acc", path.yControl.acc);
-                telemetry.addData("h acc", path.hControl.acc);
+                telemetry.addData("x acc", path.waypointController.xControl.acc);
+                telemetry.addData("y acc", path.waypointController.yControl.acc);
+                telemetry.addData("h acc", path.waypointController.hControl.acc);
         }
     }
     //Adds angular position

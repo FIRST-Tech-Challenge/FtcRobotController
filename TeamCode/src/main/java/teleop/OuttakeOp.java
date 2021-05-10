@@ -1,6 +1,5 @@
 package teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -53,7 +52,6 @@ public class OuttakeOp extends OpMode {
 
     @Override
     public void stop() {
-        bot.stopAllAutomodules();
         bot.stopOdoThread();
     }
 }

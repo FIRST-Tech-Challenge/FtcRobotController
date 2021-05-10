@@ -1,35 +1,32 @@
 package autofunctions;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import globalfunctions.Constants;
 import globalfunctions.TerraThread;
-import util.Stage;
 import util.CodeSeg;
+import util.Stage;
 
 public class RobotFunctionsHandler {
-    public int rfsIndex = 0;
     public int rfsQueueIndex = 0;
-    public ArrayList<CodeSeg> rfs = new ArrayList<>();
-    public ArrayList<Boolean> isRf = new ArrayList<>();
-    public ArrayList<CodeSeg> rfsQueue = new ArrayList<>();
+    public volatile HashMap<Integer, ArrayList<Stage>> allRFs = new HashMap<>();
+    public volatile ArrayList<Stage> rfsQueue = new ArrayList<>();
 
-    public LinearOpMode op;
+    public ElapsedTime timer = new ElapsedTime();
 
     public CodeSeg updateCode = () -> {
-        if(rfsIndex < rfs.size()) {
-            if(rfsQueue.size() > rfsQueueIndex){
-                rfsQueue.get(rfsQueueIndex).run();
+        if(rfsQueueIndex < rfsQueue.size()){
+            Stage s = rfsQueue.get(rfsQueueIndex);
+            if (s.run(timer.seconds())) {
                 rfsQueueIndex++;
+                timer.reset();
             }
-        }
-    };
-
-    public Stage exit = new Stage() {
-        @Override
-        public boolean run(double in) {
-            return op.isStopRequested();
+        }else{
+            rfsQueueIndex = 0;
+            rfsQueue.clear();
         }
     };
 
@@ -38,11 +35,9 @@ public class RobotFunctionsHandler {
 
 
 
-    public void start(LinearOpMode op){
-        this.op = op;
-        rfsThread = new TerraThread(updateCode, exit);
-//        rfsThread = new TerraThread(updateCode);
-        rfsThread.changeRefreshRate(10);
+    public void start(){
+        rfsThread = new TerraThread(updateCode);
+        rfsThread.changeRefreshRate(Constants.ROBOT_FUNCTIONS_REFRESH_RATE);
         Thread t = new Thread(rfsThread);
         t.start();
     }
@@ -51,32 +46,29 @@ public class RobotFunctionsHandler {
         rfsThread.stop();
     }
 
-    public void update(){
-        if(rfsIndex < rfs.size() - 1 && isRf.get(rfsIndex+1)) {
-            rfsQueue.add(rfs.get(rfsIndex+1));
-            rfsIndex++;
+    public void update(int curIndex){
+        ArrayList<Stage> curRf = allRFs.get(curIndex);
+        if(curRf != null){
+            rfsQueue.addAll(curRf);
         }
-        rfsIndex++;
     }
 
 
-    public void addRFs(CodeSeg... segs){
-        rfs.add(combineSegs(segs));
-        isRf.add(true);
-    }
-    public void notRF(){
-        rfs.add(nullCode());
-        isRf.add(false);
+    @SafeVarargs
+    public final void addRFs(int index, ArrayList<Stage>... stages){
+        allRFs.put(index, combineStages(stages));
     }
 
-    public static CodeSeg nullCode(){ return () -> {
 
-    }; }
-    public static CodeSeg combineSegs(final CodeSeg[] segs){
-        return () -> {
-            for(CodeSeg seg:segs) {
-                seg.run();
-            }
-        };
+    public static ArrayList<Stage> combineStages(ArrayList<Stage>... stages){
+        ArrayList<Stage> out = new ArrayList<>();
+        for(ArrayList<Stage> stages1 :stages) {
+            out.addAll(stages1);
+        }
+        return out;
+    }
+
+    public int size(){
+        return allRFs.size();
     }
 }

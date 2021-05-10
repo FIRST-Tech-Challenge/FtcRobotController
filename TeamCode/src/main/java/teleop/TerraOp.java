@@ -2,9 +2,6 @@ package teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import java.util.Arrays;
 
 import global.TerraBot;
 import globalfunctions.Constants;
@@ -75,7 +72,7 @@ public class TerraOp extends OpMode {
 //        if(shouldICareAboutAuton) {
 //            bot.initWobbleGoal();
 //        }
-        bot.initWobbleGoal();
+//        bot.initWobbleGoal();
 
         // update optimizer
         optimizer.update();
@@ -111,21 +108,12 @@ public class TerraOp extends OpMode {
             }
         }
 
-        // when the driver presses gamepad1.x, start the wobble goal automodule
-//        if(gamepad1.x){
-//            bot.wobbleGoal.start();
-//        }
         if(gamepad1.x){
             bot.powerShot.start();
         }
 
         // when the driver presses gamepad1.y, start the shooting automodule
         if (gamepad1.y) {
-//            if (!bot.powershotMode) {
-//                bot.shooter.start();
-//            } else {
-//                bot.powerShot.start();
-//            }
             bot.shooter.start();
         }
 
@@ -134,25 +122,18 @@ public class TerraOp extends OpMode {
         // update the outtake motor speeds if the automodule is running
         bot.outtakeWithCalculations(true);
 
-        // use optimizer to fix odometry heading
+        // use optimizer to fix odometry heading within range [-180,180]
         bot.optimizeOdometryHeading();
 
-        //
-
+        bot.updateAutoModules();
         // TELEMETRY
-
-//        telemetryHandler.addTele(1,1,1,1,1);
-//        if(bot.shooter.path != null) {
-////            telemetryHandler.addAuton(bot.shooter.path, 1);
-//        }
-        telemetryHandler.addTele(0,0,0,1,4);
+        telemetryHandler.addTele(0,0,0,0,0);
         telemetry.update();
     }
 
     @Override
     public void stop() {
         // stop the automodules and odometry thread
-        bot.stopAllAutomodules();
-        bot.stopOdoThread();
+        bot.stop();
     }
 }

@@ -2,19 +2,14 @@ package autofunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import global.TerraBot;
-import globalfunctions.PID;
-import globalfunctions.Storage;
 import globalfunctions.TelemetryHandler;
-import globalfunctions.TimeData;
-import util.CodeSeg;
 import util.Line;
-import util.Vector;
+import util.Stage;
 
 public class Path {
 
@@ -24,12 +19,11 @@ public class Path {
 
     public ElapsedTime globalTime = new ElapsedTime();
     public int curIndex = 0;
+    public int defineIndex = 0;
 
     public ArrayList<double[]> poses = new ArrayList<>();
     public ArrayList<Line> lines = new ArrayList<>();
     public ArrayList<Posetype> posetypes = new ArrayList<>();
-    public RobotFunctionsHandler rfsHandler = new RobotFunctionsHandler();
-    public RobotFunctionsHandler wobbleGoalHandler = new RobotFunctionsHandler();
 
     public ArrayList<Double> stops = new ArrayList<>();
     public int stopIndex = 0;
@@ -39,19 +33,20 @@ public class Path {
 
     public double angleToGoal = 0;
 
+    public TerraBot bot;
+
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
-        init();
     }
     public Path(double[] spos){
         poses.add(spos);
-        init();
     }
-    public void init(){
+    public void init(TerraBot bot){
         posetypes.add(Posetype.SETPOINT);
         setpointController.init();
         waypointController.init();
         globalTime.reset();
+        this.bot = bot;
         addStop(0.01);
     }
 
@@ -60,9 +55,7 @@ public class Path {
         poses.add(new double[]{lastPose[0] + x, lastPose[1] + y, lastPose[2] + h});
         double[] currPose = poses.get(poses.size() - 1);
         lines.add(new Line(lastPose[0], lastPose[1], currPose[0], currPose[1]));
-
-        rfsHandler.notRF();
-        wobbleGoalHandler.notRF();
+        defineIndex++;
     }
     public void addWaypoint(double x, double y, double h){
         addNewPose(x,y,h);
@@ -85,29 +78,21 @@ public class Path {
         posetypes.add(Posetype.SHOOT);
     }
 
-    public void addRF(CodeSeg... segs){
-        rfsHandler.addRFs(segs);
+    public void addRF(ArrayList<Stage> stages){
+        bot.rfh1.addRFs(defineIndex, stages);
+        defineIndex++;
     }
-
-    public void addWGRF(CodeSeg... segs) {
-        wobbleGoalHandler.addRFs(segs);
-    }
-
-    public void startRFThread(LinearOpMode op){
-       rfsHandler.start(op);
-       wobbleGoalHandler.start(op);
-    }
-    public void stopRFThread(){
-       rfsHandler.stop();
-       wobbleGoalHandler.stop();
+    public void addRF2(ArrayList<Stage> stages){
+//        bot.rfh2.addRFs(defineIndex, stages);
+//        defineIndex++;
     }
 
     public void next(){
         resetControls();
         globalTime.reset();
         curIndex++;
-        rfsHandler.update();
-        wobbleGoalHandler.update();
+        bot.rfh1.update(curIndex);
+//        bot.rfh1.update(curIndex);
         if(curIndex >= lines.size()){
             end();
         }
@@ -125,7 +110,7 @@ public class Path {
         }
     }
 
-    public void updateControlsForSetPoint(double[] currentPos, double[] target, boolean isShoot, TerraBot bot){
+    public void updateControlsForSetPoint(double[] currentPos, double[] target, boolean isShoot){
         setpointController.update(currentPos, target);
 
         if (setpointController.isDone()) {
@@ -145,14 +130,14 @@ public class Path {
     }
 
 
-    public double[] update(double[] currentPos, TerraBot bot){
+    public double[] update(double[] currentPos){
         double[] target = poses.get(curIndex+1);
         switch (posetypes.get(curIndex+1)){
             case WAYPOINT:
                 updateControlsForWaypoint(currentPos, target, lines.get(curIndex));
                 return waypointController.getPowers();
             case SETPOINT:
-                updateControlsForSetPoint(currentPos, target, false, bot);
+                updateControlsForSetPoint(currentPos, target, false);
                 return setpointController.getPowers();
             case STOP:
                 if(globalTime.seconds() > stops.get(stopIndex)){
@@ -163,7 +148,7 @@ public class Path {
             case SHOOT:
                 double[] targetSh = poses.get(curIndex+1);
                 targetSh = new double[]{targetSh[0], targetSh[1], angleToGoal};
-                updateControlsForSetPoint(currentPos, targetSh, true, bot);
+                updateControlsForSetPoint(currentPos, targetSh, true);
                 if(!bot.autoAimer.hasPosBeenUpdated()) {
                     angleToGoal = bot.autoAimer.getRobotToGoalAngle(targetSh);
                     bot.autoAimer.setOuttakePos(Arrays.copyOf(targetSh, 2));
@@ -182,7 +167,7 @@ public class Path {
     }
 
 
-    public void start(TerraBot bot, LinearOpMode op){
+    public void start(LinearOpMode op){
         op.telemetry.addData("Resetting", "Odometry");
         op.telemetry.update();
         telemetryHandler.init(op.telemetry, bot);
@@ -192,14 +177,14 @@ public class Path {
         op.telemetry.update();
         globalTime.reset();
         while (op.opModeIsActive() && isExecuting) {
-            double[] pows = update(bot.odometry.getAll(), bot);
+            double[] pows = update(bot.odometry.getAll());
             bot.move(pows[1], pows[0], pows[2]);
 //            Sleep.trySleep(() -> Thread.sleep(10));
         }
         op.telemetry.addData("Status:", "Done");
         op.telemetry.update();
         bot.move(0,0,0);
-        stopRFThread();
+        bot.stop();
     }
 
     public enum Posetype{

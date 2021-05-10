@@ -15,6 +15,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import autofunctions.RobotFunctions;
+import autofunctions.RobotFunctionsHandler;
+import global.AngularPosition;
+import global.AutoAimer;
+import global.Localizer;
+import global.Odometry;
 import globalfunctions.Constants;
 import globalfunctions.Optimizer;
 import globalfunctions.Storage;
@@ -23,8 +29,8 @@ import telefunctions.AutoModule;
 import telefunctions.ButtonController;
 import telefunctions.Cycle;
 import telefunctions.Limits;
-import util.Stage;
 import util.CodeSeg;
+import util.Stage;
 
 public class TerraBot {
 
@@ -93,17 +99,21 @@ public class TerraBot {
     //Start Position of wobble goal in degs
     public double wgStart = 0;
 
+    //Robot functions
+    public RobotFunctions rfs = new RobotFunctions();
+    //Robot function handler 1
+    public RobotFunctionsHandler rfh1 = new RobotFunctionsHandler();
+    public RobotFunctionsHandler rfh2 = new RobotFunctionsHandler();
 
     //Automodule for shooting
-    public AutoModule shooter = new AutoModule(); // 0
+    public AutoModule shooter = new AutoModule();
 
     //Automodule for wobble goal
     public AutoModule wobbleGoal = new AutoModule();
 
     //Automodule for powershot
     public AutoModule powerShot = new AutoModule();
-
-    //List of AutoModules
+    //List of automodules
     public ArrayList<AutoModule> autoModules = new ArrayList<>();
 
     //Button Controls - Make delay between clicks to only count them once
@@ -113,8 +123,6 @@ public class TerraBot {
     public ButtonController knockdownController = new ButtonController();
 
     //Odometry for position of robot
-    //TODO
-    // Make this more accurate pls?
     public Odometry odometry = new Odometry();
 
     //Thread for odometry at 100 htz
@@ -193,6 +201,14 @@ public class TerraBot {
         defineShooter();
         defineWobbleGoal();
         definePowershot();
+
+
+        rfs.init(this);
+        rfh1.start();
+        rfh2.start();
+
+
+
     }
 
     //Helper methods for getting hardware
@@ -379,22 +395,20 @@ public class TerraBot {
     //Are any automodules running checks if they are inited
     public boolean areAutomodulesRunning(){
         for (AutoModule a: autoModules) {
-            if(a.inited) {
-                if (a.isExecuting()) {
-                    return true;
-                }
+            if(a.isExecuting()){
+                return a.isExecuting();
             }
         }
         return false;
     }
-    //Stops all automodules
-    public void stopAllAutomodules(){
+    //Update automodule
+    public void updateAutoModules(){
         for (AutoModule a: autoModules) {
-            if(a.inited) {
-                a.stop();
-            }
+            a.update();
         }
     }
+
+
     //Get angular position of outtake motors
     public double getRightAngPos() {return (outr.getCurrentPosition() / Constants.GOBUILDA1_Ticks) * Constants.pi2; }
     public double getLeftAngPos(){ return (outl.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2; }
@@ -495,6 +509,7 @@ public class TerraBot {
             }
         };
         odometryThread = new TerraThread(run, exit);
+        odometryThread.changeRefreshRate(Constants.ODOMETRY_REFRESH_RATE);
         Thread t = new Thread(odometryThread);
         t.start();
     }
@@ -569,69 +584,67 @@ public class TerraBot {
 
     }
 
-    //TODO
-    // Define shooter and powershot
     public void defineShooter(){
-        shooter.init(this);
-        shooter.addCustom(() -> {
+        shooter.init(rfh1);
+        shooter.add(rfs.addCustom(() -> {
             outtaking = true;
             autoAimer.shotMode = 0;
-        });
-        shooter.addWait(0.1);
-//        shooter.addTurnToGoal();
-        shooter.addWait(0.2);
-        shooter.addStage(rs, Constants.RS_POW);
-        shooter.addWait(1);
-        shooter.addStage(0, outr, outl);
-        shooter.addStage(rs, 0);
-        shooter.addCustom(() -> outtaking = false);
-        shooter.addPause();
+        }));
+        shooter.add(rfs.addWait(0.3));
+        shooter.add(rfs.turnToGoal());
+        shooter.add(rfs.moveRS(Constants.RS_POW));
+        shooter.add(rfs.addWait(1));
+        shooter.add(rfs.outtake(0));
+        shooter.add(rfs.moveRS(0));
+        shooter.add(rfs.addCustom(() -> {
+            outtaking = false;
+        }));
         autoModules.add(shooter);
     }
 
     public void definePowershot(){
-        powerShot.init(this);
-        powerShot.addCustom(() -> outtaking = true);
-
-        for (int i = 1; i < 4; i++) {
-            powerShot.changeAutoAimerMode(i);
-            powerShot.addWait(0.2);
-//            powerShot.addTurnToGoal();
-            powerShot.addStage(rs, Constants.RS_POW);
-            powerShot.addWait(0.2);
-            powerShot.addStage(rs, 0);
-            if(i < 3) {
-                powerShot.addPause();
-            }
-        }
-        powerShot.addStage(0, outr, outl);
-        powerShot.addStage(rs, 0);
-        powerShot.addCustom(() -> outtaking = false);
-        powerShot.addPause();
-        autoModules.add(powerShot);
+//        powerShot.init(this);
+//        powerShot.addCustom(() -> outtaking = true);
+//
+//        for (int i = 1; i < 4; i++) {
+//            powerShot.changeAutoAimerMode(i);
+//            powerShot.addWait(0.2);
+////            powerShot.addTurnToGoal();
+//            powerShot.addStage(rs, Constants.RS_POW);
+//            powerShot.addWait(0.2);
+//            powerShot.addStage(rs, 0);
+//            if(i < 3) {
+//                powerShot.addPause();
+//            }
+//        }
+//        powerShot.addStage(0, outr, outl);
+//        powerShot.addStage(rs, 0);
+//        powerShot.addCustom(() -> outtaking = false);
+//        powerShot.addPause();
+//        autoModules.add(powerShot);
     }
 
     //Define wobble goal automodule
     public void defineWobbleGoal(){
-        wobbleGoal.init(this);
-        wobbleGoal.addClaw( 2); //Open claw
-        wobbleGoal.addControlWGE(1); //Mode wge out
-        wobbleGoal.addWobbleGoal(-10, 1); //Move wg arm down
-        wobbleGoal.addCustom(() -> fastMode = true); //Set to slowmode
-        wobbleGoal.addPause(); // Wait for driver
-        wobbleGoal.addClaw( 0); //Close claw
-        wobbleGoal.addWait(0.5); // Wait 0.5
-        wobbleGoal.addWobbleGoal( 120, 1); //Move wg arm up
-        wobbleGoal.addControlWGE( 0.5); //move wge in to halfway
-        wobbleGoal.holdWobbleGoalAndPause(); //Hold wobble gaol arm pause
-        wobbleGoal.addMove(new double[]{0,20,0}, true); //Move forward 20 cm
-        wobbleGoal.addClaw( 1); //open claw halfway
-        wobbleGoal.addWobbleGoal( 160, 1); //Move woggle goal arm down
-        wobbleGoal.addClaw( 2); //open claw
-        wobbleGoal.addWait(0.7); //wait to drop
-        wobbleGoal.addWobbleGoal( 45, 1); //Move arm forward
-        wobbleGoal.addPause(); //Pause for next time
-        autoModules.add(wobbleGoal);
+//        wobbleGoal.init(this);
+//        wobbleGoal.addClaw( 2); //Open claw
+//        wobbleGoal.addControlWGE(1); //Mode wge out
+//        wobbleGoal.addWobbleGoal(-10, 1); //Move wg arm down
+//        wobbleGoal.addCustom(() -> fastMode = true); //Set to slowmode
+//        wobbleGoal.addPause(); // Wait for driver
+//        wobbleGoal.addClaw( 0); //Close claw
+//        wobbleGoal.addWait(0.5); // Wait 0.5
+//        wobbleGoal.addWobbleGoal( 120, 1); //Move wg arm up
+//        wobbleGoal.addControlWGE( 0.5); //move wge in to halfway
+//        wobbleGoal.holdWobbleGoalAndPause(); //Hold wobble gaol arm pause
+//        wobbleGoal.addMove(new double[]{0,20,0}, true); //Move forward 20 cm
+//        wobbleGoal.addClaw( 1); //open claw halfway
+//        wobbleGoal.addWobbleGoal( 160, 1); //Move woggle goal arm down
+//        wobbleGoal.addClaw( 2); //open claw
+//        wobbleGoal.addWait(0.7); //wait to drop
+//        wobbleGoal.addWobbleGoal( 45, 1); //Move arm forward
+//        wobbleGoal.addPause(); //Pause for next time
+//        autoModules.add(wobbleGoal);
     }
 
 
@@ -650,6 +663,13 @@ public class TerraBot {
         odometry.resetPos(Optimizer.fromString(storage.readText("pos")));
         odometry.resetHeading(angularPosition.getHeadingGY());
         updateOdoWithLocalizerAndCheck();
+    }
+
+
+    public void stop(){
+        stopOdoThread();
+        rfh1.stop();
+        rfh2.stop();
     }
 
 
