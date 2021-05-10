@@ -17,10 +17,16 @@ public class AutoModule {
     public ArrayList<Integer> pauses = new ArrayList<>();
     //Stage numbers when defining automodule
     public int defineStageNum = 0;
+    //Stage number to start at
+    public int startStageNum = 0;
 
     //Initialize the automodule with the robot function handler and start by pausing
     public void init(RobotFunctionsHandler rfh){
         this.rfh = rfh;
+        //Start the stage num index from the size of the current handler
+        startStageNum = rfh.size();
+        defineStageNum = startStageNum;
+        stageNum = startStageNum;
         addPause();
     }
 
@@ -44,10 +50,10 @@ public class AutoModule {
 
     //Goes to next robot function
     public void next(){
-        if(stageNum < rfh.size()) {
+        if(stageNum < (defineStageNum)) {
             stageNum++;
         }else {
-            stageNum = 0;
+            stageNum = startStageNum;
         }
     }
 

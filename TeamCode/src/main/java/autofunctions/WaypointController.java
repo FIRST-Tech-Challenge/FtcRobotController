@@ -9,36 +9,31 @@ import util.Line;
 import util.Vector;
 
 public class WaypointController {
-
+    //PID controllers for waypoint
     public PID xControl = new PID();
     public PID yControl = new PID();
     public PID hControl = new PID();
 
-
-    final public double[] ks = {0.05,0.05,0.012};
+    //P D and I coeffs
+    final public double[] ps = {0.05,0.05,0.012};
     final public double[] ds = {0.0003,0.0006,0.0005};
     final public double[] is = {0.000,0.000,0.0000};
 
-
-
+    //Maximum radius to aim for
     public double maxRadius = 15;
+    //The current radius for pure pursuit
     public double currentRadius = 5;
-
-
+    //Has the robot reached the target position
     public boolean isDone = false;
-
-
+    //Initializes the pid controllers
     public void init(){
-        xControl.setCoefficients(ks[0], ds[0], is[0]);
-        yControl.setCoefficients(ks[1], ds[1], is[1]);
-        hControl.setCoefficients(ks[2], ds[2], is[2]);
-        xControl.setMaxD(1);
-        yControl.setMaxD(1);
-        hControl.setMaxD(1);
+        xControl.setCoefficients(ps[0], ds[0], is[0]);
+        yControl.setCoefficients(ps[1], ds[1], is[1]);
+        hControl.setCoefficients(ps[2], ds[2], is[2]);
     }
-
+    //Updates the radius
     public void updateRadius(double dis){currentRadius = maxRadius*(1-Math.exp(-(1/maxRadius)*(dis))); }
-
+    //Solves for the current target using the current position and line
     public double solve(double[] currentPose,Line currentLine){
         double x1 = currentLine.x1;
         double y1 = currentLine.y1;
@@ -64,12 +59,11 @@ public class WaypointController {
             return 1;
         }
     }
-
+    //Gets the target pos for the robot to aim for
     public double[] getTargetPos(double[] currentPose, Line currentLine){
         return currentLine.getAt(solve(currentPose, currentLine));
     }
-
-
+    //Updates the pid controllers using the current pos and line and the target pos
     public void update(double[] currentPos, double[] target, Line currentLine){
         double[] localTarget = getTargetPos(currentPos, currentLine);
         updateRadius(currentLine.getDis());
@@ -82,19 +76,18 @@ public class WaypointController {
         yControl.update(disVect.y);
         hControl.update(herr);
     }
-
+    //Gets the powers for the robot
     public double[] getPowers(){
         return new double[]{Range.clip(xControl.getPower(), -1, 1), Range.clip(yControl.getPower(), -1, 1), Range.clip(hControl.getPower(), -1, 1)};
     }
-
+    //Resets the pid controllers and sets isDone to false
     public void reset(){
         xControl.reset();
         yControl.reset();
         hControl.reset();
         isDone = false;
     }
-
-
+    //Is the robot done with the current waypoint
     public boolean isDone(){return isDone;}
 
 

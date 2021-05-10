@@ -69,9 +69,9 @@ public class TerraCV extends OpenCvPipeline
             ringNum = RingNum.ZERO;
         }
         //Uncomment this line if you want to view fullscreen
-        if(show) {
-            Imgproc.resize(processed, processed, input.size());
-        }
+//        if(show) {
+//            Imgproc.resize(processed, processed, input.size());
+//        }
 
         return processed;
     }
