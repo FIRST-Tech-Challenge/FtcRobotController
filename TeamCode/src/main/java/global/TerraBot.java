@@ -202,8 +202,9 @@ public class TerraBot {
         defineWobbleGoal();
         definePowershot();
 
-
+        //Initialize robot functions
         rfs.init(this);
+        //Start both robot function threads
         rfh1.start();
         rfh2.start();
 
@@ -256,11 +257,13 @@ public class TerraBot {
         in.setPower(p);
         if (!outtaking) { shootRings(-Math.signum(p)*Constants.RS_POW);}
     }
+    //Toggles knockdown servos
     public void toggleKnockdown(boolean hasPressed) {
         if (knockdownController.isPressedOnce(hasPressed)) {
             knockdownRings(flsControl.update(false, true), frsControl.update(false, true));
         }
     }
+    //Knocks down the rings by moving servos to certain pos
     public void knockdownRings(double lPos, double rPos) {
         fls.setPosition(lPos);
         frs.setPosition(rPos);
@@ -583,7 +586,7 @@ public class TerraBot {
         }
 
     }
-
+    //Define shooter automodule
     public void defineShooter(){
         shooter.init(rfh1);
         shooter.add(rfs.addCustom(() -> {
@@ -665,7 +668,7 @@ public class TerraBot {
         updateOdoWithLocalizerAndCheck();
     }
 
-
+    //Stop the odometry thread and the two robot function threads
     public void stop(){
         stopOdoThread();
         rfh1.stop();

@@ -121,6 +121,8 @@ public class Constants {
     public static final double DIS_CENTER_TO_RIGHT_ENC = DIS_BEWTEEN_ENCS-DIS_CENTER_TO_LEFT_ENC; //cm
     //Distance of the center encoder wheel to the center of robot
     public static final double DIS_CENTER_ENC_TO_CENTER = HALF_DIS_BETWEEN_ENCS-DIS_CENTER_TO_LEFT_ENC;
+    //Distance of the center encoder wheel to the center of robot
+    public static final double DIS_CENTER_ENC_TO_CENTER_HEIGHT = 2; //cm
 
 
     //AutoAimer Constants

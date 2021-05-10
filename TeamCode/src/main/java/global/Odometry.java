@@ -1,5 +1,7 @@
 package global;
 
+import com.vuforia.EyewearUserCalibrator;
+
 import java.util.ArrayList;
 
 import globalfunctions.Constants;
@@ -27,17 +29,15 @@ public class Odometry {
     public final double dc = Constants.DIS_CENTER_ENC_TO_CENTER;//Looks like this
     //          C
     // L--------|--|-----------R
-    public final double dh = Constants.RADIUS_CENTER_TO_ENC;
+    public final double dh = Constants.DIS_CENTER_ENC_TO_CENTER_HEIGHT; //Looks like this
     // C
     // ___
     //  |
     // ___
 
-    public ArrayList<Double> Ydebug = new ArrayList<>();
-    public ArrayList<Double> Xdebug = new ArrayList<>();
-    public ArrayList<Double> Hdebug = new ArrayList<>();
-
+    //Sine of the heading
     public double s = 0;
+    //1 - cosine of the heading
     public double c1 = 0;
 
 

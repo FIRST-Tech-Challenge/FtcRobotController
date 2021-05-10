@@ -2,6 +2,7 @@ package autofunctions;
 
 import java.util.ArrayList;
 
+import global.TerraBot;
 import util.CodeSeg;
 import util.Stage;
 
