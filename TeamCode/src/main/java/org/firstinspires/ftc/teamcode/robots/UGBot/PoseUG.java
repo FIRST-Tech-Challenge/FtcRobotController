@@ -30,8 +30,11 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import java.util.Arrays;
 
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_FAR;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_NEAR;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ANGLE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ELEVATION;
+import static org.firstinspires.ftc.teamcode.util.Conversions.between;
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
@@ -519,6 +522,7 @@ public class PoseUG {
         CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS_INCHES, turret.getHeading(), "#FF0000");
 
         // vision
+        packet.put("Right Laser", getDistRightDist());
         packet.put("Frame Count", frameCount);
         packet.put("FPS", String.format("%.2f", visionFPS));
         packet.put("Total frame time ms", totalFrameTimeMs);
@@ -717,6 +721,15 @@ public class PoseUG {
 
 
         maintainTarget();
+
+        //auto intake when we are tented and ring crosses the right distance sensor
+        if(isTented){
+            if (between(getDistRightDist(),INTAKE_ROLLING_RING_NEAR,INTAKE_ROLLING_RING_FAR))
+                //don't interrupt any other articulation
+                if(getArticulation()==Articulation.manual)
+                    articulate(Articulation.autoIntake);
+        }
+        
 
         //subsystem updates should be the very last movement methods called in this update cycle
         launcher.update();
@@ -1166,6 +1179,7 @@ public class PoseUG {
                 if(isTented){ //this looks like bad coding, but it the only way to structure this
                     wasTented = true;
                 }
+                else wasTented=false;
                 isTented = false;
                 intake.setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT);
                 autoIntakeState++;
@@ -1177,8 +1191,13 @@ public class PoseUG {
                 intake.setIntakeSpeed(Constants.AUTO_INTAKE_SPEED);
                 autoIntakeTimer = System.nanoTime();
                 autoIntakeState++;
+                if (wasTented) {
+                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_HANDOFF);
+                    autoIntakeState++; //skip over next case
+                }
                 break;
             case 2:
+                //transit the ring on the floor
                 if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_FIRST * 1E9) {
                     intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_HANDOFF);
                     autoIntakeTimer = System.nanoTime();
@@ -1186,6 +1205,7 @@ public class PoseUG {
                 }
                 break;
             case 3:
+                //wait for intake belt to bring up and hand off the ring, then ready for travel
                 if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_SECOND * 1E9) {
                     intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
                     intake.setIntakeSpeed(0);

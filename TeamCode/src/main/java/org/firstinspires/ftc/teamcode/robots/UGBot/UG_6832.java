@@ -686,7 +686,7 @@ public class UG_6832 extends OpMode {
 
         if(toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
             robot.returnHomeState = 0;
-            robot.articulate(PoseUG.Articulation.returnHome);
+            //robot.articulate(PoseUG.Articulation.returnHome);
         }
 
         //region good logging example
