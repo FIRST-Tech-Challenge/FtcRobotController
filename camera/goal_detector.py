@@ -24,8 +24,8 @@ orangeUpper = (38,252,255)
 greenLower = (29, 86, 6)
 greenUpper = (64, 255, 255)
 
-Upper = orangeUpper
-Lower = orangeLower
+Upper = redUpper
+Lower = redLower
 
 pts = deque(maxlen=args["buffer"])
 # if a video path was not supplied, grab the reference
