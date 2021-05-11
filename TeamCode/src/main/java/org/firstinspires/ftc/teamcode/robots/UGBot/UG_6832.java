@@ -713,10 +713,12 @@ public class UG_6832 extends OpMode {
         if(toggleAllowed(gamepad1.a, a, 1))
             robot.flywheelIsActive = !robot.flywheelIsActive;
         if(toggleAllowed(gamepad1.y, y, 1)) {
-            robot.articulate(PoseUG.Articulation.autoIntake);
+            //robot.articulate(PoseUG.Articulation.autoIntake);
+            robot.intake.Do(Intake.Behavior.INTAKE);
         }
         if(toggleAllowed(gamepad1.x,x,1)){
-            robot.articulate(PoseUG.Articulation.setUpTent);
+            //robot.articulate(PoseUG.Articulation.setUpTent);
+            robot.intake.Do(Intake.Behavior.TENT);
         }
 
         if (notdeadzone(gamepad1.right_stick_y)) {

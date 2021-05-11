@@ -729,7 +729,7 @@ public class PoseUG {
                 if(getArticulation()==Articulation.manual)
                     articulate(Articulation.autoIntake);
         }
-        
+
 
         //subsystem updates should be the very last movement methods called in this update cycle
         launcher.update();

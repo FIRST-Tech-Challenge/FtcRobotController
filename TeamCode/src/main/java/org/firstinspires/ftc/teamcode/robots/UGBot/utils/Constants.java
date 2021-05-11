@@ -104,6 +104,7 @@ public class Constants {
     public static int INTAKE_TO_TURRET_XFER_ELEVATION = 30;
 
     public static int INTAKE_OUT_SERVO_OUT = 1600;
+    public static int INTAKE_OUT_SERVO_HANDOFF = 1700;
     public static int INTAKE_OUT_SERVO_IN = 900;
 
     public static double AUTO_INTAKE_SPEED = .8;
