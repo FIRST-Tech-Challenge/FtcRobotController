@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robot.DriveTrain;
 import org.firstinspires.ftc.robot.FlyWheel;
+import org.firstinspires.ftc.robot.WobbleSystem;
 import org.firstinspires.ftc.robot_utilities.GamePadController;
 import org.firstinspires.ftc.robot.Hitter;
 import org.firstinspires.ftc.robot_utilities.RotationController;
@@ -27,15 +28,14 @@ public class EchoOp extends OpMode {
     private FlyWheel flywheel;
     private Hitter hitter;
     private Motor intake1, intake2;
-    private Motor wobbleArm;
-    private Servo wobbleHand;
+    private WobbleSystem wobbleSystem;
     private DifferentialDriveOdometry odometry;
     private RotationController rotationController;
 
     private double intakeSpeed = 0;
     private boolean wobbleHandOpen = false;
     private double wobbleHandPos = Vals.wobble_hand_close;
-    private double wobbleArmVelocity = 0;
+    private WobbleArmState wobbleArmState = WobbleArmState.UP;
     private boolean flywheelOn = false;
     private boolean flywheelPowershot = false;
 
@@ -60,8 +60,8 @@ public class EchoOp extends OpMode {
         intake1.setVeloCoefficients(0.05, 0, 0);
         intake2.setVeloCoefficients(0.05, 0, 0);
 
-        wobbleHand = hardwareMap.servo.get("wobbleArmServo");
-        wobbleArm = new Motor(hardwareMap, "wobbleArmMotor");
+        wobbleSystem = new WobbleSystem(new Motor(hardwareMap, "wobbleArmMotor"),
+                                        hardwareMap.servo.get("wobbleArmServo"));
 
         flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE), telemetry);
 
@@ -97,12 +97,12 @@ public class EchoOp extends OpMode {
             wobbleHandPos = Vals.wobble_hand_close;
         }
 
-        if(gamepad1.dpad_up) {
-            wobbleArmVelocity = Vals.wobble_arm_up_velocity;
-        } else if(gamepad1.dpad_down) {
-            wobbleArmVelocity = Vals.wobble_arm_down_velocity;
-        } else {
-            wobbleArmVelocity = 0;
+        if(gamepad.isUpRelease()) {
+            wobbleArmState = WobbleArmState.UP;
+        } else if(gamepad.isDownRelease()) {
+            wobbleArmState = WobbleArmState.DOWN;
+        } else if(gamepad.isLeftRelease()) {
+            wobbleArmState = WobbleArmState.MID;
         }
 
 
@@ -150,8 +150,19 @@ public class EchoOp extends OpMode {
         intake1.set(intakeSpeed);
         intake2.set(intakeSpeed);
 
-        wobbleHand.setPosition(wobbleHandPos);
-        wobbleArm.set(wobbleArmVelocity);
+        wobbleSystem.wobbleHand.setPosition(wobbleHandPos);
+
+        switch (wobbleArmState) {
+            case UP:
+                wobbleSystem.arm_up();
+                break;
+            case MID:
+                wobbleSystem.arm_mid();
+                break;
+            case DOWN:
+                wobbleSystem.arm_down();
+                break;
+        }
 
 
         telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
@@ -164,7 +175,9 @@ public class EchoOp extends OpMode {
         telemetry.addData("Left Distance", driveTrainDistance[0]);
         telemetry.addData("Right Distance", driveTrainDistance[1]);
         telemetry.addData("Intake Speed", intakeSpeed);
-        telemetry.addData("Flywheel Ready State", isReady);
+        telemetry.addData("Wobble Arm Position", wobbleSystem.wobbleArm.getCurrentPosition());
+        telemetry.addData("Wobble Arm Rotations", wobbleSystem.wobbleArm.getCurrentPosition());
+        telemetry.addData("Wobble Arm Distance", wobbleSystem.wobbleArm.getDistance());
 
         Pose2d pose = odometry.getPoseMeters();
         telemetry.addData("X Pos: ", pose.getX());
@@ -186,4 +199,10 @@ public class EchoOp extends OpMode {
 
 
     }
+}
+
+enum WobbleArmState {
+    DOWN,
+    MID,
+    UP
 }
