@@ -1,9 +1,10 @@
 package auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-//@Disabled
+@Disabled
 @Autonomous(name="AutoOne", group="Auto")
 public class AutoOne extends LinearOpMode {
     AutoHandler autoHandler = new AutoHandler(this);

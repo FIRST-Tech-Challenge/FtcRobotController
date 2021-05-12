@@ -39,19 +39,20 @@ public class SetpointController {
         if(xMP.hasStartDisBeenSet && yMP.hasStartDisBeenSet && hMP.hasStartDisBeenSet){
             //Current position vector
             Vector curPosVect = new Vector(currentPos[0] , currentPos[1]);
-            curPosVect.rotate(-currentPos[2], Vector.angle.DEGREES);
             //Start position vector
             Vector startVect = new Vector(xMP.startDis, yMP.startDis);
-            startVect.rotate(-currentPos[2], Vector.angle.DEGREES);
             //Target vector
             Vector targetVect = new Vector(target[0], target[1]);
-            targetVect.rotate(-currentPos[2], Vector.angle.DEGREES);
 
             //Local distance is the current pos - the start pos
             Vector localDis = curPosVect.subtract(startVect);
             //Local target is the target pos - the start pos
             Vector localTarget = targetVect.subtract(startVect);
             //Update the motion planners with the x and y coords
+
+            localDis.rotate(-currentPos[2], Vector.angle.DEGREES);
+            localTarget.rotate(-currentPos[2], Vector.angle.DEGREES);
+            //Rotate Vectors to Robot Coordinate Frame
             xMP.update(localDis.x, localTarget.x);
             yMP.update(localDis.y, localTarget.y);
             hMP.update(currentPos[2]-hMP.startDis, target[2]-hMP.startDis);

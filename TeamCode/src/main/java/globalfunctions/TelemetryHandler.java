@@ -83,7 +83,7 @@ public class TelemetryHandler {
                 telemetry.addData("left gyro", bot.angularPosition.getHeadingLeftGY());
                 telemetry.addData("right gyro", bot.angularPosition.getHeadingRightGY());
             case 3:
-                telemetry.addData("compass sensor", bot.angularPosition.getHeadingCS());
+//                telemetry.addData("compass sensor", bot.angularPosition.getHeadingCS());
         }
     }
     //Adds outtake

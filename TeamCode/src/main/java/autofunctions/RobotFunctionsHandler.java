@@ -51,6 +51,9 @@ public class RobotFunctionsHandler {
     //Timer
     public ElapsedTime timer = new ElapsedTime();
     //Update code for running the queue
+
+    //TODO
+    // Make this more efficient
     public CodeSeg updateCode = () -> {
         if(rfsQueueIndex < rfsQueue.size()){
             Stage s = rfsQueue.get(rfsQueueIndex);
@@ -58,7 +61,7 @@ public class RobotFunctionsHandler {
                 rfsQueueIndex++;
                 timer.reset();
             }
-        }else{
+        }else if(!rfsQueue.isEmpty()){
             rfsQueueIndex = 0;
             rfsQueue.clear();
         }

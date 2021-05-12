@@ -10,7 +10,7 @@ public class TerraThread implements Runnable {
     CodeSeg cs;
     Stage st;
     public boolean executing = true;
-    public int refreshRate = 100; // hertz
+    public int refreshRate = 10; // hertz default
 
     //Define thread with codeseg to run and stage to stop
     public TerraThread(CodeSeg run, Stage stop){

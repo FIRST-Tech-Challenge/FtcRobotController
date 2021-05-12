@@ -30,6 +30,7 @@ import telefunctions.ButtonController;
 import telefunctions.Cycle;
 import telefunctions.Limits;
 import util.CodeSeg;
+import util.Line;
 import util.Stage;
 
 public class TerraBot {
@@ -197,10 +198,6 @@ public class TerraBot {
         outr.setVelocityPIDFCoefficients(54, 0, 0, 14);
         outl.setVelocityPIDFCoefficients(54, 0, 0, 14);
 
-        //Define Automodules
-        defineShooter();
-        defineWobbleGoal();
-        definePowershot();
 
         //Initialize robot functions
         rfs.init(this);
@@ -211,6 +208,38 @@ public class TerraBot {
 
 
     }
+
+
+    public void autoInit(LinearOpMode op){
+        // Initialize the robot
+        init(op.hardwareMap);
+        // Set the wobble goal start pos
+        wgStart = Constants.WG_START_POS_AUTON;
+        //Start the odometry thread
+        startOdoThreadAuto(op, false);
+    }
+    public void teleInit(HardwareMap hwMap){
+        // Initialize the robot
+        init(hwMap);
+        //Define Automodules
+        defineShooter();
+        defineWobbleGoal();
+        definePowershot();
+        // Start the odometry thread
+        startOdoThreadTele();
+        //Did auton run before this?
+        boolean shouldICareAboutAuton = false;
+        // If we don't want to use the last auton's data, reset the gyro to heading 0
+        if(!shouldICareAboutAuton){
+            angularPosition.resetGyro(0);
+            odometry.resetHeading(0);
+            updateOdoWithLocalizer();
+        }else{
+            // Use readings from last auton to find wg, robot, and angular positions
+            readFromAuton();
+        }
+    }
+
 
     //Helper methods for getting hardware
     public DcMotor getMotor(HardwareMap hwMap, String name, DcMotor.Direction dir, DcMotor.ZeroPowerBehavior zpb, DcMotor.RunMode mode){
@@ -505,13 +534,13 @@ public class TerraBot {
                 updateOdometryUsingSensors();
             }
         };
-        Stage exit = new Stage() {
-            @Override
-            public boolean run(double in) {
-                return op.isStopRequested();
-            }
-        };
-        odometryThread = new TerraThread(run, exit);
+//        Stage exit = new Stage() {
+//            @Override
+//            public boolean run(double in) {
+//                return op.isStopRequested();
+//            }
+//        };
+        odometryThread = new TerraThread(run);
         odometryThread.changeRefreshRate(Constants.ODOMETRY_REFRESH_RATE);
         Thread t = new Thread(odometryThread);
         t.start();
@@ -524,6 +553,7 @@ public class TerraBot {
             updateOdometryUsingSensors();
         };
         odometryThread = new TerraThread(run);
+        odometryThread.changeRefreshRate(Constants.ODOMETRY_REFRESH_RATE);
         Thread t = new Thread(odometryThread);
         t.start();
     }

@@ -89,13 +89,11 @@ public class Path {
     @SafeVarargs
     public final void addRF(ArrayList<Stage>... stages){
         bot.rfh1.addRFs(defineIndex, stages);
-        defineIndex++;
     }
     //Add a robot function to the 2nd thread
     @SafeVarargs
     public final void addRF2(ArrayList<Stage>... stages){
         bot.rfh2.addRFs(defineIndex, stages);
-        defineIndex++;
     }
     //Go to the next index
     public void next(){
@@ -184,6 +182,8 @@ public class Path {
         while (op.opModeIsActive() && isExecuting) {
             double[] pows = update(bot.odometry.getAll());
             bot.move(pows[1], pows[0], pows[2]);
+            op.telemetry.addData("rfsSize", bot.rfh1.rfsQueue.size());
+            op.telemetry.update();
         }
         op.telemetry.addData("Status:", "Done");
         op.telemetry.update();

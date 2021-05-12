@@ -15,44 +15,17 @@ public class TerraOp extends OpMode {
     TelemetryHandler telemetryHandler = new TelemetryHandler();
     Optimizer optimizer = new Optimizer();
 
-
-    // Should the robot use the data stored from the last auton run?
-    boolean shouldICareAboutAuton = false;
-
     @Override
     public void init() {
         telemetry.addData("Ready?", "No.");
         telemetry.update();
-        // Initialize the robot
-        bot.init(hardwareMap);
-        // Start the odometry thread
-        bot.startOdoThreadTele();
-
+        bot.teleInit(hardwareMap);
         // Reset optimizer
         optimizer.reset();
-
-        //Increase Accel for teleop
-        Constants.FRICTION_ACCEL = 400;
-
-
-        // If we don't want to use the last auton's data, reset the gyro to heading 0
-        if(!shouldICareAboutAuton){
-            bot.angularPosition.resetGyro(0);
-            bot.odometry.resetHeading(0);
-            bot.updateOdoWithLocalizer();
-        }else{
-            // Use readings from last auton to find wg, robot, and angular positions
-            bot.readFromAuton();
-        }
-
-
-
-
-
         // Initialize telemetryHandler and tell the driver that initialization is done
+        telemetryHandler.init(telemetry, bot);
         telemetry.addData("Ready?", "Yes!");
         telemetry.update();
-        telemetryHandler.init(telemetry, bot);
 
     }
 

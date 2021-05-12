@@ -144,7 +144,13 @@ public class AutoHandler {
 
     public void autoT(){
         path.addWaypoint(0, 30, 0);
-        path.addSetpoint(0, 50, 0);
+        path.addRF(rf.intake(1));
+        path.addSetpoint(0, -30, 90);
+        path.addRF(rf.intake(0));
+//        path.addWaypoint(10,-10,10);
+        path.addSetpoint(-20,20,-90);
+        path.addSetpoint(10,10,45);
+        path.addSetpoint(-10,-10,-45);
         path.start(op);
         bot.stop();
     }
@@ -164,9 +170,7 @@ public class AutoHandler {
 
 
     public void initialize(boolean scan) {
-        bot.init(op.hardwareMap);
-        bot.wgStart = Constants.WG_START_POS_AUTON;
-        bot.startOdoThreadAuto(op, true);
+        bot.autoInit(op);
         rf = bot.rfs;
         path.init(bot);
         if(scan) {
