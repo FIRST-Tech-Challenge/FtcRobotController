@@ -137,6 +137,12 @@ public class TerraBot {
     //Is movement available in teleop?
     public boolean isMovementAvailable = true;
 
+    //Is outtake available in teleop?
+    public boolean isOuttakeAvailable = true;
+
+    //Is intake available in teleop?
+    public boolean isIntakeAvailable = true;
+
     //Is in powershot mode?
     public boolean powershotMode = false;
 
@@ -284,7 +290,7 @@ public class TerraBot {
     //Intake power p and check if not outtake to control ring shooter
     public void intake(double p){
         in.setPower(p);
-        if (!outtaking) { shootRings(-Math.signum(p)*Constants.RS_POW);}
+        if (isIntakeAvailable) { shootRings(-Math.signum(p)*Constants.RS_POW);}
     }
     //Toggles knockdown servos
     public void toggleKnockdown(boolean hasPressed) {
@@ -332,15 +338,17 @@ public class TerraBot {
     //Update intake for teleop
     public void updateIntake(boolean left_bumper, boolean right_bumper) {
         //Set intake on with right bumper and turn it off with left bumper and also go backward with left bumper
-        if(right_bumper){
-            intaking = true;
-        }else if(left_bumper){
-            intaking = false;
-            intake(-0.5);
-        }else if(intaking){
-            intake(1);
-        }else{
-            intake(0);
+        if(isIntakeAvailable) {
+            if (right_bumper) {
+                intaking = true;
+            } else if (left_bumper) {
+                intaking = false;
+                intake(-0.5);
+            } else if (intaking) {
+                intake(1);
+            } else {
+                intake(0);
+            }
         }
     }
 
@@ -621,16 +629,20 @@ public class TerraBot {
         shooter.init(rfh1);
         shooter.add(rfs.addCustom(() -> {
             outtaking = true;
-            autoAimer.shotMode = 0;
+            isOuttakeAvailable = false;
+            isIntakeAvailable = false;
+//            autoAimer.shotMode = 0;
         }));
         shooter.add(rfs.addWait(0.3));
-        shooter.add(rfs.turnToGoal());
+//        shooter.add(rfs.turnToGoal());
         shooter.add(rfs.moveRS(Constants.RS_POW));
         shooter.add(rfs.addWait(1));
         shooter.add(rfs.outtake(0));
         shooter.add(rfs.moveRS(0));
         shooter.add(rfs.addCustom(() -> {
             outtaking = false;
+            isOuttakeAvailable = true;
+            isIntakeAvailable = true;
         }));
         autoModules.add(shooter);
     }

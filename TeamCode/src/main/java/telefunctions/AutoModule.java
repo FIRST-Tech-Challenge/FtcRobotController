@@ -10,7 +10,7 @@ public class AutoModule {
     //Current stage that the automodule is on
     public int stageNum = 0;
     //Is the automodule pausing?
-    public boolean pausing = false;
+    public boolean pausing = true;
     //Robot Functions Handler to use
     public RobotFunctionsHandler rfh;
     //List of indexes to pause at
@@ -35,16 +35,19 @@ public class AutoModule {
     public void start(){
         //Set pausing to false
         pausing = false;
+        next();
     }
     //Updates the automodule
     public void update(){
-        //if the automodule is running and it should not pause then add the current robot function to the queue
-        if(!pausing && !shouldPause()) {
-            rfh.update(stageNum);
-            next();
-        }else if(!pausing){ //If the automodule is running and it should pause then set pausing to true and go to the next stage
-            pausing = true;
-            next();
+
+        if(!pausing){
+            //If the automodule is running and it should pause then set pausing to true
+            if(shouldPause()){
+                pausing = true;
+            }else{//if the automodule is running and it should not pause then add the current robot function to the queue
+                rfh.update(stageNum);
+                next();
+            }
         }
     }
 

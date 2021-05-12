@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import global.TerraBot;
 import globalfunctions.Constants;
+import globalfunctions.Sleep;
 import util.CodeSeg;
 import util.Stage;
 
@@ -122,7 +123,8 @@ public class RobotFunctions {
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
-                return in > time;
+                Sleep.trySleep(() -> Thread.sleep((int)(time*1000)));
+                return true;
             }
         });
         return stages;

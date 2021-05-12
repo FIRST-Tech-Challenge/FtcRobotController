@@ -3,6 +3,8 @@ package teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import java.util.Arrays;
+
 import global.TerraBot;
 import globalfunctions.Constants;
 import globalfunctions.Optimizer;
@@ -54,8 +56,7 @@ public class TerraOp extends OpMode {
         bot.moveTeleOp(-gamepad1.right_stick_y, gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.right_trigger, gamepad1.left_trigger);
 
         // update the intake with the gamepad1 bumpers
-        bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
-
+//        bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
         // if automodules aren't running:
         if(!bot.areAutomodulesRunning()) {
@@ -69,15 +70,19 @@ public class TerraOp extends OpMode {
             }
 
             // update outtake wheels manually with gamepad2's right stick y
-            bot.outtake(-gamepad2.right_stick_y);
+            if(bot.isOuttakeAvailable) {
+                bot.outtake(-gamepad2.right_stick_y);
+            }
 
             // update the outtake servo manually with gamepad2's left stick y
-            if(gamepad2.right_bumper) {
-                bot.shootRings(Constants.RS_POW);
-            }else if(gamepad2.left_bumper){
-                bot.shootRings(-Constants.RS_POW);
-            }else{
-                bot.shootRings(0);
+            if(bot.isOuttakeAvailable) {
+                if (gamepad2.right_bumper) {
+                    bot.shootRings(Constants.RS_POW);
+                } else if (gamepad2.left_bumper) {
+                    bot.shootRings(-Constants.RS_POW);
+                } else {
+                    bot.shootRings(0);
+                }
             }
         }
 
@@ -86,7 +91,7 @@ public class TerraOp extends OpMode {
         }
 
         // when the driver presses gamepad1.y, start the shooting automodule
-        if (gamepad1.y) {
+        if (bot.outtakeButtonController.isPressedOnce(gamepad1.y)) {
             bot.shooter.start();
         }
 
@@ -100,7 +105,12 @@ public class TerraOp extends OpMode {
 
         bot.updateAutoModules();
         // TELEMETRY
-        telemetryHandler.addTele(0,0,0,0,0);
+        telemetry.addData("pauses", Arrays.toString(bot.shooter.pauses.toArray()));
+        telemetry.addData("pausing", bot.shooter.pausing);
+        telemetry.addData("startstagenum", bot.shooter.startStageNum);
+        telemetry.addData("currentstagenum", bot.shooter.stageNum);
+        telemetry.addData("definestafenum", bot.shooter.defineStageNum);
+//        telemetryHandler.addTele(0,0,0,0,0);
         telemetry.update();
     }
 
