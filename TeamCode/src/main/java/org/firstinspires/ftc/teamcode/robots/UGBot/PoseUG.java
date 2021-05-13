@@ -193,10 +193,7 @@ public class PoseUG {
         cardinalBaseRight,
         cardinalBaseLeft,
         returnHome,
-        autoIntake,
         testShot,
-        makeIntakeOuttake,
-        setUpTent,
         intakeDisk,
         dumpWobbleGoal,
         secondaryGripperModeSetup
@@ -723,11 +720,12 @@ public class PoseUG {
         maintainTarget();
 
         //auto intake when we are tented and ring crosses the right distance sensor
-        if(isTented){
+        //todo move into Intake class as TentTake behavior - probably as a behavior to cascade into after TentSetup
+        if(intake.isTented() && intake.isRollingRingMode()){
             if (between(getDistRightDist(),INTAKE_ROLLING_RING_NEAR,INTAKE_ROLLING_RING_FAR))
-                //don't interrupt any other articulation
-                if(getArticulation()==Articulation.manual)
-                    articulate(Articulation.autoIntake);
+                //don't interrupt other articulations
+                if(getArticulation()==Articulation.manual||getArticulation()==Articulation.toggleTrigger)
+                    intake.Do(Intake.Behavior.INTAKE);
         }
 
 
@@ -1170,53 +1168,6 @@ public class PoseUG {
         return true;
     }
 
-    public int autoIntakeState = 0;
-    private double autoIntakeTimer = 0;
-    private boolean wasTented = false;
-    public boolean autoIntake(){
-        switch(autoIntakeState){
-            case 0:
-                if(isTented){ //this looks like bad coding, but it the only way to structure this
-                    wasTented = true;
-                }
-                else wasTented=false;
-                isTented = false;
-                intake.setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT);
-                autoIntakeState++;
-                break;
-            case 1:
-                if(!wasTented) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_PICKUP);
-                }
-                intake.setIntakeSpeed(Constants.AUTO_INTAKE_SPEED);
-                autoIntakeTimer = System.nanoTime();
-                autoIntakeState++;
-                if (wasTented) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_HANDOFF);
-                    autoIntakeState++; //skip over next case
-                }
-                break;
-            case 2:
-                //transit the ring on the floor
-                if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_FIRST * 1E9) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_HANDOFF);
-                    autoIntakeTimer = System.nanoTime();
-                    autoIntakeState++;
-                }
-                break;
-            case 3:
-                //wait for intake belt to bring up and hand off the ring, then ready for travel
-                if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_SECOND * 1E9) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
-                    intake.setIntakeSpeed(0);
-                    wasTented = false;
-                    autoIntakeState = 0;
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
 
     public int toggleTriggerState = 0;
     public long lastTriggerTime;
@@ -1256,15 +1207,24 @@ public class PoseUG {
                 setTarget(newTarget);
                 flywheelIsActive = true;
                 shootRingStage++;
+                shootTime = System.nanoTime();
                 break;
             case 1:
+                //todo need to add a proper test to see if we are on target before shooting
+                //for now just adding a delay
+                if(System.nanoTime() - shootTime > 1.5 * 1E9){
+                    shootRingStage++;
+                    shootTime = System.nanoTime();
+                }
+                break;
+            case 2:
                 if(toggleTriggerArticulation()){
                     ringsShot++;
                     shootRingStage++;
                     shootTime = System.nanoTime();
                 }
                 break;
-            case 2:
+            case 3:
                 if(ringsShot == numShots){
                     shootRingStage++;
                 }
@@ -1273,7 +1233,7 @@ public class PoseUG {
                     shootRingStage--;//ben was here
                 }
                 break;
-            case 3:
+            case 4:
                 shootRingStage = 0;
                 setTarget(Constants.Target.NONE);
                 flywheelIsActive = false;
@@ -1398,74 +1358,6 @@ public class PoseUG {
         Constants.IN_WOBBLE_MODE = false;
     }
 
-    int outtakeState = 0;
-    double outtakeTimer = 0.0;
-    public boolean deployIntake(){
-        switch (outtakeState){
-            case 0:
-                intake.setIntakeSpeed(1);
-                intake.setTiltTargetPosition(Constants.INTAKE_TILT_FOR_OUTTAKE);
-                outtakeTimer = System.nanoTime();
-                outtakeState++;
-                break;
-            case 1:
-                if(System.nanoTime() - outtakeTimer > .2 * 1E9) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_FOR_OUTTAKE_TOO);
-                    outtakeTimer = System.nanoTime();
-                    outtakeState++;
-                }
-                break;
-            case 2:
-                if(System.nanoTime() - outtakeTimer > .2 * 1E9){
-                    intake.setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT);
-                    outtakeTimer = System.nanoTime();
-                    outtakeState++;
-                }
-                break;
-            case 3:
-                if(System.nanoTime() - outtakeTimer > .2 * 1E9){
-//                    if(autoIntake()) {
-                        intake.setIntakeSpeed(-.5);
-                        outtakeTimer = System.nanoTime();
-                        outtakeState++;
-//                    }
-                }
-                break;
-            case 4:
-                if(System.nanoTime() - outtakeTimer > .7 * 1E9) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
-                    intake.setIntakeSpeed(0);
-                    outtakeState = 0;
-                    return true;
-                }
-        }
-        return false;
-    }
-
-    int tentSetup = 0;
-    boolean isTented = false;
-    public boolean setupTent(){
-        switch (tentSetup){
-            case 0:
-                intake.setIntakeSpeed(1);
-                intake.setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TENT);
-                intake.setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT - 200);
-                outtakeTimer = System.nanoTime();
-                tentSetup++;
-                break;
-            case 1:
-                if(System.nanoTime() - outtakeTimer > 1 * 1E9) {
-                    intake.setIntakeSpeed(0);
-                    outtakeTimer = System.nanoTime();
-                    tentSetup = 0;
-                    isTented = true;
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
-
     public Articulation articulate(Articulation target) {
         articulation = target; // store the most recent explict articulation request as our target, allows us
                                // to keep calling incomplete multi-step transitions
@@ -1482,11 +1374,6 @@ public class PoseUG {
                 if(toggleTriggerArticulation())
                         articulation = Articulation.manual;
                 break;
-            case autoIntake:
-                if(autoIntake()){
-                    articulation = Articulation.manual;
-                }
-                break;
             case cardinalBaseLeft:
                 if (cardinalBaseTurn(false)) {
                     articulation = PoseUG.Articulation.manual;
@@ -1494,16 +1381,6 @@ public class PoseUG {
                 break;
             case cardinalBaseRight:
                 if (cardinalBaseTurn(true)) {
-                    articulation = PoseUG.Articulation.manual;
-                }
-                break;
-            case makeIntakeOuttake:
-                if(deployIntake()){
-                    articulation = PoseUG.Articulation.manual;
-                }
-                break;
-            case setUpTent:
-                if(setupTent()){
                     articulation = PoseUG.Articulation.manual;
                 }
                 break;

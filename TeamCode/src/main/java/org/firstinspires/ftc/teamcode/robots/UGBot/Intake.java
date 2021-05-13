@@ -14,8 +14,8 @@ public class Intake {
     public Servo outServo = null;
     private double speed;
     private boolean active = true;
-    private int tiltTargetPosition = Constants.INTAKE_TILT_INIT_POS;
-    private int outTargetPos = Constants.INTAKE_OUT_SERVO_IN;
+    private int tiltTargetPosition = Constants.INTAKE_INIT_TOP;
+    private int outTargetPos = Constants.INTAKE_INIT_BTM;
 
 
 
@@ -28,17 +28,31 @@ public class Intake {
     }
 
     public enum Behavior{
-        INITIALIZE, //before match, fully retracted and vertical for
+        INITIALIZE, //before match, fully retracted and vertical for sizing
         DEPLOY, //beginning of match should deploy once
         TRAVEL, //for running around the field - default behavior
         PICKUP, //for transiting across the ring to pick it up - this is a mini behavior
         ELEVATE, //run up the ringevator and exit into the slinger tray
         INTAKE, //combo of pickup and elevate - not sure if needed, since Pickup should transition to elevate
         TENT, //enter tent mode
+        ROLLING_RINGTAKE, //auto snap on rolling rings
         REACH //todo: far reach
     }
+
+    public Behavior getBehavior() {
+        return behavior;
+    }
+
     protected Behavior behavior = Behavior.INITIALIZE;
     int miniState=0;
+
+    public boolean isRollingRingMode() {
+        return rollingRingMode;
+    }
+    public void setRollingRingMode(boolean rollingRingMode) {
+        this.rollingRingMode = rollingRingMode;
+    }
+    boolean rollingRingMode = false;
 
     public Behavior Do(Behavior target){
         behavior = target; // store the most recent explict articulation request as our target, allows us
@@ -50,24 +64,41 @@ public class Intake {
 
         switch (behavior) {
             case INITIALIZE:
+                //only need to call this behavior if resetting - these are the starting values when Intake is created
+                tiltTargetPosition = Constants.INTAKE_INIT_TOP;
+                outTargetPos = Constants.INTAKE_INIT_BTM;
                 break;
             case DEPLOY:
-                if(deployIntake()){
+                if(Deploy()){
                     behavior=Behavior.TRAVEL;
                 }
                 break;
             case TRAVEL:
+                setTravel(); //normally we stay in this mode
                 break;
-            case PICKUP:
+            case PICKUP: //not broken out yet
                 break;
-            case ELEVATE:
+            case ELEVATE: //not broken out yet
+                break;
+            case INTAKE:
+                if (Intake()){
+                    if (!isRollingRingMode())
+                        behavior=Behavior.TRAVEL; //normally we transition back to Travel after intake
+                    else
+                        behavior=Behavior.TENT; //auto return to Tent after Intake
+                }
                 break;
             case TENT:
                 if(setupTent()){
-                    behavior=Behavior.TRAVEL;
+                    setRollingRingMode(true);
+                    behavior=Behavior.ROLLING_RINGTAKE;
                 }
                 break;
-            case REACH:
+            case ROLLING_RINGTAKE:
+                //does nothing until we move logic here from pose.update
+                //for now it just stays in this behavior until another is called
+                break;
+            case REACH: //not implemented
                 break;
             default:
                 return target;
@@ -83,6 +114,7 @@ public class Intake {
             intakeMotor.setPower(0);
         }
 
+        Do(behavior); //call the current Ringevator behavior
 
         tiltServo.setPosition(Conversions.servoNormalize(tiltTargetPosition));
         outServo.setPosition(Conversions.servoNormalize(outTargetPos));
@@ -90,24 +122,25 @@ public class Intake {
 
     int deployState = 0;
     double deployTimer = 0.0;
-    public boolean deployIntake(){
+    public boolean Deploy()
+    {
         switch (deployState){
             case 0:
                 setIntakeSpeed(1);
-                setTiltTargetPosition(Constants.INTAKE_TILT_FOR_OUTTAKE);
+                setTiltTargetPosition(Constants.INTAKE_DEPLOY_TOP);
                 deployTimer = System.nanoTime();
                 deployState++;
                 break;
             case 1:
                 if(System.nanoTime() - deployTimer > .2 * 1E9) {
-                    setTiltTargetPosition(Constants.INTAKE_TILT_FOR_OUTTAKE_TOO);
+                    setTiltTargetPosition(Constants.INTAKE_DEPLOY2_TOP);
                     deployTimer = System.nanoTime();
                     deployState++;
                 }
                 break;
             case 2:
                 if(System.nanoTime() - deployTimer > .2 * 1E9){
-                    setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT);
+                    setOutTargetPosition(Constants.INTAKE_DEPLOY_TRAVEL_BTM);
                     deployTimer = System.nanoTime();
                     deployState++;
                 }
@@ -123,8 +156,7 @@ public class Intake {
                 break;
             case 4:
                 if(System.nanoTime() - deployTimer > .7 * 1E9) {
-                    setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TRAVEL);
-                    setIntakeSpeed(0);
+                    setTravel();
                     deployState = 0;
                     return true;
                 }
@@ -132,19 +164,97 @@ public class Intake {
         return false;
     }
 
+    public boolean setTravel(){
+        setTiltTargetPosition(Constants.INTAKE_TRAVEL_TOP);
+        setOutTargetPosition(Constants.INTAKE_DEPLOY_TRAVEL_BTM);
+        setIntakeSpeed(0);
+        return true;
+    }
+
+    public int autoIntakeState = 0;
+    private double autoIntakeTimer = 0;
+    private boolean wasTented = false;
+    public boolean Intake(){
+        switch(autoIntakeState){
+            case 0:
+                if(isTented){ //this looks like bad coding, but it the only way to structure this
+                    wasTented = true;
+                }
+                else wasTented=false;
+                isTented = false;
+                setOutTargetPosition(Constants.INTAKE_DEPLOY_TRAVEL_BTM);
+                autoIntakeState++;
+                break;
+            case 1:
+                if(!wasTented) {
+                    //lean forward to contact flat ring if we are not recovering from Tent
+                    setTiltTargetPosition(Constants.INTAKE_PICKUP_TOP);
+                }
+                setIntakeSpeed(Constants.INTAKE_SPEED);
+                autoIntakeTimer = System.nanoTime();
+                autoIntakeState++;
+                if (wasTented) {
+                    //go straight to lift and handoff
+                    setTiltTargetPosition(Constants.INTAKE_HANDOFF_TOP);
+                    setOutTargetPosition(Constants.INTAKE_HANDOFF_BTM);
+                    autoIntakeState++; //skip over next case
+                }
+                break;
+            case 2:
+                //transit the ring on the floor during the wait, then start lift and handoff
+                if(System.nanoTime() - autoIntakeTimer > Constants.INTAKE_TIME_FIRST * 1E9) {
+                    setTiltTargetPosition(Constants.INTAKE_HANDOFF_TOP);
+                    setOutTargetPosition(Constants.INTAKE_HANDOFF_BTM);
+                    autoIntakeTimer = System.nanoTime();
+                    autoIntakeState++;
+                }
+                break;
+            case 3:
+                //wait for intake belt to bring up and hand off the ring, then ready for travel
+                if(System.nanoTime() - autoIntakeTimer > Constants.INTAKE_TIME_SECOND * 1E9) {
+                    setTravel();
+                    wasTented = false;
+                    autoIntakeState = 0;
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
+
+
+    //Tent Mode Setup
     int tentSetup = 0;
+
+    public boolean isTented() {
+        return isTented;
+    }
+
+    public void setTented(boolean tented) {
+        isTented = tented;
+    }
+
     boolean isTented = false;
     long tentTimer = System.nanoTime();
     public boolean setupTent(){
         switch (tentSetup){
-            case 0:
+            case 0: //begin moving forward without digging in to stall (only slightly more aggressive than Pickup)
                 setIntakeSpeed(1);
-                setTiltTargetPosition(Constants.INTAKE_TILT_SERVO_TENT);
-                setOutTargetPosition(Constants.INTAKE_OUT_SERVO_OUT - 200);
+                setTiltTargetPosition(Constants.INTAKE_TENT_TOP);
+                setOutTargetPosition(Constants.INTAKE_DEPLOY_TRAVEL_BTM);
                 tentTimer = System.nanoTime();
                 tentSetup++;
                 break;
-            case 1:
+            case 1: //now we can move further forward
+                if(System.nanoTime() - tentTimer > .3 * 1E9) {
+                    setTiltTargetPosition(Constants.INTAKE_TENT_TOP2);
+                    setOutTargetPosition(Constants.INTAKE_TENT_BTM);
+                    tentTimer = System.nanoTime();
+                    tentSetup++;
+                }
+                break;
+            case 2:
+
                 if(System.nanoTime() - tentTimer > 1 * 1E9) {
                     setIntakeSpeed(0);
                     tentTimer = System.nanoTime();

@@ -91,13 +91,36 @@ public class Autonomous {
 
     private Constants.Position targetPose;
 
+    public StateMachine DemoRollingRingtake = getStateMachine(autoStage)
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.DEPLOY))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            //spin up the flywheel
+            .addSingleState(() -> robot.launcher.preSpinFlywheel(900))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_ROLLERS,true,  .5,.1))
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.TENT)) //initial tent to put it into rollingringtake
+            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,10))
+
+            //the rest of this is just about safely returning proteus to starting position
+            .addSingleState(()-> robot.setTarget(Constants.Target.NONE))
+            .addSingleState(()-> robot.intake.setRollingRingMode(false))
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.INTAKE))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.TRAVEL))
+            //todo: something still doesn't work right here. bottom servo jams. prolly need a custom RETURN_INIT behavior
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.INITIALIZE))
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.HOME, false, .4,.1))
+            //todo add a robot.quiesce
+            .build();
+
     public StateMachine AutoFull = getStateMachine(autoStage)
             //raise elbow to minimum distance for clear gripper extension
             .addSingleState(()->robot.launcher.wobbleRelease())
             .addSingleState(() -> robot.launcher.setElbowTargetAngle(5))
             .addSingleState(()->robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS))
-            //deploy intake
-            .addState(()-> robot.deployIntake())
+            //deploy intake without waiting on completion so gripper deploys simultaneously
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.DEPLOY))
 
             //open then extend the gripper
             .addTimedState(1f, ()->robot.launcher.wobbleGrip(),()->robot.launcher.setElbowTargetAngle(15))
@@ -156,7 +179,7 @@ public class Autonomous {
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(()-> robot.deployIntake())
+            .addState(()-> robot.intake.Deploy())
             .addSingleState(()->robot.launcher.wobbleRelease())
             .addSingleState(() -> robot.launcher.setElbowTargetAngle(0))
             .addSingleState(()->robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS))

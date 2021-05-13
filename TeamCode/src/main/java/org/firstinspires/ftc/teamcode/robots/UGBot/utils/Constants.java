@@ -91,28 +91,35 @@ public class Constants {
     public static double DANGER_ZONE_SAFTEY_BUFFER = 3;
     public static int GRIPPER_HEADING_OFFSET = 42; //add this to the desired turret angle to actually point the open gripper that way and not the turret
 
-    public static int INTAKE_TILT_SERVO_TRAVEL = 1450;
-    public static int INTAKE_TILT_SERVO_HANDOFF = 1100;
-    public static int INTAKE_TILT_SERVO_PICKUP = 1600;
-    public static int INTAKE_TILT_SERVO_TENT = 1900;
-    public static int INTAKE_TILT_FOR_OUTTAKE = 1300;
-    public static int INTAKE_TILT_FOR_OUTTAKE_TOO = 1600;
-    public static int INTAKE_TILT_INIT_POS = 899;
+    //renaming the Intake servo combinations to group together in Dashboard
+    public static int INTAKE_DEPLOY_TOP = 1300;
+    public static int INTAKE_DEPLOY2_TOP = 1600;
+    public static int INTAKE_DEPLOY_TRAVEL_BTM = 1600; //use as default bottom servo position if none specified
+
+    public static int INTAKE_HANDOFF_BTM = 1675;
+    public static int INTAKE_HANDOFF_TOP = 900;
+
+    public static int INTAKE_INIT_BTM = 900;
+    public static int INTAKE_INIT_TOP = 1100;
+
+    public static int INTAKE_PICKUP_TOP = 1700;
+
+    public static int INTAKE_TENT_BTM = 1400;
+    public static int INTAKE_TENT_TOP = 1750;
+    public static int INTAKE_TENT_TOP2 = 1800; //do this after it has started moving forward
+
+    public static int INTAKE_TRAVEL_TOP = 1450;
+
+    public static double INTAKE_ROLLING_RING_NEAR = .1; //distance range to trigger snap back
+    public static double INTAKE_ROLLING_RING_FAR = .5;
 
     //chassis-relative angle that places the transfer tray into a good position to receive rings from the intake
     public static int INTAKE_TO_TURRET_XFER_ANGLE = 360-25;
     public static int INTAKE_TO_TURRET_XFER_ELEVATION = 30;
 
-    public static int INTAKE_OUT_SERVO_OUT = 1600;
-    public static int INTAKE_OUT_SERVO_HANDOFF = 1700;
-    public static int INTAKE_OUT_SERVO_IN = 900;
-
-    public static double AUTO_INTAKE_SPEED = .8;
-    public static double AUTO_INTAKE_FIRST = .65;
-    public static double AUTO_INTAKE_SECOND = 1.1;
-
-    public static double INTAKE_ROLLING_RING_NEAR = .1;
-    public static double INTAKE_ROLLING_RING_FAR = .5;
+    public static double INTAKE_SPEED = .8; //speed of walk and lift
+    public static double INTAKE_TIME_FIRST = .65; //time to walk the ring
+    public static double INTAKE_TIME_SECOND = 1.6; //time for ring to escalate & handoff
 
     public static double TURRET_SPEED= 90; //max degrees per second to manually adjust turret targetAngle
     public static double TURRET_TOLERANCE = 2; //accuracy wiggle room
@@ -189,8 +196,9 @@ public class Constants {
         WOBBLE_TWO_GRAB (40/INCHES_PER_METER, (26)/INCHES_PER_METER, 90, 270,0,0),
         NAVIGATE(49/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .2), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
         LAUNCH_PREFERRED(49/INCHES_PER_METER, (4.5*12)/INCHES_PER_METER,-1,-1, -1,0), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
+        LAUNCH_ROLLERS(49/INCHES_PER_METER, (5.5*12)/INCHES_PER_METER,260,0, 25,.2), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
         WOBBLE_GOAL_DUMP(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES + 3)/INCHES_PER_METER, -1, 180 + GRIPPER_HEADING_OFFSET, 45, .6),
-        TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10, .2);
+        TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,330,30, 10, .2);
 
         public double x, y, baseHeading, launchHeading, launchElevation, launchStart;
 
