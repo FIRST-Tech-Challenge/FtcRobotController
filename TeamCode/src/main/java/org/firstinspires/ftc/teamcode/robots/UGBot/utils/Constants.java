@@ -76,7 +76,8 @@ public class Constants {
     public static double startingYOffset = ROBOT_RADIUS_INCHES/INCHES_PER_METER;
     public static double HEIGHT_MULTIPLIER = 1.15;
     public static double RPS_MULTIPLIER = 1.07;
-    public static double MUZZLE_ANGLE_OFFSET_IN_TELE_OP = -10;
+    public static double MUZZLE_ANGLE_OFFSET_IN_TELE_OP = -8;
+    public static double STARTING_HEIGHT_OFFSET = 0;
     public static int  ELBOW_ZERO_DEGREES_OFFSET = 141;
     public static double ILLEGAL_SHOOTING_DISTANCE = 1.8288;
 
@@ -94,19 +95,19 @@ public class Constants {
     //renaming the Intake servo combinations to group together in Dashboard
     public static int INTAKE_DEPLOY_TOP = 1300;
     public static int INTAKE_DEPLOY2_TOP = 1600;
-    public static int INTAKE_DEPLOY_TRAVEL_BTM = 1600; //use as default bottom servo position if none specified
+    public static int INTAKE_DEPLOY_TRAVEL_BTM = 1450; //use as default bottom servo position if none specified
 
     public static int INTAKE_HANDOFF_BTM = 1675;
-    public static int INTAKE_HANDOFF_TOP = 900;
+    public static int INTAKE_HANDOFF_TOP = 1200;
 
     public static int INTAKE_INIT_BTM = 900;
     public static int INTAKE_INIT_TOP = 1100;
 
-    public static int INTAKE_PICKUP_TOP = 1700;
+    public static int INTAKE_PICKUP_TOP = 1600;
 
     public static int INTAKE_TENT_BTM = 1400;
     public static int INTAKE_TENT_TOP = 1750;
-    public static int INTAKE_TENT_TOP2 = 1800; //do this after it has started moving forward
+    public static int INTAKE_TENT_TOP2 = 1900; //do this after it has started moving forward
 
     public static int INTAKE_TRAVEL_TOP = 1450;
 
@@ -133,7 +134,7 @@ public class Constants {
     public static double __ATMEP2 = -1;
 
     //inner conflicts
-    public static double TURRET_HEADING_OFFSET = 30;
+    public static double TURRET_HEADING_OFFSET = 5;
     public static double ELBOW_LEGAL_ANGLE = 35;
 
     public static int WALL_FOLLOW_MULTIPLIER = 50;

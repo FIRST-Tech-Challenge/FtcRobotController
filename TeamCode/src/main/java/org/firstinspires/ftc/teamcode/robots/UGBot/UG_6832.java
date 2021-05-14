@@ -110,7 +110,7 @@ public class UG_6832 extends OpMode {
     private boolean testableDirection = true;
 
     // values associated with the buttons in the toggleAllowed method
-    private boolean[] buttonSavedStates = new boolean[16];
+    private boolean[] buttonSavedStates = new boolean[20];
     private int a = 0; // lower glyph lift
     private int b = 1; // toggle grip/release on glyph
     private int x = 2; // no function
@@ -127,9 +127,13 @@ public class UG_6832 extends OpMode {
     private int back_button = 13;
     private int left_stick_button = 14;
     private int right_stick_button = 15; // sound player
+    private int dpad_left_2 = 16;
+    private int dpad_right_2 = 17;
+    private int dpad_up_2 = 18;
+    private int dpad_down_2 = 19;
 
     // values associated with the buttons in the toggleAllowedGP2 method
-    private boolean[] buttonSavedStates2 = new boolean[16];
+    private boolean[] buttonSavedStates2 = new boolean[20];
 
     boolean debugTelemetry = false;
 
@@ -639,6 +643,17 @@ public class UG_6832 extends OpMode {
 //            cacheValidated = false;
 //        }
         //endregion
+
+        // offsets
+        if(toggleAllowed(gamepad2.dpad_left, dpad_left_2, 16))
+            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP -= 1.0;
+        if(toggleAllowed(gamepad2.dpad_right, dpad_right_2, 17))
+            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP += 1.0;
+        if(toggleAllowed(gamepad2.dpad_up, dpad_up_2, 18))
+            Constants.STARTING_HEIGHT_OFFSET -= 0.02;
+        if(toggleAllowed(gamepad2.dpad_down, dpad_down_2, 19))
+            Constants.STARTING_HEIGHT_OFFSET += 0.02;
+
 
         if(toggleAllowed(gamepad1.b, b, 1))
             robot.articulate(PoseUG.Articulation.toggleTrigger);

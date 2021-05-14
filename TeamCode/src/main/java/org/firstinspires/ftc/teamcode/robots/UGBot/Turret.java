@@ -62,7 +62,7 @@ public class Turret{
 
 
     //manual steering
-    private double manualOffset = 0; //positive/negative angle by which drivers want the turret offset - should reset to zero each time the mode changes
+    private double manualOffset; //positive/negative angle by which drivers want the turret offset - should reset to zero each time the mode changes
     private final double speedBoost = 10/7; //boosted speed at which drivers change target heading through calls to rotateRight or rotateLeft
 
 

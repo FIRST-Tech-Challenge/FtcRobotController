@@ -29,7 +29,7 @@ public class TrajectoryCalculator {
 
     public TrajectorySolution getTrajectorySolution() {
         // initializing base launch height and distance
-        double launchHeight = Constants.LAUNCH_HEIGHT;
+        double launchHeight = Constants.LAUNCH_HEIGHT + Constants.STARTING_HEIGHT_OFFSET;
         TrajectorySolution trajectoryIterationSolution = null;
 
         // performing iterations for convergence

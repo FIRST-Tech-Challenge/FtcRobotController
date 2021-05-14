@@ -555,6 +555,8 @@ public class PoseUG {
         packet.put("base error", turnPID.getError());
         packet.put("base integrated error", turnPID.getTotalError());
         packet.put("base derivative error", turnPID.getDeltaError());
+        packet.put("turret angle offset", Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
+        packet.put("staring height offset", Constants.STARTING_HEIGHT_OFFSET);
 
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
@@ -711,7 +713,7 @@ public class PoseUG {
         //turret.setTurntableAngle(model.getTurretHeading());
 
 
-        trajCalc.updatePos(poseX, poseY);
+        trajCalc.updatePos(model.getMuzzleX(), model.getMuzzleY());
         trajCalc.updateVel(velocityX, velocityY);
         trajCalc.setTarget(target);
         trajSol = trajCalc.getTrajectorySolution();
