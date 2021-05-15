@@ -196,7 +196,10 @@ public class PoseUG {
         testShot,
         intakeDisk,
         dumpWobbleGoal,
-        secondaryGripperModeSetup
+        enterWobbleGoalMode,
+        exitWobbleGoalMode,
+        deployWobbleGoalAuton,
+        releaseWobbleGoalAuton
     }
 
     public enum RobotType {
@@ -718,6 +721,10 @@ public class PoseUG {
         trajCalc.setTarget(target);
         trajSol = trajCalc.getTrajectorySolution();
 
+        if(setTargetInProgress){
+            setTarget(target);
+        }
+
 
         maintainTarget();
 
@@ -742,8 +749,20 @@ public class PoseUG {
         this.autoLaunchActive = autoLaunchActive;
     }
 
+
+
+    boolean setTargetInProgress = false;
     public void setTarget(Constants.Target target) {
         this.target = target;
+
+        if(Constants.IN_WOBBLE_MODE){
+            setTargetInProgress = true;
+            exitWobbleGoalMode();
+        }
+        else{
+            setTargetInProgress = false;
+        }
+
         //when we come out of targeting, go to chassis relative mode and set up for catching rings
         if (target == Constants.Target.NONE){
             turret.setCurrentMode(Turret.TurretMode.chassisRelative);
@@ -751,7 +770,8 @@ public class PoseUG {
             //todo test - probably want a preset elbow angle too
             launcher.setElbowTargetAngle(INTAKE_TO_TURRET_XFER_ELEVATION);
         }
-        else turret.setCurrentMode(Turret.TurretMode.fieldRelative);
+        else {
+            turret.setCurrentMode(Turret.TurretMode.fieldRelative);}
     }
 
     public Constants.Target getTarget() {
@@ -1314,26 +1334,39 @@ public class PoseUG {
     }
 
     boolean gripperModeIsInReverse = false;
-    int secondaryGripperModeSetupState = 0;
-    double secondaryGripperModeSetupTimer = 0.0;
-    public boolean secondaryGripperModeSetup() {
-        switch (secondaryGripperModeSetupState) {
+    int enterWobbleGoalModeState = 0;
+    double enterWobbleGoalModeTimer = 0.0;
+    public boolean enterWobbleGoalMode() {
+        switch (enterWobbleGoalModeState) {
             case 0:
+                setTarget(Constants.Target.NONE);
+                turret.setCurrentMode(Turret.TurretMode.chassisRelative);
                 launcher.setElbowTargetAngle(25);
-                turret.setTurretAngle(180);
-                secondaryGripperModeSetupTimer = System.nanoTime();
-                secondaryGripperModeSetupState++;
+                turret.setTurretAngle(180 + Constants.GRIPPER_HEADING_OFFSET);
+                enterWobbleGoalModeTimer = System.nanoTime();
+                enterWobbleGoalModeState++;
                 break;
             case 1:
-                if(System.nanoTime() - secondaryGripperModeSetupTimer > 2 * 1E9) {
-                    launcher.setElbowTargetAngle(0);
-                    secondaryGripperModeSetupTimer = System.nanoTime();
-                    secondaryGripperModeSetupState++;
+                if(System.nanoTime() - enterWobbleGoalModeTimer > 2 * 1E9) {
+                    turret.setDangerModeActive(true);
+                    launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
+                    launcher.wobbleRelease();
+                    Constants.IN_WOBBLE_MODE = true;
+                    enterWobbleGoalModeTimer = System.nanoTime();
+                    enterWobbleGoalModeState++;
                 }
                 break;
+
             case 2:
-                if(System.nanoTime() - secondaryGripperModeSetupTimer > 1 * 1E9) {
-                    secondaryGripperModeSetupState = 0;
+                if(System.nanoTime() - enterWobbleGoalModeTimer > .5 * 1E9) {
+                    launcher.setElbowTargetAngle(0);
+                    enterWobbleGoalModeTimer = System.nanoTime();
+                    enterWobbleGoalModeState++;
+                }
+                break;
+            case 3:
+                if(System.nanoTime() - enterWobbleGoalModeTimer > 1 * 1E9) {
+                    enterWobbleGoalModeState = 0;
                     gripperModeIsInReverse = true;
                     return true;
                 }
@@ -1342,22 +1375,80 @@ public class PoseUG {
         return false;
     }
 
-    public void enterWobbleGoalMode(){
-//        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
-        turret.setCurrentMode(Turret.TurretMode.fieldRelative);
-        turret.setDangerModeActive(true);
-        launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
-        launcher.wobbleRelease();
-        Constants.IN_WOBBLE_MODE = true;
+
+    int exitWobbleGoalState = 0;
+    double exitWobbleGoalTimer = 0.0;
+    public boolean exitWobbleGoalMode(){
+        switch (exitWobbleGoalState) {
+            case 0:
+                launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
+                launcher.wobbleGrip();
+                exitWobbleGoalTimer = System.nanoTime();
+                exitWobbleGoalState++;
+                break;
+            case 1:
+                if(System.nanoTime() - enterWobbleGoalModeTimer > 1.3 * 1E9){
+                    gripperModeIsInReverse = false;
+                    turret.setDangerModeActive(false);
+                    Constants.IN_WOBBLE_MODE = false;
+                    exitWobbleGoalState = 0;
+                    return true;
+                }
+        }
+        return false;
     }
 
-    public void exitWobbleGoalMode(){
-        turret.setDangerModeActive(false);
-        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
-        launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
-        launcher.wobbleGrip();
-        gripperModeIsInReverse = false;
-        Constants.IN_WOBBLE_MODE = false;
+    int deployWobbleGoalAutonState = 0;
+    double deployWobbleGoalAutonTimer = 0.0;
+    public boolean deployWobbleGoalGripperAuton(){
+        switch (deployWobbleGoalAutonState){
+            case 0:
+                launcher.setElbowTargetAngle(0);
+                launcher.wobbleRelease();
+                deployWobbleGoalAutonTimer = System.nanoTime();
+                deployWobbleGoalAutonState++;
+                break;
+            case 1:
+                if(System.nanoTime() - deployWobbleGoalAutonTimer > 1 * 1E9) {
+                    launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
+                    deployWobbleGoalAutonState++;
+                    deployWobbleGoalAutonTimer = System.nanoTime();
+                }
+                break;
+            case 2:
+                if(System.nanoTime() - deployWobbleGoalAutonTimer > 1 * 1E9) {
+                    deployWobbleGoalAutonState = 0;
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
+
+    int releaseWobbleGoalAutonState = 0;
+    double releaseWobbleGoalAutonTimer = 0.0;
+    public boolean releaseWobbleGoalAuton(){
+        switch (releaseWobbleGoalAutonState){
+            case 0:
+                launcher.wobbleRelease();
+                launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
+                releaseWobbleGoalAutonTimer = System.nanoTime();
+                releaseWobbleGoalAutonState++;
+            case 1:
+                if(System.nanoTime() - releaseWobbleGoalAutonTimer > 1 * 1E9) {
+                    launcher.wobbleGrip();
+                    releaseWobbleGoalAutonTimer = System.nanoTime();
+                    releaseWobbleGoalAutonState++;
+                }
+                break;
+            case 2:
+                if(System.nanoTime() - releaseWobbleGoalAutonTimer > 1 * 1E9) {
+                    releaseWobbleGoalAutonState = 0;
+                    return true;
+                }
+                break;
+        }
+        return false;
     }
 
     public Articulation articulate(Articulation target) {
@@ -1396,8 +1487,23 @@ public class PoseUG {
                     articulation = PoseUG.Articulation.manual;
                 }
                 break;
-            case secondaryGripperModeSetup:
-                if(secondaryGripperModeSetup()){
+            case enterWobbleGoalMode:
+                if(enterWobbleGoalMode()){
+                    articulation = PoseUG.Articulation.manual;
+                }
+                break;
+            case exitWobbleGoalMode:
+                if(exitWobbleGoalMode()){
+                    articulation = PoseUG.Articulation.manual;
+                }
+                break;
+            case deployWobbleGoalAuton:
+                if(exitWobbleGoalMode()){
+                    articulation = PoseUG.Articulation.manual;
+                }
+                break;
+            case releaseWobbleGoalAuton:
+                if(exitWobbleGoalMode()){
                     articulation = PoseUG.Articulation.manual;
                 }
                 break;

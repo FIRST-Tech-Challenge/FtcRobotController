@@ -480,10 +480,7 @@ public class UG_6832 extends OpMode {
             if (active) {
                 switch (state) {
                     case 0: // auton full
-                        if(!Constants.IN_WOBBLE_MODE)
-                            joystickDrive();
-                        else
-                            gripperJoystickDrive();
+                        joystickDrive();
                         break;
                     case 1: // teleop
                         if (auto.AutoFull.execute()) {
@@ -576,7 +573,7 @@ public class UG_6832 extends OpMode {
     boolean rotate = false;
 
 
-
+    boolean shiftActive = false;
 
     private void joystickDrive() { //apple
 
@@ -588,15 +585,21 @@ public class UG_6832 extends OpMode {
             robot.intake.Do(Intake.Behavior.DEPLOY);
         }
 
-
+        shiftActive = gamepad1.dpad_down;
         reverse = -1;
         pwrDamper = .70;
 
         pwrFwd = 0;
         pwrRot = 0;
 
-        if(toggleAllowed(gamepad1.right_bumper, right_bumper, 1)){
-            robot.enterWobbleGoalMode();
+        if(robot.gripperModeIsInReverse == true){
+            reverse = 1;
+        }
+        else
+            reverse = -1;
+
+        if(shiftActive && toggleAllowed(gamepad1.right_bumper, right_bumper, 1)){
+            robot.articulate(PoseUG.Articulation.enterWobbleGoalMode);
         }
 
         if (notdeadzone(gamepad1.left_stick_y)) {
@@ -672,11 +675,18 @@ public class UG_6832 extends OpMode {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
         }
 
-        if (gamepad1.right_trigger > .01)
-            robot.turret.rotateRight(gamepad1.right_trigger * 2);
+        if(Constants.IN_WOBBLE_MODE && toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
+            if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN)
+                robot.launcher.wobbleGrip();
+            else
+                robot.launcher.wobbleRelease();
+        }
 
-        if (gamepad1.left_trigger > .01)
-            robot.turret.rotateLeft(gamepad1.left_trigger * 2);
+//        if (gamepad1.right_trigger > .01)
+//            robot.turret.rotateRight(gamepad1.right_trigger * 2);
+//
+//        if (gamepad1.left_trigger > .01)
+//            robot.turret.rotateLeft(gamepad1.left_trigger * 2);
 
         if(toggleAllowed(gamepad1.dpad_right,dpad_right,1))
             robot.setTarget(Constants.Target.NONE);
@@ -697,88 +707,22 @@ public class UG_6832 extends OpMode {
                     robot.setTarget(Constants.Target.FIRST_POWER_SHOT);
             }
         }
-        if(toggleAllowed(gamepad1.dpad_down,dpad_down,1)) {
-            switch(robot.getTarget()){
-                case MID_GOAL:
-                    robot.setTarget(Constants.Target.LOW_GOAL);
-                    break;
-                case LOW_GOAL:
-                    robot.setTarget(Constants.Target.MID_GOAL);
-                    break;
-                default:
-                    robot.setTarget(Constants.Target.MID_GOAL);
-            }
-        }
+//        if(toggleAllowed(gamepad1.dpad_down,dpad_down,1)) {
+//            switch(robot.getTarget()){
+//                case MID_GOAL:
+//                    robot.setTarget(Constants.Target.LOW_GOAL);
+//                    break;
+//                case LOW_GOAL:
+//                    robot.setTarget(Constants.Target.MID_GOAL);
+//                    break;
+//                default:
+//                    robot.setTarget(Constants.Target.MID_GOAL);
+//            }
+//        }
 
 //        robot.launcher.update();
 //        robot.turret.update(); //todo- make sure there wasn't a reason this was here
 //        robot.intake.update();
-    }
-
-    private void gripperJoystickDrive() {
-
-
-        pwrDamper = .70;
-
-        pwrFwd = 0;
-        pwrRot = 0;
-
-        if(robot.gripperModeIsInReverse == true){
-            reverse = 1;
-        }
-        else
-            reverse = -1;
-
-        if (notdeadzone(gamepad1.left_stick_y)) {
-            pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
-            if(robot.getArticulation() != PoseUG.Articulation.secondaryGripperModeSetup) {
-                robot.articulate(PoseUG.Articulation.manual);
-                robot.dumpWobbleGoalState = 0;
-            }
-        }
-
-        if (notdeadzone(gamepad1.right_stick_x)) {
-            pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
-            if(robot.getArticulation() != PoseUG.Articulation.secondaryGripperModeSetup) {
-                robot.dumpWobbleGoalState = 0;
-                robot.articulate(PoseUG.Articulation.manual);
-            }
-        }
-
-        if (nearZero(pwrFwd) && nearZero(pwrRot) && robot.getArticulation() != PoseUG.Articulation.manual) {
-            robot.driveMixerDiffSteer(0, 0);
-        } else {
-            robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
-        }
-
-        if(toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
-            if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN)
-                robot.launcher.wobbleGrip();
-            else
-                robot.launcher.wobbleRelease();
-        }
-
-        if(toggleAllowed(gamepad1.right_bumper, right_bumper, 1)){
-            robot.exitWobbleGoalMode();
-        }
-
-        if (notdeadzone(gamepad1.right_stick_y)) {
-            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
-        }
-
-        if (gamepad1.right_trigger > .01)
-            robot.turret.rotateRight(gamepad1.right_trigger * 2);
-
-        if (gamepad1.left_trigger > .01)
-            robot.turret.rotateLeft(gamepad1.left_trigger * 2);
-
-
-//        if(toggleAllowed(gamepad1.b,b,1))
-//            robot.articulate(PoseUG.Articulation.dumpWobbleGoal);
-//
-//        if(toggleAllowed(gamepad1.y,y,1))
-//            robot.articulate(PoseUG.Articulation.secondaryGripperModeSetup);
-
     }
 
     private void joystickDrivePregameMode() {
