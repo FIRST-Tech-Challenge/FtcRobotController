@@ -147,6 +147,10 @@ public class Autonomous {
         .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
         .build();
 
+    public StateMachine TurretCalibrate = getStateMachine(autoStage)
+            .addState(() -> robot.turret.calibrate())
+            .build();
+
     public StateMachine DemoRollingRingtake = getStateMachine(autoStage)
             .addSingleState(()-> robot.intake.Do(Intake.Behavior.DEPLOY))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))

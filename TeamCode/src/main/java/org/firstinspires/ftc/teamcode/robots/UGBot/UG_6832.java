@@ -501,7 +501,11 @@ public class UG_6832 extends OpMode {
                         }
                         break;
                     case 4:
-                        //testRamp();
+                        if (auto.TurretCalibrate.execute()) {
+                            active = false;
+                            state = 0;
+                        }
+
                         break;
                     case 6:
                         demo();

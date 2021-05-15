@@ -520,6 +520,8 @@ public class PoseUG {
 
         // turret heading (red)
         CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS_INCHES, turret.getHeading(), "#FF0000");
+        packet.put("TurretMotorPos", turret.getTicksPerDegree());
+        packet.put("TurretTicksPerDegree", turret.getTicksPerDegree());
 
         // vision
         packet.put("Right Laser", getDistRightDist());

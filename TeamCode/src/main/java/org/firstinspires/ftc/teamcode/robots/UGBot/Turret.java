@@ -53,6 +53,13 @@ public class Turret{
 
 
     //sensors
+
+    //virtual IMU based on chassis IMU readings
+    double virtualHeading = 0;
+    public static double TURRET_TICKS_PER_DEGREE = 25; //determine with a calibration run
+    public static double headingVariance = 0;
+    boolean calibrating = false;
+
     //DigitalChannel magSensor;
 
     //a single supported Danger Zone - where the chassis is not allowed to point when it is active
@@ -97,7 +104,6 @@ public class Turret{
     double baseHeading = 0.0;
     public void update(double baseHeading){
 
-
         //IMU Update
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         if (!initialized) {
@@ -112,7 +118,11 @@ public class Turret{
         //update current heading before doing any other calculations
         turretHeading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
 
-        this.baseHeading = baseHeading;
+        if (!calibrating) this.baseHeading = baseHeading;
+
+        //virtual IMU heading based on turret encoder offset from chassis heading
+        virtualHeading = wrap360(baseHeading - wrap360(motor.getCurrentPosition()/ TURRET_TICKS_PER_DEGREE));
+        headingVariance = getHeading() - virtualHeading;
 
         if(active) {
             maintainHeadingTurret();
@@ -395,6 +405,54 @@ public class Turret{
     public enum TurretMode {
         fieldRelative, // normal mode - requested angles are relative to the field (starting orientation of turret imu)
         chassisRelative, // requested angles are relative to the chassis headi
+    }
+
+
+    public double getTicksPerDegree() {
+        return ticksPerDegree;
+    }
+
+    double ticksPerDegree = 0;
+
+    public boolean calibrate (){
+        double lastbaseheading = 0;
+        long loopTime=0;
+        int rotations = 0;
+        double tpd = 0;
+
+        if (!calibrating) //first time in
+            {
+            setCurrentMode(TurretMode.chassisRelative);
+            calibrating = true;
+            baseHeading = 0;
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            loopTime=System.nanoTime();
+            }
+
+        loopTime = System.nanoTime()- loopTime;
+
+
+        //we are going to fool the turret into thinking the chassis is turning - the turret will turn to keep up
+        //will do this until the turret has turned 10 times
+        //this will only work while the IMU is healthy since it's deciding when to stop
+        if (lastbaseheading>baseHeading+10) // we just crossed 0
+            rotations++;
+
+        lastbaseheading = baseHeading;
+
+        //move faked baseheading forward at a rate of 45 degrees per second
+        baseHeading+=45*loopTime/1E9;
+        ticksPerDegree = motor.getCurrentPosition()/(360*rotations + getHeading()); //
+
+        if(rotations==10) //we are done
+        {
+            calibrating = false;
+            return true;
+        }
+
+
+        return false;
     }
 
 
