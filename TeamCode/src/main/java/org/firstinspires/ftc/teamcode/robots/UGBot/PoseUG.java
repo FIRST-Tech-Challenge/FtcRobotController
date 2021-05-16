@@ -784,6 +784,7 @@ public class PoseUG {
         switch(target) {
             case NONE:
                 if(noneInit == false) {
+                    flywheelIsActive = false;
                     launcher.setFlywheelActivePID(false);
                     noneInit = true;
                 }
@@ -795,7 +796,7 @@ public class PoseUG {
                     turret.setTurretAngle(goalHeading + Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
 
                     launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.HEIGHT_MULTIPLIER);
-
+                    flywheelIsActive = true;
                     ringChambered = true; //todo- when the color sensor is implemented, this is where it will be updated
                     //we might not need this when we get the color sensor implemented
 
@@ -1405,6 +1406,7 @@ public class PoseUG {
     public boolean deployWobbleGoalGripperAuton(){
         switch (deployWobbleGoalAutonState){
             case 0:
+                Constants.IN_WOBBLE_MODE = true;
                 launcher.setElbowTargetAngle(0);
                 launcher.wobbleRelease();
                 deployWobbleGoalAutonTimer = System.nanoTime();
@@ -1433,18 +1435,19 @@ public class PoseUG {
         switch (releaseWobbleGoalAutonState){
             case 0:
                 launcher.wobbleRelease();
-                launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
                 releaseWobbleGoalAutonTimer = System.nanoTime();
                 releaseWobbleGoalAutonState++;
             case 1:
                 if(System.nanoTime() - releaseWobbleGoalAutonTimer > 1 * 1E9) {
-                    launcher.wobbleGrip();
+                    launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
                     releaseWobbleGoalAutonTimer = System.nanoTime();
                     releaseWobbleGoalAutonState++;
                 }
                 break;
             case 2:
-                if(System.nanoTime() - releaseWobbleGoalAutonTimer > 1 * 1E9) {
+                if(System.nanoTime() - releaseWobbleGoalAutonTimer > 1.5 * 1E9) {
+                    launcher.wobbleGrip();
+                    Constants.IN_WOBBLE_MODE = false;
                     releaseWobbleGoalAutonState = 0;
                     return true;
                 }

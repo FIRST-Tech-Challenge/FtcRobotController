@@ -49,6 +49,7 @@ import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ELEVATION;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.TURRET_SPEED;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
@@ -628,10 +629,10 @@ public class UG_6832 extends OpMode {
                 robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
                 }
 
-        if(toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
-            robot.returnHomeState = 0;
-            //robot.articulate(PoseUG.Articulation.returnHome);
-        }
+//        if(toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
+//            robot.returnHomeState = 0;
+//            //robot.articulate(PoseUG.Articulation.returnHome);
+//        }
 
         //region good logging example
 
@@ -665,17 +666,22 @@ public class UG_6832 extends OpMode {
         if(toggleAllowed(gamepad1.b, b, 1))
             robot.articulate(PoseUG.Articulation.toggleTrigger);
             //robot.articulate(PoseUG.Articulation.toggleTrigger);
-        if(toggleAllowed(gamepad1.a, a, 1))
-            robot.flywheelIsActive = !robot.flywheelIsActive;
+//        if(toggleAllowed(gamepad1.a, a, 1))
+//            robot.flywheelIsActive = !robot.flywheelIsActive;
         if(toggleAllowed(gamepad1.y, y, 1)) {
             robot.intake.setRollingRingMode(false);
+            robot.launcher.setElbowTargetAngle(INTAKE_TO_TURRET_XFER_ELEVATION);
             robot.intake.Do(Intake.Behavior.INTAKE);
         }
         if(toggleAllowed(gamepad1.x,x,1)){
             robot.intake.Do(Intake.Behavior.TENT);
         }
 
-        if (notdeadzone(gamepad1.right_stick_y)) {
+        if (notdeadzone(gamepad2.right_stick_y)) {
+            robot.launcher.adjustElbowAngle(-gamepad2.right_stick_y);
+        }
+
+        if (Constants.IN_WOBBLE_MODE && notdeadzone(gamepad1.right_stick_y)) {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
         }
 

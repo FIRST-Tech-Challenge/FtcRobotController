@@ -106,7 +106,7 @@ public class Autonomous {
                 ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .8,.1))
 
         .addMineralState(ugStateProvider,
-                ()-> robot.turret.setTurretAngle( 90 + Constants.GRIPPER_HEADING_OFFSET),
+                ()-> robot.turret.setTurretAngle(45 + Constants.GRIPPER_HEADING_OFFSET),
                 ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET),
                 ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET))
 
@@ -147,7 +147,12 @@ public class Autonomous {
         .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
         .build();
 
+
+
+
+
     public StateMachine TurretCalibrate = getStateMachine(autoStage)
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.DEPLOY))
             .addState(() -> robot.turret.calibrate())
             .build();
 

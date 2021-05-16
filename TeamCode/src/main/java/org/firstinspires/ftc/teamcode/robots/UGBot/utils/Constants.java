@@ -103,7 +103,7 @@ public class Constants {
     public static int INTAKE_INIT_BTM = 900;
     public static int INTAKE_INIT_TOP = 1100;
 
-    public static int INTAKE_PICKUP_TOP = 1600;
+    public static int INTAKE_PICKUP_TOP = 1500;
 
     public static int INTAKE_TENT_BTM = 1400;
     public static int INTAKE_TENT_TOP = 1750;
@@ -182,11 +182,12 @@ public class Constants {
         //340, 45
         ALIGNMENT_RESET(49/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1,1),
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
-        TARGET_C_1(49/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,190,-1,.2),
+        //TARGET_C_1(49/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,190,-1,.2),
+        TARGET_C_1(49/INCHES_PER_METER, 11*12/INCHES_PER_METER, 90,-1,-1,1),
         TARGET_C_2((49+7)/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,45+45,5,0),
         TARGET_B_1((49)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,190,5,.2), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
         TARGET_B_2((49+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, -1,0,5,0),
-        TARGET_A_1((49)/INCHES_PER_METER, 7.75*12/INCHES_PER_METER, 0,190,20,.02),
+        TARGET_A_1((49)/INCHES_PER_METER, 7*12/INCHES_PER_METER, 0,190,20,.02),
         TARGET_A_2((49-7)/INCHES_PER_METER, 7*12/INCHES_PER_METER, -1,90,5,0),
         RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1,0),
         RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1), //sweep needs to be very slow

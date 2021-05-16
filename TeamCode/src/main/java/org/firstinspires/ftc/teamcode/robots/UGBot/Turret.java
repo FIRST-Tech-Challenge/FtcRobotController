@@ -297,7 +297,7 @@ public class Turret{
     public void movePIDTurret(double Kp, double Ki, double Kd, double currentAngle, double targetAngle) {
 
         //initialization of the PID calculator's output range, target value and multipliers
-        turretPID.setOutputRange(-1, 1);
+        turretPID.setOutputRange(-.69, .69); //this is funny
         turretPID.setPID(Kp, Ki, Kd);
         turretPID.setSetpoint(targetAngle);
         turretPID.enable();
@@ -430,13 +430,13 @@ public class Turret{
             loopTime=System.nanoTime();
             }
 
-        loopTime = System.nanoTime()- loopTime;
+        loopTime = System.nanoTime() - loopTime;
 
 
         //we are going to fool the turret into thinking the chassis is turning - the turret will turn to keep up
         //will do this until the turret has turned 10 times
         //this will only work while the IMU is healthy since it's deciding when to stop
-        if (lastbaseheading>baseHeading+10) // we just crossed 0
+        if (lastbaseheading > baseHeading+10) // we just crossed 0
             rotations++;
 
         lastbaseheading = baseHeading;
