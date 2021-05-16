@@ -1237,7 +1237,7 @@ public class PoseUG {
             case 1:
                 //todo need to add a proper test to see if we are on target before shooting
                 //for now just adding a delay
-                if(System.nanoTime() - shootTime > 1.5 * 1E9){
+                if(System.nanoTime() - shootTime > 1 * 1E9){
                     shootRingStage++;
                     shootTime = System.nanoTime();
                 }
@@ -1254,7 +1254,7 @@ public class PoseUG {
                     shootRingStage++;
                 }
 
-                if(System.nanoTime() - shootTime > 1.7 * 1E9){
+                if(System.nanoTime() - shootTime > 0.7 * 1E9){
                     shootRingStage--;//ben was here
                 }
                 break;

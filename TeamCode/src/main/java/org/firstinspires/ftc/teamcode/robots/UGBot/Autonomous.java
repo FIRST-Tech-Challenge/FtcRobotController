@@ -97,7 +97,7 @@ public class Autonomous {
 
         .addState(() -> robot.deployWobbleGoalGripperAuton())
         .addState(() -> robot.launcher.wobbleGrip())
-            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+        .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
         .addState(() -> robot.launcher.setElbowTargetAngle(20))
 
             .addMineralState(ugStateProvider,
@@ -106,9 +106,9 @@ public class Autonomous {
                 ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .8,.1))
 
         .addMineralState(ugStateProvider,
-                ()-> robot.turret.setTurretAngle(45 + Constants.GRIPPER_HEADING_OFFSET),
+                ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET),
                 ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET),
-                ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET))
+                ()-> robot.turret.setTurretAngle(35 + Constants.GRIPPER_HEADING_OFFSET))
 
         //spin up the flywheel
         .addSingleState(() -> robot.launcher.preSpinFlywheel(900))
@@ -118,6 +118,15 @@ public class Autonomous {
 
         .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
         .addSingleState(() -> robot.launcher.preSpinFlywheel(900))
+
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            //back up
+        .addMineralState(ugStateProvider,
+                ()->true,
+                ()->true,
+                ()->true) //todo back up .5 meter
+                // driveIMUDistances seems broke for backwards ()-> robot.driveIMUDistance(.7,robot.getHeading(), false, -.5))
 
         //launch preferred since we can't seem to launch while driving away from goal at speed
         .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,false,  .8,.1))
