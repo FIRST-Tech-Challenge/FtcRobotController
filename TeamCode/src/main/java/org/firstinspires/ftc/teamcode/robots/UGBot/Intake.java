@@ -140,7 +140,7 @@ public class Intake {
                 break;
             case 2:
                 if(System.nanoTime() - deployTimer > .2 * 1E9){
-                    setOutTargetPosition(Constants.INTAKE_DEPLOY_TRAVEL_BTM);
+                    setOutTargetPosition(Constants.INTAKE_DEPLOY_TRAVEL_BTM + 200);
                     deployTimer = System.nanoTime();
                     deployState++;
                 }

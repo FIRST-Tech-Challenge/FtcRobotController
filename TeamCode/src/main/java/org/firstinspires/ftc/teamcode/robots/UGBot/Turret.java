@@ -54,9 +54,18 @@ public class Turret{
 
     //sensors
 
+    public double getVirtualHeading() {
+        return virtualHeading;
+    }
+
     //virtual IMU based on chassis IMU readings
     double virtualHeading = 0;
-    public static double TURRET_TICKS_PER_DEGREE = 25; //determine with a calibration run
+    public static double TURRET_TICKS_PER_DEGREE = 15.320535022020206; //determine with a calibration run
+
+    public double getHeadingVariance() {
+        return headingVariance;
+    }
+
     public static double headingVariance = 0;
     boolean calibrating = false;
 
@@ -84,6 +93,8 @@ public class Turret{
         turretTargetHeading = 0.0;
         turretPID = new PIDController(0,0,0);
         initIMU(turretIMU);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void initIMU(BNO055IMU turretIMU){
@@ -102,7 +113,7 @@ public class Turret{
     }
 
     double baseHeading = 0.0;
-    public void update(double baseHeading){
+    public void update(double chassisHeading){
 
         //IMU Update
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
@@ -115,14 +126,14 @@ public class Turret{
             initialized = true;
         }
 
-        //update current heading before doing any other calculations
+        //update current IMU heading before doing any other calculations
         turretHeading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
 
-        if (!calibrating) this.baseHeading = baseHeading;
+        if (!calibrating) this.baseHeading = chassisHeading;
 
         //virtual IMU heading based on turret encoder offset from chassis heading
-        virtualHeading = wrap360(baseHeading - wrap360(motor.getCurrentPosition()/ TURRET_TICKS_PER_DEGREE));
-        headingVariance = getHeading() - virtualHeading;
+        virtualHeading = wrap360(chassisHeading + wrap360(motor.getCurrentPosition()/ TURRET_TICKS_PER_DEGREE));
+        headingVariance = wrap360(getHeading() - virtualHeading);
 
         if(active) {
             maintainHeadingTurret();
@@ -289,7 +300,6 @@ public class Turret{
 
 
     private void setPower(double pwr){
-        motorPwr = pwr;
         motor.setPower(pwr);
     }
 
@@ -326,8 +336,7 @@ public class Turret{
 
     public void maintainHeadingTurret() {
 
-        //if this is the first time the button has been down, then save the heading that the robot will hold at
-        // and set a variable to tell that the heading has been saved
+        //initialze
         if (!maintainHeadingInit) {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             //turretTargetHeading = turretHeading;
@@ -350,7 +359,11 @@ public class Turret{
 
     public double getHeading(){
         if (currentMode==TurretMode.chassisRelative)
+            //todo: return baseHeading is not precisely true - in chasssRelative, this is actually the target for
+            // the turret, not the actual position, which may be off a couple of degrees
+            // should be based on sensor calculations transformed from field to chassis frames
             return baseHeading;
+
         else
         return turretHeading;
     }
@@ -366,7 +379,7 @@ public class Turret{
         return turretTargetHeading;
     }
     public double getCorrection(){return correction;}
-    public double getMotorPwr(){return motorPwr;}
+    public double getMotorPwr(){return motor.getPower();}
     public double getMotorPwrActual(){return motor.getPower();}
 
     public TurretMode getCurrentMode() {
@@ -382,7 +395,7 @@ public class Turret{
                 turretTargetHeading = chassisToFieldRelative();
             }
             if (currentMode == TurretMode.chassisRelative) {
-                //on entering chassisRelative from fieldRelative, stop movement and set the current target va
+                //on entering chassisRelative from fieldRelative, stop movement and set the current target value
                 turretTargetHeading = fieldToChassisRelative();
             }
             setManualOffset(0); //reset any driver offset any time TurretMode is changed
@@ -414,10 +427,13 @@ public class Turret{
 
     double ticksPerDegree = 0;
 
+    long lastNanos = 0;
+    double lastbaseheading = 0;
+    int rotations = 0;
+
     public boolean calibrate (){
-        double lastbaseheading = 0;
-        long loopTime=0;
-        int rotations = 0;
+
+        long loopNanos=0;
         double tpd = 0;
 
         if (!calibrating) //first time in
@@ -427,10 +443,11 @@ public class Turret{
             baseHeading = 0;
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            loopTime=System.nanoTime();
+            lastNanos=System.nanoTime();
             }
 
-        loopTime = System.nanoTime() - loopTime;
+        loopNanos = System.nanoTime() - lastNanos;
+        lastNanos = System.nanoTime();
 
 
         //we are going to fool the turret into thinking the chassis is turning - the turret will turn to keep up
@@ -442,7 +459,8 @@ public class Turret{
         lastbaseheading = baseHeading;
 
         //move faked baseheading forward at a rate of 45 degrees per second
-        baseHeading+=45*loopTime/1E9;
+        baseHeading=wrap360(baseHeading+ 90*loopNanos/1E9);
+        //updates ticksPerDegree - should converge very rapidly
         ticksPerDegree = motor.getCurrentPosition()/(360*rotations + getHeading()); //
 
         if(rotations==10) //we are done
