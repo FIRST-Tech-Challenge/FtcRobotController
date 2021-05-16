@@ -155,6 +155,14 @@ public class Intake {
                 }
                 break;
             case 4:
+                if(System.nanoTime() - deployTimer > Constants.INTAKE_TIME_FIRST * 1E9) {
+                    setTiltTargetPosition(Constants.INTAKE_HANDOFF_TOP);
+                    setOutTargetPosition(Constants.INTAKE_HANDOFF_BTM);
+                    deployTimer = System.nanoTime();
+                    deployState++;
+                }
+                break;
+            case 5:
                 if(System.nanoTime() - deployTimer > .7 * 1E9) {
                     setTravel();
                     deployState = 0;
