@@ -712,6 +712,10 @@ public class PoseUG {
           getPoseX(), getPoseY(), poseHeadingRad, turret.getHeading(), launcher.getElbowAngle() ,turret.getTurretTargetHeading(), intake.getTiltTargetPosition(), powerLeft, powerRight
         );
 
+        if(launcher.getGripperExtendABobTargetPos() != Constants.GRIPPER_IN_POS){
+            turret.setDangerModeActive(true);
+        }
+
         powerLeft = model.getLeftPower();
         powerRight = model.getRightPower();
         motorBackLeft.setPower(clampMotor(powerBackLeft));
@@ -1354,7 +1358,7 @@ public class PoseUG {
             case 1:
                 if(System.nanoTime() - enterWobbleGoalModeTimer > 2 * 1E9) {
                     turret.setDangerModeActive(true);
-                    launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
+                    launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_OUT_POS);
                     launcher.wobbleRelease();
                     Constants.IN_WOBBLE_MODE = true;
                     enterWobbleGoalModeTimer = System.nanoTime();
@@ -1386,7 +1390,7 @@ public class PoseUG {
     public boolean exitWobbleGoalMode(){
         switch (exitWobbleGoalState) {
             case 0:
-                launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
+                launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_IN_POS);
                 launcher.wobbleGrip();
                 exitWobbleGoalTimer = System.nanoTime();
                 exitWobbleGoalState++;
@@ -1408,7 +1412,7 @@ public class PoseUG {
     public boolean deployWobbleGoalGripperAuton(){
         switch (deployWobbleGoalAutonState){
             case 0:
-                Constants.IN_WOBBLE_MODE = true;
+                turret.setDangerModeActive(true);
                 launcher.setElbowTargetAngle(0);
                 launcher.wobbleRelease();
                 deployWobbleGoalAutonTimer = System.nanoTime();
@@ -1416,7 +1420,7 @@ public class PoseUG {
                 break;
             case 1:
                 if(System.nanoTime() - deployWobbleGoalAutonTimer > 1 * 1E9) {
-                    launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS);
+                    launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_OUT_POS);
                     deployWobbleGoalAutonState++;
                     deployWobbleGoalAutonTimer = System.nanoTime();
                 }
@@ -1437,11 +1441,12 @@ public class PoseUG {
         switch (releaseWobbleGoalAutonState){
             case 0:
                 launcher.wobbleRelease();
+                launcher.setElbowTargetAngle(0);
                 releaseWobbleGoalAutonTimer = System.nanoTime();
                 releaseWobbleGoalAutonState++;
             case 1:
                 if(System.nanoTime() - releaseWobbleGoalAutonTimer > 1 * 1E9) {
-                    launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS);
+                    launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_IN_POS);
                     releaseWobbleGoalAutonTimer = System.nanoTime();
                     releaseWobbleGoalAutonState++;
                 }
@@ -1449,7 +1454,7 @@ public class PoseUG {
             case 2:
                 if(System.nanoTime() - releaseWobbleGoalAutonTimer > 1.5 * 1E9) {
                     launcher.wobbleGrip();
-                    Constants.IN_WOBBLE_MODE = false;
+                    turret.setDangerModeActive(false);
                     releaseWobbleGoalAutonState = 0;
                     return true;
                 }

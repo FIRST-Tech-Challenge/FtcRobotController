@@ -105,32 +105,29 @@ public class Autonomous {
                 ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .8,.1),
                 ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1,true,  .8,.1))
 
-        .addMineralState(ugStateProvider,
-                ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET),
-                ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET),
-                ()-> robot.turret.setTurretAngle(35 + Constants.GRIPPER_HEADING_OFFSET))
+//        .addMineralState(ugStateProvider,
+//                ()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET),
+//                ()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET),
+//                ()-> robot.turret.setTurretAngle(35 + Constants.GRIPPER_HEADING_OFFSET))
 
         //spin up the flywheel
-        .addSingleState(() -> robot.launcher.preSpinFlywheel(900))
+        .addSingleState(() -> robot.launcher.preSpinFlywheel(1000))
 
         //release the wobble goal
         .addState(() -> robot.releaseWobbleGoalAuton())
 
-        .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
-        .addSingleState(() -> robot.launcher.preSpinFlywheel(900))
-
-            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
 
             //back up
         .addMineralState(ugStateProvider,
                 ()->true,
                 ()->true,
-                ()->true) //todo back up .5 meter
+                ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_3,false,  .8,.1)) //todo back up .5 meter
                 // driveIMUDistances seems broke for backwards ()-> robot.driveIMUDistance(.7,robot.getHeading(), false, -.5))
 
         //launch preferred since we can't seem to launch while driving away from goal at speed
         .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,false,  .8,.1))
-        .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+        .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
         .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
 //
@@ -152,8 +149,10 @@ public class Autonomous {
 //                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_2,true,  .8,.1))
 //            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-        .addState(()-> robot.driveToFieldPosition(Constants.Position.NAVIGATE, true, 1,.1))
-        .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//        .addState(()-> robot.driveToFieldPosition(Constants.Position.NAVIGATE, true, 1,.1))
+            .addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
+
+            .addTimedState(4f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
         .build();
 
 
@@ -190,23 +189,9 @@ public class Autonomous {
 
     public StateMachine AutoTest = getStateMachine(autoStage)
             .addState(()-> robot.intake.Deploy())
-            .addSingleState(()->robot.launcher.wobbleRelease())
-            .addSingleState(() -> robot.launcher.setElbowTargetAngle(0))
-            .addSingleState(()->robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_OUT_POS))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addSingleState(()->robot.launcher.wobbleGrip())
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addSingleState(() -> robot.launcher.setElbowTargetAngle(15))
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1,true,  .8,.1))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addSingleState(()-> robot.turret.setTurretAngle(270 + Constants.GRIPPER_HEADING_OFFSET))
-            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addSingleState(()->robot.launcher.wobbleRelease())
-            .addSingleState(()->robot.launcher.setGripperOutTargetPos(Constants.GRIPPER_IN_POS))
-            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addSingleState(()->robot.launcher.wobbleGrip())
-            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.HOME,false,  .8,.07))
+            .addSingleState(()->robot.deployWobbleGoalGripperAuton())
+            .addSingleState(()-> robot.turret.setTurretAngle(90 + Constants.GRIPPER_HEADING_OFFSET))
+            .addTimedState(7f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

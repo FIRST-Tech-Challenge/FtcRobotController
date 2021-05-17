@@ -57,7 +57,7 @@ public class Launcher {
     public int actualElbowMax = 1400;
     public int elbowMid = (actualElbowMax + elbowMin)/2;
     public int elbowMaxSafetyOffset = 70; //makes sure that the robot doesn't try and extend to the elbow max exactly
-    public int gripperOutTargetPos = 0;
+    public int gripperExtendABobTargetPos = 0;
 
     public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, DcMotor gripperExtendABob, Servo servoTrigger, Servo servoGripper){
 
@@ -106,7 +106,7 @@ public class Launcher {
 
             servoTrigger.setPosition(servoNormalize(triggerTargetPos));
             servoGripper.setPosition(servoNormalize(gripperTargetPos));
-            gripperExtendABob.setTargetPosition(gripperOutTargetPos);
+            gripperExtendABob.setTargetPosition(gripperExtendABobTargetPos);
 
             flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) / 1E9);
 
@@ -148,7 +148,8 @@ public class Launcher {
 
     //gripper mehtods
 
-    public void setGripperOutTargetPos(int pos){gripperOutTargetPos = pos;}
+    public void setGripperExtendABobTargetPos(int pos){
+        gripperExtendABobTargetPos = pos;}
 
 
 
@@ -244,6 +245,10 @@ public class Launcher {
     }
     public int getElbowCurrentPos() {
         return elbow.getCurrentPosition();
+    }
+
+    public int getGripperExtendABobTargetPos(){
+        return gripperExtendABobTargetPos;
     }
 
     public double getFlywheelTargetTPS() {return flywheelTargetTPS;}
