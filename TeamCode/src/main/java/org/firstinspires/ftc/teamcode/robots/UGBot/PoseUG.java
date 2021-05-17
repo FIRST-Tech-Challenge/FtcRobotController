@@ -1205,9 +1205,15 @@ public class PoseUG {
     public boolean rampedUp = false;
 
     public boolean toggleTriggerArticulation() {
-        if (Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < 0.05) {
+
+        if (getTarget()== Constants.Target.NONE){
+
+        }
+        if ((Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < 0.05)
+            || (getTarget()== Constants.Target.NONE&& launcher.flywheelTPS<50)){ //you are also allowed to trigger (for settling rings) if you have no active target and your TPS is very low
             rampedUp = true;
         }
+
         if(rampedUp){
             switch (toggleTriggerState) {
                 case 0:
