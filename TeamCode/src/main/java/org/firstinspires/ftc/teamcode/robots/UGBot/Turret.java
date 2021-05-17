@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.PIDController;
+import org.firstinspires.ftc.teamcode.util.RateController;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.between360Clockwise;
 import static org.firstinspires.ftc.teamcode.util.Conversions.diffAngle2;
@@ -246,7 +247,7 @@ public class Turret{
         if (lastTime>2*1E9+System.nanoTime()) lastTime=System.nanoTime();
         long elapsedTime = System.nanoTime()-lastTime; //kind of assuming that the elapsed time represents roughly the current loop speed
         double timeFactoredSpeed = speed * elapsedTime/1E9; //this is actually angle difference to add, factored for time
-        setManualOffset(getHeading() + manualOffset + timeFactoredSpeed);
+        setManualOffset(getManualOffset() + timeFactoredSpeed);
     }
 
     public void rotateRight(double speed) {
@@ -348,7 +349,6 @@ public class Turret{
             turretTargetHeading = fromChassisRelative(turretChassisTarget);
         }
 
-
         turretTargetHeading = remapHeadingToSafe(turretTargetHeading);
         double offsetTargetHeading = wrap360(turretTargetHeading, getManualOffset()); //alter by driver input if any present
         offsetTargetHeading = remapHeadingToSafe(offsetTargetHeading); //remap safe since the offset could have put it back in the danger zone
@@ -430,7 +430,7 @@ public class Turret{
     long lastNanos = 0;
     double lastbaseheading = 0;
     int rotations = 0;
-
+    RateController DegreesPerSecCalibrate = new RateController(90);
     public boolean calibrate (){
 
         long loopNanos=0;
@@ -459,7 +459,8 @@ public class Turret{
         lastbaseheading = baseHeading;
 
         //move faked baseheading forward at a rate of 45 degrees per second
-        baseHeading=wrap360(baseHeading+ 90*loopNanos/1E9);
+        //baseHeading=wrap360(baseHeading+ 90*loopNanos/1E9);
+        baseHeading=wrap360(baseHeading+ DegreesPerSecCalibrate.get(90));
         //updates ticksPerDegree - should converge very rapidly
         ticksPerDegree = motor.getCurrentPosition()/(360*rotations + getHeading()); //
 
