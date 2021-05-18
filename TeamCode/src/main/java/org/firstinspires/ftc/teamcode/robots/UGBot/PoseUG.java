@@ -817,10 +817,6 @@ public class PoseUG {
                         }
                     }
 
-                    if(autoLaunchActive && target != Constants.Target.NONE){
-                        flywheelIsActive = true;
-                    }
-
                     if (flywheelIsActive) {
                         launcher.setFlywheelActivePID(true);
                         launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity() * Constants.RPS_MULTIPLIER);
@@ -1247,30 +1243,22 @@ public class PoseUG {
                 shootTime = System.nanoTime();
                 break;
             case 1:
-                //todo need to add a proper test to see if we are on target before shooting
-                //for now just adding a delay
-                if(System.nanoTime() - shootTime > 1 * 1E9){
-                    shootRingStage++;
-                    shootTime = System.nanoTime();
-                }
-                break;
-            case 2:
                 if(toggleTriggerArticulation()){
                     ringsShot++;
                     shootRingStage++;
                     shootTime = System.nanoTime();
                 }
                 break;
-            case 3:
+            case 2:
                 if(ringsShot == numShots){
                     shootRingStage++;
                 }
 
-                if(System.nanoTime() - shootTime > 0.7 * 1E9){
+                if(System.nanoTime() - shootTime > 0.1 * 1E9){
                     shootRingStage--;//ben was here
                 }
                 break;
-            case 4:
+            case 3:
                 shootRingStage = 0;
                 setTarget(Constants.Target.NONE);
                 flywheelIsActive = false;
@@ -1425,14 +1413,14 @@ public class PoseUG {
                 deployWobbleGoalAutonState++;
                 break;
             case 1:
-                if(System.nanoTime() - deployWobbleGoalAutonTimer > 1 * 1E9) {
+                if(System.nanoTime() - deployWobbleGoalAutonTimer > .5 * 1E9) {
                     launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_OUT_POS);
                     deployWobbleGoalAutonState++;
                     deployWobbleGoalAutonTimer = System.nanoTime();
                 }
                 break;
             case 2:
-                if(System.nanoTime() - deployWobbleGoalAutonTimer > 1 * 1E9) {
+                if(System.nanoTime() - deployWobbleGoalAutonTimer > .5 * 1E9) {
                     deployWobbleGoalAutonState = 0;
                     return true;
                 }
@@ -1458,8 +1446,14 @@ public class PoseUG {
                 }
                 break;
             case 2:
-                if(System.nanoTime() - releaseWobbleGoalAutonTimer > 1.5 * 1E9) {
+                if(System.nanoTime() - releaseWobbleGoalAutonTimer > .5 * 1E9) {
                     launcher.wobbleGrip();
+                    releaseWobbleGoalAutonTimer = System.nanoTime();
+                    releaseWobbleGoalAutonState++;
+                }
+                break;
+            case 3:
+                if(System.nanoTime() - releaseWobbleGoalAutonTimer > .5 * 1E9) {
                     turret.setDangerModeActive(false);
                     releaseWobbleGoalAutonState = 0;
                     return true;

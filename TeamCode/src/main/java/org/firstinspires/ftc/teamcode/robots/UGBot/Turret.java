@@ -34,7 +34,7 @@ public class Turret{
     //PID
     PIDController turretPID;
     public static double kpTurret = 0.03; //proportional constant multiplier goodish
-    public static  double kiTurret = .01; //integral constant multiplier
+    public static  double kiTurret = 0; //integral constant multiplier
     public static  double kdTurret= .05; //derivative constant multiplier
     double correction = 0.00; //correction to apply to turret motor
 

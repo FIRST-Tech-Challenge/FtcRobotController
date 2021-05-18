@@ -698,6 +698,10 @@ public class UG_6832 extends OpMode {
         if (gamepad1.left_trigger > .01)
             robot.turret.rotateLeft(gamepad1.left_trigger * 2);
 
+        if(toggleAllowed(gamepad2.y, y,2)) {
+            robot.setAutoLaunchActive(!robot.autoLaunchActive);
+        }
+
         if(toggleAllowed(gamepad1.dpad_right,dpad_right,1))
             robot.setTarget(Constants.Target.NONE);
         if(toggleAllowed(gamepad1.dpad_up,dpad_up,1))
