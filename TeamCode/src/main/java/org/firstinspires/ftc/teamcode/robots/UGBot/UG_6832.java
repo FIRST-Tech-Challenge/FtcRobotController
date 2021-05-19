@@ -49,6 +49,7 @@ import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_NOW;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ELEVATION;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.TURRET_SPEED;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
@@ -611,12 +612,12 @@ public class UG_6832 extends OpMode {
             pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
         }
 
-        if(robot.intake.isTented()){
-            if(gamepad1.left_stick_y <= 0)
-                robot.intake.setIntakeSpeed(gamepad1.left_stick_y * Constants.__ATMEP2);
-            if(gamepad1.left_stick_y >= 0)
-                robot.intake.setIntakeSpeed(gamepad1.left_stick_y * Constants.__ATMEP);
-        }
+//        if(robot.intake.isTented()){
+//            if(gamepad1.left_stick_y <= 0)
+//                robot.intake.setIntakeSpeed(gamepad1.left_stick_y * Constants.__ATMEP2);
+//            if(gamepad1.left_stick_y >= 0)
+//                robot.intake.setIntakeSpeed(gamepad1.left_stick_y * Constants.__ATMEP);
+//        }
 
 
         if (notdeadzone(gamepad1.right_stick_x))
@@ -700,6 +701,9 @@ public class UG_6832 extends OpMode {
 
         if(toggleAllowed(gamepad2.y, y,2)) {
             robot.setAutoLaunchActive(!robot.autoLaunchActive);
+        }
+        if(toggleAllowed(gamepad2.x, x,2)) {
+            INTAKE_MINIJOG_NOW=true;
         }
 
         if(toggleAllowed(gamepad1.dpad_right,dpad_right,1))

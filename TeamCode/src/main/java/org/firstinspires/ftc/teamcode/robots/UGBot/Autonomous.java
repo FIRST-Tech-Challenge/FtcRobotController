@@ -127,11 +127,11 @@ public class Autonomous {
 
             //WOBBLE TWO
             .addSimultaneousStates(
-                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, false, .8, .1),
+                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, false, .8, .2),
                     () -> robot.enterWobbleGoalMode()
             )
 
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO, false, .8, .6))
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB, false, .8, .2))
 
             .addState(() -> robot.launcher.wobbleGrip())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
@@ -140,7 +140,7 @@ public class Autonomous {
             .addSingleState(() -> robot.turret.setDangerModeActive(true))
 
             .addSimultaneousStates(
-                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, true, .8, .1),
+                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
                     () -> robot.launcher.setElbowTargetAngle(20)
             )
 
@@ -184,7 +184,7 @@ public class Autonomous {
             .addSingleState(() -> robot.launcher.preSpinFlywheel(900))
             .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_ROLLERS,true,  .5,.1))
             .addSingleState(()-> robot.intake.Do(Intake.Behavior.TENT)) //initial tent to put it into rollingringtake
-            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,10))
+            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,30))
 
             //the rest of this is just about safely returning proteus to starting position
             .addSingleState(()-> robot.setTarget(Constants.Target.NONE))

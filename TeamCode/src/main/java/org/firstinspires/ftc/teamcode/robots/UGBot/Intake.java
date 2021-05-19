@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.Conversions;
 
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_NOW;
+
 
 public class Intake {
 
@@ -186,6 +188,7 @@ public class Intake {
         switch(autoIntakeState){
             case 0:
                 if(isTented){ //this looks like bad coding, but it the only way to structure this
+                    //agree it's bad but it's not the only way to handle this
                     wasTented = true;
                 }
                 else wasTented=false;
@@ -197,13 +200,16 @@ public class Intake {
                 if(!wasTented) {
                     //lean forward to contact flat ring if we are not recovering from Tent
                     setTiltTargetPosition(Constants.INTAKE_PICKUP_TOP);
+                    //request mini jog backward from chassis
+                    INTAKE_MINIJOG_NOW=true;
                 }
+
                 setIntakeSpeed(Constants.INTAKE_SPEED);
                 autoIntakeTimer = System.nanoTime();
                 autoIntakeState++;
                 if (wasTented) {
                     //go straight to lift and handoff
-                    setTiltTargetPosition(Constants.INTAKE_HANDOFF_TOP);
+                    setTiltTargetPosition(Constants.INTAKE_HANDOFF__ROLLERS_TOP);
                     setOutTargetPosition(Constants.INTAKE_HANDOFF_BTM);
                     autoIntakeState++; //skip over next case
                 }

@@ -130,6 +130,9 @@ public class Conversions {
     public static long futureTime(float seconds){
         return System.nanoTime() + (long) (seconds * 1e9);
     }
+    public static long futureTime(double seconds){
+        return System.nanoTime() + (long) (seconds * 1e9);
+    }
 
     public static boolean notdeadzone(double value){
         if (value> -deadzone && value < deadzone) return false;

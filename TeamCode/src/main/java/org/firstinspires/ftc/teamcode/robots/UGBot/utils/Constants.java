@@ -82,7 +82,7 @@ public class Constants {
     public static double ILLEGAL_SHOOTING_DISTANCE = 1.8288;
 
     public static int WOBBLE_GRIPPER_CLOSED = 2100;
-    public static int WOBBLE_GRIPPER_RELEASE = 1700;
+    public static int WOBBLE_GRIPPER_RELEASE = 1400;
     public static int WOBBLE_GRIPPER_OPEN = 900;
     public static int GRIPPER_IN_POS = 0;
     public static int GRIPPER_OUT_POS = 550; //todo-fix this
@@ -94,17 +94,18 @@ public class Constants {
     public static int GRIPPER_HEADING_OFFSET = 42; //add this to the desired turret angle to actually point the open gripper that way and not the turret
 
     //renaming the Intake servo combinations to group together in Dashboard
-    public static int INTAKE_DEPLOY_TOP = 1300;
+    public static int INTAKE_DEPLOY_TOP = 1250; //1300
     public static int INTAKE_DEPLOY2_TOP = 1600;
     public static int INTAKE_DEPLOY_TRAVEL_BTM = 1450; //use as default bottom servo position if none specified
 
     public static int INTAKE_HANDOFF_BTM = 1675;
     public static int INTAKE_HANDOFF_TOP = 1200;
+    public static int INTAKE_HANDOFF__ROLLERS_TOP = 1200; //could be different if we are in active targeting and need to clear the slinger wall
 
     public static int INTAKE_INIT_BTM = 900;
     public static int INTAKE_INIT_TOP = 1100;
 
-    public static int INTAKE_PICKUP_TOP = 1500;
+    public static int INTAKE_PICKUP_TOP = 1530; //1500
 
     public static int INTAKE_TENT_BTM = 1400;
     public static int INTAKE_TENT_TOP = 1750;
@@ -112,8 +113,16 @@ public class Constants {
 
     public static int INTAKE_TRAVEL_TOP = 1450;
 
-    public static double INTAKE_ROLLING_RING_NEAR = .1; //distance range to trigger snap back
-    public static double INTAKE_ROLLING_RING_FAR = .5;
+    public static double INTAKE_ROLLING_RING_NEAR = .15; //distance range to trigger snap back
+    public static double INTAKE_ROLLING_RING_FAR = .42;
+    public static double INTAKE_ROLLING_RING_TOO_FAR = .65;
+    public static double INTAKE_ROLLING_RING_DELAY = .05;
+    public static boolean INTAKE_ROLLING_JOG_FW_NOW = false; //request Pose to jog the robot backward briefly - helps separate touching rings
+    public static double INTAKE_ROLLING_JOG_FW_TIME = .5;
+    public static double INTAKE_ROLLING_JOG_FW_POWER = .8;
+    public static boolean INTAKE_ROLLING_JOG_BW_NOW = false; //request Pose to jog the robot backward briefly - helps separate touching rings
+    public static double INTAKE_ROLLING_JOG_BW_TIME = .5;
+    public static double INTAKE_ROLLING_JOG_BW_POWER = -.8;
 
     //chassis-relative angle that places the transfer tray into a good position to receive rings from the intake
     public static int INTAKE_TO_TURRET_XFER_ANGLE = 360-25;
@@ -122,6 +131,9 @@ public class Constants {
     public static double INTAKE_SPEED = .8; //speed of walk and lift
     public static double INTAKE_TIME_FIRST = .65; //time to walk the ring
     public static double INTAKE_TIME_SECOND = 1.6; //time for ring to escalate & handoff
+    public static boolean INTAKE_MINIJOG_NOW = false; //request Pose to jog the robot backward briefly - helps separate touching rings
+    public static double INTAKE_MINIJOG_TIME = .35;
+    public static double INTAKE_MINIJOG_POWER = .25;
 
     public static double TURRET_SPEED= 90; //max degrees per second to manually adjust turret targetAngle
     public static double TURRET_TOLERANCE = 2; //accuracy wiggle room
@@ -184,8 +196,8 @@ public class Constants {
         ALIGNMENT_RESET(49/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1,1),
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
         //TARGET_C_1(49/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,190,-1,.2),
-        TARGET_C_1(49/INCHES_PER_METER, 10*12/INCHES_PER_METER, 75,35,-1,1),
-        TARGET_C_2((49+7)/INCHES_PER_METER, 9.25*12/INCHES_PER_METER, -1,45+45,5,0),
+        TARGET_C_1(49/INCHES_PER_METER, 10.75*12/INCHES_PER_METER, -1,120,-1,.02),
+        TARGET_C_2((49)/INCHES_PER_METER, 9.75*12/INCHES_PER_METER, -1,45+45,-1,.02),
         TARGET_C_3((49-12)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, -1,45+45,5,0),
         TARGET_B_1((49)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, 0,270,5,.2), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
         TARGET_B_2((49+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, -1,0,5,0),
@@ -194,13 +206,14 @@ public class Constants {
         RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1,0),
         RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1), //sweep needs to be very slow
         RING_STACK_SWEEPTO(36/INCHES_PER_METER, (48-10+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1),
-        WOBBLE_TWO(24/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1,1),
-        WOBBLE_TWO_APPROACH(49/INCHES_PER_METER, (3 * 12)/INCHES_PER_METER, -1, -1,-1, 0),
-        WOBBLE_TWO_EXIT(49/INCHES_PER_METER, (26)/INCHES_PER_METER, -1, -1,25, 1),
-        WOBBLE_TWO_GRAB (40/INCHES_PER_METER, (26)/INCHES_PER_METER, 90, 270,0,0),
+        //this is the actual location of wobble2 for reference, not meant as a robot drive target
+        WOBBLE_TWO(25/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1,1),
+        WOBBLE_TWO_APPROACH((49-3)/INCHES_PER_METER, (3 * 12)/INCHES_PER_METER, 50, -1,-1, 0),
+        WOBBLE_TWO_EXIT((49-3)/INCHES_PER_METER, (3.2*12)/INCHES_PER_METER, 0, -1,-1, -1),
+        WOBBLE_TWO_GRAB (30/INCHES_PER_METER, (30)/INCHES_PER_METER, -1, -1,-1,-1),
         NAVIGATE(49/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .2), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
         LAUNCH_PREFERRED((49)/INCHES_PER_METER, (5*12)/INCHES_PER_METER,-1,-1, -1,0), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
-        LAUNCH_ROLLERS(49/INCHES_PER_METER, (5.5*12)/INCHES_PER_METER,260,0, 25,.2), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
+        LAUNCH_ROLLERS(39/INCHES_PER_METER, (70)/INCHES_PER_METER,260,-1, -1,.2), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
         WOBBLE_GOAL_DUMP(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES + 3)/INCHES_PER_METER, -1, 180 + GRIPPER_HEADING_OFFSET, 45, .6),
         TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,330,30, 10, .2);
 

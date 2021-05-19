@@ -30,8 +30,18 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import java.util.Arrays;
 
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_NOW;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_POWER;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_TIME;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_BW_NOW;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_BW_POWER;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_FW_NOW;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_FW_POWER;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_FW_TIME;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_DELAY;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_FAR;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_NEAR;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_TOO_FAR;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ANGLE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ELEVATION;
 import static org.firstinspires.ftc.teamcode.util.Conversions.between;
@@ -67,7 +77,7 @@ public class PoseUG {
     PIDController alignPID = new PIDController(ALIGN_P, ALIGN_I, ALIGN_D);
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
-    public static double turnP = 0.0055; // proportional constant applied to error in degrees
+    public static double turnP = 0.01; // proportional constant applied to error in degrees /.0055 seems very low
     public static double turnI = 0.0; // integral constant
     public static double turnD = .13; // derivative constant
     public static double distP = 0.5; // proportional constant applied to error in meters
@@ -634,6 +644,10 @@ public class PoseUG {
         posePitch = wrapAngle(imuAngles.thirdAngle, offsetPitch);
         poseRoll = wrapAngle(imuAngles.secondAngle, offsetRoll);
 
+        //monitor for tent and motors moving to start ringevator rolling
+        //placing this monitor early since we want a good chance of it being overridden by subsequent intake behaviors
+        TentRingevatorMonitor();
+
         /*
          * double jerkX = (cachedXAcceleration - lastXAcceleration) / loopTime; boolean
          * correct = false;
@@ -736,13 +750,11 @@ public class PoseUG {
         maintainTarget();
 
         //auto intake when we are tented and ring crosses the right distance sensor
-        //todo move into Intake class as TentTake behavior - probably as a behavior to cascade into after TentSetup
-        if(intake.isTented() && intake.isRollingRingMode()){
-            if (between(getDistRightDist(),INTAKE_ROLLING_RING_NEAR,INTAKE_ROLLING_RING_FAR))
-                //don't interrupt other articulations
-                if(getArticulation()==Articulation.manual||getArticulation()==Articulation.toggleTrigger)
-                    intake.Do(Intake.Behavior.INTAKE);
-        }
+        TentTake();
+
+        MiniJog(); //service any request for jogs
+        RollingJogForward();
+        RollingJogBackward();
 
 
         //subsystem updates should be the very last movement methods called in this update cycle
@@ -1037,7 +1049,7 @@ public class PoseUG {
         switch (fieldPosState){
             case 0: //initially rotate to align with target location
 
-                if(rotateIMU(heading,1)) {
+                if(true) { //rotateIMU(heading,1)) {
                     fieldPosState++;
                 }
                 break;
@@ -1238,8 +1250,11 @@ public class PoseUG {
             case 0:
                 setTarget(newTarget);
                 flywheelIsActive = true;
-                shootRingStage++;
-                shootTime = System.nanoTime();
+                //wait until we are on-target
+                if (turret.isTurretNearTarget()) {
+                    shootRingStage++;
+                    shootTime = System.nanoTime();
+                }
                 break;
             case 1:
                 if(toggleTriggerArticulation()){
@@ -1439,7 +1454,7 @@ public class PoseUG {
 
             case 1: //for safety, raise for retract
                 if(System.nanoTime() - releaseWobbleGoalAutonTimer > .5 * 1E9) {
-                    launcher.setElbowTargetAngle(10);
+                    launcher.setElbowTargetAngle(30);
                     releaseWobbleGoalAutonTimer = System.nanoTime();
                     releaseWobbleGoalAutonState++;
                     }
@@ -1447,7 +1462,7 @@ public class PoseUG {
 
             case 2://close gripper prior to retract
                 if(System.nanoTime() - releaseWobbleGoalAutonTimer > .5 * 1E9) {
-                    launcher.wobbleGrip();
+                    if (withRetract) launcher.wobbleGrip();
                     releaseWobbleGoalAutonTimer = System.nanoTime();
                     releaseWobbleGoalAutonState++;
                 }
@@ -1457,7 +1472,10 @@ public class PoseUG {
                 if(System.nanoTime() - releaseWobbleGoalAutonTimer > .5 * 1E9) {
                     if (withRetract)
                         launcher.gripperRetract();
-                    else launcher.setElbowTargetAngle(20); //or raise up for another run
+                    else {
+                        releaseWobbleGoalAutonState = 0;
+                        return true;
+                    }
 
                     releaseWobbleGoalAutonTimer = System.nanoTime();
                     releaseWobbleGoalAutonState++;
@@ -2099,6 +2117,135 @@ public class PoseUG {
             maintainHeadingInit = false;
         }
     }
+
+    boolean intakeStartedByMonitor = false;
+    void TentRingevatorMonitor(){
+    if (intake.isTented){
+            if(Math.abs(motorBackLeft.getPower())>.1 || Math.abs(motorBackRight.getPower())>.1) {
+                intake.setIntakeSpeed(1);
+                intakeStartedByMonitor=true; //yup, this is a very weak way to do it
+            }
+            else{
+                    intake.setIntakeSpeed(0);
+                    intakeStartedByMonitor=false;
+                }
+        }
+    }
+
+
+    //auto intake when we are tented and ring crosses the right distance sensor
+    long tentTakeTime = 0;
+    boolean tentTakeInit = false;
+    public void TentTake() {
+        //try to adjust foward or backward for edge case rings
+        //todo again, rushed - really need to set the calculated distance to move forward or back
+        if (intake.isTented() && intake.isRollingRingMode()) {
+            if(getDistRightDist()<INTAKE_ROLLING_RING_NEAR)
+                INTAKE_ROLLING_JOG_BW_NOW=true;
+            if(between(getDistRightDist(),INTAKE_ROLLING_RING_FAR,INTAKE_ROLLING_RING_TOO_FAR))
+            {
+                INTAKE_ROLLING_JOG_FW_NOW = true;
+                intake.setIntakeSpeed(1); //todo: this should really be implemented as a monitor to turn on the intake motor if the robot is moving and tented is true
+            }
+
+            if (between(getDistRightDist(), INTAKE_ROLLING_RING_NEAR, INTAKE_ROLLING_RING_FAR)) {
+                if (!tentTakeInit) {
+                    tentTakeInit = true;
+                    tentTakeTime = futureTime(INTAKE_ROLLING_RING_DELAY);
+                }
+                //don't interrupt other articulations
+                //if (getArticulation() == Articulation.manual || getArticulation() == Articulation.toggleTrigger)
+                if (System.nanoTime() > tentTakeTime) {
+                    intake.Do(Intake.Behavior.INTAKE);
+                    tentTakeInit = false;
+                }
+            }
+        }
+    }
+
+    //jog the robot backward briefly
+    boolean miniJogInit = false;
+    double miniJogTime = 0;
+    public void MiniJog(){
+        if (INTAKE_MINIJOG_NOW)
+        {
+            if (!miniJogInit) {
+                miniJogTime = futureTime(INTAKE_MINIJOG_TIME);
+                miniJogInit = true;
+            }
+
+            if (miniJogTime > System.nanoTime()){
+                //set power on drive motors backward
+                motorBackLeft.setPower(-INTAKE_MINIJOG_POWER);
+                motorBackRight.setPower(-INTAKE_MINIJOG_POWER);
+
+            }
+            else {
+                miniJogInit = false;
+                motorBackLeft.setPower(0);
+                motorBackRight.setPower(0);
+                INTAKE_MINIJOG_NOW=false;
+            }
+
+        }
+
+    }
+
+    //jog the robot forward briefly - horrid way to duplicate code, but in a hurry
+    boolean rollingJogFwInit = false;
+    double rollingJogFwTime = 0;
+    public void RollingJogForward(){
+        if (INTAKE_ROLLING_JOG_FW_NOW)
+        {
+            if (!rollingJogFwInit) {
+                rollingJogFwTime = futureTime(INTAKE_ROLLING_JOG_FW_TIME);
+                rollingJogFwInit = true;
+            }
+
+            if (rollingJogFwTime > System.nanoTime()){
+                //set power on drive motors backward
+                motorBackLeft.setPower(INTAKE_ROLLING_JOG_FW_POWER);
+                motorBackRight.setPower(INTAKE_ROLLING_JOG_FW_POWER);
+
+            }
+            else {
+                rollingJogFwInit = false;
+                motorBackLeft.setPower(0);
+                motorBackRight.setPower(0);
+                INTAKE_ROLLING_JOG_FW_NOW=false;
+            }
+
+        }
+
+    }
+    //jog the robot forward briefly - screaming horrid way to duplicate code, but in a hurry
+    boolean rollingJogBwInit = false;
+    double rollingJogBwTime = 0;
+    public void RollingJogBackward(){
+        if (INTAKE_ROLLING_JOG_BW_NOW)
+        {
+            if (!rollingJogBwInit) {
+                rollingJogBwTime = futureTime(INTAKE_ROLLING_JOG_FW_TIME);
+                rollingJogBwInit = true;
+            }
+
+            if (rollingJogBwTime > System.nanoTime()){
+                //set power on drive motors backward
+                motorBackLeft.setPower(INTAKE_ROLLING_JOG_BW_POWER);
+                motorBackRight.setPower(INTAKE_ROLLING_JOG_BW_POWER);
+
+            }
+            else {
+                rollingJogBwInit = false;
+                motorBackLeft.setPower(0);
+                motorBackRight.setPower(0);
+                INTAKE_ROLLING_JOG_BW_NOW=false;
+            }
+
+        }
+
+    }
+
 
     /**
      * pivotTurn is a simple low level method to turn the robot from an arbitrary
