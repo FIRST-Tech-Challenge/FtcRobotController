@@ -146,15 +146,28 @@ public class Launcher {
         //flywheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    //gripper mehtods
+    //gripper methods
 
-    public void setGripperExtendABobTargetPos(int pos){
+    void setGripperExtendABobTargetPos(int pos){
         gripperExtendABobTargetPos = pos;}
 
+    public void gripperExtend(){
+        gripperExtendABobTargetPos = Constants.GRIPPER_OUT_POS;
+    }
+
+    public void gripperRetract(){
+        gripperExtendABobTargetPos = Constants.GRIPPER_IN_POS;}
+
+    public boolean IsGripperExtended(){
+        if(gripperExtendABob.getCurrentPosition()>Constants.GRIPPER_IN_POS + 50)
+            return true;
+        else return false;
+    }
 
 
     public boolean wobbleGrip(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;return true;}
-    public boolean wobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_OPEN;return true;}
+    public boolean wobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_RELEASE;return true;}
+    public boolean gripperOpenWide(){gripperTargetPos = Constants.WOBBLE_GRIPPER_OPEN;return true;}
 
     //trigger methods
 

@@ -82,6 +82,7 @@ public class Constants {
     public static double ILLEGAL_SHOOTING_DISTANCE = 1.8288;
 
     public static int WOBBLE_GRIPPER_CLOSED = 2100;
+    public static int WOBBLE_GRIPPER_RELEASE = 1700;
     public static int WOBBLE_GRIPPER_OPEN = 900;
     public static int GRIPPER_IN_POS = 0;
     public static int GRIPPER_OUT_POS = 550; //todo-fix this
