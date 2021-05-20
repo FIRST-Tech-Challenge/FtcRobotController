@@ -51,6 +51,7 @@ import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIAN
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_NOW;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ELEVATION;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.STARTING_HEIGHT_OFFSET;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.TURRET_SPEED;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
@@ -663,6 +664,14 @@ public class UG_6832 extends OpMode {
         if(toggleAllowed(gamepad2.dpad_down, dpad_down_2, 19))
             Constants.STARTING_HEIGHT_OFFSET += 0.02;
 
+        if(toggleAllowed(gamepad2.x,x,2)){
+            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP = 0;
+        }
+
+        if(toggleAllowed(gamepad2.y,y,2)){
+            Constants.STARTING_HEIGHT_OFFSET = 0;
+        }
+
 
         if(toggleAllowed(gamepad1.b, b, 1))
             robot.articulate(PoseUG.Articulation.toggleTrigger);
@@ -687,7 +696,7 @@ public class UG_6832 extends OpMode {
         }
 
         if(Constants.IN_WOBBLE_MODE && toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
-            if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN)
+            if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN || robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_RELEASE)
                 robot.launcher.wobbleGrip();
             else
                 robot.launcher.wobbleRelease();
@@ -698,13 +707,6 @@ public class UG_6832 extends OpMode {
 
         if (gamepad1.left_trigger > .01)
             robot.turret.rotateLeft(gamepad1.left_trigger * 2);
-
-        if(toggleAllowed(gamepad2.y, y,2)) {
-            robot.setAutoLaunchActive(!robot.autoLaunchActive);
-        }
-        if(toggleAllowed(gamepad2.x, x,2)) {
-            INTAKE_MINIJOG_NOW=true;
-        }
 
         if(toggleAllowed(gamepad1.dpad_right,dpad_right,1))
             robot.setTarget(Constants.Target.NONE);

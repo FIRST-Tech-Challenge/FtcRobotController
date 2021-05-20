@@ -131,13 +131,16 @@ public class Autonomous {
                     () -> robot.enterWobbleGoalMode()
             )
 
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB, false, .8, .2))
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB, false, .8, .1))
 
             .addState(() -> robot.launcher.wobbleGrip())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addSingleState(() -> Constants.IN_WOBBLE_MODE = false)
             .addSingleState(() -> robot.turret.setDangerModeActive(true))
+
+            //ben is a coder 😎
+
 
             .addSimultaneousStates(
                     () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
@@ -148,7 +151,7 @@ public class Autonomous {
             .addMineralState(ugStateProvider,
                     () -> robot.driveToFieldPosition(Constants.Position.TARGET_A_2, true, .8, .2),
                     () -> robot.driveToFieldPosition(Constants.Position.TARGET_B_2, true, .8, .2),
-                    () -> robot.driveToFieldPosition(Constants.Position.TARGET_C_2, true, .8, .2))
+                    () -> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true, .8, .2))
 
             //spin up the flywheel
             .addSingleState(() -> robot.launcher.preSpinFlywheel(1000))
@@ -162,6 +165,7 @@ public class Autonomous {
             .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL, 3))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
+            .addSingleState(()-> robot.gripperModeIsInReverse = false)
 
             //park
             .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE, false, .8, .6))

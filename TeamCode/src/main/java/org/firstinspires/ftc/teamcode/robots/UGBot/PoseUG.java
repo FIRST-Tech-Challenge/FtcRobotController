@@ -77,7 +77,8 @@ public class PoseUG {
     PIDController alignPID = new PIDController(ALIGN_P, ALIGN_I, ALIGN_D);
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
-    public static double turnP = 0.01; // proportional constant applied to error in degrees /.0055 seems very low
+    public static double turnP = 0.0055; // proportional constant applied to error in degrees /.0055 seems very low
+    public static double driveP = .001;
     public static double turnI = 0.0; // integral constant
     public static double turnD = .13; // derivative constant
     public static double distP = 0.5; // proportional constant applied to error in meters
@@ -1144,7 +1145,7 @@ public class PoseUG {
         return Math.sqrt(Math.pow((targetX-getPoseX()),2) + Math.pow((targetY-getPoseY()),2));
     }
 
-    private double getBearingTo(double targetX, double targetY) {
+    public double getBearingTo(double targetX, double targetY) {
         return Math.toDegrees(Math.atan2((targetX-getPoseX()), (targetY-getPoseY())));
     }
 
@@ -1356,6 +1357,7 @@ public class PoseUG {
     public boolean enterWobbleGoalMode() {
         switch (enterWobbleGoalModeState) {
             case 0:
+                gripperModeIsInReverse = true;
                 setTarget(Constants.Target.NONE);
                 turret.setCurrentMode(Turret.TurretMode.chassisRelative);
                 launcher.setElbowTargetAngle(25);
@@ -1384,7 +1386,6 @@ public class PoseUG {
             case 3:
                 if(System.nanoTime() - enterWobbleGoalModeTimer > 1 * 1E9) {
                     enterWobbleGoalModeState = 0;
-                    gripperModeIsInReverse = true;
                     return true;
                 }
                 break;
@@ -1843,7 +1844,7 @@ public class PoseUG {
         // setup turnPID
         turnPID.setOutputRange(-.5, .5);
         turnPID.setIntegralCutIn(cutout);
-        turnPID.setPID(turnP, turnI, turnD);
+        turnPID.setPID(driveP, turnI, turnD);
         turnPID.setSetpoint(targetAngle);
         turnPID.setInputRange(0, 360);
         turnPID.setContinuous();
