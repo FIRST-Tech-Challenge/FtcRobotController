@@ -52,11 +52,11 @@ public class RateController {
             m_result = m_rate * m_deltaTime;
 
             // Make sure the final result is within bounds
-            if (m_result > m_maximumOutput) {
-                m_result = m_maximumOutput;
-            } else if (m_result < m_minimumOutput) {
-                m_result = m_minimumOutput;
-            }
+//            if (m_result > m_maximumOutput) {
+//                m_result = m_maximumOutput;
+//            } else if (m_result < m_minimumOutput) {
+//                m_result = m_minimumOutput;
+//            }
         }
         else m_result = 0;
         return m_result;

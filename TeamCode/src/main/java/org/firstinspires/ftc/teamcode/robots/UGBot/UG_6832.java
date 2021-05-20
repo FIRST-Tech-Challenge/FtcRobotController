@@ -46,6 +46,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.OpenCVIntegration;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
+import org.firstinspires.ftc.teamcode.util.RateController;
 
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
@@ -294,6 +295,9 @@ public class UG_6832 extends OpMode {
         }
 
     };
+
+
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -654,7 +658,14 @@ public class UG_6832 extends OpMode {
 //        }
         //endregion
 
+
         // offsets
+
+        if (notdeadzone(gamepad2.right_trigger))
+            robot.turret.imuOffset(gamepad2.right_trigger);
+        if (notdeadzone(gamepad2.left_trigger))
+            robot.turret.imuOffset(-gamepad2.left_trigger);
+
         if(toggleAllowed(gamepad2.dpad_left, dpad_left_2, 16))
             Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP -= 1.0;
         if(toggleAllowed(gamepad2.dpad_right, dpad_right_2, 17))
