@@ -36,6 +36,7 @@ public class ShooterCommands extends Command {
         // Toggle Button for shooter type (highgoal if true, powershot if false)
         if(opMode.gamepad2.x || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
              shooter.setShooterVelocity(robot.powerShotVelocity);
+             robot.stickToggle = true;
              robot.setShootingState(UpliftRobot.ShootingState.IDLE);
         }
 

@@ -70,11 +70,11 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void initStick() {
-        stick.setPosition(0);
+        stick.setPosition(0.035);
     }
 
     public void dropStick() {
-        stick.setPosition(0.97);
+        stick.setPosition(1);
     }
 
     public void raiseStick() {

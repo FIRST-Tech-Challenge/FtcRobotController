@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.toolkit.background;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -33,8 +31,8 @@ public class Odometry extends Background {
         if(robot.imuInitialized) {
             robot.imuAngle = -robot.imu.getAngularOrientation().firstAngle;
         }
-        Log.i("Odometry:", "X: " + robot.worldX + "   Y: " + robot.worldY + "   Angle: " + robot.worldAngle);
-        Log.i("IMU", robot.imuAngle + "");
+//        Log.i("Odometry:", "X: " + robot.worldX + "   Y: " + robot.worldY + "   Angle: " + robot.worldAngle);
+//        Log.i("IMU", robot.imuAngle + "");
 //        Log.i("Lf", robot.leftFront.getPower() + "");
 //        Log.i("Rf", robot.rightFront.getPower() + "");
 //        Log.i("Lb", robot.leftBack.getPower() + "");

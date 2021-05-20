@@ -1,17 +1,11 @@
 package org.firstinspires.ftc.teamcode.toolkit.background;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
-import org.firstinspires.ftc.teamcode.subsystems.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.core.Background;
-import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
-import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 import org.firstinspires.ftc.teamcode.toolkit.misc.MathFunctions;
 
 public class UpliftTelemetry extends Background {

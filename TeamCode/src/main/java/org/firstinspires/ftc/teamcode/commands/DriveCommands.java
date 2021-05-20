@@ -53,6 +53,9 @@ public class DriveCommands extends Command {
             // set shooting state to PREPARING_POWERSHOT in order to raise transfer and set shooter vel to the powershot target vel
             robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
 
+            // lift the roller all the way
+            robot.forceLiftRoller = true;
+
             // set the odometry position (CHANGE/CHECK THESE VALUES LATER)
             drive.robot.odometry.setOdometryPosition(54, 70,0);
 
@@ -85,6 +88,7 @@ public class DriveCommands extends Command {
 
             // set the shooting state to DONE_SHOOTING in order to move the shooter to an idle speed and drop the transfer
             robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
+            robot.forceLiftRoller = false;
         }
 
         teleOpDrive();

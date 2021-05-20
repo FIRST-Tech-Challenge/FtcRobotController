@@ -83,6 +83,7 @@ public class UpliftRobot {
     public double constant = 0;
     public boolean slowMode = false;
     public boolean intakeToggle = false;
+    public boolean forceLiftRoller = false;
     public boolean stickToggle = false;
     public boolean highGoalMode = true;
     public double shooter1Vel = -1;

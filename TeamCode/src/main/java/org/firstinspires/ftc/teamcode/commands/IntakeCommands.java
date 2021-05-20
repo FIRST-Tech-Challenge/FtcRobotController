@@ -59,29 +59,33 @@ public class IntakeCommands extends Command {
             lifterButtonPressed = false;
         }
 
-        if(robot.intakeToggle) {
+        if(robot.driverCancel || robot.operatorCancel) {
+            robot.forceLiftRoller = false;
+        }
+
+        if(intake.getPower() < 0) {
+            intake.dropRoller();
+        } else if(robot.forceLiftRoller) {
+            intake.initRoller();
+        } else if(robot.intakeToggle) {
             intake.liftRoller();
         } else {
             intake.dropRoller();
         }
 
-        if(intake.getPower() < 0){
+        if(intake.getPower() < 0) {
             intake.sweeperOn();
-            intake.dropRoller();
         } else {
             intake.sweeperOff();
         }
 
-        if(robot.stickToggle) {
+        if(robot.stickToggle || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
             intake.stick.setPosition(0.35);
         } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL || robot.shootingState == UpliftRobot.ShootingState.SHOOTING_HIGHGOAL && robot.shotCount < 1) {
             intake.raiseStick();
-        } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
-            intake.stick.setPosition(0.35);
         } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
             intake.dropStick();
-        }
-        else{
+        } else {
             intake.dropStick();
         }
     }
