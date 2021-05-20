@@ -192,9 +192,9 @@ public class Meet5Auto extends UpliftAuto {
             }
 
             // drop off first wobble
-            driveSub.driveToPosition(120, 92, 0.7, 180);
+            driveSub.driveToPosition(122, 92, 0.7, 180);
             driveSub.turnTo(180, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
-            driveSub.driveToPosition(120, 92, 0.5, 180);
+            driveSub.driveToPosition(122, 92, 0.5, 180);
             wobbleSub.dropOff();
 
             // pick up second wobble goal
