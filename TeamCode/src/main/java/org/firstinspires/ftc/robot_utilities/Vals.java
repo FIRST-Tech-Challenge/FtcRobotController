@@ -66,4 +66,6 @@ public class Vals {
     public static double motorMoveUp = 0.565;
     public static double motorMoveDown = -0.565;
     public static double motorReturnToDefault = 0.0;
+
+    public static int vision_horizon = 75;
 }

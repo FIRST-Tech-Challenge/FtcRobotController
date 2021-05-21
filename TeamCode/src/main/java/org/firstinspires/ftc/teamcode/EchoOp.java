@@ -34,7 +34,6 @@ public class EchoOp extends OpMode {
 
     private double intakeSpeed = 0;
     private boolean wobbleHandOpen = false;
-    private double wobbleHandPos = Vals.wobble_hand_close;
     private WobbleArmState wobbleArmState = WobbleArmState.UP;
     private boolean flywheelOn = false;
     private boolean flywheelPowershot = false;
@@ -92,9 +91,9 @@ public class EchoOp extends OpMode {
         }
 
         if(wobbleHandOpen) {
-            wobbleHandPos = Vals.wobble_hand_open;
+            wobbleSystem.hand_open();
         } else {
-            wobbleHandPos = Vals.wobble_hand_close;
+            wobbleSystem.hand_close();
         }
 
         if(gamepad.isUpRelease()) {
@@ -150,8 +149,6 @@ public class EchoOp extends OpMode {
         intake1.set(intakeSpeed);
         intake2.set(intakeSpeed);
 
-        wobbleSystem.wobbleHand.setPosition(wobbleHandPos);
-
         switch (wobbleArmState) {
             case UP:
                 wobbleSystem.arm_up();
@@ -185,17 +182,17 @@ public class EchoOp extends OpMode {
         telemetry.addData("Heading: ", pose.getHeading());
 
 
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.fieldOverlay()
-                .setFill("blue")
-                .fillRect(pose.getX(), pose.getY(), 10, 10);
-        TelemetryPacket packet2 = new TelemetryPacket();
-        packet2.fieldOverlay()
-                .setFill("red")
-                .fillRect(0, 0, 30, 30);
-
-        dashboard.sendTelemetryPacket(packet);
-        dashboard.sendTelemetryPacket(packet2);
+//        TelemetryPacket packet = new TelemetryPacket();
+//        packet.fieldOverlay()
+//                .setFill("blue")
+//                .fillRect(pose.getX(), pose.getY(), 10, 10);
+//        TelemetryPacket packet2 = new TelemetryPacket();
+//        packet2.fieldOverlay()
+//                .setFill("red")
+//                .fillRect(0, 0, 30, 30);
+//
+//        dashboard.sendTelemetryPacket(packet);
+//        dashboard.sendTelemetryPacket(packet2);
 
 
     }

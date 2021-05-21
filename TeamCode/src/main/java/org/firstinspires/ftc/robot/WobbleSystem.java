@@ -28,6 +28,10 @@ public class WobbleSystem {
         wobbleArm.set(0);
     }
 
+    public void hand_to_pos(double pos) {
+        wobbleHand.setPosition(pos);
+    }
+
     public void arm_down() {
         this.arm_to_pos(Vals.wobble_arm_down_pos);
     }
@@ -38,6 +42,13 @@ public class WobbleSystem {
 
     public void arm_mid() {
         this.arm_to_pos(Vals.wobble_arm_mid_pos);
+    }
+
+    public void hand_open() {
+        hand_to_pos(Vals.wobble_hand_open);
+    }
+    public void hand_close() {
+        hand_to_pos(Vals.wobble_hand_close);
     }
 
 }
