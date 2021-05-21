@@ -691,13 +691,9 @@ public class UG_6832 extends OpMode {
 //        if(toggleAllowed(gamepad1.a, a, 1))
 //            robot.flywheelIsActive = !robot.flywheelIsActive;
         if(toggleAllowed(gamepad1.y, y, 1)) {
-            if (robot.intake.IsIntaking())
-                robot.intake.Do(Intake.Behavior.ENDINTAKE);
-            else {
-                robot.intake.setRollingRingMode(false);
-                robot.SetRingCatch(); //put launcher in catching position
-                robot.intake.Do(Intake.Behavior.INTAKE);
-            }
+            robot.intake.setRollingRingMode(false);
+            robot.launcher.setElbowTargetAngle(INTAKE_TO_TURRET_XFER_ELEVATION);
+            robot.intake.Do(Intake.Behavior.INTAKE);
         }
         if(toggleAllowed(gamepad1.x,x,1)){
             robot.intake.Do(Intake.Behavior.TENT);
