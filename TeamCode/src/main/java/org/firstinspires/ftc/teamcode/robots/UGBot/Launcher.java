@@ -28,6 +28,7 @@ public class Launcher {
     DcMotor gripperExtendABob = null;
     Servo servoTrigger = null;
     Servo servoGripper = null;
+    Servo servoWiper = null;
 
     //flywheel variables
     public long lastUpdateTime;
@@ -59,13 +60,14 @@ public class Launcher {
     public int elbowMaxSafetyOffset = 70; //makes sure that the robot doesn't try and extend to the elbow max exactly
     public int gripperExtendABobTargetPos = 0;
 
-    public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, DcMotor gripperExtendABob, Servo servoTrigger, Servo servoGripper){
+    public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, DcMotor gripperExtendABob, Servo servoTrigger, Servo servoGripper, Servo servoWiper){
 
         this.elbow = elbow;
         this.flywheelMotor = flywheelMotor;
         this.servoTrigger = servoTrigger;
         this.servoGripper = servoGripper;
         this.gripperExtendABob = gripperExtendABob;
+        this.servoWiper = servoWiper;
 
         this.elbow.setTargetPosition(elbow.getCurrentPosition());
         this.elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -97,6 +99,7 @@ public class Launcher {
     int prevMotorTicks;
     int gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;
     int triggerTargetPos = Constants.LAUNCHER_TRIGGER_STOWED;
+    int wiperTargetPos = Constants.LAUNCHER_WIPER_UNWIPED;
     public void update(){
         if(active) {
             if(elbowActivePID)
@@ -106,6 +109,7 @@ public class Launcher {
 
             servoTrigger.setPosition(servoNormalize(triggerTargetPos));
             servoGripper.setPosition(servoNormalize(gripperTargetPos));
+            servoWiper.setPosition(servoNormalize(wiperTargetPos));
             gripperExtendABob.setTargetPosition(gripperExtendABobTargetPos);
 
             flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) / 1E9);
@@ -154,6 +158,10 @@ public class Launcher {
     public void gripperExtend(){
         gripperExtendABobTargetPos = Constants.GRIPPER_OUT_POS;
     }
+
+    void setWiperTargetPos(int pos){
+        wiperTargetPos = pos;}
+
 
     public void gripperRetract(){
         gripperExtendABobTargetPos = Constants.GRIPPER_IN_POS;}

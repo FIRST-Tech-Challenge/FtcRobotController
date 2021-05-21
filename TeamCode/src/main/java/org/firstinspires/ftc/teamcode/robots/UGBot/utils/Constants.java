@@ -143,6 +143,9 @@ public class Constants {
     public static int LAUNCHER_TRIGGER_BACK = 1780;
     public static double autoLaunchTime = .1;
 
+    public static int LAUNCHER_WIPER_UNWIPED = 2100;
+    public static int LAUNCHER_WIPER_WIPED = 1500;
+
     public static double __ATMEP = 1;
     public static double __ATMEP2 = -1;
 

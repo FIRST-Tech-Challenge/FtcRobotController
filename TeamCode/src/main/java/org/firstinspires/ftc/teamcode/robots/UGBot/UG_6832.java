@@ -662,6 +662,21 @@ public class UG_6832 extends OpMode {
 
         // offsets
 
+        if(gamepad2.a){
+            robot.launcher.setWiperTargetPos(Constants.LAUNCHER_WIPER_WIPED);
+        }
+        else{
+            robot.launcher.setWiperTargetPos(Constants.LAUNCHER_WIPER_UNWIPED);
+        }
+
+        if(toggleAllowed(gamepad2.b,b,2)) {
+            robot.articulate(PoseUG.Articulation.toggleTrigger);
+        }
+
+        if(toggleAllowed(gamepad1.left_bumper,left_bumper,1)){
+            robot.launcher.gripperExtend();
+        }
+
         if (notsmalldeadzone(gamepad2.right_trigger))
             robot.turret.imuOffset(gamepad2.right_trigger);
         if (notsmalldeadzone(gamepad2.left_trigger))

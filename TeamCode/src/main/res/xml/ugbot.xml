@@ -9,6 +9,7 @@
 
             <Servo name="triggerServo" port="0" />
             <Servo name="gripperServo" port="4" />
+            <Servo name="servoWiper" port="1" />
             <Servo name="blinkin" port="5" />
 
             <LynxEmbeddedIMU name="turretIMU" port="0" bus="0" />

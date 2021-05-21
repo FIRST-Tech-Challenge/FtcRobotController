@@ -78,7 +78,7 @@ public class PoseUG {
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
     public static double turnP = 0.0055; // proportional constant applied to error in degrees /.0055 seems very low
-    public static double driveP = .012;
+    public static double driveP = .01;
     public static double turnI = 0.0; // integral constant
     public static double turnD = .13; // derivative constant
     public static double distP = 0.5; // proportional constant applied to error in meters
@@ -108,6 +108,7 @@ public class PoseUG {
     private DcMotor turretMotor = null;
     private Servo triggerServo = null;
     private Servo gripperServo = null;
+    private Servo servoWiper = null;
     Servo blinkin = null;
 
     // All Subsystems
@@ -337,6 +338,7 @@ public class PoseUG {
         this.gripperExtendABob = (DcMotor) this.hwMap.dcMotor.get("gripperExtendABob");
         this.triggerServo = this.hwMap.servo.get("triggerServo");
         this.gripperServo = this.hwMap.servo.get("gripperServo");
+        this.servoWiper = this.hwMap.servo.get("servoWiper");
 
         this.intakeMotor = this.hwMap.dcMotor.get("intakeMotor");
         this.tiltServo = this.hwMap.servo.get("tiltServo");
@@ -378,7 +380,7 @@ public class PoseUG {
          * driveRight.setDirection(DcMotorSimple.Direction.FORWARD); }
          */
         // setup subsystems
-        launcher = new Launcher(elbow, flywheelMotor, gripperExtendABob, triggerServo, gripperServo);
+        launcher = new Launcher(elbow, flywheelMotor, gripperExtendABob, triggerServo, gripperServo, servoWiper);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
         intake = new Intake(intakeMotor, tiltServo, outServo);
