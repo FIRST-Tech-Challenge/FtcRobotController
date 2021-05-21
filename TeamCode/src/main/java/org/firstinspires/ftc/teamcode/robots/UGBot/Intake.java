@@ -35,6 +35,7 @@ public class Intake {
         TRAVEL, //for running around the field - default behavior
         PICKUP, //for transiting across the ring to pick it up - this is a mini behavior
         ELEVATE, //run up the ringevator and exit into the slinger tray
+        ENDINTAKE, //finish an Intake or exit it early
         INTAKE, //combo of pickup and elevate - not sure if needed, since Pickup should transition to elevate
         TENT, //enter tent mode
         ROLLING_RINGTAKE, //auto snap on rolling rings
@@ -81,6 +82,14 @@ public class Intake {
             case PICKUP: //not broken out yet
                 break;
             case ELEVATE: //not broken out yet
+                break;
+            case ENDINTAKE: //exit an Intake behavior early
+                if (EndIntake()){
+                    if (!isRollingRingMode())
+                        behavior=Behavior.TRAVEL; //normally we transition back to Travel after intake
+                    else
+                        behavior=Behavior.TENT; //auto return to Tent after Intake
+                }
                 break;
             case INTAKE:
                 if (Intake()){
@@ -181,6 +190,17 @@ public class Intake {
         return true;
     }
 
+    public boolean EndIntake(){
+        setTravel();
+        wasTented = false;
+        autoIntakeState = 0;
+        return true;
+    }
+
+    public boolean IsIntaking(){
+        return autoIntakeState>0 ? true : false;
+    }
+
     public int autoIntakeState = 0;
     private double autoIntakeTimer = 0;
     private boolean wasTented = false;
@@ -226,10 +246,7 @@ public class Intake {
             case 3:
                 //wait for intake belt to bring up and hand off the ring, then ready for travel
                 if(System.nanoTime() - autoIntakeTimer > Constants.INTAKE_TIME_SECOND * 1E9) {
-                    setTravel();
-                    wasTented = false;
-                    autoIntakeState = 0;
-                    return true;
+                    return EndIntake();
                 }
                 break;
         }
