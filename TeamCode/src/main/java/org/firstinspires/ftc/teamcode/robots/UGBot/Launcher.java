@@ -121,7 +121,9 @@ public class Launcher {
                 spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelTPS, flywheelTargetTPS);
             }
             else{
-                flywheelMotor.setPower(0);
+                //spin backward very slowly to avoid jams when triggering to settle rings the breach
+                if (active) spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelTPS, -10);
+                else flywheelMotor.setPower(0);
             }
 
         }

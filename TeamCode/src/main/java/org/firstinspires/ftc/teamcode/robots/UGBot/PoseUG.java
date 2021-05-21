@@ -787,13 +787,16 @@ public class PoseUG {
 
         //when we come out of targeting, go to chassis relative mode and set up for catching rings
         if (target == Constants.Target.NONE){
-            turret.setCurrentMode(Turret.TurretMode.chassisRelative);
-            turret.setTurretAngle(INTAKE_TO_TURRET_XFER_ANGLE);
-            //todo test - probably want a preset elbow angle too
-            launcher.setElbowTargetAngle(INTAKE_TO_TURRET_XFER_ELEVATION);
+            SetRingCatch();
         }
         else {
             turret.setCurrentMode(Turret.TurretMode.fieldRelative);}
+    }
+
+    public void SetRingCatch(){
+        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
+        turret.setTurretAngle(INTAKE_TO_TURRET_XFER_ANGLE);
+        launcher.setElbowTargetAngle(INTAKE_TO_TURRET_XFER_ELEVATION);
     }
 
     public Constants.Target getTarget() {
