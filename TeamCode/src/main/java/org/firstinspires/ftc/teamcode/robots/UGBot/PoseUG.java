@@ -78,7 +78,7 @@ public class PoseUG {
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
     public static double turnP = 0.0055; // proportional constant applied to error in degrees /.0055 seems very low
-    public static double driveP = .001;
+    public static double driveP = .012;
     public static double turnI = 0.0; // integral constant
     public static double turnD = .13; // derivative constant
     public static double distP = 0.5; // proportional constant applied to error in meters
@@ -1225,7 +1225,12 @@ public class PoseUG {
         if(rampedUp){
             switch (toggleTriggerState) {
                 case 0:
-                    launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_SHOOT);
+                    if(Constants.IN_WOBBLE_MODE) {
+                        launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_STOWED);
+                    }
+                    else{
+                        launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_SHOOT);
+                    }
                     lastTriggerTime = System.currentTimeMillis();
                     toggleTriggerState++;
                     break;

@@ -126,7 +126,7 @@ public class Constants {
 
     //chassis-relative angle that places the transfer tray into a good position to receive rings from the intake
     public static int INTAKE_TO_TURRET_XFER_ANGLE = 360-25;
-    public static int INTAKE_TO_TURRET_XFER_ELEVATION = 20;
+    public static int INTAKE_TO_TURRET_XFER_ELEVATION = 23;
 
     public static double INTAKE_SPEED = .8; //speed of walk and lift
     public static double INTAKE_TIME_FIRST = .65; //time to walk the ring
@@ -196,7 +196,7 @@ public class Constants {
         ALIGNMENT_RESET(49/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1,1),
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
         //TARGET_C_1(49/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,190,-1,.2),
-        TARGET_C_1((49 - 3)/INCHES_PER_METER, 10.75*12/INCHES_PER_METER, -1,120,-1,.02),
+        TARGET_C_1((49-3)/INCHES_PER_METER, 10.75*12/INCHES_PER_METER, -1,120,-1,.02),
         TARGET_C_2((49)/INCHES_PER_METER, 9.75*12/INCHES_PER_METER, -1,45+45,-1,.02),
         TARGET_C_3((49-12)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, -1,45+45,5,0),
         TARGET_B_1((49)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, 0,270,5,.2), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
@@ -208,7 +208,7 @@ public class Constants {
         RING_STACK_SWEEPTO(36/INCHES_PER_METER, (48-10+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1),
         //this is the actual location of wobble2 for reference, not meant as a robot drive target
         WOBBLE_TWO(25/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1,1),
-        WOBBLE_TWO_APPROACH((49-3)/INCHES_PER_METER, (3 * 12)/INCHES_PER_METER, 50, -1,-1, 0),
+        WOBBLE_TWO_APPROACH((49+3)/INCHES_PER_METER, (2.5 * 12)/INCHES_PER_METER, 50, -1,-1, 0),
         WOBBLE_TWO_EXIT((49+3)/INCHES_PER_METER, (3.2*12)/INCHES_PER_METER, 0, -1,-1, -1),
         WOBBLE_TWO_GRAB (30/INCHES_PER_METER, (30)/INCHES_PER_METER, -1, -1,-1,-1),
         NAVIGATE(49/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .2), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)

@@ -253,7 +253,6 @@ public class Turret{
     public void rotateRight(double speed) { //expect speed in the range of -1 to 1, with a deadzone around zero
         //setTurretOffset(getHeading()+ manualOffset, angleIncrement * speed);
         adjust(speedBoost *speed);
-        Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP+=speed*turretOffsetAdjuster.get(20);
     }
 
     public void rotateLeft(double speed){
@@ -264,7 +263,7 @@ public class Turret{
     }
 
     public void imuOffset( double speed){
-
+        Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP+=speed*turretOffsetAdjuster.get(10);
     }
 
     //*************** WARNING ************************

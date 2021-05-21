@@ -56,6 +56,7 @@ import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.STARTI
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.TURRET_SPEED;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
+import static org.firstinspires.ftc.teamcode.util.Conversions.notsmalldeadzone;
 
 /**
  * This file contains the code for Iron Reign's main OpMode, used for both
@@ -661,9 +662,9 @@ public class UG_6832 extends OpMode {
 
         // offsets
 
-        if (notdeadzone(gamepad2.right_trigger))
+        if (notsmalldeadzone(gamepad2.right_trigger))
             robot.turret.imuOffset(gamepad2.right_trigger);
-        if (notdeadzone(gamepad2.left_trigger))
+        if (notsmalldeadzone(gamepad2.left_trigger))
             robot.turret.imuOffset(-gamepad2.left_trigger);
 
         if(toggleAllowed(gamepad2.dpad_left, dpad_left_2, 16))

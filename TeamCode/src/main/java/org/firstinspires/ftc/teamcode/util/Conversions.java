@@ -5,6 +5,8 @@ import org.firstinspires.ftc.teamcode.RC;
 public class Conversions {
 
     private static double deadzone = 0.4;
+    private static double smalldeadzone = 0.1;
+
     private static double nearzero = .0000001;
 
     public Conversions(){}
@@ -136,6 +138,11 @@ public class Conversions {
 
     public static boolean notdeadzone(double value){
         if (value> -deadzone && value < deadzone) return false;
+        else return true;
+    }
+
+    public static boolean notsmalldeadzone(double value){
+        if (value> -smalldeadzone && value < smalldeadzone) return false;
         else return true;
     }
 

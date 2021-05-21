@@ -131,7 +131,7 @@ public class Autonomous {
                     () -> robot.enterWobbleGoalMode()
             )
 
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB, false, .8, .1))
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO, false, .8, .5))
 
             .addState(() -> robot.launcher.wobbleGrip())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
@@ -143,9 +143,11 @@ public class Autonomous {
 
 
             .addSimultaneousStates(
-                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
+                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, true, .8, .15),
                     () -> robot.launcher.setElbowTargetAngle(20)
             )
+
+            .addSingleState(()-> robot.rotateIMU(0,1))
 
             //place wobble 2
             .addMineralState(ugStateProvider,
@@ -157,6 +159,8 @@ public class Autonomous {
             .addSingleState(() -> robot.launcher.preSpinFlywheel(1000))
 
             .addState(() -> robot.releaseWobbleGoalAuton(true))
+
+            .addSingleState(()-> robot.setTarget(Constants.Target.HIGH_GOAL))
 
             //lAUNCHING
             .addState(() -> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED, false, 1, .1))
