@@ -66,23 +66,53 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
     }
 
     public void shootPowerShotStrafeStopStyle() {
+//        robot.shooterOnPowershot();
+//        driveToWayPoint(aroundStartingStack1, true, true);
+//        robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
+//        driveToWayPoint(powerShotFirst, false, false);
+//        rotateToWayPointAngle(powerShotFirst);
+//        sleep(500);
+//        robot.startInjecting();
+//        while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+//            updatePosition();
+//        }
+//        driveToWayPoint(powerShotSecond, false, false);
+//        rotateToWayPointAngle(powerShotSecond);
+//        robot.startInjecting();
+//        while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+//            updatePosition();
+//        }
+//        driveToWayPoint(powerShotThird, false, false);
+//        rotateToWayPointAngle(powerShotThird);
+//        robot.startInjecting();
+//        while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+//            updatePosition();
+//        }
+
+//        if (randomizationPosition == 1) {
+//            robot.shooterOff();
+//        } else {
+//            robot.shooterOnHighGoal();
+//        }
+
+
         robot.shooterOnPowershot();
-        driveToWayPoint(aroundStartingStack1, true, true);
-        robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
         driveToWayPoint(powerShotFirst, false, false);
+        robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
+//        driveToWayPoint(powerShotFirst, false, false);
         rotateToWayPointAngle(powerShotFirst);
         sleep(500);
         robot.startInjecting();
         while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
             updatePosition();
         }
-        driveToWayPoint(powerShotSecond, false, false);
+//        driveToWayPoint(powerShotSecond, false, false);
         rotateToWayPointAngle(powerShotSecond);
         robot.startInjecting();
         while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
             updatePosition();
         }
-        driveToWayPoint(powerShotThird, false, false);
+//        driveToWayPoint(powerShotThird, false, false);
         rotateToWayPointAngle(powerShotThird);
         robot.startInjecting();
         while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {

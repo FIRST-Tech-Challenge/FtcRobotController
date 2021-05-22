@@ -25,6 +25,8 @@ import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MovementVars;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
+import java.util.Arrays;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.copySign;
@@ -46,7 +48,8 @@ public class UltimateGoalRobot
     public static boolean autoExecuted;
 
     /* Public OpMode members. */
-    public final static double WOBBLE_ARM_MIN = 0.300;
+    public final static double WOBBLE_ARM_MIN = 0.150;
+//    public final static double WOBBLE_ARM_MIN = 0.300;
     public final static double WOBBLE_ARM_MAX = 3.2;
 
     // Regular high goal shots
@@ -109,6 +112,9 @@ public class UltimateGoalRobot
     LynxModule controlHub;
     LynxModule expansionHub;
 
+    private MaxSonarI2CXL sonarRangeL = null;   // Must include MaxSonarI2CXL.java in teamcode folder
+    private MaxSonarI2CXL sonarRangeR = null;
+
     // These motors have the odometry encoders attached
     protected DcMotorEx intake = null;
     protected DcMotorEx wobble = null;
@@ -157,14 +163,27 @@ public class UltimateGoalRobot
     public boolean forceReset = false;
     public boolean disableDriverCentric = true;
 
-    public static WayPoint shootingError = new WayPoint(0, 0, Math.toRadians(0), 1.0);
-    public static WayPoint highGoal = new WayPoint(167.35324, 149.7584, Math.toRadians(95.0), 1.0);
+    public WayPoint shootingError = new WayPoint(0, 0, Math.toRadians(0), 1.0);
+    public WayPoint teleHighGoal;
 
-    public static WayPoint powerShotRight = new WayPoint(122.77404, 149.7584, Math.toRadians(95.0), 1.0);
-    public static WayPoint powerShotCenter = new WayPoint(100.27404, 149.7584, Math.toRadians(95.0), 1.0);
-    public static WayPoint powerShotLeft = new WayPoint(82.77404, 149.7584, Math.toRadians(95.0), 1.0);
+    public WayPoint telePowerShotRight;
+    public WayPoint telePowerShotCenter;
+    public WayPoint telePowerShotLeft;
+    public WayPoint powerShotCorrection = new WayPoint(0.0, 0.0, 0.0, 1.0);
 
-    public double xAngle, yAngle, zAngle;
+    // Sonar variables
+    private int      sonarRangeLIndex   = 0;                          // 0...4 (SampCnt-1)
+    private double[] sonarRangeLSamples = {0,0,0,0,0};                // continuous sampling data (most recent 5)
+    private int      sonarRangeLSampCnt = sonarRangeLSamples.length;  // 5
+    private double   sonarRangeLMedian  = 0.0;                        // CM (divide by 2.54 for INCHES)
+    public  double   sonarRangeLStdev   = 0.0;
+
+    private int      sonarRangeRIndex   = 0;                          // 0...4 (SampCnt-1)
+    private double[] sonarRangeRSamples = {0,0,0,0,0};                // continuous sampling data (most recent 5)
+    private int      sonarRangeRSampCnt = sonarRangeRSamples.length;  // 5
+    private double   sonarRangeRMedian  = 0.0;                        // CM (divide by 2.54 for INCHES)
+    public  double   sonarRangeRStdev   = 0.0;
+
     /* local OpMode members. */
     protected HardwareMap hwMap  =  null;
 
@@ -255,6 +274,10 @@ public class UltimateGoalRobot
         // Define and initialize sensors
         armPot = hwMap.get(AnalogInput.class, ARM_POT);
         initIMU();
+
+        //Instantiate Maxbotics ultrasonic range sensors (sensors wired to I2C ports)
+        sonarRangeL = hwMap.get( MaxSonarI2CXL.class, "left_ultrasonic" );
+        sonarRangeR = hwMap.get( MaxSonarI2CXL.class, "right_ultrasonic" );
     }
 
     public int getLeftEncoderWheelPosition() { return intake.getCurrentPosition();
@@ -559,7 +582,7 @@ public class UltimateGoalRobot
         }
 
         // We are done if we are within 2 degrees
-        if(abs(Math.toDegrees(deltaAngle)) < 1) {
+        if(abs(Math.toDegrees(deltaAngle)) < 0.5) {
             // We have reached our destination if the angle is close enough
             setAllDriveZero();
             reachedDestination = true;
@@ -709,6 +732,78 @@ public class UltimateGoalRobot
             sequentialStableVelocityChecks = 0;
         }
     }
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* NOTE ABOUT RANGE SENSORS:                                                                  */
+    /* The REV 2m Range Sensor is really only 1.2m (47.2") maximum in DEFAULT mode. Depending on  */
+    /* reflectivity of the surface encountered, it can be even shorter.  For example, the black   */
+    /* metal paint on the field wall is highly absorptive, so we only get reliable range readings */
+    /* out to 12" or so.  In contrast, the Maxbotics ultrasonic range sensors have a minimum      */
+    /* range of 20 cm (about 8").  A combined Autonomous solution that requires both short (< 8") */
+    /* and long (> 12-47") requires *both* REV Time-of-Flight (tof) range sensors and Maxbotics   */
+    /* Ultrasonic range sensors. Also note that if you mount either ToF/Ultrasonic sensor too low */
+    /* on the robot you'll get invalid distance readings due to reflections off the field tiles   */
+    /* due to "fanout" of both laser/ultrasonic signals the further you get from the robot.       */
+    /*--------------------------------------------------------------------------------------------*/
+
+    // ULTRASONIC READINGS: The ultrasonic driver can be queried in two different update modes:
+    // a) getDistanceSync()  sends a new ping and WAITS 50msec for the return
+    // b) getDistanceAsync() sends a new ping and RETURNS IMMEDIATELY with the most recent valiue
+
+    public double updateSonarRangeL() {
+        // Query the current range sensor reading as the next sample to our LEFT range dataset
+//      sonarRangeLSamples[ sonarRangeLIndex ] = sonarRangeL.getDistanceSync();
+        sonarRangeLSamples[ sonarRangeLIndex ] = sonarRangeL.getDistanceAsync();
+        if( ++sonarRangeLIndex >= sonarRangeLSampCnt ) sonarRangeLIndex = 0;
+        // Create a duplicate copy that's sorted
+        double[] sonarRangeLSorted = sonarRangeLSamples;
+        Arrays.sort(sonarRangeLSorted);
+        // Determine the running median (middle value of the last 5; assumes sonarRangeLSampCnt=5)
+        sonarRangeLMedian = sonarRangeLSorted[2];
+        // Compute the standard deviation of the collection of readings
+        sonarRangeLStdev = stdevSonarRangeL();
+        return sonarRangeLMedian;
+    } // updateSonarRangeL
+
+    private double stdevSonarRangeL(){
+        double sum1=0.0, sum2=0.0, mean;
+        for( int i=0; i<sonarRangeLSampCnt; i++ ) {
+            sum1 += sonarRangeLSamples[i];
+        }
+        mean = sum1 / (double)sonarRangeLSampCnt;
+        for( int i=0; i<sonarRangeLSampCnt; i++ ) {
+            sum2 += Math.pow( (sonarRangeLSamples[i] - mean), 2.0);
+        }
+        return Math.sqrt( sum2 / (double)sonarRangeLSampCnt );
+    } // stdevSonarRangeL
+
+    /*--------------------------------------------------------------------------------------------*/
+    public double updateSonarRangeR() {
+        // Query the current range sensor reading as the next sample to our RIGHT range dataset
+//      sonarRangeRSamples[ sonarRangeRIndex ] = sonarRangeR.getDistanceSync();
+        sonarRangeRSamples[ sonarRangeRIndex ] = sonarRangeR.getDistanceAsync();
+        if( ++sonarRangeRIndex >= sonarRangeRSampCnt ) sonarRangeRIndex = 0;
+        // Create a duplicate copy that's sorted
+        double[] sonarRangeRSorted = sonarRangeRSamples;
+        Arrays.sort(sonarRangeRSorted);
+        // Determine the running median (middle value of the last 5; assumes sonarRangeRSampCnt=5)
+        sonarRangeRMedian = sonarRangeRSorted[2];
+        // Compute the standard deviation of the collection of readings
+        sonarRangeRStdev = stdevSonarRangeR();
+        return sonarRangeRMedian;
+    } // updateSonarRangeR
+
+    private double stdevSonarRangeR(){
+        double sum1=0.0, sum2=0.0, mean;
+        for( int i=0; i<sonarRangeRSampCnt; i++ ) {
+            sum1 += sonarRangeRSamples[i];
+        }
+        mean = sum1 / (double)sonarRangeRSampCnt;
+        for( int i=0; i<sonarRangeRSampCnt; i++ ) {
+            sum2 += Math.pow( (sonarRangeRSamples[i] - mean), 2.0);
+        }
+        return Math.sqrt( sum2 / (double)sonarRangeRSampCnt );
+    } // stdevSonarRangeR
 
     /** Grab activity closes or opens the wobble arm claw. **/
     public final static double CLAW_TIME = 500.0;
@@ -939,9 +1034,12 @@ public class UltimateGoalRobot
 
     /** Moves the wobble arm to the specified position. **/
     public static double WOBBLE_ARM_STOWED = WOBBLE_ARM_MIN;
-    public static double WOBBLE_ARM_RUNNING = 1.400;
-    public static double WOBBLE_ARM_DEPLOYING = 2.100;
-    public static double WOBBLE_ARM_GRABBING = 3.100;
+//    public static double WOBBLE_ARM_RUNNING = 1.400;
+//    public static double WOBBLE_ARM_DEPLOYING = 2.100;
+//    public static double WOBBLE_ARM_GRABBING = 3.100;
+    public static double WOBBLE_ARM_RUNNING = 1.200;
+    public static double WOBBLE_ARM_DEPLOYING = 2.000;
+    public static double WOBBLE_ARM_GRABBING = 2.700;
     public static double WOBBLE_ARM_ERROR = 0.1;
     public static double WOBBLE_ARM_REFINING = 0.005;
     public enum WOBBLE_ARM_ROTATOR {
@@ -989,6 +1087,50 @@ public class UltimateGoalRobot
             default:
                 break;
         }
+    }
+
+    /** Rotates to the specified location and shoots 1 ring for powershot and 3 for high goal. **/
+    protected WayPoint rotationDestination;
+    public enum ROTATE_ALIGNMENT_STATE {
+        IDLE,
+        ANGLE_ALIGNMENT,
+        FIRE
+    }
+    public ROTATE_ALIGNMENT_STATE rotateAlignmentState = ROTATE_ALIGNMENT_STATE.IDLE;
+    public void startRotateAligning(WayPoint rotationCoordinates) {
+        if (rotateAlignmentState == ROTATE_ALIGNMENT_STATE.IDLE) {
+            rotationDestination = rotationCoordinates;
+            rotationDestination.x += shootingError.x;
+            rotationDestination.y += shootingError.y;
+            rotationDestination.angle += shootingError.angle;
+
+            rotateToAngle(rotationDestination.angle, true);
+            rotateAlignmentState = ROTATE_ALIGNMENT_STATE.ANGLE_ALIGNMENT;
+        }
+    }
+
+    public void performRotateAligning() {
+        switch(rotateAlignmentState) {
+            case ANGLE_ALIGNMENT:
+                if(rotateToAngle(rotationDestination.angle, false)) {
+                    startInjecting();
+                    rotateAlignmentState = ROTATE_ALIGNMENT_STATE.FIRE;
+                }
+                break;
+            case FIRE:
+                if(injectState == INJECTING.IDLE) {
+                    rotateAlignmentState = ROTATE_ALIGNMENT_STATE.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    public void stopRotateAligning() {
+        rotateAlignmentState = ROTATE_ALIGNMENT_STATE.IDLE;
+        injector.setPosition(INJECTOR_HOME);
     }
 
     /** Moves to the specified location and shoots 1 ring for powershot and 3 for high goal. **/
@@ -1058,5 +1200,108 @@ public class UltimateGoalRobot
         shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
         injector.setPosition(INJECTOR_HOME);
     }
-}
 
+    /** Moves to the specified location and shoots 3 ring for powershots. **/
+    protected WayPoint shootingPowershotDestination = new WayPoint(0, 0, 0, 0);
+    public enum POWERSHOT_ALIGNMENT_STATE {
+        IDLE,
+        DRIVE_TO_POSITION,
+        ANGLE_ALIGNMENT1,
+        FIRE1,
+        ANGLE_ALIGNMENT2,
+        FIRE2,
+        ANGLE_ALIGNMENT3,
+        FIRE3
+    }
+    public POWERSHOT_ALIGNMENT_STATE powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.IDLE;
+    protected double POWERSHOT_LEFT_ANGLE_DIFF = Math.toRadians(5.0);
+    protected double POWERSHOT_RIGHT_ANGLE_DIFF = Math.toRadians(4.0);
+    public void startPowershotAligning(WayPoint alignmentCoordinates, boolean shootingPowershot) {
+        if (powershotAlignmentState == POWERSHOT_ALIGNMENT_STATE.IDLE) {
+
+            // When we drop wobble goal, the robot must be flat against the wall,
+            // We know this is y = 16.787, at angle 0 degrees
+//            shootingPowershotDestination.angle = alignmentCoordinates.angle - powerShotCorrection.angle;
+//            shootingPowershotDestination.y = alignmentCoordinates.y + powerShotCorrection.y;
+//            shootingPowershotDestination.x = alignmentCoordinates.x + powerShotCorrection.x;
+            shootingPowershotDestination.x = MyPosition.worldXPosition - 55.05776;
+            shootingPowershotDestination.y = MyPosition.worldYPosition + 133.9578;
+            shootingPowershotDestination.angle = MyPosition.worldAngle_rad + Math.toRadians(91.25);
+            shootingPowershotDestination.speed = alignmentCoordinates.speed;
+
+            shooterFlapTarget = FLAP_POSITION.POWERSHOT;
+            // If the shooter isn't on, fire it up.
+            // Make sure shooter flap is in the right position.
+            shooterOnPowershot();
+            driveToXY(shootingPowershotDestination.x,
+                    shootingPowershotDestination.y,
+                    shootingPowershotDestination.angle,
+                    MIN_DRIVE_MAGNITUDE,
+                    shootingPowershotDestination.speed, 0.014, 2.0, false);
+            powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.DRIVE_TO_POSITION;
+        }
+    }
+
+    public void performPowershotAligning() {
+        switch(powershotAlignmentState) {
+            case DRIVE_TO_POSITION:
+                if(driveToXY(shootingPowershotDestination.x, shootingPowershotDestination.y, shootingPowershotDestination.angle, MIN_DRIVE_MAGNITUDE,
+                        shootingPowershotDestination.speed, 0.014, 2.0, false)) {
+                    // We have reached the position, need to rotate to angle.
+                    rotateToAngle(shootingPowershotDestination.angle, true);
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.ANGLE_ALIGNMENT1;
+                }
+                break;
+
+            case ANGLE_ALIGNMENT1:
+                if(rotateToAngle(shootingPowershotDestination.angle, false)) {
+                    startInjecting();
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.FIRE1;
+                }
+                break;
+            case FIRE1:
+                if(injectState == INJECTING.IDLE) {
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.ANGLE_ALIGNMENT2;
+                    // We have reached the position, need to rotate to angle.
+                    rotateToAngle(shootingPowershotDestination.angle + POWERSHOT_LEFT_ANGLE_DIFF,
+                            true);
+                }
+                break;
+            case ANGLE_ALIGNMENT2:
+                if(rotateToAngle(shootingPowershotDestination.angle + POWERSHOT_LEFT_ANGLE_DIFF,
+                        false)) {
+                    startInjecting();
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.FIRE2;
+                }
+                break;
+            case FIRE2:
+                if(injectState == INJECTING.IDLE) {
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.ANGLE_ALIGNMENT3;
+                    // We have reached the position, need to rotate to angle.
+                    rotateToAngle(shootingPowershotDestination.angle - POWERSHOT_RIGHT_ANGLE_DIFF,
+                            true);
+                }
+                break;
+            case ANGLE_ALIGNMENT3:
+                if(rotateToAngle(shootingPowershotDestination.angle - POWERSHOT_RIGHT_ANGLE_DIFF,
+                        false)) {
+                    startInjecting();
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.FIRE3;
+                }
+                break;
+            case FIRE3:
+                if(injectState == INJECTING.IDLE) {
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    public void stopPowershotAligning() {
+        powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.IDLE;
+        injector.setPosition(INJECTOR_HOME);
+    }
+}

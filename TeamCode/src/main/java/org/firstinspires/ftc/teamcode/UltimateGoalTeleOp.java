@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.toDegrees;
+import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.SHOOT_POWERSHOT_VELOCITY;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.SHOOT_VELOCITY;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_GRABBING;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_MAX;
@@ -26,6 +27,11 @@ public class UltimateGoalTeleOp extends OpMode {
 
     public UltimateGoalRobot robot = new UltimateGoalRobot();
     protected boolean aligning = false;
+    protected double fineAngleAdjust = 5.0;
+
+    double    sonarRangeL=0.0, sonarRangeR=0.0;
+    //  double    tofRangeL=0.0, tofRangeR=0.0;
+    boolean   rangeSensorsEnabled = true;  // enable only when needed (takes time!)
 
     @Override
     public void init() {
@@ -124,7 +130,12 @@ public class UltimateGoalTeleOp extends OpMode {
                     robot.finalStrafeEncoder);
         }
 
-        robot.highGoal = new WayPoint(110.10, 153.99, Math.toRadians(87.45), 1.0);
+        robot.teleHighGoal = new WayPoint(110.10, 153.99, Math.toRadians(82.45), 1.0);
+//        UltimateGoalRobot.powerShotCenter = new WayPoint(98.77404, 149.7584, Math.toRadians(91.5), 1.0);
+        robot.telePowerShotCenter = new WayPoint(90.77404, 149.7584, Math.toRadians(91.25), 0.75);
+        robot.telePowerShotLeft = new WayPoint(90.77404, 149.7584, Math.toRadians(96.25), 0.75);
+        robot.telePowerShotRight = new WayPoint(90.77404, 149.7584, Math.toRadians(87.25), 0.75);
+//        robot.highGoal = new WayPoint(110.10, 138.99, Math.toRadians(87.45), 1.0);
         MyPosition.setPosition(robot.finalAutoPosition.x, robot.finalAutoPosition.y,
                 robot.finalAutoPosition.angle);
 
@@ -143,6 +154,10 @@ public class UltimateGoalTeleOp extends OpMode {
         MyPosition.giveMePositions(robot.getLeftEncoderWheelPosition(),
                 robot.getRightEncoderWheelPosition(),
                 robot.getStrafeEncoderWheelPosition());
+        // If enabled, process ultrasonic & time-of-flight range sensors
+        if( rangeSensorsEnabled ) {
+            processRangeSensors();
+        }
 
         //left joystick is for moving
         //right joystick is for rotation
@@ -190,53 +205,36 @@ public class UltimateGoalTeleOp extends OpMode {
 		// DRIVER JOYSTICK
 		// ********************************************************************
         if(!circleHeld && circlePressed) {
-            if(robot.clawClosed) {
-                robot.startClawToggle(true);
-            } else {
-                robot.startClawToggle(false);
-            }
+            robot.startRotateAligning(new WayPoint(MyPosition.worldXPosition,
+                    MyPosition.worldYPosition, MyPosition.worldAngle_rad - Math.toRadians(fineAngleAdjust), 1.0));
             circleHeld = true;
         } else if(!circlePressed) {
             circleHeld = false;
         }
 
+        if(!crossHeld && crossPressed) {
+            robot.startRotateAligning(new WayPoint(MyPosition.worldXPosition,
+                    MyPosition.worldYPosition, MyPosition.worldAngle_rad + Math.toRadians(fineAngleAdjust), 1.0));
+            crossHeld = true;
+        } else if(!crossPressed) {
+            crossHeld = false;
+        }
+
         if(trianglePressed) {
             if(robot.injectState == UltimateGoalRobot.INJECTING.IDLE) {
                 if (shootHighGoal) {
-                    UltimateGoalRobot.shootingError.x = MyPosition.worldXPosition - UltimateGoalRobot.highGoal.x;
-                    UltimateGoalRobot.shootingError.y = MyPosition.worldYPosition - UltimateGoalRobot.highGoal.y;
-                    UltimateGoalRobot.shootingError.angle = MyPosition.worldAngle_rad - UltimateGoalRobot.highGoal.angle;
+                    robot.shootingError.x = MyPosition.worldXPosition - robot.teleHighGoal.x;
+                    robot.shootingError.y = MyPosition.worldYPosition - robot.teleHighGoal.y;
+                    robot.shootingError.angle = MyPosition.worldAngle_rad - robot.teleHighGoal.angle;
                 }
                 robot.startInjecting();
             }
-        }
-//        if(!triangleHeld && trianglePressed) {
-//            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
-//                UltimateGoalRobot.shootingError.x = MyPosition.worldXPosition - UltimateGoalRobot.highGoal.x;
-//                UltimateGoalRobot.shootingError.y = MyPosition.worldYPosition - UltimateGoalRobot.highGoal.y;
-//                UltimateGoalRobot.shootingError.angle = MyPosition.worldAngle_rad - UltimateGoalRobot.highGoal.angle;
-//            }
-//            robot.startTripleInjecting();
-//            triangleHeld = true;
-//        } else if(!trianglePressed) {
-//            triangleHeld = false;
-//        }
-
-        if(!crossHeld && crossPressed) {
-            crossHeld = true;
-            if(robot.shooterMotorTargetVelocity == SHOOT_VELOCITY) {
-                robot.shooterOff();
-            } else {
-                robot.shooterOnHighGoal();
-            }
-        } else if(!crossPressed) {
-            crossHeld = false;
         }
 
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.powerShotRight, true);
+                robot.startShotAligning(robot.telePowerShotRight, true);
                 aligning = true;
             } else {
                 aligning = false;
@@ -250,7 +248,7 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!leftHeld && leftPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.powerShotLeft, true);
+                robot.startShotAligning(robot.telePowerShotLeft, true);
                 aligning = true;
             } else {
                 aligning = false;
@@ -264,11 +262,12 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!downHeld && downPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.powerShotCenter, true);
+//                robot.startShotAligning(UltimateGoalRobot.powerShotCenter, true);
+                robot.startPowershotAligning(robot.telePowerShotCenter, true);
                 aligning = true;
             } else {
                 aligning = false;
-                robot.stopShotAligning();
+                robot.stopPowershotAligning();
             }
             shootHighGoal = false;
             downHeld = true;
@@ -278,7 +277,7 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!upHeld && upPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.highGoal, false);
+                robot.startShotAligning(robot.teleHighGoal, false);
                 aligning = true;
             } else {
                 aligning = false;
@@ -329,8 +328,16 @@ public class UltimateGoalTeleOp extends OpMode {
 		// ********************************************************************
 		// This was unassigned (fingers up/down)
         if(!square2Held && square2Pressed) {
-            // Enable the velocity checks again.
-            robot.disableVelocityCheck = false;
+            if(robot.clawClosed) {
+                robot.startClawToggle(true);
+                // This is to correct for accumulated error in the odometry for
+                // powershot in endgame.
+                robot.powerShotCorrection.angle = MyPosition.worldAngle_rad - 0.0;
+                robot.powerShotCorrection.y = MyPosition.worldYPosition - 16.787;
+                robot.powerShotCorrection.x = MyPosition.worldXPosition - 148.215;
+            } else {
+                robot.startClawToggle(false);
+            }
             square2Held = true;
         } else if(!square2Pressed) {
             square2Held = false;
@@ -370,12 +377,10 @@ public class UltimateGoalTeleOp extends OpMode {
         }
 
         if(!up2Held && up2Pressed) {
-            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
-                robot.highGoalOffset -= 0.002;
-                robot.setShooterFlapHighGoal();
+            if(robot.shooterMotorTargetVelocity == SHOOT_VELOCITY) {
+                robot.shooterOff();
             } else {
-                robot.powerShotOffset -= 0.002;
-                robot.setShooterFlapPowerShot();
+                robot.shooterOnHighGoal();
             }
             up2Held = true;
         } else if (!up2Pressed) {
@@ -383,12 +388,10 @@ public class UltimateGoalTeleOp extends OpMode {
 		}
 
         if(!down2Held && down2Pressed) {
-            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
-                robot.highGoalOffset += 0.002;
-                robot.setShooterFlapHighGoal();
+            if(robot.shooterMotorTargetVelocity == SHOOT_POWERSHOT_VELOCITY) {
+                robot.shooterOff();
             } else {
-                robot.powerShotOffset += 0.002;
-                robot.setShooterFlapPowerShot();
+                robot.shooterOnPowershot();
             }
             down2Held = true;
         } else if (!down2Pressed) {
@@ -417,6 +420,10 @@ public class UltimateGoalTeleOp extends OpMode {
                     spinMultiplier * spin, driverAngle - 90.0, robot.defaultInputShaping);
         }
 
+        if( rangeSensorsEnabled ) {
+            telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f cm", sonarRangeL, sonarRangeR );
+//             telemetry.addData("TofF Range (L/R)", "%.1f  %.1f in", tofRangeL, tofRangeR );
+        }
         telemetry.addData("Shooter Target Velocity: ", robot.shooterMotorTargetVelocity);
         telemetry.addData("Shooter Actual Velocity: ", robot.shooter.getVelocity());
         telemetry.addData("Shooter Stability Count: ", robot.sequentialStableVelocityChecks);
@@ -451,20 +458,46 @@ public class UltimateGoalTeleOp extends OpMode {
         telemetry.addData("World X Position: ", MyPosition.worldXPosition);
         telemetry.addData("World Y Position: ", MyPosition.worldYPosition);
         telemetry.addData("World Angle: ", Math.toDegrees(MyPosition.worldAngle_rad));
+        telemetry.addData("PowerShot X: ", robot.powerShotCorrection.x);
+        telemetry.addData("PowerShot Y: ", robot.powerShotCorrection.y);
+        telemetry.addData("PowerShot Angle: ", Math.toDegrees(robot.powerShotCorrection.angle));
         telemetry.addData("Loop time: ", loopTime.milliseconds());
         updateTelemetry(telemetry);
     }
 
     @Override
+
     public void stop() {
 //        robot.stopGroundEffects();
     }
+    /*---------------------------------------------------------------------------------*/
+    /*  TELE-OP: Capture range-sensor data (one reading! call from main control loop)  */
+    /*                                                                                 */
+    /*  Designed for test programs that are used to assess the mounting location of    */
+    /*  your sensors and whether you get reliable/repeatable returns off various field */
+    /*  elements.                                                                      */
+    /*                                                                                 */
+    /*  IMPORTANT!! updateSonarRangeL / updateSonarRangeR may call getDistanceSync(),  */
+    /*  which sends out an ultrasonic pulse and SLEEPS for the sonar propogation delay */
+    /*  (50 sec) before reading the range result.  Don't use in applications where an  */
+    /*  extra 50/100 msec (ie, 1 or 2 sensors) in the loop time will create problems.  */
+    /*  If getDistanceAsync() is used, then this warning doesn't apply.                */
+    /*---------------------------------------------------------------------------------*/
+    void processRangeSensors() {
+//      tofRangeL   = robot.updateTofRangeL();
+        sonarRangeL = robot.updateSonarRangeL();
+//      tofRangeR   = robot.updateTofRangeR();
+        sonarRangeR = robot.updateSonarRangeR();
+    } // processRangeSensors
+
     protected void performActivities() {
         robot.performClawToggle();
         robot.performInjecting();
         robot.performTripleInjecting();
         robot.performShotAligning();
         robot.performRotatingArm();
+        robot.performRotateAligning();
+        robot.performPowershotAligning();
         robot.updateShooterStability();
     }
 }

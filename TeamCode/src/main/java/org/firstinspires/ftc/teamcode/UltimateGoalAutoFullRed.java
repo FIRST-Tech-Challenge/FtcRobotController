@@ -44,11 +44,8 @@ public class UltimateGoalAutoFullRed extends UltimateGoalAutoFull
 
         // The powershots
         powerShotFirst = new WayPoint(104.06888, 178.94808, Math.toRadians(95.0), REGULAR_SPEED);
-        UltimateGoalRobot.powerShotRight = powerShotFirst;
         powerShotSecond = new WayPoint(89.47404, 178.94808, Math.toRadians(95.0), REGULAR_SPEED);
-        UltimateGoalRobot.powerShotCenter = powerShotSecond;
         powerShotThird = new WayPoint(74.8792, 178.94808, Math.toRadians(95.0), REGULAR_SPEED);
-        UltimateGoalRobot.powerShotLeft = powerShotThird;
 
         // Pickup the second wobble goal.
         wobble2Pickup = new WayPoint(97.70872, 83.14436, Math.toRadians(85.0), REGULAR_SPEED);
@@ -58,7 +55,6 @@ public class UltimateGoalAutoFullRed extends UltimateGoalAutoFull
 
         // Shoot the collected rings in the high goal.
         highGoal = new WayPoint(164.35324, 187.18276, Math.toRadians(95.0), REGULAR_SPEED);
-        UltimateGoalRobot.highGoal = highGoal;
 
         park = new WayPoint(149.7584, 210.04276, Math.toRadians(110.0), REGULAR_SPEED);
     }

@@ -46,9 +46,12 @@ public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
         switch(startShootingStyle) {
             case STRAFE_STOP:
             case HIGH_GOAL:
-                powerShotFirst = new WayPoint(82.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
-                powerShotSecond = new WayPoint(100.27404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
-                powerShotThird = new WayPoint(122.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+//                powerShotFirst = new WayPoint(82.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+//                powerShotSecond = new WayPoint(100.27404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+//                powerShotThird = new WayPoint(122.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+                powerShotFirst = new WayPoint(90.77404, 149.7584, Math.toRadians(91.25), 1.0);
+                powerShotSecond = new WayPoint(90.77404, 149.7584, Math.toRadians(96.25), 1.0);
+                powerShotThird = new WayPoint(90.77404, 149.7584, Math.toRadians(87.25), 1.0);
                 beforeQuadStack = new WayPoint(152.865, 74.46187, Math.toRadians(71.43), SLOW_SPEED);
                 collectQuadStack = new WayPoint(165.2126, 122.607, Math.toRadians(69.946), REGULAR_SPEED);
                 collectQuadStraggler = new WayPoint(165.2126, 132.607, Math.toRadians(69.946), SLOW_SPEED);
@@ -69,14 +72,15 @@ public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
         }
 
         // starting stack line up
-        beforeStack = new WayPoint(149.7584, 195.44792, Math.toRadians(270.0), SLOW_SPEED);
-        collectStack = new WayPoint(154.7584, 125.44792, Math.toRadians(270.0), SLOW_SPEED);
+//        beforeStack = new WayPoint(149.7584, 195.44792, Math.toRadians(270.0), SLOW_SPEED);
+//        collectStack = new WayPoint(154.7584, 125.44792, Math.toRadians(270.0), SLOW_SPEED);
+        beforeStack = new WayPoint(145.7584, 195.44792, Math.toRadians(270.0), SLOW_SPEED);
+        collectStack = new WayPoint(150.7584, 125.44792, Math.toRadians(270.0), SLOW_SPEED);
 
         // Shoot the collected rings in the high goal.
         bumpStack = new WayPoint(167.35324, 139.7584, Math.toRadians(95.0), SLOW_SPEED);
         highGoal = new WayPoint(167.35324, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
         longShotHighGoal = new WayPoint(147.9975, 57.9297, Math.toRadians(96.0), REGULAR_SPEED);
-        UltimateGoalRobot.highGoal = highGoal;
 
         park = new WayPoint(149.7584, 195.44792, Math.toRadians(135.0), REGULAR_SPEED);
     }
