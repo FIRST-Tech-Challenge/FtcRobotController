@@ -120,7 +120,8 @@ public class FlyWheel {
     private void updateVelocity() {
         double velocity = Math.abs(flywheel.getCorrectedVelocity());
         if(lastTimeStamp == 0) {
-            lastVelocity = velocity;
+            flywheel.resetEncoder();
+            lastVelocity = Math.abs(flywheel.getCorrectedVelocity());
             lastTimeStamp = (double)System.nanoTime() / 1e9;
         } else if(velocity < 1e-6) {
             lastVelocity = 0;
