@@ -138,6 +138,7 @@ public class Autonomous {
 
             .addSingleState(() -> Constants.IN_WOBBLE_MODE = false)
             .addSingleState(() -> robot.turret.setDangerModeActive(true))
+            .addSingleState(() -> robot.turret.setCurrentMode(Turret.TurretMode.fieldRelative))
 
             //ben is a coder 😎
             .addMineralState(ugStateProvider,
@@ -175,7 +176,7 @@ public class Autonomous {
             .addSingleState(()-> robot.gripperModeIsInReverse = false)
 
             //park
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE, false, .8, .6))
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE, true, .8, .6))
 
             //.addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))

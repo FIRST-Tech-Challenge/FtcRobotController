@@ -675,10 +675,6 @@ public class UG_6832 extends OpMode {
             robot.articulate(PoseUG.Articulation.toggleTrigger);
         }
 
-        if(toggleAllowed(gamepad1.left_bumper,left_bumper,1)){
-            robot.launcher.gripperExtend();
-        }
-
         if (notsmalldeadzone(gamepad2.right_trigger))
             robot.turret.imuOffset(gamepad2.right_trigger);
         if (notsmalldeadzone(gamepad2.left_trigger))
@@ -730,13 +726,19 @@ public class UG_6832 extends OpMode {
         if (Constants.IN_WOBBLE_MODE && notdeadzone(gamepad1.right_stick_y)) {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
         }
-
-        if(Constants.IN_WOBBLE_MODE && toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
-            if(robot.launcher.gripperTargetPos != Constants.WOBBLE_GRIPPER_CLOSED)
-                robot.launcher.wobbleRelease();
-            else
+//hi hello
+        if(Constants.IN_WOBBLE_MODE && toggleAllowed(gamepad1.left_bumper, left_bumper,1)) {
+            if (robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN || robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_RELEASE) {
                 robot.launcher.wobbleGrip();
+            } else {
+                robot.launcher.wobbleRelease();
+            }
         }
+
+//        if(toggleAllowed(gamepad1.left_bumper, left_bumper,1)){
+//            robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_OUT_POS);
+//            robot.turret.setDangerModeActive(true);
+//        }
 
         if (gamepad1.right_trigger > .01)
             robot.turret.rotateRight(gamepad1.right_trigger * 2);

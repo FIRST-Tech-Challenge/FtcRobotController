@@ -534,6 +534,11 @@ public class PoseUG {
 
         // turret heading (red)
         CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS_INCHES, turret.getHeading(), "#FF0000");
+
+        packet.put("trajectory calculator bearing to target", trajSol.getBearing());
+        packet.put("trajectory calculator flywheel speed output", trajSol.getVelocity());
+        packet.put("trajectory calculator launcher elevation output", trajSol.getElevation());
+
         packet.put("TurretMotorPos", turret.getTicksPerDegree());
         packet.put("TurretTicksPerDegree", turret.getTicksPerDegree());
         packet.put("virtual IMU heading", turret.getVirtualHeading());
