@@ -140,12 +140,15 @@ public class Autonomous {
             .addSingleState(() -> robot.turret.setDangerModeActive(true))
 
             //ben is a coder 😎
+            .addMineralState(ugStateProvider,
+                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
+                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT_B, true, .8, .15),
+                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15))
 
-
-            .addSimultaneousStates(
-                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, true, .8, .15),
-                    () -> robot.launcher.setElbowTargetAngle(20)
-            )
+//            .addSimultaneousStates(
+//                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
+//                    () -> robot.launcher.setElbowTargetAngle(20)
+//                            )
 
             .addSingleState(()-> robot.rotateIMU(0,1))
 

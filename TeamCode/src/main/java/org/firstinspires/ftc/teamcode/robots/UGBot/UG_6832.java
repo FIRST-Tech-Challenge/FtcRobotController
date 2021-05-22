@@ -669,6 +669,8 @@ public class UG_6832 extends OpMode {
             robot.launcher.setWiperTargetPos(Constants.LAUNCHER_WIPER_UNWIPED);
         }
 
+
+
         if(toggleAllowed(gamepad2.b,b,2)) {
             robot.articulate(PoseUG.Articulation.toggleTrigger);
         }
@@ -681,6 +683,9 @@ public class UG_6832 extends OpMode {
             robot.turret.imuOffset(gamepad2.right_trigger);
         if (notsmalldeadzone(gamepad2.left_trigger))
             robot.turret.imuOffset(-gamepad2.left_trigger);
+
+        if (toggleAllowed(gamepad2.right_bumper,left_bumper,2))
+            robot.articulate(PoseUG.Articulation.ohBabyATriple);
 
         if(toggleAllowed(gamepad2.dpad_left, dpad_left_2, 16))
             Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP -= 1.0;
@@ -727,10 +732,10 @@ public class UG_6832 extends OpMode {
         }
 
         if(Constants.IN_WOBBLE_MODE && toggleAllowed(gamepad1.left_bumper, left_bumper, 1)){
-            if(robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN || robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_RELEASE)
-                robot.launcher.wobbleGrip();
-            else
+            if(robot.launcher.gripperTargetPos != Constants.WOBBLE_GRIPPER_CLOSED)
                 robot.launcher.wobbleRelease();
+            else
+                robot.launcher.wobbleGrip();
         }
 
         if (gamepad1.right_trigger > .01)

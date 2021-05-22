@@ -211,7 +211,8 @@ public class PoseUG {
         enterWobbleGoalMode,
         exitWobbleGoalMode,
         deployWobbleGoalAuton,
-        releaseWobbleGoalAuton
+        releaseWobbleGoalAuton,
+        ohBabyATriple
     }
 
     public enum RobotType {
@@ -1230,8 +1231,8 @@ public class PoseUG {
         if(rampedUp){
             switch (toggleTriggerState) {
                 case 0:
-                    if(Constants.IN_WOBBLE_MODE) {
-                        launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_STOWED);
+                    if(target == Constants.Target.NONE) {
+                        launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_FLIP);
                     }
                     else{
                         launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_SHOOT);
@@ -1248,6 +1249,29 @@ public class PoseUG {
                     }
                     break;
             }
+        }
+        return false;
+    }
+
+    int ohBabyAStage = 0;
+    double ohBabyATimer = 0;
+    public boolean ohBabyATriple(){
+        switch (ohBabyAStage){
+            case 0:
+                setTarget(Constants.Target.HIGH_GOAL);
+                ohBabyATimer = System.nanoTime();
+                ohBabyAStage++;
+                break;
+            case 1:
+                if(turret.isTurretNearTarget()) {
+                    if(shootRingAuton(Constants.Target.HIGH_GOAL, 3))
+                        ohBabyAStage++;
+                }
+                break;
+            case 2:
+                setTarget(Constants.Target.NONE);
+                ohBabyAStage = 0;
+                return true;
         }
         return false;
     }
@@ -1556,6 +1580,11 @@ public class PoseUG {
                 break;
             case releaseWobbleGoalAuton:
                 if(exitWobbleGoalMode()){
+                    articulation = PoseUG.Articulation.manual;
+                }
+                break;
+            case ohBabyATriple:
+                if(ohBabyATriple()){
                     articulation = PoseUG.Articulation.manual;
                 }
                 break;
@@ -2152,11 +2181,11 @@ public class PoseUG {
         //todo again, rushed - really need to set the calculated distance to move forward or back
         if (intake.isTented() && intake.isRollingRingMode()) {
             if(getDistRightDist()<INTAKE_ROLLING_RING_NEAR)
-                INTAKE_ROLLING_JOG_BW_NOW=true;
+                //INTAKE_ROLLING_JOG_BW_NOW=true;
             if(between(getDistRightDist(),INTAKE_ROLLING_RING_FAR,INTAKE_ROLLING_RING_TOO_FAR))
             {
-                INTAKE_ROLLING_JOG_FW_NOW = true;
-                intake.setIntakeSpeed(1); //todo: this should really be implemented as a monitor to turn on the intake motor if the robot is moving and tented is true
+                //INTAKE_ROLLING_JOG_FW_NOW = true;
+                //intake.setIntakeSpeed(1); //todo: this should really be implemented as a monitor to turn on the intake motor if the robot is moving and tented is true
             }
 
             if (between(getDistRightDist(), INTAKE_ROLLING_RING_NEAR, INTAKE_ROLLING_RING_FAR)) {
