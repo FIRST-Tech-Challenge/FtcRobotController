@@ -146,10 +146,29 @@ public class VisionTest extends LinearOpMode {
 
         if (visionController.getHeight().equals("FOUR")) {
 
+            while (elapsedTime.seconds() < 1.5) {
 
+                rotatePower = rotate(0);
+                double leftPower = -rotatePower;
+                double rightPower = rotatePower;
+
+                leftPower += driveSpeed;
+                rightPower += driveSpeed;
+
+
+                driveLeft.set(leftPower);
+                driveRight.set(rightPower);
+
+            }
+
+            while (elapsedTime.seconds() < 1.68) {
+
+                rotatePower = rotate(45);
+                driveLeft.set(0);
+                driveRight.set(0);
+
+            }
         }
-
-
     }
 
     private void resetAngle() {
