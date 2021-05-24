@@ -662,6 +662,18 @@ public class UG_6832 extends OpMode {
 
         // offsets
 
+        if(shiftActive && toggleAllowed(gamepad1.x, x,1)){
+            robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_OUT_POS);
+            robot.turret.setCurrentMode(Turret.TurretMode.fieldRelative);
+            robot.turret.setDangerModeActive(true);
+        }
+
+        if(shiftActive && toggleAllowed(gamepad1.b, b,1)){
+            robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_IN_POS);
+            robot.turret.setCurrentMode(Turret.TurretMode.chassisRelative);
+            robot.turret.setDangerModeActive(false);
+        }
+
         if(gamepad2.a){
             robot.launcher.setWiperTargetPos(Constants.LAUNCHER_WIPER_WIPED);
         }
@@ -715,6 +727,8 @@ public class UG_6832 extends OpMode {
                 robot.intake.Do(Intake.Behavior.INTAKE);
             }
         }
+
+
         if(toggleAllowed(gamepad1.x,x,1)){
             robot.intake.Do(Intake.Behavior.TENT);
         }
@@ -735,10 +749,7 @@ public class UG_6832 extends OpMode {
             }
         }
 
-//        if(toggleAllowed(gamepad1.left_bumper, left_bumper,1)){
-//            robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_OUT_POS);
-//            robot.turret.setDangerModeActive(true);
-//        }
+
 
         if (gamepad1.right_trigger > .01)
             robot.turret.rotateRight(gamepad1.right_trigger * 2);
