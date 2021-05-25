@@ -88,10 +88,11 @@ public class StatesAuto extends UpliftAuto {
                 while(robot.transferState != UpliftRobot.TransferState.DOWN && opModeIsActive()) {
                     robot.safeSleep(5);
                 }
+                driveSub.driveToPosition(109, 47, 0.4, 0);
                 intakeSub.setIntakePower(1);
                 double shootingActualY = robot.worldY;
-                driveSub.driveToPosition(109, shootingActualY + 1.5, 0.3, 1, 0, DriveSubsystem.QUICKEST_DIRECTION);
-                robot.safeSleep(1200);
+                driveSub.driveToPosition(109, shootingActualY + 4.5, 0.3, 1, 0, DriveSubsystem.QUICKEST_DIRECTION);
+                robot.safeSleep(1300);
                 intakeSub.setIntakePower(0);
 
                 // shoot second set of 3
@@ -138,11 +139,13 @@ public class StatesAuto extends UpliftAuto {
             }
 
             // drive to drop off first wobble
+            intakeSub.setIntakePower(-1);
             wobbleSub.setWobblePosition(0.4);
             driveSub.passThroughPosition(120, 102, 1, -135);
+            intakeSub.setIntakePower(0);
             driveSub.driveToPosition(128,120, 0.6, -135);
             wobbleSub.dropOff();
-            driveSub.passThroughPosition(122, 114, 1, -135);
+            driveSub.passThroughPosition(115, 114, 1, -135);
 
             // drive to pick up second wobble
             getSecondWobble();
@@ -175,7 +178,7 @@ public class StatesAuto extends UpliftAuto {
                     Utils.sleep(5);
                 }
                 intakeSub.setIntakePower(1);
-                driveSub.driveToPosition(110, 56, 0.25, 0);
+                driveSub.driveToPosition(110, 58, 0.25, 0);
                 robot.safeSleep(750);
                 intakeSub.setIntakePower(0);
                 intakeSub.liftRoller();
@@ -254,7 +257,7 @@ public class StatesAuto extends UpliftAuto {
 
     public void getSecondWobble() {
         driveSub.passThroughPosition(115, 56, 0.65, 0, DriveSubsystem.COUNTER_CLOCKWISE, 6);
-        driveSub.turnTo(0, 0.75, DriveSubsystem.COUNTER_CLOCKWISE);
+        driveSub.turnTo(0, 0.85, DriveSubsystem.COUNTER_CLOCKWISE);
         driveSub.driveToPosition(115, 37, 0.3, 1, 0, 0);
         wobbleSub.pickUp();
     }

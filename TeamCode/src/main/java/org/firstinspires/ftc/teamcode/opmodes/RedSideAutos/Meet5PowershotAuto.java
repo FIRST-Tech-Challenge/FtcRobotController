@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.RedSideAutos;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
 
+@Disabled
 @Autonomous(name = "Meet 5 Powershot Auto", group = "opModes")
 public class Meet5PowershotAuto extends UpliftAuto {
     UpliftRobot robot;

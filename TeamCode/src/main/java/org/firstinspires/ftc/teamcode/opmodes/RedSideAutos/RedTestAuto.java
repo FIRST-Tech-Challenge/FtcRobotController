@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.RedSideAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.background.AutoTimeout;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 
+@Disabled
 @Autonomous(name = "Test Auto", group = "opModes")
 public class RedTestAuto extends UpliftAuto {
     UpliftRobot robot;

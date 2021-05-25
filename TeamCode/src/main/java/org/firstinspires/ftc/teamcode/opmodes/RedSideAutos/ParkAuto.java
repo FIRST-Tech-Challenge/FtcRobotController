@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.RedSideAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 
+@Disabled
 @Autonomous(name = "Park Auto Red", group = "opModes")
 public class ParkAuto extends UpliftAuto {
 
