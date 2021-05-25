@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.firstinspires.ftc.teamcode">
 
-<!-- Note: the actual manifest file used in your APK merges this file with contributions
-     from the modules on which your app depends (such as FtcRobotController, etc).
-     So it won't ultimately be as empty as it might here appear to be :-) -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-<!-- The package name here determines the package for your R class and your BuildConfig class -->
-<manifest
-    package="org.firstinspires.ftc.teamcode"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <application/>
+    <uses-feature android:name="android.hardware.type.watch" />
+
+    <application>
+        <uses-library
+            android:name="com.google.android.wearable"
+            android:required="true" />
+
+        <!--
+               Set to true if your app is Standalone, that is, it does not require the handheld
+               app to run.
+        -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <activity
+            android:name=".imgproc.imgproc"
+            android:label="@string/title_activity_imgproc">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
 </manifest>
