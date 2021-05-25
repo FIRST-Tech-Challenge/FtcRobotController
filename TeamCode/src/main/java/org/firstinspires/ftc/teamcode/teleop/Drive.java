@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.settings.DeviceNames;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class Drive extends OpMode {
     public void init() {
         // Left Drive
         leftDriveMotors = new ArrayList<DcMotor>();
-        for (String name : DeviceNames.LEFT_DRIVE) {
+        for (String name : hardwareMap.appContext.getResources().getStringArray(R.array.LEFT_DRIVE)) {
             DcMotor motor = hardwareMap.get(DcMotor.class, name);
             motor.setDirection(DcMotorSimple.Direction.REVERSE);
             leftDriveMotors.add(motor);
@@ -30,7 +31,7 @@ public class Drive extends OpMode {
 
         // Right Drive
         rightDriveMotors = new ArrayList<DcMotor>();
-        for (String name : DeviceNames.RIGHT_DRIVE) {
+        for (String name : hardwareMap.appContext.getResources().getStringArray(R.array.RIGHT_DRIVE)) {
             DcMotor motor = hardwareMap.get(DcMotor.class, name);
             rightDriveMotors.add(motor);
         }

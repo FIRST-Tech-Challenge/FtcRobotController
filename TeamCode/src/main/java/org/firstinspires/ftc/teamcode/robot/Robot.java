@@ -35,7 +35,7 @@ public class Robot {
     public ArrayList<RobotPart> robotParts;
 
     // Device Names
-    public static final DeviceNames deviceNames = new DeviceNames();
+    public static DeviceNames deviceNames;
 
     // Time
     public ElapsedTime timeSinceInstantiation = new ElapsedTime();
@@ -58,6 +58,8 @@ public class Robot {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
         this.useTelemetry = useTelemetry;
+
+        deviceNames = new DeviceNames(hardwareMap);
 
         robotParts = new ArrayList<RobotPart>();
 

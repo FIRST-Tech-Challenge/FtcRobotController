@@ -48,7 +48,7 @@ public class DriveTrainSettings extends RobotPartSettings {
     public DriveTrain create(Robot robot) {
         if (driveTrain == null) { // Tries to auto-detect
             try {
-                robot.hardwareMap.get(DcMotor.class, DeviceNames.CENTER_DRIVE[0]);
+                robot.hardwareMap.get(DcMotor.class, robot.deviceNames.CENTER_DRIVE[0]);
                 return new HDrive(useTelemetry, wheelType, robot, leftForwards, centerForwards, driveWithEncoder);
             } catch (Exception e) {
                 return new StandardDrive(useTelemetry, wheelType, robot);

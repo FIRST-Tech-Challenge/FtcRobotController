@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="LEFT_DRIVE">
+        <item>ld1</item>
+        <item>ld2</item>
+    </string-array>
+    <string-array name="RIGHT_DRIVE">
+        <item>rd1</item>
+        <item>rd2</item>
+    </string-array><string-array name="CENTER_DRIVE">
+        <item>cd1</item>
+        <item>cd2</item>
+    </string-array>
+</resources>
