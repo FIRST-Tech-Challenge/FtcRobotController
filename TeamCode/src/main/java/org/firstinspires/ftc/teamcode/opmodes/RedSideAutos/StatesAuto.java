@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
 
-@Autonomous(name = "Meet 5 Auto", group = "opModes")
-public class Meet5Auto extends UpliftAuto {
+@Autonomous(name = "States Auto", group = "opModes")
+public class StatesAuto extends UpliftAuto {
     UpliftRobot robot;
     WobbleSubsystem wobbleSub;
     DriveSubsystem driveSub;
