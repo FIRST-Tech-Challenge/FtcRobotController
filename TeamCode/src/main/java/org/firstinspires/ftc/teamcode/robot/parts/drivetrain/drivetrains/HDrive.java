@@ -18,6 +18,10 @@ public class HDrive extends DriveTrain{
         super(useTelemetry, wheelType, robot);
     }
 
+    public HDrive(boolean useTelemetry, WheelTypes wheelType, Robot robot, boolean leftForwards, boolean centerForwards, boolean driveWithEncoders) {
+        super(useTelemetry, wheelType, robot, leftForwards, centerForwards, driveWithEncoders);
+    }
+
     @Override
     public void moveMecanum(Movement movementType, double power) {
         throw new WheelException();

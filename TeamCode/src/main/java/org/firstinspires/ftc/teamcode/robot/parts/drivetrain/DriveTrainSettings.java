@@ -21,6 +21,9 @@ public class DriveTrainSettings extends RobotPartSettings {
     public WheelTypes wheelType;
     public boolean useTelemetry;
     public Class driveTrain;
+    public boolean leftForwards = false;
+    public boolean centerForwards = false;
+    public boolean driveWithEncoder = true;
 
     public DriveTrainSettings(boolean useTelemetry, WheelTypes wheelType, Class driveTrain) {
         if(!(DriveTrain.class.isAssignableFrom(driveTrain))) {
@@ -46,7 +49,7 @@ public class DriveTrainSettings extends RobotPartSettings {
         if (driveTrain == null) { // Tries to auto-detect
             try {
                 robot.hardwareMap.get(DcMotor.class, DeviceNames.CENTER_DRIVE[0]);
-                return new HDrive(useTelemetry, wheelType, robot);
+                return new HDrive(useTelemetry, wheelType, robot, leftForwards, centerForwards, driveWithEncoder);
             } catch (Exception e) {
                 return new StandardDrive(useTelemetry, wheelType, robot);
             }

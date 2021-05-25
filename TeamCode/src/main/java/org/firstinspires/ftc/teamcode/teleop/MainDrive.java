@@ -34,6 +34,7 @@ public class MainDrive extends OpMode {
         ArrayList<RobotPartSettings> robotPartSettings = new ArrayList<RobotPartSettings>();
 
         DriveTrainSettings driveTrainSettings = new DriveTrainSettings(true, WheelTypes.OMNI);
+        driveTrainSettings.driveWithEncoder = true;
         robotPartSettings.add(driveTrainSettings);
 
         // Robot

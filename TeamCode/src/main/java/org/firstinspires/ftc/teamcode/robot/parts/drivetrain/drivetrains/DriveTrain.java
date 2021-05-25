@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.parts.drivetrain.drivetrains;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,27 +38,30 @@ public abstract class DriveTrain extends RobotPart {
     double powerModifier = 1;
 
     public DriveTrain(boolean useTelemetry, WheelTypes wheelType, Robot robot) {
-        this(useTelemetry,wheelType,robot,true,true);
+        this(useTelemetry,wheelType,robot,true,true, false);
     }
 
-    public DriveTrain(boolean useTelemetry, WheelTypes wheelType, Robot robot, boolean leftForwards, boolean centerForwards) {
+    public DriveTrain(boolean useTelemetry, WheelTypes wheelType, Robot robot, boolean leftForwards, boolean centerForwards, boolean driveWithEncoders) {
         this.hardwareMap = robot.hardwareMap;
         this.useTelemetry = useTelemetry;
         this.telemetry = robot.telemetry;
         this.wheelType = wheelType;
 
+        DcMotor.RunMode runMode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+        if (driveWithEncoders) runMode = DcMotor.RunMode.RUN_USING_ENCODER;
+
         if (leftForwards) {
-            leftMotors = getMotorArray(robot.deviceNames.LEFT_DRIVE, DcMotorSimple.Direction.FORWARD);
-            rightMotors = getMotorArray(robot.deviceNames.RIGHT_DRIVE, DcMotorSimple.Direction.REVERSE);
+            leftMotors = getMotorArray(robot.deviceNames.LEFT_DRIVE, DcMotorSimple.Direction.FORWARD, runMode);
+            rightMotors = getMotorArray(robot.deviceNames.RIGHT_DRIVE, DcMotorSimple.Direction.REVERSE, runMode);
         } else {
-            leftMotors = getMotorArray(robot.deviceNames.LEFT_DRIVE, DcMotorSimple.Direction.REVERSE);
-            rightMotors = getMotorArray(robot.deviceNames.RIGHT_DRIVE, DcMotorSimple.Direction.FORWARD);
+            leftMotors = getMotorArray(robot.deviceNames.LEFT_DRIVE, DcMotorSimple.Direction.REVERSE, runMode);
+            rightMotors = getMotorArray(robot.deviceNames.RIGHT_DRIVE, DcMotorSimple.Direction.FORWARD, runMode);
         }
 
         if (centerForwards) {
-            centerMotors = getMotorArray(robot.deviceNames.CENTER_DRIVE, DcMotorSimple.Direction.FORWARD);
+            centerMotors = getMotorArray(robot.deviceNames.CENTER_DRIVE, DcMotorSimple.Direction.FORWARD, runMode);
         } else {
-            centerMotors = getMotorArray(robot.deviceNames.CENTER_DRIVE, DcMotorSimple.Direction.REVERSE);
+            centerMotors = getMotorArray(robot.deviceNames.CENTER_DRIVE, DcMotorSimple.Direction.REVERSE, runMode);
         }
 
     }
@@ -68,16 +73,22 @@ public abstract class DriveTrain extends RobotPart {
      * @see com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
      * @return
      */
-    private DcMotor[] getMotorArray(String[] deviceNames, DcMotorSimple.Direction direction) {
+    private DcMotor[] getMotorArray(String[] deviceNames, DcMotorSimple.Direction direction, DcMotor.RunMode runMode) {
         ArrayList<DcMotor> motorsArrayList = new ArrayList<DcMotor>();
         for (String name : deviceNames) {
             try { // to add it, if it isn't there don't add it
                 DcMotor motor = hardwareMap.get(DcMotor.class, name);
                 motor.setDirection(direction);
+                Log.d("TAG", "getMotorArray: " + runMode);
+                motor.setMode(runMode);
                 motorsArrayList.add(motor);
             } catch (IllegalArgumentException e) {}
         }
         return motorsArrayList.toArray(new DcMotor[motorsArrayList.size()]);
+    }
+
+    private DcMotor[] getMotorArray(String[] deviceNames, DcMotorSimple.Direction direction) {
+        return getMotorArray(deviceNames, direction, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setUseTelemetry(boolean useTelemetry) {
