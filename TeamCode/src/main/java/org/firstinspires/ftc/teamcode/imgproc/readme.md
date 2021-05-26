@@ -1,13 +1,22 @@
-## Using these files
+## Usage
+
+1. Import the class
+2. Initialize the class
+3. Run the `process` method while passing a Bitmap image
+4. The function returns an `Array` of `Object` class (custom defined).
+       This object class has two attributes: `label` (The name of the detected object) and
+       `boundingBox` (The area of the object)
+
+## Importing these files
 
 Because these files were made with `Kotlin`, then they have to be
-imported to Java like the code below.
+imported to `Java` like the code below.
 
 *This code sample is not exact and needs to be adopted for other use*
 
 
 ## Code Sample
-**Kotlin file**
+**Kotlin source file** (Filename: app.kt)
 ```
 package org.example
 

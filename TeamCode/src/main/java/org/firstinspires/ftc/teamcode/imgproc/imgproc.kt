@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.imgproc
 
 import android.graphics.Bitmap
+import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +31,7 @@ class ImgProc : AppCompatActivity() {
         }
     }
 
-    fun process(bitmap: Bitmap): MutableList<Array<String>> {
+    fun process(bitmap: Bitmap): Array<Object> {
         val image = TensorImage.fromBitmap(bitmap)
 
         val options = ObjectDetector.ObjectDetectorOptions.builder()
@@ -48,16 +49,18 @@ class ImgProc : AppCompatActivity() {
 
         debugPrint(results)
 
-        val objects: MutableList<Array<String>> = ArrayList()
+        val objects: MutableList<Object> = ArrayList()
 
         for (obj in results) {
             val box = obj.boundingBox
             val category = obj.categories.first()
             val type = category.label.toString()
-            val add = [type, box.left.toString(), box.top.toString(), box.right.toString(), box.left.toString()]
-            objects.add(add)
+
+            objects.add(Object(type, box))
         }
 
-        return objects
+        return objects.toTypedArray()
     }
 }
+
+data class Object(val label: String, val boundingBox: RectF)
