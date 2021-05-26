@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -67,17 +69,17 @@ public class FlickerSubsystem extends Subsystem {
         // move in
         setFlickerIn();
         double initialTime = System.currentTimeMillis();
-        while(potentiometer.getVoltage() > 0.642 && System.currentTimeMillis() - initialTime < 750) {
+        while(potentiometer.getVoltage() > 0.635 && System.currentTimeMillis() - initialTime < 750) {
             robot.safeSleep(1);
-//            Log.i("Flicker", potentiometer.getVoltage() + "");
+            Log.i("Flicker", potentiometer.getVoltage() + "");
         }
-//        Log.i("Flicker", "In Time: " + (System.currentTimeMillis() - initialTime));
+        Log.i("Flicker", "In Time: " + (System.currentTimeMillis() - initialTime));
         setFlickerOut();
         initialTime = System.currentTimeMillis();
         while(potentiometer.getVoltage() < 0.99 && System.currentTimeMillis() - initialTime < 750) {
             robot.safeSleep(1);
-//            Log.i("Flicker", potentiometer.getVoltage() + "");
+            Log.i("Flicker", potentiometer.getVoltage() + "");
         }
-//        Log.i("Flicker", "Out Time: " + (System.currentTimeMillis() - initialTime));
+        Log.i("Flicker", "Out Time: " + (System.currentTimeMillis() - initialTime));
     }
 }

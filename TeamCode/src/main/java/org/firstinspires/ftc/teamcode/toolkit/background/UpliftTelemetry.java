@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.toolkit.background;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.core.Background;
+import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
+import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 import org.firstinspires.ftc.teamcode.toolkit.misc.MathFunctions;
 
 public class UpliftTelemetry extends Background {
@@ -18,18 +21,18 @@ public class UpliftTelemetry extends Background {
         super(robot);
         this.robot = robot;
         this.opMode = robot.opMode;
-//        this.telem = FtcDashboard.getInstance().getTelemetry();
+        this.telem = FtcDashboard.getInstance().getTelemetry();
 //        this.telem = robot.opMode.telemetry;
     }
 
     @Override
     public void loop() {
 
-//        if(opMode instanceof UpliftTele) {
-//            displayTeleOpTelemetry(robot);
-//        } else if(opMode instanceof UpliftAuto){
-//            displayAutoTelemetry(robot);
-//        }
+        if(opMode instanceof UpliftTele) {
+            displayTeleOpTelemetry(robot);
+        } else if(opMode instanceof UpliftAuto){
+            displayAutoTelemetry(robot);
+        }
 
     }
 
@@ -74,6 +77,9 @@ public class UpliftTelemetry extends Background {
         }
         if(robot.visionInitialized) {
             telem.addData("Ring Stack:\t", robot.ringDetector.ringCount);
+        }
+        if(robot.flickerInitialized) {
+            telem.addData("Potentiometer Voltage\t", robot.potentiometer.getVoltage());
         }
         telem.update();
     }

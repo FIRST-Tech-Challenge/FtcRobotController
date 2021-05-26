@@ -407,4 +407,15 @@ public class UpliftRobot {
         flickingState = state;
     }
 
+    public enum StickState {
+        INIT,
+        POWERSHOT_POSITION,
+        UP,
+        DOWN
+    }
+    public StickState stickState = StickState.INIT;
+    public void setStickState(StickState state) {
+        stickState = state;
+    }
+
 }

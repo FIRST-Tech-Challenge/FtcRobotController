@@ -80,10 +80,12 @@ public class IntakeCommands extends Command {
         }
 
         if(robot.stickToggle || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
+            robot.setStickState(UpliftRobot.StickState.POWERSHOT_POSITION);
             intake.stick.setPosition(0.35);
         } else if(robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL || robot.shootingState == UpliftRobot.ShootingState.SHOOTING_HIGHGOAL && robot.shotCount < 1) {
+            robot.setStickState(UpliftRobot.StickState.UP);
             intake.raiseStick();
-        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
+        } else if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING || robot.stickState == UpliftRobot.StickState.DOWN) {
             intake.dropStick();
         } else {
             intake.dropStick();

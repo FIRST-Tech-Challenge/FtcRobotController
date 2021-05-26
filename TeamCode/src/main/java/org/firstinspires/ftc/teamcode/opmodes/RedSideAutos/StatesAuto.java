@@ -91,7 +91,7 @@ public class StatesAuto extends UpliftAuto {
                 driveSub.driveToPosition(109, 47, 0.4, 0);
                 intakeSub.setIntakePower(1);
                 double shootingActualY = robot.worldY;
-                driveSub.driveToPosition(109, shootingActualY + 4.5, 0.3, 1, 0, DriveSubsystem.QUICKEST_DIRECTION);
+                driveSub.driveToPosition(109, shootingActualY + 6.5, 0.3, 1, 0, DriveSubsystem.QUICKEST_DIRECTION);
                 robot.safeSleep(1300);
                 intakeSub.setIntakePower(0);
 
@@ -186,7 +186,7 @@ public class StatesAuto extends UpliftAuto {
                 // shoot the 1 ring
                 transferSub.autoRaiseTransfer();
                 shooterSub.setShooterVelocity(robot.autoHighGoalVelocity);
-                driveSub.driveToPosition(110, 48, 0.5, 0);
+                driveSub.driveToPosition(107, 48, 0.5, 0);
                 for(int i = 0; i < 4 - robot.shotCount; i++) {
                     flickerSub.flickRing();
                 }

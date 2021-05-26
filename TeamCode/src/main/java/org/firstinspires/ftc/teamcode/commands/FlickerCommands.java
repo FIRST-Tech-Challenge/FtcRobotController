@@ -45,6 +45,7 @@ public class FlickerCommands extends Command {
                     robot.safeSleep(1);
                     if(robot.driverCancel || robot.operatorCancel) {
                         flicker.setFlickerOut();
+                        robot.setStickState(UpliftRobot.StickState.DOWN);
                         Log.i("flicker", "CANCELLED");
                         return;
                     }
