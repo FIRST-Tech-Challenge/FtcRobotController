@@ -2,31 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.firstinspires.ftc.teamcode">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-    <uses-feature android:name="android.hardware.type.watch" />
-
     <application>
-        <uses-library
-            android:name="com.google.android.wearable"
-            android:required="true" />
 
         <!--
                Set to true if your app is Standalone, that is, it does not require the handheld
                app to run.
         -->
-        <meta-data
-            android:name="com.google.android.wearable.standalone"
-            android:value="true" />
 
         <activity
-            android:name=".imgproc.imgproc"
+            android:name=".imgproc.ImgProc"
             android:label="@string/title_activity_imgproc">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--
+            <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <category android:name="android.intent.category.LAUNCHER" />
+            -->
         </activity>
     </application>
 

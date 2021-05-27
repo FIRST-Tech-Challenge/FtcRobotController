@@ -11,16 +11,23 @@ import org.tensorflow.lite.task.vision.detector.ObjectDetector
 
 class ImgProc : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val options = ObjectDetector.ObjectDetectorOptions.builder()
+            .setMaxResults(5)
+            .setScoreThreshold(0.5f)
+            .build()
+
+    val objectDetector = ObjectDetector.createFromFileAndOptions(
+            this,
+            "UltimateGoal.tflite",
+            options,
+    )
 
     fun debugPrint(results : List<Detection>) {
         val TAG = "ImageProc"
         for ((i, obj) in results.withIndex()) {
             val box = obj.boundingBox
 
-            Log.d(TAG, "Detected object: ${i} ")
+            Log.d(TAG, "Detected object: $i ")
             Log.d(TAG, "  boundingBox: (${box.left}, ${box.top}) - (${box.right},${box.bottom})")
 
             for ((j, category) in obj.categories.withIndex()) {
@@ -34,18 +41,7 @@ class ImgProc : AppCompatActivity() {
     fun process(bitmap: Bitmap): Array<Object> {
         val image = TensorImage.fromBitmap(bitmap)
 
-        val options = ObjectDetector.ObjectDetectorOptions.builder()
-                .setMaxResults(5)
-                .setScoreThreshold(0.5f)
-                .build()
-
-        val detector = ObjectDetector.createFromFileAndOptions(
-                this,
-                "UltimateGoal.tflite",
-                options,
-        )
-
-        val results = detector.detect(image)
+        val results = this.objectDetector.detect(image)
 
         debugPrint(results)
 
