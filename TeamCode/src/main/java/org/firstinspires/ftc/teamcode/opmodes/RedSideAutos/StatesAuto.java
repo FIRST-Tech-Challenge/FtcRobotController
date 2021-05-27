@@ -141,17 +141,17 @@ public class StatesAuto extends UpliftAuto {
             // drive to drop off first wobble
             intakeSub.setIntakePower(-1);
             wobbleSub.setWobblePosition(0.4);
-            driveSub.passThroughPosition(120, 102, 1, -135);
+            driveSub.passThroughPosition(120, 102, 1, -135, DriveSubsystem.QUICKEST_DIRECTION, 10);
             intakeSub.setIntakePower(0);
             driveSub.driveToPosition(128,120, 0.6, -135);
             wobbleSub.dropOff();
-            driveSub.passThroughPosition(115, 114, 1, -135);
+            driveSub.passThroughPosition(113, 114, 1, -135);
 
             // drive to pick up second wobble
             getSecondWobble();
 
             // drop off second wobble
-            driveSub.passThroughPosition(120, 102, 1, -135);
+            driveSub.passThroughPosition(120, 102, 1, -135, DriveSubsystem.QUICKEST_DIRECTION, 10);
             driveSub.driveToPosition(128,116, 0.6, -135);
             wobbleSub.dropOff();
             driveSub.driveToPosition(96, 88, 1, -135);
@@ -195,19 +195,19 @@ public class StatesAuto extends UpliftAuto {
             }
 
             // drop off first wobble
-            driveSub.driveToPosition(122, 92, 0.7, 180);
+            driveSub.driveToPosition(120, 92, 0.7, 180);
             driveSub.turnTo(180, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
-            driveSub.driveToPosition(122, 92, 0.5, 180);
+            driveSub.driveToPosition(120, 92, 0.5, 180);
             wobbleSub.dropOff();
 
             // pick up second wobble goal
             getSecondWobble();
 
             // drop off the second wobble goal
-            driveSub.passThroughPosition(114, 80, 0.85, 180, DriveSubsystem.QUICKEST_DIRECTION, 6);
-            driveSub.driveToPosition(114, 92, 0.7, 180);
+            driveSub.passThroughPosition(112, 80, 0.85, 180, DriveSubsystem.QUICKEST_DIRECTION, 6);
+            driveSub.driveToPosition(112, 92, 0.7, 180);
             driveSub.turnTo(180, 0.5, DriveSubsystem.QUICKEST_DIRECTION);
-            driveSub.driveToPosition(114, 92, 0.5, 180);
+            driveSub.driveToPosition(112, 92, 0.5, 180);
             wobbleSub.dropOff();
 
             // park
@@ -256,8 +256,8 @@ public class StatesAuto extends UpliftAuto {
     }
 
     public void getSecondWobble() {
-        driveSub.passThroughPosition(115, 56, 0.65, 0, DriveSubsystem.COUNTER_CLOCKWISE, 6);
-        driveSub.turnTo(0, 0.85, DriveSubsystem.COUNTER_CLOCKWISE);
+        driveSub.passThroughPosition(115, 60, 0.65, 0, DriveSubsystem.COUNTER_CLOCKWISE, 6);
+        driveSub.turnTo(0, 0.45, DriveSubsystem.COUNTER_CLOCKWISE);
         driveSub.driveToPosition(115, 37, 0.3, 1, 0, 0);
         wobbleSub.pickUp();
     }

@@ -61,7 +61,7 @@ public class FlickerSubsystem extends Subsystem {
     }
 
     public void setFlickerIn() {
-        flicker.setPosition(0.61);
+        flicker.setPosition(0.618);
     }
 
     public void flickRing() {
