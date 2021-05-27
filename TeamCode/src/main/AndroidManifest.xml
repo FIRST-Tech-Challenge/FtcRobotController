@@ -18,6 +18,13 @@
             <category android:name="android.intent.category.LAUNCHER" />
             -->
         </activity>
+
     </application>
+
+    <uses-permission android:name="android.permission.CAMERA"></uses-permission>
+    <uses-permission-sdk-23 android:name="android.permission.CAMERA"></uses-permission-sdk-23>
+
+    <uses-feature android:name="android.hardware.usb.UsbDevice"></uses-feature>
+    <uses-feature android:name="android.hardware.usb.UsbAccessory"></uses-feature>
 
 </manifest>
