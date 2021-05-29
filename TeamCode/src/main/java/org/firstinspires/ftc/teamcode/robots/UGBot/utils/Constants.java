@@ -42,10 +42,15 @@ public class Constants {
     public static  double kdFlywheel= 0.0; //derivative constant multiplier
 
     // Vision
-    public static int TOP_LEFT_X = 70;
-    public static int TOP_LEFT_Y = 160;
-    public static int BOTTOM_RIGHT_X = 180;
-    public static int BOTTOM_RIGHT_Y = 230;
+    public static int TOP_LEFT_X_RED = 70;
+    public static int TOP_LEFT_Y_RED = 160;
+    public static int BOTTOM_RIGHT_X_RED = 180;
+    public static int BOTTOM_RIGHT_Y_RED = 230;
+
+    public static int TOP_LEFT_X_BLUE = 70;
+    public static int TOP_LEFT_Y_BLUE = 160;
+    public static int BOTTOM_RIGHT_X_BLUE = 250;
+    public static int BOTTOM_RIGHT_Y_BLUE = 230;
 
     public static double NORMALIZE_ALPHA = 51.0;
     public static double NORMALIZE_BETA = 261.0;
@@ -96,7 +101,7 @@ public class Constants {
     //renaming the Intake servo combinations to group together in Dashboard
     public static int INTAKE_DEPLOY_TOP = 1250; //1300
     public static int INTAKE_DEPLOY2_TOP = 1600;
-    public static int INTAKE_DEPLOY_TRAVEL_BTM = 1450; //use as default bottom servo position if none specified
+    public static int INTAKE_DEPLOY_TRAVEL_BTM = 1550; //use as default bottom servo position if none specified
 
     public static int INTAKE_HANDOFF_BTM = 1675;
     public static int INTAKE_HANDOFF_TOP = 1200;
@@ -105,7 +110,7 @@ public class Constants {
     public static int INTAKE_INIT_BTM = 900;
     public static int INTAKE_INIT_TOP = 1100;
 
-    public static int INTAKE_PICKUP_TOP = 1530; //1500
+    public static int INTAKE_PICKUP_TOP = 1720; //1500
 
     public static int INTAKE_TENT_BTM = 1400;
     public static int INTAKE_TENT_TOP = 1750;
@@ -206,6 +211,7 @@ public class Constants {
         TARGET_B_1((49)/INCHES_PER_METER, 9*12/INCHES_PER_METER, 0,270 + GRIPPER_HEADING_OFFSET,-1,.5), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
         TARGET_B_2((49)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, 0,270 + GRIPPER_HEADING_OFFSET,-1,0.5),
         TARGET_A_1((49)/INCHES_PER_METER, 7*12/INCHES_PER_METER, -1,90,20,.02),
+        TARGET_A_1_BLUE((49)/INCHES_PER_METER, 7*12/INCHES_PER_METER, -1,0,20,.02),
         TARGET_A_2((49)/INCHES_PER_METER, (7*12 - 6)/INCHES_PER_METER, -1,90,-1,0),
         RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1,0),
         RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1), //sweep needs to be very slow
@@ -213,7 +219,9 @@ public class Constants {
         //this is the actual location of wobble2 for reference, not meant as a robot drive target
         WOBBLE_TWO(25/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1,1),
         WOBBLE_TWO_APPROACH((49+3)/INCHES_PER_METER, (2.5 * 12)/INCHES_PER_METER, 50, -1,-1, 0),
+        WOBBLE_TWO_APPROACH_BLUE((49+3)/INCHES_PER_METER, (2.5 * 12)/INCHES_PER_METER, 310, -1,-1, 0),
         WOBBLE_TWO_EXIT((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 90 + GRIPPER_HEADING_OFFSET,-1, 1),
+        WOBBLE_TWO_EXIT_BLUE((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 90 + GRIPPER_HEADING_OFFSET,-1, 1),
         WOBBLE_TWO_EXIT_B((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 320,-1, .02),
         WOBBLE_TWO_GRAB (30/INCHES_PER_METER, (30)/INCHES_PER_METER, -1, -1,-1,-1),
         NAVIGATE(49/INCHES_PER_METER, 7*12/INCHES_PER_METER,-1,-1, -1, .2), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)

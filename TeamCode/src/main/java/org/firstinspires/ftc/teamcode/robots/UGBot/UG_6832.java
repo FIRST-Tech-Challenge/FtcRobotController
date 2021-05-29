@@ -46,13 +46,9 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.OpenCVIntegration;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
-import org.firstinspires.ftc.teamcode.util.RateController;
 
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_NOW;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ELEVATION;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.STARTING_HEIGHT_OFFSET;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.TURRET_SPEED;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
@@ -482,7 +478,7 @@ public class UG_6832 extends OpMode {
      */
     @Override
     public void loop() {
-
+        //orange
 
             stateSwitch();
             if (active) {
@@ -491,9 +487,17 @@ public class UG_6832 extends OpMode {
                         joystickDrive();
                         break;
                     case 1: // teleop
-                        if (auto.AutoFull.execute()) {
-                            active = false;
-                            state = 0;
+                        if(ALLIANCE == Constants.Alliance.RED) {
+                            if (auto.AutoFullRed.execute()) {
+                                active = false;
+                                state = 0;
+                            }
+                        }
+                        else{
+                            if (auto.AutoFullBlue.execute()) {
+                                active = false;
+                                state = 0;
+                            }
                         }
                         break;
                     case 2:

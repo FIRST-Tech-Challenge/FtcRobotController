@@ -3,16 +3,11 @@ package org.firstinspires.ftc.teamcode.robots.UGBot.vision;
 import android.graphics.Bitmap;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.vuforia.Image;
-import com.vuforia.PIXEL_FORMAT;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.BlobStats;
-import org.firstinspires.ftc.teamcode.util.VisionUtils;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -52,7 +47,13 @@ public class Pipeline extends OpenCvPipeline {
 
     public Mat processFrame(Mat input) {
         // Step crop:
-        cropOutput = crop(input, new Point(Constants.TOP_LEFT_X, Constants.TOP_LEFT_Y), new Point(Constants.BOTTOM_RIGHT_X, Constants.BOTTOM_RIGHT_Y));
+        switch(Constants.ALLIANCE) {
+            case RED:
+                cropOutput = crop(input, new Point(Constants.TOP_LEFT_X_RED, Constants.TOP_LEFT_Y_RED), new Point(Constants.BOTTOM_RIGHT_X_RED, Constants.BOTTOM_RIGHT_Y_RED));
+            case BLUE:
+                cropOutput = crop(input, new Point(Constants.TOP_LEFT_X_BLUE, Constants.TOP_LEFT_Y_BLUE), new Point(Constants.BOTTOM_RIGHT_X_BLUE, Constants.BOTTOM_RIGHT_Y_BLUE));
+        }
+
         cropTime = System.currentTimeMillis();
 
         // Step Normalize0:
