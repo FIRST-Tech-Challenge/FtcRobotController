@@ -20,7 +20,7 @@ public class StandardDrive extends DriveTrain {
         super(useTelemetry, wheelType, robot);
     }
 
-    // TODO
+    // TODO: Merge with current
     public void moveMecanum(Movement movementType, double power) {
 
     }

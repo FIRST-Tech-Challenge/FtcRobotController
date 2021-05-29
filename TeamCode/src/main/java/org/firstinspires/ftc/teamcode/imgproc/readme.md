@@ -3,7 +3,7 @@
 1. Import the class
 2. Initialize the class
 3. Run the `process` method while passing a `Bitmap` image
-4. The function returns an `Array` of `Object` class (custom defined).
+4. The function returns an `Array` of `ObjectDetected` class (custom defined).
        This object class has two attributes: `label` (The name of the detected object) and
        `boundingBox` (The area of the object)
 

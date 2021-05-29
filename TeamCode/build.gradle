@@ -19,10 +19,14 @@ apply from: '../build.dependencies.gradle'
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     compileOnly 'com.google.android.wearable:wearable:2.8.1'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:+'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:+'
 }
 repositories {
     mavenCentral()

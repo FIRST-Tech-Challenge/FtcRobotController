@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.parts.drivetrain.DriveTrainSettings;
 import org.firstinspires.ftc.teamcode.robot.parts.drivetrain.drivetrains.HDrive;
 import org.firstinspires.ftc.teamcode.robot.parts.drivetrain.drivetrains.StandardDrive;
 import org.firstinspires.ftc.teamcode.robot.parts.drivetrain.wheels.WheelTypes;
+import org.firstinspires.ftc.teamcode.buttons.AllMappings;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,10 @@ import java.util.ArrayList;
 public class MainDrive extends OpMode {
     Driver driver;
 
+    Robot robot;
+
+    AllMappings mappings;
+
     @Override
     public void init() {
         // Robot parts
@@ -38,7 +43,9 @@ public class MainDrive extends OpMode {
         robotPartSettings.add(driveTrainSettings);
 
         // Robot
-        Robot robot = new Robot(true, robotPartSettings,gamepad1,gamepad2,telemetry,hardwareMap);
+        this.robot = new Robot(true, robotPartSettings,gamepad1,gamepad2,telemetry,hardwareMap);
+
+        this.mappings = new AllMappings(this.robot);
 
         // Pick driver from class
         if (robot.hasRobotPart(HDrive.class)) {
@@ -54,11 +61,13 @@ public class MainDrive extends OpMode {
     @Override
     public void start() {
         driver.start();
+        this.mappings.start();
     }
 
     @Override
     public void stop() {
         driver.stop();
+        this.mappings.stop();
     }
 
     @Override

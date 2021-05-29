@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
  * @author 22jmiller
  */
 public abstract class Driver {
-    Robot robot;
+    public Robot robot;
 
     public Driver(Robot robot) {
         this.robot = robot;

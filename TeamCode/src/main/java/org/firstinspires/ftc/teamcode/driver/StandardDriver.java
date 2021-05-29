@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Drive code for a person controlling the robot with StandardDrive
  * @author 22jmiller
  */
-public class StandardDriver extends Driver {
+public class  StandardDriver extends Driver {
     private boolean aPressing = false;
 
     private boolean useTelemetry;
@@ -27,7 +27,7 @@ public class StandardDriver extends Driver {
      *
      * @param useTelemetry Pretty straight forward, let this class use telemetry, output stuff?
      * @param standardDriveMode How do you want to drive the car?
-     * @param wheelType What type of wheel do you have?
+     * @param robotPartSettings What type of wheel do you have?
      * @param gamepad1 Gamepad 1
      * @param gamepad2 Gamepad 2
      * @param telemetry Telemetry
