@@ -131,23 +131,8 @@ public class VisionTest extends LinearOpMode {
 
             }
 
-            if (gamepad.isARelease()) {
-                wobbleHandOpen = !wobbleHandOpen;
-            }
-
-            if (wobbleHandOpen) {
-                wobbleSystem.hand_open();
-            } else {
-                wobbleSystem.hand_close();
-            }
-
-            if (gamepad.isUpRelease()) {
-                wobbleArmState = WobbleArmState.UP;
-            } else if (gamepad.isDownRelease()) {
-                wobbleArmState = WobbleArmState.DOWN;
-            } else if (gamepad.isLeftRelease()) {
-                wobbleArmState = WobbleArmState.MID;
-            }
+            wobbleArmState = WobbleArmState.DOWN;
+            wobbleSystem.hand_open();
         }
 
         if (visionController.getHeight().equals("ONE")) {
@@ -174,6 +159,9 @@ public class VisionTest extends LinearOpMode {
                 driveRight.set(0);
 
             }
+
+            wobbleArmState = WobbleArmState.DOWN;
+            wobbleSystem.hand_open();
         }
 
         if (visionController.getHeight().equals("FOUR")) {
@@ -200,6 +188,9 @@ public class VisionTest extends LinearOpMode {
                 driveRight.set(0);
 
             }
+
+            wobbleArmState = WobbleArmState.DOWN;
+            wobbleSystem.hand_open();
         }
     }
 
