@@ -24,14 +24,14 @@ class ImgProc() : AppCompatActivity() {
             .setScoreThreshold(0.5f)
             .build()
 
-    val objectDetector = ObjectDetector.createFromFileAndOptions(
+    val objectDetector: ObjectDetector = ObjectDetector.createFromFileAndOptions(
             this,
             "UltimateGoal.tflite",
             options,
     )
 
-    val VUFORIA_KEY = resources.getString(R.string.VUFORIA_KEY)
-    val CAM_NAME = resources.getString(R.string.webcam)
+    private val VUFORIA_KEY = resources.getString(R.string.VUFORIA_KEY)
+    private val CAM_NAME = resources.getString(R.string.webcam)
 
     init {
         initVuforia()
@@ -45,7 +45,7 @@ class ImgProc() : AppCompatActivity() {
         val parameters = VuforiaLocalizer.Parameters()
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY
-        parameters.cameraName = hardwareMap[WebcamName::class.java, resources.getString(R.string.webcam)]
+        parameters.cameraName = hardwareMap[WebcamName::class.java, CAM_NAME]
 
         //  Instantiate the Vuforia engine
         this.vuforia = ClassFactory.getInstance().createVuforia(parameters)

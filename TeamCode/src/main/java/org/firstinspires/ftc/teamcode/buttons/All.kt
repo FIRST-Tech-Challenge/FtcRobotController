@@ -6,14 +6,20 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.teamcode.buttons.dpad.*
+import org.firstinspires.ftc.teamcode.imgproc.ImgProc
 
 // Add functions to their appropriate package for readability then restate them here
 
-class AllMappings(robot: Robot) {
+class AllMappings(robot: Robot, telemetry: Telemetry) {
 
     val robot = robot
 
-    lateinit var looper: Deferred<Unit>;
+    val telemetry = telemetry
+
+    lateinit var looper: Deferred<Unit>
+
+    lateinit var image: ImgProc
 
     fun start() {
         this.looper = GlobalScope.async(Dispatchers.Default) {
@@ -29,9 +35,25 @@ class AllMappings(robot: Robot) {
         if (this.robot.gamepad1.dpad_up) {
             this.dpadUp()
         }
+
+        if (this.robot.gamepad1.dpad_right) {
+            this.dpadRight()
+        }
+
+        if (this.robot.gamepad1.dpad_left) {
+            this.dpadRight()
+        }
     }
 
     fun dpadUp() {
-        org.firstinspires.ftc.teamcode.buttons.dpad.Up(this.robot)
+        Up(this.robot)
+    }
+
+    fun dpadRight() {
+        this.image = Right(this.telemetry).img
+    }
+
+    fun dpadLeft() {
+        Left(this.image)
     }
 }
