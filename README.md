@@ -5,6 +5,8 @@ I would like to thank @22jmiller for his help and contribution of the driving co
 Most of the image processing code is located under the `org.firstinspires.ftc.teamcode.imgproc.ImgProc` package.
 There is also documentation located there, which also includes the necessary `build.gradle` modifications.
 
+Also, please see [this discussion.](https://github.com/XaverianTeamRobotics/FtcRobotController/discussions/7)
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the Ultimate Goal (2020-2021) competition season.
