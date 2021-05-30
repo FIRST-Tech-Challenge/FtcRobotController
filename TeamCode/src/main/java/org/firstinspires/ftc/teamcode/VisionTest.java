@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robot.FlyWheel;
 import org.firstinspires.ftc.robot.Hitter;
+import org.firstinspires.ftc.robot.WobbleSystem;
+import org.firstinspires.ftc.robot_utilities.GamePadController;
 import org.firstinspires.ftc.robot_utilities.Vals;
 import org.firstinspires.ftc.robot_utilities.VisionController;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -39,9 +41,20 @@ public class VisionTest extends LinearOpMode {
     private double driveSpeed = 0.4;
     double rotatePower = 0;
 
+    private GamePadController gamepad;
+    private boolean wobbleHandOpen = false;
+    private WobbleArmState wobbleArmState = WobbleArmState.UP;
+    private WobbleSystem wobbleSystem;
+
     public void initRobot() {
 
         elapsedTime = new ElapsedTime();
+
+        //Initialize gamepad.
+        gamepad = new GamePadController(gamepad1);
+
+        wobbleSystem = new WobbleSystem(new Motor(hardwareMap, "wobbleArmMotor"),
+                hardwareMap.servo.get("wobbleArmServo"));
 
         driveLeft = new Motor(hardwareMap, "dl");
         driveRight = new Motor(hardwareMap, "dr");
@@ -116,6 +129,24 @@ public class VisionTest extends LinearOpMode {
                 driveLeft.set(0);
                 driveRight.set(0);
 
+            }
+
+            if (gamepad.isARelease()) {
+                wobbleHandOpen = !wobbleHandOpen;
+            }
+
+            if (wobbleHandOpen) {
+                wobbleSystem.hand_open();
+            } else {
+                wobbleSystem.hand_close();
+            }
+
+            if (gamepad.isUpRelease()) {
+                wobbleArmState = WobbleArmState.UP;
+            } else if (gamepad.isDownRelease()) {
+                wobbleArmState = WobbleArmState.DOWN;
+            } else if (gamepad.isLeftRelease()) {
+                wobbleArmState = WobbleArmState.MID;
             }
         }
 
