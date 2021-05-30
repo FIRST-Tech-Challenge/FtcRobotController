@@ -45,7 +45,7 @@ public class MainDrive extends OpMode {
         // Robot
         this.robot = new Robot(true, robotPartSettings,gamepad1,gamepad2,telemetry,hardwareMap);
 
-        this.mappings = new AllMappings(this.robot);
+        this.mappings = new AllMappings(this.robot, telemetry);
 
         // Pick driver from class
         if (robot.hasRobotPart(HDrive.class)) {
