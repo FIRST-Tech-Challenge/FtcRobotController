@@ -26,35 +26,35 @@ public class gm0_mecanum extends OpMode {
 
     @Override
     public void loop() {
-        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        double y = -gamepad1.left_stick_y; // reverse stick y axis
+        double x = gamepad1.left_stick_x * 1.1; // counteract slower strafing
         double rx = gamepad1.right_stick_x;
 
-        double frontLeftPower = y + x + rx;
-        double backLeftPower = y - x + rx;
-        double frontRightPower = y - x - rx;
-        double backRightPower = y + x - rx;
+        double flPower = y + x + rx;
+        double blPower = y - x + rx;
+        double frPower = y - x - rx;
+        double brPower = y + x - rx;
 
         // Put powers in the range of -1 to 1 only if they aren't already
         // Not checking would cause us to always drive at full speed
-        if (Math.abs(frontLeftPower) > 1 || Math.abs(backLeftPower) > 1 ||
-                Math.abs(frontRightPower) > 1 || Math.abs(backRightPower) > 1) {
+        if (Math.abs(flPower) > 1 || Math.abs(blPower) > 1 ||
+                Math.abs(frPower) > 1 || Math.abs(brPower) > 1) {
             // Find the largest power
             double max = 0;
-            max = Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower));
-            max = Math.max(Math.abs(frontRightPower), max);
-            max = Math.max(Math.abs(backRightPower), max);
+            max = Math.max(Math.abs(flPower), Math.abs(blPower));
+            max = Math.max(Math.abs(frPower), max);
+            max = Math.max(Math.abs(brPower), max);
 
             // Divide everything by max
-            frontLeftPower /= max;
-            backLeftPower /= max;
-            frontRightPower /= max;
-            backRightPower /= max;
+            flPower /= max;
+            blPower /= max;
+            frPower /= max;
+            brPower /= max;
         }
 
-        fl.setPower(frontLeftPower);
-        bl.setPower(backLeftPower);
-        fr.setPower(frontRightPower);
-        br.setPower(backRightPower);
+        fl.setPower(flPower);
+        bl.setPower(blPower);
+        fr.setPower(frPower);
+        br.setPower(brPower);
     }
 }
