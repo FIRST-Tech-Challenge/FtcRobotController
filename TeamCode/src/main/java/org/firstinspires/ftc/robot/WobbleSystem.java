@@ -16,7 +16,7 @@ public class WobbleSystem {
 
         this.wobbleArm.setRunMode(Motor.RunMode.PositionControl);
         this.wobbleArm.setPositionCoefficient(Vals.wobble_arm_kp);
-        this.wobbleArm.setPositionTolerance(15);
+        this.wobbleArm.setPositionTolerance(Vals.wobble_arm_tolerance);
     }
 
     public void arm_to_pos(int pos) {
