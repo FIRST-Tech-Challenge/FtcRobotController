@@ -42,8 +42,6 @@ public class VisionTest extends LinearOpMode {
     double rotatePower = 0;
 
     private GamePadController gamepad;
-    private boolean wobbleHandOpen = false;
-    private WobbleArmState wobbleArmState = WobbleArmState.UP;
     private WobbleSystem wobbleSystem;
 
     public void initRobot() {
@@ -75,6 +73,7 @@ public class VisionTest extends LinearOpMode {
         pidRotate = new PIDController(Vals.rotate_kp, Vals.rotate_ki, Vals.rotate_kd);
         pidRotate.setTolerance(Vals.rotate_tolerance);
 
+        //Rotation controller
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -84,14 +83,15 @@ public class VisionTest extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         resetAngle();
-    }
 
-    @Override
-    public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         elapsedTime = new ElapsedTime();
         visionController = new VisionController(phoneCam);
+    }
+
+    @Override
+    public void runOpMode() {
 
         initRobot();
         waitForStart();
@@ -107,19 +107,7 @@ public class VisionTest extends LinearOpMode {
 
         elapsedTime.reset();
 
-        switch (wobbleArmState) {
-            case UP:
-                wobbleSystem.arm_up();
-                break;
-            case MID:
-                wobbleSystem.arm_mid();
-                break;
-            case DOWN:
-                wobbleSystem.arm_down();
-                break;
-        }
-
-        if (visionController.getHeight().equals("ZERO")) {
+        if (visionController.getRingPosition() == 0) {
 
             while (elapsedTime.seconds() < 2) {
 
@@ -143,12 +131,12 @@ public class VisionTest extends LinearOpMode {
 
             }
 
-            wobbleArmState = WobbleArmState.DOWN;
+            wobbleSystem.arm_down();
             wobbleSystem.hand_open();
-            wobbleHandOpen = true;
+
         }
 
-        if (visionController.getHeight().equals("ONE")) {
+        if (visionController.getRingPosition() == 1) {
 
             while (elapsedTime.seconds() < 1.5) {
 
@@ -173,11 +161,11 @@ public class VisionTest extends LinearOpMode {
 
             }
 
-            wobbleArmState = WobbleArmState.DOWN;
+            wobbleSystem.arm_down();
             wobbleSystem.hand_open();
         }
 
-        if (visionController.getHeight().equals("FOUR")) {
+        if (visionController.getRingPosition() == 4) {
 
             while (elapsedTime.seconds() < 1.5) {
 
@@ -202,9 +190,8 @@ public class VisionTest extends LinearOpMode {
 
             }
 
-            wobbleArmState = WobbleArmState.DOWN;
+            wobbleSystem.arm_down();
             wobbleSystem.hand_open();
-            wobbleHandOpen = true;
         }
     }
 
