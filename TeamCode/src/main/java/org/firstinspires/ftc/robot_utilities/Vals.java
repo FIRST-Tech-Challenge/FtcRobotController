@@ -55,8 +55,8 @@ public class Vals {
     public static int wobble_arm_up_pos = 0;
     public static int wobble_arm_down_pos = -2000;
     public static int wobble_arm_mid_pos = -1000;
-    public static double wobble_hand_open = .45;
-    public static double wobble_hand_close = 0;
+    public static double wobble_hand_close = .45;
+    public static double wobble_hand_open = 0;
     public static double wobble_arm_kp = 0.004;
     public static double wobble_arm_tolerance = 20;
 
