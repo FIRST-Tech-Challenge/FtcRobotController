@@ -135,11 +135,9 @@ public class VisionTest extends LinearOpMode {
                 wobbleSystem.hand_open();
 
             }
-        }
+        } else if (visionController.getRingPosition() == 1) {
 
-        else if (visionController.getRingPosition() == 1) {
-
-            while (elapsedTime.seconds() < 1.5) {
+            while (elapsedTime.seconds() < 2) {
 
                 rotatePower = rotate(0);
                 double leftPower = -rotatePower;
@@ -154,21 +152,22 @@ public class VisionTest extends LinearOpMode {
 
             }
 
-            while (elapsedTime.seconds() < 1.68) {
+            while (elapsedTime.seconds() < 5) {
 
                 rotatePower = rotate(50);
                 driveLeft.set(0);
                 driveRight.set(0);
 
             }
+            while (elapsedTime.seconds() < 7) {
 
-            wobbleSystem.arm_down();
-            wobbleSystem.hand_open();
-        }
+                wobbleSystem.arm_down();
+                wobbleSystem.hand_open();
 
-        else if (visionController.getRingPosition() == 4) {
+            }
+        } else if (visionController.getRingPosition() == 4) {
 
-            while (elapsedTime.seconds() < 1.5) {
+            while (elapsedTime.seconds() < 2) {
 
                 rotatePower = rotate(0);
                 double leftPower = -rotatePower;
@@ -183,7 +182,7 @@ public class VisionTest extends LinearOpMode {
 
             }
 
-            while (elapsedTime.seconds() < 1.68) {
+            while (elapsedTime.seconds() < 5) {
 
                 rotatePower = rotate(45);
                 driveLeft.set(0);
@@ -191,8 +190,12 @@ public class VisionTest extends LinearOpMode {
 
             }
 
-            wobbleSystem.arm_down();
-            wobbleSystem.hand_open();
+            while (elapsedTime.seconds() < 7) {
+
+                wobbleSystem.arm_down();
+                wobbleSystem.hand_open();
+
+            }
         }
     }
 
