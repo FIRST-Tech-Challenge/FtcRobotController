@@ -7,17 +7,20 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
 public class gm0_mecanum extends OpMode {
+    DcMotor fl;
+    DcMotor bl;
+    DcMotor fr;
+    DcMotor br;
     @Override
     public void init() {
-        DcMotor FL = hardwareMap.dcMotor.get("FL");
-        DcMotor BL = hardwareMap.dcMotor.get("BL");
-        DcMotor FR = hardwareMap.dcMotor.get("FR");
-        DcMotor BR = hardwareMap.dcMotor.get("BR");
+        fl = hardwareMap.dcMotor.get("fl");
+        bl = hardwareMap.dcMotor.get("BL");
+        fr = hardwareMap.dcMotor.get("FR");
+        br = hardwareMap.dcMotor.get("BR");
 
         // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
-        FR.setDirection(DcMotorSimple.Direction.REVERSE);
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
@@ -42,17 +45,16 @@ public class gm0_mecanum extends OpMode {
             max = Math.max(Math.abs(frontRightPower), max);
             max = Math.max(Math.abs(backRightPower), max);
 
-            // Divide everything by max (it's positive so we don't need to worry
-            // about signs)
+            // Divide everything by max
             frontLeftPower /= max;
             backLeftPower /= max;
             frontRightPower /= max;
             backRightPower /= max;
         }
 
-        FL.setPower(frontLeftPower);
-        motorBackLeft.setPower(backLeftPower);
-        motorFrontRight.setPower(frontRightPower);
-        motorBackRight.setPower(backRightPower);
+        fl.setPower(frontLeftPower);
+        bl.setPower(backLeftPower);
+        fr.setPower(frontRightPower);
+        br.setPower(backRightPower);
     }
 }
