@@ -53,11 +53,11 @@ public class Vals {
     // Wobble Arm Values
     public static double wobble_arm_velocity = 0.7;
     public static int wobble_arm_up_pos = 0;
-    public static int wobble_arm_down_pos = -1900;
+    public static int wobble_arm_down_pos = -2100;
     public static int wobble_arm_mid_pos = -1000;
     public static double wobble_hand_open = .45;
     public static double wobble_hand_close = 0;
-    public static double wobble_arm_kp = 0.006;
+    public static double wobble_arm_kp = 0.004;
 
     public static double initialMotorPosition = 0.0;
     public static double initialServoPosition = 0.0;

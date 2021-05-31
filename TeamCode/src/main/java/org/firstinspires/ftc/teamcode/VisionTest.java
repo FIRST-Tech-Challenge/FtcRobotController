@@ -124,7 +124,7 @@ public class VisionTest extends LinearOpMode {
 
             }
 
-            while (elapsedTime.seconds() < 2.18) {
+            while (elapsedTime.seconds() < 5) {
 
                 driveLeft.set(0);
                 driveRight.set(0);
