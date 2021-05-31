@@ -1,34 +1,46 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
-public class gm0_mecanum extends OpMode {
+public class gm0_mecanum_field_centric extends OpMode {
     DcMotor fl;
     DcMotor bl;
     DcMotor fr;
     DcMotor br;
+    BNO055IMU imu;
     @Override
     public void init() {
         fl = hardwareMap.dcMotor.get("fl");
         bl = hardwareMap.dcMotor.get("BL");
         fr = hardwareMap.dcMotor.get("FR");
         br = hardwareMap.dcMotor.get("BR");
-
         // Reverse the right side motors
         fr.setDirection(DcMotorSimple.Direction.REVERSE);
         br.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+
+        telemetry.addData("program", "initialized");
+        telemetry.update();
     }
 
     @Override
     public void loop() {
-        double y = -gamepad1.left_stick_y; // reverse stick y axis
         double x = gamepad1.left_stick_x * 1.1; // counteract slower strafing
+        double y = -gamepad1.left_stick_y; // reverse stick y axis
         double rx = gamepad1.right_stick_x;
+        double heading = -imu.getAngularOrientation().firstAngle;
+
+        x = (x*Math.cos(heading))-(y*Math.sin(heading));
+        y = (x*Math.sin(heading))+(y*Math.cos(heading));
 
         double flPower = y + x + rx;
         double blPower = y - x + rx;
