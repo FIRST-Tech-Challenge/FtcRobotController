@@ -27,6 +27,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode.robots.cart;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.HINT;
@@ -68,7 +69,7 @@ import static org.firstinspires.ftc.robotcontroller.internal.GamepadRC.gamepadRC
 @TeleOp(name="Cart Hack", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 //  @Autonomous
 
-public class CartHack extends LinearOpMode {
+public class CartHack extends OpMode {
 
     //hi im testing something
 
@@ -134,8 +135,12 @@ public class CartHack extends LinearOpMode {
 
 
 
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
+        telemetry.addData("Status", "Initialized");
 
         robot.init(this.hardwareMap);
 
@@ -152,12 +157,11 @@ public class CartHack extends LinearOpMode {
         locale.setFrameQueueCapacity(1);
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
 
-        Vuforia.setHint (HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
 
         //set vuforia to look for assets from the Relic Recovery library
         relicCodex = locale.loadTrackablesFromAsset("RelicVuMark");
         relicCodex.get(0).setName("RelicTemplate");
-
 
 
         relicTemplate = relicCodex.get(0);
@@ -170,17 +174,13 @@ public class CartHack extends LinearOpMode {
         mDetector = new ColorBlobDetector();
 
         relicCodex.activate();
+    }
 
-        while(!isStarted()){    // Wait for the game to start (driver presses PLAY)
-
-            synchronized (this) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-            }
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
+    @Override
+    public void init_loop() {
 
             stateSwitch();
 
@@ -204,18 +204,23 @@ public class CartHack extends LinearOpMode {
             telemetry.addData("Status", "Initialized");
             telemetry.update();
 
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            //idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
 
 
-
-
-//        robot.jewel.liftArm();
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
         runtime.reset();
+    }
 
-
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
             telemetry.update();
             stateSwitch();
             if(active) {
@@ -242,9 +247,8 @@ public class CartHack extends LinearOpMode {
                 robot.stopAll();
             }
 
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            //idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
-    }
 
     public void demo(VuforiaTrackableDefaultListener beaconTarget, double distance){
 //        if(gamepadRC.x){
