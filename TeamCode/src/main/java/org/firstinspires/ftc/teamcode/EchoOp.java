@@ -33,7 +33,7 @@ public class EchoOp extends OpMode {
     private RotationController rotationController;
 
     private double intakeSpeed = 0;
-    private boolean wobbleHandOpen = false;
+    private boolean wobbleHandOpen = true;
     private WobbleArmState wobbleArmState = WobbleArmState.UP;
     private boolean flywheelOn = false;
     private boolean flywheelPowershot = false;
