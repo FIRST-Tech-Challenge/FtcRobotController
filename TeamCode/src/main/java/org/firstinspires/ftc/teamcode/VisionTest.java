@@ -107,6 +107,18 @@ public class VisionTest extends LinearOpMode {
 
         elapsedTime.reset();
 
+        switch (wobbleArmState) {
+            case UP:
+                wobbleSystem.arm_up();
+                break;
+            case MID:
+                wobbleSystem.arm_mid();
+                break;
+            case DOWN:
+                wobbleSystem.arm_down();
+                break;
+        }
+
         if (visionController.getHeight().equals("ZERO")) {
 
             while (elapsedTime.seconds() < 2) {
@@ -133,6 +145,7 @@ public class VisionTest extends LinearOpMode {
 
             wobbleArmState = WobbleArmState.DOWN;
             wobbleSystem.hand_open();
+            wobbleHandOpen = true;
         }
 
         if (visionController.getHeight().equals("ONE")) {
@@ -191,6 +204,7 @@ public class VisionTest extends LinearOpMode {
 
             wobbleArmState = WobbleArmState.DOWN;
             wobbleSystem.hand_open();
+            wobbleHandOpen = true;
         }
     }
 
