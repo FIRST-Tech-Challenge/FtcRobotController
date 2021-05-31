@@ -96,14 +96,12 @@ public class VisionTest extends LinearOpMode {
         initRobot();
         waitForStart();
         elapsedTime.reset();
-        while (elapsedTime.seconds() < 2) {
-            telemetry.addData("Position", visionController.getRingPosition());
-//            telemetry.addData("Analysis", visionController.getAnalysis());
-            telemetry.addData("Height", visionController.getHeight());
-            telemetry.update();
 
-            sleep(1000);
-        }
+        telemetry.addData("Position", visionController.getRingPosition());
+//            telemetry.addData("Analysis", visionController.getAnalysis());
+        telemetry.addData("Height", visionController.getHeight());
+        telemetry.update();
+
 
         elapsedTime.reset();
 
