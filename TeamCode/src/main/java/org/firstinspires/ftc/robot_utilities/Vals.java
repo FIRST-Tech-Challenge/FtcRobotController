@@ -31,7 +31,7 @@ public class Vals {
     public static double drive_kd = .0003;
     public static double drive_kv = 1;
     public static double drive_ks = 3;
-    public static double drive_ramsete_b = 0.9;
+    public static double drive_ramsete_b = 2.0; //0.9
     public static double drive_ramsete_zeta = 0.7;
     public static double drive_tolerance = 1;
     public static double drive_target_x = 45;
@@ -53,11 +53,12 @@ public class Vals {
     // Wobble Arm Values
     public static double wobble_arm_velocity = 0.7;
     public static int wobble_arm_up_pos = 0;
-    public static int wobble_arm_down_pos = -1950;
+    public static int wobble_arm_down_pos = -2000;
     public static int wobble_arm_mid_pos = -1000;
     public static double wobble_hand_open = .45;
     public static double wobble_hand_close = 0;
     public static double wobble_arm_kp = 0.004;
+    public static double wobble_arm_tolerance = 20;
 
     public static double initialMotorPosition = 0.0;
     public static double initialServoPosition = 0.0;
