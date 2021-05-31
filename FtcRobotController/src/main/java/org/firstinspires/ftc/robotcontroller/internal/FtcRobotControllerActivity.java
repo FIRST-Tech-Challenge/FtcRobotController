@@ -50,6 +50,8 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -86,6 +88,7 @@ import com.qualcomm.hardware.HardwareFactory;
 import com.qualcomm.robotcore.eventloop.EventLoopManager;
 import com.qualcomm.robotcore.eventloop.opmode.FtcRobotControllerServiceState;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.hardware.configuration.Utility;
 import com.qualcomm.robotcore.robot.Robot;
@@ -824,4 +827,24 @@ public class FtcRobotControllerActivity extends Activity
       wifiMuteStateMachine.consumeEvent(WifiMuteEvent.USER_ACTIVITY);
     }
   }
+
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent event) {
+      if (!Gamepad.isGamepadDevice(event.getDeviceId())) {
+        return super.dispatchGenericMotionEvent(event);
+      } else {
+        GamepadRC.gamepadRC.update(event);
+        return true;
+      }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+      if (!Gamepad.isGamepadDevice(event.getDeviceId())) {
+        return super.dispatchKeyEvent(event);
+      } else {
+        GamepadRC.gamepadRC.update(event);
+        return true;
+      }
+    }
 }
