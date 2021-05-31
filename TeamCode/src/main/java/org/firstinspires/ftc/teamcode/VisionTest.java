@@ -129,9 +129,12 @@ public class VisionTest extends LinearOpMode {
 
             }
 
-            wobbleSystem.arm_down();
-            wobbleSystem.hand_open();
+            while (elapsedTime.seconds() < 7) {
 
+                wobbleSystem.arm_down();
+                wobbleSystem.hand_open();
+
+            }
         }
 
         else if (visionController.getRingPosition() == 1) {
