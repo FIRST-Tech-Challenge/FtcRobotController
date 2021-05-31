@@ -136,7 +136,7 @@ public class VisionTest extends LinearOpMode {
 
         }
 
-        if (visionController.getRingPosition() == 1) {
+        else if (visionController.getRingPosition() == 1) {
 
             while (elapsedTime.seconds() < 1.5) {
 
@@ -165,7 +165,7 @@ public class VisionTest extends LinearOpMode {
             wobbleSystem.hand_open();
         }
 
-        if (visionController.getRingPosition() == 4) {
+        else if (visionController.getRingPosition() == 4) {
 
             while (elapsedTime.seconds() < 1.5) {
 
