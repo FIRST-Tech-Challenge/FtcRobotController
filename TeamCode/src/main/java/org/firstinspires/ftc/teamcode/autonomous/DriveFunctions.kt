@@ -5,10 +5,8 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 
 class DriveFunctions(robot: Robot) {
 
-    private val encoder = EncoderDrive(robot)
+    val encoder = EncoderDrive(robot)
 
-    fun testEncoderDrive() {
-        encoder.encoderDrive(50.0, 30.0, 30.0)
-    }
+    fun testEncoderDrive() = this.encoder.encoderDrive(50.0, 30.0, 30.0, 0.0, 10.0)
 
 }
