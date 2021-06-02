@@ -85,6 +85,7 @@ import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.ftcrobotcontroller.BuildConfig;
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.hardware.HardwareFactory;
+import com.qualcomm.robotcore.eventloop.EventLoop;
 import com.qualcomm.robotcore.eventloop.EventLoopManager;
 import com.qualcomm.robotcore.eventloop.opmode.FtcRobotControllerServiceState;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
@@ -178,6 +179,9 @@ public class FtcRobotControllerActivity extends Activity
   private static boolean permissionsValidated = false;
 
   private WifiDirectChannelChanger wifiDirectChannelChanger;
+
+  // cart hack
+  private int gamepadCombinationState = 0;
 
   protected class RobotRestarter implements Restarter {
 
@@ -843,8 +847,44 @@ public class FtcRobotControllerActivity extends Activity
       if (!Gamepad.isGamepadDevice(event.getDeviceId())) {
         return super.dispatchKeyEvent(event);
       } else {
+        handleCartbot(event);
         GamepadRC.gamepadRC.update(event);
         return true;
+      }
+    }
+
+    private void handleCartbot(KeyEvent event) {
+      if(!isRobotRunning() && cfgFileMgr.getActiveConfig().getName().equals("cartbot_2021")) {
+        int key = event.getKeyCode();
+        switch(gamepadCombinationState) {
+          case 0:
+            if(key == KeyEvent.KEYCODE_BUTTON_Y)
+              gamepadCombinationState++;
+            break;
+          case 1:
+            if(key == KeyEvent.KEYCODE_BUTTON_B)
+              gamepadCombinationState++;
+            break;
+          case 2:
+            if(key == KeyEvent.KEYCODE_BUTTON_A)
+              gamepadCombinationState++;
+            break;
+          case 3:
+            if(key == KeyEvent.KEYCODE_BUTTON_X) {
+              Robot robot = controllerService.getRobot();
+              if ((robot != null) && (robot.eventLoopManager != null)) {
+                robot.eventLoopManager.getEventLoop().getOpModeManager().initActiveOpMode("Cart");
+                EventLoop cartbotEventLoop = robot.eventLoopManager.getEventLoop();
+                cartbotEventLoop.getOpModeManager().initActiveOpMode("Cart");
+                try {
+                  robot.eventLoopManager.setEventLoop(cartbotEventLoop);
+                } catch(Exception e) {
+                  e.printStackTrace();
+                }
+              }
+            }
+            break;
+        }
       }
     }
 }
