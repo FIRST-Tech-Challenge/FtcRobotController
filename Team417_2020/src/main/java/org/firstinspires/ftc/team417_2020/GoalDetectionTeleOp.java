@@ -11,13 +11,15 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 //@Disabled
 @TeleOp(name = "Goal Detection")
-public class GoalDetectionTeleOp extends LinearOpMode {
+public class GoalDetectionTeleOp extends MasterTeleOp {
 
     GoalDetectionOpenCV goalDetector = new GoalDetectionOpenCV();
     OpenCvCamera webcam;
-
+    double[] values = new double[3];
     @Override
     public void runOpMode() throws InterruptedException {
+
+        initializeHardware();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Top Webcam"), cameraMonitorViewId);
@@ -56,7 +58,72 @@ public class GoalDetectionTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             telemetry.addLine("Started");
-            telemetry.addData("Blue area", goalDetector.blueArea);
+            //telemetry.addData("Blue area", goalDetector.blueArea);
+            telemetry.addData("Number of contours", goalDetector.whiteContours.size());
+            telemetry.addData("Max Area", goalDetector.whiteRect.area());
+
+
+            int x1 = goalDetector.whiteGoal.x + goalDetector.blueRect.x;
+            // blue width - white width - white x
+            int x2 = (goalDetector.blueRect.width - goalDetector.whiteGoal.width - goalDetector.whiteGoal.x)
+                    + (goalDetector.displayMat.width() - (goalDetector.blueRect.x + goalDetector.blueRect.width));
+
+            int xError = (x1 - x2) - 118;
+            int yError = 65 - goalDetector.whiteGoal.height;
+            double error = Math.hypot(xError, yError);
+            double drivePower = xError * 0.0015;
+            double angle = Math.atan2(yError, xError);
+            /*double xDrivingPower = xError * 0.001;
+
+
+
+            double yDrivingPower = yError * 0.001;
+            double angle = Math.atan2(yDrivingPower, xDrivingPower);
+            double drivePower = Math.hypot(xDrivingPower, yDrivingPower);*/
+
+
+
+            if (gamepad1.dpad_up) {
+                goalDetector.sLower ++;
+                sleep(300);
+            } else if (gamepad1.dpad_down) {
+                goalDetector.sLower --;
+                sleep(300);
+            } else if (gamepad1.dpad_right) {
+                goalDetector.sUpper ++;
+                sleep(300);
+            } else if (gamepad1.dpad_left) {
+                goalDetector.sUpper --;
+                sleep(300);
+            } else if (gamepad1.y) {
+                goalDetector.vLower ++;
+                sleep(300);
+            } else if (gamepad1.a) {
+                goalDetector.vLower --;
+                sleep(300);
+            } else if (gamepad1.x) {
+                goalDetector.vUpper --;
+                sleep(300);
+            } else if (gamepad1.b) {
+                goalDetector.vUpper ++;
+                sleep(300);
+            }
+
+            telemetry.addData("Driving Power", xError);
+            telemetry.addData("X1", x1);
+            telemetry.addData("X2", x2);
+            telemetry.addData("White height", goalDetector.whiteGoal.height);
+            telemetry.addData("White width", goalDetector.whiteGoal.width);
+            //telemetry.addData("White is in middle range", whiteIsInMiddleRange);
+            telemetry.addLine();
+
+
+            if ((Math.abs(xError) > 10 /*|| Math.abs(yError) > 10*/) && gamepad1.left_trigger != 0) {
+                mecanumDrive(0, drivePower, 0);
+            } else {
+                driveRobot();
+            }
+
             telemetry.update();
             idle();
         }

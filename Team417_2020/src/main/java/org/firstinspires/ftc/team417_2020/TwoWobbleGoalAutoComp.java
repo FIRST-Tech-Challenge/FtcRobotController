@@ -44,56 +44,97 @@ public class TwoWobbleGoalAutoComp extends MasterAutonomous {
 
         //strafe away from wall and pivot
         move(-6, 0, 0.9);
-        pivot(-90, 0.7);
+        pivot(-90, 0.6);
         // 0 rings -> Zone A
         // 1 rings -> Zone B
         // 4 rings -> Zone C
         deliverWobbleGoal();
 
 
-        move(11, 2, 0.9);
-
+        //move(11, 2, 0.9);
+        // navigate to other wobble goal by going back towards wall and strafing
         switch (numRings) {
             case 0:
+                move(11, 2, 0.9);
                 move(-21, 2, 0.9);
                 break;
             case 1:
-                move(-25, 2, 0.9);
+                move(11, 1, 0.9);
+                move(-22, 1, 0.9);
                 break;
             case 4:
-                move(-20, 4, 0.7);
+                move(11, 2, 0.9);
+                move(-22, 4, 0.7);
                 break;
         }
 
 
-
+        // going forward to catch wobble goal
         move(-22, -8, 0.3);
 
 
+        // deliver second wobble goal
         switch (numRings) {
             case 0:
                 move(13, -64, 0.9);
                 move(13,-47, 0.9);
+                // navigate to shoot
+                move(-18, -60, 0.4);
+                pivot(92,0.4);
+
+                // shoot left power shot
+                shootLauncher(-0.8);
+                pivot(84, 0.4);
+                shootLauncher(-0.85);
+                pivot(78, 0.4);
+                shootLauncher(-0.85);
+                motorLauncher.setPower(0.0);
                 break;
 
             case 1:
                 // Navigate to Zone B
-                move(-30, -41, 0.9);
+                move(-35, -41, 0.9);
                 move(-12, -90, 0.9);
                 //OpenWobbleGoalGrabber();
+                // navigate to shoot
+                move(-22, -58, 0.4);
+                pivot(92,0.4);
+
+                // shoot left power shot
+                shootLauncher(-0.85);
+                pivot(84, 0.4);
+                shootLauncher(-0.80);
+                pivot(78, 0.4);
+                shootLauncher(-0.85);
+                motorLauncher.setPower(0.0);
 
                 break;
 
             case 4:
                 // Navigate to Zone C
-                move(-30, -41, 0.9);
-                move(A_C_TARGET_ZONE_X_POSITION, -115, 0.9);
+                move(-33, -41, 0.9);
+                move(A_C_TARGET_ZONE_X_POSITION, -111, 0.9);
                 //OpenWobbleGoalGrabber();
+                // navigate to shoot
+                move(-21, -60, 0.9); //-19
+                pivot(92,0.6);
+
+                // shoot left power shot
+                shootLauncher(-0.85);
+                pivot(83, 0.4);
+                shootLauncher(-0.85);
+                pivot(78, 0.4);
+                shootLauncher(-0.85);
+                motorLauncher.setPower(0.0);
                 break;
 
         }
 
-        move(-12, -72, 0.4);
+
+
+
+        // parking
+        move(-18, -48, 0.9);
 
 
 
@@ -110,7 +151,7 @@ public class TwoWobbleGoalAutoComp extends MasterAutonomous {
 
     // todo program Wobble Goal arm
     public void OpenWobbleGoalGrabber() {
-        wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
+        //wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_OUT);
 
     }
 
@@ -209,6 +250,16 @@ public class TwoWobbleGoalAutoComp extends MasterAutonomous {
 
     }
 
+
+    public void shootLauncher(double speed) {
+        servoRamp.setPosition(RAMP_UP);
+        motorLauncher.setPower(speed);
+        sleep(300);
+        sleep(1100);
+        servoRingPusher.setPosition(RING_PUSHER_IN);
+        sleep(200);
+        servoRingPusher.setPosition(RING_PUSHER_OUT);
+    }
 
 
 

@@ -139,14 +139,15 @@ abstract public class MasterAutonomous extends MasterOpMode {
             }
             mecanumDrive(angleToTarget, movingPower, turningPower);
 
-            telemetry.addData("Loop Condition", (Math.abs(errorAngle) > angleTolerance || distanceToTarget > distanceTolerance));
+            /*telemetry.addData("Loop Condition", (Math.abs(errorAngle) > angleTolerance || distanceToTarget > distanceTolerance));
             telemetry.addData("motorFL", motorFL.getCurrentPosition());
             telemetry.addData("motorBL", motorBL.getCurrentPosition());
             telemetry.addData("motorFR", motorFR.getCurrentPosition());
             telemetry.addData("motorBR", motorBR.getCurrentPosition());
             telemetry.addData("errorX", errorX);
             telemetry.addData("errorY", errorY);
-            telemetry.addData("errorAngle", errorAngle);
+            telemetry.addData("errorAngle", errorAngle);*/
+            telemetry.addData("IMU Value", robot.getCorrectedHeading());
             telemetry.update();
 
             idle();
@@ -154,7 +155,7 @@ abstract public class MasterAutonomous extends MasterOpMode {
 
         // stop motors
         telemetry.clear();
-        telemetry.addLine("stopping motors");
+        //telemetry.addLine("stopping motors");
         telemetry.update();
         motorFL.setPower(0);
         motorFR.setPower(0);

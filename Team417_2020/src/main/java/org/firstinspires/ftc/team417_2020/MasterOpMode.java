@@ -14,12 +14,17 @@ abstract public class MasterOpMode extends LinearOpMode {
 
     public Robot robot = new Robot(this);
     // Declare drive motors
-    public DcMotor motorFL = null; // hub 2 port 0
-    public DcMotor motorFR = null; // hub 1 port 0
-    public DcMotor motorBL = null; // hub 2 port 1
-    public DcMotor motorBR = null; // hub 1 port 1
+    public DcMotor motorFL = null;
+    public DcMotor motorFR = null;
+    public DcMotor motorBL = null;
+    public DcMotor motorBR = null;
     public DcMotor motorWobbleGoalArm = null; //
     public Servo wobbleGoalGrabber = null;//
+
+    public DcMotor motorCollection = null;
+    public DcMotor motorLauncher = null;
+    public Servo servoRingPusher = null;
+    public Servo servoRamp = null;
 
     public BNO055IMU imu;
     //initial position of servo
@@ -29,9 +34,10 @@ abstract public class MasterOpMode extends LinearOpMode {
     static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
     static final double WOBBLE_GOAL_GRABBER_IN = 0.5;
-    static final int WOBBLE_GOAL_ARM_UP = 500;
-    static final int WOBBLE_GOAL_ARM_DOWN = 150;
-    static final int WOBBLE_GOAL_ARM_MID = 300;
+    static final double RING_PUSHER_IN = 0.8;
+    static final double RING_PUSHER_OUT = 0.4;
+    static final double RAMP_UP = 0.5;
+    static final double RAMP_DOWN = 0.75;
 
 
     PIDFilter turnFilter;
@@ -59,24 +65,35 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorBR = hardwareMap.dcMotor.get("motorBR");
         motorWobbleGoalArm = hardwareMap.dcMotor.get("motorWobbleGoalArm");
         wobbleGoalGrabber = hardwareMap.servo.get("wobbleGoalGrabber");
+        servoRingPusher = hardwareMap.servo.get("servoRingPusher");
+        servoRamp = hardwareMap.servo.get("servoRamp");
+
+        motorCollection = hardwareMap.dcMotor.get("motorCollection");
+        motorLauncher = hardwareMap.dcMotor.get("motorLauncher");
+
 
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorWobbleGoalArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorCollection.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorWobbleGoalArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorWobbleGoalArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLauncher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motorCollection.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // reverse front and back right motors
         motorFL.setDirection(DcMotor.Direction.FORWARD);
@@ -90,8 +107,13 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorBL.setPower(0);
         motorBR.setPower(0);
         motorWobbleGoalArm.setPower(0);
+        motorLauncher.setPower(0);
+        motorCollection.setPower(0);
 
         wobbleGoalGrabber.setPosition(WOBBLE_GOAL_GRABBER_IN);
+        servoRingPusher.setPosition(RING_PUSHER_OUT);
+
+
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
