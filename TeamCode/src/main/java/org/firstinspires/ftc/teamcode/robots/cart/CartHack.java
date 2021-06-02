@@ -66,7 +66,7 @@ import static org.firstinspires.ftc.robotcontroller.internal.GamepadRC.gamepadRC
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Cart Hack", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="CartHack", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 //  @Autonomous
 
 public class CartHack extends OpMode {

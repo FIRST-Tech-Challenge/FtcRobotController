@@ -854,7 +854,7 @@ public class FtcRobotControllerActivity extends Activity
     }
 
     private void handleCartbot(KeyEvent event) {
-      if(!isRobotRunning() && cfgFileMgr.getActiveConfig().getName().equals("cartbot_2021")) {
+      if(cfgFileMgr.getActiveConfig().getName().equals("cartbot_2021")) {
         int key = event.getKeyCode();
         switch(gamepadCombinationState) {
           case 0:
@@ -873,9 +873,9 @@ public class FtcRobotControllerActivity extends Activity
             if(key == KeyEvent.KEYCODE_BUTTON_X) {
               Robot robot = controllerService.getRobot();
               if ((robot != null) && (robot.eventLoopManager != null)) {
-                robot.eventLoopManager.getEventLoop().getOpModeManager().initActiveOpMode("Cart");
+                robot.eventLoopManager.getEventLoop().getOpModeManager().initActiveOpMode("CartHack");
                 EventLoop cartbotEventLoop = robot.eventLoopManager.getEventLoop();
-                cartbotEventLoop.getOpModeManager().initActiveOpMode("Cart");
+                cartbotEventLoop.getOpModeManager().initActiveOpMode("CartHack");
                 try {
                   robot.eventLoopManager.setEventLoop(cartbotEventLoop);
                 } catch(Exception e) {
