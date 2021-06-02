@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.OpenCVIntegration;
@@ -590,6 +591,7 @@ public class UG_6832 extends OpMode {
 
 
     boolean shiftActive = false;
+    double timeSinceLastIntake = 0.0;
 
     private void joystickDrive() { //apple
 
@@ -599,6 +601,7 @@ public class UG_6832 extends OpMode {
             robot.launcher.setActive(true);
             //robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
             robot.intake.Do(Intake.Behavior.DEPLOY);
+            robot.intake.alwaysASpinnin = true;
         }
 
         shiftActive = gamepad1.dpad_down;
@@ -670,6 +673,16 @@ public class UG_6832 extends OpMode {
             robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_OUT_POS);
             robot.turret.setCurrentMode(Turret.TurretMode.fieldRelative);
             robot.turret.setDangerModeActive(true);
+        }
+
+        if(robot.intake.IsIntaking()){
+            timeSinceLastIntake = System.nanoTime();
+        }
+
+        if(robot.intake.getBehavior() == Intake.Behavior.TRAVEL
+                && robot.intake.intakeMotor.getCurrent(CurrentUnit.AMPS) > Constants.INTAKE_AUTO_PICKUP_AMPS
+                && System.nanoTime() - timeSinceLastIntake > Constants.INTAKE_AUTO_PICKUP_TIME_BUFFER * 1E9){
+            robot.intake.Do(Intake.Behavior.INTAKE);
         }
 
         if(shiftActive && toggleAllowed(gamepad1.b, b,1)){

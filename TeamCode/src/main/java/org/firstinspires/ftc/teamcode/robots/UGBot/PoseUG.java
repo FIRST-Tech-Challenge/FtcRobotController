@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils;
@@ -100,7 +101,7 @@ public class PoseUG {
     private DcMotor motorFrontLeft = null;
     private DcMotor motorBackRight = null;
     private DcMotor elbow = null;
-    private DcMotor intakeMotor = null;
+    private DcMotorEx intakeMotor = null;
     private Servo tiltServo = null;
     private Servo outServo = null;
     private DcMotorEx flywheelMotor = null;
@@ -341,7 +342,7 @@ public class PoseUG {
         this.gripperServo = this.hwMap.servo.get("gripperServo");
         this.servoWiper = this.hwMap.servo.get("servoWiper");
 
-        this.intakeMotor = this.hwMap.dcMotor.get("intakeMotor");
+        this.intakeMotor = (DcMotorEx) this.hwMap.dcMotor.get("intakeMotor");
         this.tiltServo = this.hwMap.servo.get("tiltServo");
         this.outServo = this.hwMap.servo.get("outServo");
 
@@ -583,6 +584,7 @@ public class PoseUG {
         packet.put("base derivative error", turnPID.getDeltaError());
         packet.put("turret angle offset", Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
         packet.put("staring height offset", Constants.STARTING_HEIGHT_OFFSET);
+        packet.put("IntakeThing", intake.intakeMotor.getCurrent(CurrentUnit.AMPS));
 
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));

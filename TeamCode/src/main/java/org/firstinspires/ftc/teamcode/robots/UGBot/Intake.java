@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.UGBot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
@@ -11,7 +12,7 @@ import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE
 
 public class Intake {
 
-    public DcMotor intakeMotor = null;
+    public DcMotorEx intakeMotor = null;
     public Servo tiltServo = null;
     public Servo outServo = null;
     private double speed;
@@ -21,7 +22,7 @@ public class Intake {
 
 
 
-    public Intake(DcMotor intakeMotor, Servo tiltServo, Servo outServo) {
+    public Intake(DcMotorEx intakeMotor, Servo tiltServo, Servo outServo) {
         this.intakeMotor = intakeMotor;
         this.intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.tiltServo = tiltServo;
@@ -183,10 +184,16 @@ public class Intake {
         return false;
     }
 
+    public boolean alwaysASpinnin = true;
     public boolean setTravel(){
         setTiltTargetPosition(Constants.INTAKE_TRAVEL_TOP);
         setOutTargetPosition(Constants.INTAKE_DEPLOY_TRAVEL_BTM);
-        setIntakeSpeed(0);
+        if(alwaysASpinnin){
+            setIntakeSpeed(.10);
+        }
+        else{
+            setIntakeSpeed(0);
+        }
         return true;
     }
 

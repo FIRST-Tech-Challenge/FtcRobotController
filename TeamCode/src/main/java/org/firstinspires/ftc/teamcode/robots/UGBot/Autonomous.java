@@ -125,6 +125,13 @@ public class Autonomous {
 
             //launch preferred since we can't seem to launch while driving away from goal at speed
 
+            .addSingleState(() -> robot.turret.setDangerModeActive(true))
+
+            .addMineralState(ugStateProvider,
+                    () -> true,
+                    () -> robot.turret.setTurretAngle(270),
+                    () -> true)
+
             //WOBBLE TWO
             .addSimultaneousStates(
                     () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, false, .8, .2),
@@ -146,6 +153,7 @@ public class Autonomous {
                     () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT_B, true, .8, .15),
                     () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15))
 
+            .addState(()-> robot.launcher.setElbowTargetAngle(15))
 //            .addSimultaneousStates(
 //                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
 //                    () -> robot.launcher.setElbowTargetAngle(20)
@@ -174,6 +182,7 @@ public class Autonomous {
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addSingleState(()-> robot.gripperModeIsInReverse = false)
+            .addSingleState(()-> robot.intake.alwaysASpinnin = false)
 
             //park
             .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE, true, .8, .6))

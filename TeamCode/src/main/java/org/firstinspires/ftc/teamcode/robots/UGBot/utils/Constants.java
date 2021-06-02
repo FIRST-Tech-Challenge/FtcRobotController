@@ -104,7 +104,7 @@ public class Constants {
     public static int INTAKE_DEPLOY_TRAVEL_BTM = 1550; //use as default bottom servo position if none specified
 
     public static int INTAKE_HANDOFF_BTM = 1675;
-    public static int INTAKE_HANDOFF_TOP = 1200;
+    public static int INTAKE_HANDOFF_TOP = 1400;
     public static int INTAKE_HANDOFF__ROLLERS_TOP = 1200; //could be different if we are in active targeting and need to clear the slinger wall
 
     public static int INTAKE_INIT_BTM = 900;
@@ -131,7 +131,7 @@ public class Constants {
 
     //chassis-relative angle that places the transfer tray into a good position to receive rings from the intake
     public static int INTAKE_TO_TURRET_XFER_ANGLE = 360-25;
-    public static int INTAKE_TO_TURRET_XFER_ELEVATION = 23;
+    public static int INTAKE_TO_TURRET_XFER_ELEVATION = 20;
 
     public static double INTAKE_SPEED = .8; //speed of walk and lift
     public static double INTAKE_TIME_FIRST = .65; //time to walk the ring
@@ -139,6 +139,8 @@ public class Constants {
     public static boolean INTAKE_MINIJOG_NOW = false; //request Pose to jog the robot backward briefly - helps separate touching rings
     public static double INTAKE_MINIJOG_TIME = .35;
     public static double INTAKE_MINIJOG_POWER = .25;
+
+    public static double INTAKE_AUTO_PICKUP_AMPS = 1.3;
 
     public static double TURRET_SPEED= 90; //max degrees per second to manually adjust turret targetAngle
     public static double TURRET_TOLERANCE = 2; //accuracy wiggle room
@@ -148,6 +150,7 @@ public class Constants {
     public static int LAUNCHER_TRIGGER_BACK = 1780;
     public static int LAUNCHER_TRIGGER_FLIP = 1900;
     public static double autoLaunchTime = .1;
+    public static double INTAKE_AUTO_PICKUP_TIME_BUFFER = 1;
 
     public static int LAUNCHER_WIPER_UNWIPED = 2100;
     public static int LAUNCHER_WIPER_WIPED = 1500;
@@ -208,8 +211,8 @@ public class Constants {
         TARGET_C_1((49-3)/INCHES_PER_METER, 10.75*12/INCHES_PER_METER, -1,120,-1,.02),
         TARGET_C_2((49)/INCHES_PER_METER, 9.75*12/INCHES_PER_METER, -1,45+45,-1,.02),
         TARGET_C_3((49-12)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, -1,45+45,5,0),
-        TARGET_B_1((49)/INCHES_PER_METER, 9*12/INCHES_PER_METER, 0,270 + GRIPPER_HEADING_OFFSET,-1,.5), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
-        TARGET_B_2((49)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, 0,270 + GRIPPER_HEADING_OFFSET,-1,0.5),
+        TARGET_B_1((49)/INCHES_PER_METER, 9*12/INCHES_PER_METER, 0,0,-1,.5), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
+        TARGET_B_2((49)/INCHES_PER_METER, (9.5*12 - 8)/INCHES_PER_METER, 0,0,-1,0.5),
         TARGET_A_1((49)/INCHES_PER_METER, 7*12/INCHES_PER_METER, -1,90,20,.02),
         TARGET_A_1_BLUE((49)/INCHES_PER_METER, 7*12/INCHES_PER_METER, -1,0,20,.02),
         TARGET_A_2((49)/INCHES_PER_METER, (7*12 - 6)/INCHES_PER_METER, -1,90,-1,0),
@@ -222,7 +225,7 @@ public class Constants {
         WOBBLE_TWO_APPROACH_BLUE((49+3)/INCHES_PER_METER, (2.5 * 12)/INCHES_PER_METER, 310, -1,-1, 0),
         WOBBLE_TWO_EXIT((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 90 + GRIPPER_HEADING_OFFSET,-1, 1),
         WOBBLE_TWO_EXIT_BLUE((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 90 + GRIPPER_HEADING_OFFSET,-1, 1),
-        WOBBLE_TWO_EXIT_B((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 320,-1, .02),
+        WOBBLE_TWO_EXIT_B((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 0,-1, .02),
         WOBBLE_TWO_GRAB (30/INCHES_PER_METER, (30)/INCHES_PER_METER, -1, -1,-1,-1),
         NAVIGATE(49/INCHES_PER_METER, 7*12/INCHES_PER_METER,-1,-1, -1, .2), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
         LAUNCH_PREFERRED((49)/INCHES_PER_METER, (4.6*12)/INCHES_PER_METER,-1,-1, -1,0), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
