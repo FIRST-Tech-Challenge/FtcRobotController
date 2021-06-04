@@ -28,9 +28,7 @@ public class Odometry extends Background {
     @Override
     public void loop() {
         updatePosition();
-        if(robot.imuInitialized) {
-            robot.imuAngle = -robot.imu.getAngularOrientation().firstAngle;
-        }
+        robot.imuAngle = -robot.imu.getAngularOrientation().firstAngle;
 //        Log.i("Odometry:", "X: " + robot.worldX + "   Y: " + robot.worldY + "   Angle: " + robot.worldAngle);
 //        Log.i("IMU", robot.imuAngle + "");
 //        Log.i("Lf", robot.leftFront.getPower() + "");

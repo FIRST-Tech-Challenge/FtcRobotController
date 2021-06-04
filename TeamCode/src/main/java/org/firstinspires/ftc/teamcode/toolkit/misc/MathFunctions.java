@@ -17,6 +17,7 @@ public class MathFunctions {
         return angle;
     }
 
+    // inverse tangent in the Uplift angle system (returns radians)
     public static double atan2UL(double y, double x) {
         return (Math.PI / 2) - Math.atan2(y, x);
     }
