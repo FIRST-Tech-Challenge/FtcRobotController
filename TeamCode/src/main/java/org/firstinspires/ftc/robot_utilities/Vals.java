@@ -39,6 +39,8 @@ public class Vals {
     public static double drive_linear_velocity_mps = .1;
     public static double drive_angular_velocity_radians = 1;
 
+    public static double intake_speed = 0.7;
+
     public static final double POSITION_PRE_MOVEMENT = 5;
 
     public static final double TICKS_PER_INCH_MOVEMENT = 40.58;
