@@ -28,7 +28,7 @@ public class EchoShooterAuto extends LinearOpMode {
     private double currentHeading = 0;
     private PIDController pidRotate;
 
-    private double driveSpeed = 0.4;
+    private double driveSpeed = 0.6;
 
 
     public void initRobot() {
