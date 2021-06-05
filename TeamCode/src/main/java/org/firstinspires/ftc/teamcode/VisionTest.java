@@ -1,203 +1,234 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robot.FlyWheel;
+import org.firstinspires.ftc.robot.Hitter;
+import org.firstinspires.ftc.robot.WobbleSystem;
+import org.firstinspires.ftc.robot_utilities.GamePadController;
+import org.firstinspires.ftc.robot_utilities.Vals;
+import org.firstinspires.ftc.robot_utilities.VisionController;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 @Autonomous(name = "VisionTest")
 public class VisionTest extends LinearOpMode {
 
     // Code for vision testing.
+    VisionController visionController;
     OpenCvInternalCamera phoneCam;
-    SkystoneDeterminationPipeline pipeline;
+    ElapsedTime elapsedTime;
 
-    @Override
-    public void runOpMode()
-    {
+    private Motor driveLeft, driveRight;
+    private FlyWheel flywheel;
+    private Hitter hitter;
+    private Motor intake1, intake2;
+    private BNO055IMU imu;
+
+    private Orientation lastAngles;
+    private double currentHeading = 0;
+    private PIDController pidRotate;
+
+    private double driveSpeed = 0.4;
+    double rotatePower = 0;
+
+    private GamePadController gamepad;
+    private WobbleSystem wobbleSystem;
+
+    public void initRobot() {
+
+        elapsedTime = new ElapsedTime();
+
+        //Initialize gamepad.
+        gamepad = new GamePadController(gamepad1);
+
+        wobbleSystem = new WobbleSystem(new Motor(hardwareMap, "wobbleArmMotor"),
+                hardwareMap.servo.get("wobbleArmServo"));
+
+        driveLeft = new Motor(hardwareMap, "dl");
+        driveRight = new Motor(hardwareMap, "dr");
+        driveRight.setInverted(true);
+        driveLeft.setRunMode(Motor.RunMode.RawPower);
+        driveRight.setRunMode(Motor.RunMode.RawPower);
+
+        intake1 = new Motor(hardwareMap, "in1");
+        intake2 = new Motor(hardwareMap, "in2");
+        intake1.setRunMode(Motor.RunMode.VelocityControl);
+        intake2.setRunMode(Motor.RunMode.VelocityControl);
+        intake1.setVeloCoefficients(0.05, 0, 0);
+        intake2.setVeloCoefficients(0.05, 0, 0);
+
+        flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE), telemetry);
+        hitter = new Hitter(hardwareMap.servo.get("sv"));
+
+        pidRotate = new PIDController(Vals.rotate_kp, Vals.rotate_ki, Vals.rotate_kd);
+        pidRotate.setTolerance(Vals.rotate_tolerance);
+
+        //Rotation controller
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        resetAngle();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline();
-        phoneCam.setPipeline(pipeline);
+        elapsedTime = new ElapsedTime();
+        visionController = new VisionController(phoneCam);
+    }
 
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+    @Override
+    public void runOpMode() {
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
-            }
-        });
-
+        initRobot();
         waitForStart();
+        elapsedTime.reset();
 
-        while (opModeIsActive())
-        {
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.addData("Position", pipeline.position);
-            telemetry.update();
+        telemetry.addData("Position", visionController.getRingPosition());
+//            telemetry.addData("Analysis", visionController.getAnalysis());
+        telemetry.addData("Height", visionController.getHeight());
+        telemetry.update();
 
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
+
+        elapsedTime.reset();
+
+        if (visionController.getRingPosition() == 0) {
+
+            while (elapsedTime.seconds() < 2) {
+
+                rotatePower = rotate(0);
+                double leftPower = -rotatePower;
+                double rightPower = rotatePower;
+
+                leftPower += driveSpeed;
+                rightPower += driveSpeed;
+
+
+                driveLeft.set(leftPower);
+                driveRight.set(rightPower);
+
+            }
+
+            while (elapsedTime.seconds() < 5) {
+
+                driveLeft.set(0);
+                driveRight.set(0);
+
+            }
+
+            while (elapsedTime.seconds() < 7) {
+
+                wobbleSystem.arm_down();
+                wobbleSystem.hand_open();
+
+            }
+        } else if (visionController.getRingPosition() == 1) {
+
+            while (elapsedTime.seconds() < 2) {
+
+                rotatePower = rotate(0);
+                double leftPower = -rotatePower;
+                double rightPower = rotatePower;
+
+                leftPower += driveSpeed;
+                rightPower += driveSpeed;
+
+
+                driveLeft.set(leftPower);
+                driveRight.set(rightPower);
+
+            }
+
+            while (elapsedTime.seconds() < 5) {
+
+                rotatePower = rotate(50);
+                driveLeft.set(0);
+                driveRight.set(0);
+
+            }
+            while (elapsedTime.seconds() < 7) {
+
+                wobbleSystem.arm_down();
+                wobbleSystem.hand_open();
+
+            }
+        } else if (visionController.getRingPosition() == 4) {
+
+            while (elapsedTime.seconds() < 2) {
+
+                rotatePower = rotate(0);
+                double leftPower = -rotatePower;
+                double rightPower = rotatePower;
+
+                leftPower += driveSpeed;
+                rightPower += driveSpeed;
+
+
+                driveLeft.set(leftPower);
+                driveRight.set(rightPower);
+
+            }
+
+            while (elapsedTime.seconds() < 5) {
+
+                rotatePower = rotate(45);
+                driveLeft.set(0);
+                driveRight.set(0);
+
+            }
+
+            while (elapsedTime.seconds() < 7) {
+
+                wobbleSystem.arm_down();
+                wobbleSystem.hand_open();
+
+            }
         }
     }
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline
-    {
-        /*
-         * An enum to define the skystone position
-         */
-        public enum RingPosition
-        {
-            FOUR,
-            ONE,
-            NONE
+    private void resetAngle() {
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        currentHeading = 0;
+        pidRotate.reset();
+    }
+
+    private double updateHeading() {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle < -180) {
+            deltaAngle += 360;
+        } else if (deltaAngle > 180) {
+            deltaAngle -= 360;
         }
 
-        /*
-         * Some color constants
-         */
-        static final Scalar BLUE = new Scalar(0, 0, 255);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
+        currentHeading += deltaAngle;
+        lastAngles = angles;
 
-        /*
-         * The core values which define the location and size of the sample regions
-         */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(181,98);
+        return currentHeading;
+    }
 
-        static final int REGION_WIDTH = 35;
-        static final int REGION_HEIGHT = 25;
+    private double rotate(double degrees) {
+        if (Math.abs(degrees) > 359) degrees = Math.copySign(359, degrees);
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+        double power = pidRotate.calculate(updateHeading(), degrees);
+        return power;
 
-        Point region1_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
-        /*
-         * Working variables
-         */
-        Mat region1_Cb;
-        Mat YCrCb = new Mat();
-        Mat Cb = new Mat();
-        int avg1;
-
-        // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile RingPosition position = RingPosition.FOUR;
-
-        /*
-         * This function takes the RGB frame, converts to YCrCb,
-         * and extracts the Cb channel to the 'Cb' variable
-         */
-        void inputToCb(Mat input)
-        {
-            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(YCrCb, Cb, 1);
-        }
-
-        @Override
-        public void init(Mat firstFrame)
-        {
-            inputToCb(firstFrame);
-
-            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-        }
-
-        @Override
-        public Mat processFrame(Mat input)
-        {
-            inputToCb(input);
-
-            avg1 = (int) Core.mean(region1_Cb).val[0];
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-
-            position = RingPosition.FOUR; // Record our analysis
-            if(avg1 > FOUR_RING_THRESHOLD){
-                position = RingPosition.FOUR;
-            }else if (avg1 > ONE_RING_THRESHOLD){
-                position = RingPosition.ONE;
-            }else{
-                position = RingPosition.NONE;
-            }
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-
-            return input;
-        }
-
-        public int getAnalysis()
-        {
-            return avg1;
-        }
     }
 
 
 }
-
-
-/**
- * private OpenCvCamera camera;
- * private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
- * private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
- * <p>
- * <p>
- * private void initRobot() {
- * int cameraMonitorViewId = this
- * .hardwareMap
- * .appContext
- * .getResources()
- * .getIdentifier(
- * "cameraMonitorViewId",
- * "id",
- * hardwareMap.appContext.getPackageName()
- * );
- * camera = OpenCvCameraFactory
- * .getInstance()
- * .createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
- * <p>
- * camera.openCameraDeviceAsync(() -> camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.SIDEWAYS_RIGHT));
- * }
- *
- * @Override public void runOpMode() throws InterruptedException {
- * <p>
- * initRobot();
- * waitForStart();
- * //      double speed = 0.7;
- * //      driveLeft.set(-speed);
- * //      driveRight.set(speed);
- * <p>
- * Thread.sleep(2000);
- * <p>
- * stop();
- **/

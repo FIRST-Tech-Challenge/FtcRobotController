@@ -1,0 +1,32 @@
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/EchoOp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode;\r\n\r\nimport com.acmerobotics.dashboard.FtcDashboard;\r\nimport com.acmerobotics.dashboard.telemetry.MultipleTelemetry;\r\nimport com.arcrobotics.ftclib.hardware.motors.Motor;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.robot.FlyWheel;\r\nimport org.firstinspires.ftc.robot_utilities.GamePadController;\r\nimport org.firstinspires.ftc.robot.Hitter;\r\n\r\n@TeleOp(name = \"EchoOp\")\r\npublic class EchoOp extends OpMode {\r\n    private GamePadController gamepad;\r\n    private Motor driveLeft, driveRight;\r\n    private FlyWheel flywheel;\r\n    private Hitter hitter;\r\n    private Motor intake1, intake2;\r\n\r\n    private double intakeSpeed = 0;\r\n    private boolean flywheelOn = false;\r\n\r\n    @Override\r\n    public void init() {\r\n        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());\r\n        gamepad = new GamePadController(gamepad1);\r\n\r\n        driveLeft = new Motor(hardwareMap, \"dl\");\r\n        driveRight = new Motor(hardwareMap, \"dr\");\r\n        driveLeft.setRunMode(Motor.RunMode.VelocityControl);\r\n        driveRight.setRunMode(Motor.RunMode.VelocityControl);\r\n        driveLeft.setVeloCoefficients(0.05, 0, 0);\r\n        driveRight.setVeloCoefficients(0.05, 0, 0);\r\n\r\n        intake1 = new Motor(hardwareMap, \"in1\");\r\n        intake2 = new Motor(hardwareMap, \"in2\");\r\n        intake1.setRunMode(Motor.RunMode.VelocityControl);\r\n        intake2.setRunMode(Motor.RunMode.VelocityControl);\r\n        intake1.setVeloCoefficients(0.05, 0, 0);\r\n        intake2.setVeloCoefficients(0.05, 0, 0);\r\n\r\n        flywheel = new FlyWheel(new Motor(hardwareMap, \"fw\", Motor.GoBILDA.BARE));\r\n\r\n        hitter = new Hitter(hardwareMap.servo.get(\"sv\"));\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n        gamepad.update();\r\n\r\n\r\n        double leftSpeed = -gamepad1.left_stick_y;\r\n        double rightSpeed = gamepad1.right_stick_y;\r\n        if(gamepad1.right_trigger >= 0.1) {\r\n            intakeSpeed = 0.7;\r\n        } else if(gamepad1.left_trigger >= 0.1) {\r\n            intakeSpeed = -0.7;\r\n        } else {\r\n            intakeSpeed = 0;\r\n        }\r\n\r\n        if(gamepad.isARelease()) {\r\n            flywheel.flipDirection();\r\n        }\r\n\r\n        if(gamepad.isBRelease()) {\r\n            if(flywheel.isOn()) {\r\n                flywheelOn = false;\r\n            } else {\r\n                flywheelOn = true;\r\n            }\r\n        }\r\n\r\n        if(flywheelOn) {\r\n            flywheel.on();\r\n        } else {\r\n            flywheel.off();\r\n        }\r\n\r\n        String isReady = \"FLYWHEEL NOT READY\";\r\n\r\n        if(flywheel.isReady()) {\r\n            isReady = \"FLYWHEEL READY!\";\r\n        }\r\n\r\n\r\n        if(gamepad1.left_bumper) {\r\n            hitter.hit();\r\n        }\r\n        else {\r\n            hitter.reset();\r\n        }\r\n\r\n        driveLeft.set(leftSpeed);\r\n        driveRight.set(rightSpeed);\r\n\r\n        intake1.set(intakeSpeed);\r\n        intake2.set(intakeSpeed);\r\n\r\n\r\n        telemetry.addData(\"Flywheel Speed\", flywheel.flywheel.get());\r\n        telemetry.addData(\"Flywheel Velocity\", flywheel.flywheel.encoder.getRawVelocity());\r\n        telemetry.addData(\"Flywheel Position\", flywheel.flywheel.getCurrentPosition());\r\n        telemetry.addData(\"Hitter Position\", hitter.hitter.getPosition());\r\n        telemetry.addData(\"Left Speed\", leftSpeed);\r\n        telemetry.addData(\"Right Speed\", rightSpeed);\r\n        telemetry.addData(\"Intake Speed\", intakeSpeed);\r\n        telemetry.addData(\"Flywheel Ready State\", isReady);\r\n\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/EchoOp.java	(revision 465d2a0a37d985cbce2d811bfd946d5a9ae12e34)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/EchoOp.java	(date 1617490784671)
+@@ -49,7 +49,6 @@
+     public void loop() {
+         gamepad.update();
+ 
+-
+         double leftSpeed = -gamepad1.left_stick_y;
+         double rightSpeed = gamepad1.right_stick_y;
+         if(gamepad1.right_trigger >= 0.1) {
+Index: .idea/discord.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/discord.xml	(date 1617490559798)
++++ .idea/discord.xml	(date 1617490559798)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="DiscordProjectSettings">
++    <option name="show" value="false" />
++  </component>
++</project>
+\ No newline at end of file
