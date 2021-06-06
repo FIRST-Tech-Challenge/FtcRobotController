@@ -15,6 +15,12 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.functions.DriveFunctions;
+import org.firstinspires.ftc.teamcode.functions.FlickerFunctions;
+import org.firstinspires.ftc.teamcode.functions.IntakeFunctions;
+import org.firstinspires.ftc.teamcode.functions.ShooterFunctions;
+import org.firstinspires.ftc.teamcode.functions.TransferFunctions;
+import org.firstinspires.ftc.teamcode.functions.WobbleFunctions;
 import org.firstinspires.ftc.teamcode.toolkit.background.Cancel;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.background.ShotCounter;
@@ -37,25 +43,25 @@ public class UpliftRobot {
     public Odometry odometry;
     public VelocityData velocityData;
     public ShotCounter shotCounter;
-    public boolean driverCancel = false;
-    public boolean operatorCancel = false;
+    public boolean driverCancel = false, operatorCancel = false;
 
     public HardwareMap hardwareMap;
-    public DcMotor leftFront, leftBack, rightFront, rightBack;
-    public DcMotorEx shooter1, shooter2;
-    public DcMotor intake;
-    public DcMotorEx transfer;
-    public Servo intakeLifter;
-    public Servo wobbleLeft, wobbleRight;
-    public Servo flicker, clamp;
-    public Servo sweeperJoint, stick;
-    public CRServo sweeperLeft;
-    public CRServo sweeperRight;
+    public DcMotor leftFront, leftBack, rightFront, rightBack, intake;
+    public DcMotorEx shooter1, shooter2, transfer;
+    public Servo intakeLifter, wobbleLeft, wobbleRight, flicker, clamp, sweeperJoint, stick;
+    public CRServo sweeperLeft, sweeperRight;
     public DigitalChannel digitalTouchBottom, digitalTouchTop;
     public DistanceSensor shooterSensor;
     public AnalogInput potentiometer;
 
     public boolean driveInitialized, flickerInitialized, intakeInitialized, shooterInitialized, transferInitialized, wobbleInitialized, imuInitialized, visionInitialized;
+
+    public DriveFunctions driveFunctions;
+    public ShooterFunctions shooterFunctions;
+    public WobbleFunctions wobbleFunctions;
+    public IntakeFunctions intakeFunctions;
+    public FlickerFunctions flickerFunctions;
+    public TransferFunctions transferFunctions;
 
     public BNO055IMU imu;
 
@@ -63,30 +69,19 @@ public class UpliftRobot {
     WebcamName webcamName;
     public RingDetector ringDetector;
 
-    public double worldX = 0;
-    public double worldY = 0;
-    public double rawAngle = 0;
-    public double worldAngle = 0;
+    public double worldX = 0, worldY = 0, rawAngle = 0, worldAngle = 0;
     public double imuAngle = 0;
     public int shotCount = 0;
     public boolean slowMode = false;
-    public double shooter1Vel = -1;
-    public double shooter2Vel = -1;
+    public double shooter1Vel = -1, shooter2Vel = -1;
 
-    public double highGoalVelocity = 1850;
-    public double powerShotVelocity = 1500;
-    public double bounceBackVelocity = 1500;
-    public double autoHighGoalVelocity = 1800;
-    public double kP = 50;
-    public double kI = 0;
-    public double kD = 0;
-    public double kF = 15;
+    public double highGoalVelocity = 1850, powerShotVelocity = 1500, bounceBackVelocity = 1500, autoHighGoalVelocity = 1800;
+    public double kP = 50, kI = 0, kD = 0, kF = 15;
 
     public File odometryFileWorldX, odometryFileWorldY, odometryFileWorldAngle, transferFile, imuFile;
 
     // values specific to the drivetrain
-    public static double ticksPerQuarterRotation = 720;
-    public static double wheelRadius = 19/25.4; // in inches
+    public static double wheelRadius = 0.7480315; // in inches
     public static double wheelCircumference = wheelRadius * (2 * Math.PI); // in inches
     public static double COUNTS_PER_INCH = (720 * 4) / wheelCircumference;
     public static double robotEncoderWheelDistance = 15.7;
@@ -97,6 +92,7 @@ public class UpliftRobot {
         this.opMode = opMode;
         getHardware();
         initBackground();
+        initFunctions();
     }
 
     public void getHardware() {
@@ -253,6 +249,28 @@ public class UpliftRobot {
         shotCounter.enable();
     }
 
+    // method to create instances of each Functions class (these hold the methods for each section of the robot)
+    public void initFunctions() {
+        if(driveInitialized) {
+            driveFunctions = new DriveFunctions(this);
+        }
+        if(shooterInitialized) {
+            shooterFunctions = new ShooterFunctions(this);
+        }
+        if(wobbleInitialized) {
+            wobbleFunctions = new WobbleFunctions(this);
+        }
+        if(intakeInitialized) {
+            intakeFunctions = new IntakeFunctions(this);
+        }
+        if(flickerInitialized) {
+            flickerFunctions = new FlickerFunctions(this);
+        }
+        if(transferInitialized) {
+            transferFunctions = new TransferFunctions(this);
+        }
+    }
+
     public void writePositionToFiles() {
         ReadWriteFile.writeFile(odometryFileWorldX, String.valueOf(worldX));
         ReadWriteFile.writeFile(odometryFileWorldY, String.valueOf(worldY));
@@ -299,6 +317,16 @@ public class UpliftRobot {
             }
         }
         return true;
+    }
+
+    public void wait(boolean complete) {
+        while(!complete && opMode.opModeIsActive() && !driverCancel && !operatorCancel) {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void stopThreads() {

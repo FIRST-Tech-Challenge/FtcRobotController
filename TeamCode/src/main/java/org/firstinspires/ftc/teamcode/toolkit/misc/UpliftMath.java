@@ -2,17 +2,17 @@ package org.firstinspires.ftc.teamcode.toolkit.misc;
 
 import android.util.Log;
 
-public class MathFunctions {
+public class UpliftMath {
     public static double truncate(double val) {
         return (((int)(val * 1000)) / 1000.0);
     }
 
     public static double angleRestrictions(double angle) {
         while (angle < -180) {
-            angle += 2 * 180;
+            angle += 360;
         }
         while (angle > 180) {
-            angle -= 2 * 180;
+            angle -= 360;
         }
         return angle;
     }

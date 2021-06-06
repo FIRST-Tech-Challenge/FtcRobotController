@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.core.Background;
-import org.firstinspires.ftc.teamcode.toolkit.misc.MathFunctions;
+import org.firstinspires.ftc.teamcode.toolkit.misc.UpliftMath;
 
 public class Odometry extends Background {
 
@@ -58,7 +58,7 @@ public class Odometry extends Background {
         robot.worldY += ((((deltaLeftDistance + deltaRightDistance) / 2.0)) * Math.cos(Math.toRadians(robot.worldAngle + (0.5 * changeInRobotOrientation)))) - (deltaHorizontal * Math.sin(Math.toRadians(robot.worldAngle + (0.5 * changeInRobotOrientation))));
 
         robot.rawAngle = robot.rawAngle + changeInRobotOrientation;
-        robot.worldAngle = MathFunctions.angleRestrictions(robot.rawAngle);
+        robot.worldAngle = UpliftMath.angleRestrictions(robot.rawAngle);
 
         initialLeftDistance = finalLeftDistance;
         initialRightDistance = finalRightDistance;

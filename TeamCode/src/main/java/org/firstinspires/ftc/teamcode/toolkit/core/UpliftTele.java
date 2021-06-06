@@ -5,7 +5,6 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
-import org.firstinspires.ftc.teamcode.toolkit.misc.MathFunctions;
 
 public abstract class UpliftTele extends LinearOpMode {
 
