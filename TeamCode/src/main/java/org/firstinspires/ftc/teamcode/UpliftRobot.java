@@ -230,16 +230,6 @@ public class UpliftRobot {
             parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
             imu.initialize(parameters);
 
-//        byte AXIS_MAP_CONFIG_BYTE = 0x6; //swap x and z axis
-//        byte AXIS_MAP_SIGN_BYTE = 0x1; //negate z axis
-//
-//        imu.write8(BNO055IMU.Register.OPR_MODE, BNO055IMU.SensorMode.CONFIG.bVal & 0xFF);
-//        safeSleep(100);
-//        imu.write8(BNO055IMU.Register.AXIS_MAP_CONFIG, AXIS_MAP_CONFIG_BYTE & 0xFF);
-//        imu.write8(BNO055IMU.Register.AXIS_MAP_SIGN, AXIS_MAP_SIGN_BYTE & 0x0F);
-//        imu.write8(BNO055IMU.Register.OPR_MODE, BNO055IMU.SensorMode.IMU.bVal & 0x0F);
-//        safeSleep(100);
-
             imuInitialized = true;
         } catch (Exception ex) {
             imuInitialized = false;
