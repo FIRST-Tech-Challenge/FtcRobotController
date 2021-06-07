@@ -22,7 +22,7 @@ public class UpliftTelemetry extends Background {
         this.robot = robot;
         this.opMode = robot.opMode;
 //        this.telem = FtcDashboard.getInstance().getTelemetry();
-        this.telem = robot.opMode.telemetry;
+        this.telem = robot.opMode.telemetry; //
     }
 
     @Override
