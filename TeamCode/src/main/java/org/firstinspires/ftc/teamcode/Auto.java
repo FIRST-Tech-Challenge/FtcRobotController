@@ -24,8 +24,11 @@ public class Auto extends UpliftAuto {
 
     @Override
     public void body() throws InterruptedException {
-        drive.driveToPosition(0, 50, 0.7, 2);
-        drive.driveToPosition(0, 0, 0.7, 2);
+        drive.turnTo(240, 0.7, 1, DriveFunctions.CLOCKWISE);
+        robot.safeSleep(3000);
+        drive.turnTo(1, 0.7, 1, DriveFunctions.COUNTER_CLOCKWISE);
+        robot.safeSleep(3000);
+        drive.turnTo(179, 0.7, 1, DriveFunctions.QUICKEST_DIRECTION);
     }
 
     @Override

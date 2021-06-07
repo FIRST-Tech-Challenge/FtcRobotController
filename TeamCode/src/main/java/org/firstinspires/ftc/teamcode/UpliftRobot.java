@@ -96,6 +96,8 @@ public class UpliftRobot {
     }
 
     public void getHardware() {
+        hardwareMap = opMode.hardwareMap;
+
         try {
             leftFront = hardwareMap.get(DcMotor.class, "lf_motor");//Declares two left motors
             leftBack = hardwareMap.get(DcMotor.class, "lb_motor");
