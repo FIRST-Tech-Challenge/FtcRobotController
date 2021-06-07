@@ -585,11 +585,25 @@ public class PoseUG {
         packet.put("turret angle offset", Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
         packet.put("staring height offset", Constants.STARTING_HEIGHT_OFFSET);
         packet.put("IntakeThing", intake.intakeMotor.getCurrent(CurrentUnit.AMPS));
+        packet.put("EMAofIntakeAmps", intake.EMAofIntakeAmps);
+        packet.put("EMAofIntakeAmpsLowerLimit", Constants.INTAKE_AUTO_PICKUP_AMPS_LIM);
 
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
         dashboard.sendTelemetryPacket(packet);
+    }
+
+    private Double oldValue;
+
+    public double exponentialMovingAverage(double value) {
+        if (oldValue == null) {
+            oldValue = value;
+            return value;
+        }
+        double newValue = oldValue + Constants.K_AMP_ALPHA * (value - oldValue);
+        oldValue = newValue;
+        return newValue;
     }
 
     public double getGoalHeading() {
@@ -636,6 +650,7 @@ public class PoseUG {
     boolean autoLaunchActive = false;
     double autoLaunchTimer = 0.0;
     boolean ringChambered = false;
+
 
     public void update(BNO055IMU imu, long ticksLeft, long ticksRight, boolean isActive) {
         long currentTime = System.nanoTime();
@@ -747,7 +762,6 @@ public class PoseUG {
         motorBackRight.setPower(clampMotor(powerBackRight));
 
         //turret.setTurntableAngle(model.getTurretHeading());
-
 
         trajCalc.updatePos(model.getMuzzleX(), model.getMuzzleY());
         trajCalc.updateVel(velocityX, velocityY);

@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -592,6 +593,7 @@ public class UG_6832 extends OpMode {
 
     boolean shiftActive = false;
     double timeSinceLastIntake = 0.0;
+    boolean autoIntakeDisabled = true;
 
     private void joystickDrive() { //apple
 
@@ -606,7 +608,7 @@ public class UG_6832 extends OpMode {
 
         shiftActive = gamepad1.dpad_down;
         reverse = -1;
-        pwrDamper = .70;
+        pwrDamper = .90;
 
         pwrFwd = 0;
         pwrRot = 0;
@@ -679,11 +681,14 @@ public class UG_6832 extends OpMode {
             timeSinceLastIntake = System.nanoTime();
         }
 
-        if(robot.intake.getBehavior() == Intake.Behavior.TRAVEL
-                && robot.intake.intakeMotor.getCurrent(CurrentUnit.AMPS) > Constants.INTAKE_AUTO_PICKUP_AMPS
-                && System.nanoTime() - timeSinceLastIntake > Constants.INTAKE_AUTO_PICKUP_TIME_BUFFER * 1E9){
-            robot.intake.Do(Intake.Behavior.INTAKE);
-        }
+        //todo this should not be here - these tests should be inside Intake
+        //todo we get false positives when shooting - for some reason we get a current spike
+        //todo should probably stop slow intake while shooting
+//        if(robot.intake.getBehavior() == Intake.Behavior.TRAVEL
+//                && robot.intake.intakeMotor.getCurrent(CurrentUnit.AMPS) > Constants.INTAKE_AUTO_PICKUP_AMPS
+//                && System.nanoTime() - timeSinceLastIntake > Constants.INTAKE_AUTO_PICKUP_TIME_BUFFER * 1E9){
+//            robot.intake.Do(Intake.Behavior.INTAKE);
+//        }
 
         if(shiftActive && toggleAllowed(gamepad1.b, b,1)){
             robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_IN_POS);
@@ -744,7 +749,6 @@ public class UG_6832 extends OpMode {
                 robot.intake.Do(Intake.Behavior.INTAKE);
             }
         }
-
 
         if(toggleAllowed(gamepad1.x,x,1)){
             robot.intake.Do(Intake.Behavior.TENT);
@@ -818,7 +822,7 @@ public class UG_6832 extends OpMode {
         robot.ledSystem.setColor(LEDSystem.Color.CALM);
         reverse = -1;
 
-        pwrDamper = .70;
+        pwrDamper = .90;
 
         // drive joysticks
         pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
@@ -845,18 +849,33 @@ public class UG_6832 extends OpMode {
         if(toggleAllowed(gamepad1.x,x,1)) {
             ALLIANCE = Constants.Alliance.BLUE;
             ALLIANCE_INT_MOD=-1;
-            robot.setPoseX(Constants.Position.START.getX());
+            if(!Constants.isInner) {
+                robot.setPoseX(Constants.Position.START.getX());
+            }
+            else{
+                robot.setPoseX(Constants.Position.START_INNER.getX());
+            }
         }
         //press red button to set red alliance
         if(toggleAllowed(gamepad1.b,b,1)) {
             ALLIANCE = Constants.Alliance.RED;
             ALLIANCE_INT_MOD=1;
-            robot.setPoseX(Constants.Position.START.getX());
+            if(!Constants.isInner) {
+                robot.setPoseX(Constants.Position.START.getX());
+            }
+            else{
+                robot.setPoseX(Constants.Position.START_INNER.getX());
+            }
         }
 
         if(toggleAllowed(gamepad1.y,y,1)){
-            //robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
-            robot.intake.Do(Intake.Behavior.DEPLOY);
+            robot.setPoseX(Constants.Position.START_INNER.getX());
+            Constants.isInner = true;
+        }
+
+        if(toggleAllowed(gamepad1.a,a,1)){
+            robot.setPoseX(Constants.Position.START.getX());
+            Constants.isInner = true;
         }
     }
 

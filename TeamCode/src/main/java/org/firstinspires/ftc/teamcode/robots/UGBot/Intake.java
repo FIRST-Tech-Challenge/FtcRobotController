@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.Conversions;
 
@@ -19,6 +20,7 @@ public class Intake {
     private boolean active = true;
     private int tiltTargetPosition = Constants.INTAKE_INIT_TOP;
     private int outTargetPos = Constants.INTAKE_INIT_BTM;
+    double EMAofIntakeAmps = 0.0;
 
 
 
@@ -118,6 +120,7 @@ public class Intake {
         return target;
     }
 
+    boolean autoIntakeEnabled = false;
     public void update(){
         if(active){
             intakeMotor.setPower(speed);
@@ -126,10 +129,39 @@ public class Intake {
             intakeMotor.setPower(0);
         }
 
+
+
+        EMAofIntakeAmps = exponentialMovingAverage(intakeMotor.getCurrent(CurrentUnit.AMPS));
+
+        if(autoIntakeEnabled && EMAofIntakeAmps > Constants.INTAKE_AUTO_PICKUP_AMPS){
+            behavior = Behavior.INTAKE;
+        }
+
+        if(behavior == Behavior.TRAVEL && EMAofIntakeAmps < Constants.INTAKE_AUTO_PICKUP_AMPS_LIM){
+            autoIntakeEnabled = true;
+        }
+//        else if(EMAofIntakeAmps>1.1){
+//            autoIntakeEnabled = false;
+//        }
+
         Do(behavior); //call the current Ringevator behavior
+
+
 
         tiltServo.setPosition(Conversions.servoNormalize(tiltTargetPosition));
         outServo.setPosition(Conversions.servoNormalize(outTargetPos));
+    }
+
+    private Double oldValue;
+
+    public double exponentialMovingAverage(double value) {
+        if (oldValue == null) {
+            oldValue = value;
+            return value;
+        }
+        double newValue = oldValue + Constants.K_AMP_ALPHA * (value - oldValue);
+        oldValue = newValue;
+        return newValue;
     }
 
     int deployState = 0;
@@ -168,7 +200,7 @@ public class Intake {
                 break;
             case 4:
                 if(System.nanoTime() - deployTimer > Constants.INTAKE_TIME_FIRST * 1E9) {
-                    setTiltTargetPosition(Constants.INTAKE_HANDOFF_TOP);
+                    setTiltTargetPosition(Constants.INTAKE_DEFLECTORANNOYING_TOP);//ben
                     setOutTargetPosition(Constants.INTAKE_HANDOFF_BTM);
                     deployTimer = System.nanoTime();
                     deployState++;
@@ -214,6 +246,7 @@ public class Intake {
     public boolean Intake(){
         switch(autoIntakeState){
             case 0:
+                autoIntakeEnabled = false;
                 if(isTented){ //this looks like bad coding, but it the only way to structure this
                     //agree it's bad but it's not the only way to handle this
                     wasTented = true;

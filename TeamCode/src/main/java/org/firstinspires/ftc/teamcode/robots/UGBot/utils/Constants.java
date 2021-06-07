@@ -15,6 +15,7 @@ public class Constants {
     public static Alliance ALLIANCE = Alliance.RED;
     //public static int ALLIANCE_INT_MOD = (ALLIANCE == Alliance.RED ? 1 : -1); //todo don't know what this is, evaluates only on load, not in a loop
     public static int ALLIANCE_INT_MOD = 1;
+    public static boolean isInner = false;
 
 
     //BEGIN Proteus Kinematics
@@ -40,6 +41,8 @@ public class Constants {
     public static double kpFlywheel = 0.6; //proportional constant multiplier goodish
     public static  double kiFlywheel = 1.0; //integral constant multiplier
     public static  double kdFlywheel= 0.0; //derivative constant multiplier
+
+    public static double K_AMP_ALPHA = .2;
 
     // Vision
     public static int TOP_LEFT_X_RED = 70;
@@ -103,8 +106,9 @@ public class Constants {
     public static int INTAKE_DEPLOY2_TOP = 1600;
     public static int INTAKE_DEPLOY_TRAVEL_BTM = 1550; //use as default bottom servo position if none specified
 
-    public static int INTAKE_HANDOFF_BTM = 1675;
-    public static int INTAKE_HANDOFF_TOP = 1400;
+    public static int INTAKE_HANDOFF_BTM = 1750; //was 1675
+    public static int INTAKE_HANDOFF_TOP = 1550; //was 1450
+    public static int INTAKE_DEFLECTORANNOYING_TOP = 1350; //was 1400
     public static int INTAKE_HANDOFF__ROLLERS_TOP = 1200; //could be different if we are in active targeting and need to clear the slinger wall
 
     public static int INTAKE_INIT_BTM = 900;
@@ -130,8 +134,8 @@ public class Constants {
     public static double INTAKE_ROLLING_JOG_BW_POWER = -.8;
 
     //chassis-relative angle that places the transfer tray into a good position to receive rings from the intake
-    public static int INTAKE_TO_TURRET_XFER_ANGLE = 360-25;
-    public static int INTAKE_TO_TURRET_XFER_ELEVATION = 20;
+    public static int INTAKE_TO_TURRET_XFER_ANGLE = 0; //was 360-25 for feather gate
+    public static int INTAKE_TO_TURRET_XFER_ELEVATION = 17;
 
     public static double INTAKE_SPEED = .8; //speed of walk and lift
     public static double INTAKE_TIME_FIRST = .65; //time to walk the ring
@@ -140,7 +144,8 @@ public class Constants {
     public static double INTAKE_MINIJOG_TIME = .35;
     public static double INTAKE_MINIJOG_POWER = .25;
 
-    public static double INTAKE_AUTO_PICKUP_AMPS = 1.3;
+    public static double INTAKE_AUTO_PICKUP_AMPS = 1.1;
+    public static double INTAKE_AUTO_PICKUP_AMPS_LIM = .9;
 
     public static double TURRET_SPEED= 90; //max degrees per second to manually adjust turret targetAngle
     public static double TURRET_TOLERANCE = 2; //accuracy wiggle room
@@ -201,6 +206,7 @@ public class Constants {
     public enum Position {
         //headings and elevations that are negative means don't apply them to ending position - let other behaviors control
         START(49/INCHES_PER_METER, ROBOT_RADIUS_INCHES/INCHES_PER_METER,0,0,0, 1),
+        START_INNER((49-24)/INCHES_PER_METER, ROBOT_RADIUS_INCHES/INCHES_PER_METER,0,0,0, 1),
         HOME(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES)/INCHES_PER_METER,0,0,0, 0),
         //WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (ROBOT_RADIUS_INCHES+3)/INCHES_PER_METER,0,340,0),
         WOBBLE_ONE_GRAB(49/INCHES_PER_METER, (8 + ROBOT_RADIUS_INCHES)/INCHES_PER_METER,0,0,1,1),
