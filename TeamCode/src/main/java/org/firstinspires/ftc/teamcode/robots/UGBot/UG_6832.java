@@ -602,8 +602,15 @@ public class UG_6832 extends OpMode {
             joystickDriveStarted = true;
             robot.launcher.setActive(true);
             //robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
+            if(robot.intake.isTented()){
+                robot.intake.Do(Intake.Behavior.INTAKE);
+            }
+            else{
+                robot.intake.Do(Intake.Behavior.DEPLOY);
+            }
             robot.intake.Do(Intake.Behavior.DEPLOY);
             robot.intake.alwaysASpinnin = true;
+            robot.intake.setRollingRingMode(true);
         }
 
         shiftActive = gamepad1.dpad_down;

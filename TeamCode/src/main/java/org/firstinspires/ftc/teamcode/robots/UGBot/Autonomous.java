@@ -114,6 +114,8 @@ public class Autonomous {
             //release the wobble goal
             .addState(() -> robot.releaseWobbleGoalAuton(false))
 
+            .addSingleState(() -> robot.launcher.gripperExtendABobTargetPos = Constants.GRIPPER_HALFWAY_POS)
+
             //.addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
 
             //back up
@@ -153,7 +155,11 @@ public class Autonomous {
                     () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT_B, true, .8, .15),
                     () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15))
 
+
             .addState(()-> robot.launcher.setElbowTargetAngle(15))
+
+            .addSingleState(() -> robot.launcher.gripperExtendABobTargetPos = Constants.GRIPPER_OUT_POS)
+
 //            .addSimultaneousStates(
 //                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
 //                    () -> robot.launcher.setElbowTargetAngle(20)
@@ -178,6 +184,11 @@ public class Autonomous {
             .addState(() -> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED, false, 1, .1))
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
+            .addState(()-> robot.rotateIMU(325,1))
+
+
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
             .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL, 3))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
@@ -185,10 +196,10 @@ public class Autonomous {
             .addSingleState(()-> robot.intake.alwaysASpinnin = false)
 
             //park
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE, true, .8, .6))
-
+//            .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE, true, .8, .6))
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.TENT))
             //.addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
 
@@ -320,40 +331,9 @@ public class Autonomous {
     public StateMachine AutoTest = getStateMachine(autoStage)
             .addSingleState(()-> robot.intake.Do(Intake.Behavior.DEPLOY))
             .addState(() -> robot.launcher.setElbowTargetAngle(0))
-
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.TENT))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,true,  .8,.1))
-
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
-            .addSimultaneousStates(
-                    ()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,false,  .8,.1),
-                    ()-> robot.enterWobbleGoalMode()
-            )
-
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO,false,  .8,.6))
-
-            .addState(() -> robot.launcher.wobbleGrip())
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
-            .addSingleState(()-> Constants.IN_WOBBLE_MODE = false)
-            .addSingleState(()-> robot.turret.setDangerModeActive(true))
-
-            .addSimultaneousStates(
-                    ()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH,true,  .8,.1),
-                    () -> robot.launcher.setElbowTargetAngle(20)
-            )
-
-            .addSimultaneousStates(
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_2,true,  .8,.1),
-                    () -> robot.launcher.setElbowTargetAngle(20)
-            )
-
-            .addState(()-> robot.releaseWobbleGoalAuton(true))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.NAVIGATE,false,  .8,.6))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
