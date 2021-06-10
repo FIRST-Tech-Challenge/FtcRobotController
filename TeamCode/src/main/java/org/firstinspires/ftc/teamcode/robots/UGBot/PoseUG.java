@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_NOW;
@@ -982,6 +983,37 @@ public class PoseUG {
         }
     }
 
+    public boolean driveUntilXNotSoJankPossibly(double pwr, boolean forward, double targetX, double closeEnoughDist) {
+        return driveToFieldPosition(getNewPosAway(targetX)[0], getNewPosAway(targetX)[1], forward, pwr, closeEnoughDist);
+    }
+
+    public boolean driveUntilXJank(double pwr, boolean forward, double targetX, double closeEnoughDist) {
+        forward = !forward;
+        //driveAbsoluteDistance(MaxPower, heading, forward, distance,.1)
+        if (!forward) {
+            moveMode = moveMode.backward;
+            //targetMeters = -targetMeters;
+            //pwr = -pwr;
+        } else
+            moveMode = moveMode.forward;
+
+
+
+        // if this statement is true, then the robot has not achieved its target
+        // position
+        if (Math.abs(getX() - targetX) > Math.abs(closeEnoughDist)) {
+            //driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
+            //driveIMU(turnP, turnI, turnD, pwr, wrap360(targetAngle), false);
+
+            movePIDMixer(pwr, forward, getX() - targetX,0,getHeading(),getHeading());
+            return false;
+        } // destination achieved
+        else {
+            stopChassis(); //todo: maybe this should be optional when you are stringing moves together
+            return true;
+        }
+    }
+
     double WallVal = 0.0;
 
     int countOutliers = 0;
@@ -1170,6 +1202,15 @@ public class PoseUG {
 
     private double getDistanceTo(double targetX, double targetY) {
         return Math.sqrt(Math.pow((targetX-getPoseX()),2) + Math.pow((targetY-getPoseY()),2));
+    }
+
+    private double[] getNewPosAway(double x) {
+        double h = x / Math.asin(getHeading());
+        double y = Math.sqrt(Math.pow(h,2) - Math.pow(x,2));
+        double[] j = new double[2];
+        j[0] = x;
+        j[1] = y;
+        return j;
     }
 
     public double getBearingTo(double targetX, double targetY) {

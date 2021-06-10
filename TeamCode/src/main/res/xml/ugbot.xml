@@ -11,7 +11,7 @@
             <Servo name="gripperServo" port="4" />
             <Servo name="servoWiper" port="1" />
             <Servo name="blinkin" port="5" />
-
+            <LynxEmbeddedIMU name="imuTest" port="1" bus="1" />
             <LynxEmbeddedIMU name="turretIMU" port="0" bus="0" />
         </LynxModule>
 

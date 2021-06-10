@@ -150,10 +150,12 @@ public class Autonomous {
 //            .addSingleState(() -> robot.turret.setCurrentMode(Turret.TurretMode.fieldRelative))
 
             //ben is a coder 😎
-            .addMineralState(ugStateProvider,
-                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
-                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT_B, true, .8, .15),
-                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15))
+//            .addMineralState(ugStateProvider,
+//                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
+//                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT_B, true, .8, .15),
+//                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15))
+
+            .addState(()-> robot.driveUntilXJank(1,true,Constants.startingXOffset,.05))
 
 
             .addState(()-> robot.launcher.setElbowTargetAngle(15))
@@ -331,8 +333,16 @@ public class Autonomous {
     public StateMachine AutoTest = getStateMachine(autoStage)
             .addSingleState(()-> robot.intake.Do(Intake.Behavior.DEPLOY))
             .addState(() -> robot.launcher.setElbowTargetAngle(0))
-            .addSingleState(()-> robot.intake.Do(Intake.Behavior.TENT))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .5,.1))
+
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, false, .5,.1))
+            .addTimedState(4f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO, false, .5,.1))
+            .addTimedState(4f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveUntilXJank(1,false,Constants.startingXOffset,.05))
+            .addTimedState(4f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
 
             .build();
 
