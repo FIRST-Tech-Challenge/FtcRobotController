@@ -147,7 +147,6 @@ public class AutoHandler {
         path.addRF(rf.intake(1));
         path.addSetpoint(0, -30, 90);
         path.addRF(rf.intake(0));
-//        path.addWaypoint(10,-10,10);
         path.addSetpoint(-20,20,-90);
         path.addSetpoint(10,10,45);
         path.addSetpoint(-10,-10,-45);

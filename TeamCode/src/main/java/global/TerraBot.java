@@ -222,7 +222,7 @@ public class TerraBot {
         // Set the wobble goal start pos
         wgStart = Constants.WG_START_POS_AUTON;
         //Start the odometry thread
-        startOdoThreadAuto(op, false);
+        startOdoThreadAuto(false);
     }
     public void teleInit(HardwareMap hwMap){
         // Initialize the robot
@@ -232,7 +232,7 @@ public class TerraBot {
         defineWobbleGoal();
         definePowershot();
         // Start the odometry thread
-        startOdoThreadTele();
+        startOdoThreadTele(false);
         //Did auton run before this?
         boolean shouldICareAboutAuton = false;
         // If we don't want to use the last auton's data, reset the gyro to heading 0
@@ -535,7 +535,7 @@ public class TerraBot {
 
 
     //Start odometry thread for autonomous
-    public void startOdoThreadAuto(final LinearOpMode op, final boolean useSensors){
+    public void startOdoThreadAuto(final boolean useSensors){
         CodeSeg run = () -> {
             updateOdometry();
             if(useSensors) {
@@ -555,10 +555,12 @@ public class TerraBot {
     }
 
     //Start odometry thread for teleop
-    public void startOdoThreadTele(){
+    public void startOdoThreadTele(final boolean useSensors){
         CodeSeg run = () -> {
             updateOdometry();
-            updateOdometryUsingSensors();
+            if(useSensors) {
+                updateOdometryUsingSensors();
+            }
         };
         odometryThread = new TerraThread(run);
         odometryThread.changeRefreshRate(Constants.ODOMETRY_REFRESH_RATE);
@@ -631,10 +633,9 @@ public class TerraBot {
             outtaking = true;
             isOuttakeAvailable = false;
             isIntakeAvailable = false;
-//            autoAimer.shotMode = 0;
         }));
         shooter.add(rfs.addWait(0.3));
-//        shooter.add(rfs.turnToGoal());
+        shooter.add(rfs.turnToGoal());
         shooter.add(rfs.moveRS(Constants.RS_POW));
         shooter.add(rfs.addWait(1));
         shooter.add(rfs.outtake(0));

@@ -137,7 +137,7 @@ public class Constants {
     //Refresh Constants
     //--------------------------------------------------------------------------------------------------------------
     //The refresh rate of Robot Functions
-    public static final int ROBOT_FUNCTIONS_REFRESH_RATE = 10; //hertz
+    public static final int ROBOT_FUNCTIONS_REFRESH_RATE = 100; //hertz
     //The refresh rate of Odometry
     public static final int ODOMETRY_REFRESH_RATE = 100; //hertz
     //The refresh rate of updating odoemtry with sensors

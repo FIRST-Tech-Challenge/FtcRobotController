@@ -1,5 +1,6 @@
 package teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,7 +10,7 @@ import global.TerraBot;
 import globalfunctions.Constants;
 import globalfunctions.Optimizer;
 import globalfunctions.TelemetryHandler;
-
+@Disabled
 @TeleOp(name = "TerraOp")
 public class TerraOp extends OpMode {
     // Define the bot, telemetryHandler, optimizer
