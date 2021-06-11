@@ -35,6 +35,7 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -439,7 +440,8 @@ public class UG_6832 extends OpMode {
             }
             telemetry.update();
 
-            robot.ledSystem.setColor(LEDSystem.Color.GAME_OVER);
+//            robot.ledSystem.setColor(LEDSystem.Color.GAME_OVER);
+//            robot.ledSystem.setColor(LEDSystem.Color.RED);
 
             robot.updateSensors(active);
             robot.sendTelemetry();
@@ -564,7 +566,6 @@ public class UG_6832 extends OpMode {
     private void initialization_initSound() {
         telemetry.addData("Please wait", "Initializing Sound");
         // telemetry.update();
-        robot.ledSystem.setColor(LEDSystem.Color.CALM);
         soundID = hardwareMap.appContext.getResources().getIdentifier("gracious", "raw",
                 hardwareMap.appContext.getPackageName());
         boolean success = SoundPlayer.getInstance().preload(hardwareMap.appContext, soundID);
@@ -611,6 +612,9 @@ public class UG_6832 extends OpMode {
             robot.intake.Do(Intake.Behavior.DEPLOY);
             robot.intake.alwaysASpinnin = true;
             robot.intake.setRollingRingMode(true);
+
+            robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
+
         }
 
         shiftActive = gamepad1.dpad_down;
@@ -826,7 +830,6 @@ public class UG_6832 extends OpMode {
         // robot.setAutonSingleStep(true); //single step through articulations having to
         // do with deploying
 
-        robot.ledSystem.setColor(LEDSystem.Color.CALM);
         reverse = -1;
 
         pwrDamper = .90;
@@ -856,33 +859,55 @@ public class UG_6832 extends OpMode {
         if(toggleAllowed(gamepad1.x,x,1)) {
             ALLIANCE = Constants.Alliance.BLUE;
             ALLIANCE_INT_MOD=-1;
+
             if(!Constants.isInner) {
                 robot.setPoseX(Constants.Position.START.getX());
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
             }
             else{
                 robot.setPoseX(Constants.Position.START_INNER.getX());
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
             }
         }
         //press red button to set red alliance
         if(toggleAllowed(gamepad1.b,b,1)) {
             ALLIANCE = Constants.Alliance.RED;
             ALLIANCE_INT_MOD=1;
+
             if(!Constants.isInner) {
                 robot.setPoseX(Constants.Position.START.getX());
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
             }
             else{
                 robot.setPoseX(Constants.Position.START_INNER.getX());
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
             }
         }
 
         if(toggleAllowed(gamepad1.y,y,1)){
             robot.setPoseX(Constants.Position.START_INNER.getX());
+
+            if(ALLIANCE == Constants.Alliance.RED) {
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
+            }
+            else {
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+            }
+
             Constants.isInner = true;
         }
 
         if(toggleAllowed(gamepad1.a,a,1)){
             robot.setPoseX(Constants.Position.START.getX());
-            Constants.isInner = true;
+
+            if(ALLIANCE == Constants.Alliance.RED) {
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            }
+            else {
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            }
+
+            Constants.isInner = false;
         }
     }
 
@@ -1023,10 +1048,10 @@ public class UG_6832 extends OpMode {
         telemetry.addData("Pulse width", servoTest);
     }
 
-    private void ledTest() {
-        int idx = (int) ((System.currentTimeMillis() / 2000) % LEDSystem.Color.values().length);
-        robot.ledSystem.setColor(LEDSystem.Color.values()[idx]);
-        telemetry.addData("Color", LEDSystem.Color.values()[idx].name());
-    }
+//    private void ledTest() {
+//        int idx = (int) ((System.currentTimeMillis() / 2000) % LEDSystem.Color.values().length);
+//        robot.ledSystem.setColor(LEDSystem.Color.values()[idx]);
+//        telemetry.addData("Color", LEDSystem.Color.values()[idx].name());
+//    }
 
 }

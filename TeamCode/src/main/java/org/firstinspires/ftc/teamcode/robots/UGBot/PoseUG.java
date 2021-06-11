@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -111,11 +112,10 @@ public class PoseUG {
     private Servo triggerServo = null;
     private Servo gripperServo = null;
     private Servo servoWiper = null;
-    Servo blinkin = null;
+    RevBlinkinLedDriver blinkin = null;
 
     // All Subsystems
     public Launcher launcher = null;
-    public LEDSystem ledSystem = null;
     public Turret turret = null;
     public Intake intake = null;
 
@@ -347,7 +347,7 @@ public class PoseUG {
         this.tiltServo = this.hwMap.servo.get("tiltServo");
         this.outServo = this.hwMap.servo.get("outServo");
 
-        this.blinkin = this.hwMap.servo.get("blinkin");
+        this.blinkin = hwMap.get(RevBlinkinLedDriver.class, "blinkin");
         this.distForward = this.hwMap.get(DistanceSensor.class, "distForward");
         this.distRight = this.hwMap.get(DistanceSensor.class, "distRight");
         this.distLeft = this.hwMap.get(DistanceSensor.class, "distLeft");
@@ -387,7 +387,6 @@ public class PoseUG {
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
         intake = new Intake(intakeMotor, tiltServo, outServo);
-        ledSystem = new LEDSystem(blinkin);
 
         moveMode = MoveMode.still;
 

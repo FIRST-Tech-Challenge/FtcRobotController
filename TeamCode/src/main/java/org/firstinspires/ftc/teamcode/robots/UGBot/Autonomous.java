@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.UGBot;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -210,6 +211,7 @@ public class Autonomous {
     public StateMachine AutoFullBlue = getStateMachine(autoStage)
             //deploy intake without waiting on completion so gripper deploys simultaneously
             .addSingleState(() -> robot.intake.Do(Intake.Behavior.DEPLOY))
+            .addSingleState(()-> robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE))
 
             .addState(() -> robot.deployWobbleGoalGripperAuton())
             .addState(() -> robot.launcher.wobbleGrip())
@@ -368,7 +370,7 @@ public class Autonomous {
     public void deinitVisionProvider() {
         telemetry.addData("Please wait", "Deinitializing vision");
         // telemetry.update();
-        robot.ledSystem.setColor(LEDSystem.Color.CALM);
+//        robot.ledSystem.setColor(LEDSystem.Color.CALM);
         vp.shutdownVision();
         vp = null;
         visionProviderFinalized = false;
@@ -378,7 +380,7 @@ public class Autonomous {
         try {
             telemetry.addData("Please wait", "Initializing vision");
             // telemetry.update();
-            robot.ledSystem.setColor(LEDSystem.Color.CALM);
+//            robot.ledSystem.setColor(LEDSystem.Color.CALM);
             vp = visionProviders[visionProviderState].newInstance();
              vp.initializeVision(robot.hwMap, viewpoint, this.enableTelemetry);
         } catch (IllegalAccessException | InstantiationException e) {
@@ -391,7 +393,7 @@ public class Autonomous {
         try {
             telemetry.addData("Please wait", "Initializing vision");
             // telemetry.update();
-            robot.ledSystem.setColor(LEDSystem.Color.CALM);
+//            robot.ledSystem.setColor(LEDSystem.Color.CALM);
             vp = VisionProviders.defaultProvider.newInstance();
              vp.initializeVision(robot.hwMap, viewpoint, false);
         } catch (IllegalAccessException | InstantiationException e) {
