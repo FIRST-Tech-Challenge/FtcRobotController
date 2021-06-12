@@ -83,7 +83,7 @@ public class Hardware {
     //PID coefficients
     private PIDCoefficients FrBlStrafePIDCoeffecients, FlBrStrafePIDCoeffecients, rotatePIDCoeffecients;
     //PID controllers
-    private PIDController FrBlStrafePIDController, FlBrStrafePIDController, rotatePIDController;
+    public PIDController FrBlStrafePIDController, FlBrStrafePIDController, rotatePIDController;
 
     //**variables for robot measurements**//
 
@@ -152,7 +152,7 @@ public class Hardware {
         //run without encoders
 
         // Set Zero power behavior
-        driveFrontRight.setPower(0);
+        driveFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         driveFrontLeft.setPower(0);
         driveBackLeft.setPower(0);
         driveBackRight.setPower(0);
@@ -193,9 +193,9 @@ public class Hardware {
      */
     private void initPIDs() {
         initPIDs(
-                new PIDCoefficients(.003, .00003, 0),
-                new PIDCoefficients(.003, .00003, 0),
-                new PIDCoefficients(.003, .00003, 0)
+                new PIDCoefficients(.05, .00003, 5),
+                new PIDCoefficients(.05, .00003, 5),
+                new PIDCoefficients(.003, .00003, 5)
         );
     }
     /**
@@ -354,8 +354,8 @@ public class Hardware {
     }
     /**
      * given polar coordinates (r, theta), returns array of equivalent rectangular coordinates (x,y)
-     * @param radius
-     * @param theta
+     * @param radius radius, distance
+     * @param theta  theta, angle
      * @return array of length 2 containing equivalent rectangular coordinates
      */
     public static double[] convertPolarToRectangular(double radius, double theta) {
