@@ -17,6 +17,8 @@ public class Constants {
     public static int ALLIANCE_INT_MOD = 1;
     public static boolean isInner = false;
 
+    public static double LINE_DETECTION_THRESHHOLD = .7;
+
 
     //BEGIN Proteus Kinematics
     public static final double ROBOT_RADIUS_INCHES = 8.75;
@@ -108,7 +110,7 @@ public class Constants {
     public static int INTAKE_DEPLOY_TRAVEL_BTM = 1550; //use as default bottom servo position if none specified
 
     public static int INTAKE_HANDOFF_BTM = 1750; //was 1675
-    public static int INTAKE_HANDOFF_TOP = 1550; //was 1450
+    public static int INTAKE_HANDOFF_TOP = 1600; //was 1450
     public static int INTAKE_DEFLECTORANNOYING_TOP = 1350; //was 1400
     public static int INTAKE_HANDOFF__ROLLERS_TOP = 1200; //could be different if we are in active targeting and need to clear the slinger wall
 

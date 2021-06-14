@@ -151,12 +151,12 @@ public class Autonomous {
 //            .addSingleState(() -> robot.turret.setCurrentMode(Turret.TurretMode.fieldRelative))
 
             //ben is a coder 😎
-//            .addMineralState(ugStateProvider,
-//                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
-//                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT_B, true, .8, .15),
-//                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15))
+            .addMineralState(ugStateProvider,
+                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
+                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT_B, true, .8, .15),
+                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15))
 
-            .addState(()-> robot.driveUntilXJank(1,true,Constants.startingXOffset,.05))
+//            .addState(()-> robot.driveUntilXJank(1,true,Constants.startingXOffset,.05))
 
 
             .addState(()-> robot.launcher.setElbowTargetAngle(15))
@@ -193,15 +193,15 @@ public class Autonomous {
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL, 3))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addTimedState(.5f, () -> telemetry.addData("DELA]Y", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addSingleState(()-> robot.gripperModeIsInReverse = false)
             .addSingleState(()-> robot.intake.alwaysASpinnin = false)
 
             //park
 //            .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE, true, .8, .6))
-            .addSingleState(()-> robot.intake.Do(Intake.Behavior.TENT))
-            //.addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
+//            .addSingleState(()-> robot.intake.Do(Intake.Behavior.TENT))
+            .addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
             .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 

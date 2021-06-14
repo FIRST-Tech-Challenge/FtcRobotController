@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -30,7 +31,6 @@ import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_NOW;
@@ -127,6 +127,7 @@ public class PoseUG {
     DistanceSensor distForward;
     DistanceSensor distLeft;
     DistanceSensor distRight;
+    RevColorSensorV3 bottomColorSensor;
     // DigitalChannel magSensor;
 
     private Constants.Target target = Constants.Target.NONE;
@@ -351,6 +352,7 @@ public class PoseUG {
         this.distForward = this.hwMap.get(DistanceSensor.class, "distForward");
         this.distRight = this.hwMap.get(DistanceSensor.class, "distRight");
         this.distLeft = this.hwMap.get(DistanceSensor.class, "distLeft");
+        this.bottomColorSensor = this.hwMap.get(RevColorSensorV3.class, "bottomColorSensor");
         // this.magSensor = this.hwMap.get(DigitalChannel.class, "magSensor");
         // motorFrontLeft = hwMap.get(DcMotor.class, "motorFrontLeft");
         motorBackLeft = hwMap.get(DcMotor.class, "motorBackLeft");
@@ -587,6 +589,10 @@ public class PoseUG {
         packet.put("IntakeThing", intake.intakeMotor.getCurrent(CurrentUnit.AMPS));
         packet.put("EMAofIntakeAmps", intake.EMAofIntakeAmps);
         packet.put("EMAofIntakeAmpsLowerLimit", Constants.INTAKE_AUTO_PICKUP_AMPS_LIM);
+        packet.put("2Bottom color sensor R", bottomColorSensor.red());
+        packet.put("3Bottom color sensor G", bottomColorSensor.green());
+        packet.put("1Bottom color sensor B", bottomColorSensor.blue());
+        packet.put("4is on line", (bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD) &&  bottomColorSensor.green() > bottomColorSensor.red() && bottomColorSensor.green() > bottomColorSensor.blue() ? 100 : 0);
 
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
@@ -780,6 +786,11 @@ public class PoseUG {
         MiniJog(); //service any request for jogs
         RollingJogForward();
         RollingJogBackward();
+
+//        if(bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD
+//                &&  bottomColorSensor.green() > bottomColorSensor.red() && bottomColorSensor.green() > bottomColorSensor.blue()){
+//            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+//        }
 
 
         //subsystem updates should be the very last movement methods called in this update cycle

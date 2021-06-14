@@ -10,10 +10,9 @@
             <Servo name="triggerServo" port="0" />
             <Servo name="gripperServo" port="4" />
             <Servo name="servoWiper" port="1" />
-<!--            <LynxEmbeddedIMU name="imuTest" port="1" bus="1" />-->
+            <LynxEmbeddedIMU name="imuTest" port="1" bus="1" />
             <LynxEmbeddedIMU name="turretIMU" port="0" bus="0" />
 
-            <ColorSensor name="sensor_color" port="1" bus="1"/>
         </LynxModule>
 
         <LynxModule name="Expansion Hub 2" port="2">
@@ -27,6 +26,7 @@
             <REV_VL53L0X_RANGE_SENSOR name="distRight" port="1" bus="0"/>
             <REV_VL53L0X_RANGE_SENSOR name="distLeft" port="1" bus="1"/>
             <RevBlinkinLedDriver name="blinkin" port="5" />
+            <RevColorSensorV3 name="bottomColorSensor" port="0" bus="2"/>
 
 
         </LynxModule>
