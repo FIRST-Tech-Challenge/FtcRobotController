@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,8 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 this opmode should tune the strafing PID's using the Ziegler-Nichols method
 
  */
-
 @TeleOp(name="PID Tuner")
+@Disabled
 public class PIDTuner extends LinearOpMode {
     /*declare OpMode members, initialize some classes*/
     Hardware robot          = new Hardware();
@@ -19,7 +20,7 @@ public class PIDTuner extends LinearOpMode {
 
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException {
         // declare some variables if needed
 
         //values i should get from this test
