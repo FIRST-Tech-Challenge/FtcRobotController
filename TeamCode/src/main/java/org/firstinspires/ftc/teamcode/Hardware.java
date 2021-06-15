@@ -41,6 +41,19 @@ import java.io.File;
     * y- =
  */
 
+/*
+gamepad joystick signs
+      y-neg
+        ___
+      /  |  \
+x-neg|---+---|pos
+      \__|__/
+       y-pos
+ */
+
+
+
+
 
 /**
  * This is NOT an opmode.
@@ -125,12 +138,16 @@ public class Hardware {
         //PID's
         initPIDs();
     }
+    //motors
     private void initMotors() {
+        initDriveMotors();
+    }
+    private void initDriveMotors() {
         // Define and initialize all Motors
-        driveFrontRight = hwMap.get(DcMotor.class, "front_right_drive"); //main hub port 0
-        driveFrontLeft  = hwMap.get(DcMotor.class, "front_left_drive");  //main hub port 1
-        driveBackLeft   = hwMap.get(DcMotor.class, "back_left_drive");   //main hub port 2
-        driveBackRight  = hwMap.get(DcMotor.class, "back_right_drive");  //main hub port 3
+        driveFrontRight = hwMap.get(DcMotor.class, "front_right_drive"); //expansion hub port 2
+        driveFrontLeft  = hwMap.get(DcMotor.class, "front_left_drive");  //main hub port 2
+        driveBackLeft   = hwMap.get(DcMotor.class, "back_left_drive");   //main hub port 3
+        driveBackRight  = hwMap.get(DcMotor.class, "back_right_drive");  //expansion hub port 3
 
         // Set all motors to zero power
         driveFrontRight.setPower(0);
@@ -153,9 +170,9 @@ public class Hardware {
 
         // Set Zero power behavior
         driveFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        driveFrontLeft.setPower(0);
-        driveBackLeft.setPower(0);
-        driveBackRight.setPower(0);
+        driveFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        driveBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        driveBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         //assign motor directions
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -163,6 +180,7 @@ public class Hardware {
         driveBackLeft.setDirection(DcMotor.Direction.REVERSE);
         driveBackRight.setDirection(DcMotor.Direction.FORWARD);
     }
+    //servos
     private void initServos() {
         // Define and initialize ALL installed servos.
 
@@ -172,30 +190,46 @@ public class Hardware {
         // Define and initialize all Sensors
 
     }
+    //sensors
     private void initSensors() {
 
     }
+    //other
     private void initIMU() {
         //Initialize IMU hardware map value. PLEASE UPDATE THIS VALUE TO MATCH YOUR CONFIGURATION
         imu = hwMap.get(BNO055IMU.class, "imu");
         //Initialize IMU parameters
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
     }
+    //PIDS
+    /*
+    calculated coefficients for a torquenado motor.
+    target and input values are the encoder count of the motor, it's a position PID, and while it may work for velocity, velocity was not what it was tuned for.
+                            Kp      Ki      Kd
+    PID                 |.004602|.095875| 0.000055
+    PI                  |.003452|0.04315|
+    P                   |.003835|       |
+    PD                  |.006136|       | 0.000074
+    some overshoot      |.002557|.053271| 0.000082
+    no overshoot        |.001534|.031958| 0.000049
+    pessen integration  |.005369|.139818| 0.000077
+    */
     /**
      * init PIDs with default coefficients
      */
     private void initPIDs() {
+
         initPIDs(
-                new PIDCoefficients(.05, .00003, 5),
-                new PIDCoefficients(.05, .00003, 5),
-                new PIDCoefficients(.003, .00003, 5)
+                new PIDCoefficients(0.004602, 0.04315, 0.000055), //frbl strafe pid
+                new PIDCoefficients(0.004602, 0.04315, 0.000055), //flbr strafe pid
+                new PIDCoefficients(0.004602, 0.04315, 0.000055)  //rotation pid
         );
     }
     /**
@@ -249,6 +283,7 @@ public class Hardware {
     }
     /**
      * causes the robot to strafe a given direction, at a given power, for a given distance using PIDs
+     * power and distance should always be positive
      * @param power             power factor
      * @param angle             direction to strafe relative to robot, measure in radians, angle of 0 == starboard
      * @param targetDistance    distance to strafe, measured in meters
@@ -297,13 +332,26 @@ public class Hardware {
 
             //assign drive motor powers
             setDrivetrainPower(
-                    FrBlPairPower + rotationCorrection  - (1-FrBlCorrection),
-                     FlBrPairPower - rotationCorrection  - (1-FlBrCorrection),
-                     FrBlPairPower - rotationCorrection  - (1-FrBlCorrection),
-                    FlBrPairPower + rotationCorrection  - (1-FlBrCorrection)
+                    (FrBlPairPower*FrBlCorrection) + rotationCorrection,
+                    (FlBrPairPower*FlBrCorrection) - rotationCorrection,
+                    (FrBlPairPower*FrBlCorrection) - rotationCorrection,
+                    (FlBrPairPower*FlBrCorrection) + rotationCorrection
             );
         }
 
+    }
+
+    /**
+     * rotates the robot by adjusting its current motor powers rather than directly setting powers, allows turning while strafing
+     * @param signedPower determines the directions and power of rotation, larger values result in faster movement, and the sign (positive or negative) of this value determine direction
+     */
+    public void rotateByCorrection(double signedPower) {
+        setDrivetrainPower(
+                driveFrontRight.getPower()+signedPower,
+                driveFrontLeft.getPower()-signedPower,
+                driveBackLeft.getPower()-signedPower,
+                driveBackRight.getPower()+signedPower
+        );
     }
 
     /**
@@ -372,7 +420,7 @@ public class Hardware {
      */
     public void setDrivetrainPower(double frontRightPower, double frontLeftPower, double backLeftPower, double backRightPower){
         driveFrontRight.setPower(frontRightPower);
-        driveBackLeft.setPower(frontLeftPower);
+        driveFrontLeft.setPower(frontLeftPower);
         driveBackLeft.setPower(backLeftPower);
         driveBackRight.setPower(backRightPower);
     }
