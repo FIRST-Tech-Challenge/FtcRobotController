@@ -53,6 +53,7 @@ import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.TURRET_SPEED;
+import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.isInner;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notsmalldeadzone;
@@ -492,15 +493,31 @@ public class UG_6832 extends OpMode {
                         break;
                     case 1: // teleop
                         if(ALLIANCE == Constants.Alliance.RED) {
-                            if (auto.AutoFullRed.execute()) {
-                                active = false;
-                                state = 0;
+                            if(!isInner) {
+                                if (auto.AutoFullRed.execute()) {
+                                    active = false;
+                                    state = 0;
+                                }
+                            }
+                            else{
+                                if (auto.AutoFullBlueREDInner.execute()) {
+                                    active = false;
+                                    state = 0;
+                                }
                             }
                         }
                         else{
-                            if (auto.AutoFullBlue.execute()) {
-                                active = false;
-                                state = 0;
+                            if(!isInner) {
+                                if (auto.AutoFullBlue.execute()) {
+                                    active = false;
+                                    state = 0;
+                                }
+                            }
+                            else{
+                                if (auto.AutoFullBlueREDInner.execute()) {
+                                    active = false;
+                                    state = 0;
+                                }
                             }
                         }
                         break;
@@ -604,17 +621,16 @@ public class UG_6832 extends OpMode {
             robot.launcher.setActive(true);
             //robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
             if(robot.intake.isTented()){
+                robot.intake.isTented = false;
                 robot.intake.Do(Intake.Behavior.INTAKE);
             }
-            else{
+            else{//ben was here
                 robot.intake.Do(Intake.Behavior.DEPLOY);
             }
-            robot.intake.Do(Intake.Behavior.DEPLOY);
             robot.intake.alwaysASpinnin = true;
             robot.intake.setRollingRingMode(true);
 
             robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
-
         }
 
         shiftActive = gamepad1.dpad_down;
@@ -835,26 +851,26 @@ public class UG_6832 extends OpMode {
         pwrDamper = .90;
 
         // drive joysticks
-        pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
-        pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
+//        pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
+//        pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
 
         robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
 
         // turret controls - this is on gamepad2 in teleop - but on gamepad 1 for
         // prematch setup
-        if (notdeadzone(gamepad1.right_trigger))
-            robot.turret.rotateRight(gamepad1.right_trigger * 5);
-        if (notdeadzone(gamepad1.left_trigger))
-            robot.turret.rotateLeft(gamepad1.left_trigger * 5);
-
-        if (notdeadzone(gamepad1.right_stick_y)) {
-            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
-        }
+//        if (notdeadzone(gamepad1.right_trigger))
+//            robot.turret.rotateRight(gamepad1.right_trigger * 5);
+//        if (notdeadzone(gamepad1.left_trigger))
+//            robot.turret.rotateLeft(gamepad1.left_trigger * 5);
+//
+//        if (notdeadzone(gamepad1.right_stick_y)) {
+//            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
+//        }
         // fine adjustment of turret - this is on gamepad2 right stick in teleop - but
         // on gamepad 1 for prematch setup
-        if (notdeadzone(gamepad1.left_stick_x)) {
-            robot.turret.adjust(gamepad1.left_stick_x * TURRET_SPEED);
-        }
+//        if (notdeadzone(gamepad1.left_stick_x)) {
+//            robot.turret.adjust(gamepad1.left_stick_x * TURRET_SPEED);
+//        }
         //press blue button to set blue alliance
         if(toggleAllowed(gamepad1.x,x,1)) {
             ALLIANCE = Constants.Alliance.BLUE;
@@ -909,6 +925,8 @@ public class UG_6832 extends OpMode {
 
             Constants.isInner = false;
         }
+
+        robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_TELEOP_INIT_POS);
     }
 
     private void logTurns(double target) {

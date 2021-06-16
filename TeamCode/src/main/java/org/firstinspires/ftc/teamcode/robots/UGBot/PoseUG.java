@@ -593,6 +593,7 @@ public class PoseUG {
         packet.put("3Bottom color sensor G", bottomColorSensor.green());
         packet.put("1Bottom color sensor B", bottomColorSensor.blue());
         packet.put("4is on line", (bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD) &&  bottomColorSensor.green() > bottomColorSensor.red() && bottomColorSensor.green() > bottomColorSensor.blue() ? 100 : 0);
+        packet.put("extendabobtarget", launcher.gripperExtendABobTargetPos);
 
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
@@ -741,6 +742,11 @@ public class PoseUG {
 
         poseX += displacement * Math.sin(poseHeadingRad);
         poseY += displacement * Math.cos(poseHeadingRad);
+
+        if((bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD)
+                &&  bottomColorSensor.green() > bottomColorSensor.red()
+                && bottomColorSensor.green() > bottomColorSensor.blue())
+            poseY = Constants.MIDFIELD_COLOR_RESET_POSITION;
 
         lastXAcceleration = cachedXAcceleration;
         cachedXAcceleration = imu.getLinearAcceleration().xAccel;
@@ -1374,8 +1380,7 @@ public class PoseUG {
                 if(ringsShot == numShots){
                     shootRingStage++;
                 }
-
-                if(System.nanoTime() - shootTime > 0.1 * 1E9){
+                else if(System.nanoTime() - shootTime > 0.1 * 1E9){
                     shootRingStage--;//ben was here
                 }
                 break;
@@ -2232,7 +2237,7 @@ public class PoseUG {
 
     boolean intakeStartedByMonitor = false;
     void TentRingevatorMonitor(){
-    if (intake.isTented){
+    if (intake.isTented()){
             if(Math.abs(motorBackLeft.getPower())>.1 || Math.abs(motorBackRight.getPower())>.1) {
                 intake.setIntakeSpeed(1);
                 intakeStartedByMonitor=true; //yup, this is a very weak way to do it

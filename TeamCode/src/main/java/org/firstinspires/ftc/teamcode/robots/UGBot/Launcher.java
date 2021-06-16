@@ -58,7 +58,7 @@ public class Launcher {
     public int actualElbowMax = 1400;
     public int elbowMid = (actualElbowMax + elbowMin)/2;
     public int elbowMaxSafetyOffset = 70; //makes sure that the robot doesn't try and extend to the elbow max exactly
-    public int gripperExtendABobTargetPos = 0;
+    public int gripperExtendABobTargetPos = Constants.GRIPPER_INIT_POS;
 
     public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, DcMotor gripperExtendABob, Servo servoTrigger, Servo servoGripper, Servo servoWiper){
 
@@ -170,7 +170,7 @@ public class Launcher {
         gripperExtendABobTargetPos = Constants.GRIPPER_IN_POS;}
 
     public boolean IsGripperExtended(){
-        if(gripperExtendABob.getCurrentPosition()>Constants.GRIPPER_IN_POS + 50)
+        if(gripperExtendABob.getCurrentPosition()>Constants.GRIPPER_INIT_POS + 50)
             return true;
         else return false;
     }

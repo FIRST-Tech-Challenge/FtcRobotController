@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.system.CloseableOnFinalize;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.util.RateController;
@@ -121,7 +122,7 @@ public class Turret{
         if (!initialized) {
             //first time in - we assume that the robot has not started moving and that orientation values are set to the current absolute orientation
             //so first set of imu readings are effectively offsets
-            offsetHeading = wrapAngleMinus(360 - imuAngles.firstAngle, turretHeading);
+            offsetHeading = wrapAngleMinus(360 - imuAngles.firstAngle + Constants.TURRET_OFFSET_HEADING, turretHeading);
             offsetRoll = wrapAngleMinus(imuAngles.secondAngle, turretRoll);
             offsetPitch = wrapAngleMinus(imuAngles.thirdAngle, turretPitch);
             initialized = true;
@@ -339,6 +340,7 @@ public class Turret{
     }
 
     public void maintainHeadingTurret() {
+
 
         //initialze
         if (!maintainHeadingInit) {

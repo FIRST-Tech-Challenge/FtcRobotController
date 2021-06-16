@@ -93,9 +93,10 @@ public class Autonomous {
     private Constants.Position targetPose;
 
     public StateMachine AutoFullRed = getStateMachine(autoStage)
+            .addSingleState(() -> robot.launcher.setGripperExtendABobTargetPos(0))
             //deploy intake without waiting on completion so gripper deploys simultaneously
             .addSingleState(() -> robot.intake.Do(Intake.Behavior.DEPLOY))
-
+            .addSingleState(() -> robot.intake.autoIntakeEnabled = false)
             .addState(() -> robot.deployWobbleGoalGripperAuton())
             .addState(() -> robot.launcher.wobbleGrip())
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
@@ -115,8 +116,9 @@ public class Autonomous {
             //release the wobble goal
             .addState(() -> robot.releaseWobbleGoalAuton(false))
 
+            .addSingleState(() -> robot.launcher.gripperExtendABob.setPower(1))
             .addSingleState(() -> robot.launcher.gripperExtendABobTargetPos = Constants.GRIPPER_HALFWAY_POS)
-
+            .addSingleState(() -> robot.launcher.gripperExtendABob.setTargetPosition(Constants.GRIPPER_HALFWAY_POS))
             //.addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
 
             //back up
@@ -147,7 +149,11 @@ public class Autonomous {
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addSingleState(() -> Constants.IN_WOBBLE_MODE = false)
-            .addSingleState(() -> robot.turret.setDangerModeActive(true))
+
+//            .addSingleState(() -> robot.launcher.gripperExtendABob.setPower(1))
+//            .addSingleState(() -> robot.turret.setDangerModeActive(true))
+//            .addSingleState(() -> robot.launcher.gripperExtendABobTargetPos = Constants.GRIPPER_OUT_POS)
+            .addSingleState(() -> robot.launcher.gripperExtendABob.setTargetPosition(Constants.GRIPPER_OUT_POS))
 //            .addSingleState(() -> robot.turret.setCurrentMode(Turret.TurretMode.fieldRelative))
 
             //ben is a coder 😎
@@ -161,7 +167,7 @@ public class Autonomous {
 
             .addState(()-> robot.launcher.setElbowTargetAngle(15))
 
-            .addSingleState(() -> robot.launcher.gripperExtendABobTargetPos = Constants.GRIPPER_OUT_POS)
+
 
 //            .addSimultaneousStates(
 //                    () -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_EXIT, true, .8, .15),
@@ -208,7 +214,7 @@ public class Autonomous {
 
 
 
-    public StateMachine AutoFullBlue = getStateMachine(autoStage)
+    public StateMachine oldAutoFullBlue = getStateMachine(autoStage)
             //deploy intake without waiting on completion so gripper deploys simultaneously
             .addSingleState(() -> robot.intake.Do(Intake.Behavior.DEPLOY))
             .addSingleState(()-> robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE))
@@ -232,6 +238,8 @@ public class Autonomous {
             //release the wobble goal
             .addState(() -> robot.releaseWobbleGoalAuton(false))
             .addSingleState(() -> robot.turret.setDangerModeActive(true))
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
             .addSingleState(()-> robot.turret.setHeading(270))
 
             //.addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
@@ -284,6 +292,8 @@ public class Autonomous {
 
             .addState(() -> robot.releaseWobbleGoalAuton(true))
 
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
             .addSingleState(()-> robot.setTarget(Constants.Target.HIGH_GOAL))
 
             //lAUNCHING
@@ -300,6 +310,48 @@ public class Autonomous {
 
             //.addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .build();
+
+    public StateMachine AutoFullBlue = getStateMachine(autoStage)
+            .addSingleState(() -> robot.launcher.setGripperExtendABobTargetPos(0))
+            .addSingleState(() -> robot.intake.Do(Intake.Behavior.DEPLOY))
+            .addSingleState(() -> robot.intake.autoIntakeEnabled = false)
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED, true, 1, .1))
+            .addTimedState(1.7f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addState(()-> robot.rotateIMU(325,1))
+
+
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL, 3))
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addSingleState(()-> robot.gripperModeIsInReverse = false)
+            .addSingleState(()-> robot.intake.alwaysASpinnin = false)
+            .addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
+            .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .build();
+
+    public StateMachine AutoFullBlueREDInner = getStateMachine(autoStage)
+            .addSingleState(() -> robot.launcher.setGripperExtendABobTargetPos(0))
+            .addSingleState(() -> robot.intake.Do(Intake.Behavior.DEPLOY))
+            .addSingleState(() -> robot.intake.autoIntakeEnabled = false)
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED_INNER, true, 1, .1))
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addState(()-> robot.rotateIMU(325,1))
+
+
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL, 3))
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addSingleState(()-> robot.gripperModeIsInReverse = false)
+            .addSingleState(()-> robot.intake.alwaysASpinnin = false)
+            .addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
+            .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
 
@@ -336,13 +388,17 @@ public class Autonomous {
             .addSingleState(()-> robot.intake.Do(Intake.Behavior.DEPLOY))
             .addState(() -> robot.launcher.setElbowTargetAngle(0))
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true, .5,.1))
+//            .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED, true, .5,.1))
+//            .addState(()-> robot.rotateIMU(180,1))
+//
+//
+//            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//
+//            .addState(()-> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
 
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, false, .5,.1))
-            .addTimedState(4f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO, false, .5,.1))
-            .addTimedState(4f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(()-> robot.driveUntilXJank(1,false,Constants.startingXOffset,.05))
+            .addSingleState(()-> robot.intake.Do(Intake.Behavior.TENT_NO_RINGTAKE))
+
+
             .addTimedState(4f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
 

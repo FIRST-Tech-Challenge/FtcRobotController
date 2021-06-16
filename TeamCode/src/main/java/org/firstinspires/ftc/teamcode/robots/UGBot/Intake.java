@@ -42,7 +42,8 @@ public class Intake {
         INTAKE, //combo of pickup and elevate - not sure if needed, since Pickup should transition to elevate
         TENT, //enter tent mode
         ROLLING_RINGTAKE, //auto snap on rolling rings
-        REACH //todo: far reach
+        REACH, //todo: far reach
+        TENT_NO_RINGTAKE
     }
 
     public Behavior getBehavior() {
@@ -114,13 +115,20 @@ public class Intake {
                 break;
             case REACH: //not implemented
                 break;
+            case TENT_NO_RINGTAKE:
+                if(setupTent()){
+                    setRollingRingMode(false);
+//                    behavior=Behavior.ROLLING_RINGTAKE;
+                }
+                break;
             default:
                 return target;
         }
         return target;
     }
 
-    boolean autoIntakeEnabled = false;
+    boolean autoIntakeAllowed = false;
+    boolean autoIntakeEnabled = true;
     public void update(){
         if(active){
             intakeMotor.setPower(speed);
@@ -130,19 +138,21 @@ public class Intake {
         }
 
         if(behavior != Behavior.TRAVEL){
-            autoIntakeEnabled = false;
+            autoIntakeAllowed = false;
         }
 
         EMAofIntakeAmps = exponentialMovingAverage(intakeMotor.getCurrent(CurrentUnit.AMPS));
 
-        if(autoIntakeEnabled && EMAofIntakeAmps > Constants.INTAKE_AUTO_PICKUP_AMPS){
-            behavior = Behavior.INTAKE;
-        }
+        if(autoIntakeEnabled) {
 
-        if(behavior == Behavior.TRAVEL && EMAofIntakeAmps < Constants.INTAKE_AUTO_PICKUP_AMPS_LIM){
-            autoIntakeEnabled = true;
+//            if (autoIntakeAllowed && EMAofIntakeAmps > Constants.INTAKE_AUTO_PICKUP_AMPS) {
+//                behavior = Behavior.INTAKE;
+//            }
+//
+//            if (behavior == Behavior.TRAVEL && EMAofIntakeAmps < Constants.INTAKE_AUTO_PICKUP_AMPS_LIM) {
+//                autoIntakeAllowed = true;
+//            }
         }
-
 
         Do(behavior); //call the current Ringevator behavior
 
@@ -246,7 +256,7 @@ public class Intake {
     public boolean Intake(){
         switch(autoIntakeState){
             case 0:
-                autoIntakeEnabled = false;
+                autoIntakeAllowed = false;
                 if(isTented){ //this looks like bad coding, but it the only way to structure this
                     //agree it's bad but it's not the only way to handle this
                     wasTented = true;
@@ -269,7 +279,7 @@ public class Intake {
                 autoIntakeState++;
                 if (wasTented) {
                     //go straight to lift and handoff
-                    setTiltTargetPosition(Constants.INTAKE_HANDOFF__ROLLERS_TOP);
+                    setTiltTargetPosition(Constants.INTAKE_HANDOFF_TOP);
                     setOutTargetPosition(Constants.INTAKE_HANDOFF_BTM);
                     autoIntakeState++; //skip over next case
                 }
