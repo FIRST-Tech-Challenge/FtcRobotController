@@ -512,7 +512,7 @@ public class UG_6832 extends OpMode {
                         }
                         else{
                             if(!isInner) {
-                                if (auto.AutoFullBlue.execute()) {
+                                if (auto.AutoFullRed.execute()) {
                                     active = false;
                                     state = 0;
                                 }

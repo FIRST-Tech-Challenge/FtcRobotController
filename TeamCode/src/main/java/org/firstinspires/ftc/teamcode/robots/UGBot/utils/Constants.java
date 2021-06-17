@@ -21,11 +21,11 @@ public class Constants {
 
 
     //BEGIN Proteus Kinematics
-    public static final double ROBOT_RADIUS_INCHES = 8.5;
+    public static double ROBOT_RADIUS_INCHES = 8.5;
     public static double ITERATIONS = 10;
-    public static final double LAUNCHER_LENGTH = 0.24;
-    public static final double LAUNCHER_VERTICAL_OFFSET = 0.085;
-    public static final double BASE_LAUNCH_ANGLE = 19.50244851;
+    public static double LAUNCHER_LENGTH = 9 / INCHES_PER_METER;
+    public static double LAUNCHER_VERTICAL_OFFSET = 4.5 / INCHES_PER_METER;
+    public static double BASE_LAUNCH_ANGLE = 19.50244851;
 
     //MUZZLE Corrections
     //keep these X and Y muzzle offsets for reference
@@ -64,7 +64,7 @@ public class Constants {
 
     public static double HSV_THRESHOLD_HUE_MIN = 0.4668065215846204;
     public static double HSV_THRESHOLD_HUE_MAX = 1000;
-    public static double HSV_THRESHOLD_SATURATION_MIN = 60;
+    public static double HSV_THRESHOLD_SATURATION_MIN = 70;
     public static double HSV_THRESHOLD_SATURATION_MAX = 255.0;
     public static double HSV_THRESHOLD_VALUE_MIN = 109.84730100784292;
     public static double HSV_THRESHOLD_VALUE_MAX = 255.0;
@@ -84,15 +84,15 @@ public class Constants {
     public static double POWER_SHOT_RADIUS = 1;
     public static double startingXOffset = 49/INCHES_PER_METER;
     public static double startingYOffset = ROBOT_RADIUS_INCHES/INCHES_PER_METER;
-    public static double HEIGHT_MULTIPLIER = 1.45;
+    public static double HEIGHT_MULTIPLIER = 1.35; //1.45 breeh
     public static double RPS_MULTIPLIER = 1.07;
-    public static double MUZZLE_ANGLE_OFFSET_IN_TELE_OP = -5;
+    public static double MUZZLE_ANGLE_OFFSET_IN_TELE_OP = 2; //-5 breeh
     public static double STARTING_HEIGHT_OFFSET = 0;
     public static int  ELBOW_ZERO_DEGREES_OFFSET = 141;
     public static double ILLEGAL_SHOOTING_DISTANCE = 1.8288;
 
     public static int WOBBLE_GRIPPER_CLOSED = 2050;
-    public static int WOBBLE_GRIPPER_CLOSED_2 = 2100;
+    public static int WOBBLE_GRIPPER_CLOSED_2 = 2200;
     public static int WOBBLE_GRIPPER_RELEASE = 1400;
     public static int WOBBLE_GRIPPER_OPEN = 900;
     public static int GRIPPER_IN_POS = 0;
@@ -155,7 +155,7 @@ public class Constants {
 
     public static double TURRET_SPEED= 90; //max degrees per second to manually adjust turret targetAngle
     public static double TURRET_TOLERANCE = 2; //accuracy wiggle room
-    public static double TURRET_OFFSET_HEADING = 5;
+    public static double TURRET_OFFSET_HEADING = 0; // 5 breeh
 
     public static int LAUNCHER_TRIGGER_STOWED = 1900;
     public static int LAUNCHER_TRIGGER_SHOOT = 2040;
@@ -224,9 +224,9 @@ public class Constants {
         ALIGNMENT_RESET(49/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1,1),
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
         //TARGET_C_1(49/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, -1,190,-1,.2),
-        TARGET_C_1((49-3)/INCHES_PER_METER, 10.75*12/INCHES_PER_METER, -1,120,-1,.02),
-        TARGET_C_2((49)/INCHES_PER_METER, 9.75*12/INCHES_PER_METER, -1,45+45,-1,.02),
-        TARGET_C_3((49-12)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, -1,45+45,5,0),
+//        TARGET_C_1((49-3)/INCHES_PER_METER, 10.75*12/INCHES_PER_METER, -1,120,-1,.02),
+//        TARGET_C_2((49)/INCHES_PER_METER, 9.75*12/INCHES_PER_METER, -1,45+45,-1,.02),
+//        TARGET_C_3((49-12)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, -1,45+45,5,0),
         TARGET_B_1((49)/INCHES_PER_METER, 9*12/INCHES_PER_METER, 0,0,-1,.5), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
         TARGET_B_2((49)/INCHES_PER_METER, (9.5*12 - 8)/INCHES_PER_METER, 0,0,-1,0.5),
         TARGET_A_1((49)/INCHES_PER_METER, (7*12 - 2)/INCHES_PER_METER, -1,90,20,.02),
@@ -247,6 +247,8 @@ public class Constants {
         NAVIGATE_INNER((49+6 -24)/INCHES_PER_METER, 7*12/INCHES_PER_METER,-1,-1, -1, .2), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
         LAUNCH_PREFERRED((49)/INCHES_PER_METER, (4.9*12)/INCHES_PER_METER,325,-1, -1,1), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
         LAUNCH_PREFERRED_INNER((49 - 24)/INCHES_PER_METER, (4.9*12)/INCHES_PER_METER,315,-1, -1,1), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
+        TARGET_C_1((49)/INCHES_PER_METER, (8 * 12)/INCHES_PER_METER,-1,-1, -1,1),
+        TARGET_C_2((49 - 24)/INCHES_PER_METER, (8 * 12)/INCHES_PER_METER,-1,-1, -1,1),
         LAUNCH_ROLLERS(39/INCHES_PER_METER, (70)/INCHES_PER_METER,260,-1, -1,.2), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
         WOBBLE_GOAL_DUMP(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES + 3)/INCHES_PER_METER, -1, 180 + GRIPPER_HEADING_OFFSET, 45, .6),
         TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,330,30, 10, .2);

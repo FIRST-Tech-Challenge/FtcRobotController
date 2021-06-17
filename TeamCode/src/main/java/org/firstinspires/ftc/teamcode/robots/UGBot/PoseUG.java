@@ -779,7 +779,8 @@ public class PoseUG {
 
         //turret.setTurntableAngle(model.getTurretHeading());
 
-        trajCalc.updatePos(model.getMuzzleX(), model.getMuzzleY());
+//        trajCalc.updatePos(model.getMuzzleX(), model.getMuzzleY());
+        trajCalc.updatePos(poseX, poseY);
         trajCalc.updateVel(velocityX, velocityY);
         trajCalc.setTarget(target);
         trajSol = trajCalc.getTrajectorySolution();
