@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.MineralStateProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 /**
@@ -116,9 +117,9 @@ public class Autonomous {
             //release the wobble goal
             .addState(() -> robot.releaseWobbleGoalAuton(false))
 
-            .addSingleState(() -> robot.launcher.gripperExtendABob.setPower(1))
-            .addSingleState(() -> robot.launcher.gripperExtendABobTargetPos = Constants.GRIPPER_HALFWAY_POS)
-            .addSingleState(() -> robot.launcher.gripperExtendABob.setTargetPosition(Constants.GRIPPER_HALFWAY_POS))
+//            .addSingleState(() -> robot.launcher.gripperExtendABob.setPower(1))
+//            .addSingleState(() -> robot.launcher.gripperExtendABobTargetPos = Constants.GRIPPER_HALFWAY_POS)
+//            .addSingleState(() -> robot.launcher.gripperExtendABob.setTargetPosition(Constants.GRIPPER_HALFWAY_POS))
             //.addSingleState(() -> robot.setTarget(Constants.Target.HIGH_GOAL))
 
             //back up
@@ -143,9 +144,13 @@ public class Autonomous {
                     () -> robot.enterWobbleGoalMode()
             )
 
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO, false, .8, .5))
+            .addState(()-> robot.rotateIMU(Conversions.wrap360(robot.getBearingTo(Constants.Position.WOBBLE_TWO.x,Constants.Position.WOBBLE_TWO.y)-180),1))
 
-            .addState(() -> robot.launcher.wobbleGrip())
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO, false, .8, .6))
+
+            .addState(() -> robot.launcher.wobbleGrip2())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addSingleState(() -> Constants.IN_WOBBLE_MODE = false)
@@ -153,7 +158,7 @@ public class Autonomous {
 //            .addSingleState(() -> robot.launcher.gripperExtendABob.setPower(1))
 //            .addSingleState(() -> robot.turret.setDangerModeActive(true))
 //            .addSingleState(() -> robot.launcher.gripperExtendABobTargetPos = Constants.GRIPPER_OUT_POS)
-            .addSingleState(() -> robot.launcher.gripperExtendABob.setTargetPosition(Constants.GRIPPER_OUT_POS))
+//            .addSingleState(() -> robot.launcher.gripperExtendABob.setTargetPosition(Constants.GRIPPER_OUT_POS))
 //            .addSingleState(() -> robot.turret.setCurrentMode(Turret.TurretMode.fieldRelative))
 
             //ben is a coder 😎
@@ -174,7 +179,7 @@ public class Autonomous {
 //                    () -> robot.launcher.setElbowTargetAngle(20)
 //                            )
 
-            .addSingleState(()-> robot.rotateIMU(0,1))
+            .addState(()-> robot.rotateIMU(0,1))
 
             //place wobble 2
             .addMineralState(ugStateProvider,
@@ -193,7 +198,7 @@ public class Autonomous {
             .addState(() -> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED, false, 1, .1))
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-            .addState(()-> robot.rotateIMU(325,1))
+            .addState(()-> robot.rotateIMU(315,1))
 
 
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
@@ -312,14 +317,17 @@ public class Autonomous {
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
+//bruh we're metally regresing
     public StateMachine AutoFullBlue = getStateMachine(autoStage)
             .addSingleState(() -> robot.launcher.setGripperExtendABobTargetPos(0))
             .addSingleState(() -> robot.intake.Do(Intake.Behavior.DEPLOY))
             .addSingleState(() -> robot.intake.autoIntakeEnabled = false)
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED, true, 1, .1))
-            .addTimedState(1.7f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-            .addState(()-> robot.rotateIMU(325,1))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED, true, 1, .1))
+            .addTimedState(1.7f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(Constants.ALLIANCE == Constants.Alliance.RED ?
+                    () ->  robot.rotateIMU(300,1):
+                    () ->  robot.rotateIMU(325,1))
 
 
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
@@ -329,7 +337,10 @@ public class Autonomous {
 
             .addSingleState(()-> robot.gripperModeIsInReverse = false)
             .addSingleState(()-> robot.intake.alwaysASpinnin = false)
-            .addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
+//            .addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
+            .addState(()-> robot.rotateIMU(0,1))
+            //ben was here
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.NAVIGATE, true, 1, .1))
             .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
@@ -340,7 +351,7 @@ public class Autonomous {
             .addState(() -> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED_INNER, true, 1, .1))
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-            .addState(()-> robot.rotateIMU(325,1))
+            .addState(()-> robot.rotateIMU(315,1))
 
 
             .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
@@ -350,7 +361,9 @@ public class Autonomous {
 
             .addSingleState(()-> robot.gripperModeIsInReverse = false)
             .addSingleState(()-> robot.intake.alwaysASpinnin = false)
-            .addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
+//            .addSingleState(() -> robot.intake.Do(Intake.Behavior.TENT))
+            .addState(()-> robot.rotateIMU(0,1))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.NAVIGATE_INNER, true, 1, .1))
             .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 

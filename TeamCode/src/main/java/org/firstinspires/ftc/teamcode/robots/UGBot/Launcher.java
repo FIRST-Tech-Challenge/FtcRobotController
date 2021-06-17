@@ -177,6 +177,7 @@ public class Launcher {
 
 
     public boolean wobbleGrip(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;return true;}
+    public boolean wobbleGrip2(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED_2;return true;}
     public boolean wobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_RELEASE;return true;}
     public boolean gripperOpenWide(){gripperTargetPos = Constants.WOBBLE_GRIPPER_OPEN;return true;}
 

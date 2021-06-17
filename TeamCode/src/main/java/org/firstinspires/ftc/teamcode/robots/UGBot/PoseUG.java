@@ -386,7 +386,7 @@ public class PoseUG {
          */
         // setup subsystems
         launcher = new Launcher(elbow, flywheelMotor, gripperExtendABob, triggerServo, gripperServo, servoWiper);
-        turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
+        turretIMU = hwMap.get(BNO055IMU.class, "imuTest");
         turret = new Turret(turretMotor, turretIMU);
         intake = new Intake(intakeMotor, tiltServo, outServo);
 
@@ -530,6 +530,9 @@ public class PoseUG {
             Point targetPoint = CanvasUtils.toCanvasPoint(new Point(getTarget().getX(), getTarget().y));
             fieldOverlay.setStroke("#39FF14");
             fieldOverlay.strokeLine(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), targetPoint.getX(), targetPoint.getY());
+
+            // actual heading (purple)
+            CanvasUtils.drawVector(fieldOverlay, turretCenter, 1000, turret.getHeading(), "#6A0DAD");
         }
 
         // robot heading (black)
@@ -573,6 +576,7 @@ public class PoseUG {
         packet.put("target angle for the thing", goalHeading);
         packet.put("avg ticks",getAverageTicks());
         packet.put("voltage", getBatteryVoltage());
+        packet.put("emaAmperage", intake.EMAofIntakeAmps);
 //        packet.put("x offset", trajSol.getxOffset());
 //        packet.put("disk speed", trajSol.getVelocity());
 //        packet.put("pose speed", poseSpeed);
@@ -592,8 +596,9 @@ public class PoseUG {
         packet.put("2Bottom color sensor R", bottomColorSensor.red());
         packet.put("3Bottom color sensor G", bottomColorSensor.green());
         packet.put("1Bottom color sensor B", bottomColorSensor.blue());
-        packet.put("4is on line", (bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD) &&  bottomColorSensor.green() > bottomColorSensor.red() && bottomColorSensor.green() > bottomColorSensor.blue() ? 100 : 0);
+//        packet.put("4is on line", (bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD) &&  bottomColorSensor.green() > bottomColorSensor.red() && bottomColorSensor.green() > bottomColorSensor.blue() ? 100 : 0);
         packet.put("extendabobtarget", launcher.gripperExtendABobTargetPos);
+        packet.put("loop time", loopTime);
 
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
@@ -657,7 +662,6 @@ public class PoseUG {
     boolean autoLaunchActive = false;
     double autoLaunchTimer = 0.0;
     boolean ringChambered = false;
-
 
     public void update(BNO055IMU imu, long ticksLeft, long ticksRight, boolean isActive) {
         long currentTime = System.nanoTime();
@@ -743,10 +747,10 @@ public class PoseUG {
         poseX += displacement * Math.sin(poseHeadingRad);
         poseY += displacement * Math.cos(poseHeadingRad);
 
-        if((bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD)
-                &&  bottomColorSensor.green() > bottomColorSensor.red()
-                && bottomColorSensor.green() > bottomColorSensor.blue())
-            poseY = Constants.MIDFIELD_COLOR_RESET_POSITION;
+//        if((bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD)
+//                &&  bottomColorSensor.green() > bottomColorSensor.red()
+//                && bottomColorSensor.green() > bottomColorSensor.blue())
+//            poseY = Constants.MIDFIELD_COLOR_RESET_POSITION;
 
         lastXAcceleration = cachedXAcceleration;
         cachedXAcceleration = imu.getLinearAcceleration().xAccel;
@@ -783,6 +787,14 @@ public class PoseUG {
         if(setTargetInProgress){
             setTarget(target);
         }
+
+//        if(isRampedUp()){
+//            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+//
+//        }
+//        else{
+//            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
+//        }
 
         maintainTarget();
 
@@ -1291,22 +1303,29 @@ public class PoseUG {
         return true;
     }
 
+    public boolean isRampedUp(){
+        if(target == Constants.Target.NONE){
+            return false;
+        }
+
+        if ((Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < Constants.rampedUpPercent)
+                || (getTarget()== Constants.Target.NONE&& launcher.flywheelTPS<50)){ //you are also allowed to trigger (for settling rings) if you have no active target and your TPS is very low
+            return true;
+        }
+        return false;
+    }
 
     public int toggleTriggerState = 0;
     public long lastTriggerTime;
-    public boolean rampedUp = false;
 
     public boolean toggleTriggerArticulation() {
 
         if (getTarget()== Constants.Target.NONE){
 
         }
-        if ((Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < 0.05)
-            || (getTarget()== Constants.Target.NONE&& launcher.flywheelTPS<50)){ //you are also allowed to trigger (for settling rings) if you have no active target and your TPS is very low
-            rampedUp = true;
-        }
 
-        if(rampedUp){
+
+        if(isRampedUp()){
             switch (toggleTriggerState) {
                 case 0:
                     if(target == Constants.Target.NONE) {
@@ -1322,7 +1341,6 @@ public class PoseUG {
                     if (System.currentTimeMillis() - lastTriggerTime > 500) {
                         launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_BACK);
                         toggleTriggerState = 0;
-                        rampedUp = false;
                         return true;
                     }
                     break;
@@ -1380,7 +1398,7 @@ public class PoseUG {
                 if(ringsShot == numShots){
                     shootRingStage++;
                 }
-                else if(System.nanoTime() - shootTime > 0.1 * 1E9){
+                else if(System.nanoTime() - shootTime > 0.3 * 1E9){
                     shootRingStage--;//ben was here
                 }
                 break;

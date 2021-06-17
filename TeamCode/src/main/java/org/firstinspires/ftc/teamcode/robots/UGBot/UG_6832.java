@@ -136,9 +136,13 @@ public class UG_6832 extends OpMode {
     private int dpad_right_2 = 17;
     private int dpad_up_2 = 18;
     private int dpad_down_2 = 19;
+    private int y_2 = 20;
+    private int b_2 = 21;
+    private int a_2 = 22;
+    private int x_2 = 23;
 
     // values associated with the buttons in the toggleAllowedGP2 method
-    private boolean[] buttonSavedStates2 = new boolean[20];
+    private boolean[] buttonSavedStates2 = new boolean[24];
 
     boolean debugTelemetry = false;
 
@@ -748,16 +752,25 @@ public class UG_6832 extends OpMode {
             Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP -= 1.0;
         if(toggleAllowed(gamepad2.dpad_right, dpad_right_2, 17))
             Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP += 1.0;
-        if(toggleAllowed(gamepad2.dpad_up, dpad_up_2, 18))
-            Constants.STARTING_HEIGHT_OFFSET -= 0.02;
+        if(toggleAllowed(gamepad2.dpad_up, dpad_up_2, 18)) //broong
+            Constants.HEIGHT_MULTIPLIER += 0.02;
         if(toggleAllowed(gamepad2.dpad_down, dpad_down_2, 19))
-            Constants.STARTING_HEIGHT_OFFSET += 0.02;
+            Constants.HEIGHT_MULTIPLIER -= 0.02;
 
-        if(toggleAllowed(gamepad2.x,x,2)){
+        if(toggleAllowed(gamepad2.x, x_2, 20))
+            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP -= 3.0;
+        if(toggleAllowed(gamepad2.b, b_2, 21))
+            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP += 3.0;
+        if(toggleAllowed(gamepad2.y, y_2, 22)) //broong
+            Constants.HEIGHT_MULTIPLIER += 0.06;
+        if(toggleAllowed(gamepad2.a, a_2, 23))
+            Constants.HEIGHT_MULTIPLIER -= 0.06;
+
+        if(toggleAllowed(gamepad2.left_bumper, x,2)){
             Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP = 0;
         }
 
-        if(toggleAllowed(gamepad2.y,y,2)){
+        if(toggleAllowed(gamepad2.right_bumper,y,2)){
             Constants.STARTING_HEIGHT_OFFSET = 0;
         }
 
@@ -818,6 +831,9 @@ public class UG_6832 extends OpMode {
                     robot.setTarget(Constants.Target.THIRD_POWER_SHOT);
                     break;
                 case THIRD_POWER_SHOT:
+                    robot.setTarget(Constants.Target.TEST_TARGET);
+                    break;
+                case TEST_TARGET:
                     robot.setTarget(Constants.Target.FIRST_POWER_SHOT);
                     break;
                 default:
@@ -842,7 +858,7 @@ public class UG_6832 extends OpMode {
 //        robot.intake.update();
     }
 
-    private void joystickDrivePregameMode() {
+    private void joystickDrivePregameMode() { //positions set
         // robot.setAutonSingleStep(true); //single step through articulations having to
         // do with deploying
 
@@ -868,7 +884,6 @@ public class UG_6832 extends OpMode {
 //        }
         // fine adjustment of turret - this is on gamepad2 right stick in teleop - but
         // on gamepad 1 for prematch setup
-//        if (notdeadzone(gamepad1.left_stick_x)) {
 //            robot.turret.adjust(gamepad1.left_stick_x * TURRET_SPEED);
 //        }
         //press blue button to set blue alliance
@@ -896,7 +911,7 @@ public class UG_6832 extends OpMode {
             }
             else{
                 robot.setPoseX(Constants.Position.START_INNER.getX());
-                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
             }
         }
 
@@ -904,7 +919,7 @@ public class UG_6832 extends OpMode {
             robot.setPoseX(Constants.Position.START_INNER.getX());
 
             if(ALLIANCE == Constants.Alliance.RED) {
-                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
+                robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
             }
             else {
                 robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
@@ -1023,6 +1038,7 @@ public class UG_6832 extends OpMode {
         telemetry.addLine().addData("active", () -> active);
         telemetry.addLine().addData("state", () -> state);
         telemetry.addLine().addData("Alliance", () -> ALLIANCE);
+        telemetry.addLine().addData("Alliance", () -> isInner ? "inner":"outer");
         telemetry.addLine() .addData("autoStage", () -> auto.autoStage).addData("Game Mode", () -> GAME_MODES[gameMode]);
         telemetry.addLine() .addData("Articulation", () -> robot.getArticulation());
         telemetry.addLine().addData("elbow Current Position", () -> robot.launcher.getElbowCurrentPos());

@@ -143,8 +143,8 @@ public class Intake {
 
         EMAofIntakeAmps = exponentialMovingAverage(intakeMotor.getCurrent(CurrentUnit.AMPS));
 
-        if(autoIntakeEnabled) {
-
+//        if(autoIntakeEnabled) {
+//
 //            if (autoIntakeAllowed && EMAofIntakeAmps > Constants.INTAKE_AUTO_PICKUP_AMPS) {
 //                behavior = Behavior.INTAKE;
 //            }
@@ -152,7 +152,7 @@ public class Intake {
 //            if (behavior == Behavior.TRAVEL && EMAofIntakeAmps < Constants.INTAKE_AUTO_PICKUP_AMPS_LIM) {
 //                autoIntakeAllowed = true;
 //            }
-        }
+//        }
 
         Do(behavior); //call the current Ringevator behavior
 

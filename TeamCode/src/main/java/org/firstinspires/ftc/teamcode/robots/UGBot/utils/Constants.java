@@ -11,7 +11,7 @@ public class Constants {
     public static final int ENCODER_TICKS_PER_REVOLUTION = 28;
     public static final double FLYWHEEL_RADIUS = 0.0765;
     public static final double GRAVITY = 9.80665;
-    public static final double INCHES_PER_METER = 39.3701;
+    public static final double INCHES_PER_METER = 39.3700787;
     public static Alliance ALLIANCE = Alliance.RED;
     //public static int ALLIANCE_INT_MOD = (ALLIANCE == Alliance.RED ? 1 : -1); //todo don't know what this is, evaluates only on load, not in a loop
     public static int ALLIANCE_INT_MOD = 1;
@@ -21,8 +21,8 @@ public class Constants {
 
 
     //BEGIN Proteus Kinematics
-    public static final double ROBOT_RADIUS_INCHES = 8.75;
-    public static double ITERATIONS = 1;
+    public static final double ROBOT_RADIUS_INCHES = 8.5;
+    public static double ITERATIONS = 10;
     public static final double LAUNCHER_LENGTH = 0.24;
     public static final double LAUNCHER_VERTICAL_OFFSET = 0.085;
     public static final double BASE_LAUNCH_ANGLE = 19.50244851;
@@ -64,7 +64,7 @@ public class Constants {
 
     public static double HSV_THRESHOLD_HUE_MIN = 0.4668065215846204;
     public static double HSV_THRESHOLD_HUE_MAX = 1000;
-    public static double HSV_THRESHOLD_SATURATION_MIN = 40.13039568345324;
+    public static double HSV_THRESHOLD_SATURATION_MIN = 60;
     public static double HSV_THRESHOLD_SATURATION_MAX = 255.0;
     public static double HSV_THRESHOLD_VALUE_MIN = 109.84730100784292;
     public static double HSV_THRESHOLD_VALUE_MAX = 255.0;
@@ -84,14 +84,15 @@ public class Constants {
     public static double POWER_SHOT_RADIUS = 1;
     public static double startingXOffset = 49/INCHES_PER_METER;
     public static double startingYOffset = ROBOT_RADIUS_INCHES/INCHES_PER_METER;
-    public static double HEIGHT_MULTIPLIER = 1.15;
+    public static double HEIGHT_MULTIPLIER = 1.45;
     public static double RPS_MULTIPLIER = 1.07;
-    public static double MUZZLE_ANGLE_OFFSET_IN_TELE_OP = -8;
+    public static double MUZZLE_ANGLE_OFFSET_IN_TELE_OP = -5;
     public static double STARTING_HEIGHT_OFFSET = 0;
     public static int  ELBOW_ZERO_DEGREES_OFFSET = 141;
     public static double ILLEGAL_SHOOTING_DISTANCE = 1.8288;
 
-    public static int WOBBLE_GRIPPER_CLOSED = 2100;
+    public static int WOBBLE_GRIPPER_CLOSED = 2050;
+    public static int WOBBLE_GRIPPER_CLOSED_2 = 2100;
     public static int WOBBLE_GRIPPER_RELEASE = 1400;
     public static int WOBBLE_GRIPPER_OPEN = 900;
     public static int GRIPPER_IN_POS = 0;
@@ -107,9 +108,9 @@ public class Constants {
     //renaming the Intake servo combinations to group together in Dashboard
     public static int INTAKE_DEPLOY_TOP = 1250; //1300
     public static int INTAKE_DEPLOY2_TOP = 1600;
-    public static int INTAKE_DEPLOY_TRAVEL_BTM = 1650; //use as default bottom servo position if none specified
+    public static int INTAKE_DEPLOY_TRAVEL_BTM = 1600; //use as default bottom servo position if none specified
 
-    public static int INTAKE_HANDOFF_BTM = 1850; //was 1675
+    public static int INTAKE_HANDOFF_BTM = 1760; //was 1675
     public static int INTAKE_HANDOFF_TOP = 1500; //was 1450
     public static int INTAKE_DEFLECTORANNOYING_TOP = 1350; //was 1400
     public static int INTAKE_HANDOFF__ROLLERS_TOP = 1200; //could be different if we are in active targeting and need to clear the slinger wall
@@ -117,7 +118,7 @@ public class Constants {
     public static int INTAKE_INIT_BTM = 900;
     public static int INTAKE_INIT_TOP = 900;
 
-    public static int INTAKE_PICKUP_TOP = 1720; //1500
+    public static int INTAKE_PICKUP_TOP = 1680; //1500
 
     public static int INTAKE_TENT_BTM = 1500;//bruh.
     public static int INTAKE_TENT_TOP = 1750;
@@ -140,7 +141,7 @@ public class Constants {
 
     //chassis-relative angle that places the transfer tray into a good position to receive rings from the intake
     public static int INTAKE_TO_TURRET_XFER_ANGLE = 0; //was 360-25 for feather gate
-    public static int INTAKE_TO_TURRET_XFER_ELEVATION = 17;
+    public static int INTAKE_TO_TURRET_XFER_ELEVATION = 15;
 
     public static double INTAKE_SPEED = .8; //speed of walk and lift
     public static double INTAKE_TIME_FIRST = .65; //time to walk the ring
@@ -157,10 +158,11 @@ public class Constants {
     public static double TURRET_OFFSET_HEADING = 5;
 
     public static int LAUNCHER_TRIGGER_STOWED = 1900;
-    public static int LAUNCHER_TRIGGER_SHOOT = 2030;
+    public static int LAUNCHER_TRIGGER_SHOOT = 2040;
     public static int LAUNCHER_TRIGGER_BACK = 1780;
     public static int LAUNCHER_TRIGGER_FLIP = 1900;
     public static double autoLaunchTime = .1;
+    public static double rampedUpPercent = 0.009;
     public static double INTAKE_AUTO_PICKUP_TIME_BUFFER = 1;
 
     public static int LAUNCHER_WIPER_UNWIPED = 2100;
@@ -186,16 +188,16 @@ public class Constants {
         return targ.x * ALLIANCE_INT_MOD;
 }
 
-    public enum Target {
+    public enum Target { // 3 - 27 - 17.5
         NONE(0, 0, 0),
-        HIGH_GOAL(0.9144, 3.6576, 0.88),
-        MID_GOAL(0.9144,3.6576,.6858),
-        MID_GOAL_CLASSIC(-0.9144,3.6576,.6858),
-        LOW_GOAL(0.9144,3.6576,.4318),
-        FIRST_POWER_SHOT(.1016,3.6576,.8),
-        SECOND_POWER_SHOT(.2921,3.6576,.8),
-        THIRD_POWER_SHOT(.4826,3.6576,.8);
-
+        HIGH_GOAL((12 * 3)/INCHES_PER_METER, (3 + 6 * 24) / INCHES_PER_METER, (3 * 12) / INCHES_PER_METER),
+        MID_GOAL((12 * 3)/INCHES_PER_METER,(3 + 6 * 24) / INCHES_PER_METER,(27) / INCHES_PER_METER),
+        MID_GOAL_CLASSIC((12 * -3)/INCHES_PER_METER,3.6576,(27) / INCHES_PER_METER),
+        LOW_GOAL((12 * 3)/INCHES_PER_METER,(3 + 6 * 24) / INCHES_PER_METER,(17.5) / INCHES_PER_METER), //3.25 - 7.5
+        FIRST_POWER_SHOT((3.5) / INCHES_PER_METER,(3 + 6 * 24) / INCHES_PER_METER,30 / INCHES_PER_METER),
+        SECOND_POWER_SHOT((3.5 + 7.5) / INCHES_PER_METER,(3 + 6 * 24) / INCHES_PER_METER,30 / INCHES_PER_METER),
+        THIRD_POWER_SHOT((3.5 + 2 * 7.5) / INCHES_PER_METER,(3 + 6 * 24) / INCHES_PER_METER,30 / INCHES_PER_METER),
+        TEST_TARGET((12 * 3)/INCHES_PER_METER, (3 + 6 * 24) / INCHES_PER_METER, (3 * 12 + 8) / INCHES_PER_METER);
 
         public double getX(){
             return x  * ALLIANCE_INT_MOD;
@@ -227,23 +229,24 @@ public class Constants {
         TARGET_C_3((49-12)/INCHES_PER_METER, 9.5*12/INCHES_PER_METER, -1,45+45,5,0),
         TARGET_B_1((49)/INCHES_PER_METER, 9*12/INCHES_PER_METER, 0,0,-1,.5), //        TARGET_B_1((49-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
         TARGET_B_2((49)/INCHES_PER_METER, (9.5*12 - 8)/INCHES_PER_METER, 0,0,-1,0.5),
-        TARGET_A_1((49)/INCHES_PER_METER, 7.5*12/INCHES_PER_METER, -1,90,20,.02),
+        TARGET_A_1((49)/INCHES_PER_METER, (7*12 - 2)/INCHES_PER_METER, -1,90,20,.02),
         TARGET_A_1_BLUE((49)/INCHES_PER_METER, 7*12/INCHES_PER_METER, -1,0,20,.02),
-        TARGET_A_2((49)/INCHES_PER_METER, (7*12 - 6)/INCHES_PER_METER, -1,90,-1,0),
+        TARGET_A_2((49)/INCHES_PER_METER, (7*12 - 2)/INCHES_PER_METER, -1,90,-1,0),
         RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1,0),
         RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1), //sweep needs to be very slow
         RING_STACK_SWEEPTO(36/INCHES_PER_METER, (48-10+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1),
         //this is the actual location of wobble2 for reference, not meant as a robot drive target
         WOBBLE_TWO(25/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1,1),
-        WOBBLE_TWO_APPROACH((49+3)/INCHES_PER_METER, (2.5 * 12)/INCHES_PER_METER, 50, -1,-1, 0),
+        WOBBLE_TWO_APPROACH((49+3)/INCHES_PER_METER, (2.5 * 12)/INCHES_PER_METER, -1, -1,-1, 0),
         WOBBLE_TWO_APPROACH_BLUE((49+3)/INCHES_PER_METER, (2.5 * 12)/INCHES_PER_METER, 310, -1,-1, 0),
-        WOBBLE_TWO_EXIT((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 90 + GRIPPER_HEADING_OFFSET,-1, 1),
-        WOBBLE_TWO_EXIT_BLUE((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 90 + GRIPPER_HEADING_OFFSET,-1, 1),
+        WOBBLE_TWO_EXIT((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 90 + GRIPPER_HEADING_OFFSET,15, 1),
+        WOBBLE_TWO_EXIT_BLUE((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 90 + GRIPPER_HEADING_OFFSET,15, 1),
         WOBBLE_TWO_EXIT_B((49+3)/INCHES_PER_METER, (2.5*12)/INCHES_PER_METER, 350, 0,-1, .02),
         WOBBLE_TWO_GRAB (30/INCHES_PER_METER, (30)/INCHES_PER_METER, -1, -1,-1,-1),
         NAVIGATE((49+6)/INCHES_PER_METER, 7*12/INCHES_PER_METER,-1,-1, -1, .2), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
-        LAUNCH_PREFERRED((49)/INCHES_PER_METER, (5.3*12)/INCHES_PER_METER,325,-1, -1,1), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
-        LAUNCH_PREFERRED_INNER((49 - 24)/INCHES_PER_METER, (5.3*12)/INCHES_PER_METER,325,-1, -1,1), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
+        NAVIGATE_INNER((49+6 -24)/INCHES_PER_METER, 7*12/INCHES_PER_METER,-1,-1, -1, .2), //NAVIGATE(35/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5)
+        LAUNCH_PREFERRED((49)/INCHES_PER_METER, (4.9*12)/INCHES_PER_METER,325,-1, -1,1), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
+        LAUNCH_PREFERRED_INNER((49 - 24)/INCHES_PER_METER, (4.9*12)/INCHES_PER_METER,315,-1, -1,1), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
         LAUNCH_ROLLERS(39/INCHES_PER_METER, (70)/INCHES_PER_METER,260,-1, -1,.2), //LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,180,-1, -1,0)
         WOBBLE_GOAL_DUMP(49/INCHES_PER_METER, (ROBOT_RADIUS_INCHES + 3)/INCHES_PER_METER, -1, 180 + GRIPPER_HEADING_OFFSET, 45, .6),
         TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,330,30, 10, .2);
