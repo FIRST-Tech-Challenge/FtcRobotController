@@ -199,8 +199,8 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroTurn(-85, 0.5);
                 robot.gyroDriveCm(-0.5, 40);
                 dropWobble();
+                robot.gyroDriveCm(0.7,60);
                 setOdometryAngle(0);
-                robot.gyroDriveCm(0.7,-60);
                 goToEnd();
                 //backup
                 //robot.gyroDriveCm(-.5, 10);
@@ -222,8 +222,9 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroTurn(165, 0.5);
                 robot.gyroDriveCm(-.75, 80);
                 dropWobble();
+                //setOdometryAngle(0);
+                robot.gyroDriveCm(0.7,60);
                 setOdometryAngle(0);
-                robot.gyroDriveCm(0.7,-60);
                 goToEnd();
                 //odometryDriveToPos(100,100);
                 break;
@@ -234,6 +235,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroDriveCm(.6, 117);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(2250);
+
                 intake.setPower(0);
                 flipper.setPosition(0);
                 Thread.sleep(500);//CHANGE!!!!!!! slower
@@ -250,8 +252,9 @@ public class AutonomousMain extends LinearOpMode {
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
+                //setOdometryAngle(0);
+                robot.gyroDriveCm(0.7, 150);
                 setOdometryAngle(0);
-                robot.gyroDriveCm(0.7,-150);
                 goToEnd();
                 //odometryDriveToPos(100,100);
                 break;
@@ -322,7 +325,7 @@ public class AutonomousMain extends LinearOpMode {
 
     }
     public void goShoot() throws InterruptedException{
-        double power = .64;
+        double power = .76;
         double power_off = 0;
 
         outtakeLeft.setPower(power);//or 0.44

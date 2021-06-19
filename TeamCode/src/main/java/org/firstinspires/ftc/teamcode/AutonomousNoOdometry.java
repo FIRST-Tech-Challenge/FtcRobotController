@@ -152,7 +152,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
         positionThread.start();
 
         goShoot();
-
+        outtakeLeft.setPower(0);
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
         int stackThreshold = 60;
@@ -210,28 +210,46 @@ public class AutonomousNoOdometry extends LinearOpMode {
                 break;
             case 3:
                 intake.setPower(-0.85);
-                robot.gyroDriveCm(-.6, 117);
-                Thread.sleep(400);
-                robot.gyroDriveCm(.6, 117);
-                outtakeLeft.setPower(.65);
-                Thread.sleep(2250);
-                intake.setPower(0);
-                flipper.setPosition(0);
-                Thread.sleep(500);//CHANGE!!!!!!! slower
+                robot.gyroDriveCm(-.6, 110);
+                Thread.sleep(200);
+                robot.gyroDriveCm(.6, 112);
+                Thread.sleep(200);
+                outtakeLeft.setPower(.76);
+                Thread.sleep(1150);
+
+                for(int i = 0; i < 3; i++){
+                    Thread.sleep(250);
+                    flipper.setPosition(0);
+                    Thread.sleep(250);//CHANGE!!!!!!! slower
+                    flipper.setPosition(1);
+                    Thread.sleep(250);//CHANGE!!!!!!!!
+                    outtakeLeft.setPower(.76);//or 0.44
+                    outtakeRight.setPower(0);//or 0.44
+                }
                 flipper.setPosition(1);
-                Thread.sleep(500);//CHANGE!!!!!!!!
-                intake.setPower(0);
-                flipper.setPosition(0);
-                Thread.sleep(500);//CHANGE!!!!!!! slower
-                flipper.setPosition(1);
-                Thread.sleep(500);//CHANGE!!!!!!!!
                 outtakeLeft.setPower(0);
                 outtakeRight.setPower(0);
+
+//                intake.setPower(0);
+//                flipper.setPosition(0);
+//                Thread.sleep(250);//CHANGE!!!!!!! slower
+//                flipper.setPosition(1);
+//                flipper.setPosition(0);
+//                Thread.sleep(250);//CHANGE!!!!!!!!
+//                flipper.setPosition(1);
+//                flipper.setPosition(0);
+//                Thread.sleep(250);//CHANGE!!!!!!! slower
+//                flipper.setPosition(1);
+//                Thread.sleep(250);//CHANGE!!!!!!!!
+//                intake.setPower(0);
+//                outtakeLeft.setPower(0);
+//                outtakeRight.setPower(0);
                 robot.gyroTurn(180, 0.5);
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
-                robot.gyroDriveCm(.75, 130);
+                robot.gyroDriveCm(
+                        .75, 130);
                 //odometryDriveToPos(100,100);
                 break;
             default:
@@ -302,7 +320,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
 
     }
     public void goShoot() throws InterruptedException{
-        double power = .64;
+        double power = .76;
         double power_off = 0;
 
         outtakeLeft.setPower(power);//or 0.44
@@ -312,11 +330,11 @@ public class AutonomousNoOdometry extends LinearOpMode {
         robot.gyroStrafeCm(0.5, -90, 105);
 
         for(int i = 0; i < 3; i++){
-            Thread.sleep(500);
+            Thread.sleep(250);
             flipper.setPosition(0);
-            Thread.sleep(500);//CHANGE!!!!!!! slower
+            Thread.sleep(250);//CHANGE!!!!!!! slower
             flipper.setPosition(1);
-            Thread.sleep(500);//CHANGE!!!!!!!!
+            Thread.sleep(250);//CHANGE!!!!!!!!
             outtakeLeft.setPower(power);//or 0.44
             outtakeRight.setPower(power_off);//or 0.44
         }

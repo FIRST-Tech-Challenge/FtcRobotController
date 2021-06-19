@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+
 //import org.openftc.revextensions2.ExpansionHubEx;
 
 /**
@@ -25,11 +26,11 @@ public class MainTeleop extends LinearOpMode{
 
     private DcMotor intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
-    private Servo flipper, wobbleClaw;
+    private Servo flipper, wobbleClaw, leftwing, rightwing;
 
     private BNO055IMU imu;
 
-    private IMURobot robot;
+   // private IMURobot  robot;
 
     //Figures for ring elevator calculations
     private static final double PINION_CIRCUMFERENCE = 2.57;
@@ -62,10 +63,12 @@ public class MainTeleop extends LinearOpMode{
         //intake and conveyor
         intake = hardwareMap.dcMotor.get("intake");
 
-        //wobble and flipper
+        //wobble and flipper and wings
         wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
         wobbleClaw = hardwareMap.servo.get("wobbleClaw");
         flipper = hardwareMap.servo.get("flipper");
+        leftwing = hardwareMap.servo.get("leftwing");
+        rightwing = hardwareMap.servo.get("rightwing");
 
         //launcher  //Feb 7 - Jeff commmented out these motor definitions
         //outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
@@ -97,15 +100,15 @@ public class MainTeleop extends LinearOpMode{
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, wobbleArm, wobbleClaw, flipper, intake,
-                outtakeRight, outtakeLeft, this);
+     //   robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
+     //           imu, wobbleArm, wobbleClaw, flipper, intake,
+     //           outtakeRight, outtakeLeft, leftwing, rightwing, this);
 
-        robot.setupRobot();//calibrate IMU, set any required parameters
+     //   robot.setupRobot();//calibrate IMU, set any required parameters
 
         double powerMod = 1.0;
         double intakeMod = 1.0;
-        double outtakeMod = .64;
+        double outtakeMod = .76;
         double wobbleMod = .3;
 
         waitForStart();
@@ -130,16 +133,27 @@ public class MainTeleop extends LinearOpMode{
             /*
             Change direction of intake
             */
-            if(gamepad1.a){//press and hold a while running intake
-                intakeMod = -1.0;
-            }else{
+            if(gamepad1.right_trigger>0){//press and hold a while running intake
                 intakeMod = 1.0;
+            }else{
+                intakeMod = -1.0;
             }
-            double intakeSpeed = gamepad1.left_trigger * intakeMod * .85;
+
+            if(gamepad1.x){
+                leftwing.setPosition(1);
+                rightwing.setPosition(1);
+            }
+            else if(gamepad1.y){
+                leftwing.setPosition(0);
+                rightwing.setPosition(0);
+            }
+            //intakeMod=-1.0;
+            double intakeSpeed = gamepad1.left_trigger * intakeMod;//intake
+            // * .85;
             intake.setPower(intakeSpeed);
 
-
-
+        //    double ejectSpeed = gamepad1.right_trigger * 1.0;//eject
+       //     intake.setPower(ejectSpeed);
             //Ring flipper
             //Run by a servo, 1 is fully "flipped" position, 0 is fully "retracted" position
             //Hold down b button to flip ring out
@@ -147,9 +161,10 @@ public class MainTeleop extends LinearOpMode{
 
             if(gamepad2.a){
                 flipper.setPosition(0);
-                Thread.sleep(500);
+                Thread.sleep(250);
                 flipper.setPosition(1);
             }
+
 
             telemetry.addData("flipper position", flipper.getPosition());
 
@@ -174,10 +189,10 @@ public class MainTeleop extends LinearOpMode{
 
 
             if(gamepad2.right_bumper){
-                outtakeMod= .57;
+                outtakeMod= .66;
                 //outtakeMod = 0.32; //power shots
             }else{
-                outtakeMod=.64;
+                outtakeMod=.76;
                // outtakeMod = 0.3225;
             }
             double outtakePower = outtakeMod;
