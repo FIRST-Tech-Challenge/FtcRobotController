@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
 /**
  * Ultimate Goal TeleOp mode <BR>
  *
- *  This code defines the TeleOp mode is done by Hazmat Robot for Ultimate Goal.<BR>
+ *  *  This code defines the TeleOp mode is done by Hazmat Robot for Ultimate Goal.<BR>
  *
  */
 @TeleOp(name = "Hazmat TeleOp RR", group = "00-Teleop")
