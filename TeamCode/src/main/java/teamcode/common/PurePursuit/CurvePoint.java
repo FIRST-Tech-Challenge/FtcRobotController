@@ -14,6 +14,7 @@ public class CurvePoint {
     //slows down robot when overshot
     double slowDownTurnAmount;
     boolean isLast;
+    long waitMillis; //millis to wait when the
 
     public CurvePoint(double x, double y, double moveSpeed, double turnSpeed, double followDistance, double slowDownTurnDegrees, double slowDownTurnAmount){
         this.x = x;
@@ -38,20 +39,13 @@ public class CurvePoint {
         isLast = false;
     }
 
-    /**
-     *
-     * @param thisPoint the parameters of the point that you are pursuing
-     * @param isLast differentiates the last point in the list from the others
-     */
-    public CurvePoint(CurvePoint thisPoint, boolean isLast){
+
+
+
+    //Curve point parameters are going to be zero, need this to cast tho
+    public CurvePoint(Point thisPoint){
         x = thisPoint.x;
         y = thisPoint.y;
-        moveSpeed = thisPoint.moveSpeed;
-        turnSpeed = thisPoint.turnSpeed;
-        followDistance = thisPoint.followDistance;
-        //pointLength = thisPoint.pointLength;
-        slowDownTurnRads = thisPoint.slowDownTurnRads;
-        slowDownTurnAmount = thisPoint.slowDownTurnAmount;
     }
 
     public Point toPoint(){

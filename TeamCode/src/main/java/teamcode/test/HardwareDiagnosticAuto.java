@@ -10,8 +10,9 @@ import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Point;
 import teamcode.common.Utils;
+import teamcode.common.Vector2D;
 
-
+@Disabled
 @Autonomous(name="HardwareDiagnostic")
 public class HardwareDiagnosticAuto extends AbstractOpMode {
     Localizer localizer;
@@ -19,7 +20,7 @@ public class HardwareDiagnosticAuto extends AbstractOpMode {
     private final double POWER = 0.5;
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Point(0,0), 0);
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0);
         drive = new MecanumDriveTrain(hardwareMap);
 
     }
@@ -29,12 +30,12 @@ public class HardwareDiagnosticAuto extends AbstractOpMode {
 
         //FIXED
         try {
-            //drive.setPower(POWER, 0, 0, 0); //good
-            //Thread.sleep(1000);
-//            drive.setPower(0, POWER, 0, 0); //good
-//            Thread.sleep(1000);
-            //drive.setPower(0, 0, POWER, 0); //bad
-            //Thread.sleep(1000);
+            drive.setPower(POWER, 0, 0, 0); //good
+            Thread.sleep(1000);
+            drive.setPower(0, POWER, 0, 0); //good
+            Thread.sleep(1000);
+            drive.setPower(0, 0, POWER, 0); //bad
+            Thread.sleep(1000);
             drive.setPower(0, 0, 0, POWER); //bad
             Thread.sleep(1000);
         } catch (InterruptedException e) {

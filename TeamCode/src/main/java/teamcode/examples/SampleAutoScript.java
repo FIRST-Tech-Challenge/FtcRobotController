@@ -1,6 +1,7 @@
 package teamcode.examples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -28,6 +29,7 @@ import teamcode.common.PurePursuit.PurePursuitMovement;
 import teamcode.common.Vector2D;
 import teamcode.test.CVNew.OpenCVTest;
 
+@Disabled
 @Autonomous(name= "example Autonomous")
 public class SampleAutoScript extends AbstractOpMode {
     /*
@@ -44,8 +46,8 @@ public class SampleAutoScript extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Point(25, 25), 0); //calibrate this
-        movement = new PurePursuitMovement(localizer);
+        localizer = new Localizer(hardwareMap, new Vector2D(25, 25), 0); //calibrate this
+        //movement = new PurePursuitMovement(localizer);
         drivetrain = new MecanumDriveTrain(hardwareMap);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
@@ -55,10 +57,10 @@ public class SampleAutoScript extends AbstractOpMode {
             webcam.startStreaming(320, 240); //specify cam orientation and calibrate the resolution
         });
         allPoints = new ArrayList<>(); //IT IS CRITICAL WHEN BUILDING THIS LIST to add the starting position of the robot, this way the framework works as intended
-        allPoints.add(new CurvePoint(localizer.getCurrentPosition().x, localizer.getCurrentPosition().y, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(50, 25, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(50, 50, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(25, 50, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
+//        allPoints.add(new CurvePoint(localizer.getCurrentPosition().x, localizer.getCurrentPosition().y, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
+//        allPoints.add(new CurvePoint(50, 25, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
+//        allPoints.add(new CurvePoint(50, 50, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
+//        allPoints.add(new CurvePoint(25, 50, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
 
     }
 
@@ -159,11 +161,11 @@ public class SampleAutoScript extends AbstractOpMode {
     }
 
     private void followPath(ArrayList<CurvePoint> path) {
-        movement.initPath(path);
-        while(movement.isActive || opModeIsActive()){
-            movement.followCurve(path, 0); //path is the path and follow angle is in DEGREES
-            drivetrain.setPower(new Vector2D(MovementVars.movementX, -MovementVars.movementY), MovementVars.movementTurn);
-        }
+//        movement.initPath(path);
+//        while(movement.isActive || opModeIsActive()){
+//            movement.followCurve(path, 0); //path is the path and follow angle is in DEGREES
+//            drivetrain.setPower(new Vector2D(MovementVars.movementX, -MovementVars.movementY), MovementVars.movementTurn);
+//        }
     }
 
     //prints to a file in the format
@@ -171,15 +173,15 @@ public class SampleAutoScript extends AbstractOpMode {
     @Override
     protected void onStop() {
 
-        Point currentPos = localizer.getCurrentPosition();
-        double currentAng = localizer.getGlobalRads();
-        File f = new File(Constants.SAVE_FILE_PATH);
-        try {
-            PrintStream ps = new PrintStream(f);
-            ps.println(currentPos.toStringData() + " " + currentAng);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        Point currentPos = localizer.getCurrentPosition();
+//        double currentAng = localizer.getGlobalRads();
+//        File f = new File(Constants.SAVE_FILE_PATH);
+//        try {
+//            PrintStream ps = new PrintStream(f);
+//            ps.println(currentPos.toStringData() + " " + currentAng);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
 

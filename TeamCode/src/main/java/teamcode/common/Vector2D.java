@@ -2,16 +2,19 @@ package teamcode.common;
 
 /**
  * Represents an immutable 2-dimensional vector.
+ * This class is immutable.
  */
 public final class Vector2D implements Cloneable {
 
-    private final double x;
-    private final double y;
+    private double x;
+    private double y;
 
     public Vector2D(double x, double y) {
         this.x = x;
         this.y = y;
     }
+
+
 
     /**
      * Returns a new vector with the specified angle and magnitude.
@@ -95,12 +98,15 @@ public final class Vector2D implements Cloneable {
 
     @Override
     public String toString() {
-        return String.format("[%.1f, %.1f]", x, y);
+        return String.format("[%.3f, %.3f]", x, y);
     }
 
     @Override
-    public Vector2D clone() {
-        return new Vector2D(x, y);
+    public Vector2D clone() throws CloneNotSupportedException {
+        Vector2D newVec = (Vector2D)super.clone();
+        newVec.x = this.x;
+        newVec.y = this.y;
+        return newVec;
     }
 
 }

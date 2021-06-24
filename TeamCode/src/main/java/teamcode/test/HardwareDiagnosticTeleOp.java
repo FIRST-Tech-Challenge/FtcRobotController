@@ -10,7 +10,7 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Point;
 import teamcode.common.Vector2D;
 
-
+@Disabled
 @TeleOp(name="HardwareDiagnosticTO")
 public class HardwareDiagnosticTeleOp extends AbstractOpMode {
     //tests odo and drive
@@ -20,7 +20,7 @@ public class HardwareDiagnosticTeleOp extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         driveTrain = new MecanumDriveTrain(hardwareMap);
-        localizer = new Localizer(hardwareMap, new Point(0,0), 0);
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0);
 
     }
 

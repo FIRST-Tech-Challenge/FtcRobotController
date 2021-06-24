@@ -1,14 +1,12 @@
-package teamcode.League1;
+package teamcode.Competition;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import teamcode.League1.Shooter;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Localizer;
@@ -16,7 +14,7 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Point;
 import teamcode.common.Vector2D;
 
-
+@Disabled
 @TeleOp(name = "FirstTeleOpScript")
 public class TeleOpTest extends AbstractOpMode {
 
@@ -39,7 +37,7 @@ public class TeleOpTest extends AbstractOpMode {
     // try-catch stuff with localizer and drive train
         try {
             Scanner fileParser = new Scanner(new File(Constants.SAVE_FILE_PATH));
-            localizer = new Localizer(hardwareMap, new Point(fileParser.nextDouble(), fileParser.nextDouble()), fileParser.nextDouble());
+            localizer = new Localizer(hardwareMap, new Vector2D(fileParser.nextDouble(), fileParser.nextDouble()), fileParser.nextDouble());
             driveTrain = new MecanumDriveTrain(hardwareMap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -83,7 +81,7 @@ public class TeleOpTest extends AbstractOpMode {
                         shooter.intake(INTAKE_MOTOR_POWER);
                      }
                     if(gamepad1.x) {
-                        shooter.shoot(1);
+                        shooter.shoot(1, 0.95);
                 }
             }
         }

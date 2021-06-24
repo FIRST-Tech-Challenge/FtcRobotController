@@ -1,10 +1,11 @@
 package teamcode.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import teamcode.common.AbstractOpMode;
-
+@Disabled
 @TeleOp(name="MotorTest")
 public class MotorTest extends AbstractOpMode {
     DcMotor motor1, motor2;

@@ -1,12 +1,13 @@
 package teamcode.examples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import teamcode.League1.Shooter;
+import teamcode.Competition.Shooter;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Localizer;
@@ -14,6 +15,7 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Point;
 import teamcode.common.Vector2D;
 
+@Disabled
 @TeleOp(name="exampleTeleOp")
 public class SampleTeleOp extends AbstractOpMode {
 
@@ -48,7 +50,7 @@ public class SampleTeleOp extends AbstractOpMode {
     protected void onInitialize() {
         try {
             Scanner fileParser = new Scanner(new File(Constants.SAVE_FILE_PATH));
-            localizer = new Localizer(hardwareMap, new Point(fileParser.nextDouble(), fileParser.nextDouble()), fileParser.nextDouble());
+            localizer = new Localizer(hardwareMap, new Vector2D(fileParser.nextDouble(), fileParser.nextDouble()), fileParser.nextDouble());
             driveTrain = new MecanumDriveTrain(hardwareMap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
