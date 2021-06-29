@@ -13,28 +13,9 @@
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
-
-repositories {
-    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
-    maven { url 'http://repo1.maven.org/maven2' }
-    jcenter()
-    google()
-}
+apply from: '../build.dependencies.gradle'
 
 dependencies {
+    implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
-    annotationProcessor 'org.projectlombok:lombok:1.18.6'
-
-    implementation 'junit:junit:4.12'
-    implementation 'com.acmerobotics.roadrunner:core:0.4.6'
-    implementation 'com.acmerobotics.dashboard:dashboard:0.3.4'
-    implementation 'com.android.support:multidex:1.0.3'
-    compileOnly 'org.projectlombok:lombok:1.18.6'
-    testImplementation 'org.mockito:mockito-core:2.27.0'
-    testImplementation 'com.google.guava:guava-testlib:27.1-android'
-    api 'com.google.guava:guava:27.1-android'
-    implementation 'com.ftc9929.TntFtcCore:corelib:2fe61ed'
-    implementation 'com.ftc9929.TntFtcCore:fakeHardware:2fe61ed'
-    implementation 'com.ftc9929.TntFtcCore:metrics:2fe61ed'
-    testImplementation 'com.ftc9929.TntFtcCore:fakeHardware:2fe61ed'
 }
