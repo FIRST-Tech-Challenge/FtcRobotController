@@ -372,12 +372,14 @@ public class Hardware {
             return new double[]{radius,theta};
         }
     }
+
     /**
      * given rectangular coordinates (x,y), returns array of equivalent polar coordinates (r, theta)
      * @param x x-coordinate
      * @param y y-coordinate
      * @return array of length 2 containing equivalent polar coordinates
      */
+
     public static double[] convertRectangularToPolar(double x, double y) {
         return convertRectangularToPolar(new double[]{x, y});
     }
