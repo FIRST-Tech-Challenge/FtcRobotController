@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
@@ -175,10 +176,10 @@ public class Hardware {
         driveBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         //assign motor directions
-        driveFrontRight.setDirection(DcMotor.Direction.FORWARD);
-        driveFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        driveBackLeft.setDirection(DcMotor.Direction.REVERSE);
-        driveBackRight.setDirection(DcMotor.Direction.FORWARD);
+        driveFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        driveFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+        driveBackLeft.setDirection(DcMotor.Direction.FORWARD);
+        driveBackRight.setDirection(DcMotor.Direction.REVERSE);
     }
     //servos
     private void initServos() {
@@ -282,15 +283,17 @@ public class Hardware {
         setDrivetrainPowerMecanum(FrBlPairPower, FlBrPairPower);
     }
     /**
+     * TODO: reimplement heading correction once odometry is up and running
      * causes the robot to strafe a given direction, at a given power, for a given distance using PIDs
      * power and distance should always be positive
+     * DOES NOT USE IMU ANYMORE BC THAT WAS CAUSING ISSUES
      * @param power             power factor
      * @param angle             direction to strafe relative to robot, measure in radians, angle of 0 == starboard
      * @param targetDistance    distance to strafe, measured in meters
      */
-    public synchronized void strafeToDistance(double power, double angle, double targetDistance){
+    public void strafeToDistance(double power, double angle, double targetDistance){
         //initial heading and encoder counts
-        double initialHeading = getGlobalAngle();
+        //double initialHeading = getGlobalAngle();
         int initialFrBlAxisEncoderCount = (driveFrontRight.getCurrentPosition() + driveBackLeft.getCurrentPosition())/2;
         int initialFlBrAxisEncoderCount = (driveFrontLeft.getCurrentPosition() + driveBackRight.getCurrentPosition())/2;
 
@@ -315,9 +318,9 @@ public class Hardware {
         FlBrStrafePIDController.setSetpoint(FlBrAxisTarget);
         FlBrStrafePIDController.enable();
         //rotation PID (will be used to maintain constant heading)
-        rotatePIDController.reset();
-        rotatePIDController.setSetpoint(initialHeading);
-        rotatePIDController.enable();
+        //rotatePIDController.reset();
+        //rotatePIDController.setSetpoint(initialHeading);
+        //rotatePIDController.enable();
 
 
         while (!FrBlStrafePIDController.onTarget() || !FlBrStrafePIDController.onTarget()) {
@@ -328,29 +331,41 @@ public class Hardware {
             //get correction values
             double FrBlCorrection = FrBlStrafePIDController.performPID(FrBlAxisEncoderCount - initialFrBlAxisEncoderCount);
             double FlBrCorrection = FlBrStrafePIDController.performPID(FlBrAxisEncoderCount - initialFlBrAxisEncoderCount);
-            double rotationCorrection = rotatePIDController.performPID(getGlobalAngle());
+            //double rotationCorrection = rotatePIDController.performPID(getGlobalAngle());
 
             //assign drive motor powers
             setDrivetrainPower(
-                    (FrBlPairPower*FrBlCorrection) + rotationCorrection,
-                    (FlBrPairPower*FlBrCorrection) - rotationCorrection,
-                    (FrBlPairPower*FrBlCorrection) - rotationCorrection,
-                    (FlBrPairPower*FlBrCorrection) + rotationCorrection
+                    (FrBlPairPower*FrBlCorrection),// - rotationCorrection,
+                    (FlBrPairPower*FlBrCorrection),// + rotationCorrection,
+                    (FrBlPairPower*FrBlCorrection),// + rotationCorrection,
+                    (FlBrPairPower*FlBrCorrection)// - rotationCorrection
             );
         }
 
     }
 
     /**
+     * DOES NOT WORK AS EXPECTED
      * rotates the robot by adjusting its current motor powers rather than directly setting powers, allows turning while strafing
      * @param signedPower determines the directions and power of rotation, larger values result in faster movement, and the sign (positive or negative) of this value determine direction
      */
     public void rotateByCorrection(double signedPower) {
         setDrivetrainPower(
-                driveFrontRight.getPower()+signedPower,
-                driveFrontLeft.getPower()-signedPower,
-                driveBackLeft.getPower()-signedPower,
-                driveBackRight.getPower()+signedPower
+                driveFrontRight.getPower()-signedPower,
+                driveFrontLeft.getPower()+signedPower,
+                driveBackLeft.getPower()+signedPower,
+                driveBackRight.getPower()-signedPower
+        );
+    }
+    /**
+     * rotates the bot by directly setting powers
+     */
+    public void rotate(double power) {
+        setDrivetrainPower(
+                -power,
+                power,
+                power,
+                -power
         );
     }
 
@@ -428,7 +443,7 @@ public class Hardware {
     }
     /**
      * set all motors to the same power
-     * @param power     power to assign to all drive motots
+     * @param power     power to assign to all drive motors
      */
     public void setDrivetrainPower(double power){
         setDrivetrainPower(power,power,power,power);

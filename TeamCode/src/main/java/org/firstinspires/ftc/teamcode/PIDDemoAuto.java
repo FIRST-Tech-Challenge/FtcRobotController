@@ -26,8 +26,9 @@ public class PIDDemoAuto extends LinearOpMode {
 
         //auto routine
         strafeToDistanceNoHeading(0.3, Math.PI/6, 0.2);
-        robot.strafeToDistance(0.3, 7*Math.PI/6, 0.2);
-
+        robot.strafeToDistance(0.3, 4*Math.PI/6, 0.2);
+        strafeToDistanceNoHeading(0.3, -7*Math.PI/6, 0.2);
+        robot.strafeToDistance(0.3, -10*Math.PI/6, 0.2);
     }
 
     /**
@@ -37,7 +38,7 @@ public class PIDDemoAuto extends LinearOpMode {
      * @param angle             direction to strafe relative to robot, measure in radians, angle of 0 == starboard
      * @param targetDistance    distance to strafe, measured in meters
      */
-    public synchronized void strafeToDistanceNoHeading(double power, double angle, double targetDistance){
+    public void strafeToDistanceNoHeading(double power, double angle, double targetDistance){
         //initial heading and encoder counts
         int initialFrBlAxisEncoderCount = (robot.driveFrontRight.getCurrentPosition() + robot.driveBackLeft.getCurrentPosition())/2;
         int initialFlBrAxisEncoderCount = (robot.driveFrontLeft.getCurrentPosition() + robot.driveBackRight.getCurrentPosition())/2;
@@ -64,7 +65,7 @@ public class PIDDemoAuto extends LinearOpMode {
         robot.FlBrStrafePIDController.enable();
 
 
-        while (!robot.FrBlStrafePIDController.onTarget() || !robot.FlBrStrafePIDController.onTarget()) {
+        while ((!robot.FrBlStrafePIDController.onTarget() || !robot.FlBrStrafePIDController.onTarget()) && opModeIsActive()) {
             //calculate distance travelled by each diagonal pair
             int FrBlAxisEncoderCount = (robot.driveFrontRight.getCurrentPosition() + robot.driveBackLeft.getCurrentPosition())/2;
             int FlBrAxisEncoderCount = (robot.driveFrontLeft.getCurrentPosition() + robot.driveBackRight.getCurrentPosition())/2;
