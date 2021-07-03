@@ -144,10 +144,10 @@ public class Hardware {
     }
     private void initDriveMotors() {
         // Define and initialize all Motors
-        driveFrontRight = hwMap.get(DcMotor.class, "front_right_drive"); //expansion hub port 2
-        driveFrontLeft  = hwMap.get(DcMotor.class, "front_left_drive");  //main hub port 2
-        driveBackLeft   = hwMap.get(DcMotor.class, "back_left_drive");   //main hub port 3
-        driveBackRight  = hwMap.get(DcMotor.class, "back_right_drive");  //expansion hub port 3
+        driveFrontRight = hwMap.get(DcMotor.class, "front_right_drive"); //main hub port 0
+        driveFrontLeft  = hwMap.get(DcMotor.class, "front_left_drive");  //main hub port 1
+        driveBackLeft   = hwMap.get(DcMotor.class, "back_left_drive");   //main hub port 2
+        driveBackRight  = hwMap.get(DcMotor.class, "back_right_drive");  //main hub port 3
 
         // Set all motors to zero power
         driveFrontRight.setPower(0);
