@@ -14,13 +14,13 @@ public class gm0_mecanum extends OpMode {
     @Override
     public void init() {
         fl = hardwareMap.dcMotor.get("fl");
-        bl = hardwareMap.dcMotor.get("BL");
-        fr = hardwareMap.dcMotor.get("FR");
-        br = hardwareMap.dcMotor.get("BR");
+        bl = hardwareMap.dcMotor.get("bl");
+        fr = hardwareMap.dcMotor.get("fr");
+        br = hardwareMap.dcMotor.get("br");
 
         // Reverse the right side motors
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
