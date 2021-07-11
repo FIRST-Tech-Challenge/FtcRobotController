@@ -48,7 +48,7 @@ public class HzArm {
     public static int ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT = -178;//-250;
     public static int ARM_DROP_WOBBLE_RING_POSITION_COUNT = -357;//-500 ;
     public static int ARM_DROP_WOBBLE_AUTONOMOUS_POSITION = -500;//-700;
-    public static int ARM_PICK_WOBBLE_POSITION_COUNT = -550;//-517;//-725 ;
+    public static int ARM_PICK_WOBBLE_POSITION_COUNT = -525;//-550;//-517;//-725 ;
     public static int ARM_PICK_RING_POSITION_COUNT = -655;//-900 ;
 
     public static double POWER_NO_WOBBLEGOAL = 0.5;

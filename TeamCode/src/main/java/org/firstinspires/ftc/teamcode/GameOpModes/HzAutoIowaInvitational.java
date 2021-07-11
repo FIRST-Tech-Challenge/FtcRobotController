@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.GameOpModes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -125,12 +126,7 @@ public class HzAutoIowaInvitational extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested() && !parked) {
 
                 hzVuforia.deactivateVuforiaTensorFlow();
-
-                //if (HzGameField.startPosition == HzGameField.START_POSITION.INNER) {
-                   runAutoInner();
-               // } else { //HzGameField.startPosition == HzGameField.START_POSITION.OUTER
-               //     runAutoOuter();
-               // }
+                runAutoInner();
 
                 hzIntake.setIntakeReleaseOpen();
                 hzAutoControl.setMagazineToCollect();
@@ -160,30 +156,6 @@ public class HzAutoIowaInvitational extends LinearOpMode {
      */
     public void runAutoInner(){
 
-        //Initial Wait time logic
-        /*if (!hzAutoControl.launchHighGoalOrPowerShot){
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(-53, af *10, Math.toRadians(af * 90))) //-40,6
-                    .build();
-            hzDrive.followTrajectory(traj);
-            hzWait(19000); // starts at 7 sec balance, 4 seconds to execute, 3 seconds at the end
-            //hzWait(1000);
-        } else {
-            if (!hzAutoControl.dropFirstWobbleGoal){
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-53, af *10, Math.toRadians(af * 90))) //-40,6
-                        .build();
-                hzDrive.followTrajectory(traj);
-                hzWait(7000); // 10 seconds in the end
-            } else{
-                if (!hzAutoControl.pickRingFromTargetMarker){
-                    //hzWait(1500);//STATE TESTING
-                } else {
-                    //ADD CUSTOM WAIT TIME HERE
-                }
-            }
-        }
-        */
         // Move to launch position and launch rings to High Goal or Powershots
         if (!hzAutoControl.launchHighGoalOrPowerShot) {
             //runInnerOnlyLaunchPark(0);
@@ -195,21 +167,6 @@ public class HzAutoIowaInvitational extends LinearOpMode {
                 hzAutoControl.setMagazineToLaunch();
                 hzAutoControl.setLaunchTargetHighGoal();
 
-                //Intermediary position to move away from alliance robot.
-                //For option of second wobble goal drop, this is avoided to save time
-                /*if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
-                    if (!hzAutoControl.dropFirstWobbleGoal) {
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToLinearHeading(new Pose2d(-54, af *10, Math.toRadians(af * 90))) //-40,6
-                                .build();
-                        hzDrive.followTrajectory(traj);
-                    } else {
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToLinearHeading(new Pose2d(-34, af * 14, Math.toRadians(af * 45))) //-40,6
-                                .build();
-                        hzDrive.followTrajectory(traj);
-                    }
-                } */
                 hzAutoControl.setMagazineToLaunch();
                 //Move to position to launch rings
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
@@ -217,12 +174,7 @@ public class HzAutoIowaInvitational extends LinearOpMode {
                             //.lineToLinearHeading(new Pose2d(-10, 14, Math.toRadians(19)))//-10  ORIGINAL.. IST RING NOT WORKING
                             .lineToLinearHeading(new Pose2d(-6, 14, Math.toRadians(19)))//-10
                             .build();
-                } /*else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            //.lineToLinearHeading(new Pose2d(-10, -14, Math.toRadians(-12)))//-10 ORIGINAL.. IST RING NOT WORKING
-                            .lineToLinearHeading(new Pose2d(-13, -12, Math.toRadians(-14))) //STATE TESTING
-                            .build();
-                } */
+                }
                 hzDrive.followTrajectory(traj);
 
                 launch3RingsToHighGoal();
@@ -274,108 +226,37 @@ public class HzAutoIowaInvitational extends LinearOpMode {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 switch (targetZone) {
                     case A:
-                        //if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
-                            /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    //.lineToSplineHeading(new Pose2d(48, af * 15, Math.toRadians(af * -45))) //y:51
-                                    .lineToSplineHeading(new Pose2d(48, af * 15, Math.toRadians(af * -45))) //y:51
-                                    .build();
-                            hzDrive.followTrajectory(traj); */
-                            /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    //.lineToSplineHeading(new Pose2d(48, af * 15, Math.toRadians(af * -45))) //y:51
-                                    .lineToSplineHeading(new Pose2d(48, af * 53, Math.toRadians(af * -45))) //y:51
-                                    .build();
-                            hzDrive.followTrajectory(traj); */
-
-                        //}
                         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                //.lineToSplineHeading(new Pose2d(27, af * 48, Math.toRadians(af * -45)))//43
-                                //.lineToSplineHeading(new Pose2d(27, af * 53, Math.toRadians(af * -45)))//43
                                 .lineToSplineHeading(new Pose2d(0, af * 53, Math.toRadians(af * -135)))//43
                                 .build();
                         hzDrive.followTrajectory(traj);
                         break;
                     case B:
-                        if (!hzAutoControl.pickRingFromTargetMarker){
-                             /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(35, af* 23, Math.toRadians(-90))) // STATE x:38 y:20
-                                    .build();
-                            hzDrive.followTrajectory(traj); */
-                        } else {
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(25, af * 33, Math.toRadians(af * -135)))
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        }
+                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                                 .lineToSplineHeading(new Pose2d(25, af * 33, Math.toRadians(af * -135)))
+                                 .build();
+                        hzDrive.followTrajectory(traj);
                         break;
                     case C:
-                        //if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(48, af * 15, Math.toRadians(af * -90))) //y:51
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        //}
                         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToSplineHeading(new Pose2d(56, af * 45, Math.toRadians(af * -90))) //y:51 STATE y:43
+                                .lineToSplineHeading(new Pose2d(49, af * 57, Math.toRadians(af * -135))) //y:51 STATE y:43
                                 .build();
                         hzDrive.followTrajectory(traj);
                         break;
                 }
-            } /*else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
-                switch (targetZone) {
-                    case A:
-                        if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(48, af * 15, Math.toRadians(af * -45))) //y:51
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        }
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToSplineHeading(new Pose2d(33, af * 48, Math.toRadians(af * -45)))//43
-                                .build();
-                        hzDrive.followTrajectory(traj);
-                        break;
-                    case B:
-                        if (!hzAutoControl.pickRingFromTargetMarker){
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(36, af* 17, Math.toRadians(af* -90)))
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        } else {
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(21, af * 21, Math.toRadians(af * -135)))
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        }
-                        break;
-                    case C:
-                        if ((!hzAutoControl.pickAndDropSecondWobbleGoal) && (!hzAutoControl.pickRingFromTargetMarker)) {
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(48, af * 15, Math.toRadians(af * -90))) //y:51
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        }
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToSplineHeading(new Pose2d(50, af * 45, Math.toRadians(af * -135))) //y:51
-                                .build();
-                        hzDrive.followTrajectory(traj);
-                        break;
-                }
-            }*/
+            }
 
             dropWobbleGoalInTarget();
 
             if ((hzAutoControl.pickRingFromTargetMarker == false) || (targetZone == HzGameField.TARGET_ZONE.A)) { // Park
                 if (hzAutoControl.pickAndDropSecondWobbleGoal) {
                     hzWait(300);
-                   /* traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            //.lineToSplineHeading(new Pose2d(48, af * 15, Math.toRadians(af * -45))) //y:51
-                            .lineToSplineHeading(new Pose2d(48, af * 15, Math.toRadians(af * -45))) //y:51
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-8, af * 37, Math.toRadians(5))) //STATE y: 31
                             .build();
-                    hzDrive.followTrajectory(traj); */
+                    hzDrive.followTrajectory(traj);
                     runInnerPickAndDropSecondWobbleGoalAndPark();
-                } //else {
-                   //runInnerOnlyLaunchPark(3000);
-                //}
+                }
                 return;
             } else { //Target Zone is B or C and pickRingFromTargetMarker == True
                 //Pick rings from Target Marker
@@ -388,7 +269,6 @@ public class HzAutoIowaInvitational extends LinearOpMode {
 
                     if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                //.lineToLinearHeading(new Pose2d(-8, af * 37, Math.toRadians(5))) //STATE y: 31
                                 .lineToLinearHeading(new Pose2d(-8, af * 37, Math.toRadians(5))) //STATE y: 31
                                 .build();
                         hzDrive.followTrajectory(traj);
@@ -425,34 +305,6 @@ public class HzAutoIowaInvitational extends LinearOpMode {
         }
     }
 
-    public void runInnerOnlyLaunchPark(int waitInBetween){
-        if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE &&
-                targetZone == HzGameField.TARGET_ZONE.A){
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(48, af * 30, Math.toRadians(af * -45)))
-                    .build();
-            hzDrive.followTrajectory(traj);
-        } else {
-            //Move towards base line away from other robot and Park
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(53, af * 15, Math.toRadians(af * -45))) //STATE x:50 y:15
-                    .build();
-            hzDrive.followTrajectory(traj);
-        }
-        hzWait(waitInBetween);
-        if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(13, af * 17, Math.toRadians(af * 0)))
-                    .build();
-            hzDrive.followTrajectory(traj);
-        } else {
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(13, af * 13, Math.toRadians(af * 0)))
-                    .build();
-            hzDrive.followTrajectory(traj);
-        }
-    }
-
     /**
      * Path for picking and dropping second wobble goal for Inner Start position
      */
@@ -460,8 +312,8 @@ public class HzAutoIowaInvitational extends LinearOpMode {
         hzAutoControl.setMoveArmPickWobble();
         hzAutoControl.runOpenGrip();
         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                //.lineToLinearHeading(new Pose2d(-33, af*44, Math.toRadians(af*0)))
-                .lineToLinearHeading(new Pose2d(-36, af*44, Math.toRadians(af*0)))
+                .splineToConstantHeading(new Vector2d(-20, af * 48), Math.toRadians(af * 0))
+                .splineToConstantHeading(new Vector2d(-35, af * 48), Math.toRadians(af * 0))
                 .build();
         hzDrive.followTrajectory(traj);
         hzWait(200);
@@ -472,241 +324,48 @@ public class HzAutoIowaInvitational extends LinearOpMode {
         switch (targetZone) {
             case A:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(6, af*40, Math.toRadians(af*-90)))
+                        .lineToSplineHeading(new Pose2d(6, af * 40, Math.toRadians(af * -90)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;
             case B:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(9, af*42, Math.toRadians(af*180)))
+                        .lineToSplineHeading(new Pose2d(9, af * 42, Math.toRadians(af * 180)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;
             case C:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(42, af*50, Math.toRadians(af*-135)))
+                        .lineToSplineHeading(new Pose2d(42, af * 56, Math.toRadians(af * -135)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;
         }
         dropWobbleGoalInTarget();
-        if (targetZone == HzGameField.TARGET_ZONE.B) {
+        if (targetZone == HzGameField.TARGET_ZONE.C) {
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(-15, af * 27, Math.toRadians(af * 180)))
+                    .lineToSplineHeading(new Pose2d(36, af * 56, Math.toRadians(af * -135)))
                     .build();
             hzDrive.followTrajectory(traj);
+        } else {
+            if (targetZone == HzGameField.TARGET_ZONE.B) {
+                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(0, af * 27, Math.toRadians(af * 180)))
+                    .build();
+                hzDrive.followTrajectory(traj);
             }
 
-        //Park
-        //if (targetZone == HzGameField.TARGET_ZONE.C) {
+            //Park
+            //if (targetZone == HzGameField.TARGET_ZONE.C) {
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(13, af * 27, Math.toRadians(af * 0)))
-                    .build();
+                .lineToSplineHeading(new Pose2d(3, af * 27, Math.toRadians(af * 0)))
+                .build();
             hzDrive.followTrajectory(traj);
         //}
+        }
+
     }
 
-    /**
-     * Path and actions for autonomous mode starting from Outer start position
-     */
-    public void runAutoOuter(){
-
-        //Initial Wait time logic
-        if (!hzAutoControl.launchHighGoalOrPowerShot){
-            hzWait(17000); // starts at 7 sec balance, 4 seconds to execute, 3 seconds at the end
-        } else {
-            if (!hzAutoControl.dropFirstWobbleGoal){
-                hzWait(7000); // 3 seconds in the end
-            } else{
-                if (!hzAutoControl.pickRingFromTargetMarker){
-                    hzWait(3000);
-                } else {
-                    //ADD CUSTOM WAIT TIME HERE
-                }
-            }
-        }
-
-        // Move to launch position and launch rings to High Goal or Powershots
-        if (!hzAutoControl.launchHighGoalOrPowerShot) {
-            runOuterOnlyLaunchPark(0);
-            return;
-        } else {
-            // Move to launch position and launch rings to High Goal or Powershots
-            if (hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.HIGHGOAL) {
-                // Set magazine to Launch in case it slipped
-                hzAutoControl.setMagazineToLaunch();
-                hzAutoControl.setLaunchTargetHighGoal();
-                if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-40, af * 53, Math.toRadians(af * -45)))
-                            //.lineToLinearHeading(new Pose2d(-40, af * 50, Math.toRadians(af * -45)))
-                            .build();
-                    hzDrive.followTrajectory(traj);
-                }
-                hzAutoControl.setMagazineToLaunch();
-                if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                    //PATGAMES : MOVE ROBOT TO LAST LANE and not obstruct to middle lane
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            //.lineToLinearHeading(new Pose2d(-10, 52, Math.toRadians(-12)))
-                            .lineToLinearHeading(new Pose2d(-6, 52, Math.toRadians(-12)))
-                            .build();
-                } else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
-                    //PATGAMES : MOVE ROBOT TO LAST LANE and not obstruct to middle lane
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            //.lineToLinearHeading(new Pose2d(-10, -52, Math.toRadians(17)))//-10
-                            .lineToLinearHeading(new Pose2d(-6, -52, Math.toRadians(18)))
-                            //.lineToLinearHeading(new Pose2d(-3, -52, Math.toRadians(19)))
-                            .build();
-                }
-                hzDrive.followTrajectory(traj);
-
-                launch3RingsToHighGoal();
-            } else {
-                hzAutoControl.setLaunchTargetPowerShot1();
-                if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-40, af * 53, Math.toRadians(af * -45)))
-                            .build();
-                    hzDrive.followTrajectory(traj);
-                }
-                /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .splineToLinearHeading(new Pose2d(-10, af * 50, Math.toRadians(af * -22)), Math.toRadians(0))
-                        .build();
-                hzDrive.followTrajectory(traj);*/
-                hzAutoControl.setMagazineToLaunch();
-                if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                    //PATGAMES : MOVE ROBOT TO LAST LANE and not obstruct to middle lane
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-10, 52, Math.toRadians(-20)))
-                            .build();
-                } else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
-                    //PATGAMES : MOVE ROBOT TO LAST LANE and not obstruct to middle lane
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-10, -52, Math.toRadians(28)))//-10
-                            .build();
-                }
-                hzDrive.followTrajectory(traj);
-
-                //Set turn angles prior to launching
-                turnAnglePowershot12 = Math.toRadians(af*-5);
-                turnAnglePowershot23 = Math.toRadians(af*-7);
-                launch3RingsToPowerShots();
-            }
-        }
-
-        if (!hzAutoControl.dropFirstWobbleGoal) {
-            runOuterOnlyLaunchPark(5000);
-            return;
-        } else {
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                switch (targetZone) {
-                    case A:
-                        //patgames
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToLinearHeading(new Pose2d(-3, 52, Math.toRadians(-150)))
-                                .build();
-                        hzDrive.followTrajectory(traj);
-                        break;
-                    case B:
-                        if (!hzAutoControl.pickRingFromTargetMarker){
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(38, 50, Math.toRadians(90)))
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        } else {
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(18, 33, Math.toRadians(180)))
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        }
-                        break;
-                    case C:
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToSplineHeading(new Pose2d(40, 52, Math.toRadians(-150)))
-                                .build();
-                        hzDrive.followTrajectory(traj);
-                        break;
-                }
-            } else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
-                switch (targetZone) {
-                    case A:
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToLinearHeading(new Pose2d(0, -53, Math.toRadians(180)))
-                                .build();
-                        hzDrive.followTrajectory(traj);
-                        break;
-                    case B:
-                        if (!hzAutoControl.pickRingFromTargetMarker){
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    .lineToSplineHeading(new Pose2d(31, -50, Math.toRadians(-90))) //STATE x:32
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        } else {
-                            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                    //.lineToSplineHeading(new Pose2d(18, -30, Math.toRadians(180)))
-                                    .lineToSplineHeading(new Pose2d(18, -36, Math.toRadians(180)))
-                                    .build();
-                            hzDrive.followTrajectory(traj);
-                        }
-                        break;
-                    case C:
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToSplineHeading(new Pose2d(44, -53, Math.toRadians(180))) //STATE x:47
-                                .build();
-                        hzDrive.followTrajectory(traj);
-                        break;
-                }
-            }
-
-            dropWobbleGoalInTarget();
-            if ((hzAutoControl.pickRingFromTargetMarker == false) || (targetZone == HzGameField.TARGET_ZONE.A)) { // Park
-                if (hzAutoControl.pickAndDropSecondWobbleGoal) {
-                    runOuterPickAndDropSecondWobbleGoalAndPark();
-                } else {
-                    runOuterOnlyLaunchPark(8000);
-                }
-                return;
-            } else { //Target Zone is B or C and pickRingFromTargetMarker == True
-                //Pick rings from Target Marker
-                runPickRingsFromTargetMarker();
-
-                if (hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal) {
-                    hzAutoControl.setIntakeStop();
-                    hzAutoControl.setMagazineToLaunch();
-                    hzAutoControl.setLaunchTargetHighGoal();
-
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-8, af * 31, Math.toRadians(2))) //STATE x: -13
-                            .build();
-                    hzDrive.followTrajectory(traj);
-
-                    launch3RingsToHighGoal();
-
-                    if (hzAutoControl.pickAndDropSecondWobbleGoal == true) {
-                        runOuterPickAndDropSecondWobbleGoalAndPark();
-                    } else {
-
-                        //Park
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToSplineHeading(new Pose2d(13, af * 54, Math.toRadians(af * 0)))
-                                //.lineToSplineHeading(new Pose2d(13, af * 46, Math.toRadians(af * 0)))
-                                .build();
-                        hzDrive.followTrajectory(traj);
-                    }
-                } else { //Move to baseline and park in safe zone
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-50, af * 16, Math.toRadians(af * -90)))
-                            .build();
-                    hzDrive.followTrajectory(traj);
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToSplineHeading(new Pose2d(13, af * 10, Math.toRadians(af * 0)))
-                            .build();
-                    hzDrive.followTrajectory(traj);
-                    hzAutoControl.setIntakeStop();
-                }
-            }
-        }
-    }
 
     public void runPickRingsFromTargetMarker(){
         hzIntake.setIntakeReleaseOpen();
@@ -722,7 +381,6 @@ public class HzAutoIowaInvitational extends LinearOpMode {
                         .build();
                 hzDrive.followTrajectory(traj);
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        //.lineToLinearHeading(new Pose2d(-22, af * 34.5, Math.toRadians(af * 180)))
                         .lineToLinearHeading(new Pose2d(-22, af * 33.5, Math.toRadians(af * 180)))
                         .build();
                 hzDrive.followTrajectory(traj);
@@ -732,31 +390,25 @@ public class HzAutoIowaInvitational extends LinearOpMode {
                         .build();
                 hzDrive.followTrajectory(traj);
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        //.lineToLinearHeading(new Pose2d(-22, af * 34.5, Math.toRadians(af * 180)))
                         .lineToLinearHeading(new Pose2d(-22, af * 35.5, Math.toRadians(af * 180)))
                         .build();
                 hzDrive.followTrajectory(traj);
             }
         }
 
-        // Spline to (24,24,0)
         if (targetZone == HzGameField.TARGET_ZONE.C) {
-
-
-            //TEST
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(0, af * 33.5, Math.toRadians(af * -180)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-11, af * 33.5, Math.toRadians(af * -180)))
+                        .lineToLinearHeading(new Pose2d(-22, af * 33.5, Math.toRadians(af * -180)))
                         .build();
                 hzDrive.followTrajectory(traj);
 
                 if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            //.lineToLinearHeading(new Pose2d(-22, af * 34.5, Math.toRadians(af * -180)))
                             .lineToLinearHeading(new Pose2d(-22, af * 35.5, Math.toRadians(af * -180)))
                             .build();
                     hzDrive.followTrajectory(traj);
@@ -779,109 +431,10 @@ public class HzAutoIowaInvitational extends LinearOpMode {
                     hzDrive.followTrajectory(traj);
                 }
             }
-
-
-            /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    //.lineToLinearHeading(new Pose2d(-33, af * 34.5, Math.toRadians(af * -180))) //x33
-                    .lineToLinearHeading(new Pose2d(-30, af * 34.5, Math.toRadians(af * -180))) //x33
-                    .build();
-            hzDrive.followTrajectory(traj);*/
         }
         hzWait(300);
     }
 
-    public void runOuterOnlyLaunchPark(int waitInBetween){
-        //Park in or Next to Target A
-
-        //Intermediary stop position in the back of the firld
-        //PATGAMES :
-        if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(-45, af * 49, Math.toRadians(af * -25)))
-                    .build();
-            hzDrive.followTrajectory(traj);
-        } else {
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(-45, af * 54, Math.toRadians(af * -25)))
-                    .build();
-            hzDrive.followTrajectory(traj);
-        }
-        hzWait(waitInBetween);
-
-        /*Comment this section if alternate is used*/
-        if (targetZone != HzGameField.TARGET_ZONE.A) {
-            //Park in Target Zone A
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(13, af * 52, Math.toRadians(af * 0))) // In Target A
-                    .build();
-            hzDrive.followTrajectory(traj);
-        } else {
-            //Park Next to Target Zone A
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(16, af * 35, Math.toRadians(af * 0))) // Near Target A //STATE x:13
-                    .build();
-            hzDrive.followTrajectory(traj);
-        }
-        //*/
-
-        /*Alternate Park Near center : Use if Target is not visible. or want to park in middle
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(-45, af * 12, Math.toRadians(af * 0))) //  Towards Middle
-                .build();
-        hzDrive.followTrajectory(traj);
-        hzWait(0);
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(13, af * 12, Math.toRadians(af * 0))) //  Towards Middle
-                .build();
-        hzDrive.followTrajectory(traj);
-        //*/
-
-    }
-
-    /**
-     * Path for picking and dropping second wobble goal for Outer Start position
-     */
-    public void runOuterPickAndDropSecondWobbleGoalAndPark() {
-        hzAutoControl.setMoveArmPickWobble();
-        hzAutoControl.runOpenGrip();
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-30, af*28, Math.toRadians(af*0)))
-                .build();
-        hzDrive.followTrajectory(traj);
-        hzWait(200);
-        hzAutoControl.runCloseGrip();
-        hzWait(400);
-        hzAutoControl.setMoveArmHoldUpWobbleRing();
-        hzWait(500);
-        switch (targetZone) {
-            case A:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(13, af*20, Math.toRadians(af*-60)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-            case B:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(13, af*33, Math.toRadians(af*180)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-            case C:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(37, af*50, Math.toRadians(af*-135)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-        }
-        dropWobbleGoalInTarget();
-        //Park
-        if (targetZone == HzGameField.TARGET_ZONE.C) {
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(13, af * 33, Math.toRadians(af * 0)))
-                    .build();
-            hzDrive.followTrajectory(traj);
-        }
-    }
 
     /**
      * Sequence of launching 3 rings to High Goal with time in between
@@ -1006,178 +559,6 @@ public class HzAutoIowaInvitational extends LinearOpMode {
         hzAutoControl.pickRingFromTargetMarker = true;
         hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = true;
         hzAutoControl.pickAndDropSecondWobbleGoal = true;
-    }
-    /**
-     * Method that take key pad inputs to select the Autonomous options
-     */
-    public void selectGamePlan(){
-        telemetry.setAutoClear(true);
-        telemetry.addData("Compile time : ", "4:47 :: 2/13");
-
-        //***** Select Alliance ******
-        telemetry.addData("Enter PLaying Alliance :", "(Blue: (X),    Red: (B))");
-        telemetry.update();
-
-
-        while (!isStopRequested()) {
-            if (hzGamepad.getButtonBPress()) {
-                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE;
-                HzGameField.ALLIANCE_FACTOR = -1;
-                telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
-                break;
-            }
-            if (hzGamepad.getButtonXPress()) {
-                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
-                HzGameField.ALLIANCE_FACTOR = 1;
-                telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
-                break;
-            }
-            telemetry.update();
-        }
-
-        telemetry.update();
-        hzWait(200);
-
-        //***** Select Start Pose ******
-        telemetry.addData("Enter Start Pose :", "(Inner: (A) ,    Outer: (Y))");
-        while (!isStopRequested()) {
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                if (hzGamepad.getButtonAPress()) {
-                    HzGameField.startPosition = HzGameField.START_POSITION.INNER;
-                    startPose = HzGameField.RED_INNER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
-                    telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
-                    break;
-                }
-                if (hzGamepad.getButtonYPress()) {
-                    HzGameField.startPosition = HzGameField.START_POSITION.OUTER;
-                    startPose = HzGameField.RED_OUTER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
-                    telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
-                    break;
-                }
-            }
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                if (hzGamepad.getButtonAPress()) {
-                    HzGameField.startPosition = HzGameField.START_POSITION.INNER;
-                    startPose = HzGameField.BLUE_INNER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
-                    telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
-                    break;
-                }
-                if (hzGamepad.getButtonYPress()) {
-                    HzGameField.startPosition = HzGameField.START_POSITION.OUTER;
-                    startPose = HzGameField.BLUE_OUTER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
-                    telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
-                    break;
-                }
-            }
-            telemetry.update();
-        }
-        telemetry.update();
-
-
-        while (!isStopRequested()) {
-            telemetry.addData("Playing Alliance :", HzGameField.playingAlliance);
-            telemetry.addData("startPose : ", startPose);
-            telemetry.addData("activeWebcam : ",activeWebcam);
-            telemetry.addLine();
-            telemetry.addData("Please select launch target : ", "");
-            telemetry.addData("     (X) for Powershot","");
-            telemetry.addData("     (B) for High Goal","");
-            telemetry.addData("     (A) for No launch - Only park","");
-            if (hzGamepad.getButtonBPress()) {
-                hzAutoControl.launchHighGoalOrPowerShot = true;
-                hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.HIGHGOAL;
-                telemetry.addData("hzAutoControl.autoLaunchAim : ", hzAutoControl.autoLaunchAim);
-                break;
-            }
-            if (hzGamepad.getButtonXPress()) {
-                hzAutoControl.launchHighGoalOrPowerShot = true;
-                hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.POWERSHOT;
-                telemetry.addData("hzAutoControl.autoLaunchAim : ", hzAutoControl.autoLaunchAim);
-                break;
-            }
-            if (hzGamepad.getButtonAPress()) {
-                /*hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.HIGHGOAL;
-                telemetry.addData("hzAutoControl.autoLaunchAim : ", hzAutoControl.autoLaunchAim);*/
-                telemetry.addData("No Launch, Only Park : ","");
-                hzAutoControl.launchHighGoalOrPowerShot = false;
-                hzAutoControl.dropFirstWobbleGoal = false;
-                hzAutoControl.pickRingFromTargetMarker = false;
-                hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = false;
-                hzAutoControl.pickAndDropSecondWobbleGoal = false;
-                break;
-            }
-            telemetry.update();
-            //hzWait(200);
-        }
-
-        if (hzAutoControl.launchHighGoalOrPowerShot) {
-            while (!isStopRequested()) {
-                telemetry.addData("Playing Alliance :", HzGameField.playingAlliance);
-                telemetry.addData("startPose : ", startPose);
-                telemetry.addData("activeWebcam : ", activeWebcam);
-                telemetry.addLine();
-
-                telemetry.addData("hzAutoControl.autoLaunchAim : ", hzAutoControl.autoLaunchAim);
-                telemetry.addData("Please select option for Picking rings from target markers and launching : ", "");
-                telemetry.addData("    (Y):", "Launch and park");
-                telemetry.addData("    (A):", "Launch, drop WG and park");
-                telemetry.addData("    (X):", "Launch, drop WG, Pick rings, launch and park");
-                telemetry.addData("    (B):", "Launch, drop WG, Pick rings, launch, move WG2 and park");
-
-                if (hzGamepad.getButtonYPress()) {
-                    hzAutoControl.dropFirstWobbleGoal = false;
-                    hzAutoControl.pickRingFromTargetMarker = false;
-                    hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = false;
-                    hzAutoControl.pickAndDropSecondWobbleGoal = false;
-                    telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
-                    telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
-                    telemetry.addData("hzAutoControl.pickAndDropSecondWobbleGoal: ", hzAutoControl.pickAndDropSecondWobbleGoal);
-                    break;
-                }
-
-                if (hzGamepad.getButtonAPress()) {
-                    hzAutoControl.dropFirstWobbleGoal = true;
-                    hzAutoControl.pickRingFromTargetMarker = false;
-                    hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = false;
-                    hzAutoControl.pickAndDropSecondWobbleGoal = false;
-                    telemetry.addData("hzAutoControl.dropFirstWobbleGoal : ", hzAutoControl.dropFirstWobbleGoal);
-                    telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
-                    telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
-                    telemetry.addData("hzAutoControl.pickAndDropSecondWobbleGoal: ", hzAutoControl.pickAndDropSecondWobbleGoal);
-                    break;
-                }
-                if (hzGamepad.getButtonXPress()) {
-                    hzAutoControl.dropFirstWobbleGoal = true;
-                    hzAutoControl.pickRingFromTargetMarker = true;
-                    hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = true;
-                    hzAutoControl.pickAndDropSecondWobbleGoal = false;
-                    telemetry.addData("hzAutoControl.dropFirstWobbleGoal : ", hzAutoControl.dropFirstWobbleGoal);
-                    telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
-                    telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
-                    telemetry.addData("hzAutoControl.pickAndDropSecondWobbleGoal: ", hzAutoControl.pickAndDropSecondWobbleGoal);
-                    break;
-                }
-                if (hzGamepad.getButtonBPress()) {
-                    hzAutoControl.dropFirstWobbleGoal = true;
-                    hzAutoControl.pickRingFromTargetMarker = true;
-                    hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = true;
-                    hzAutoControl.pickAndDropSecondWobbleGoal = true;
-                    telemetry.addData("hzAutoControl.dropFirstWobbleGoal : ", hzAutoControl.dropFirstWobbleGoal);
-                    telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
-                    telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
-                    telemetry.addData("hzAutoControl.pickAndDropSecondWobbleGoal: ", hzAutoControl.pickAndDropSecondWobbleGoal);
-                    break;
-                }
-                telemetry.update();
-            }
-            telemetry.update();
-        }
-        telemetry.update();
-        //sleep(200);
     }
 
     /**
