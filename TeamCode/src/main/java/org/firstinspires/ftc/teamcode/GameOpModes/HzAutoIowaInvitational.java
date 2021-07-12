@@ -227,7 +227,7 @@ public class HzAutoIowaInvitational extends LinearOpMode {
                 switch (targetZone) {
                     case A:
                         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToSplineHeading(new Pose2d(0, af * 53, Math.toRadians(af * -135)))//43
+                                .lineToSplineHeading(new Pose2d(0, af * 55, Math.toRadians(af * -135)))//43
                                 .build();
                         hzDrive.followTrajectory(traj);
                         break;
@@ -239,7 +239,7 @@ public class HzAutoIowaInvitational extends LinearOpMode {
                         break;
                     case C:
                         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                                .lineToSplineHeading(new Pose2d(49, af * 57, Math.toRadians(af * -135))) //y:51 STATE y:43
+                                .lineToSplineHeading(new Pose2d(49, af * 61, Math.toRadians(af * -135))) //y:51 STATE y:43
                                 .build();
                         hzDrive.followTrajectory(traj);
                         break;
@@ -313,7 +313,7 @@ public class HzAutoIowaInvitational extends LinearOpMode {
         hzAutoControl.runOpenGrip();
         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                 .splineToConstantHeading(new Vector2d(-20, af * 48), Math.toRadians(af * 0))
-                .splineToConstantHeading(new Vector2d(-35, af * 48), Math.toRadians(af * 0))
+                .splineToConstantHeading(new Vector2d(-33, af * 48), Math.toRadians(af * 0))
                 .build();
         hzDrive.followTrajectory(traj);
         hzWait(200);
@@ -324,19 +324,19 @@ public class HzAutoIowaInvitational extends LinearOpMode {
         switch (targetZone) {
             case A:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(6, af * 40, Math.toRadians(af * -90)))
+                        .lineToSplineHeading(new Pose2d(6, af * 42, Math.toRadians(af * -90)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;
             case B:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(9, af * 42, Math.toRadians(af * 180)))
+                        .lineToSplineHeading(new Pose2d(13, af * 42, Math.toRadians(af * 180)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;
             case C:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(42, af * 56, Math.toRadians(af * -135)))
+                        .lineToSplineHeading(new Pose2d(42, af * 61, Math.toRadians(af * -135)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;
@@ -344,7 +344,7 @@ public class HzAutoIowaInvitational extends LinearOpMode {
         dropWobbleGoalInTarget();
         if (targetZone == HzGameField.TARGET_ZONE.C) {
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(36, af * 56, Math.toRadians(af * -135)))
+                    .lineToSplineHeading(new Pose2d(20, af * 56, Math.toRadians(af * -135)))
                     .build();
             hzDrive.followTrajectory(traj);
         } else {
@@ -377,11 +377,13 @@ public class HzAutoIowaInvitational extends LinearOpMode {
 
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(0, af * 33.5, Math.toRadians(af * 180)))
+                        .lineToLinearHeading(new Pose2d(0, af * 36.5, Math.toRadians(af * 180)))
+                        // .lineToLinearHeading(new Pose2d(0, af * 33.5, Math.toRadians(af * 180)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-22, af * 33.5, Math.toRadians(af * 180)))
+                        .lineToLinearHeading(new Pose2d(-22, af * 36.5, Math.toRadians(af * 180)))
+                        // .lineToLinearHeading(new Pose2d(-22, af * 33.5, Math.toRadians(af * 180)))
                         .build();
                 hzDrive.followTrajectory(traj);
             } else {
@@ -399,11 +401,13 @@ public class HzAutoIowaInvitational extends LinearOpMode {
         if (targetZone == HzGameField.TARGET_ZONE.C) {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(0, af * 33.5, Math.toRadians(af * -180)))
+                        .lineToLinearHeading(new Pose2d(0, af * 36.5, Math.toRadians(af * -180)))
+                        // .lineToLinearHeading(new Pose2d(0, af * 33.5, Math.toRadians(af * -180)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-22, af * 33.5, Math.toRadians(af * -180)))
+                        .lineToLinearHeading(new Pose2d(-22, af * 36.5, Math.toRadians(af * -180)))
+                        // .lineToLinearHeading(new Pose2d(-22, af * 33.5, Math.toRadians(af * -180)))
                         .build();
                 hzDrive.followTrajectory(traj);
 
