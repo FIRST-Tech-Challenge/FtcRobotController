@@ -80,9 +80,10 @@ public class testProgram8 extends LinearOpMode {
                 neat.setPower(0);
             }
             // shoot a ring when a is pressed
-            if (gamepad2.a) {
+            if (gamepad1.left_trigger > 0.1) {
                 ringPusher.setPosition(0.6);
-                ringPusher.setPosition(0.95);
+            }
+                else {ringPusher.setPosition(0.95);
             }
             // open wobble claw when y is pressed
             if (gamepad2.y) {
@@ -92,13 +93,13 @@ public class testProgram8 extends LinearOpMode {
             }
 
             // slow mode
-            if (gamepad1.left_trigger < 0.1) { // if left trigger not pressed
+            if (gamepad1.right_trigger < 0.1) { // if left trigger not pressed
                 FL.setPower(v1);
                 FR.setPower(v2);
                 BL.setPower(v3);
                 BR.setPower(v4);
                 wobbleArm.setPower(wobblepower/2);
-            } else if (gamepad1.left_trigger > 0.1) { // if left trigger pressed
+            } else if (gamepad1.right_trigger > 0.1) { // if left trigger pressed
                 FL.setPower(v1 / 8);
                 FR.setPower(v2 / 8);
                 BL.setPower(v3 / 8);
@@ -106,10 +107,6 @@ public class testProgram8 extends LinearOpMode {
                 // drive slow
                 wobbleArm.setPower(wobblepower/2);
             }
-            telemetry.addData("status", "motor FL (v1): " + v1);
-            telemetry.addData("status", "motor FR (v2): " + v2);
-            telemetry.addData("status", "motor BL (v3): " + v3);
-            telemetry.addData("status", "motor FL (v4): " + v4);
             telemetry.addData("status", "r" + r);
             telemetry.addData("status", "robot angle: " + robotAngle);
             telemetry.addData("runtime",runtime);
