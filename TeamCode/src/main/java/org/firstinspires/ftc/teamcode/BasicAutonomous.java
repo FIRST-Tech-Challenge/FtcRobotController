@@ -24,7 +24,7 @@ public class BasicAutonomous extends LinearOpMode {
 
     //Ticks per revolution = 537.6(same for both)
     //wheel size is 100mm and circumference ~31.415 cm(regular)
-    //wheel size is 96mm and circumference~30.15 cm(strafer chassis)
+    //wheel size is 96mm and circumference~30.15 cm(Strafer chassis)
 
     public void runOpMode() {
 
@@ -37,10 +37,10 @@ public class BasicAutonomous extends LinearOpMode {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         waitForStart();
 
