@@ -101,14 +101,14 @@ public class testProgram8 extends LinearOpMode {
                 FR.setPower(v2);
                 BL.setPower(v3);
                 BR.setPower(v4);
-                wobbleArm.setPower(wobblepower/2);
+                wobbleArm.setPower(wobblepower/4);
             } else if (gamepad1.right_trigger > 0.1) { // if left trigger pressed
                 FL.setPower(v1 / 8);
                 FR.setPower(v2 / 8);
                 BL.setPower(v3 / 8);
                 BR.setPower(v4 / 8);
                 // drive slow
-                wobbleArm.setPower(wobblepower/2);
+                wobbleArm.setPower(wobblepower/4);
             }
             telemetry.addData("status", "r" + r);
             telemetry.addData("status", "robot angle: " + robotAngle);
