@@ -17,6 +17,6 @@ public abstract class OperationMode extends LinearOpMode {
     @Override
     public void runOpMode() {
         if(OperationMode.robot == null)
-            OperationMode.robot = new Robot(hardwareMap, specifications);
+            OperationMode.robot = new Robot(this, specifications);
     }
 }

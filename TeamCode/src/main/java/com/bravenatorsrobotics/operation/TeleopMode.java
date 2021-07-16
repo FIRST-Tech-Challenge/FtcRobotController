@@ -14,15 +14,31 @@ public abstract class TeleopMode extends OperationMode {
     public void runOpMode() {
         super.runOpMode();
 
+        telemetry.addData("Operation Mode", "TeleopMode");
+        telemetry.addData("Status", "Initializing...");
+        telemetry.update();
+
         OnInitialize();
 
+        telemetry.addData("Status", "Ready");
+        telemetry.update();
+
         waitForStart();
+
+        telemetry.addData("Status", "Running...");
+        telemetry.update();
 
         while(opModeIsActive()) {
             OnUpdate();
         }
 
+        telemetry.addData("Status", "Stopping...");
+        telemetry.update();
+
         OnStop();
+
+        telemetry.addData("Status", "Stopped!");
+        telemetry.update();
     }
 
 }

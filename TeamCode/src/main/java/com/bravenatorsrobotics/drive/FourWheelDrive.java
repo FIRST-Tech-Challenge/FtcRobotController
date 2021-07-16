@@ -1,6 +1,7 @@
 package com.bravenatorsrobotics.drive;
 
 import com.bravenatorsrobotics.core.Robot;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
@@ -20,25 +21,13 @@ public class FourWheelDrive extends AbstractDrive {
         this.backRight = robot.GetAllMotors()[3];
     }
 
-    @Override
-    protected void SetAllPower(double power) {
-        if(robot.specifications.useVelocity) {
-            this.frontLeft.setVelocity(power * robot.specifications.maxVelocity);
-            this.frontRight.setVelocity(power * robot.specifications.maxVelocity);
-            this.backLeft.setVelocity(power * robot.specifications.maxVelocity);
-            this.backRight.setVelocity(power * robot.specifications.maxVelocity);
-        } else {
-            this.frontLeft.setPower(power);
-            this.frontRight.setPower(power);
-            this.backLeft.setPower(power);
-            this.backRight.setPower(power);
+    // Takes load off the CPU
+    private void Sleep() {
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void SetPower(DcMotorEx motor, double power) {
-        if(robot.specifications.useVelocity) motor.setVelocity(power * robot.specifications.maxVelocity);
-        else motor.setPower(power);
     }
 
     @Override
@@ -60,4 +49,30 @@ public class FourWheelDrive extends AbstractDrive {
         this.backRight.setPower(0);
     }
 
+    @Override
+    public void DriveByEncoders(double power, int leftTicks, int rightTicks) {
+        // Increment Target Positions
+        IncrementTargetPosition(frontLeft, leftTicks);
+        IncrementTargetPosition(backLeft, leftTicks);
+        IncrementTargetPosition(frontRight, leftTicks);
+        IncrementTargetPosition(backRight, leftTicks);
+
+        robot.SetRunMode(DcMotorEx.RunMode.RUN_TO_POSITION); // Set Run Mode
+        SetAllPower(power); // Set Motor Power
+
+        while(robot.opMode.opModeIsActive() &&
+                (frontLeft.isBusy() || frontRight.isBusy() ||
+                backLeft.isBusy() || backRight.isBusy())) {
+            Sleep();
+        }
+
+        this.Stop();
+
+        robot.SetRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    @Override
+    public void DriveByInches(double power, int leftInches, int rightInches) {
+        DriveByEncoders(power, (int) (leftInches * ticksPerInch), (int) (rightInches * ticksPerInch));
+    }
 }
