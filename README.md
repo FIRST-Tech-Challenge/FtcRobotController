@@ -25,6 +25,8 @@ If you are an Android Studio programmer, there are several ways to download this
 
 * You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the [Releases](https://github.com/FIRST-Tech-Challenge/FtcRobotController/releases) page for this repository.
 
+* The Releases page also contains prebuilt APKs.
+
 Once you have downloaded and uncompressed (if needed) your folder, you can use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
 
 ## Getting Help
@@ -40,17 +42,48 @@ The Javadoc reference documentation for the FTC SDK is now available online.  Cl
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Javadoc Documentation](https://first-tech-challenge.github.io/FtcRobotController)
 
-Documentation for the FTC SDK is also included with this repository.  There is a subfolder called "doc" which contains several subfolders:
-
- * The folder "apk" contains the .apk files for the FTC Driver Station and FTC Robot Controller apps.
- * The folder "javadoc" contains the JavaDoc user documentation for the FTC SDK.
-
 ### Online User Forum
 For technical questions regarding the Control System or the FTC SDK, please visit the FTC Technology forum:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Technology Forum](https://ftcforum.firstinspires.org/forum/ftc-technology)
 
+### Sample OpModes
+This project contains a large selection of Sample OpModes (robot code examples) which can be cut and pasted into your /teamcode folder to be used as-is, or modified to suit your team's needs.
+
+Samples Folder: &nbsp;&nbsp; [/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples](FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples)
+
+The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](TeamCode/src/main/java/org/firstinspires/ftc/teamcode) folder contains an explanation of the sample naming convention, and instructions on how to copy them to your own project space.
+
 # Release Information
+
+## Version 6.2 (20210218-074821)
+
+### Enhancements
+* Attempts to automatically fix the condition where a Control Hub's internal Expansion Hub is not
+  working by re-flashing its firmware
+* Makes various improvements to the WiFi Direct pairing screen, especially in landscape mode
+* Makes the Robot Controller service no longer be categorically restarted when the main activity is brought to foreground
+    * (e.g. the service is no longer restarted simply by viewing the Self Inspect screen and pressing the back button)
+    * It is still restarted if the Settings menu or Configure Robot menu is opened
+
+
+### Bug fixes
+* Fixes [FtcRobotController issue #71](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/71)
+  Cannot open OpModes in v6.1 Blocks offline editor
+* Fixes [FtcRobotController issue #79](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/79)
+  6.1 causes a soft reboot on the Motorola E5 Play
+* Fixes issue where the Control Hub OS's watchdog would restart the Robot Controller app if 
+  the Control Hub was not able to communicate with its internal Expansion Hub
+* Fixes certain I2C devices not showing up in the appropriate `HardwareMap` fields (such as `hardwareMap.colorSensor`) 
+* Fixes issue where performing a WiFi factory reset on the Control Hub would not set the WiFi band to 2.4 GHz
+* Fixes issue where OnBotJava might fail to create a new file if the option to "Setup Code for Configured Hardware" was selected
+* Fixes issue where performing certain operations after an Op Mode crashes would temporarily break Control/Expansion Hub communication
+* Fixes issue where a Control Hub with a configured USB-connected Expansion Hub would not work if the Expansion Hub was missing at startup
+* Fixes potential issues caused by having mismatched Control/Expansion Hub firmware versions 
+* Fixes [ftc_app issue 673](https://github.com/ftctechnh/ftc_app/issues/673) Latest matchlog is being deleted instead of old ones by RobotLog
+* Fixes ConceptVuforiaUltimateGoalNavigationWebcam sample opmode by correctly orienting camera on robot.
+* Fixes issue where logcat would be spammed with InterruptedExceptions when stop is requested from the Driver Station (this behavior was accidentally introduced in v5.3). This change has no impact on functionality.
+* Fixes issue where the blocks editor fails to load if the name of any TeleOp opmode contains an apostrophe.
 
 ## Version 6.1 (20201209-113742)
 * Makes the scan button on the configuration screen update the list of Expansion Hubs connected via RS-485
