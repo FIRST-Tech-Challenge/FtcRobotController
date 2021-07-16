@@ -98,6 +98,9 @@ public class Robot {
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
+    public void tripleSplineToPosition(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power){
+        drivetrain.tripleSplineToPosition(direction, x0, y0, x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4,  power);
+    };
     public void setPosition(float xPosition,float yPosition, float newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
     public double[] track(){return drivetrain.track();}//track[0] is y value, track[1] is x value, and track[2] is angle
     public void goToPosition(double yPosition,double xPosition, double newAngle, double power){drivetrain.goToPosition(yPosition,xPosition,newAngle,power);}
