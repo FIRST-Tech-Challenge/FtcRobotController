@@ -12,11 +12,15 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Robot {
 
-    public final AbstractDrive drive;
+    public final AbstractDrive drive; // Drive System
+    public final RobotSpecifications specifications; // Specifications
 
-    protected final DcMotorEx[] motors;
+    protected final DcMotorEx[] motors; // All the selected motors
 
+    // Constructor
     public Robot(HardwareMap hardwareMap, RobotSpecifications specifications) {
+        this.specifications = specifications;
+
         this.motors = new DcMotorEx[specifications.robotMotors.length];
 
         // Get the motors from the hardware map with correct direction
@@ -44,7 +48,16 @@ public class Robot {
         }
 
         this.drive = drive;
+
+        // Reset All Encoders
+        SetRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SetRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
+
+    // ==========================================================================================
+    // Control Methods
+    // ==========================================================================================
 
     public void SetRunMode(DcMotorEx.RunMode runMode) {
         for(DcMotorEx motor : motors)
@@ -55,4 +68,10 @@ public class Robot {
         for(DcMotorEx motor : motors)
             motor.setZeroPowerBehavior(behavior);
     }
+
+    // ==========================================================================================
+    // Getters and Setters
+    // ==========================================================================================
+
+    public DcMotorEx[] GetAllMotors() { return motors; }
 }

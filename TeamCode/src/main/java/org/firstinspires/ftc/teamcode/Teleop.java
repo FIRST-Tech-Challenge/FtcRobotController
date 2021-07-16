@@ -16,7 +16,7 @@ public class Teleop extends TeleopMode {
 
     @Override
     public void OnUpdate() {
-
+        robot.drive.Drive(-gamepad1.left_stick_y, 0, gamepad1.right_stick_x);
     }
 
     @Override

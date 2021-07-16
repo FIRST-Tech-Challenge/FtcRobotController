@@ -12,9 +12,11 @@ public abstract class OperationMode extends LinearOpMode {
 
     public OperationMode(RobotSpecifications specifications) {
         this.specifications = specifications;
+    }
 
+    @Override
+    public void runOpMode() {
         if(OperationMode.robot == null)
             OperationMode.robot = new Robot(hardwareMap, specifications);
     }
-
 }

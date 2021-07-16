@@ -12,6 +12,8 @@ public abstract class TeleopMode extends OperationMode {
 
     @Override
     public void runOpMode() {
+        super.runOpMode();
+
         OnInitialize();
 
         waitForStart();

@@ -1,6 +1,7 @@
 package com.bravenatorsrobotics.drive;
 
 import com.bravenatorsrobotics.core.Robot;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public abstract class AbstractDrive {
 
@@ -10,6 +11,10 @@ public abstract class AbstractDrive {
         this.robot = robot;
     }
 
-    public abstract void Drive(double v, double h, double r);
+    // Abstract Methods
+    protected abstract void SetAllPower(double power);
+    protected abstract void SetPower(DcMotorEx motor, double power);
 
+    public abstract void Drive(double v, double h, double r);
+    public abstract void Stop();
 }
