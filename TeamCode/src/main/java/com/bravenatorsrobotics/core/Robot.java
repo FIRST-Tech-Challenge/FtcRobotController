@@ -1,13 +1,20 @@
 package com.bravenatorsrobotics.core;
 
+import com.bravenatorsrobotics.drive.AbstractDrive;
+import com.bravenatorsrobotics.drive.FourWheelDrive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 public class Robot {
 
-    private final DcMotorEx[] motors;
+    public final AbstractDrive drive;
+
+    protected final DcMotorEx[] motors;
 
     public Robot(HardwareMap hardwareMap, RobotSpecifications specifications) {
         this.motors = new DcMotorEx[specifications.robotMotors.length];
@@ -25,6 +32,18 @@ public class Robot {
             if(shouldReverse)
                 this.motors[i].setDirection(DcMotorSimple.Direction.REVERSE);
         }
+
+        AbstractDrive drive;
+
+        try {
+            Constructor<?> constructor = specifications.driveType.getConstructor(specifications.driveType);
+            drive = (AbstractDrive) constructor.newInstance(this);
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            e.printStackTrace();
+            drive = new FourWheelDrive(this);
+        }
+
+        this.drive = drive;
     }
 
     public void SetRunMode(DcMotorEx.RunMode runMode) {
@@ -36,5 +55,4 @@ public class Robot {
         for(DcMotorEx motor : motors)
             motor.setZeroPowerBehavior(behavior);
     }
-
 }
