@@ -2,12 +2,12 @@ package com.bravenatorsrobotics.operation;
 
 import com.bravenatorsrobotics.core.RobotSpecifications;
 
-public abstract class TeleopMode extends OperationMode {
+public abstract class AutonomousMode extends OperationMode {
 
-    public TeleopMode(RobotSpecifications specifications) { super(specifications); }
+    public AutonomousMode(RobotSpecifications specifications) { super(specifications); }
 
     public abstract void OnInitialize();
-    public abstract void OnUpdate();
+    public abstract void OnStart();
     public abstract void OnStop();
 
     @Override
@@ -18,11 +18,7 @@ public abstract class TeleopMode extends OperationMode {
 
         waitForStart();
 
-        while(opModeIsActive()) {
-            OnUpdate();
-        }
-
+        OnStart();
         OnStop();
     }
-
 }

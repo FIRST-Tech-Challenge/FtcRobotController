@@ -20,7 +20,7 @@ public class Teleop extends TeleopMode {
     }
 
     @Override
-    public void OnEnd() {
+    public void OnStop() {
 
     }
 
