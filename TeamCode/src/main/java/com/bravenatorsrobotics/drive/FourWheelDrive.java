@@ -21,6 +21,18 @@ public class FourWheelDrive extends AbstractDrive {
         this.backRight = robot.GetAllMotors()[3];
     }
 
+    public static String[] GenerateMotors(String frontLeftName, boolean frontLeftReversed,
+                                          String frontRightName, boolean frontRightReversed,
+                                          String backLeftName, boolean backLeftReversed,
+                                          String backRightName, boolean backRightReversed) {
+        return new String[] {
+            frontLeftReversed ? "!" : "" + frontLeftName,
+            frontRightReversed ? "!" : "" + frontRightName,
+            backLeftReversed ? "!" : "" + backLeftName,
+            backRightReversed ? "!" : "" + backRightName
+        };
+    }
+
     // Takes load off the CPU
     private void Sleep() {
         try {

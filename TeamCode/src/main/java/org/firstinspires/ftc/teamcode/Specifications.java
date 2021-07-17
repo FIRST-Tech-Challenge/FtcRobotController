@@ -6,7 +6,12 @@ import com.bravenatorsrobotics.drive.FourWheelDrive;
 public class Specifications extends RobotSpecifications {
 
     public Specifications() {
-        super(new String[] { "!fl", "fr", "!bl", "br" }, FourWheelDrive.class,
+        super(FourWheelDrive.GenerateMotors(
+                "fl", true,
+                "fr", false,
+                "bl", true,
+                "br", false
+                ), FourWheelDrive.class,
                 1120, 1, 3.78);
 
         this.useVelocity = true;
