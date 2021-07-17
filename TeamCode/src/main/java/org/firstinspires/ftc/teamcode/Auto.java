@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.bravenatorsrobotics.operation.AutonomousMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Autonomous")
-public class Autonomous extends AutonomousMode {
+@Autonomous(name="Autonomous")
+public class Auto extends AutonomousMode {
 
-    public Autonomous() { super(new Specifications()); }
+    public Auto() { super(new Specifications()); }
 
     @Override
     public void OnInitialize() {
@@ -14,7 +15,7 @@ public class Autonomous extends AutonomousMode {
 
     @Override
     public void OnStart() {
-        robot.drive.DriveByInches(0.75, 24);
+
     }
 
     @Override
