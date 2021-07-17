@@ -26,8 +26,12 @@ public class HzDriveConstantsDriveEncoders {
     //public static final double MAX_RPM = 1;
 
     //Main Robot Calibration Parameters
-    public static final double TICKS_PER_REV = 383.6 ;
-    public static final double MAX_RPM = 435 ;
+    //public static final double TICKS_PER_REV = 383.6 ;
+    //public static final double MAX_RPM = 435 ;
+
+    public static final double TICKS_PER_REV = 537.7 ;
+    public static final double MAX_RPM = 312 ;
+
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -58,7 +62,7 @@ public class HzDriveConstantsDriveEncoders {
     //Main Robot Calibration Parameters
     public static double WHEEL_RADIUS = 1.8898;//1.8898; // in
     //EDIT THIS FOR STRAIGHT TEST
-    public static double GEAR_RATIO = 1.055;//1.0; // Test Robot : *55.5/60.0; // output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 44.0/60.0;//1.055;//1.0; // Test Robot : *55.5/60.0; // output (wheel) speed / input (motor) speed
     //EDIT THIS FOR TRACK WIDTH TUNER TEST
     public static double TRACK_WIDTH = 15.64; //16.2;//16.1;// Test Robot : 10.75;//9.4; // in
 
@@ -109,17 +113,17 @@ public class HzDriveConstantsDriveEncoders {
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );*/
 
-    //85% max velocity
-    /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            73.17330064499293, 73.17330064499293, 0.0,
-            Math.toRadians(360), Math.toRadians(360), 0.0
-    );*/
-
-    //80% max velocity
+    //85% max velocity 312 rpm motor - 100% = 61.7446106862415091252
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
+            52.48180821614297, 52.48180821614297, 0.0,
+            Math.toRadians(184.02607784577722), Math.toRadians(184.02607784577722), 0.0
+    ); // max Ang velocity was 360 for 435 motors
+
+    //80% max velocity 435 rpm motor
+    /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
             68.86898884234629863, 68.86898884234629863, 0.0,
             Math.toRadians(360), Math.toRadians(360), 0.0
-    );
+    );*/
 
     //75% max velocity
     /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(

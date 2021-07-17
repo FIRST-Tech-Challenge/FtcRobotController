@@ -367,7 +367,7 @@ public class HzGamepad {
      * @return Cube of the stick input reduced to 25% speed
      */
     public double limitStick(double stickInput) {
-        return (stickInput * stickInput * stickInput * 0.25);
+        return (stickInput * stickInput * stickInput * 0.33);
     }
 
     /**

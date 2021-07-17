@@ -29,8 +29,10 @@ public class DriveConstants {
     //public static final double MAX_RPM = 312;
 
     //Main Robot Calibration Parameters
-    public static final double TICKS_PER_REV = 383.6 ;
-    public static final double MAX_RPM = 435 ;
+    //public static final double TICKS_PER_REV = 383.6 ;
+    //public static final double MAX_RPM = 435 ;
+    public static final double TICKS_PER_REV = 537.7 ;
+    public static final double MAX_RPM = 312 ;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -130,11 +132,17 @@ public class DriveConstants {
             Math.toRadians(360), Math.toRadians(360), 0.0
     );*/
 
-    //80% max velocity
+    //85% max velocity 312 rpm motor - 100% = 61.7446106862415091252
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
+            52.48180821614297, 52.48180821614297, 0.0,
+            Math.toRadians(184.02607784577722), Math.toRadians(184.02607784577722), 0.0
+    ); // max Ang velocity was 360 for 435 motors
+
+    //80% max velocity 435 rpm motor
+    /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
             68.86898884234629863, 68.86898884234629863, 0.0,
             Math.toRadians(360), Math.toRadians(360), 0.0
-    );
+    );*/
 
     //75% max velocity
     /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
