@@ -55,10 +55,6 @@ public class Robot {
 
         // Set Zero Power Behavior
         SetZeroBehavior(specifications.zeroPowerBehavior);
-
-        // Reset All Encoders
-        SetRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        SetRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
