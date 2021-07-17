@@ -19,7 +19,7 @@ public abstract class AutonomousMode extends OperationMode {
         telemetry.update();
 
         super.robot.Reset();
-        
+
         OnInitialize();
 
         telemetry.addData("Status", "Ready");
