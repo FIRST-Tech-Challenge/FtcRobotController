@@ -48,6 +48,32 @@ public class FtcGamePad
     private int ySign;
 
     /**
+     * Should call initialize before use!
+     */
+    public FtcGamePad() {}
+
+    /**
+     * Initialize instance of this object.
+     *
+     * @param instanceName specifies the instance name.
+     * @param gamepad specifies the gamepad associated with this instance.
+     * @param buttonHandler specifies the object that will handle the button events. If none provided, it is set to
+     *                      null.
+     */
+    public void initialize(final String instanceName, Gamepad gamepad, FtcGamePad.ButtonHandler buttonHandler) {
+        if (instanceName == null || gamepad == null)
+        {
+            throw new NullPointerException("InstanceName/Gamepad must not be null");
+        }
+
+        this.instanceName = instanceName;
+        this.gamepad = gamepad;
+        this.buttonHandler = buttonHandler;
+        prevButtons = getButtons();
+        ySign = 1;
+    }
+
+    /**
      * Constructor: Create an instance of the object.
      *
      * @param instanceName specifies the instance name.
