@@ -19,6 +19,6 @@ public class Autonomous extends AutonomousMode {
 
     @Override
     public void OnStop() {
-
+        robot.drive.Stop();
     }
 }

@@ -21,7 +21,7 @@ public class Teleop extends TeleopMode {
 
     @Override
     public void OnStop() {
-
+        robot.drive.Stop();
     }
 
 }

@@ -53,6 +53,9 @@ public class Robot {
 
         this.drive = drive;
 
+        // Set Zero Power Behavior
+        SetZeroBehavior(specifications.zeroPowerBehavior);
+
         // Reset All Encoders
         SetRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SetRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -71,6 +74,11 @@ public class Robot {
     public void SetZeroBehavior(DcMotor.ZeroPowerBehavior behavior) {
         for(DcMotorEx motor : motors)
             motor.setZeroPowerBehavior(behavior);
+    }
+
+    public void Reset() {
+        SetRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SetRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // ==========================================================================================

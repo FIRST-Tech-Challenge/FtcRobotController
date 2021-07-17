@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public abstract class OperationMode extends LinearOpMode {
 
-    protected static Robot robot = null;
+    protected Robot robot = null;
 
     protected final RobotSpecifications specifications;
 
@@ -16,7 +16,8 @@ public abstract class OperationMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        if(OperationMode.robot == null)
-            OperationMode.robot = new Robot(this, specifications);
+        // TODO: Salvage the robot class
+//        if(OperationMode.robot == null)
+        this.robot = new Robot(this, specifications);
     }
 }
