@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.bravenatorsrobotics.drive.AbstractDrive;
 import com.bravenatorsrobotics.operation.AutonomousMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -16,6 +15,7 @@ public class Auto extends AutonomousMode {
 
     @Override
     public void OnStart() {
+
     }
 
     @Override
