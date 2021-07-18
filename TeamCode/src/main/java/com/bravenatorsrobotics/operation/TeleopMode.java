@@ -2,8 +2,9 @@ package com.bravenatorsrobotics.operation;
 
 import com.bravenatorsrobotics.core.FtcGamePad;
 import com.bravenatorsrobotics.core.RobotSpecifications;
+import com.bravenatorsrobotics.drive.AbstractDrive;
 
-public abstract class TeleopMode extends OperationMode {
+public abstract class TeleopMode<T extends AbstractDrive> extends OperationMode<T> {
 
     protected final FtcGamePad driverGamePad;
     protected final FtcGamePad operatorGamePad;

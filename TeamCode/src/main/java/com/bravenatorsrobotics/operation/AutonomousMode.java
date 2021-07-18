@@ -1,8 +1,9 @@
 package com.bravenatorsrobotics.operation;
 
 import com.bravenatorsrobotics.core.RobotSpecifications;
+import com.bravenatorsrobotics.drive.AbstractDrive;
 
-public abstract class AutonomousMode extends OperationMode {
+public abstract class AutonomousMode<T extends AbstractDrive> extends OperationMode<T> {
 
     public AutonomousMode(RobotSpecifications specifications) { super(specifications); }
 

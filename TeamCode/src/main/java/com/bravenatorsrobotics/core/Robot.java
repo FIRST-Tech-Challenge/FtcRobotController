@@ -1,9 +1,7 @@
 package com.bravenatorsrobotics.core;
 
 import com.bravenatorsrobotics.drive.AbstractDrive;
-import com.bravenatorsrobotics.drive.FourWheelDrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ControlSystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,11 +10,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-public class Robot {
+public class Robot<DriveType extends AbstractDrive> {
 
     public final LinearOpMode opMode;
 
-    public final AbstractDrive drive; // Drive System
+    public final DriveType drive; // Drive System
     public final RobotSpecifications specifications; // Specifications
 
     protected final DcMotorEx[] motors; // All the selected motors
@@ -43,7 +41,7 @@ public class Robot {
         }
 
         try {
-            Constructor<? extends AbstractDrive> constructor = specifications.driveType.getConstructor(Robot.class);
+            Constructor<DriveType> constructor = ((Class<DriveType>) specifications.driveType).getConstructor(Robot.class);
             this.drive = constructor.newInstance(this);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new BravenatorRuntimeException(Arrays.toString(e.getStackTrace()));

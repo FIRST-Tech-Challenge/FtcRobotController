@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.bravenatorsrobotics.drive.FourWheelDrive;
 import com.bravenatorsrobotics.operation.TeleopMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name="Teleop")
-public class Teleop extends TeleopMode {
+public class Teleop extends TeleopMode<FourWheelDrive> {
 
     // Create TeleopMode with specified specifications
     public Teleop() { super(new Specifications()); }

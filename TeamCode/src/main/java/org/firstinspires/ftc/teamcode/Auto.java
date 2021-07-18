@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.bravenatorsrobotics.drive.AbstractDrive;
+import com.bravenatorsrobotics.drive.FourWheelDrive;
+import com.bravenatorsrobotics.drive.TwoWheelDrive;
 import com.bravenatorsrobotics.operation.AutonomousMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="Autonomous")
-public class Auto extends AutonomousMode {
+public class Auto extends AutonomousMode<FourWheelDrive> {
 
     public Auto() { super(new Specifications()); }
 
