@@ -3,12 +3,14 @@ package com.bravenatorsrobotics.core;
 import com.bravenatorsrobotics.drive.AbstractDrive;
 import com.bravenatorsrobotics.drive.FourWheelDrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ControlSystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 public class Robot {
 
@@ -40,22 +42,16 @@ public class Robot {
                 this.motors[i].setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
-        AbstractDrive drive;
-
         try {
-            Constructor<?> constructor = specifications.driveType.getConstructor(specifications.driveType);
-            drive = (AbstractDrive) constructor.newInstance(this);
+            Constructor<? extends AbstractDrive> constructor = specifications.driveType.getConstructor(Robot.class);
+            this.drive = constructor.newInstance(this);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
-            drive = new FourWheelDrive(this);
+            throw new BravenatorRuntimeException(Arrays.toString(e.getStackTrace()));
         }
-
-        this.drive = drive;
 
         // Set Zero Power Behavior
         SetZeroBehavior(specifications.zeroPowerBehavior);
     }
-
 
     // ==========================================================================================
     // Control Methods
