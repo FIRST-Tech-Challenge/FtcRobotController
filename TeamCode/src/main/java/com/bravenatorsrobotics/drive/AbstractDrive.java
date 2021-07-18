@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public abstract class AbstractDrive {
 
     protected final Robot robot;
+
     protected final double ticksPerInch;
 
     public AbstractDrive(Robot robot) {
@@ -13,6 +14,10 @@ public abstract class AbstractDrive {
 
         this.ticksPerInch = (robot.specifications.ticksPerMotorRev * robot.specifications.driveGearReduction) /
                 (robot.specifications.wheelDiameterInches * Math.PI);
+    }
+
+    public enum TurnDirection {
+        CLOCKWISE, COUNTER_CLOCKWISE
     }
 
     protected void SetPower(DcMotorEx motor, double power) {
@@ -43,6 +48,8 @@ public abstract class AbstractDrive {
     public abstract void DriveByEncoders(double power, int leftTicks, int rightTicks);
     public void DriveByEncoders(double power, int ticks) { DriveByEncoders(power, ticks, ticks); } // Binding
 
-    public abstract void DriveByInches(double power, int leftInches, int rightInches);
+    public abstract void DriveByInches(double power, double leftInches, double rightInches);
     public void DriveByInches(double power, int inches) { DriveByInches(power, inches, inches); }
+
+    public abstract void TurnDegrees(double power, int degrees, TurnDirection turnDirection);
 }

@@ -26,19 +26,19 @@ public class FourWheelDrive extends AbstractDrive {
                                           String backLeftName, boolean backLeftReversed,
                                           String backRightName, boolean backRightReversed) {
         return new String[] {
-            frontLeftReversed ? "!" : "" + frontLeftName,
-            frontRightReversed ? "!" : "" + frontRightName,
-            backLeftReversed ? "!" : "" + backLeftName,
-            backRightReversed ? "!" : "" + backRightName
+                (frontLeftReversed ? "!" : "") + frontLeftName,
+                (frontRightReversed ? "!" : "") + frontRightName,
+                (backLeftReversed ? "!" : "") + backLeftName,
+                (backRightReversed ? "!" : "") + backRightName
         };
     }
 
-    // Takes load off the CPU
-    private void Sleep() {
-        try {
-            Thread.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    private void LoopUntilNotBusy() {
+        while(true) {
+            if (!robot.opMode.opModeIsActive() || (!frontLeft.isBusy() &&
+                    !backLeft.isBusy() &&
+                    !backRight.isBusy() &&
+                    !backLeft.isBusy())) break;
         }
     }
 
@@ -66,17 +66,13 @@ public class FourWheelDrive extends AbstractDrive {
         // Increment Target Positions
         IncrementTargetPosition(frontLeft, leftTicks);
         IncrementTargetPosition(backLeft, leftTicks);
-        IncrementTargetPosition(frontRight, leftTicks);
-        IncrementTargetPosition(backRight, leftTicks);
+        IncrementTargetPosition(frontRight, rightTicks);
+        IncrementTargetPosition(backRight, rightTicks);
 
         robot.SetRunMode(DcMotorEx.RunMode.RUN_TO_POSITION); // Set Run Mode
         SetAllPower(power); // Set Motor Power
 
-        while(robot.opMode.opModeIsActive() &&
-                (frontLeft.isBusy() || frontRight.isBusy() ||
-                backLeft.isBusy() || backRight.isBusy())) {
-            Sleep();
-        }
+        LoopUntilNotBusy();
 
         this.Stop();
 
@@ -84,7 +80,19 @@ public class FourWheelDrive extends AbstractDrive {
     }
 
     @Override
-    public void DriveByInches(double power, int leftInches, int rightInches) {
+    public void DriveByInches(double power, double leftInches, double rightInches) {
         DriveByEncoders(power, (int) (leftInches * ticksPerInch), (int) (rightInches * ticksPerInch));
+    }
+
+    @Override
+    public void TurnDegrees(double power, int degrees, TurnDirection turnDirection) {
+        // Calculate Distance
+        double distance = Math.abs(degrees) * (robot.specifications.pivotDiameterInches / 45.0);
+
+        // Reverse if turning counter-clockwise
+        distance *= turnDirection == TurnDirection.COUNTER_CLOCKWISE ? 1 : -1;
+
+        // Drive the sides in different directions the specified distances
+        this.DriveByInches(power, -distance, distance);
     }
 }
