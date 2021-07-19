@@ -10,7 +10,7 @@ public class TwoWheelDrive extends AbstractDrive {
     private final DcMotorEx left;
     private final DcMotorEx right;
 
-    public TwoWheelDrive(Robot robot) {
+    public TwoWheelDrive(Robot<? extends TwoWheelDrive> robot) {
         super(robot);
 
         this.left = robot.GetAllMotors()[0];

@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.bravenatorsrobotics.drive.FourWheelDrive;
+import com.bravenatorsrobotics.drive.MecanumDrive;
 import com.bravenatorsrobotics.operation.TeleopMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name="Teleop")
-public class Teleop extends TeleopMode<FourWheelDrive> {
+public class Teleop extends TeleopMode<MecanumDrive> {
 
     // Create TeleopMode with specified specifications
     public Teleop() { super(new Specifications()); }
@@ -17,7 +17,7 @@ public class Teleop extends TeleopMode<FourWheelDrive> {
 
     @Override
     public void OnUpdate() {
-        robot.drive.Drive(-gamepad1.left_stick_y, 0, gamepad1.right_stick_x);
+        robot.drive.Drive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
     }
 
     @Override

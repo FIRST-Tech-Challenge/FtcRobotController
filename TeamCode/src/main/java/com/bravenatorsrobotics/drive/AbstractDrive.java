@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public abstract class AbstractDrive {
 
-    protected final Robot robot;
+    protected final Robot<? extends AbstractDrive> robot;
 
     protected final double ticksPerInch;
 
-    public AbstractDrive(Robot robot) {
+    public AbstractDrive(Robot<? extends AbstractDrive> robot) {
         this.robot = robot;
 
         this.ticksPerInch = (robot.specifications.ticksPerMotorRev * robot.specifications.driveGearReduction) /

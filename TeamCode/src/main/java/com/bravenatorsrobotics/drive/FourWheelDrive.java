@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.util.Range;
 
 public class FourWheelDrive extends AbstractDrive {
 
-    private final DcMotorEx frontLeft;
-    private final DcMotorEx frontRight;
-    private final DcMotorEx backLeft;
-    private final DcMotorEx backRight;
+    protected final DcMotorEx frontLeft;
+    protected final DcMotorEx frontRight;
+    protected final DcMotorEx backLeft;
+    protected final DcMotorEx backRight;
 
-    public FourWheelDrive(Robot robot) {
+    public FourWheelDrive(Robot<? extends FourWheelDrive> robot) {
         super(robot);
 
         this.frontLeft = robot.GetAllMotors()[0];
