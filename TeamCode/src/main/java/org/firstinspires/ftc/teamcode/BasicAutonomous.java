@@ -14,7 +14,9 @@ public class BasicAutonomous extends LinearOpMode {
     DcMotor frontLeft,backLeft,frontRight,backRight;
 
     ElapsedTime t;
-
+    //Ticks per revolution = 537.6(same for both)
+    //wheel size is 100mm and circumference ~31.415 cm(regular)
+    //wheel size is 96mm and circumference~30.15 cm(Strafer chassis)
     public static double TICKS_PER_CM = 17.83; // 17.83 tics/cm traveled(Strafer)
     public static double WHEEL_POWER = 0.6;
     public static double MOVE_CORRECTION = 1.0;
@@ -39,9 +41,7 @@ public class BasicAutonomous extends LinearOpMode {
 
     }
 
-    //Ticks per revolution = 537.6(same for both)
-    //wheel size is 100mm and circumference ~31.415 cm(regular)
-    //wheel size is 96mm and circumference~30.15 cm(Strafer chassis)
+
 
     public void runOpMode() {
         initHardware();
