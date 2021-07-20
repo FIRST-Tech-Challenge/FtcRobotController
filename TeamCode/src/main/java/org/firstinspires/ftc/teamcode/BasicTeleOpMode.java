@@ -16,6 +16,8 @@ public class BasicTeleOpMode extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
     public void runOpMode() {
+
+        //INIT CODE GOES HERE
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
         backLeft = hardwareMap.dcMotor.get("backLeft");
         frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -24,10 +26,15 @@ public class BasicTeleOpMode extends LinearOpMode {
         backLeft = hardwareMap.dcMotor.get("front_left_motor");
         frontRight = hardwareMap.dcMotor.get("front_right_motor");
         backRight = hardwareMap.dcMotor.get("back_right_motor");*/
+        //WAITING HERE FOR START
         waitForStart();
+
+        //POST INIT CODE
         if(opModeIsActive()) {
             double wheelsPowerFactor = 0.6;
             while(opModeIsActive()) {
+
+                //THESE ARE THE MOVEMENT FUNCTIONS
                 double output_x = Math.pow(gamepad1.left_stick_x, 3);
                 double output_y = Math.pow(gamepad1.left_stick_y, 3);
                 double output_xRight = Math.pow(gamepad1.right_stick_x, 3);
