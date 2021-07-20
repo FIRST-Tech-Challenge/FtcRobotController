@@ -42,8 +42,10 @@ public class BasicAutonomous extends LinearOpMode {
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        //WAITING FOR START
         waitForStart();
 
+        //CODE THAT IS RUN ON THE ROBOT
         t = new ElapsedTime();
 
         moveStraight(100);
@@ -55,7 +57,7 @@ public class BasicAutonomous extends LinearOpMode {
         strafeLeft(100);
         sleep(1000);
     }
-
+    //MOVING FUNCTIONS
     public void moveStraight(double distance) {
         backLeft.setTargetPosition((int) (distance * TICKS_PER_CM * MOVE_CORRECTION)); //ticks
         frontLeft.setTargetPosition((int) (distance * TICKS_PER_CM * MOVE_CORRECTION));
@@ -110,6 +112,7 @@ public class BasicAutonomous extends LinearOpMode {
 
         while (opModeIsActive() && (backRight.isBusy() || backLeft.isBusy() || frontLeft.isBusy() || frontRight.isBusy()))
         {
+            //TELEMETRY OUTPUT TO THE PHONE
             telemetry.addData("Time", t.seconds());
             telemetry.addData("encoder-bck-left", backLeft.getCurrentPosition() + " power= " + backLeft.getPower() +  "  busy=" + backLeft.isBusy());
             telemetry.addData("encoder-bck-right", backRight.getCurrentPosition() + " power= " + backRight.getPower() +  "  busy=" + backRight.isBusy());
