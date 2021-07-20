@@ -21,13 +21,8 @@ public class BasicAutonomous extends LinearOpMode {
     public static double ROTATION_CORRECTION = 1.0; //(62/90);
     public static double STRAFE_CORRECTION = 1.0;
 
-
-    //Ticks per revolution = 537.6(same for both)
-    //wheel size is 100mm and circumference ~31.415 cm(regular)
-    //wheel size is 96mm and circumference~30.15 cm(Strafer chassis)
-
-    public void runOpMode() {
-
+    public void initHardware(){
+        //INIT CODE GOES HERE
         backLeft = hardwareMap.dcMotor.get("backLeft");
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
         frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -41,6 +36,15 @@ public class BasicAutonomous extends LinearOpMode {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+    }
+
+    //Ticks per revolution = 537.6(same for both)
+    //wheel size is 100mm and circumference ~31.415 cm(regular)
+    //wheel size is 96mm and circumference~30.15 cm(Strafer chassis)
+
+    public void runOpMode() {
+        initHardware();
 
         //WAITING FOR START
         waitForStart();
