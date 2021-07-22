@@ -20,15 +20,14 @@ public class BasicTeleOpMode extends LinearOpMode {
         backLeft = hardwareMap.dcMotor.get("backLeft");
         frontRight = hardwareMap.dcMotor.get("frontRight");
         backRight = hardwareMap.dcMotor.get("backRight");
-            /*frontLeft = hardwareMap.dcMotor.get("back_left_motor");
-            backLeft = hardwareMap.dcMotor.get("front_left_motor");
-            frontRight = hardwareMap.dcMotor.get("front_right_motor");
-            backRight = hardwareMap.dcMotor.get("back_right_motor");*/
-        //WAITING HERE FOR START
-        waitForStart();
     }
 
     public void runOpMode() {
+        initHardware();
+
+        //WAITING HERE FOR START
+        waitForStart();
+
         //POST INIT CODE
         if(opModeIsActive()) {
             double wheelsPowerFactor = 0.6;
