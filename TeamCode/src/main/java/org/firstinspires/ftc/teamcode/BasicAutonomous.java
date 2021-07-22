@@ -1,3 +1,4 @@
+//Simple autonomous with movement functions using encoders, that moves in a 100cm square
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
