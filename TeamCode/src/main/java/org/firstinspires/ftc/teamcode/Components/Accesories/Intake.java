@@ -35,6 +35,10 @@ public class Intake {
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeMotor.setPower(intakeSpeed);
     }
+    public void reverseIntakeTeleOp(){
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setPower(intakeSpeed-0.3);
+    }
 
     public void stopIntake() {
         intakeMotor.setPower(0);

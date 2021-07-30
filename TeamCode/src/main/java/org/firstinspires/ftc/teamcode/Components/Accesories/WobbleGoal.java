@@ -48,6 +48,7 @@ public class WobbleGoal {
         }
         else{
             wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            wobbleGoalMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         }
     }
@@ -56,7 +57,7 @@ public class WobbleGoal {
     public void goToPosition(Position p) {
         int i = 0;
         if (p == Position.REST) {
-            int ticksForREST = 40;
+            int ticksForREST = 100;
             i = ticksForREST;
         } else if (p == Position.AutoGRAB) {
             int ticksForGRAB = 650;
@@ -86,7 +87,7 @@ public class WobbleGoal {
             op.telemetry.update();
             op.sleep(2000);
         }
-        i-=40;
+        i-=100;
 //        op.sleep(1000);
         if (p == Position.DROP) {
             double wobbleGoalSpeedDrop = 0.7;

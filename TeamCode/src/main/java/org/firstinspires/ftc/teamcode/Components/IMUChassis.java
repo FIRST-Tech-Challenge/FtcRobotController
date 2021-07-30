@@ -375,6 +375,11 @@ public class IMUChassis extends BasicChassis {
     }
 
     @Override
+    public void tripleSplineToPosition(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power) {
+
+    }
+
+    @Override
     public void moveAngle(double x, double y, double power) {
         motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

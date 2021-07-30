@@ -36,7 +36,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.closeWobbleGoalClaw();
             sleep(250);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-            robot.goToPosition(-75,-3,90,1);
+            robot.goToPosition(-77,-3,90,1);
             sleep(350);
             robot.openWobbleGoalClaw();
             sleep(200);
@@ -92,7 +92,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.startTransfer();
             robot.goToPositionWithoutStop((float)-117,48,90,(float)0.7);
             robot.reverseTransfer();
-            robot.setVelocity(1675,1000);
+            robot.setVelocity(1640,3000);
             robot.startTransfer();
             //robot.stopIntake();
             //            robot.setVelocity(1600,1000);
@@ -104,7 +104,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.reverseTransfer();
             sleep(100);
             robot.startTransfer();
-            robot.shootHighGoal(3);
+            robot.shootHighGoalTest(1640,2000,3);
             robot.stopIntake();
             robot.stopTransfer();
             robot.goToPosition(-70,4,0,0.1);
@@ -230,7 +230,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.openWobbleGoalClaw();
             sleep(50);
             robot.setVelocity(1650,1000);
-            robot.goToPosition(-55.5,3,2.5,1.0);
+            robot.goToPosition(-54.5,3,2.5,1.0);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
             robot.shootHighGoal(3);
             sleep(100);
@@ -259,7 +259,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             robot.stopTransfer();
             robot.turnInPlace(180,0.7);
             robot.goToPosition(-30,9,180,1);
-            robot.goToPosition(-24.25,8.5,172.5,0.9);
+            robot.goToPosition(-20.55,8.5,172.5,0.9);
             robot.closeWobbleGoalClaw();
             sleep(250);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
