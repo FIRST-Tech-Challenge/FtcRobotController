@@ -4,6 +4,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MotionPlanner {
 
+
+    //Using x(t) we can calculate v(x)
+    //1. First calculate v(t) which is d/dt(x(t))
+    //2. Then calculate g(x) which is x(t)^-1 (inverse)
+    //3. Then calculate v(g(x)) which is v(x)
+
     //Rest pow
     public double restPow = 0;
     //Approach rate [0,1] lower means stops farther away
