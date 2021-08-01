@@ -60,7 +60,7 @@ public class WobbleGoal {
             int ticksForREST = 100;
             i = ticksForREST;
         } else if (p == Position.AutoGRAB) {
-            int ticksForGRAB = 700;
+            int ticksForGRAB = 650;
             i = ticksForGRAB;
         } else if (p == Position.GRAB) {
             int ticksForGRAB = 630;

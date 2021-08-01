@@ -33,7 +33,7 @@ public class OneGPTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,true);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,false);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
         //robot.navigateTeleOp();
@@ -98,8 +98,6 @@ public class OneGPTeleop extends LinearOpMode {
                 goingToPosition=1;
                 robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 1.0);
                 robot.turnInPlace(angleShootingPosition,1.0);
-                sleep(50);
-                robot.shootHighGoal(3);
                     /*if(robot.goToPositionTeleop(yShootingPosition, xShootingPosition, , 0.8)){
                         robot.turnInPlace(angleShootingPosition,0.8);
                     }*/
@@ -166,14 +164,14 @@ public class OneGPTeleop extends LinearOpMode {
             // wobble goal movements
             if (move_wobble_goal_arm){
                 if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGRAB);
+                } else if (currentWobbleGoalPosition == WobbleGoal.Position.AutoGRAB) {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DRIVETOWALL);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.DRIVETOWALL) {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
                 }
                 else if(currentWobbleGoalPosition == WobbleGoal.Position.RAISE){
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGRAB);
                 }
                 // added by Aiden; must have this otherwise if you hold onto the button multiple
                 // actions/movements will be executed by mistake
