@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -24,10 +28,10 @@ public class TestTeleOp extends UpliftTele {
     DcMotor intake;
     Servo intakeLifter;
     DcMotor transfer;
-    DcMotor shooter1;
-    DcMotor shooter2;
-
-
+    DcMotorEx shooter1;
+    DcMotorEx shooter2;
+    Servo flicker;
+    AnalogInput potentiometer;
 
 
     @Override
@@ -45,6 +49,7 @@ public class TestTeleOp extends UpliftTele {
         transfer = robot.transfer;
         shooter1 = robot.shooter1;
         shooter2 = robot.shooter2;
+        flicker = robot.flicker;
     }
 
     @Override
@@ -88,6 +93,16 @@ public class TestTeleOp extends UpliftTele {
         if(gamepad2.y) {
             shooter1.setPower(0);
             shooter2.setPower(0);
+        }
+        if(gamepad2.right_bumper) {
+            Log.i("RB clicked", "TRUE");
+            for(int i = 0; i < 3; i++) {
+                setFlickerIn();
+                Log.i("FLICKER IN", "TRUE");
+                robot.safeSleep(300);
+                setFlickerOut();
+                robot.safeSleep(300);
+            }
         }
 
 
@@ -161,6 +176,28 @@ public class TestTeleOp extends UpliftTele {
     }
     public void dropRoller() {
         intakeLifter.setPosition(0.64);
+    }
+
+    public void setFlickerOut() {
+        flicker.setPosition(0.49);
+    }
+
+    public void setFlickerIn() {
+        flicker.setPosition(0.618);
+    }
+
+    public void flickRing() {
+        // move in
+        setFlickerIn();
+        double initialTime = System.currentTimeMillis();
+        while(potentiometer.getVoltage() > 0.635 && System.currentTimeMillis() - initialTime < 750) {
+            robot.safeSleep(1);
+        }
+        setFlickerOut();
+        initialTime = System.currentTimeMillis();
+        while(potentiometer.getVoltage() < 0.99 && System.currentTimeMillis() - initialTime < 750) {
+            robot.safeSleep(1);
+        }
     }
 
 

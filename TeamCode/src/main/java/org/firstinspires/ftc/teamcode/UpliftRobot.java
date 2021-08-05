@@ -15,13 +15,6 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.functions.DriveFunctions;
-import org.firstinspires.ftc.teamcode.functions.FlickerFunctions;
-import org.firstinspires.ftc.teamcode.functions.IntakeFunctions;
-import org.firstinspires.ftc.teamcode.functions.ShooterFunctions;
-import org.firstinspires.ftc.teamcode.functions.TransferFunctions;
-import org.firstinspires.ftc.teamcode.functions.WobbleFunctions;
-import org.firstinspires.ftc.teamcode.toolkit.background.Cancel;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.background.ShotCounter;
 import org.firstinspires.ftc.teamcode.toolkit.background.UpliftTelemetry;
@@ -39,7 +32,6 @@ public class UpliftRobot {
     public LinearOpMode opMode;
 
     public UpliftTelemetry upliftTelemetry;
-    public Cancel cancelClass;
     public Odometry odometry;
     public VelocityData velocityData;
     public ShotCounter shotCounter;
@@ -53,15 +45,6 @@ public class UpliftRobot {
     public DigitalChannel digitalTouchBottom, digitalTouchTop;
     public DistanceSensor shooterSensor;
     public AnalogInput potentiometer;
-
-    public boolean driveInitialized, flickerInitialized, intakeInitialized, shooterInitialized, transferInitialized, wobbleInitialized, imuInitialized, visionInitialized;
-
-    public DriveFunctions driveFunctions;
-    public ShooterFunctions shooterFunctions;
-    public WobbleFunctions wobbleFunctions;
-    public IntakeFunctions intakeFunctions;
-    public FlickerFunctions flickerFunctions;
-    public TransferFunctions transferFunctions;
 
     public BNO055IMU imu;
 
@@ -92,129 +75,80 @@ public class UpliftRobot {
         this.opMode = opMode;
         getHardware();
         initBackground();
-        initFunctions();
     }
 
     public void getHardware() {
         hardwareMap = opMode.hardwareMap;
 
-        try {
-            leftFront = hardwareMap.get(DcMotor.class, "lf_motor");//Declares two left motors
-            leftBack = hardwareMap.get(DcMotor.class, "lb_motor");
-            rightFront = hardwareMap.get(DcMotor.class, "rf_motor"); //Declares two right motors
-            rightBack = hardwareMap.get(DcMotor.class, "rb_motor");
+        leftFront = hardwareMap.get(DcMotor.class, "lf_motor");//Declares two left motors
+        leftBack = hardwareMap.get(DcMotor.class, "lb_motor");
+        rightFront = hardwareMap.get(DcMotor.class, "rf_motor"); //Declares two right motors
+        rightBack = hardwareMap.get(DcMotor.class, "rb_motor");
 
-            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            driveInitialized = true;
-        } catch (Exception ex) {
-            driveInitialized = false;
-            opMode.telemetry.addData("Drivetrain initialization failed: ", ex.getMessage());
-        }
+        flicker = hardwareMap.get(Servo.class, "flicker");
+        potentiometer = hardwareMap.get(AnalogInput.class, "potentiometer");
 
-        try {
-            flicker = hardwareMap.get(Servo.class, "flicker");
-            potentiometer = hardwareMap.get(AnalogInput.class, "potentiometer");
-            flickerInitialized = true;
-        } catch (Exception ex) {
-            flickerInitialized = false;
-            opMode.telemetry.addData("Flicker initialization failed: ", ex.getMessage());
-        }
+        transfer = hardwareMap.get(DcMotorEx.class, "transfer");
+        transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        transfer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        try {
-            transfer = hardwareMap.get(DcMotorEx.class, "transfer");
-            transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            transfer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "touch_bottom");
+        digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
+        digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
+        digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
 
-            digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "touch_bottom");
-            digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
-            digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
-            digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
+        shooter1 = hardwareMap.get(DcMotorEx.class, "shooter_1");
+        shooter2 = hardwareMap.get(DcMotorEx.class, "shooter_2");
+        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            transferInitialized = true;
-        } catch (Exception ex) {
-            transferInitialized = false;
-            opMode.telemetry.addData("Transfer initialization failed: ", ex.getMessage());
-        }
+        shooterSensor = hardwareMap.get(DistanceSensor.class, "shooter_sensor");
 
-        try {
-            shooter1 = hardwareMap.get(DcMotorEx.class, "shooter_1");
-            shooter2 = hardwareMap.get(DcMotorEx.class, "shooter_2");
-            shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
-            shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeLifter = hardwareMap.get(Servo.class, "intake_lifter");
 
-            shooterSensor = hardwareMap.get(DistanceSensor.class, "shooter_sensor");
+        sweeperJoint = hardwareMap.get(Servo.class, "sweeper_joint");
+        sweeperLeft = hardwareMap.get(CRServo.class, "sweeper_left");
+        sweeperRight = hardwareMap.get(CRServo.class, "sweeper_right");
+        stick = hardwareMap.get(Servo.class, "stick");
 
-            shooterInitialized = true;
-        } catch (Exception ex) {
-            shooterInitialized = false;
-            opMode.telemetry.addData("Shooter initialization failed: ", ex.getMessage());
-        }
+        wobbleLeft = hardwareMap.get(Servo.class, "wobble_left");
+        wobbleRight = hardwareMap.get(Servo.class, "wobble_right");
+        clamp = hardwareMap.get(Servo.class, "clamp");
 
-        try {
-            intake = hardwareMap.get(DcMotor.class, "intake");
-            intake.setDirection(DcMotorSimple.Direction.REVERSE);
-            intakeLifter = hardwareMap.get(Servo.class, "intake_lifter");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        imu.initialize(parameters);
 
-            sweeperJoint = hardwareMap.get(Servo.class, "sweeper_joint");
-            sweeperLeft = hardwareMap.get(CRServo.class, "sweeper_left");
-            sweeperRight = hardwareMap.get(CRServo.class, "sweeper_right");
-            stick = hardwareMap.get(Servo.class, "stick");
-
-            intakeInitialized = true;
-        } catch (Exception ex) {
-            intakeInitialized = false;
-            opMode.telemetry.addData("Intake initialization failed: ", ex.getMessage());
-        }
-
-        try {
-            wobbleLeft = hardwareMap.get(Servo.class, "wobble_left");
-            wobbleRight = hardwareMap.get(Servo.class, "wobble_right");
-            clamp = hardwareMap.get(Servo.class, "clamp");
-
-            wobbleInitialized = true;
-        } catch (Exception ex) {
-            wobbleInitialized = false;
-            opMode.telemetry.addData("Wobble initialization failed: ", ex.getMessage());
-        }
-
-        try {
-            imu = hardwareMap.get(BNO055IMU.class, "imu");
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            imu.initialize(parameters);
-
-            imuInitialized = true;
-        } catch (Exception ex) {
-            imuInitialized = false;
-            opMode.telemetry.addData("IMU initialization failed: ", ex.getMessage());
-        }
 
         // if the current opmode is an Auto, setup vision
         if(opMode instanceof UpliftAuto) {
-            try {
                 ringDetector = new RingDetector();
                 webcamName = hardwareMap.get(WebcamName.class, "webcam");
                 int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -222,11 +156,6 @@ public class UpliftRobot {
                 camera.openCameraDevice();
                 camera.setPipeline(ringDetector);
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            } catch (Exception ex) {
-                visionInitialized = false;
-                opMode.telemetry.addData("WARNING WARNING WARNING WARNING", "");
-                opMode.telemetry.addData("Vision initialization failed: ", ex.getMessage());
-            }
         }
 
         // setup file system
@@ -241,36 +170,12 @@ public class UpliftRobot {
     public void initBackground() {
         upliftTelemetry = new UpliftTelemetry(this);
         upliftTelemetry.enable();
-        cancelClass = new Cancel(this);
-        cancelClass.enable();
         odometry = new Odometry(this);
         odometry.enable();
         velocityData = new VelocityData(this);
         velocityData.enable();
         shotCounter = new ShotCounter(this);
         shotCounter.enable();
-    }
-
-    // method to create instances of each Functions class (these hold the methods for each section of the robot)
-    public void initFunctions() {
-        if(driveInitialized) {
-            driveFunctions = new DriveFunctions(this);
-        }
-        if(shooterInitialized) {
-            shooterFunctions = new ShooterFunctions(this);
-        }
-        if(wobbleInitialized) {
-            wobbleFunctions = new WobbleFunctions(this);
-        }
-        if(intakeInitialized) {
-            intakeFunctions = new IntakeFunctions(this);
-        }
-        if(flickerInitialized) {
-            flickerFunctions = new FlickerFunctions(this);
-        }
-        if(transferInitialized) {
-            transferFunctions = new TransferFunctions(this);
-        }
     }
 
     public void writePositionToFiles() {
@@ -321,27 +226,9 @@ public class UpliftRobot {
         return true;
     }
 
-    public void wait(boolean complete) {
-        while(!complete && opMode.opModeIsActive() && !driverCancel && !operatorCancel) {
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void stopThreads() {
         odometry.stop();
         velocityData.stop();
-        cancelClass.stop();
-    }
-
-    public void disable() {
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightFront.setPower(0);
-        rightBack.setPower(0);
     }
 
 }
