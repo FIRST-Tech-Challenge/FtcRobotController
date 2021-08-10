@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
@@ -9,6 +11,7 @@ import org.firstinspires.ftc.teamcode.toolkit.misc.UpliftMath;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.hypot;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
@@ -42,7 +45,8 @@ public class Auto extends UpliftAuto {
 
     @Override
     public void body() throws InterruptedException {
-
+        driveToPosition(0,20,.5,4);
+        passThroughPosition(20, 20, 0.5);
     }
 
     @Override
@@ -85,20 +89,47 @@ public class Auto extends UpliftAuto {
     public void driveToPosition(double x, double y, double speedVal, double tolerance) {
         double xDist = x - robot.worldX;
         double yDist = y - robot.worldY;
-        double distance = sqrt(pow(xDist, 2) + pow(yDist,2));
-        double angle = UpliftMath.atan2UL(yDist,xDist);
-        while(distance > tolerance) {
+        double distance = hypot(xDist,yDist);
+        double angle = Math.toDegrees(UpliftMath.atan2UL(yDist,xDist));
+        telemetry.addData("y position", yDist);
+        telemetry.update();
+        Log.i("y position", yDist + "");
+        Log.i("angle", angle + "");
+        while(distance > tolerance && opModeIsActive()) {
             driveTowards(speedVal, angle);
             xDist = x - robot.worldX;
             yDist = y - robot.worldY;
-            distance = sqrt(pow(xDist, 2) + pow(yDist,2));
-            angle = UpliftMath.atan2UL(yDist,xDist);
+            distance = hypot(xDist,yDist);
+            angle = Math.toDegrees(UpliftMath.atan2UL(yDist,xDist));
+            telemetry.addData("y position", yDist);
+            telemetry.update();
+            Log.i("y position", yDist + "");
+            Log.i("angle", angle + "");
         }
+        stopMotors();
     }
 
     // method to pass through a target point (within a large tolerance) and continue without stopping
     public void passThroughPosition(double x, double y, double speedVal) {
-
+        double xDist = x - robot.worldX;
+        double yDist = y - robot.worldY;
+        double distance = hypot(xDist,yDist);
+        double angle = Math.toDegrees(UpliftMath.atan2UL(yDist,xDist));
+        telemetry.addData("y position", yDist);
+        telemetry.update();
+        Log.i("y position", yDist + "");
+        Log.i("angle", angle + "");
+        while(distance > 6 && opModeIsActive()) {
+            driveTowards(speedVal, angle);
+            xDist = x - robot.worldX;
+            yDist = y - robot.worldY;
+            distance = hypot(xDist,yDist);
+            angle = Math.toDegrees(UpliftMath.atan2UL(yDist,xDist));
+            telemetry.addData("y position", yDist);
+            telemetry.update();
+            Log.i("y position", yDist + "");
+            Log.i("angle", angle + "");
+        }
     }
 
     // method to constantly spin ( [+] for clockwise and [-] for counter-clockwise )
