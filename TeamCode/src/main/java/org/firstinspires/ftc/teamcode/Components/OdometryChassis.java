@@ -796,17 +796,22 @@ public class OdometryChassis extends BasicChassis {
                 if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>t){
                     t = (oneDistance)/(oneDistance+twoDistance);
                 }
-                target_position[2] = (0.5 * ((2 * point[i+1][1]) + (-point[i+0][1] + point[i+2][1]) + 2 * (2 * point[i+0][1] - 5 * point[i+1][1] + 4 * point[i+2][1] - point[i+3][1]) * t +
-                        3 * (-point[i+0][1] + 3 * point[i+1][1] - 3 * point[i+2][1] + point[i+3][1]) * pow(t, 2)));
+                tarcurpos[0] = 0.5 * ((2 * point[i + 1][0]) + ( + point[i + 2][0]) * t + ( - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(t, 2) +
+                        ( + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t, 3));
+
+                tarcurpos[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1]) * t + ( - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t, 2) +
+                        ( + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 3));
+                target_position[2] = (0.5 * ((2 * point[i + 1][1]) + ( + point[i + 2][1]) + 2 * ( - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
+                        3 * ( + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 2)));
                 mpconst=target_position[2];
                 target_position[2]=atan(1/target_position[2]) + (direction-1) * PI;
                 error = currentPosition[2];
                 error %= 360;
                 double x = target_position[0] - currentPosition[0];
                 double y = target_position[1] - currentPosition[1];
-                double xError=0;//sqrt(pow((power)*power*30,2)/(1+pow(mpconst,2)))-xVelocity;
+                double xError=0;//sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity+tarcurpos[0]-currentPosition[0];
                 xError*=0.02;
-                double yError=0;//(xError+xVelocity*0.02)*mpconst-yVelocity*0.02;
+                double yError=0;//(xError+xVelocity*0.02)*mpconst-yVelocity*0.02+(tarcurpos[1]-currentPosition[1])*0.02;
                 angleInRadians = atan2(y, -x) - (currentPosition[2] * PI / 180);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
@@ -851,8 +856,6 @@ public class OdometryChassis extends BasicChassis {
             startPosition = currentPosition;
             axisa=atan2(-point[i+2][1]+point[i+1][1],point[i+2][0]-point[i+1][0]);
             difference = abs(sqrt(pow((point[i + 2][0] - currentPosition[0]),2) + pow(point[i + 2][1] - currentPosition[1],2)));
-            double xError=0;
-            double yError=0;
             t=0;
             while (op.opModeIsActive() && (abs(difference) >= 0.5)) {
                 currentPosition = track();
@@ -872,8 +875,13 @@ public class OdometryChassis extends BasicChassis {
                 if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>t){
                     t = (oneDistance)/(oneDistance+twoDistance);
                 }
-                target_position[2] = (0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) + 2 * (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] ) * t +
-                        3 * (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] ) * pow(t, 2)));
+                tarcurpos[0] = 0.5 * ((2 * point[i + 1][0]) + ( + point[i + 2][0]) * t + ( - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(t, 2) +
+                        ( + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t, 3));
+
+                tarcurpos[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1]) * t + ( - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t, 2) +
+                        ( + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 3));
+                target_position[2] = (0.5 * ((2 * point[i + 1][1]) + ( + point[i + 2][1]) + 2 * ( - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
+                        3 * ( + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 2)));
                 mpconst=target_position[2];
                 target_position[2]=atan(1/target_position[2]) + (direction-1) * PI;
                 error = currentPosition[2];
@@ -881,11 +889,9 @@ public class OdometryChassis extends BasicChassis {
                 double x = target_position[0] - currentPosition[0];
                 double y = target_position[1] - currentPosition[1];
 
-                    xError = sqrt(pow((power) * power * 30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
-                    xError *= 0.02;
-                    yError = (xError + xVelocity * 0.02) * mpconst - yVelocity * 0.02;
-                    xError=0;
-                    yError=0;
+                double xError=0;//sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity+tarcurpos[0]-currentPosition[0];
+                xError*=0.02;
+                double yError=0;//(xError+xVelocity*0.02)*mpconst-yVelocity*0.02+(tarcurpos[1]-currentPosition[1])*0.02;
                 double approxDifference=0;
 
                 if(difference<20){
