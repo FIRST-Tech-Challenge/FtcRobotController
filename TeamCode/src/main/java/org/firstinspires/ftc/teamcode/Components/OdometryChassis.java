@@ -36,7 +36,7 @@ public class OdometryChassis extends BasicChassis {
     double Velocity=0;
     public static final boolean gotoPosition_off = false;
     public static final boolean vuforia_on = false;
-    final int[] odomconst = {-1, 1, -1};
+    final int[] odomconst = {1, -1, -1};
     final float ticks_per_inch = (float) (8640 * 2.54 / 38 * Math.PI) * 72 / 76;
     float robot_diameter = (float) sqrt(619.84);
     static final float[] odom = {0f,0f,0f};
@@ -678,7 +678,9 @@ public class OdometryChassis extends BasicChassis {
         double max = 0.15;
         double mpconst = 0;
         double mpyVelocity = 0;
+        double[] tarcurpos = {0,0,0};
         runtime.reset();
+        double t=0;
         for (int i =-1; i < 0; i++) {
             double timedis = sqrt(pow(point[i + 2][0] - point[i + 1][0], 2) + pow(point[i + 2][1] - point[i + 1][1], 2));
             startPosition = currentPosition;
@@ -694,7 +696,9 @@ public class OdometryChassis extends BasicChassis {
                 currentPosition = track();
                 double twoDistance=sqrt(pow(point[i+2][1]-currentPosition[1],2)+pow(point[i+2][0]-currentPosition[0],2));
                 double oneDistance=sqrt(pow(point[i+1][1]-currentPosition[1],2)+pow(point[i+1][0]-currentPosition[0],2));
-                double t = (oneDistance+Velocity/4)/(oneDistance+twoDistance);
+                if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>t){
+                    t = (oneDistance+Velocity/4)/(oneDistance+twoDistance);
+                }
                 if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>1){
                     break;
                 }
@@ -703,7 +707,14 @@ public class OdometryChassis extends BasicChassis {
 
                 target_position[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1]) * t + ( - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t, 2) +
                         ( + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 3));
+                if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>t){
+                    t = (oneDistance)/(oneDistance+twoDistance);
+                }
+                tarcurpos[0] = 0.5 * ((2 * point[i + 1][0]) + ( + point[i + 2][0]) * t + ( - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(t, 2) +
+                        ( + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t, 3));
 
+                tarcurpos[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1]) * t + ( - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t, 2) +
+                        ( + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 3));
                 target_position[2] = (0.5 * ((2 * point[i + 1][1]) + ( + point[i + 2][1]) + 2 * ( - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
                         3 * ( + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 2)));
                 mpconst=target_position[2];
@@ -712,9 +723,9 @@ public class OdometryChassis extends BasicChassis {
                 error %= 360;
                 double x = target_position[0] - currentPosition[0];
                 double y = target_position[1] - currentPosition[1];
-                double xError=sqrt(pow((power)*power*30,2)/(1+pow(mpconst,2)))-xVelocity;
+                double xError=0;//sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity+tarcurpos[0]-currentPosition[0];
                 xError*=0.02;
-                double yError=(xError+xVelocity*0.02)*mpconst-yVelocity*0.02;
+                double yError=0;//(xError+xVelocity*0.02)*mpconst-yVelocity*0.02+(tarcurpos[1]-currentPosition[1])*0.02;
                 angleInRadians = atan2(y, -x) - (currentPosition[2] * PI / 180);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
@@ -747,10 +758,10 @@ public class OdometryChassis extends BasicChassis {
                 op.telemetry.addData("yvelocity", yVelocity);
                 op.telemetry.addData("xvelocity",sqrt(pow((power)*30,2)/(1+pow(mpconst,2))));
                 op.telemetry.addData("yvelocity", (xError+xVelocity*0.02)*mpconst*50);
-                motorRightBack.setPower((power * anglePower[1]-xError+yError + anglecorrection));
-                motorRightFront.setPower(power * anglePower[0]+xError+yError + anglecorrection);
-                motorLeftBack.setPower(power * anglePower[0]+xError+yError - anglecorrection);
-                motorLeftFront.setPower(power * anglePower[1]-xError+yError - anglecorrection);
+                motorRightBack.setPower((power * anglePower[1]-xError+yError + anglecorrection)/3);
+                motorRightFront.setPower((power * anglePower[0]+xError+yError + anglecorrection)/3);
+                motorLeftBack.setPower((power * anglePower[0]+xError+yError - anglecorrection)/3);
+                motorLeftFront.setPower((power * anglePower[1]-xError+yError - anglecorrection)/3);
 //            op.telemetry.addData("leftBack",power * anglePower[0] - anglecorrection);
 //            op.telemetry.addData("rightBack",power * anglePower[1] + anglecorrection);
 //            op.telemetry.addData("leftFront",power * anglePower[1] - anglecorrection);
@@ -759,17 +770,22 @@ public class OdometryChassis extends BasicChassis {
                 difference = abs(sqrt(pow((point[i + 2][0] - currentPosition[0]),2) + pow(point[i + 2][1] - currentPosition[1],2)));
             }
         }
+
         for (int i =0; i < 2; i++) {
             double timedis = sqrt(pow(point[i + 2][0] - point[i + 1][0], 2) + pow(point[i + 2][1] - point[i + 1][1], 2));
             startPosition=currentPosition;
             difference = abs(sqrt(pow((point[i + 2][0] - currentPosition[0]),2) + pow(point[i + 2][1] - currentPosition[1],2)));
             axisa=atan2(-point[i+2][1]+point[i+1][1],point[i+2][0]-point[i+1][0]);
+            t=0;
+
             while (op.opModeIsActive() && (abs(difference) >= 0.5)) {
                 currentPosition = track();
                 double twoDistance=sqrt(pow(point[i+2][1]-currentPosition[1],2)+pow(point[i+2][0]-currentPosition[0],2));
                 double oneDistance=sqrt(pow(point[i+1][1]-currentPosition[1],2)+pow(point[i+1][0]-currentPosition[0],2));
-                double t = (oneDistance+Velocity/4)/(oneDistance+twoDistance);
-                if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>1){
+                if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>t){
+                    t = (oneDistance+Velocity/4)/(oneDistance+twoDistance);
+                }
+                if((oneDistance+Velocity/10)/(oneDistance+twoDistance)>1){
                     break;
                 }
                 target_position[0] = 0.5 * ((2 * point[i+1][0]) + (-point[i+0][0] + point[i+2][0]) * t + (2 * point[i+0][0] - 5 * point[i+1][0] + 4 * point[i+2][0] - point[i+3][0]) * pow(t, 2) +
@@ -777,7 +793,9 @@ public class OdometryChassis extends BasicChassis {
 
                 target_position[1] = 0.5 * ((2 * point[i+1][1]) + (-point[i+0][1] + point[i+2][1]) * t + (2 * point[i+0][1] - 5 * point[i+1][1] + 4 * point[i+2][1] - point[i+3][1]) * pow(t, 2) +
                         (-point[i+0][1] + 3 * point[i+1][1] - 3 * point[i+2][1] + point[i+3][1]) * pow(t, 3));
-
+                if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>t){
+                    t = (oneDistance)/(oneDistance+twoDistance);
+                }
                 target_position[2] = (0.5 * ((2 * point[i+1][1]) + (-point[i+0][1] + point[i+2][1]) + 2 * (2 * point[i+0][1] - 5 * point[i+1][1] + 4 * point[i+2][1] - point[i+3][1]) * t +
                         3 * (-point[i+0][1] + 3 * point[i+1][1] - 3 * point[i+2][1] + point[i+3][1]) * pow(t, 2)));
                 mpconst=target_position[2];
@@ -786,9 +804,9 @@ public class OdometryChassis extends BasicChassis {
                 error %= 360;
                 double x = target_position[0] - currentPosition[0];
                 double y = target_position[1] - currentPosition[1];
-                double xError=sqrt(pow((power)*power*30,2)/(1+pow(mpconst,2)))-xVelocity;
+                double xError=0;//sqrt(pow((power)*power*30,2)/(1+pow(mpconst,2)))-xVelocity;
                 xError*=0.02;
-                double yError=(xError+xVelocity*0.02)*mpconst-yVelocity*0.02;
+                double yError=0;//(xError+xVelocity*0.02)*mpconst-yVelocity*0.02;
                 angleInRadians = atan2(y, -x) - (currentPosition[2] * PI / 180);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
@@ -821,10 +839,10 @@ public class OdometryChassis extends BasicChassis {
                 op.telemetry.addData("yvelocity", yVelocity);
                 op.telemetry.addData("xvelocity",sqrt(pow((power)*30,2)/(1+pow(mpconst,2))));
                 op.telemetry.addData("yvelocity", (xError+xVelocity*0.02)*mpconst*50);
-                motorRightBack.setPower((power * anglePower[1]-xError+yError + anglecorrection));
-                motorRightFront.setPower(power * anglePower[0]+xError+yError + anglecorrection);
-                motorLeftBack.setPower(power * anglePower[0]-xError+yError - anglecorrection);
-                motorLeftFront.setPower(power * anglePower[1]+xError+yError - anglecorrection);
+                motorRightBack.setPower((power * anglePower[1]-xError+yError + anglecorrection)/3);
+                motorRightFront.setPower((power * anglePower[0]+xError+yError + anglecorrection)/3);
+                motorLeftBack.setPower((power * anglePower[0]-xError+yError - anglecorrection)/3);
+                motorLeftFront.setPower((power * anglePower[1]+xError+yError - anglecorrection)/3);
                 difference = abs(sqrt(pow((point[i + 2][0] - currentPosition[0]),2) + pow(point[i + 2][1] - currentPosition[1],2)));
             }
         }
@@ -835,11 +853,14 @@ public class OdometryChassis extends BasicChassis {
             difference = abs(sqrt(pow((point[i + 2][0] - currentPosition[0]),2) + pow(point[i + 2][1] - currentPosition[1],2)));
             double xError=0;
             double yError=0;
+            t=0;
             while (op.opModeIsActive() && (abs(difference) >= 0.5)) {
                 currentPosition = track();
                 double twoDistance=sqrt(pow(point[i+2][1]-currentPosition[1],2)+pow(point[i+2][0]-currentPosition[0],2));
                 double oneDistance=sqrt(pow(point[i+1][1]-currentPosition[1],2)+pow(point[i+1][0]-currentPosition[0],2));
-                double t = (oneDistance+Velocity/4)/(oneDistance+twoDistance);
+                if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>t){
+                    t = (oneDistance+Velocity/4)/(oneDistance+twoDistance);
+                }
                 if(t>1){
                     t=1;
                 }
@@ -848,7 +869,9 @@ public class OdometryChassis extends BasicChassis {
 
                 target_position[1] = 0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) * t + (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] ) * pow(t, 2) +
                         (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] ) * pow(t, 3));
-
+                if((oneDistance+Velocity/4)/(oneDistance+twoDistance)>t){
+                    t = (oneDistance)/(oneDistance+twoDistance);
+                }
                 target_position[2] = (0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) + 2 * (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] ) * t +
                         3 * (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] ) * pow(t, 2)));
                 mpconst=target_position[2];
@@ -861,24 +884,50 @@ public class OdometryChassis extends BasicChassis {
                     xError = sqrt(pow((power) * power * 30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                     xError *= 0.02;
                     yError = (xError + xVelocity * 0.02) * mpconst - yVelocity * 0.02;
+                    xError=0;
+                    yError=0;
+                double approxDifference=0;
+
                 if(difference<20){
-                    double approxDifference=0;
+                     t = (oneDistance)/(oneDistance+twoDistance);
                     double tdiff= (1-t)/20;
                     double[] dummyPosition = {0,0};
                     double[] dummyPositionTwo = {currentPosition[0],currentPosition[1]};
                     for(double j=t; j<1+tdiff; j+=tdiff){
-                        dummyPosition[0] = 0.5 * ((2 * point[i + 1][0]) + (-point[i + 0][0] + point[i + 2][0]) * t + (2 * point[i + 0][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] ) * pow(t, 2) +
-                                (-point[i + 0][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] ) * pow(t, 3));
+                        dummyPosition[0] = 0.5 * ((2 * point[i + 1][0]) + (-point[i + 0][0] + point[i + 2][0]) * j + (2 * point[i + 0][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] ) * pow(j, 2) +
+                                (-point[i + 0][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] ) * pow(j, 3));
 
-                        dummyPosition[1] = 0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) * t + (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] ) * pow(t, 2) +
-                                (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] ) * pow(t, 3));
+                        dummyPosition[1] = 0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) * j + (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] ) * pow(j, 2) +
+                                (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] ) * pow(j, 3));
                         approxDifference+=abs(sqrt(pow((dummyPosition[0] - dummyPositionTwo[0]),2) + pow(dummyPosition[1] - dummyPositionTwo[1],2)));
                         dummyPositionTwo=dummyPosition;
                     }
-                    if(approxDifference<10){
-                        xError*=approxDifference/10;
-                        yError*=approxDifference/10;
-                        power=min((approxDifference)/10+0.22,startpower);
+                    int xCon=0;
+                    if(currentPosition[0]<point[i+2][0]){
+                        xCon=1;
+                    }
+                    else {
+                        xCon = -1;
+                    }
+                    int yCon=0;
+                    if(currentPosition[1]<point[i+2][1]){
+                        yCon=1;
+                    }
+                    else{
+                        yCon=-1;
+                    }
+                    //power=startpower;
+                    double trueVelocity = sqrt(xCon*pow(xVelocity,2)+yCon*pow(yVelocity,2));
+                    if(approxDifference<trueVelocity*power/2){
+                        //xError*=approxDifference/10;
+                        //yError*=approxDifference/10;
+                        //power=min((pow(approxDifference,2)/4-trueVelocity)/30,startpower);
+                        xError = pow(approxDifference,2)/4 / (1 + pow(mpconst, 2)) - xVelocity;
+                        xError *= 0.02;
+                        yError = (xError + xVelocity * 0.02) * mpconst - yVelocity * 0.02;
+                    }
+                    else{
+                        power=startpower;
                     }
                 }
                 angleInRadians = atan2(y, -x) - (currentPosition[2] * PI / 180);
@@ -914,10 +963,12 @@ public class OdometryChassis extends BasicChassis {
                 op.telemetry.addData("yvelocity", yVelocity);
                 op.telemetry.addData("xvelocity",sqrt(pow((power)*30,2)/(1+pow(mpconst,2))));
                 op.telemetry.addData("yvelocity", (xError+xVelocity*0.02)*mpconst*50);
-                motorRightBack.setPower((power * anglePower[1]-xError+yError + anglecorrection));
-                motorRightFront.setPower(power * anglePower[0]+xError+yError + anglecorrection);
-                motorLeftBack.setPower(power * anglePower[0]-xError+yError - anglecorrection);
-                motorLeftFront.setPower(power * anglePower[1]+xError+yError - anglecorrection);
+                op.telemetry.addData("yvelocity", approxDifference);
+
+                motorRightBack.setPower((power * anglePower[1]-xError+yError + anglecorrection)/5);
+                motorRightFront.setPower((power * anglePower[0]+xError+yError + anglecorrection)/5);
+                motorLeftBack.setPower((power * anglePower[0]-xError+yError - anglecorrection)/5);
+                motorLeftFront.setPower((power * anglePower[1]+xError+yError - anglecorrection)/5);
 
                 difference = abs(sqrt(pow((point[i + 2][0] - currentPosition[0]),2) + pow(point[i + 2][1] - currentPosition[1],2)));
             }
