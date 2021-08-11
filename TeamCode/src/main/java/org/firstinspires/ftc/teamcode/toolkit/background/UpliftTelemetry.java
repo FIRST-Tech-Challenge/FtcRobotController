@@ -26,12 +26,12 @@ public class UpliftTelemetry extends Background {
     public void loop() {
 
         if(opMode instanceof UpliftTele) {
-            telem.addData("time elapsed", opMode.getRuntime());
-            telem.addData("X Position", robot.worldX);
-            telem.addData("shooter1 power", robot.shooter1.getPower());
-            telem.addData("shooter2 power", robot.shooter2.getPower());
+//            telem.addData("time elapsed", opMode.getRuntime());
+//            telem.addData("X Position", robot.worldX);
+//            telem.addData("shooter1 power", robot.shooter1.getPower());
+//            telem.addData("shooter2 power", robot.shooter2.getPower());
 
-            telem.update();
+//            telem.update();
         } else if(opMode instanceof UpliftAuto){
 
         }
