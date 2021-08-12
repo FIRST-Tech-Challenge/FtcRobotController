@@ -46,7 +46,7 @@ public class OdometryChassis extends BasicChassis {
     public static float globalAngle = 0;
     public static float xpos = 0;
     public static float ypos = 0;
-    public static float angle;
+    public static float angle=0;
     final double[] velocity = {0,0,0};
     double power = .30, correction;
 
@@ -88,16 +88,7 @@ public class OdometryChassis extends BasicChassis {
             op.sleep(50);
             op.idle();
         }
-        double[] tracker = track();
-        xpos = 0;
-        ypos = 0;
-        op.sleep(500);
-        if (tracker[2] > 5 && tracker[2] < -5) {
-            globalAngle = 0;
-        }
-        xpos = 0;
-        ypos = 0;
-        angle = 0;
+
     }
 
     public static float getXpos() {
@@ -139,6 +130,7 @@ public class OdometryChassis extends BasicChassis {
         xpos = x;
         ypos = y;
         globalAngle = newAngle;
+        angle=0;
         //navigation.setPosition(x,y,newAngle);
     }
 
@@ -333,10 +325,6 @@ public class OdometryChassis extends BasicChassis {
     }
 
     public void goToPosition(double y, double x, double a, double power) {
-
-        double f = x;
-        x = y;
-        y = f;
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -371,7 +359,6 @@ public class OdometryChassis extends BasicChassis {
         double startpower = power;
         double error = 0;
         double max = 0.15;
-        runtime.reset();
         while (op.opModeIsActive() && (abs(difference) >= 0.5) && !gotoPosition_off) {
             currentPosition = track();
             difftime = op.getRuntime() - time;
@@ -411,7 +398,7 @@ public class OdometryChassis extends BasicChassis {
             }
             x = target_position[0] - currentPosition[0];
             y = target_position[1] - currentPosition[1];
-            angleInRadians = atan2(x, -y * 2) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
+            angleInRadians = atan2(y, -x) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
             anglePower[0] = sin(angleInRadians + PI / 4);
             anglePower[1] = sin(angleInRadians - PI / 4);
             anglecorrection = error * 0.06;
@@ -723,9 +710,9 @@ public class OdometryChassis extends BasicChassis {
                 error %= 360;
                 double x = target_position[0] - currentPosition[0];
                 double y = target_position[1] - currentPosition[1];
-                double xError=0;//sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity+tarcurpos[0]-currentPosition[0];
+                double xError=sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity+tarcurpos[0]-currentPosition[0];
                 xError*=0.02;
-                double yError=0;//(xError+xVelocity*0.02)*mpconst-yVelocity*0.02+(tarcurpos[1]-currentPosition[1])*0.02;
+                double yError=(xError+xVelocity*0.02)*mpconst-yVelocity*0.02+(tarcurpos[1]-currentPosition[1])*0.02;
                 angleInRadians = atan2(y, -x) - (currentPosition[2] * PI / 180);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
@@ -809,9 +796,9 @@ public class OdometryChassis extends BasicChassis {
                 error %= 360;
                 double x = target_position[0] - currentPosition[0];
                 double y = target_position[1] - currentPosition[1];
-                double xError=0;//sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity+tarcurpos[0]-currentPosition[0];
+                double xError=sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity+tarcurpos[0]-currentPosition[0];
                 xError*=0.02;
-                double yError=0;//(xError+xVelocity*0.02)*mpconst-yVelocity*0.02+(tarcurpos[1]-currentPosition[1])*0.02;
+                double yError=(xError+xVelocity*0.02)*mpconst-yVelocity*0.02+(tarcurpos[1]-currentPosition[1])*0.02;
                 angleInRadians = atan2(y, -x) - (currentPosition[2] * PI / 180);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
@@ -889,9 +876,9 @@ public class OdometryChassis extends BasicChassis {
                 double x = target_position[0] - currentPosition[0];
                 double y = target_position[1] - currentPosition[1];
 
-                double xError=0;//sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity+tarcurpos[0]-currentPosition[0];
+                double xError=sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity+tarcurpos[0]-currentPosition[0];
                 xError*=0.02;
-                double yError=0;//(xError+xVelocity*0.02)*mpconst-yVelocity*0.02+(tarcurpos[1]-currentPosition[1])*0.02;
+                double yError=(xError+xVelocity*0.02)*mpconst-yVelocity*0.02+(tarcurpos[1]-currentPosition[1])*0.02;
                 double approxDifference=0;
 
                 if(difference<20){
