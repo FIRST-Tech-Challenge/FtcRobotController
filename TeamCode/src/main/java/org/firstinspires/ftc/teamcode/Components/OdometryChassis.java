@@ -359,7 +359,7 @@ public class OdometryChassis extends BasicChassis {
         double startpower = power;
         double error = 0;
         double max = 0.15;
-        while (op.opModeIsActive() && (abs(difference) >= 0.5) && !gotoPosition_off) {
+        while ((abs(difference) >= 0.5) ||error>2.5) {
             currentPosition = track();
             difftime = op.getRuntime() - time;
             time += difftime;
