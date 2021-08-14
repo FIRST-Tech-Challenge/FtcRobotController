@@ -85,7 +85,7 @@ public class Hardware {
     //**Sensors**//
 
     //**Other**//
-    //IMU Sensor
+    //IMU
     public BNO055IMU imu;
     private double globalAngle;
     private Orientation lastAngles = new Orientation();
@@ -228,8 +228,8 @@ public class Hardware {
     private void initPIDs() {
 
         initPIDs(
-                new PIDCoefficients(0.004602, 0.04315, 0.000055), //frbl strafe pid
-                new PIDCoefficients(0.004602, 0.04315, 0.000055), //flbr strafe pid
+                new PIDCoefficients(0.001534/3,0.031958/3,0.000049/3),//0.004602, 0.04315, 0.000055), //frbl strafe pid
+                new PIDCoefficients(0.001534,0.031958,0.000049),//0.004602, 0.04315, 0.000055), //flbr strafe pid
                 new PIDCoefficients(0.004602, 0.04315, 0.000055)  //rotation pid
         );
     }
@@ -359,6 +359,7 @@ public class Hardware {
     }
     /**
      * rotates the bot by directly setting powers
+     * @param power the power to rotate at
      */
     public void rotate(double power) {
         setDrivetrainPower(
