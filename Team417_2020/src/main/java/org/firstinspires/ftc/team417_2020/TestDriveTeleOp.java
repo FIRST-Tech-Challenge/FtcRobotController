@@ -3,7 +3,7 @@ package org.firstinspires.ftc.team417_2020;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp (name = "Test Drive TeleOp")
+@TeleOp (name = "TeleOp Competition")
 public class TestDriveTeleOp extends MasterTeleOp {
 
     @Override
@@ -23,6 +23,11 @@ public class TestDriveTeleOp extends MasterTeleOp {
 
         while (opModeIsActive()) {
             driveRobot();
+            //setWobbleGoalGrabber();
+            moveWobbleGoalArm();
+            collector();
+            setLauncherVelocity();
+            telemetry.update();
 
             idle();
         }
