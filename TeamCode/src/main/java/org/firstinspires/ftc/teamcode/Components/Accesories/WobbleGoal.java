@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class WobbleGoal {
+public class    WobbleGoal {
 
     public enum Position {
         REST, GRAB, RAISE, RUN, DROP, AutoGRAB, DRIVETOWALL, AutoRAISE
