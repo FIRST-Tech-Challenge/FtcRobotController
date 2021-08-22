@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 
+import java.util.List;
+
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan;
@@ -24,6 +27,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 //2.0,1.7,1.1
 public class OdometryChassis extends BasicChassis {
@@ -93,6 +97,11 @@ public class OdometryChassis extends BasicChassis {
         while (!op.isStopRequested() && !imu.isGyroCalibrated()) {
             op.sleep(50);
             op.idle();
+        }
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
     }
@@ -192,15 +201,16 @@ public class OdometryChassis extends BasicChassis {
         odom[0] += odomconst[0] * diff[0];
         odom[1] += odomconst[1] * diff[1];
         odom[2] += odomconst[2] * diff[2];
-        double x = cos((getAngle() * Math.PI / 180));
-        double y = sin((getAngle() * Math.PI / 180));
+        float newANgle = getAngle();
+        double x = cos((newANgle * Math.PI / 180));
+        double y = sin((newANgle * Math.PI / 180));
         xVelocity = (y * (diff[0] + diff[1]) / (2 * ticks_per_inch) - x * diff[2] / ticks_per_inch) * 1 / differtime;
         yVelocity = (x * (diff[0] + diff[1]) / (2 * ticks_per_inch) + y * diff[2] / ticks_per_inch) * 1 / differtime;
         Velocity=sqrt(xVelocity*xVelocity+yVelocity*yVelocity);
         ypos += yVelocity * differtime;
         xpos += xVelocity * differtime;
-        aVelocity=(getAngle()-angle)/differtime;
-        angle = getAngle();
+        aVelocity=(newANgle-angle)/differtime;
+        angle = newANgle;
         data[0] = xpos;
         data[1] = ypos;
         data[2] = angle;
@@ -676,7 +686,7 @@ public class OdometryChassis extends BasicChassis {
         point[4][0] = x4;
         point[4][1] = y4;
         double[] currentPosition = track();
-        double[] startPosition = track();
+        double[] startPosition = currentPosition;
         double[] target_position = {0, 0, 0};
         double anglecorrection = 0;
         double maxpower = 0.2;
