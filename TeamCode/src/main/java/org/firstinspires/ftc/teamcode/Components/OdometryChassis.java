@@ -204,8 +204,8 @@ public class OdometryChassis extends BasicChassis {
         float newANgle = getAngle();
         double x = cos((newANgle * Math.PI / 180));
         double y = sin((newANgle * Math.PI / 180));
-        xVelocity = (y * (diff[0] + diff[1]) / (2 * ticks_per_inch) - x * diff[2] / ticks_per_inch) * 1 / differtime;
-        yVelocity = (x * (diff[0] + diff[1]) / (2 * ticks_per_inch) + y * diff[2] / ticks_per_inch) * 1 / differtime;
+        xVelocity = (y * (diff[0] + diff[1]) / (2 * ticks_per_inch) - x * diff[2] / ticks_per_inch)/ differtime;
+        yVelocity = (x * (diff[0] + diff[1]) / (2 * ticks_per_inch) + y * diff[2] / ticks_per_inch)/ differtime;
         Velocity=sqrt(xVelocity*xVelocity+yVelocity*yVelocity);
         ypos += yVelocity * differtime;
         xpos += xVelocity * differtime;
@@ -710,7 +710,7 @@ public class OdometryChassis extends BasicChassis {
         double mpyVelocity = 0;
         double[] tarcurpos = {0,0,0};
         runtime.reset();
-        double pxError=0,pyError=0, pposxError=0,pposyError=0, x=0, y=0 ,xError=0, posxError=0, yError=0, posyError=0, xCorrection=0, yCorrection=0, approxDifference=0, t=0,yInt=0,xInt=0;
+        double pxError=0,pyError=0, pposxError=0,pposyError=0, x=0, y=0 ,xError=0, posxError=0, yError=0, posyError=0, xCorrection=0, yCorrection=0, approxDifference=0, t=0,yInt=0,xInt=0,angleConst;
         for (int i =-1; i < 0; i++) {
             double timedis = sqrt(pow(point[i + 2][0] - point[i + 1][0], 2) + pow(point[i + 2][1] - point[i + 1][1], 2));
             startPosition = currentPosition;
@@ -762,9 +762,10 @@ public class OdometryChassis extends BasicChassis {
                 xCorrection=p*(xError+posxError)+I*xInt+D*(xError+posxError-pposxError-pxError)/differtime;
                 xCorrection*=-1;
                 yCorrection=p*(yError+posyError)+I*yInt+D*(yError+posyError-pposyError-pyError)/differtime;
-                double angleInCorrection = atan2(yCorrection, xCorrection)-(currentPosition[2]*PI/180);
+                angleConst=currentPosition[2]*PI/180;
+                double angleInCorrection = atan2(yCorrection, xCorrection)-(angleConst);
                 double angleCorrectPower[] = {sin(angleInCorrection+PI /4),sin(angleInCorrection-PI/4),sqrt(pow(yCorrection,2)+pow(xCorrection,2))};
-                angleInRadians = atan2(y, -x) - (currentPosition[2] * PI / 180);
+                angleInRadians = atan2(y, -x) - (angleConst);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
                 double targetaVelocity=((-deltaAngle/error)/differtime-error);
@@ -859,9 +860,10 @@ public class OdometryChassis extends BasicChassis {
                 xCorrection=p*(xError+posxError)+I*xInt+D*(xError+posxError-pposxError-pxError)/differtime;
                 xCorrection*=-1;
                 yCorrection=p*(yError+posyError)+I*yInt+D*(yError+posyError-pposyError-pyError)/differtime;
-                double angleInCorrection = atan2(yCorrection, xCorrection)-(currentPosition[2]*PI/180);
+                angleConst=currentPosition[2]*PI/180;
+                double angleInCorrection = atan2(yCorrection, xCorrection)-(angleConst);
                 double angleCorrectPower[] = {sin(angleInCorrection+PI /4),sin(angleInCorrection-PI/4),sqrt(pow(yCorrection,2)+pow(xCorrection,2))};
-                angleInRadians = atan2(y, -x) - (currentPosition[2] * PI / 180);
+                angleInRadians = atan2(y, -x) - (angleConst);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
                 double targetaVelocity=((-deltaAngle/error-error*differtime)/differtime);
@@ -914,7 +916,7 @@ public class OdometryChassis extends BasicChassis {
         for (int i =2; i < 3; i++) {
             difference = abs(sqrt(pow((point[i + 2][0] - currentPosition[0]),2) + pow(point[i + 2][1] - currentPosition[1],2)));
             t=0;
-            boolean td=true;
+            boolean td=true, approximated=false;
             while (op.opModeIsActive() && (abs(difference) >= 0.5)) {
                 currentPosition = track();
                 double twoDistance=sqrt(pow(point[i+2][1]-currentPosition[1],2)+pow(point[i+2][0]-currentPosition[0],2));
@@ -963,14 +965,20 @@ public class OdometryChassis extends BasicChassis {
                     double tdiff= (1-t)/20;
                     double[] dummyPosition = {0,0};
                     double[] dummyPositionTwo = {currentPosition[0],currentPosition[1]};
-                    for(double j=t; j<1+tdiff; j+=tdiff){
-                        dummyPosition[0] = 0.5 * ((2 * point[i + 1][0]) + (-point[i + 0][0] + point[i + 2][0]) * j + (2 * point[i + 0][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] ) * pow(j, 2) +
-                                (-point[i + 0][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] ) * pow(j, 3));
+                    if(!approximated) {
+                        for (double j = t; j < 1 + tdiff; j += tdiff) {
+                            dummyPosition[0] = 0.5 * ((2 * point[i + 1][0]) + (-point[i + 0][0] + point[i + 2][0]) * j + (2 * point[i + 0][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0]) * pow(j, 2) +
+                                    (-point[i + 0][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0]) * pow(j, 3));
 
-                        dummyPosition[1] = 0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) * j + (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] ) * pow(j, 2) +
-                                (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] ) * pow(j, 3));
-                        approxDifference+=abs(sqrt(pow((dummyPosition[0] - dummyPositionTwo[0]),2) + pow(dummyPosition[1] - dummyPositionTwo[1],2)));
-                        dummyPositionTwo=dummyPosition;
+                            dummyPosition[1] = 0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) * j + (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1]) * pow(j, 2) +
+                                    (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1]) * pow(j, 3));
+                            approxDifference += abs(sqrt(pow((dummyPosition[0] - dummyPositionTwo[0]), 2) + pow(dummyPosition[1] - dummyPositionTwo[1], 2)));
+                            dummyPositionTwo = dummyPosition;
+                        }
+                        approximated=true;
+                    }
+                    else{
+                        approxDifference-=Velocity*differtime;
                     }
 //                    int xCon=0;
 //                    if(currentPosition[0]<point[i+2][0]){
@@ -1002,9 +1010,10 @@ public class OdometryChassis extends BasicChassis {
                 xCorrection=p*(xError+posxError)+I*xInt+D*(xError+posxError-pposxError-pxError)/differtime;
                 xCorrection*=-1;
                 yCorrection=p*(yError+posyError)+I*yInt+D*(yError+posyError-pposyError-pyError)/differtime;
-                double angleInCorrection = atan2(yCorrection, xCorrection)-(currentPosition[2]*PI/180);
+                angleConst=currentPosition[2]*PI/180;
+                double angleInCorrection = atan2(yCorrection, xCorrection)-(angleConst);
                 double angleCorrectPower[] = {sin(angleInCorrection+PI /4),sin(angleInCorrection-PI/4),sqrt(pow(yCorrection,2)+pow(xCorrection,2))};
-                angleInRadians = atan2(y, -x) - (currentPosition[2] * PI / 180);
+                angleInRadians = atan2(y, -x) - (angleConst);
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
                 double targetaVelocity=((-deltaAngle/error)/differtime-error);
