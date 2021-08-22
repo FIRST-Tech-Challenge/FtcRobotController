@@ -2,13 +2,15 @@ package org.firstinspires.ftc.team8923_2020;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @Autonomous(name="MasterAutonomous")
-    public abstract class MasterAutonomous extends MasterOpMode {
+@Disabled
+public abstract class MasterAutonomous extends MasterOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -16,13 +18,6 @@ import com.qualcomm.robotcore.util.Range;
     double robotY;
     double robotAngle;
     double headingOffset = 0.0;
-    /*enum Stone{
-        RIGHT,MIDDLE,LEFT
-    }
-
-     */
-
-
 
     int newTargetFL;
     int newTargetFR;
@@ -78,9 +73,6 @@ import com.qualcomm.robotcore.util.Range;
     enum Destinations{
         SQUAREA, SQUAREB, SQUAREC
     }
-
-
-
 
     public void initAuto() {
         telemetry.addData("Init State", "Init Started");
@@ -158,13 +150,10 @@ import com.qualcomm.robotcore.util.Range;
     }
 
     public void moveAuto(double x, double y, double speed, double minSpeed) throws InterruptedException {
-
-
-        newTargetFL = motorFL.getCurrentPosition() + (int) Math.round(Constants.COUNTS_PER_MM) + (int) Math.round(Constants.COUNTS_PER_MM);
-        newTargetFR = motorFR.getCurrentPosition() + (int) Math.round(Constants.COUNTS_PER_MM) + (int) Math.round(Constants.COUNTS_PER_MM);
-        newTargetBL = motorBL.getCurrentPosition() + (int) Math.round(Constants.COUNTS_PER_MM) + (int) Math.round(Constants.COUNTS_PER_MM);
-        newTargetBR = motorBR.getCurrentPosition() + (int) Math.round(Constants.COUNTS_PER_MM) + (int) Math.round(Constants.COUNTS_PER_MM);
-
+        newTargetFL = motorFL.getCurrentPosition() - (int) Math.round(Constants.TICKS_PER_INCH * y) + (int) Math.round(Constants.TICKS_PER_INCH * x * 1.15);
+        newTargetFR = motorFR.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * y) + (int) Math.round(Constants.TICKS_PER_INCH * x * 1.15);
+        newTargetBL = motorBL.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * y) - (int) Math.round(Constants.TICKS_PER_INCH * x * 1.15);
+        newTargetBR = motorBR.getCurrentPosition() - (int) Math.round(Constants.TICKS_PER_INCH * y) - (int) Math.round(Constants.TICKS_PER_INCH * x * 1.15);
 
         do {
 
@@ -192,18 +181,10 @@ import com.qualcomm.robotcore.util.Range;
             motorFR.setPower(speedFR);
             motorBL.setPower(speedBL);
             motorBR.setPower(speedBR);
-
-
             idle();
-
         }
-
-
         while (opModeIsActive() && Math.abs(errorFL) > TOL || Math.abs(errorFR) > TOL || Math.abs(errorBR) > TOL || Math.abs(errorBL) > TOL);
-        {
-
-
-        }
+        stopDriving();
     }
 
     //using imu
@@ -229,9 +210,9 @@ import com.qualcomm.robotcore.util.Range;
                 }
 
                 speedFL = pivot;
-                speedFR = -pivot;
+                speedFR = pivot;
                 speedBL = pivot;
-                speedBR = -pivot;
+                speedBR = pivot;
 
                 motorFL.setPower(speedFL);
                 motorFR.setPower(speedFR);
@@ -340,8 +321,8 @@ import com.qualcomm.robotcore.util.Range;
 
     // Convert to mm
     //TODO: maybe wrong proportions? something about 70/30 effectiveness maybe translation to MM is wrong
-    deltaX *= Constants.MM_PER_TICK;
-    deltaY *= Constants.MM_PER_TICK;
+    deltaX *= Constants.TICKS_PER_INCH;
+    deltaY *= Constants.TICKS_PER_INCH;
 
     /*
      * Delta x and y are intrinsic to the robot, so they need to be converted to extrinsic.
@@ -374,8 +355,25 @@ import com.qualcomm.robotcore.util.Range;
         //intakeRight.setPower(0);
     }
 
-    public void runLauncher() throws InterruptedException{
-
+    public void shootRings() throws InterruptedException{
+        motorLift.setTargetPosition(870);
+        motorLift.setPower(Math.max((motorLift.getTargetPosition() - motorLift.getCurrentPosition()) * (1 / 75.0), 1.0));
+        motorShooter.setPower(-0.33);
+        servoFlicker.setPosition(0.4);
+        sleep(100);
+        servoFlicker.setPosition(0.55);
+        sleep(300);
+        servoFlicker.setPosition(0.4);
+        sleep(100);
+        servoFlicker.setPosition(0.55);
+        sleep(300);
+        servoFlicker.setPosition(0.4);
+        sleep(100);
+        servoFlicker.setPosition(0.55);
+        sleep(300);
+        motorShooter.setPower(0.0);
+        motorLift.setTargetPosition(0);
+        motorLift.setPower(Math.max((motorLift.getTargetPosition() - motorLift.getCurrentPosition()) * (1 / 75.0), 1.0));
     }
 
     public void turnOffLauncher() throws InterruptedException{
@@ -396,8 +394,6 @@ import com.qualcomm.robotcore.util.Range;
      */
 
         public void stopLift(){
-            //motorLift1.setPower(0.0);
-            //motorLift2.setPower(0.0);
             idle();
         }
 
@@ -458,16 +454,6 @@ import com.qualcomm.robotcore.util.Range;
 
             }
         }
-
-
-
-
-
-
-
-
-
-
 }
 
 
