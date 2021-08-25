@@ -38,7 +38,7 @@ public class UpliftRobot {
     public boolean driverCancel = false, operatorCancel = false;
 
     public HardwareMap hardwareMap;
-    public DcMotor leftFront, leftBack, rightFront, rightBack, intake;
+    public DcMotor leftFront, leftBack, rightFront, rightBack, intake, testMotor;
     public DcMotorEx shooter1, shooter2, transfer;
     public Servo intakeLifter, wobbleLeft, wobbleRight, flicker, clamp, sweeperJoint, stick;
     public CRServo sweeperLeft, sweeperRight;
@@ -130,6 +130,8 @@ public class UpliftRobot {
         intake = hardwareMap.get(DcMotor.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeLifter = hardwareMap.get(Servo.class, "intake_lifter");
+
+        testMotor = hardwareMap.get(DcMotor.class, "test_motor");
 
         sweeperJoint = hardwareMap.get(Servo.class, "sweeper_joint");
         sweeperLeft = hardwareMap.get(CRServo.class, "sweeper_left");
