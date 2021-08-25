@@ -1,13 +1,9 @@
-package teleop;
+package tele;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import java.util.Arrays;
-
 import global.TerraBot;
-import globalfunctions.Constants;
-import globalfunctions.Optimizer;
 import globalfunctions.TelemetryHandler;
 
 @TeleOp(name = "TestOp")
