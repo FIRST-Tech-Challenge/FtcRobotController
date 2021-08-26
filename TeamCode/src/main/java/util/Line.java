@@ -26,9 +26,7 @@ public class Line {
     }
     //Gets the length of the line
     public double getDis(){
-        double x = x2-x1;
-        double y = y2-y1;
-        return Math.sqrt(x*x+y*y);
+        return Math.sqrt(mx*mx+my*my);
     }
 
 }
