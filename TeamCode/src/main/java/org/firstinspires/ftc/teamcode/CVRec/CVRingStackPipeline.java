@@ -14,8 +14,8 @@ public class CVRingStackPipeline extends CVPipelineBase {
 
 
     static final Point REGION_ANCHOR_POINT = new Point(150,100);
-    static final int REGION_WIDTH = 60;
-    static final int REGION_HEIGHT = 60;
+    static final int REGION_WIDTH = 100;
+    static final int REGION_HEIGHT = 100;
 
     Point region_pointA = new Point(
             REGION_ANCHOR_POINT.x,
@@ -49,15 +49,22 @@ public class CVRingStackPipeline extends CVPipelineBase {
                 CVDetector.BLUE, // The color the rectangle is drawn in
                 2); // Thickness of the rectangle lines
 
-        if (getMeanVal() < QUAD_MAX){
-            stackSize = RingStackSize.Quad;
-        }
-        else if (getMeanVal() < SINGLE_MAX){
-            stackSize = RingStackSize.Single;
+        if (getMeanVal() < YELLOW_CUBE){
+            setGameElement(GameElement.Cube);
         }
         else{
-            stackSize = RingStackSize.None;
+            setGameElement(GameElement.Ball);
         }
+
+//        if (getMeanVal() < QUAD_MAX){
+//            stackSize = RingStackSize.Quad;
+//        }
+//        else if (getMeanVal() < SINGLE_MAX){
+//            stackSize = RingStackSize.Single;
+//        }
+//        else{
+//            stackSize = RingStackSize.None;
+//        }
 
 
         return input;
@@ -65,7 +72,11 @@ public class CVRingStackPipeline extends CVPipelineBase {
 
     private void inputToCb(Mat input)
     {
+        //convert the input matrix color space from RGB to YCrCb.
+        // Because the way YCrCb represents color by luminance(Y), chroma of red(CR), chroma of blue(Cb),
+        // it keeps values consistent under different lighting
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+        //Extracts the blue channel in Cb variable
         Core.extractChannel(YCrCb, Cb, 2);
     }
 }

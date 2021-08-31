@@ -102,6 +102,13 @@ public class CVDetector {
         return RingStackSize.Undefined;
     }
 
+    public GameElement getGameElement(){
+        if (activePipeline != null){
+            return activePipeline.getGameElement();
+        }
+        return GameElement.None;
+    }
+
     public int getMeanVal(){
         if (activePipeline != null){
             return activePipeline.getMeanVal();

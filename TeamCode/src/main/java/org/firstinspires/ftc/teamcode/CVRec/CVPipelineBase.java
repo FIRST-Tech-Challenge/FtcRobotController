@@ -8,6 +8,7 @@ import java.util.List;
 
 public abstract class CVPipelineBase extends OpenCvPipeline {
     protected volatile RingStackSize stackSize = RingStackSize.Undefined;
+    private volatile GameElement gameElement = GameElement.Ball;
     protected List<CVRoi> targets;
     protected volatile int meanVal;
     protected double PIXELS_PER_INCH = 9.5;
@@ -17,6 +18,7 @@ public abstract class CVPipelineBase extends OpenCvPipeline {
 
     protected static final int QUAD_MAX = 108;
     protected static final int SINGLE_MAX = 118;
+    protected static final int YELLOW_CUBE = 115;
 
     private int resolutionX;
     private int resolutionY;
@@ -75,5 +77,13 @@ public abstract class CVPipelineBase extends OpenCvPipeline {
 
     public void setSecondTarget(CVRoi secondTarget) {
         this.secondTarget = secondTarget;
+    }
+
+    public GameElement getGameElement() {
+        return gameElement;
+    }
+
+    public void setGameElement(GameElement gameElement) {
+        this.gameElement = gameElement;
     }
 }

@@ -35,8 +35,8 @@ public class CVRingRecogTest extends LinearOpMode {
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
-                telemetry.addData("Stack size", detector.getStackSize());
-                telemetry.addData("Mean Val", detector.getMeanVal());
+                telemetry.addData("Element: ", detector.getGameElement());
+                telemetry.addData("Mean Val: ", detector.getMeanVal());
                 telemetry.update();
                 sleep(200);
             }
