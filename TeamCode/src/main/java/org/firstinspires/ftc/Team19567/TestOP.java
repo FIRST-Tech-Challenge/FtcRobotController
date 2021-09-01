@@ -20,7 +20,7 @@ public class TestOP extends OpMode
     private DcMotor rightDCBack = null;
     private boolean slowMode = false;
     private double acc = 1.0;
-    private Servo servo = null;
+    private Servo servo1 = null;
     private boolean isServoMaxed = false;
 
     @Override
@@ -31,7 +31,7 @@ public class TestOP extends OpMode
         rightDCFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftDCBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightDCBack = hardwareMap.get(DcMotor.class, "rightBack");
-        servo = hardwareMap.get(Servo.class, "servo1");
+        servo1 = hardwareMap.get(Servo.class, "servo1");
 
         leftDCFront.setDirection(DcMotor.Direction.FORWARD);
         rightDCFront.setDirection(DcMotor.Direction.FORWARD);
@@ -39,16 +39,19 @@ public class TestOP extends OpMode
         rightDCBack.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
+        telemetry.update();
     }
 
     @Override
     public void init_loop() {
         telemetry.addData("Status", "Awaiting Start");
+        telemetry.update();
     }
 
     @Override
     public void start() {
         telemetry.addData("Status", "Started");
+        telemetry.update();
         runtime.reset();
     }
 
@@ -71,8 +74,8 @@ public class TestOP extends OpMode
             if(isServoMaxed) isServoMaxed = false;
             else isServoMaxed = true;
         }
-        if(isServoMaxed) servo.setPosition(1.0);
-        else servo.setPosition(0.1);
+        if(isServoMaxed) servo1.setPosition(1.0);
+        else servo1.setPosition(0.1);
 
         leftDCFront.setPower(leftFrontSpeed);
         rightDCFront.setPower(rightFrontSpeed);
@@ -81,12 +84,15 @@ public class TestOP extends OpMode
 
         telemetry.addData("Status", "Looping");
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds");
-        telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f)",
-                leftDCFront, rightDCFront, leftDCBack, rightDCBack);
+        telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f)",
+                leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed);
+        telemetry.addData("Servos", "servo1 (%.2f)", servo1.getPosition());
+        telemetry.update();
     }
 
     @Override
     public void stop() {
         telemetry.addData("Status", "Stopped");
+        telemetry.update();
     }
 }
