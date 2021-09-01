@@ -41,8 +41,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.SubSystems.HzChassisClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzChassisClassicUltimateGoal;
+import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadClassicUltimateGoal;
 
 //import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 
@@ -87,8 +87,8 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
     //HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
     //ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
 
-    HzGamepadClassic hzGamepad;
-    HzChassisClassic hzChassisClassic;
+    HzGamepadClassicUltimateGoal hzGamepad;
+    HzChassisClassicUltimateGoal hzChassisClassicUltimateGoal;
 
     // The IMU sensor object
     BNO055IMU               imu;
@@ -124,8 +124,8 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
          * The init() method of the hardware class does most of the work here
          */
         //robot.init(hardwareMap);
-        hzChassisClassic = new HzChassisClassic(hardwareMap);
-        hzGamepad = new HzGamepadClassic(gamepad1, this);
+        hzChassisClassicUltimateGoal = new HzChassisClassicUltimateGoal(hardwareMap);
+        hzGamepad = new HzGamepadClassicUltimateGoal(gamepad1, this);
 
 
         //gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
@@ -172,7 +172,7 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
 
         waitForStart();
 
-        hzChassisClassic.initChassis();
+        hzChassisClassicUltimateGoal.initChassis();
 
         telemetry.addData("Mode", "running");
         telemetry.update();
@@ -290,27 +290,27 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
             //newLeftTarget = robot.leftDrive.getCurrentPosition() + moveCounts;
             //newRightTarget = robot.rightDrive.getCurrentPosition() + moveCounts;
 
-            newFrontLeftTarget = hzChassisClassic.frontLeft.getCurrentPosition() + moveCounts;
-            newFrontRightTarget = hzChassisClassic.frontRight.getCurrentPosition() + moveCounts;
-            newBackLeftTarget = hzChassisClassic.backLeft.getCurrentPosition() + moveCounts;
-            newBackRightTarget = hzChassisClassic.backRight.getCurrentPosition() + moveCounts;
+            newFrontLeftTarget = hzChassisClassicUltimateGoal.frontLeft.getCurrentPosition() + moveCounts;
+            newFrontRightTarget = hzChassisClassicUltimateGoal.frontRight.getCurrentPosition() + moveCounts;
+            newBackLeftTarget = hzChassisClassicUltimateGoal.backLeft.getCurrentPosition() + moveCounts;
+            newBackRightTarget = hzChassisClassicUltimateGoal.backRight.getCurrentPosition() + moveCounts;
 
             // Set Target and Turn On RUN_TO_POSITION
             //robot.leftDrive.setTargetPosition(newLeftTarget);
             //robot.rightDrive.setTargetPosition(newRightTarget);
 
-            hzChassisClassic.frontLeft.setTargetPosition(newFrontLeftTarget);
-            hzChassisClassic.frontRight.setTargetPosition(newFrontRightTarget);
-            hzChassisClassic.backLeft.setTargetPosition(newBackLeftTarget);
-            hzChassisClassic.backRight.setTargetPosition(newBackRightTarget);
+            hzChassisClassicUltimateGoal.frontLeft.setTargetPosition(newFrontLeftTarget);
+            hzChassisClassicUltimateGoal.frontRight.setTargetPosition(newFrontRightTarget);
+            hzChassisClassicUltimateGoal.backLeft.setTargetPosition(newBackLeftTarget);
+            hzChassisClassicUltimateGoal.backRight.setTargetPosition(newBackRightTarget);
 
             //robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            hzChassisClassic.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hzChassisClassic.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hzChassisClassic.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hzChassisClassic.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hzChassisClassicUltimateGoal.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hzChassisClassicUltimateGoal.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hzChassisClassicUltimateGoal.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hzChassisClassicUltimateGoal.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
             // start motion.
@@ -318,17 +318,17 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
             //robot.leftDrive.setPower(speed);
             //robot.rightDrive.setPower(speed);
 
-            hzChassisClassic.frontLeft.setPower(speed);
-            hzChassisClassic.frontRight.setPower(speed);
-            hzChassisClassic.backLeft.setPower(speed);
-            hzChassisClassic.backRight.setPower(speed);
+            hzChassisClassicUltimateGoal.frontLeft.setPower(speed);
+            hzChassisClassicUltimateGoal.frontRight.setPower(speed);
+            hzChassisClassicUltimateGoal.backLeft.setPower(speed);
+            hzChassisClassicUltimateGoal.backRight.setPower(speed);
 
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                    //(robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
-                   (hzChassisClassic.frontLeft.isBusy() && hzChassisClassic.frontRight.isBusy() &&
-                    hzChassisClassic.backLeft.isBusy() && hzChassisClassic.backRight.isBusy())) {
+                   (hzChassisClassicUltimateGoal.frontLeft.isBusy() && hzChassisClassicUltimateGoal.frontRight.isBusy() &&
+                    hzChassisClassicUltimateGoal.backLeft.isBusy() && hzChassisClassicUltimateGoal.backRight.isBusy())) {
                 // adjust relative speed based on heading error.
                 error = getError(angle);
                 steer = getSteer(error, P_DRIVE_COEFF);
@@ -353,10 +353,10 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
                 //robot.leftDrive.setPower(leftSpeed);
                 //robot.rightDrive.setPower(rightSpeed);
 
-                hzChassisClassic.frontLeft.setPower(leftSpeed);
-                hzChassisClassic.frontRight.setPower(rightSpeed);
-                hzChassisClassic.backLeft.setPower(leftSpeed);
-                hzChassisClassic.backRight.setPower(rightSpeed);
+                hzChassisClassicUltimateGoal.frontLeft.setPower(leftSpeed);
+                hzChassisClassicUltimateGoal.frontRight.setPower(rightSpeed);
+                hzChassisClassicUltimateGoal.backLeft.setPower(leftSpeed);
+                hzChassisClassicUltimateGoal.backRight.setPower(rightSpeed);
 
 
                 // Display drive status for the driver.
@@ -365,8 +365,8 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
                 //telemetry.addData("Actual",  "%7d:%7d",      robot.leftDrive.getCurrentPosition(), robot.rightDrive.getCurrentPosition());
 
                 telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      newFrontLeftTarget,newFrontRightTarget, newBackLeftTarget, newBackRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      hzChassisClassic.frontLeft.getCurrentPosition(),
-                        hzChassisClassic.frontRight.getCurrentPosition(), hzChassisClassic.backLeft.getCurrentPosition(), hzChassisClassic.backRight.getCurrentPosition());
+                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      hzChassisClassicUltimateGoal.frontLeft.getCurrentPosition(),
+                        hzChassisClassicUltimateGoal.frontRight.getCurrentPosition(), hzChassisClassicUltimateGoal.backLeft.getCurrentPosition(), hzChassisClassicUltimateGoal.backRight.getCurrentPosition());
 
 
                 telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
@@ -377,18 +377,18 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
             //robot.leftDrive.setPower(0);
             //robot.rightDrive.setPower(0);
 
-            hzChassisClassic.frontLeft.setPower(0);
-            hzChassisClassic.frontRight.setPower(0);
-            hzChassisClassic.backLeft.setPower(0);
-            hzChassisClassic.backRight.setPower(0);
+            hzChassisClassicUltimateGoal.frontLeft.setPower(0);
+            hzChassisClassicUltimateGoal.frontRight.setPower(0);
+            hzChassisClassicUltimateGoal.backLeft.setPower(0);
+            hzChassisClassicUltimateGoal.backRight.setPower(0);
 
             // Turn off RUN_TO_POSITION
             //robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             //robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            hzChassisClassic.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            hzChassisClassic.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            hzChassisClassic.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            hzChassisClassic.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            hzChassisClassicUltimateGoal.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            hzChassisClassicUltimateGoal.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            hzChassisClassicUltimateGoal.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            hzChassisClassicUltimateGoal.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         getAngle();
     }
@@ -440,10 +440,10 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
         //robot.leftDrive.setPower(0);
         //robot.rightDrive.setPower(0);
 
-        hzChassisClassic.frontLeft.setPower(0);
-        hzChassisClassic.frontRight.setPower(0);
-        hzChassisClassic.backLeft.setPower(0);
-        hzChassisClassic.backRight.setPower(0);
+        hzChassisClassicUltimateGoal.frontLeft.setPower(0);
+        hzChassisClassicUltimateGoal.frontRight.setPower(0);
+        hzChassisClassicUltimateGoal.backLeft.setPower(0);
+        hzChassisClassicUltimateGoal.backRight.setPower(0);
 
         getAngle();
     }
@@ -487,10 +487,10 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
         //robot.leftDrive.setPower(leftSpeed);
         //robot.rightDrive.setPower(rightSpeed);
 
-        hzChassisClassic.frontLeft.setPower(-turnSpeed);
-        hzChassisClassic.frontRight.setPower(turnSpeed);
-        hzChassisClassic.backLeft.setPower(-turnSpeed);
-        hzChassisClassic.backRight.setPower(turnSpeed);
+        hzChassisClassicUltimateGoal.frontLeft.setPower(-turnSpeed);
+        hzChassisClassicUltimateGoal.frontRight.setPower(turnSpeed);
+        hzChassisClassicUltimateGoal.backLeft.setPower(-turnSpeed);
+        hzChassisClassicUltimateGoal.backRight.setPower(turnSpeed);
 
         // Display it for the driver.
         telemetry.addData("Target", "%5.2f", angle);

@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
-import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
+import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadClassicUltimateGoal;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzLauncherUltimateGoal;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -17,17 +17,17 @@ public class Test_Launcher extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepadClassic hzGamepadClassic;
-    HzMagazine hzMagazine;
-    HzLauncher hzLauncher;
+    HzGamepadClassicUltimateGoal hzGamepadClassicUltimateGoal;
+    HzMagazineUltimateGoal hzMagazineUltimateGoal;
+    HzLauncherUltimateGoal hzLauncherUltimateGoal;
     double powerLoop = 0.3;
     double velocityLoop = 1200;
 
     @Override
     public void runOpMode() {
-        hzLauncher = new HzLauncher(hardwareMap);
-        hzMagazine = new HzMagazine(hardwareMap);
-        hzGamepadClassic = new HzGamepadClassic(gamepad1,this);
+        hzLauncherUltimateGoal = new HzLauncherUltimateGoal(hardwareMap);
+        hzMagazineUltimateGoal = new HzMagazineUltimateGoal(hardwareMap);
+        hzGamepadClassicUltimateGoal = new HzGamepadClassicUltimateGoal(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
@@ -37,9 +37,9 @@ public class Test_Launcher extends LinearOpMode {
         //Run Robot based on Gamepad1 inputs
         while (opModeIsActive()) {
             //**** Launcher Actions ****
-            hzMagazine.moveMagazineToLaunch();
+            hzMagazineUltimateGoal.moveMagazineToLaunch();
             //Launches Ring
-            if (hzGamepadClassic.getRightBumperPress()) {
+            if (hzGamepadClassicUltimateGoal.getRightBumperPress()) {
                 //TODO : AMJAD : Launch Controller should be used to check if status is good to launch
 
                 //AMJAD : moveMagazinetoLaunch should not be called by right bumper,
@@ -47,7 +47,7 @@ public class Test_Launcher extends LinearOpMode {
                 //gpMagazine.moveMagazineToLaunch();
 
                 //if (!gpMagazine.isMagazineEmpty()) {
-                    hzLauncher.plungeRingToFlyWheel();
+                    hzLauncherUltimateGoal.plungeRingToFlyWheel();
                 //}
 
             }
@@ -55,17 +55,17 @@ public class Test_Launcher extends LinearOpMode {
             //hzLauncher.launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.26, 0.126, 0, 12.6);
             //hzLauncher.launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
 
-            if (hzGamepadClassic.getLeftBumperPress()) {
+            if (hzGamepadClassicUltimateGoal.getLeftBumperPress()) {
                 maxVelocityTest();
             }
 
-            if (hzGamepadClassic.getButtonXPress()) {
+            if (hzGamepadClassicUltimateGoal.getButtonXPress()) {
                 //hzLauncher.runFlyWheelToTarget(0.7);
-                hzLauncher.runFlyWheelToTarget(1640);
+                hzLauncherUltimateGoal.runFlyWheelToTarget(1640);
             }
 
-            if (hzGamepadClassic.getButtonBPress()) {
-                hzLauncher.stopFlyWheel();
+            if (hzGamepadClassicUltimateGoal.getButtonBPress()) {
+                hzLauncherUltimateGoal.stopFlyWheel();
             }
 
             /*if (powerLoop >1.0) powerLoop = 1.0;
@@ -82,14 +82,14 @@ public class Test_Launcher extends LinearOpMode {
 
             if (velocityLoop >2340) velocityLoop = 2340;
             if (velocityLoop < 1200) velocityLoop = 1200;
-            if (hzGamepadClassic.getButtonAPress()) {
+            if (hzGamepadClassicUltimateGoal.getButtonAPress()) {
                 velocityLoop = velocityLoop - 10;
-                hzLauncher.runFlyWheelToTarget(velocityLoop);
+                hzLauncherUltimateGoal.runFlyWheelToTarget(velocityLoop);
             }
 
-            if (hzGamepadClassic.getButtonYPress()) {
+            if (hzGamepadClassicUltimateGoal.getButtonYPress()) {
                 velocityLoop = velocityLoop + 10;
-                hzLauncher.runFlyWheelToTarget(velocityLoop);
+                hzLauncherUltimateGoal.runFlyWheelToTarget(velocityLoop);
             }
 
 
@@ -104,8 +104,8 @@ public class Test_Launcher extends LinearOpMode {
 
     public void maxVelocityTest(){
         //hzLauncher.runFlyWheelToTarget(1.0);
-        hzLauncher.launcherFlyWheelMotor.setPower(1.0);
-        currentVelocity = hzLauncher.launcherFlyWheelMotor.getVelocity();
+        hzLauncherUltimateGoal.launcherFlyWheelMotor.setPower(1.0);
+        currentVelocity = hzLauncherUltimateGoal.launcherFlyWheelMotor.getVelocity();
 
         if (currentVelocity > currentVelocity) {
             maxVelocity = currentVelocity;
@@ -121,15 +121,15 @@ public class Test_Launcher extends LinearOpMode {
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
         telemetry.addData("7:24","11/23");
-        telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());
-        telemetry.addData("Launch Motor Power", hzLauncher.launcherFlyWheelMotor.getPower());
+        telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncherUltimateGoal.launcherFlyWheelMotor.isBusy());
+        telemetry.addData("Launch Motor Power", hzLauncherUltimateGoal.launcherFlyWheelMotor.getPower());
         telemetry.addData("velocityLoop: ", velocityLoop);
-        telemetry.addData("Laucnch Motor Velocity", hzLauncher.launcherFlyWheelMotor.getVelocity());
+        telemetry.addData("Laucnch Motor Velocity", hzLauncherUltimateGoal.launcherFlyWheelMotor.getVelocity());
 
         telemetry.addData("launcher MaxVelocity : ",maxVelocity );
-        telemetry.addData("launcherRingPlungerServo.getPosition()", hzLauncher.launcherRingPlungerServo.getPosition());
+        telemetry.addData("launcherRingPlungerServo.getPosition()", hzLauncherUltimateGoal.launcherRingPlungerServo.getPosition());
 
-        switch (hzLauncher.getLauncherState()){
+        switch (hzLauncherUltimateGoal.getLauncherState()){
             case RUNNING_FOR_TARGET:  {
                 telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_RUNNING_FOR_SUPPLY");
                 break;

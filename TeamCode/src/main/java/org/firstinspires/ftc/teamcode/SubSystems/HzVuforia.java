@@ -29,6 +29,13 @@
 
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
+import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -43,16 +50,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
+import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 /**
  *
@@ -262,6 +264,7 @@ public class HzVuforia {
     /**
      * Run Tensor flow algorithm.
      * This is to be run till the play button is pressed.. the last target zone identified is returned.
+     * @return
      */
     public HzGameField.TARGET_ZONE runVuforiaTensorFlow() {
         vuforiaState = VUFORIA_STATE.TFOD_RUNNING;
@@ -481,7 +484,7 @@ public class HzVuforia {
             vuforiaFirstAngle=rotation.firstAngle;
             vuforiaSecondAngle=rotation.secondAngle;
             vuforiaThirdAngle=rotation.thirdAngle;
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+            if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 poseVuforia = (new Pose2d(translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, rotation.thirdAngle)).plus(vuforiaLeftCameraCorrection);
             } else {
                 poseVuforia = (new Pose2d(translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, rotation.thirdAngle)).plus(vuforiaRightCameraCorrection);

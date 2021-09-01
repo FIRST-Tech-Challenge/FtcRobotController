@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
+import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadClassicUltimateGoal;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -16,21 +16,21 @@ public class Test_Magazine extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepadClassic hzGamepadClassic;
+    HzGamepadClassicUltimateGoal hzGamepadClassicUltimateGoal;
 
     //Magazine hzMagazine;
-    HzMagazine hzMagazine;
+    HzMagazineUltimateGoal hzMagazineUltimateGoal;
 
     @Override
     public void runOpMode() {
 
-        hzMagazine = new HzMagazine(hardwareMap);
+        hzMagazineUltimateGoal = new HzMagazineUltimateGoal(hardwareMap);
 
-        hzGamepadClassic = new HzGamepadClassic(gamepad1,this);
+        hzGamepadClassicUltimateGoal = new HzGamepadClassicUltimateGoal(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
-        hzMagazine.initMagazine();
+        hzMagazineUltimateGoal.initMagazine();
 
         int keyCount = 0;
         //Wait for pressing plan on controller
@@ -59,16 +59,16 @@ public class Test_Magazine extends LinearOpMode {
                 hzMagazine.senseMagazineRingStatus();;
             }*/
 
-            if (hzGamepadClassic.getButtonBPress()){
-                hzMagazine.senseMagazinePosition();
+            if (hzGamepadClassicUltimateGoal.getButtonBPress()){
+                hzMagazineUltimateGoal.senseMagazinePosition();
             }
 
-            if (hzGamepadClassic.getDpad_upPress()) {
-                hzMagazine.moveMagazineToLaunch();
+            if (hzGamepadClassicUltimateGoal.getDpad_upPress()) {
+                hzMagazineUltimateGoal.moveMagazineToLaunch();
             }
 
-            if (hzGamepadClassic.getDpad_downPress()) {
-                hzMagazine.moveMagazineToCollect();
+            if (hzGamepadClassicUltimateGoal.getDpad_downPress()) {
+                hzMagazineUltimateGoal.moveMagazineToCollect();
             }
 
             if(HzDEBUG_FLAG) {
@@ -110,7 +110,7 @@ public class Test_Magazine extends LinearOpMode {
             }
         }*/
 
-        switch (hzMagazine.getMagazinePosition()) {
+        switch (hzMagazineUltimateGoal.getMagazinePosition()) {
             case AT_LAUNCH: {
                 telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_LAUNCH");
                 break;
@@ -125,8 +125,8 @@ public class Test_Magazine extends LinearOpMode {
             }
         }
 
-        telemetry.addData("magazineLaunchTouchSensor.getState()", hzMagazine.magazineLaunchTouchSensor.isPressed());
-        telemetry.addData("magazineCollectTouchSensor.getState()", hzMagazine.magazineCollectTouchSensor.isPressed());
+        telemetry.addData("magazineLaunchTouchSensor.getState()", hzMagazineUltimateGoal.magazineLaunchTouchSensor.isPressed());
+        telemetry.addData("magazineCollectTouchSensor.getState()", hzMagazineUltimateGoal.magazineCollectTouchSensor.isPressed());
     }
 
 }

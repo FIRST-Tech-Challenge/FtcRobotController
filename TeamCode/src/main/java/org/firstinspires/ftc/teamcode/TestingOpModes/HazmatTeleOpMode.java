@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SubSystems.HzChassisClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzChassisClassicUltimateGoal;
+import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadClassicUltimateGoal;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -17,8 +17,8 @@ public class HazmatTeleOpMode extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepadClassic hzGamepad;
-    HzChassisClassic hzChassisClassic;
+    HzGamepadClassicUltimateGoal hzGamepad;
+    HzChassisClassicUltimateGoal hzChassisClassicUltimateGoal;
 
 
 
@@ -26,9 +26,9 @@ public class HazmatTeleOpMode extends LinearOpMode {
     public void runOpMode() {
 
         //Instantiate Subsystems : Chassis, Arm, Intake, Gamepad1
-        hzChassisClassic = new HzChassisClassic(hardwareMap);
+        hzChassisClassicUltimateGoal = new HzChassisClassicUltimateGoal(hardwareMap);
 
-        hzGamepad = new HzGamepadClassic(gamepad1,this);
+        hzGamepad = new HzGamepadClassicUltimateGoal(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
@@ -36,12 +36,12 @@ public class HazmatTeleOpMode extends LinearOpMode {
         waitForStart();
 
         //Initialize on press of play
-        hzChassisClassic.initChassis();
+        hzChassisClassicUltimateGoal.initChassis();
 
         //Run Robot based on Gamepad1 inputs
         while (opModeIsActive()) {
             //Run per Gamepad input
-            hzGamepad.runByGamepadInputClassicChassis(hzChassisClassic);
+            hzGamepad.runByGamepadInputClassicChassis(hzChassisClassicUltimateGoal);
 
             if(HzDEBUG_FLAG) {
                 printDebugMessages();
@@ -57,10 +57,10 @@ public class HazmatTeleOpMode extends LinearOpMode {
     public void printDebugMessages(){
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
-        telemetry.addData("backRightDrive.getCurrentPosition()", hzChassisClassic.backRight.getCurrentPosition());
-        telemetry.addData("backLeftDrive.getCurrentPosition()", hzChassisClassic.backLeft.getCurrentPosition());
-        telemetry.addData("frontRightDrive.getCurrentPosition()", hzChassisClassic.frontRight.getCurrentPosition());
-        telemetry.addData("frontLeftDrive.getCurrentPosition()", hzChassisClassic.frontLeft.getCurrentPosition());
+        telemetry.addData("backRightDrive.getCurrentPosition()", hzChassisClassicUltimateGoal.backRight.getCurrentPosition());
+        telemetry.addData("backLeftDrive.getCurrentPosition()", hzChassisClassicUltimateGoal.backLeft.getCurrentPosition());
+        telemetry.addData("frontRightDrive.getCurrentPosition()", hzChassisClassicUltimateGoal.frontRight.getCurrentPosition());
+        telemetry.addData("frontLeftDrive.getCurrentPosition()", hzChassisClassicUltimateGoal.frontLeft.getCurrentPosition());
         telemetry.addData("hzGamepad1.getLeftTrigger()", hzGamepad.getLeftTrigger());
 
 

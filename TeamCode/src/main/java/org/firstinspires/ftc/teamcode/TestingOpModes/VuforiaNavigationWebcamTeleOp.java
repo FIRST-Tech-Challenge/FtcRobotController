@@ -42,8 +42,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.SubSystems.HzChassisClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzChassisClassicUltimateGoal;
+import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadClassicUltimateGoal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,8 +94,8 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
     //*****From : HazmatTeleOpMode
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepadClassic hzGamepad;
-    HzChassisClassic hzChassisClassic;
+    HzGamepadClassicUltimateGoal hzGamepad;
+    HzChassisClassicUltimateGoal hzChassisClassicUltimateGoal;
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
@@ -142,9 +142,9 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
 
     @Override public void runOpMode() {
         //Instantiate Subsystems : Chassis, Arm, Intake, Gamepad1
-        hzChassisClassic = new HzChassisClassic(hardwareMap);
+        hzChassisClassicUltimateGoal = new HzChassisClassicUltimateGoal(hardwareMap);
 
-        hzGamepad = new HzGamepadClassic(gamepad1, this);
+        hzGamepad = new HzGamepadClassicUltimateGoal(gamepad1, this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
@@ -286,11 +286,11 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
         // Tap the preview window to receive a fresh image.
 
         //Initialize on press of play
-        hzChassisClassic.initChassis();
+        hzChassisClassicUltimateGoal.initChassis();
 
         targetsUltimateGoal.activate();
         while (!isStopRequested()) {
-            hzGamepad.runByGamepadInputClassicChassis(hzChassisClassic);
+            hzGamepad.runByGamepadInputClassicChassis(hzChassisClassicUltimateGoal);
 
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
@@ -342,10 +342,10 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
     public void printDebugMessages(){
         //telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
-        telemetry.addData("backRightDrive.getCurrentPosition()", hzChassisClassic.backRight.getCurrentPosition());
-        telemetry.addData("backLeftDrive.getCurrentPosition()", hzChassisClassic.backLeft.getCurrentPosition());
-        telemetry.addData("frontRightDrive.getCurrentPosition()", hzChassisClassic.frontRight.getCurrentPosition());
-        telemetry.addData("frontLeftDrive.getCurrentPosition()", hzChassisClassic.frontLeft.getCurrentPosition());
+        telemetry.addData("backRightDrive.getCurrentPosition()", hzChassisClassicUltimateGoal.backRight.getCurrentPosition());
+        telemetry.addData("backLeftDrive.getCurrentPosition()", hzChassisClassicUltimateGoal.backLeft.getCurrentPosition());
+        telemetry.addData("frontRightDrive.getCurrentPosition()", hzChassisClassicUltimateGoal.frontRight.getCurrentPosition());
+        telemetry.addData("frontLeftDrive.getCurrentPosition()", hzChassisClassicUltimateGoal.frontLeft.getCurrentPosition());
         telemetry.addData("hzGamepad1.getLeftTrigger()", hzGamepad.getLeftTrigger());
 
     }

@@ -5,15 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
-import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
-import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
-import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
-import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
-import org.firstinspires.ftc.teamcode.SubSystems.HzVuforiaStatic;
+import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
+import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadControllerUltimateGoal;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzIntakeUltimateGoal;
+import org.firstinspires.ftc.teamcode.Controllers.Examples.HzLaunchSubControllerUltimateGoal;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzLauncherUltimateGoal;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzVuforiaStatic;
 
 
 /**
@@ -30,16 +30,16 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    public HzGamepad hzGamepad;
+    public HzGamepadControllerUltimateGoal hzGamepadControllerUltimateGoal;
     public HzDrive hzDrive;
-    public HzMagazine hzMagazine;
-    public HzIntake hzIntake;
-    public HzLaunchController hzLaunchController;
-    public HzLauncher hzLauncher;
-    public HzArm hzArm;
+    public HzMagazineUltimateGoal hzMagazineUltimateGoal;
+    public HzIntakeUltimateGoal hzIntakeUltimateGoal;
+    public HzLaunchSubControllerUltimateGoal hzLaunchSubControllerUltimateGoal;
+    public HzLauncherUltimateGoal hzLauncherUltimateGoal;
+    public HzArmUltimateGoal hzArmUltimateGoal;
 
     //public HzVuforia hzVuforia;
-    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+    public Pose2d startPose = HzGameFieldUltimateGoal.BLUE_INNER_START_LINE;
     public HzVuforiaStatic.ACTIVE_WEBCAM activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.LEFT;
     //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
     //TODO : Create another TeleOp for Red
@@ -48,13 +48,13 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
         hzDrive = new HzDrive(hardwareMap);
-        hzMagazine = new HzMagazine(hardwareMap);
-        hzIntake = new HzIntake(hardwareMap);
+        hzMagazineUltimateGoal = new HzMagazineUltimateGoal(hardwareMap);
+        hzIntakeUltimateGoal = new HzIntakeUltimateGoal(hardwareMap);
 
-        hzLauncher = new HzLauncher(hardwareMap);
-        hzArm = new HzArm(hardwareMap);
-        hzLaunchController = new HzLaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
-        hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
+        hzLauncherUltimateGoal = new HzLauncherUltimateGoal(hardwareMap);
+        hzArmUltimateGoal = new HzArmUltimateGoal(hardwareMap);
+        hzLaunchSubControllerUltimateGoal = new HzLaunchSubControllerUltimateGoal(hardwareMap, hzLauncherUltimateGoal, hzIntakeUltimateGoal, hzMagazineUltimateGoal, hzDrive);
+        hzGamepadControllerUltimateGoal = new HzGamepadControllerUltimateGoal(gamepad1,hzDrive, hzMagazineUltimateGoal, hzIntakeUltimateGoal, hzLaunchSubControllerUltimateGoal, hzLauncherUltimateGoal, hzArmUltimateGoal);
 
         initialConfiguration();
 
@@ -70,8 +70,8 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
         //hzDrive.setPoseEstimate(PoseStorage.currentPose);
-        if ( HzGameField.poseSetInAutonomous == true) {
-            hzDrive.getLocalizer().setPoseEstimate(HzGameField.currentPose);
+        if ( HzGameFieldUltimateGoal.poseSetInAutonomous == true) {
+            hzDrive.getLocalizer().setPoseEstimate(HzGameFieldUltimateGoal.currentPose);
         } else {
             hzDrive.getLocalizer().setPoseEstimate(startPose);
         }
@@ -106,7 +106,7 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
 
                 HzVuforiaStatic.runVuforiaNavigation();
 
-                hzGamepad.runByGamepad();
+                hzGamepadControllerUltimateGoal.runByGamepadControl();
 
                 if(HzDEBUG_FLAG) {
                     printDebugMessages();
@@ -117,7 +117,7 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
 
         }
         HzVuforiaStatic.deactivateVuforiaNavigation();
-        HzGameField.poseSetInAutonomous = false;
+        HzGameFieldUltimateGoal.poseSetInAutonomous = false;
     }
 
 
@@ -130,13 +130,13 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
         telemetry.update();
 
         while (!isStopRequested()) {
-            if (hzGamepad.getButtonBPress()) {
-                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+            if (hzGamepadControllerUltimateGoal.getButtonBPress()) {
+                HzGameFieldUltimateGoal.playingAlliance = HzGameFieldUltimateGoal.PLAYING_ALLIANCE.RED_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
                 break;
             }
-            if (hzGamepad.getButtonXPress()) {
-                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+            if (hzGamepadControllerUltimateGoal.getButtonXPress()) {
+                HzGameFieldUltimateGoal.playingAlliance = HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
                 break;
             }
@@ -151,29 +151,29 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
         //timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
         while (!isStopRequested()) {
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.RED_INNER_START_LINE;
+            if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.RED_ALLIANCE) {
+                if (hzGamepadControllerUltimateGoal.getButtonAPress()) {
+                    startPose = HzGameFieldUltimateGoal.RED_INNER_START_LINE;
                     activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.RIGHT;
                     telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
                     break;
                 }
-                if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.RED_OUTER_START_LINE;
+                if (hzGamepadControllerUltimateGoal.getButtonAPress()) {
+                    startPose = HzGameFieldUltimateGoal.RED_OUTER_START_LINE;
                     activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.LEFT;
                     telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
                     break;
                 }
             }
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.BLUE_INNER_START_LINE;
+            if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                if (hzGamepadControllerUltimateGoal.getButtonAPress()) {
+                    startPose = HzGameFieldUltimateGoal.BLUE_INNER_START_LINE;
                     activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.RIGHT;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
-                if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.BLUE_OUTER_START_LINE;
+                if (hzGamepadControllerUltimateGoal.getButtonAPress()) {
+                    startPose = HzGameFieldUltimateGoal.BLUE_OUTER_START_LINE;
                     activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.LEFT;
                     telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
                     break;
@@ -195,9 +195,9 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
-        telemetry.addData("GameField.playingAlliance : ", HzGameField.playingAlliance);
-        telemetry.addData("GameField.poseSetInAutonomous : ", HzGameField.poseSetInAutonomous);
-        telemetry.addData("GameField.currentPose : ", HzGameField.currentPose);
+        telemetry.addData("GameField.playingAlliance : ", HzGameFieldUltimateGoal.playingAlliance);
+        telemetry.addData("GameField.poseSetInAutonomous : ", HzGameFieldUltimateGoal.poseSetInAutonomous);
+        telemetry.addData("GameField.currentPose : ", HzGameFieldUltimateGoal.currentPose);
         telemetry.addData("startPose : ", startPose);
 
         //****** Drive debug ******
@@ -212,7 +212,7 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
         //telemetry.addData("hzVuforia.vuforiaThirdAngle: %.3f°",Math.toDegrees(hzVuforia.vuforiaThirdAngle));
 
         //******* Magazine Debug ********
-        switch (hzMagazine.getMagazinePosition()) {
+        switch (hzMagazineUltimateGoal.getMagazinePosition()) {
             case AT_LAUNCH: {
                 telemetry.addData("hzMagazine.getMagazinePosition(): ", "MAGAZINE_AT_LAUNCH");
                 break;
@@ -227,16 +227,16 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
             }
         }
         //telemetry.addData("hzMagazine.moveMagazineToLaunchState",hzMagazine.moveMagazineToLaunchState);
-        telemetry.addData("magazineLaunchTouchSensor.getState():", hzMagazine.magazineLaunchTouchSensor.isPressed());
+        telemetry.addData("magazineLaunchTouchSensor.getState():", hzMagazineUltimateGoal.magazineLaunchTouchSensor.isPressed());
         //telemetry.addData("hzMagazine.moveMagazineToCollectState",hzMagazine.moveMagazineToCollectState);
-        telemetry.addData("magazineCollectTouchSensor.getState():", hzMagazine.magazineCollectTouchSensor.isPressed());
+        telemetry.addData("magazineCollectTouchSensor.getState():", hzMagazineUltimateGoal.magazineCollectTouchSensor.isPressed());
 
 
         //********** Intake Debug *******
         //telemetry.addData("hzGamepad1.getDpad_downPress()", hzGamepad.getDpad_downPress());
         //telemetry.addData("hzGamepad1.getDpad_upPress()", hzGamepad.getDpad_upPress());
         //telemetry.addData("intakeMotor.isBusy()", hzIntake.intakeMotor.isBusy());
-        switch (hzIntake.getIntakeState()){
+        switch (hzIntakeUltimateGoal.getIntakeState()){
             case RUNNING: {
                 telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_RUNNING");
                 break;
@@ -252,23 +252,23 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
         }
 
         //******* Launch Controller Debug ********
-        telemetry.addData("hzLaunchController.launchMode : ", hzLaunchController.launchMode);
-        telemetry.addData("hzLaunchController.deactivateLaunchReadinessState :",hzLaunchController.deactivateLaunchReadinessState);
-        telemetry.addData("hzLaunchController.activateLaunchReadinessState :",hzLaunchController.activateLaunchReadinessState);
-        telemetry.addData("hzLaunchController.launchReadiness : ", hzLaunchController.launchReadiness);
-        telemetry.addData("hzLaunchController.launchActivation : ", hzLaunchController.launchActivation);
-        telemetry.addData("hzLaunchController.lcTarget : ", hzLaunchController.lcTarget);
-        telemetry.addData("hzLaunchController.lcTargetVector", hzLaunchController.lcTargetVector);
-        telemetry.addData("hzLaunchController.distanceFromTarget : ", hzLaunchController.distanceFromTarget);
-        telemetry.addData("hzLaunchController.lclaunchMotorPower : ", hzLaunchController.lclaunchMotorPower);
+        telemetry.addData("hzLaunchController.launchMode : ", hzLaunchSubControllerUltimateGoal.launchMode);
+        telemetry.addData("hzLaunchController.deactivateLaunchReadinessState :", hzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState);
+        telemetry.addData("hzLaunchController.activateLaunchReadinessState :", hzLaunchSubControllerUltimateGoal.activateLaunchReadinessState);
+        telemetry.addData("hzLaunchController.launchReadiness : ", hzLaunchSubControllerUltimateGoal.launchReadiness);
+        telemetry.addData("hzLaunchController.launchActivation : ", hzLaunchSubControllerUltimateGoal.launchActivation);
+        telemetry.addData("hzLaunchController.lcTarget : ", hzLaunchSubControllerUltimateGoal.lcTarget);
+        telemetry.addData("hzLaunchController.lcTargetVector", hzLaunchSubControllerUltimateGoal.lcTargetVector);
+        telemetry.addData("hzLaunchController.distanceFromTarget : ", hzLaunchSubControllerUltimateGoal.distanceFromTarget);
+        telemetry.addData("hzLaunchController.lclaunchMotorPower : ", hzLaunchSubControllerUltimateGoal.lclaunchMotorPower);
         //telemetry.addData("hzLauncher.launchMotorVelocity : ", hzLauncher.launchMotorVelocity);
         telemetry.addData("hzDrive.drivePointToAlign : ", hzDrive.drivePointToAlign);
 
         //******* Launcher Debug *********
         //telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());
-        telemetry.addData("launcherRingPlungerServo.getPosition() : ", hzLauncher.launcherRingPlungerServo.getPosition());
+        telemetry.addData("launcherRingPlungerServo.getPosition() : ", hzLauncherUltimateGoal.launcherRingPlungerServo.getPosition());
 
-        switch (hzLauncher.getLauncherState()){
+        switch (hzLauncherUltimateGoal.getLauncherState()){
             case RUNNING_FOR_TARGET:  {
                 telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_RUNNING_FOR_TARGET");
                 break;
@@ -290,7 +290,7 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
         //telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
         //telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
 
-        switch (hzArm.getGripServoState()){
+        switch (hzArmUltimateGoal.getGripServoState()){
             case OPENED  : {
                 telemetry.addData("hzArm.getGripServoState()", "OPENED");
                 break;
@@ -307,7 +307,7 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
         //telemetry.addData("armGripServo.getCurrentPosition()", hzArm.armGripServo.getPosition());
         //telemetry.addData("hzGamepad.getLeftTriggerPress()", hzGamepad.getLeftTriggerPress());
 
-        switch (hzArm.getCurrentArmPosition()){
+        switch (hzArmUltimateGoal.getCurrentArmPosition()){
             case PARKED: {
                 telemetry.addData("hzArm.getCurrentArmPosition()", "PARKED");
                 break;

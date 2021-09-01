@@ -8,12 +8,15 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.util.DashboardUtil;
+import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
+import org.firstinspires.ftc.teamcode.SubSystems.HzDrive_RoadRunner.HzDriveConstantsDriveEncoders;
+import org.firstinspires.ftc.teamcode.SubSystems.HzDrive_RoadRunner.HzMecanumDriveDriveEncoders;
+import org.firstinspires.ftc.teamcode.SubSystems.HzDrive_RoadRunner.util.DashboardUtil;
 
-//import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-//import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-//import org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder;
-//import org.firstinspires.ftc.teamcode.drive.MecanumDriveDeadWheelsEncoder;
+//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.DriveConstants;
+//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.SampleMecanumDrive;
+//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.DriveConstantsDeadWheelEncoder;
+//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.MecanumDriveDeadWheelsEncoder;
 
 /**
  * Drive Class that implements Mecanum drive using roadrunner using Drive Encoders
@@ -40,9 +43,9 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
     //private PIDFController headingController = new PIDFController(MecanumDriveDeadWheelsEncoder.HEADING_PID);
     private PIDFController headingController = new PIDFController(HzMecanumDriveDriveEncoders.HEADING_PID);
 
-    HzGameField hzGameField;
+    HzGameFieldUltimateGoal hzGameFieldUltimateGoal;
 
-    enum DriveType {
+    public enum DriveType {
         ROBOT_CENTRIC,
         FIELD_CENTRIC,
     }
@@ -51,7 +54,7 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
 
     //**** Align to point and Field Drive Mode ****
     // Define 2 states, driver control or alignment control
-    enum DriveMode {
+    public enum DriveMode {
         NORMAL_CONTROL,
         ALIGN_TO_POINT;
         DriveMode toggle() {
@@ -62,7 +65,7 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
         }
     }
 
-    enum AugmentedControl {
+    public enum AugmentedControl {
         NONE,
         TURN_CENTER,
         TURN_DELTA_LEFT,
@@ -73,7 +76,7 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
 
     public DriveMode driveMode = DriveMode.NORMAL_CONTROL; //Default initializer
     public static double DRAWING_TARGET_RADIUS = 2;
-    public Vector2d drivePointToAlign = hzGameField.ORIGIN;
+    public Vector2d drivePointToAlign = hzGameFieldUltimateGoal.ORIGIN;
 
 
     //**** Drive Train ****
