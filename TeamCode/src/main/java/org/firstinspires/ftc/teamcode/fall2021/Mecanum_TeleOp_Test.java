@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.fall2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -31,34 +32,38 @@ public class Mecanum_TeleOp_Test extends LinearOpMode {
         LB  = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
 
-        LF.setDirection(DcMotor.Direction.FORWARD);
-        RF.setDirection(DcMotor.Direction.REVERSE);
+        LF.setDirection(DcMotor.Direction.REVERSE);
+        RF.setDirection(DcMotor.Direction.FORWARD);
         LB.setDirection(DcMotor.Direction.REVERSE);
         RB.setDirection(DcMotor.Direction.FORWARD);
+
+        double LFPower;
+        double RFPower;
+        double LBPower;
+        double RBPower;
 
 
         waitForStart();
 
         while (opModeIsActive()) {
-            double LFPower;
-            double RFPower;
-            double LBPower;
-            double RBPower;
 
             double drive = -gamepad1.left_stick_y;
             double strafe  = -gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
 
 
-
             if(gamepad1.dpad_up){
                 speed += 0.05;
+                while(gamepad1.dpad_up){
+                }
                 if(speed < 0){
                     speed = 0;
                 }
             }
             if(gamepad1.dpad_down){
                 speed -= 0.05;
+                while(gamepad1.dpad_down){
+                }
                 if(speed < 0){
                     speed = 0;
                 }
@@ -76,6 +81,7 @@ public class Mecanum_TeleOp_Test extends LinearOpMode {
 
             telemetry.addData("Front Motors", "LF (%.2f), RF (%.2f)", LFPower, RFPower);
             telemetry.addData("Back Motors", "LB (%.2f), RB (%.2f)", LBPower, RBPower);
+            telemetry.addData("speed: %.2f", speed);
             telemetry.update();
         }
 
