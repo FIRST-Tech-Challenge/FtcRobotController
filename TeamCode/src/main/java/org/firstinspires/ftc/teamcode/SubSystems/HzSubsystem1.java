@@ -22,54 +22,46 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 public class HzSubsystem1 {
 
-    public DcMotor intakeMotor = null;
-    public Servo intakeRelease = null;
+    public DcMotor subsystem1Motor = null;
+    public Servo subsystem1Servo = null;
 
-    public static final double INTAKE_RELEASE_HOLD = 0.6;
-    public static final double INTAKE_RELEASE_OPEN = 0.35;
+    public static final double SUBSYSTEM1_SERVO_LEVEL1 = 0.6;
+    public static final double SUBSYSTEM1_SERVO_LEVEL2 = 0.35;
 
-    public enum INTAKE_MOTOR_STATE {
-        RUNNING,
-        STOPPED,
-        REVERSING
+    public enum SUBSYSTEM1_MOTOR_STATE {
+        STATE1,
+        STATE2,
+        STATE3
     }
 
-    public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
+    public SUBSYSTEM1_MOTOR_STATE subsystem1MotorState = SUBSYSTEM1_MOTOR_STATE.STATE1;
 
-    public double intakePower = 0.95;//0.9;
-    public double intakeReversePower = 0.8;
+    public double subsystem1MotorPower1 = 0.95;//0.9;
+    public double subsystem1MotorPower2 = 0.8;
 
-    public enum INTAKE_BUTTON_STATE {
+    public enum SUBSYSTEM1_BUTTON_STATE {
         ON,
         OFF
     }
-    public INTAKE_BUTTON_STATE intakeButtonState;
-
-
-    public enum INTAKE_REVERSE_BUTTON_STATE {
-        ON,
-        OFF
-    }
-    public INTAKE_REVERSE_BUTTON_STATE intakeReverseButtonState;
-
+    public SUBSYSTEM1_BUTTON_STATE subsystem1ButtonState;
 
     public HzSubsystem1(HardwareMap hardwareMap) {
-        intakeMotor = hardwareMap.dcMotor.get("intake_rightenc");
-        intakeRelease = hardwareMap.servo.get("intake_release_servo");
+        subsystem1Motor = hardwareMap.dcMotor.get("intake_rightenc");
+        subsystem1Servo = hardwareMap.servo.get("intake_release_servo");
     }
 
-    public void initIntake(){
+    public void initSubsystem1(){
 
     }
 
     /**
      * runIntakeMotor checks if the intake is not running and runs the intake
      */
-    public void runIntakeMotor() {
-        if(intakeMotorState != INTAKE_MOTOR_STATE.RUNNING) {
-            intakeMotor.setDirection(DcMotor.Direction.REVERSE);
-            intakeMotor.setPower(intakePower);
-            intakeMotorState = INTAKE_MOTOR_STATE.RUNNING;
+    public void runSubsystem1Motor() {
+        if(subsystem1MotorState != SUBSYSTEM1_MOTOR_STATE.STATE1) {
+            subsystem1Motor.setDirection(DcMotor.Direction.REVERSE);
+            subsystem1Motor.setPower(subsystem1MotorPower1);
+            subsystem1MotorState = SUBSYSTEM1_MOTOR_STATE.STATE1;
         }
     }
 
@@ -77,10 +69,10 @@ public class HzSubsystem1 {
      * stopIntakeMotor checks if the intake has stopped and if its not, it sets the intake power to 0
      * and sets intakeMotorState to INTAKE_MOTOR_STATE.STOPPED
      */
-    public void stopIntakeMotor() {
-        if(intakeMotorState != INTAKE_MOTOR_STATE.STOPPED) {
-            intakeMotor.setPower(0.0);
-            intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
+    public void stopSubsystem1Motor() {
+        if(subsystem1MotorState != SUBSYSTEM1_MOTOR_STATE.STATE2) {
+            subsystem1Motor.setPower(0.0);
+            subsystem1MotorState = SUBSYSTEM1_MOTOR_STATE.STATE2;
        }
     }
 
@@ -88,11 +80,11 @@ public class HzSubsystem1 {
      * reverseIntakeMotor checks if the intake is not reversing, and sets the intake motor to FORWARD, then also
      * ets intake motor state to REVERSING
      */
-    public void reverseIntakeMotor() {
-        if(intakeMotorState != INTAKE_MOTOR_STATE.REVERSING) {
-            intakeMotor.setDirection((DcMotor.Direction.FORWARD));
-            intakeMotor.setPower(intakeReversePower);
-            intakeMotorState = INTAKE_MOTOR_STATE.REVERSING;
+    public void reverseSubsystem1Motor() {
+        if(subsystem1MotorState != SUBSYSTEM1_MOTOR_STATE.STATE3) {
+            subsystem1Motor.setDirection((DcMotor.Direction.FORWARD));
+            subsystem1Motor.setPower(subsystem1MotorPower2);
+            subsystem1MotorState = SUBSYSTEM1_MOTOR_STATE.STATE3;
         }
     }
 
@@ -100,20 +92,20 @@ public class HzSubsystem1 {
      * set Intake gripper position to hold.. to ensure intake is within robot dimensions at start
      */
     public void setIntakeReleaseHold(){
-        intakeRelease.setPosition(INTAKE_RELEASE_HOLD);
+        subsystem1Servo.setPosition(SUBSYSTEM1_SERVO_LEVEL1);
     }
 
     /**
      * set Intake gripper position to release
      */
     public void setIntakeReleaseOpen(){
-        intakeRelease.setPosition(INTAKE_RELEASE_OPEN);
+        subsystem1Servo.setPosition(SUBSYSTEM1_SERVO_LEVEL2);
     }
 
     /**
      * Returns Intake motor state
      */
-    public INTAKE_MOTOR_STATE getIntakeState() {
-        return intakeMotorState;
+    public SUBSYSTEM1_MOTOR_STATE getIntakeState() {
+        return subsystem1MotorState;
     }
 }

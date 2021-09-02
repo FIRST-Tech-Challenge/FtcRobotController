@@ -2,13 +2,8 @@ package org.firstinspires.ftc.teamcode.Controllers;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import org.firstinspires.ftc.teamcode.Controllers.Examples.HzLaunchSubControllerUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzIntakeUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzLauncherUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
 
 /**
@@ -22,8 +17,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
 public class HzAutonomousController {
 
     //Create gamepad object reference to connect to gamepad1
-    public HzDrive acDrive;
-    public HzSubsystem1 acHzSubsystem1;
+    public HzDrive hzDrive;
+    public HzSubsystem1 hzSubsystem1;
 
     public Pose2d startPose = HzGameFieldUltimateGoal.BLUE_INNER_START_LINE;
 
@@ -42,10 +37,10 @@ public class HzAutonomousController {
      *
      *
      */
-    public HzAutonomousController(HzDrive gpDrivePassed,
-                                  HzSubsystem1 gpHzSubsystem1Passed) {
-        acDrive = gpDrivePassed;
-        acHzSubsystem1 = gpHzSubsystem1Passed;
+    public HzAutonomousController(HzDrive hzDrive,
+                                  HzSubsystem1 hzSubsystem1) {
+        this.hzDrive = hzDrive;
+        this.hzSubsystem1 = hzSubsystem1;
     }
 
     /**

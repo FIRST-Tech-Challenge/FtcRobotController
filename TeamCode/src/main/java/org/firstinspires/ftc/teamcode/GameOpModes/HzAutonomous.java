@@ -60,9 +60,10 @@ public class HzAutonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize HW
+        /* Create Subsystem Objects*/
         hzDrive = new HzDrive(hardwareMap);
         hzSubsystem1 = new HzSubsystem1(hardwareMap);
+        /* Create Controllers */
         hzGamepadController = new HzGamepadController(gamepad1,hzDrive, hzSubsystem1);
         hzAutonomousController = new HzAutonomousController(hzDrive, hzSubsystem1);
 
