@@ -20,12 +20,12 @@ import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal
 public class HzAutonomousControllerUltimateGoal {
 
     //Create gamepad object reference to connect to gamepad1
-    public HzDrive acDrive;
-    public HzMagazineUltimateGoal acHzMagazineUltimateGoal;
-    public HzIntakeUltimateGoal acHzIntakeUltimateGoal;
-    public HzLaunchSubControllerUltimateGoal acHzLaunchSubControllerUltimateGoal;
-    public HzLauncherUltimateGoal acHzLauncherUltimateGoal;
-    public HzArmUltimateGoal acHzArmUltimateGoal;
+    public HzDrive hzDrive;
+    public HzMagazineUltimateGoal hzMagazineUltimateGoal;
+    public HzIntakeUltimateGoal hzIntakeUltimateGoal;
+    public HzLaunchSubControllerUltimateGoal hzLaunchSubControllerUltimateGoal;
+    public HzLauncherUltimateGoal hzLauncherUltimateGoal;
+    public HzArmUltimateGoal hzArmUltimateGoal;
 
     public enum AutoLaunchAim {
         HIGHGOAL,
@@ -47,19 +47,19 @@ public class HzAutonomousControllerUltimateGoal {
      *
      *
      */
-    public HzAutonomousControllerUltimateGoal(HzDrive gpDrivePassed,
-                                              HzMagazineUltimateGoal gpHzMagazineUltimateGoalPassed,
-                                              HzIntakeUltimateGoal gpHzIntakeUltimateGoalPassed,
-                                              HzLaunchSubControllerUltimateGoal gpHzLaunchSubControllerUltimateGoalPassed,
-                                              HzLauncherUltimateGoal gpHzLauncherUltimateGoalPassed,
-                                              HzArmUltimateGoal gpHzArmUltimateGoalPassed) {
-        acDrive = gpDrivePassed;
-        acHzMagazineUltimateGoal = gpHzMagazineUltimateGoalPassed;
-        acHzIntakeUltimateGoal = gpHzIntakeUltimateGoalPassed;
-        acHzLaunchSubControllerUltimateGoal = gpHzLaunchSubControllerUltimateGoalPassed;
-        acHzLauncherUltimateGoal = gpHzLauncherUltimateGoalPassed;
-        acHzArmUltimateGoal = gpHzArmUltimateGoalPassed;
-        acHzLaunchSubControllerUltimateGoal.batteryCorrectionFlag = true;
+    public HzAutonomousControllerUltimateGoal(HzDrive hzDrive,
+                                              HzMagazineUltimateGoal hzMagazineUltimateGoal,
+                                              HzIntakeUltimateGoal hzIntakeUltimateGoal,
+                                              HzLaunchSubControllerUltimateGoal hzLaunchSubControllerUltimateGoal,
+                                              HzLauncherUltimateGoal hzLauncherUltimateGoal,
+                                              HzArmUltimateGoal hzArmUltimateGoal) {
+        this.hzDrive = hzDrive;
+        this.hzMagazineUltimateGoal = hzMagazineUltimateGoal;
+        this.hzIntakeUltimateGoal = hzIntakeUltimateGoal;
+        this.hzLaunchSubControllerUltimateGoal = hzLaunchSubControllerUltimateGoal;
+        this.hzLauncherUltimateGoal = hzLauncherUltimateGoal;
+        this.hzArmUltimateGoal = hzArmUltimateGoal;
+        this.hzLaunchSubControllerUltimateGoal.batteryCorrectionFlag = true;
 
     }
 
@@ -82,7 +82,7 @@ public class HzAutonomousControllerUltimateGoal {
      * set Magazine To Collect state
      */
     public void setMagazineToCollect(){
-        acHzMagazineUltimateGoal.moveMagazineTo = HzMagazineUltimateGoal.MOVE_MAGAZINE_TO.COLLECT;
+        hzMagazineUltimateGoal.moveMagazineTo = HzMagazineUltimateGoal.MOVE_MAGAZINE_TO.COLLECT;
         runAutoControl();
     }
 
@@ -90,7 +90,7 @@ public class HzAutonomousControllerUltimateGoal {
      * set Magazine To Launch state
      */
     public void setMagazineToLaunch(){
-        acHzMagazineUltimateGoal.moveMagazineTo = HzMagazineUltimateGoal.MOVE_MAGAZINE_TO.LAUNCH;
+        hzMagazineUltimateGoal.moveMagazineTo = HzMagazineUltimateGoal.MOVE_MAGAZINE_TO.LAUNCH;
         runAutoControl();
     }
 
@@ -98,16 +98,16 @@ public class HzAutonomousControllerUltimateGoal {
      * run MagazineControl State machine response
      */
     public void runMagazineControl(){
-        if (acHzMagazineUltimateGoal.magazinePosition == HzMagazineUltimateGoal.MAGAZINE_POSITION.AT_COLLECT){
-            acHzLauncherUltimateGoal.stopFlyWheel();
+        if (hzMagazineUltimateGoal.magazinePosition == HzMagazineUltimateGoal.MAGAZINE_POSITION.AT_COLLECT){
+            hzLauncherUltimateGoal.stopFlyWheel();
         }
 
-        switch (acHzMagazineUltimateGoal.moveMagazineTo) {
+        switch (hzMagazineUltimateGoal.moveMagazineTo) {
             case COLLECT:
-                acHzMagazineUltimateGoal.moveMagazineToCollect();
+                hzMagazineUltimateGoal.moveMagazineToCollect();
                 break;
             case LAUNCH:
-                acHzMagazineUltimateGoal.moveMagazineToLaunch();
+                hzMagazineUltimateGoal.moveMagazineToLaunch();
                 break;
         }
 
@@ -142,22 +142,22 @@ public class HzAutonomousControllerUltimateGoal {
     public void runIntakeControl(){
 
         if (autoIntakeState == AUTO_INTAKE_STATE.START){
-            acHzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = false;
-            acHzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
-            acHzMagazineUltimateGoal.moveMagazineTo = HzMagazineUltimateGoal.MOVE_MAGAZINE_TO.COLLECT;
+            hzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = false;
+            hzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
+            hzMagazineUltimateGoal.moveMagazineTo = HzMagazineUltimateGoal.MOVE_MAGAZINE_TO.COLLECT;
         }
 
         if (autoIntakeState == AUTO_INTAKE_STATE.STOP){
-            acHzIntakeUltimateGoal.intakeButtonState = HzIntakeUltimateGoal.INTAKE_BUTTON_STATE.OFF;
+            hzIntakeUltimateGoal.intakeButtonState = HzIntakeUltimateGoal.INTAKE_BUTTON_STATE.OFF;
         }
 
         if (autoIntakeState == AUTO_INTAKE_STATE.START &&
-                acHzIntakeUltimateGoal.getIntakeState() != HzIntakeUltimateGoal.INTAKE_MOTOR_STATE.RUNNING &&
-                acHzMagazineUltimateGoal.magazinePosition == HzMagazineUltimateGoal.MAGAZINE_POSITION.AT_COLLECT){
-            acHzIntakeUltimateGoal.runIntakeMotor();
+                hzIntakeUltimateGoal.getIntakeState() != HzIntakeUltimateGoal.INTAKE_MOTOR_STATE.RUNNING &&
+                hzMagazineUltimateGoal.magazinePosition == HzMagazineUltimateGoal.MAGAZINE_POSITION.AT_COLLECT){
+            hzIntakeUltimateGoal.runIntakeMotor();
         } else if (autoIntakeState == AUTO_INTAKE_STATE.STOP &&
-                acHzIntakeUltimateGoal.getIntakeState() == HzIntakeUltimateGoal.INTAKE_MOTOR_STATE.RUNNING){
-            acHzIntakeUltimateGoal.stopIntakeMotor();
+                hzIntakeUltimateGoal.getIntakeState() == HzIntakeUltimateGoal.INTAKE_MOTOR_STATE.RUNNING){
+            hzIntakeUltimateGoal.stopIntakeMotor();
         }
     }
 
@@ -217,63 +217,63 @@ public class HzAutonomousControllerUltimateGoal {
      */
     public void runLaunchController(){
 
-        if (acHzLaunchSubControllerUltimateGoal.launchActivation == HzLaunchSubControllerUltimateGoal.LAUNCH_ACTIVATION.NOT_ACTIVATED) {
+        if (hzLaunchSubControllerUltimateGoal.launchActivation == HzLaunchSubControllerUltimateGoal.LAUNCH_ACTIVATION.NOT_ACTIVATED) {
             //High, Middle, Low Goal
             switch (autoLaunchtarget){
                 case HIGH_GOAL:
-                    acHzLaunchSubControllerUltimateGoal.lcTarget = HzLaunchSubControllerUltimateGoal.LAUNCH_TARGET.HIGH_GOAL;
-                    acHzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = true;
+                    hzLaunchSubControllerUltimateGoal.lcTarget = HzLaunchSubControllerUltimateGoal.LAUNCH_TARGET.HIGH_GOAL;
+                    hzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = true;
                     break;
                 case POWER_SHOT1:
-                    acHzLaunchSubControllerUltimateGoal.lcTarget = HzLaunchSubControllerUltimateGoal.LAUNCH_TARGET.POWER_SHOT1;
-                    acHzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = true;
+                    hzLaunchSubControllerUltimateGoal.lcTarget = HzLaunchSubControllerUltimateGoal.LAUNCH_TARGET.POWER_SHOT1;
+                    hzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = true;
                     break;
                 case POWER_SHOT2:
-                    acHzLaunchSubControllerUltimateGoal.lcTarget = HzLaunchSubControllerUltimateGoal.LAUNCH_TARGET.POWER_SHOT2;
-                    acHzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = true;
+                    hzLaunchSubControllerUltimateGoal.lcTarget = HzLaunchSubControllerUltimateGoal.LAUNCH_TARGET.POWER_SHOT2;
+                    hzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = true;
                     break;
                 case POWER_SHOT3:
-                    acHzLaunchSubControllerUltimateGoal.lcTarget = HzLaunchSubControllerUltimateGoal.LAUNCH_TARGET.POWER_SHOT3;
-                    acHzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = true;
+                    hzLaunchSubControllerUltimateGoal.lcTarget = HzLaunchSubControllerUltimateGoal.LAUNCH_TARGET.POWER_SHOT3;
+                    hzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = true;
                     break;
                 case OFF:
-                    acHzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
+                    hzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
                     break;
             }
 
         }
 
-        if (acHzLaunchSubControllerUltimateGoal.launchActivation == HzLaunchSubControllerUltimateGoal.LAUNCH_ACTIVATION.ACTIVATED &&
-                acHzLaunchSubControllerUltimateGoal.launchMode == HzLaunchSubControllerUltimateGoal.LAUNCH_MODE.AUTOMATED) {
-            acHzLaunchSubControllerUltimateGoal.runLauncherByDistanceToTarget();
+        if (hzLaunchSubControllerUltimateGoal.launchActivation == HzLaunchSubControllerUltimateGoal.LAUNCH_ACTIVATION.ACTIVATED &&
+                hzLaunchSubControllerUltimateGoal.launchMode == HzLaunchSubControllerUltimateGoal.LAUNCH_MODE.AUTOMATED) {
+            hzLaunchSubControllerUltimateGoal.runLauncherByDistanceToTarget();
             if (autoLaunchtarget == AUTO_LAUNCH_TARGET.OFF) {
-                acHzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
+                hzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
             }
         }
 
-        if (acHzLaunchSubControllerUltimateGoal.launchActivation == HzLaunchSubControllerUltimateGoal.LAUNCH_ACTIVATION.ACTIVATED &&
-                acHzLaunchSubControllerUltimateGoal.launchMode == HzLaunchSubControllerUltimateGoal.LAUNCH_MODE.MANUAL) {
+        if (hzLaunchSubControllerUltimateGoal.launchActivation == HzLaunchSubControllerUltimateGoal.LAUNCH_ACTIVATION.ACTIVATED &&
+                hzLaunchSubControllerUltimateGoal.launchMode == HzLaunchSubControllerUltimateGoal.LAUNCH_MODE.MANUAL) {
             switch (autoLaunchtarget){
                 case HIGH_GOAL:
-                    acHzLauncherUltimateGoal.runFlyWheelToTarget(acHzLauncherUltimateGoal.flyWheelVelocityHighGoal);
+                    hzLauncherUltimateGoal.runFlyWheelToTarget(hzLauncherUltimateGoal.flyWheelVelocityHighGoal);
                     break;
                 case POWER_SHOT1:
                 case POWER_SHOT2:
                 case POWER_SHOT3:
-                    acHzLauncherUltimateGoal.runFlyWheelToTarget(acHzLauncherUltimateGoal.flyWheelVelocityPowerShot);
+                    hzLauncherUltimateGoal.runFlyWheelToTarget(hzLauncherUltimateGoal.flyWheelVelocityPowerShot);
                     break;
                 case OFF:
-                    acHzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
+                    hzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
                     break;
             }
         }
 
-        if (acHzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState) {
-            acHzLaunchSubControllerUltimateGoal.deactivateLaunchReadiness();
+        if (hzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState) {
+            hzLaunchSubControllerUltimateGoal.deactivateLaunchReadiness();
         }
 
-        if (acHzLaunchSubControllerUltimateGoal.activateLaunchReadinessState) {
-            acHzLaunchSubControllerUltimateGoal.activateLaunchReadiness();
+        if (hzLaunchSubControllerUltimateGoal.activateLaunchReadinessState) {
+            hzLaunchSubControllerUltimateGoal.activateLaunchReadiness();
         }
 
     }
@@ -301,9 +301,9 @@ public class HzAutonomousControllerUltimateGoal {
      */
     public void runLauncherControl(){
         if (autoRunLauncher) {
-            if (acHzLaunchSubControllerUltimateGoal.launchActivation == HzLaunchSubControllerUltimateGoal.LAUNCH_ACTIVATION.ACTIVATED &&
-                    acHzLaunchSubControllerUltimateGoal.launchReadiness == HzLaunchSubControllerUltimateGoal.LAUNCH_READINESS.READY) {
-                acHzLauncherUltimateGoal.plungeRingToFlyWheel();
+            if (hzLaunchSubControllerUltimateGoal.launchActivation == HzLaunchSubControllerUltimateGoal.LAUNCH_ACTIVATION.ACTIVATED &&
+                    hzLaunchSubControllerUltimateGoal.launchReadiness == HzLaunchSubControllerUltimateGoal.LAUNCH_READINESS.READY) {
+                hzLauncherUltimateGoal.plungeRingToFlyWheel();
             }
             autoRunLauncher = false;
         }
@@ -355,25 +355,25 @@ public class HzAutonomousControllerUltimateGoal {
     public void runArmControl(){
         switch (autoMoveArm){
             case PARKED:
-                acHzArmUltimateGoal.moveArmParkedPosition();
-                acHzArmUltimateGoal.motorPowerToRun = acHzArmUltimateGoal.POWER_NO_WOBBLEGOAL;
-                acHzArmUltimateGoal.runArmToLevel(acHzArmUltimateGoal.motorPowerToRun);
-                acHzArmUltimateGoal.closeGrip();
+                hzArmUltimateGoal.moveArmParkedPosition();
+                hzArmUltimateGoal.motorPowerToRun = hzArmUltimateGoal.POWER_NO_WOBBLEGOAL;
+                hzArmUltimateGoal.runArmToLevel(hzArmUltimateGoal.motorPowerToRun);
+                hzArmUltimateGoal.closeGrip();
                 break;
             case HOLD_UP_WOBBLE_RING:
-                acHzArmUltimateGoal.moveArmHoldUpWobbleRingPosition();
-                acHzArmUltimateGoal.motorPowerToRun = acHzArmUltimateGoal.POWER_WITH_WOBBLEGOAL;
-                acHzArmUltimateGoal.runArmToLevel(acHzArmUltimateGoal.motorPowerToRun);
+                hzArmUltimateGoal.moveArmHoldUpWobbleRingPosition();
+                hzArmUltimateGoal.motorPowerToRun = hzArmUltimateGoal.POWER_WITH_WOBBLEGOAL;
+                hzArmUltimateGoal.runArmToLevel(hzArmUltimateGoal.motorPowerToRun);
                 break;
             case PICK_WOBBLE:
-                acHzArmUltimateGoal.moveArmPickWobblePosition();
-                acHzArmUltimateGoal.motorPowerToRun = acHzArmUltimateGoal.POWER_WITH_WOBBLEGOAL;
-                acHzArmUltimateGoal.runArmToLevel(acHzArmUltimateGoal.motorPowerToRun);
+                hzArmUltimateGoal.moveArmPickWobblePosition();
+                hzArmUltimateGoal.motorPowerToRun = hzArmUltimateGoal.POWER_WITH_WOBBLEGOAL;
+                hzArmUltimateGoal.runArmToLevel(hzArmUltimateGoal.motorPowerToRun);
                 break;
             case DROP_WOBBLE_AUTONOMOUS:
-                acHzArmUltimateGoal.moveArmDropWobbleAutonomousPosition();
-                acHzArmUltimateGoal.motorPowerToRun = acHzArmUltimateGoal.POWER_WITH_WOBBLEGOAL;
-                acHzArmUltimateGoal.runArmToLevel(acHzArmUltimateGoal.motorPowerToRun);
+                hzArmUltimateGoal.moveArmDropWobbleAutonomousPosition();
+                hzArmUltimateGoal.motorPowerToRun = hzArmUltimateGoal.POWER_WITH_WOBBLEGOAL;
+                hzArmUltimateGoal.runArmToLevel(hzArmUltimateGoal.motorPowerToRun);
                 break;
         }
     }
@@ -382,7 +382,7 @@ public class HzAutonomousControllerUltimateGoal {
      * Open Arm Grip
      */
     public void runOpenGrip(){
-        acHzArmUltimateGoal.openGrip();
+        hzArmUltimateGoal.openGrip();
         runAutoControl();
     }
 
@@ -390,7 +390,7 @@ public class HzAutonomousControllerUltimateGoal {
      * Close Atn Grip
      */
     public void runCloseGrip(){
-        acHzArmUltimateGoal.closeGrip();
+        hzArmUltimateGoal.closeGrip();
         runAutoControl();
     }
 

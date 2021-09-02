@@ -3,13 +3,8 @@ package org.firstinspires.ftc.teamcode.Controllers;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.Controllers.Examples.HzLaunchSubControllerUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzIntakeUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzLauncherUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzVuforiaStatic;
 import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
 
@@ -37,21 +32,21 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
 
 public class HzGamepadController {
 
-    //Create gamepad object reference to connect to gamepad1
-    public Gamepad gpGamepad;
-    public HzDrive gpDrive;
-    public HzSubsystem1 gpHzSubsystem1;
+    //Create object reference to objects to systems passed from TeleOp
+    public Gamepad hzGamepad;
+    public HzDrive hzDrive;
+    public HzSubsystem1 hzSubsystem1;
 
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
      * Assign the gamepad1 given in OpMode to the gamepad used here.
      */
-    public HzGamepadController(Gamepad gamepadPassed,
-                               HzDrive gpDrivePassed,
-                               HzSubsystem1 gpHzSubsystem1Passed) {
-        gpGamepad = gamepadPassed;
-        gpDrive = gpDrivePassed;
-        gpHzSubsystem1 = gpHzSubsystem1Passed;
+    public HzGamepadController(Gamepad hzGamepad,
+                               HzDrive hzDrive,
+                               HzSubsystem1 hzSubsystem1) {
+        this.hzGamepad = hzGamepad;
+        this.hzDrive = hzDrive;
+        this.hzSubsystem1 = hzSubsystem1;
     }
 
     /**
@@ -70,47 +65,47 @@ public class HzGamepadController {
 
         if (HzVuforiaStatic.vuforiaState == HzVuforiaStatic.VUFORIA_STATE.NAVIGATION_RUNNING &&
                 HzVuforiaStatic.targetVisible){
-            gpDrive.setPoseEstimate(HzVuforiaStatic.poseVuforia);
+            hzDrive.setPoseEstimate(HzVuforiaStatic.poseVuforia);
         }
-        gpDrive.poseEstimate = gpDrive.getPoseEstimate();
+        hzDrive.poseEstimate = hzDrive.getPoseEstimate();
 
-        gpDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
+        hzDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
 
-        if (gpDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
-            gpDrive.gamepadInput = new Vector2d(
+        if (hzDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
+            hzDrive.gamepadInput = new Vector2d(
                     -turboMode(getLeftStickY()) ,
                     -turboMode(getLeftStickX())
             );
         };
 
-        if (gpDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
+        if (hzDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
 
             if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
-                gpDrive.gamepadInput = new Vector2d(
+                hzDrive.gamepadInput = new Vector2d(
                         turboMode(getLeftStickX()),
                         -turboMode(getLeftStickY())
-                ).rotated(-gpDrive.poseEstimate.getHeading());
+                ).rotated(-hzDrive.poseEstimate.getHeading());
             };
 
             if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
-                gpDrive.gamepadInput = new Vector2d(
+                hzDrive.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickX()),
                         turboMode(getLeftStickY())
-                ).rotated(-gpDrive.poseEstimate.getHeading());
+                ).rotated(-hzDrive.poseEstimate.getHeading());
             };
         }
-        gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
+        hzDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
         if (getButtonXPress()) {
-            gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
+            hzDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
         }
 
         //Power Shot 2
         if (getButtonBPress()) {
-            gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
+            hzDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
         }
 
-        gpDrive.driveTrainPointFieldModes();
+        hzDrive.driveTrainPointFieldModes();
 
     }
 
@@ -128,9 +123,11 @@ public class HzGamepadController {
             if (gpHzIntakeUltimateGoal.getIntakeState() != HzIntakeUltimateGoal.INTAKE_MOTOR_STATE.RUNNING) {
                 gpHzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = false;
                 gpHzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
+
                 gpHzMagazineUltimateGoal.moveMagazineTo = HzMagazineUltimateGoal.MOVE_MAGAZINE_TO.COLLECT;
                 gpHzIntakeUltimateGoal.intakeButtonState = HzIntakeUltimateGoal.INTAKE_BUTTON_STATE.ON;
                 gpHzIntakeUltimateGoal.intakeReverseButtonState = HzIntakeUltimateGoal.INTAKE_REVERSE_BUTTON_STATE.OFF;
+
             } else if(gpHzIntakeUltimateGoal.getIntakeState() == HzIntakeUltimateGoal.INTAKE_MOTOR_STATE.RUNNING) {
                 gpHzIntakeUltimateGoal.intakeButtonState = HzIntakeUltimateGoal.INTAKE_BUTTON_STATE.OFF;
             }
@@ -204,7 +201,7 @@ public class HzGamepadController {
      * @return gpGamepad1.left_stick_x
      */
     public double getLeftStickX() {
-        return gpGamepad.left_stick_x;
+        return hzGamepad.left_stick_x;
     }
 
     /**
@@ -214,7 +211,7 @@ public class HzGamepadController {
      *
      * @return gpGamepad1.left_stick_y
      */
-    public double getLeftStickY() { return gpGamepad.left_stick_y; }
+    public double getLeftStickY() { return hzGamepad.left_stick_y; }
 
     /**
      * Methods to get the value of gamepad Right stick X to keep turning.
@@ -224,7 +221,7 @@ public class HzGamepadController {
      * @return gpGamepad1.right_stick_x
      */
     public double getRightStickX() {
-        return gpGamepad.right_stick_x;
+        return hzGamepad.right_stick_x;
     }
 
     /**
@@ -235,7 +232,7 @@ public class HzGamepadController {
      * @return gpGamepad1.right_trigger
      */
     public double getRightTrigger() {
-        return gpGamepad.right_trigger;
+        return hzGamepad.right_trigger;
     }
 
     /**
@@ -244,7 +241,7 @@ public class HzGamepadController {
      * @return gpGamepad1.right_trigger
      */
     public double getLeftTrigger() {
-        return gpGamepad.left_trigger;
+        return hzGamepad.left_trigger;
     }
 
     public boolean getLeftTriggerPress() {
@@ -268,10 +265,10 @@ public class HzGamepadController {
      */
     public boolean getLeftBumperPress() {
         boolean isPressedLeftBumper = false;
-        if (!gp1LeftBumperLast && gpGamepad.left_bumper) {
+        if (!gp1LeftBumperLast && hzGamepad.left_bumper) {
             isPressedLeftBumper = true;
         }
-        gp1LeftBumperLast = gpGamepad.left_bumper;
+        gp1LeftBumperLast = hzGamepad.left_bumper;
         return isPressedLeftBumper;
     }
 
@@ -288,15 +285,15 @@ public class HzGamepadController {
      */
     public boolean getRightBumperPress() {
         boolean isPressedRightBumper = false;
-        if (!gp1RightBumperLast && gpGamepad.right_bumper) {
+        if (!gp1RightBumperLast && hzGamepad.right_bumper) {
             isPressedRightBumper = true;
         }
-        gp1RightBumperLast = gpGamepad.right_bumper;
+        gp1RightBumperLast = hzGamepad.right_bumper;
         return isPressedRightBumper;
     }
 
     public boolean getRightBumperPersistant(){
-        return gpGamepad.right_bumper;
+        return hzGamepad.right_bumper;
     }
 
     /**
@@ -311,10 +308,10 @@ public class HzGamepadController {
      */
     public boolean getButtonAPress() {
         boolean isPressedButtonA = false;
-        if (!gp1ButtonALast && gpGamepad.a) {
+        if (!gp1ButtonALast && hzGamepad.a) {
             isPressedButtonA = true;
         }
-        gp1ButtonALast = gpGamepad.a;
+        gp1ButtonALast = hzGamepad.a;
         return isPressedButtonA;
     }
 
@@ -330,10 +327,10 @@ public class HzGamepadController {
      */
     public boolean getButtonYPress() {
         boolean isPressedButtonY = false;
-        if (!gp1ButtonYLast && gpGamepad.y) {
+        if (!gp1ButtonYLast && hzGamepad.y) {
             isPressedButtonY = true;
         }
-        gp1ButtonYLast = gpGamepad.y;
+        gp1ButtonYLast = hzGamepad.y;
         return isPressedButtonY;
     }
 
@@ -349,10 +346,10 @@ public class HzGamepadController {
      */
     public boolean getButtonXPress() {
         boolean isPressedButtonX = false;
-        if (!gp1ButtonXLast && gpGamepad.x) {
+        if (!gp1ButtonXLast && hzGamepad.x) {
             isPressedButtonX = true;
         }
-        gp1ButtonXLast = gpGamepad.x;
+        gp1ButtonXLast = hzGamepad.x;
         return isPressedButtonX;
     }
 
@@ -368,10 +365,10 @@ public class HzGamepadController {
      */
     public boolean getButtonBPress() {
         boolean isPressedButtonB = false;
-        if (!gp1ButtonBLast && gpGamepad.b) {
+        if (!gp1ButtonBLast && hzGamepad.b) {
             isPressedButtonB = true;
         }
-        gp1ButtonBLast = gpGamepad.b;
+        gp1ButtonBLast = hzGamepad.b;
         return isPressedButtonB;
     }
 
@@ -390,16 +387,16 @@ public class HzGamepadController {
 
         isPressedDpad_up = false;
 
-        if (!gp1Dpad_upLast && gpGamepad.dpad_up) {
+        if (!gp1Dpad_upLast && hzGamepad.dpad_up) {
             isPressedDpad_up = true;
         }
-        gp1Dpad_upLast = gpGamepad.dpad_up;
+        gp1Dpad_upLast = hzGamepad.dpad_up;
         return isPressedDpad_up;
 
     }
 
     public boolean getDpad_upPersistent(){
-        return gpGamepad.dpad_up;
+        return hzGamepad.dpad_up;
     }
 
     /**
@@ -416,16 +413,16 @@ public class HzGamepadController {
         boolean isPressedDpad_down;
 
         isPressedDpad_down = false;
-        if (!gp1Dpad_downLast && gpGamepad.dpad_down) {
+        if (!gp1Dpad_downLast && hzGamepad.dpad_down) {
             isPressedDpad_down = true;
         }
-        gp1Dpad_downLast = gpGamepad.dpad_down;
+        gp1Dpad_downLast = hzGamepad.dpad_down;
         return isPressedDpad_down;
 
     }
 
     public boolean getStartPersistent(){
-        return gpGamepad.start;
+        return hzGamepad.start;
     }
 
 }
