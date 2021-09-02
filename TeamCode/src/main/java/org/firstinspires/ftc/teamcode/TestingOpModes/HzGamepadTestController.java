@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode.Controllers.Examples;
+package org.firstinspires.ftc.teamcode.TestingOpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzChassisClassicUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzIntakeUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzLauncherUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal;
+import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzVuforiaStatic;
+import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
 
 /**
  * Defenition of the HzGamepad Class <BR>
@@ -20,271 +19,106 @@ import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal
  * The controls are as follows: <BR>
  *      <emsp>Left Stick for pan motion (gamepad1.left_stick_x and gamepad1.left_stick_y) <BR>
  *      <emsp>Right Stick for turn motion (only uses the x direction : gamepad1.right_stick_y) <BR>
- *      <emsp>Right Bumper for <TO-BE-UPDATED> (gamepad1.right_bumper) <BR>
- *      <emsp>Left Bumper for <TO-BE-UPDATED> (gamepad1.left_bumper) <BR>
- *      <emsp>Right Trigger for increasing speed to double (gamepad1.right_trigger) <BR>
- *      <emsp>Button A to <TO-BE-UPDATED> (gamepad1.a) <BR>
- *      <emsp>Button Y to <TO-BE-UPDATED> (gamepad1.y) <BR>
- *      <emsp>Button X to <TO-BE-UPDATED> (gamepad1.x) <BR>
- *      <emsp>Button B to <TO-BE-UPDATED> (gamepad1.b) <BR>
- *      <emsp>Button Dpad_up to <TO-BE-UPDATED> (gamepad1.dpad_up) <BR>
- *      <emsp>Button Dpad_down to <TO-BE-UPDATED> (gamepad1.dpad_down) <BR>
+ *      <emsp>Right Bumper for Launching Ring (gamepad1.right_bumper) <BR>
+ *      <emsp>Left Bumper for Grip Arm Servos (gamepad1.left_bumper) <BR>
+ *      <emsp>Right Trigger for Accelerating robot (gamepad1.right_trigger) <BR>
+ *      <emsp>Button A to Powershot selection (gamepad1.a) <BR>
+ *      <emsp>Button Y to High Goal selection (gamepad1.y) <BR>
+ *      <emsp>Button X to Turn delta left (gamepad1.x) <BR>
+ *      <emsp>Button B to Turn delta right (gamepad1.b) <BR>
+ *      <emsp>Button Dpad_up to Reverse Intake on (gamepad1.dpad_up) <BR>
+ *      <emsp>Button Dpad_down to Intake On (gamepad1.dpad_down) <BR>
  */
 
-public class HzGamepadClassicUltimateGoal {
+public class HzGamepadTestController {
 
-    //Create gamepad object reference to connect to gamepad1
-    public Gamepad gpGamepad1;
+    //Create object reference to objects to systems passed from TeleOp
+    public Gamepad hzGamepad;
+    public HzDrive hzDrive;
 
-    //Records last button press to deal with single button presses doing a certain methods
-    boolean buttonALast = false;
-    boolean buttonBLast = false;
-    boolean buttonXLast = false;
-    boolean buttonYLast = false;
-    boolean rightBumperLast = false;
-    boolean leftBumperLast = false;
-    boolean dpad_upLast = false;
-    boolean dpad_downLast = false;
-    boolean gp1LeftTriggerLast = false;
-
-    LinearOpMode opModepassed;
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
      * Assign the gamepad1 given in OpMode to the gamepad used here.
-     *
-     * @param gamepadPassedfromOpMode from OpMode. In the case of Hazmat Skystone, this is gamepad1
      */
-    public HzGamepadClassicUltimateGoal(Gamepad gamepadPassedfromOpMode, LinearOpMode opModepassedfromOpMode) {
-        gpGamepad1 = gamepadPassedfromOpMode;
-        this.opModepassed = opModepassedfromOpMode;
+    public HzGamepadTestController(Gamepad hzGamepad,
+                                   HzDrive hzDrive) {
+        this.hzGamepad = hzGamepad;
+        this.hzDrive = hzDrive;
     }
 
     /**
-     * Methods to get the value of gamepad Left stick X for Pan motion X direction.
-     * This is the method to apply any directional modifiers to match to the X plane of robot.
-     * No modifier needed for Hazmat Skystone Robot.
-     *
-     * @return gpGamepad1.left_stick_x
+     *runByGamepad is the main controller function that runs each subsystem controller based on states
      */
-    public double getLeftStickX() {
-        return gpGamepad1.left_stick_x;
+    public void runByGamepadControl(){
+        runDriveControl_byRRDriveModes();
     }
 
     /**
-     * Methods to get the value of gamepad Left stick Y for Pan motion Y direction.
-     * This is the method to apply any directional modifiers to match to the Y plane of robot.
-     * For Hazmat Skystone Robot, Y direction needs to be inverted.
-     *
-     * @return gpGamepad1.left_stick_y * (-1)
+     * runByGamepadRRDriveModes sets modes for Road Runner such as ROBOT and FIELD Centric Modes. <BR>
      */
-    public double getLeftStickY() {
+    // RR Drive Train
+    public void runDriveControl_byRRDriveModes() {
 
-        return gpGamepad1.left_stick_y * (-1);
-         //return gpGamepad1.left_stick_y;
-    }
-
-    /**
-     * Methods to get the value of gamepad Right stick X to keep turning.
-     * This is the method to apply any directional modifiers to match to the turn direction robot.
-     * No modifier needed for Hazmat Skystone Robot.
-     *
-     * @return gpGamepad1.right_stick_x
-     */
-    public double getRightStickX() {
-        return gpGamepad1.right_stick_x;
-    }
-
-    /**
-     * Methods to get the value of gamepad Right Trigger for turbo mode (max speed).
-     * This is the method to apply any modifiers to match to action of turbo mode for each driver preference.
-     * For Hazmat Skystone Right Trigger pressed means turbo mode on.
-     *
-     * @return gpGamepad1.right_trigger
-     */
-    public double getRightTrigger() {
-        return gpGamepad1.right_trigger;
-    }
-
-    /**
-     * Methods to get the value of gamepad Left Trigger for <TO-BE-UPDATED>
-     *
-     * @return gpGamepad1.right_trigger
-     */
-    public double getLeftTrigger() {
-        return gpGamepad1.left_trigger;
-    }
-
-    public boolean getLeftTriggerPress() {
-        boolean isPressedLeftTrigger = false;
-        if (!gp1LeftTriggerLast && (getLeftTrigger()>0.95)) {
-            isPressedLeftTrigger = true;
+        if (HzVuforiaStatic.vuforiaState == HzVuforiaStatic.VUFORIA_STATE.NAVIGATION_RUNNING &&
+                HzVuforiaStatic.targetVisible){
+            hzDrive.setPoseEstimate(HzVuforiaStatic.poseVuforia);
         }
-        gp1LeftTriggerLast = (getLeftTrigger()>0.95) ? true : false;
-        return isPressedLeftTrigger;
-    }
+        hzDrive.poseEstimate = hzDrive.getPoseEstimate();
 
-    /**
-     * Method to track if Left Bumper was pressed to <TO-BE-UPDATED>.
-     * To ensure that the continuous holding of the left bumper does not cause a contiual action,
-     * the state of the bumper is recorded and compared against previous time.
-     * Only if the previous state is unpressed and current state is pressed would
-     * the function return true.
-     * Continue to not press, or continuing hold or release of button should not trigger action.
-     *
-     * @return isPressedLeftBumper| = true if prev state is not pressed and current is pressed.
-     */
-    public boolean getLeftBumperPress() {
-        boolean isPressedLeftBumper = false;
-        if (!leftBumperLast && gpGamepad1.left_bumper) {
-            isPressedLeftBumper = true;
+        hzDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
+
+        if (hzDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
+            hzDrive.gamepadInput = new Vector2d(
+                    -turboMode(getLeftStickY()) ,
+                    -turboMode(getLeftStickX())
+            );
+        };
+
+        if (hzDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
+
+            if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
+                hzDrive.gamepadInput = new Vector2d(
+                        turboMode(getLeftStickX()),
+                        -turboMode(getLeftStickY())
+                ).rotated(-hzDrive.poseEstimate.getHeading());
+            };
+
+            if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
+                hzDrive.gamepadInput = new Vector2d(
+                        -turboMode(getLeftStickX()),
+                        turboMode(getLeftStickY())
+                ).rotated(-hzDrive.poseEstimate.getHeading());
+            };
         }
-        leftBumperLast = gpGamepad1.left_bumper;
-        return isPressedLeftBumper;
-    }
+        hzDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
-    /**
-     * Method to track if Right Bumper was pressed to <TO-BE-UPDATED>.
-     * To ensure that the continuous holding of the right bumper does not cause a continual action,
-     * the state of the bumper is recorded and compared against previous time.
-     * Only if the previous state is unpressed and current state is pressed would
-     * the function return true.
-     * Continue to not press, or continuing to hold or release of button should not trigger action.
-     *
-     * @return isPressedRightBumper = true if prev state is not pressed and current is pressed.
-     */
-    public boolean getRightBumperPress() {
-        boolean isPressedRightBumper = false;
-        if (!rightBumperLast && gpGamepad1.right_bumper) {
-            isPressedRightBumper = true;
+        if (getButtonXPress()) {
+            hzDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
         }
-        rightBumperLast = gpGamepad1.right_bumper;
-        return isPressedRightBumper;
-    }
 
-    /**
-     * Method to track if Button A was pressed to <TO-BE-UPDATED>.
-     * To ensure that the continuous holding of Button A does not send continual triggers,
-     * the state of the button is recorded and compared against previous time.
-     * Only if the previous state is unpressed and current state is pressed would
-     * the function return true.
-     * Continue to not press, or continuing to hold or release of button should not trigger action.
-     *
-     * @return isPressedButton A = true if prev state is not pressed and current is pressed.
-     */
-    public boolean getButtonAPress() {
-        boolean isPressedButtonA = false;
-        if (!buttonALast && gpGamepad1.a) {
-            isPressedButtonA = true;
+        //Power Shot 2
+        if (getButtonBPress()) {
+            hzDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
         }
-        buttonALast = gpGamepad1.a;
-        return isPressedButtonA;
-    }
 
-    /**
-     * Method to track if Button Y was pressed to <TO-BE-UPDATED>.
-     * To ensure that the continuous holding of Button Y does not send continual triggers,
-     * the state of the button is recorded and compared against previous time.
-     * Only if the previous state is unpressed and current state is pressed would
-     * the function return true.
-     * Continue to not press, or continuing to hold or release of button should not trigger action.
-     *
-     * @return isPressedButtonY = true if prev state is not pressed and current is pressed.
-     */
-    public boolean getButtonYPress() {
-        boolean isPressedButtonY = false;
-        if (!buttonYLast && gpGamepad1.y) {
-            isPressedButtonY = true;
-        }
-        buttonYLast = gpGamepad1.y;
-        return isPressedButtonY;
-    }
-
-    /**
-     * Method to track if Button X was pressed to <TO-BE-UPDATED>.
-     * To ensure that the continuous holding of Button X does not send continual triggers,
-     * the state of the button is recorded and compared against previous time.
-     * Only if the previous state is unpressed and current state is pressed would
-     * the function return true.
-     * Continue to not press, or continuing to hold or release of button should not trigger action.
-     *
-     * @return isPressedButtonX = true if prev state is not pressed and current is pressed.
-     */
-    public boolean getButtonXPress() {
-        boolean isPressedButtonX = false;
-        if (!buttonXLast && gpGamepad1.x) {
-            isPressedButtonX = true;
-        }
-        buttonXLast = gpGamepad1.x;
-        return isPressedButtonX;
-    }
-
-    /**
-     * Method to track if Button B was pressed to move Arm to <TO-BE-UPDATED>.
-     * To ensure that the continuous holding of Button Y does not send continual triggers,
-     * the state of the button is recorded and compared against previous time.
-     * Only if the previous state is unpressed and current state is pressed would
-     * the function return true.
-     * Continue to not press, or continuing to hold or release of button should not trigger action.
-     *
-     * @return isPressedButtonB = true if prev state is not pressed and current is pressed.
-     */
-    public boolean getButtonBPress() {
-        boolean isPressedButtonB = false;
-        if (!buttonBLast && gpGamepad1.b) {
-            isPressedButtonB = true;
-        }
-        buttonBLast = gpGamepad1.b;
-        return isPressedButtonB;
-    }
-
-    /**
-     * Method to track if Dpad_up was pressed to <TO-BE-UPDATED>.
-     * To ensure that the continuous holding of Dpad_up does not send continual triggers,
-     * the state of the button is recorded and compared against previous time.
-     * Only if the previous state is unpressed and current state is pressed would
-     * the function return true.
-     * Continue to not press, or continuing to hold or release of button should not trigger action.
-     *
-     * @return isPressedDpad_up = true if prev state is not pressed and current is pressed.
-     */
-    public boolean getDpad_upPress() {
-        boolean isPressedDpad_up;
-
-        isPressedDpad_up = false;
-
-        if (!dpad_upLast && gpGamepad1.dpad_up) {
-            isPressedDpad_up = true;
-        }
-        dpad_upLast = gpGamepad1.dpad_up;
-        return isPressedDpad_up;
+        hzDrive.driveTrainPointFieldModes();
 
     }
 
-    public boolean getDpad_upPersistent(){
-        return gpGamepad1.dpad_up;
-    }
 
-    /**
-     * Method to track if Dpad_down was pressed to <TO-BE-UPDATED>.
-     * To ensure that the continuous holding of Dpad_up does not send continual triggers,
-     * the state of the button is recorded and compared against previous time.
-     * Only if the previous state is unpressed and current state is pressed would
-     * the function return true.
-     * Continue to not press, or continuing to hold or release of button should not trigger action.
-     *
-     * @return isPressedDpad_down = true if prev state is not pressed and current is pressed.
-     */
-    public boolean getDpad_downPress() {
-        boolean isPressedDpad_down;
+    //*********** KEY PAD MODIFIERS BELOW ***********
 
-        isPressedDpad_down = false;
-        if (!dpad_downLast && gpGamepad1.dpad_down) {
-            isPressedDpad_down = true;
-        }
-        dpad_downLast = gpGamepad1.dpad_down;
-        return isPressedDpad_down;
-
-    }
+    //**** Gamepad buttons
+    //Records last button press to deal with single button presses doing a certain methods
+    boolean gp1ButtonALast = false;
+    boolean gp1ButtonBLast = false;
+    boolean gp1ButtonXLast = false;
+    boolean gp1ButtonYLast = false;
+    boolean gp1RightBumperLast = false;
+    boolean gp1LeftBumperLast = false;
+    boolean gp1Dpad_upLast = false;
+    boolean gp1Dpad_downLast = false;
+    boolean gp1LeftTriggerLast = false;
 
     /**
      * Method to convert linear map from gamepad1 stick input to a cubic map
@@ -293,7 +127,7 @@ public class HzGamepadClassicUltimateGoal {
      * @return Cube of the stick input reduced to 25% speed
      */
     public double limitStick(double stickInput) {
-        return (stickInput * stickInput * stickInput * 0.25);
+        return (stickInput * stickInput * stickInput * 0.33);
     }
 
     /**
@@ -311,50 +145,242 @@ public class HzGamepadClassicUltimateGoal {
         double turboFactor;
 
         rightTriggerValue = getRightTrigger();
-        acceleration_factor = 1.0 + 3.0 * rightTriggerValue;
+        //acceleration_factor = 1.0 + 3.0 * rightTriggerValue;
+        acceleration_factor = 1.0 + 2.0 * rightTriggerValue;
         turboFactor = limitStick(stickInput) * acceleration_factor;
         return turboFactor;
     }
 
+    /**
+     * Methods to get the value of gamepad Left stick X for Pan motion X direction.
+     * This is the method to apply any directional modifiers to match to the X plane of robot.
+     * No modifier needed for Hazmat Skystone Robot.
+     *
+     * @return gpGamepad1.left_stick_x
+     */
+    public double getLeftStickX() {
+        return hzGamepad.left_stick_x;
+    }
 
-    public void runByGamepadInputClassicChassis(HzChassisClassicUltimateGoal gpChassis) {
+    /**
+     * Methods to get the value of gamepad Left stick Y for Pan motion Y direction.
+     * This is the method to apply any directional modifiers to match to the Y plane of robot.
+     * For Hazmat Skystone Robot, Y direction needs to be inverted.
+     *
+     * @return gpGamepad1.left_stick_y
+     */
+    public double getLeftStickY() { return hzGamepad.left_stick_y; }
 
-        double leftStickX = turboMode(getLeftStickX());
-        double leftStickY = turboMode(getLeftStickY());
-        double rightStickX = turboMode(getRightStickX());
-        double power = Math.hypot(leftStickX, leftStickY);
-        double targetAngle = Math.atan2(leftStickY, leftStickX);
-        double turn = rightStickX;
-        gpChassis.runByGamepadCommand(targetAngle, turn, power);
+    /**
+     * Methods to get the value of gamepad Right stick X to keep turning.
+     * This is the method to apply any directional modifiers to match to the turn direction robot.
+     * No modifier needed for Hazmat Skystone Robot.
+     *
+     * @return gpGamepad1.right_stick_x
+     */
+    public double getRightStickX() {
+        return hzGamepad.right_stick_x;
+    }
 
-        /*    if (getLeftTrigger()>0.5){}*/
-        /*    if (getLeftBumperPress()) {}*/
-        /*    if (getRightBumperPress()) {}*/
-        /*    if (getButtonXPress()) {}*/
-        /*    if (getButtonBPress()){}*/
-        /*    if (getButtonAPress()){}*/
-        /*    if (getButtonYPress()){}*/
-        /*    if (getDpad_upPress()){}*/
-        /*    if (getDpad_downPress()){}*/
+    /**
+     * Methods to get the value of gamepad Right Trigger for turbo mode (max speed).
+     * This is the method to apply any modifiers to match to action of turbo mode for each driver preference.
+     * For Hazmat Skystone Right Trigger pressed means turbo mode on.
+     *
+     * @return gpGamepad1.right_trigger
+     */
+    public double getRightTrigger() {
+        return hzGamepad.right_trigger;
+    }
+
+    /**
+     * Methods to get the value of gamepad Left Trigger
+     *
+     * @return gpGamepad1.right_trigger
+     */
+    public double getLeftTrigger() {
+        return hzGamepad.left_trigger;
+    }
+
+    public boolean getLeftTriggerPress() {
+        boolean isPressedLeftTrigger = false;
+        if (!gp1LeftTriggerLast && (getLeftTrigger()>0.7)) {
+            isPressedLeftTrigger = true;
+        }
+        gp1LeftTriggerLast = (getLeftTrigger()>0.7);
+        return isPressedLeftTrigger;
+    }
+
+    /**
+     * Method to track if Left Bumper was pressed
+     * To ensure that the continuous holding of the left bumper does not cause a contiual action,
+     * the state of the bumper is recorded and compared against previous time.
+     * Only if the previous state is unpressed and current state is pressed would
+     * the function return true.
+     * Continue to not press, or continuing hold or release of button should not trigger action.
+     *
+     * @return isPressedLeftBumper| = true if prev state is not pressed and current is pressed.
+     */
+    public boolean getLeftBumperPress() {
+        boolean isPressedLeftBumper = false;
+        if (!gp1LeftBumperLast && hzGamepad.left_bumper) {
+            isPressedLeftBumper = true;
+        }
+        gp1LeftBumperLast = hzGamepad.left_bumper;
+        return isPressedLeftBumper;
+    }
+
+
+    /**
+     * Method to track if Right Bumper was pressed
+     * To ensure that the continuous holding of the right bumper does not cause a continual action,
+     * the state of the bumper is recorded and compared against previous time.
+     * Only if the previous state is unpressed and current state is pressed would
+     * the function return true.
+     * Continue to not press, or continuing to hold or release of button should not trigger action.
+     *
+     * @return isPressedRightBumper = true if prev state is not pressed and current is pressed.
+     */
+    public boolean getRightBumperPress() {
+        boolean isPressedRightBumper = false;
+        if (!gp1RightBumperLast && hzGamepad.right_bumper) {
+            isPressedRightBumper = true;
+        }
+        gp1RightBumperLast = hzGamepad.right_bumper;
+        return isPressedRightBumper;
+    }
+
+    public boolean getRightBumperPersistant(){
+        return hzGamepad.right_bumper;
+    }
+
+    /**
+     * Method to track if Button A was pressed
+     * To ensure that the continuous holding of Button A does not send continual triggers,
+     * the state of the button is recorded and compared against previous time.
+     * Only if the previous state is unpressed and current state is pressed would
+     * the function return true.
+     * Continue to not press, or continuing to hold or release of button should not trigger action.
+     *
+     * @return isPressedButton A = true if prev state is not pressed and current is pressed.
+     */
+    public boolean getButtonAPress() {
+        boolean isPressedButtonA = false;
+        if (!gp1ButtonALast && hzGamepad.a) {
+            isPressedButtonA = true;
+        }
+        gp1ButtonALast = hzGamepad.a;
+        return isPressedButtonA;
+    }
+
+    /**
+     * Method to track if Button Y was pressed
+     * To ensure that the continuous holding of Button Y does not send continual triggers,
+     * the state of the button is recorded and compared against previous time.
+     * Only if the previous state is unpressed and current state is pressed would
+     * the function return true.
+     * Continue to not press, or continuing to hold or release of button should not trigger action.
+     *
+     * @return isPressedButtonY = true if prev state is not pressed and current is pressed.
+     */
+    public boolean getButtonYPress() {
+        boolean isPressedButtonY = false;
+        if (!gp1ButtonYLast && hzGamepad.y) {
+            isPressedButtonY = true;
+        }
+        gp1ButtonYLast = hzGamepad.y;
+        return isPressedButtonY;
+    }
+
+    /**
+     * Method to track if Button X was pressed
+     * To ensure that the continuous holding of Button X does not send continual triggers,
+     * the state of the button is recorded and compared against previous time.
+     * Only if the previous state is unpressed and current state is pressed would
+     * the function return true.
+     * Continue to not press, or continuing to hold or release of button should not trigger action.
+     *
+     * @return isPressedButtonX = true if prev state is not pressed and current is pressed.
+     */
+    public boolean getButtonXPress() {
+        boolean isPressedButtonX = false;
+        if (!gp1ButtonXLast && hzGamepad.x) {
+            isPressedButtonX = true;
+        }
+        gp1ButtonXLast = hzGamepad.x;
+        return isPressedButtonX;
+    }
+
+    /**
+     * Method to track if Button B was pressed to move Arm
+     * To ensure that the continuous holding of Button Y does not send continual triggers,
+     * the state of the button is recorded and compared against previous time.
+     * Only if the previous state is unpressed and current state is pressed would
+     * the function return true.
+     * Continue to not press, or continuing to hold or release of button should not trigger action.
+     *
+     * @return isPressedButtonB = true if prev state is not pressed and current is pressed.
+     */
+    public boolean getButtonBPress() {
+        boolean isPressedButtonB = false;
+        if (!gp1ButtonBLast && hzGamepad.b) {
+            isPressedButtonB = true;
+        }
+        gp1ButtonBLast = hzGamepad.b;
+        return isPressedButtonB;
+    }
+
+    /**
+     * Method to track if Dpad_up was pressed
+     * To ensure that the continuous holding of Dpad_up does not send continual triggers,
+     * the state of the button is recorded and compared against previous time.
+     * Only if the previous state is unpressed and current state is pressed would
+     * the function return true.
+     * Continue to not press, or continuing to hold or release of button should not trigger action.
+     *
+     * @return isPressedDpad_up = true if prev state is not pressed and current is pressed.
+     */
+    public boolean getDpad_upPress() {
+        boolean isPressedDpad_up;
+
+        isPressedDpad_up = false;
+
+        if (!gp1Dpad_upLast && hzGamepad.dpad_up) {
+            isPressedDpad_up = true;
+        }
+        gp1Dpad_upLast = hzGamepad.dpad_up;
+        return isPressedDpad_up;
 
     }
 
-    public void runSubsystemByGamepadInput(HzChassisClassicUltimateGoal gpChassis, HzArmUltimateGoal gpHzArmUltimateGoal, HzIntakeUltimateGoal gpHzIntakeUltimateGoal, HzLauncherUltimateGoal gpHzLauncherUltimateGoal, HzMagazineUltimateGoal gpHzMagazineUltimateGoal, HzLaunchSubControllerUltimateGoal gpLauncherController) {
-
-        //**** Chassis Actions****
-        double leftStickX = turboMode(getLeftStickX());
-        double leftStickY = turboMode(getLeftStickY());
-        double rightStickX = turboMode(getRightStickX());
-        double power = Math.hypot(leftStickX, leftStickY);
-        double targetAngle = Math.atan2(leftStickY, leftStickX);
-        double turn = rightStickX;
-        gpChassis.runByGamepadCommand(targetAngle, turn, power);
-
-        //runMagazineControl();
-        //runIntakeControl();
-        //runLaunchController();
-        //runLauncher();
-        //runArm();
+    public boolean getDpad_upPersistent(){
+        return hzGamepad.dpad_up;
     }
+
+    /**
+     * Method to track if Dpad_down was pressed
+     * To ensure that the continuous holding of Dpad_up does not send continual triggers,
+     * the state of the button is recorded and compared against previous time.
+     * Only if the previous state is unpressed and current state is pressed would
+     * the function return true.
+     * Continue to not press, or continuing to hold or release of button should not trigger action.
+     *
+     * @return isPressedDpad_down = true if prev state is not pressed and current is pressed.
+     */
+    public boolean getDpad_downPress() {
+        boolean isPressedDpad_down;
+
+        isPressedDpad_down = false;
+        if (!gp1Dpad_downLast && hzGamepad.dpad_down) {
+            isPressedDpad_down = true;
+        }
+        gp1Dpad_downLast = hzGamepad.dpad_down;
+        return isPressedDpad_down;
+
+    }
+
+    public boolean getStartPersistent(){
+        return hzGamepad.start;
+    }
+
 }
-

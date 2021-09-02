@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.TestingOpModes;
+package org.firstinspires.ftc.teamcode.TestingOpModes.Examples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
-import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadClassicUltimateGoal;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -13,11 +12,11 @@ import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadClassicUltim
  */
 @TeleOp(name = "Test_Arm", group = "Test")
 @Disabled
-public class Test_Arm extends LinearOpMode {
+public class Test_ArmUltimateGoal extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepadClassicUltimateGoal hzGamepad;
+    HzGamepadTestControllerUltimateGoal hzGamepad;
     HzArmUltimateGoal hzArmUltimateGoal;
 
     public int keyCount = 0;
@@ -25,7 +24,7 @@ public class Test_Arm extends LinearOpMode {
     @Override
     public void runOpMode() {
         hzArmUltimateGoal = new HzArmUltimateGoal(hardwareMap);
-        hzGamepad = new HzGamepadClassicUltimateGoal(gamepad1,this);
+        hzGamepad = new HzGamepadTestControllerUltimateGoal(gamepad1);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 

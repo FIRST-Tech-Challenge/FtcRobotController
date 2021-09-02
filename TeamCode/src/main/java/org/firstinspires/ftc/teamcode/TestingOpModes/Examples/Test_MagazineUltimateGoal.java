@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.TestingOpModes;
+package org.firstinspires.ftc.teamcode.TestingOpModes.Examples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadClassicUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal;
 
 /**
@@ -12,11 +11,11 @@ import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal
  */
 @TeleOp(name = "Test_Magazine", group = "Test")
 @Disabled
-public class Test_Magazine extends LinearOpMode {
+public class Test_MagazineUltimateGoal extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepadClassicUltimateGoal hzGamepadClassicUltimateGoal;
+    HzGamepadTestControllerUltimateGoal hzGamepadTestControllerUltimateGoal;
 
     //Magazine hzMagazine;
     HzMagazineUltimateGoal hzMagazineUltimateGoal;
@@ -26,7 +25,7 @@ public class Test_Magazine extends LinearOpMode {
 
         hzMagazineUltimateGoal = new HzMagazineUltimateGoal(hardwareMap);
 
-        hzGamepadClassicUltimateGoal = new HzGamepadClassicUltimateGoal(gamepad1,this);
+        hzGamepadTestControllerUltimateGoal = new HzGamepadTestControllerUltimateGoal(gamepad1);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
@@ -59,15 +58,15 @@ public class Test_Magazine extends LinearOpMode {
                 hzMagazine.senseMagazineRingStatus();;
             }*/
 
-            if (hzGamepadClassicUltimateGoal.getButtonBPress()){
+            if (hzGamepadTestControllerUltimateGoal.getButtonBPress()){
                 hzMagazineUltimateGoal.senseMagazinePosition();
             }
 
-            if (hzGamepadClassicUltimateGoal.getDpad_upPress()) {
+            if (hzGamepadTestControllerUltimateGoal.getDpad_upPress()) {
                 hzMagazineUltimateGoal.moveMagazineToLaunch();
             }
 
-            if (hzGamepadClassicUltimateGoal.getDpad_downPress()) {
+            if (hzGamepadTestControllerUltimateGoal.getDpad_downPress()) {
                 hzMagazineUltimateGoal.moveMagazineToCollect();
             }
 

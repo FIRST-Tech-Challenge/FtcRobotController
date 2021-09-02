@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.TestingOpModes;
+package org.firstinspires.ftc.teamcode.TestingOpModes.Examples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadClassicUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzLauncherUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal;
 
@@ -13,11 +12,11 @@ import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal
  */
 @TeleOp(name = "Test_Launcher", group = "Test")
 @Disabled
-public class Test_Launcher extends LinearOpMode {
+public class Test_LauncherUltimateGoal extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepadClassicUltimateGoal hzGamepadClassicUltimateGoal;
+    HzGamepadTestControllerUltimateGoal hzGamepadTestControllerUltimateGoal;
     HzMagazineUltimateGoal hzMagazineUltimateGoal;
     HzLauncherUltimateGoal hzLauncherUltimateGoal;
     double powerLoop = 0.3;
@@ -27,7 +26,7 @@ public class Test_Launcher extends LinearOpMode {
     public void runOpMode() {
         hzLauncherUltimateGoal = new HzLauncherUltimateGoal(hardwareMap);
         hzMagazineUltimateGoal = new HzMagazineUltimateGoal(hardwareMap);
-        hzGamepadClassicUltimateGoal = new HzGamepadClassicUltimateGoal(gamepad1,this);
+        hzGamepadTestControllerUltimateGoal = new HzGamepadTestControllerUltimateGoal(gamepad1);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
@@ -39,7 +38,7 @@ public class Test_Launcher extends LinearOpMode {
             //**** Launcher Actions ****
             hzMagazineUltimateGoal.moveMagazineToLaunch();
             //Launches Ring
-            if (hzGamepadClassicUltimateGoal.getRightBumperPress()) {
+            if (hzGamepadTestControllerUltimateGoal.getRightBumperPress()) {
                 //TODO : AMJAD : Launch Controller should be used to check if status is good to launch
 
                 //AMJAD : moveMagazinetoLaunch should not be called by right bumper,
@@ -55,16 +54,16 @@ public class Test_Launcher extends LinearOpMode {
             //hzLauncher.launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.26, 0.126, 0, 12.6);
             //hzLauncher.launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
 
-            if (hzGamepadClassicUltimateGoal.getLeftBumperPress()) {
+            if (hzGamepadTestControllerUltimateGoal.getLeftBumperPress()) {
                 maxVelocityTest();
             }
 
-            if (hzGamepadClassicUltimateGoal.getButtonXPress()) {
+            if (hzGamepadTestControllerUltimateGoal.getButtonXPress()) {
                 //hzLauncher.runFlyWheelToTarget(0.7);
                 hzLauncherUltimateGoal.runFlyWheelToTarget(1640);
             }
 
-            if (hzGamepadClassicUltimateGoal.getButtonBPress()) {
+            if (hzGamepadTestControllerUltimateGoal.getButtonBPress()) {
                 hzLauncherUltimateGoal.stopFlyWheel();
             }
 
@@ -82,12 +81,12 @@ public class Test_Launcher extends LinearOpMode {
 
             if (velocityLoop >2340) velocityLoop = 2340;
             if (velocityLoop < 1200) velocityLoop = 1200;
-            if (hzGamepadClassicUltimateGoal.getButtonAPress()) {
+            if (hzGamepadTestControllerUltimateGoal.getButtonAPress()) {
                 velocityLoop = velocityLoop - 10;
                 hzLauncherUltimateGoal.runFlyWheelToTarget(velocityLoop);
             }
 
-            if (hzGamepadClassicUltimateGoal.getButtonYPress()) {
+            if (hzGamepadTestControllerUltimateGoal.getButtonYPress()) {
                 velocityLoop = velocityLoop + 10;
                 hzLauncherUltimateGoal.runFlyWheelToTarget(velocityLoop);
             }

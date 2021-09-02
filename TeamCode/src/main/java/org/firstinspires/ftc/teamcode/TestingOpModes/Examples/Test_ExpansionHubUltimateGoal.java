@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TestingOpModes;
+package org.firstinspires.ftc.teamcode.TestingOpModes.Examples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.BatteryChecker;
  */
 @TeleOp(name = "Test_Battery", group = "Test")
 @Disabled
-public class Test_ExpansionHub extends LinearOpMode {
+public class Test_ExpansionHubUltimateGoal extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 

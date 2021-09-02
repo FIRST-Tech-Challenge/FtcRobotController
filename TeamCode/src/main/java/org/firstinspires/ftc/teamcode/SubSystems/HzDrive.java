@@ -8,15 +8,16 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive_RoadRunner.HzDriveConstantsDriveEncoders;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive_RoadRunner.HzMecanumDriveDriveEncoders;
+import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive_RoadRunner.util.DashboardUtil;
 
-//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.DriveConstants;
-//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.SampleMecanumDrive;
-//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.DriveConstantsDeadWheelEncoder;
-//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.MecanumDriveDeadWheelsEncoder;
+// When using Drive Encoders in RoadRunner
+import org.firstinspires.ftc.teamcode.SubSystems.HzDrive_RoadRunner.HzDriveConstantsDriveEncoders;
+import org.firstinspires.ftc.teamcode.SubSystems.HzDrive_RoadRunner.HzMecanumDriveDriveEncoders;
+
+// When using Dead Wheel Encoders in RoadRunner
+//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.HzDriveConstantsDeadWheelEncoder;
+//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.HzMecanumDriveDeadWheelsEncoder;
 
 /**
  * Drive Class that implements Mecanum drive using roadrunner using Drive Encoders
@@ -29,21 +30,18 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzDrive_RoadRunner.util.Dashboa
 public class HzDrive extends HzMecanumDriveDriveEncoders {
     public boolean FtcDashboard_FLAG = true;
 
-    //double DriveConstants_kV = DriveConstants.kV;
     //double DriveConstants_kV = DriveConstantsDeadWheelEncoder.kV;
     double DriveConstants_kV = HzDriveConstantsDriveEncoders.kV;
 
-    //double DriveConstants_TRACK_WIDTH = DriveConstants.TRACK_WIDTH;
     //double DriveConstants_TRACK_WIDTH = DriveConstantsDeadWheelEncoder.TRACK_WIDTH;
     double DriveConstants_TRACK_WIDTH = HzDriveConstantsDriveEncoders.TRACK_WIDTH;
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as SampleMecanumDrive's heading controller
-    //private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
     //private PIDFController headingController = new PIDFController(MecanumDriveDeadWheelsEncoder.HEADING_PID);
     private PIDFController headingController = new PIDFController(HzMecanumDriveDriveEncoders.HEADING_PID);
 
-    HzGameFieldUltimateGoal hzGameFieldUltimateGoal;
+    HzGameField hzGameField;
 
     public enum DriveType {
         ROBOT_CENTRIC,
@@ -76,7 +74,7 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
 
     public DriveMode driveMode = DriveMode.NORMAL_CONTROL; //Default initializer
     public static double DRAWING_TARGET_RADIUS = 2;
-    public Vector2d drivePointToAlign = hzGameFieldUltimateGoal.ORIGIN;
+    public Vector2d drivePointToAlign = hzGameField.ORIGIN;
 
 
     //**** Drive Train ****

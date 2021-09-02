@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Controllers.HzAutonomousController;
 import org.firstinspires.ftc.teamcode.Controllers.HzGamepadController;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
-import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
 import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 
@@ -51,7 +50,7 @@ public class HzAutonomous extends LinearOpMode {
     public HzVuforia.ACTIVE_WEBCAM activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
     public HzGameField.TARGET_ZONE targetZone = HzGameField.TARGET_ZONE.A;
 
-    double af = HzGameFieldUltimateGoal.ALLIANCE_FACTOR;
+    double af = HzGameField.ALLIANCE_FACTOR;
 
     double turnAnglePowershot12 = Math.toRadians(-5);
     double turnAnglePowershot23 = Math.toRadians(-5);
@@ -70,7 +69,7 @@ public class HzAutonomous extends LinearOpMode {
         //Key Pay inputs to select Game Plan;
         selectGamePlan();
         hzVuforia = new HzVuforia(hardwareMap, activeWebcam);
-        af = HzGameFieldUltimateGoal.ALLIANCE_FACTOR;
+        af = HzGameField.ALLIANCE_FACTOR;
 
         // Initiate Camera on Init.
         hzVuforia.activateVuforiaTensorFlow();
@@ -123,8 +122,8 @@ public class HzAutonomous extends LinearOpMode {
                 parked = true;
 
                 //Write last position to static class to be used as initial position in TeleOp
-                HzGameFieldUltimateGoal.currentPose = hzDrive.getPoseEstimate();
-                HzGameFieldUltimateGoal.poseSetInAutonomous = true;
+                HzGameField.currentPose = hzDrive.getPoseEstimate();
+                HzGameField.poseSetInAutonomous = true;
 
                 if (HzDEBUG_FLAG) {
                     printDebugMessages();
@@ -135,8 +134,8 @@ public class HzAutonomous extends LinearOpMode {
         }
 
         //Write last position to static class to be used as initial position in TeleOp
-        HzGameFieldUltimateGoal.currentPose = hzDrive.getPoseEstimate();
-        HzGameFieldUltimateGoal.poseSetInAutonomous = true;
+        HzGameField.currentPose = hzDrive.getPoseEstimate();
+        HzGameField.poseSetInAutonomous = true;
     }
 
     /**
@@ -234,9 +233,9 @@ public class HzAutonomous extends LinearOpMode {
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
-        telemetry.addData("GameField.playingAlliance : ", HzGameFieldUltimateGoal.playingAlliance);
-        telemetry.addData("GameField.poseSetInAutonomous : ", HzGameFieldUltimateGoal.poseSetInAutonomous);
-        telemetry.addData("GameField.currentPose : ", HzGameFieldUltimateGoal.currentPose);
+        telemetry.addData("GameField.playingAlliance : ", HzGameField.playingAlliance);
+        telemetry.addData("GameField.poseSetInAutonomous : ", HzGameField.poseSetInAutonomous);
+        telemetry.addData("GameField.currentPose : ", HzGameField.currentPose);
         telemetry.addData("startPose : ", startPose);
 
         //****** Drive debug ******

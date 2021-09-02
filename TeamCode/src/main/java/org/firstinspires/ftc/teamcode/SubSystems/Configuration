@@ -1,6 +1,7 @@
 
 Hardware configuration declarations :
 
+Example :
         frontLeft = hardwareMap.dcMotor.get("flmotor"); Hub 1 Motor Port 0
         frontRight = hardwareMap.dcMotor.get("frmotor"); Hub 2 Motor Port 0
         backLeft = hardwareMap.dcMotor.get("blmotor"); Hub 1 Motor Port 1

@@ -105,7 +105,7 @@ public class HzSubsystem1 {
     /**
      * Returns Intake motor state
      */
-    public SUBSYSTEM1_MOTOR_STATE getIntakeState() {
+    public SUBSYSTEM1_MOTOR_STATE getSubsystemMotorState() {
         return subsystem1MotorState;
     }
 }
