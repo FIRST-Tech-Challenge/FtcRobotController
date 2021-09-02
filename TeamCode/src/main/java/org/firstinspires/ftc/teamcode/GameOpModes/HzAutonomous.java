@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Controllers.HzAutonomousController;
 import org.firstinspires.ftc.teamcode.Controllers.HzGamepadController;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
-import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
+import org.firstinspires.ftc.teamcode.SubSystems.HzVision;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
@@ -41,13 +41,13 @@ public class HzAutonomous extends LinearOpMode {
     public HzDrive hzDrive;
     public HzSubsystem1 hzSubsystem1;
 
-    public HzVuforia hzVuforia;
+    public HzVision hzVision;
     public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
 
     boolean parked = false ;
     boolean autonomousStarted = false;
 
-    public HzVuforia.ACTIVE_WEBCAM activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
+    public HzVision.ACTIVE_WEBCAM activeWebcam = HzVision.ACTIVE_WEBCAM.LEFT;
     public HzGameField.TARGET_ZONE targetZone = HzGameField.TARGET_ZONE.A;
 
     double af = HzGameField.ALLIANCE_FACTOR;
@@ -68,11 +68,11 @@ public class HzAutonomous extends LinearOpMode {
 
         //Key Pay inputs to select Game Plan;
         selectGamePlan();
-        hzVuforia = new HzVuforia(hardwareMap, activeWebcam);
+        hzVision = new HzVision(hardwareMap, activeWebcam);
         af = HzGameField.ALLIANCE_FACTOR;
 
         // Initiate Camera on Init.
-        hzVuforia.activateVuforiaTensorFlow();
+        hzVision.activateVuforiaTensorFlow();
 
         hzDrive.getLocalizer().setPoseEstimate(startPose);
 
@@ -93,7 +93,7 @@ public class HzAutonomous extends LinearOpMode {
 
         while (!isStopRequested()) {
             //Run Vuforia Tensor Flow
-            targetZone = hzVuforia.runVuforiaTensorFlow();
+            targetZone = hzVision.runVuforiaTensorFlow();
 
             if (!parked){
                 hzAutonomousController.runAutoControl();
@@ -107,7 +107,7 @@ public class HzAutonomous extends LinearOpMode {
             //Game Play is pressed
             while (opModeIsActive() && !isStopRequested() && !parked) {
 
-                hzVuforia.deactivateVuforiaTensorFlow();
+                hzVision.deactivateVuforiaTensorFlow();
 
                 // Logic to determine and run defined Autonomous mode
                 if (HzGameField.startPosition == HzGameField.START_POSITION.INNER) {
