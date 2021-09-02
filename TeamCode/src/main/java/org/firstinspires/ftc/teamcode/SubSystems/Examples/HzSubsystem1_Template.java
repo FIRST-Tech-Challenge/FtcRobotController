@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.SubSystems;
+package org.firstinspires.ftc.teamcode.SubSystems.Examples;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -21,7 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  *     <emsp>reverseIntakeMotor checks if the intake is not reversing, and sets the intake motor to FORWARD, then also
  *     sets intake motor state to REVERSING</emsp> <BR>
  */
-public class HzSubsystem1 {
+public class HzSubsystem1_Template {
 
     public DcMotor subsystem1Motor = null;
     public Servo subsystem1Servo = null;
@@ -46,7 +45,7 @@ public class HzSubsystem1 {
     }
     public SUBSYSTEM1_BUTTON_STATE subsystem1ButtonState;
 
-    public HzSubsystem1(HardwareMap hardwareMap) {
+    public HzSubsystem1_Template(HardwareMap hardwareMap) {
         subsystem1Motor = hardwareMap.dcMotor.get("intake_rightenc");
         subsystem1Servo = hardwareMap.servo.get("intake_release_servo");
     }

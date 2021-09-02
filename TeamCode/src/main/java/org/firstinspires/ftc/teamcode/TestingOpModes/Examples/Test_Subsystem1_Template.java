@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TestingOpModes;
+package org.firstinspires.ftc.teamcode.TestingOpModes.Examples;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
+import org.firstinspires.ftc.teamcode.TestingOpModes.HzGamepadTestController;
 
 /**
  * Ultimate Goal TeleOp mode <BR>
@@ -14,8 +15,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
  *  *  This code defines the TeleOp mode is done by Hazmat Robot for Ultimate Goal.<BR>
  *
  */
-@TeleOp(name = "Test Subsystem1", group = "Test")
-public class Test_Subsystem1 extends LinearOpMode {
+@TeleOp(name = "Test Subsystem1 Template", group = "Test")
+public class Test_Subsystem1_Template extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 

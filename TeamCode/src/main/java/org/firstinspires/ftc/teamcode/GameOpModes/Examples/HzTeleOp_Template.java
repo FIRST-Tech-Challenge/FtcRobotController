@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.TestingOpModes;
+package org.firstinspires.ftc.teamcode.GameOpModes.Examples;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Controllers.HzGamepadController;
 import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
@@ -14,12 +15,12 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
  *  *  This code defines the TeleOp mode is done by Hazmat Robot for Ultimate Goal.<BR>
  *
  */
-@TeleOp(name = "Test Subsystem1", group = "Test")
-public class Test_Subsystem1 extends LinearOpMode {
+@TeleOp(name = "Hazmat TeleOp Template", group = "00-Teleop")
+public class HzTeleOp_Template extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    public HzGamepadTestController hzGamepadTestController;
+    public HzGamepadController hzGamepadController;
     public HzDrive hzDrive;
     public HzSubsystem1 hzSubsystem1;
 
@@ -33,10 +34,17 @@ public class Test_Subsystem1 extends LinearOpMode {
         hzDrive = new HzDrive(hardwareMap);
         hzSubsystem1 = new HzSubsystem1(hardwareMap);
         /* Create Controllers */
-        hzGamepadTestController = new HzGamepadTestController(gamepad1,hzDrive);
+        hzGamepadController = new HzGamepadController(gamepad1,hzDrive, hzSubsystem1);
+
+        /* Get last position after Autonomous mode ended from static class set in Autonomous */
+        if ( HzGameField.poseSetInAutonomous == true) {
+            hzDrive.getLocalizer().setPoseEstimate(HzGameField.currentPose);
+        } else {
+            hzDrive.getLocalizer().setPoseEstimate(startPose);
+        }
 
         /* Set Initial State of any subsystem when TeleOp is to be started*/
-        hzSubsystem1.initSubsystem1();
+        hzSubsystem1.setIntakeReleaseOpen();
 
         /* Wait for Start or Stop Button to be pressed */
         waitForStart();
@@ -53,23 +61,7 @@ public class Test_Subsystem1 extends LinearOpMode {
             }
 
             while (opModeIsActive()) {
-                hzGamepadTestController.runByGamepadControl();
-
-                //Add Test Code here
-                if (hzGamepadTestController.getDpad_downPress()) {
-                    if(hzSubsystem1.getSubsystemMotorState() == HzSubsystem1.SUBSYSTEM1_MOTOR_STATE.STATE1) {
-                        hzSubsystem1.startForwardSubsystem1Motor();
-                    } else if(hzSubsystem1.getSubsystemMotorState() == HzSubsystem1.SUBSYSTEM1_MOTOR_STATE.STATE2) {
-                        hzSubsystem1.stopSubsystem1Motor();
-                    }
-                }
-
-                //Reverse Intake motors and run - in case of stuck state)
-                if (hzGamepadTestController.getDpad_upPersistent()) {
-                    hzSubsystem1.startReverseSubsystem1Motor();
-                } else if (hzSubsystem1.getSubsystemMotorState() == HzSubsystem1.SUBSYSTEM1_MOTOR_STATE.STATE3){
-                    hzSubsystem1.stopSubsystem1Motor();
-                }
+                hzGamepadController.runByGamepadControl();
 
                 if(HzDEBUG_FLAG) {
                     printDebugMessages();
@@ -98,9 +90,7 @@ public class Test_Subsystem1 extends LinearOpMode {
         //****** Drive debug ******
         telemetry.addData("Drive Mode : ", hzDrive.driveMode);
         telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
-        telemetry.addData("Battery Power : ", hzDrive.getBatteryVoltage(hardwareMap));
-
-        telemetry.addData("Subsystem1 State : ", hzSubsystem1.getSubsystemMotorState());
+        telemetry.addData("Battery Power", hzDrive.getBatteryVoltage(hardwareMap));
 
         //Add logic for debug print Logic
 
