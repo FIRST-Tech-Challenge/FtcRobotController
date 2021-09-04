@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import java.util.concurrent.TimeUnit;
 
 //At this point it's almost entirely created by Ethan
-//38 inches between the robots
+//38 inches between robots
 @Autonomous
 public class AutoCode3 extends LinearOpMode {
 
