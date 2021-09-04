@@ -8,8 +8,10 @@ public class GitTest {
         apple_cost = 6;
     }
 
-    int victorHasThisManyApple () {
-        return 11;
+    public int victorHasThisManyApple () {
+        apple_cost = 100;
+        return 12;
+
     }
 
 }
