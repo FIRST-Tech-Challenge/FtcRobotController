@@ -7,6 +7,10 @@ public class WarrenGitTest {
     public WarrenGitTest(){
         apple_cost=6;
     }
+    public EricTest(){
+        apple_cost= 7;
+        System.out.println("Working nani");
+    }
     int victorMasThisManyApple(){
         return 11;
     }
