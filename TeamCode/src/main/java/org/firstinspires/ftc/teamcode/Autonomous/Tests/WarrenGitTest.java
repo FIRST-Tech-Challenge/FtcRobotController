@@ -7,6 +7,10 @@ public class WarrenGitTest {
     public WarrenGitTest(){
         apple_cost=6;
     }
+
+    public void williampogtest() {
+        apple_cost = 25;
+    }
     int victorMasThisManyApple(){
         return 11;
     }

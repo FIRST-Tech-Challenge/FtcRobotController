@@ -37,7 +37,7 @@ public class    WobbleGoal {
         wobbleGoalServoClaw = op.hardwareMap.servo.get("wobbleGoalServoClaw");
         wobbleGoalMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setDirection(DcMotorEx.Direction.FORWARD);
-        if(!teleOp) {
+        if(teleOp) {
             wobbleGoalMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -55,6 +55,9 @@ public class    WobbleGoal {
 
     //tells motor to go to a specified position based on ticks(i)
     public void goToPosition(Position p) {
+        wobbleGoalMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         int i = 0;
         if (p == Position.REST) {
             int ticksForREST = 100;
@@ -64,6 +67,7 @@ public class    WobbleGoal {
             i = ticksForGRAB;
         } else if (p == Position.GRAB) {
             int ticksForGRAB = 630;
+
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
             int ticksForRAISE = 280;
@@ -98,7 +102,7 @@ public class    WobbleGoal {
         }
 
         wobbleGoalMotor.setTargetPosition(i);
-        //wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
 //        op.sleep(2000);

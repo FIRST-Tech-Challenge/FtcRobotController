@@ -183,7 +183,7 @@ public class TwoGPTeleop extends LinearOpMode {
                     robot.stopShooter();
                 }
 
-                magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
+                magnitude = Math.abs(left_stick_x) + Math.abs(left_stick_y);
 
                 robot.moveMultidirectional(magnitude, angleInDegree, (float)(right_stick_x*0.6), slowMode); // It is 0.95, because the robot DCs at full power.
                 WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.GRAB;
