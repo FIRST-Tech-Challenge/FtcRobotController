@@ -53,6 +53,11 @@ public class EncoderChassis extends BasicChassis {
 
     }
 
+    @Override
+    public void tripleSplineToPositionHead(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power) {
+
+    }
+
     public double getAngle() {
         double[] diff = {motorLeftFront.getCurrentPosition() - encoder[0], motorRightFront.getCurrentPosition() - encoder[1], motorLeftBack.getCurrentPosition() - encoder[2], motorRightBack.getCurrentPosition() - encoder[3]};
         encoder[0] += diff[0];

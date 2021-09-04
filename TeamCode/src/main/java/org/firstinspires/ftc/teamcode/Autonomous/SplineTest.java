@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,13 +11,18 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 @Autonomous(name= "SplineTest", preselectTeleOp = "OneGPTeleop")
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode(){
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
         waitForStart();
-        //robot.tripleSplineToPosition(1, 0, 0, 12, 20, 16, 30, 12, 40, 5, 50, 1.0);
+        robot.tripleSplineToPositionHead(1, 0, 0, 0, 10, -15, 15, -25, 20, -30, 30, 1.0);
 //        robot.goToPosition(48,48,90,1.0);
 //        robot.goToPosition(36,36,90*3/4,0.8);
 //        robot.goToPosition(24,24,90*1/2,0.6);
