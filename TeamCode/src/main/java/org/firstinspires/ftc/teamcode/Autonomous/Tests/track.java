@@ -16,7 +16,7 @@ public class track extends LinearOpMode {
         OdometryChassis odom = new OdometryChassis(this, false,true);
 
         //ElapsedTime runtime = new ElapsedTime();
-        odom.setPosition(0,0,-36);
+        odom.setPosition(0,0,0);
         //int rings = robot.getRingsAndWaitForStart();
         //robot.stopRingDetection();
         waitForStart();
