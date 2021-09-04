@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.Autonomous.Tests;
 public class WarrenGitTest {
 
     int apple_cost=0;
-
+    int apples_that_are_tasty=3;
     public WarrenGitTest(){
         apple_cost=6;
     }
-    public EricTest(){
-        apple_cost= 7;
-        System.out.println("Working nani");
+
+    public void aaaaaaaaaMOGUS() {
+        apple_cost = 25;
     }
     int victorMasThisManyApple(){
         return 11;
