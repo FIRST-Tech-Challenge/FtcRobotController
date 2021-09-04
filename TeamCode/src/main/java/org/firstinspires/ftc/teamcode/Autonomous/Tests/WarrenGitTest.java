@@ -8,7 +8,7 @@ public class WarrenGitTest {
         apple_cost=6;
     }
 
-    public void williamweirdchamptest() {
+    public void aaaaaaaaaMOGUS() {
         apple_cost = 25;
     }
     int victorMasThisManyApple(){
