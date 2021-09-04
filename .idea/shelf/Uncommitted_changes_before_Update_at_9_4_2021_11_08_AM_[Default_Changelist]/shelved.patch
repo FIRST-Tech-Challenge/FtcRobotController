@@ -1,0 +1,13 @@
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1630770450042)
++++ b/.idea/.gitignore	(date 1630770450042)
+@@ -0,0 +1,3 @@
++# Default ignored files
++/shelf/
++/workspace.xml
