@@ -49,7 +49,7 @@ public class CorgiFinalAutoPower extends LinearOpMode {
             sleep(100);
             robot.startTransfer();
             robot.setVelocity(1650,1000);
-            robot.goToPosition(-56,4,-2,1);
+            robot.tripleSplineToPosition(1, 46,-117.5, 30, -96, 20, -75, 4, -56, -12,-47,1.0);
             robot.reverseTransfer();
             sleep(100);
             robot.startTransfer();
