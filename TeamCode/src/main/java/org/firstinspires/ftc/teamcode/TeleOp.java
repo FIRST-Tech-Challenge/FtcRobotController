@@ -20,6 +20,10 @@ public class TeleOp extends UpliftTele {
     DcMotor rf;
     DcMotor lb;
     DcMotor rb;
+    DcMotor shooter1;
+    DcMotor shooter2;
+    DcMotor intake;
+    DcMotor transfer;
 
     @Override
     public void initHardware() {
@@ -28,6 +32,10 @@ public class TeleOp extends UpliftTele {
         rf = robot.rightFront;
         lb = robot.leftBack;
         rb = robot.rightBack;
+        shooter1 = robot.shooter1;
+        shooter2 = robot.shooter2;
+        intake = robot.intake;
+        transfer = robot.transfer;
     }
 
     @Override
