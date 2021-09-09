@@ -2,19 +2,48 @@ package org.firstinspires.ftc.teamcode.RobotData;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Light;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class DeviceMap {
-        //Listing hardware devices
+    //Listing hardware devices
     public DcMotor leftFront = null;
     public DcMotor rightFront = null;
-    public  DcMotor leftRear = null;
-    public  DcMotor rightRear = null;
-    public  Servo   fontClaw  = null;
+    public DcMotor leftRear = null;
+    public DcMotor rightRear = null;
+    public Servo frontClaw = null;
+    public RevBlinkinLedDriver light = null;
 
-        HardwareMap hwMap = null;
-        private ElapsedTime period = new  Elpsedtime();
+    HardwareMap hwMap = null;
+    private ElapsedTime period = new ElapsedTime();
+
+    public DeviceMap() {
+    }
+
+    public void init(HardwareMap hwMap)
+    {
+                        // Naming hardware Devices
+        leftFront = hwMap.get(DcMotor.class, "leftFront");
+        leftRear = hwMap.get(DcMotor.class, "leftRear");
+        rightFront = hwMap.get(DcMotor.class, "rightFront");
+        rightRear = hwMap.get(DcMotor.class, "rightRear");
+        frontClaw = hwMap.get(Servo.class, "frontClaw");
+        light = hwMap.get(RevBlinkinLedDriver.class, "Led");
+
+        leftFront.setPower(0);
+        leftRear.setPower(0);
+        rightFront.setPower(0);
+        rightRear.setPower(0);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
 
+
+    }
 }
