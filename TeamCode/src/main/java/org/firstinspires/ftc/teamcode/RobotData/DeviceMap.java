@@ -10,5 +10,4 @@ public class DeviceMap {
     public  DcMotor leftRear = null;
     public  DcMotor rightRear = null;
     public  Servo   fontClaw  = null;
-    public  Servo   rearClaw  = null;
 }
