@@ -12,7 +12,9 @@ public class DeviceMap {
     public  DcMotor rightRear = null;
     public  Servo   fontClaw  = null;
 
-        //Test test
+        HardwareMap hwMap = null;
+        private ElapsedTime period = new  Elpsedtime();
+
 
 
 }
