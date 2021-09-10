@@ -40,7 +40,7 @@ public class DeviceMap {
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.Run)
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
 
