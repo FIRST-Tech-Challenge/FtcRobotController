@@ -1,17 +1,9 @@
 ### FTC SDK API Documentation
 
-## v6.0 
+Now hosted at [javadoc.io](https://javadoc.io/doc/org.firstinspires.ftc)
 
-- [Hardware](6.0.1/Hardware/index.html)
-- [RobotCore](6.0.1/RobotCore/index.html)
-- [FtcCommon](6.0.1/FtcCommon/index.html)
-- [OnBotJava](6.0.1/OnBotJava/index.html)
-- [Inspection](6.0.1/Inspection/index.html)
-
-## v6.1
-
-- [Hardware](6.1.1/Hardware/index.html)
-- [RobotCore](6.1.1/RobotCore/index.html)
-- [FtcCommon](6.1.1/FtcCommon/index.html)
-- [OnBotJava](6.1.1/OnBotJava/index.html)
-- [Inspection](6.1.1/Inspection/index.html)
+- [RobotCore](https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/index.html)
+- [FtcCommon](https://javadoc.io/doc/org.firstinspires.ftc/FtcCommon/latest/index.html)
+- [Hardware](https://javadoc.io/doc/org.firstinspires.ftc/Hardware/latest/index.html)
+- [Inspection](https://javadoc.io/doc/org.firstinspires.ftc/Inspection/latest/index.html)
+- [OnBotJava](https://javadoc.io/doc/org.firstinspires.ftc/OnBotJava/latest/index.html)
