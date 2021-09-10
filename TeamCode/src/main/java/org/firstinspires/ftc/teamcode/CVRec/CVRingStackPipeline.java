@@ -56,7 +56,7 @@ public class CVRingStackPipeline extends CVPipelineBase {
             setGameElement(GameElement.Ball);
         }
 
-        //ring stack recognition
+        // ring  stack recognition
 //        if (getMeanVal() < QUAD_MAX){
 //            stackSize = RingStackSize.Quad;
 //        }
