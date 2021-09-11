@@ -8,12 +8,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-@Disabled
+@TeleOp(name="TestOPLinear", group="Linear Opmode")
+
 public class TestOPLinear extends LinearOpMode {
 
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
     private DcMotor rightDCFront = null;
@@ -25,54 +23,53 @@ public class TestOPLinear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //Get the motors from the robot's configuration
+
+        leftDCFront  = hardwareMap.get(DcMotor.class, "leftFront");
+        rightDCFront = hardwareMap.get(DcMotor.class, "rightFront");
+        leftDCBack = hardwareMap.get(DcMotor.class, "leftBack");
+        rightDCBack = hardwareMap.get(DcMotor.class, "rightBack");
+        servo1 = hardwareMap.get(Servo.class, "servo1");
+
+        //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
+
+        leftDCFront.setDirection(DcMotor.Direction.FORWARD);
+        rightDCFront.setDirection(DcMotor.Direction.FORWARD);
+        leftDCBack.setDirection(DcMotor.Direction.FORWARD);
+        rightDCBack.setDirection(DcMotor.Direction.FORWARD);
+
+        //Set DC motors to run with encoder
+
+        leftDCFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDCFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftDCBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDCBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDCFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDCFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDCBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDCBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        waitForStart(); //Wait for the driver to press Init
+        runtime.reset(); //Reset the runtime
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        runtime.reset();
-
-        // run until the end of the match (driver presses STOP)
+        //Run until the driver presses Stop
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower;
-            double rightPower;
+            double leftFrontSpeed = 0.0;
+            double rightFrontSpeed = 0.0;
+            double leftBackSpeed = 0.0;
+            double rightBackSpeed = 0.0;
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
-
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
-
-            // Send calculated power to wheels
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.update();
+            telemetry.addData("Status", "Running"); //Add telemetry to show that the program is currently in the loop function
+            telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
+            telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f)",
+                    leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
+            //(%.2f) is used here so that the displayed motor speeds aren't excessively long and don't clutter the screen.
+            telemetry.addData("Servos", "servo1 (%.2f)", servo1.getPosition()); //Same with (%.2f) here; we just use it to display the servo value
+            telemetry.update(); //Updates the telemetry
         }
     }
 }
