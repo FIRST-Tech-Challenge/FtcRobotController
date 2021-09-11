@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode.robots.UGBot;
+package org.firstinspires.ftc.teamcode.robots.goodBot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -40,20 +40,17 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.UGBot.vision.OpenCVIntegration;
-import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.goodBot.vision.OpenCVIntegration;
+import org.firstinspires.ftc.teamcode.robots.goodBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.TURRET_SPEED;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.isInner;
+import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.ALLIANCE;
+import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.ALLIANCE_INT_MOD;
+import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.isInner;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notsmalldeadzone;
@@ -63,7 +60,7 @@ import static org.firstinspires.ftc.teamcode.util.Conversions.notsmalldeadzone;
  * TeleOp and Autonomous.
  */
 
-@TeleOp(name = "AAAUltimateGoal_6832", group = "Challenge") // @Autonomous(...) is the other common choice
+@TeleOp(name = "AAATest_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
 public class UG_6832 extends OpMode {
@@ -71,7 +68,7 @@ public class UG_6832 extends OpMode {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
-    private PoseUG.RobotType currentBot = PoseUG.RobotType.TomBot;
+    private PoseUG.RobotType currentBot = PoseUG.RobotType.goodBot;
 
     private PoseUG robot;
 
@@ -358,36 +355,36 @@ public class UG_6832 extends OpMode {
                     joystickDrivePregameMode();
 
                 if(!auto.visionProviderFinalized) {
-                    auto.visionProviderState = 0;
-                    auto.initVisionProvider();
+//                    auto.visionProviderState = 0;
+//                    auto.initVisionProvider();
                 } else {
-                    auto.sample();
-                    telemetry.addData("Vision", "Prep detection: %s%s", auto.height,
-                            auto.height == StackHeight.NONE_FOUND ? " (NONE_FOUND)" : "");
-                    robot.setDetection(auto.height);
-                    if(auto.vp instanceof OpenCVIntegration) {
-                        OpenCVIntegration vp = (OpenCVIntegration) auto.vp;
-                        robot.setVisionTimes(new long[] {
-                                vp.pipeline.normalizeTime - vp.pipeline.cropTime,
-                                vp.pipeline.blurTime - vp.pipeline.normalizeTime,
-                                vp.pipeline.hsvTime - vp.pipeline.blurTime,
-                                vp.pipeline.contourTime - vp.pipeline.hsvTime,
-                                vp.pipeline.momentsTime - vp.pipeline.contourTime
-                        });
-                        telemetry.addData("Frame Count", vp.camera.getFrameCount());
-                        telemetry.addData("FPS", String.format("%.2f", vp.camera.getFps()));
-                        telemetry.addData("Total frame time ms", vp.camera.getTotalFrameTimeMs());
-                        telemetry.addData("Pipeline time ms", vp.camera.getPipelineTimeMs());
-                        telemetry.addData("Overhead time ms", vp.camera.getOverheadTimeMs());
-                        telemetry.addData("Theoretical max FPS", vp.camera.getCurrentPipelineMaxFps());
-
-                        robot.setFrameCount(vp.camera.getFrameCount());
-                        robot.setVisionFPS(vp.camera.getFps());
-                        robot.setTotalFrameTimeMs(vp.camera.getTotalFrameTimeMs());
-                        robot.setPipelineTimeMs(vp.camera.getPipelineTimeMs());
-                        robot.setOverheadTimeMs(vp.camera.getOverheadTimeMs());
-                        robot.setCurrentPipelineMaxFps(vp.camera.getCurrentPipelineMaxFps());
-                        robot.setAspectRatio(vp.pipeline.lastRatio);
+//                    auto.sample();
+//                    telemetry.addData("Vision", "Prep detection: %s%s", auto.height,
+//                            auto.height == StackHeight.NONE_FOUND ? " (NONE_FOUND)" : "");
+//                    robot.setDetection(auto.height);
+//                    if(auto.vp instanceof OpenCVIntegration) {
+//                        OpenCVIntegration vp = (OpenCVIntegration) auto.vp;
+//                        robot.setVisionTimes(new long[] {
+//                                vp.pipeline.normalizeTime - vp.pipeline.cropTime,
+//                                vp.pipeline.blurTime - vp.pipeline.normalizeTime,
+//                                vp.pipeline.hsvTime - vp.pipeline.blurTime,
+//                                vp.pipeline.contourTime - vp.pipeline.hsvTime,
+//                                vp.pipeline.momentsTime - vp.pipeline.contourTime
+//                        });
+//                        telemetry.addData("Frame Count", vp.camera.getFrameCount());
+//                        telemetry.addData("FPS", String.format("%.2f", vp.camera.getFps()));
+//                        telemetry.addData("Total frame time ms", vp.camera.getTotalFrameTimeMs());
+//                        telemetry.addData("Pipeline time ms", vp.camera.getPipelineTimeMs());
+//                        telemetry.addData("Overhead time ms", vp.camera.getOverheadTimeMs());
+//                        telemetry.addData("Theoretical max FPS", vp.camera.getCurrentPipelineMaxFps());
+//
+//                        robot.setFrameCount(vp.camera.getFrameCount());
+//                        robot.setVisionFPS(vp.camera.getFps());
+//                        robot.setTotalFrameTimeMs(vp.camera.getTotalFrameTimeMs());
+//                        robot.setPipelineTimeMs(vp.camera.getPipelineTimeMs());
+//                        robot.setOverheadTimeMs(vp.camera.getOverheadTimeMs());
+//                        robot.setCurrentPipelineMaxFps(vp.camera.getCurrentPipelineMaxFps());
+//                        robot.setAspectRatio(vp.pipeline.lastRatio);
 
                     }
                 }
@@ -404,45 +401,45 @@ public class UG_6832 extends OpMode {
 //                    auto.visionProviderState = 0;
 //                    auto.initVisionProvider(); // this is blocking
 //                }
-
-            }
-
-            else { // if inactive we are in configuration mode
-
-                if(auto.visionProviderFinalized)
-                    auto.sample();
-
-                if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_left, dpad_left, 1)) {
-                    auto.visionProviderState = (auto.visionProviderState + 1) % auto.visionProviders.length; // switch
-                                                                                                             // vision
-                                                                                                             // provider
-                }
-                if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_up, dpad_up, 1)) {
-                    auto.initVisionProvider(); // this is blocking
-                } else if (auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_up, dpad_up, 1)) {
-                    auto.deinitVisionProvider(); // also blocking, but should be very quick
-                }
-                if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
-                    auto.enableTelemetry = !auto.enableTelemetry; // enable/disable FtcDashboard telemetry
-                    // CenterOfGravityCalculator.drawRobotDiagram =
-                    // !CenterOfGravityCalculator.drawRobotDiagram;
-                }
-
-                if (soundState == 0 && toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
-                    initialization_initSound();
-                }
-
-                telemetry.addData("Vision", "Backend: %s (%s)",
-                        auto.visionProviders[auto.visionProviderState].getSimpleName(),
-                        auto.visionProviderFinalized ? "finalized"
-                                : System.currentTimeMillis() / 500 % 2 == 0 ? "**NOT FINALIZED**" : " NOT FINALIZED ");
-                telemetry.addData("Vision", "FtcDashboard Telemetry: %s",
-                        auto.enableTelemetry ? "Enabled" : "Disabled");
-                telemetry.addData("Vision", "Viewpoint: %s", auto.viewpoint);
-                telemetry.addData("Status", "Initialized");
-                telemetry.addData("Status", "Auto Delay: " + Integer.toString((int) auto.autoDelay) + "seconds");
-
-            }
+//
+//            }
+//
+//            else { // if inactive we are in configuration mode
+//
+//                if(auto.visionProviderFinalized)
+////                    auto.sample();
+//
+//                if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_left, dpad_left, 1)) {
+//                    auto.visionProviderState = (auto.visionProviderState + 1) % auto.visionProviders.length; // switch
+//                                                                                                             // vision
+//                                                                                                             // provider
+//                }
+//                if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_up, dpad_up, 1)) {
+//                    auto.initVisionProvider(); // this is blocking
+//                } else if (auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_up, dpad_up, 1)) {
+//                    auto.deinitVisionProvider(); // also blocking, but should be very quick
+//                }
+//                if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
+//                    auto.enableTelemetry = !auto.enableTelemetry; // enable/disable FtcDashboard telemetry
+//                    // CenterOfGravityCalculator.drawRobotDiagram =
+//                    // !CenterOfGravityCalculator.drawRobotDiagram;
+//                }
+//
+//                if (soundState == 0 && toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
+//                    initialization_initSound();
+//                }
+//
+//                telemetry.addData("Vision", "Backend: %s (%s)",
+//                        auto.visionProviders[auto.visionProviderState].getSimpleName(),
+//                        auto.visionProviderFinalized ? "finalized"
+//                                : System.currentTimeMillis() / 500 % 2 == 0 ? "**NOT FINALIZED**" : " NOT FINALIZED ");
+//                telemetry.addData("Vision", "FtcDashboard Telemetry: %s",
+//                        auto.enableTelemetry ? "Enabled" : "Disabled");
+//                telemetry.addData("Vision", "Viewpoint: %s", auto.viewpoint);
+//                telemetry.addData("Status", "Initialized");
+//                telemetry.addData("Status", "Auto Delay: " + Integer.toString((int) auto.autoDelay) + "seconds");
+//
+//            }
             telemetry.update();
 
 //            robot.ledSystem.setColor(LEDSystem.Color.GAME_OVER);
@@ -471,10 +468,6 @@ public class UG_6832 extends OpMode {
 
             auto.vp.reset();
 
-
-
-            robot.launcher.restart(.4, .5);
-
             lastLoopClockTime = System.nanoTime();
         }
 
@@ -488,7 +481,6 @@ public class UG_6832 extends OpMode {
     @Override
     public void loop() {
         //orange
-
             stateSwitch();
             if (active) {
                 switch (state) {
@@ -496,56 +488,12 @@ public class UG_6832 extends OpMode {
                         joystickDrive();
                         break;
                     case 1: // teleop
-                        if(ALLIANCE == Constants.Alliance.RED) {
-                            if(!isInner) {
-                                if (auto.AutoFullRed.execute()) {
-                                    active = false;
-                                    state = 0;
-                                }
-                            }
-                            else{
-                                if (auto.AutoFullBlueREDInner.execute()) {
-                                    active = false;
-                                    state = 0;
-                                }
-                            }
-                        }
-                        else{
-                            if(!isInner) {
-                                if (auto.AutoFullRed.execute()) {
-                                    active = false;
-                                    state = 0;
-                                }
-                            }
-                            else{
-                                if (auto.AutoFullBlueREDInner.execute()) {
-                                    active = false;
-                                    state = 0;
-                                }
-                            }
-                        }
-                        break;
-                    case 2:
-                        if (auto.AutoTest.execute()) {
+                        if (auto.testAuto.execute()) {
                             active = false;
                             state = 0;
                         }
-                        break;
-                    case 3:
-                        if (auto.DemoRollingRingtake.execute()) {
-                            active = false;
-                            state = 0;
-                        }
-                        break;
-                    case 4:
-                        if (auto.TurretCalibrate.execute()) {
-                            active = false;
-                            state = 0;
-                        }
-
                         break;
                     case 6:
-                        demo();
                         break;
                     case 7:
                         break;
@@ -596,13 +544,6 @@ public class UG_6832 extends OpMode {
             soundState = 2;
     }
 
-    private void demo() {
-        if (gamepad1.x)
-            robot.maintainHeading(gamepad1.x);
-        if (gamepad1.y)
-            robot.turret.maintainHeadingTurret();
-    }
-
     int reverse = 1;
     String message = "";
 
@@ -620,248 +561,38 @@ public class UG_6832 extends OpMode {
     private void joystickDrive() { //apple
 
         if (!joystickDriveStarted) {
-            robot.setAutonSingleStep(true);
             joystickDriveStarted = true;
-            robot.launcher.setActive(true);
-            //robot.articulate(PoseUG.Articulation.makeIntakeOuttake);
-            if(robot.intake.isTented()){
-                robot.intake.isTented = false;
-                robot.intake.Do(Intake.Behavior.INTAKE);
-            }
-            else{//ben was here
-                robot.intake.Do(Intake.Behavior.DEPLOY);
-            }
-            robot.intake.alwaysASpinnin = true;
-            robot.intake.setRollingRingMode(true);
-
             robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
         }
 
-        shiftActive = gamepad1.dpad_down;
         reverse = -1;
         pwrDamper = .90;
 
         pwrFwd = 0;
         pwrRot = 0;
-
-        if(robot.gripperModeIsInReverse == true){
-            reverse = 1;
-        }
-        else
-            reverse = -1;
-
-        if(shiftActive && toggleAllowed(gamepad1.right_bumper, right_bumper, 1)){
-            robot.articulate(PoseUG.Articulation.enterWobbleGoalMode);
-        }
+        pwrStf = 0;
 
         if (notdeadzone(gamepad1.left_stick_y)) {
             pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
         }
 
-//        if(robot.intake.isTented()){
-//            if(gamepad1.left_stick_y <= 0)
-//                robot.intake.setIntakeSpeed(gamepad1.left_stick_y * Constants.__ATMEP2);
-//            if(gamepad1.left_stick_y >= 0)
-//                robot.intake.setIntakeSpeed(gamepad1.left_stick_y * Constants.__ATMEP);
-//        }
-
+        if (notdeadzone(gamepad1.left_stick_x)) {
+            pwrStf = pwrDamper * gamepad1.left_stick_x;
+        }
 
         if (notdeadzone(gamepad1.right_stick_x))
             pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
 
 
-            if (nearZero(pwrFwd) && nearZero(pwrRot)) {
-                robot.driveMixerDiffSteer(0, 0);
-            } else {
-                robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
-                }
-
-//        if(toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
-//            robot.returnHomeState = 0;
-//            //robot.articulate(PoseUG.Articulation.returnHome);
-//        }
-
-        //region good logging example
-
-//        if(toggleAllowed(gamepad1.a, a, 1) && gamepad1.y){
-//            robot.articulate(PoseUG.Articulation.toggleTrigger);
-//            lastCachedTPS = robot.launcher.getFlywheelTPS();
-//            lastCachedArmTiccs= robot.launcher.getElbowCurrentPos();
-//        }
-//
-//        if(toggleAllowed(gamepad2.a, a, 2)){
-//            cacheValidated = true;
-//        }
-
-//        if(cacheValidated = true){
-//            logger.UpdateLog(Double.toString(lastCachedTPS) + ","  + Double.toString(lastCachedArmTiccs) + "," + "idkguess");
-//            cacheValidated = false;
-//        }
-        //endregion
-
-
-        // offsets
-
-        if(shiftActive && toggleAllowed(gamepad1.x, x,1)){
-            robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_OUT_POS);
-            robot.turret.setCurrentMode(Turret.TurretMode.fieldRelative);
-            robot.turret.setDangerModeActive(true);
-        }
-
-        if(robot.intake.IsIntaking()){
-            timeSinceLastIntake = System.nanoTime();
-        }
-
-        //todo this should not be here - these tests should be inside Intake
-        //todo we get false positives when shooting - for some reason we get a current spike
-        //todo should probably stop slow intake while shooting
-//        if(robot.intake.getBehavior() == Intake.Behavior.TRAVEL
-//                && robot.intake.intakeMotor.getCurrent(CurrentUnit.AMPS) > Constants.INTAKE_AUTO_PICKUP_AMPS
-//                && System.nanoTime() - timeSinceLastIntake > Constants.INTAKE_AUTO_PICKUP_TIME_BUFFER * 1E9){
-//            robot.intake.Do(Intake.Behavior.INTAKE);
-//        }
-
-        if(shiftActive && toggleAllowed(gamepad1.b, b,1)){
-            robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_IN_POS);
-            robot.turret.setCurrentMode(Turret.TurretMode.chassisRelative);
-            robot.turret.setDangerModeActive(false);
-        }
-
-        if(gamepad2.a){
-            robot.launcher.setWiperTargetPos(Constants.LAUNCHER_WIPER_WIPED);
-        }
-        else{
-            robot.launcher.setWiperTargetPos(Constants.LAUNCHER_WIPER_UNWIPED);
-        }
-
-
-
-        if(notsmalldeadzone(gamepad2.right_trigger)) {
-            robot.articulate(PoseUG.Articulation.toggleTrigger);
-        }
-
-//        if (notsmalldeadzone(gamepad2.right_trigger))
-//            robot.turret.imuOffset(gamepad2.right_trigger);
-//        if (notsmalldeadzone(gamepad2.left_trigger))
-//            robot.turret.imuOffset(-gamepad2.left_trigger);
-
-        if (toggleAllowed(gamepad2.right_bumper,left_bumper,2))
-            robot.articulate(PoseUG.Articulation.ohBabyATriple);
-
-        if(toggleAllowed(gamepad2.dpad_left, dpad_left_2, 16))
-            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP -= 1.0;
-        if(toggleAllowed(gamepad2.dpad_right, dpad_right_2, 17))
-            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP += 1.0;
-        if(toggleAllowed(gamepad2.dpad_up, dpad_up_2, 18)) //broong
-            Constants.HEIGHT_MULTIPLIER += 0.02;
-        if(toggleAllowed(gamepad2.dpad_down, dpad_down_2, 19))
-            Constants.HEIGHT_MULTIPLIER -= 0.02;
-
-        if(toggleAllowed(gamepad2.a, a_2, 22)) {
-            robot.launcher.setElbowTargetAngle(Constants.ELBOW_TARGET_ANGLE);
-            robot.launcher.fullSpeed = !robot.launcher.fullSpeed;
-        }
-
-//
-//        if(toggleAllowed(gamepad2.x, x_2, 20))
-//            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP -= 3.0;
-//        if(toggleAllowed(gamepad2.b, b_2, 21))
-//            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP += 3.0;
-//        if(toggleAllowed(gamepad2.y, y_2, 22)) //broong
-//            Constants.HEIGHT_MULTIPLIER += 0.06;
-//        if(toggleAllowed(gamepad2.a, a_2, 23))
-//            Constants.HEIGHT_MULTIPLIER -= 0.06;
-
-        if(toggleAllowed(gamepad2.left_bumper, x,2)){
-            Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP = 0;
-        }
-
-        if(toggleAllowed(gamepad2.right_bumper,y,2)){
-            Constants.STARTING_HEIGHT_OFFSET = 0;
-        }
-
-
-        if(toggleAllowed(gamepad1.b, b, 1))
-            robot.articulate(PoseUG.Articulation.toggleTrigger);
-            //robot.articulate(PoseUG.Articulation.toggleTrigger);
-//        if(toggleAllowed(gamepad1.a, a, 1))
-//            robot.flywheelIsActive = !robot.flywheelIsActive;
-        if(toggleAllowed(gamepad1.y, y, 1)) {
-            if (robot.intake.IsIntaking())
-                robot.intake.Do(Intake.Behavior.ENDINTAKE);
-            else {
-                robot.intake.setRollingRingMode(false);
-                robot.SetRingCatch(); //put launcher in catching position
-                robot.intake.Do(Intake.Behavior.INTAKE);
-            }
+        if (nearZero(pwrFwd) && nearZero(pwrRot) && nearZero(pwrStf)) {
+            robot.driveMixerMec(0, 0,0);
+        } else {
+            robot.driveMixerMec(pwrFwd * pwrDamper, pwrStf, pwrRot);
         }
 
         if(toggleAllowed(gamepad1.x,x,1)){
-            robot.intake.Do(Intake.Behavior.TENT);
+            robot.toggleGripper();
         }
-
-        if (notdeadzone(gamepad2.right_stick_y)) {
-            robot.launcher.adjustElbowAngle(-gamepad2.right_stick_y);
-        }
-
-        if (Constants.IN_WOBBLE_MODE && notdeadzone(gamepad1.right_stick_y)) {
-            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
-        }
-//hi hello
-        if(Constants.IN_WOBBLE_MODE && toggleAllowed(gamepad1.left_bumper, left_bumper,1)) {
-            if (robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_OPEN || robot.launcher.gripperTargetPos == Constants.WOBBLE_GRIPPER_RELEASE) {
-                robot.launcher.wobbleGrip();
-            } else {
-                robot.launcher.wobbleRelease();
-            }
-        }
-
-
-
-        if (gamepad1.right_trigger > .01)
-            robot.turret.rotateRight(gamepad1.right_trigger * 2);
-
-        if (gamepad1.left_trigger > .01)
-            robot.turret.rotateLeft(gamepad1.left_trigger * 2);
-
-        if(toggleAllowed(gamepad1.dpad_right,dpad_right,1))
-            robot.setTarget(Constants.Target.NONE);
-        if(toggleAllowed(gamepad1.dpad_up,dpad_up,1))
-            robot.setTarget(Constants.Target.HIGH_GOAL);
-        if(toggleAllowed(gamepad1.dpad_left,dpad_left,1)){
-            switch(robot.getTarget()){
-                case FIRST_POWER_SHOT:
-                    robot.setTarget(Constants.Target.SECOND_POWER_SHOT);
-                    break;
-                case SECOND_POWER_SHOT:
-                    robot.setTarget(Constants.Target.THIRD_POWER_SHOT);
-                    break;
-                case THIRD_POWER_SHOT:
-                    robot.setTarget(Constants.Target.TEST_TARGET);
-                    break;
-                case TEST_TARGET:
-                    robot.setTarget(Constants.Target.FIRST_POWER_SHOT);
-                    break;
-                default:
-                    robot.setTarget(Constants.Target.FIRST_POWER_SHOT);
-            }
-        }
-//        if(toggleAllowed(gamepad1.dpad_down,dpad_down,1)) {
-//            switch(robot.getTarget()){
-//                case MID_GOAL:
-//                    robot.setTarget(Constants.Target.LOW_GOAL);
-//                    break;
-//                case LOW_GOAL:
-//                    robot.setTarget(Constants.Target.MID_GOAL);
-//                    break;
-//                default:
-//                    robot.setTarget(Constants.Target.MID_GOAL);
-//            }
-//        }
-
-//        robot.launcher.update();
-//        robot.turret.update(); //todo- make sure there wasn't a reason this was here
-//        robot.intake.update();
     }
 
     private void joystickDrivePregameMode() { //positions set
@@ -872,27 +603,8 @@ public class UG_6832 extends OpMode {
 
         pwrDamper = .90;
 
-        // drive joysticks
-//        pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
-//        pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
-
         robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
 
-        // turret controls - this is on gamepad2 in teleop - but on gamepad 1 for
-        // prematch setup
-//        if (notdeadzone(gamepad1.right_trigger))
-//            robot.turret.rotateRight(gamepad1.right_trigger * 5);
-//        if (notdeadzone(gamepad1.left_trigger))
-//            robot.turret.rotateLeft(gamepad1.left_trigger * 5);
-//
-//        if (notdeadzone(gamepad1.right_stick_y)) {
-//            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
-//        }
-        // fine adjustment of turret - this is on gamepad2 right stick in teleop - but
-        // on gamepad 1 for prematch setup
-//            robot.turret.adjust(gamepad1.left_stick_x * TURRET_SPEED);
-//        }
-        //press blue button to set blue alliance
         if(toggleAllowed(gamepad1.x,x,1)) {
             ALLIANCE = Constants.Alliance.BLUE;
             ALLIANCE_INT_MOD=-1;
@@ -947,23 +659,6 @@ public class UG_6832 extends OpMode {
             Constants.isInner = false;
         }
 
-        robot.launcher.setGripperExtendABobTargetPos(Constants.GRIPPER_TELEOP_INIT_POS);
-    }
-
-    private void logTurns(double target) {
-        telemetry.addData("Error: ", target - robot.getHeading());
-        // telemetry.update();
-    }
-
-    private void turnTest() {
-        if (robot.rotateIMU(90, 3)) {
-            telemetry.addData("Angle Error: ", 90 - robot.getHeading());
-            telemetry.addData("Final Test Heading: ", robot.getHeading());
-            robot.setZeroHeading();
-            active = false;
-        }
-        telemetry.addData("Current Angle: ", robot.getHeading());
-        telemetry.addData("Angle Error: ", 90 - robot.getHeading());
     }
 
     // the method that controls the main state of the robot; must be called in the
@@ -1047,19 +742,10 @@ public class UG_6832 extends OpMode {
         telemetry.addLine().addData("Alliance", () -> isInner ? "inner":"outer");
         telemetry.addLine() .addData("autoStage", () -> auto.autoStage).addData("Game Mode", () -> GAME_MODES[gameMode]);
         telemetry.addLine() .addData("Articulation", () -> robot.getArticulation());
-        telemetry.addLine().addData("elbow Current Position", () -> robot.launcher.getElbowCurrentPos());
-        telemetry.addLine().addData("elbow Target Position", () -> robot.launcher.getElbowTargetPos());
         telemetry.addLine()  .addData("chassis heading", () -> robot.getHeading());
-        telemetry.addLine()  .addData("chassis ticks left", () -> robot.getLeftMotorTicks());
-        telemetry.addLine()  .addData("chassis ticks right", () -> robot.getRightMotorTicks());
-        telemetry.addLine()  .addData("chassis avg ticks", () -> robot.getAverageTicks());
+        telemetry.addLine()  .addData("chassis avg abs ticks", () -> robot.getAverageAbsTicks());
+
         telemetry.addLine().addData("Loop time", "%.0fms", () -> loopAvg / 1000000);
-        telemetry.addLine().addData("Turret Heading", () -> robot.turret.getHeading());
-        telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
-        telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
-        telemetry.addLine().addData("Current Target", () -> robot.getTarget());
-
-
     }
 
 

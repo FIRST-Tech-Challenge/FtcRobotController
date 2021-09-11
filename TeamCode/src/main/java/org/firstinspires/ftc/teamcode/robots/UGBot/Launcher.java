@@ -39,6 +39,7 @@ public class Launcher {
     double flywheelTargetTPS = 0;
     double FlywheelPwr = 1;
     double flywheelTPS;
+    public boolean fullSpeed = false;
 
     //elbow variables
     PIDController elbowPID;
@@ -117,7 +118,10 @@ public class Launcher {
             prevNanoTime = System.nanoTime();
             prevMotorTicks = flywheelMotor.getCurrentPosition();
 
-            if (FlywheelActivePID) {
+            if(fullSpeed) {
+                flywheelMotor.setPower(1.0);
+            }
+            else if (FlywheelActivePID) {
                 spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelTPS, flywheelTargetTPS);
             }
             else{
@@ -244,7 +248,7 @@ public class Launcher {
         flywheelTargetTPS = TPS;
     }
 
-    private void setElbowTargetPos(int pos){elbowPos = Math.min(Math.max(pos, elbowMin), actualElbowMax -elbowMaxSafetyOffset);}
+    private void setElbowTargetPos(int pos){elbowPos = Math.min(Math.max(pos, elbowMin), actualElbowMax -Constants.elbowMaxSafetyOffset);}
 
     public void setElbowTargetPosNoCap(int pos){elbowPos = pos;}
 

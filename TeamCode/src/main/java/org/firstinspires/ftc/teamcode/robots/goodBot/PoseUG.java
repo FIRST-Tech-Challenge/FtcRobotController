@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.UGBot;
+package org.firstinspires.ftc.teamcode.robots.goodBot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -6,26 +6,19 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils.Point;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.KinematicModel;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
-import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.goodBot.utils.CanvasUtils.Point;
+import org.firstinspires.ftc.teamcode.robots.goodBot.utils.CanvasUtils;
+import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.goodBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
@@ -33,22 +26,8 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import java.util.Arrays;
 
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_NOW;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_POWER;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_TIME;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_BW_NOW;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_BW_POWER;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_FW_NOW;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_FW_POWER;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_JOG_FW_TIME;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_DELAY;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_FAR;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_NEAR;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_TOO_FAR;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ANGLE;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ELEVATION;
-import static org.firstinspires.ftc.teamcode.util.Conversions.between;
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
+import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
@@ -102,37 +81,12 @@ public class PoseUG {
     private DcMotor motorBackLeft = null;
     private DcMotor motorFrontLeft = null;
     private DcMotor motorBackRight = null;
-    private DcMotor elbow = null;
-    private DcMotorEx intakeMotor = null;
-    private Servo tiltServo = null;
-    private Servo outServo = null;
-    private DcMotorEx flywheelMotor = null;
-    private DcMotor gripperExtendABob = null;
-    private DcMotor turretMotor = null;
-    private Servo triggerServo = null;
-    private Servo gripperServo = null;
-    private Servo servoWiper = null;
     RevBlinkinLedDriver blinkin = null;
-
-    // All Subsystems
-    public Launcher launcher = null;
-    public Turret turret = null;
-    public Intake intake = null;
-
-    private KinematicModel model;
+    private Servo gripperServo = null;
 
     // All sensors
     BNO055IMU imu; // Inertial Measurement Unit: Accelerometer and Gyroscope combination sensor
-    BNO055IMU turretIMU;
-    DistanceSensor distForward;
-    DistanceSensor distLeft;
-    DistanceSensor distRight;
-    RevColorSensorV3 bottomColorSensor;
     // DigitalChannel magSensor;
-
-    private Constants.Target target = Constants.Target.NONE;
-    public TrajectoryCalculator trajCalc = new TrajectoryCalculator(poseX, poseY, target);
-    public TrajectorySolution trajSol = null;
 
     // drive train power values
     private double powerLeft = 0;
@@ -144,9 +98,9 @@ public class PoseUG {
     private double powerBackRight = 0;
 
     // PID values
-    public int forwardTPM = 1304;// todo- use drive IMU to get this perfect
-    int rightTPM = 1304; // todo - these need to be tuned for each robot
-    int leftTPM = 1304; // todo - these need to be tuned for each robot
+    public int forwardTPM = 2109;// todo- use drive IMU to get this perfect
+    int rightTPM = 2109; // todo - these need to be tuned for each robot
+    int leftTPM = 2109; // todo - these need to be tuned for each robot
     private int strafeTPM = 1909; // todo - fix value high priority this current value is based on Kraken -
 
     // minimech will be different
@@ -204,22 +158,13 @@ public class PoseUG {
     public enum Articulation { // serves as a desired robot articulation which may include related complex movements of the elbow, lift and supermanLeft
         inprogress, // currently in progress to a final articulation
         manual, // target positions are all being manually overridden
-        toggleTrigger,
         cardinalBaseRight,
         cardinalBaseLeft,
         returnHome,
-        testShot,
-        intakeDisk,
-        dumpWobbleGoal,
-        enterWobbleGoalMode,
-        exitWobbleGoalMode,
-        deployWobbleGoalAuton,
-        releaseWobbleGoalAuton,
-        ohBabyATriple
     }
 
     public enum RobotType {
-        BigWheel, Icarus, Minimech, TomBot, UGBot;
+        BigWheel, Icarus, Minimech, TomBot, UGBot, goodBot;
     }
 
     public RobotType currentBot;
@@ -234,15 +179,6 @@ public class PoseUG {
     Orientation imuAngles; // pitch, roll and yaw from the IMU
     // roll is in x, pitch is in y, yaw is in z
 
-    public boolean isAutonSingleStep() {
-        return autonSingleStep;
-    }
-
-    public void setAutonSingleStep(boolean autonSingleStep) {
-        this.autonSingleStep = autonSingleStep;
-    }
-
-    boolean autonSingleStep = false; // single step through auton deploying stages to facilitate testing and demos
 
     public void setIsBlue(boolean blue) {
         isBlue = blue;
@@ -336,38 +272,25 @@ public class PoseUG {
         // create hwmap with config values
         // this.driveLeft = this.hwMap.dcMotor.get("driveLeft");
         // this.driveRight = this.hwMap.dcMotor.get("driveRight");
-        this.elbow = this.hwMap.dcMotor.get("elbow");
 
-        this.flywheelMotor = (DcMotorEx) this.hwMap.dcMotor.get("flywheelMotor");
-        this.gripperExtendABob = (DcMotor) this.hwMap.dcMotor.get("gripperExtendABob");
-        this.triggerServo = this.hwMap.servo.get("triggerServo");
-        this.gripperServo = this.hwMap.servo.get("gripperServo");
-        this.servoWiper = this.hwMap.servo.get("servoWiper");
-
-        this.intakeMotor = (DcMotorEx) this.hwMap.dcMotor.get("intakeMotor");
-        this.tiltServo = this.hwMap.servo.get("tiltServo");
-        this.outServo = this.hwMap.servo.get("outServo");
-
+        this.gripperServo = hwMap.get(Servo.class, "servoGripper");
         this.blinkin = hwMap.get(RevBlinkinLedDriver.class, "blinkin");
-        this.distForward = this.hwMap.get(DistanceSensor.class, "distForward");
-        this.distRight = this.hwMap.get(DistanceSensor.class, "distRight");
-        this.distLeft = this.hwMap.get(DistanceSensor.class, "distLeft");
-        this.bottomColorSensor = this.hwMap.get(RevColorSensorV3.class, "bottomColorSensor");
-        // this.magSensor = this.hwMap.get(DigitalChannel.class, "magSensor");
-        // motorFrontLeft = hwMap.get(DcMotor.class, "motorFrontLeft");
+         motorFrontLeft = hwMap.get(DcMotor.class, "motorFrontLeft");
         motorBackLeft = hwMap.get(DcMotor.class, "motorBackLeft");
-        // motorFrontRight = hwMap.get(DcMotor.class, "motorFrontRight");
+         motorFrontRight = hwMap.get(DcMotor.class, "motorFrontRight");
         motorBackRight = hwMap.get(DcMotor.class, "motorBackRight");
-        turretMotor = hwMap.get(DcMotor.class, "turret");
         // elbow.setDirection(DcMotor.Direction.REVERSE);
 
-        // motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+        //reverse chassis motors on one side only - because they are reflected
+        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-        // motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
         motorBackRight.setDirection(DcMotor.Direction.FORWARD);
-        // motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+       //set coasting/braking preference
+         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // magSensor.setMode(DigitalChannel.Mode.INPUT);
@@ -385,11 +308,6 @@ public class PoseUG {
          * driveRight.setDirection(DcMotorSimple.Direction.FORWARD); }
          */
         // setup subsystems
-        launcher = new Launcher(elbow, flywheelMotor, gripperExtendABob, triggerServo, gripperServo, servoWiper);
-        turretIMU = hwMap.get(BNO055IMU.class, "imuTest");
-        turret = new Turret(turretMotor, turretIMU);
-        intake = new Intake(intakeMotor, tiltServo, outServo);
-
         moveMode = MoveMode.still;
 
         // setup both IMU's (Assuming 2 rev hubs
@@ -417,8 +335,6 @@ public class PoseUG {
 
         // dashboard
         dashboard = FtcDashboard.getInstance();
-
-        model = new KinematicModel();
     }
 
     public void setVisionTimes(long[] visionTimes) {
@@ -440,7 +356,6 @@ public class PoseUG {
     }
 
     public void resetEncoders() {
-        launcher.resetEncoders();
     }
 
     private StackHeight detection = StackHeight.HOLD_STATE;
@@ -490,68 +405,14 @@ public class PoseUG {
         Point posePoint = new Point(getPoseX(), getPoseY());
 
         // goal location
-        Point goalCanvasPoint = CanvasUtils.toCanvasPoint(new Point(Constants.Target.HIGH_GOAL.getX(), Constants.goalY));
-        fieldOverlay.strokeCircle(goalCanvasPoint.getX(), goalCanvasPoint.getY(), Constants.GOAL_RADIUS);
-
         // robot location
         Point robotCanvasPoint = CanvasUtils.toCanvasPoint(posePoint);
-        fieldOverlay.strokeCircle(robotCanvasPoint.getX(), robotCanvasPoint.getY(), Constants.ROBOT_RADIUS_INCHES);
-
-        // turret center in field coords
-        Point turretCenter = new Point(model.getTurretX(), model.getTurretY());
-        //Point turretCenter = new Point(getPoseX()  * Math.sin(poseHeadingRad), (getPoseY() - Constants.TURRET_AXIS_OFFSET) * Math.cos(poseHeadingRad));
-
-        Point turretCanvasCenter = CanvasUtils.toCanvasPoint(turretCenter);
-        fieldOverlay.strokeCircle(turretCanvasCenter.getX(), turretCanvasCenter.getY(), Constants.TURRET_RADIUS * Constants.INCHES_PER_METER);
-
-        //muzzle center
-        //muzzle angle in field orientation
-
-        Point muzzleCenterField = new Point(model.getMuzzleX(), model.getMuzzleY());
-        Point muzzleCanvasCenter = CanvasUtils.toCanvasPoint(muzzleCenterField);
-        fieldOverlay.strokeCircle(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), 2.5);
-
-        // power shots
-        Point firstPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.FIRST_POWER_SHOT.getX(), Constants.Target.FIRST_POWER_SHOT.y));
-        Point secondPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.SECOND_POWER_SHOT.getX(), Constants.Target.SECOND_POWER_SHOT.y));
-        Point thirdPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.THIRD_POWER_SHOT.getX(), Constants.Target.THIRD_POWER_SHOT.y));
-
-        fieldOverlay.strokeCircle(firstPowerShot.getX(), firstPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
-        fieldOverlay.strokeCircle(secondPowerShot.getX(), secondPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
-        fieldOverlay.strokeCircle(thirdPowerShot.getX(), thirdPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
-
-        if(!target.equals(Constants.Target.NONE)) {
-            // bearing to offset (speed corrected) target (dark green)
-            Point offsetTargetPoint = CanvasUtils.toCanvasPoint(new Point(trajSol.getxOffset(), getTarget().y));
-            fieldOverlay.setStroke("#4D934D");
-            fieldOverlay.strokeLine(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), offsetTargetPoint.getX(), offsetTargetPoint.getY());
-
-            // bearing to target (neon green)
-            Point targetPoint = CanvasUtils.toCanvasPoint(new Point(getTarget().getX(), getTarget().y));
-            fieldOverlay.setStroke("#39FF14");
-            fieldOverlay.strokeLine(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), targetPoint.getX(), targetPoint.getY());
-
-            // actual heading (purple)
-            CanvasUtils.drawVector(fieldOverlay, turretCenter, 1000, turret.getHeading(), "#6A0DAD");
-        }
+        fieldOverlay.strokeCircle(robotCanvasPoint.getX(), robotCanvasPoint.getY(), 9);
 
         // robot heading (black)
-        CanvasUtils.drawVector(fieldOverlay, posePoint, 2 * Constants.ROBOT_RADIUS_INCHES, poseHeading, "#000000");
-
-        // turret heading (red)
-        CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS_INCHES, turret.getHeading(), "#FF0000");
-
-        packet.put("trajectory calculator bearing to target", trajSol.getBearing());
-        packet.put("trajectory calculator flywheel speed output", trajSol.getVelocity());
-        packet.put("trajectory calculator launcher elevation output", trajSol.getElevation());
-
-        packet.put("TurretMotorPos", turret.getTicksPerDegree());
-        packet.put("TurretTicksPerDegree", turret.getTicksPerDegree());
-        packet.put("virtual IMU heading", turret.getVirtualHeading());
-        packet.put("virtual heading variance", turret.getHeadingVariance());
+        CanvasUtils.drawVector(fieldOverlay, posePoint, 2 * 9, poseHeading, "#000000");
 
         // vision
-        packet.put("Right Laser", getDistRightDist());
         packet.put("Frame Count", frameCount);
         packet.put("FPS", String.format("%.2f", visionFPS));
         packet.put("Total frame time ms", totalFrameTimeMs);
@@ -566,9 +427,6 @@ public class PoseUG {
         for(long time: visionTimes)
             totalTime += time;
         packet.put("total time", totalTime);
-        packet.put("current flywheel velocity", launcher.getFlywheelTPS());
-        packet.put("target flywheel velocity", launcher.getFlywheelTargetTPS());
-        packet.put("flywheel motor power", launcher.flywheelMotor.getPower() * 200);
         packet.put("pose y",getPoseY());
         packet.put("pose x",getPoseX());
         packet.put("velocity x", velocityX);
@@ -576,50 +434,12 @@ public class PoseUG {
         packet.put("target angle for the thing", goalHeading);
         packet.put("avg ticks",getAverageTicks());
         packet.put("voltage", getBatteryVoltage());
-        packet.put("emaAmperage", intake.EMAofIntakeAmps);
-//        packet.put("x offset", trajSol.getxOffset());
-//        packet.put("disk speed", trajSol.getVelocity());
-//        packet.put("pose speed", poseSpeed);
-//        packet.put("rotVelBase", rotVelBase);
         packet.put("zero indicator", 0);
-        packet.put("turret error", turret.turretPID.getError());
-        packet.put("turret integrated error", turret.turretPID.getTotalError());
-        packet.put("turret derivative error", turret.turretPID.getDeltaError());//ben was here
         packet.put("base error", turnPID.getError());
         packet.put("base integrated error", turnPID.getTotalError());
         packet.put("base derivative error", turnPID.getDeltaError());
-        packet.put("turret angle offset", Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
-        packet.put("staring height offset", Constants.STARTING_HEIGHT_OFFSET);
-        packet.put("IntakeThing", intake.intakeMotor.getCurrent(CurrentUnit.AMPS));
-        packet.put("EMAofIntakeAmps", intake.EMAofIntakeAmps);
-        packet.put("EMAofIntakeAmpsLowerLimit", Constants.INTAKE_AUTO_PICKUP_AMPS_LIM);
-        packet.put("2Bottom color sensor R", bottomColorSensor.red());
-        packet.put("3Bottom color sensor G", bottomColorSensor.green());
-        packet.put("1Bottom color sensor B", bottomColorSensor.blue());
-//        packet.put("4is on line", (bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD) &&  bottomColorSensor.green() > bottomColorSensor.red() && bottomColorSensor.green() > bottomColorSensor.blue() ? 100 : 0);
-        packet.put("extendabobtarget", launcher.gripperExtendABobTargetPos);
         packet.put("loop time", loopTime);
-
-//        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
-//        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
-
         dashboard.sendTelemetryPacket(packet);
-    }
-
-    private Double oldValue;
-
-    public double exponentialMovingAverage(double value) {
-        if (oldValue == null) {
-            oldValue = value;
-            return value;
-        }
-        double newValue = oldValue + Constants.K_AMP_ALPHA * (value - oldValue);
-        oldValue = newValue;
-        return newValue;
-    }
-
-    public double getGoalHeading() {
-        return goalHeading;
     }
 
     double getBatteryVoltage() {
@@ -681,9 +501,6 @@ public class PoseUG {
         posePitch = wrapAngle(imuAngles.thirdAngle, offsetPitch);
         poseRoll = wrapAngle(imuAngles.secondAngle, offsetRoll);
 
-        //monitor for tent and motors moving to start ringevator rolling
-        //placing this monitor early since we want a good chance of it being overridden by subsequent intake behaviors
-        TentRingevatorMonitor();
 
         /*
          * double jerkX = (cachedXAcceleration - lastXAcceleration) / loopTime; boolean
@@ -764,151 +581,27 @@ public class PoseUG {
 
         lastUpdateTimestamp = System.nanoTime();
 
-        model.update(
-          getPoseX(), getPoseY(), poseHeadingRad, turret.getHeading(), launcher.getElbowAngle() ,turret.getTurretTargetHeading(), intake.getTiltTargetPosition(), powerLeft, powerRight
-        );
-
-        //monitor for extended gripper to set turret into Danger Mode
-        if(launcher.IsGripperExtended()) turret.setDangerModeActive(true);
-        else turret.setDangerModeActive(false);
-
-        powerLeft = model.getLeftPower();
-        powerRight = model.getRightPower();
+        motorFrontLeft.setPower(clampMotor(powerFrontLeft));
+        motorFrontRight.setPower(clampMotor(powerFrontRight));
         motorBackLeft.setPower(clampMotor(powerBackLeft));
-        motorBackRight.setPower(clampMotor(powerBackRight));
-
-        //turret.setTurntableAngle(model.getTurretHeading());
-
-        trajCalc.updatePos(model.getMuzzleX(), model.getMuzzleY());
-        trajCalc.updateVel(velocityX, velocityY);
-        trajCalc.setTarget(target);
-        trajSol = trajCalc.getTrajectorySolution();
-
-        if(setTargetInProgress){
-            setTarget(target);
-        }
-
-//        if(isRampedUp()){
-//            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-//
-//        }
-//        else{
-//            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
-//        }
-
-        maintainTarget();
-
-        //auto intake when we are tented and ring crosses the right distance sensor
-        TentTake();
-
-        MiniJog(); //service any request for jogs
-        RollingJogForward();
-        RollingJogBackward();
-
-//        if(bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD
-//                &&  bottomColorSensor.green() > bottomColorSensor.red() && bottomColorSensor.green() > bottomColorSensor.blue()){
-//            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-//        }
-
-
-        //subsystem updates should be the very last movement methods called in this update cycle
-        launcher.update();
-        turret.update(getHeading());
-        intake.update(); //watermelon
+        motorBackRight.setPower(clampMotor(powerBackRight));//watermelon
         sendTelemetry();
-    }
-
-    public void setAutoLaunchActive(boolean autoLaunchActive){
-        this.autoLaunchActive = autoLaunchActive;
-    }
-
-
-
-    boolean setTargetInProgress = false;
-    public void setTarget(Constants.Target target) {
-        this.target = target;
-
-        if(Constants.IN_WOBBLE_MODE){
-            setTargetInProgress = true;
-            exitWobbleGoalMode();
-        }
-        else{
-            setTargetInProgress = false;
-        }
-
-        //when we come out of targeting, go to chassis relative mode and set up for catching rings
-        if (target == Constants.Target.NONE){
-            SetRingCatch();
-        }
-        else {
-            turret.setCurrentMode(Turret.TurretMode.fieldRelative);}
-    }
-
-    public void SetRingCatch(){
-        turret.setCurrentMode(Turret.TurretMode.chassisRelative);
-        turret.setTurretAngle(INTAKE_TO_TURRET_XFER_ANGLE);
-        launcher.setElbowTargetAngle(INTAKE_TO_TURRET_XFER_ELEVATION);
-    }
-
-    public Constants.Target getTarget() {
-        return target; }
-
-        private boolean noneInit = false;
-    public void maintainTarget() {
-        switch(target) {
-            case NONE:
-                if(noneInit == false) {
-                    flywheelIsActive = false;
-                    launcher.setFlywheelActivePID(false);
-                    noneInit = true;
-                }
-
-                break;
-            default:
-                    noneInit = false;
-                    goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
-                    turret.setTurretAngle(goalHeading + Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
-
-                    launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.HEIGHT_MULTIPLIER);
-                    flywheelIsActive = true;
-                    ringChambered = true; //todo- when the color sensor is implemented, this is where it will be updated
-                    //we might not need this when we get the color sensor implemented
-
-                    if(autoLaunchActive &&
-                            ringChambered &&
-                            System.nanoTime() - autoLaunchTimer > Constants.autoLaunchTime * 1E9 &&
-                            poseY < 66/Constants.INCHES_PER_METER &&
-                            target != Constants.Target.NONE){
-                        flywheelIsActive = true;
-                        if(toggleTriggerArticulation()){
-                            autoLaunchTimer = System.nanoTime();
-                        }
-                    }
-
-                    if (flywheelIsActive) {
-                        launcher.setFlywheelActivePID(true);
-                        launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity() * Constants.RPS_MULTIPLIER);
-                    } else {
-                        launcher.setFlywheelActivePID(false);
-                    }
-                break;
-        }
     }
 
     public void updateSensors(boolean isActive) {
         update(imu, 0, 0, isActive);
     }
 
-    public double getDistForwardDist() {
-        return distForward.getDistance(DistanceUnit.METER);
-    }
-
-    public double getDistLeftDist() {
-        return distLeft.getDistance(DistanceUnit.METER);
-    }
-
-    public double getDistRightDist() {
-        return distRight.getDistance(DistanceUnit.METER);
+    boolean gripperOpen = true;
+    void toggleGripper(){
+        if(gripperOpen){
+            gripperServo.setPosition(Conversions.servoNormalize(1300));
+            gripperOpen = false;
+        }
+        else{
+            gripperServo.setPosition(Conversions.servoNormalize(2100));
+            gripperOpen = true;
+        }
     }
 
 
@@ -923,20 +616,6 @@ public class PoseUG {
      */
     public void driveIMU(double Kp, double Ki, double Kd, double pwr, double targetAngle) {
         movePID(Kp, Ki, Kd, pwr, poseHeading, targetAngle);
-    }
-
-    public boolean driveIMUDistanceWithReset(double pwr, double targetAngle, boolean forward, double targetMeters) {
-        if (!driveIMUDistanceInitialzed) {
-            resetMotors(false);
-        }
-        return driveIMUDistance(pwr,  targetAngle,  forward,  targetMeters);
-    }
-
-    public boolean driveIMUUntilDistanceWithReset(double pwr, double targetAngle, boolean forward, double targetMeters) {
-        if (!driveIMUDistanceInitialzed) {
-            resetMotors(false);
-        }
-        return driveIMUUntilDistance(pwr,  targetAngle,  forward,  targetMeters);
     }
 
     /**
@@ -1002,127 +681,13 @@ public class PoseUG {
         if (Math.abs(targetMeters) > Math.abs(closeEnoughDist)) {
             //driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
             //driveIMU(turnP, turnI, turnD, pwr, wrap360(targetAngle), false);
-            movePIDMixer(pwr, forward, targetMeters,0,getHeading(),targetAngle);
+            movePID(pwr, forward, targetMeters,0,getHeading(),targetAngle);
             return false;
         } // destination achieved
         else {
             stopChassis(); //todo: maybe this should be optional when you are stringing moves together
             return true;
         }
-    }
-
-    public boolean driveUntilXNotSoJankPossibly(double pwr, boolean forward, double targetX, double closeEnoughDist) {
-        return driveToFieldPosition(getNewPosAway(targetX)[0], getNewPosAway(targetX)[1], forward, pwr, closeEnoughDist);
-    }
-
-    public boolean driveUntilXJank(double pwr, boolean forward, double targetX, double closeEnoughDist) {
-        forward = !forward;
-        //driveAbsoluteDistance(MaxPower, heading, forward, distance,.1)
-        if (!forward) {
-            moveMode = moveMode.backward;
-            //targetMeters = -targetMeters;
-            //pwr = -pwr;
-        } else
-            moveMode = moveMode.forward;
-
-
-
-        // if this statement is true, then the robot has not achieved its target
-        // position
-        if (Math.abs(getX() - targetX) > Math.abs(closeEnoughDist)) {
-            //driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
-            //driveIMU(turnP, turnI, turnD, pwr, wrap360(targetAngle), false);
-
-            movePIDMixer(pwr, forward, getX() - targetX,0,getHeading(),getHeading());
-            return false;
-        } // destination achieved
-        else {
-            stopChassis(); //todo: maybe this should be optional when you are stringing moves together
-            return true;
-        }
-    }
-
-    double WallVal = 0.0;
-
-    int countOutliers = 0;
-    double driveWallDistanceTarget = 0;
-
-    public boolean alignmentRun(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
-
-        if (!driveIMUDistanceInitialzed) {
-            // set what direction the robot is supposed to be moving in for the purpose of
-            // the field position calculator
-
-            // calculate the target position of the drive motors
-            driveWallDistanceTarget = (long) Math.abs((targetMeters * forwardTPM)) + Math.abs(getAverageTicks());
-            driveIMUDistanceInitialzed = true;
-        }
-
-
-
-        if (!forward) {
-            moveMode = moveMode.backward;
-            targetMeters = -targetMeters;
-            pwr = -pwr;
-        } else
-            moveMode = moveMode.forward;
-
-//        if(Math.abs(getAverageTicks() / Math.abs(driveWallDistanceTarget)) > .90){
-//            if(rotVelBase < 5){
-//                shiftOdometer(getHeading());
-//                initialized = false;
-//            }
-//        }
-
-        // if this statement is true, then the robot has not achieved its target
-        // position
-        if (Math.abs(driveWallDistanceTarget) > Math.abs(getAverageTicks())) {
-            // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
-            movegenericPIDMixer(turnP, turnI, turnD,pwr,0,currentVal,targetVal);
-            return false;
-        } // destination achieved\
-        else {
-            //stopAll();
-            driveMixerDiffSteer(0, 0);
-            driveIMUDistanceInitialzed = false;
-
-            setPoseHeading(0);
-
-            return true;
-        }
-    }
-
-    public boolean driveIMUUntilDistance(double pwr, double targetAngle, boolean forward, double targetMetersAway) {
-
-        if (!forward) {
-            moveMode = moveMode.backward;
-            pwr = -pwr;
-        } else
-            moveMode = moveMode.forward;
-
-        // if this statement is true, then the robot has not achieved its target
-        // position
-        if (Math.abs(targetMetersAway) > Math.abs(getDistForwardDist())) {
-            // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
-            driveIMU(turnP, turnI, turnD, pwr, targetAngle, false);
-            return false;
-        } // destination achieved
-        else {
-            // stopAll();
-            driveMixerDiffSteer(0, 0);
-            driveIMUDistanceInitialzed = false;
-            return true;
-        }
-        // long targetPos = (long)(targetMeters * forwardTPM);
-        // if(Math.abs(targetPos) > Math.abs(getAverageTicks())){//we've not arrived yet
-        // driveMixerDiffSteer(power,0);
-        // return false;
-        // }
-        // else { //destination achieved
-        // driveMixerDiffSteer(0,0);
-        // return true;
-        // }
-
     }
 
     int fieldPosState = 0;
@@ -1159,8 +724,6 @@ public class PoseUG {
     }
 
     int fieldPosStateToo = 0;
-
-
     // drive with a final heading
         public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double maxPower, double closeEnoughDist, double targetFinalHeading){
         switch (fieldPosStateToo){
@@ -1170,7 +733,7 @@ public class PoseUG {
                 }
                 break;
             case 1:
-                if(rotateIMU(targetFinalHeading, 1)){
+                if(rotateIMU(targetFinalHeading, 5)){
                     fieldPosStateToo = 0;
                     return true;
                 }
@@ -1193,13 +756,7 @@ public class PoseUG {
                 break;
             case 1: //driving to target location
                 if(getDistanceTo((Constants.ALLIANCE_INT_MOD) * targetPose.x, targetPose.y) <= launchMoveDist){
-                    //kick in launcher adjustments if requested
-                    if(targetPose.launchElevation > -.01) { //set elevation{
-                        launcher.setElbowTargetAngle(targetPose.launchElevation);
-                    }
-                    if(targetPose.launchHeading > -.01) {
-                        turret.setTurretAngle(targetPose.launchHeading);
-                    }
+
                 }
 
                 if(targetPose.baseHeading > -.01) {
@@ -1214,16 +771,10 @@ public class PoseUG {
                 }
                 break;
             case 2: //end of travel
-                // if we haven't kicked in launcher adjustments yet, now is the time to do it
-                if (targetPose.launchElevation > -.01 && targetPose.launchStart > .99) { //set elevation{
-                        launcher.setElbowTargetAngle(targetPose.launchElevation);
-                    }
+                if(targetPose.launchStart > .99){}
 
-                if(targetPose.launchHeading > -.01 && targetPose.launchStart > .99) {
-                    turret.setTurretAngle(targetPose.launchHeading);
-                }
-                    getFieldPosStateThree = 0;
-                    return true;
+                return true;
+
                 }
         return false;
     }
@@ -1232,57 +783,12 @@ public class PoseUG {
         return Math.sqrt(Math.pow((targetX-getPoseX()),2) + Math.pow((targetY-getPoseY()),2));
     }
 
-    private double[] getNewPosAway(double x) {
-        double h = x / Math.asin(getHeading());
-        double y = Math.sqrt(Math.pow(h,2) - Math.pow(x,2));
-        double[] j = new double[2];
-        j[0] = x;
-        j[1] = y;
-        return j;
-    }
-
     public double getBearingTo(double targetX, double targetY) {
         return Math.toDegrees(Math.atan2((targetX-getPoseX()), (targetY-getPoseY())));
     }
 
-    private double getBearingFromTo(double fromX, double fromY, double targetX, double targetY) {
-        return Math.toDegrees(Math.atan2((targetX-fromX), (targetY-fromY)));
-    }
-
-    private double getBearingToWrapped(double targetX, double targetY) {
+    public double getBearingToWrapped(double targetX, double targetY) {
         return wrap360(Math.toDegrees(Math.atan2((targetX-getPoseX()), (targetY-getPoseY()))));
-    }
-
-    /**
-     * a method written to test servos by plugging them into a designated servo
-     * tester port on the REV module designed to work best with debounced gamepad
-     * buttons
-     *
-     * @param largeUp   if true, increase PWM being sent to the servo tester by a
-     *                  large amount
-     * @param smallUp   if true, increase PWM being sent to the servo tester by a
-     *                  small amount
-     * @param smallDown if true, decrease PWM being sent to the servo tester by a
-     *                  small amount
-     * @param largeDown if true, decrease PWM being sent to the servo tester by a
-     *                  large amount
-     */
-    public void servoTester(boolean largeUp, boolean smallUp, boolean smallDown, boolean largeDown) {
-        // check to see if the PWM value being sent to the servo should be altered
-        if (largeUp) {
-            servoTesterPos += 100;
-        }
-        if (smallUp) {
-            servoTesterPos += 25;
-        }
-        if (smallDown) {
-            servoTesterPos -= 25;
-        }
-        if (largeDown) {
-            servoTesterPos -= 100;
-        }
-
-        // send the PWM value to the servo regardless of if it is altered or not
     }
 
     // todo - All Articulations need to be rebuilt - most of these are from icarus
@@ -1303,132 +809,10 @@ public class PoseUG {
         return true;
     }
 
-    public boolean isRampedUp(){
-        if(target == Constants.Target.NONE){
-            return false;
-        }
 
-        if ((Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < Constants.rampedUpPercent)
-                || (getTarget()== Constants.Target.NONE&& launcher.flywheelTPS<50)){ //you are also allowed to trigger (for settling rings) if you have no active target and your TPS is very low
-            return true;
-        }
-        return false;
-    }
-
-    public int toggleTriggerState = 0;
-    public long lastTriggerTime;
-
-    public boolean toggleTriggerArticulation() {
-
-        if (getTarget()== Constants.Target.NONE){
-
-        }
-
-
-//        if(isRampedUp()){
-            switch (toggleTriggerState) {
-                case 0:
-                    if(target == Constants.Target.NONE) {
-                        launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_FLIP);
-                    }
-                    else{
-                        launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_SHOOT);
-                    }
-                    lastTriggerTime = System.currentTimeMillis();
-                    toggleTriggerState++;
-                    break;
-                case 1:
-                    if (System.currentTimeMillis() - lastTriggerTime > 500) {
-                        launcher.setTriggerTargetPos(Constants.LAUNCHER_TRIGGER_BACK);
-                        toggleTriggerState = 0;
-                        return true;
-                    }
-                    break;
-            }
-//        }
-        return false;
-    }
-
-    int ohBabyAStage = 0;
-    double ohBabyATimer = 0;
-    public boolean ohBabyATriple(){
-        switch (ohBabyAStage){
-            case 0:
-                setTarget(Constants.Target.HIGH_GOAL);
-                ohBabyATimer = System.nanoTime();
-                ohBabyAStage++;
-                break;
-            case 1:
-                if(turret.isTurretNearTarget()) {
-                    if(shootRingAuton(Constants.Target.HIGH_GOAL, 3))
-                        ohBabyAStage++;
-                }
-                break;
-            case 2:
-                setTarget(Constants.Target.NONE);
-                ohBabyAStage = 0;
-                return true;
-        }
-        return false;
-    }
-
-    int shootRingStage = 0;
-    int ringsShot = 0;
-    double shootTime = 0;
-
-    public boolean shootRingAuton(Constants.Target newTarget, int numShots){
-        switch(shootRingStage){
-            case 0:
-                setTarget(newTarget);
-                flywheelIsActive = true;
-                //wait until we are on-target
-                if (turret.isTurretNearTarget()) {
-                    shootRingStage++;
-                    shootTime = System.nanoTime();
-                }
-                break;
-            case 1:
-                if(toggleTriggerArticulation()){
-                    ringsShot++;
-                    shootRingStage++;
-                    shootTime = System.nanoTime();
-                }
-                break;
-            case 2:
-                if(ringsShot == numShots){
-                    shootRingStage++;
-                }
-                else if(System.nanoTime() - shootTime > 0.3 * 1E9){
-                    shootRingStage--;//ben was here
-                }
-                break;
-            case 3:
-                shootRingStage = 0;
-                setTarget(Constants.Target.NONE);
-                flywheelIsActive = false;
-                ringsShot = 0;
-                return true;
-        }
-        return false;
-    }
-
-    boolean isNavigating = false;
-    boolean autonTurnInitialized = false;
     double autonTurnTarget = 90;
-
     public boolean cardinalBaseTurn(boolean isRightTurn) {
-//        if (!autonTurnInitialized) {
-//            autonTurnTarget = nextCardinal(getHeading(), isRightTurn, 10);
-//            autonTurnInitialized = true;
-//            isNavigating = true;
-//        }
-//
-//        if (isNavigating == false)
-//            return true; // abort if drivers override
-
         if (rotateIMU(autonTurnTarget, 5.0) ) {
-//            isNavigating = false;
-//            autonTurnInitialized = false;
             autonTurnTarget = wrap360(isRightTurn ? autonTurnTarget + 90 : autonTurnTarget - 90);
             return true;
         }
@@ -1439,185 +823,18 @@ public class PoseUG {
     public boolean returnHome(){
         switch(returnHomeState){
             case 0:
-                if(driveToFieldPosition(Constants.Position.HOME,false,  .3,.08)){
+                if(rotateIMU(wrap360(360 - getBearingToWrapped(Constants.Position.HOME.x,Constants.Position.HOME.y)),5)){
                     returnHomeState++;
                 }
                 break;
             case 1:
+                if(driveToFieldPosition(Constants.Position.HOME,false,  .3,.08)){
+                    returnHomeState++;
+                }
+                break;
+            case 2:
                 returnHomeState = 0;
                 return true;
-        }
-        return false;
-    }
-
-    int dumpWobbleGoalState = 0;
-    double wobbleGoalDumpTimer = 0.0;
-    public boolean dumpWobbleGoal(){
-
-        switch (dumpWobbleGoalState) {
-            case 0:
-                launcher.setElbowTargetAngle(45);
-                launcher.wobbleGrip();
-                wobbleGoalDumpTimer = System.nanoTime();
-                dumpWobbleGoalState++;
-                break;
-            case 1:
-                if(System.nanoTime() - wobbleGoalDumpTimer > 1 * 1E9) {
-                    if (driveToFieldPosition(Constants.Position.WOBBLE_GOAL_DUMP, false, .8, .1)) {
-                        launcher.wobbleRelease();
-                        wobbleGoalDumpTimer = System.nanoTime();
-                        dumpWobbleGoalState++;
-                    }
-                }
-                break;
-            case 2:
-                if (System.nanoTime() - wobbleGoalDumpTimer > .7 * 1E9) {
-                    dumpWobbleGoalState = 0;
-                    exitWobbleGoalMode();
-                    return true;
-                }
-        }
-        return false;
-    }
-
-    boolean gripperModeIsInReverse = false;
-    int enterWobbleGoalModeState = 0;
-    double enterWobbleGoalModeTimer = 0.0;
-    public boolean enterWobbleGoalMode() {
-        switch (enterWobbleGoalModeState) {
-            case 0:
-                gripperModeIsInReverse = true;
-                setTarget(Constants.Target.NONE);
-                turret.setCurrentMode(Turret.TurretMode.chassisRelative);
-                launcher.setElbowTargetAngle(25);
-                turret.setTurretAngle(180 + Constants.GRIPPER_HEADING_OFFSET);
-                enterWobbleGoalModeTimer = System.nanoTime();
-                enterWobbleGoalModeState++;
-                break;
-            case 1:
-                if(System.nanoTime() - enterWobbleGoalModeTimer > 2 * 1E9) {
-                    turret.setDangerModeActive(true);
-                    launcher.gripperExtend();
-                    launcher.gripperOpenWide();
-                    Constants.IN_WOBBLE_MODE = true;
-                    enterWobbleGoalModeTimer = System.nanoTime();
-                    enterWobbleGoalModeState++;
-                }
-                break;
-
-            case 2:
-                if(System.nanoTime() - enterWobbleGoalModeTimer > .5 * 1E9) {
-                    launcher.setElbowTargetAngle(0);
-                    enterWobbleGoalModeTimer = System.nanoTime();
-                    enterWobbleGoalModeState++;
-                }
-                break;
-            case 3:
-                if(System.nanoTime() - enterWobbleGoalModeTimer > 1 * 1E9) {
-                    enterWobbleGoalModeState = 0;
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
-
-    int exitWobbleGoalState = 0;
-    double exitWobbleGoalTimer = 0.0;
-    public boolean exitWobbleGoalMode(){
-        switch (exitWobbleGoalState) {
-            case 0:
-                launcher.wobbleGrip();
-                launcher.gripperRetract();
-                exitWobbleGoalTimer = System.nanoTime();
-                exitWobbleGoalState++;
-                break;
-            case 1:
-                if(System.nanoTime() - enterWobbleGoalModeTimer > 1.3 * 1E9){
-                    gripperModeIsInReverse = false;
-                    turret.setDangerModeActive(false);  //todo this is dangerous and not needed
-                    Constants.IN_WOBBLE_MODE = false;
-                    exitWobbleGoalState = 0;
-                    return true;
-                }
-        }
-        return false;
-    }
-
-    int deployWobbleGoalAutonState = 0;
-    double deployWobbleGoalAutonTimer = 0.0;
-    public boolean deployWobbleGoalGripperAuton(){
-        switch (deployWobbleGoalAutonState){
-            case 0:
-                turret.setDangerModeActive(true);
-                launcher.setElbowTargetAngle(0);
-                launcher.wobbleRelease();
-                deployWobbleGoalAutonTimer = System.nanoTime();
-                deployWobbleGoalAutonState++;
-                break;
-            case 1:
-                if(System.nanoTime() - deployWobbleGoalAutonTimer > .5 * 1E9) {
-                    launcher.gripperExtend();
-                    deployWobbleGoalAutonState++;
-                    deployWobbleGoalAutonTimer = System.nanoTime();
-                }
-                break;
-            case 2:
-                if(System.nanoTime() - deployWobbleGoalAutonTimer > .5 * 1E9) {
-                    deployWobbleGoalAutonState = 0;
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
-
-    int releaseWobbleGoalAutonState = 0;
-    double releaseWobbleGoalAutonTimer = 0.0;
-    public boolean releaseWobbleGoalAuton(boolean withRetract){
-        switch (releaseWobbleGoalAutonState){
-            case 0: //release and set down
-                launcher.wobbleRelease();
-                launcher.setElbowTargetAngle(0);
-                releaseWobbleGoalAutonTimer = System.nanoTime();
-                releaseWobbleGoalAutonState++;
-
-            case 1: //for safety, raise for retract
-                if(System.nanoTime() - releaseWobbleGoalAutonTimer > .5 * 1E9) {
-                    launcher.setElbowTargetAngle(30);
-                    releaseWobbleGoalAutonTimer = System.nanoTime();
-                    releaseWobbleGoalAutonState++;
-                    }
-                break;
-
-            case 2://close gripper prior to retract
-                if(System.nanoTime() - releaseWobbleGoalAutonTimer > .5 * 1E9) {
-                    if (withRetract) launcher.wobbleGrip();
-                    releaseWobbleGoalAutonTimer = System.nanoTime();
-                    releaseWobbleGoalAutonState++;
-                }
-                break;
-
-            case 3: //retract gripper or raise elbow
-                if(System.nanoTime() - releaseWobbleGoalAutonTimer > .5 * 1E9) {
-                    if (withRetract)
-                        launcher.gripperRetract();
-                    else {
-                        releaseWobbleGoalAutonState = 0;
-                        return true;
-                    }
-
-                    releaseWobbleGoalAutonTimer = System.nanoTime();
-                    releaseWobbleGoalAutonState++;
-                }
-                break;
-
-            case 4: //give it time to complete raising or retracting
-                if(System.nanoTime() - releaseWobbleGoalAutonTimer > .5 * 1E9) {
-                    releaseWobbleGoalAutonState = 0;
-                    return true;
-                }
-                break;
         }
         return false;
     }
@@ -1634,53 +851,19 @@ public class PoseUG {
         switch (articulation) {
             case manual:
                 break; // do nothing here - likely we are directly overriding articulations in game
-            case toggleTrigger:
-                if(toggleTriggerArticulation())
-                        articulation = Articulation.manual;
-                break;
             case cardinalBaseLeft:
                 if (cardinalBaseTurn(false)) {
-                    articulation = PoseUG.Articulation.manual;
+                    articulation = Articulation.manual;
                 }
                 break;
             case cardinalBaseRight:
                 if (cardinalBaseTurn(true)) {
-                    articulation = PoseUG.Articulation.manual;
+                    articulation = Articulation.manual;
                 }
                 break;
             case returnHome:
                 if (returnHome()) {
-                    articulation = PoseUG.Articulation.manual;
-                }
-                break;
-            case dumpWobbleGoal:
-                if(dumpWobbleGoal()){
-                    articulation = PoseUG.Articulation.manual;
-                }
-                break;
-            case enterWobbleGoalMode:
-                if(enterWobbleGoalMode()){
-                    articulation = PoseUG.Articulation.manual;
-                }
-                break;
-            case exitWobbleGoalMode:
-                if(exitWobbleGoalMode()){
-                    articulation = PoseUG.Articulation.manual;
-                }
-                break;
-            case deployWobbleGoalAuton:
-                if(exitWobbleGoalMode()){
-                    articulation = PoseUG.Articulation.manual;
-                }
-                break;
-            case releaseWobbleGoalAuton:
-                if(exitWobbleGoalMode()){
-                    articulation = PoseUG.Articulation.manual;
-                }
-                break;
-            case ohBabyATriple:
-                if(ohBabyATriple()){
-                    articulation = PoseUG.Articulation.manual;
+                    articulation = Articulation.manual;
                 }
                 break;
             default:
@@ -1727,8 +910,6 @@ public class PoseUG {
      * Stops all motors on the robot
      */
     public void stopAll() {
-        launcher.stopAll();
-        turret.stopAll();
         driveMixerMec(0, 0, 0);
     }
 
@@ -1795,6 +976,8 @@ public class PoseUG {
         // provide power to the motors
         motorBackLeft.setPower(clampMotor(powerBackLeft));
         motorBackRight.setPower(clampMotor(powerBackRight));
+        motorFrontLeft.setPower(clampMotor(powerFrontLeft));
+        motorFrontRight.setPower(clampMotor(powerFrontRight));
 
     }
 
@@ -1821,7 +1004,6 @@ public class PoseUG {
      * @param rotate  sets how much power will be provided to clockwise rotation
      */
     public void driveMixerDiffSteer(double forward, double rotate) {
-
         driveMixerMec(forward, 0, rotate);
     }
 
@@ -1832,19 +1014,19 @@ public class PoseUG {
      *                       active after reset
      */
     public void resetMotors(boolean enableEncoders) {
-        // motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         if (enableEncoders) {
-            // motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+             motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            // motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+             motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else {
-            // motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+             motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            // motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+             motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
@@ -1900,11 +1082,19 @@ public class PoseUG {
         return averageTicks;
     }
 
-    public int getLeftMotorTicks() {
+    public int getFrontLeftMotorTicks() {
+        return motorFrontLeft.getCurrentPosition();
+    }
+
+    public int getFrontRightMotorTicks() {
+        return motorFrontRight.getCurrentPosition();
+    }
+
+    public int getBackLeftMotorTicks() {
         return motorBackLeft.getCurrentPosition();
     }
 
-    public int getRightMotorTicks() {
+    public int getBackRightMotorTicks() {
         return motorBackRight.getCurrentPosition();
     }
 
@@ -1972,8 +1162,8 @@ public class PoseUG {
      * @param targetAngle  the target angle of the robot in the coordinate system of
      *                     the sensor that provides the current angle
      */
-    public void movePIDMixer(double maxPwrFwd,  boolean forward, double dist, double pwrStf, double currentAngle,
-                             double targetAngle) {
+    public void movePID(double maxPwrFwd, boolean forward, double dist, double pwrStf, double currentAngle,
+                        double targetAngle) {
 
         // setup turnPID
         turnPID.setOutputRange(-.5, .5);
@@ -2253,135 +1443,6 @@ public class PoseUG {
         }
     }
 
-    boolean intakeStartedByMonitor = false;
-    void TentRingevatorMonitor(){
-    if (intake.isTented()){
-            if(Math.abs(motorBackLeft.getPower())>.1 || Math.abs(motorBackRight.getPower())>.1) {
-                intake.setIntakeSpeed(1);
-                intakeStartedByMonitor=true; //yup, this is a very weak way to do it
-            }
-            else{
-                    intake.setIntakeSpeed(0);
-                    intakeStartedByMonitor=false;
-                }
-        }
-    }
-
-
-    //auto intake when we are tented and ring crosses the right distance sensor
-    long tentTakeTime = 0;
-    boolean tentTakeInit = false;
-    public void TentTake() {
-        //try to adjust foward or backward for edge case rings
-        //todo again, rushed - really need to set the calculated distance to move forward or back
-        if (intake.isTented() && intake.isRollingRingMode()) {
-            if(getDistRightDist()<INTAKE_ROLLING_RING_NEAR)
-                //INTAKE_ROLLING_JOG_BW_NOW=true;
-            if(between(getDistRightDist(),INTAKE_ROLLING_RING_FAR,INTAKE_ROLLING_RING_TOO_FAR))
-            {
-                //INTAKE_ROLLING_JOG_FW_NOW = true;
-                //intake.setIntakeSpeed(1); //todo: this should really be implemented as a monitor to turn on the intake motor if the robot is moving and tented is true
-            }
-
-            if (between(getDistRightDist(), INTAKE_ROLLING_RING_NEAR, INTAKE_ROLLING_RING_FAR)) {
-                if (!tentTakeInit) {
-                    tentTakeInit = true;
-                    tentTakeTime = futureTime(INTAKE_ROLLING_RING_DELAY);
-                }
-                //don't interrupt other articulations
-                //if (getArticulation() == Articulation.manual || getArticulation() == Articulation.toggleTrigger)
-                if (System.nanoTime() > tentTakeTime) {
-                    intake.Do(Intake.Behavior.INTAKE);
-                    tentTakeInit = false;
-                }
-            }
-        }
-    }
-
-    //jog the robot backward briefly
-    boolean miniJogInit = false;
-    double miniJogTime = 0;
-    public void MiniJog(){
-        if (INTAKE_MINIJOG_NOW)
-        {
-            if (!miniJogInit) {
-                miniJogTime = futureTime(INTAKE_MINIJOG_TIME);
-                miniJogInit = true;
-            }
-
-            if (miniJogTime > System.nanoTime()){
-                //set power on drive motors backward
-                motorBackLeft.setPower(-INTAKE_MINIJOG_POWER);
-                motorBackRight.setPower(-INTAKE_MINIJOG_POWER);
-
-            }
-            else {
-                miniJogInit = false;
-                motorBackLeft.setPower(0);
-                motorBackRight.setPower(0);
-                INTAKE_MINIJOG_NOW=false;
-            }
-
-        }
-
-    }
-
-    //jog the robot forward briefly - horrid way to duplicate code, but in a hurry
-    boolean rollingJogFwInit = false;
-    double rollingJogFwTime = 0;
-    public void RollingJogForward(){
-        if (INTAKE_ROLLING_JOG_FW_NOW)
-        {
-            if (!rollingJogFwInit) {
-                rollingJogFwTime = futureTime(INTAKE_ROLLING_JOG_FW_TIME);
-                rollingJogFwInit = true;
-            }
-
-            if (rollingJogFwTime > System.nanoTime()){
-                //set power on drive motors backward
-                motorBackLeft.setPower(INTAKE_ROLLING_JOG_FW_POWER);
-                motorBackRight.setPower(INTAKE_ROLLING_JOG_FW_POWER);
-
-            }
-            else {
-                rollingJogFwInit = false;
-                motorBackLeft.setPower(0);
-                motorBackRight.setPower(0);
-                INTAKE_ROLLING_JOG_FW_NOW=false;
-            }
-
-        }
-
-    }
-    //jog the robot forward briefly - screaming horrid way to duplicate code, but in a hurry
-    boolean rollingJogBwInit = false;
-    double rollingJogBwTime = 0;
-    public void RollingJogBackward(){
-        if (INTAKE_ROLLING_JOG_BW_NOW)
-        {
-            if (!rollingJogBwInit) {
-                rollingJogBwTime = futureTime(INTAKE_ROLLING_JOG_FW_TIME);
-                rollingJogBwInit = true;
-            }
-
-            if (rollingJogBwTime > System.nanoTime()){
-                //set power on drive motors backward
-                motorBackLeft.setPower(INTAKE_ROLLING_JOG_BW_POWER);
-                motorBackRight.setPower(INTAKE_ROLLING_JOG_BW_POWER);
-
-            }
-            else {
-                rollingJogBwInit = false;
-                motorBackLeft.setPower(0);
-                motorBackRight.setPower(0);
-                INTAKE_ROLLING_JOG_BW_NOW=false;
-            }
-
-        }
-
-    }
-
-
     /**
      * pivotTurn is a simple low level method to turn the robot from an arbitrary
      * point on the virtual axle of a diffsteer platform call this method until it
@@ -2434,7 +1495,6 @@ public class PoseUG {
             // set drive motors to run to position mode
             motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
             motorBackRight.setTargetPosition((int) arcright * rightTPM);
             motorBackLeft.setTargetPosition((int) arcleft * leftTPM);
 
@@ -2480,33 +1540,6 @@ public class PoseUG {
      */
     public void setZeroHeading() {
         setHeading(0);
-        turret.setHeading(0);
-    }
-
-    /**
-     * assign the current heading of the robot to alliance setup values
-     */
-    public void setHeadingAlliance() {
-        if(isBlue){
-            setHeading(90);
-            turret.setHeading(90);
-        }
-        else
-        {
-            setHeading(270);
-            turret.setHeading(270);
-        }
-    }
-
-    public void setHeadingBase(double offset) {
-        setHeading(360 - offset);
-    }
-
-    /**
-     * assign the current heading of the robot to 45 (robot on field perimeter wall)
-     */
-    public void setWallHeading() {
-        setHeading(45);
     }
 
     /**
