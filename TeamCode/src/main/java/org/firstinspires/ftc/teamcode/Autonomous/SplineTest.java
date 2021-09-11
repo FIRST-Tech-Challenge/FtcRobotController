@@ -22,7 +22,11 @@ public class SplineTest extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         waitForStart();
-        robot.tripleSplineToPositionHead(1, 0, 0, 0, 10, -15, 15, -25, 20, -30, 30, 1.0);
+        robot.partOfPolySplineToPosition(1, 0, 0, 0, 10, -15, 15, -25, 20, true, false, -90,1.0);
+        robot.partOfPolySplineToPosition(1, 0, 0, 0, 10, -15, 15, -25, 20, false, false, -90, 1.0);
+        robot.partOfPolySplineToPosition(1, 0, 10, -15, 15, -25, 20, -30, 30, false, false, -90,1.0);
+        robot.partOfPolySplineToPosition(1, 0, 10, -15, 15, -25, 20,-30,30, false, true, 0,1.0);
+//        robot.tripleSplineToPositionHead(1, 0, 0, 0, 10, -15, 15, -25, 20, -30, 30, 1.0);
 //        robot.goToPosition(48,48,90,1.0);
 //        robot.goToPosition(36,36,90*3/4,0.8);
 //        robot.goToPosition(24,24,90*1/2,0.6);

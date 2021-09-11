@@ -102,11 +102,17 @@ public class Robot {
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
-    public void tripleSplineToPosition(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power){
-        drivetrain.tripleSplineToPosition(direction, x0, y0, x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4,  power);
-    };
+    public void tripleSplineToPosition(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power, double targetAnglu){
+        drivetrain.tripleSplineToPosition(direction, x0,  y0,  x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4,  power,  targetAnglu);
+    }
     public void tripleSplineToPositionHead(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power){
-        drivetrain.tripleSplineToPositionHead(direction,x0,y0,x1,y1,x2,y2,x3,y3,x4,y4,power);
+        drivetrain.tripleSplineToPositionHead(direction,  x0,  y0,  x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4,  power);
+    }
+    public void partOfPolySplineToPosition(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, boolean start, boolean end, double power, double targetAnglu){
+        drivetrain.partOfPolySplineToPosition(direction,  x0,  y0,  x1,  y1,  x2,  y2,  x3,  y3,  start,  end,  targetAnglu,  power);
+    }
+    public void partOfPolySplineToPositionHead(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, boolean start, boolean end, double power){
+        drivetrain.partOfPolySplineToPositionHead(direction,  x0,  y0,  x1,  y1,  x2,  y2,  x3,  y3,  start,  end,  power);
     }
     public void setPosition(float xPosition,float yPosition, float newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
     public double[] track(){return drivetrain.track();}//track[0] is y value, track[1] is x value, and track[2] is angle

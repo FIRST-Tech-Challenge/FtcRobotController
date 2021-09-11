@@ -55,11 +55,11 @@ public class    WobbleGoal {
 
     //tells motor to go to a specified position based on ticks(i)
     public void goToPosition(Position p) {
-        wobbleGoalMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         int i = 0;
         if (p == Position.REST) {
+            //change ticksFor(PositionName) to change the tick count pretty epic right, gamer? be sure to take note of the i-=100 at the bottom though, sussy boy
             int ticksForREST = 100;
             i = ticksForREST;
         } else if (p == Position.AutoGRAB) {
@@ -83,6 +83,7 @@ public class    WobbleGoal {
             int ticksForAutonomousDrop = 800;
             i = ticksForAutonomousDrop;
         } else if(p==Position.RUN){
+            //wowillium why such^^hard try
             int ticksForRun=570;
             i=ticksForRun;
         }
@@ -93,19 +94,20 @@ public class    WobbleGoal {
         }
         i-=100;
 //        op.sleep(1000);
-        if (p == Position.DROP) {
-            double wobbleGoalSpeedDrop = 0.7;
+        wobbleGoalMotor.setTargetPosition(i);
+        //might want to set it back to RUNWITHOUTENCODER after this, gamer
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (i<wobbleGoalMotor.getCurrentPosition()) {
+            double wobbleGoalSpeedDrop = -0.7;
             wobbleGoalMotor.setPower(wobbleGoalSpeedDrop);
         } else {
             double wobbleGoalSpeed = 0.7;
             wobbleGoalMotor.setPower(wobbleGoalSpeed);
         }
-
-        wobbleGoalMotor.setTargetPosition(i);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
 //        op.sleep(2000);
+        //ok gamer tighten the set screw of wobble goal arm
     }
 
     public void printCurrentLocation(){
