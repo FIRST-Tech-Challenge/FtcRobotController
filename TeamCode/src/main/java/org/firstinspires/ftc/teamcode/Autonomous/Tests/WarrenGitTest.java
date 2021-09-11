@@ -4,15 +4,15 @@ public class WarrenGitTest {
 
     int apple_cost=0;
 
-    public WarrenGitTest(){
+    public WarrenGitTest() {
         apple_cost=6;
     }
 
-    public void aaaaaaaaaMOGUS() {
+    public void susalphabet() {
         apple_cost = 25;
     }
 
-    int victorMasThisManyApple(){
+    int victorMasThisManyApple() {
         return 11;
     }
 }
