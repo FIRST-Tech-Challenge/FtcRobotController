@@ -111,7 +111,7 @@ public class SachalTeleOp extends OpMode
     public void loop() {
        // the teleop
 
-        rightY = gamepad1.right_stick_y;
+        rightY = -gamepad1.right_stick_y;
         rightX = gamepad1.right_stick_x;
         leftX = gamepad1.left_stick_x;
 
