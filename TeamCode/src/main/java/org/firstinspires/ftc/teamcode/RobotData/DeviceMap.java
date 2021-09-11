@@ -31,12 +31,12 @@ public class DeviceMap {
         rightRear = hwMap.get(DcMotor.class, "rightRear");
         frontClaw = hwMap.get(Servo.class, "frontClaw");
         light = hwMap.get(RevBlinkinLedDriver.class, "Led");
-
+        //Setting Power to motors
         leftFront.setPower(0);
         leftRear.setPower(0);
         rightFront.setPower(0);
         rightRear.setPower(0);
-
+            //Setting to run without encoders
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
