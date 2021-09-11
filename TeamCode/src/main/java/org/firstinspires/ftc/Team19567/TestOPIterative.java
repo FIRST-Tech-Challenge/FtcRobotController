@@ -17,7 +17,7 @@ public class TestOPIterative extends OpMode //Declares the class TestOPIterative
 {
     //Declare OpMode members
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
     private DcMotor rightDCFront = null;
     private DcMotor leftDCBack = null;
@@ -29,8 +29,6 @@ public class TestOPIterative extends OpMode //Declares the class TestOPIterative
 
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
-
         //Get the motors from the robot's configuration
 
         leftDCFront  = hardwareMap.get(DcMotor.class, "leftFront");
@@ -60,7 +58,7 @@ public class TestOPIterative extends OpMode //Declares the class TestOPIterative
     public void start() {
         telemetry.addData("Status", "Started");
         telemetry.update();
-        runtime.reset();
+        runtime.reset(); //Reset runtime
     }
 
     @Override
@@ -85,16 +83,11 @@ public class TestOPIterative extends OpMode //Declares the class TestOPIterative
         final double leftBackSpeed = r*acc*Math.cos(angleDC) + gamepad1.right_stick_x;
         final double rightBackSpeed = r*acc*Math.sin(angleDC) - gamepad1.right_stick_x;
 
-        if(gamepad1.x) { //If the x button is pressed do the following:
-            if(slowMode) slowMode = false; //If slowmode has already been initiated, turn it off
-            else slowMode = true; //Otherwise, turn it on
-        }
+        if(gamepad1.x) slowMode = !slowMode;
+        if(gamepad1.a) isServoMaxed = !isServoMaxed;
+
         if(slowMode) acc = 0.3; //If slowmode is on, then change movement multiplier speed to 0.3 (30%)
         else acc = 1.0; //Otherwise, keep it at 1.0 (100%)
-        if(gamepad1.a) { //If the a button is pressed, do the following (note that this if statement is not an else if from the first one in the event that multiple buttons are pressed at once):
-            if(isServoMaxed) isServoMaxed = false; //If the servo is already at its maximum position, then set isServoMaxed to be false to tell the servo to move back to its starting position
-            else isServoMaxed = true; //Otherwise, set the variable isServoMaxed to be true
-        }
         if(isServoMaxed) servo1.setPosition(1.0); //If the servo should be at its maximum position, then set it to that position , 1.0 (100%)
         else servo1.setPosition(0.1); //Otherwise, set the servo position to be the minimum amount (Not the absolute minimum here, but that's not important)
 
