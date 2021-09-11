@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -62,9 +63,9 @@ public class SachalTeleOp extends OpMode
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-    double rightY;
-    double rightX;
+    double leftY;
     double leftX;
+    double rightX;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -80,6 +81,12 @@ public class SachalTeleOp extends OpMode
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
         motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
+
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -111,14 +118,14 @@ public class SachalTeleOp extends OpMode
     public void loop() {
        // the teleop
 
-        rightY = -gamepad1.right_stick_y;
-        rightX = gamepad1.right_stick_x;
+        leftY = -gamepad1.left_stick_y;
         leftX = gamepad1.left_stick_x;
+        rightX = gamepad1.right_stick_x;
 
-        motorFrontLeft.setPower(rightY + rightX + leftX);
-        motorBackLeft.setPower(rightY - rightX - leftX);
-        motorFrontRight.setPower(rightY - rightX - leftX);
-        motorBackRight.setPower(rightY + rightX + leftX);
+        motorFrontLeft.setPower(leftY + leftX + rightX);
+        motorBackLeft.setPower(leftY - leftX + rightX);
+        motorFrontRight.setPower(leftY - leftX - rightX);
+        motorBackRight.setPower(leftY + leftX - rightX);
     }
 
     /*
