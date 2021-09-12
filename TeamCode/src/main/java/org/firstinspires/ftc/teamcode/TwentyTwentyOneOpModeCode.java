@@ -3,7 +3,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,7 +11,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.lang.Math;
 
@@ -59,7 +57,7 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
         LauncherCode.Launcher launcher = new LauncherCode.Launcher();
         LauncherCode.LauncherStates launchStates = LauncherCode.LauncherStates.Start;
         LifterCode.Lifter lift = new LifterCode.Lifter();
-        GrabberCode.Grabber grabber = new GrabberCode.Grabber();
+        Grabber grabber = new Grabber();
         DistanceSensorClass.RingClass ring = new DistanceSensorClass.RingClass();
         ChassisMovementCode.Chassis chassis = new ChassisMovementCode.Chassis();
         ChassisMovementCode.OperState driveOpState = ChassisMovementCode.OperState.NORMALDRIVE;

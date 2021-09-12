@@ -92,7 +92,7 @@ public class AutoCode3 extends LinearOpMode {
         AutoCode3.OperState driveOpState = AutoCode3.OperState.PrepClose;
         AutoCode3.Menu menu = AutoCode3.Menu.StartLocation;
         DistanceSensorClass.RingClass ring = new DistanceSensorClass.RingClass();
-        GrabberCode.Grabber grabber = new GrabberCode.Grabber();
+        Grabber grabber = new Grabber();
         Control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
         expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
         lift.LiftMotor = hardwareMap.get(DcMotor.class, "LiftMotor");
