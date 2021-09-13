@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import java.lang.Math;
 
 @TeleOp
-//Merging, lift, and part of intake done by nahtE, the rest done by lahiN.
 //back right front right front left back left
 public class TwentyTwentyOneOpModeCode extends LinearOpMode {
     
@@ -474,7 +473,6 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
                     break;
 
                 case ABSOLUTEDRIVE:
-
                     drive = -this.gamepad1.left_stick_y;
                     strafe = -this.gamepad1.left_stick_x;
                     telemetry.addData("zAngle", chassis.zAngle);
@@ -484,11 +482,8 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
                     telemetry.addData("fr", chassis.frontRight);
 
                     rotate = 0;
-
-
                     chassis.SetMotors (drive, strafe, rotate);
                     chassis.Drive();
-
                     chassis.Encoders();
                     chassis.SetAxisMovement();
 

@@ -117,7 +117,6 @@ public class AutoCode3 extends LinearOpMode {
         double strafePreset = 0;
         double rotationGoal = chassis.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double originalRotation = rotationGoal;
-
         //menu variables
         boolean IsMenuDone = false;
         boolean OnRed = true; //true is on red, false is on blue.
