@@ -31,6 +31,11 @@ public class DeviceMap {
         rightRear = hwMap.get(DcMotor.class, "rightRear");
         frontClaw = hwMap.get(Servo.class, "frontClaw");
         light = hwMap.get(RevBlinkinLedDriver.class, "Led");
+        leftFront.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        rightFront.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
+
         //Setting Power to motors
         leftFront.setPower(0);
         leftRear.setPower(0);
