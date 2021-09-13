@@ -14,16 +14,6 @@ public class Goodbot_TeleOp extends LinearOpMode {
     private DcMotor rightFront;
     private DcMotor rightRear;
 
-    public void mecanum_movement_2020(double forward, double turn, double strafe) {
-        double leftFrontPower = forward + turn + strafe;
-        double leftRearPower = forward + turn - strafe;
-        double rightFrontPower = forward - turn - strafe;
-        double rightRearPower = forward - turn + strafe;
-        robot.leftFront.setPower(leftFrontPower);
-        robot.leftRear.setPower(leftRearPower);
-        robot.rightFront.setPower(rightFrontPower);
-        robot.rightRear.setPower(rightRearPower);
-
     @Override
     public void runOpMode() throws InterruptedException
     {                   // Naming the motors in configuration
