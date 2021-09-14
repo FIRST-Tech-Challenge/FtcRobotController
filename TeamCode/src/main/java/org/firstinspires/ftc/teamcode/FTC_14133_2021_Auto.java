@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;// https://first-tech-challenge.github.io/SkyStone/  This is the link to ALL metered of FTC
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 @Autonomous(name="FTC 14133 2021 Auto", group="Auto")
+@Disabled
 public class FTC_14133_2021_Auto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx lb = null;        // Sets the variables of the mecanum wheels
@@ -22,7 +24,7 @@ public class FTC_14133_2021_Auto extends LinearOpMode {
     static final double MOTOR_TICK_COUNT = 2800;        //
     private DcMotorEx shooter = null;         // Sets the variable of the shooter
     private DcMotorEx arm = null;         // Sets the variable of the arm that is long but there is not a arm that is short
-    private DcMotorEx intake = null;          // Sets the variable of the intake
+    private DcMotorEx intake = null;          // Sets the variable of tffhe intake
     private DcMotorEx conveyor = null;          // Sets the variable of the conveyor
     //   DigitalChannel LimitSwitchLongArm;          // Sets the variable of the LimitSwitchLongArm
     DigitalChannel beambreak;          // Sets the variable of the beambreak
@@ -37,7 +39,7 @@ public class FTC_14133_2021_Auto extends LinearOpMode {
 
     Telemetry.Item patternName;
     Telemetry.Item display;
-    Arm_Test.DisplayKind displayKind;
+    //Arm_Test.DisplayKind displayKind;
     Deadline ledCycleDeadline;
     Deadline gamepadRateLimit;
 
@@ -242,7 +244,7 @@ public class FTC_14133_2021_Auto extends LinearOpMode {
 
     public void runOpMode() {
 
-        displayKind = Arm_Test.DisplayKind.AUTO;
+        //displayKind = Arm_Test.DisplayKind.AUTO;
 
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         pattern = RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN;
