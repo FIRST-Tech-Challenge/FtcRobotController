@@ -286,7 +286,7 @@ public class FtcRobotControllerActivity extends Activity
 
     PreferenceRemoterRC.getInstance().start(prefRemoterStartResult);
 
-    receivedUsbAttachmentNotifications = new ConcurrentLinkedQueue<UsbDevice>();
+    receivedUsbAttachmentNotifications = new ConcurrentLinkedQueue<>();
     eventLoop = null;
 
     setContentView(R.layout.activity_ftc_controller);
