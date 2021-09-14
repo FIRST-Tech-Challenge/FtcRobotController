@@ -42,8 +42,6 @@ import java.util.List;
 
 public class PermissionValidatorWrapper extends PermissionValidatorActivity {
 
-    private final String TAG = "PermissionValidatorWrapper";
-
     /*
      * The list of dangerous permissions the robot controller needs.
      */
