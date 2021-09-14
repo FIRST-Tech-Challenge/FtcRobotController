@@ -205,13 +205,11 @@ public class FtcRobotControllerActivity extends Activity
       assert usbDevice != null; // Protects from a NPE
       RobotLog.vv(TAG, "ACTION_USB_DEVICE_ATTACHED: %s", usbDevice.getDeviceName());
 
-      if (usbDevice != null) {  // paranoia
-        // We might get attachment notifications before the event loop is set up, so
-        // we hold on to them and pass them along only when we're good and ready.
-        if (receivedUsbAttachmentNotifications != null) { // *total* paranoia
-          receivedUsbAttachmentNotifications.add(usbDevice);
-          passReceivedUsbAttachmentsToEventLoop();
-        }
+      // We might get attachment notifications before the event loop is set up, so
+      // we hold on to them and pass them along only when we're good and ready.
+      if (receivedUsbAttachmentNotifications != null) { // *total* paranoia
+        receivedUsbAttachmentNotifications.add(usbDevice);
+        passReceivedUsbAttachmentsToEventLoop();
       }
     }
   }
