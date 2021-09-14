@@ -202,6 +202,7 @@ public class FtcRobotControllerActivity extends Activity
 
     if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction())) {
       UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+      assert usbDevice != null; // Protects from a NPE
       RobotLog.vv(TAG, "ACTION_USB_DEVICE_ATTACHED: %s", usbDevice.getDeviceName());
 
       if (usbDevice != null) {  // paranoia
