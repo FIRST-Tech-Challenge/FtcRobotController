@@ -19,6 +19,7 @@ public class Beeline_TeleOp_Test extends LinearOpMode {
     private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
     private ElapsedTime runtime = new ElapsedTime();
 
+    double rotate = 0;
     double speed = 0.5;
     boolean reverse = false;
 
