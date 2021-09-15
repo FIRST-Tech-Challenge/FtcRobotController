@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.ArrayList;
 
 
-@TeleOp(name = "Mecanum TeleOp Test", group = "Linear Opmode")
-public class Mecanum_TeleOp_Test extends LinearOpMode {
+@TeleOp(name = "Beeline TeleOp Test", group = "Linear Opmode")
+public class Beeline_TeleOp_Test extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -19,11 +19,10 @@ public class Mecanum_TeleOp_Test extends LinearOpMode {
     private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
     private ElapsedTime runtime = new ElapsedTime();
 
-    double rotate = 0;
     double speed = 0.5;
     boolean reverse = false;
 
-    public Mecanum_TeleOp_Test() {
+    public Beeline_TeleOp_Test() {
 
     }
 
@@ -121,28 +120,6 @@ public class Mecanum_TeleOp_Test extends LinearOpMode {
             RFPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate + strafe), -1.0, 1.0) ;
             RBPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate - strafe), -1.0, 1.0) ;
 
-//            if(reverse){
-//                int currentIndex = speedList.size() - 1;
-//                int maxIndex = 0;
-//                double maxValue = -2;
-//                for(int i = currentIndex - 200; i <= currentIndex; i++){
-//                    if(Math.abs(Double.valueOf(speedList.get(i)[0])) > maxValue){
-//                        maxIndex = i;
-//                        maxValue = speedList.get(i)[0];
-//                    }
-//                }
-//                LFPower = -0.8 * speedList.get(maxIndex)[0];
-//                LBPower = -0.8 * speedList.get(maxIndex)[1];
-//                RFPower = -0.8 * speedList.get(maxIndex)[2];
-//                RBPower = -0.8 * speedList.get(maxIndex)[3];
-//                telemetry.addLine("BREAK APPLIED");
-//                LFPower = 0;
-//                LBPower = 0;
-//                RFPower = 0;
-//                RBPower = 0;
-
-//            }
-
             Double currentSpeed[] = {LFPower, LBPower, RFPower, RBPower};
             speedList.add(currentSpeed);
 
@@ -156,18 +133,7 @@ public class Mecanum_TeleOp_Test extends LinearOpMode {
             telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, drive);
             telemetry.addData("speed:", speed);
 
-            /*if(loop == 200){
-                if (reverse){
-                    reverse = false;
-                }
-                telemetry.addData("duration of a loop: %.2f", runtime.milliseconds());
-                sleep(100);
-                loop = 0;
-            }*/
             telemetry.update();
-            //loop++;
-
-//            released = true;
         }
     }
 
