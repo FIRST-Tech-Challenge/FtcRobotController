@@ -11,12 +11,13 @@ import java.util.Arrays;
  Encapsulates gamepads for easy interpretation of driver input
  */
 
-public class DriverInput implements ConcurrentOperation
+public class DriverInput
 {
     private Gamepad controller;
     private boolean[] buttonStates;     // One state for each button; there are 14 buttons available
     private boolean[] lastButtonStates;
     private double[] buttonHeldCounts;
+    private double startTime = System.currentTimeMillis();
 
 
     public DriverInput(Gamepad cont)
@@ -117,8 +118,12 @@ public class DriverInput implements ConcurrentOperation
         return controller.right_stick_y;
     }
 
+    public boolean[] getButtonStates(){
+        return buttonStates;
+    }
+
     // Call at end of loop
-    public void update(double eTime)
+    public void update()
     {
         for(int i = 0; i < 14; i++)
         {
@@ -143,13 +148,14 @@ public class DriverInput implements ConcurrentOperation
         {
             if(buttonStates[i])
             {
-                buttonHeldCounts[i] += eTime;
+                buttonHeldCounts[i] += (startTime - System.currentTimeMillis());
             }
             else
             {
                 buttonHeldCounts[i] = 0;
             }
         }
+        startTime = System.currentTimeMillis();
     }
 
 }

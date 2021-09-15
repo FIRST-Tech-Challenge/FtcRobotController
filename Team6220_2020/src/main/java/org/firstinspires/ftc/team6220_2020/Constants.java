@@ -7,9 +7,9 @@ package org.firstinspires.ftc.team6220_2020;
 public class Constants
 {
     // Standard conversions------------------------------------------
-    // This is for an AndyMark 40; 20s are 560 ticks / rot and 60s are 1680 ticks / rot
-    public static final int AM_40_TICKS_PER_ROTATION = 1120;
-    public static final int US_DIGITAL_TICKS_PER_ROTATION = 1440;   // For odometry wheels
+    public static final double AM_40_TICKS_PER_ROTATION = 1120;
+    public static final double AM_20_TICKS_PER_ROTATION = 537.6;
+    public static final double US_DIGITAL_TICKS_PER_ROTATION = 1440;   // For odometry wheels
     public static final double MM_PER_INCH = 25.4;
     public static final double IN_FIELD_SIZE = 140.94;  // Not 144" due to interlocking pieces being cut off on field edge.
     public static final double AM_37_TICKS_PER_ROTATION = 103.6;
@@ -27,7 +27,7 @@ public class Constants
     // Robot specs---------------------------------------------------
     public static final double WHEEL_DIAMETER_IN = 4.0;         // 4 inch diameter wheel
     public static final double SPROCKET_RATIO = 16.0 / 16.0;    // Driven to driving sprocket teeth
-    public static final double IN_PER_ANDYMARK_TICK = (Math.PI * WHEEL_DIAMETER_IN) / (0.5 * AM_40_TICKS_PER_ROTATION * SPROCKET_RATIO);    // Num inches per tick of drive motors
+    public static final double IN_PER_ANDYMARK_TICK = (Math.PI * WHEEL_DIAMETER_IN) / (AM_20_TICKS_PER_ROTATION * SPROCKET_RATIO);    // Num inches per tick of drive motors
     //---------------------------------------------------------------
 
 
@@ -44,10 +44,10 @@ public class Constants
     // Movement control constants------------------------------------
     public static final double MINIMUM_DRIVE_POWER = 0.08;
     public static final double MAX_DRIVE_POWER = 1.0;
-    public static final double MINIMUM_TURNING_POWER = 0.02;    // todo Too small?
+    public static final double MINIMUM_TURNING_POWER = 0.03;
     // Constants for adjusting powers that are proportional to angle and position differences
-    public static final double TURNING_POWER_FACTOR = 0.01;
-    public static final double DRIVE_POWER_FACTOR = 0.04;
+    public static final double TURNING_POWER_FACTOR = 0.005;
+    public static final double DRIVE_POWER_FACTOR = 0.03;
     //---------------------------------------------------------------
 
 
@@ -57,9 +57,9 @@ public class Constants
     public static final double ROTATION_I = 0.0;
     public static final double ROTATION_D = 0.0;
     public static final double TRANSLATION_P = DRIVE_POWER_FACTOR;
-    public static final double TRANSLATION_I = 0;
-    public static final double TRANSLATION_D = 0;
-    //----------------------------------------------------------------
+    public static final double TRANSLATION_I = 0.0;
+    public static final double TRANSLATION_D = 0.0;
+    //---------------------------------------------------------------
 
 
     // Vuforia and OpenCV constants----------------------------------
@@ -75,7 +75,13 @@ public class Constants
     public static final double MINIMUM_TRIGGER_VALUE = 0.1;
     //---------------------------------------------------------------
 
+    //Servo Values --------------------------------------------------
+    public static final double SERVO_LAUNCH_REST = 0.27;
+    public static final double SERVO_LAUNCH_FIRE = 0.45;
+    //---------------------------------------------------------------
+
     // Helpful Constants
-    public static  final double MILLIS_TO_MIN = 60000;
-    //--------------------------------------------------------------
+    public static final double MILLIS_TO_MIN = 60000;
+    public static final double MINIMUM_LAUNCHER_SPEED = 1200;
+    //---------------------------------------------------------------
 }
