@@ -39,16 +39,14 @@ public class SampleAutoScript extends AbstractOpMode {
     //TODO add vision stuff in here too
     MecanumDriveTrain drivetrain;
     Localizer localizer;
-    PurePursuitMovement movement;
-    ArrayList<CurvePoint> allPoints;
+
     OpenCvWebcam webcam;
     DetectedPosition position;
 
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Vector2D(25, 25), 0); //calibrate this
-        //movement = new PurePursuitMovement(localizer);
-        drivetrain = new MecanumDriveTrain(hardwareMap);
+        localizer = new Localizer(hardwareMap, new Vector2D(0, 0), 0, 10); //calibrate this
+        drivetrain = new MecanumDriveTrain(hardwareMap, localizer);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         DetectionAlgorithm detector = new DetectionAlgorithm();
@@ -56,12 +54,6 @@ public class SampleAutoScript extends AbstractOpMode {
         webcam.openCameraDeviceAsync(() -> {
             webcam.startStreaming(320, 240); //specify cam orientation and calibrate the resolution
         });
-        allPoints = new ArrayList<>(); //IT IS CRITICAL WHEN BUILDING THIS LIST to add the starting position of the robot, this way the framework works as intended
-//        allPoints.add(new CurvePoint(localizer.getCurrentPosition().x, localizer.getCurrentPosition().y, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
-//        allPoints.add(new CurvePoint(50, 25, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
-//        allPoints.add(new CurvePoint(50, 50, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
-//        allPoints.add(new CurvePoint(25, 50, 1.0, 0.5, 10, Math.toRadians(50), 1.0));
-
     }
 
     enum DetectedPosition{
@@ -112,38 +104,21 @@ public class SampleAutoScript extends AbstractOpMode {
         }
     }
 
-    /*
-    this method should simply drive the robot in the pattern shown below
 
-
-    <-<-<-<-
-            ^
-            |
-            ^
-            |
-    ->->->->
-    the most important thing to note here is YOU MUST ADD
-     THE START POSITION OF THE ROBOT TO THE LIST THE METHOD WILL CRASH IF YOU DONT
-     */
 
     @Override
     protected void onStart() {
         //Drive Thread
-        /*
-        This thread is telling the robot to repeatedly recalculate its power based on some math
-        and reset the power as a sligthly different vector each time resulting in humanoid movements
-        this process is called Pure Pursuit FTC team 11115 did an excellent video series on the subject
-        if you are interested
-         */
-        webcam.stopStreaming(); // may not be necessary if we are processing realtime location of the balls on the field
+
+        webcam.stopStreaming(); //may not be necessary if we are processing realtime location of the elements on the field
+        //rather you would want to switch to a dynamic processing pipeline in that case
         new Thread(){
             public void run(){
-                followPath(allPoints);
-                //this is my fix to Spline entanglement. Essentially if that comes up parse the path into
-                // another list and simply call a line like below, from there the method should cover the rest
-                //This may make some minor oscillations however with smart pathing we can avoid this and make a fluid auto path
-                //that will not have very much pauses
-                //followPath(secondPath);
+                localizer.start();
+                //this command moves 2 feet forward at a rate of 12 inches per second, this is optimized using
+                //a proportional integral derivative (PID) control loop which isnt necessary but will greatly minimize slippage
+                drivetrain.moveToPosition(new Vector2D(0,24), 12, 0, 0.5);
+                //you will essentially keep running things like this until you no longer have points to run to
             }
         }.start();
         //Arm Thread
@@ -160,19 +135,13 @@ public class SampleAutoScript extends AbstractOpMode {
         while(opModeIsActive()); //this is here to stall the main thread so the OpMode does not prematurely end
     }
 
-    private void followPath(ArrayList<CurvePoint> path) {
-//        movement.initPath(path);
-//        while(movement.isActive || opModeIsActive()){
-//            movement.followCurve(path, 0); //path is the path and follow angle is in DEGREES
-//            drivetrain.setPower(new Vector2D(MovementVars.movementX, -MovementVars.movementY), MovementVars.movementTurn);
-//        }
-    }
 
     //prints to a file in the format
     // x y rad
+    // VERY UNLIKELY that we use this, this is more often used for cleanup steps
     @Override
     protected void onStop() {
-
+        localizer.stopThread();
 //        Point currentPos = localizer.getCurrentPosition();
 //        double currentAng = localizer.getGlobalRads();
 //        File f = new File(Constants.SAVE_FILE_PATH);

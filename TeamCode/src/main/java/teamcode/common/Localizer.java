@@ -73,10 +73,12 @@ public class Localizer extends Thread {
     Matrix previousVislamMat;
 
 
+    //Non Kalman constructor, may make this an option later but for now this is deprecated
     /**
      * @param position in inches
      * @param globalRads in radians
      */
+    @Deprecated
     public Localizer(HardwareMap hardwareMap, Vector2D position, double globalRads) {
         minElapsedTime = 0;
         maxElapsedTime = 0;
@@ -98,6 +100,18 @@ public class Localizer extends Thread {
 
     }
 
+    //Kalman Constructor
+
+    /**
+     *
+     * @param hardwareMap hardware interface we use, just passing in the opModes HardwareMap
+     *                    field is always sufficient
+     * @param position the starting position of the robot as a vector in inches
+     * @param globalRads the starting orientation of the robot in radians
+     * @param previousEstimateUncertainty the covariance of the kinematic models estimate,
+     *                                    greater value means trusting the measured values more and
+     *                                    smaller value means trusting the kinematic models estimate more
+     */
     public Localizer(HardwareMap hardwareMap, Vector2D position, double globalRads, double previousEstimateUncertainty){
 
         if(slamra == null) {

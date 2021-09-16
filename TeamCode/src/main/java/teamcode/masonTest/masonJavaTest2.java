@@ -1,4 +1,6 @@
-public class masonWasHere2 {
+package teamcode.masonTest;
+
+public class masonJavaTest2 {
     public void printName() {
         System.out.println("mason was here2");
     }
