@@ -6,7 +6,6 @@ public class DistanceSensorClass {
     This code makes sure that the output from the distance sensor is reliable and isn't completely off from reality.
      */
     public static class RingClass {
-
         public DistanceSensor DistanceSensor;
         public double AveragedArray;
         private double total;

@@ -2,11 +2,11 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-    jcenter()  // Needed for tensorflow-lite
+    //jcenter()  // Needed for tensorflow-lite
+    maven { url = 'https://maven.brott.dev/' }
     flatDir {
         dirs rootProject.file('libs')
     }
-    maven { url = 'https://maven.brott.dev/' }
 }
 
 dependencies {
@@ -18,7 +18,9 @@ dependencies {
     implementation 'org.firstinspires.ftc:Hardware:6.2.1'
     implementation 'org.firstinspires.ftc:FtcCommon:6.2.1'
     implementation 'org.firstinspires.ftc:tfod:1.0.2'
-    implementation 'org.tensorflow:tensorflow-lite:1.10.0'
+    //implementation 'org.tensorflow:tensorflow-lite:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.1'
 }
 
