@@ -16,10 +16,12 @@ apply from: '../build.common.gradle'
 
 repositories {
     maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+    maven { url = "https://maven.0x778.tk" }
 }
 
 dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:easyopencv:1.4.4'
     implementation 'org.openftc:rev-extensions-2:1.2'
+    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
 }

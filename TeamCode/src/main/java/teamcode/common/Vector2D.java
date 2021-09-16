@@ -16,6 +16,7 @@ public final class Vector2D implements Cloneable {
 
 
 
+
     /**
      * Returns a new vector with the specified angle and magnitude.
      */

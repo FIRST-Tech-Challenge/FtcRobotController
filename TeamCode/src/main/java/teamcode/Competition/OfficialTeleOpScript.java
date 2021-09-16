@@ -10,6 +10,8 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
+
+//15:40
 @TeleOp(name="tele op")
 public class OfficialTeleOpScript extends AbstractOpMode {
 
@@ -62,13 +64,13 @@ public class OfficialTeleOpScript extends AbstractOpMode {
                 }
             }
         };
-        driverTwoThread = new Thread(){
-            public void run(){
-                while(opModeIsActive()){
-                    driverTwoUpdate();
-                }
-            }
-        };
+//        driverTwoThread = new Thread(){
+//            public void run(){
+//                while(opModeIsActive()){
+//                    driverTwoUpdate();
+//                }
+//            }
+//        };
 
     }
 
@@ -137,7 +139,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     private void shootUpdate() {
         if (gamepad1.x) {
-            shooter.shoot(3, 1450);
+            shooter.shoot(3, 1450); //1450
             //shooter.shoot(1, 1330);
             //shooter.shoot(1, 1330);
         } else if (gamepad1.right_trigger > 0.3) {
@@ -200,7 +202,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
         //WGG.runToPosition(WobbleConstants.RETRACTED_POSITION, 0.5);
         driveThread.start();
         shootThread.start();
-        driverTwoThread.start();
+        //driverTwoThread.start();
         while(opModeIsActive());
     }
 

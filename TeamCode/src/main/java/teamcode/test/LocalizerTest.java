@@ -32,7 +32,7 @@ public class LocalizerTest extends AbstractOpMode {
     protected void onStart() {
         //driveTrain.setPower(-0.5,.5, -0.5, 0.5);
         localizer.start();
-        driveTrain.moveToPosition(new Vector2D(0,24), 6.0, 0);
+        //driveTrain.moveToPosition(new Vector2D(0,24), 6.0, 0);
 
         //driveTrain.moveToRotation( Math.PI/2.0, 0.5);
         while(opModeIsActive()) {

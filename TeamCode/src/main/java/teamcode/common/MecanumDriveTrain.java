@@ -7,12 +7,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.robot.Robot;
 
+import java.util.Vector;
+
 public class MecanumDriveTrain {
     private static final double ANGULAR_TOLERANCE = 0.05;
     final double COUNTS_PER_INCH = 920.111004;
 
     /*
-    This has most of the relevant information regarding a 4 wheel Mechanum DriveTrain,
+    This has most of the relevant information regarding a 4 wheel Mecanum DriveTrain,
     which is the most used DriveTrain in FTC
      */
 
@@ -20,14 +22,17 @@ public class MecanumDriveTrain {
     Localizer localizer;
     Vector2D previousVelocity;
     Vector2D previousError;
+    double previousOmegaError;
+
 
     /**
      * PID Constants
      *
      */
-    final double pVelocity = 0.001; //0.001
-    final double dVelocity  = 0.05;
-    final double pOmega = 0.225;
+    final double pVelocity = 0.001; //0.000725
+    final double dVelocity  = 0.027; //0.027
+    final double pOmega = 0.1;
+    final double dOmega = 0;
 
     public MecanumDriveTrain(HardwareMap hardwareMap){
         fl = hardwareMap.dcMotor.get("FrontLeftDrive");
@@ -45,6 +50,7 @@ public class MecanumDriveTrain {
         br = hardwareMap.dcMotor.get("BackRightDrive");
         this.localizer = localizer;
         previousVelocity = new Vector2D(0,0);
+        previousOmega = 0;
         correctMotors();
 
     }
@@ -71,17 +77,30 @@ public class MecanumDriveTrain {
      * moving from position to position
      * @param desiredPosition the end point of the robot
      * @param desiredVelocity the end velocity of the robot in inches per second
-     * @param desiredAngle the angle the robot should be at at the end.
+     * @param desiredAngle the angle the robot should be at at the end in radians.
+     * @param desiredOmega the rate of angle change in rads/sec
      */
 
-    public void moveToPosition(Vector2D desiredPosition, double desiredVelocity, double desiredAngle){
+    public void moveToPosition(Vector2D desiredPosition, double desiredVelocity, double desiredAngle, double desiredOmega){
 
-
-        Vector2D newDesiredPosition = desiredPosition.add(new Vector2D(5.0 * Math.cos(desiredPosition.getDirection()), 5.0 * Math.sin(desiredPosition.getDirection())));
-        previousError = new Vector2D(0,0);
 
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
-        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 || Math.abs(currentState.getRotation() - desiredAngle) > 0.05) && AbstractOpMode.currentOpMode().opModeIsActive()){
+
+        Vector2D desiredPositionPointer = new Vector2D(desiredPosition.getX() - currentState.getPosition().getX() , desiredPosition.getY() - currentState.getPosition().getY());
+        Vector2D newDesiredPosition = desiredPosition.add(new Vector2D(5.0 * Math.cos(desiredPositionPointer.getDirection()), 5.0 * Math.sin(desiredPositionPointer.getDirection())));
+
+        previousError = new Vector2D(0,0);
+        Vector2D steadyStateError = new Vector2D(0,0);
+        previousOmegaError = 0;
+        double newDesiredAngle = desiredAngle;
+        if(currentState.getRotation() > Math.PI){
+            newDesiredAngle += 0.05;
+        }else{
+            newDesiredAngle -= 0.05;
+        }
+
+
+        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 || Math.abs(currentState.getRotation() - newDesiredAngle) > 0.05) && AbstractOpMode.currentOpMode().opModeIsActive()){
 
             currentState = localizer.getCurrentState();
             Vector2D positionError = desiredPosition.subtract(currentState.getPosition());
@@ -93,46 +112,85 @@ public class MecanumDriveTrain {
             //recordedVelocity.rotate(-Math.PI / 4.0);
 
             double currentRotation = currentState.getRotation();
-            double rotationError =  (desiredAngle - currentRotation);
+            double rotationError =  (newDesiredAngle - currentRotation);
 
 
             double recordedOmega = currentState.getAngularVelocity();
-            double desiredOmega = Math.PI;
-
-
 
             double xError = (idealVelocity.getX() - recordedVelocity.getX());
             double yError = (idealVelocity.getY() - recordedVelocity.getY());
             double omegaError =  (desiredOmega - recordedOmega);
             Vector2D error = new Vector2D(xError, yError);
-            //Vector2D deltaError = error.subtract(previousError);
+            //Vector2D crossTrackError = new Vector2D(xError, yError);
+            steadyStateError.add(error);
+            double deltaErrorOmega = omegaError - previousOmegaError;
+            Vector2D deltaError = error.subtract(previousError);
             error = error.multiply(pVelocity);
-           // deltaError = deltaError.multiply(dVelocity);
-            //error.add(deltaError);
+            deltaError = deltaError.multiply(dVelocity);
+            error.add(deltaError);
+
             omegaError *= pOmega;
-            omegaError *= rotationError;
+            deltaErrorOmega *= dOmega;
+            omegaError += deltaErrorOmega;
+
+
 
 //            double sign = 1.0;
 //            if(error.getX() < 0 || error.getY() < 0){
 //                sign = -1.0;
 //            }
+            //error.add(previousVelocity);
+            double direction = error.getDirection();
 
-            previousVelocity = setPowerPurePursuit(error.add(previousVelocity), omegaError);
+            //TODO read this later when I am more awake, from here to the setPower line
+            double passedX = error.getX();
+            double passedY = error.getY();
+            Vector2D maxVector = new Vector2D(Math.cos(direction), Math.sin(direction));
+            if(Math.abs(maxVector.getX()) < Math.abs(error.getX())){
+                if(getSign(maxVector.getX()) == getSign(error.getX())){
+                    passedX = maxVector.getX();
+                }else{
+                    passedX = -maxVector.getX();
+                }
+            }
+            if(Math.abs(maxVector.getY()) < Math.abs(error.getY())){
+                if(getSign(maxVector.getY()) == getSign(error.getY())){
+                    passedY = maxVector.getY();
+                }else{
+                    passedY = -maxVector.getY();
+                }
+            }
+
+
+            omegaError += previousOmega;
+            //Vector2D passedVector = new Vector2D(passedX, passedY);
+            previousVelocity = setPowerPurePursuit(previousVelocity.add(new Vector2D(passedX, passedY)), omegaError);
+
            // previousVelocity.multiply(sign);
             previousError = error;
+            previousOmegaError = omegaError;
 
             //AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
 //
-            AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
-            AbstractOpMode.currentOpMode().telemetry.addData("sign", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
+            //AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
+            //AbstractOpMode.currentOpMode().telemetry.addData("sign", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
 
 
-            AbstractOpMode.currentOpMode().telemetry.addData("", currentState);
-            AbstractOpMode.currentOpMode().telemetry.update();
+            //AbstractOpMode.currentOpMode().telemetry.addData("", currentState);
+            //AbstractOpMode.currentOpMode().telemetry.addData("", this::getMotorPower);
+
+            //AbstractOpMode.currentOpMode().telemetry.update();
         }
         brake();
 
 
+    }
+
+    public String getMotorPower(){
+        return "fl: " + fl.getPower() + "\n" +
+                "fr: " + fr.getPower() + "\n" +
+                "bl: " + bl.getPower() + "\n" +
+                "br: " + br.getPower();
     }
 
 
@@ -141,15 +199,15 @@ public class MecanumDriveTrain {
     public void moveToRotation(double desiredRotation, double omega){
         RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
         previousOmega = 0;
-        while(Math.abs(desiredRotation - state.getRotation()) > 0.02){
+        while(Math.abs(desiredRotation - state.getRotation()) > 0.05){
             state = localizer.getCurrentState();
             double recordedOmega = state.getAngularVelocity();
             double omegaError = omega - recordedOmega;
             omegaError *= pRotation;
             omega += omegaError;
             setPowerPurePursuit(new Vector2D(0,0), omega);
-            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
-            AbstractOpMode.currentOpMode().telemetry.update();
+//            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
+//            AbstractOpMode.currentOpMode().telemetry.update();
         }
         brake();
     }

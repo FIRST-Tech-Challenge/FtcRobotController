@@ -61,89 +61,89 @@ public class StateAuto extends AbstractOpMode {
     protected void onStart() {
         webcam.stopStreaming();
         localizer.start();
-        drive.moveToPosition(new Vector2D(0,2), 6.0, 0);
-        drive.moveToRotation(Math.toRadians(-6), -0.25);
-        drive.moveToPosition(new Vector2D(18,2), 12.0, 0);
-        drive.moveToRotation(Math.toRadians(1), 0.25);
-        //drive.moveToRotation(Math.toRadians(10.0), 0.25);
-        shooter.setFlywheelVelocity(1710 * 0.855, AngleUnit.DEGREES);
-        try {
-            Thread.sleep(750);
-            shooter.progressBanana();
-            Thread.sleep(250);
-            shooter.progressBanana();
-            shooter.setFlywheelVelocity(1710 * 0.87, AngleUnit.DEGREES);
-            Thread.sleep(750);
-            shooter.progressBanana();
-            Thread.sleep(250);
-            shooter.progressBanana();
-            shooter.setFlywheelVelocity(1710 * 0.835, AngleUnit.DEGREES);
-            Thread.sleep(750);
-            shooter.progressBanana();
-            Thread.sleep(250);
-            shooter.progressBanana();
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
-        shooter.setFlywheelVelocity(0,AngleUnit.RADIANS);
-        drive.moveToRotation(0, -0.25);
-        drive.moveToPosition(new Vector2D(11,97), 24.0, 0);
-
-        //drive.moveToPosition(new Vector2D(17,94), 6.0, 0);
-
-        if(rings == NumRings.ONE){
-            drive.moveToRotation(Math.PI / 2.0, 0.5);
-        }else if(rings == NumRings.FOUR){
-            drive.moveToRotation(Math.PI, 0.5);
-        }
-        arm.runToPosition(-4000, 1);
-        arm.adjustClaw();
-        Utils.sleep(100);
-        arm.runToPosition(4000, 0.5);
-
-        //Utils.sleep(250);
-
-        if(rings == NumRings.ZERO) {
-
-            drive.moveToPosition(new Vector2D(11, 115), 12, 0);
-        }else{
-            drive.moveToRotation(Math.toRadians(5), -0.5);
-            drive.moveToPosition(new Vector2D(11, 72), 12, 0);
-        }
-
-
-        drive.moveToPosition(new Vector2D(-11,72), 21, 0);
-
-        if(rings != NumRings.ZERO){
-//            drive.moveToPosition(new Vector2D(localizer.getCurrentState().getPosition().getX(),8), 18.0, 0);
-            drive.moveToRotation(Math.toRadians(20), 0.5);
-//            arm.runToPosition(-1000, 0.5);
-//            drive.moveToPosition(new Vector2D(-5, 8), 6.0, Math.PI / 2.0);
-
-            //drive.moveToPosition(new Vector2D(11,88), 21, 0);
-            drive.moveToRotation(Math.toRadians(5), -0.5);
-            if(rings == NumRings.ONE){
-                shooter.intake(1.0);
-            }
-            drive.moveToPosition(new Vector2D(-11,39), 24, Math.toRadians(5));
-            shooter.intake(1.0);
-
-            //drive.moveToPosition(new Vector2D(-15,34), 12, 0);
-            //Utils.sleep(1000);
-            drive.moveToRotation(Math.toRadians(9), 0.5);
-            Utils.sleep(1000);
-            shooter.shoot(3, 1440);
-            //drive.moveToRotation(Math.toRadians(3), -0.5);
-//            if(rings == NumRings.FOUR) {
-//                drive.moveToPosition(new Vector2D(-19, 12), 6, 0);
-//                drive.moveToPosition(new Vector2D(-19, 36), 12, 0);
-//                drive.moveToRotation(Math.toRadians(13), 0.5);
-//                shooter.shoot(3, 1450);
+//        drive.moveToPosition(new Vector2D(0,2), 6.0, 0);
+//        drive.moveToRotation(Math.toRadians(-6), -0.25);
+//        drive.moveToPosition(new Vector2D(18,2), 12.0, 0);
+//        drive.moveToRotation(Math.toRadians(1), 0.25);
+//        //drive.moveToRotation(Math.toRadians(10.0), 0.25);
+//        shooter.setFlywheelVelocity(1710 * 0.855, AngleUnit.DEGREES);
+//        try {
+//            Thread.sleep(750);
+//            shooter.progressBanana();
+//            Thread.sleep(250);
+//            shooter.progressBanana();
+//            shooter.setFlywheelVelocity(1710 * 0.87, AngleUnit.DEGREES);
+//            Thread.sleep(750);
+//            shooter.progressBanana();
+//            Thread.sleep(250);
+//            shooter.progressBanana();
+//            shooter.setFlywheelVelocity(1710 * 0.835, AngleUnit.DEGREES);
+//            Thread.sleep(750);
+//            shooter.progressBanana();
+//            Thread.sleep(250);
+//            shooter.progressBanana();
+//        }catch(InterruptedException e){
+//            e.printStackTrace();
+//        }
+//        shooter.setFlywheelVelocity(0,AngleUnit.RADIANS);
+//        drive.moveToRotation(0, -0.25);
+//        drive.moveToPosition(new Vector2D(11,97), 24.0, 0);
+//
+//        //drive.moveToPosition(new Vector2D(17,94), 6.0, 0);
+//
+//        if(rings == NumRings.ONE){
+//            drive.moveToRotation(Math.PI / 2.0, 0.5);
+//        }else if(rings == NumRings.FOUR){
+//            drive.moveToRotation(Math.PI, 0.5);
+//        }
+//        arm.runToPosition(-4000, 1);
+//        arm.adjustClaw();
+//        Utils.sleep(100);
+//        arm.runToPosition(4000, 0.5);
+//
+//        //Utils.sleep(250);
+//
+//        if(rings == NumRings.ZERO) {
+//
+//            drive.moveToPosition(new Vector2D(11, 115), 12, 0);
+//        }else{
+//            drive.moveToRotation(Math.toRadians(5), -0.5);
+//            drive.moveToPosition(new Vector2D(11, 72), 12, 0);
+//        }
+//
+//
+//        drive.moveToPosition(new Vector2D(-11,72), 21, 0);
+//
+//        if(rings != NumRings.ZERO){
+////            drive.moveToPosition(new Vector2D(localizer.getCurrentState().getPosition().getX(),8), 18.0, 0);
+//            drive.moveToRotation(Math.toRadians(20), 0.5);
+////            arm.runToPosition(-1000, 0.5);
+////            drive.moveToPosition(new Vector2D(-5, 8), 6.0, Math.PI / 2.0);
+//
+//            //drive.moveToPosition(new Vector2D(11,88), 21, 0);
+//            drive.moveToRotation(Math.toRadians(5), -0.5);
+//            if(rings == NumRings.ONE){
+//                shooter.intake(1.0);
 //            }
-        }
-
-        drive.moveToPosition(new Vector2D(-19,69), 24, 0);
-        shooter.zero();
+//            drive.moveToPosition(new Vector2D(-11,39), 24, Math.toRadians(5));
+//            shooter.intake(1.0);
+//
+//            //drive.moveToPosition(new Vector2D(-15,34), 12, 0);
+//            //Utils.sleep(1000);
+//            drive.moveToRotation(Math.toRadians(9), 0.5);
+//            Utils.sleep(1000);
+//            shooter.shoot(3, 1440);
+//            //drive.moveToRotation(Math.toRadians(3), -0.5);
+////            if(rings == NumRings.FOUR) {
+////                drive.moveToPosition(new Vector2D(-19, 12), 6, 0);
+////                drive.moveToPosition(new Vector2D(-19, 36), 12, 0);
+////                drive.moveToRotation(Math.toRadians(13), 0.5);
+////                shooter.shoot(3, 1450);
+////            }
+//        }
+//
+//        drive.moveToPosition(new Vector2D(-19,69), 24, 0);
+//        shooter.zero();
         while(opModeIsActive());
 
 

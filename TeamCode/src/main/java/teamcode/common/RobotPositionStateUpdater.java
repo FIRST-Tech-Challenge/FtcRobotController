@@ -71,4 +71,13 @@ public class RobotPositionStateUpdater {
         state.velocity = new Vector2D(deltaVx, deltaVy);
         state.angularVelocity = omega;
     }
+
+    public synchronized void updateState(double deltaX, double deltaY, double deltaPhi,
+                                         double deltaVx, double deltaVy, double omega) {
+        updatePositionTime();
+        state.position = new Vector2D(deltaX, deltaY);
+        state.rotation =  MathFunctions.angleWrap(deltaPhi);
+        state.velocity = new Vector2D(deltaVx, deltaVy);
+        state.angularVelocity = omega;
+    }
 }
