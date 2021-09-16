@@ -37,7 +37,7 @@ public class Shooter {
     PIDController pidShoot;
 
     public Shooter(HardwareMap hardwareMap){
-        roller = (ExpansionHubMotor)hardwareMap.dcMotor.get("LowerIntakeMotor");
+        roller = (ExpansionHubMotor)hardwareMap.get("LowerIntakeMotor");
         upperRoller = (ExpansionHubMotor)hardwareMap.dcMotor.get("UpperIntakeMotor");
         flywheel = hardwareMap.get(ExpansionHubMotor.class, "Shooter");
         indexer = hardwareMap.servo.get("Indexer");
