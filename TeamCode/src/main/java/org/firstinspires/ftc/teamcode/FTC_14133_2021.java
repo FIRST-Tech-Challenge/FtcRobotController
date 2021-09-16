@@ -13,6 +13,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name="FTC 14133 2021", group="Iterative Opmode")
 @Disabled
+
+//My favorite shape is a nonagon
+
 public class FTC_14133_2021 extends OpMode {
  private ElapsedTime runtime = new ElapsedTime();
  private DcMotorEx lb = null;        // Sets the variables of the mecanum wheels
