@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 // https://first-tech-challenge.github.io/SkyStone/  This is the link to ALL metered of FTC
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name="FTC 14133 2021", group="Iterative Opmode")
+@Disabled
 public class FTC_14133_2021 extends OpMode {
  private ElapsedTime runtime = new ElapsedTime();
  private DcMotorEx lb = null;        // Sets the variables of the mecanum wheels
@@ -18,7 +20,7 @@ public class FTC_14133_2021 extends OpMode {
  private DcMotorEx lf = null;
  private DcMotorEx rf = null;
 
- // COMMENTED OUT THINGS ARE NOT TO BE DELETED TESTTTTTTTTTTTTTTTT
+ // COMMENTED OUT THINGS ARE NOT TO BE DELETED
  static final double MOTOR_TICK_COUNT = 2800;
  private DcMotorEx shooter = null;         // Sets the variable of the shooter
  private DcMotor arm = null;         // Sets the variable of the arm that is long but there is not a arm that is short
