@@ -32,7 +32,7 @@ public class DeviceMap {
         leftFront.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightRear.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE
-        leftRear.setDirection(DcMotor.Direction.FORWARD);
+        leftRear.setDirection(DcMotor.Direction.FORWARD); //Test Alex's Computer
 
         //Setting Power to motors
         leftFront.setPower(0);
