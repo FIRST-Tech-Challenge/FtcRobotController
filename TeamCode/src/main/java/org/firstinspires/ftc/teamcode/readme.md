@@ -1,4 +1,6 @@
-## FTC14169 2021 Ultimate Goal
+## FTC14169 2021/2022 Preseason Practice Members
+- Lydia, Mentor
+
 ## TeamCode Module
 
 Welcome!
