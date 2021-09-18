@@ -20,8 +20,8 @@ public abstract class TeleopMode<T extends AbstractDrive> extends OperationMode<
     public abstract void OnUpdate();
     public abstract void OnStop();
 
-    protected void OnDriverGamePadChange(FtcGamePad gamePad, int button, boolean pressed) {}
-    protected void OnOperatorGamePadChange(FtcGamePad gamePad, int button, boolean pressed) {}
+    protected abstract void OnDriverGamePadChange(FtcGamePad gamePad, int button, boolean pressed);
+    protected abstract void OnOperatorGamePadChange(FtcGamePad gamePad, int button, boolean pressed);
 
     @Override
     public void runOpMode() {
