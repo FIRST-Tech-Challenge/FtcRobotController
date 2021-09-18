@@ -37,6 +37,7 @@ public class OdometryChassis extends BasicChassis {
     static DcMotorEx odom1;
     static DcMotorEx odom2;
     static DcMotorEx odom3;
+    boolean hi=false;
     double deltaAngle=0;
     double xVelocity = 0;
     double yVelocity = 0;
