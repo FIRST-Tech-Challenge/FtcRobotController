@@ -23,6 +23,7 @@ public class DeviceMap {
     }
     {
                         // Naming hardware Devices
+                        // Testing
         leftFront = hwMap.get(DcMotor.class, "leftFront");
         leftRear = hwMap.get(DcMotor.class, "leftRear");
         rightFront = hwMap.get(DcMotor.class, "rightFront");
@@ -32,7 +33,7 @@ public class DeviceMap {
         leftFront.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightRear.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE
-        leftRear.setDirection(DcMotor.Direction.FORWARD); //Test Alex's Computer
+        leftRear.setDirection(DcMotor.Direction.FORWARD);
 
         //Setting Power to motors
         leftFront.setPower(0);
