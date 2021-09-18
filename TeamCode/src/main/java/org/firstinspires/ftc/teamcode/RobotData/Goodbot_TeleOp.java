@@ -26,7 +26,7 @@ public class Goodbot_TeleOp extends LinearOpMode {
             leftFront.setDirection(DcMotor.Direction.FORWARD);
             leftRight.setDirection(DcMotor.Direction.FORWARD);
             rightFront.setDirection(DcMotor.Direction.FORWARD);
-            rightRear.setDirection(DCMotor.Direction.FORWARD);
+            rightRear.setDirection(DcMotor.Direction.FORWARD);
 
 
 
