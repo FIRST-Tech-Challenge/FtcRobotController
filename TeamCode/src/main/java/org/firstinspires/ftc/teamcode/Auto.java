@@ -11,15 +11,25 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @Autonomous(name="Autonomous")
 public class Auto extends AutonomousMode<MecanumDrive> {
 
+    private Config config;
+
     public Auto() { super(new Specifications()); }
 
     @Override
     public void OnInitialize() {
+        config = new Config(hardwareMap.appContext);
     }
 
     @Override
     public void OnStart() {
-        robot.drive.TurnDegrees(0.5, 90 * 3, AbstractDrive.TurnDirection.CLOCKWISE);
+        double movementModifier = config.allianceColor == Config.AllianceColor.RED ? 1 : -1;
+
+        switch (config.startingPosition) {
+            case SHIPPING_HUB:
+                break;
+            case STORAGE_UNIT:
+                break;
+        }
     }
 
     @Override

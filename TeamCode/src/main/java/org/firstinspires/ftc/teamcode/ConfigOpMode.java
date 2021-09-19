@@ -16,7 +16,8 @@ public class ConfigOpMode extends LinearOpMode {
 
         menu.clearOptions();
 
-        menu.addOption("Alliance Color", Config.AllianceColor.class, Config.allianceColor);
+        menu.addOption("Alliance Color", Config.AllianceColor.class, config.allianceColor);
+        menu.addOption("Starting Position", Config.StartingPosition.class, config.startingPosition);
 
         menu.setGamepad(gamepad1);
         menu.setTelemetry(telemetry);
@@ -28,10 +29,19 @@ public class ConfigOpMode extends LinearOpMode {
 
             switch (menu.getCurrentChoiceOf("Alliance Color")) {
                 case "RED":
-                    Config.allianceColor = Config.AllianceColor.RED;
+                    config.allianceColor = Config.AllianceColor.RED;
                     break;
                 case "BLUE":
-                    Config.allianceColor = Config.AllianceColor.BLUE;
+                    config.allianceColor = Config.AllianceColor.BLUE;
+                    break;
+            }
+
+            switch (menu.getCurrentChoiceOf("Starting Position")) {
+                case "STORAGE_UNIT":
+                    config.startingPosition = Config.StartingPosition.STORAGE_UNIT;
+                    break;
+                case "SHIPPING_HUB":
+                    config.startingPosition = Config.StartingPosition.SHIPPING_HUB;
                     break;
             }
 
