@@ -40,8 +40,8 @@ public class ConfigOpMode extends LinearOpMode {
                 case "STORAGE_UNIT":
                     config.startingPosition = Config.StartingPosition.STORAGE_UNIT;
                     break;
-                case "SHIPPING_HUB":
-                    config.startingPosition = Config.StartingPosition.SHIPPING_HUB;
+                case "WAREHOUSE":
+                    config.startingPosition = Config.StartingPosition.WAREHOUSE;
                     break;
             }
 
