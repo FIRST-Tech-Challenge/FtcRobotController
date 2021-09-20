@@ -25,8 +25,11 @@ public class OdoRoll extends AbstractOpMode {
     protected void onStart() {
         localizer.start();
         while(opModeIsActive()){
+            //telemetry.addData("leftVertical: ", localizer.getLeftVerticalOdometerPosition());
+            //telemetry.addData("rightVertical: ", localizer.getRightVerticalOdometerPosition());
+            //telemetry.addData("horizontal: ", localizer.getHorizontalOdometerPosition());
             //telemetry.addData("", localizer.getCurrentState());
-           // telemetry.update();
+            //telemetry.update();
         }
         ReadWriteFile.writeFile(AppUtil.getInstance().getSettingsFile("KalmanStateReadings.txt"), localizer.loggingString);
     }

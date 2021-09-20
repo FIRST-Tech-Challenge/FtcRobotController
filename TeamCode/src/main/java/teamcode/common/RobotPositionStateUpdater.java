@@ -1,5 +1,7 @@
 package teamcode.common;
 
+import java.util.Vector;
+
 import teamcode.common.PurePursuit.MathFunctions;
 
 public class RobotPositionStateUpdater {

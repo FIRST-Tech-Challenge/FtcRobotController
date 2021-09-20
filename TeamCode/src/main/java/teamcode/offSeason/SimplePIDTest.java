@@ -25,7 +25,7 @@ public class SimplePIDTest extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 10);
         driveTrain = new MecanumDriveTrain(hardwareMap, localizer);
         localizer.setPriority(10);
     }

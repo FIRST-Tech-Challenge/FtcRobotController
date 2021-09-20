@@ -1,6 +1,6 @@
 package teamcode.common;
 
-public class Matrix {
+public class Matrix implements Cloneable{
     private double[][] matrix;
     private int rows; //m
     private int columns; //n
@@ -233,6 +233,10 @@ public class Matrix {
 
     public Matrix clone(){
         return new Matrix(this.matrix);
+    }
+
+    public double[][] getMatrix(){
+        return matrix;
     }
 
     @Override

@@ -7,7 +7,10 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.spartronics4915.lib.T265Camera;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
+
 import teamcode.common.AbstractOpMode;
+import teamcode.common.Utils;
 
 @TeleOp(name="VISLAM Test")
 public class VISLAMTest extends AbstractOpMode {
@@ -28,6 +31,8 @@ public class VISLAMTest extends AbstractOpMode {
     protected void onStart() {
 
         slamra.start();
+        Utils.sleep(2000);
+        slamra.setPose(startingPose);
         while(opModeIsActive()){
 
             T265Camera.CameraUpdate update = slamra.getLastReceivedCameraUpdate();

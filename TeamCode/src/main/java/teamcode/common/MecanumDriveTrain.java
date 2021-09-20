@@ -29,8 +29,8 @@ public class MecanumDriveTrain {
      * PID Constants
      *
      */
-    final double pVelocity = 0.001; //0.000725
-    final double dVelocity  = 0.027; //0.027
+    final double pVelocity = 0.000725; //0.000725
+    final double dVelocity  = 0.047; //0.027
     final double pOmega = 0.1;
     final double dOmega = 0;
 
@@ -93,11 +93,6 @@ public class MecanumDriveTrain {
         Vector2D steadyStateError = new Vector2D(0,0);
         previousOmegaError = 0;
         double newDesiredAngle = desiredAngle;
-        if(currentState.getRotation() > Math.PI){
-            newDesiredAngle += 0.05;
-        }else{
-            newDesiredAngle -= 0.05;
-        }
 
 
         while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 || Math.abs(currentState.getRotation() - newDesiredAngle) > 0.05) && AbstractOpMode.currentOpMode().opModeIsActive()){
@@ -175,11 +170,10 @@ public class MecanumDriveTrain {
             //AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
             //AbstractOpMode.currentOpMode().telemetry.addData("sign", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
 
+            AbstractOpMode.currentOpMode().telemetry.addData("", currentState);
+            //AbstractOpMode.currentOpMode().telemetry.addData("error", (Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude())));
 
-            //AbstractOpMode.currentOpMode().telemetry.addData("", currentState);
-            //AbstractOpMode.currentOpMode().telemetry.addData("", this::getMotorPower);
-
-            //AbstractOpMode.currentOpMode().telemetry.update();
+            AbstractOpMode.currentOpMode().telemetry.update();
         }
         brake();
 

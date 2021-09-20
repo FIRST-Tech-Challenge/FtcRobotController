@@ -25,20 +25,18 @@ public class Localizer extends Thread {
     // odds are if you see a math function it is from that and not a constatnt/method I created
     //https://docs.google.com/document/d/1JQuU2M--rVFEa9ApKkOcc0CalsBxKjH-l0PQLRW7F3c/edit?usp=sharing proof behind the math
 
+    //odometry wheel constants, MUST BE CALIBRATED FOR EACH ROBOT
     private static final double TICKS_PER_REV = 8192;
     private static final double WHEEL_RADIUS = 1.421; //1.181 for 60 mm, 1.417 for 72mm
     private static final double GEAR_RATIO = 1;
     private static final double CHASSIS_LENGTH = 12.4; //new bot + 2.83465
     private static final double ODO_XY_DISTANCE = 1.925;
 
-
+    //debugging constants, not used very much
     File loggingFile = AppUtil.getInstance().getSettingsFile("LinearEncoderReadings.txt");
     public String loggingString;
     //-2.641358450698 - (-2.641358450698 * 1.2)
 
-    /**
-     * Position stored in ticks. When exposed to external classes, it is represented in inches.
-     */
 
 
 
@@ -50,6 +48,7 @@ public class Localizer extends Thread {
     private long runInterval = (long)Math.round(1.0/50.0 * 1000.0);
     //1.0/300.0 * 1,000,000.0
 
+    //hardware and timing constants, all of this is set up in the constructor
     private long elapsedTime, startingTime;
     private RobotPositionStateUpdater state;
     private final ExpansionHubMotor leftVertical, rightVertical, horizontal;
@@ -61,7 +60,7 @@ public class Localizer extends Thread {
     private double previousHorizontalArcLength = 0;
     private long minElapsedTime, maxElapsedTime;
 
-    //Kalman filter parameters
+    //Kalman filter parameters, the ones declared up here must also be tuned for EVERY ROBOT
     Transform2d cameraToRobot = new Transform2d(new Translation2d(7.5 * 0.0254, 0), new Rotation2d());
     private static T265Camera slamra;
     private Pose2d slamraStartingPose;
@@ -133,12 +132,22 @@ public class Localizer extends Thread {
         previousHorizontalArcLength = 0;
         previousInnerArcLength = 0;
         previousOuterArcLength = 0;
-        previousOdoMat = new Matrix(6,1);
+
         previousVislamMat = new Matrix(6,1);
         previousIdealMat = new Matrix(6,1);
         startingTime = System.currentTimeMillis();
         state = new RobotPositionStateUpdater(position, new Vector2D(0,0), globalRads, 0);
 
+        double[][] previousOdoArray = {
+                {state.getCurrentState().getPosition().getX()},
+                {state.getCurrentState().getPosition().getY()},
+                {state.getCurrentState().getRotation()},
+                {0},
+                {0}, //this whole class assumes constant velocity and it is fair to assume the robot starts still
+                {0}
+        };
+        previousOdoMat = new Matrix(6,1);
+        slamra.start();
         resetEncoders();
     }
 
@@ -155,12 +164,9 @@ public class Localizer extends Thread {
         // make sure we reset our accounting of start times
         state.resetUpdateTime();
         startingTime = System.currentTimeMillis();
-
         if(slamra != null) {
-            slamra.start();
+            slamra.setPose(slamraStartingPose);
         }
-
-        slamra.setPose(slamraStartingPose);
         // max speed 300 Hz)
         while (!stop.get()) {
             long millis = System.currentTimeMillis();
@@ -188,6 +194,7 @@ public class Localizer extends Thread {
         }
     }
 
+    //initializing the odo, not to be confused with zeroing it
     private void resetEncoders() {
         leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -199,6 +206,7 @@ public class Localizer extends Thread {
         leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    //zeroing the odo
     public void resetOdometersTravelling(){
         leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -208,11 +216,13 @@ public class Localizer extends Thread {
         previousOuterArcLength = 0;
     }
 
+    //exposes the state to exterior classes
     public RobotPositionStateUpdater.RobotPositionState getCurrentState() {
         return state.getCurrentState();
     }
 
     //see top of class for formalized proof of the math
+    @Deprecated //use updateKalman instead
     private synchronized void update() {
         // read sensor data
         data1 = hub1.getBulkInputData();
@@ -239,10 +249,7 @@ public class Localizer extends Thread {
         double phi =  (2.0 * arcLength) / (CHASSIS_LENGTH);
         double hypotenuse;
 
-        //janky fix
-//        if(arcLength < 2000 * getCurrentState().getAngularVelocity()){
-//            arcLength = 0;
-//        }
+
         // When phi is small, the full formula is numerically unstable.
         // for small phi, sin(phi) = phi and cos(phi) = 1
         // thus small phi, hypotense = arcLength
@@ -288,7 +295,8 @@ public class Localizer extends Thread {
 
 
 
-
+    //updating a cycle using the Kalman Filter, a method which takes 3 measurements, Odometry, VISLAM
+    //and a third measurement using physics to predict where the robot is (we call this the kinematic model)
     private synchronized void updateKalman(){
         // read sensor data
         data1 = hub1.getBulkInputData();
@@ -312,7 +320,7 @@ public class Localizer extends Thread {
         double arcLength = (deltaInnerArcLength + deltaOuterArcLength) / 2.0;
         double deltaVerticalDiff = (deltaInnerArcLength - deltaOuterArcLength) / 2.0;
 
-//(deltaOuterArcLength - deltaInnerArcLength)
+
         // CHASSIS_LENGTH is the diamater of the circle.
         // phi is arclength divided by radius for small phi
         double phi =  (2.0 * arcLength) / (CHASSIS_LENGTH);
@@ -340,6 +348,14 @@ public class Localizer extends Thread {
         double deltaVy = (leftVerticalVelocity + rightVerticalVelocity)/2.0;
         double deltaVx = horizontalVelocity;
 
+        //scaling the deltas to make the Odometry its own independent measurement
+        horizontalDelta *= TAO;
+        verticalDelta *= TAO;
+        phi *= TAO;
+        omega *= TAO;
+        deltaVx *= TAO;
+        deltaVy *= TAO;
+
 
         //matrix declarations
         Pose2d slamraEstimatePose = currentSlamraPos.pose;
@@ -347,7 +363,7 @@ public class Localizer extends Thread {
                 {-slamraEstimatePose.getY() / 0.0254},
                 {slamraEstimatePose.getX() / 0.0254},
                 {slamraEstimatePose.getRotation().getRadians()},
-                {currentSlamraPos.velocity.vyMetersPerSecond / 0.0254},
+                {-currentSlamraPos.velocity.vyMetersPerSecond / 0.0254},
                 {currentSlamraPos.velocity.vxMetersPerSecond / 0.0254},
                 {currentSlamraPos.velocity.omegaRadiansPerSecond}
         };
@@ -396,26 +412,24 @@ public class Localizer extends Thread {
 
         Matrix kinematicModel = new Matrix(deltaMat);
         Matrix idealEstimate = kinematicModel.add(currentStateEstimate);
-        //AbstractOpMode.currentOpMode().telemetry.addData("elapsed time:", elapsedTime);
-        AbstractOpMode.currentOpMode().telemetry.addData("dx:", slamraEstimate.getValue(0,0));
-        AbstractOpMode.currentOpMode().telemetry.addData("dy", slamraEstimate.getValue(1,0));
-        AbstractOpMode.currentOpMode().telemetry.addData("phi:", slamraEstimate.getValue(2,0));
-        AbstractOpMode.currentOpMode().telemetry.addData("vx:", slamraEstimate.getValue(3,0));
-        AbstractOpMode.currentOpMode().telemetry.addData("vy:", slamraEstimate.getValue(4,0));
-        AbstractOpMode.currentOpMode().telemetry.update();
 
-//        AbstractOpMode.currentOpMode().telemetry.addData("", idealEstimate.toString());
-        AbstractOpMode.currentOpMode().telemetry.update();
+        //update this here to keep odo estimate truly independent of everything else,
+        //if one system starts drifting we dont want the covariance of the odo to suffer
+        double[][] previousOdoArray = {
+                {odoEstimate.getValue(0,0)},
+                {odoEstimate.getValue(1,0)},
+                {odoEstimate.getValue(2,0)},
+                {odoEstimate.getValue(3,0)},
+                {odoEstimate.getValue(4,0)},
+                {odoEstimate.getValue(5,0)},
+        };
+        previousOdoMat = new Matrix(previousOdoArray);
 
-        odoEstimate.multiply(TAO);
         slamraEstimate.multiply(1.0-TAO);
         Matrix complementaryStateEstimtate = odoEstimate.add(slamraEstimate); //measured state, Z
 
         double kalmanGain = previousEstimateUncertainty / (previousEstimateUncertainty + MEASUREMENT_VARIANCE);
         double currentEstimateUncertainty = (1 - kalmanGain) * previousEstimateUncertainty;
-//        AbstractOpMode.currentOpMode().telemetry.addData("previousEstimateUncertainty", previousEstimateUncertainty);
-//        AbstractOpMode.currentOpMode().telemetry.addData("currentEstimateUncertainty", currentEstimateUncertainty);
-//        AbstractOpMode.currentOpMode().telemetry.addData("kalman gain", kalmanGain);
 
 
 
@@ -426,9 +440,7 @@ public class Localizer extends Thread {
         complementaryStateEstimtate.setValue(0,0, complementaryStateEstimtate.getValue(0,0) * kalmanGain);
         complementaryStateEstimtate.setValue(1,0, complementaryStateEstimtate.getValue(1,0) * kalmanGain);
         complementaryStateEstimtate.setValue(2,0, complementaryStateEstimtate.getValue(2,0) * kalmanGain);
-        //idealEstimate.multiply(0);
         Matrix finalStateEstimate = complementaryStateEstimtate.add(idealEstimate);
-        //Matrix deltaMatrix = finalStateEstimate.subtract(currentStateEstimate);
 
 
 
@@ -439,40 +451,14 @@ public class Localizer extends Thread {
         double dvy = complementaryStateEstimtate.getValue(4,0);
         double domega = complementaryStateEstimtate.getValue(5,0);
 
-//        double dx = finalStateEstimate.getValue(0,0);
-//        double dy = finalStateEstimate.getValue(1,0);
-//        double dphi = finalStateEstimate.getValue(2,0);
-//        double dvx = finalStateEstimate.getValue(3,0);
-//        double dvy = finalStateEstimate.getValue(4,0);
-//        double domega = finalStateEstimate.getValue(5,0);
         state.updateState(dx, dy, dphi, dvx, dvy, domega);
         startingTime = System.currentTimeMillis();
         previousInnerArcLength = innerArcLength;
         previousOuterArcLength = outerArcLength;
         previousHorizontalArcLength = horizontalArcLength;
         previousEstimateUncertainty = currentEstimateUncertainty;
-        previousOdoMat = odoEstimate.clone();
-        //  Matrix shit
-        //        double[][] stateTransistionMat = {
-//                {currentState.getVelocity().getX() * elapsedTime * 1000, 0, 0, 0, 0, 0},
-//                {0, currentState.getVelocity().getY() * elapsedTime * 1000, 0, 0, 0, 0},
-//                {0, 0, currentState.getAngularVelocity() * elapsedTime * 1000, 0, 0, 0},
-//                {0, 0, 0, currentState.getVelocity().getX(), 0, 0},
-//                {0, 0, 0, 0, currentState.getVelocity().getY(), 0},
-//                {0, 0, 0, 0, 0, currentState.getAngularVelocity()}
-//        };
-//
-//        Matrix stateTransistionMatrix = new Matrix(stateTransistionMat);
-//
-//        //we have an estimate according to kinematics (assumes constant acceleration)
-//        //Matrix idealStateEstimate = currentStateEstimate.add(KinematicMotionModel);
-//        Matrix transposedStateTransitionMatrix = stateTransistionMatrix.transpose();
-//        Matrix controlMatrix;
-//
-//        Matrix estimateUncertianty = stateTransistionMatrix.multiply(previousProcessNoise);
-//        estimateUncertianty = estimateUncertianty.multiply(transposedStateTransitionMatrix);
 
-        //loggingString += "current state: " + currentStateEstimate.toString() + "\nComplementaryStateEstimate: " + complementaryStateEstimtate.toString() + "\nkinematicModel: " + kinematicModel.toString() + "\nfinalStateEstimate: " + finalStateEstimate.toString() + "\n\n";
+
     }
 
 
@@ -503,3 +489,31 @@ public class Localizer extends Thread {
         return horizontal.getCurrentPosition();
     }
 }
+
+
+
+
+
+
+
+
+
+//  Matrix shit, saving the start of my unsimplified proof of the math
+//        double[][] stateTransistionMat = {
+//                {currentState.getVelocity().getX() * elapsedTime * 1000, 0, 0, 0, 0, 0},
+//                {0, currentState.getVelocity().getY() * elapsedTime * 1000, 0, 0, 0, 0},
+//                {0, 0, currentState.getAngularVelocity() * elapsedTime * 1000, 0, 0, 0},
+//                {0, 0, 0, currentState.getVelocity().getX(), 0, 0},
+//                {0, 0, 0, 0, currentState.getVelocity().getY(), 0},
+//                {0, 0, 0, 0, 0, currentState.getAngularVelocity()}
+//        };
+//
+//        Matrix stateTransistionMatrix = new Matrix(stateTransistionMat);
+//
+//        //we have an estimate according to kinematics (assumes constant acceleration)
+//        //Matrix idealStateEstimate = currentStateEstimate.add(KinematicMotionModel);
+//        Matrix transposedStateTransitionMatrix = stateTransistionMatrix.transpose();
+//        Matrix controlMatrix;
+//
+//        Matrix estimateUncertianty = stateTransistionMatrix.multiply(previousProcessNoise);
+//        estimateUncertianty = estimateUncertianty.multiply(transposedStateTransitionMatrix);
