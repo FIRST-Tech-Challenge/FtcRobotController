@@ -12,10 +12,8 @@ import java.util.ArrayList;
 @TeleOp(name = "Beeline TeleOp Test", group = "Linear Opmode")
 public class Beeline_TeleOp_Test extends LinearOpMode {
 
-    private DcMotor LF = null;
-    private DcMotor RF = null;
-    private DcMotor LB = null;
-    private DcMotor RB = null;
+    private DcMotor left = null;
+    private DcMotor right = null;
     private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -32,20 +30,15 @@ public class Beeline_TeleOp_Test extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        LF  = hardwareMap.get(DcMotor.class, "LF");
-        RF = hardwareMap.get(DcMotor.class, "RF");
-        LB  = hardwareMap.get(DcMotor.class, "LB");
-        RB = hardwareMap.get(DcMotor.class, "RB");
+        left  = hardwareMap.get(DcMotor.class, "left");
+        right = hardwareMap.get(DcMotor.class, "right");
 
-        LF.setDirection(DcMotor.Direction.REVERSE);
-        RF.setDirection(DcMotor.Direction.FORWARD);
-        LB.setDirection(DcMotor.Direction.REVERSE);
-        RB.setDirection(DcMotor.Direction.FORWARD);
+        left.setDirection(DcMotor.Direction.REVERSE);
+        right.setDirection(DcMotor.Direction.FORWARD);
 
-        double LFPower;
-        double RFPower;
-        double LBPower;
-        double RBPower;
+        double LPower;
+        double RPower;
+
 
         waitForStart();
 
@@ -60,8 +53,7 @@ public class Beeline_TeleOp_Test extends LinearOpMode {
             runtime.reset();
 
             double drive = -gamepad1.left_stick_y;
-            double strafe  = -gamepad1.left_stick_x;
-            double rotate = gamepad1.right_stick_x;
+            double rotate = -gamepad1.right_stick_x;
 
             if(gamepad1.right_bumper) {
                 if(releasedRightBumper && releasedLeftBumper) {
@@ -96,17 +88,13 @@ public class Beeline_TeleOp_Test extends LinearOpMode {
             if (gamepad1.x) {
                 if (releasedGamePad1){
                     if (toggleGamePad1) {
-                        LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                        LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                        RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                        RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         telemetry.addLine("BREAK");
                         toggleGamePad1 = false;
                     } else {
-                        LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                        LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                        RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                        RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         telemetry.addLine("FLOAT");
                         toggleGamePad1 = true;
                     }
@@ -116,22 +104,17 @@ public class Beeline_TeleOp_Test extends LinearOpMode {
                 releasedGamePad1 = true;
             }
 
-            LFPower  = Range.clip(gamepad1.left_trigger + speed*(drive + rotate - strafe), -1.0, 1.0) ;
-            LBPower  = Range.clip(gamepad1.left_trigger + speed*(drive + rotate + strafe), -1.0, 1.0) ;
-            RFPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate + strafe), -1.0, 1.0) ;
-            RBPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate - strafe), -1.0, 1.0) ;
+            LPower  = Range.clip(gamepad1.left_trigger + speed*(drive + rotate), -1.0, 1.0) ;
+            RPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate), -1.0, 1.0) ;
 
-            Double currentSpeed[] = {LFPower, LBPower, RFPower, RBPower};
-            speedList.add(currentSpeed);
 
-            LF.setPower(LFPower);
-            RF.setPower(RFPower);
-            LB.setPower(LBPower);
-            RB.setPower(RBPower);
+            left.setPower(LPower);
+            right.setPower(RPower);
 
-            telemetry.addData("Front Motors", "LF (%.2f), RF (%.2f)", LFPower, RFPower);
-            telemetry.addData("Back Motors", "LB (%.2f), RB (%.2f)", LBPower, RBPower);
-            telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, drive);
+
+            telemetry.addData("Left (%.2f)", LPower);
+            telemetry.addData("Right (%.2f)", RPower);
+            //telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, rotate);
             telemetry.addData("speed:", speed);
 
             telemetry.update();
