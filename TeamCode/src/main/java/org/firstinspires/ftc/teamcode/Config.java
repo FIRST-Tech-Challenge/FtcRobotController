@@ -47,7 +47,7 @@ public class Config {
         public StartingPosition startingPosition;
         public enum StartingPosition {
             STORAGE_UNIT,
-            SHIPPING_HUB;
+            WAREHOUSE;
 
             public static StartingPosition ToStartingPosition(String startingPosition) {
                 try {
