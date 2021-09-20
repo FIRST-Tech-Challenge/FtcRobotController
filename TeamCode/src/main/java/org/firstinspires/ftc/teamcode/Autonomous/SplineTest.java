@@ -22,10 +22,19 @@ public class SplineTest extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         waitForStart();
-        robot.partOfPolySplineToPosition(1, 0, 0, 0, 10, -15, 15, -25, 20, true, false, -90,1.0);
-        robot.partOfPolySplineToPosition(1, 0, 0, 0, 10, -15, 15, -25, 20, false, false, -90, 1.0);
-        robot.partOfPolySplineToPosition(1, 0, 10, -15, 15, -25, 20, -30, 30, false, false, -90,1.0);
-        robot.partOfPolySplineToPosition(1, 0, 10, -15, 15, -25, 20,-30,30, false, true, 0,1.0);
+//        robot.goToPosition(72,0,0,1.0);
+        robot.partOfPolySplineToPositionHead(1, 0, 0, 18, 24, 0, 36, -18, 48, true, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, 0, 0, 18, 24, 0, 36, -18, 48, false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1,  18, 24, 0, 36, -18, 48, 0, 60, false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, 0, 48, -18, 48, 0, 60,18, 72, false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, -18, 48, 0, 60,18, 72, 0 ,84, false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, 0, 60,18, 72, 0 ,84, -18, 72, false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, 18, 72, 0 ,84, -18, 72, 0, 60, false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, 0 ,84, -18, 72, 0, 60, 18,48, false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, -18, 72, 0, 60, 18,48, 0, 36, false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, 0, 60, 12,48, 0, 36, -18, 24, false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, 18,48, 0, 36, -18, 24, 0,0,false, false, 0.4);
+        robot.partOfPolySplineToPositionHead(1, 0, 36, -18, 24, 0,0, 0, -24,true, true, 0.4);
 //        robot.tripleSplineToPositionHead(1, 0, 0, 0, 10, -15, 15, -25, 20, -30, 30, 1.0);
 //        robot.goToPosition(48,48,90,1.0);
 //        robot.goToPosition(36,36,90*3/4,0.8);

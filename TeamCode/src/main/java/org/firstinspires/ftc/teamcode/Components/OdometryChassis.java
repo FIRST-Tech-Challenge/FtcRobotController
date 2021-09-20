@@ -45,8 +45,8 @@ public class OdometryChassis extends BasicChassis {
     double Velocity=0;
     public static final boolean gotoPosition_off = false;
     public static final boolean vuforia_on = false;
-    final int[] odomconst = {1, -1, -1};
-    final float ticks_per_inch = (float) (8640 * 2.54 / 38 * Math.PI) * 72 / 76;
+    final int[] odomconst = {-1, 1, 1};
+    final float ticks_per_inch = (float) (8640 * 2.54 / 38 * Math.PI);
     float robot_diameter = (float) sqrt(619.84);
     static final float[] odom = {0f,0f,0f};
     private LinearOpMode op = null;
@@ -407,6 +407,12 @@ public class OdometryChassis extends BasicChassis {
             }
             x = target_position[0] - currentPosition[0];
             y = target_position[1] - currentPosition[1];
+            if(x==0){
+                x=0.0001;
+            }
+            if(y==0){
+                y=0.0001;
+            }
             double mpconst=y/x;
             difference-=5;
             double[] tarcurpos={startposition[0]+(target_position[0]-startposition[0])*((startDifference-difference)/startDifference),startposition[1]+(target_position[1]-startposition[1])*(1-(difference)/startDifference)};
@@ -414,7 +420,7 @@ public class OdometryChassis extends BasicChassis {
                 tarcurpos=target_position;
             }
             difference+=5;
-            double xError=sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity;
+            double xError=sqrt(pow((power)*power*30,2)/(1+pow(mpconst,2)))-xVelocity;
             double posxError=tarcurpos[0]-currentPosition[0];
             double yError=(xError+xVelocity)*mpconst-yVelocity;
             double posyError=(tarcurpos[1]-currentPosition[1]);
@@ -903,7 +909,7 @@ public class OdometryChassis extends BasicChassis {
                     approxDifference = 0;
                     x = target_position[0] - currentPosition[0];
                     y = target_position[1] - currentPosition[1];
-                    xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                    xError = sqrt(pow((power) * power * 30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                     posxError = tarcurpos[0] - currentPosition[0];
                     yError = (xError + xVelocity) * mpconst - yVelocity;
                     posyError = (tarcurpos[1] - currentPosition[1]);
@@ -1103,7 +1109,7 @@ public class OdometryChassis extends BasicChassis {
                         error %= 360;
                         x = target_position[0] - currentPosition[0];
                         y = target_position[1] - currentPosition[1];
-                        xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                        xError = sqrt(pow((power) *30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                         posxError = tarcurpos[0] - currentPosition[0];
                         yError = (xError + xVelocity) * mpconst - yVelocity;
                         posyError = (tarcurpos[1] - currentPosition[1]);
@@ -1200,7 +1206,7 @@ public class OdometryChassis extends BasicChassis {
                         error %= 360;
                         x = target_position[0] - currentPosition[0];
                         y = target_position[1] - currentPosition[1];
-                        xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                        xError = sqrt(pow((power) * power * 30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                         posxError = tarcurpos[0] - currentPosition[0];
                         yError = (xError + xVelocity) * mpconst - yVelocity;
                         posyError = (tarcurpos[1] - currentPosition[1]);
@@ -1303,7 +1309,7 @@ public class OdometryChassis extends BasicChassis {
                         approxDifference = 0;
                         x = target_position[0] - currentPosition[0];
                         y = target_position[1] - currentPosition[1];
-                        xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                        xError = sqrt(pow((power) * power *30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                         posxError = tarcurpos[0] - currentPosition[0];
                         yError = (xError + xVelocity) * mpconst - yVelocity;
                         posyError = (tarcurpos[1] - currentPosition[1]);
@@ -1452,7 +1458,7 @@ public class OdometryChassis extends BasicChassis {
                     approxDifference = 0;
                     x = target_position[0] - currentPosition[0];
                     y = target_position[1] - currentPosition[1];
-                    xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                    xError = sqrt(pow((power) * power *30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                     posxError = tarcurpos[0] - currentPosition[0];
                     yError = (xError + xVelocity) * mpconst - yVelocity;
                     posyError = (tarcurpos[1] - currentPosition[1]);
@@ -1599,7 +1605,7 @@ public class OdometryChassis extends BasicChassis {
         double error = 0;
         double max = 0.15;
         double mpconst = 0;
-        double p=0.01,I=0.0000,D=0.00057;
+        double p=0.01,I=0.0000,D=0.000;
         double mpyVelocity = 0;
         double[] tarcurpos = {0,0,0};
         runtime.reset();
@@ -1634,6 +1640,7 @@ public class OdometryChassis extends BasicChassis {
                         target_position[2] = (0.5 * (+(+point[i + 2][0]) + 2 * ( - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * t +
                                 3 * (+ 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t, 2)))/(0.5 * (+(+point[i + 2][1] ) + 2 * ( - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
                                 3 * ( + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 2)));
+                        mpconst = target_position[2];
                         if ((oneDistance + Velocity / 4) / (oneDistance + twoDistance) > t) {
                             t = (oneDistance) / (oneDistance + twoDistance);
                         }
@@ -1642,13 +1649,12 @@ public class OdometryChassis extends BasicChassis {
 
                         tarcurpos[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1] - point[i + 1][1]) * t + (-5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t, 2) +
                                 (+3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 3));
-                        mpconst = target_position[2];
                         target_position[2]=(atan2(target_position[2],1)*180/PI + (direction-1) * 180);
                         error = currentPosition[2]-target_position[2];
                         error %= 360;
                         x = target_position[0] - currentPosition[0];
                         y = target_position[1] - currentPosition[1];
-                        xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                        xError = sqrt(pow((power) * power *30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                         posxError = tarcurpos[0] - currentPosition[0];
                         yError = (xError + xVelocity) * mpconst - yVelocity;
                         posyError = (tarcurpos[1] - currentPosition[1]);
@@ -1732,7 +1738,8 @@ public class OdometryChassis extends BasicChassis {
                         target_position[2] = (0.5 * (+(+point[i + 2][0] - point[i + 0][0]) + 2 * (2 * point[i][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * t +
                                 3 * (-point[i][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t, 2)))/(0.5 * (+(+point[i + 2][1] - point[i + 0][1]) + 2 * (2 * point[i][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
                                 3 * (-point[i][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 2)));
-                        if ((oneDistance + Velocity / 4) / (oneDistance + twoDistance) > t) {
+                        mpconst = target_position[2];
+                        if ((oneDistance + Velocity / 6) / (oneDistance + twoDistance) > t) {
                             t = (oneDistance) / (oneDistance + twoDistance);
                         }
                         tarcurpos[0] = 0.5 * ((2 * point[i + 1][0]) + (+point[i + 2][0] - point[i + 0][1]) * t + (-5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(t, 2) +
@@ -1740,13 +1747,12 @@ public class OdometryChassis extends BasicChassis {
 
                         tarcurpos[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1] - point[i + 0][1]) * t + (-5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t, 2) +
                                 (+3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 3));
-                        mpconst = target_position[2];
                         target_position[2] = (atan2(target_position[2], 1) * 180 / PI + (direction - 1) * 180);
                         error = currentPosition[2] - target_position[2];
                         error %= 360;
                         x = target_position[0] - currentPosition[0];
                         y = target_position[1] - currentPosition[1];
-                        xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                        xError = sqrt(pow((power) * power *30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                         posxError = tarcurpos[0] - currentPosition[0];
                         yError = (xError + xVelocity) * mpconst - yVelocity;
                         posyError = (tarcurpos[1] - currentPosition[1]);
@@ -1853,7 +1859,7 @@ public class OdometryChassis extends BasicChassis {
                         approxDifference = 0;
                         x = target_position[0] - currentPosition[0];
                         y = target_position[1] - currentPosition[1];
-                        xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                        xError = sqrt(pow((power) * power *30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                         posxError = tarcurpos[0] - currentPosition[0];
                         yError = (xError + xVelocity) * mpconst - yVelocity;
                         posyError = (tarcurpos[1] - currentPosition[1]);
@@ -2003,7 +2009,7 @@ public class OdometryChassis extends BasicChassis {
                         approxDifference = 0;
                         x = target_position[0] - currentPosition[0];
                         y = target_position[1] - currentPosition[1];
-                        xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                        xError = sqrt(pow((power) * power *30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                         posxError = tarcurpos[0] - currentPosition[0];
                         yError = (xError + xVelocity) * mpconst - yVelocity;
                         posyError = (tarcurpos[1] - currentPosition[1]);
@@ -2195,7 +2201,7 @@ public class OdometryChassis extends BasicChassis {
                 error %= 360;
                 x = target_position[0] - currentPosition[0];
                 y = target_position[1] - currentPosition[1];
-                xError=sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity;
+                xError=sqrt(pow((power)*power*30,2)/(1+pow(mpconst,2)))-xVelocity;
                 posxError=tarcurpos[0]-currentPosition[0];
                 yError=(xError+xVelocity)*mpconst-yVelocity;
                 posyError=(tarcurpos[1]-currentPosition[1]);
@@ -2290,7 +2296,7 @@ public class OdometryChassis extends BasicChassis {
                 error %= 360;
                 x = target_position[0] - currentPosition[0];
                 y = target_position[1] - currentPosition[1];
-                xError=sqrt(pow((power)*power*25,2)/(1+pow(mpconst,2)))-xVelocity;
+                xError=sqrt(pow((power)*power*30,2)/(1+pow(mpconst,2)))-xVelocity;
                 posxError=tarcurpos[0]-currentPosition[0];
                 yError=(xError+xVelocity)*mpconst-yVelocity;
                 posyError=(tarcurpos[1]-currentPosition[1]);
@@ -2398,7 +2404,7 @@ public class OdometryChassis extends BasicChassis {
                 approxDifference = 0;
                 x = target_position[0] - currentPosition[0];
                 y = target_position[1] - currentPosition[1];
-                xError = sqrt(pow((power) * power * 25, 2) / (1 + pow(mpconst, 2))) - xVelocity;
+                xError = sqrt(pow((power) * power *30, 2) / (1 + pow(mpconst, 2))) - xVelocity;
                 posxError = tarcurpos[0] - currentPosition[0];
                 yError = (xError + xVelocity) * mpconst - yVelocity;
                 posyError = (tarcurpos[1] - currentPosition[1]);

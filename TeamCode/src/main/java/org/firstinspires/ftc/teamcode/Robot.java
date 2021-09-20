@@ -36,9 +36,9 @@ public class Robot {
         //This link has a easy to understand explanation. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
         drivetrain= ChassisFactory.getChassis(chassisType,op,vuforiaNAVIGATIONneeded,isCorgi);
 
-        if(objectDetectionNeeded){
-            tensorFlow = new TensorFlow(op);
-        }
+//        if(objectDetectionNeeded){
+//            tensorFlow = new TensorFlow(op);
+//        }
         if(vuforiaNAVIGATIONneeded){
             //vuforiaWebcam = new VuforiaWebcam(op);
 //            vuforiaWebcam.init(op);
