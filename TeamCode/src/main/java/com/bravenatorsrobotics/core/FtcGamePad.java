@@ -110,29 +110,15 @@ public class FtcGamePad
         this(instanceName, gamepad, null);
     }   //FtcGamepad
 
-    /**
-     * Constructor: Create an instance of the object.
-     *
-     * @param instanceName specifies the instance name.
-     * @param gamepad specifies the gamepad associated with this instance.
-     * @param deadbandThreshold specifies the deadband of the gamepad analog sticks.
-     * @param buttonHandler specifies the object that will handle the button events. If none provided, it is set
-     *                      to null.
-     */
+    @Deprecated
     public FtcGamePad(
             final String instanceName, Gamepad gamepad, final double deadbandThreshold, FtcGamePad.ButtonHandler buttonHandler)
     {
         this(instanceName, gamepad, buttonHandler);
-        gamepad.setJoystickDeadzone((float)deadbandThreshold);
+//        gamepad.setJoystickDeadzone((float)deadbandThreshold);
     }   //FtcGamepad
 
-    /**
-     * Constructor: Create an instance of the object.
-     *
-     * @param instanceName specifies the instance name.
-     * @param gamepad specifies the gamepad associated with this instance.
-     * @param deadbandThreshold specifies the deadband of the gamepad analog sticks.
-     */
+    @Deprecated
     public FtcGamePad(final String instanceName, Gamepad gamepad, final double deadbandThreshold)
     {
         this(instanceName, gamepad, deadbandThreshold, null);
