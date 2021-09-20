@@ -25,7 +25,7 @@ public class Auto extends AutonomousMode<MecanumDrive> {
         double movementModifier = config.allianceColor == Config.AllianceColor.RED ? 1 : -1;
 
         switch (config.startingPosition) {
-            case SHIPPING_HUB:
+            case WAREHOUSE:
                 break;
             case STORAGE_UNIT:
                 break;
