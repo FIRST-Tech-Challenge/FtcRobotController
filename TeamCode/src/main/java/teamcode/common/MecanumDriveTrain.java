@@ -137,29 +137,31 @@ public class MecanumDriveTrain {
             //error.add(previousVelocity);
             double direction = error.getDirection();
 
-            //TODO read this later when I am more awake, from here to the setPower line
-            double passedX = error.getX();
-            double passedY = error.getY();
+            //found and fixed stupid math error
+            Vector2D passedVector = previousVelocity.add(new Vector2D(error.getX(), error.getY()));
+            double passedX = passedVector.getX();
+            double passedY = passedVector.getY();
+
             Vector2D maxVector = new Vector2D(Math.cos(direction), Math.sin(direction));
-            if(Math.abs(maxVector.getX()) < Math.abs(error.getX())){
-                if(getSign(maxVector.getX()) == getSign(error.getX())){
+            if(Math.abs(maxVector.getX()) < Math.abs(passedX)){
+                if(getSign(maxVector.getX()) == getSign(passedX)){
                     passedX = maxVector.getX();
                 }else{
                     passedX = -maxVector.getX();
                 }
             }
-            if(Math.abs(maxVector.getY()) < Math.abs(error.getY())){
-                if(getSign(maxVector.getY()) == getSign(error.getY())){
+            if(Math.abs(maxVector.getY()) < Math.abs(passedY)){
+                if(getSign(maxVector.getY()) == getSign(passedY)){
                     passedY = maxVector.getY();
                 }else{
                     passedY = -maxVector.getY();
                 }
             }
-
+            passedVector = new Vector2D(passedX, passedY);
 
             omegaError += previousOmega;
             //Vector2D passedVector = new Vector2D(passedX, passedY);
-            previousVelocity = setPowerPurePursuit(previousVelocity.add(new Vector2D(passedX, passedY)), omegaError);
+            previousVelocity = setPowerPurePursuit(passedVector, omegaError);
 
            // previousVelocity.multiply(sign);
             previousError = error;
@@ -213,6 +215,7 @@ public class MecanumDriveTrain {
         br.setPower(0);
         previousVelocity = new Vector2D(0,0);
     }
+
 
     public DcMotor[] getMotors(){
         return new DcMotor[]{fl,fr,bl,br};
