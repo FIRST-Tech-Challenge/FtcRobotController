@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -54,7 +56,10 @@ public class PController extends LinearOpMode {
             double error = origAngle-newAngle;
             double correction = (error *2);
             if (correction < 0){
-                
+                robot.flDrive.setPower(.5);
+                robot.frDrive.setPower(.5);
+                robot.blDrive.setPower(.5);
+                robot.brDrive.setPower(.5);
             }
 
         } while (!isStopRequested());

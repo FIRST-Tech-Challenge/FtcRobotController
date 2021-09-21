@@ -29,20 +29,10 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
-import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * This is NOT an opmode.
@@ -60,30 +50,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
-
-
 public class Hardware
 {
     /* Public OpMode members. */
-    public Motor m0 = null;
-    public Motor m1 = null;
-    public Motor m2 = null;
-    public Motor m3 = null;
-    public Motor carousel = null;
-    public Motor intake = null;
-    public double MIN_ANGLE = 0;
-    public double MAX_ANGLE = 180;
-    MotorGroup frontMotors = new MotorGroup(m0, m1);
-    MotorGroup backMotors = new MotorGroup(m2, m3);
-    DifferentialDrive drive;
-    MecanumDrive mecanum = new MecanumDrive(m1 , m1, m2, m3);
-    DistanceSensor dist = null;
-
-
+    public DcMotor  flDrive   = null;
+    public DcMotor  frDrive  = null;
+    public DcMotor  blDrive     = null;
+    public DcMotor  brDrive = null;
 
     /* local OpMode members. */
-    HardwareMap hwMap   =  null;
-    ServoEx servo = new SimpleServo(hwMap,"servo", MIN_ANGLE, MAX_ANGLE);
+    HardwareMap hwMap           =  null;
+    private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
     public Hardware(){
@@ -96,47 +73,27 @@ public class Hardware
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        m0 = new Motor(hwMap, "m0");
-        m1 = new Motor(hwMap, "m2");
-        m2 = new Motor(hwMap, "m1");
-        m3 = new Motor(hwMap, "m3");
-        intake = new Motor(hwMap, "m4");
-        carousel = new Motor(hwMap, "m5");
-        dist = hwMap.get(DistanceSensor.class, "distsensor");
+        flDrive  = hwMap.get(DcMotor.class, "m0");
+        frDrive = hwMap.get(DcMotor.class, "m1");
+        blDrive    = hwMap.get(DcMotor.class, "m2");
+        brDrive = hwMap.get(DcMotor.class, "m3");
+        flDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        frDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        blDrive.setDirection(DcMotor.Direction.REVERSE);
+        brDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        m0.set(0);
-        m1.set(0);
-        m2.set(0);
-        m3.set(0);
-        intake.set(0);
-        carousel.set(0);
+        // Set all motors to run without encoders.
+        // May want to use RUN_USING_ENCODERS if encoders are installed.
+        flDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        blDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        brDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        m0.setInverted(false);
-        m1.setInverted(true);
-        m2.setInverted(false);
-        m3.setInverted(true);
-        intake.setInverted(false);
-        carousel.setInverted(false);
-
-        // Set motors to run with/without encoders
-        m0.setRunMode(Motor.RunMode.PositionControl);
-        m1.setRunMode(Motor.RunMode.PositionControl);
-        m2.setRunMode(Motor.RunMode.PositionControl);
-        m3.setRunMode(Motor.RunMode.PositionControl);
-        intake.setRunMode(Motor.RunMode.PositionControl);
-        carousel.setRunMode(Motor.RunMode.PositionControl);
-
-        m0.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        m1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        m2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        m3.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        carousel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        servo.setRange(MIN_ANGLE, MAX_ANGLE);
-        servo.setPosition(0);
-
-        drive = new DifferentialDrive(frontMotors,backMotors);
+        flDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        blDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        brDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
-}
+ }
+
