@@ -46,6 +46,8 @@ public class Mecanum_TeleOp_Test extends LinearOpMode {
         double RFPower;
         double LBPower;
         double RBPower;
+        double XPower;
+        double YPower;
 
         waitForStart();
 
@@ -121,27 +123,6 @@ public class Mecanum_TeleOp_Test extends LinearOpMode {
             RFPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate + strafe), -1.0, 1.0) ;
             RBPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate - strafe), -1.0, 1.0) ;
 
-//            if(reverse){
-//                int currentIndex = speedList.size() - 1;
-//                int maxIndex = 0;
-//                double maxValue = -2;
-//                for(int i = currentIndex - 200; i <= currentIndex; i++){
-//                    if(Math.abs(Double.valueOf(speedList.get(i)[0])) > maxValue){
-//                        maxIndex = i;
-//                        maxValue = speedList.get(i)[0];
-//                    }
-//                }
-//                LFPower = -0.8 * speedList.get(maxIndex)[0];
-//                LBPower = -0.8 * speedList.get(maxIndex)[1];
-//                RFPower = -0.8 * speedList.get(maxIndex)[2];
-//                RBPower = -0.8 * speedList.get(maxIndex)[3];
-//                telemetry.addLine("BREAK APPLIED");
-//                LFPower = 0;
-//                LBPower = 0;
-//                RFPower = 0;
-//                RBPower = 0;
-
-//            }
 
             Double currentSpeed[] = {LFPower, LBPower, RFPower, RBPower};
             speedList.add(currentSpeed);
@@ -154,7 +135,7 @@ public class Mecanum_TeleOp_Test extends LinearOpMode {
             telemetry.addData("Front Motors", "LF (%.2f), RF (%.2f)", LFPower, RFPower);
             telemetry.addData("Back Motors", "LB (%.2f), RB (%.2f)", LBPower, RBPower);
             telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, drive);
-            telemetry.addData("speed:", speed);
+            telemetry.addData("Speed:", speed);
 
             /*if(loop == 200){
                 if (reverse){
