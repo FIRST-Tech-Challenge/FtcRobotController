@@ -5,6 +5,7 @@
           android:versionCode="42"
           android:versionName="7.0">
 
+
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
   <application

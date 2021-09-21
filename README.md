@@ -1,6 +1,12 @@
 ## NOTICE
 
+<<<<<<< HEAD
 This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
+=======
+This repository contains the public FTC SDK for the Ultimate Goal (2020-2021) competition season.
+
+Formerly this software project was hosted [here](https://github.com/FIRST-Tech-Challenge/Skystone).  Teams who are competing in the Ultimate Goal Challenge should use this [new FtcRobotController repository](https://github.com/FIRST-Tech-Challenge/FtcRobotController) instead of last season's (no longer updated) Skystone repository.
+>>>>>>> 95e1756ae94ff67dcf052ce482f48bb29fd80159
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
@@ -38,7 +44,11 @@ Note that the online documentation is an "evergreen" document that is constantly
 ### Javadoc Reference Material
 The Javadoc reference documentation for the FTC SDK is now available online.  Click on the following link to view the FTC SDK Javadoc documentation as a live website:
 
+<<<<<<< HEAD
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Javadoc Documentation](https://javadoc.io/org.firstinspires.ftc)
+=======
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Javadoc Documentation](https://first-tech-challenge.github.io/FtcRobotController)
+>>>>>>> 95e1756ae94ff67dcf052ce482f48bb29fd80159
 
 ### Online User Forum
 For technical questions regarding the Control System or the FTC SDK, please visit the FTC Technology forum:
@@ -54,6 +64,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
+<<<<<<< HEAD
 ## Version 7.0 (20210915-141025)
 
 ### Enhancements and New Features
@@ -126,12 +137,18 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
  * Fixes "black swirl of doom" (Infinite "configuring Wi-Fi Direct" message) on older devices
  * Updates the wiki comment on the OnBotJava intro page
 
+=======
+>>>>>>> 95e1756ae94ff67dcf052ce482f48bb29fd80159
 ## Version 6.2 (20210218-074821)
 
 ### Enhancements
 * Attempts to automatically fix the condition where a Control Hub's internal Expansion Hub is not
   working by re-flashing its firmware
+<<<<<<< HEAD
 * Makes various improvements to the Wi-Fi Direct pairing screen, especially in landscape mode
+=======
+* Makes various improvements to the WiFi Direct pairing screen, especially in landscape mode
+>>>>>>> 95e1756ae94ff67dcf052ce482f48bb29fd80159
 * Makes the Robot Controller service no longer be categorically restarted when the main activity is brought to foreground
     * (e.g. the service is no longer restarted simply by viewing the Self Inspect screen and pressing the back button)
     * It is still restarted if the Settings menu or Configure Robot menu is opened
@@ -145,7 +162,11 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Fixes issue where the Control Hub OS's watchdog would restart the Robot Controller app if 
   the Control Hub was not able to communicate with its internal Expansion Hub
 * Fixes certain I2C devices not showing up in the appropriate `HardwareMap` fields (such as `hardwareMap.colorSensor`) 
+<<<<<<< HEAD
 * Fixes issue where performing a Wi-Fi factory reset on the Control Hub would not set the Wi-Fi band to 2.4 GHz
+=======
+* Fixes issue where performing a WiFi factory reset on the Control Hub would not set the WiFi band to 2.4 GHz
+>>>>>>> 95e1756ae94ff67dcf052ce482f48bb29fd80159
 * Fixes issue where OnBotJava might fail to create a new file if the option to "Setup Code for Configured Hardware" was selected
 * Fixes issue where performing certain operations after an Op Mode crashes would temporarily break Control/Expansion Hub communication
 * Fixes issue where a Control Hub with a configured USB-connected Expansion Hub would not work if the Expansion Hub was missing at startup
@@ -171,7 +192,11 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Introduces an automatic TeleOp preselection feature
     * For details and usage guide, please see [this wiki entry](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Automatically-Loading-a-Driver-Controlled-Op-Mode)
 * Shows icon next to OpMode name in the OpMode list dropdown on the Driver Station to indicate the source of the OpMode (i.e. the programming tool used to create it)
+<<<<<<< HEAD
 * Fixes issue where the Driver Station app would exit after displaying the Configuring Wi-Fi Direct screen
+=======
+* Fixes issue where the Driver Station app would exit after displaying the Configuring WiFi Direct screen
+>>>>>>> 95e1756ae94ff67dcf052ce482f48bb29fd80159
 * Fixes Blocks and OnBotJava prompts when accessed via the REV Hardware Client
 
 ## Version 6.0 (20200921-085816)

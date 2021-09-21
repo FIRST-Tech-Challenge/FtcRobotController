@@ -192,8 +192,8 @@ public class ConceptVuforiaFieldNavigationWebcam extends LinearOpMode {
         final float CAMERA_LEFT_DISPLACEMENT     = 0.0f * mmPerInch;   // eg: Enter the left distance from the center of the robot to the camera lens
 
         OpenGLMatrix cameraLocationOnRobot = OpenGLMatrix
-                    .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, 90, 90, 0));
+                .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, 90, 90, 0));
 
         /**  Let all the trackable listeners know where the camera is.  */
         for (VuforiaTrackable trackable : allTrackables) {
