@@ -19,6 +19,8 @@ apply from: '../build.dependencies.gradle'
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'org.ftclib.ftclib:vision:1.2.0' // vision
+    implementation 'org.ftclib.ftclib:core:1.2.0' // core
 }
 repositories {
     mavenCentral()
