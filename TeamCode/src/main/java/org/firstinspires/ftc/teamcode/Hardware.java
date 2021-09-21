@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -53,10 +55,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Hardware
 {
     /* Public OpMode members. */
-    public DcMotor  flDrive   = null;
-    public DcMotor  frDrive  = null;
-    public DcMotor  blDrive     = null;
-    public DcMotor  brDrive = null;
+    public Motor  flDrive   = null;
+    public Motor  frDrive  = null;
+    public Motor  blDrive     = null;
+    public Motor  brDrive = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -73,27 +75,34 @@ public class Hardware
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        flDrive  = hwMap.get(DcMotor.class, "m0");
-        frDrive = hwMap.get(DcMotor.class, "m1");
-        blDrive    = hwMap.get(DcMotor.class, "m2");
-        brDrive = hwMap.get(DcMotor.class, "m3");
-        flDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        frDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-        blDrive.setDirection(DcMotor.Direction.REVERSE);
-        brDrive.setDirection(DcMotor.Direction.FORWARD);
+        flDrive  = new Motor(hwMap, "m0");
+        frDrive = new Motor(hwMap, "m1");
+        blDrive    = new Motor(hwMap, "m2");
+        brDrive = new Motor(hwMap, "m3");
+
+        flDrive.set(0);
+        frDrive.set(0);
+        blDrive.set(0);
+        brDrive.set(0);
+
+        flDrive.setInverted(true);
+        frDrive.setInverted(false);
+        blDrive.setInverted(true);
+        brDrive.setInverted(false);
 
         // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        flDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        blDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        brDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flDrive.setRunMode(Motor.RunMode.VelocityControl);
+        frDrive.setRunMode(Motor.RunMode.VelocityControl);
+        blDrive.setRunMode(Motor.RunMode.VelocityControl);
+        brDrive.setRunMode(Motor.RunMode.VelocityControl);
 
-        flDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        blDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        brDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        frDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        blDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        brDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
+        MotorGroup frontMotors = new MotorGroup(flDrive,frDrive);
+        MotorGroup backMotors = new MotorGroup(blDrive, brDrive);
     }
  }
 
