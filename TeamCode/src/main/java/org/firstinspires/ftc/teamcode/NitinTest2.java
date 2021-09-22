@@ -1,7 +1,9 @@
+
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.UpliftRobot2;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 @TeleOp (name = "NitinOp2", group = "Opmodes")
 public class NitinTest2 extends UpliftTele {
@@ -9,7 +11,6 @@ public class NitinTest2 extends UpliftTele {
     DcMotor tm;
     public void initHardware() {
         robot = new UpliftRobot2(this);
-        tm = robot.tm;
     }
 
     @Override
