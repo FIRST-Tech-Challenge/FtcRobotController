@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.mason_wu;
+package org.firstinspires.ftc.teamcode.UltimateGoal_2020.mason_wu;
 
         import com.qualcomm.robotcore.eventloop.opmode.Disabled;
         import com.qualcomm.robotcore.hardware.Servo;
