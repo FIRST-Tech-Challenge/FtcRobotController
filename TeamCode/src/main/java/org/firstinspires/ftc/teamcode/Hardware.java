@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -59,6 +60,9 @@ public class Hardware
     public Motor  frDrive  = null;
     public Motor  blDrive     = null;
     public Motor  brDrive = null;
+    MotorGroup frontMotors = new MotorGroup(flDrive,frDrive);
+    MotorGroup backMotors = new MotorGroup(blDrive, brDrive);
+    public DifferentialDrive m_drive = new DifferentialDrive(frontMotors,backMotors);
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -100,9 +104,6 @@ public class Hardware
         frDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         blDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         brDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        MotorGroup frontMotors = new MotorGroup(flDrive,frDrive);
-        MotorGroup backMotors = new MotorGroup(blDrive, brDrive);
     }
  }
 

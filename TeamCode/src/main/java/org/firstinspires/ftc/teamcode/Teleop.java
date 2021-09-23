@@ -58,6 +58,9 @@ public class Teleop extends LinearOpMode {
     Hardware robot    = new Hardware();   // Use a Pushbot's hardware
     double          clawOffset      = 0;                       // Servo mid position
     final double    CLAW_SPEED      = 0.02 ;                   // sets rate to move servo
+    double drive = (gamepad1.right_trigger * .5);
+    double turn = (gamepad1.left_trigger * .5);
+    double reverse = (gamepad1.left_stick_y * .5);
 
     @Override
     public void runOpMode() {
@@ -65,21 +68,11 @@ public class Teleop extends LinearOpMode {
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.init(hardwareMap);
+        robot.init(robot.hwMap);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
-
-            // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
-            // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
-            // This way it's also easy to just drive straight, or just turn.
-           robot.flDrive.setPower(gamepad1.left_stick_y);
-           robot.frDrive.setPower(gamepad1.right_stick_y);
-           robot.blDrive.setPower(gamepad1.left_stick_y);
-           robot.brDrive.setPower(gamepad1.right_stick_y);
-        }
+        robot.m_drive.arcadeDrive(drive-reverse, turn);
     }
 }
