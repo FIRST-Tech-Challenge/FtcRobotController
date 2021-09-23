@@ -1,3 +1,9 @@
+![github image](https://www.perryic.org/uploads/1/4/6/5/14650352/published/perry-logo_1.jpg?1515508048) 
+# PICKLE-Bots
+Perry Innovation Center's FTC Robotics Program/Team Repository
+</br><b>Season</b>: 2021-2022
+</br><b>Game</b>: Freight Frenzy
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
