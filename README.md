@@ -28,7 +28,7 @@ This GitHub repository contains the source code that is used to build an Android
 ## Cloning the Repository
 
 1. Touch base with [Charlie Gray](https://github.com/charlie-gray) in order to be **added to the GitHub group**, especially if you are an underclassman. This allows us to keep all of the code from each year in one place so we can look back and steal our own code. You can email Charlie at `cgray@lsoc.org` if you need to be added to the group <strike>or if you want to complain about the obnoxious emoticions in this readme document.</strike>
-2. Once we've taken care of that housekeeping item, the next step is to **install git**. You can learn how to do that [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+2. Once we've taken care of that housekeeping item, the next step is to **install git**. You can learn how to do that [here](https://git-scm.com/downloads)
 3. After you've installed git, you'll need to clone the repository to your computer. In order to do this, you'll need some experience using your computer's command line prompt. If you don't know how to do that, I'd *highly* reccomend checking out [this codeacademy course](https://www.codecademy.com/learn/learn-the-command-line). Refreshed on command line work? Great! Change directories to where you want to clone (or "download") this repository. Then make a directory using `mkdir`. `cd` into that directory you just made, then run `git clone https://github.com/Latin-School-robotics/LSOC-Freight-Frenzy.git`. Horray! We just cloned the repository! \(^ヮ^)/
 
 ## Pushing to the Repository
