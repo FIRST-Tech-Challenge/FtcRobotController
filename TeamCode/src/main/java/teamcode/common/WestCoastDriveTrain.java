@@ -22,7 +22,7 @@ public class WestCoastDriveTrain {
     private double previousError;
     private double previousOmegaError;
 
-    private final double WHEEL_RADIUS = 0;
+    private final double WHEEL_RADIUS = 0; //TODO measure
 
 
     public WestCoastDriveTrain(Localizer localizer, HardwareMap hardwareMap){
@@ -67,7 +67,7 @@ public class WestCoastDriveTrain {
         previousError =  0;
         double steadyStateError = 0;
         previousOmegaError = 0;
-        moveToRotation(currentState.getRotation() + newDesiredPosition.getDirection(), desiredOmega);
+        moveToRotation( newDesiredPosition.getDirection() - currentState.getRotation(), desiredOmega);
 
         while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive())){
 

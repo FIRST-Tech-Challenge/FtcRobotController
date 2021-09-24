@@ -3,35 +3,34 @@ package teamcode.test;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import teamcode.common.AbstractOpMode;
-@Disabled
+import teamcode.common.Utils;
+
 @TeleOp(name="MotorTest")
 public class MotorTest extends AbstractOpMode {
     DcMotor motor1, motor2;
+    Servo servo;
 
-
-    @Override
     protected void onInitialize() {
-        motor1 = hardwareMap.dcMotor.get("TestMotor1");
-        motor2 = hardwareMap.dcMotor.get("TestMotor2");
+        motor1 = hardwareMap.dcMotor.get("Motor1");
+        motor2 = hardwareMap.dcMotor.get("Motor2");
+        servo = hardwareMap.servo.get("Servo");
     }
 
     @Override
     protected void onStart() {
-        new Thread(){
-            public void run(){
-                while(opModeIsActive()){
-                    motor1.setPower(gamepad1.left_trigger);
-                    motor2.setPower(gamepad1.right_trigger);
-                }
-            }
-        }.start();
+        servo.setPosition(0);
+        Utils.sleep(250);
+        servo.setPosition(0.2);
+        Utils.sleep(250);
+
+        motor1.setPower(1);
+        motor2.setPower(-1);
+
 
         while(opModeIsActive()) {
-            telemetry.addData("Motor 1 Power: ", motor1.getPower());
-            telemetry.addData("Motor 2 Power: ", motor2.getPower());
-            telemetry.update();
         }
 
     }
