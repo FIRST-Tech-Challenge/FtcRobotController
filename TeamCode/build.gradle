@@ -19,3 +19,17 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
+
+//t265 tracking
+repositories {
+    // This line will already be here; you do not need to add it
+    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+    // Add this line
+    maven { url = "https://maven.0x778.tk" }
+}
+
+dependencies {
+    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
+}
+
+
