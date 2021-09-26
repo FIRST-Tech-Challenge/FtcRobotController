@@ -8,6 +8,7 @@
 // please think carefully as to whether such customizations are really necessary
 // before doing so.
 
+options.deprecation = true //Trying to get gradle to sotp
 
 // Custom definitions may go here
 
