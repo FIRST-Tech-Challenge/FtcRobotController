@@ -8,6 +8,10 @@
 // please think carefully as to whether such customizations are really necessary
 // before doing so.
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.compilerArgs << '-Xlint:deprecation'
+}
 
 // Custom definitions may go here
 
