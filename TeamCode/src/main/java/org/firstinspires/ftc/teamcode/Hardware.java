@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -62,7 +63,8 @@ public class Hardware
     public Motor  brDrive = null;
     MotorGroup frontMotors = new MotorGroup(flDrive,frDrive);
     MotorGroup backMotors = new MotorGroup(blDrive, brDrive);
-    public DifferentialDrive m_drive = new DifferentialDrive(frontMotors,backMotors);
+    public MecanumDrive m_drive = new MecanumDrive(flDrive, frDrive,
+            blDrive, brDrive);
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;

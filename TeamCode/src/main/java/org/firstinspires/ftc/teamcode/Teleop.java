@@ -60,7 +60,7 @@ public class Teleop extends LinearOpMode {
     final double    CLAW_SPEED      = 0.02 ;                   // sets rate to move servo
     double drive = (gamepad1.right_trigger * .5);
     double turn = (gamepad1.left_trigger * .5);
-    double reverse = (gamepad1.left_stick_y * .5);
+    double strafe = (gamepad1.left_stick_y * .5);
 
     @Override
     public void runOpMode() {
@@ -72,7 +72,6 @@ public class Teleop extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-        robot.m_drive.arcadeDrive(drive-reverse, turn);
+        robot.m_drive.driveRobotCentric(strafe, drive, turn);
     }
 }
