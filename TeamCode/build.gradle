@@ -10,7 +10,7 @@
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:unchecked'
-    options.deprecation = true
+    options.compilerArgs << '-Xlint:deprecation'
 }
 
 // Custom definitions may go here
