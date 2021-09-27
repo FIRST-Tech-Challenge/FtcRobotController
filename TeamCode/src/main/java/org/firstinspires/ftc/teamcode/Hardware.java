@@ -31,12 +31,16 @@ package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * This is NOT an opmode.
@@ -61,14 +65,17 @@ public class Hardware
     public Motor  frDrive  = null;
     public Motor  blDrive     = null;
     public Motor  brDrive = null;
+    public double MIN_ANGLE = 0;
+    public double MAX_ANGLE = 180;
     MotorGroup frontMotors = new MotorGroup(flDrive,frDrive);
     MotorGroup backMotors = new MotorGroup(blDrive, brDrive);
     public MecanumDrive m_drive = new MecanumDrive(flDrive, frDrive,
             blDrive, brDrive);
 
+
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
+    ServoEx servo = new SimpleServo(hwMap,"mainservo", MIN_ANGLE, MAX_ANGLE);
 
     /* Constructor */
     public Hardware(){
@@ -106,6 +113,9 @@ public class Hardware
         frDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         blDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         brDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        servo.setRange(MIN_ANGLE, MAX_ANGLE);
+        servo.setPosition(0);
     }
  }
 
