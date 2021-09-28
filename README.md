@@ -1,3 +1,8 @@
+# FORK WARNING
+
+This repository is a **fork** of the original FtcRobotController repository specifically for team
+12778/Tech Empire's codebase. It might not be up to date.
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
