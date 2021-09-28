@@ -13,22 +13,15 @@
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
-
-android {
-    buildToolsVersion '30.0.2'
-    sourceSets {
-        main.java.srcDirs += '../../ultimate-goal/src'
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-
-repositories {
-    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
-}
+apply from: '../build.dependencies.gradle'
 
 dependencies {
+    implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+}
+
+android {
+    sourceSets{
+        main.java.srcDirs+='../../freight-frenzy/src'
+    }
 }

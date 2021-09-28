@@ -1,11 +1,11 @@
 dependencies {
     implementation project(':FtcRobotController')
-    implementation 'org.firstinspires.ftc:RobotCore:6.0.1'
-    implementation 'org.firstinspires.ftc:Hardware:6.0.1'
-    implementation 'org.firstinspires.ftc:FtcCommon:6.0.1'
+    implementation 'org.firstinspires.ftc:RobotCore:7.0.0'
+    implementation 'org.firstinspires.ftc:Hardware:7.0.0'
+    implementation 'org.firstinspires.ftc:FtcCommon:7.0.0'
     implementation (name: 'tfod-release', ext:'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext:'aar')
-    implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.3'
     implementation 'com.acmerobotics.roadrunner:core:0.5.2'
     implementation project(':robomatic')
 }
