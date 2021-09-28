@@ -5,38 +5,49 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import org.firstinspires.ftc.teamcode.R
 import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.teamcode.robot.parts.drivetrain.drivetrains.DriveTrain
+import kotlin.math.abs
 
-class EncoderDrive(val robot: Robot){
+class EncoderDrive(val robot: Robot) {
 
     private val runtime = ElapsedTime()
 
-    val COUNTS_PER_MOTOR_REV = 1440.0
+    var WHEEL_DIAMETER_INCHES: Double = 3.0
 
-    val DRIVE_GEAR_REDUCTION = 2.0
+    var DRIVE_GEAR_REDUCTION: Double = 20.0
 
-    val WHEEL_DIAMETER_INCHES = 4.0
+    var COUNTS_PER_MOTOR_REV: Double = 1440.0
 
-    val COUNTS_PER_INCH = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION /
-            (WHEEL_DIAMETER_INCHES * hardwareMap.appContext.resources.getString(R.string.pi).toInt())
+    private var COUNTS_PER_INCH: Double = 0.0
+        get() = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION /
+                    (WHEEL_DIAMETER_INCHES * hardwareMap.appContext.resources.getString(R.string.pi).toInt())
 
     var stop = false
 
     fun encoderDrive(
-            speed: Double,
-            leftInches: Double,
-            rightInches: Double,
-            lateralInches: Double,
-            timeout: Double,
+        speed: Double,
+        leftInches: Double,
+        rightInches: Double,
+        lateralInches: Double,
+        timeout: Double,
     ) {
         stop = false
         val newLeftTarget: Int
         val newRightTarget: Int
         val newCenterTarget: Int
 
-        val leftDrive = robot.getRobotPart(hardwareMap.appContext.resources.getInteger(R.integer.leftDriveID)) as DcMotor
-        val rightDrive = robot.getRobotPart(hardwareMap.appContext.resources.getInteger(R.integer.rightDriveID)) as DcMotor
-        val centerDrive = robot.getRobotPart(hardwareMap.appContext.resources.getInteger(R.integer.centerDriveID)) as DcMotor
-
+        /*
+        val leftDrive =
+                robot.getRobotPart(hardwareMap.appContext.resources.getInteger(R.integer.leftDriveID)) as DcMotor
+        val rightDrive =
+                robot.getRobotPart(hardwareMap.appContext.resources.getInteger(R.integer.rightDriveID)) as DcMotor
+        val centerDrive =
+                robot.getRobotPart(hardwareMap.appContext.resources.getInteger(R.integer.centerDriveID)) as DcMotor
+         */
+        val driveTrain = robot.getRobotPart(DriveTrain::class.java) as DriveTrain
+        val leftDrive = robot.hardwareMap.get(hardwareMap.appContext.resources.getStringArray(R.array.LEFT_DRIVE)[0]) as DcMotor
+        val rightDrive = robot.hardwareMap.get(hardwareMap.appContext.resources.getStringArray(R.array.RIGHT_DRIVE)[0]) as DcMotor
+        val centerDrive = robot.hardwareMap.get(hardwareMap.appContext.resources.getStringArray(R.array.CENTER_DRIVE)[0]) as DcMotor
 
         // Determine new target position, and pass to motor controller
         newLeftTarget = leftDrive.currentPosition + (leftInches * COUNTS_PER_INCH).toInt()
@@ -53,9 +64,9 @@ class EncoderDrive(val robot: Robot){
 
         // reset the timeout time and start motion.
         runtime.reset()
-        leftDrive.power = Math.abs(speed)
-        rightDrive.power = Math.abs(speed)
-        centerDrive.power = Math.abs(speed)
+        leftDrive.power = abs(speed)
+        rightDrive.power = abs(speed)
+        centerDrive.power = abs(speed)
 
         while (
             !this.stop &&

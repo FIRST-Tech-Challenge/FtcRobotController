@@ -1,17 +1,22 @@
 package org.firstinspires.ftc.teamcode.buttons
 
+import com.qualcomm.robotcore.hardware.Gamepad
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.teamcode.buttons.dpad.*
+import org.firstinspires.ftc.teamcode.buttons.dpad.Left
+import org.firstinspires.ftc.teamcode.buttons.dpad.Right
+import org.firstinspires.ftc.teamcode.buttons.dpad.Up
 import org.firstinspires.ftc.teamcode.driver.EncoderDrive
 import org.firstinspires.ftc.teamcode.imgproc.ImgProc
+import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.teamcode.robot.parts.drivetrain.drivetrains.DriveTrain
 
 // Add functions to their appropriate package for readability then restate them here
 
+@Deprecated("Deprecated in favor of ButtonMGR in Java")
 class AllMappings(robot: Robot, telemetry: Telemetry) {
 
     val robot = robot
@@ -35,36 +40,37 @@ class AllMappings(robot: Robot, telemetry: Telemetry) {
     }
 
     private suspend fun loop() {
-        if (this.robot.gamepad1.dpad_up) {
+        var gamepad = robot.getRobotPart(Gamepad::class.java) as Gamepad
+        if (gamepad.dpad_up) {
             this.dpadUp()
         }
 
-        if (this.robot.gamepad1.dpad_right) {
+        if (gamepad.dpad_right) {
             this.dpadRight()
         }
 
-        if (this.robot.gamepad1.dpad_left) {
-            this.dpadRight()
+        if (gamepad.dpad_left) {
+            this.dpadLeft()
         }
 
-        if (this.robot.gamepad1.left_bumper) {
+        if (gamepad.left_bumper) {
             this.leftBumper()
         }
     }
 
-    fun dpadUp() {
+    private fun dpadUp() {
         this.encoder = Up(this.robot).encoder
     }
 
-    fun dpadRight() {
-        this.image = Right(this.telemetry).img
+    private fun dpadRight() {
+        this.image = Right(this.telemetry, ImgProc()).img
     }
 
-    fun dpadLeft() {
+    private fun dpadLeft() {
         Left(this.image)
     }
 
-    fun leftBumper() {
+    private fun leftBumper() {
         org.firstinspires.ftc.teamcode.buttons.bumpers.Left(this.encoder)
     }
 }

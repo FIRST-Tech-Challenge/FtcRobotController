@@ -8,5 +8,4 @@ class DriveFunctions(robot: Robot) {
     val encoder = EncoderDrive(robot)
 
     fun testEncoderDrive() = this.encoder.encoderDrive(50.0, 30.0, 30.0, 0.0, 10.0)
-
 }

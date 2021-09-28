@@ -9,7 +9,7 @@ configurations {
 }
 
 buildscript {
-    ext.kotlin_version = '1.5.10'
+    ext.kotlin_version = '+'
     repositories {
         mavenCentral()
         google()
