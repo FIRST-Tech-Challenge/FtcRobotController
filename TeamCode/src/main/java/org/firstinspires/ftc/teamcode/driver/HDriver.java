@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.driver;
 
+import org.firstinspires.ftc.teamcode.buttons.ButtonMGR;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.parts.drivetrain.drivetrains.DriveTrain;
 import org.firstinspires.ftc.teamcode.robot.parts.drivetrain.movement.Movement;
@@ -14,6 +15,8 @@ public class HDriver extends Driver {
 
     private HDriveMode hDriveMode;
 
+    private ButtonMGR buttonMGR;
+
     public HDriver(boolean useTelemetry, HDriveMode hDriveMode, Robot robot) {
         super(robot);
         this.useTelemetry = useTelemetry;
@@ -22,6 +25,7 @@ public class HDriver extends Driver {
 
     @Override
     public void loop() {
+        buttonMGR = new ButtonMGR(robot.telemetry, robot);
         robot.telemetry.addData("Mode", hDriveMode);
         // Move / Drive
         switch (hDriveMode) {
@@ -32,6 +36,9 @@ public class HDriver extends Driver {
 
                 // Turn
                 ((DriveTrain)robot.getRobotPart(DriveTrain.class)).turn(Turn.CLOCKWISE, robot.gamepad1.right_stick_x);
+
+                buttonMGR.CheckAndExecute();
+
                 break;
             default:
                 stop();
