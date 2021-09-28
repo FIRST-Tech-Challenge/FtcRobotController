@@ -11,7 +11,7 @@ To use this code, download / clone the entire project to your local computer.
 
 |Team Number|Current Status|Is playing|
 |-|-|-|
-|5100|Not playing this year|No|
+|5100|-|-|
 |4100|-|Yes|
 
 ## Library Status
