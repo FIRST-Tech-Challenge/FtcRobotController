@@ -30,6 +30,7 @@ dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.3'
+    implementation 'org.openftc:easyopencv:1.5.0'
     implementation 'org.ftclib.ftclib:vision:1.2.0' // vision for ftclib
     implementation 'org.ftclib.ftclib:core:1.2.0' // core for ftclib
 }
