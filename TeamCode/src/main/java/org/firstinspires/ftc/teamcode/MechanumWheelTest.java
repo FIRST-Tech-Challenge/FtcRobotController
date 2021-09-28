@@ -99,13 +99,7 @@ public class MechanumWheelTest extends LinearOpMode {
             double leftX = gamepad1.left_stick_x * 1.1;
             double rightX = gamepad1.right_stick_x;
 
-            double[] output = driveAPI.convertInputsToPowers(leftX, leftY, rightX);
-
-            // Send calculated power to wheels
-            rearLeft.setPower(output[0]);
-            frontLeft.setPower(output[1]);
-            rearRight.setPower(output[2]);
-            frontRight.setPower(output[3]);
+            double[] output = driveAPI.runMotorsFromStick(leftX, leftY, rightX);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Running");

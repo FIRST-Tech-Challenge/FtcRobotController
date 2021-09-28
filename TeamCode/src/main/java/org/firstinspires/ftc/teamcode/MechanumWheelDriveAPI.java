@@ -34,4 +34,20 @@ public class MechanumWheelDriveAPI {
         output[3] = (inputY - inputX - inputSpin) * this.power_scale / denom;
         return output;
     }
+
+    public void stopAll() {
+        rear_left.setPower(0);
+        rear_right.setPower(0);
+        front_left.setPower(0);
+        front_right.setPower(0);
+    }
+
+    public double[] runMotorsFromStick(double inputX, double inputY, double inputSpin) {
+        double[] output = convertInputsToPowers(inputX, inputY, inputSpin);
+        rear_left.setPower(output[0]);
+        rear_right.setPower(output[1]);
+        front_left.setPower(output[2]);
+        front_right.setPower(output[3]);
+        return output;
+    }
 }
