@@ -30,4 +30,8 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.3'
 
     implementation 'org.openftc:easyopencv:1.5.0'
+
+    implementation 'org.ftclib.ftclib:core:1.2.0'
+    // the following is optional if you want vision
+    implementation 'org.ftclib.ftclib:vision:1.2.0'
 }
