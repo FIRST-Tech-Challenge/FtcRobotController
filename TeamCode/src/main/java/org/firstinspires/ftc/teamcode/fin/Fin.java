@@ -13,21 +13,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-import java.lang.Math;
-import java.util.function.Function;
 
 @TeleOp
 //back right front right front left back left
 public class Fin extends LinearOpMode {
-
+    public Runnable function = this::startFunction;
 
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
         while (opModeIsActive()) {
-
+            function.run();
         }
     }
 
-    public void startFunction() {}
+    public void startFunction() {
+
+    }
 }
