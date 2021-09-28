@@ -20,15 +20,15 @@ import org.tensorflow.lite.task.vision.detector.ObjectDetector
 class ImgProc() : AppCompatActivity() {
 
     private val options = ObjectDetector.ObjectDetectorOptions.builder()
-            .setMaxResults(5)
-            .setScoreThreshold(0.5f)
-            .build()
+        .setMaxResults(5)
+        .setScoreThreshold(0.5f)
+        .build()
 
     private val objectDetector: ObjectDetector = ObjectDetector.createFromFileAndOptions(
-                this,
-                "UltimateGoal.tflite",
-                options,
-        )
+        this,
+        "UltimateGoal.tflite",
+        options,
+    )
 
     private val VUFORIA_KEY = resources.getString(R.string.VUFORIA_KEY)
     private val CAM_NAME = resources.getString(R.string.webcam)
@@ -53,7 +53,8 @@ class ImgProc() : AppCompatActivity() {
 
     private fun initTF() {
         val tfodMonitorViewId = hardwareMap.appContext.resources.getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.packageName)
+            "tfodMonitorViewId", "id", hardwareMap.appContext.packageName
+        )
 
         val tfodParameters = TFObjectDetector.Parameters(tfodMonitorViewId)
 
@@ -86,8 +87,6 @@ class ImgProc() : AppCompatActivity() {
         while (true) {
             Thread.sleep(10)
             if (tfod != null) {
-                // getUpdatedRecognitions() will return null if no new information is available since
-                // the last time that call was made.
                 val updatedRecognitions = tfod.updatedRecognitions
                 if (updatedRecognitions != null) {
                     this.objects.clear()
@@ -96,20 +95,27 @@ class ImgProc() : AppCompatActivity() {
                     val i = 0
                     for (recognition in updatedRecognitions) {
                         telemetry.addData(String.format("label (%d)", i), recognition.label)
-                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                recognition.left, recognition.top)
-                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                recognition.right, recognition.bottom)
+                        telemetry.addData(
+                            String.format("  left,top (%d)", i), "%.03f , %.03f",
+                            recognition.left, recognition.top
+                        )
+                        telemetry.addData(
+                            String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                            recognition.right, recognition.bottom
+                        )
 
-                        this.objects.add(ObjectDetected(
+                        // add objects to array
+                        this.objects.add(
+                            ObjectDetected(
                                 recognition.label,
                                 RectF(
-                                        recognition.left,
-                                        recognition.top,
-                                        recognition.right,
-                                        recognition.bottom,
+                                    recognition.left,
+                                    recognition.top,
+                                    recognition.right,
+                                    recognition.bottom,
                                 ),
-                        ))
+                            )
+                        )
                     }
                     telemetry.update()
                 }
@@ -128,11 +134,12 @@ class ImgProc() : AppCompatActivity() {
     }
 
     fun stop() {
-        tfod.deactivate()
-
         this.looper.cancel()
+
+        tfod.deactivate()
     }
 
+    @Deprecated("Replaced by start(), stop() and the 'objects' array")
     fun processLegacy(bitmap: Bitmap): Array<ObjectDetected> {
         val image = TensorImage.fromBitmap(bitmap)
 

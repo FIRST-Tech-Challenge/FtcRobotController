@@ -31,8 +31,6 @@ public class MainDrive extends OpMode {
 
     Robot robot;
 
-    AllMappings mappings;
-
     @Override
     public void init() {
         // Robot parts
@@ -44,8 +42,6 @@ public class MainDrive extends OpMode {
 
         // Robot
         this.robot = new Robot(true, robotPartSettings,gamepad1,gamepad2,telemetry,hardwareMap);
-
-        this.mappings = new AllMappings(this.robot, telemetry);
 
         // Pick driver from class
         if (robot.hasRobotPart(HDrive.class)) {
@@ -61,13 +57,11 @@ public class MainDrive extends OpMode {
     @Override
     public void start() {
         driver.start();
-        this.mappings.start();
     }
 
     @Override
     public void stop() {
         driver.stop();
-        this.mappings.stop();
     }
 
     @Override
