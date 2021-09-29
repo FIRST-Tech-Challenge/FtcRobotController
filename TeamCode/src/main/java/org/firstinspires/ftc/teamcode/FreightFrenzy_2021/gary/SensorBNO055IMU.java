@@ -68,7 +68,8 @@ public class SensorBNO055IMU extends LinearOpMode
     // State used for updating telemetry
     Orientation angles;
     Acceleration gravity;
-    double finalAngles;
+    /*double finalAngles;*/
+
 
     //----------------------------------------------------------------------------------------------
     // Main logic
@@ -108,9 +109,9 @@ public class SensorBNO055IMU extends LinearOpMode
         }
 
 
-        if(Double.valueOf(formatAngle(angles.angleUnit, angles.firstAngle)) < 0){
+        /*if(Double.parseDouble(formatAngle(angles.angleUnit, angles.firstAngle)) < 0){
             finalAngles = Double.valueOf(formatAngle(angles.angleUnit, angles.firstAngle)) + 360;
-        }
+        }*/
     }
 
     //----------------------------------------------------------------------------------------------
@@ -147,8 +148,9 @@ public class SensorBNO055IMU extends LinearOpMode
             .addData("heading", new Func<String>() {
 
                 @Override public String value() {
-                    return formatAngle(angles.angleUnit, finalAngles);
-                            //formatAngle(angles.angleUnit, angles.firstAngle);
+                    return formatAngle(angles.angleUnit, angles.firstAngle);
+                           // formatAngle(angles.angleUnit, finalAngles);
+
                     }
                 })
             .addData("roll", new Func<String>() {
@@ -189,4 +191,13 @@ public class SensorBNO055IMU extends LinearOpMode
     String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
+
+
+    /*public AnotherClass Mecanum_TeleOp;{
+        if(Double.valueOf(formatAngle(angles.angleUnit, angles.firstAngle)) == x){
+
+        }
+    }*/
 }
+
+
