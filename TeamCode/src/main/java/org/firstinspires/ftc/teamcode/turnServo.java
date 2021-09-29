@@ -70,7 +70,7 @@ public class turnServo extends LinearOpMode {
         waitForStart();
         timer.reset();
         while(position <= 180){
-            if(timer.milliseconds() < 2000){
+            if(timer.milliseconds() > 2000){
                 position += 45;
                 if(position == 180){
                     robot.servo.setPosition(0);
