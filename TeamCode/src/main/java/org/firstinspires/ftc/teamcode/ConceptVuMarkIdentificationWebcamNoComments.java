@@ -63,7 +63,7 @@ public class ConceptVuMarkIdentificationWebcamNoComments extends LinearOpMode {
 
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+        parameters.vuforiaLicenseKey = "AQXJtf3/////AAABmRNtqRHOi01ztX4zAd+KuPdOXWfS1wa0VbmgatYieybPLp6S7F+PpEIxktdGYJhBEd9SBRox+HmVviMD3XQdouhnWR8NtrjrlFXN63orJIBQHEhUC8vZTbO1Sq/EsAELA4VhNOHmERzTXhJ4Kz8h4Cy4tJr192IiMB7W02Czjts055dln8QTMQPXqXgFU4qeY7mxKrpFco1pKT/OFCdwVHWWvkozJBXEIujp/eqjknmpKgrlPQPRkFOzyLRHHCybs/R9Agw6EDiVGgE92XCU/lFOaU0U92R/WlWoFGh/LlyHgqlFg6N/SskENvsnX1j7tbCF68Bz78meWiaRYSktMJRgshC1Fk3G7EnmMKaCPFMJ";
 
         parameters.cameraName = webcamName;
         this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
