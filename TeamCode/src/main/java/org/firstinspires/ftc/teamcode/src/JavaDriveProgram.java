@@ -21,12 +21,6 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENC
 @TeleOp(name = " State 2021 Drive Program")
 public class JavaDriveProgram extends LinearOpMode {
 
-    private Servo ring_stopper;
-    private Servo wobble_grabber;
-    private DcMotor intake;
-    private DcMotor shooter;
-    private DcMotor wobble_arm;
-    private DcMotor feeder;
     private BNO055IMU imu;
 
     private DcMotor back_right;
@@ -106,28 +100,7 @@ public class JavaDriveProgram extends LinearOpMode {
 
 
 
-        /**
-         * Peripheral initialization
-         */
-        ring_stopper = hardwareMap.get(Servo.class, "ring_stopper");
-        ring_stopper.setPosition(0.82);
 
-        wobble_grabber = hardwareMap.get(Servo.class, "wobble_grabber");
-        wobble_grabber.setPosition(0.17);
-
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        intake.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        wobble_arm = hardwareMap.get(DcMotor.class, "wobble_arm");
-        wobble_arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        feeder = hardwareMap.get(DcMotor.class, "feeder");
-
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
-        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        shooter.setMode(STOP_AND_RESET_ENCODER);
-        shooter.setMode(RUN_USING_ENCODER);
 
 
         telemetry.addData("Initialization Status", "Initialized");
@@ -156,8 +129,6 @@ public class JavaDriveProgram extends LinearOpMode {
                 front_right.setPower(DrivePowerMult * ((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));
 
 
-                wobble_arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                wobble_arm.setPower(-1 * determineWobblePower() * gamepad2.left_stick_y);
 
 
                 //Toggles Shooter
@@ -165,7 +136,6 @@ public class JavaDriveProgram extends LinearOpMode {
                     xDepressed = true;
                 }
                 if (gamepad2.x && xDepressed) {
-                    toggleShooterPower();
                     xDepressed = false;
                 }
 
@@ -174,23 +144,6 @@ public class JavaDriveProgram extends LinearOpMode {
                     yDepressed = true;
                 }
                 if (gamepad2.y && yDepressed) {
-                    //Closed Position
-                    if (ring_stopper.getPosition() < 0.6) {
-                        ring_stopper.setPosition(.82);
-                    }
-                    //Open Position
-                    else {
-                        // this is the function to open shooter
-                        front_right.setPower(0);
-                        front_left.setPower(0);
-                        back_right.setPower(0);
-                        back_left.setPower(0);
-                        ring_stopper.setPosition(0);
-                        sleep(800);
-                        intake.setPower(1);
-                        feeder.setPower(1);
-                    }
-
                     yDepressed = false;
                 }
 
@@ -199,11 +152,6 @@ public class JavaDriveProgram extends LinearOpMode {
                     aDepressed = true;
                 }
                 if (gamepad2.a && aDepressed) {
-                    if (feeder.getPower() == 0) {
-                        feeder.setPower(0.45);
-                    } else {
-                        feeder.setPower(0);
-                    }
                     aDepressed = false;
                 }
 
@@ -213,48 +161,31 @@ public class JavaDriveProgram extends LinearOpMode {
                     bDepressed = true;
                 }
                 if (gamepad2.b && bDepressed) {
-                    if (intake.getPower() == 1) {
-                        intake.setPower(0);
-                    } else {
-                        intake.setPower(1);
-                    }
+
                     bDepressed = false;
                 }
 
                 if (gamepad2.left_trigger > 0.8) {
-                    wobble_grabber.setPosition(0.75);
+
                 }
                 if (gamepad2.right_trigger > 0.8) {
-                    wobble_grabber.setPosition(0.2);
+
                 }
 
-                /*if (gamepad2.dpad_left) {
-                    wobble_grabber.setPosition(1);
-                }
-                if (gamepad2.dpad_right) {
-                    wobble_grabber.setPosition(.17);
-                }
 
-                 */
-                if (intake.getPower() != -1) {
-                    pow = intake.getPower();
-                }
                 if (gamepad2.dpad_down) {
-                    intake.setPower(-1);
+
 
                 }
                 if (!gamepad2.dpad_down) {
-                    intake.setPower(pow);
+
                 }
 
-                if (feeder.getPower() != -1) {
-                    pow2 = feeder.getPower();
-                }
                 if (gamepad2.dpad_up) {
-                    feeder.setPower(-1);
+
                 }
                 if (!gamepad2.dpad_up) {
-                    feeder.setPower(pow2);
+
                 }
 
                 if (gamepad1.b) {
@@ -269,12 +200,6 @@ public class JavaDriveProgram extends LinearOpMode {
 
 
             }
-            //telemetry.addData("Left Pow", back_left.getPower());
-            //telemetry.addData("Right Pow", back_right.getPower());
-            //telemetry.addData("Downshifted",flag);
-            telemetry.addData("Shooter Power", Power);
-            telemetry.addData("Shooter Ticks", shooter.getCurrentPosition());
-            telemetry.update();
 
         }
     }
@@ -293,8 +218,7 @@ public class JavaDriveProgram extends LinearOpMode {
 
 
     private void Powershooting_Stop() {
-        intake.setPower(0);
-        feeder.setPower(0);
+
     }
 
     private static double boundNumber(double num) {
@@ -381,18 +305,6 @@ public class JavaDriveProgram extends LinearOpMode {
         sleep(0);
     }
 
-    private void Shooting_Start() {
-        ring_stopper.setPosition(0);
-        sleep(1000);
-        feeder.setPower(0.65);
-        intake.setPower(1);
-    }
-
-    private void Shooting_Stop() {
-        intake.setPower(0);
-        feeder.setPower(0);
-        ring_stopper.setPosition(0.57);
-    }
 
     private void StrafeRight2(double DriveDistance, double DrivePower, double DegreeOfTurn, double Forward_drift_mult) {
         init_encoders();
@@ -418,18 +330,6 @@ public class JavaDriveProgram extends LinearOpMode {
     }
 
     private void init_encoders() {
-        wobble_arm.setDirection(DcMotorSimple.Direction.REVERSE);
-        wobble_arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // You will have to determine which motor to reverse for your robot.
-        // In this example, the right motor was reversed so that positive
-        // applied power makes it move the robot in the forward direction.
-        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
-        // You will have to determine which motor to reverse for your robot.
-        // In this example, the right motor was reversed so that positive
-        // applied power makes it move the robot in the forward direction.
-        intake.setDirection(DcMotorSimple.Direction.FORWARD);
-        //0.8 is closed
-        ring_stopper.setPosition(0.57);
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
         back_right.setDirection(DcMotorSimple.Direction.REVERSE);
         front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -455,18 +355,7 @@ public class JavaDriveProgram extends LinearOpMode {
     }
 
 
-    /**
-     * Describe this function...
-     */
-    private void toggleShooterPower() {
-        if (shooter.getPower() == 0) {
-            shooter.setPower(Power); //
-        } else {
-            shooter.setPower(0);
-        }
-        telemetry.addData("Shooter Power", shooter.getPower());
-        telemetry.update();
-    }
+
 
 
     private double getVoltage() {
