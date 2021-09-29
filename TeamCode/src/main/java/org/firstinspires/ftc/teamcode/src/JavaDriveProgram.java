@@ -18,6 +18,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
 //@Disabled
+
 @TeleOp(name = " State 2021 Drive Program")
 public class JavaDriveProgram extends LinearOpMode {
 
@@ -115,18 +116,13 @@ public class JavaDriveProgram extends LinearOpMode {
             time.reset();
 
             while (opModeIsActive() && !isStopRequested()) {
-                // Put loop blocks here.
                 // The Y axis of a joystick ranges from -1 in its topmost position
                 // to +1 in its bottom most position. We negate this value so that
                 // the topmost position corresponds to maximum forward power.
-                // if(time.seconds() < 89 && time.seconds() < 91){
-                //     shooterPower = 0.49;
-                //     flag = true;
-                // }
-                back_left.setPower(DrivePowerMult * ((-gamepad1.left_stick_y - gamepad1.left_stick_x) + gamepad1.right_stick_x));
-                front_left.setPower(DrivePowerMult * ((-gamepad1.left_stick_y + gamepad1.left_stick_x) + gamepad1.right_stick_x));
-                back_right.setPower(DrivePowerMult * (-gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x));
-                front_right.setPower(DrivePowerMult * ((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));
+                back_left.setPower(DrivePowerMult * ((gamepad1.left_stick_y - gamepad1.left_stick_x) + gamepad1.right_stick_x));
+                front_left.setPower(DrivePowerMult * ((gamepad1.left_stick_y + gamepad1.left_stick_x) + gamepad1.right_stick_x));
+                back_right.setPower(DrivePowerMult * (gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x));
+                front_right.setPower(DrivePowerMult * ((gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));
 
 
 
