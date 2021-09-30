@@ -33,7 +33,7 @@ public class TeleOp extends CommandOpMode {
         //Gyro
         RevIMU m_gyro = new RevIMU(hardwareMap, "imu");
         m_gyro.reset();
-        
+
         //Gamepad
         GamepadEx m_driverGamepad = new GamepadEx(gamepad1);
 
