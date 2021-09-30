@@ -47,9 +47,6 @@ public class OmniTeleOpTimer extends OpMode {
     public void init() {
         telemetry.addLine("Calling robot.init");
         updateTelemetry(telemetry);
-		// Turn off the SDK deadzone so we can do it ourselves
-        gamepad1.setJoystickDeadzone(0.0f);
-        gamepad2.setJoystickDeadzone(0.0f);
         robot.init(hardwareMap);
         robot.setInputShaping(true);
         // This  should override the Half And Half pattern with the timer.
