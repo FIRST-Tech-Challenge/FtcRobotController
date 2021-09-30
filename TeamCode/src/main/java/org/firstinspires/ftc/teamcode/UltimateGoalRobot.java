@@ -41,11 +41,15 @@ import static java.lang.Math.sqrt;
  */
 public class UltimateGoalRobot
 {
+//    public static double ULTRASONIC_POWERSHOT_LEFT_DISTANCE = 58.0;
+    public static double ULTRASONIC_POWERSHOT_LEFT_DISTANCE = 53.0;
+    public boolean rangeSensorsEnabled = false;  // enable only when needed (takes time!)
     public static WayPoint finalAutoPosition;
     public static int finalRightEncoder;
     public static int finalLeftEncoder;
     public static int finalStrafeEncoder;
     public static boolean autoExecuted;
+    public double ultrasonicCorrection = 0.0;
 
     /* Public OpMode members. */
     public final static double WOBBLE_ARM_MIN = 0.150;
@@ -1205,7 +1209,10 @@ public class UltimateGoalRobot
     protected WayPoint shootingPowershotDestination = new WayPoint(0, 0, 0, 0);
     public enum POWERSHOT_ALIGNMENT_STATE {
         IDLE,
-        DRIVE_TO_POSITION,
+        DRIVE_TO_ULTRA_POSITION,
+        ULTRA_ANGLE_ALIGNMENT,
+        ULTRASONIC_MEASURE,
+        DRIVE_TO_POSITION1,
         ANGLE_ALIGNMENT1,
         FIRE1,
         ANGLE_ALIGNMENT2,
@@ -1214,19 +1221,21 @@ public class UltimateGoalRobot
         FIRE3
     }
     public POWERSHOT_ALIGNMENT_STATE powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.IDLE;
+    private ElapsedTime ultrasonicTimer = new ElapsedTime();
     protected double POWERSHOT_LEFT_ANGLE_DIFF = Math.toRadians(5.0);
     protected double POWERSHOT_RIGHT_ANGLE_DIFF = Math.toRadians(4.0);
+    protected double ULTRASONIC_ALIGNMENT_ANGLE = Math.toRadians(88.0);
+    public double angleCorrection = 0.0;
     public void startPowershotAligning(WayPoint alignmentCoordinates, boolean shootingPowershot) {
         if (powershotAlignmentState == POWERSHOT_ALIGNMENT_STATE.IDLE) {
 
             // When we drop wobble goal, the robot must be flat against the wall,
-            // We know this is y = 16.787, at angle 0 degrees
-//            shootingPowershotDestination.angle = alignmentCoordinates.angle - powerShotCorrection.angle;
-//            shootingPowershotDestination.y = alignmentCoordinates.y + powerShotCorrection.y;
-//            shootingPowershotDestination.x = alignmentCoordinates.x + powerShotCorrection.x;
-            shootingPowershotDestination.x = MyPosition.worldXPosition - 55.05776;
-            shootingPowershotDestination.y = MyPosition.worldYPosition + 133.9578;
-            shootingPowershotDestination.angle = MyPosition.worldAngle_rad + Math.toRadians(91.25);
+            // We know this is angle 0 degrees
+//            angleCorrection = MyPosition.worldAngle_rad;
+            angleCorrection = Math.toRadians(-8.0);
+            shootingPowershotDestination.angle = alignmentCoordinates.angle;
+            shootingPowershotDestination.y = alignmentCoordinates.y;
+            shootingPowershotDestination.x = alignmentCoordinates.x;
             shootingPowershotDestination.speed = alignmentCoordinates.speed;
 
             shooterFlapTarget = FLAP_POSITION.POWERSHOT;
@@ -1235,40 +1244,67 @@ public class UltimateGoalRobot
             shooterOnPowershot();
             driveToXY(shootingPowershotDestination.x,
                     shootingPowershotDestination.y,
-                    shootingPowershotDestination.angle,
+                    ULTRASONIC_ALIGNMENT_ANGLE - angleCorrection,
                     MIN_DRIVE_MAGNITUDE,
                     shootingPowershotDestination.speed, 0.014, 2.0, false);
-            powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.DRIVE_TO_POSITION;
+            rangeSensorsEnabled = true;
+            powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.DRIVE_TO_ULTRA_POSITION;
         }
     }
 
     public void performPowershotAligning() {
         switch(powershotAlignmentState) {
-            case DRIVE_TO_POSITION:
-                if(driveToXY(shootingPowershotDestination.x, shootingPowershotDestination.y, shootingPowershotDestination.angle, MIN_DRIVE_MAGNITUDE,
+            case DRIVE_TO_ULTRA_POSITION:
+                if(driveToXY(shootingPowershotDestination.x, shootingPowershotDestination.y, ULTRASONIC_ALIGNMENT_ANGLE - angleCorrection, MIN_DRIVE_MAGNITUDE,
                         shootingPowershotDestination.speed, 0.014, 2.0, false)) {
                     // We have reached the position, need to rotate to angle.
-                    rotateToAngle(shootingPowershotDestination.angle, true);
+                    rotateToAngle(ULTRASONIC_ALIGNMENT_ANGLE - angleCorrection, true);
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.ULTRA_ANGLE_ALIGNMENT;
+                }
+                break;
+            case ULTRA_ANGLE_ALIGNMENT:
+                if(rotateToAngle(ULTRASONIC_ALIGNMENT_ANGLE - angleCorrection, false)) {
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.ULTRASONIC_MEASURE;
+                    ultrasonicTimer.reset();
+                }
+                break;
+            case ULTRASONIC_MEASURE:
+                if(ultrasonicTimer.milliseconds() >= 500) {
+                    // correction value
+                    ultrasonicCorrection = ULTRASONIC_POWERSHOT_LEFT_DISTANCE - sonarRangeLMedian;
+                    shootingPowershotDestination.x += ultrasonicCorrection;
+                    driveToXY(shootingPowershotDestination.x, shootingPowershotDestination.y,
+                            shootingPowershotDestination.angle - angleCorrection, MIN_DRIVE_MAGNITUDE,
+                            shootingPowershotDestination.speed, 0.014, 2.0, false);
+                    rangeSensorsEnabled = false;
+                    powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.DRIVE_TO_POSITION1;
+                }
+                break;
+            case DRIVE_TO_POSITION1:
+                if(driveToXY(shootingPowershotDestination.x, shootingPowershotDestination.y,
+                        shootingPowershotDestination.angle - angleCorrection, MIN_DRIVE_MAGNITUDE,
+                        shootingPowershotDestination.speed, 0.014, 2.0, false)) {
+                    // We have reached the position, need to rotate to angle.
+                    rotateToAngle(shootingPowershotDestination.angle - angleCorrection, true);
                     powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.ANGLE_ALIGNMENT1;
                 }
                 break;
-
             case ANGLE_ALIGNMENT1:
-                if(rotateToAngle(shootingPowershotDestination.angle, false)) {
-                    startInjecting();
+                if(rotateToAngle(shootingPowershotDestination.angle - angleCorrection, false)) {
                     powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.FIRE1;
+                    startInjecting();
                 }
                 break;
             case FIRE1:
                 if(injectState == INJECTING.IDLE) {
                     powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.ANGLE_ALIGNMENT2;
                     // We have reached the position, need to rotate to angle.
-                    rotateToAngle(shootingPowershotDestination.angle + POWERSHOT_LEFT_ANGLE_DIFF,
+                    rotateToAngle(shootingPowershotDestination.angle + POWERSHOT_LEFT_ANGLE_DIFF - angleCorrection,
                             true);
                 }
                 break;
             case ANGLE_ALIGNMENT2:
-                if(rotateToAngle(shootingPowershotDestination.angle + POWERSHOT_LEFT_ANGLE_DIFF,
+                if(rotateToAngle(shootingPowershotDestination.angle + POWERSHOT_LEFT_ANGLE_DIFF - angleCorrection,
                         false)) {
                     startInjecting();
                     powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.FIRE2;
@@ -1278,12 +1314,12 @@ public class UltimateGoalRobot
                 if(injectState == INJECTING.IDLE) {
                     powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.ANGLE_ALIGNMENT3;
                     // We have reached the position, need to rotate to angle.
-                    rotateToAngle(shootingPowershotDestination.angle - POWERSHOT_RIGHT_ANGLE_DIFF,
+                    rotateToAngle(shootingPowershotDestination.angle - POWERSHOT_RIGHT_ANGLE_DIFF - angleCorrection,
                             true);
                 }
                 break;
             case ANGLE_ALIGNMENT3:
-                if(rotateToAngle(shootingPowershotDestination.angle - POWERSHOT_RIGHT_ANGLE_DIFF,
+                if(rotateToAngle(shootingPowershotDestination.angle - POWERSHOT_RIGHT_ANGLE_DIFF - angleCorrection,
                         false)) {
                     startInjecting();
                     powershotAlignmentState = POWERSHOT_ALIGNMENT_STATE.FIRE3;

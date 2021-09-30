@@ -113,7 +113,7 @@ public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
 
                 // Pickup the second wobble goal.
                 wobble2PickupLineup = new WayPoint(165.0, 115.0, Math.toRadians(30.0), SLOW_SPEED);
-                wobble2Pickup = new WayPoint(175.0, 90.0, Math.toRadians(30.0), REGULAR_SPEED);
+                wobble2Pickup = new WayPoint(180.0, 88.0, Math.toRadians(30.0), REGULAR_SPEED);
                 break;
             case 3:
                 startShootingStyle = StartShotStyle.HIGH_GOAL;

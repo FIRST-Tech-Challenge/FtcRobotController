@@ -31,7 +31,6 @@ public class UltimateGoalTeleOp extends OpMode {
 
     double    sonarRangeL=0.0, sonarRangeR=0.0;
     //  double    tofRangeL=0.0, tofRangeR=0.0;
-    boolean   rangeSensorsEnabled = true;  // enable only when needed (takes time!)
 
     @Override
     public void init() {
@@ -63,6 +62,7 @@ public class UltimateGoalTeleOp extends OpMode {
     private double speedMultiplier = MAX_SPEED;
     private double spinMultiplier = MAX_SPIN;
     private boolean crossHeld = false;
+    private boolean squareHeld = false;
     private boolean circleHeld = false;
     private boolean triangleHeld = false;
     private boolean upHeld = false;
@@ -82,6 +82,7 @@ public class UltimateGoalTeleOp extends OpMode {
     private boolean leftBumper2Held = false;
     private boolean rightBumper2Held = false;
     private boolean crossPressed;
+    private boolean squarePressed;
     private boolean circlePressed;
     private boolean trianglePressed;
     private boolean leftPressed;
@@ -132,7 +133,9 @@ public class UltimateGoalTeleOp extends OpMode {
 
         robot.teleHighGoal = new WayPoint(110.10, 153.99, Math.toRadians(82.45), 1.0);
 //        UltimateGoalRobot.powerShotCenter = new WayPoint(98.77404, 149.7584, Math.toRadians(91.5), 1.0);
-        robot.telePowerShotCenter = new WayPoint(90.77404, 149.7584, Math.toRadians(91.25), 0.75);
+//        robot.telePowerShotCenter = new WayPoint(90.77404, 149.7584, Math.toRadians(91.25), 0.75);
+//        robot.telePowerShotCenter = new WayPoint(90.77404, 149.7584, Math.toRadians(96.25), 0.75);
+        robot.telePowerShotCenter = new WayPoint(85.77404, 149.7584, Math.toRadians(91.25), 0.75);
         robot.telePowerShotLeft = new WayPoint(90.77404, 149.7584, Math.toRadians(96.25), 0.75);
         robot.telePowerShotRight = new WayPoint(90.77404, 149.7584, Math.toRadians(87.25), 0.75);
 //        robot.highGoal = new WayPoint(110.10, 138.99, Math.toRadians(87.45), 1.0);
@@ -155,7 +158,7 @@ public class UltimateGoalTeleOp extends OpMode {
                 robot.getRightEncoderWheelPosition(),
                 robot.getStrafeEncoderWheelPosition());
         // If enabled, process ultrasonic & time-of-flight range sensors
-        if( rangeSensorsEnabled ) {
+        if( robot.rangeSensorsEnabled ) {
             processRangeSensors();
         }
 
@@ -166,6 +169,7 @@ public class UltimateGoalTeleOp extends OpMode {
         leftTriggerPower = gamepad1.left_trigger;
         rightTriggerPower = gamepad1.right_trigger;
         spin = gamepad1.right_stick_x;
+        squarePressed = gamepad1.square;
         crossPressed = gamepad1.cross;
         circlePressed = gamepad1.circle;
         trianglePressed = gamepad1.triangle;
@@ -186,7 +190,7 @@ public class UltimateGoalTeleOp extends OpMode {
         leftBumper2Pressed = gamepad2.left_bumper;
         rightBumper2Pressed = gamepad2.right_bumper;
 
-        if (gamepad1.square) {
+        if (crossPressed) {
             // The driver presses Square, then uses the left joystick to say what angle the robot
             // is aiming.  This will calculate the values as long as square is pressed, and will
             // not drive the robot using the left stick.  Once square is released, it will use the
@@ -212,12 +216,12 @@ public class UltimateGoalTeleOp extends OpMode {
             circleHeld = false;
         }
 
-        if(!crossHeld && crossPressed) {
+        if(!squareHeld && squarePressed) {
             robot.startRotateAligning(new WayPoint(MyPosition.worldXPosition,
                     MyPosition.worldYPosition, MyPosition.worldAngle_rad + Math.toRadians(fineAngleAdjust), 1.0));
-            crossHeld = true;
-        } else if(!crossPressed) {
-            crossHeld = false;
+            squareHeld = true;
+        } else if(!squarePressed) {
+            squareHeld = false;
         }
 
         if(trianglePressed) {
@@ -420,10 +424,13 @@ public class UltimateGoalTeleOp extends OpMode {
                     spinMultiplier * spin, driverAngle - 90.0, robot.defaultInputShaping);
         }
 
-        if( rangeSensorsEnabled ) {
+        if( robot.rangeSensorsEnabled ) {
             telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f cm", sonarRangeL, sonarRangeR );
 //             telemetry.addData("TofF Range (L/R)", "%.1f  %.1f in", tofRangeL, tofRangeR );
         }
+        telemetry.addData("Ultrasonic Correction: ", robot.ultrasonicCorrection);
+        telemetry.addData("Angle Correction: ", Math.toDegrees(robot.angleCorrection));
+        telemetry.addData("PowerShot State: ", robot.powershotAlignmentState);
         telemetry.addData("Shooter Target Velocity: ", robot.shooterMotorTargetVelocity);
         telemetry.addData("Shooter Actual Velocity: ", robot.shooter.getVelocity());
         telemetry.addData("Shooter Stability Count: ", robot.sequentialStableVelocityChecks);
@@ -487,7 +494,7 @@ public class UltimateGoalTeleOp extends OpMode {
 //      tofRangeL   = robot.updateTofRangeL();
         sonarRangeL = robot.updateSonarRangeL();
 //      tofRangeR   = robot.updateTofRangeR();
-        sonarRangeR = robot.updateSonarRangeR();
+//        sonarRangeR = robot.updateSonarRangeR();
     } // processRangeSensors
 
     protected void performActivities() {
