@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.Controllers;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
-import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzVuforiaStatic;
 import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
+import org.firstinspires.ftc.teamcode.SubSystems.HzVision;
 
 /**
  * Defenition of the HzGamepad Class <BR>
@@ -63,10 +63,6 @@ public class HzGamepadController {
     // RR Drive Train
     public void runDriveControl_byRRDriveModes() {
 
-        if (HzVuforiaStatic.vuforiaState == HzVuforiaStatic.VUFORIA_STATE.NAVIGATION_RUNNING &&
-                HzVuforiaStatic.targetVisible){
-            hzDrive.setPoseEstimate(HzVuforiaStatic.poseVuforia);
-        }
         hzDrive.poseEstimate = hzDrive.getPoseEstimate();
 
         hzDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
@@ -80,14 +76,14 @@ public class HzGamepadController {
 
         if (hzDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
 
-            if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
                 hzDrive.gamepadInput = new Vector2d(
                         turboMode(getLeftStickX()),
                         -turboMode(getLeftStickY())
                 ).rotated(-hzDrive.poseEstimate.getHeading());
             };
 
-            if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
                 hzDrive.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickX()),
                         turboMode(getLeftStickY())

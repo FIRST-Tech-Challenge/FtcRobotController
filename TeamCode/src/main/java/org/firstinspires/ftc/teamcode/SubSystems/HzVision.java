@@ -183,7 +183,7 @@ public class HzVision {
 
     private TFObjectDetector tfod;
     private List<Recognition> updatedRecognitions;
-    public HzGameField.TARGET_ZONE targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
+    public HzGameField.VISION_IDENTIFIER_OPTION targetZoneDetected = HzGameField.VISION_IDENTIFIER_OPTION.UNKNOWN;
 
     /**
      * Initialize the Vuforia localization engine.
@@ -266,7 +266,7 @@ public class HzVision {
      * This is to be run till the play button is pressed.. the last target zone identified is returned.
      * @return
      */
-    public HzGameField.TARGET_ZONE runVuforiaTensorFlow() {
+    public HzGameField.VISION_IDENTIFIER_OPTION runVuforiaTensorFlow() {
         visionState = VISION_STATE.TFOD_RUNNING;
 
         if (tfod != null) {
@@ -279,7 +279,7 @@ public class HzVision {
                     // empty list.  no objects recognized.
                     //telemetry.addData("TFOD", "No items detected.");
                     //telemetry.addData("Target Zone", "A");
-                    targetZoneDetected = HzGameField.TARGET_ZONE.A;
+                    targetZoneDetected = HzGameField.VISION_IDENTIFIER_OPTION.A;
                 } else {
                     // list is not empty.
                     // step through the list of recognitions and display boundary info.
@@ -294,13 +294,13 @@ public class HzVision {
                         // check label to see which target zone to go after.
                         if (recognition.getLabel().equals("Single")) {
                             //telemetry.addData("Target Zone", "B");
-                            targetZoneDetected =  HzGameField.TARGET_ZONE.B;
+                            targetZoneDetected =  HzGameField.VISION_IDENTIFIER_OPTION.B;
                         } else if (recognition.getLabel().equals("Quad")) {
                             //telemetry.addData("Target Zone", "C");
-                            targetZoneDetected =  HzGameField.TARGET_ZONE.C;
+                            targetZoneDetected =  HzGameField.VISION_IDENTIFIER_OPTION.C;
                         } else {
                             //telemetry.addData("Target Zone", "UNKNOWN");
-                            targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
+                            targetZoneDetected = HzGameField.VISION_IDENTIFIER_OPTION.UNKNOWN;
                         }
                     }
                 }

@@ -45,13 +45,13 @@ public class HzAutonomous_Template extends LinearOpMode {
     public HzSubsystem1 hzSubsystem1;
 
     public HzVision hzVision;
-    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+    public Pose2d startPose = HzGameField.BLUE_STARTPOS_1;
 
     boolean parked = false ;
     boolean autonomousStarted = false;
 
     public HzVision.ACTIVE_WEBCAM activeWebcam = HzVision.ACTIVE_WEBCAM.LEFT;
-    public HzGameField.TARGET_ZONE targetZone = HzGameField.TARGET_ZONE.A;
+    public HzGameField.VISION_IDENTIFIER_OPTION targetZone = HzGameField.VISION_IDENTIFIER_OPTION.A;
 
     double af = HzGameField.ALLIANCE_FACTOR;
 
@@ -113,7 +113,7 @@ public class HzAutonomous_Template extends LinearOpMode {
                 hzVision.deactivateVuforiaTensorFlow();
 
                 // Logic to determine and run defined Autonomous mode
-                if (HzGameField.startPosition == HzGameField.START_POSITION.INNER) {
+                if (HzGameField.startPosition == HzGameField.START_POSITION.STARTPOS_1) {
                     runAutoOption1();
                 } else { //HzGameField.startPosition == HzGameField.START_POSITION.OUTER
                     //runAutoOuter();

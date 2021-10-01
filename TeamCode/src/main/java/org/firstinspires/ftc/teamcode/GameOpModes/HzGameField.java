@@ -17,7 +17,7 @@ public class HzGameField {
     public static final Pose2d ORIGINPOSE = new Pose2d(0,0,Math.toRadians(0));
 
     // Declare and assign starting pose of robot
-    public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-57,26,Math.toRadians(90));
+    public static final Pose2d BLUE_STARTPOS_1 =  new Pose2d(-57,26,Math.toRadians(90));
 
     //Declare locations of key positions on field
     //Example - public static final Vector2d BLUE_TOWER_GOAL = new Vector2d(72,42);
@@ -33,13 +33,13 @@ public class HzGameField {
 
     //Define and declare Robot Starting Locations
     public enum START_POSITION{
-        INNER,
-        OUTER
+        STARTPOS_1,
+        STARTPOS_2
     }
-    public static START_POSITION startPosition = START_POSITION.INNER;
+    public static START_POSITION startPosition = START_POSITION.STARTPOS_1;
 
-    //Define targets for Vuforia to determine Autonomous mode
-    public enum TARGET_ZONE{
+    //Define targets for Vision to determine Autonomous mode action based on camera detection
+    public enum VISION_IDENTIFIER_OPTION {
         A,
         B,
         C,
