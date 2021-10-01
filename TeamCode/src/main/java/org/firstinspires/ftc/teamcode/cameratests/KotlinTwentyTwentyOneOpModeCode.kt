@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Grabber
 import org.firstinspires.ftc.teamcode.LauncherCode.Launcher
 import org.firstinspires.ftc.teamcode.LauncherCode.LauncherStates
 import org.firstinspires.ftc.teamcode.LifterCode.Lifter
+import kotlin.math.abs
 
 class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
     private var leftStickValue: Double = 0.0
@@ -28,11 +29,11 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
     private var intakeDirection = 1
     private var Control_Hub: Blinker? = null
     private var expansion_Hub_2: Blinker? = null
-    var mytimer = ElapsedTime()
+    private var mytimer = ElapsedTime()
     var debugTimer = ElapsedTime()
     private var launchpower = 1.0
     private enum class OperState {
-        DEBUGSELECT, DEBUGONE
+        DEBUGSELECT
     }
 
     private enum class Intake {
@@ -80,8 +81,6 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
         var strafe: Double
         var rotate: Double
         var movementLength = 0.0
-        var forwardLength: Double
-        var lateralMovement: Double
         var increaseIntensity = 5.0
         var upWait = false
         var downWait = false
@@ -90,9 +89,7 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
         var drivePreset = 0.0
         var increaseDecrease = 1.0
         var aWait = false
-        val autonomousTestStep = 0.0
         var rotationGoal = chassis.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle.toDouble()
-        val banana2 = -1.0
         var servoState = false
 
         //double timerStopTime = 0;
@@ -104,10 +101,10 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
             lift.MoveLift(this.leftStickValue)
             telemetry.addData("drive", chassis.trueDrive)
             grabber.Toggle(gamepad2.right_bumper)
-            if (gamepad2.left_bumper) {
-                launchpower = 0.9
+            launchpower = if (gamepad2.left_bumper) {
+                0.9
             } else {
-                launchpower = 1.0
+                1.0
             }
             telemetry.addData("zAngle", chassis.zAngle)
             telemetry.addData("distance sensor", ring.AveragedArray)
@@ -229,11 +226,11 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
                     if (this.gamepad1.right_trigger != 0f) {
                         driveOpState = ChassisMovementCode.OperState.NORMALDRIVE
                     }
-                    if (Math.abs(zAngle - rotationGoal) >= 2) {
+                    if (abs(zAngle - rotationGoal) >= 2) {
                         //chassis.SetMotors(0,0,chassis.CorrectRotation(zAngle,rotationGoal));
                         chassis.Drive()
                     }
-                    if (Math.abs(drivePreset - chassis.trueDrive) <= 0.2) {
+                    if (abs(drivePreset - chassis.trueDrive) <= 0.2) {
                         chassis.front_left_wheel.power = 0.01
                         chassis.front_right_wheel.power = 0.01
                         chassis.back_right_wheel.power = 0.01
@@ -248,11 +245,11 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
                     if (this.gamepad1.right_trigger != 0f) {
                         driveOpState = ChassisMovementCode.OperState.NORMALDRIVE
                     }
-                    if (Math.abs(zAngle - rotationGoal) >= 2) {
+                    if (abs(zAngle - rotationGoal) >= 2) {
                         //chassis.SetMotors(0,0,chassis.CorrectRotation(zAngle,rotationGoal));
                         chassis.Drive()
                     }
-                    if (Math.abs(drivePreset - chassis.trueStrafe) <= 0.2) {
+                    if (abs(drivePreset - chassis.trueStrafe) <= 0.2) {
                         chassis.front_left_wheel.power = 0.01
                         chassis.front_right_wheel.power = 0.01
                         chassis.back_right_wheel.power = 0.01
@@ -267,19 +264,19 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
                     telemetry.addData("Amount increased per increase", increaseIntensity)
                     telemetry.update()
                     if (upWait and !this.gamepad1.dpad_up) {
-                        movementLength = movementLength + increaseIntensity
+                        movementLength += increaseIntensity
                         upWait = false
                     }
                     if (!this.gamepad1.dpad_down and downWait) {
-                        movementLength = movementLength - increaseIntensity
+                        movementLength -= increaseIntensity
                         downWait = false
                     }
                     if (!this.gamepad1.dpad_right and rightWait) {
-                        increaseIntensity = increaseIntensity + 1
+                        increaseIntensity++
                         rightWait = false
                     }
                     if (!this.gamepad1.dpad_left and leftWait) {
-                        increaseIntensity = increaseIntensity - 1
+                        increaseIntensity--
                         leftWait = false
                     }
                     if (this.gamepad1.dpad_up) {
@@ -399,14 +396,19 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
                 }
             }
             when (intakeSwitch) {
-                Intake.WaitingForPush -> intakeSwitch = if (gamepad2.x) {
-                    Intake.WaitingForRelease
-                } else if (gamepad2.dpad_up) {
-                    Intake.WaitingForDpadRelease
-                } else if (gamepad2.dpad_down) {
-                    Intake.WaitingForDownRelease
-                } else {
-                    Intake.ChangeMotors
+                Intake.WaitingForPush -> intakeSwitch = when {
+                    gamepad2.x -> {
+                        Intake.WaitingForRelease
+                    }
+                    gamepad2.dpad_up -> {
+                        Intake.WaitingForDpadRelease
+                    }
+                    gamepad2.dpad_down -> {
+                        Intake.WaitingForDownRelease
+                    }
+                    else -> {
+                        Intake.ChangeMotors
+                    }
                 }
                 Intake.WaitingForRelease -> if (!gamepad2.x) {
                     intakeSwitch = Intake.ChangeValue
@@ -432,14 +434,14 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
                 }
                 Intake.ChangeMotors -> {
                     if (motorState2) {
-                        intakeMotor2?.setPower(1.0)
+                        intakeMotor2?.power = 1.0
                     } else if (!motorState2) {
-                        intakeMotor2?.setPower(0.0)
+                        intakeMotor2?.power = 0.0
                     }
                     if (motorState1) {
-                        intakeMotor?.setPower((-1 * intakeDirection).toDouble())
+                        intakeMotor?.power = (-1 * intakeDirection).toDouble()
                     } else if (!motorState1) {
-                        intakeMotor?.setPower(0.0)
+                        intakeMotor?.power = 0.0
                     }
                     intakeSwitch = Intake.WaitingForPush
                 }
@@ -459,15 +461,15 @@ class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
                 }
                 RingWiper.ChangeServo -> {
                     if (servoState) {
-                        wiperServo?.setPosition(0.75)
+                        wiperServo?.position = 0.75
                     } else if (!servoState) {
-                        wiperServo?.setPosition(.95)
+                        wiperServo?.position = .95
                     }
                     ringWiperSwitch = RingWiper.WaitingForPushY
                 }
             }
             telemetry.addData("Wiper state: ", ringWiperSwitch)
-            telemetry.addData("Wiper position", wiperServo?.getPosition())
+            telemetry.addData("Wiper position", wiperServo?.position)
             telemetry.addData("is Y pressed", gamepad2.y)
             telemetry.addData("LeftGrabber", grabber.GrabberLeft.position)
             telemetry.addData("RightGrabber", grabber.GrabberRight.position)
