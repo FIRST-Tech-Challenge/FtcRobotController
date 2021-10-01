@@ -1,24 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.chassis;
 
 import static org.firstinspires.ftc.teamcode.Constants.sensitivity;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.Constants;
 
-public class FourWheelChassis {
-    public static DcMotor frontRight;
-    public static DcMotor frontLeft;
-    public static DcMotor backRight;
-    public static DcMotor backLeft;
-
-    public void init(HardwareMap hardwareMap){
-        frontRight = hardwareMap.get(DcMotor.class, "fr");
-        frontLeft = hardwareMap.get(DcMotor.class, "fl");
-        backRight = hardwareMap.get(DcMotor.class, "br");
-        backLeft = hardwareMap.get(DcMotor.class, "bl");
-    }
+public class FourWheelChassis extends Chassis {
+    @Override
     public void drive(Gamepad gamepad){
         //This works, just trust me on it. Slack me or something if you need a full explanation.
         double lPower = (gamepad.left_stick_y + gamepad.right_stick_x);
