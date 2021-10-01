@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
+import org.opencv.core.*;
+import com.arcrobotics.ftclib.*;
 import java.lang.Math;
 
 @TeleOp
 //back right front right front left back left
 public class TwentyTwentyOneOpModeCode extends LinearOpMode {
-    
     private double LeftStickValue;
     private double RightStickValue;
     public DcMotor IntakeMotor;
@@ -35,7 +35,7 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
         DEBUGSELECT,
         DEBUGONE
     }
-    private enum Intake {
+    public enum Intake {
         WaitingForPush,
         WaitingForRelease,
         ChangeValue,
@@ -45,7 +45,7 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
         WaitingForDownRelease,
         SwitchIntakeDirection
     }
-    private enum RingWiper {
+    public enum RingWiper {
         WaitingForPushY,
         WaitingForReleaseY,
         ToggleValue,

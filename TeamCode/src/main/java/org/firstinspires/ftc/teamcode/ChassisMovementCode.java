@@ -29,41 +29,41 @@ public class ChassisMovementCode { //PATRICK IS RACIST AAA DONT LET HIM SEE THIS
         public BNO055IMU imu;
         private DigitalChannel switch_;
 
-        double frontLeft;
-        double frontRight;
-        double backLeft;
-        double backRight;
+        public double frontLeft;
+        public double frontRight;
+        public double backLeft;
+        public double backRight;
         double rightEncoder;
         double leftEncoder;
         double backEncoder;
         double clearRight = 0;
         double clearLeft = 0;
         double clearBack = 0;
-        double clearRotate = 0;
+        public double clearRotate = 0;
         double fieldLength = 141;
         double robotLength = 17.25;
         double robotWidth = 17.375;
         double countsPerRotation = 360;
-        double trueDrive;
+        public double trueDrive;
 
-        double trueStrafe;
+        public double trueStrafe;
         double slowIntensity = 10;
-        double trueRotate;
-        double backRightMultiplier = 1;
-        double backLeftMultiplier = 1;
-        double frontRightMultiplier = 0.9;
-        double frontLeftMultiplier = 0.9;
+        public double trueRotate;
+        public double backRightMultiplier = 1;
+        public double backLeftMultiplier = 1;
+        public double frontRightMultiplier = 0.9;
+        public double frontLeftMultiplier = 0.9;
         double oldZAngel =0;
         double newZAngle = 0;
         double rotations=0;
-        double zAngle = 0;
-        double presetX = 0;
-        double presetY = 0;
-        double trueX = 0;
-        double trueY = 0;
-        double clearDrive = 0;
-        double clearStrafe = 0;
-        double tau = 6.28318530718;
+        public double zAngle = 0;
+        public double presetX = 0;
+        public double presetY = 0;
+        public double trueX = 0;
+        public double trueY = 0;
+        public double clearDrive = 0;
+        public double clearStrafe = 0;
+        public double tau = 6.28318530718;
 
         double IMUDrive = 0;
         double IMUStrafe = 0;
@@ -275,7 +275,7 @@ public class ChassisMovementCode { //PATRICK IS RACIST AAA DONT LET HIM SEE THIS
         }
     }
 
-    enum OperState {
+    public enum OperState {
         NORMALDRIVE,
         NORMALROTATE,
         FORWARD,

@@ -12,9 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
 import java.util.concurrent.TimeUnit;
-
 //At this point it's almost entirely created by Ethan
 //38 inches between robots
 @Autonomous
