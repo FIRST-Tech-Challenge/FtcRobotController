@@ -98,16 +98,20 @@ public class OpTrain {
         rotationPerMeter = 100 / (Math.pow((wheelDiameter/2),2) * Math.PI);
     }
 
+    /** Functions */
+
     /**
+     * travel()
      *
      * @param forwardBackPower : Power of forward back (between -1, 1)
      * @param leftRightPower : Power of left right lat (between -1, 1)
+     * @param rotatePower : Power of rotation (between -1, 1)
      */
-    public void travel(float forwardBackPower, float leftRightPower){
-
+    public void travel(float forwardBackPower, float leftRightPower, float rotatePower){
+        back_left.setPower(forwardBackPower - leftRightPower + rotatePower);
+        front_left.setPower(forwardBackPower + leftRightPower + rotatePower);
+        back_right.setPower(forwardBackPower + leftRightPower - rotatePower);
+        front_right.setPower(forwardBackPower - leftRightPower - rotatePower);
     }
-
-
-
 
 }
