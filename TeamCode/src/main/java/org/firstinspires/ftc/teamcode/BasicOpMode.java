@@ -5,13 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Basic OpMode😀", group = "Remote")
 public class BasicOpMode extends OpMode {
-    private final Chassis chassis = new Chassis();
+    private final MecanumChassis mecanumChassis = new MecanumChassis();
     @Override
     public void init() {
-        chassis.init(hardwareMap);
+        mecanumChassis.init(hardwareMap);
     }
     @Override
     public void loop() {
-        chassis.drive(gamepad1);
+        mecanumChassis.drive(gamepad1);
     }
 }
