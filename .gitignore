@@ -87,3 +87,4 @@ lint/tmp/
 # lint/reports/
 
 android/*.hprof
+*.hprof
