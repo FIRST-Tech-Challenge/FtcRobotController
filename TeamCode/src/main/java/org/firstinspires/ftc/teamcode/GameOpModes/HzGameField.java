@@ -17,7 +17,11 @@ public class HzGameField {
     public static final Pose2d ORIGINPOSE = new Pose2d(0,0,Math.toRadians(0));
 
     // Declare and assign starting pose of robot
+    //TODO: Update start position correctly.
     public static final Pose2d BLUE_STARTPOS_1 =  new Pose2d(-57,26,Math.toRadians(90));
+    public static final Pose2d BLUE_STARTPOS_2 =  new Pose2d(-57,44,Math.toRadians(-90));
+    public static final Pose2d RED_STARTPOS_1 =  new Pose2d(-57,-26,Math.toRadians(-90)); //y=-26
+    public static final Pose2d RED_STARTPOS_2 =  new Pose2d(-57,-47,Math.toRadians(90));
 
     //Declare locations of key positions on field
     //Example - public static final Vector2d BLUE_TOWER_GOAL = new Vector2d(72,42);
@@ -39,12 +43,18 @@ public class HzGameField {
     public static START_POSITION startPosition = START_POSITION.STARTPOS_1;
 
     //Define targets for Vision to determine Autonomous mode action based on camera detection
-    public enum VISION_IDENTIFIER_OPTION {
-        A,
-        B,
-        C,
+    public enum VISION_IDENTIFIED_TARGET {
+        LEVEL1,
+        LEVEL2,
+        LEVEL3,
         UNKNOWN;
     };
+
+    public enum VISION_IDENTIFIER{
+        DUCK,
+        MARKER
+    };
+    public static VISION_IDENTIFIER visionIdentifier = VISION_IDENTIFIER.DUCK;
 
     //Static fields to pass Pos from Autonomous to TeleOp
     public static boolean poseSetInAutonomous = false;

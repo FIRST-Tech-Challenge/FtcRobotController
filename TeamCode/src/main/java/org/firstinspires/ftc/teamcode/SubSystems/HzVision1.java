@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.SubSystems.Examples;
+package org.firstinspires.ftc.teamcode.SubSystems;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -62,6 +62,9 @@ import java.util.List;
  *  - Integrates Tensor flow and Navigation to single code
  *  - Updated to manage 2 cameras
  *
+ * This 2021-2022 OpMode illustrates the basics of using the TensorFlow Object Detection API to
+ * determine the position of the Freight Frenzy game elements.
+ *
  * This 2020-2021 OpMode illustrates the basics of using the Vuforia localizer to determine
  * positioning and orientation of robot on the ULTIMATE GOAL FTC field.
  * The code is structured as a LinearOpMode
@@ -94,7 +97,7 @@ import java.util.List;
  */
 
 
-public class HzVision_Template {
+public class HzVision1 {
 
     public enum VISION_STATE {
         TFOD_INIT,
@@ -112,8 +115,8 @@ public class HzVision_Template {
     private static final boolean PHONE_IS_PORTRAIT = false  ;
 
     public enum ACTIVE_WEBCAM{
-        LEFT,
-        RIGHT,
+        WEBCAM1,
+        WEBCAM2,
     }
 
 
@@ -177,26 +180,49 @@ public class HzVision_Template {
     public double vuforiaThirdAngle = 0;
 
     //Tensor Flow parameters
-    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Quad";
-    private static final String LABEL_SECOND_ELEMENT = "Single";
+    /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
+     * the following 4 detectable objects
+     *  0: Ball,
+     *  1: Cube,
+     *  2: Duck,
+     *  3: Marker (duck location tape marker)
+     *
+     *  Two additional model assets are available which only contain a subset of the objects:
+     *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
+     *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
+     */
+    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_DM.tflite";
+    public static final String[] LABELS = {
+            "Ball",
+            "Cube",
+            "Duck",
+            "Marker"
+    };
+    public String targetLabel = LABELS[2]; // Default "Duck"
+    public String detectedLabel = LABELS[2];
+    public static float[] targetPosition = {
+            //TODO : Update values based on marker location identifier
+            10,
+            20,
+            30
+    };
 
     private TFObjectDetector tfod;
-    private List<Recognition> updatedRecognitions;
-    public HzGameField.VISION_IDENTIFIED_TARGET targetZoneDetected = HzGameField.VISION_IDENTIFIED_TARGET.UNKNOWN;
+    private List<Recognition> recognitions;
+    public HzGameField.VISION_IDENTIFIED_TARGET targetLevelDetected = HzGameField.VISION_IDENTIFIED_TARGET.UNKNOWN;
 
     /**
      * Initialize the Vuforia localization engine.
      */
-    public HzVision_Template(HardwareMap hardwareMap, ACTIVE_WEBCAM activeWebcam) {
-        /*
-         * Retrieve the camera we are to use.
-         */
-        if (activeWebcam == ACTIVE_WEBCAM.LEFT){
-            //webcamName = hardwareMap.get(WebcamName.class, "Webcam_l");
-        } else {
-            //webcamName = hardwareMap.get(WebcamName.class, "Webcam_r");
+    public HzVision1(HardwareMap hardwareMap, ACTIVE_WEBCAM activeWebcam) {
+        activeWebcam = ACTIVE_WEBCAM.WEBCAM1;
+
+        if (activeWebcam == ACTIVE_WEBCAM.WEBCAM1){
+            webcamName = hardwareMap.get(WebcamName.class, "Webcam1");
+        } /*else { //TODO: Uncomment if using 2 cameras;
+            webcamName = hardwareMap.get(WebcamName.class, "Webcam2");
         }
+        */
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -224,14 +250,23 @@ public class HzVision_Template {
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    public void initTfod(HardwareMap hardwareMap) {
+    private void initTfod(HardwareMap hardwareMap) {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;//0.8f;
+        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+
+        if (HzGameField.visionIdentifier == HzGameField.VISION_IDENTIFIER.MARKER){
+            targetLabel = LABELS[3]; //"Marker"
+        } else {//if (HzGameField.visionIdentifier == HzGameField.VISION_IDENTIFIER.DUCK)
+            targetLabel = LABELS[2];
+        }
         visionState = VISION_STATE.TFOD_INIT;
+
     }
 
     /**
@@ -257,7 +292,7 @@ public class HzVision_Template {
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
             //tfod.setZoom(1.75, 16.0/9.0);
             tfod.setZoom(2.0, 16.0/9.0);
-            updatedRecognitions = tfod.getUpdatedRecognitions();
+            recognitions = tfod.getUpdatedRecognitions();
         }
     }
 
@@ -272,44 +307,44 @@ public class HzVision_Template {
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
-            updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
+            recognitions = tfod.getUpdatedRecognitions();
+            if (recognitions != null) {
                 //telemetry.addData("# Object Detected", updatedRecognitions.size());
-                if (updatedRecognitions.size() == 0 ) {
+                if (recognitions.size() == 0 ) {
                     // empty list.  no objects recognized.
-                    //telemetry.addData("TFOD", "No items detected.");
-                    //telemetry.addData("Target Zone", "A");
-                    targetZoneDetected = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL1;
+                    detectedLabel = "None";
+                    targetLevelDetected = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL1;
                 } else {
                     // list is not empty.
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
-                    for (Recognition recognition : updatedRecognitions) {
-                        //telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                        //telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                        //        recognition.getLeft(), recognition.getTop());
-                        //telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                        //        recognition.getRight(), recognition.getBottom());
+                    /* step through the list of recognitions and display boundary info.
+                    for (Recognition recognition : recognitions) {
+                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                recognition.getLeft(), recognition.getTop());
+                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                recognition.getRight(), recognition.getBottom());
+                        i++;
+                    }*/
 
+                    for (Recognition recognition : recognitions) {
                         // check label to see which target zone to go after.
-                        if (recognition.getLabel().equals("Single")) {
-                            //telemetry.addData("Target Zone", "B");
-                            targetZoneDetected =  HzGameField.VISION_IDENTIFIED_TARGET.LEVEL2;
-                        } else if (recognition.getLabel().equals("Quad")) {
-                            //telemetry.addData("Target Zone", "C");
-                            targetZoneDetected =  HzGameField.VISION_IDENTIFIED_TARGET.LEVEL3;
-                        } else {
-                            //telemetry.addData("Target Zone", "UNKNOWN");
-                            targetZoneDetected = HzGameField.VISION_IDENTIFIED_TARGET.UNKNOWN;
+                        detectedLabel = recognition.getLabel();
+                        if (recognition.getLabel().equals(targetLabel)) {
+                            if (recognition.getLeft() < targetPosition[0]) {
+                                targetLevelDetected = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL1;
+                            } else if (recognition.getLeft() < targetPosition[1]) {
+                                targetLevelDetected = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL2;
+                            } else {
+                                targetLevelDetected = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL3;
+                            }
                         }
                     }
                 }
-
-                //telemetry.update();
-
             }
         }
-        return targetZoneDetected;
+        return targetLevelDetected;
     }
 
     /**

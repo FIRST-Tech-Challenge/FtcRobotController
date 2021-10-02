@@ -50,8 +50,8 @@ public class HzAutonomous_Template extends LinearOpMode {
     boolean parked = false ;
     boolean autonomousStarted = false;
 
-    public HzVision.ACTIVE_WEBCAM activeWebcam = HzVision.ACTIVE_WEBCAM.LEFT;
-    public HzGameField.VISION_IDENTIFIER_OPTION targetZone = HzGameField.VISION_IDENTIFIER_OPTION.A;
+    public HzVision.ACTIVE_WEBCAM activeWebcam = HzVision.ACTIVE_WEBCAM.WEBCAM1;
+    public HzGameField.VISION_IDENTIFIED_TARGET targetZone = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL1;
 
     double af = HzGameField.ALLIANCE_FACTOR;
 
@@ -66,7 +66,7 @@ public class HzAutonomous_Template extends LinearOpMode {
         hzDrive = new HzDrive(hardwareMap);
         hzSubsystem1 = new HzSubsystem1(hardwareMap);
         /* Create Controllers */
-        hzGamepadController = new HzGamepadController(gamepad1,hzDrive, hzSubsystem1);
+        hzGamepadController = new HzGamepadController(gamepad1, gamepad2, hzDrive, hzSubsystem1);
         hzAutonomousController = new HzAutonomousController(hzDrive, hzSubsystem1);
 
         //Key Pay inputs to select Game Plan;

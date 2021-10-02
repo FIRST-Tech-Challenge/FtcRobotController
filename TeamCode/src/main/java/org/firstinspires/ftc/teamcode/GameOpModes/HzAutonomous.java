@@ -47,13 +47,11 @@ public class HzAutonomous extends LinearOpMode {
     boolean parked = false ;
     boolean autonomousStarted = false;
 
-    public HzVision.ACTIVE_WEBCAM activeWebcam = HzVision.ACTIVE_WEBCAM.LEFT;
-    public HzGameField.VISION_IDENTIFIER_OPTION targetZone = HzGameField.VISION_IDENTIFIER_OPTION.A;
+    public HzVision.ACTIVE_WEBCAM activeWebcam = HzVision.ACTIVE_WEBCAM.WEBCAM1;
+    public HzGameField.VISION_IDENTIFIED_TARGET targetZone = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL1;
 
     double af = HzGameField.ALLIANCE_FACTOR;
 
-    double turnAnglePowershot12 = Math.toRadians(-5);
-    double turnAnglePowershot23 = Math.toRadians(-5);
     Trajectory traj;
 
 
@@ -63,7 +61,7 @@ public class HzAutonomous extends LinearOpMode {
         hzDrive = new HzDrive(hardwareMap);
         hzSubsystem1 = new HzSubsystem1(hardwareMap);
         /* Create Controllers */
-        hzGamepadController = new HzGamepadController(gamepad1,hzDrive, hzSubsystem1);
+        hzGamepadController = new HzGamepadController(gamepad1,gamepad2, hzDrive, hzSubsystem1);
         hzAutonomousController = new HzAutonomousController(hzDrive, hzSubsystem1);
 
         //Key Pay inputs to select Game Plan;
@@ -202,24 +200,63 @@ public class HzAutonomous extends LinearOpMode {
         telemetry.update();
 
         //Add logic to select autonomous mode based on keypad entry
-
-        /* Example
         while (!isStopRequested()) {
-            if (hzGamepadControllerUltimateGoal.getButtonBPress()) {
-                HzGameFieldUltimateGoal.playingAlliance = HzGameFieldUltimateGoal.PLAYING_ALLIANCE.RED_ALLIANCE;
-                HzGameFieldUltimateGoal.ALLIANCE_FACTOR = -1;
+            if (hzGamepadController.gp1GetButtonBPress()) {
+                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+                HzGameField.ALLIANCE_FACTOR = -1;
                 telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
                 break;
             }
-            if (hzGamepadControllerUltimateGoal.getButtonXPress()) {
-                HzGameFieldUltimateGoal.playingAlliance = HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE;
-                HzGameFieldUltimateGoal.ALLIANCE_FACTOR = 1;
+            if (hzGamepadController.gp1GetButtonXPress()) {
+                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+                HzGameField.ALLIANCE_FACTOR = 1;
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
                 break;
             }
             telemetry.update();
         }
-         */
+        telemetry.update();
+        hzWait(200);
+
+        //***** Select Start Pose ******
+        telemetry.addData("Enter Start Pose :", "(Inner: (A) ,    Outer: (Y))");
+        while (!isStopRequested()) {
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+                if (hzGamepadController.gp1GetButtonAPress()) {
+                    HzGameField.startPosition = HzGameField.START_POSITION.STARTPOS_1;
+                    startPose = HzGameField.RED_STARTPOS_1;
+                    activeWebcam = HzVision.ACTIVE_WEBCAM.WEBCAM1;
+                    telemetry.addData("Start Pose : ", "RED_STARTPOS_1");
+                    break;
+                }
+                if (hzGamepadController.gp1GetButtonYPress()) {
+                    HzGameField.startPosition = HzGameField.START_POSITION.STARTPOS_2;
+                    startPose = HzGameField.RED_STARTPOS_2;
+                    activeWebcam = HzVision.ACTIVE_WEBCAM.WEBCAM1;
+                    telemetry.addData("Start Pose : ", "RED_STARTPOS_2");
+                    break;
+                }
+            }
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                if (hzGamepadController.gp1GetButtonAPress()) {
+                    HzGameField.startPosition = HzGameField.START_POSITION.STARTPOS_1;
+                    startPose = HzGameField.BLUE_STARTPOS_1;
+                    activeWebcam = HzVision.ACTIVE_WEBCAM.WEBCAM1;
+                    telemetry.addData("Start Pose : ", "BLUE_STARTPOS_1");
+                    break;
+                }
+                if (hzGamepadController.gp1GetButtonYPress()) {
+                    HzGameField.startPosition = HzGameField.START_POSITION.STARTPOS_2;
+                    startPose = HzGameField.BLUE_STARTPOS_2;
+                    activeWebcam = HzVision.ACTIVE_WEBCAM.WEBCAM1;
+                    telemetry.addData("Start Pose : ", "BLUE_STARTPOS_2");
+                    break;
+                }
+            }
+            telemetry.update();
+        }
+
+        //TODO: Add more selection logic based on the above template
 
         telemetry.update();
         hzWait(200);
