@@ -45,13 +45,13 @@ public class HzAutonomous_Template extends LinearOpMode {
     public HzSubsystem1 hzSubsystem1;
 
     public HzVision hzVision;
-    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+    public Pose2d startPose = HzGameField.BLUE_STARTPOS_1;
 
     boolean parked = false ;
     boolean autonomousStarted = false;
 
-    public HzVision.ACTIVE_WEBCAM activeWebcam = HzVision.ACTIVE_WEBCAM.LEFT;
-    public HzGameField.TARGET_ZONE targetZone = HzGameField.TARGET_ZONE.A;
+    public HzVision.ACTIVE_WEBCAM activeWebcam = HzVision.ACTIVE_WEBCAM.WEBCAM1;
+    public HzGameField.VISION_IDENTIFIED_TARGET targetZone = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL1;
 
     double af = HzGameField.ALLIANCE_FACTOR;
 
@@ -66,7 +66,7 @@ public class HzAutonomous_Template extends LinearOpMode {
         hzDrive = new HzDrive(hardwareMap);
         hzSubsystem1 = new HzSubsystem1(hardwareMap);
         /* Create Controllers */
-        hzGamepadController = new HzGamepadController(gamepad1,hzDrive, hzSubsystem1);
+        hzGamepadController = new HzGamepadController(gamepad1, gamepad2, hzDrive, hzSubsystem1);
         hzAutonomousController = new HzAutonomousController(hzDrive, hzSubsystem1);
 
         //Key Pay inputs to select Game Plan;
@@ -113,7 +113,7 @@ public class HzAutonomous_Template extends LinearOpMode {
                 hzVision.deactivateVuforiaTensorFlow();
 
                 // Logic to determine and run defined Autonomous mode
-                if (HzGameField.startPosition == HzGameField.START_POSITION.INNER) {
+                if (HzGameField.startPosition == HzGameField.START_POSITION.STARTPOS_1) {
                     runAutoOption1();
                 } else { //HzGameField.startPosition == HzGameField.START_POSITION.OUTER
                     //runAutoOuter();

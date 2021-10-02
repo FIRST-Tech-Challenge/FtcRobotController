@@ -36,7 +36,7 @@ public class HzTeleOp_Template extends LinearOpMode {
         hzDrive = new HzDrive(hardwareMap);
         hzSubsystem1 = new HzSubsystem1(hardwareMap);
         /* Create Controllers */
-        hzGamepadController = new HzGamepadController(gamepad1,hzDrive, hzSubsystem1);
+        hzGamepadController = new HzGamepadController(gamepad1, gamepad2, hzDrive, hzSubsystem1);
 
         /* Get last position after Autonomous mode ended from static class set in Autonomous */
         if ( HzGameField.poseSetInAutonomous == true) {
