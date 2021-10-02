@@ -31,6 +31,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * The code for Red and Blue are written as reflection of each other.<BR>
  * Camera on either side is used using Vuforia to determine target for Wobble Goal<BR>
  */
+//TODO: Copy and Rename Autonomous Mode
 @Autonomous(name = "Hazmat Platform Autonomous", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp")
 public class HzAutonomous extends LinearOpMode {
 
@@ -226,8 +227,9 @@ public class HzAutonomous extends LinearOpMode {
         telemetry.update();
         hzWait(200);
 
+        //TODO: Update instructions per game positions
         //***** Select Start Pose ******
-        telemetry.addData("Enter Start Pose :", "(Inner: (A) ,    Outer: (Y))");
+        telemetry.addData("Enter Start Pose :", "(STARTPOS_1: (A) ,    STARTPOS_2: (Y))");
         while (!isStopRequested()) {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepadController.gp1GetButtonAPress()) {
@@ -288,7 +290,15 @@ public class HzAutonomous extends LinearOpMode {
         telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
         telemetry.addData("Battery Power", hzDrive.getBatteryVoltage(hardwareMap));
 
+        //****** Vision Debug *****
+        telemetry.addData("Target Label : ", hzVision.detectedLabel);
+        telemetry.addData("Target Left : ", hzVision.detectedLabelLeft);
+        telemetry.addData("Target Right : ", hzVision.detectedLabelRight);
+        telemetry.addData("Target Top : ", hzVision.detectedLabelTop);
+        telemetry.addData("Target Bottom : ", hzVision.detectedLabelBottom);
+
         //TODO:Add logic for debug print Logic
+
 
         telemetry.update();
 

@@ -193,6 +193,7 @@ public class HzVision {
     };
     public String targetLabel = LABELS[2]; // Default "Duck"
     public String detectedLabel = LABELS[2];
+    public float detectedLabelLeft, detectedLabelRight, detectedLabelTop, detectedLabelBottom;
     public static float[] targetPosition = {
             //TODO : Update values based on marker location identifier
             10,
@@ -324,6 +325,10 @@ public class HzVision {
                     for (Recognition recognition : recognitions) {
                         // check label to see which target zone to go after.
                         detectedLabel = recognition.getLabel();
+                        detectedLabelLeft = recognition.getLeft();
+                        detectedLabelRight = recognition.getRight();
+                        detectedLabelTop = recognition.getTop();
+                        detectedLabelBottom = recognition.getBottom();
                         if (recognition.getLabel().equals(targetLabel)) {
                             if (recognition.getLeft() < targetPosition[0]) {
                                 targetLevelDetected = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL1;
