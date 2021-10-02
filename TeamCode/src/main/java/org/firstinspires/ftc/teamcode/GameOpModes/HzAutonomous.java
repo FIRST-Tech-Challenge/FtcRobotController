@@ -40,6 +40,7 @@ public class HzAutonomous extends LinearOpMode {
     public HzAutonomousController hzAutonomousController;
     public HzDrive hzDrive;
     public HzSubsystem1 hzSubsystem1;
+    //TODO: Replace name of Subsystem1 and Declare more subsystems
 
     public HzVision hzVision;
     public Pose2d startPose = HzGameField.BLUE_STARTPOS_1;
@@ -60,12 +61,14 @@ public class HzAutonomous extends LinearOpMode {
         /* Create Subsystem Objects*/
         hzDrive = new HzDrive(hardwareMap);
         hzSubsystem1 = new HzSubsystem1(hardwareMap);
+        //TODO: Replace name of Subsystem1 and Declare more subsystems
+
         /* Create Controllers */
         hzGamepadController = new HzGamepadController(gamepad1,gamepad2, hzDrive, hzSubsystem1);
         hzAutonomousController = new HzAutonomousController(hzDrive, hzSubsystem1);
 
         //Key Pay inputs to select Game Plan;
-        selectGamePlan();
+        selectGamePlan(); //TODO: Update function with more selections as needed
         hzVision = new HzVision(hardwareMap, activeWebcam);
         af = HzGameField.ALLIANCE_FACTOR;
 
@@ -110,7 +113,9 @@ public class HzAutonomous extends LinearOpMode {
                 // Logic to determine and run defined Autonomous mode
                 if (HzGameField.startPosition == HzGameField.START_POSITION.STARTPOS_1) {
                     runAutoOption1();
+                    //TODO: Update Option1 with relevant name
                 } else { //HzGameField.startPosition == HzGameField.START_POSITION.OUTER
+                    //TODO: Create new runAutoOptions for alternate options
                     //runAutoOuter();
                 }
 
@@ -140,11 +145,12 @@ public class HzAutonomous extends LinearOpMode {
      * Path and actions for autonomous mode starting from Inner start position
      */
     public void runAutoOption1(){
-
+        //TODO: Update name for Autonomous mode.
         //Logic for waiting
         hzWait(100);
 
-        //Add logic for autonmous mode actions.
+        //TODO: Add logic for autonmous mode actions.
+
         /* Example
 
         // Move to launch position and launch rings to High Goal or Powershots
@@ -177,6 +183,8 @@ public class HzAutonomous extends LinearOpMode {
             }
             */
     }
+
+    //TODO: Add other runAutoOptions
 
 
     /**
@@ -280,7 +288,7 @@ public class HzAutonomous extends LinearOpMode {
         telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
         telemetry.addData("Battery Power", hzDrive.getBatteryVoltage(hardwareMap));
 
-        //Add logic for debug print Logic
+        //TODO:Add logic for debug print Logic
 
         telemetry.update();
 
