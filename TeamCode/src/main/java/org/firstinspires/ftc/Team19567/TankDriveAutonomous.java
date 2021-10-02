@@ -13,6 +13,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.openftc.easyopencv.OpenCvCamera;
 
 @Autonomous(name="TankAutoOP", group="Linear OpMode")
 @Disabled

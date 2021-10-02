@@ -13,19 +13,23 @@ import java.lang.Math;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="TestOpIterative", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
-public class TestOPIterative extends OpMode //Declares the class TestOPIterative, which is a child of OpMode
-{
+public class TestOPIterative extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
-
     private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
     private DcMotor rightDCFront = null;
     private DcMotor leftDCBack = null;
     private DcMotor rightDCBack = null;
+    private DcMotor intakeDC = null;
+    private DcMotor carouselDC = null;
+    private DcMotor linearSlideDC = null;
     private boolean slowMode = false;
     private double acc = 1.0;
     private Servo servo1 = null;
     private boolean isServoMaxed = false;
+    private double servo1Pos = 0.0;
+    private double carouselDCPos=0.0;
+    private double intakeDCPos = 0.0;
 
     @Override
     public void init() {
@@ -35,6 +39,8 @@ public class TestOPIterative extends OpMode //Declares the class TestOPIterative
         rightDCFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftDCBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightDCBack = hardwareMap.get(DcMotor.class, "rightBack");
+        intakeDC = hardwareMap.get(DcMotor.class, "intake");
+        carouselDC = hardwareMap.get(DcMotor.class, "carousel");
         servo1 = hardwareMap.get(Servo.class, "servo1");
 
         //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
@@ -43,6 +49,10 @@ public class TestOPIterative extends OpMode //Declares the class TestOPIterative
         rightDCFront.setDirection(DcMotor.Direction.FORWARD);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.FORWARD);
+        intakeDC.setDirection(DcMotor.Direction.FORWARD);
+        carouselDC.setDirection(DcMotor.Direction.FORWARD);
+        linearSlideDC.setDirection(DcMotor.Direction.FORWARD);
+        linearSlideDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -84,17 +94,26 @@ public class TestOPIterative extends OpMode //Declares the class TestOPIterative
         final double rightBackSpeed = r*acc*Math.sin(angleDC) - gamepad1.right_stick_x;
 
         if(gamepad1.x) slowMode = !slowMode;
-        if(gamepad1.a) isServoMaxed = !isServoMaxed;
+        if(gamepad1.right_bumper) {
+            servo1Pos += 0.03;
+        }
+        else if(gamepad1.left_bumper) {
+            servo1Pos -= 0.03;
+        }
+        if(gamepad1.a) {
+            linearSlideDC.setPower(1.0);
+        }
+
 
         if(slowMode) acc = 0.3; //If slowmode is on, then change movement multiplier speed to 0.3 (30%)
         else acc = 1.0; //Otherwise, keep it at 1.0 (100%)
-        if(isServoMaxed) servo1.setPosition(1.0); //If the servo should be at its maximum position, then set it to that position , 1.0 (100%)
-        else servo1.setPosition(0.1); //Otherwise, set the servo position to be the minimum amount (Not the absolute minimum here, but that's not important)
 
         leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
         rightDCFront.setPower(rightFrontSpeed);
         leftDCBack.setPower(leftBackSpeed);
         rightDCBack.setPower(rightBackSpeed);
+        intakeDC.setPower(gamepad1.left_trigger);
+        carouselDC.setPower(gamepad1.right_trigger);
 
         telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
