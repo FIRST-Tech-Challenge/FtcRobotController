@@ -39,6 +39,7 @@ public class HzGameField {
     public enum START_POSITION{
         STARTPOS_1,
         STARTPOS_2
+        //TODO: Update names for Startpos
     }
     public static START_POSITION startPosition = START_POSITION.STARTPOS_1;
 

@@ -51,11 +51,13 @@ public class HzGamepadController {
     public Gamepad hzGamepad1, hzGamepad2;
     public HzDrive hzDrive;
     public HzSubsystem1 hzSubsystem1;
+    //TODO: Replace name of Subsystem1 and Declare more subsystems
 
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
      * Assign the gamepad1 given in OpMode to the gamepad used here.
      */
+    //TODO: Replace name of Subsystem1 and Add more Subsystems in declaration
     public HzGamepadController(Gamepad hzGamepad1,
                                Gamepad hzGamepad2,
                                HzDrive hzDrive,
@@ -64,6 +66,7 @@ public class HzGamepadController {
         this.hzGamepad2 = hzGamepad2;
         this.hzDrive = hzDrive;
         this.hzSubsystem1 = hzSubsystem1;
+        //TODO: line to point object for more subsystems
     }
 
     /**
@@ -71,6 +74,7 @@ public class HzGamepadController {
      */
     public void runByGamepadControl(){
         runSubsystem1Control();
+        //TODO: Add run functions for more Subsystems added
         runDriveControl_byRRDriveModes();
     }
 
@@ -129,8 +133,7 @@ public class HzGamepadController {
      * direction in order for a stuck ring to be out of intake. <BR>
      */
     public void runSubsystem1Control(){ //this function should be at LaunchController's place after order change
-
-        //Add logic for state of Subsubsystem1 to be set when a key entry is made
+        //TODO: Add logic for state of Subsubsystem1 to be set when a key entry is made
         /* Example
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
         if (getDpad_downPress()) {
@@ -160,6 +163,8 @@ public class HzGamepadController {
 
 
     }
+
+    //TODO: Add controller code for more subsystems as above
 
 
     //*********** KEY PAD MODIFIERS BELOW ***********

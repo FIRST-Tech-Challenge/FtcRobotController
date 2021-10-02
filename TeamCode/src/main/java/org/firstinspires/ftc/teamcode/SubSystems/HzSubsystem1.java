@@ -23,6 +23,8 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 public class HzSubsystem1 {
 
+    //TODO: Update code as needed for Subsystem1
+
     public DcMotor subsystem1Motor = null;
     public Servo subsystem1Servo = null;
 

@@ -22,6 +22,7 @@ public class HzTeleOp extends LinearOpMode {
     public HzGamepadController hzGamepadController;
     public HzDrive hzDrive;
     public HzSubsystem1 hzSubsystem1;
+    //TODO: Replace name of Subsystem1 and Declare more subsystems
 
     //public HzVuforia hzVuforia1;
     public Pose2d startPose = HzGameField.ORIGINPOSE;
@@ -32,6 +33,8 @@ public class HzTeleOp extends LinearOpMode {
         /* Create Subsystem Objects*/
         hzDrive = new HzDrive(hardwareMap);
         hzSubsystem1 = new HzSubsystem1(hardwareMap);
+        //TODO: Replace name of Subsystem1 and Declare more subsystems
+
         /* Create Controllers */
         hzGamepadController = new HzGamepadController(gamepad1, gamepad2, hzDrive, hzSubsystem1);
 
@@ -43,7 +46,8 @@ public class HzTeleOp extends LinearOpMode {
         }
 
         /* Set Initial State of any subsystem when TeleOp is to be started*/
-        hzSubsystem1.setIntakeReleaseOpen();
+        //TODO: Add code for any initial state
+        //hzSubsystem1.setIntakeReleaseOpen();
 
         /* Wait for Start or Stop Button to be pressed */
         waitForStart();
