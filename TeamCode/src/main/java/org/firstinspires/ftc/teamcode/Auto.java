@@ -23,6 +23,8 @@ public class Auto extends AutonomousMode<MecanumDrive> {
     public void OnInitialize() {
         config = new Config(hardwareMap.appContext);
 
+        objectDetector = new TensorFlowObjectDetector(this, "Webcam 1");
+
         telemetry.addData("Status", "Updating Recognitions");
         telemetry.update();
 

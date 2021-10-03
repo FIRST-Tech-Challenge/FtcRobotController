@@ -30,7 +30,7 @@ public class TensorFlowObjectDetector {
     };
 
     private static final String VUFORIA_KEY =
-            "-- VUFORIA KEY --";
+            "AYMJwEL/////AAABmXhnZUthlkQRqZtBBpNME36DsqdlCz6tt/5wuog/yF9PmuuAhfZZ8uAPCgQJ6WXXjB+fDSCT9z0knxMTAhrZ0Ey/0zpe5MGvDnae7MKDlFxK/GiUlr5PFSpZ+afiAYK7fc0SQOEjf6Oup+gRzn9sDe+3sZzkgTNQ7iSQ+NIltPSEQEO1lpyC7+fG47ya5i9YSA5CxZW1+R9J3FYkqvh+gMSniRAjeXY97wl3dPmahCuAcTSx+WYSijLQX6PLpiHyEe+Q1qAGdimhfq/mjrE1iWQU9OMVNAIoC0lZ+RmJr3+lPg8gR0UhjRLp9v3M1Giv08siHwRdlvb24W49SRdLNSqPqCxAcBvr0l1BkrpIbtIh";
 
     // ============================================================
     // Member Variables
@@ -79,10 +79,14 @@ public class TensorFlowObjectDetector {
     }
 
     public void UpdateRecognitions() {
-        if(opMode.opModeIsActive() && tfod != null) {
+
+        if(tfod != null) {
+            System.out.println("Hey");
+
             recognitions = tfod.getUpdatedRecognitions();
 
             if(recognitions != null && recognitions.size() > 0) {
+
                 for(Recognition recognition : recognitions) {
                     opMode.telemetry.addLine(opMode.telemetry.getItemSeparator());
                     opMode.telemetry.addLine(recognition.getLabel());
