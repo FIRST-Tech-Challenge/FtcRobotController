@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
 import org.firstinspires.ftc.teamcode.Controllers.Examples.HzAutonomousControllerUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadControllerUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzIntakeUltimateGoal;
 import org.firstinspires.ftc.teamcode.Controllers.Examples.HzLaunchSubControllerUltimateGoal;
@@ -45,7 +45,7 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
 
     public HzGamepadControllerUltimateGoal hzGamepadControllerUltimateGoal;
     public HzAutonomousControllerUltimateGoal hzAutonomousController;
-    public HzDrive hzDrive;
+    public DriveTrain driveTrain;
     public HzMagazineUltimateGoal hzMagazineUltimateGoal;
     public HzIntakeUltimateGoal hzIntakeUltimateGoal;
     public HzLaunchSubControllerUltimateGoal hzLaunchSubControllerUltimateGoal;
@@ -71,15 +71,15 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize HW
-        hzDrive = new HzDrive(hardwareMap);
+        driveTrain = new DriveTrain(hardwareMap);
         hzMagazineUltimateGoal = new HzMagazineUltimateGoal(hardwareMap);
         hzIntakeUltimateGoal = new HzIntakeUltimateGoal(hardwareMap);
 
         hzLauncherUltimateGoal = new HzLauncherUltimateGoal(hardwareMap);
         hzArmUltimateGoal = new HzArmUltimateGoal(hardwareMap);
-        hzLaunchSubControllerUltimateGoal = new HzLaunchSubControllerUltimateGoal(hardwareMap, hzLauncherUltimateGoal, hzIntakeUltimateGoal, hzMagazineUltimateGoal, hzDrive);
-        hzGamepadControllerUltimateGoal = new HzGamepadControllerUltimateGoal(gamepad1,hzDrive, hzMagazineUltimateGoal, hzIntakeUltimateGoal, hzLaunchSubControllerUltimateGoal, hzLauncherUltimateGoal, hzArmUltimateGoal);
-        hzAutonomousController = new HzAutonomousControllerUltimateGoal(hzDrive, hzMagazineUltimateGoal, hzIntakeUltimateGoal, hzLaunchSubControllerUltimateGoal, hzLauncherUltimateGoal, hzArmUltimateGoal);
+        hzLaunchSubControllerUltimateGoal = new HzLaunchSubControllerUltimateGoal(hardwareMap, hzLauncherUltimateGoal, hzIntakeUltimateGoal, hzMagazineUltimateGoal, driveTrain);
+        hzGamepadControllerUltimateGoal = new HzGamepadControllerUltimateGoal(gamepad1, driveTrain, hzMagazineUltimateGoal, hzIntakeUltimateGoal, hzLaunchSubControllerUltimateGoal, hzLauncherUltimateGoal, hzArmUltimateGoal);
+        hzAutonomousController = new HzAutonomousControllerUltimateGoal(driveTrain, hzMagazineUltimateGoal, hzIntakeUltimateGoal, hzLaunchSubControllerUltimateGoal, hzLauncherUltimateGoal, hzArmUltimateGoal);
 
         //Key Pay inputs to select Game Plan;
         //selectGamePlan();
@@ -90,7 +90,7 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
         // Initiate Camera on Init.
         hzVuforiaUltimateGoal.activateVuforiaTensorFlow();
 
-        hzDrive.getLocalizer().setPoseEstimate(startPose);
+        driveTrain.getLocalizer().setPoseEstimate(startPose);
 
         hzIntakeUltimateGoal.setIntakeReleaseHold();
         hzAutonomousController.setMagazineToLaunch();
@@ -136,7 +136,7 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
                 parked = true;
 
                 //Write last position to static class to be used as initial position in TeleOp
-                HzGameFieldUltimateGoal.currentPose = hzDrive.getPoseEstimate();
+                HzGameFieldUltimateGoal.currentPose = driveTrain.getPoseEstimate();
                 HzGameFieldUltimateGoal.poseSetInAutonomous = true;
 
                 if (HzDEBUG_FLAG) {
@@ -148,7 +148,7 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
         }
 
         //Write last position to static class to be used as initial position in TeleOp
-        HzGameFieldUltimateGoal.currentPose = hzDrive.getPoseEstimate();
+        HzGameFieldUltimateGoal.currentPose = driveTrain.getPoseEstimate();
         HzGameFieldUltimateGoal.poseSetInAutonomous = true;
     }
 
@@ -171,11 +171,11 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
                 hzAutonomousController.setMagazineToLaunch();
                 //Move to position to launch rings
                 if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                             .lineToLinearHeading(new Pose2d(-6, 14, Math.toRadians(19)))//-10
                             .build();
                 }
-                hzDrive.followTrajectory(traj);
+                driveTrain.followTrajectory(traj);
 
                 launch3RingsToHighGoal();
             } else {
@@ -184,27 +184,27 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
                 //Intermediary position to move away from alliance robot.
                 //For option of second wobble goal drop, this is avoided to save time
                 if (!hzAutonomousController.pickAndDropSecondWobbleGoal) {
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                             .lineToLinearHeading(new Pose2d(-34, af * 14, Math.toRadians(af * 45))) //-40,6
                             .build();
-                    hzDrive.followTrajectory(traj);
+                    driveTrain.followTrajectory(traj);
                 }
                 //Move to position to launch rings
 
                 if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                             //.lineToLinearHeading(new Pose2d(-10, af * 15, Math.toRadians(af * 5)))
                             .lineToLinearHeading(new Pose2d(-10, af * 19, Math.toRadians(af * 5)))
                             .build();
-                    hzDrive.followTrajectory(traj);
+                    driveTrain.followTrajectory(traj);
                     //Set turn angles prior to launching for each of the power shorts
                     turnAnglePowershot12 = Math.toRadians(af * -5);
                     turnAnglePowershot23 = Math.toRadians(af * -7);
                 } else {
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                             .lineToLinearHeading(new Pose2d(-10, af * 15, Math.toRadians(af * 0)))
                             .build();
-                    hzDrive.followTrajectory(traj);
+                    driveTrain.followTrajectory(traj);
                     //Set turn angles prior to launching for each of the power shorts
                     turnAnglePowershot12 = Math.toRadians(af * -5);
                     turnAnglePowershot23 = Math.toRadians(af * -7);
@@ -226,22 +226,22 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
             if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 switch (targetZone) {
                     case A:
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                        traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                                 .lineToSplineHeading(new Pose2d(0, af * 55, Math.toRadians(af * -135)))//43
                                 .build();
-                        hzDrive.followTrajectory(traj);
+                        driveTrain.followTrajectory(traj);
                         break;
                     case B:
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                        traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                                  .lineToSplineHeading(new Pose2d(25, af * 33, Math.toRadians(af * -135)))
                                  .build();
-                        hzDrive.followTrajectory(traj);
+                        driveTrain.followTrajectory(traj);
                         break;
                     case C:
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                        traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                                 .lineToSplineHeading(new Pose2d(49, af * 61, Math.toRadians(af * -135))) //y:51 STATE y:43
                                 .build();
-                        hzDrive.followTrajectory(traj);
+                        driveTrain.followTrajectory(traj);
                         break;
                 }
             }
@@ -251,10 +251,10 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
             if ((hzAutonomousController.pickRingFromTargetMarker == false) || (targetZone == HzGameFieldUltimateGoal.TARGET_ZONE.A)) { // Park
                 if (hzAutonomousController.pickAndDropSecondWobbleGoal) {
                     hzWait(300);
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                             .lineToLinearHeading(new Pose2d(-8, af * 37, Math.toRadians(5))) //STATE y: 31
                             .build();
-                    hzDrive.followTrajectory(traj);
+                    driveTrain.followTrajectory(traj);
                     runInnerPickAndDropSecondWobbleGoalAndPark();
                 }
                 return;
@@ -268,15 +268,15 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
                     hzAutonomousController.setLaunchTargetHighGoal();
 
                     if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                        traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                                 .lineToLinearHeading(new Pose2d(-8, af * 37, Math.toRadians(5))) //STATE y: 31
                                 .build();
-                        hzDrive.followTrajectory(traj);
+                        driveTrain.followTrajectory(traj);
                     } else {
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                        traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                                 .lineToLinearHeading(new Pose2d(-8, af * 34, Math.toRadians(0))) //STATE x :-13angle:5
                                 .build();
-                        hzDrive.followTrajectory(traj);
+                        driveTrain.followTrajectory(traj);
                     }
 
                     launch3RingsToHighGoal();
@@ -285,20 +285,20 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
                         runInnerPickAndDropSecondWobbleGoalAndPark();
                     } else {
                         //Park
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                        traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                                 .lineToSplineHeading(new Pose2d(13, af * 36, Math.toRadians(af * 0)))
                                 .build();
-                        hzDrive.followTrajectory(traj);
+                        driveTrain.followTrajectory(traj);
                     }
                 } else { //Move to baseline and park in safe zone
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                             .lineToLinearHeading(new Pose2d(-50, af * 16, Math.toRadians(af * -90)))
                             .build();
-                    hzDrive.followTrajectory(traj);
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    driveTrain.followTrajectory(traj);
+                    traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                             .lineToSplineHeading(new Pose2d(10, af * 0, Math.toRadians(af * 0)))
                             .build();
-                    hzDrive.followTrajectory(traj);
+                    driveTrain.followTrajectory(traj);
                     hzAutonomousController.setIntakeStop();
                 }
             }
@@ -311,11 +311,11 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
     public void runInnerPickAndDropSecondWobbleGoalAndPark() {
         hzAutonomousController.setMoveArmPickWobble();
         hzAutonomousController.runOpenGrip();
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+        traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                 .splineToConstantHeading(new Vector2d(-20, af * 48), Math.toRadians(af * 0))
                 .splineToConstantHeading(new Vector2d(-33, af * 48), Math.toRadians(af * 0))
                 .build();
-        hzDrive.followTrajectory(traj);
+        driveTrain.followTrajectory(traj);
         hzWait(200);
         hzAutonomousController.runCloseGrip();
         hzWait(400);
@@ -323,44 +323,44 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
         hzWait(500);
         switch (targetZone) {
             case A:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToSplineHeading(new Pose2d(6, af * 42, Math.toRadians(af * -90)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                driveTrain.followTrajectory(traj);
                 break;
             case B:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToSplineHeading(new Pose2d(13, af * 42, Math.toRadians(af * 180)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                driveTrain.followTrajectory(traj);
                 break;
             case C:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToSplineHeading(new Pose2d(42, af * 61, Math.toRadians(af * -135)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                driveTrain.followTrajectory(traj);
                 break;
         }
         dropWobbleGoalInTarget();
         if (targetZone == HzGameFieldUltimateGoal.TARGET_ZONE.C) {
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+            traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                     .lineToSplineHeading(new Pose2d(20, af * 56, Math.toRadians(af * -135)))
                     .build();
-            hzDrive.followTrajectory(traj);
+            driveTrain.followTrajectory(traj);
         } else {
             if (targetZone == HzGameFieldUltimateGoal.TARGET_ZONE.B) {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                     .lineToSplineHeading(new Pose2d(0, af * 27, Math.toRadians(af * 180)))
                     .build();
-                hzDrive.followTrajectory(traj);
+                driveTrain.followTrajectory(traj);
             }
 
             //Park
             //if (targetZone == HzGameField.TARGET_ZONE.C) {
-            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+            traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                 .lineToSplineHeading(new Pose2d(3, af * 27, Math.toRadians(af * 0)))
                 .build();
-            hzDrive.followTrajectory(traj);
+            driveTrain.followTrajectory(traj);
         //}
         }
 
@@ -376,63 +376,63 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
         if (targetZone == HzGameFieldUltimateGoal.TARGET_ZONE.B) {
 
             if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(0, af * 36.5, Math.toRadians(af * 180)))
                         // .lineToLinearHeading(new Pose2d(0, af * 33.5, Math.toRadians(af * 180)))
                         .build();
-                hzDrive.followTrajectory(traj);
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                driveTrain.followTrajectory(traj);
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(-22, af * 36.5, Math.toRadians(af * 180)))
                         // .lineToLinearHeading(new Pose2d(-22, af * 33.5, Math.toRadians(af * 180)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                driveTrain.followTrajectory(traj);
             } else {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(0, af * 35.5, Math.toRadians(af * 180)))
                         .build();
-                hzDrive.followTrajectory(traj);
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                driveTrain.followTrajectory(traj);
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(-22, af * 35.5, Math.toRadians(af * 180)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                driveTrain.followTrajectory(traj);
             }
         }
 
         if (targetZone == HzGameFieldUltimateGoal.TARGET_ZONE.C) {
             if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(0, af * 36.5, Math.toRadians(af * -180)))
                         // .lineToLinearHeading(new Pose2d(0, af * 33.5, Math.toRadians(af * -180)))
                         .build();
-                hzDrive.followTrajectory(traj);
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                driveTrain.followTrajectory(traj);
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(-22, af * 36.5, Math.toRadians(af * -180)))
                         // .lineToLinearHeading(new Pose2d(-22, af * 33.5, Math.toRadians(af * -180)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                driveTrain.followTrajectory(traj);
 
                 if (!hzAutonomousController.pickAndDropSecondWobbleGoal) {
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                             .lineToLinearHeading(new Pose2d(-22, af * 35.5, Math.toRadians(af * -180)))
                             .build();
-                    hzDrive.followTrajectory(traj);
+                    driveTrain.followTrajectory(traj);
                 }
             } else {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(0, af * 35.5, Math.toRadians(af * -180)))
                         .build();
-                hzDrive.followTrajectory(traj);
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                driveTrain.followTrajectory(traj);
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(-11, af * 35.5, Math.toRadians(af * -180)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                driveTrain.followTrajectory(traj);
 
                 if (!hzAutonomousController.pickAndDropSecondWobbleGoal) {
-                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                             //.lineToLinearHeading(new Pose2d(-22, af * 34.5, Math.toRadians(af * -180)))
                             .lineToLinearHeading(new Pose2d(-22, af * 35.5, Math.toRadians(af * -180)))
                             .build();
-                    hzDrive.followTrajectory(traj);
+                    driveTrain.followTrajectory(traj);
                 }
             }
         }
@@ -507,13 +507,13 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
         hzWait(600);
         hzAutonomousController.setRunLauncherTrue();
 
-        hzDrive.turn(turnAnglePowershot12);
+        driveTrain.turn(turnAnglePowershot12);
         hzAutonomousController.setLaunchTargetPowerShot1();
         hzAutonomousController.setMagazineToLaunch();
         hzWait(400);
         hzAutonomousController.setRunLauncherTrue();
 
-        hzDrive.turn(turnAnglePowershot23);
+        driveTrain.turn(turnAnglePowershot23);
         hzAutonomousController.setMagazineToLaunch();
         hzAutonomousController.setLaunchTargetPowerShot1();
         hzWait(400);
@@ -579,9 +579,9 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
         telemetry.addData("startPose : ", startPose);
 
         //****** Drive debug ******
-        telemetry.addData("Drive Mode : ", hzDrive.driveMode);
-        telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
-        telemetry.addData("Battery Power", hzDrive.getBatteryVoltage(hardwareMap));
+        telemetry.addData("Drive Mode : ", driveTrain.driveMode);
+        telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
+        telemetry.addData("Battery Power", driveTrain.getBatteryVoltage(hardwareMap));
 
         //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry
@@ -640,7 +640,7 @@ public class HzAutoIowaInvitationalUltimateGoal extends LinearOpMode {
         telemetry.addData("hzLauncher.flyWheelVelocityPowerShot : ", hzLauncherUltimateGoal.flyWheelVelocityPowerShot);
         telemetry.addData("hzLauncher.flyWheelVelocityHighGoal : ", hzLauncherUltimateGoal.flyWheelVelocityHighGoal);
         telemetry.addData("hzLauncher.launcherFlyWheelMotor.getVelocity() : ", hzLauncherUltimateGoal.launcherFlyWheelMotor.getVelocity());
-        telemetry.addData("hzDrive.drivePointToAlign : ", hzDrive.drivePointToAlign);
+        telemetry.addData("hzDrive.drivePointToAlign : ", driveTrain.drivePointToAlign);
 
         //******* Launcher Debug *********
         //telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());

@@ -6,22 +6,22 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Definition of HzIntake Class <BR>
+ * Definition of Subsystem Class <BR>
  *
- * HzIntake consists of system provided intake controls and adds functionality to the selection made on intake. <BR>
+ * Example : Intake consists of system provided intake controls and adds functionality to the selection made on intake. <BR>
  *
  * The states are as followed: <BR>
- *     <emsp>INTAKE_MOTOR_STATE for telling if intake is running, stopped, or reversing </emsp> <BR>
- *     <emsp>INTAKE_REVERSE_BUTTON_STATE sees if the intake is on or off </emsp> <BR>
+ *     <emsp>SUBSYSTEM1_SERVO_LEVEL1 for one state - example if intake motor is running, stopped, or reversing </emsp> <BR>
+ *     <emsp>SUBSYSTEM1_SERVO_LEVEL2 for another state  = example if the intake is on or off </emsp> <BR>
  *
- * The functions are as followed: <BR>
- *     <emsp>runIntakeMotor checks if the intake is not running and runs the intake </emsp> <BR>
- *     <emsp>stopIntakeMotor checks if the intake has stopped and if its not, it sets the intake power to 0
- *     and sets intakeMotorState to INTAKE_MOTOR_STATE.STOPPED </emsp> <BR>
- *     <emsp>reverseIntakeMotor checks if the intake is not reversing, and sets the intake motor to FORWARD, then also
+ * The functions are as followed: Example assumes a motor like an intake <BR>
+ *     <emsp>runSubsystem1Motor checks if the motor is not running and runs the intake </emsp> <BR>
+ *     <emsp>stopSubsystem1Motor checks if the intake has stopped and if its not, it sets the intake power to 0
+ *     and sets subsystem1MotorState to SUBSYSTEM1_SERVO_LEVEL1.STOPPED </emsp> <BR>
+ *     <emsp> startReverseSubsystem1Motor checks if the motor is not reversing, and sets the  motor to FORWARD, then also
  *     sets intake motor state to REVERSING</emsp> <BR>
  */
-public class HzSubsystem1 {
+public class SubsystemTemplate {
 
     //TODO: Update code as needed for Subsystem1
 
@@ -48,7 +48,7 @@ public class HzSubsystem1 {
     }
     public SUBSYSTEM1_BUTTON_STATE subsystem1ButtonState;
 
-    public HzSubsystem1(HardwareMap hardwareMap) {
+    public SubsystemTemplate(HardwareMap hardwareMap) {
         subsystem1Motor = hardwareMap.dcMotor.get("frmotor");
         subsystem1Servo = hardwareMap.servo.get("servotest");
     }

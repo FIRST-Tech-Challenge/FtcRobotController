@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Controllers.Examples;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzIntakeUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzLauncherUltimateGoal;
@@ -67,15 +67,15 @@ public class HzLaunchSubControllerUltimateGoal {
     public HzLauncherUltimateGoal lcHzLauncherUltimateGoal;
     public HzIntakeUltimateGoal lcHzIntakeUltimateGoal;
     public HzMagazineUltimateGoal lcHzMagazineUltimateGoal;
-    public HzDrive lcHzDrive;
+    public DriveTrain lcDriveTrain;
     public HardwareMap lcHzHardwareMap;
 
     public HzLaunchSubControllerUltimateGoal(HardwareMap lcHzhardwareMapPassed, HzLauncherUltimateGoal lcHzLauncherUltimateGoalPassed, HzIntakeUltimateGoal lcHzIntakeUltimateGoalPassed, HzMagazineUltimateGoal lcHzMagazineUltimateGoalPassed,
-                                             HzDrive lcHzDrivePassed){
+                                             DriveTrain lcDriveTrainPassed){
         lcHzLauncherUltimateGoal = lcHzLauncherUltimateGoalPassed;
         lcHzMagazineUltimateGoal = lcHzMagazineUltimateGoalPassed;
         lcHzIntakeUltimateGoal = lcHzIntakeUltimateGoalPassed;
-        lcHzDrive = lcHzDrivePassed;
+        lcDriveTrain = lcDriveTrainPassed;
         lcHzHardwareMap = lcHzhardwareMapPassed;
     }
 
@@ -83,7 +83,7 @@ public class HzLaunchSubControllerUltimateGoal {
      * In case of battery dependency, this is used to set launcher velocity based on battery state
      */
     public double batteryCorrectFlyWheelVelocity(double flywheelVelcityToCorrect){
-        double batteryVoltage = lcHzDrive.getBatteryVoltage(lcHzHardwareMap);
+        double batteryVoltage = lcDriveTrain.getBatteryVoltage(lcHzHardwareMap);
         double batteryCorrectedFlyWheelVelocity = 1500;
         if ((batteryCorrectionFlag) && (batteryVoltage >13.0)) {
             batteryCorrectedFlyWheelVelocity = flywheelVelcityToCorrect
@@ -191,27 +191,27 @@ public class HzLaunchSubControllerUltimateGoal {
         if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
             switch (lcTarget) {
                 case HIGH_GOAL:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_TOWER_GOAL;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_TOWER_GOAL;
                     lcTargetVector = HzGameFieldUltimateGoal.BLUE_TOWER_GOAL;
                     break;
                 case MID_GOAL:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.RED_TOWER_GOAL;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.RED_TOWER_GOAL;
                     lcTargetVector = HzGameFieldUltimateGoal.RED_TOWER_GOAL;
                     break;
                 case LOW_GOAL:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_TOWER_GOAL;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_TOWER_GOAL;
                     lcTargetVector = HzGameFieldUltimateGoal.BLUE_TOWER_GOAL;
                     break;
                 case POWER_SHOT1:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_POWERSHOT1;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_POWERSHOT1;
                     lcTargetVector = HzGameFieldUltimateGoal.BLUE_POWERSHOT1;
                     break;
                 case POWER_SHOT2:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_POWERSHOT2;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_POWERSHOT2;
                     lcTargetVector = HzGameFieldUltimateGoal.BLUE_POWERSHOT2;
                     break;
                 case POWER_SHOT3:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_POWERSHOT3;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_POWERSHOT3;
                     lcTargetVector = HzGameFieldUltimateGoal.BLUE_POWERSHOT3;
                     break;
             }
@@ -220,27 +220,27 @@ public class HzLaunchSubControllerUltimateGoal {
         if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.RED_ALLIANCE) {
             switch (lcTarget) {
                 case HIGH_GOAL:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.RED_TOWER_GOAL;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.RED_TOWER_GOAL;
                     lcTargetVector = HzGameFieldUltimateGoal.RED_TOWER_GOAL;
                     break;
                 case MID_GOAL:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_TOWER_GOAL;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.BLUE_TOWER_GOAL;
                     lcTargetVector = HzGameFieldUltimateGoal.BLUE_TOWER_GOAL;
                     break;
                 case LOW_GOAL:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.RED_TOWER_GOAL;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.RED_TOWER_GOAL;
                     lcTargetVector = HzGameFieldUltimateGoal.RED_TOWER_GOAL;
                     break;
                 case POWER_SHOT1:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.RED_POWERSHOT1;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.RED_POWERSHOT1;
                     lcTargetVector = HzGameFieldUltimateGoal.RED_POWERSHOT1;
                     break;
                 case POWER_SHOT2:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.RED_POWERSHOT2;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.RED_POWERSHOT2;
                     lcTargetVector = HzGameFieldUltimateGoal.RED_POWERSHOT2;
                     break;
                 case POWER_SHOT3:
-                    lcHzDrive.drivePointToAlign = HzGameFieldUltimateGoal.RED_POWERSHOT3;
+                    lcDriveTrain.drivePointToAlign = HzGameFieldUltimateGoal.RED_POWERSHOT3;
                     lcTargetVector = HzGameFieldUltimateGoal.RED_POWERSHOT3;
                     break;
             }
@@ -256,8 +256,8 @@ public class HzLaunchSubControllerUltimateGoal {
         // so that robot does not get locked in this function.
         // (Driver has to manually turn the robot in MODE_AUTOMATED)
         if (getLaunchMode() == LAUNCH_MODE.AUTOMATED) {
-            lcHzDrive.driveMode = HzDrive.DriveMode.ALIGN_TO_POINT;
-            lcHzDrive.driveTrainPointFieldModes();
+            lcDriveTrain.driveMode = DriveTrain.DriveMode.ALIGN_TO_POINT;
+            lcDriveTrain.driveTrainPointFieldModes();
         }
     }
 
@@ -265,7 +265,7 @@ public class HzLaunchSubControllerUltimateGoal {
      * Return robot for target pointed control to Normal control
      */
     public void turnRobotToNormalControl(){
-        lcHzDrive.driveMode = HzDrive.DriveMode.NORMAL_CONTROL;
+        lcDriveTrain.driveMode = DriveTrain.DriveMode.NORMAL_CONTROL;
         //lcDrive.driveTrainPointFieldModes();
     }
 
@@ -277,7 +277,7 @@ public class HzLaunchSubControllerUltimateGoal {
      * Get distance from target
      */
     public void getDistanceFromTarget() {
-        distanceFromTarget = lcTargetVector.distTo(lcHzDrive.poseEstimate.vec());
+        distanceFromTarget = lcTargetVector.distTo(lcDriveTrain.poseEstimate.vec());
     }
 
     /**

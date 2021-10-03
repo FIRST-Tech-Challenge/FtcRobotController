@@ -51,7 +51,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
-import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,7 +183,7 @@ public class HzVision_Template {
 
     private TFObjectDetector tfod;
     private List<Recognition> updatedRecognitions;
-    public HzGameField.VISION_IDENTIFIED_TARGET targetZoneDetected = HzGameField.VISION_IDENTIFIED_TARGET.UNKNOWN;
+    public GameField.VISION_IDENTIFIED_TARGET targetZoneDetected = GameField.VISION_IDENTIFIED_TARGET.UNKNOWN;
 
     /**
      * Initialize the Vuforia localization engine.
@@ -266,7 +266,7 @@ public class HzVision_Template {
      * This is to be run till the play button is pressed.. the last target zone identified is returned.
      * @return
      */
-    public HzGameField.VISION_IDENTIFIED_TARGET runVuforiaTensorFlow() {
+    public GameField.VISION_IDENTIFIED_TARGET runVuforiaTensorFlow() {
         visionState = VISION_STATE.TFOD_RUNNING;
 
         if (tfod != null) {
@@ -279,7 +279,7 @@ public class HzVision_Template {
                     // empty list.  no objects recognized.
                     //telemetry.addData("TFOD", "No items detected.");
                     //telemetry.addData("Target Zone", "A");
-                    targetZoneDetected = HzGameField.VISION_IDENTIFIED_TARGET.LEVEL1;
+                    targetZoneDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL1;
                 } else {
                     // list is not empty.
                     // step through the list of recognitions and display boundary info.
@@ -294,13 +294,13 @@ public class HzVision_Template {
                         // check label to see which target zone to go after.
                         if (recognition.getLabel().equals("Single")) {
                             //telemetry.addData("Target Zone", "B");
-                            targetZoneDetected =  HzGameField.VISION_IDENTIFIED_TARGET.LEVEL2;
+                            targetZoneDetected =  GameField.VISION_IDENTIFIED_TARGET.LEVEL2;
                         } else if (recognition.getLabel().equals("Quad")) {
                             //telemetry.addData("Target Zone", "C");
-                            targetZoneDetected =  HzGameField.VISION_IDENTIFIED_TARGET.LEVEL3;
+                            targetZoneDetected =  GameField.VISION_IDENTIFIED_TARGET.LEVEL3;
                         } else {
                             //telemetry.addData("Target Zone", "UNKNOWN");
-                            targetZoneDetected = HzGameField.VISION_IDENTIFIED_TARGET.UNKNOWN;
+                            targetZoneDetected = GameField.VISION_IDENTIFIED_TARGET.UNKNOWN;
                         }
                     }
                 }

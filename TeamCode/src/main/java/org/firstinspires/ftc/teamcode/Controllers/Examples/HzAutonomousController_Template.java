@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.Controllers.Examples;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
-import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
 
 /**
  * Defenition of the AutoControl Class <BR>
@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
 public class HzAutonomousController_Template {
 
     //Create gamepad object reference to connect to gamepad1
-    public HzDrive hzDrive;
-    public HzSubsystem1 hzSubsystem1;
+    public DriveTrain driveTrain;
+    public SubsystemTemplate subsystemTemplate;
 
     public Pose2d startPose = HzGameFieldUltimateGoal.BLUE_INNER_START_LINE;
 
@@ -37,10 +37,10 @@ public class HzAutonomousController_Template {
      *
      *
      */
-    public HzAutonomousController_Template(HzDrive hzDrive,
-                                           HzSubsystem1 hzSubsystem1) {
-        this.hzDrive = hzDrive;
-        this.hzSubsystem1 = hzSubsystem1;
+    public HzAutonomousController_Template(DriveTrain driveTrain,
+                                           SubsystemTemplate subsystemTemplate) {
+        this.driveTrain = driveTrain;
+        this.subsystemTemplate = subsystemTemplate;
     }
 
     /**

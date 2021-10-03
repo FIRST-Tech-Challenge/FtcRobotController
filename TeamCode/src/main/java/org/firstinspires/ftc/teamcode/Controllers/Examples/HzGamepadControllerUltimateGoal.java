@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzIntakeUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzLauncherUltimateGoal;
@@ -37,7 +37,7 @@ public class HzGamepadControllerUltimateGoal {
 
     //Create gamepad object reference to connect to gamepad1
     public Gamepad gpGamepad;
-    public HzDrive gpDrive;
+    public DriveTrain gpDrive;
     public HzMagazineUltimateGoal gpHzMagazineUltimateGoal;
     public HzIntakeUltimateGoal gpHzIntakeUltimateGoal;
     public HzLaunchSubControllerUltimateGoal gpHzLaunchSubControllerUltimateGoal;
@@ -49,7 +49,7 @@ public class HzGamepadControllerUltimateGoal {
      * Assign the gamepad1 given in OpMode to the gamepad used here.
      */
     public HzGamepadControllerUltimateGoal(Gamepad gamepadPassed,
-                                           HzDrive gpDrivePassed,
+                                           DriveTrain gpDrivePassed,
                                            HzMagazineUltimateGoal gpHzMagazineUltimateGoalPassed,
                                            HzIntakeUltimateGoal gpHzIntakeUltimateGoalPassed,
                                            HzLaunchSubControllerUltimateGoal gpHzLaunchSubControllerUltimateGoalPassed,
@@ -89,16 +89,16 @@ public class HzGamepadControllerUltimateGoal {
         }
         gpDrive.poseEstimate = gpDrive.getPoseEstimate();
 
-        gpDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
+        gpDrive.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
 
-        if (gpDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
+        if (gpDrive.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
             gpDrive.gamepadInput = new Vector2d(
                     -turboMode(getLeftStickY()) ,
                     -turboMode(getLeftStickX())
             );
         };
 
-        if (gpDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
+        if (gpDrive.driveType == DriveTrain.DriveType.FIELD_CENTRIC){
 
             if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
                 gpDrive.gamepadInput = new Vector2d(
@@ -117,12 +117,12 @@ public class HzGamepadControllerUltimateGoal {
         gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
         if (getButtonXPress()) {
-            gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
+            gpDrive.augmentedControl = DriveTrain.AugmentedControl.TURN_DELTA_LEFT;
         }
 
         //Power Shot 2
         if (getButtonBPress()) {
-            gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
+            gpDrive.augmentedControl = DriveTrain.AugmentedControl.TURN_DELTA_RIGHT;
         }
 
         gpDrive.driveTrainPointFieldModes();
