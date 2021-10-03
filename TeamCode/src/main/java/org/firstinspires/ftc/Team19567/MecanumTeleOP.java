@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.Range;
 import java.lang.Math;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="TestOpIterative", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
-public class TestOPIterative extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
+@TeleOp(name="Mecanum TeleOP", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
+public class MecanumTeleOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
