@@ -16,8 +16,8 @@ public class skinnyrobot extends LinearOpMode {
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
         //reverse the needed motors
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        //motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        //motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -40,12 +40,12 @@ public class skinnyrobot extends LinearOpMode {
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             double rotation = gamepad1.left_stick_x;
 
-            double powerOne = r*Math.sin(angle);
-            double powerTwo = r*Math.cos(angle);
+            double powerOne = r*Math.cos(angle);
+            double powerTwo = r*Math.sin(angle);
 
             motorFrontLeft.setPower((powerOne - (rotation))*powerMod);
-            motorFrontRight.setPower((powerTwo + (rotation))*powerMod);
-            motorBackLeft.setPower((powerTwo - (rotation))*powerMod);
+            motorFrontRight.setPower((powerTwo - (rotation))*powerMod);
+            motorBackLeft.setPower((powerTwo + (rotation))*powerMod);
             motorBackRight.setPower((powerOne + (rotation))*powerMod);
         }
     }

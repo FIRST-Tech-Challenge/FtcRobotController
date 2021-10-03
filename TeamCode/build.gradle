@@ -19,3 +19,11 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
+
+dependencies {
+    implementation 'org.openftc:easyopencv:1.5.0'
+}
+
+dependencies {
+    implementation 'org.openftc:rev-extensions-2:1.2'
+}
