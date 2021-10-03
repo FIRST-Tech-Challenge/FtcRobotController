@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 
 @TeleOp(name = "TeleopMark4")
-public class TeleopMark extends LinearOpMode {
+public class Teleop extends LinearOpMode {
     //Declare DC motor objects
     private Robot robot;
 
