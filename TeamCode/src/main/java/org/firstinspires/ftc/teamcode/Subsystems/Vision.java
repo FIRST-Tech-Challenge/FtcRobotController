@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -9,19 +13,9 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-
-/**
- * Created by Ryan Lin on 1/04/2021.
- * modified by Andrew Chiang on 4/14/2021
- */
 
 /**
  * https://github.com/OpenFTC/OpenCV-Repackaged
@@ -52,7 +46,7 @@ public class Vision {
     private static final String VUFORIA_KEY =
             "ATDGULf/////AAABmRRGSyLSbUY4lPoqBYjklpYqC4y9J7bCk42kjgYS5KtgpKL8FbpEDQTovzZG8thxB01dClvthxkSuSyCkaZi+JiD5Pu0cMVre3gDwRvwRXA7V9kpoYyMIPMVX/yBTGaW8McUaK9UeQUaFSepsTcKjX/itMtcy7nl1k84JChE4i8whbinHWDpaNwb5qcJsXlQwJhE8JE7t8NMxMm31AgzqjVf/7HwprTRfrxjTjVx5v2rp+wgLeeLTE/xk1JnL3fZMG6yyxPHgokWlIYEBZ5gBX+WJfgA+TDsdSPY/MnBp5Z7QxQsO9WJA59o/UzyEo/9BkbvYJZfknZqeoZWrJoN9jk9sivFh0wIPsH+JjZNFsPw";
 
-    // Since ImageTarget trackables use mm to specify their dimensions, we must use mm for all the physical dimension.
+    // Since ImageTarget trackable use mm to specify their dimensions, we must use mm for all the physical dimension.
     // Define constants
     private static final float mmPerInch        = 25.4f;
     private static final float mmTargetHeight   = (6) * mmPerInch;
@@ -94,13 +88,6 @@ public class Vision {
 
         webcamName = hardwareMap.get(WebcamName.class, WEBCAM_NAME);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        /**
-         * This is the only thing you need to do differently when using multiple cameras.
-         * Instead of obtaining the camera monitor view and directly passing that to the
-         * camera constructor, we invoke {@link OpenCvCameraFactory#splitLayoutForMultipleViewports(int, int)}
-         * on that view in order to split that view into multiple equal-sized child views,
-         * and then pass those child views to the constructor.
-         */
         viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
 
 
@@ -122,26 +109,8 @@ public class Vision {
         // Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-        // Load the data sets for the trackable objects. These particular data sets are stored in the 'assets' part of our application.
-        targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
-        if(alliance == Color.BLUE) {
-            towerTarget = targetsUltimateGoal.get(0);
-            towerTarget.setName("Blue Tower Goal Target");
-        } else {
-            towerTarget = targetsUltimateGoal.get(1);
-            towerTarget.setName("Red Tower Goal Target");
-        }
-        frontWallTarget = targetsUltimateGoal.get(4);
-        frontWallTarget.setName("Front Wall Target");
-
-        // Set the position of the perimeter target as the origin (robot position will be relative to the target)
-        towerTarget.setLocation(createMatrix(0, 0, mmTargetHeight, 90, 0, 0));
-        frontWallTarget.setLocation(createMatrix(0, 0, mmTargetHeight, 90, 0, 0));
 
         OpenGLMatrix robotFromCamera = createMatrix(CAMERA_LEFT_DISPLACEMENT, CAMERA_FORWARD_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT, 90, 0, 0);
-
-        ((VuforiaTrackableDefaultListener) towerTarget.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
-        ((VuforiaTrackableDefaultListener) frontWallTarget.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
     }
 
 
