@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.Controllers;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
-import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
 
 /**
  * Defenition of the AutoControl Class <BR>
@@ -14,14 +14,14 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
  * 
  */
 
-public class HzAutonomousController {
+public class AutonomousController {
 
     //Create gamepad object reference to connect to gamepad1
-    public HzDrive hzDrive;
-    public HzSubsystem1 hzSubsystem1;
+    public DriveTrain driveTrain;
+    public SubsystemTemplate subsystemTemplate;
     //TODO: Replace name of Subsystem1 and Declare more subsystems
 
-    public Pose2d startPose = HzGameField.BLUE_STARTPOS_1;
+    public Pose2d startPose = GameField.BLUE_STARTPOS_1;
 
     // TODO: Declare autonomous option logic based on key pad selection
     /* Example
@@ -38,10 +38,10 @@ public class HzAutonomousController {
      *
      * TODO: Add more subsystems in declaration
      */
-    public HzAutonomousController(HzDrive hzDrive,
-                                  HzSubsystem1 hzSubsystem1) {
-        this.hzDrive = hzDrive;
-        this.hzSubsystem1 = hzSubsystem1;
+    public AutonomousController(DriveTrain driveTrain,
+                                SubsystemTemplate subsystemTemplate) {
+        this.driveTrain = driveTrain;
+        this.subsystemTemplate = subsystemTemplate;
         //TODO: Add more subsystems
     }
 

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Controllers.Examples;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzIntakeUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzLauncherUltimateGoal;
@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzMagazineUltimateGoal
 public class HzAutonomousControllerUltimateGoal {
 
     //Create gamepad object reference to connect to gamepad1
-    public HzDrive hzDrive;
+    public DriveTrain driveTrain;
     public HzMagazineUltimateGoal hzMagazineUltimateGoal;
     public HzIntakeUltimateGoal hzIntakeUltimateGoal;
     public HzLaunchSubControllerUltimateGoal hzLaunchSubControllerUltimateGoal;
@@ -47,13 +47,13 @@ public class HzAutonomousControllerUltimateGoal {
      *
      *
      */
-    public HzAutonomousControllerUltimateGoal(HzDrive hzDrive,
+    public HzAutonomousControllerUltimateGoal(DriveTrain driveTrain,
                                               HzMagazineUltimateGoal hzMagazineUltimateGoal,
                                               HzIntakeUltimateGoal hzIntakeUltimateGoal,
                                               HzLaunchSubControllerUltimateGoal hzLaunchSubControllerUltimateGoal,
                                               HzLauncherUltimateGoal hzLauncherUltimateGoal,
                                               HzArmUltimateGoal hzArmUltimateGoal) {
-        this.hzDrive = hzDrive;
+        this.driveTrain = driveTrain;
         this.hzMagazineUltimateGoal = hzMagazineUltimateGoal;
         this.hzIntakeUltimateGoal = hzIntakeUltimateGoal;
         this.hzLaunchSubControllerUltimateGoal = hzLaunchSubControllerUltimateGoal;

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Controllers.Examples.HzGamepadControllerUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzIntakeUltimateGoal;
 import org.firstinspires.ftc.teamcode.Controllers.Examples.HzLaunchSubControllerUltimateGoal;
@@ -27,7 +27,7 @@ public class HzTeleOpRRUltimateGoal extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     public HzGamepadControllerUltimateGoal hzGamepadControllerUltimateGoal;
-    public HzDrive hzDrive;
+    public DriveTrain driveTrain;
     public HzMagazineUltimateGoal hzMagazineUltimateGoal;
     public HzIntakeUltimateGoal hzIntakeUltimateGoal;
 
@@ -42,21 +42,21 @@ public class HzTeleOpRRUltimateGoal extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         /* Create Subsystem Objects*/
-        hzDrive = new HzDrive(hardwareMap);
+        driveTrain = new DriveTrain(hardwareMap);
         hzMagazineUltimateGoal = new HzMagazineUltimateGoal(hardwareMap);
         hzIntakeUltimateGoal = new HzIntakeUltimateGoal(hardwareMap);
         hzLauncherUltimateGoal = new HzLauncherUltimateGoal(hardwareMap);
         hzArmUltimateGoal = new HzArmUltimateGoal(hardwareMap);
 
         /* Create Controllers */
-        hzLaunchSubControllerUltimateGoal = new HzLaunchSubControllerUltimateGoal(hardwareMap, hzLauncherUltimateGoal, hzIntakeUltimateGoal, hzMagazineUltimateGoal, hzDrive);
-        hzGamepadControllerUltimateGoal = new HzGamepadControllerUltimateGoal(gamepad1,hzDrive, hzMagazineUltimateGoal, hzIntakeUltimateGoal, hzLaunchSubControllerUltimateGoal, hzLauncherUltimateGoal, hzArmUltimateGoal);
+        hzLaunchSubControllerUltimateGoal = new HzLaunchSubControllerUltimateGoal(hardwareMap, hzLauncherUltimateGoal, hzIntakeUltimateGoal, hzMagazineUltimateGoal, driveTrain);
+        hzGamepadControllerUltimateGoal = new HzGamepadControllerUltimateGoal(gamepad1, driveTrain, hzMagazineUltimateGoal, hzIntakeUltimateGoal, hzLaunchSubControllerUltimateGoal, hzLauncherUltimateGoal, hzArmUltimateGoal);
 
         /* Get last position after Autonomous mode ended from static class set in Autonomous */
         if ( HzGameFieldUltimateGoal.poseSetInAutonomous == true) {
-            hzDrive.getLocalizer().setPoseEstimate(HzGameFieldUltimateGoal.currentPose);
+            driveTrain.getLocalizer().setPoseEstimate(HzGameFieldUltimateGoal.currentPose);
         } else {
-            hzDrive.getLocalizer().setPoseEstimate(startPose);
+            driveTrain.getLocalizer().setPoseEstimate(startPose);
         }
 
         /* Set Initial State of any subsystem when TeleOp is to be started*/
@@ -162,9 +162,9 @@ public class HzTeleOpRRUltimateGoal extends LinearOpMode {
         telemetry.addData("startPose : ", startPose);
 
         //****** Drive debug ******
-        telemetry.addData("Drive Mode : ", hzDrive.driveMode);
-        telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
-        telemetry.addData("Battery Power", hzDrive.getBatteryVoltage(hardwareMap));
+        telemetry.addData("Drive Mode : ", driveTrain.driveMode);
+        telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
+        telemetry.addData("Battery Power", driveTrain.getBatteryVoltage(hardwareMap));
 
         //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry
@@ -221,7 +221,7 @@ public class HzTeleOpRRUltimateGoal extends LinearOpMode {
         telemetry.addData("hzLauncher.flyWheelVelocityPowerShot : ", hzLauncherUltimateGoal.flyWheelVelocityPowerShot);
         telemetry.addData("hzLauncher.flyWheelVelocityHighGoal : ", hzLauncherUltimateGoal.flyWheelVelocityHighGoal);
         telemetry.addData("hzLauncher.launcherFlyWheelMotor.getVelocity() : ", hzLauncherUltimateGoal.launcherFlyWheelMotor.getVelocity());
-        telemetry.addData("hzDrive.drivePointToAlign : ", hzDrive.drivePointToAlign);
+        telemetry.addData("hzDrive.drivePointToAlign : ", driveTrain.drivePointToAlign);
 
         //******* Launcher Debug *********
         //telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());

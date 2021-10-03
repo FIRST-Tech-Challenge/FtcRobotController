@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants_DriveEncoder;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive_DriveEncoder;
 
@@ -38,7 +38,7 @@ public class HzDrive_Template extends SampleMecanumDrive_DriveEncoder {
     //private PIDFController headingController = new PIDFController(MecanumDriveDeadWheelsEncoder.HEADING_PID);
     private PIDFController headingController = new PIDFController(SampleMecanumDrive_DriveEncoder.HEADING_PID);
 
-    HzGameField hzGameField;
+    GameField gameField;
 
     public enum DriveType {
         ROBOT_CENTRIC,
@@ -71,7 +71,7 @@ public class HzDrive_Template extends SampleMecanumDrive_DriveEncoder {
 
     public DriveMode driveMode = DriveMode.NORMAL_CONTROL; //Default initializer
     public static double DRAWING_TARGET_RADIUS = 2;
-    public Vector2d drivePointToAlign = hzGameField.ORIGIN;
+    public Vector2d drivePointToAlign = gameField.ORIGIN;
 
 
     //**** Drive Train ****

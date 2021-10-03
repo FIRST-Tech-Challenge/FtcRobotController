@@ -4,9 +4,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
-import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
 
 /**
  * Ultimate Goal TeleOp mode <BR>
@@ -17,26 +17,26 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
 @TeleOp(name = "Test Subsystem1", group = "Test")
 public class Test_Subsystem1 extends LinearOpMode {
 
-    public boolean HzDEBUG_FLAG = true;
+    public boolean DEBUG_FLAG = true;
 
-    public HzGamepadTestController hzGamepadTestController;
-    public HzDrive hzDrive;
-    public HzSubsystem1 hzSubsystem1;
+    public GamepadTestController gamepadTestController;
+    public DriveTrain driveTrain;
+    public SubsystemTemplate subsystemTemplate;
 
-    //public HzVuforia hzVuforia1;
-    public Pose2d startPose = HzGameField.ORIGINPOSE;
+    //public Vuforia Vuforia1;
+    public Pose2d startPose = GameField.ORIGINPOSE;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         /* Create Subsystem Objects*/
-        hzDrive = new HzDrive(hardwareMap);
-        hzSubsystem1 = new HzSubsystem1(hardwareMap);
+        driveTrain = new DriveTrain(hardwareMap);
+        subsystemTemplate = new SubsystemTemplate(hardwareMap);
         /* Create Controllers */
-        hzGamepadTestController = new HzGamepadTestController(gamepad1,hzDrive);
+        gamepadTestController = new GamepadTestController(gamepad1, driveTrain);
 
         /* Set Initial State of any subsystem when TeleOp is to be started*/
-        hzSubsystem1.initSubsystem1();
+        subsystemTemplate.initSubsystem1();
 
         /* Wait for Start or Stop Button to be pressed */
         waitForStart();
@@ -47,31 +47,31 @@ public class Test_Subsystem1 extends LinearOpMode {
         /*If Start is pressed, enter loop and exit only when Stop is pressed */
         while (!isStopRequested()) {
 
-            if(HzDEBUG_FLAG) {
+            if(DEBUG_FLAG) {
                 printDebugMessages();
                 telemetry.update();
             }
 
             while (opModeIsActive()) {
-                hzGamepadTestController.runByGamepadControl();
+                gamepadTestController.runByGamepadControl();
 
                 //Add Test Code here
-                if (hzGamepadTestController.getDpad_downPress()) {
-                    if(hzSubsystem1.getSubsystemMotorState() == HzSubsystem1.SUBSYSTEM1_MOTOR_STATE.STATE1) {
-                        hzSubsystem1.startForwardSubsystem1Motor();
-                    } else if(hzSubsystem1.getSubsystemMotorState() == HzSubsystem1.SUBSYSTEM1_MOTOR_STATE.STATE2) {
-                        hzSubsystem1.stopSubsystem1Motor();
+                if (gamepadTestController.getDpad_downPress()) {
+                    if(subsystemTemplate.getSubsystemMotorState() == SubsystemTemplate.SUBSYSTEM1_MOTOR_STATE.STATE1) {
+                        subsystemTemplate.startForwardSubsystem1Motor();
+                    } else if(subsystemTemplate.getSubsystemMotorState() == SubsystemTemplate.SUBSYSTEM1_MOTOR_STATE.STATE2) {
+                        subsystemTemplate.stopSubsystem1Motor();
                     }
                 }
 
                 //Reverse Intake motors and run - in case of stuck state)
-                if (hzGamepadTestController.getDpad_upPersistent()) {
-                    hzSubsystem1.startReverseSubsystem1Motor();
-                } else if (hzSubsystem1.getSubsystemMotorState() == HzSubsystem1.SUBSYSTEM1_MOTOR_STATE.STATE3){
-                    hzSubsystem1.stopSubsystem1Motor();
+                if (gamepadTestController.getDpad_upPersistent()) {
+                    subsystemTemplate.startReverseSubsystem1Motor();
+                } else if (subsystemTemplate.getSubsystemMotorState() == SubsystemTemplate.SUBSYSTEM1_MOTOR_STATE.STATE3){
+                    subsystemTemplate.stopSubsystem1Motor();
                 }
 
-                if(HzDEBUG_FLAG) {
+                if(DEBUG_FLAG) {
                     printDebugMessages();
                     telemetry.update();
                 }
@@ -79,7 +79,7 @@ public class Test_Subsystem1 extends LinearOpMode {
             }
 
         }
-        HzGameField.poseSetInAutonomous = false;
+        GameField.poseSetInAutonomous = false;
     }
 
     /**
@@ -88,19 +88,19 @@ public class Test_Subsystem1 extends LinearOpMode {
      */
     public void printDebugMessages(){
         telemetry.setAutoClear(true);
-        telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
+        telemetry.addData("DEBUG_FLAG is : ", DEBUG_FLAG);
 
-        telemetry.addData("GameField.playingAlliance : ", HzGameField.playingAlliance);
-        telemetry.addData("GameField.poseSetInAutonomous : ", HzGameField.poseSetInAutonomous);
-        telemetry.addData("GameField.currentPose : ", HzGameField.currentPose);
+        telemetry.addData("GameField.playingAlliance : ", GameField.playingAlliance);
+        telemetry.addData("GameField.poseSetInAutonomous : ", GameField.poseSetInAutonomous);
+        telemetry.addData("GameField.currentPose : ", GameField.currentPose);
         telemetry.addData("startPose : ", startPose);
 
         //****** Drive debug ******
-        telemetry.addData("Drive Mode : ", hzDrive.driveMode);
-        telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
-        telemetry.addData("Battery Power : ", hzDrive.getBatteryVoltage(hardwareMap));
+        telemetry.addData("Drive Mode : ", driveTrain.driveMode);
+        telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
+        telemetry.addData("Battery Power : ", driveTrain.getBatteryVoltage(hardwareMap));
 
-        telemetry.addData("Subsystem1 State : ", hzSubsystem1.getSubsystemMotorState());
+        telemetry.addData("Subsystem1 State : ", subsystemTemplate.getSubsystemMotorState());
 
         //Add logic for debug print Logic
 

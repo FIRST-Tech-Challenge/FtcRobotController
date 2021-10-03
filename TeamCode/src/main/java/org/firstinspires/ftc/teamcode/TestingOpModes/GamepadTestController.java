@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzVuforiaStatic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
-import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 
 /**
  * Defenition of the HzGamepad Class <BR>
@@ -30,20 +29,20 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
  *      <emsp>Button Dpad_down to Intake On (gamepad1.dpad_down) <BR>
  */
 
-public class HzGamepadTestController {
+public class GamepadTestController {
 
     //Create object reference to objects to systems passed from TeleOp
     public Gamepad hzGamepad;
-    public HzDrive hzDrive;
+    public DriveTrain driveTrain;
 
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
      * Assign the gamepad1 given in OpMode to the gamepad used here.
      */
-    public HzGamepadTestController(Gamepad hzGamepad,
-                                   HzDrive hzDrive) {
+    public GamepadTestController(Gamepad hzGamepad,
+                                 DriveTrain driveTrain) {
         this.hzGamepad = hzGamepad;
-        this.hzDrive = hzDrive;
+        this.driveTrain = driveTrain;
     }
 
     /**
@@ -61,47 +60,47 @@ public class HzGamepadTestController {
 
         if (HzVuforiaStatic.vuforiaState == HzVuforiaStatic.VUFORIA_STATE.NAVIGATION_RUNNING &&
                 HzVuforiaStatic.targetVisible){
-            hzDrive.setPoseEstimate(HzVuforiaStatic.poseVuforia);
+            driveTrain.setPoseEstimate(HzVuforiaStatic.poseVuforia);
         }
-        hzDrive.poseEstimate = hzDrive.getPoseEstimate();
+        driveTrain.poseEstimate = driveTrain.getPoseEstimate();
 
-        hzDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
+        driveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
 
-        if (hzDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
-            hzDrive.gamepadInput = new Vector2d(
+        if (driveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
+            driveTrain.gamepadInput = new Vector2d(
                     -turboMode(getLeftStickY()) ,
                     -turboMode(getLeftStickX())
             );
         };
 
-        if (hzDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
+        if (driveTrain.driveType == DriveTrain.DriveType.FIELD_CENTRIC){
 
             if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
-                hzDrive.gamepadInput = new Vector2d(
+                driveTrain.gamepadInput = new Vector2d(
                         turboMode(getLeftStickX()),
                         -turboMode(getLeftStickY())
-                ).rotated(-hzDrive.poseEstimate.getHeading());
+                ).rotated(-driveTrain.poseEstimate.getHeading());
             };
 
             if (HzGameFieldUltimateGoal.playingAlliance == HzGameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
-                hzDrive.gamepadInput = new Vector2d(
+                driveTrain.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickX()),
                         turboMode(getLeftStickY())
-                ).rotated(-hzDrive.poseEstimate.getHeading());
+                ).rotated(-driveTrain.poseEstimate.getHeading());
             };
         }
-        hzDrive.gamepadInputTurn = -turboMode(getRightStickX());
+        driveTrain.gamepadInputTurn = -turboMode(getRightStickX());
 
         if (getButtonXPress()) {
-            hzDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
+            driveTrain.augmentedControl = DriveTrain.AugmentedControl.TURN_DELTA_LEFT;
         }
 
         //Power Shot 2
         if (getButtonBPress()) {
-            hzDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
+            driveTrain.augmentedControl = DriveTrain.AugmentedControl.TURN_DELTA_RIGHT;
         }
 
-        hzDrive.driveTrainPointFieldModes();
+        driveTrain.driveTrainPointFieldModes();
 
     }
 

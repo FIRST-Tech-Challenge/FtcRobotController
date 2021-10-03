@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.Controllers;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
-import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
-import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
 
 /**
  * Defenition of the HzGamepad Class <BR>
@@ -45,12 +45,12 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzSubsystem1;
  *
  */
 
-public class HzGamepadController {
+public class GamepadController {
 
     //Create object reference to objects to systems passed from TeleOp
     public Gamepad hzGamepad1, hzGamepad2;
-    public HzDrive hzDrive;
-    public HzSubsystem1 hzSubsystem1;
+    public DriveTrain driveTrain;
+    public SubsystemTemplate subsystemTemplate;
     //TODO: Replace name of Subsystem1 and Declare more subsystems
 
     /**
@@ -58,14 +58,14 @@ public class HzGamepadController {
      * Assign the gamepad1 given in OpMode to the gamepad used here.
      */
     //TODO: Replace name of Subsystem1 and Add more Subsystems in declaration
-    public HzGamepadController(Gamepad hzGamepad1,
-                               Gamepad hzGamepad2,
-                               HzDrive hzDrive,
-                               HzSubsystem1 hzSubsystem1) {
+    public GamepadController(Gamepad hzGamepad1,
+                             Gamepad hzGamepad2,
+                             DriveTrain driveTrain,
+                             SubsystemTemplate subsystemTemplate) {
         this.hzGamepad1 = hzGamepad1;
         this.hzGamepad2 = hzGamepad2;
-        this.hzDrive = hzDrive;
-        this.hzSubsystem1 = hzSubsystem1;
+        this.driveTrain = driveTrain;
+        this.subsystemTemplate = subsystemTemplate;
         //TODO: line to point object for more subsystems
     }
 
@@ -84,34 +84,34 @@ public class HzGamepadController {
     // RR Drive Train
     public void runDriveControl_byRRDriveModes() {
 
-        hzDrive.poseEstimate = hzDrive.getPoseEstimate();
+        driveTrain.poseEstimate = driveTrain.getPoseEstimate();
 
-        hzDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
+        driveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
 
-        if (hzDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
-            hzDrive.gamepadInput = new Vector2d(
+        if (driveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
+            driveTrain.gamepadInput = new Vector2d(
                     -gp1TurboMode(gp1GetLeftStickY()) ,
                     -gp1TurboMode(gp1GetLeftStickX())
             );
         };
 
-        if (hzDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
+        if (driveTrain.driveType == DriveTrain.DriveType.FIELD_CENTRIC){
 
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
-                hzDrive.gamepadInput = new Vector2d(
+            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
+                driveTrain.gamepadInput = new Vector2d(
                         gp1TurboMode(gp1GetLeftStickX()),
                         -gp1TurboMode(gp1GetLeftStickY())
-                ).rotated(-hzDrive.poseEstimate.getHeading());
+                ).rotated(-driveTrain.poseEstimate.getHeading());
             };
 
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
-                hzDrive.gamepadInput = new Vector2d(
+            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
+                driveTrain.gamepadInput = new Vector2d(
                         -gp1TurboMode(gp1GetLeftStickX()),
                         gp1TurboMode(gp1GetLeftStickY())
-                ).rotated(-hzDrive.poseEstimate.getHeading());
+                ).rotated(-driveTrain.poseEstimate.getHeading());
             };
         }
-        hzDrive.gamepadInputTurn = -gp1TurboMode(gp1GetRightStickX());
+        driveTrain.gamepadInputTurn = -gp1TurboMode(gp1GetRightStickX());
 
         /*TODO: Code to implement slight left / right turn. Uncomment to use
         if (gp1GetButtonXPress()) {
@@ -123,7 +123,7 @@ public class HzGamepadController {
         }
         */
 
-        hzDrive.driveTrainPointFieldModes();
+        driveTrain.driveTrainPointFieldModes();
 
     }
 

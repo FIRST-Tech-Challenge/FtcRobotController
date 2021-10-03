@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.GameOpModes.HzGameField;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 
 // When using Drive Encoders in RoadRunner
 import org.firstinspires.ftc.teamcode.drive.DriveConstants_DriveEncoder;
@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive_DriveEncoder;
 
 //TODO: Comment and uncomment Include files for Drive Encoder vs Dead wheel encoder
 // When using Dead Wheel Encoders in RoadRunner
-//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.HzDriveConstantsDeadWheelEncoder;
-//import org.firstinspires.ftc.teamcode.SubSystems.HzDriveEncoders.drive.HzMecanumDriveDeadWheelsEncoder;
+//import org.firstinspires.ftc.teamcode.SubSystems.DriveEncoders.drive.DriveConstantsDeadWheelEncoder;
+//import org.firstinspires.ftc.teamcode.SubSystems.DriveEncoders.drive.MecanumDriveDeadWheelsEncoder;
 
 /**
  * Drive Class that implements Mecanum drive using roadrunner using Drive Encoders
@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive_DriveEncoder;
  * Coded for Field Centric and Robot Centric drive mode, to be selected based on driver comfort
  * Also include Align to direction and delta turn functions to be used in teleOp
  */
-//public class HzDrive extends SampleMecanumDrive {
-public class HzDrive extends SampleMecanumDrive_DriveEncoder {
+//public class Drive extends SampleMecanumDrive {
+public class DriveTrain extends SampleMecanumDrive_DriveEncoder {
     public boolean FtcDashboard_FLAG = true;
 
     //double DriveConstants_kV = DriveConstantsDeadWheelEncoder.kV;
@@ -41,7 +41,7 @@ public class HzDrive extends SampleMecanumDrive_DriveEncoder {
     //private PIDFController headingController = new PIDFController(MecanumDriveDeadWheelsEncoder.HEADING_PID);
     private PIDFController headingController = new PIDFController(SampleMecanumDrive_DriveEncoder.HEADING_PID);
 
-    HzGameField hzGameField;
+    GameField gameField;
 
     public enum DriveType {
         ROBOT_CENTRIC,
@@ -74,14 +74,14 @@ public class HzDrive extends SampleMecanumDrive_DriveEncoder {
 
     public DriveMode driveMode = DriveMode.NORMAL_CONTROL; //Default initializer
     public static double DRAWING_TARGET_RADIUS = 2;
-    public Vector2d drivePointToAlign = hzGameField.ORIGIN;
+    public Vector2d drivePointToAlign = gameField.ORIGIN;
 
 
     //**** Drive Train ****
     //For Position
     public Pose2d poseEstimate = new Pose2d(0,0,0);
 
-    public HzDrive(HardwareMap hardwareMap) {
+    public DriveTrain(HardwareMap hardwareMap) {
         super(hardwareMap);
 
     }
