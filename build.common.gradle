@@ -7,7 +7,7 @@
  *
  * This file contains the necessary content of the 'build.gradle' files for robot controller
  * applications built using the FTC SDK. Each individual 'build.gradle' in those applications
- * can simply contain the one line: apply plugin: 'java'
+ * can simply contain the one line:
  *
  *      apply from: '../build.common.gradle'
  *
@@ -21,9 +21,24 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     signingConfigs {
+        release {
+            def apkStoreFile = System.getenv("APK_SIGNING_STORE_FILE")
+            if (apkStoreFile != null) {
+                keyAlias System.getenv("APK_SIGNING_KEY_ALIAS")
+                keyPassword System.getenv("APK_SIGNING_KEY_PASSWORD")
+                storeFile file(System.getenv("APK_SIGNING_STORE_FILE"))
+                storePassword System.getenv("APK_SIGNING_STORE_PASSWORD")
+            } else {
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+                storeFile rootProject.file('libs/ftc.debug.keystore')
+                storePassword 'android'
+            }
+        }
+
         debug {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
@@ -40,7 +55,8 @@ android {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
         minSdkVersion 23
-        targetSdkVersion 30
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 28
 
         /**
          * We keep the versionCode and versionName of robot controller applications in sync with
@@ -75,10 +91,10 @@ android {
     // http://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.BuildType.html
     buildTypes {
         release {
-            // Disable debugging for release versions so it can be uploaded to Google Play.
-            //debuggable true
+            signingConfig signingConfigs.release
+
             ndk {
-                abiFilters "armeabi-v7a"
+                abiFilters "armeabi-v7a", "arm64-v8a"
             }
         }
         debug {
@@ -86,26 +102,29 @@ android {
             jniDebuggable true
             renderscriptDebuggable true
             ndk {
-                abiFilters "armeabi-v7a"
+                abiFilters "armeabi-v7a", "arm64-v8a"
             }
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
     sourceSets.main {
         jni.srcDirs = []
         jniLibs.srcDir rootProject.file('libs')
     }
+    ndkVersion '21.3.6528147'
 }
 
 repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
-    jcenter()
 }
-apply from: 'build.release.gradle'
+

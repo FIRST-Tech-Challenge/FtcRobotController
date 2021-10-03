@@ -9,28 +9,17 @@ android {
 
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 30
-        buildConfigField "String", "BUILD_TIME", '"' + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT).format(new Date())) + '"'
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 28
+        buildConfigField "String", "APP_BUILD_TIME", '"' + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT).format(new Date())) + '"'
     }
 
-<<<<<<< HEAD
-    compileSdkVersion 30
-=======
-    compileSdkVersion 28
->>>>>>> parent of 8dd0276 (gradle stuff)
+    compileSdkVersion 29
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
-repositories {
-    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
-
-    flatDir {
-        dirs '../libs'
-    }
-}
-
-apply from: 'build.release.gradle'
+apply from: '../build.dependencies.gradle'

@@ -3,13 +3,19 @@
  *
  * It is extraordinarily rare that you will ever need to edit this file.
  */
+
+configurations {
+    doc { transitive false }
+}
+
 buildscript {
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'com.android.tools.build:gradle:4.0.1'
     }
 }
 
@@ -17,11 +23,11 @@ buildscript {
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
 }
-<<<<<<< HEAD
 
 repositories {
     mavenCentral()
@@ -32,11 +38,11 @@ repositories {
 }
 
 dependencies {
-    doc 'org.firstinspires.ftc:Hardware:6.2.1'
-    doc 'org.firstinspires.ftc:RobotCore:6.2.1'
-    doc 'org.firstinspires.ftc:FtcCommon:6.2.1'
-    doc 'org.firstinspires.ftc:OnBotJava:6.2.1'
-    doc 'org.firstinspires.ftc:Inspection:6.2.1'
+    doc 'org.firstinspires.ftc:Hardware:6.2.0'
+    doc 'org.firstinspires.ftc:RobotCore:6.2.0'
+    doc 'org.firstinspires.ftc:FtcCommon:6.2.0'
+    doc 'org.firstinspires.ftc:OnBotJava:6.2.0'
+    doc 'org.firstinspires.ftc:Inspection:6.2.0'
 }
 
 task extractJavadoc {
@@ -61,5 +67,3 @@ task extractJavadoc {
     }
 }
 
-=======
->>>>>>> parent of 16b1b91 (Merge remote-tracking branch 'upstream/master' into RohitTesting-9/26)
