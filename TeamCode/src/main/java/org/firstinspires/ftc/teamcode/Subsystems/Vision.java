@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -14,8 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
@@ -82,7 +79,6 @@ public class Vision {
     private VuforiaTrackable towerTarget;
     private VuforiaTrackable frontWallTarget;
 
-    private UGContourRingPipeline pipeline;
     private OpenCvCamera camera;
 
     private int[] viewportContainerIds;
@@ -107,10 +103,6 @@ public class Vision {
          */
         viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
 
-
-        robot.getOpmode().telemetry.addLine("init RingPipeline");
-        robot.getOpmode().telemetry.update();
-        initRingPipeline();
 
         robot.getOpmode().telemetry.addLine("init Vuforia");
         robot.getOpmode().telemetry.update();
@@ -152,92 +144,6 @@ public class Vision {
         ((VuforiaTrackableDefaultListener) frontWallTarget.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
     }
 
-    public boolean towerTargetScan() {
-        // check the tower target to see if it is visible.
-        targetsUltimateGoal.activate();
-        targetVisible = false;
-        if (((VuforiaTrackableDefaultListener) towerTarget.getListener()).isVisible()) {
-            robot.getOpmode().telemetry.addData("Visible Target", towerTarget.getName());
-            targetVisible = true;
-
-            // getUpdatedRobotLocation() will return null if no new information is available since
-            // the last time that call was made, or if the trackable is not currently visible.
-            OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) towerTarget.getListener()).getUpdatedRobotLocation();
-            if (robotLocationTransform != null) {
-                lastLocation = robotLocationTransform;
-            }
-        }
-
-        // Provide feedback as to where the robot is located (if we know).
-        if (targetVisible) {
-            // express position (translation) of robot in mm.
-            targetTranslation = lastLocation.getTranslation();
-            robot.getOpmode().telemetry.addData("Pos (mm)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                    targetTranslation.get(0), targetTranslation.get(1), targetTranslation.get(2));
-
-            // express the rotation of the robot in degrees.
-            targetRotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-            robot.getOpmode().telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.1f, %.1f, %.1f", targetRotation.firstAngle, targetRotation.secondAngle, targetRotation.thirdAngle);
-        }
-        else {
-            robot.getOpmode().telemetry.addData("Visible Target", "none");
-        }
-        robot.getOpmode().telemetry.update();
-        return targetVisible;
-    }
-
-    public double getTowerOffsetX() {
-        return targetTranslation.get(0);
-    }
-
-    public double getTowerOffsetY() {
-        return targetTranslation.get(1);
-    }
-
-    public double getTowerOffsetAngle() {
-        return targetRotation.thirdAngle;
-    }
-
-    private void initRingPipeline() {
-        // get camera from the robot
-//        int cameraMonitorViewId = this
-//                .hardwareMap
-//                .appContext
-//                .getResources().getIdentifier(
-//                        "cameraMonitorViewId",
-//                        "id",
-//                        hardwareMap.appContext.getPackageName()
-//                );
-//        if (USING_WEBCAM) {
-        camera = OpenCvCameraFactory
-                .getInstance()
-                .createWebcam(hardwareMap.get(WebcamName.class, WEBCAM_NAME2), viewportContainerIds[0]);
-//        } else {
-//            camera = OpenCvCameraFactory
-//                    .getInstance()
-//                    .createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-//        }
-
-        UGContourRingPipeline.Config.setCAMERA_WIDTH(CAMERA_WIDTH);
-        UGContourRingPipeline.Config.setHORIZON(HORIZON);
-
-        pipeline = new UGContourRingPipeline(robot.getOpmode().telemetry, DEBUG);
-        camera.setPipeline(pipeline);
-
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-            }
-        });
-    }
-
-
-    public UGContourRingPipeline.Height ringDetect() {
-        return pipeline.getHeight();
-    }
 
     // Helper method to create matrix to identify locations
     public OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
