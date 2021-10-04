@@ -1,3 +1,6 @@
+# Profiler
+*.hprof
+
 # Built application files
 *.apk
 *.aar
