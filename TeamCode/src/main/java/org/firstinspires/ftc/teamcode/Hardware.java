@@ -29,11 +29,19 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * This is NOT an opmode.
@@ -53,17 +61,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 
-public class Hardware
-{
+public class Hardware{
     /* Public OpMode members. */
-    public DcMotor  m0   = null;
-    public DcMotor  m1  = null;
-    public DcMotor  m2   = null;
-    public DcMotor  m3  = null;
+    public Motor m0 = null;
+    public Motor m1 = null;
+    public Motor m2 = null;
+    public Motor m3 = null;
+
+    public double MIN_ANGLE;
+    public double MAX_ANGLE;
 
     /* local OpMode members. */
     HardwareMap hwMap =  null;
-    private ElapsedTime period  = new ElapsedTime();
+    MecanumDrive mecanum = new MecanumDrive(m0, m1,m2, m3);
+
+    ServoEx servo;
 
     /* Constructor */
     public Hardware(){
@@ -72,30 +84,34 @@ public class Hardware
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
-        m0 = hwMap.get(DcMotor.class, "m0");
-        m1 = hwMap.get(DcMotor.class, "m1");
-        m2 = hwMap.get(DcMotor.class, "m2");
-        m3 = hwMap.get(DcMotor.class, "m3");
+        hwMap = ahwMap;
 
-        m0.setPower(0);
-        m1.setPower(0);
-        m2.setPower(0);
-        m3.setPower(0);
+        m0 = new Motor(hwMap, "m0");
+        m1 = new Motor(hwMap, "m1");
+        m2 = new Motor(hwMap, "m2");
+        m3 = new Motor(hwMap, "m3");
 
-        m0.setDirection(DcMotor.Direction.FORWARD);
-        m1.setDirection(DcMotor.Direction.REVERSE);
-        m2.setDirection(DcMotor.Direction.FORWARD);
-        m3.setDirection(DcMotor.Direction.REVERSE);
+        m0.set(0);
+        m1.set(0);
+        m2.set(0);
+        m3.set(0);
 
-        m0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        m1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        m2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        m3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        m0.setInverted(false);
+        m1.setInverted(true);
+        m2.setInverted(false);
+        m3.setInverted(true);
 
-        m0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        m1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        m2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        m3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m0.setRunMode(Motor.RunMode.VelocityControl);
+        m1.setRunMode(Motor.RunMode.VelocityControl);
+        m2.setRunMode(Motor.RunMode.VelocityControl);
+        m3.setRunMode(Motor.RunMode.VelocityControl);
+
+        m0.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        m1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        m2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        m3.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        servo = new SimpleServo(hwMap, "servo", MIN_ANGLE, MAX_ANGLE, AngleUnit.DEGREES);
     }
  }
 
