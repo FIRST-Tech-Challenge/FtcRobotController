@@ -58,12 +58,12 @@ public class RobotTeleOp extends CommandOpMode {
 //        MotorEx motorArm = new MotorEx(hardwareMap, "motorArm");
 //        MotorEx motorCarousel = new MotorEx(hardwareMap, "motorCarousel");
 
-        CRServo servoIntakeLeft = new CRServo(hardwareMap, "servoIntakeLeft");
-        CRServo servoIntakeRight = new CRServo(hardwareMap, "servoIntakeRight");
+//        CRServo servoIntakeLeft = new CRServo(hardwareMap, "servoIntakeLeft");
+//        CRServo servoIntakeRight = new CRServo(hardwareMap, "servoIntakeRight");
 
         //Gyro
         RevIMU m_gyro = new RevIMU(hardwareMap, "imu");
-        m_gyro.reset();
+//        m_gyro.reset();
 
         BNO055IMU m_imu = hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -76,7 +76,7 @@ public class RobotTeleOp extends CommandOpMode {
                 telemetry, m_gyro, DRIVE_MODE, m_imu);
 
 //        Arm m_arm = new Arm(motorArm, telemetry);
-        Intake m_intake = new Intake(servoIntakeLeft, servoIntakeRight, telemetry);
+//        Intake m_intake = new Intake(servoIntakeLeft, servoIntakeRight, telemetry);
 
         Vision m_vision = new Vision(hardwareMap, telemetry);
         register(m_vision);
@@ -100,8 +100,8 @@ public class RobotTeleOp extends CommandOpMode {
 
 
 
-        driver_a.whileHeld(new IntakeIn(m_intake, telemetry)).whenReleased(() -> m_intake.stopIntake());
-        driver_y.whileHeld(new IntakeOut(m_intake, telemetry)).whenReleased(() -> m_intake.stopIntake());
+//        driver_a.whileHeld(new IntakeIn(m_intake, telemetry)).whenReleased(() -> m_intake.stopIntake());
+//        driver_y.whileHeld(new IntakeOut(m_intake, telemetry)).whenReleased(() -> m_intake.stopIntake());
 
 
 //        // Default Command
