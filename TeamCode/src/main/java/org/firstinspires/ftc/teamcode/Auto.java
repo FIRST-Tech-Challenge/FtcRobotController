@@ -32,10 +32,10 @@ public class Auto extends AutonomousMode<MecanumDrive> {
         objectDetector.Initialize();
         while(!isStarted()) {
             objectDetector.UpdateRecognitions();
-            sleep(1);
+            sleep(5);
         }
 
-        objectDetector.UpdateRecognitions();
+//        objectDetector.UpdateRecognitions();
     }
 
     @Override

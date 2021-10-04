@@ -81,8 +81,6 @@ public class TensorFlowObjectDetector {
     public void UpdateRecognitions() {
 
         if(tfod != null) {
-            System.out.println("Hey");
-
             recognitions = tfod.getUpdatedRecognitions();
 
             if(recognitions != null && recognitions.size() > 0) {
@@ -92,8 +90,6 @@ public class TensorFlowObjectDetector {
                     opMode.telemetry.addLine(recognition.getLabel());
                     opMode.telemetry.addLine(String.format(Locale.US, "left = %.3f, right = %.3f", recognition.getLeft(), recognition.getRight()));
                     opMode.telemetry.addLine(String.format(Locale.US, "top = %.3f, bottom = %.3f", recognition.getTop(), recognition.getBottom()));
-
-                    recognition.getLeft();
                 }
 
                 opMode.telemetry.update();
