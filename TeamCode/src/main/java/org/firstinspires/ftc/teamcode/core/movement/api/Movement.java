@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.api.movement;
+package org.firstinspires.ftc.teamcode.core.movement.api;
 
 public interface Movement {
     /**

@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.api.movement;
+package org.firstinspires.ftc.teamcode.core.movement.impl;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.core.movement.api.StrafingMovement;
 
 public class StrafedMovementImpl implements StrafingMovement {
     private final DcMotor frontLeft;
