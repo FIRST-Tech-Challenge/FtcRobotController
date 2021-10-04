@@ -1,22 +1,18 @@
 package org.firstinspires.ftc.teamcode.cameratests;
 import org.firstinspires.ftc.teamcode.*;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Blinker;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.ChassisMovementCode;
 import org.firstinspires.ftc.teamcode.DistanceSensorClass;
 import org.firstinspires.ftc.teamcode.Grabber;
 import org.firstinspires.ftc.teamcode.LauncherCode;
 import org.firstinspires.ftc.teamcode.LifterCode;
-
+import org.opencv.core.*;
+import com.arcrobotics.ftclib.*;
+import com.arcrobotics.ftclib.vision.*;
 @TeleOp
 //back right front right front left back left
 public class EthanCameraTest extends LinearOpMode {
@@ -55,7 +51,7 @@ public class EthanCameraTest extends LinearOpMode {
     }
     @Override
     public void runOpMode() {
-
+        //UGRectDetector cv = new UGRectDetector(HardwareMap hardwareMap, String webcamName);
         LauncherCode.Launcher launcher = new LauncherCode.Launcher();
         LauncherCode.LauncherStates launchStates = LauncherCode.LauncherStates.Start;
         LifterCode.Lifter lift = new LifterCode.Lifter();

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.cameratests
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Blinker
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DistanceSensor
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.LauncherCode.Launcher
 import org.firstinspires.ftc.teamcode.LauncherCode.LauncherStates
 import org.firstinspires.ftc.teamcode.LifterCode.Lifter
 import kotlin.math.abs
-
+@TeleOp
 class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
     private var leftStickValue: Double = 0.0
     private var rightStickValue = 0.0
