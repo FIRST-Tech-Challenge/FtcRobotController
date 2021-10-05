@@ -52,6 +52,7 @@ android {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
         minSdkVersion 25
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 30
 
         /**
@@ -108,6 +109,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_10
     }
 
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
     sourceSets.main {
         jni.srcDirs = []
         jniLibs.srcDir rootProject.file('libs')
