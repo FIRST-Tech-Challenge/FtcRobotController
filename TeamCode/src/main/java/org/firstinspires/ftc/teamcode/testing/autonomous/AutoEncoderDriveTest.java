@@ -19,7 +19,7 @@ public class AutoEncoderDriveTest extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
+    static final double     DRIVE_SPEED             = 1;
     static final double     TURN_SPEED              = 0.5;
 
     DcMotor leftDrive;
@@ -50,7 +50,7 @@ public class AutoEncoderDriveTest extends LinearOpMode {
 
         leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        centerDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        centerDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d : %7d : %7d",
@@ -65,10 +65,6 @@ public class AutoEncoderDriveTest extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         encoderDrive(DRIVE_SPEED,  12,  12, 0, 5.0);
-        encoderDrive(TURN_SPEED,   6, -6, 0, 4.0);
-        encoderDrive(DRIVE_SPEED, -6, -6, 0, 4.0);
-        encoderDrive(DRIVE_SPEED, 0, 0, 5, 4.0);
-        encoderDrive(DRIVE_SPEED, 0, 0, -5, 4.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -93,9 +89,9 @@ public class AutoEncoderDriveTest extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = leftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = rightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            newCenterTarget = centerDrive.getCurrentPosition() + (int)(centerInches * COUNTS_PER_INCH);
+            newLeftTarget = leftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH * ld1Offset);
+            newRightTarget = rightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH * rd1Offset);
+            newCenterTarget = centerDrive.getCurrentPosition() + (int)(centerInches * COUNTS_PER_INCH * cd1Offset);
             leftDrive.setTargetPosition(newLeftTarget);
             rightDrive.setTargetPosition(newRightTarget);
             centerDrive.setTargetPosition(newCenterTarget);
@@ -113,7 +109,7 @@ public class AutoEncoderDriveTest extends LinearOpMode {
 
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
-                   (leftDrive.isBusy() && rightDrive.isBusy())) {
+                   (leftDrive.isBusy() || rightDrive.isBusy() || centerDrive.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d : %7d : %7d", newLeftTarget,  newRightTarget, newCenterTarget);
