@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.LauncherCode.LauncherStates
 import org.firstinspires.ftc.teamcode.LifterCode.Lifter
 import kotlin.math.abs
 @TeleOp
-class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
+open class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
     private var leftStickValue: Double = 0.0
     private var rightStickValue = 0.0
     var intakeMotor: DcMotor? = null

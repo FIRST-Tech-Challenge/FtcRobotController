@@ -51,7 +51,6 @@ public class EthanCameraTest extends LinearOpMode {
     }
     @Override
     public void runOpMode() {
-        //UGRectDetector cv = new UGRectDetector(HardwareMap hardwareMap, String webcamName);
         LauncherCode.Launcher launcher = new LauncherCode.Launcher();
         LauncherCode.LauncherStates launchStates = LauncherCode.LauncherStates.Start;
         LifterCode.Lifter lift = new LifterCode.Lifter();
