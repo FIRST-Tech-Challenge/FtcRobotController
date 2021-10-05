@@ -37,7 +37,7 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        m_telemetry.update();
+
     }
 
     public void driveToSetPoint(Integer setpoint) {

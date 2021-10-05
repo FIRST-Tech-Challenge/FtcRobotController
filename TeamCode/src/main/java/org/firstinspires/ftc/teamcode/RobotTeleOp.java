@@ -7,12 +7,18 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.arcrobotics.ftclib.hardware.SensorColor;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -26,6 +32,7 @@ import org.firstinspires.ftc.teamcode.commands.IntakeOut;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainMecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 import java.io.IOException;
@@ -48,6 +55,13 @@ public class RobotTeleOp extends CommandOpMode {
         MotorEx motorBackRight = new MotorEx(hardwareMap, "motorBackRight", Motor.GoBILDA.RPM_223);
         MotorEx motorFrontLeft = new MotorEx(hardwareMap, "motorFrontLeft", Motor.GoBILDA.RPM_223);
         MotorEx motorFrontRight = new MotorEx(hardwareMap, "motorFrontRight", Motor.GoBILDA.RPM_223);
+
+        ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
+        RevTouchSensor touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
+
+        Sensors m_sensors = new Sensors(colorSensor, touchSensor, telemetry);
+
+
 
 
         //Gyro

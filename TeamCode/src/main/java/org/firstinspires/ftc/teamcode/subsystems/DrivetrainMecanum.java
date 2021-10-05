@@ -50,22 +50,15 @@ public class DrivetrainMecanum extends SubsystemBase {
 
         m_telemetry.addLine("Drivetrain Initialized");
 
-        tAcceleration = m_telemetry.addData("Acceleration", 0);
-        tHeading = m_telemetry.addData("Heading", 0);
-        tMotorSpeeds = m_telemetry.addData("Motor Speeds", "Stopped");
-
     }
 
 
     @Override
     public void periodic() {
-        tAcceleration.setValue(m_imu.getAcceleration());
-        tHeading.setValue(m_gyro.getHeading());
-        tMotorSpeeds.setValue("backLeft: %.2f, backRight: %.2f, frontLeft: %.2f, frontRight: %.2f",
+        m_telemetry.addData("Acceleration", m_imu.getAcceleration());
+        m_telemetry.addData("Heading", m_gyro.getHeading());
+        m_telemetry.addData("Motor Speeds","backLeft: %.2f, backRight: %.2f, frontLeft: %.2f, frontRight: %.2f",
                 m_motorBackLeft.get(), m_motorBackRight.get(), m_motorFrontLeft.get(), m_motorFrontRight.get());
-
-        m_telemetry.update();
-
     }
 
     public void driveWithLimiter(double strafeSpeed, double forwardSpeed, double turnSpeed) {

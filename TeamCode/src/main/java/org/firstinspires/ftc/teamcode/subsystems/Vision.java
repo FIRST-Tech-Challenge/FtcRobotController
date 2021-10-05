@@ -63,21 +63,19 @@ public class Vision extends SubsystemBase {
             // the last time that call was made.
             List<Recognition> updatedRecognitions = m_tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                tItem = m_telemetry.addData("# Object Detected", updatedRecognitions.size());
+                m_telemetry.addData("# Object Detected", updatedRecognitions.size());
                 // step through the list of recognitions and display boundary info.
                 int i = 0;
                 for (Recognition recognition : updatedRecognitions) {
-                    tItem.addData(String.format("label (%d)", i), recognition.getLabel());
-                    tItem.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                    m_telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                    m_telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                             recognition.getLeft(), recognition.getTop());
-                    tItem.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                    m_telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                             recognition.getRight(), recognition.getBottom());
                     i++;
                 }
             }
         }
-        tItem.setRetained(true);
-        m_telemetry.update();
     }
 
     /**

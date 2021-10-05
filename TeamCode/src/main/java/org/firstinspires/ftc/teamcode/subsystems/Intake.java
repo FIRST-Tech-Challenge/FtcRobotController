@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        m_telemetry.update();
+
     }
 
     public void runIntake(Double speed) {
