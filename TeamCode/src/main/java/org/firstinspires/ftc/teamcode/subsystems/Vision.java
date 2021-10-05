@@ -17,11 +17,10 @@ import java.util.List;
 
 public class Vision extends SubsystemBase {
     Telemetry m_telemetry;
-    WebcamName m_webcamName;
+    Telemetry.Item tItem;
     VuforiaLocalizer m_vuforia;
     HardwareMap m_hardwareMap;
     TFObjectDetector m_tfod;
-    Telemetry.Item tVision, tTop, tBottom, tLabel;
 
     static final String VUFORIA_KEY = "ARKNcpL/////AAABmaul75WJu02hpEsBG/MnvsZ0aacsUMH0zc+d53A" +
             "KGDU3mzdXJQzSDPuea0rokovM0/U3INJNoaNvGx+Xnk9tFdgMVitg+hE32fMsH4f5KLF9CqJyqRynTBo55jfOsN4UbPMO6ij" +
@@ -53,7 +52,7 @@ public class Vision extends SubsystemBase {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            m_tfod.setZoom(2.5, 16.0/9.0);
+            m_tfod.setZoom(1.0, 16.0/9.0);
         }
     }
 
@@ -64,19 +63,20 @@ public class Vision extends SubsystemBase {
             // the last time that call was made.
             List<Recognition> updatedRecognitions = m_tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                m_telemetry.addData("# Object Detected", updatedRecognitions.size());
+                tItem = m_telemetry.addData("# Object Detected", updatedRecognitions.size());
                 // step through the list of recognitions and display boundary info.
                 int i = 0;
                 for (Recognition recognition : updatedRecognitions) {
-                    m_telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                    m_telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                    tItem.addData(String.format("label (%d)", i), recognition.getLabel());
+                    tItem.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                             recognition.getLeft(), recognition.getTop());
-                    m_telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                    tItem.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                             recognition.getRight(), recognition.getBottom());
                     i++;
                 }
             }
         }
+        tItem.setRetained(true);
         m_telemetry.update();
     }
 
@@ -90,7 +90,7 @@ public class Vision extends SubsystemBase {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = m_hardwareMap.get(WebcamName.class, "Webcam 1");
+        parameters.cameraName = m_hardwareMap.get(WebcamName.class, "camera");
 
         //  Instantiate the Vuforia engine
         m_vuforia = ClassFactory.getInstance().createVuforia(parameters);
