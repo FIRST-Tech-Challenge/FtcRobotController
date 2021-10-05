@@ -32,7 +32,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * Camera on either side is used using Vuforia to determine target for Wobble Goal<BR>
  */
 //TODO: Copy and Rename Autonomous Mode
-@Autonomous(name = "Hazmat Platform Autonomous", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp")
+@Autonomous(name = "Autonomous Template", group = "00-Autonomous" , preselectTeleOp = "TeleOp Template")
 public class AutonomousOpModeTemplate extends LinearOpMode {
 
     public boolean DEBUG_FLAG = true;

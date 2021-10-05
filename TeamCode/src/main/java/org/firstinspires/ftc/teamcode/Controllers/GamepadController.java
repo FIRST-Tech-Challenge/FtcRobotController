@@ -135,31 +135,22 @@ public class GamepadController {
     public void runSubsystem1Control(){ //this function should be at LaunchController's place after order change
         //TODO: Add logic for state of Subsubsystem1 to be set when a key entry is made
         /* Example
-        //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
-        if (getDpad_downPress()) {
-            if (gpHzIntakeUltimateGoal.getIntakeState() != HzIntakeUltimateGoal.INTAKE_MOTOR_STATE.RUNNING) {
-                gpHzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = false;
-                gpHzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
+        if (getLeftTriggerPress()) {
+            gpHzArmUltimateGoal.moveArmByTrigger();
+        }
 
-                gpHzMagazineUltimateGoal.moveMagazineTo = HzMagazineUltimateGoal.MOVE_MAGAZINE_TO.COLLECT;
-                gpHzIntakeUltimateGoal.intakeButtonState = HzIntakeUltimateGoal.INTAKE_BUTTON_STATE.ON;
-                gpHzIntakeUltimateGoal.intakeReverseButtonState = HzIntakeUltimateGoal.INTAKE_REVERSE_BUTTON_STATE.OFF;
+        if (gpHzArmUltimateGoal.runArmToLevelState) {
+            gpHzArmUltimateGoal.runArmToLevel(gpHzArmUltimateGoal.motorPowerToRun);
+        }
 
-            } else if(gpHzIntakeUltimateGoal.getIntakeState() == HzIntakeUltimateGoal.INTAKE_MOTOR_STATE.RUNNING) {
-                gpHzIntakeUltimateGoal.intakeButtonState = HzIntakeUltimateGoal.INTAKE_BUTTON_STATE.OFF;
+        //Toggle Arm Grip actions
+        if (getLeftBumperPress()) {
+            if(gpHzArmUltimateGoal.getGripServoState() == HzArmUltimateGoal.GRIP_SERVO_STATE.OPENED) {
+                gpHzArmUltimateGoal.closeGrip();
+            } else if(gpHzArmUltimateGoal.getGripServoState() == HzArmUltimateGoal.GRIP_SERVO_STATE.CLOSED) {
+                gpHzArmUltimateGoal.openGrip();
             }
-        }
-        */
-
-        //Add logic for Subsystem1 run action to be taken when State is set
-        /* Exaample
-        if (gpHzIntakeUltimateGoal.intakeReverseButtonState == HzIntakeUltimateGoal.INTAKE_REVERSE_BUTTON_STATE.ON) {
-                gpHzIntakeUltimateGoal.reverseIntakeMotor();
-        } else if ((gpHzIntakeUltimateGoal.intakeReverseButtonState == HzIntakeUltimateGoal.INTAKE_REVERSE_BUTTON_STATE.OFF &&
-                gpHzIntakeUltimateGoal.getIntakeState() == HzIntakeUltimateGoal.INTAKE_MOTOR_STATE.REVERSING) ){
-            gpHzIntakeUltimateGoal.stopIntakeMotor();
-        }
-         */
+        }*/
 
 
     }

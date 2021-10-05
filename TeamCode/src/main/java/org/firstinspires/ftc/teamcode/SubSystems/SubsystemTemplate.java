@@ -50,7 +50,7 @@ public class SubsystemTemplate {
 
     public SubsystemTemplate(HardwareMap hardwareMap) {
         subsystem1Motor = hardwareMap.dcMotor.get("frmotor");
-        subsystem1Servo = hardwareMap.servo.get("servotest");
+        //subsystem1Servo = hardwareMap.servo.get("servotest");
     }
 
     public void initSubsystem1(){

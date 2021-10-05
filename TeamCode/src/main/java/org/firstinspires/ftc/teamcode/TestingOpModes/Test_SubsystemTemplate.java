@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
  *
  */
 @TeleOp(name = "Test Subsystem1", group = "Test")
-public class Test_Subsystem1 extends LinearOpMode {
+public class Test_SubsystemTemplate extends LinearOpMode {
 
     public boolean DEBUG_FLAG = true;
 
@@ -31,6 +31,7 @@ public class Test_Subsystem1 extends LinearOpMode {
 
         /* Create Subsystem Objects*/
         driveTrain = new DriveTrain(hardwareMap);
+        //TODO: Declare subsystem to be tested
         subsystemTemplate = new SubsystemTemplate(hardwareMap);
         /* Create Controllers */
         gamepadTestController = new GamepadTestController(gamepad1, driveTrain);
@@ -55,7 +56,7 @@ public class Test_Subsystem1 extends LinearOpMode {
             while (opModeIsActive()) {
                 gamepadTestController.runByGamepadControl();
 
-                //Add Test Code here
+                //TODO: Add Test Code here
                 if (gamepadTestController.getDpad_downPress()) {
                     if(subsystemTemplate.getSubsystemMotorState() == SubsystemTemplate.SUBSYSTEM1_MOTOR_STATE.STATE1) {
                         subsystemTemplate.startForwardSubsystem1Motor();
