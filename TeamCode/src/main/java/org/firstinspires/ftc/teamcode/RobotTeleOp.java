@@ -31,10 +31,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 import java.io.IOException;
 
 
-@TeleOp(name="Robot TeleOp", group="TeleOp")
+@TeleOp(name="Robot TeleOp", group="Competition")
 public class RobotTeleOp extends CommandOpMode {
 
-    Utils utils = new Utils();
     static final String DRIVE_MODE = "RC";
 
 
@@ -48,12 +47,6 @@ public class RobotTeleOp extends CommandOpMode {
         MotorEx motorBackRight = new MotorEx(hardwareMap, "motorBackRight", Motor.GoBILDA.RPM_223);
         MotorEx motorFrontLeft = new MotorEx(hardwareMap, "motorFrontLeft", Motor.GoBILDA.RPM_223);
         MotorEx motorFrontRight = new MotorEx(hardwareMap, "motorFrontRight", Motor.GoBILDA.RPM_223);
-        
-
-//        motorBackRight.setInverted(true);
-//        motorFrontRight.setInverted(true);
-//        motorBackLeft.setInverted(true);
-//        motorFrontLeft.setInverted(true);
 
 //        MotorEx motorArm = new MotorEx(hardwareMap, "motorArm");
 //        MotorEx motorCarousel = new MotorEx(hardwareMap, "motorCarousel");

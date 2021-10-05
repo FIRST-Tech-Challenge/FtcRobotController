@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.commands.IntakeOut;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @Disabled
-@TeleOp(name = "Basic Mecanum Drive")
+@TeleOp(name = "Basic Mecanum Drive", group = "Competition")
 public class Mecanum extends LinearOpMode {
   
   // private DcMotor armMotor;

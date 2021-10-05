@@ -1,29 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
-
 public class Utils {
 
-    public String readFile(String file) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String         line = null;
-        StringBuilder  stringBuilder = new StringBuilder();
-        String         ls = System.getProperty("line.separator");
+    public static class RampRate {
+        Double m_lastValue = 0.0;
+        Double m_maxRate;
 
-        try {
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append(ls);
+        public RampRate(Double maxRate) {
+            m_maxRate = maxRate;
+        }
+
+        public Double update(Double current) {
+            Double maxValue = m_lastValue * (1 + m_maxRate);
+            if (current > maxValue) {
+                m_lastValue = maxValue;
+                return maxValue;
+            } else {
+                m_lastValue = current;
+                return current;
             }
-
-            return stringBuilder.toString();
-
-        } finally {
-            reader.close();
         }
     }
-
 }

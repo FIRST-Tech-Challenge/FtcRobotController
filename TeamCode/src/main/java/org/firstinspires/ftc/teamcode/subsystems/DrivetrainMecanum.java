@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Utils;
 
 public class DrivetrainMecanum extends SubsystemBase {
     RevIMU m_gyro;
@@ -16,6 +17,10 @@ public class DrivetrainMecanum extends SubsystemBase {
     BNO055IMU m_imu;
     MotorEx m_motorFrontLeft, m_motorFrontRight, m_motorBackLeft, m_motorBackRight;
     Telemetry.Item tAcceleration, tHeading, tMotorSpeeds;
+    Utils.RampRate strafeRate, forwardRate, turnRate;
+
+    static final Double MAX_RAMP = 0.01;
+
 
 
 
@@ -33,6 +38,11 @@ public class DrivetrainMecanum extends SubsystemBase {
         m_motorFrontRight = motorFrontRight;
         m_motorBackLeft = motorBackLeft;
         m_motorBackRight = motorBackRight;
+
+        strafeRate = new Utils.RampRate(MAX_RAMP);
+        forwardRate = new Utils.RampRate(MAX_RAMP);
+        turnRate = new Utils.RampRate(MAX_RAMP);
+
 
         m_drivetrain = new MecanumDrive(motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight);
 
@@ -57,24 +67,19 @@ public class DrivetrainMecanum extends SubsystemBase {
     }
 
     public void drive(double strafeSpeed, double forwardSpeed, double turnSpeed) {
+        strafeSpeed = strafeRate.update(strafeSpeed);
+        forwardSpeed = forwardRate.update(forwardSpeed);
+        turnSpeed = turnRate.update(turnSpeed);
 
-        Double scale = 0.75;
 
         if (m_drivemode.equals("RC")) {
-//            m_drivetrain.driveRobotCentric(stickLimiter(strafeSpeed, 1.5),
-//                    stickLimiter(forwardSpeed, 3.0),
-//                    stickLimiter(turnSpeed, 1.5));
-            m_drivetrain.driveRobotCentric(strafeSpeed * scale,forwardSpeed * scale,
-                    turnSpeed * scale);
+            m_drivetrain.driveRobotCentric(strafeSpeed,forwardSpeed,
+                    turnSpeed);
         }
         else if (m_drivemode.equals("FC")) {
-            m_drivetrain.driveFieldCentric(stickLimiter(strafeSpeed, 3.0),
-                    stickLimiter(forwardSpeed, 3.0),
-                    stickLimiter(turnSpeed, 3.0), m_gyro.getHeading());
+            m_drivetrain.driveFieldCentric(strafeSpeed,
+                    forwardSpeed,
+                    turnSpeed, m_gyro.getHeading());
         }
-    }
-
-    public Double stickLimiter(Double magnitude, Double scale) {
-        return Math.pow(magnitude, scale);
     }
 }
