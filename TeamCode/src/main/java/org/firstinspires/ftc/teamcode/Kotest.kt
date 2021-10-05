@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.cameratests
+package org.firstinspires.ftc.teamcode
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -10,15 +10,13 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
-import org.firstinspires.ftc.teamcode.ChassisMovementCode
 import org.firstinspires.ftc.teamcode.DistanceSensorClass.RingClass
-import org.firstinspires.ftc.teamcode.Grabber
 import org.firstinspires.ftc.teamcode.LauncherCode.Launcher
 import org.firstinspires.ftc.teamcode.LauncherCode.LauncherStates
 import org.firstinspires.ftc.teamcode.LifterCode.Lifter
 import kotlin.math.abs
 @TeleOp
-open class KotlinTwentyTwentyOneOpModeCode: LinearOpMode() {
+open class Kotest: LinearOpMode() {
     private var leftStickValue: Double = 0.0
     private var rightStickValue = 0.0
     var intakeMotor: DcMotor? = null
