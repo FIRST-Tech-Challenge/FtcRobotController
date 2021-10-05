@@ -74,7 +74,7 @@ public class Hardware
 
 
     /* local OpMode members. */
-    HardwareMap hwMap           =  null;
+    HardwareMap hwMap   =  null;
     ServoEx servo = new SimpleServo(hwMap,"servo", MIN_ANGLE, MAX_ANGLE);
 
     /* Constructor */
