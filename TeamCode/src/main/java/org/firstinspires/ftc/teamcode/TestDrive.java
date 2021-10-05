@@ -28,10 +28,10 @@ public class TestDrive extends OpMode {
 
     @Override
     public void loop() {
-        frontLeft.setPower(-gamepad1.left_stick_y);
-        rearLeft.setPower(-gamepad1.left_stick_y);
+        frontLeft.setPower(-gamepad1.left_stick_y / 3);
+        rearLeft.setPower(-gamepad1.left_stick_y / 3);
 
-        frontRight.setPower(-gamepad1.right_stick_y);
-        rearRight.setPower(-gamepad1.right_stick_y);
+        frontRight.setPower(-gamepad1.right_stick_y /3);
+        rearRight.setPower(-gamepad1.right_stick_y / 3);
     }
 }
