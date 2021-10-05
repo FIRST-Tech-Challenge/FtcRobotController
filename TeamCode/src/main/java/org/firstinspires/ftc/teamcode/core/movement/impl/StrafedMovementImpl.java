@@ -22,15 +22,15 @@ public class StrafedMovementImpl implements StrafingMovement {
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
-        backLeft.setPower(backLeftPower);
+        backLeft.setPower(-backLeftPower);
     }
 
     @Override
     public void driveDRS(double drive, double rotate, double strafe) {
         double frontLeftPower = drive - rotate - strafe;
         double frontRightPower = drive + rotate + strafe;
-        double backLeftPower = -drive + rotate - strafe;
-        double backRightPower = -drive - rotate + strafe;
+        double backLeftPower = drive - rotate + strafe;
+        double backRightPower = drive + rotate - strafe;
 
         this.drivePower(frontLeftPower, frontRightPower, backRightPower, backLeftPower);
     }
@@ -48,5 +48,10 @@ public class StrafedMovementImpl implements StrafingMovement {
     @Override
     public void strafe(double velocity) {
         this.driveDRS(0, 0, velocity);
+    }
+
+    @Override
+    public void stop() {
+        this.drivePower(0, 0, 0, 0);
     }
 }

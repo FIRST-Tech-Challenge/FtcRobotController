@@ -8,5 +8,11 @@ public interface Movement {
      * @param backRightPower power for the back right wheel.
      * @param backLeftPower power for the back left wheel.
      */
-    void drivePower(double frontLeftPower, double frontRightPower, double backRightPower, double backLeftPower);
+    void drivePower(double frontLeftPower, double frontRightPower, double backRightPower,
+                    double backLeftPower);
+
+    /**
+     * Stops all motors.
+     */
+    void stop();
 }
