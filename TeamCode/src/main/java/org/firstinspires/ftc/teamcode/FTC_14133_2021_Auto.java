@@ -13,6 +13,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
+@SuppressWarnings("StatementWithEmptyBody")
 @Autonomous(name="FTC 14133 2021 Auto", group="Auto")
 @Disabled
 public class FTC_14133_2021_Auto extends LinearOpMode {
@@ -42,12 +43,6 @@ public class FTC_14133_2021_Auto extends LinearOpMode {
     //Arm_Test.DisplayKind displayKind;
     Deadline ledCycleDeadline;
     Deadline gamepadRateLimit;
-
-    protected enum DisplayKind {
-        MANUAL,
-        AUTO
-    }
-
 
 
     void ForwardorBackwardsCount(double distance, double speed) {
@@ -158,6 +153,7 @@ public class FTC_14133_2021_Auto extends LinearOpMode {
         lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        //noinspection StatementWithEmptyBody
         while (lf.isBusy() || rf.isBusy() /*|| lb.isBusy() || rb.isBusy()*/) {
             //run until motors arrive at position
         }
