@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Basic: BeeLine OpMode", group="Linear OpMode")
+@TeleOp(name="Basic: BeeLine", group="Linear OpMode")
 public class BeeLine_TeleOp extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
