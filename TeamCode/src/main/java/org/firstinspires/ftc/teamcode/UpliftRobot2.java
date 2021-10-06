@@ -8,13 +8,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class UpliftRobot2 {
     public DcMotor leftFront, leftBack, rightFront, rightBack;
+    public float imuAngle;
     public BNO055IMU imu;
+    public double worldX = 0, worldY = 0, rawAngle = 0, worldAngle = 0;
 
 
 
     public LinearOpMode opMode;
     public HardwareMap hardwareMap;
-
 
     // robot constructor
     public UpliftRobot2(LinearOpMode opMode) {

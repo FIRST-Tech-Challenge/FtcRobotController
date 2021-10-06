@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 import org.firstinspires.ftc.teamcode.toolkit.misc.UpliftMath;
 
@@ -43,7 +44,13 @@ public class TestTeleOp extends UpliftTele {
         double angle = 90 - Math.toDegrees(UpliftMath.atan2UL(leftY, leftX));
         double magnitude = Range.clip(Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2)), -1, 1);
 
-        tankDrive(0.5, 0.5, robot);
+
+        turn(90, 0.5, 0.5);
+        robot.imuAngle = -robot.imu.getAngularOrientation().firstAngle;
+        telemetry.addData("robot angle", robot.imuAngle);
+        telemetry.update();
+
+
 
     }
 
@@ -86,9 +93,50 @@ public class TestTeleOp extends UpliftTele {
         robot.leftFront.setPower(leftPower);
         robot.leftBack.setPower(leftPower);
         robot.rightBack.setPower(rightPower);
+    }
 
+    public void spin(double speed) {
+        speed = Range.clip(speed, -1, 1);
+        robot.leftFront.setPower(speed);
+        robot.leftBack.setPower(speed);
+        robot.rightFront.setPower(-speed);
+        robot.rightBack.setPower(-speed);
+    }
 
-
+    public void turn(double degrees, double speed, double tolerance) {
+        double initialAngle = robot.rawAngle;
+        double targetAngle = initialAngle + degrees;
+        // if turning counter-clockwise
+        while(Math.abs(degrees) > tolerance) {
+            if(degrees > 30) {
+                spin(speed);
+            } else if(degrees > 10) {
+                spin(0.4);
+            } else if(degrees > 5) {
+                spin(0.2);
+            } else if(degrees > 0) {
+                spin(0.15);
+            } else if(degrees < -30) {
+                spin(-speed);
+            } else if(degrees < -10) {
+                spin(-0.4);
+            } else if(degrees < -5) {
+                spin(-0.2);
+            } else if(degrees < 0) {
+                spin(-0.15);
+            } else {
+                stopMotors();
+                return;
+            }
+            degrees = targetAngle - robot.rawAngle;
+        }
+        stopMotors();
+    }
+    public void stopMotors() {
+        robot.leftFront.setPower(0);
+        robot.leftBack.setPower(0);
+        robot.rightBack.setPower(0);
+        robot.rightFront.setPower(0);
     }
 
 }
