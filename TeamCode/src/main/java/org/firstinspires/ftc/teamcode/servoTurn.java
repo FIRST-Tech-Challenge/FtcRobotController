@@ -60,22 +60,22 @@ public class servoTurn extends LinearOpMode {
         waitForStart();
         telemetry.addData("FuckServo: ", "fucking running");
         telemetry.update();
-        robot.servo.setRange(MIN_ANGLE, MAX_ANGLE);
-        Time.reset();
-        while(Position <= 180) {
-            robot.servo.setPosition(Position);
-            if (Time.milliseconds() >= 2000) {
-                Position += 45;
-                Time.reset();
-                if (Position == 180){
-                    robot.servo.setPosition(0);
-                    Position = 0;
-                }
-            }
-            if (opModeIsActive()){
-                stop();
-            }
-        }
+//        robot.servo.setRange(MIN_ANGLE, MAX_ANGLE);
+//        Time.reset();
+//        while(Position <= 180) {
+//            robot.servo.setPosition(Position);
+//            if (Time.milliseconds() >= 2000) {
+//                Position += 45;
+//                Time.reset();
+//                if (Position == 180){
+//                    robot.servo.setPosition(0);
+//                    Position = 0;
+//                }
+//            }
+//            if (opModeIsActive()){
+//                stop();
+//            }
+//        }
         stop();
     }
 }

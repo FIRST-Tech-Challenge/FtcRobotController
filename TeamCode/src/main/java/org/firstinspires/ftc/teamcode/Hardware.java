@@ -73,9 +73,9 @@ public class Hardware{
 
     /* local OpMode members. */
     HardwareMap hwMap =  null;
-    MecanumDrive mecanum = new MecanumDrive(m0, m1,m2, m3);
+    MecanumDrive mecanum;
 
-    ServoEx servo;
+//    ServoEx servo;
 
     /* Constructor */
     public Hardware(){
@@ -96,10 +96,10 @@ public class Hardware{
         m2.set(0);
         m3.set(0);
 
-        m0.setInverted(false);
+        m0.setInverted(true);
         m1.setInverted(true);
         m2.setInverted(false);
-        m3.setInverted(true);
+        m3.setInverted(false);
 
         m0.setRunMode(Motor.RunMode.VelocityControl);
         m1.setRunMode(Motor.RunMode.VelocityControl);
@@ -111,7 +111,9 @@ public class Hardware{
         m2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m3.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        servo = new SimpleServo(hwMap, "servo", MIN_ANGLE, MAX_ANGLE, AngleUnit.DEGREES);
+        mecanum = new MecanumDrive(m0, m2, m1, m3);
+
+//        servo = new SimpleServo(hwMap, "servo", MIN_ANGLE, MAX_ANGLE, AngleUnit.DEGREES);
     }
  }
 
