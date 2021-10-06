@@ -45,8 +45,11 @@ public class Auto extends UpliftAuto {
 
     @Override
     public void body() throws InterruptedException {
-        driveToPosition(0,20,.5,4);
-        passThroughPosition(20, 20, 0.5);
+      turn(360,1, .5);
+        robot.imuAngle = -robot.imu.getAngularOrientation().firstAngle;
+        telemetry.addData("robot angle", robot.imuAngle);
+        telemetry.update();
+
     }
 
     @Override

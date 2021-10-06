@@ -31,7 +31,7 @@ public class TestTeleOp extends UpliftTele {
 
     @Override
     public void initAction() {
-//        claw.setPosition(0.5);
+//
 
     }
 
