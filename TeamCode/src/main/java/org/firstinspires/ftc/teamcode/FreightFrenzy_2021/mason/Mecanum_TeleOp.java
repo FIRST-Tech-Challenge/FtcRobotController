@@ -8,8 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 
-
-@TeleOp(name = "Mecanum TeleOp Test", group = "Linear Opmode")
+@TeleOp(name = "Mecanum TeleOp Test", group = "Linear OpMode")
 public class Mecanum_TeleOp extends LinearOpMode {
 
     private DcMotor LF = null;
