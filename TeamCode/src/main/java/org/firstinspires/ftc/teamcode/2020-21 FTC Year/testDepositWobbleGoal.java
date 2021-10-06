@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.robot.Robot;
 
-@Autonomous(name = "testDepositWobbleGoal")
+@Disabled
 
 public class testDepositWobbleGoal extends LinearOpMode {
 

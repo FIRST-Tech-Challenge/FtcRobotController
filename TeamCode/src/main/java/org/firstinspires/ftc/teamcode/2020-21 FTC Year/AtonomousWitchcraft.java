@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="AutoW")
 public class AtonomousWitchcraft extends LinearOpMode {
 
 //    DcMotor wobbleGoalExtendMotor = null;

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.Date;
 
-@Autonomous (name="Inside Red")
+@Disabled
 public class InsideRed extends LinearOpMode {
 
     DcMotor wobbleGoalExtendMotor = null;

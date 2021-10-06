@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-@Autonomous(name="strafeTest")
-public class TestStrafe extends LinearOpMode {
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+@Disabled
+public class TestTurn extends LinearOpMode {
 
     RobotClass robot;
 
@@ -15,8 +17,13 @@ public class TestStrafe extends LinearOpMode {
 
         waitForStart();
 
-        robot.strafeLeft(0.5,2);
-        robot.strafeRight(0.5, 2);
+        robot.pivotLeftSloppy(0.4,45);
+        Thread.sleep(1000);
+        robot.pivotRightSloppy(0.4, 45);
+        Thread.sleep(1000);
+        robot.pivotLeft(0.4,90);
+        Thread.sleep(1000);
+        robot.pivotRight(0.4, 90);
 
     }
 }
