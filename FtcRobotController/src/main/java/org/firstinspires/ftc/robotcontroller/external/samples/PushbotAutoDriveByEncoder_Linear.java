@@ -98,7 +98,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
+        telemetry.addData("Path0",  "Starting at ",
                           robot.leftDrive.getCurrentPosition(),
                           robot.rightDrive.getCurrentPosition());
         telemetry.update();
@@ -163,8 +163,8 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
+                telemetry.addData("Path1",  "Running to ", newLeftTarget,  newRightTarget);
+                telemetry.addData("Path2",  "Running at ",
                                             robot.leftDrive.getCurrentPosition(),
                                             robot.rightDrive.getCurrentPosition());
                 telemetry.update();
