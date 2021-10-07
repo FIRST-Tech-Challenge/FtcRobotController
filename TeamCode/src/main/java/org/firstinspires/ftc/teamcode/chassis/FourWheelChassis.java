@@ -2,9 +2,18 @@ package org.firstinspires.ftc.teamcode.chassis;
 
 import static org.firstinspires.ftc.teamcode.Constants.sensitivity;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class FourWheelChassis extends Chassis {
+    @Override
+    public void init(HardwareMap hardwareMap) {
+        super.init(hardwareMap);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
     @Override
     public void drive(Gamepad gamepad){
         //This works, just trust me on it. Slack me or something if you need a full explanation.
