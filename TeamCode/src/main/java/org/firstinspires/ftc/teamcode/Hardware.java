@@ -36,6 +36,7 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -69,8 +70,8 @@ public class Hardware
     public double MAX_ANGLE = 180;
     MotorGroup frontMotors = new MotorGroup(flDrive,frDrive);
     MotorGroup backMotors = new MotorGroup(blDrive, brDrive);
-    public MecanumDrive m_drive = new MecanumDrive(flDrive, frDrive,
-            blDrive, brDrive);
+    MecanumDrive m_drive;
+    public DistanceSensor dist;
 
 
     /* local OpMode members. */
@@ -89,8 +90,8 @@ public class Hardware
 
         // Define and Initialize Motors
         flDrive  = new Motor(hwMap, "m0");
-        frDrive = new Motor(hwMap, "m1");
-        blDrive    = new Motor(hwMap, "m2");
+        frDrive = new Motor(hwMap, "m2");
+        blDrive    = new Motor(hwMap, "m1");
         brDrive = new Motor(hwMap, "m3");
 
         flDrive.set(0);
@@ -116,6 +117,9 @@ public class Hardware
 
         servo.setRange(MIN_ANGLE, MAX_ANGLE);
         servo.setPosition(0);
+
+        m_drive = new MecanumDrive(flDrive, frDrive, blDrive, brDrive);
+        dist = hwMap.get(DistanceSensor.class, "distsensor");
     }
  }
 

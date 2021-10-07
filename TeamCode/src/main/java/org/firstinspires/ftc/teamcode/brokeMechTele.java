@@ -50,17 +50,17 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 //BE AWARE THIS TELEOP USES MECHANUM WHEELS
-@TeleOp(name="Test_Teleop")
+@TeleOp(name="Test_Teleop-Mech")
 //@Disabled
-public class Teleop extends LinearOpMode {
+public class brokeMechTele extends LinearOpMode {
 
     /* Declare OpMode members. */
     Hardware robot    = new Hardware();   // Use a Pushbot's hardware
     double          clawOffset      = 0;                       // Servo mid position
     final double    CLAW_SPEED      = 0.02 ;                   // sets rate to move servo
-    double drive = (gamepad1.right_trigger * .5);
-    double turn = (gamepad1.left_trigger * .5);
-    double strafe = (gamepad1.left_stick_y * .5);
+    double drive = (gamepad1.right_stick_y * .5);
+    double turn = (gamepad1.right_stick_x * .5);
+    double strafe = (gamepad1.left_stick_x * .5);
 
     @Override
     public void runOpMode() {
