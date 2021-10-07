@@ -1,25 +1,40 @@
 package org.firstinspires.ftc.teamcode.utils.motors;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+/**
+ * Represents a motor attached to the robot.
+ * @author Thomas Ricci, Mickael Lachut
+ * */
 public class Motor {
 
     private final Telemetry TELEMETRY;
     private final String NAME;
     private final HardwareMap HARDWARE;
     private final DcMotor MOTOR;
-    private final int OFFSET;
+    private final DcMotorSimple.Direction OFFSET;
     private final double COUNTS_PER_REV;
     private final double GEAR_REDUCTION;
     private final double RADIUS;
     private final double COUNTS_PER_INCH;
     private final ElapsedTime TIME = new ElapsedTime();
 
-    public Motor(Telemetry telemetry, HardwareMap hardware, String name, int offset, double countsPerRev, double gearReduction, double radius) {
+    /**
+     * Creates a reference to a motor on the robot.
+     * @param telemetry The telemetry object to log data to.
+     * @param hardware The hardware object to locate the motor with.
+     * @param name The name of the motor as listed on the FtcRobotController device.
+     * @param offset The directional offset of the motor. This can be useful if a motor is mounted the opposite way it should be, for example upside down.
+     * @param countsPerRev The amount of encoder steps per motor revolution.
+     * @param gearReduction The reduction ratio of the motor's gearing.
+     * @param radius The radius of the motor's attachment.
+     */
+    public Motor(Telemetry telemetry, HardwareMap hardware, String name, DcMotorSimple.Direction offset, double countsPerRev, double gearReduction, double radius) {
         TELEMETRY = telemetry;
         NAME = name;
         HARDWARE = hardware;
@@ -33,26 +48,8 @@ public class Motor {
         TELEMETRY.update();
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MOTOR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        MOTOR.setDirection(offset);
         TELEMETRY.addData("Encoder reset and location found",  "Position is ", MOTOR.getCurrentPosition());
-        TELEMETRY.update();
-    }
-
-    public void move(double distance, double speed, double timeout) {
-        MOTOR.setTargetPosition(MOTOR.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH * OFFSET));
-        // Turn On RUN_TO_POSITION
-        MOTOR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // reset the timeout time and start motion.
-        TIME.reset();
-        MOTOR.setPower(Math.abs(speed));
-        while(TIME.seconds() < timeout && MOTOR.isBusy()) {
-            // Display it for the driver.
-            TELEMETRY.addData("Target",  "Running to ", MOTOR.getTargetPosition());
-            TELEMETRY.addData("Location",  "Running at ", MOTOR.getCurrentPosition());
-            TELEMETRY.update();
-        }
-        MOTOR.setPower(0);
-        MOTOR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        TELEMETRY.addData("Run complete and motor ready for next run",  "Position is ", MOTOR.getCurrentPosition());
         TELEMETRY.update();
     }
 
@@ -72,11 +69,11 @@ public class Motor {
         return HARDWARE;
     }
 
-    public DcMotor getMotor() {
+    public DcMotor getDcMotor() {
         return MOTOR;
     }
 
-    public int getOffset() {
+    public DcMotorSimple.Direction getOffset() {
         return OFFSET;
     }
 
