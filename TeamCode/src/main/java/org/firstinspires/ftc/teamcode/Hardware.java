@@ -67,7 +67,7 @@ public class Hardware
     MotorGroup backMotors = new MotorGroup(blDrive, brDrive);
     DifferentialDrive drive;
     MecanumDrive mechdrive = new MecanumDrive(flDrive,frDrive, blDrive, brDrive);
-    public DistanceSensor dist;
+    DistanceSensor dist;
 
 
 
@@ -117,6 +117,7 @@ public class Hardware
         servo.setPosition(0);
 
         drive = new DifferentialDrive(frontMotors,backMotors);
+        
     }
  }
 
