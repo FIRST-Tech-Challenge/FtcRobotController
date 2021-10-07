@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.cameratests.pipeline1Detector;
-import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import org.firstinspires.ftc.teamcode.vision.detectors.pipeline1Detector;
 
 public class Pipeline1Implementation extends LinearOpMode {
     pipeline1Detector pipeline1Detector;

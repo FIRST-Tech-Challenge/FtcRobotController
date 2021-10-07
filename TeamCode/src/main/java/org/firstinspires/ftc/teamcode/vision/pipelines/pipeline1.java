@@ -1,20 +1,14 @@
-package org.firstinspires.ftc.teamcode.cameratests;
+package org.firstinspires.ftc.teamcode.vision.pipelines;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import com.arcrobotics.ftclib.vision.UGRectDetector;
-import com.arcrobotics.ftclib.*;
-import com.arcrobotics.ftclib.vision.*;
+
 public class pipeline1 extends OpenCvPipeline {
+    private Telemetry telemetry;
     //We declare the mats ontop so we can reuse them later to avoid memory leaks
     private Mat matYCrCb = new Mat();
     private Mat matCbBottom = new Mat();
@@ -41,6 +35,7 @@ public class pipeline1 extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+
         /**
          *input which is in RGB is the frame the camera gives
          *We convert the input frame to the color space matYCrCb
@@ -49,7 +44,8 @@ public class pipeline1 extends OpenCvPipeline {
          *https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html
          */
         Imgproc.cvtColor(input, matYCrCb, Imgproc.COLOR_RGB2YCrCb);
-
+        telemetry.addData("Telemetry","Telemetry");
+        telemetry.update();
         //The points needed for the rectangles are calculated here
         Rect topRect = new Rect(
                 (int) (matYCrCb.width() * topRectWidthPercentage),
@@ -67,7 +63,7 @@ public class pipeline1 extends OpenCvPipeline {
 
         //The rectangle is drawn into the mat
         drawRectOnToMat(input, topRect, new Scalar(255, 0, 0));
-        drawRectOnToMat(input, bottomRect, new Scalar(0, 255, 0));
+        drawRectOnToMat(input, bottomRect, new Scalar(100, 255, 0));
 
         //We crop the image so it is only everything inside the rectangles and find the cb value inside of them
         topBlock = matYCrCb.submat(topRect);
