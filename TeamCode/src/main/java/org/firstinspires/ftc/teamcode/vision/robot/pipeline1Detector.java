@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.vision.detectors;
+package org.firstinspires.ftc.teamcode.vision.robot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.vision.pipelines.pipeline1;
+import org.firstinspires.ftc.teamcode.vision.robot.robotpipelines.pipeline1Robot;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-
+import org.firstinspires.ftc.teamcode.vision.robot.robotpipelines.pipeline1Robot;
 
 public class pipeline1Detector {
 
@@ -15,7 +15,7 @@ public class pipeline1Detector {
     private boolean isUsingWebcam;
     private String webcamName;
     private final HardwareMap hardwareMap;
-    private pipeline1 ftclibPipeline;
+    private pipeline1Robot ftclibPipeline;
 
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
@@ -48,7 +48,7 @@ public class pipeline1Detector {
         }
 
         //Set the pipeline the camera should use and start streaming
-        camera.setPipeline(ftclibPipeline = new pipeline1());
+        camera.setPipeline(ftclibPipeline = new pipeline1Robot());
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {

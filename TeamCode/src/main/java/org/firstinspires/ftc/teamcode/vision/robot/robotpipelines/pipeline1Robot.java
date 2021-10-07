@@ -1,13 +1,14 @@
-package org.firstinspires.ftc.teamcode.vision.pipelines;
+package org.firstinspires.ftc.teamcode.vision.robot.robotpipelines;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class pipeline1 extends OpenCvPipeline {
+public class pipeline1Robot extends OpenCvPipeline {
     private Telemetry telemetry;
     //We declare the mats ontop so we can reuse them later to avoid memory leaks
     private Mat matYCrCb = new Mat();
@@ -32,7 +33,11 @@ public class pipeline1 extends OpenCvPipeline {
     //The width and height of the rectangles in terms of pixels
     private int rectangleWidth = 10;
     private int rectangleHeight = 10;
-
+    /*
+    public pipeline1Simulator(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
+    */
     @Override
     public Mat processFrame(Mat input) {
 
