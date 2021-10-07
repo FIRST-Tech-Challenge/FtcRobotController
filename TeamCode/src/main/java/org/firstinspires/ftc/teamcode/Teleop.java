@@ -48,15 +48,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //BE AWARE THIS TELEOP USES MECHANUM WHEELS
 @TeleOp(name="Test_Teleop-Mech")
 //@Disabled
-public class brokeMechTele extends LinearOpMode {
+public class Teleop extends LinearOpMode {
 
     /* Declare OpMode members. */
     Hardware robot    = new Hardware();   // Use a Pushbot's hardware
     double          clawOffset      = 0;                       // Servo mid position
     final double    CLAW_SPEED      = 0.02 ;                   // sets rate to move servo
-    double drive = (gamepad1.right_stick_y * .5);
+    double drive = (gamepad1.left_stick_y * .5);
     double turn = (gamepad1.right_stick_x * .5);
-    double strafe = (gamepad1.left_stick_x * .5);
 
     @Override
     public void runOpMode() {
@@ -68,6 +67,10 @@ public class brokeMechTele extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        robot.mechdrive.driveRobotCentric(strafe, drive, turn);
+        robot.flDrive.set(drive - turn);
+        robot.frDrive.set(drive + turn);
+        robot.blDrive.set(drive - turn);
+        robot.brDrive.set(drive + turn);
+        // for some reason the arcade drive was not working as intended ^^
     }
 }

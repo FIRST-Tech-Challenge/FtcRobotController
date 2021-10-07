@@ -35,13 +35,8 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * This is NOT an opmode.
@@ -70,8 +65,10 @@ public class Hardware
     public double MAX_ANGLE = 180;
     MotorGroup frontMotors = new MotorGroup(flDrive,frDrive);
     MotorGroup backMotors = new MotorGroup(blDrive, brDrive);
-    MecanumDrive m_drive;
+    DifferentialDrive drive;
+    MecanumDrive mechdrive = new MecanumDrive(flDrive,frDrive, blDrive, brDrive);
     public DistanceSensor dist;
+
 
 
     /* local OpMode members. */
@@ -93,16 +90,17 @@ public class Hardware
         frDrive = new Motor(hwMap, "m2");
         blDrive    = new Motor(hwMap, "m1");
         brDrive = new Motor(hwMap, "m3");
+        dist = hwMap.get(DistanceSensor.class, "distsensor");
 
         flDrive.set(0);
         frDrive.set(0);
         blDrive.set(0);
         brDrive.set(0);
 
-        flDrive.setInverted(true);
-        frDrive.setInverted(false);
-        blDrive.setInverted(true);
-        brDrive.setInverted(false);
+        flDrive.setInverted(false);
+        frDrive.setInverted(true);
+        blDrive.setInverted(false);
+        brDrive.setInverted(true);
 
         // Set all motors to run without encoders.
         flDrive.setRunMode(Motor.RunMode.VelocityControl);
@@ -118,8 +116,7 @@ public class Hardware
         servo.setRange(MIN_ANGLE, MAX_ANGLE);
         servo.setPosition(0);
 
-        m_drive = new MecanumDrive(flDrive, frDrive, blDrive, brDrive);
-        dist = hwMap.get(DistanceSensor.class, "distsensor");
+        drive = new DifferentialDrive(frontMotors,backMotors);
     }
  }
 
