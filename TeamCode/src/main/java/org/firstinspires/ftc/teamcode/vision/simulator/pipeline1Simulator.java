@@ -98,7 +98,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
      * @param color The color the rectangle will be
      */
     private void mostDifferent(double box1, double box2, double box3) {
-        double boxMean = (box1+box2+box3)/3;
+        private double boxMean = (box1+box2+box3)/3;
         diffBox1 = Math.abs(boxMean - box1);
         diffBox2 = Math.abs(boxMean - box2);
         diffBox3 = Math.abs(boxMean - box3);
