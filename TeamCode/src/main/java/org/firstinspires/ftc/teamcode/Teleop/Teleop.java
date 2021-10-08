@@ -31,14 +31,6 @@ public class Teleop extends LinearOpMode {
 //        OPEN,
 //        WIDEOPEN,
 //    }
-    private double robotAngle;
-    private boolean visionEnabled = false;
-    private boolean wobbleClawControlDigital = true;
-    private boolean wobbleClawDeployed = false;
-    private boolean wobbleClawOpen = false;
-
-    private boolean isIntakeOn = false;
-    private boolean isLaunchOn = false;
 
 
 
