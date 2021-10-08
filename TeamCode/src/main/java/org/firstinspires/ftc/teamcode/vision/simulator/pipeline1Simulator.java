@@ -99,14 +99,14 @@ public class pipeline1Simulator extends OpenCvPipeline {
      */
     private void mostDifferent(double box1, double box2, double box3) {
         private double boxMean = (box1+box2+box3)/3;
-        diffBox1 = Math.abs(boxMean - box1);
-        diffBox2 = Math.abs(boxMean - box2);
-        diffBox3 = Math.abs(boxMean - box3);
+        private double diffBox1 = Math.abs(boxMean - box1);
+        private double diffBox2 = Math.abs(boxMean - box2);
+        private double diffBox3 = Math.abs(boxMean - box3);
         List<Double> set = new ArrayList<>();
         set.add(diffBox1);
         set.add(diffBox2);
         set.add(diffBox3);
-        boxNum = Collections.max(set);
+        private double boxNum = Collections.max(set);
         return set.indexOf(boxNum) + 1;
     }
     private void drawRectOnToMat(Mat mat, Rect rect, Scalar color) {
