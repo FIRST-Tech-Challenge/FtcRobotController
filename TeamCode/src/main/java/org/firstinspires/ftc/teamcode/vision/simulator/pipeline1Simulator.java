@@ -26,8 +26,8 @@ public class pipeline1Simulator extends OpenCvPipeline {
     //The position related to the screen
     private double topRectWidthPercentage = 0.25;
     private double topRectHeightPercentage = 0.25;
-    private double bottomRectWidthPercentage = 0.25;
-    private double bottomRectHeightPercentage = 0.35;
+    private double bottomRectWidthPercentage = 0.75;
+    private double bottomRectHeightPercentage = 0.75;
 
     //The width and height of the rectangles in terms of pixels
     private int rectangleWidth = 10;
