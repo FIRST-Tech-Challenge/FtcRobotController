@@ -102,7 +102,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
         private double diffBox1 = Math.abs(boxMean - box1);
         private double diffBox2 = Math.abs(boxMean - box2);
         private double diffBox3 = Math.abs(boxMean - box3);
-        List<Double> set = new ArrayList<>();
+        ArrayList<Double> set = new ArrayList<>();
         set.add(diffBox1);
         set.add(diffBox2);
         set.add(diffBox3);
