@@ -15,7 +15,6 @@ public class AutoEncoderDriveTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -27,6 +26,7 @@ public class AutoEncoderDriveTest extends LinearOpMode {
         complexMotorController.startMotor(flipper, 1);
         while(flipper.getDcMotor().isBusy()){}
         complexMotorController.stopMotor(flipper);
+
     }
 
 }

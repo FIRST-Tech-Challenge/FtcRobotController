@@ -7,6 +7,8 @@ There is also documentation located there, which also includes the necessary `bu
 
 Also, please see [this discussion.](https://github.com/XaverianTeamRobotics/FtcRobotController/discussions/7)
 
+SDK docs can be found at https://gm0.org/en/latest/docs/software/index.html
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the Ultimate Goal (2020-2021) competition season.
