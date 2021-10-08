@@ -1,4 +1,5 @@
 # Using Motors
+**Note: Don't use this for drivetrains**
 Motors on the robot can be referenced with the `Motor` class. They can be controlled in autonomous OpModes with the SimpleMotorController and ComplexMotorController control planes. Keep in mind the SimpleMotorController and ComplexMotorControllers are both prototypes and will probably change later.
 
 The simple control plane is best used for moving grouped motors at once as the simple control plane can only run one motor or motor group at a time, and must let the current group stop before running the next group.
