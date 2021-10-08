@@ -49,6 +49,8 @@ public class pipeline1Simulator extends OpenCvPipeline {
          */
         Imgproc.cvtColor(input, matYCrCb, Imgproc.COLOR_RGB2YCrCb);
         telemetry.addData("Telemetry","Telemetry");
+        telemetry.addData("topBoxAverage",topAverage);
+        telemetry.addData("bottomBoxAverage",bottomAverage);
         telemetry.update();
         //The points needed for the rectangles are calculated here
         Rect topRect = new Rect(
@@ -72,8 +74,8 @@ public class pipeline1Simulator extends OpenCvPipeline {
         //We crop the image so it is only everything inside the rectangles and find the cb value inside of them
         topBlock = matYCrCb.submat(topRect);
         bottomBlock = matYCrCb.submat(bottomRect);
-        Core.extractChannel(bottomBlock, matCbBottom, 2);
-        Core.extractChannel(topBlock, matCbTop, 2);
+        Core.extractChannel(bottomBlock, matCbBottom, 0);
+        Core.extractChannel(topBlock, matCbTop, 0);
 
         //We take the average
         Scalar bottomMean = Core.mean(matCbBottom);
