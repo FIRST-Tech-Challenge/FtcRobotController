@@ -51,6 +51,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
         telemetry.addData("Telemetry","Telemetry");
         telemetry.addData("topBoxAverage",topAverage);
         telemetry.addData("bottomBoxAverage",bottomAverage);
+        // USE Z-SCORE
         telemetry.update();
         //The points needed for the rectangles are calculated here
         Rect topRect = new Rect(
