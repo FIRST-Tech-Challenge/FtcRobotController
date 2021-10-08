@@ -13,13 +13,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.robotAttachments.CarouselSpinner;
+import org.firstinspires.ftc.teamcode.robotAttachments.Grabber;
+import org.firstinspires.ftc.teamcode.robotAttachments.LinearSlide;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
 //@Disabled
 
-@TeleOp(name = " State 2021 Drive Program")
+@TeleOp(name = "2022 Drive Program")
 public class JavaDriveProgram extends LinearOpMode {
 
     private BNO055IMU imu;
@@ -29,33 +32,27 @@ public class JavaDriveProgram extends LinearOpMode {
     private DcMotor front_right;
     private DcMotor front_left;
 
-    private double Power;
+    private Grabber grabber;
+    private LinearSlide slide;
+    private CarouselSpinner spinner;
+
     double Yaw_value;
-    double pow;
-    double pow2;
+
+    boolean grabberIsOpen;
 
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
     //Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         ElapsedTime time = new ElapsedTime();
         double DrivePowerMult = 1;
-        double ShooterPowerMult = 0;
-
-        // different Power numerators over voltage:  past 12.5, 12, 11.2, 11, current: 8
-        Power = .55;
-        if (Power > 1) {
-            Power = 1;
-        } // {Power= 1;} was originally {shooterPower = 1;}
-
 
         boolean xDepressed = true;
         boolean yDepressed = true;
         boolean aDepressed = true;
         boolean bDepressed = true;
-        double powershotTime = 0;
 
         /**
          * Drive-train, odometry and IMU initialization
@@ -100,8 +97,13 @@ public class JavaDriveProgram extends LinearOpMode {
         imu.initialize(parameters);
 
 
+        grabber = new Grabber(hardwareMap,"freight grabber");
+        grabber.open();
+        grabberIsOpen = true;
 
+        slide = new LinearSlide(hardwareMap,"linear slide arm");
 
+        spinner = new CarouselSpinner(hardwareMap,"carousel wheel");
 
 
         telemetry.addData("Initialization Status", "Initialized");
@@ -143,12 +145,19 @@ public class JavaDriveProgram extends LinearOpMode {
                     yDepressed = false;
                 }
 
-                //Toggles A
-                if (gamepad2.a == false) {
+                //Toggles Attachment A Button for Grabber, Needs some work. Sometimes doesn't toggle
+                if (!gamepad2.a) {
                     aDepressed = true;
                 }
-                if (gamepad2.a && aDepressed) {
-                    aDepressed = false;
+                if (gamepad2.a && grabberIsOpen && aDepressed) {
+                    yDepressed = false;
+                    grabberIsOpen = false;
+                    grabber.close();
+                }
+                if (gamepad2.a && !grabberIsOpen && aDepressed) {
+                    yDepressed = false;
+                    grabberIsOpen = true;
+                    grabber.open();
                 }
 
 
@@ -157,15 +166,19 @@ public class JavaDriveProgram extends LinearOpMode {
                     bDepressed = true;
                 }
                 if (gamepad2.b && bDepressed) {
-
+                    stopBot();
+                    spinner.spinOffDuck();
                     bDepressed = false;
                 }
 
                 if (gamepad2.left_trigger > 0.8) {
-
+                    slide.goUp();
                 }
                 if (gamepad2.right_trigger > 0.8) {
-
+                    slide.goDown();
+                }
+                if ((gamepad2.right_trigger < 0.8 )&& (gamepad2.left_trigger < 0.8)){
+                    slide.stop();
                 }
 
 
@@ -198,18 +211,6 @@ public class JavaDriveProgram extends LinearOpMode {
             }
 
         }
-    }
-
-
-    private double determineWobblePower() {
-        double voltage = getVoltage();
-        if (voltage < 12) {
-            return 1.0;
-        }
-        if (voltage > 14) {
-            return .75;
-        }
-        return ((-0.125 * voltage) + 2.5);
     }
 
 
