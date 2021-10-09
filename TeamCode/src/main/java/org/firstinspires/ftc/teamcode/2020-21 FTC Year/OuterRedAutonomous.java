@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.Date;
 
-@Autonomous(name = "OuterRedAutonomous")
+@Disabled
 public class OuterRedAutonomous extends LinearOpMode {
 
     RobotClass robot;

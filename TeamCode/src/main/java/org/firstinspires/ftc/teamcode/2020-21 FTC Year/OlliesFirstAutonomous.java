@@ -2,21 +2,23 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+@Disabled
+public class OlliesFirstAutonomous extends LinearOpMode {
 
-@Autonomous(name="testShooterLoading")
-public class TestShooterLoading extends LinearOpMode{
     RobotClass robot;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode(){
+
         robot= new RobotClass(hardwareMap, telemetry, this);
 
         waitForStart();
 
-//        robot.shooterServo1(.7);
-//        robot.shooterServo1(.7);
+        robot.pivotLeft(.7,90);
+        telemetry.addData("pivot left complete",0);
+
 
     }
 }
-

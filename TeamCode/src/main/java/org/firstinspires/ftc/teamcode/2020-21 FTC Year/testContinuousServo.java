@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="TestingServo")
+@Disabled
 public class testContinuousServo extends LinearOpMode {
 
     private CRServo crServo;

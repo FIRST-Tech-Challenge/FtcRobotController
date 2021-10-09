@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-@TeleOp(name = "Mecanum Test?")
+@Disabled
 public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     //    private Gyroscope imu;
 //    private DcMotor motorTest;
