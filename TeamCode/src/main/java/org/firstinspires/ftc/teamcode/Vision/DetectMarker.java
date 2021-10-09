@@ -9,6 +9,11 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class DetectMarker extends OpenCvPipeline {
     Telemetry telemetry;
+    public enum MarkerLocation {
+        LEFT,
+        Middle,
+        RIGHT
+    }
     Mat mat = new Mat();
     public DetectMarker(Telemetry t) {
         telemetry = t;
