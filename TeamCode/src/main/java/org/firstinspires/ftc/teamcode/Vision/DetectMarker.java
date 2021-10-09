@@ -26,20 +26,21 @@ public class DetectMarker extends OpenCvPipeline {
 
     static final Rect LEFT_RECT = new Rect(
             new Point(60, 35),
-            new Point(120, 75));
+            new Point(110, 75));
 
     static final Rect MIDDLE_RECT = new Rect(
-            new Point(60, 35),
-            new Point(120, 75));
+            new Point(110, 35),
+            new Point(150, 75));
 
     static final Rect RIGHT_RECT = new Rect(
-            new Point(140, 35),
+            new Point(150, 35),
             new Point(200, 75));
 
     static double PERCENT_COLOR_THRESHOLD = 0.4;
 
 
     Mat mat = new Mat();
+
     public DetectMarker(Telemetry t) {
         telemetry = t;
     }
