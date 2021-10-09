@@ -1218,7 +1218,7 @@ public class Drive extends Subsystem {
          *
          * @param pose specifies the pose to set the velocity info to.
          */
-        void setVelocityAs(TrcPose2D pose)
+            void setVelocityAs(TrcPose2D pose)
         {
             this.velocity.setAs(pose);
         }   //setVelocityAs
