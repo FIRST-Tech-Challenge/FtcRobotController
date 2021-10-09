@@ -8,6 +8,19 @@ import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+/**
+ * Odometry class to keep track of a robot using V-SLAM Camera Module
+ *
+ * Camera: Intel® RealSense™ Tracking Camera T265
+ * Product page: https://www.intelrealsense.com/tracking-camera-t265/
+ *
+ * Sample code can be found at
+ * https://github.com/pietroglyph/FtcRobotController/tree/ftc265-example
+ * file: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TestCameraOpMode.java
+ *
+ * Instructions on adding the required libraries can be found at
+ * https://github.com/pietroglyph/ftc265
+ */
 public class VSlamOdometry implements IBaseOdometry {
 
     private static final int DEFAULT_THREAD_SLEEP_TIME = 100;
