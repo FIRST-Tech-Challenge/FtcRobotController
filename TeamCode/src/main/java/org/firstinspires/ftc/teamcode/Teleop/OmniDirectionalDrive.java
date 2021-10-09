@@ -13,9 +13,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 import java.io.IOException;
 
-/**
- * Created by Elijah Rowe (Skystone 2020)
- */
 
 @TeleOp(name="OmniDirectionalDrive", group="Assisted Driving")
 public class OmniDirectionalDrive extends LinearOpMode {
@@ -33,13 +30,13 @@ public class OmniDirectionalDrive extends LinearOpMode {
 
     // called when init button is  pressed.
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
         try {
             initOpMode();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
         /*
 
