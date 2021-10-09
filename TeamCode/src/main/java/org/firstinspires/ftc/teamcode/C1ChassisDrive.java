@@ -29,108 +29,90 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
+import static org.firstinspires.ftc.teamcode.Variables.motorTankTread;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+import com.sun.tools.javac.tree.DCTree;
+
 
 /**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
+ * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
+ * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
+ * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
  *
  * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
+ * It includes all the skeletal structure that all linear OpModes contain.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="NonMecanumTeleOp", group="Iterative Opmode")
-//@Disabled
-public class NonMecanumTeleOp extends OpMode
-{
+@TeleOp(name="C1 Chassis Drive", group="A")
+
+public class C1ChassisDrive extends DriveMethods {
+
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-
     double leftY;
     double leftX;
     double rightX;
+    double rightY;
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
     @Override
-    public void init() {
+    public void runOpMode() {
         telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
         motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
         motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
+        motorTankTread = hardwareMap.get(DcMotor.class, "tanktread");
 
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
 
-
-        // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
-    }
-
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-     */
-    @Override
-    public void init_loop() {
-    }
-
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
-    @Override
-    public void start() {
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
         runtime.reset();
+
+        // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+
+            leftY = -gamepad1.left_stick_y;
+            leftX = gamepad1.left_stick_x;
+            rightX = gamepad1.right_stick_x;
+            rightY = gamepad1.right_stick_y;
+
+            motorFrontLeft.setPower(leftY + leftX + rightX);
+            motorBackLeft.setPower(leftY - leftX + rightX);
+            motorFrontRight.setPower(leftY - leftX - rightX);
+            motorBackRight.setPower(leftY + leftX - rightX);
+            motorTankTread.setPower(rightY);
+
+
+
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            if(rightY > 0 || rightY < 0){
+                telemetry.addLine("Tank Tread Activated! Escape the Evil Pipes of Doom!");
+            }
+
+            telemetry.update();
+        }
     }
-
-    /*
-     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
-     */
-    @Override
-    public void loop() {
-       // the teleop
-
-        leftY = -gamepad1.left_stick_y;
-        leftX = gamepad1.left_stick_x;
-        rightX = gamepad1.right_stick_x;
-
-        motorFrontLeft.setPower(leftY + rightX);
-        motorBackLeft.setPower(leftY + rightX);
-        motorFrontRight.setPower(leftY - rightX);
-        motorBackRight.setPower(leftY - rightX);
-    }
-
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
-    }
-
 }

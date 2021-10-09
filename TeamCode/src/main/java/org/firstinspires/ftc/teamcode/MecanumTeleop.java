@@ -58,7 +58,7 @@ import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
 
 @TeleOp(name="SachalTeleOp", group="Iterative Opmode")
 //@Disabled
-public class SachalTeleOp extends OpMode
+public class MecanumTeleop extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();

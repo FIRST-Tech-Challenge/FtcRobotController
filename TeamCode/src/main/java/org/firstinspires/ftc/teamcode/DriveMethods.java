@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import static java.lang.Math.abs;
@@ -10,7 +11,14 @@ import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
 
-public class DriveMethods {
+public class DriveMethods extends LinearOpMode {
+
+    // Ignore this method (it is to satisfy the parent class LinearOpmode)
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+    }
+
     public enum Direction {
         FORWARD,
         BACKWARD,

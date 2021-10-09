@@ -16,6 +16,7 @@ public class Variables {
     public static DcMotor motorBackLeft;
     public static DcMotor motorFrontRight;
     public static DcMotor motorBackRight;
+    public static DcMotor motorTankTread;
 
     //servos
 
