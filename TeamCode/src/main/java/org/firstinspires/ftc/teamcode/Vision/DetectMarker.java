@@ -17,7 +17,8 @@ public class DetectMarker extends OpenCvPipeline {
     public enum MarkerLocation {
         Left,
         Middle,
-        Right
+        Right,
+        Not_Found
     }
 
     private MarkerLocation markerLocation;
@@ -75,15 +76,19 @@ public class DetectMarker extends OpenCvPipeline {
         boolean markerRight = rightValue > PERCENT_COLOR_THRESHOLD;
 
         if (markerLeft && markerMiddle && markerRight) {
-            location = Location.NOT_FOUND;
+            markerLocation = markerLocation.Not_Found;
             telemetry.addData("Marker Location", "not found");
         }
-        else if (markerRight) {
-            location = Location.RIGHT;
+        else if (markerLeft) {
+            markerLocation = MarkerLocation.Left;
             telemetry.addData("Marker Location", "right");
         }
-        else if (markerLeft) {
-            location = Location.LEFT;
+        else if (markerMiddle) {
+            markerLocation = MarkerLocation.Middle;
+            telemetry.addData("Marker Location", "left");
+        }
+        else if (markerRight) {
+            markerLocation = markerLocation.Right;
             telemetry.addData("Marker Location", "left");
         }
         telemetry.update();
