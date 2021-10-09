@@ -95,12 +95,12 @@ public class DetectMarker extends OpenCvPipeline {
 
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
 
-        Scalar colorStone = new Scalar(255, 0, 0);
-        Scalar colorSkystone = new Scalar(0, 255, 0);
+        Scalar colorNormal = new Scalar(255, 0, 0);
+        Scalar colorMarker = new Scalar(0, 255, 0);
 
-        Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.Left? colorSkystone:colorStone);
-        Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.Middle? colorSkystone:colorStone);
-        Imgproc.rectangle(mat, RIGHT_RECT, markerLocation == MarkerLocation.Right? colorSkystone:colorStone);
+        Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.Left? colorMarker:colorNormal);
+        Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.Middle? colorMarker:colorNormal);
+        Imgproc.rectangle(mat, RIGHT_RECT, markerLocation == MarkerLocation.Right? colorMarker:colorNormal);
 
         return mat;
     }
