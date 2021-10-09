@@ -76,7 +76,7 @@ public class DetectMarker extends OpenCvPipeline {
         boolean markerRight = rightValue > PERCENT_COLOR_THRESHOLD;
 
         if (markerLeft && markerMiddle && markerRight) {
-            markerLocation = markerLocation.Not_Found;
+            markerLocation = MarkerLocation.Not_Found;
             telemetry.addData("Marker Location", "not found");
         }
         else if (markerLeft) {
@@ -88,7 +88,7 @@ public class DetectMarker extends OpenCvPipeline {
             telemetry.addData("Marker Location", "left");
         }
         else if (markerRight) {
-            markerLocation = markerLocation.Right;
+            markerLocation = MarkerLocation.Right;
             telemetry.addData("Marker Location", "left");
         }
         telemetry.update();
@@ -98,9 +98,9 @@ public class DetectMarker extends OpenCvPipeline {
         Scalar colorStone = new Scalar(255, 0, 0);
         Scalar colorSkystone = new Scalar(0, 255, 0);
 
-        Imgproc.rectangle(mat, LEFT_RECT, location == Location.LEFT? colorSkystone:colorStone);
-        Imgproc.rectangle(mat, MIDDLE_RECT, location == Location.MIDDLE? colorSkystone:colorStone);
-        Imgproc.rectangle(mat, RIGHT_RECT, location == Location.RIGHT? colorSkystone:colorStone);
+        Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.Left? colorSkystone:colorStone);
+        Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.Middle? colorSkystone:colorStone);
+        Imgproc.rectangle(mat, RIGHT_RECT, markerLocation == MarkerLocation.Right? colorSkystone:colorStone);
 
         return mat;
     }
