@@ -28,27 +28,28 @@ public class TeleopRed extends LinearOpMode {
 
         waitForStart();
 
-        //turn with right stick
-        if (gamepad1.right_stick_x>0.1){
-            frontLeft.setPower(gamepad1.right_stick_x*MAX_SPEED);
-            frontRight.setPower(gamepad1.right_stick_x*MAX_SPEED*-1);
-            backLeft.setPower(gamepad1.right_stick_x*MAX_SPEED);
-            backRight.setPower(gamepad1.right_stick_x*MAX_SPEED*-1);
-        } else if (gamepad1.right_stick_x<0.1){
-            frontLeft.setPower(gamepad1.right_stick_x*MAX_SPEED*-1);
-            frontRight.setPower(gamepad1.right_stick_x*MAX_SPEED);
-            backLeft.setPower(gamepad1.right_stick_x*MAX_SPEED*-1);
-            backRight.setPower(gamepad1.right_stick_x*MAX_SPEED);
-        } else {
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
+        while(opModeIsActive()) {
+            //turn with right stick
+            if (gamepad1.right_stick_x > 0.1) {
+                frontLeft.setPower(gamepad1.right_stick_x * MAX_SPEED);
+                frontRight.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
+                backLeft.setPower(gamepad1.right_stick_x * MAX_SPEED);
+                backRight.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
+            } else if (gamepad1.right_stick_x < 0.1) {
+                frontLeft.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
+                frontRight.setPower(gamepad1.right_stick_x * MAX_SPEED);
+                backLeft.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
+                backRight.setPower(gamepad1.right_stick_x * MAX_SPEED);
+            } else {
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
 
+            }
+
+            turnDuck(carousel);
         }
-
-        turnDuck(carousel);
-
 
     }
 
