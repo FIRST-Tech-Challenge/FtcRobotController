@@ -85,7 +85,7 @@ public class DetectMarker extends OpenCvPipeline {
         }
         else if (markerMiddle) {
             markerLocation = MarkerLocation.Middle;
-            telemetry.addData("Marker Location", "left");
+            telemetry.addData("Marker Location", "middle");
         }
         else if (markerRight) {
             markerLocation = MarkerLocation.Right;
