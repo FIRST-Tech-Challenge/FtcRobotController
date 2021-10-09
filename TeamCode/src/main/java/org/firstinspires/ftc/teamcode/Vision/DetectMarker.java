@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -10,6 +9,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+
 public class DetectMarker extends OpenCvPipeline {
     Telemetry telemetry;
     public enum MarkerLocation {
@@ -17,7 +17,7 @@ public class DetectMarker extends OpenCvPipeline {
         Middle,
         Right
     }
-    private Location markerLocation;
+    private MarkerLocation markerLocation;
 
     static final Rect LEFT_RECT = new Rect(
             new Point(60, 35),
