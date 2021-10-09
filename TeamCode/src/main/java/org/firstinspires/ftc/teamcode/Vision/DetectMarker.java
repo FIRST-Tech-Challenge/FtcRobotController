@@ -12,10 +12,16 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 
-public class DetectMarker extends OpenCvPipeline {
+public class DetectMarker extends LinearOpMode {
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        DetectionPipeline pipeline = new DetectionPipeline(telemetry);
+
+    }
+}
+class DetectionPipeline extends OpenCvPipeline{
     Telemetry telemetry;
-
-
     public enum MarkerLocation {
         Left,
         Middle,
@@ -43,7 +49,7 @@ public class DetectMarker extends OpenCvPipeline {
 
     Mat mat = new Mat();
 
-    public DetectMarker(Telemetry t) {
+    public DetectionPipeline(Telemetry t) {
         telemetry = t;
     }
 
@@ -82,16 +88,13 @@ public class DetectMarker extends OpenCvPipeline {
         if (markerLeft) {
             markerLocation = MarkerLocation.Left;
             telemetry.addData("Marker Location", "right");
-        }
-        else if (markerMiddle) {
+        } else if (markerMiddle) {
             markerLocation = MarkerLocation.Middle;
             telemetry.addData("Marker Location", "middle");
-        }
-        else if (markerRight) {
+        } else if (markerRight) {
             markerLocation = MarkerLocation.Right;
             telemetry.addData("Marker Location", "left");
-        }
-        else {
+        } else {
             markerLocation = MarkerLocation.Not_Found;
             telemetry.addData("Marker Location", "not found");
         }
@@ -102,9 +105,9 @@ public class DetectMarker extends OpenCvPipeline {
         Scalar colorNormal = new Scalar(255, 0, 0);
         Scalar colorMarker = new Scalar(0, 255, 0);
 
-        Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.Left? colorMarker:colorNormal);
-        Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.Middle? colorMarker:colorNormal);
-        Imgproc.rectangle(mat, RIGHT_RECT, markerLocation == MarkerLocation.Right? colorMarker:colorNormal);
+        Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.Left ? colorMarker : colorNormal);
+        Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.Middle ? colorMarker : colorNormal);
+        Imgproc.rectangle(mat, RIGHT_RECT, markerLocation == MarkerLocation.Right ? colorMarker : colorNormal);
 
         return mat;
     }
