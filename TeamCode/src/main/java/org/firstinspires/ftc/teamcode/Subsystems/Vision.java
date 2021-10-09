@@ -69,10 +69,6 @@ public class Vision {
     private VectorF targetTranslation;
     private Orientation targetRotation;
 
-    private VuforiaTrackables targetsUltimateGoal;
-    private VuforiaTrackable towerTarget;
-    private VuforiaTrackable frontWallTarget;
-
     private OpenCvCamera camera;
 
     private int[] viewportContainerIds;
