@@ -48,4 +48,6 @@ public class Arm extends SubsystemBase {
     public void drive(Double speed) {
         m_armMotor.set(speed);
     }
+
+    public void stopAll() { m_armMotor.set(0); }
 }

@@ -42,7 +42,7 @@ import java.io.IOException;
 public class RobotTeleOp extends CommandOpMode {
 
     static final String DRIVE_MODE = "RC";
-    static final Boolean INTAKE_ENABLED = false;
+    static final Boolean INTAKE_ENABLED = true;
     static final Boolean ARM_ENABLED = false;
 
     @Override
@@ -139,9 +139,9 @@ public class RobotTeleOp extends CommandOpMode {
             GamepadButton dpad_right = m_driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT);
 
             dpad_up.whenPressed(new ArmToPosition(m_arm, 100, telemetry));
-            dpad_down.whenPressed(new ArmToPosition(m_arm, -100, telemetry));
-            dpad_left.whileHeld(new ArmDriveBackward(m_arm, telemetry));
-            dpad_right.whileHeld(new ArmDriveForward(m_arm, telemetry));
+            dpad_down.whenPressed(new ArmToPosition(m_arm, 0, telemetry));
+            dpad_left.whileHeld(new ArmDriveBackward(m_arm, telemetry)).whenReleased(() -> m_arm.stopAll());
+            dpad_right.whileHeld(new ArmDriveForward(m_arm, telemetry)).whenReleased(() -> m_arm.stopAll());
         }
 
         telemetry.addLine("Robot Initialized");
