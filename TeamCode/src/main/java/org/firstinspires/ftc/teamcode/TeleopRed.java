@@ -71,6 +71,11 @@ public class TeleopRed extends LinearOpMode {
             } else if (gamepad1.left_stick_x < -0.1){
                 //move Left
 
+            }else {
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
             }
 
 
