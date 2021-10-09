@@ -5,20 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+// import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+// import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+// import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.SubSystems.Robot;
+import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 import java.io.IOException;
 
-/**
- * Created by Elijah Rowe (Skystone 2020)
- */
 
-@TeleOp(name="OmniDirectionalDrive2", group="Assisted Driving")
-public class OmniDirectionalDrive2 extends LinearOpMode {
+@TeleOp(name="OmniDirectionalDrive", group="Assisted Driving")
+public class OmniDirectionalDrive extends LinearOpMode {
     private Robot robot;
     private BNO055IMU imu;
     Orientation lastAngles = new Orientation();
@@ -33,13 +30,13 @@ public class OmniDirectionalDrive2 extends LinearOpMode {
 
     // called when init button is  pressed.
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
         try {
             initOpMode();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
         /*
 
