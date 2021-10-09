@@ -47,14 +47,29 @@ public class TeleopRed extends LinearOpMode {
                 frontRight.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
                 backLeft.setPower(gamepad1.right_stick_x * MAX_SPEED);
                 backRight.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
-            } else if (gamepad1.left_stick_x == 1 && gamepad1.left_stick_y == 1){
-                //move with left stick
+            } else if (gamepad1.left_stick_x < -0.1 && gamepad1.left_stick_y > 0.1){
+                //move UpLeft
 
-            }else {
-                frontLeft.setPower(0);
-                frontRight.setPower(0);
-                backLeft.setPower(0);
-                backRight.setPower(0);
+            } else if (gamepad1.left_stick_y > 0.1){
+                //move Up
+
+            } else if (gamepad1.left_stick_x > 0.1 && gamepad1.left_stick_y > 0.1){
+                //move UpRight
+
+            } else if (gamepad1.left_stick_x > 0.1){
+                //move Right
+
+            } else if (gamepad1.left_stick_x > 0.1 && gamepad1.left_stick_y < -0.1){
+                //move DownRight
+
+            } else if (gamepad1.left_stick_y < -0.1){
+                //move Down
+
+            } else if (gamepad1.left_stick_x > -0.1 && gamepad1.left_stick_y < -0.1){
+                //move DownLeft
+
+            } else if (gamepad1.left_stick_x < -0.1){
+                //move Left
 
             }
 
