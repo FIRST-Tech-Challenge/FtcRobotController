@@ -297,9 +297,6 @@ public class Robot extends Subsystem {
 
 //        control = new Control(intake, launch1, launch2, imu, opMode, timer, wobbleClaw, wobbleGoalArm);
 //        control = new Control(intake, launch1, launch2a, launch2b, imu, opMode, timer, wobbleClaw, wobbleGoalArm);
-        control = new Control(intake, launch1, launch2a, launch2b, imu, opMode, timer,
-                wobbleClaw, wobbleGoalArm, intakeToElevatorR, intakeToElevatorL, launcherFeederR, launcherFeederL, elevatorR, elevatorL);
-
 
         opMode.telemetry.addData("Mode", " vision initializing...");
         opMode.telemetry.update();
@@ -313,11 +310,6 @@ public class Robot extends Subsystem {
 
     public void initServosAuto() {
         // code here
-    }
-
-    public void initServosTeleop() {
-        control.moveWobbleGoalArmDown();
-        control.closeWobbleGoalClaw();
     }
 
     public OpMode getOpmode(){
