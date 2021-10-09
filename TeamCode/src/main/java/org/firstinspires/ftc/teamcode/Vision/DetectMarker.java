@@ -76,11 +76,8 @@ public class DetectMarker extends OpenCvPipeline {
         boolean markerMiddle = middleValue > PERCENT_COLOR_THRESHOLD;
         boolean markerRight = rightValue > PERCENT_COLOR_THRESHOLD;
 
-        if (markerLeft && markerMiddle && markerRight) {
-            markerLocation = MarkerLocation.Not_Found;
-            telemetry.addData("Marker Location", "not found");
-        }
-        else if (markerLeft) {
+
+        if (markerLeft) {
             markerLocation = MarkerLocation.Left;
             telemetry.addData("Marker Location", "right");
         }
@@ -91,6 +88,10 @@ public class DetectMarker extends OpenCvPipeline {
         else if (markerRight) {
             markerLocation = MarkerLocation.Right;
             telemetry.addData("Marker Location", "left");
+        }
+        else {
+            markerLocation = MarkerLocation.Not_Found;
+            telemetry.addData("Marker Location", "not found");
         }
         telemetry.update();
 
