@@ -19,10 +19,13 @@ public class DetectMarker extends OpenCvPipeline {
     }
     private Location markerLocation;
 
-    static final Rect LEFT_ROI = new Rect(
+    static final Rect LEFT_RECT = new Rect(
             new Point(60, 35),
             new Point(120, 75));
-    static final Rect RIGHT_ROI = new Rect(
+    static final Rect MIDDLE_RECT = new Rect(
+            new Point(60, 35),
+            new Point(120, 75));
+    static final Rect RIGHT_RECT = new Rect(
             new Point(140, 35),
             new Point(200, 75));
 
