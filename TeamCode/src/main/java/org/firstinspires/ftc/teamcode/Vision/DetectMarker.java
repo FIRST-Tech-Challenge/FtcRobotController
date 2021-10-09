@@ -93,9 +93,9 @@ public class DetectMarker extends OpenCvPipeline {
         Scalar colorStone = new Scalar(255, 0, 0);
         Scalar colorSkystone = new Scalar(0, 255, 0);
 
-        Imgproc.rectangle(mat, LEFT_ROI, location == Location.LEFT? colorSkystone:colorStone);
-        Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? colorSkystone:colorStone);
-        Imgproc.rectangle(mat, MIDDLE_ROI, location == Location.MIDDLE? colorSkystone:colorStone);
+        Imgproc.rectangle(mat, LEFT_RECT, location == Location.LEFT? colorSkystone:colorStone);
+        Imgproc.rectangle(mat, MIDDLE_RECT, location == Location.MIDDLE? colorSkystone:colorStone);
+        Imgproc.rectangle(mat, RIGHT_RECT, location == Location.RIGHT? colorSkystone:colorStone);
 
         return mat;
     }
