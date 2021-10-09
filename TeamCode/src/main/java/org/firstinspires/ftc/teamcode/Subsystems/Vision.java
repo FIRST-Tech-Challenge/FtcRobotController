@@ -30,7 +30,7 @@ public class Vision {
         RED,
         BLUE,
     }
-    private Color alliance;
+    private final Color alliance;
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -87,11 +87,11 @@ public class Vision {
         viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
 
 
-        robot.getOpmode().telemetry.addLine("init Vuforia");
+        robot.getOpmode().telemetry.addLine("init Vuforia started");
         robot.getOpmode().telemetry.update();
         initVuforia();
 
-        robot.getOpmode().telemetry.addLine("vision init completed");
+        robot.getOpmode().telemetry.addLine("init Vuforia completed");
         robot.getOpmode().telemetry.update();
     }
 
