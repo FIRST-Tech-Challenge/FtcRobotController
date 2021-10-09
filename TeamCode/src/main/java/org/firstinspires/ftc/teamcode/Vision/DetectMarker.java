@@ -75,15 +75,15 @@ public class DetectMarker extends OpenCvPipeline {
 
         if (markerLeft && markerMiddle && markerRight) {
             location = Location.NOT_FOUND;
-            telemetry.addData("Skystone Location", "not found");
+            telemetry.addData("Marker Location", "not found");
         }
-        else if (stoneLeft) {
+        else if (markerRight) {
             location = Location.RIGHT;
-            telemetry.addData("Skystone Location", "right");
+            telemetry.addData("Marker Location", "right");
         }
-        else {
+        else if (markerLeft) {
             location = Location.LEFT;
-            telemetry.addData("Skystone Location", "left");
+            telemetry.addData("Marker Location", "left");
         }
         telemetry.update();
 
