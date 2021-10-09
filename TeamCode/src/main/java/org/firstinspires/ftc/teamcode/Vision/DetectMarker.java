@@ -73,7 +73,7 @@ public class DetectMarker extends OpenCvPipeline {
         boolean markerMiddle = middleValue > PERCENT_COLOR_THRESHOLD;
         boolean markerRight = rightValue > PERCENT_COLOR_THRESHOLD;
 
-        if (stoneLeft && stoneRight) {
+        if (markerLeft && markerMiddle && markerRight) {
             location = Location.NOT_FOUND;
             telemetry.addData("Skystone Location", "not found");
         }
