@@ -60,6 +60,7 @@ public class DetectMarker extends OpenCvPipeline {
         double rightValue = Core.sumElems(right).val[0] / RIGHT_RECT.area() / 255;
 
         left.release();
+        middle.release();
         right.release();
 
         telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
