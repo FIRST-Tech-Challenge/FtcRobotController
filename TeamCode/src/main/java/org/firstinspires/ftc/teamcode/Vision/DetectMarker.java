@@ -13,14 +13,13 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 
 public class DetectMarker extends LinearOpMode {
-
     @Override
     public void runOpMode() throws InterruptedException {
-        DetectionPipeline pipeline = new DetectionPipeline(telemetry);
+        DetectionPipeline pipeline = new DetectionPipeline(telemetry, "red");
 
     }
 }
-class DetectionPipeline extends OpenCvPipeline{
+class DetectionPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     public enum MarkerLocation {
         Left,
@@ -29,6 +28,7 @@ class DetectionPipeline extends OpenCvPipeline{
         Not_Found
     }
 
+    String allianceColor;
     private MarkerLocation markerLocation;
 
 
@@ -49,13 +49,14 @@ class DetectionPipeline extends OpenCvPipeline{
 
     Mat mat = new Mat();
 
-    public DetectionPipeline(Telemetry t) {
+    public DetectionPipeline(Telemetry t, String ac) {
         telemetry = t;
+        allianceColor = ac; // ac stands for allianceColor
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful.
         Scalar lowHSV = new Scalar(23, 50, 70);
         Scalar highHSV = new Scalar(32, 255, 255);
 
