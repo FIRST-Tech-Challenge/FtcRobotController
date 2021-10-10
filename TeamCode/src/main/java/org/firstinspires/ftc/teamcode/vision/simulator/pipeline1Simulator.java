@@ -16,6 +16,12 @@ public class pipeline1Simulator extends OpenCvPipeline {
     private Mat matCbBottom = new Mat();
     private Mat matCbMiddle = new Mat();
     private Mat matCbTop = new Mat();
+    private Mat matCbBottom1 = new Mat();
+    private Mat matCbMiddle1 = new Mat();
+    private Mat matCbTop1 = new Mat();
+    private Mat matCbBottom2 = new Mat();
+    private Mat matCbMiddle2 = new Mat();
+    private Mat matCbTop2 = new Mat();
     private Mat topBlock = new Mat();
     private Mat middleBlock = new Mat();
     private Mat bottomBlock = new Mat();
@@ -109,15 +115,26 @@ public class pipeline1Simulator extends OpenCvPipeline {
         Core.extractChannel(topBlock, matCbTop, 0);
         Core.extractChannel(middleBlock,matCbMiddle,0);
         Core.extractChannel(bottomBlock, matCbBottom, 0);
+        Core.extractChannel(topBlock, matCbTop1, 1);
+        Core.extractChannel(middleBlock,matCbMiddle1,1);
+        Core.extractChannel(bottomBlock, matCbBottom1, 1);
+        Core.extractChannel(topBlock, matCbTop2, 2);
+        Core.extractChannel(middleBlock,matCbMiddle2,2);
+        Core.extractChannel(bottomBlock, matCbBottom2, 2);
 
-        //We take the average
         Scalar topMean = Core.mean(matCbTop);
+        Scalar topMean1 = Core.mean(matCbTop1);
+        Scalar topMean2 = Core.mean(matCbTop2);
         Scalar middleMean = Core.mean(matCbMiddle);
+        Scalar middleMean1 = Core.mean(matCbMiddle1);
+        Scalar middleMean2 = Core.mean(matCbMiddle2);
         Scalar bottomMean = Core.mean(matCbBottom);
+        Scalar bottomMean1 = Core.mean(matCbBottom1);
+        Scalar bottomMean2 = Core.mean(matCbBottom2);
 
-        topAverage = topMean.val[0];
-        middleAverage = middleMean.val[0];
-        bottomAverage = bottomMean.val[0];
+        topAverage = topMean.val[0] + topMean1.val[0] + topMean2.val[0];
+        middleAverage = middleMean.val[0] + middleMean1.val[0] + middleMean2.val[0];
+        bottomAverage = bottomMean.val[0] + bottomMean1.val[0] + bottomMean2.val[0];
 
 
         //return the mat to be shown onto the screen
