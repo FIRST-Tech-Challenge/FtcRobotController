@@ -6,7 +6,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
-
+import java.lang.Math;
+import java.util.ArrayList;
+import java.util.Collections;
 public class pipeline1Simulator extends OpenCvPipeline {
     private Telemetry telemetry;
     //We declare the mats ontop so we can reuse them later to avoid memory leaks
@@ -96,6 +98,18 @@ public class pipeline1Simulator extends OpenCvPipeline {
      * @param rect  The rectangle
      * @param color The color the rectangle will be
      */
+    private void mostDifferent(double box1, double box2, double box3) {
+        private double boxMean = (box1+box2+box3)/3;
+        private double diffBox1 = Math.abs(boxMean - box1);
+        private double diffBox2 = Math.abs(boxMean - box2);
+        private double diffBox3 = Math.abs(boxMean - box3);
+        ArrayList<Double> set = new ArrayList<>();
+        set.add(diffBox1);
+        set.add(diffBox2);
+        set.add(diffBox3);
+        private double boxNum = Collections.max(set);
+        return set.indexOf(boxNum) + 1;
+    }
     private void drawRectOnToMat(Mat mat, Rect rect, Scalar color) {
         Imgproc.rectangle(mat, rect, color, 1);
     }
