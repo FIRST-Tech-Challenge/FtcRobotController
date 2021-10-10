@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.Vision;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+
 import org.openftc.easyopencv.OpenCvPipeline;
 
 
@@ -19,6 +21,8 @@ public class DetectMarker extends LinearOpMode {
 
     }
 }
+
+
 class DetectionPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     public enum MarkerLocation {
@@ -28,7 +32,7 @@ class DetectionPipeline extends OpenCvPipeline {
         Not_Found
     }
 
-    String allianceColor;
+    String allianceColor; // TODO: Standardize allianceColor
     private MarkerLocation markerLocation;
 
 
@@ -101,7 +105,7 @@ class DetectionPipeline extends OpenCvPipeline {
         }
         telemetry.update();
 
-        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
+        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB); // TODO: Change COLOR_GRAY2RGB to something more useful.
 
         Scalar colorNormal;
 
