@@ -173,11 +173,7 @@ public class Robot extends Subsystem {
         hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
         this.timer = timer;
-        if(isBlue) {
-            this.isBlue = true;
-        } else {
-            this.isBlue = false;
-        }
+        this.isBlue = isBlue;
         init();
     }
 
