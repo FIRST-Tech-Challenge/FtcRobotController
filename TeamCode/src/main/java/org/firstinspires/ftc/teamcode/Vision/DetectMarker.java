@@ -103,7 +103,15 @@ class DetectionPipeline extends OpenCvPipeline {
 
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
 
-        Scalar colorNormal = new Scalar(255, 0, 0);
+        Scalar colorNormal;
+
+        if (allianceColor.equals("red")) {
+            colorNormal = new Scalar(255, 0, 0);
+        }
+        else {
+            colorNormal = new Scalar(0, 0, 255);
+        }
+
         Scalar colorMarker = new Scalar(0, 255, 0);
 
         Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.Left ? colorMarker : colorNormal);
