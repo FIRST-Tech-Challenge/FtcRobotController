@@ -56,7 +56,7 @@ import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="SachalTeleOp", group="Iterative Opmode")
+@TeleOp(name="MecanumTeleop", group="Iterative Opmode")
 //@Disabled
 public class MecanumTeleop extends OpMode
 {

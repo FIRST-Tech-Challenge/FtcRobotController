@@ -34,12 +34,14 @@ import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
 import static org.firstinspires.ftc.teamcode.Variables.motorTankTread;
+import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.sun.tools.javac.tree.DCTree;
@@ -68,6 +70,7 @@ public class C1ChassisDrive extends DriveMethods {
     double leftX;
     double rightX;
     double rightY;
+    double rightTrigger2;
 
     @Override
     public void runOpMode() {
@@ -79,6 +82,7 @@ public class C1ChassisDrive extends DriveMethods {
         motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
         motorTankTread = hardwareMap.get(DcMotor.class, "tanktread");
+        servoCarousel = hardwareMap.get(Servo.class, "carousel");
 
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -98,12 +102,17 @@ public class C1ChassisDrive extends DriveMethods {
             leftX = gamepad1.left_stick_x;
             rightX = gamepad1.right_stick_x;
             rightY = gamepad1.right_stick_y;
+            rightTrigger2 = gamepad2.right_trigger;
 
+            //motors
             motorFrontLeft.setPower(leftY + leftX + rightX);
             motorBackLeft.setPower(leftY - leftX + rightX);
             motorFrontRight.setPower(leftY - leftX - rightX);
             motorBackRight.setPower(leftY + leftX - rightX);
             motorTankTread.setPower(rightY);
+
+            //servos
+            servoCarousel.setPosition(rightTrigger2);
 
 
 
@@ -111,7 +120,7 @@ public class C1ChassisDrive extends DriveMethods {
             if(rightY > 0 || rightY < 0){
                 telemetry.addLine("Tank Tread Activated! Escape the Evil Pipes of Doom!");
             }
-
+            telemetry.addLine("Carousel Speed" + rightTrigger2);
             telemetry.update();
         }
     }
