@@ -6,7 +6,6 @@ public class Enumclaw {
 
 //var declarations
     private Servo claw;
-    boolean closed ;
     private float minturn;
     private float maxturn;
 
@@ -16,7 +15,7 @@ public class Enumclaw {
         this.maxturn = maxturn1;
     }
     //turns servo in range of min and max; percentage is used for pos
-    public void turninrange(int pos) {
+    public void turninrange(float pos) {
 
         //corrects incorrect nums
         if(pos>1){
