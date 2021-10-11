@@ -138,8 +138,8 @@ public class RobotTeleOp extends CommandOpMode {
             GamepadButton dpad_left = m_driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT);
             GamepadButton dpad_right = m_driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT);
 
-            dpad_up.whenPressed(new ArmToPosition(m_arm, 100, telemetry));
-            dpad_down.whenPressed(new ArmToPosition(m_arm, 0, telemetry));
+//            dpad_up.whenPressed(new ArmToPosition(m_arm, 100, telemetry));
+//            dpad_down.whenPressed(new ArmToPosition(m_arm, 0, telemetry));
             dpad_left.whileHeld(new ArmDriveBackward(m_arm, telemetry)).whenReleased(() -> m_arm.stopAll());
             dpad_right.whileHeld(new ArmDriveForward(m_arm, telemetry)).whenReleased(() -> m_arm.stopAll());
         }

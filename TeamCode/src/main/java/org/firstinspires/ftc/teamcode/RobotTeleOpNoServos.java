@@ -30,8 +30,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 public class RobotTeleOpNoServos extends CommandOpMode {
 
     static final String DRIVE_MODE = "RC";
-    static final Boolean INTAKE_ENABLED = true;
-    static final Boolean ARM_ENABLED = false;
+    static final Boolean INTAKE_ENABLED = false;
+    static final Boolean ARM_ENABLED = true;
 
     @Override
     public void initialize() {

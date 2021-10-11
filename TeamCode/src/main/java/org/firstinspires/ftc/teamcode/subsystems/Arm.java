@@ -22,13 +22,13 @@ public class Arm extends SubsystemBase {
 
         m_armMotor = armMotor;
         m_telemetry = telemetry;
-        kS = 0.0;
-        kCos = 0.0;
-        kV = 0.0;
-        kA = 0.0;
-
-        ArmFeedforward feedforward = new ArmFeedforward(kS, kCos, kV, kA);
-        telemetry.addData("Arm Values", "kS: %d, kCos: %d, kV: %d, kA: %d", kS, kCos, kV, kA);
+//        kS = 0.0;
+//        kCos = 0.0;
+//        kV = 0.0;
+//        kA = 0.0;
+//
+//        ArmFeedforward feedforward = new ArmFeedforward(kS, kCos, kV, kA);
+//        telemetry.addData("Arm Values", "kS: %d, kCos: %d, kV: %d, kA: %d", kS, kCos, kV, kA);
 
         m_telemetry.addLine("Arm Initialized");
 
