@@ -16,12 +16,7 @@ public class BasicStrafedMovementTest extends LinearOpMode {
         double power = 0.3;
         int restTime = 1000;
 
-        StrafingMovement strafedMovement = new StrafedMovementImpl(
-            hardwareMap.get(DcMotor.class, "front left wheel"),
-            hardwareMap.get(DcMotor.class, "front right wheel"),
-            hardwareMap.get(DcMotor.class, "back right wheel"),
-            hardwareMap.get(DcMotor.class, "back left wheel")
-        );
+        StrafingMovement strafedMovement = new StrafedMovementImpl(hardwareMap);
         waitForStart();
         telemetry.addLine("Driving forward for " + runTime / 1000 + " second(s).");
         telemetry.update();

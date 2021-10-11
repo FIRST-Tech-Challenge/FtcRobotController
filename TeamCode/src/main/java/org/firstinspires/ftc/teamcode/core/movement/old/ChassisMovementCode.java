@@ -161,9 +161,9 @@ public class ChassisMovementCode { //PATRICK IS RACIST AAA DONT LET HIM SEE THIS
 
 
         public void SetAxisMovement() {
-            rightEncoder = back_right_wheel.getCurrentPosition() / 360 * 1.173150521 - clearRight;
-            leftEncoder = -front_right_wheel.getCurrentPosition() / 360 * 1.178221633 - clearLeft;
-            backEncoder = front_left_wheel.getCurrentPosition() / 360 * 1.17584979 - clearBack;
+            rightEncoder = (float) back_right_wheel.getCurrentPosition() / 360 * 1.173150521 - clearRight;
+            leftEncoder = (float) -front_right_wheel.getCurrentPosition() / 360 * 1.178221633 - clearLeft;
+            backEncoder = (float) front_left_wheel.getCurrentPosition() / 360 * 1.17584979 - clearBack;
             trueDrive = ((rightEncoder + leftEncoder) / 2)-clearDrive;
             trueStrafe = (backEncoder - (rightEncoder - leftEncoder) / 2)-clearStrafe;
             trueRotate = (((rightEncoder - leftEncoder) / 2)*0.12877427457 /* <---- see comment below*/)-clearRotate;
