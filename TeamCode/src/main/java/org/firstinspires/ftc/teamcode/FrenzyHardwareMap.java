@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+//import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -52,15 +52,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class FrenzyHardwareMap
 {
-    
+
     /* Public OpMode members. */
-    //public DcMotor  leftDrive   = null;
-    //public DcMotor  rightDrive  = null
-    //public Servo    servo1   = null;
+    public DcMotor motorFrontLeft = null;
+    public DcMotor motorBackLeft = null;
+    public DcMotor motorFrontRight = null;
+    public DcMotor motorBackRight = null;
 
     /* local OpMode members. */
-    //HardwareMap hwMap =  null;
-    //private ElapsedTime period  = new ElapsedTime();
+    HardwareMap frenzyMap =  null;
+    private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
     public FrenzyHardwareMap(){
@@ -68,33 +69,39 @@ public class FrenzyHardwareMap
     }
 
     /* Initialize standard Hardware interfaces */
-    //public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap hwMap) {
         // Save reference to Hardware map
-        //hwMap = ahwMap;
+        frenzyMap = hwMap;
 
-        // Define and Initialize Motors
-        //leftDrive  = hwMap.get(DcMotor.class, "left_drive");
-        //rightDrive = hwMap.get(DcMotor.class, "right_drive");
-        //leftArm    = hwMap.get(DcMotor.class, "left_arm");
-        //leftDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        //rightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        //Define and Initialize Motors
+        motorFrontLeft = frenzyMap.get(DcMotor.class,"frontLeft");
+        motorBackLeft = frenzyMap.get(DcMotor.class,"backLeft");
+        motorFrontRight = frenzyMap.get(DcMotor.class,"frontRight");
+        motorBackRight = frenzyMap.get(DcMotor.class,"backRight");
+
+        // Set all motor Directions
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
-        //leftDrive.setPower(0);
-        //rightDrive.setPower(0);
-        //leftArm.setPower(0);
+        motorFrontRight.setPower(0);
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorBackRight.setPower(0);
 
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        //leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-       // leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // Set all motors to run with encoders.
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
         //leftClaw  = hwMap.get(Servo.class, "left_hand");
         //rightClaw = hwMap.get(Servo.class, "right_hand");
         //leftClaw.setPosition(MID_SERVO);
         //rightClaw.setPosition(MID_SERVO);
-    //}
+    }
  }
 
