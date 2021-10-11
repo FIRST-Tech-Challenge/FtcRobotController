@@ -17,20 +17,21 @@ public class EventThread extends Thread {
             }
 
             long currentTime = Event.time.nanoseconds();
-
-            Iterator<Event> iterator =  queue.iterator();
-
             long waitUntil = 0;
 
-            while (iterator.hasNext()) {
-                Event event = iterator.next();
+            synchronized (queue) {
+                Iterator<Event> iterator = queue.iterator();
 
-                if (event.runTime <= currentTime) {
-                    iterator.remove();
-                    // run the event
-                    event.listener.run();
-                } else {
-                    waitUntil = event.runTime;
+                while (iterator.hasNext()) {
+                    Event event = iterator.next();
+
+                    if (event.runTime <= currentTime) {
+                        iterator.remove();
+                        // run the event
+                        event.listener.run();
+                    } else {
+                        waitUntil = event.runTime;
+                    }
                 }
             }
 
@@ -47,7 +48,10 @@ public class EventThread extends Thread {
     }
 
     public void addEvent(Event event) {
-        queue.add(event);
+        synchronized (queue) {
+            queue.add(event);
+            queue.notifyAll();
+        }
     }
 
 }
