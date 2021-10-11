@@ -132,9 +132,9 @@ public class pipeline1Simulator extends OpenCvPipeline {
         Scalar bottomMean1 = Core.mean(matCbBottom1);
         Scalar bottomMean2 = Core.mean(matCbBottom2);
 
-        topAverage = topMean.val[0] + topMean1.val[0] + topMean2.val[0];
-        middleAverage = middleMean.val[0] + middleMean1.val[0] + middleMean2.val[0];
-        bottomAverage = bottomMean.val[0] + bottomMean1.val[0] + bottomMean2.val[0];
+        topAverage = topMean.val[0] + 0.5 * (topMean1.val[0] + topMean2.val[0]);
+        middleAverage = middleMean.val[0] + 0.5 * (middleMean1.val[0] + middleMean2.val[0]);
+        bottomAverage = bottomMean.val[0] + 0.5 * (bottomMean1.val[0] + bottomMean2.val[0]);
 
 
         //return the mat to be shown onto the screen
