@@ -36,9 +36,13 @@ public class DemoTele extends LinearOpMode {
             telemetry.addData("right stick y: ", gamepad1.right_stick_y);
             telemetry.update();
 
-            robot.strafeDirection(leftStickPolar[0], leftStickPolar[1]);
 
-            robot.rotateByCorrection(gamepad1.right_stick_x);
+            //don't turn and strafe at the same time
+            if (gamepad1.right_stick_x >= 0.2) {
+                robot.rotate(gamepad1.right_stick_x);
+            } else {
+                robot.strafeDirection(leftStickPolar[0], leftStickPolar[1]);
+            }
 
         }
     }
