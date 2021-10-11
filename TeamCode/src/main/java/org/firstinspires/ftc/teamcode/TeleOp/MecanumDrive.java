@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
 public class MecanumDrive extends LinearOpMode {
@@ -16,6 +17,9 @@ public class MecanumDrive extends LinearOpMode {
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
 
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+
         waitForStart();
         while (opModeIsActive()){
             straight = -gamepad1.left_stick_y;
@@ -26,8 +30,6 @@ public class MecanumDrive extends LinearOpMode {
             br.setPower(straight - strafe - rotation);
             fl.setPower(straight - strafe + rotation);
             fr.setPower(straight + strafe - rotation);
-
-
         }
     }
 }
