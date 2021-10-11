@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode.robots.goodBot;
+package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -43,13 +43,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
-import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.ALLIANCE;
-import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.ALLIANCE_INT_MOD;
-import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.isInner;
+import static org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants.ALLIANCE;
+import static org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants.ALLIANCE_INT_MOD;
+import static org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants.isInner;
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
 
@@ -58,7 +58,7 @@ import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
  * TeleOp and Autonomous.
  */
 
-@TeleOp(name = "AAAGoodBot_6832", group = "Challenge") // @Autonomous(...) is the other common choice
+@TeleOp(name = "AAAConceptTrikeBot_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
 public class UG_6832 extends OpMode {
@@ -66,7 +66,7 @@ public class UG_6832 extends OpMode {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
-    private PoseUG.RobotType currentBot = PoseUG.RobotType.goodBot;
+    private PoseUG.RobotType currentBot = PoseUG.RobotType.conceptTrikeBot;
 
     private PoseUG robot;
 
@@ -561,7 +561,6 @@ public class UG_6832 extends OpMode {
         if (!joystickDriveStarted) {
             joystickDriveStarted = true;
             robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
-            robot.lnc.Do(LiftNClaw.Behaviors.DEPLOY);
         }
 
         reverse = -1;
@@ -582,40 +581,17 @@ public class UG_6832 extends OpMode {
         if (notdeadzone(gamepad1.right_stick_x))
             pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
 
-        if(notdeadzone(gamepad1.right_stick_y)){
-            if(gamepad1.right_stick_y < 0){
-                robot.lnc.increaseLiftHeight();
-            }
-            else{
-                robot.lnc.decreaseLiftHeight();
-            }
-        }
-
-        if(gamepad1.dpad_up){
-            robot.lnc.increasePitchHeight();
-        }
-
-        if(gamepad1.dpad_down){
-            robot.lnc.decreasePitchHeight();
-        }
-
         if (nearZero(pwrFwd) && nearZero(pwrRot) && nearZero(pwrStf)) {
-            robot.driveMixerMec(0, 0,0);
+            robot.driveMixerTrike(0,0);
         } else {
-            robot.driveMixerMec(pwrFwd * pwrDamper, pwrStf, pwrRot);
+            robot.driveMixerTrike(pwrFwd * pwrDamper, pwrRot);
         }
 
         if(toggleAllowed(gamepad1.x,x,1)) {
             robot.toggleDuckSpinner();
         }
 
-        if(toggleAllowed(gamepad1.a,a,1)){
-            robot.lnc.toggleGripper();
-        }
 
-        if(toggleAllowed(gamepad1.y,y,1)){
-            robot.lnc.toggleLiftHeight();
-        }
     }
 
     private void joystickDrivePregameMode() { //positions set
@@ -626,7 +602,7 @@ public class UG_6832 extends OpMode {
 
         pwrDamper = .90;
 
-        robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
+        robot.driveMixerTrike(pwrFwd * pwrDamper, pwrRot);
 
         if(toggleAllowed(gamepad1.x,x,1)) {
             ALLIANCE = Constants.Alliance.BLUE;
@@ -767,8 +743,6 @@ public class UG_6832 extends OpMode {
         telemetry.addLine() .addData("Articulation", () -> robot.getArticulation());
         telemetry.addLine()  .addData("chassis heading", () -> robot.getHeading());
         telemetry.addLine()  .addData("chassis avg abs ticks", () -> robot.getAverageAbsTicks());
-        telemetry.addLine()  .addData("liftTicks", () -> robot.lnc.getLiftPos());
-        telemetry.addLine()  .addData("liftTicksTarget", () -> robot.lnc.targetLiftPos);
 
 
         telemetry.addLine().addData("Loop time", "%.0fms", () -> loopAvg / 1000000);

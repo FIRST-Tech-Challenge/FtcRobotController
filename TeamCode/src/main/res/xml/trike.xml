@@ -15,8 +15,8 @@
         </LynxModule>
 
         <LynxModule name="Expansion Hub 2" port="2">
-            <RevRobotics40HDHexMotor name="motorBackRight" port="0" />
-            <RevRobotics40HDHexMotor name="motorFrontRight" port="1" />
+            <RevRobotics40HDHexMotor name="motorMiddle" port="0" />
+            <RevRobotics40HDHexMotor name="motorMiddleSwivel" port="1" />
             <RevRobotics40HDHexMotor name="duckSpinner" port="2" />
             <LynxEmbeddedIMU name="baseIMU" port="0" bus="0" />
 
