@@ -11,8 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.opencv.core.*;
-import com.arcrobotics.ftclib.*;
+import com.arcrobotics.ftclib.gamepad.*;
 import java.lang.Math;
 
 @TeleOp
@@ -55,6 +54,8 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
     public void runOpMode() {
         LauncherCode.Launcher launcher = new LauncherCode.Launcher();
         LauncherCode.LauncherStates launchStates = LauncherCode.LauncherStates.Start;
+        GamepadEx garryckOp = new GamepadEx(gamepad1);
+        ToggleButtonReader bumpReader = new ToggleButtonReader(garryckOp, GamepadKeys.Button.LEFT_BUMPER);
         LifterCode.Lifter lift = new LifterCode.Lifter();
         Grabber grabber = new Grabber();
         DistanceSensorClass.RingClass ring = new DistanceSensorClass.RingClass();
