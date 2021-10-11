@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.core.movement.impl;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.movement.api.StrafingMovement;
 
@@ -17,20 +18,27 @@ public class StrafedMovementImpl implements StrafingMovement {
         this.backLeft = backLeft;
     }
 
+    public StrafedMovementImpl(HardwareMap hardwareMap) {
+        this(hardwareMap.get(DcMotor.class, "front left wheel"),
+                hardwareMap.get(DcMotor.class, "front right wheel"),
+                hardwareMap.get(DcMotor.class, "back right wheel"),
+                hardwareMap.get(DcMotor.class, "back left wheel"));
+    }
+
     @Override
     public void drivePower(double frontLeftPower, double frontRightPower, double backRightPower, double backLeftPower) {
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
-        backRight.setPower(backRightPower);
-        backLeft.setPower(-backLeftPower);
+        backRight.setPower(-backRightPower);
+        backLeft.setPower(backLeftPower);
     }
 
     @Override
     public void driveDRS(double drive, double rotate, double strafe) {
         double frontLeftPower = drive - rotate - strafe;
         double frontRightPower = drive + rotate + strafe;
-        double backLeftPower = drive - rotate + strafe;
-        double backRightPower = drive + rotate - strafe;
+        double backLeftPower = -drive + rotate - strafe;
+        double backRightPower = -drive - rotate + strafe;
 
         this.drivePower(frontLeftPower, frontRightPower, backRightPower, backLeftPower);
     }
