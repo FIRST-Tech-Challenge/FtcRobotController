@@ -12,7 +12,12 @@ public class EventThread extends Thread {
 
     public void run() {
         while (!this.isInterrupted()) {
-            if (!queue.isEmpty()) {
+            boolean queueEmpty;
+            synchronized (queue) {
+                queueEmpty = queue.isEmpty();
+            }
+
+            if (!queueEmpty) {
                 try {
                     queue.wait();
                 } catch (InterruptedException e) {
