@@ -36,8 +36,8 @@ class DetectionPipeline extends OpenCvPipeline {
         Not_Found
     }
 
-    public enum allianceColor { // maybe we can enumerate it? Inserting it here because its the only place allianceColor seems to be referenced at.
-        RED,
+    public enum allianceColor { // maybe we can enumerate it?
+        RED,                    // Inserting it here because its the only place allianceColor seems to be referenced at.
         BLUE,
         UNIDENTIFIED
     }
