@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.tools.Carousel;
+
 import com.arcrobotics.ftclib.gamepad.*;
 import java.lang.Math;
 
@@ -25,8 +27,6 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
     private boolean MotorState1 = false; //false = off, true = on.
     private boolean MotorState2 = false;
     private int intakeDirection = 1;
-    private Blinker Control_Hub;
-    private Blinker expansion_Hub_2;
     ElapsedTime mytimer = new ElapsedTime();
     ElapsedTime debugTimer = new ElapsedTime();
     private double launchpower = 1;
@@ -64,8 +64,9 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
         TwentyTwentyOneOpModeCode.OperState debugOpState = TwentyTwentyOneOpModeCode.OperState.DEBUGSELECT;
         TwentyTwentyOneOpModeCode.Intake IntakeSwitch = Intake.WaitingForPush;
         TwentyTwentyOneOpModeCode.RingWiper RingWiperSwitch = RingWiper.WaitingForPushY;
-        Control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
-        expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
+        hardwareMap.get(Blinker.class, "Control Hub");
+        hardwareMap.get(Blinker.class, "Expansion Hub 2");
+        Carousel carousel = new Carousel(hardwareMap, garryckOp);
         lift.LiftMotor = hardwareMap.get(DcMotor.class, "LiftMotor");
         launcher.LaunchMotor = hardwareMap.get(DcMotor.class, "LaunchMotor");
         launcher.LaunchServo = hardwareMap.get(Servo.class, "LaunchServo");
@@ -256,7 +257,6 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
                         chassis.ZeroEncoders();
                         driveOpState = ChassisMovementCode.OperState.FULLDRIVE;
                     }
-
                     break;
 
 
