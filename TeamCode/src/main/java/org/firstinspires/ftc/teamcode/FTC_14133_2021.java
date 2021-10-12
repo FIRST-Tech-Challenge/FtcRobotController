@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @Disabled
 
 //My favorite shape is a nonagon
+//I like to ride dirt bikes RS
 
 public class FTC_14133_2021 extends OpMode {
  private ElapsedTime runtime = new ElapsedTime();
