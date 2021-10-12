@@ -22,6 +22,10 @@ public class DetectMarker extends LinearOpMode {
     }
 }
 
+public enum allianceColor {
+    RED,
+    BLUE
+}
 
 class DetectionPipeline extends OpenCvPipeline {
     Telemetry telemetry;
@@ -30,6 +34,12 @@ class DetectionPipeline extends OpenCvPipeline {
         Middle,
         Right,
         Not_Found
+    }
+
+    public enum allianceColor { // maybe we can enumerate it?
+        RED,
+        BLUE,
+        UNIDENTIFIED
     }
 
     String allianceColor; // TODO: Standardize allianceColor
