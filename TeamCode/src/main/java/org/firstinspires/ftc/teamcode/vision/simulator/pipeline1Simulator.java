@@ -143,13 +143,10 @@ public class pipeline1Simulator extends OpenCvPipeline {
 
     private int mostDifferent(double box1, double box2, double box3) {
         double boxMean = (box1+box2+box3)/3;
-        double diffBox1 = Math.abs(boxMean - box1);
-        double diffBox2 = Math.abs(boxMean - box2);
-        double diffBox3 = Math.abs(boxMean - box3);
         ArrayList<Double> list = new ArrayList<>();
-        list.add(diffBox1);
-        list.add(diffBox2);
-        list.add(diffBox3);
+        list.add(Math.abs(boxMean - box1));
+        list.add(Math.abs(boxMean - box2));
+        list.add(Math.abs(boxMean - box3));
         double boxNum = Collections.max(list);
         return list.indexOf(boxNum) + 1;
     }

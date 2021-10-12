@@ -2,9 +2,13 @@ name: Android CI
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - Cleanup
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - Cleanup
 
 jobs:
   build:
