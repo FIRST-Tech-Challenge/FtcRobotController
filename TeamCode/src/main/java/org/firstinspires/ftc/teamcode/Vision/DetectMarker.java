@@ -22,11 +22,6 @@ public class DetectMarker extends LinearOpMode {
     }
 }
 
-public enum allianceColor {
-    RED,
-    BLUE
-}
-
 class DetectionPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     public enum MarkerLocation {
