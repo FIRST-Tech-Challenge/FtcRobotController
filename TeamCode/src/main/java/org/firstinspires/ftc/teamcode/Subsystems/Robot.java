@@ -22,7 +22,11 @@ import java.util.List;
  */
 
 public class Robot extends Subsystem {
-    private boolean isBlue;
+    public enum AllianceColor {
+        RED,
+        BLUE // undefined is not needed
+    }
+    private AllianceColor allianceColor;
     public String name;
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
@@ -173,12 +177,17 @@ public class Robot extends Subsystem {
         hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
         this.timer = timer;
-        this.isBlue = isBlue;
+        if (isBlue) {
+            this.allianceColor = AllianceColor.BLUE;
+        }
+        else {
+            this.allianceColor = AllianceColor.RED;
+        }
         init();
     }
 
     public void init() throws IOException {
-        //DC Motors
+        // DC Motors
         frontLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fl");
         frontRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fr");
         rearLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("bl");
@@ -296,12 +305,12 @@ public class Robot extends Subsystem {
 
         opMode.telemetry.addData("Mode", " vision initializing...");
         opMode.telemetry.update();
-        vision = new Vision(hardwareMap, this, isBlue);
+        vision = new Vision(hardwareMap, this, allianceColor);
 
     }
 
     public void initVisionTest() {
-        vision = new Vision(hardwareMap, this, isBlue);
+        vision = new Vision(hardwareMap, this, allianceColor);
     }
 
     public void initServosAuto() {
