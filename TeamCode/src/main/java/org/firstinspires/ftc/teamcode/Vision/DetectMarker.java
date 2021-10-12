@@ -37,12 +37,12 @@ class DetectionPipeline extends OpenCvPipeline {
     }
 
     public enum allianceColor { // maybe we can enumerate it?
-        RED,                    // Inserting it here because its the only place allianceColor seems to be referenced at.
+        RED,                    // Inserting it here because its the only place allianceColor seems to be referenced at. TODO: See if this works as a solution for allianceColor standardization
         BLUE,
         UNIDENTIFIED
     }
 
-    String allianceColor; // TODO: Standardize allianceColor
+    String allianceColor; //
     private MarkerLocation markerLocation;
 
 
