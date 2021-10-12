@@ -14,8 +14,6 @@ public class FrenzyMode extends LinearOpMode {
     FrenzyBot robot = new FrenzyBot();
     private ElapsedTime runtime = new ElapsedTime();
 
-    // Locator Variables
-    RobotCoordinatePosition locator = null;
 
     @Override
     public void runOpMode() {
@@ -27,10 +25,6 @@ public class FrenzyMode extends LinearOpMode {
             }
             telemetry.update();
 
-            locator = new RobotCoordinatePosition(robot, RobotCoordinatePosition.THREAD_INTERVAL);
-            locator.reverseHorEncoder();
-            Thread positionThread = new Thread(locator);
-            positionThread.start();
 
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
@@ -51,8 +45,6 @@ public class FrenzyMode extends LinearOpMode {
                 double strafe = gamepad1.right_stick_x;
 
                 if (Math.abs(strafe) > 0) {
-                    telemetry.addData("Strafing", "Left: %2f", strafe);
-                    telemetry.update();
                     if (strafe < 0) {
                         robot.strafeRight(Math.abs(strafe));
                     } else {
@@ -61,21 +53,11 @@ public class FrenzyMode extends LinearOpMode {
                 } else {
                     robot.move(drive, turn);
                 }
-
-                telemetry.addData("X ", locator.getXInches());
-                telemetry.addData("Y ", locator.getYInches());
-                telemetry.addData("Heading (Degrees)", locator.getOrientation());
-                telemetry.update();
             }
         } catch (Exception ex) {
             telemetry.addData("Issues with the OpMode", ex.getMessage());
             telemetry.update();
             sleep(1000);
-        }
-        finally {
-            if (locator != null){
-                locator.stop();
-            }
         }
     }
 }

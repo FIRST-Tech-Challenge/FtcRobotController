@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class FrenzyBot extends YellowBot {
+public class FrenzyBot extends FrenzyBaseBot {
 
     /* Constructor */
     public FrenzyBot() {

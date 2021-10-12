@@ -29,7 +29,7 @@ public class OdometryFeedbackMode extends LinearOpMode {
         try {
             if (true) {
                 // VSLAM odometry
-                 odometry = new VSlamOdometry(this.hardwareMap, this.telemetry);
+                 odometry = new VSlamOdometry(this.hardwareMap);
             } else {
                 // Mecanum odometry
                 odometry = new MecanumOdometry(this.hardwareMap, this.telemetry, 10, 4);

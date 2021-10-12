@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
@@ -24,13 +26,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class VSlamOdometry implements IBaseOdometry {
 
     private static final int DEFAULT_THREAD_SLEEP_TIME = 100;
+    static double INCH_2_METER = 0.0254;
 
-    private final HardwareMap hwMap;
-    private final Telemetry telemetry;
+    private HardwareMap hwMap;
 
-    private final Transform2d cameraToRobot;
-    private final double encoderMeasurementCovariance;
-    private final int sleepTime;
+    private double encoderMeasurementCovariance;
+    private int sleepTime;
 
     private T265Camera slamra;
     private boolean isRunning = true;
@@ -39,16 +40,21 @@ public class VSlamOdometry implements IBaseOdometry {
     private int currentY;
     private int currentHeading;
 
-    public VSlamOdometry(HardwareMap hwMap, Telemetry telemetry) {
+    private static final String TAG = "RobotCoordinatePositionCam";
+
+    public VSlamOdometry(HardwareMap hwMap) {
+        init(hwMap, DEFAULT_THREAD_SLEEP_TIME, 0.8);
+    }
+
+    public VSlamOdometry(HardwareMap hwMap, int threadDelay) {
+        init(hwMap, threadDelay, 0.8);
+    }
+
+    private void init(HardwareMap hwMap, int threadDelay, double encoderMeasurementCovariance){
         this.hwMap = hwMap;
-        this.telemetry = telemetry;
-        this.sleepTime = DEFAULT_THREAD_SLEEP_TIME;
-
-        // This is the transformation between the center of the camera and the center of the robot
-        cameraToRobot = new Transform2d();
-
+        this.sleepTime = threadDelay;
         // Increase this value to trust encoder odometry less when fusing encoder measurements with VSLAM
-        encoderMeasurementCovariance = 0.8;
+        this.encoderMeasurementCovariance = encoderMeasurementCovariance;
     }
 
     @Override
@@ -58,10 +64,13 @@ public class VSlamOdometry implements IBaseOdometry {
         this.currentY = startYInches;
         this.currentHeading = startHeadingDegrees;
 
-        double startX = startXInches * 0.0254;
-        double startY = startYInches * 0.0254;
+        double startX = startXInches * INCH_2_METER;
+        double startY = startYInches * INCH_2_METER;
         Rotation2d startHeading = Rotation2d.fromDegrees(startHeadingDegrees);
         Pose2d startingPose = new Pose2d(startX, startY, startHeading);
+        // This is the transformation between the center of the camera and the center of the robot
+        final Transform2d cameraToRobot = new Transform2d();
+
 
         slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, this.hwMap.appContext);
         slamra.setPose(startingPose);
@@ -77,26 +86,39 @@ public class VSlamOdometry implements IBaseOdometry {
     public int getCurrentY() { return currentY; }
 
     @Override
-    public int getCurrentHeading() { return currentHeading; }
+    public int getCurrentHeading() { return currentHeading % 360; }
 
     @Override
     public void run() {
-        slamra.start();
-        isRunning = true;
-        while(isRunning) {
+        try {
+            slamra.start();
+            isRunning = true;
+            while (isRunning) {
+                updatePosition();
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        catch (Exception ex){
+            Log.e(TAG, "Error starting the camera", ex);
+        }
+    }
+
+    private void updatePosition(){
+        try {
             T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
 
             if (up != null) {
-                this.currentX = (int) Math.round(up.pose.getTranslation().getX() / 0.0254);
-                this.currentY = (int) Math.round(up.pose.getTranslation().getY() / 0.0254);
+                this.currentX = (int) Math.round(up.pose.getTranslation().getX() / INCH_2_METER);
+                this.currentY = (int) Math.round(up.pose.getTranslation().getY() / INCH_2_METER);
                 this.currentHeading = (int) up.pose.getRotation().getDegrees();
             }
-
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        }
+        catch (Exception ex){
+            Log.e(TAG, "Error in update position", ex);
         }
     }
 }
