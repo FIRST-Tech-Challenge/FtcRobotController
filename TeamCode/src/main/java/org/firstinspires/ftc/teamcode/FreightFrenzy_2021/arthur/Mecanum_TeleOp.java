@@ -6,12 +6,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 @TeleOp(name="Basic: BeeLine", group="Linear OpMode")
 public class Mecanum_TeleOp extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private final int TICKS_PER_ROTATION = 800;
     private final double WHEEL_RADIUS = 0.025; // in meters
     private final double WHEEL_DISTANCE = 0.30; // in meters
+
+    Orientation angles;
 
     private DcMotor leftMotors;
     private DcMotor rightMotors;
@@ -36,14 +40,11 @@ public class Mecanum_TeleOp extends LinearOpMode {
 
     private boolean floating = true;
 
-    public Action toggleZeroPowerBehavior = new Action() {
-        @Override
-        public void run() {
-            if (floating) {
-                setFloatingBehavior();
-            } else {
-                setBrakeBehavior();
-            }
+    public Action toggleZeroPowerBehavior = () -> {
+        if (floating) {
+            setFloatingBehavior();
+        } else {
+            setBrakeBehavior();
         }
     };
 
@@ -87,6 +88,7 @@ public class Mecanum_TeleOp extends LinearOpMode {
         leftMotors.setPower(leftPower);
         rightMotors.setPower(rightPower);
 
+        updatePosition();
 
         printData();
         telemetry.update();
