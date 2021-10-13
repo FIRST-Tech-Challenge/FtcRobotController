@@ -1,5 +1,7 @@
 # FTC 5361 Freight Frenzy code
 
+See [robots.md](URL 'https://github.com/yuhsb-lionotics/FreightFrenzy/blob/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots.md') for the basic differences between the robots.
+Switch to the right branch for the robot you want.
 
 ## NOTICE
 
