@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,8 +16,6 @@ import org.firstinspires.ftc.teamcode.robotAttachments.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.robotAttachments.Grabber;
 import org.firstinspires.ftc.teamcode.robotAttachments.LinearSlide;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
 //@Disabled
 
@@ -39,6 +36,7 @@ public class JavaDriveProgram extends LinearOpMode {
     double Yaw_value;
 
     boolean grabberIsOpen;
+    ElapsedTime buttonATimeEllapsed;
 
 
     /**
@@ -108,6 +106,8 @@ public class JavaDriveProgram extends LinearOpMode {
 
         telemetry.addData("Initialization Status", "Initialized");
         telemetry.update();
+        buttonATimeEllapsed = new ElapsedTime();
+        buttonATimeEllapsed.reset();
         waitForStart();
         time.reset();
 
@@ -137,6 +137,7 @@ public class JavaDriveProgram extends LinearOpMode {
                     xDepressed = false;
                 }
 
+                slide.setMotorPower(0.75*gamepad2.left_stick_y);
                 //toggles Y button
                 if (gamepad2.y == false) {
                     yDepressed = true;
@@ -146,8 +147,9 @@ public class JavaDriveProgram extends LinearOpMode {
                 }
 
                 //Toggles Attachment A Button for Grabber, Needs some work. Sometimes doesn't toggle
-                if (!gamepad2.a) {
+                if (!gamepad2.a && buttonATimeEllapsed.milliseconds()>250) {
                     aDepressed = true;
+                    buttonATimeEllapsed.reset();
                 }
                 if (gamepad2.a && grabberIsOpen && aDepressed) {
                     yDepressed = false;
@@ -169,16 +171,6 @@ public class JavaDriveProgram extends LinearOpMode {
                     stopBot();
                     spinner.spinOffDuck();
                     bDepressed = false;
-                }
-
-                if (gamepad2.left_trigger > 0.8) {
-                    slide.goUp();
-                }
-                if (gamepad2.right_trigger > 0.8) {
-                    slide.goDown();
-                }
-                if ((gamepad2.right_trigger < 0.8 )&& (gamepad2.left_trigger < 0.8)){
-                    slide.stop();
                 }
 
 
@@ -213,10 +205,6 @@ public class JavaDriveProgram extends LinearOpMode {
         }
     }
 
-
-    private void Powershooting_Stop() {
-
-    }
 
     private static double boundNumber(double num) {
         if (num > 1) {

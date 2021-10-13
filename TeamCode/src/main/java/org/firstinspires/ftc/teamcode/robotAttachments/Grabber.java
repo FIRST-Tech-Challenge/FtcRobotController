@@ -25,7 +25,7 @@ public class Grabber {
     }
 
     public boolean isOpen(){
-        if (grabberServo.getPosition() == openPosition){
+         if (grabberServo.getPosition() == openPosition){
             return true;
         }else {
             return false;
