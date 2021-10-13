@@ -64,9 +64,9 @@ public class Botdon extends OpMode {
         this.panDrive = gamepad1.right_stick_x * this.slowdownModifierp1;
         this.rotation = gamepad1.left_stick_x * this.slowdownModifierp1;
 
-        this.elevatorSpeed = gamepad2.right_stick_y * this.slowdownModifierp1;
+        this.elevatorSpeed = gamepad2.right_stick_y * this.slowdownModifierp2;
 
-        //Manage Sriving
+        //Manage Driving
 
         dt.travel(this.forwardDrive, this.panDrive, this.rotation);
 
