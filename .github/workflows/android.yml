@@ -2,7 +2,10 @@ name: Android CI
 
 on:
   push:
-    branches: [ master ]
+    branches:
+     - master
+     - littleRobot
+     - bigRobot 
   pull_request:
     branches: [ master ]
 
@@ -12,23 +15,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: set up JDK 11
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'adopt'
-        cache: gradle
-
-
-    - name : setup NDK
-      uses: nttld/setup-ndk@v1
-      with:
-        ndk-version: r21e
-    - runs: ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk NDK_APPLICATION_MK=./Application.mk
-
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
+      - uses: actions/checkout@v2
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: gradle
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1.0.6
+        with:
+          ndk-version: r21e
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
