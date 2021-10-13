@@ -61,6 +61,7 @@ public class CamRecogTest extends LinearOpMode {
         } finally {
             if (slamra != null) {
                 slamra.stop();
+                slamra.free();
             }
         }
     }
