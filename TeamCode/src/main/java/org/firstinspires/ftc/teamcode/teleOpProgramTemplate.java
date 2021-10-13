@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="trackStyleTeleOpProgram", group="opmode group goes here" )
+@TeleOp(name="trackStyleTeleOpProgram")
 //@Disabled //this line disables the teleop from appearing on the driver station, remove it for your code
 public class teleOpProgramTemplate extends LinearOpMode {
     /*declare OpMode members, initialize some classes*/
@@ -27,10 +27,10 @@ public class teleOpProgramTemplate extends LinearOpMode {
          */
         robot.init(hardwareMap);
 
-        robot.hwMap.get(DcMotor.class, "front_right_drive"); //expansion hub port 2 - direction: forward
+        robot.hwMap.get(DcMotor.class, "front_right_drive"); //expansion hub port 1 - direction: forward
         robot.hwMap.get(DcMotor.class, "back_right_drive"); //expansion hub port 2 - direction: forward
-        robot.hwMap.get(DcMotor.class, "front_left_drive"); //expansion hub port 2 - direction: backward
-        robot.hwMap.get(DcMotor.class, "back_left_drive"); //expansion hub port 2 - direction: backward
+        robot.hwMap.get(DcMotor.class, "front_left_drive"); //expansion hub port 3 - direction: backward
+        robot.hwMap.get(DcMotor.class, "back_left_drive"); //expansion hub port 4 - direction: backward
 
 
         // Wait for the game to start (driver presses PLAY)
