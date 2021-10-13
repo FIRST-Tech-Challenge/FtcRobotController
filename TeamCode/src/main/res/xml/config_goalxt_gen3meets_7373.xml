@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <Webcam name="Webcam 720p-" serialNumber="B7EDC3E0" />
+    <Webcam name="Webcam 720p+" serialNumber="37725D20" />
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Control Hub" port="173">
+            <RevRoboticsCoreHexMotor name="intakeStage1" port="0"/>  <!--Flywheel encoder-->
+            <RevRoboticsCoreHexMotor name="intakeStage2" port="1"/>  <!--Odometry LEFT-->
+            <Matrix12vMotor name="frontLeftMotor" port="2" />
+            <Matrix12vMotor name="backLeftMotor" port="3" />
+            <RevBlinkinLedDriver name="blinkin" port="0" />
+            <Servo name="ringTapIntoMagazineServo" port="1"/>
+            <LynxEmbeddedIMU name="imuC" port="0" bus="0" />
+            <LynxColorSensor name="mgcs1" bus="1" port="0"/>
+            <LynxColorSensor name="mgcs2" bus="2" port="0"/>
+            <LynxColorSensor name="mgcs3" bus="3" port="0"/>
+        </LynxModule>
+        <LynxModule name="Expansion Hub 2" port="2">
+            <Matrix12vMotor name="backRightMotor" port="3" />
+            <Matrix12vMotor name="frontRightMotor" port="2" />
+
+            <Matrix12vMotor name="zoomWheel" port="1"/>
+            <Motor name="odometryRear" port="0"/>
+            <Servo name="wobbleSideGrabServo" port="1"/>
+            <Servo name="wobbleSidePivotServo" port="0"/>
+            <Servo name="ringLoadServo" port="2"/>
+            <Servo name="wobbleGrabServo" port="3"/>
+            <Servo name="wobblePivotServo" port="4"/>
+            <Servo name="ringDeflectionServo" port="5"/>
+
+            <!--            <Motor name="odometryRear" port="0"/>-->
+            <!--            <Motor name="odometryLeft" port="1"/>-->
+            <!--            <Servo name="ringDropServo" port="2"/>-->
+            <!--            <AnalogInput name="liftPotentiometer" port="0" />-->
+            <LynxEmbeddedIMU name="imuE" port="0" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="sideWobbleDistSensor" port="1" bus="0" />
+
+            <DigitalDevice name="intakeTouchSensor" port="1" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
