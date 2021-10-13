@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.CVRec;
 
 public enum GameElement {
-    Cube,
-    Ball,
-    None
+    CubeLocation1,
+    CubeLocation2,
+    CubeLocationNone
 }
