@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.toolkit.background;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.OldUpliftRobot;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.core.Background;
 import org.firstinspires.ftc.teamcode.toolkit.misc.UpliftMath;
@@ -41,17 +42,17 @@ public class Odometry extends Background {
     // method to update the current position and angle of the robot (relative to left-rear edge of robot and left-rear field corner)
     public void updatePosition() {
 
-        finalLeftDistance = (getLeftTicks() / UpliftRobot.COUNTS_PER_INCH);
-        finalRightDistance = (getRightTicks() / UpliftRobot.COUNTS_PER_INCH);
-        finalCenterDistance = (getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
+        finalLeftDistance = (getLeftTicks() / OldUpliftRobot.COUNTS_PER_INCH);
+        finalRightDistance = (getRightTicks() / OldUpliftRobot.COUNTS_PER_INCH);
+        finalCenterDistance = (getCenterTicks() / OldUpliftRobot.COUNTS_PER_INCH);
 
         double deltaLeftDistance = finalLeftDistance - initialLeftDistance;
         double deltaRightDistance = finalRightDistance - initialRightDistance;
         double deltaCenterDistance = finalCenterDistance - initialCenterDistance;
 
 
-        double changeInRobotOrientation = Math.toDegrees((deltaLeftDistance - deltaRightDistance) / (UpliftRobot.robotEncoderWheelDistance));
-        double deltaHorizontal = deltaCenterDistance - (changeInRobotOrientation * UpliftRobot.horizontalEncoderInchesPerDegreeOffset);
+        double changeInRobotOrientation = Math.toDegrees((deltaLeftDistance - deltaRightDistance) / (OldUpliftRobot.robotEncoderWheelDistance));
+        double deltaHorizontal = deltaCenterDistance - (changeInRobotOrientation * OldUpliftRobot.horizontalEncoderInchesPerDegreeOffset);
 
         robot.worldX += ((((deltaLeftDistance + deltaRightDistance) / 2.0)) * Math.sin(Math.toRadians(robot.worldAngle + (0.5 * changeInRobotOrientation)))) + (deltaHorizontal * Math.cos(Math.toRadians(robot.worldAngle + (0.5 * changeInRobotOrientation))));
 

@@ -15,7 +15,7 @@ import static java.lang.Math.toRadians;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends UpliftTele {
 
-    UpliftRobot robot;
+    OldUpliftRobot robot;
     DcMotor lf;
     DcMotor rf;
     DcMotor lb;
@@ -27,7 +27,7 @@ public class TeleOp extends UpliftTele {
 
     @Override
     public void initHardware() {
-        robot = new UpliftRobot(this);
+        robot = new OldUpliftRobot(this);
         lf = robot.leftFront;
         rf = robot.rightFront;
         lb = robot.leftBack;
@@ -60,7 +60,7 @@ public class TeleOp extends UpliftTele {
 
     }
 
-    public static void teleDrive(double joystickAngle, double speedVal, double turnVal, UpliftRobot robot) {
+    public static void teleDrive(double joystickAngle, double speedVal, double turnVal, OldUpliftRobot robot) {
         double lfPow = sin(toRadians(joystickAngle) + (0.25 * PI)) * speedVal + turnVal;
         double rfPow = sin(toRadians(joystickAngle) - (0.25 * PI)) * speedVal - turnVal;
         double lbPow = sin(toRadians(joystickAngle) - (0.25 * PI)) * speedVal + turnVal;

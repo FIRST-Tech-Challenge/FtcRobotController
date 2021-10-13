@@ -1,15 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 import org.firstinspires.ftc.teamcode.toolkit.misc.UpliftMath;
 
@@ -22,10 +15,10 @@ import static java.lang.Math.toRadians;
 @TeleOp (name = "TestTeleOp", group = "Opmodes")
 public class TestTeleOp extends UpliftTele {
 
-    UpliftRobot2 robot;
+    UpliftRobot robot;
     @Override
     public void initHardware() {
-        robot = new UpliftRobot2(this);
+        robot = new UpliftRobot(this);
 
     }
 
@@ -46,8 +39,8 @@ public class TestTeleOp extends UpliftTele {
 
 
         turn(90, 0.5, 0.5);
-        robot.imuAngle = -robot.imu.getAngularOrientation().firstAngle;
-        telemetry.addData("robot angle", robot.imuAngle);
+        robot.rawAngle = -robot.imu.getAngularOrientation().firstAngle;
+        telemetry.addData("robot angle", robot.rawAngle);
         telemetry.update();
 
 
@@ -88,7 +81,7 @@ public class TestTeleOp extends UpliftTele {
         robot.rightBack.setPower(rbPow / maxVal);
     }
 
-    public void tankDrive(double leftPower, double rightPower, UpliftRobot2 robot) {
+    public void tankDrive(double leftPower, double rightPower, UpliftRobot robot) {
         robot.rightFront.setPower(rightPower);
         robot.leftFront.setPower(leftPower);
         robot.leftBack.setPower(leftPower);

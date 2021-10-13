@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.toolkit.misc.UpliftMath;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.hypot;
-import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
@@ -20,7 +19,7 @@ import static java.lang.Math.toRadians;
 @Autonomous(name = "Auto", group = "OpModes")
 public class Auto extends UpliftAuto {
 
-    UpliftRobot robot;
+    OldUpliftRobot robot;
     DcMotor lf;
     DcMotor rf;
     DcMotor lb;
@@ -31,7 +30,7 @@ public class Auto extends UpliftAuto {
 
     @Override
     public void initHardware() {
-        robot = new UpliftRobot(this);
+        robot = new OldUpliftRobot(this);
         lf = robot.leftFront;
         rf = robot.rightFront;
         lb = robot.leftBack;
