@@ -56,9 +56,8 @@ public class BasicOpTrain {
         this.back_left = bl;
         this.back_right = br;
 
-        // reverse direction of FL and BL motors
-        this.back_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.back_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        // reverse direction of FL motor b/c its broken
+        this.front_left.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.motorArray[0] = this.front_left;
         this.motorArray[1] = this.front_right;

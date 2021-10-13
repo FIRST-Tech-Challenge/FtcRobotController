@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Disabled
+
 @TeleOp(name="TeleOp Drive", group="TeleOp")
 public class Botdon extends OpMode {
 
@@ -51,7 +51,7 @@ public class Botdon extends OpMode {
 
         this.slowdownModifier = 1 - (gamepad1.right_trigger * 0.85f);
 
-        this.forwardDrive = gamepad1.right_stick_y * this.slowdownModifier;
+        this.forwardDrive = - gamepad1.right_stick_y * this.slowdownModifier;
         this.panDrive = gamepad1.right_stick_x * this.slowdownModifier;
         this.rotation = gamepad1.left_stick_x * this.slowdownModifier;
 
