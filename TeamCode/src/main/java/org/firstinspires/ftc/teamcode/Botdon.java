@@ -6,18 +6,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Disabled
 @TeleOp(name="TeleOp Drive", group="TeleOp")
 public class Botdon extends OpMode {
 
     //Variables
     BasicOpTrain dt;
+  
     LinearSlide elevator;
     ServoClaw clawservo;
 
 
     float slowdownModifier;
     float slowdownModifier2;
+
     float forwardDrive;
     float panDrive;
     float rotation;
@@ -35,14 +36,18 @@ public class Botdon extends OpMode {
         DcMotor front_right_drive = hardwareMap.dcMotor.get("front right drive");
         DcMotor back_left_drive = hardwareMap.dcMotor.get("back left drive");
         DcMotor back_right_drive = hardwareMap.dcMotor.get("back right drive");
+
         Servo claw_servo = hardwareMap.servo.get("claw servo");
+
         DcMotor elevator_motor = hardwareMap.dcMotor.get("elevator");
 
         //Init Code
         this.dt = new BasicOpTrain(front_left_drive, front_right_drive, back_left_drive, back_right_drive);
         this.elevator = new LinearSlide(elevator_motor, 0,360);
+
         //IMPORTANT: Declare claw range constraints below
         this.clawservo = new ServoClaw(claw_servo, .25, .75);
+
 
         //Telemetry B
         telemetry.addData("Ready for launch!" , "＼(≧▽≦)／");
@@ -57,7 +62,8 @@ public class Botdon extends OpMode {
         this.slowdownModifier = 1 - (gamepad1.right_trigger * 0.85f);
         this.slowdownModifier2 = 1 - (gamepad2.left_trigger * 0.85f);
 
-        this.forwardDrive = gamepad1.right_stick_y * this.slowdownModifier;
+        this.forwardDrive = - gamepad1.right_stick_y * this.slowdownModifier;
+
         this.panDrive = gamepad1.right_stick_x * this.slowdownModifier;
         this.rotation = gamepad1.left_stick_x * this.slowdownModifier;
 
