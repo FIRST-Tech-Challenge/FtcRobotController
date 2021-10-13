@@ -15,15 +15,13 @@ public class Botdon extends OpMode {
     LinearSlide elevator;
     ServoClaw clawservo;
 
-
-    float slowdownModifier;
-    float slowdownModifier2;
+    float slowdownModifierp1;
+    float slowdownModifierp2;
 
     float forwardDrive;
     float panDrive;
     float rotation;
     float elevatorSpeed;
-
 
     @Override
     public void init() {
@@ -48,7 +46,6 @@ public class Botdon extends OpMode {
         //IMPORTANT: Declare claw range constraints below
         this.clawservo = new ServoClaw(claw_servo, .25, .75);
 
-
         //Telemetry B
         telemetry.addData("Ready for launch!" , "＼(≧▽≦)／");
         telemetry.addData("WARNING!" , "LINEAR SLIDE IS OPERATING IN UNRESTRICTED MODE");
@@ -59,15 +56,15 @@ public class Botdon extends OpMode {
     public void loop() {
         //Get Gamepad Vars
 
-        this.slowdownModifier = 1 - (gamepad1.right_trigger * 0.85f);
-        this.slowdownModifier2 = 1 - (gamepad2.left_trigger * 0.85f);
+        this.slowdownModifierp1 = 1 - (gamepad1.right_trigger * 0.85f);
+        this.slowdownModifierp2 = 1 - (gamepad2.left_trigger * 0.85f);
 
-        this.forwardDrive = - gamepad1.right_stick_y * this.slowdownModifier;
+        this.forwardDrive = - gamepad1.right_stick_y * this.slowdownModifierp1;
 
-        this.panDrive = gamepad1.right_stick_x * this.slowdownModifier;
-        this.rotation = gamepad1.left_stick_x * this.slowdownModifier;
+        this.panDrive = gamepad1.right_stick_x * this.slowdownModifierp1;
+        this.rotation = gamepad1.left_stick_x * this.slowdownModifierp1;
 
-        this.elevatorSpeed = gamepad2.right_stick_y * this.slowdownModifier;
+        this.elevatorSpeed = gamepad2.right_stick_y * this.slowdownModifierp1;
 
         //Manage Sriving
 
@@ -79,7 +76,7 @@ public class Botdon extends OpMode {
 
         //Manage Claw
 
-        clawservo.turninrange(gamepad2.right_trigger * this.slowdownModifier2);
+        clawservo.turninrange(gamepad2.right_trigger * this.slowdownModifierp2);
 
         //Telemetry
 
