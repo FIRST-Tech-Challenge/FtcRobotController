@@ -44,7 +44,7 @@ It is essential that you understand the [GitHub Flow](https://guides.github.com/
 NEVER push new code to the `main` branch. Ever. 
 
 1. First [create your branch](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-and-deleting-branches-within-your-repository).
-2. Next, run `git checkout -b [branch-name]` filling in the name of the branch you just created
+2. Next, run `git checkout `"branch-name"` filling in the name of the branch you just created
     **tip** to see a list of all of the branches, run `git branch -a`
 
 ## Commiting
@@ -52,8 +52,9 @@ NEVER push new code to the `main` branch. Ever.
 This is how we send your code to your new branch.
 
 1. Run `git status` to double check that you're staging the right branch
-2. Run `git add .`
-3. Run `git commit -m "message"`
+2. Run `git add "filename"` to choose what files you want to push
+3. Run `git status again`. All of the green files will be pushed. **Make sure to only push the files you changed/added.**
+5. Run `git commit -m "message"` 
     **NOTE:** ALWAYS fill out your message with a basic summary of what you changed.
 4. Finally, push your code by running `git push origin [your-new-branch]`
 
