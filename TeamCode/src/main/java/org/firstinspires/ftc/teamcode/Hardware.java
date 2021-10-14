@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
@@ -62,11 +61,17 @@ x-neg|---+---|pos
  * This class can be used to define all the specific hardware for the robot.
  *
  * This hardware class assumes the following device names have been configured on the robot:
+ *
+ * configuration naming conventions:
  * Note:  All names are lower case and some have single spaces, or underscores, between words.
  *  more motors, sensors, servos, etc will be added as needed
- *
- *
- *
+ * 
+ * naming convention for all hardware elements (in config file)
+ * "{location}_{purpose}_{type}_{(optional) number}"
+ *  ex: front_right_drive_motor
+ *      back_color_sensor_1
+ *      cascade_lift_motor
+ * 
  *
  * the purpose of this class is to act as a centralized method for initializing the hardware on the
  * robot, so that the addition of hardware elements can be accounted for in one central area, reducing
@@ -79,6 +84,7 @@ public class Hardware {
     /* --Public OpMode members.-- */
     //**Motors**//
     public DcMotor driveFrontRight,driveFrontLeft,driveBackLeft,driveBackRight; //drive motors
+    public DcMotor cascadeLiftMotor; //other motors
 
     //**Servos**//
 
@@ -140,14 +146,19 @@ public class Hardware {
         initPIDs();
     }
     //motors
-    private void initMotors() {
+    private void initMotors()
+    {
+        //drive motors
         initDriveMotors();
+
+        //other motors
+        initOtherMotors();
     }
     private void initDriveMotors() {
         // Define and initialize all Motors
         driveFrontRight = hwMap.get(DcMotor.class, "front_right_drive"); //main hub port 0
-        driveFrontLeft  = hwMap.get(DcMotor.class, "front_left_drive");  //main hub port 1
-        driveBackLeft   = hwMap.get(DcMotor.class, "back_left_drive");   //main hub port 2
+        driveFrontLeft  = hwMap.get(DcMotor.class, "front_left_drive");  //main hub port 2
+        driveBackLeft   = hwMap.get(DcMotor.class, "back_left_drive");   //main hub port 1
         driveBackRight  = hwMap.get(DcMotor.class, "back_right_drive");  //main hub port 3
 
         // Set all motors to zero power
@@ -181,18 +192,35 @@ public class Hardware {
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD);
         driveBackRight.setDirection(DcMotor.Direction.REVERSE);
     }
+    private void initOtherMotors()
+    {
+        //define and initialize
+        cascadeLiftMotor = hwMap.get(DcMotor.class, "cascade_lift_motor");
+
+        // Set power to zero
+        cascadeLiftMotor.setPower(0);
+
+        // Set run modes
+        cascadeLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        cascadeLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Set zero power behavior
+        cascadeLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // assign motor directions
+        cascadeLiftMotor.setDirection(DcMotor.Direction.FORWARD);
+    }
     //servos
     private void initServos() {
         // Define and initialize ALL installed servos.
 
         // Set start positions for ALL installed servos
 
-        /* Sensors */
-        // Define and initialize all Sensors
-
     }
     //sensors
     private void initSensors() {
+        // Define and initialize all Sensors
 
     }
     //other
@@ -211,7 +239,7 @@ public class Hardware {
     }
     //PIDS
     /*
-    calculated coefficients for a torquenado motor.
+    calculated coefficients for a torquenado motor with no load.
     target and input values are the encoder count of the motor, it's a position PID, and while it may work for velocity, velocity was not what it was tuned for.
                             Kp      Ki      Kd
     PID                 |.004602|.095875| 0.000055

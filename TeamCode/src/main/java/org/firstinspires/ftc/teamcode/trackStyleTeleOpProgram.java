@@ -26,10 +26,10 @@ public class trackStyleTeleOpProgram extends LinearOpMode {
          */
         robot.init(hardwareMap);
 
-        robot.hwMap.get(DcMotor.class, "front_right_drive"); //expansion hub port 1 - direction: forward
-        robot.hwMap.get(DcMotor.class, "back_right_drive"); //expansion hub port 2 - direction: forward
-        robot.hwMap.get(DcMotor.class, "front_left_drive"); //expansion hub port 3 - direction: backward
-        robot.hwMap.get(DcMotor.class, "back_left_drive"); //expansion hub port 4 - direction: backward
+//        robot.hwMap.get(DcMotor.class, "front_right_drive"); //expansion hub port 1 - direction: forward
+//        robot.hwMap.get(DcMotor.class, "back_right_drive"); //expansion hub port 2 - direction: forward
+//        robot.hwMap.get(DcMotor.class, "front_left_drive"); //expansion hub port 3 - direction: backward
+//        robot.hwMap.get(DcMotor.class, "back_left_drive"); //expansion hub port 4 - direction: backward
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -59,12 +59,8 @@ public class trackStyleTeleOpProgram extends LinearOpMode {
 
             //Since using tracks, provide power to motors for each side instead of each wheel.
             double drive = gamepad1.left_stick_y;
-            double turn  = gamepad1.right_stick_x;
+            double turn  = gamepad1.left_stick_x;
 
-            driveLeftPower    = Range.clip(drive, -1.0, 1.0) ;
-            driveRightPower   = Range.clip(drive, -1.0, 1.0) ;
-            turnLeftPower    = Range.clip(turn, -1.0, 1.0) ;
-            turnRightPower   = Range.clip(turn, -1.0, 1.0) ;
 
             //Providing power for motors to lift the lift
             boolean liftUp = gamepad1.dpad_up;
@@ -80,29 +76,13 @@ public class trackStyleTeleOpProgram extends LinearOpMode {
                 liftPower = -1.0;
             }
 
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
+            double rightPower = drive - turn;
+            double leftPower =  turn + drive;
+            robot.setDrivetrainPowerTraditional(rightPower, leftPower);
 
-            // Send calculated power to wheels
-
-            // Right motors
-            robot.hwMap.get(DcMotor.class, "front_right_drive").setPower(driveRightPower);
-            robot.hwMap.get(DcMotor.class, "back_right_drive").setPower(driveRightPower);
-            robot.hwMap.get(DcMotor.class, "front_right_drive").setPower(turnRightPower);
-            robot.hwMap.get(DcMotor.class, "back_right_drive").setPower(turnRightPower);
-
-            // Left motors
-            robot.hwMap.get(DcMotor.class, "front_left_drive").setPower(driveLeftPower);
-            robot.hwMap.get(DcMotor.class, "back_left_drive").setPower(driveLeftPower);
-            robot.hwMap.get(DcMotor.class, "front_left_drive").setPower(turnLeftPower);
-            robot.hwMap.get(DcMotor.class, "back_left_drive").setPower(turnLeftPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", driveLeftPower, driveRightPower);
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", turnLeftPower, turnRightPower);
             telemetry.addData("Motors", "liftPower (%.2f)", liftPower);
             telemetry.update();
         }
