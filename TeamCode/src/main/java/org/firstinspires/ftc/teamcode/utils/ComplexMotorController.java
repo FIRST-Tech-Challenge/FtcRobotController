@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.utils.motors;
+package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -9,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Represents a complex control plane for motors connected to the robot.
  * @author Thomas Ricci
  */
+@Deprecated
 public class ComplexMotorController {
 
     private final Telemetry TELEMETRY;

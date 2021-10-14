@@ -4,10 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.utils.motors.ComplexMotorController;
-import org.firstinspires.ftc.teamcode.utils.motors.Motor;
-import org.firstinspires.ftc.teamcode.utils.motors.SimpleMotorController;
+import org.firstinspires.ftc.teamcode.utils.ComplexMotorController;
+import org.firstinspires.ftc.teamcode.utils.Motor;
 
 @Autonomous(name="Encoder Drive Test (H-Drive)", group="H.Testing.Autonomous")
 public class AutoEncoderDriveTest extends LinearOpMode {

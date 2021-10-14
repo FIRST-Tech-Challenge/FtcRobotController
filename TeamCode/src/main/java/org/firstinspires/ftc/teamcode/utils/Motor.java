@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.utils.motors;
+package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,7 +23,6 @@ public class Motor {
     private final double GEAR_REDUCTION;
     private final double RADIUS;
     private final double COUNTS_PER_INCH;
-    private final ElapsedTime TIME = new ElapsedTime();
 
     /**
      * Creates a reference to a motor on the robot.
@@ -44,13 +44,76 @@ public class Motor {
         GEAR_REDUCTION = gearReduction;
         RADIUS = radius;
         COUNTS_PER_INCH = (COUNTS_PER_REV * GEAR_REDUCTION) / (RADIUS * 2 * Math.PI);
-        TELEMETRY.addData("Status", "Resetting Encoders");    //
-        TELEMETRY.update();
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        MOTOR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         MOTOR.setDirection(offset);
-        TELEMETRY.addData("Encoder reset and location found",  "Position is ", MOTOR.getCurrentPosition());
-        TELEMETRY.update();
+        MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        TELEMETRY.addLine("Motor " + getName() + " is ready.");
+    }
+
+    /**
+     * Drives the motor a certain distance.
+     * @param distance The distance to drive in inches.
+     * @param speed The maximum speed of the motor. The speed may be anywhere between -1 and this value, depending on where the motor is. This value cannot be below 0 though.
+     * @throws IllegalArgumentException The error to throw when the maximum speed is not between 0 and 1.
+     */
+    public void driveDistance(int distance, double speed) throws IllegalArgumentException {
+        if(speed >= 0 || speed <= 1) {
+            MOTOR.setTargetPosition(MOTOR.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH));
+            MOTOR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            MOTOR.setPower(speed);
+        }else{
+            throw new IllegalArgumentException("Speed must be between 0 and 1, but was " + speed + "!");
+        }
+    }
+
+    /**
+     * Drives the motor at a certain speed.
+     * @param speed The speed to set the motor to.
+     * @throws IllegalArgumentException The error thrown when the speed is not between 0 and 1.
+     */
+    public void driveWithEncoder(double speed) throws IllegalArgumentException {
+        if(speed >= 0 || speed <= 1) {
+            MOTOR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            MOTOR.setPower(speed);
+        }else{
+            throw new IllegalArgumentException("Speed must be between 0 and 1, but was " + speed + "!");
+        }
+    }
+
+    /**
+     * Sends a certain voltage to the motor.
+     * @param power The voltage to send to the motor.
+     * @throws IllegalArgumentException The error thrown when the voltage is not between 0 and 1.
+     */
+    public void driveWithoutEncoder(double power) throws IllegalArgumentException {
+        if(power >= 0 || power <= 1) {
+            MOTOR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            MOTOR.setPower(power);
+        }else{
+            throw new IllegalArgumentException("Power must be between 0 and 1, but was " + power + "!");
+        }
+    }
+
+    /**
+     * Bring the motor to a stop and reset the encoder.
+     */
+    public void stop() {
+        brake();
+        reset();
+    }
+
+    /**
+     * Bring the motor to a stop.
+     */
+    public void brake() {
+        MOTOR.setPower(0);
+    }
+
+    /**
+     * Reset the encoder.
+     */
+    public void reset() {
+        MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public Telemetry getTelemetry() {
@@ -91,10 +154,6 @@ public class Motor {
 
     public double getCountsPerInch() {
         return COUNTS_PER_INCH;
-    }
-
-    public ElapsedTime getRuntime() {
-        return TIME;
     }
 
 }

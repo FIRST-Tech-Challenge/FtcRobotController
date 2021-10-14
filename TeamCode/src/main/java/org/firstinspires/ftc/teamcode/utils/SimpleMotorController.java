@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils.motors;
+package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Represents a simple control plane for autonomous motors on the robot.
  * @author Thomas Ricci
  */
+@Deprecated
 public class SimpleMotorController {
 
     private final Telemetry TELEMETRY;
