@@ -67,7 +67,7 @@ public class Hardware
     MotorGroup backMotors = new MotorGroup(blDrive, brDrive);
     DifferentialDrive drive;
     MecanumDrive mechdrive = new MecanumDrive(flDrive,frDrive, blDrive, brDrive);
-    DistanceSensor dist;
+    DistanceSensor dist = null;
 
 
 
