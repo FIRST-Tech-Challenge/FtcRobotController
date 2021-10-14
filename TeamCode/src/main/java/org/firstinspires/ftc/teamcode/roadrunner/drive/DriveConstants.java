@@ -33,7 +33,7 @@ public class DriveConstants {
      */
     public static final boolean RUN_USING_ENCODER = true;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+            12.8);
     //f:getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)
 
     /*
@@ -66,7 +66,7 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 61.751; //You can adjust the max velocity value here
+    public static double MAX_VEL = 60; //You can adjust the max velocity value here
     public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = 5.614;
     public static double MAX_ANG_ACCEL = Math.toRadians(60);

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Basic: BeeLine", group="Linear OpMode")
+@TeleOp(name="Basic: Mecanum", group="Linear OpMode")
 public class Mecanum_TeleOp extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private final int TICKS_PER_ROTATION = 800;
