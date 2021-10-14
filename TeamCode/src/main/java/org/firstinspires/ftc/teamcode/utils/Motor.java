@@ -56,14 +56,14 @@ public class Motor {
      * @param speed The maximum speed of the motor. The speed may be anywhere between -1 and this value, depending on where the motor is. This value cannot be below 0 though.
      * @throws IllegalArgumentException The error to throw when the maximum speed is not between 0 and 1.
      */
-    public void driveDistance(int distance, double speed) throws IllegalArgumentException {
-        if(speed >= 0 || speed <= 1) {
-            MOTOR.setTargetPosition(MOTOR.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH));
-            MOTOR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            MOTOR.setPower(speed);
-        }else{
-            throw new IllegalArgumentException("Speed must be between 0 and 1, but was " + speed + "!");
+    public void driveDistance(int distance, int speed) throws IllegalArgumentException {
+        if(speed < 0 || speed > 100) {
+            throw new IllegalArgumentException("Speed is out of bounds!");
         }
+        MOTOR.setTargetPosition(MOTOR.getCurrentPosition() + (int)(distance * getCountsPerInch()));
+        MOTOR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        double realSpeed = speed / 100.0;
+        MOTOR.setPower(realSpeed);
     }
 
     /**
@@ -71,13 +71,13 @@ public class Motor {
      * @param speed The speed to set the motor to.
      * @throws IllegalArgumentException The error thrown when the speed is not between 0 and 1.
      */
-    public void driveWithEncoder(double speed) throws IllegalArgumentException {
-        if(speed >= 0 || speed <= 1) {
-            MOTOR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            MOTOR.setPower(speed);
-        }else{
-            throw new IllegalArgumentException("Speed must be between 0 and 1, but was " + speed + "!");
+    public void driveWithEncoder(int speed) throws IllegalArgumentException {
+        if(speed < 0 || speed > 100) {
+            throw new IllegalArgumentException("Speed is out of bounds!");
         }
+        MOTOR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double realSpeed = speed / 100.0;
+        MOTOR.setPower(realSpeed);
     }
 
     /**
@@ -85,13 +85,13 @@ public class Motor {
      * @param power The voltage to send to the motor.
      * @throws IllegalArgumentException The error thrown when the voltage is not between 0 and 1.
      */
-    public void driveWithoutEncoder(double power) throws IllegalArgumentException {
-        if(power >= 0 || power <= 1) {
-            MOTOR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            MOTOR.setPower(power);
-        }else{
-            throw new IllegalArgumentException("Power must be between 0 and 1, but was " + power + "!");
+    public void driveWithoutEncoder(int power) throws IllegalArgumentException {
+        if(power < 0 || power > 100) {
+            throw new IllegalArgumentException("Speed is out of bounds!");
         }
+        MOTOR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double realPower = power / 100.0;
+        MOTOR.setPower(realPower);
     }
 
     /**
