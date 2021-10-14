@@ -54,12 +54,19 @@ public class CVFrenzyPipeline extends CVPipelineBase {
     public Mat processFrame(Mat input) {
         inputToCb(input);
         meanVal = (int) Core.mean(region_Cb).val[0];
+        meanVal_2 = (int) Core.mean(region2_Cb).val[0];
 
         //Draw rectangle
         Imgproc.rectangle(
                 input, // Buffer to draw on
                 region_pointA, // First point which defines the rectangle
                 region_pointB, // Second point which defines the rectangle
+                CVDetector.BLUE, // The color the rectangle is drawn in
+                2); // Thickness of the rectangle lines
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA_2, // First point which defines the rectangle
+                region_pointB_2, // Second point which defines the rectangle
                 CVDetector.BLUE, // The color the rectangle is drawn in
                 2); // Thickness of the rectangle lines
 
@@ -75,29 +82,6 @@ public class CVFrenzyPipeline extends CVPipelineBase {
         return input;
     }
 
-
-
-    public void processFrame_2(Mat input) {
-        inputToCb(input);
-        meanVal_2 = (int) Core.mean(region2_Cb).val[0];
-
-        //Draw rectangle
-        Imgproc.rectangle(
-                input, // Buffer to draw on
-                region_pointA_2, // First point which defines the rectangle
-                region_pointB_2, // Second point which defines the rectangle
-                CVDetector.BLUE, // The color the rectangle is drawn in
-                2); // Thickness of the rectangle lines
-
-//        Do not need now------------------------------------------
-//        if (getMeanVal_2() < ORANGE){
-//            setGameElement(GameElement.Cube);
-//        }
-//        else if{
-//            setGameElement(GameElement.Ball);
-//        }
-//        return input;
-    }
 
     private void inputToCb(Mat input) {
         //convert the input matrix color space from RGB to YCrCb.
