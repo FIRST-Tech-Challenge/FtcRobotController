@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Autonomous(name = "PID Demo Auto", group = "Off Season")
+@Disabled
 public class PIDDemoAuto extends LinearOpMode {
     /*declare OpMode members, initialize some classes*/
     Hardware robot          = new Hardware();
