@@ -10,17 +10,17 @@ This GitHub repository contains the source code that is used to build an Android
 
 ## Why GitHub? ┐('～`;)┌
 
-1. We've had code randomly vanish off the phone, thats not good. Github prevents "Disney Pixar's Finding auto.java"
+1. We've had code randomly vanish off the phone. Thats not good. Github prevents "Disney Pixar's Finding auto.java"
 
 2. Version control, lets us separate previous code, working code, and in progress code
 
-3. easy to access in the future
+3. Easy to access in the future
 
-4. forces us to be organized
+4. Forces us to be organized
 
-5. if you like to code, u will probably use it in the future
+5. If you like to code, you will probably use it in the future
 
-6. sounds cool to judges (i think?)
+6. Sounds cool to judges (i think?)
 
 # Getting Started With GIT
 
