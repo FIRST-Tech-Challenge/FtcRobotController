@@ -28,6 +28,7 @@ public class CamRecogTest extends LinearOpMode {
             Pose2d startingPose = new Pose2d(1, 1, new Rotation2d());
 
             slamra = new T265Camera(cam, encoderMeasurementCovariance, hardwareMap.appContext);
+
             slamra.setPose(startingPose);
 
             slamra.start();
@@ -58,6 +59,7 @@ public class CamRecogTest extends LinearOpMode {
         } catch (Exception ex) {
             telemetry.addData("Init Error", ex.getMessage());
             telemetry.update();
+            sleep(10000);
         } finally {
             if (slamra != null) {
                 slamra.stop();

@@ -77,7 +77,11 @@ public class VSlamOdometry implements IBaseOdometry {
     }
 
     @Override
-    public void stop() { isRunning = false; }
+    public void stop() {
+        isRunning = false;
+        slamra.stop();
+        slamra.free();
+    }
 
     @Override
     public int getCurrentX() { return currentX; }
