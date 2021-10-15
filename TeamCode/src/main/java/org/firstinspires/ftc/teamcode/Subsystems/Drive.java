@@ -833,12 +833,7 @@ public class Drive extends Subsystem {
                 targetCount = getTargetTickCount(tickCount, peakSpeed, rampTime, currentTime);  // get integrated target tick on the speed profile
                 currentTargetSpeed = getTargetSpeed(tickCount, peakSpeed, rampTime, currentTime); // get the target speed on the speed profile
                 if (initialized) {  // check if the motor is rotating
-                    if (Math.abs(currentCount - prevCountFL) < timeOutThreshold) {
-                        isMotorFLNotMoving = true;
-                    }
-                    else {
-                        isMotorFLNotMoving = false;
-                    }
+                    isMotorFLNotMoving = Math.abs(currentCount - prevCountFL) < timeOutThreshold;
                 }
                 if (motorFLForward) { // tick count increasing
                     if (currentCount >= tickCount) {
@@ -892,12 +887,7 @@ public class Drive extends Subsystem {
                 targetCount = getTargetTickCount(tickCount, peakSpeed, rampTime, currentTime);
                 currentTargetSpeed = getTargetSpeed(tickCount, peakSpeed, rampTime, currentTime);
                 if (initialized) {  // check if the motor is rotating
-                    if (Math.abs(currentCount - prevCountFR) < timeOutThreshold) {
-                        isMotorFRNotMoving = true;
-                    }
-                    else {
-                        isMotorFRNotMoving = false;
-                    }
+                    isMotorFRNotMoving = Math.abs(currentCount - prevCountFR) < timeOutThreshold;
                 }
                 if (motorFRForward) {
                     if (currentCount >= tickCount) {
@@ -951,12 +941,7 @@ public class Drive extends Subsystem {
                 targetCount = getTargetTickCount(tickCount, peakSpeed, rampTime, currentTime);
                 currentTargetSpeed = getTargetSpeed(tickCount, peakSpeed, rampTime, currentTime);
                 if (initialized) {  // check if the motor is rotating
-                    if (Math.abs(currentCount - prevCountRL) < timeOutThreshold) {
-                        isMotorRLNotMoving = true;
-                    }
-                    else {
-                        isMotorRLNotMoving = false;
-                    }
+                    isMotorRLNotMoving = Math.abs(currentCount - prevCountRL) < timeOutThreshold;
                 }
                 if (motorRLForward) {
                     if (currentCount >= tickCount) {
@@ -1010,12 +995,7 @@ public class Drive extends Subsystem {
                 targetCount = getTargetTickCount(tickCount, peakSpeed, rampTime, currentTime);
                 currentTargetSpeed = getTargetSpeed(tickCount, peakSpeed, rampTime, currentTime);
                 if (initialized) {  // check if the motor is rotating
-                    if (Math.abs(currentCount - prevCountRR) < timeOutThreshold) {
-                        isMotorRRNotMoving = true;
-                    }
-                    else {
-                        isMotorRRNotMoving = false;
-                    }
+                    isMotorRRNotMoving = Math.abs(currentCount - prevCountRR) < timeOutThreshold;
                 }
                 if (motorRRForward) {
                     currentError = (double) (currentCount-targetCount);
