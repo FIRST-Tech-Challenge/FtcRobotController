@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Represents a motor attached to the robot.
  * @author Thomas Ricci, Mickael Lachut
  * */
-public class Motor {
+public class EncoderMotor {
 
     private final Telemetry TELEMETRY;
     private final String NAME;
@@ -34,7 +34,7 @@ public class Motor {
      * @param gearReduction The reduction ratio of the motor's gearing.
      * @param radius The radius of the motor's attachment.
      */
-    public Motor(Telemetry telemetry, HardwareMap hardware, String name, DcMotorSimple.Direction offset, double countsPerRev, double gearReduction, double radius) {
+    public EncoderMotor(Telemetry telemetry, HardwareMap hardware, String name, DcMotorSimple.Direction offset, double countsPerRev, double gearReduction, double radius) {
         TELEMETRY = telemetry;
         NAME = name;
         HARDWARE = hardware;
