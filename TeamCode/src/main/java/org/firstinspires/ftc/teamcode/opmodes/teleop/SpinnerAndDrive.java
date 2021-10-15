@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.utils.Motor;
+import org.firstinspires.ftc.teamcode.utils.EncoderMotor;
 
 import kotlin.jvm.internal.MagicApiIntrinsics;
 
@@ -15,14 +15,14 @@ import kotlin.jvm.internal.MagicApiIntrinsics;
 public class ControllerTeleOp extends OpMode {
 
     private final ElapsedTime TIME = new ElapsedTime();
-    private Motor spinner;
+    private EncoderMotor spinner;
 
     /**
      * Code to run once when the OpMode is initialized.
      */
     @Override
     public void init() {
-        spinner = new Motor(telemetry, hardwareMap, "spinner", DcMotorSimple.Direction.FORWARD, 400, 1, 1);
+        spinner = new EncoderMotor(telemetry, hardwareMap, "spinner", DcMotorSimple.Direction.FORWARD, 400, 1, 1);
         telemetry.addData("Status", "Initialized");
     }
 

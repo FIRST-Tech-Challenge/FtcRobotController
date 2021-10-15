@@ -30,7 +30,7 @@ public class SimpleMotorController {
      * @param speed The speed at which the motor should move.
      * @param timeout The time in seconds in which the motor will give up moving if it hasn't completed moving.
      */
-    public void moveSingleMotor(Motor motor, double distance, double speed, double timeout) {
+    public void moveSingleMotor(EncoderMotor motor, double distance, double speed, double timeout) {
         DcMotor dcMotor = motor.getDcMotor();
         dcMotor.setTargetPosition(dcMotor.getCurrentPosition() + (int)(distance * motor.getCountsPerInch()));
         dcMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -52,8 +52,8 @@ public class SimpleMotorController {
      * @param speed The speed at which the motors should move.
      * @param timeout The time in seconds in which the motors will give up moving if they haven't completed moving.
      */
-    public void moveGroupedMotors(Motor[] motors, double distance, double speed, double timeout) {
-        for(Motor motor : motors) {
+    public void moveGroupedMotors(EncoderMotor[] motors, double distance, double speed, double timeout) {
+        for(EncoderMotor motor : motors) {
             DcMotor dcMotor = motor.getDcMotor();
             dcMotor.setTargetPosition(dcMotor.getCurrentPosition() + (int)(distance * motor.getCountsPerInch()));
             dcMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -61,7 +61,7 @@ public class SimpleMotorController {
 
         // Reset the timeout time and start motion
         TIME.reset();
-        for(Motor motor : motors) {
+        for(EncoderMotor motor : motors) {
             DcMotor dcMotor = motor.getDcMotor();
             dcMotor.setPower(Math.abs(speed));
         }
@@ -70,7 +70,7 @@ public class SimpleMotorController {
         }
 
         // Cleanup motors and prep for next motion
-        for(Motor motor : motors) {
+        for(EncoderMotor motor : motors) {
             DcMotor dcMotor = motor.getDcMotor();
             dcMotor.setPower(0);
             dcMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -86,9 +86,9 @@ public class SimpleMotorController {
      * @param speed The speed at which the motors should move.
      * @param timeout The time in seconds in which the motors will give up moving if they haven't completed moving.
      */
-    public void moveMultipleMotors(Motor[] motors, double[] distances, double speed, double timeout) {
+    public void moveMultipleMotors(EncoderMotor[] motors, double[] distances, double speed, double timeout) {
         for(int i = 0; i < motors.length; i++) {
-            Motor motor = motors[i];
+            EncoderMotor motor = motors[i];
             DcMotor dcMotor = motor.getDcMotor();
             dcMotor.setTargetPosition(dcMotor.getCurrentPosition() + (int)(distances[i] * motor.getCountsPerInch()));
             dcMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -96,7 +96,7 @@ public class SimpleMotorController {
 
         // Reset the timeout time and start motion
         TIME.reset();
-        for(Motor motor : motors) {
+        for(EncoderMotor motor : motors) {
             DcMotor dcMotor = motor.getDcMotor();
             dcMotor.setPower(Math.abs(speed));
         }
@@ -105,7 +105,7 @@ public class SimpleMotorController {
         }
 
         // Cleanup motors and prep for next motion
-        for(Motor motor : motors) {
+        for(EncoderMotor motor : motors) {
             DcMotor dcMotor = motor.getDcMotor();
             dcMotor.setPower(0);
             dcMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -118,7 +118,7 @@ public class SimpleMotorController {
      * Attempts to kill the motor even if it's still running.
      * @param motor The motor to kill.
      */
-    public void killMotor(Motor motor) {
+    public void killMotor(EncoderMotor motor) {
         DcMotor dcMotor = motor.getDcMotor();
         if(dcMotor.getPower() > 0) {
             dcMotor.setPower(0);
@@ -134,8 +134,8 @@ public class SimpleMotorController {
      * Attempts to kill multiple motors even if they're still running.
      * @param motors The motors to kill.
      */
-    public void killMotors(Motor[] motors) {
-        for(Motor motor : motors) {
+    public void killMotors(EncoderMotor[] motors) {
+        for(EncoderMotor motor : motors) {
             DcMotor dcMotor = motor.getDcMotor();
             if(dcMotor.getPower() > 0) {
                 dcMotor.setPower(0);
@@ -150,9 +150,9 @@ public class SimpleMotorController {
         TELEMETRY.update();
     }
 
-    private boolean motorsAreBusy(Motor[] motors) {
+    private boolean motorsAreBusy(EncoderMotor[] motors) {
         boolean busy = false;
-        for(Motor motor : motors) {
+        for(EncoderMotor motor : motors) {
             if(!busy && motor.getDcMotor().isBusy()) {
                 busy = true;
             }

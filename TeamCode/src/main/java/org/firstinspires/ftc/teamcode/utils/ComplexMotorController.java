@@ -26,7 +26,7 @@ public class ComplexMotorController {
      * @param motor The motor to prepare.
      * @param distance The distance the motor will travel over the next run.
      */
-    public void prepMotor(Motor motor, double distance) {
+    public void prepMotor(EncoderMotor motor, double distance) {
         DcMotor dcMotor = motor.getDcMotor();
         dcMotor.setTargetPosition(dcMotor.getCurrentPosition() + (int)(distance * motor.getCountsPerInch()));
         dcMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -39,7 +39,7 @@ public class ComplexMotorController {
      * @param motor The motor to run.
      * @param speed The speed at which to run the motor.
      */
-    public void startMotor(Motor motor, double speed) {
+    public void startMotor(EncoderMotor motor, double speed) {
         DcMotor dcMotor = motor.getDcMotor();
         dcMotor.setPower(Math.abs(speed));
         TELEMETRY.addData("Run started",  "Position is " + dcMotor.getCurrentPosition());
@@ -50,7 +50,7 @@ public class ComplexMotorController {
      * Stops running the motor at a specific speed.
      * @param motor The motor to stop.
      */
-    public void stopMotor(Motor motor) {
+    public void stopMotor(EncoderMotor motor) {
         DcMotor dcMotor = motor.getDcMotor();
         dcMotor.setPower(0);
         dcMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
