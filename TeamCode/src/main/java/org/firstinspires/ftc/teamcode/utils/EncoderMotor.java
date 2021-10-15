@@ -54,10 +54,10 @@ public class EncoderMotor {
      * Drives the motor a certain distance.
      * @param distance The distance to drive in inches.
      * @param speed The maximum speed of the motor. The speed may be anywhere between -1 and this value, depending on where the motor is. This value cannot be below 0 though.
-     * @throws IllegalArgumentException The error to throw when the maximum speed is not between 0 and 100.
+     * @throws IllegalArgumentException The error to throw when the maximum speed is not between -100 and 100.
      */
     public void driveDistance(int distance, int speed) throws IllegalArgumentException {
-        if(speed < 0 || speed > 100) {
+        if(speed < -100 || speed > 100) {
             throw new IllegalArgumentException("Speed is out of bounds!");
         }
         MOTOR.setTargetPosition(MOTOR.getCurrentPosition() + (int)(distance * getCountsPerInch()));
@@ -69,13 +69,13 @@ public class EncoderMotor {
     /**
      * Drives the motor at a certain speed.
      * @param speed The speed to set the motor to.
-     * @throws IllegalArgumentException The error thrown when the speed is not between 0 and 100.
+     * @throws IllegalArgumentException The error thrown when the speed is not between -100 and 100.
      */
     public void driveWithEncoder(int speed) throws IllegalArgumentException {
-        if(speed < 0 || speed > 100) {
+        if(speed < -100 || speed > 100) {
             throw new IllegalArgumentException("Speed is out of bounds!");
         }
-        MOTOR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        MOTOR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double realSpeed = speed / 100.0;
         MOTOR.setPower(realSpeed);
     }
@@ -83,10 +83,10 @@ public class EncoderMotor {
     /**
      * Sends a certain voltage to the motor.
      * @param power The voltage to send to the motor.
-     * @throws IllegalArgumentException The error thrown when the voltage is not between 0 and 100.
+     * @throws IllegalArgumentException The error thrown when the voltage is not between -100 and 100.
      */
     public void driveWithoutEncoder(int power) throws IllegalArgumentException {
-        if(power < 0 || power > 100) {
+        if(power < -100 || power > 100) {
             throw new IllegalArgumentException("Power is out of bounds!");
         }
         MOTOR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
