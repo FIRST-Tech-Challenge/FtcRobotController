@@ -26,7 +26,7 @@ public class Vision {
     private HardwareMap hardwareMap;
     private Robot robot;
 
-    public enum Color {
+    public enum Color { // TODO: is this enum the one defining the allianceColor?
         RED,
         BLUE,
     }
