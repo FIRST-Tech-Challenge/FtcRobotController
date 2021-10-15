@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
@@ -58,11 +60,6 @@ import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
 public class MecanumTeleop extends DriveMethods {
 
 
-@TeleOp(name="MecanumTeleop", group="Iterative Opmode")
-//@Disabled
-public class MecanumTeleop extends OpMode
-{
-
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     double leftY;
@@ -83,7 +80,7 @@ public class MecanumTeleop extends OpMode
         // step (using the FTC Robot Controller app on the phone).
         motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
-        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
+        motorBackRight = hardwareMap.get(DcMotor.class, "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
 
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -98,7 +95,6 @@ public class MecanumTeleop extends OpMode
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
-    }
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -123,3 +119,4 @@ public class MecanumTeleop extends OpMode
         }
     }
 }
+
