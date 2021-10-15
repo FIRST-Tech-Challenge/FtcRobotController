@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: org.firstinspires.ftc:RobotServer:7.0.0@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/86d5452fbc47476dbf420314f286e57b/jetified-RobotServer-7.0.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/86d5452fbc47476dbf420314f286e57b/jetified-RobotServer-7.0.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/86d5452fbc47476dbf420314f286e57b/jetified-RobotServer-7.0.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/86d5452fbc47476dbf420314f286e57b/jetified-RobotServer-7.0.0/jars/libs/Java-WebSocket-1.4.1-20190423.174615-6.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.firstinspires.ftc/RobotServer/7.0.0/a310c3a78894b318fcf26dad99fbb71551597ba7/RobotServer-7.0.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.firstinspires.ftc/RobotServer/7.0.0/eb5756dabafe15f5df8c546129184ded146f353d/RobotServer-7.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
