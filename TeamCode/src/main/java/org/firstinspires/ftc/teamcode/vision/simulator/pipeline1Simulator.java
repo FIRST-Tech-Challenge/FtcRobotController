@@ -162,45 +162,15 @@ public class pipeline1Simulator extends OpenCvPipeline {
         Imgproc.rectangle(mat, rect, color, 1);
     }
 
-    public double getTopAverage() {
-        return topAverage;
-    }
-
-    public double getMiddleAverage() { return middleAverage; }
-
-    public double getBottomAverage() {
-        return bottomAverage;
-    }
-
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
-    }
-
-    public int getThreshold() {
-        return threshold;
-    }
-
-    public void setTopRectWidthPercentage(double topRectWidthPercentage) {
+    /**
+     * percentages of all rectangles. it goes top width, top height, middle width, etc.
+     */
+    public void setRectangles(double topRectWidthPercentage, double topRectHeightPercentage,double middleRectWidthPercentage,double middleRectHeightPercentage,double bottomRectWidthPercentage,double bottomRectHeightPercentage) {
         this.topRectWidthPercentage = topRectWidthPercentage;
-    }
-
-    public void setTopRectHeightPercentage(double topRectHeightPercentage) {
         this.topRectHeightPercentage = topRectHeightPercentage;
-    }
-
-    public void setBottomRectWidthPercentage(double bottomRectWidthPercentage) {
+        this.middleRectWidthPercentage = middleRectWidthPercentage;
+        this.middleRectHeightPercentage = middleRectHeightPercentage;
         this.bottomRectWidthPercentage = bottomRectWidthPercentage;
-    }
-
-    public void setBottomRectHeightPercentage(double bottomRectHeightPercentage) {
         this.bottomRectHeightPercentage = bottomRectHeightPercentage;
-    }
-
-    public void setRectangleWidth(int rectangleWidth) {
-        this.rectangleWidth = rectangleWidth;
-    }
-
-    public void setRectangleHeight(int rectangleHeight) {
-        this.rectangleHeight = rectangleHeight;
     }
 }

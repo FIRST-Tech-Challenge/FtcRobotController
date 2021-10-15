@@ -18,7 +18,7 @@ public class Carousel {
         }
     }
     public Carousel(@NonNull HardwareMap map, GamepadEx toolGamepad) {
-        this.spinner = map.get(CRServo.class,"Spinner");
+        this.spinner = map.get(CRServo.class,"spinner");
         this.bReader = new ToggleButtonReader(toolGamepad, GamepadKeys.Button.B);
     }
 }
