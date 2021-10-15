@@ -29,14 +29,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
-import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
-import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
-import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
+import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -54,21 +52,15 @@ import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
 @Disabled
-public class MecanumTeleop extends DriveMethods {
+public class LinearOpModeTemplate extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    double leftY;
-    double leftX;
-    double rightX;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        initializeMotors();
-        setMotorDirections();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -76,15 +68,6 @@ public class MecanumTeleop extends DriveMethods {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-            leftY = -gamepad1.left_stick_y;
-            leftX = gamepad1.left_stick_x;
-            rightX = gamepad1.right_stick_x;
-
-            motorFrontLeft.setPower(leftY + leftX + rightX);
-            motorBackLeft.setPower(leftY - leftX + rightX);
-            motorFrontRight.setPower(leftY - leftX - rightX);
-            motorBackRight.setPower(leftY + leftX - rightX);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

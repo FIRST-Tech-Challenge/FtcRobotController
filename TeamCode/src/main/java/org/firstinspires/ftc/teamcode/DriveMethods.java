@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import static java.lang.Math.abs;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
@@ -215,6 +216,18 @@ public class DriveMethods extends LinearOpMode {
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
         motorBackLeft.setPower(0);
+    }
+    public void initializeMotors() {
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
+        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
+    }
+    public void setMotorDirections() {
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
 }
