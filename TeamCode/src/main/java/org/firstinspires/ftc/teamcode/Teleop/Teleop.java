@@ -21,7 +21,7 @@ public class Teleop extends LinearOpMode {
     double timePre;
     ElapsedTime timer;
 
-    enum Prospective {
+   /* enum Prospective {
         ROBOT,
         DRIVER,
     }
@@ -31,7 +31,7 @@ public class Teleop extends LinearOpMode {
 //        OPEN,
 //        WIDEOPEN,
 //    }
-
+*/
 
 
 
