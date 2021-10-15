@@ -18,13 +18,9 @@ public class AutoEncoderDriveTest extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        EncoderMotor flipper = new EncoderMotor(telemetry, hardwareMap, "flipper", DcMotorSimple.Direction.FORWARD, 244, 2.0, 2.0);
-        ComplexMotorController complexMotorController = new ComplexMotorController(telemetry);
-        complexMotorController.prepMotor(flipper, 10);
-        complexMotorController.startMotor(flipper, 1);
-        while(flipper.getDcMotor().isBusy()){}
-        complexMotorController.stopMotor(flipper);
-
+        EncoderMotor left = new EncoderMotor(telemetry, hardwareMap, "ld1", DcMotorSimple.Direction.FORWARD, 400, 2.0, 2.0);
+        left.driveDistance(60, 50);
+        while(left.getDcMotor().isBusy());
     }
 
 }
