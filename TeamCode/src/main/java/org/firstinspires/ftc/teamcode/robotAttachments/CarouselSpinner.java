@@ -6,14 +6,21 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class CarouselSpinner {
     private CRServo spinnerServo;
     private static final double servoPower = -1;
+    private static long duckSleepTime = 1750;
 
     public CarouselSpinner(HardwareMap hardwareMap, String deviceName){
         spinnerServo = hardwareMap.crservo.get(deviceName);
     }
 
-    public void spinOffDuck() throws InterruptedException {
+    public void spinOffRedDuck() throws InterruptedException {
+        spinnerServo.setPower(-servoPower);
+        Thread.sleep(duckSleepTime);
+        spinnerServo.setPower(0);
+
+    }
+    public void spinOffBlueDuck() throws InterruptedException {
         spinnerServo.setPower(servoPower);
-        Thread.sleep(1750);
+        Thread.sleep(duckSleepTime);
         spinnerServo.setPower(0);
 
     }
