@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
@@ -87,6 +89,8 @@ public class Hardware {
     public DcMotor cascadeLiftMotor; //other motors
 
     //**Servos**//
+    public Servo cascadeIntakeServo;
+    public CRServo frontTurntableCRServo;
 
     //**Sensors**//
 
@@ -209,14 +213,20 @@ public class Hardware {
         cascadeLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // assign motor directions
-        cascadeLiftMotor.setDirection(DcMotor.Direction.FORWARD);
+        cascadeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
     }
     //servos
     private void initServos() {
         // Define and initialize ALL installed servos.
+        cascadeIntakeServo = hwMap.get(Servo.class, "cascade_intake_servo");
+        frontTurntableCRServo = hwMap.get(CRServo.class, "front_turntable_crservo");
 
         // Set start positions for ALL installed servos
+        cascadeIntakeServo.setPosition(0.6); // 0.6 == closed || 0.4 == open
+        frontTurntableCRServo.setPower(0);
 
+        // assign CRServo directions
+        frontTurntableCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     //sensors
     private void initSensors() {

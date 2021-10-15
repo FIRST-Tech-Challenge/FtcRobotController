@@ -19,21 +19,17 @@ public class trackStyleTeleOpProgram extends LinearOpMode {
     {
         ////////////before driver presses play////////////
         //Variables
-
+        double drivePower, turnPower;
+        //button locks
+        boolean aCurr, yCurr;
+        boolean aPrev = false, yPrev = false;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
 
-//        robot.hwMap.get(DcMotor.class, "front_right_drive"); //expansion hub port 1 - direction: forward
-//        robot.hwMap.get(DcMotor.class, "back_right_drive"); //expansion hub port 2 - direction: forward
-//        robot.hwMap.get(DcMotor.class, "front_left_drive"); //expansion hub port 3 - direction: backward
-//        robot.hwMap.get(DcMotor.class, "back_left_drive"); //expansion hub port 4 - direction: backward
-
-
         // Wait for the game to start (driver presses PLAY)
-
         waitForStart();
         runtime.reset();
 
@@ -43,52 +39,72 @@ public class trackStyleTeleOpProgram extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            robot.setDrivetrainPower(-gamepad1.right_stick_y, -gamepad1.left_stick_y, -gamepad1.left_stick_y*(2/3.0), -gamepad1.right_stick_y*(2/3.0));
-            /*
-            // Setup a variable for each drive side and mode (turn or forwards/backwards) to save power level for telemetry
-            double driveLeftPower;
-            double driveRightPower;
-            double turnLeftPower;
-            double turnRightPower;
+            /* CONTROLS
+            joysticks: movement
+                left joystick: turning
+                right joystick: forward backward
 
-            // Setup a variable for each lift mode (up or down) to save power level for telemetry
-            double liftPower = 0.0;
+            triggers and bumpers: unassigned
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
+            ABYX: special functions
+                A: open/close intake
+                B:
+                Y: toggle turntable spinner
+                X:
 
-            // POV Mode uses left stick to go forward, and right stick to turn.
+            D-Pad: controls cascade kit and intake
+                Up: raise cascade kit
+                Down: lower cascade kit
+                Left:
+                Right:
 
-            //Since using tracks, provide power to motors for each side instead of each wheel.
-            double drive = gamepad1.left_stick_y;
-            double turn  = gamepad1.left_stick_x;
+             */
 
+            //joysticks
+            //POV drive mode
+            drivePower = -gamepad1.right_stick_y;
+            turnPower = gamepad1.left_stick_x;
 
-            //Providing power for motors to lift the lift
-            boolean liftUp = gamepad1.dpad_up;
-            boolean liftDown = gamepad1.dpad_down;
+            robot.setDrivetrainPower(
+                    drivePower-turnPower,
+                    drivePower+turnPower,
+                    (2/3.0)*(drivePower+turnPower),
+                    (2/3.0)*(drivePower-turnPower)
+            );
 
-            if (liftUp)
-            {
-                liftPower = 1.0;
+            //tank style drive mode, commented out
+            //robot.setDrivetrainPower(-gamepad1.right_stick_y, -gamepad1.left_stick_y, -gamepad1.left_stick_y*(2/3.0), -gamepad1.right_stick_y*(2/3.0));
+
+            //triggers and bumpers
+
+            //ABYX
+            //A
+            aCurr = gamepad1.a;
+            if (aCurr && !aPrev) {
+                robot.cascadeIntakeServo.setPosition((-1*((robot.cascadeIntakeServo.getPosition()-0.4) -0.1) + 0.1) + 0.4); //toggle between 0.6 and 0.4
+            }
+            aPrev = aCurr;
+            //Y
+            yCurr = gamepad1.y;
+            if (yCurr && !yPrev) {
+                robot.frontTurntableCRServo.setPower(-1*(robot.frontTurntableCRServo.getPower() - 0.5) + 0.5); //toggle between 0 and 1
+            }
+            yPrev = yCurr;
+
+            //D-Pad
+            //up & down
+            if (gamepad1.dpad_up && robot.cascadeLiftMotor.getCurrentPosition() < 2400) {
+                robot.cascadeLiftMotor.setPower(1);
+            }
+            else if (gamepad1.dpad_down && robot.cascadeLiftMotor.getCurrentPosition() > 0) {
+                robot.cascadeLiftMotor.setPower(-1);
+            }
+            else {
+                robot.cascadeLiftMotor.setPower(0);
             }
 
-            if (liftDown)
-            {
-                liftPower = -1.0;
-            }
-
-            double rightPower = drive - turn;
-            double leftPower =  turn + drive;
-            robot.setDrivetrainPowerTraditional(rightPower, leftPower);
-
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "liftPower (%.2f)", liftPower);
+            telemetry.addData("cascade lift motor encoder count: ", robot.cascadeLiftMotor.getCurrentPosition());
             telemetry.update();
-
-            */
         }
 
         ////////////after driver presses stop////////////
