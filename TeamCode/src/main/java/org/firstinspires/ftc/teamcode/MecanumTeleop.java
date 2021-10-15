@@ -52,9 +52,16 @@ import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
+
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
 @Disabled
 public class MecanumTeleop extends DriveMethods {
+
+
+@TeleOp(name="MecanumTeleop", group="Iterative Opmode")
+//@Disabled
+public class MecanumTeleop extends OpMode
+{
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -67,8 +74,32 @@ public class MecanumTeleop extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+
         initializeMotors();
         setMotorDirections();
+
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
+        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
+
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+
+
+        // Tell the driver that initialization is complete.
+        telemetry.addData("Status", "Initialized");
+    }
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();

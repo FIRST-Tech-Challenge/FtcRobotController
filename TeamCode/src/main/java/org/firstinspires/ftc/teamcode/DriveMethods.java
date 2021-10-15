@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import static java.lang.Math.abs;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
@@ -13,7 +19,7 @@ import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
 
 public class DriveMethods extends LinearOpMode {
-
+ boolean calibrated = false;
     // Ignore this method (it is to satisfy the parent class LinearOpmode)
     @Override
     public void runOpMode() throws InterruptedException {
@@ -109,7 +115,7 @@ public class DriveMethods extends LinearOpMode {
                 break;
         }
     }
-    public void driveForDistance (double distance, double power, Direction direction, boolean PID) {
+    public void driveForDistance (double distance, double power, Direction direction) {
 
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -150,17 +156,17 @@ public class DriveMethods extends LinearOpMode {
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if (PID) {
-            while (distanceTraveled < TARGET_POSITION) {
-                distanceTraveled = (abs(motorFrontLeft.getCurrentPosition()) + abs(motorFrontRight.getCurrentPosition()) + abs(motorBackLeft.getCurrentPosition()) + abs(motorBackRight.getCurrentPosition())) / 4;
-                telemetry.addLine("Driving using PID control.");
-                telemetry.addLine("TARGET_POSITION: " + TARGET_POSITION);
-                telemetry.addLine("distanceTraveled: " + distanceTraveled);
-                PofPID(power, distance, direction, ScaleFactorForStrafing);
-
-            }
-
-        } else {
+//        if (PID) {
+//            while (distanceTraveled < TARGET_POSITION) {
+//                distanceTraveled = (abs(motorFrontLeft.getCurrentPosition()) + abs(motorFrontRight.getCurrentPosition()) + abs(motorBackLeft.getCurrentPosition()) + abs(motorBackRight.getCurrentPosition())) / 4;
+//                telemetry.addLine("Driving using PID control.");
+//                telemetry.addLine("TARGET_POSITION: " + TARGET_POSITION);
+//                telemetry.addLine("distanceTraveled: " + distanceTraveled);
+//                PofPID(power, distance, direction, ScaleFactorForStrafing);
+//
+//            }
+//
+//        } else {
             driveDirection(power,direction);
             while (distanceTraveled < TARGET_POSITION) {
                 distanceTraveled = (abs(motorFrontLeft.getCurrentPosition()) + abs(motorFrontRight.getCurrentPosition()) + abs(motorBackLeft.getCurrentPosition()) + abs(motorBackRight.getCurrentPosition())) / 4;
@@ -169,7 +175,7 @@ public class DriveMethods extends LinearOpMode {
                 telemetry.addLine("Distance Inputted (In clicks): " + TARGET_POSITION);
                 telemetry.addLine("Distance Per Click: " + DISTANCE_PER_CLICK);
                 telemetry.update();
-            }
+//            }
         }
 
         StopMotors();
@@ -217,6 +223,7 @@ public class DriveMethods extends LinearOpMode {
         motorBackRight.setPower(0);
         motorBackLeft.setPower(0);
     }
+
     public void initializeMotors() {
         motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
@@ -228,6 +235,96 @@ public class DriveMethods extends LinearOpMode {
         motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+    public void calibrateIMU(){
+        BNO055IMU imu;
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
+
+        imu.initialize(parameters);
+
+        telemetry.addData("Mode", "calibrating...");
+        telemetry.update();
+
+        // make sure the imu gyro is calibrated before continuing.
+        while (!isStopRequested() && !imu.isGyroCalibrated())
+        {
+            sleep(50);
+            idle();
+        }
+        calibrated = true;
+    }
+
+    public double getCurrentZAngle(){
+        if (calibrated == false){
+            calibrateIMU();
+        }else{
+
+        }
+        BNO055IMU imu;
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+
+        Orientation CurrentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double currentZ = CurrentAngle.firstAngle;
+        return currentZ;
+
+    }
+
+    public void rotateToPosition(double power, double position){
+
+        double currentZ = getCurrentZAngle();
+        double difference = currentZ - position;
+        if(difference < 0){
+            position = position - 5;
+            while(currentZ < position){
+                driveDirection(power, Direction.TURN_LEFT);
+                currentZ = getCurrentZAngle();
+                difference = position - currentZ;
+                telemetry.addLine("Current Z:" + currentZ);
+                telemetry.addLine("Rotating to: " + position);
+                telemetry.update();
+                if (difference < 15) {
+                    while (currentZ < position) {
+                        driveDirection(0.1, Direction.TURN_LEFT);
+                        currentZ = getCurrentZAngle();
+                        difference = position - currentZ;
+                        telemetry.addLine("Current Z:" + currentZ);
+                        telemetry.addLine("Rotating to: " + position);
+                        telemetry.update();
+                    }
+                }
+
+            }
+        }else if (difference > 0){
+            position = position + 5;
+            while(currentZ > position){
+                driveDirection(power, Direction.TURN_RIGHT);
+                currentZ = getCurrentZAngle();
+                difference = position - currentZ;
+                telemetry.addLine("Current Z:" + currentZ);
+                telemetry.addLine("Rotating to: " + position);
+                telemetry.update();
+                if(difference > -15){
+                    while(currentZ > position) {
+                        driveDirection(0.1, Direction.TURN_RIGHT);
+                        currentZ = getCurrentZAngle();
+                        difference = position - currentZ;
+                        telemetry.addLine("Current Z:" + currentZ);
+                        telemetry.addLine("Rotating to: " + position);
+                        telemetry.update();
+                    }
+                }
+            }
+        }
+        StopMotors();
+
     }
 
 }

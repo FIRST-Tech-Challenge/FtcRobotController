@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Variables {
 
@@ -19,7 +20,7 @@ public class Variables {
     public static DcMotor motorTankTread;
 
     //servos
-
+    public static Servo servoCarousel;
 
     //sensors
     public static Gyroscope imu;

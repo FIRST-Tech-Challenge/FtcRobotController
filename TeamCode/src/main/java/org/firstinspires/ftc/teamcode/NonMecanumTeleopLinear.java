@@ -77,12 +77,12 @@ public class NonMecanumTeleopLinear extends DriveMethods {
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
         motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
-        motorTankTread = hardwareMap.get(DcMotor.class, "tanktread");
+//        motorTankTread = hardwareMap.get(DcMotor.class, "tanktread");
 
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
