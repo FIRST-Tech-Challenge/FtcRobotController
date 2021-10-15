@@ -28,7 +28,7 @@ class DetectionPipeline extends OpenCvPipeline {
         LEFT,
         MIDDLE,
         RIGHT,
-        NOT_FOUND,
+        NOT_FOUND
     }
 
     public enum AllianceColor { // TODO: See if this works as a solution for allianceColor standardization
