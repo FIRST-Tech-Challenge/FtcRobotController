@@ -84,34 +84,35 @@ public class Teleop extends LinearOpMode {
                 robot.drive.resetDriveMotorEncoders();
             }
 
-//            //Toggle intake
-//            if (robot.aButton && !robot.isaButtonPressedPrev){
-//                if(isIntakeOn){
-//                    robot.control.setIntake(false);
-//                    isIntakeOn = false;
-//                }
-//                else{
-//                    robot.control.setIntake(true);
-//                    isIntakeOn = true;
-//                }
-//            }
-//
-//            //Toggle launcher
-//            if (robot.bButton && !robot.isbButtonPressedPrev){
-//                if(isLaunchOn) {
-//                    robot.control.setLaunch(false);
-//                    isLaunchOn = false;
-//                }
-//                else{
-//                    robot.control.setLaunch(true);
-//                    isLaunchOn = true;
-//                }
-//
-//            }
-//
-////            int currentPositions[] = robot.drive.getCurrentPositions();
-////            telemetry.addData("position", "fl %d, fr %d, rl %d, rr %d",
-////                    currentPositions[0], currentPositions[1], currentPositions[2], currentPositions[3]);
+/*            //Toggle intake
+              if (robot.aButton && !robot.isaButtonPressedPrev){
+                  if(isIntakeOn){
+                      robot.control.setIntake(false);
+                      isIntakeOn = false;
+                  }
+                  else{
+                      robot.control.setIntake(true);
+                      isIntakeOn = true;
+                }
+              }
+
+              //Toggle launcher
+              if (robot.bButton && !robot.isbButtonPressedPrev){
+                  if(isLaunchOn) {
+                      robot.control.setLaunch(false);
+                      isLaunchOn = false;
+                  }
+                  else{
+                      robot.control.setLaunch(true);
+                      isLaunchOn = true;
+                  }
+
+              }
+
+              int currentPositions[] = robot.drive.getCurrentPositions();
+              telemetry.addData("position", "fl %d, fr %d, rl %d, rr %d",
+                    currentPositions[0], currentPositions[1], currentPositions[2], currentPositions[3]);
+*/
             telemetry.update();
         }
     }
