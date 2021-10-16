@@ -21,6 +21,7 @@ public class MecanumTeleOp extends LinearOpMode {
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        FrenzyHardwareMap robot = new FrenzyHardwareMap();
         waitForStart();
 
         if (isStopRequested()) return;
@@ -39,10 +40,10 @@ public class MecanumTeleOp extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
+            robot.motorFrontLeft.setPower(frontLeftPower);
+            robot.motorBackLeft.setPower(backLeftPower);
+            robot.motorFrontRight.setPower(frontRightPower);
+            robot.motorBackRight.setPower(backRightPower);
         }
     }
 }
