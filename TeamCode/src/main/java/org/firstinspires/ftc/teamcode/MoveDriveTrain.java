@@ -17,15 +17,15 @@ public class MoveDriveTrain extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            double speed = 0.3;
+            double speed = 0.5;
             double vertical = gamepad1.left_stick_y * speed;
             double horizontal = gamepad1.left_stick_x * speed;
             double pivot = gamepad1.right_stick_x * speed;
 
-            frontRightMotor.setPower(pivot - (vertical - horizontal));
-            frontLeftMotor.setPower(pivot + (vertical + horizontal));
-            backRightMotor.setPower(pivot - (vertical + horizontal));
-            backLeftMotor.setPower(pivot + (vertical - horizontal));
+            frontRightMotor.setPower(pivot + vertical + horizontal);
+            frontLeftMotor.setPower(pivot + vertical - horizontal);
+            backRightMotor.setPower(pivot - vertical - horizontal);
+            backLeftMotor.setPower(pivot + vertical + horizontal);
 
         }
 
