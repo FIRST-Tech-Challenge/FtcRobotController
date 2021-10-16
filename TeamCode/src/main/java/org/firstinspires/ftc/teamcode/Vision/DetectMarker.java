@@ -33,7 +33,7 @@ class DetectionPipeline extends OpenCvPipeline {
 
     public enum AllianceColor { // TODO: See if this works as a solution for allianceColor standardization
         RED, // Inserting it here because its the only place allianceColor seems to be referenced at.
-        BLUE // undefined is not needed
+        BLUE // undefined is not needed.
     }
 
     private AllianceColor allianceColor;
