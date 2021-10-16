@@ -28,7 +28,7 @@ public class JavaDriveProgram extends LinearOpMode {
         driveTrain = new TeleopDriveTrain(hardwareMap, "back_left", "back_right", "front_left", "front_right");
 
         grabber = new Grabber(hardwareMap, "freight grabber");
-        grabber.open();
+        grabber.close();
 
         slide = new LinearSlide(hardwareMap, "linear slide arm");
 
