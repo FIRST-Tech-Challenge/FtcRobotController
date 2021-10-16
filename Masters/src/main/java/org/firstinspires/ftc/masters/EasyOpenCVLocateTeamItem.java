@@ -25,6 +25,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.internal.camera.names.WebcamNameImpl;
+import org.firstinspires.ftc.robotcore.internal.camera.names.WebcamNameInternal;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -38,10 +41,9 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "TestComputerVisionExample")
-public class EasyOpenCVExample extends LinearOpMode
+@TeleOp(name = "TestComputerVision")
+public class EasyOpenCVLocateTeamItem extends LinearOpMode
 {
-    OpenCvInternalCamera phoneCam;
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
 
@@ -49,30 +51,37 @@ public class EasyOpenCVExample extends LinearOpMode
     public void runOpMode()
     {
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("CameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
+//        webcam = OpenCvCameraFactory.getInstance().createWebcam(OpenCvWebcam., cameraMonitorViewId);
         pipeline = new SkystoneDeterminationPipeline(telemetry);
-        phoneCam.setPipeline(pipeline);
+        webcam.setPipeline(pipeline);
+
+        // With live preview
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
+                camera.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
         });
 
-        waitForStart();
+
 
         while (opModeIsActive())
         {
-            telemetry.addData("Analysis", pipeline.getAnalysis());
+            telemetry.addData("Analysis1", pipeline.getAnalysis1());
+            telemetry.addData("Analysis2", pipeline.getAnalysis2());
+            telemetry.addData("Analysis3", pipeline.getAnalysis3());
             telemetry.addData("Position", pipeline.position);
             telemetry.update();
 
@@ -109,6 +118,8 @@ public class EasyOpenCVExample extends LinearOpMode
          * The core values which define the location and size of the sample regions
          */
         static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(85,176);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(50,176);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(120,176);
 
 
         static final int REGION_WIDTH = 30;
@@ -123,14 +134,31 @@ public class EasyOpenCVExample extends LinearOpMode
                 REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
+        Point region2_pointA = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x,
+                REGION1_TOPLEFT_ANCHOR_POINT.y);
+        Point region2_pointB = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
+        Point region3_pointA = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x,
+                REGION1_TOPLEFT_ANCHOR_POINT.y);
+        Point region3_pointB = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         /*
          * Working variables
          */
         Mat region1_Cb;
+        Mat region2_Cb;
+        Mat region3_Cb;
         Mat YCrCb = new Mat();
         Mat Cb = new Mat();
         int avg1;
+        int avg2;
+        int avg3;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile RingPosition position = RingPosition.LEFT;
@@ -152,6 +180,10 @@ public class EasyOpenCVExample extends LinearOpMode
 
             region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
 
+            region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
+
+            region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
+
         }
 
         @Override
@@ -160,6 +192,8 @@ public class EasyOpenCVExample extends LinearOpMode
             inputToCb(input);
 
             avg1 = (int) Core.mean(region1_Cb).val[0];
+            avg2 = (int) Core.mean(region2_Cb).val[0];
+            avg3 = (int) Core.mean(region3_Cb).val[0];
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
@@ -168,15 +202,28 @@ public class EasyOpenCVExample extends LinearOpMode
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region2_pointA, // First point which defines the rectangle
+                    region2_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region3_pointA, // First point which defines the rectangle
+                    region3_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
 
             position = RingPosition.LEFT; // Record our analysis
             telemetry.addData("value", avg1);
             telemetry.update();
             if(avg1 > FREIGHT_PRESENT_THRESHOLD){
                 position = RingPosition.LEFT;
-            }else if (avg1 > FREIGHT_PRESENT_THRESHOLD){
+            }else if (avg2 > FREIGHT_PRESENT_THRESHOLD){
                 position = RingPosition.MIDDLE;
-            }else{
+            }else if(avg3 > FREIGHT_PRESENT_THRESHOLD){
                 position = RingPosition.RIGHT;
             }
 
@@ -189,12 +236,34 @@ public class EasyOpenCVExample extends LinearOpMode
                     GREEN, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
 
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region2_pointA, // First point which defines the rectangle
+                    region2_pointB, // Second point which defines the rectangle
+                    GREEN, // The color the rectangle is drawn in
+                    -1); // Negative thickness means solid fill
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region3_pointA, // First point which defines the rectangle
+                    region3_pointB, // Second point which defines the rectangle
+                    GREEN, // The color the rectangle is drawn in
+                    -1); // Negative thickness means solid fill
+
             return input;
         }
 
-        public int getAnalysis()
+        public int getAnalysis1()
         {
             return avg1;
+        }
+        public int getAnalysis2()
+        {
+            return avg2;
+        }
+        public int getAnalysis3()
+        {
+            return avg3;
         }
 
 

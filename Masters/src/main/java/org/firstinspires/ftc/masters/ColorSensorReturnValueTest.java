@@ -23,15 +23,15 @@ package org.firstinspires.ftc.masters;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
-
+@Disabled
 @TeleOp(name = "ColorSensorReturnValueTest")
-public class ColorSensorReturnValueTest extends LinearOpMode
-{
+public class ColorSensorReturnValueTest extends LinearOpMode {
     NormalizedColorSensor colorSensor;
 
 
