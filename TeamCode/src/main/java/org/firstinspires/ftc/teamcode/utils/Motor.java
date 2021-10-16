@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Represents a motor attached to the robot.
  * @author Thomas Ricci, Mickael Lachut
  * */
-public class EncoderMotor {
+public class Motor {
 
     private final Telemetry TELEMETRY;
     private final String NAME;
@@ -23,9 +23,16 @@ public class EncoderMotor {
     private final double GEAR_REDUCTION;
     private final double RADIUS;
     private final double COUNTS_PER_INCH;
+    private final MotorType TYPE;
+
+    private enum MotorType {
+        SIMPLE, 
+        COMPLEX
+    }
+
 
     /**
-     * Creates a reference to a motor on the robot.
+     * Creates a reference to a complex motor on the robot. This motor can drive to a position, unlike the simple variant.
      * @param telemetry The telemetry object to log data to.
      * @param hardware The hardware object to locate the motor with.
      * @param name The name of the motor as listed on the FtcRobotController device.
@@ -34,7 +41,7 @@ public class EncoderMotor {
      * @param gearReduction The reduction ratio of the motor's gearing.
      * @param radius The radius of the motor's attachment.
      */
-    public EncoderMotor(Telemetry telemetry, HardwareMap hardware, String name, DcMotorSimple.Direction offset, double countsPerRev, double gearReduction, double radius) {
+    public Motor(Telemetry telemetry, HardwareMap hardware, String name, DcMotorSimple.Direction offset, double countsPerRev, double gearReduction, double radius) {
         TELEMETRY = telemetry;
         NAME = name;
         HARDWARE = hardware;
@@ -47,7 +54,33 @@ public class EncoderMotor {
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MOTOR.setDirection(offset);
         MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        TYPE = MotorType.COMPLEX;
         TELEMETRY.addLine("Motor " + getName() + " is ready.");
+    }
+
+    /**
+     * Creates a reference to a simple motor on the robot This motor can't drive a distance, but can drive with and without the encoder.
+     * @param telemetry The telemetry object to log data to.
+     * @param hardware The hardware object to locate the motor with.
+     * @param name The name of the motor as listed on the FtcRobotController device.
+     * @param offset The directional offset of the motor. This can be useful if a motor is mounted the opposite way it should be, for example upside down.
+     */
+    public Motor(Telemetry telemetry, HardwareMap hardware, String name, DcMotorSimple.Direction offset) {
+        TELEMETRY = telemetry;
+        NAME = name;
+        HARDWARE = hardware;
+        MOTOR = hardware.get(DcMotor.class, name);
+        OFFSET = offset;
+        COUNTS_PER_REV = 0;
+        GEAR_REDUCTION = 0;
+        RADIUS = 0;
+        COUNTS_PER_INCH = 0;
+        MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MOTOR.setDirection(offset);
+        MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        TYPE = MotorType.SIMPLE;
+        TELEMETRY.addLine("Motor " + getName() + " is ready.");
+
     }
 
     /**
@@ -55,10 +88,13 @@ public class EncoderMotor {
      * @param distance The distance to drive in inches.
      * @param speed The maximum speed of the motor. The speed may be anywhere between -1 and this value, depending on where the motor is. This value cannot be below 0 though.
      * @throws IllegalArgumentException The error to throw when the maximum speed is not between -100 and 100.
+     * @throws IllegalStateException The error to throw when the motor's TYPE != MotorType.COMPLEX.
      */
-    public void driveDistance(int distance, int speed) throws IllegalArgumentException {
+    public void driveDistance(int distance, int speed) throws IllegalArgumentException, IllegalStateException {
         if(speed < -100 || speed > 100) {
             throw new IllegalArgumentException("Speed is out of bounds!");
+        }else if(TYPE == MotorType.SIMPLE) {
+            throw new IllegalStateException("Motor type " + TYPE + " is simple, but must be complex for this method!");
         }
         MOTOR.setTargetPosition(MOTOR.getCurrentPosition() + (int)(distance * getCountsPerInch()));
         MOTOR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -154,6 +190,10 @@ public class EncoderMotor {
 
     public double getCountsPerInch() {
         return COUNTS_PER_INCH;
+    }
+    
+    public MotorType getType() {
+        return TYPE;
     }
 
 }
