@@ -204,12 +204,6 @@ public class Drive extends Subsystem {
     // robot move in all directions
     public double[] calcMotorPowers(double leftStickX, double leftStickY, double rightStickX) {
         double r = Math.hypot(leftStickX, leftStickY);
-        double robotAngle = Math.atan2(leftStickY, leftStickX) - Math.PI / 4;
-        double lrPower = r * Math.sin(robotAngle) + rightStickX;
-        double lfPower = r * Math.cos(robotAngle) + rightStickX;
-        double rrPower = r * Math.cos(robotAngle) - rightStickX;
-        double rfPower = r * Math.sin(robotAngle) - rightStickX;
-        return new double[]{lfPower, rfPower, lrPower, rrPower};
     }
 
     // robot only move in forward/backward/left/right directions
@@ -220,13 +214,6 @@ public class Drive extends Subsystem {
         else{
             leftStickX = 0;
         }
-        double r = Math.hypot(leftStickX, leftStickY);
-        double robotAngle = Math.atan2(leftStickY, leftStickX) - Math.PI / 4;
-        double lrPower = r * Math.sin(robotAngle) + rightStickX;
-        double lfPower = r * Math.cos(robotAngle) + rightStickX;
-        double rrPower = r * Math.cos(robotAngle) - rightStickX;
-        double rfPower = r * Math.sin(robotAngle) - rightStickX;
-        return new double[]{lfPower, rfPower, lrPower, rrPower};
     }
 
     public void setDrivePower(double power) {
@@ -282,12 +269,6 @@ public class Drive extends Subsystem {
     /**
      * Positive encoder values correspond to rightward robot movement
      */
-    public void strafe(int targetPosition) {
-        frontLeft.setTargetPosition(targetPosition);
-        frontRight.setTargetPosition(-targetPosition);
-        rearLeft.setTargetPosition(-targetPosition);
-        rearRight.setTargetPosition(targetPosition);
-    }
 
     public void turnRobotByTick(double angle) {
 //        this.turnByTick(TURN_SPEED, angle);
@@ -446,7 +427,7 @@ public class Drive extends Subsystem {
         rearRight.setTargetPosition((int)  (+ targetPositionX + targetPositionY));
     }
 
-    public double[] calcMotorPowers2D(double targetPositionX, double targetPositionY, double motorPower)
+    /*public double[] calcMotorPowers2D(double targetPositionX, double targetPositionY, double motorPower)
     {
         // targetPositionX and targetPositionY determine the direction of movement
         // motorPower determines the magnitude of motor power
@@ -457,6 +438,7 @@ public class Drive extends Subsystem {
         double rfPower = motorPower * (- targetPositionX + targetPositionY) / angleScale;
         return new double[]{lrPower, lfPower, rrPower, rfPower};
     }
+    */
 
     public void moveToPosABS(double targetPositionX, double targetPositionY) {
         // move to (targetPositionX, targetPositionY) in absolute field coordinate
@@ -479,11 +461,6 @@ public class Drive extends Subsystem {
 
     public void moveToPosREL(double targetPositionX, double targetPositionY) {
         // move to (targetPositionX, targetPositionY) in relative robot coordinate
-        this.moveToPos2D(DRIVE_SPEED, targetPositionX, targetPositionY);
-        robotCurrentPosX += targetPositionY * Math.cos(robotCurrentAngle*Math.PI/180.0)
-                + targetPositionX * Math.cos((robotCurrentAngle-90.0)*Math.PI/180.0);
-        robotCurrentPosY += targetPositionY * Math.sin(robotCurrentAngle*Math.PI/180.0)
-                + targetPositionX * Math.sin((robotCurrentAngle-90.0)*Math.PI/180.0);
         // Display it for the driver.
         opMode.telemetry.addData("moveToPosREL",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         opMode.telemetry.update();
