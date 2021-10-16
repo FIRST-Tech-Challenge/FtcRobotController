@@ -26,11 +26,11 @@ public class Vision {
     private HardwareMap hardwareMap;
     private Robot robot;
 
-    public enum Color {
+    public enum Color { // TODO: is this enum the one defining the allianceColor?
         RED,
         BLUE,
     }
-    private final Color alliance;
+    private final Robot.AllianceColor allianceColor;
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -73,14 +73,10 @@ public class Vision {
 
     private int[] viewportContainerIds;
 
-    public Vision(HardwareMap hardwareMap, Robot robot, boolean isBlue) {
+    public Vision(HardwareMap hardwareMap, Robot robot, Robot.AllianceColor aC) {
         this.hardwareMap = hardwareMap;
         this.robot = robot;
-        if(isBlue) {
-            alliance = Color.BLUE;
-        } else {
-            alliance = Color.RED;
-        }
+        this.allianceColor = aC;
 
         webcamName = hardwareMap.get(WebcamName.class, WEBCAM_NAME);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
