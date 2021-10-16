@@ -12,11 +12,11 @@ import org.opencv.core.Rect;
 public class QQLeak extends OpenCvPipeline {
     //they very kindly didn't insert comments...-_-
     Telemetry telemetry;
-    Rect space1 = new Rect(8, 110, 50, 50);//barcode position 1 i think
+    Rect space1 = new Rect(0, 140, 200, 200);//barcode position 1 i think
     Mat slot1;
-    Rect space2 = new Rect(126, 120, 50, 50);//so this is position 2 no matter what
+    Rect space2 = new Rect(220, 140, 200, 200);//so this is position 2 no matter what
     Mat slot2;
-    Rect space3 = new Rect(230, 120, 50, 50);//position 3 maybe?
+    Rect space3 = new Rect(440, 140, 200, 200);//position 3 maybe?
     Mat slot3;
     int slotSelected = -1;//for storing which location the duck/thing is in
 
@@ -31,7 +31,7 @@ public class QQLeak extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat inputMat) {
-        Imgproc.cvtColor(inputMat, inputMat, Imgproc.COLOR_RGB2HSV);//change color to hsv
+        Imgproc.cvtColor(inputMat, inputMat, Imgproc.COLOR_BGR2HSV);//change color to hsv
         Imgproc.GaussianBlur(inputMat, inputMat, new Size(3, 3), 0);//blur image
         Imgproc.rectangle(inputMat, space1, new Scalar(0, 0, 255), 3);//draw a rectangle around each area???
         Imgproc.rectangle(inputMat, space2, new Scalar(0, 0, 255), 3);
