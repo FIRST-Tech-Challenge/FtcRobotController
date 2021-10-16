@@ -55,9 +55,13 @@ public class FrenzyHardwareMap
 
     /* Public OpMode members. */
     public DcMotor motorFrontLeft = null;
+    //Motor in Port 0
     public DcMotor motorBackLeft = null;
+    //Motor in Port 3
     public DcMotor motorFrontRight = null;
+    //Motor in Port 1
     public DcMotor motorBackRight = null;
+    //Motor in Port 2
 
     /* local OpMode members. */
     HardwareMap frenzyMap =  null;
