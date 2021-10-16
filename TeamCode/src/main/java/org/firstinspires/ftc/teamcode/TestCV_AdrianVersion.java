@@ -14,6 +14,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -42,7 +43,7 @@ public class TestCV_AdrianVersion extends LinearOpMode {
         width = 640;
         height = 480;
 
-        cam.startStreaming(width, height);//can add rotation if needed
+        cam.startStreaming(width, height, OpenCvCameraRotation.SIDEWAYS_LEFT);//can add rotation if needed
 
         waitForStart();
 
