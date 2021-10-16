@@ -11,15 +11,15 @@ public class MecanumDriveTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Declare our motors
         // Make sure your ID's match your configuration
-        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("fl");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("bl");
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("fr");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("br");
+        DcMotor frontLeft = hardwareMap.dcMotor.get("fl");
+        DcMotor backLeft = hardwareMap.dcMotor.get("bl");
+        DcMotor frontRight = hardwareMap.dcMotor.get("fr");
+        DcMotor backRight = hardwareMap.dcMotor.get("br");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -37,10 +37,10 @@ public class MecanumDriveTest extends LinearOpMode {
             double rrPower = r * Math.cos(robotAngle) - rx;
             double rfPower = r * Math.sin(robotAngle) - rx;
 
-            motorFrontLeft.setPower(lfPower);
-            motorBackLeft.setPower(lrPower);
-            motorFrontRight.setPower(rfPower);
-            motorBackRight.setPower(rrPower);
+            frontLeft.setPower(lfPower);
+            frontRight.setPower(rfPower);
+            backLeft.setPower(lrPower);
+            backRight.setPower(rrPower);
         }
     }
 }
