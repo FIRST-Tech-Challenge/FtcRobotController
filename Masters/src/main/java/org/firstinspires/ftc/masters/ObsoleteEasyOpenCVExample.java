@@ -25,6 +25,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -38,10 +39,9 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "TestComputerVisionExample")
-public class EasyOpenCVExample extends LinearOpMode
+@TeleOp(name = "TestComputerVisionBack")
+public class ObsoleteEasyOpenCVExample extends LinearOpMode
 {
-    OpenCvInternalCamera phoneCam;
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
 
@@ -50,25 +50,28 @@ public class EasyOpenCVExample extends LinearOpMode
     {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
         pipeline = new SkystoneDeterminationPipeline(telemetry);
-        phoneCam.setPipeline(pipeline);
+        webcam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
+
         });
 
         waitForStart();
+        telemetry.addData("Position", "HELLO");
+        telemetry.update();
 
         while (opModeIsActive())
         {
@@ -89,13 +92,13 @@ public class EasyOpenCVExample extends LinearOpMode
         }
 
         /*
-         * An enum to define the freight position
+         * An enum to define the skystone position
          */
         public enum RingPosition
         {
-                LEFT,
-                MIDDLE,
-                RIGHT
+            FOUR,
+            ONE,
+            NONE
         }
 
         /*
@@ -103,18 +106,22 @@ public class EasyOpenCVExample extends LinearOpMode
          */
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
-        static final Scalar RED = new Scalar(255,0,0);
 
         /*
          * The core values which define the location and size of the sample regions
          */
         static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(85,176);
+//inner blue 68,176 size 30,42
+        //outer blue 192, 176 size 30,42
+        //inside red, the same as outer blue
+        //outer red, the same as inside blue
 
 
         static final int REGION_WIDTH = 30;
         static final int REGION_HEIGHT = 42;
 
-        final int FREIGHT_PRESENT_THRESHOLD = 150;
+        final int FOUR_RING_THRESHOLD = 150;
+        final int ONE_RING_THRESHOLD = 135;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -122,7 +129,6 @@ public class EasyOpenCVExample extends LinearOpMode
         Point region1_pointB = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
 
         /*
          * Working variables
@@ -133,7 +139,7 @@ public class EasyOpenCVExample extends LinearOpMode
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile RingPosition position = RingPosition.LEFT;
+        public volatile RingPosition position = RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -151,7 +157,6 @@ public class EasyOpenCVExample extends LinearOpMode
             inputToCb(firstFrame);
 
             region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-
         }
 
         @Override
@@ -168,16 +173,15 @@ public class EasyOpenCVExample extends LinearOpMode
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-
-            position = RingPosition.LEFT; // Record our analysis
+            position = RingPosition.FOUR; // Record our analysis
             telemetry.addData("value", avg1);
             telemetry.update();
-            if(avg1 > FREIGHT_PRESENT_THRESHOLD){
-                position = RingPosition.LEFT;
-            }else if (avg1 > FREIGHT_PRESENT_THRESHOLD){
-                position = RingPosition.MIDDLE;
+            if(avg1 > FOUR_RING_THRESHOLD){
+                position = RingPosition.FOUR;
+            }else if (avg1 > ONE_RING_THRESHOLD){
+                position = RingPosition.ONE;
             }else{
-                position = RingPosition.RIGHT;
+                position = RingPosition.NONE;
             }
 
 
