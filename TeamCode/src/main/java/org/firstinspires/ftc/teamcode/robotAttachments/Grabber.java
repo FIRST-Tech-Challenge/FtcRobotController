@@ -7,36 +7,31 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Grabber {
     private DcMotor linearSlide;
     private Servo grabberServo;
+    private boolean isOpen;
 
-    private static final float openPosition  = 0.5f;
+    private static final float openPosition = 0.5f;
     private static final float closePosition = .95f;
 
 
-    public Grabber(HardwareMap hardwareMap, String servoName){
+    public Grabber(HardwareMap hardwareMap, String servoName) {
         grabberServo = hardwareMap.servo.get(servoName);
     }
 
-    public void open(){
+    public void open() {
         grabberServo.setPosition(openPosition);
+        isOpen = true;
     }
 
-    public void close(){
+    public void close() {
         grabberServo.setPosition(closePosition);
+        isOpen = false;
     }
 
-    public boolean isOpen(){
-         if (grabberServo.getPosition() == openPosition){
-            return true;
-        }else {
-            return false;
-        }
+    public boolean isOpen() {
+        return isOpen;
     }
 
-    public boolean isClosed(){
-        if (grabberServo.getPosition() == closePosition){
-            return true;
-        }else {
-            return false;
-        }
+    public boolean isClosed() {
+        return !isOpen;
     }
 }
