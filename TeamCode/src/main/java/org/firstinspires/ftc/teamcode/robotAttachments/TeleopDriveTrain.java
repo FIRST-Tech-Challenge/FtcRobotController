@@ -73,10 +73,11 @@ public class TeleopDriveTrain {
         power = boundNumber(power);
         double power1;
         double power2;
+
         angle = angle % 360;
 
-        power1 = Math.cos(Math.toRadians(angle + 45.0));
-        power2 = Math.cos(Math.toRadians(angle - 45));
+        power1 = -Math.cos(Math.toRadians(angle + 45.0));
+        power2 = -Math.cos(Math.toRadians(angle - 45));
 
         power1 = power * power1;
         power2 = power * power2;
@@ -85,7 +86,7 @@ public class TeleopDriveTrain {
         back_left.setPower(power1);
 
         front_left.setPower(power2);
-        back_right.setPower(-power2);
+        back_right.setPower(power2);
 
     }
 
