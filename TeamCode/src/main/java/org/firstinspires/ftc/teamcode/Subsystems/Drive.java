@@ -665,7 +665,7 @@ public class Drive extends Subsystem {
 //        sleep(100);
     }
 
-    public void printMotorPIDCoefficients() {
+  /*  public void printMotorPIDCoefficients() {
         PIDFCoefficients pidCoeff;
         pidCoeff = getMotorPIDCoefficients(frontLeft, DcMotor.RunMode.RUN_TO_POSITION);
         opMode.telemetry.addData("Front Left ", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
@@ -681,6 +681,7 @@ public class Drive extends Subsystem {
                 pidCoeff.p, pidCoeff.i, pidCoeff.d, pidCoeff.f, pidCoeff.algorithm.toString());
         opMode.telemetry.update();
     }
+    */
 
     public void setMotorKp(double motorKPFL, double motorKPFR, double motorKPRL, double motorKPRR) {
         frontLeft.setPositionPIDFCoefficients(motorKPFL);
@@ -824,7 +825,7 @@ public class Drive extends Subsystem {
                         frontLeft.setPower(0.0);
                     }
                     else {
-                        currentError = (double) (currentCount-targetCount);
+/*                        currentError = (double) (currentCount-targetCount);
                         if (initialized) { // after the first point, the previous data is valid
                             acculErrorFL = acculErrorFL*alpha + currentError*(currentTime-prevTimeFL);  // integrate error
                             errorSlope = (currentError - prevErrorFL)/(currentTime-prevTimeFL);         // error slope
@@ -1132,7 +1133,7 @@ public class Drive extends Subsystem {
         if (targetSpeed < speedOffset) targetSpeed = speedOffset;
         return targetSpeed;
     }
-
+*/
     public static class Odometry
     {
         TrcPose2D position;
@@ -1140,7 +1141,7 @@ public class Drive extends Subsystem {
 
         /**
          * Constructor: Create an instance of the object.
-         */
+
         Odometry()
         {
             position = new TrcPose2D();
