@@ -22,11 +22,11 @@ import java.util.List;
 
 @Autonomous(name = "Testing based on Adrian example")
 public class TestCV_AdrianVersion extends LinearOpMode {
-    double hue;
-    OpenCvCamera cam;
+    double hue;//color we want, yellow
+    OpenCvCamera cam;// webcam
     int width;
     int height;
-    Pipeline mainPipeline;//Create Class First!!! Change Name!!!
+    Pipeline mainPipeline;
     double sensitivity;
 
     @Override
@@ -72,18 +72,18 @@ public class TestCV_AdrianVersion extends LinearOpMode {
             contours.clear();//idk why we need it, but we have it so ok
 
             //we're using hsl i guess??
-            hue = 2;//SET THIS VALUE!!!
-            sensitivity = 2;//THIS ONE TOO!!!
+            hue = 27;//SET THIS VALUE!!!//53
+            sensitivity = 30;//THIS ONE TOO!!!
 
             //step 1: blur
             Imgproc.GaussianBlur(input, blur, new Size(5,5), 0);//source, destination, size of blur ig, sigmax??? can be ommited
 
-            //step 2: bgr to hsv... technically could do it first but ok
+            //step 2: rgb to hsv... technically could do it first but ok
             Imgproc.cvtColor(blur, hsv, Imgproc.COLOR_RGB2HSV);//source, dest, color swap choice (is an int technically)
 
             //find contours:
-            Scalar lowBound = new Scalar(2,3,4);//basically what adrian did but in separate lines to make it look neat :)
-            Scalar hiBound = new Scalar(2,3,4);//also CHANGE THESE NUMS!!
+            Scalar lowBound = new Scalar(21,255,255);//basically what adrian did but in separate lines to make it look neat :)
+            Scalar hiBound = new Scalar(31,255,255);//also CHANGE THESE NUMS!!
             Core.inRange(hsv, lowBound, hiBound, singleColor);//source, low bound, high bound, destinatin
             Imgproc.findContours(singleColor, contours, hierarchy, Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);//source, contours list, hierarchy mat, int for code, and int method
             //also test using RETR_TREE idk what the difference is oop
