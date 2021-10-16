@@ -55,8 +55,8 @@ import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
  */
 
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-@Disabled
+@TeleOp(name="Mecanum Teleop", group="Linear Opmode")
+
 public class MecanumTeleop extends DriveMethods {
 
 

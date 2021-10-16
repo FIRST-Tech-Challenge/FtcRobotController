@@ -71,6 +71,7 @@ public class C1ChassisDrive extends DriveMethods {
     double rightX;
     double rightY;
     double rightTrigger2;
+    double carouselPosition;
 
     @Override
     public void runOpMode() {
@@ -104,6 +105,7 @@ public class C1ChassisDrive extends DriveMethods {
             rightY = gamepad1.right_stick_y;
             rightTrigger2 = gamepad2.right_trigger;
 
+
             //motors
             motorFrontLeft.setPower(leftY + leftX + rightX);
             motorBackLeft.setPower(leftY - leftX + rightX);
@@ -111,10 +113,19 @@ public class C1ChassisDrive extends DriveMethods {
             motorBackRight.setPower(leftY + leftX - rightX);
             motorTankTread.setPower(rightY);
 
+
+
             //servos
-            servoCarousel.setPosition(rightTrigger2);
+            carouselPosition = 0.5 + (rightTrigger2 / 2);
+                //constrains servo motion to correct direction
+            servoCarousel.setPosition(carouselPosition);
 
-
+                //gently pushes robot backward whilst rightTrigger2 engaged
+            if (rightTrigger2 > 0) {
+                driveDirection(.2, Direction.BACKWARD);
+            } else {
+                driveDirection(0, Direction.BACKWARD);
+            }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             if(rightY > 0 || rightY < 0){

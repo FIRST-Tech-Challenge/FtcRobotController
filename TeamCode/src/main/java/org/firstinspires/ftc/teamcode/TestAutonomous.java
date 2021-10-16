@@ -30,9 +30,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -42,6 +43,10 @@ import static org.firstinspires.ftc.teamcode.DriveMethods.Direction.FORWARD;
 import static org.firstinspires.ftc.teamcode.DriveMethods.Direction.FORWARD_LEFT;
 import static org.firstinspires.ftc.teamcode.DriveMethods.Direction.LEFT;
 import static org.firstinspires.ftc.teamcode.DriveMethods.Direction.RIGHT;
+import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
+import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
+import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
+import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
 
 
 /**
@@ -57,8 +62,7 @@ import static org.firstinspires.ftc.teamcode.DriveMethods.Direction.RIGHT;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TestAutonomous", group="Linear Opmode")
-@Disabled
+@Autonomous(name="TestAutonomous", group="Linear Opmode")
 public class TestAutonomous extends DriveMethods {
 
     // Declare OpMode members.
@@ -66,27 +70,45 @@ public class TestAutonomous extends DriveMethods {
 
     @Override
     public void runOpMode() {
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
+        motorBackRight = hardwareMap.get(DcMotor.class, "backright");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
+
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        driveForDistance(1,1,FORWARD);
-        driveForDistance(1,1,LEFT);
-        driveForDistance(1,1,BACKWARD);
-        driveForDistance(1,1,RIGHT);
-        driveForDistance(1, 1,FORWARD_LEFT);
-        driveForDistance(1,1,RIGHT);
-        driveForDistance(1,1,BACKWARD_LEFT);
-        driveForDistance(1,1,FORWARD);
-        rotateToPosition(1,-90);
+        driveForDistance(.5,.5,FORWARD);
         sleep(100);
-        rotateToPosition(1,-179);
+        driveForDistance(.5,.5,LEFT);
         sleep(100);
-        rotateToPosition(1,90);
-        rotateToPosition(1,0);
-        driveForTime(1,100,FORWARD);
+        driveForDistance(.5,.5,BACKWARD);
+        sleep(100);
+        driveForDistance(.5,.5,RIGHT);
+        sleep(100);
+        driveForDistance(.5, .5,FORWARD_LEFT);
+        sleep(100);
+        driveForDistance(.5,.5,RIGHT);
+        sleep(100);
+        driveForDistance(.5,.5,BACKWARD_LEFT);
+        sleep(100);
+        driveForDistance(.5,.5,FORWARD);
+        sleep(100);
+        rotateToPosition(.5,-90);
+        sleep(100);
+        rotateToPosition(.5,-179);
+        sleep(100);
+        rotateToPosition(.5,90);
+        rotateToPosition(.5,0);
+        driveForTime(.5,100,FORWARD);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {

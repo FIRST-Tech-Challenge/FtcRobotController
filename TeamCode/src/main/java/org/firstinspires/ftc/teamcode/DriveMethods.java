@@ -123,9 +123,10 @@ public class DriveMethods extends LinearOpMode {
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         double distanceTraveled = 0;
         int TARGET_POSITION = (int) ((distance / DISTANCE_PER_CLICK));
+
+
         double ScaleFactorForStrafing = 0.92;
 
         if (direction == Direction.LEFT || direction == Direction.RIGHT) {
