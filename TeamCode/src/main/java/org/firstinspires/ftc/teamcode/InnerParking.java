@@ -20,7 +20,7 @@ import android.graphics.Color;
 import android.view.View;
 
 @Autonomous(name="InnerParking", group="Autonomous")
-//@Disabled
+@Disabled
 public class InnerParking extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor lf;
