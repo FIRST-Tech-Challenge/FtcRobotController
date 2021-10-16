@@ -10,7 +10,7 @@
 // Use PID controller to manage motor power during 90 degree turn to reduce
 // overshoot.
 
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.PID;
 
 //import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
