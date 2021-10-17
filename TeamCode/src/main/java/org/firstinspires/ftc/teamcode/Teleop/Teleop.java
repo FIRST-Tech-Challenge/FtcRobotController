@@ -38,7 +38,6 @@ public class Teleop extends LinearOpMode {
             double lfPower = r * Math.cos(robotAngle) + rx;
             double rrPower = r * Math.cos(robotAngle) - rx;
             double rfPower = r * Math.sin(robotAngle) - rx;
-
             frontLeft.setPower(lfPower);
             frontRight.setPower(rfPower);
             backLeft.setPower(lrPower);
