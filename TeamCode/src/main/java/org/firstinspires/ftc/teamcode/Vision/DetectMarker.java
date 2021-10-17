@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Vision;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry; // TODO: Integrate this file with the rest of the codebase
 
 import org.opencv.core.Core;
@@ -13,14 +11,6 @@ import org.opencv.imgproc.Imgproc;
 
 import org.openftc.easyopencv.OpenCvPipeline;
 
-
-public class DetectMarker extends LinearOpMode {
-    @Override
-    public void runOpMode() throws InterruptedException {
-        DetectionPipeline pipeline = new DetectionPipeline(telemetry, "red");
-
-    }
-}
 
 class DetectionPipeline extends OpenCvPipeline {
     Telemetry telemetry;
