@@ -51,7 +51,7 @@ public class DetectMarker extends OpenCvPipeline {
     Mat mat = new Mat();
 
     public DetectMarker(Robot robot, Robot.AllianceColor ac) {
-        telemetry = robot.getOpmode().telemetry;
+        telemetry = robot.getOpMode().telemetry;
         this.allianceColor = ac;
     }
 
@@ -79,10 +79,12 @@ public class DetectMarker extends OpenCvPipeline {
         telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Middle raw value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Right raw value", (int) Core.sumElems(right).val[0]);
+        telemetry.update();
 
         telemetry.addData("Left percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("Middle percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("Right percentage", Math.round(rightValue * 100) + "%");
+        telemetry.update();
 
         boolean markerLeft = leftValue > PERCENT_COLOR_THRESHOLD;
         boolean markerMiddle = middleValue > PERCENT_COLOR_THRESHOLD;

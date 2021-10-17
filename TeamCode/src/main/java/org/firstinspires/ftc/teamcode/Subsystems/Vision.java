@@ -80,7 +80,7 @@ public class Vision {
     public Vision(HardwareMap hardwareMap, Robot robot, Robot.AllianceColor aC) {
         this.hardwareMap = hardwareMap;
         this.robot = robot;
-        this.telemetry = robot.getOpmode().telemetry;
+        this.telemetry = robot.getOpMode().telemetry;
         this.allianceColor = aC;
 
         webcamName = hardwareMap.get(WebcamName.class, WEBCAM_NAME);
