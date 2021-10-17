@@ -147,8 +147,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
         list.add(Math.abs(boxMean - box1));
         list.add(Math.abs(boxMean - box2));
         list.add(Math.abs(boxMean - box3));
-        double boxNum = Collections.max(list);
-        return list.indexOf(boxNum) + 1;
+        return list.indexOf(Collections.max(list)) + 1;
     }
 
     /**
