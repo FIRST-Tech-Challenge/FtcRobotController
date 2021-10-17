@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.Telemetry; // TODO: Integrate this file with the rest of the codebase
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -25,19 +25,18 @@ public class DetectMarker extends LinearOpMode {
 class DetectionPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     public enum MarkerLocation {
-        Left,
-        Middle,
-        Right,
-        Not_Found
+        LEFT,
+        MIDDLE,
+        RIGHT,
+        NOT_FOUND
     }
 
-    public enum allianceColor { // maybe we can enumerate it?
-        RED,                    // Inserting it here because its the only place allianceColor seems to be referenced at. TODO: See if this works as a solution for allianceColor standardization
-        BLUE,
-        UNIDENTIFIED
+    public enum AllianceColor { // TODO: See if this works as a solution for allianceColor standardization
+        RED, // Inserting it here because its the only place allianceColor seems to be referenced at.
+        BLUE // undefined is not needed.
     }
 
-    String allianceColor; //
+    private AllianceColor allianceColor;
     private MarkerLocation markerLocation;
 
 
@@ -60,7 +59,12 @@ class DetectionPipeline extends OpenCvPipeline {
 
     public DetectionPipeline(Telemetry t, String ac) {
         telemetry = t;
-        allianceColor = ac; // ac stands for allianceColor
+        if (ac.equals("blue")) { // ac stands for allianceColor
+            allianceColor = AllianceColor.BLUE;
+        }
+        else {
+            allianceColor = AllianceColor.RED;
+        }
     }
 
     @Override
@@ -86,6 +90,7 @@ class DetectionPipeline extends OpenCvPipeline {
         telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Middle raw value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Right raw value", (int) Core.sumElems(right).val[0]);
+
         telemetry.addData("Left percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("Middle percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("Right percentage", Math.round(rightValue * 100) + "%");
@@ -96,16 +101,16 @@ class DetectionPipeline extends OpenCvPipeline {
 
 
         if (markerLeft) {
-            markerLocation = MarkerLocation.Left;
+            markerLocation = MarkerLocation.LEFT;
             telemetry.addData("Marker Location", "right");
         } else if (markerMiddle) {
-            markerLocation = MarkerLocation.Middle;
+            markerLocation = MarkerLocation.MIDDLE;
             telemetry.addData("Marker Location", "middle");
         } else if (markerRight) {
-            markerLocation = MarkerLocation.Right;
+            markerLocation = MarkerLocation.RIGHT;
             telemetry.addData("Marker Location", "left");
         } else {
-            markerLocation = MarkerLocation.Not_Found;
+            markerLocation = MarkerLocation.NOT_FOUND;
             telemetry.addData("Marker Location", "not found");
         }
         telemetry.update();
@@ -114,7 +119,7 @@ class DetectionPipeline extends OpenCvPipeline {
 
         Scalar colorNormal;
 
-        if (allianceColor.equals("red")) {
+        if (allianceColor == AllianceColor.RED) {
             colorNormal = new Scalar(255, 0, 0);
         }
         else {
@@ -123,9 +128,9 @@ class DetectionPipeline extends OpenCvPipeline {
 
         Scalar colorMarker = new Scalar(0, 255, 0);
 
-        Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.Left ? colorMarker : colorNormal);
-        Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.Middle ? colorMarker : colorNormal);
-        Imgproc.rectangle(mat, RIGHT_RECT, markerLocation == MarkerLocation.Right ? colorMarker : colorNormal);
+        Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.LEFT ? colorMarker : colorNormal);
+        Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.MIDDLE ? colorMarker : colorNormal);
+        Imgproc.rectangle(mat, RIGHT_RECT, markerLocation == MarkerLocation.RIGHT ? colorMarker : colorNormal);
 
         return mat;
     }
