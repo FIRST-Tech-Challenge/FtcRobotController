@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 public class pipeline1Simulator extends OpenCvPipeline {
     private Telemetry telemetry;
-    //We declare the mats ontop so we can reuse them later to avoid memory leaks
+    final Scalar red = new Scalar(255,0,0);
+    final Scalar yellow = new Scalar(255,255,0);
     private Mat matYCrCb = new Mat();
     private Mat matCbBottom = new Mat();
     private Mat matCbMiddle = new Mat();
@@ -65,11 +66,9 @@ public class pipeline1Simulator extends OpenCvPipeline {
         telemetry.addData("topBoxAverage",topAverage);
         telemetry.addData("topBoxAverage",middleAverage);
         telemetry.addData("bottomBoxAverage",bottomAverage);
-        // USE Z-SCORE
         telemetry.update();
+
         //The points needed for the rectangles are calculated here
-        Scalar red = new Scalar(255,0,0);
-        Scalar yellow = new Scalar(255,255,0);
         Rect topRect = new Rect(
                 (int) (matYCrCb.width() * topRectWidthPercentage),
                 (int) (matYCrCb.height() * topRectHeightPercentage),
