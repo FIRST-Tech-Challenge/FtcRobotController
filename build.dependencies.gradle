@@ -1,7 +1,7 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-    jcenter()  // Needed for tensorflow-lite
+    // jcenter()  // Needed for tensorflow-lite
     flatDir {
         dirs rootProject.file('libs')
     }
