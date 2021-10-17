@@ -809,8 +809,8 @@ public class Drive extends Subsystem {
             if (!isMotorFLDone) {
                 currentCount = frontLeft.getCurrentPosition();                          // get current motor tick
                 currentTime = ((double) timer.nanoseconds()) * 1.0e-9 - startTime;      // get current time
-                targetCount = getTargetTickCount(tickCount, peakSpeed, rampTime, currentTime);  // get integrated target tick on the speed profile
-                currentTargetSpeed = getTargetSpeed(tickCount, peakSpeed, rampTime, currentTime); // get the target speed on the speed profile
+                //targetCount = getTargetTickCount(tickCount, peakSpeed, rampTime, currentTime);  // get integrated target tick on the speed profile
+                //currentTargetSpeed = getTargetSpeed(tickCount, peakSpeed, rampTime, currentTime); // get the target speed on the speed profile
                 if (initialized) {  // check if the motor is rotating
                     isMotorFLNotMoving = Math.abs(currentCount - prevCountFL) < timeOutThreshold;
                 }
@@ -820,12 +820,8 @@ public class Drive extends Subsystem {
                         isMotorFLNotMoving = true;
                         frontLeft.setPower(0.0);
                     }
-                    else {
-/*                        currentError = (double) (currentCount-targetCount);
-                        if (initialized) { // after the first point, the previous data is valid
-                            acculErrorFL = acculErrorFL*alpha + currentError*(currentTime-prevTimeFL);  // integrate error
-                            errorSlope = (currentError - prevErrorFL)/(currentTime-prevTimeFL);         // error slope
-                            currentPower = currentTargetSpeed/maxSpeed - currentError*Kp - acculErrorFL*Ki - errorSlope*Kd; // apply PID correction
+                   // else {          TODO: The code below is commented out for further review
+                        currentError = (double) (currentCount-targetCount);
                         }
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
@@ -843,16 +839,6 @@ public class Drive extends Subsystem {
                     }
                     else {
                         currentError = (double) (-currentCount-targetCount);
-                        if (initialized) { // after the first point, the previous data is valid
-                            acculErrorFL = acculErrorFL*alpha + currentError*(currentTime-prevTimeFL);  // integrate error
-                            errorSlope = (currentError - prevErrorFL)/(currentTime-prevTimeFL);         // error slope
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp + acculErrorFL*Ki + errorSlope*Kd; // apply PID correction
-                        }
-                        else { // at the first point, use Kp only
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
-                        }
-                        if (currentPower < -1.0) currentPower = -1.0;
-                        if (currentPower > 0.0) currentPower = 0.0;
                         frontLeft.setPower(currentPower);
                     }
                 }
@@ -860,6 +846,7 @@ public class Drive extends Subsystem {
                 prevTimeFL = currentTime;
                 prevCountFL = currentCount;
             } // if (!isMotorFLDone)
+    /*
             if (!isMotorFRDone) {
                 currentCount = frontRight.getCurrentPosition();
                 currentTime = ((double) timer.nanoseconds()) * 1.0e-9 - startTime;
@@ -876,10 +863,6 @@ public class Drive extends Subsystem {
                     }
                     else {
                         currentError = (double) (currentCount-targetCount);
-                        if (initialized) { // after the first point, the previous data is valid
-                            acculErrorFR = acculErrorFR*alpha + currentError*(currentTime-prevTimeFR);  // integrate error
-                            errorSlope = (currentError - prevErrorFR)/(currentTime-prevTimeFR);         // error slope
-                            currentPower = currentTargetSpeed/maxSpeed - currentError*Kp - acculErrorFR*Ki - errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
@@ -898,9 +881,6 @@ public class Drive extends Subsystem {
                     else {
                         currentError = (double) (-currentCount-targetCount);
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorFR = acculErrorFR*alpha + currentError*(currentTime-prevTimeFR);  // integrate error
-                            errorSlope = (currentError - prevErrorFR)/(currentTime-prevTimeFR);         // error slope
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp + acculErrorFR*Ki + errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
@@ -914,6 +894,7 @@ public class Drive extends Subsystem {
                 prevTimeFR = currentTime;
                 prevCountFR = currentCount;
             } // if (!isMotorFRDone)
+
             if (!isMotorRLDone) {
                 currentCount = rearLeft.getCurrentPosition();
                 currentTime = ((double) timer.nanoseconds()) * 1.0e-9 - startTime;
@@ -931,9 +912,6 @@ public class Drive extends Subsystem {
                     else {
                         currentError = (double) (currentCount-targetCount);
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorRL = acculErrorRL*alpha + currentError*(currentTime-prevTimeRL);  // integrate error
-                            errorSlope = (currentError - prevErrorRL)/(currentTime-prevTimeRL);         // error slope
-                            currentPower = currentTargetSpeed/maxSpeed - currentError*Kp - acculErrorRL*Ki - errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
@@ -952,9 +930,6 @@ public class Drive extends Subsystem {
                     else {
                         currentError = (double) (-currentCount-targetCount);
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorRL = acculErrorRL*alpha + currentError*(currentTime-prevTimeRL);  // integrate error
-                            errorSlope = (currentError - prevErrorRL)/(currentTime-prevTimeRL);         // error slope
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp + acculErrorRL*Ki + errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
@@ -986,9 +961,6 @@ public class Drive extends Subsystem {
                     }
                     else {
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorRR = acculErrorRR*alpha + currentError*(currentTime-prevTimeRR);  // integrate error
-                            errorSlope = (currentError - prevErrorRR)/(currentTime-prevTimeRR);         // error slope
-                            currentPower = currentTargetSpeed/maxSpeed - currentError*Kp - acculErrorRR*Ki - errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
@@ -1009,9 +981,6 @@ public class Drive extends Subsystem {
                     }
                     else {
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorRR = acculErrorRR*alpha + currentError*(currentTime-prevTimeRR);  // integrate error
-                            errorSlope = (currentError - prevErrorRR)/(currentTime-prevTimeRR);         // error slope
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp + acculErrorRR*Ki + errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
@@ -1021,7 +990,6 @@ public class Drive extends Subsystem {
                         rearRight.setPower(currentPower);
                     }
                 }
-                prevErrorRR = currentError;
                 prevTimeRR = currentTime;
                 prevCountRR = currentCount;
             } // if (!isMotorRRDone)
@@ -1050,7 +1018,7 @@ public class Drive extends Subsystem {
         }
 
     }
-
+*/
     private int getTargetTickCount(int tickCount, double speed, double rampTime, double elapsedTime) {
         int targetTick;
         double tickCountD = (double) tickCount;
@@ -1114,12 +1082,11 @@ public class Drive extends Subsystem {
         if (targetSpeed < speedOffset) targetSpeed = speedOffset;
         return targetSpeed;
     }
-*/
+    */
     public static class Odometry
     {
         TrcPose2D position;
         TrcPose2D velocity;
-
         /**
          * Constructor: Create an instance of the object.
 
