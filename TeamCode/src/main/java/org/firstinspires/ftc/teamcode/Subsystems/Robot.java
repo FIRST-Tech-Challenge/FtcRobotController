@@ -18,9 +18,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 
-/**
- * Created by AndrewC on 12/27/2019.
- */
 
 public class Robot extends Subsystem {
     public enum AllianceColor {
@@ -32,7 +29,7 @@ public class Robot extends Subsystem {
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
     private Telemetry telemetry;
-    public ElapsedTime timer;
+    protected ElapsedTime timer;
 
     //DC Motors
     public DcMotorEx frontLeftDriveMotor;
@@ -323,8 +320,12 @@ public class Robot extends Subsystem {
         // code here
     }
 
-    public LinearOpMode getOpMode(){
+    public LinearOpMode getOpMode() {
         return this.opMode;
+    }
+
+    public Telemetry getTelemetry() {
+        return this.telemetry;
     }
 
     public ElapsedTime getTimer() {

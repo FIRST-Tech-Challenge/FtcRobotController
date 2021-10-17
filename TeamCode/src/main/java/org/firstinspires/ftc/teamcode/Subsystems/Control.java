@@ -10,6 +10,6 @@ public class Control extends Subsystem {
 
     public Control(Robot robot) {
         this.opMode = robot.getOpMode();
-        this.telemetry = opMode.telemetry;
+        this.telemetry = robot.getTelemetry();
     }
 }

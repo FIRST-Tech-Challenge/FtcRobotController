@@ -111,7 +111,7 @@ public class Drive extends Subsystem {
         this.odB = odB;
         this.odR = odR;
         this.opMode = robot.getOpMode();
-        this.telemetry = opMode.telemetry;
+        this.telemetry = robot.getTelemetry();
         this.hardwareMap = opMode.hardwareMap;
         this.imu = imu;
         this.timer = robot.getTimer();

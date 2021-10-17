@@ -7,5 +7,4 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  */
 public abstract class Subsystem {
-    protected ElapsedTime timer;
 }
