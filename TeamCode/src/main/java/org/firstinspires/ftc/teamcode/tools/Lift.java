@@ -27,6 +27,12 @@ public class Lift {
             liftMotor.setPower(afloatValue);
         }
     }
+
+    /**
+     *
+     * @param map local hardwareMap instance
+     * @param toolGamepad instance of FtcLib GamepadX
+     */
     public Lift(@NonNull HardwareMap map, GamepadEx toolGamepad) {
         this.liftMotor = map.get(DcMotor.class,"liftMotor");
         this.bottomSensor = map.get(DigitalChannel.class,"bottomSensor");

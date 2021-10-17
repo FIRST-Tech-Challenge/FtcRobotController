@@ -10,19 +10,19 @@ import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Collections;
 public class pipeline1Simulator extends OpenCvPipeline {
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     private final Scalar red = new Scalar(255,0,0);
     private final Scalar yellow = new Scalar(255,255,0);
-    private Mat matYCrCb = new Mat();
-    private Mat matCbBottom = new Mat();
-    private Mat matCbMiddle = new Mat();
-    private Mat matCbTop = new Mat();
-    private Mat matCbBottom1 = new Mat();
-    private Mat matCbMiddle1 = new Mat();
-    private Mat matCbTop1 = new Mat();
-    private Mat matCbBottom2 = new Mat();
-    private Mat matCbMiddle2 = new Mat();
-    private Mat matCbTop2 = new Mat();
+    private final Mat matYCrCb = new Mat();
+    private final Mat matCbBottom = new Mat();
+    private final Mat matCbMiddle = new Mat();
+    private final Mat matCbTop = new Mat();
+    private final Mat matCbBottom1 = new Mat();
+    private final Mat matCbMiddle1 = new Mat();
+    private final Mat matCbTop1 = new Mat();
+    private final Mat matCbBottom2 = new Mat();
+    private final Mat matCbMiddle2 = new Mat();
+    private final Mat matCbTop2 = new Mat();
     private Mat topBlock = new Mat();
     private Mat middleBlock = new Mat();
     private Mat bottomBlock = new Mat();
@@ -31,9 +31,6 @@ public class pipeline1Simulator extends OpenCvPipeline {
     private double topAverage = 0;
     private double middleAverage = 0;
     private double bottomAverage = 0;
-
-    //The max difference allowed inside the rectangles
-    private int threshold = 15;
 
     //The position related to the screen
     private double topRectWidthPercentage = 0.25;
@@ -44,25 +41,20 @@ public class pipeline1Simulator extends OpenCvPipeline {
     private double bottomRectHeightPercentage = 0.50;
 
     //The width and height of the rectangles in terms of pixels
-    private int rectangleWidth = 10;
-    private int rectangleHeight = 10;
+    private final int rectangleWidth = 10;
+    private final int rectangleHeight = 10;
+
 
     public pipeline1Simulator(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
+    /**
+     * @param input input frame matrix
+     */
     @Override
     public Mat processFrame(Mat input) {
-
-        /**
-         *input which is in RGB is the frame the camera gives
-         *We convert the input frame to the color space matYCrCb
-         *Then we store this converted color space in the mat matYCrCb
-         *For all the color spaces go to
-         *https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html
-         */
         Imgproc.cvtColor(input, matYCrCb, Imgproc.COLOR_RGB2YCrCb);
-        telemetry.addData("Telemetry","Telemetry");
         telemetry.addData("topBoxAverage",topAverage);
         telemetry.addData("topBoxAverage",middleAverage);
         telemetry.addData("bottomBoxAverage",bottomAverage);
