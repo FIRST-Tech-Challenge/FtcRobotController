@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import android.graphics.Point;
+
+import org.firstinspires.ftc.teamcode.bots.BotMoveRequest;
+
 /**
  * A runnable interface that has basic odometry methods
  */
@@ -13,6 +17,21 @@ public interface IBaseOdometry extends Runnable {
      * @throws Exception if anything goes wrong
      */
     void setInitPosition(int startXInches, int startYInches, int startHeadingDegrees) throws Exception;
+
+    /**
+      Current heading value in the range of 0-360
+    */
+    double getAdjustedCurrentHeading();
+
+    /**
+      X coordinate of the robot's current position in inches
+     */
+    double getXInches();
+
+    /**
+     Y coordinate of the robot's current position in inches
+     */
+    double getYInches();
 
     /**
      * Stop the thread and stop collecting odometery
@@ -33,4 +52,24 @@ public interface IBaseOdometry extends Runnable {
      * @return the current robot heading in degrees
      */
     int getCurrentHeading();
+
+     void reverseHorEncoder();
+
+    void setPersistPosition(boolean persistPosition);
+
+    void init(Point startPos, double initialOrientation);
+
+    double getInitialOrientation();
+
+    double getOrientation();
+
+    int getThreadSleepTime();
+
+    void setTarget(BotMoveRequest target);
+
+    double getRealSpeedLeft();
+
+    double getRealSpeedRight();
+
+    boolean isLeftLong();
 }

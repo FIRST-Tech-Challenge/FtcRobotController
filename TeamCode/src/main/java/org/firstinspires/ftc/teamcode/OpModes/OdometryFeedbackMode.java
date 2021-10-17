@@ -79,9 +79,9 @@ public class OdometryFeedbackMode extends LinearOpMode {
                         robot.move(drive, turn);
                     }
 
-                    telemetry.addData("X ", odometry.getCurrentX());
-                    telemetry.addData("Y ", odometry.getCurrentY());
-                    telemetry.addData("H", odometry.getCurrentHeading());
+                    telemetry.addData("X ", odometry.getXInches());
+                    telemetry.addData("Y ", odometry.getYInches());
+                    telemetry.addData("H", odometry.getAdjustedCurrentHeading());
                     telemetry.update();
                 } catch (Exception ex) {
                     telemetry.addData("Issues with the OpMode", ex.getMessage());

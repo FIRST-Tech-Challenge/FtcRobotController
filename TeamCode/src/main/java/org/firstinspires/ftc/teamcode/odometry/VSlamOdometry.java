@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import android.graphics.Point;
 import android.util.Log;
 
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.bots.BotMoveRequest;
+
+import java.io.File;
 
 /**
  * Odometry class to keep track of a robot using V-SLAM Camera Module
@@ -25,7 +31,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 public class VSlamOdometry implements IBaseOdometry {
 
-    private static final int DEFAULT_THREAD_SLEEP_TIME = 100;
+    public static final int THREAD_INTERVAL = 100;
     static double INCH_2_METER = 0.0254;
 
     private HardwareMap hwMap;
@@ -40,10 +46,12 @@ public class VSlamOdometry implements IBaseOdometry {
     private int currentY;
     private int currentHeading;
 
+    private boolean persistPosition = false;
+
     private static final String TAG = "RobotCoordinatePositionCam";
 
     public VSlamOdometry(HardwareMap hwMap) {
-        init(hwMap, DEFAULT_THREAD_SLEEP_TIME, 0.8);
+        init(hwMap, THREAD_INTERVAL, 0.8);
     }
 
     public VSlamOdometry(HardwareMap hwMap, int threadDelay) {
@@ -77,6 +85,27 @@ public class VSlamOdometry implements IBaseOdometry {
     }
 
     @Override
+    public double getAdjustedCurrentHeading() {
+        double currentHead = this.getCurrentHeading();
+
+        boolean clockwise = currentHead >= 0;
+        if (!clockwise){
+            currentHead = 360 + currentHead;
+        }
+        return currentHead;
+    }
+
+    @Override
+    public double getXInches() {
+        return getCurrentX()/INCH_2_METER;
+    }
+
+    @Override
+    public double getYInches() {
+        return getCurrentY()/INCH_2_METER;
+    }
+
+    @Override
     public void stop() {
         isRunning = false;
         slamra.stop();
@@ -91,6 +120,61 @@ public class VSlamOdometry implements IBaseOdometry {
 
     @Override
     public int getCurrentHeading() { return currentHeading % 360; }
+
+    @Override
+    public void reverseHorEncoder() {
+        // does not apply
+    }
+
+    @Override
+    public void setPersistPosition(boolean persistPosition) {
+        this.persistPosition = persistPosition;
+    }
+
+    @Override
+    public void init(Point startPos, double initialOrientation) {
+        try {
+            setInitPosition(startPos.x, startPos.y, (int) initialOrientation);
+        }
+        catch (Exception ex){
+            Log.e(TAG, "Failed to start VSLAM camera", ex);
+        }
+    }
+
+    @Override
+    public double getInitialOrientation() {
+        return 0;
+    }
+
+    @Override
+    public double getOrientation() {
+        return 0;
+    }
+
+    @Override
+    public int getThreadSleepTime() {
+        return 0;
+    }
+
+    @Override
+    public void setTarget(BotMoveRequest target) {
+
+    }
+
+    @Override
+    public double getRealSpeedLeft() {
+        return 0;
+    }
+
+    @Override
+    public double getRealSpeedRight() {
+        return 0;
+    }
+
+    @Override
+    public boolean isLeftLong() {
+        return false;
+    }
 
     @Override
     public void run() {
@@ -116,14 +200,38 @@ public class VSlamOdometry implements IBaseOdometry {
             T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
 
             if (up != null) {
-                this.currentX = (int) Math.round(up.pose.getTranslation().getX() / INCH_2_METER);
-                this.currentY = (int) Math.round(up.pose.getTranslation().getY() / INCH_2_METER);
+                this.currentX = (int) up.pose.getTranslation().getX();
+                this.currentY = (int) up.pose.getTranslation().getY();
                 this.currentHeading = (int) up.pose.getRotation().getDegrees();
+                if (persistPosition) {
+                    saveLastPosition();
+                }
             }
         }
         catch (Exception ex){
             Log.e(TAG, "Error in update position", ex);
         }
+    }
+
+    public void saveLastPosition(){
+        BotPosition lastPos = new BotPosition();
+        lastPos.setPosX((int)this.getXInches());
+        lastPos.setPosY((int)this.getYInches());
+        lastPos.setHeading(this.getCurrentHeading());
+        File file = AppUtil.getInstance().getSettingsFile(BotPosition.BOT_LAST_POSITION);
+        ReadWriteFile.writeFile(file, lastPos.serialize());
+    }
+
+    public BotPosition getLastConfig() {
+        BotPosition lastPos = null;
+
+        File posFile = AppUtil.getInstance().getSettingsFile(BotPosition.BOT_LAST_POSITION);
+        if (posFile.exists()) {
+            String data = ReadWriteFile.readFile(posFile);
+            lastPos = BotPosition.deserialize(data);
+        }
+
+        return lastPos;
     }
 }
 

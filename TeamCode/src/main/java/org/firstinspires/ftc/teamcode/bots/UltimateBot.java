@@ -547,12 +547,14 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    @Override
     public void stopDetection() {
         if (rf != null) {
             rf.stopDetection();
         }
     }
 
+    @Override
     public void initDetectorThread(String side, LinearOpMode caller) {
         try {
             rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, telemetry);

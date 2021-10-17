@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import android.graphics.Point;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
+import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
+import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
-public class AutoReplayBase extends AutoBase {
+public class AutoReplayBaseCam extends AutoBase {
 
     @Override
     protected void preStart() {
@@ -31,16 +31,13 @@ public class AutoReplayBase extends AutoBase {
 
     @Override
     protected void initBot() {
-        this.bot = new UltimateBot();
-        bot.initDetectorThread(this.getOpModeSide(), this);
-        ((UltimateBot)bot).cameraInitAuto();
+        this.bot = new FrenzyBot();
     }
 
     @Override
     protected void initLocator() {
-        this.locator = new RobotCoordinatePosition(bot, new Point(startX, startY), initHead, RobotCoordinatePosition.THREAD_INTERVAL);
-        locator.reverseHorEncoder();
-        locator.setPersistPosition(true);
+        this.locator = new VSlamOdometry(hardwareMap, VSlamOdometry.THREAD_INTERVAL);
+        this.locator.init(new Point(startX, startY), initHead);
         startLocator(locator);
     }
 }

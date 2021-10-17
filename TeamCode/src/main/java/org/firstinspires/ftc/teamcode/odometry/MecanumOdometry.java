@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import android.graphics.Point;
+
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.bots.BotMoveRequest;
 
 /**
  * Odometry class to keep track of a Mecanum wheeled robot using three odometery wheels
@@ -90,6 +93,21 @@ public class MecanumOdometry implements IBaseOdometry {
     }
 
     @Override
+    public double getAdjustedCurrentHeading() {
+        return 0;
+    }
+
+    @Override
+    public double getXInches() {
+        return 0;
+    }
+
+    @Override
+    public double getYInches() {
+        return 0;
+    }
+
+    @Override
     public void stop(){ isRunning = false; }
 
     @Override
@@ -105,6 +123,56 @@ public class MecanumOdometry implements IBaseOdometry {
     @Override
     public int getCurrentHeading() {
         return currentHeading;
+    }
+
+    @Override
+    public void reverseHorEncoder() {
+
+    }
+
+    @Override
+    public void setPersistPosition(boolean persistPosition) {
+
+    }
+
+    @Override
+    public void init(Point startPos, double initialOrientation) {
+
+    }
+
+    @Override
+    public double getInitialOrientation() {
+        return 0;
+    }
+
+    @Override
+    public double getOrientation() {
+        return 0;
+    }
+
+    @Override
+    public int getThreadSleepTime() {
+        return 0;
+    }
+
+    @Override
+    public void setTarget(BotMoveRequest target) {
+
+    }
+
+    @Override
+    public double getRealSpeedLeft() {
+        return 0;
+    }
+
+    @Override
+    public double getRealSpeedRight() {
+        return 0;
+    }
+
+    @Override
+    public boolean isLeftLong() {
+        return false;
     }
 
     @Override

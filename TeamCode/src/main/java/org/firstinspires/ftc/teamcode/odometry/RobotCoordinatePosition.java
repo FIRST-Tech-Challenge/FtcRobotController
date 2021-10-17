@@ -9,16 +9,17 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.BotMoveRequest;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
+import org.firstinspires.ftc.teamcode.bots.OdoBot;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.YellowBot;
 import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
 
 import java.io.File;
 
-public class RobotCoordinatePosition implements Runnable {
+public class RobotCoordinatePosition implements IBaseOdometry {
 
     BotCalibConfig config;
-    YellowBot bot;
+    OdoBot bot;
     private boolean isRunning = true;
     private int sleepTime;
     private double realSpeedLeft = 0;
@@ -44,13 +45,13 @@ public class RobotCoordinatePosition implements Runnable {
     private double initialOrientation = 0;
     private boolean persistPosition = false;
 
-    private double botHalfLength = bot.ROBOT_CENTER_Y* bot.COUNTS_PER_INCH_REV;
+    private double botHalfLength = bot.getRobotCenterY()* bot.getEncoderCountsPerInch();
 
     public static final int THREAD_INTERVAL = 75;
 
     private static final String TAG = "RobotCoordinatePosition";
 
-    public RobotCoordinatePosition(YellowBot bot, int sleepTimeMS){
+    public RobotCoordinatePosition(OdoBot bot, int sleepTimeMS){
         this.bot = bot;
         config = bot.getCalibConfig();
         sleepTime = sleepTimeMS;
@@ -69,7 +70,7 @@ public class RobotCoordinatePosition implements Runnable {
         init(startPos, initialOrientation);
     }
 
-    public RobotCoordinatePosition(YellowBot bot, Point startPos, double initialOrientation, int sleepTimeMS){
+    public RobotCoordinatePosition(OdoBot bot, Point startPos, double initialOrientation, int sleepTimeMS){
         this.bot = bot;
         config = bot.getCalibConfig();
         sleepTime = sleepTimeMS;
@@ -78,9 +79,9 @@ public class RobotCoordinatePosition implements Runnable {
 
     public void init(Point startPos, double initialOrientation){
         this.setInitialOrientation(initialOrientation);
-        this.robotGlobalXCoordinatePosition = startPos.x * bot.COUNTS_PER_INCH_REV;
-        this.robotGlobalYCoordinatePosition = startPos.y * bot.COUNTS_PER_INCH_REV;
-        this.robotEncoderWheelDistance = config.getWheelBaseSeparation() * bot.COUNTS_PER_INCH_REV;
+        this.robotGlobalXCoordinatePosition = startPos.x * bot.getEncoderCountsPerInch();
+        this.robotGlobalYCoordinatePosition = startPos.y * bot.getEncoderCountsPerInch();
+        this.robotEncoderWheelDistance = config.getWheelBaseSeparation() * bot.getEncoderCountsPerInch();
         this.horizontalEncoderTickPerDegreeOffset = config.getHorizontalTicksDegree();
         this.robotOrientationRadians = Math.toRadians(initialOrientation);
     }
@@ -142,6 +143,11 @@ public class RobotCoordinatePosition implements Runnable {
         return sleepTime * 3; //give more time to settle. the value is arbitrary
     }
 
+    @Override
+    public void setInitPosition(int startXInches, int startYInches, int startHeadingDegrees) throws Exception {
+        init(new Point(startXInches, startYInches), startHeadingDegrees);
+    }
+
     public double getAdjustedCurrentHeading(){
         double currentHead = this.getOrientation();
 
@@ -169,15 +175,30 @@ public class RobotCoordinatePosition implements Runnable {
 
     public void stop(){ isRunning = false; }
 
+    @Override
+    public int getCurrentX() {
+        return (int)getX();
+    }
+
+    @Override
+    public int getCurrentY() {
+        return (int)getY();
+    }
+
+    @Override
+    public int getCurrentHeading() {
+        return 0;
+    }
+
     public double getX(){ return robotGlobalXCoordinatePosition; }
 
 
     public double getY(){ return robotGlobalYCoordinatePosition; }
 
-    public double getXInches(){ return robotGlobalXCoordinatePosition/bot.COUNTS_PER_INCH_REV; }
+    public double getXInches(){ return robotGlobalXCoordinatePosition/bot.getEncoderCountsPerInch(); }
 
 
-    public double getYInches(){ return robotGlobalYCoordinatePosition/bot.COUNTS_PER_INCH_REV; }
+    public double getYInches(){ return robotGlobalYCoordinatePosition/bot.getEncoderCountsPerInch(); }
 
 
     public double getOrientation(){ return Math.toDegrees(robotOrientationRadians) % 360; }
@@ -224,12 +245,12 @@ public class RobotCoordinatePosition implements Runnable {
     }
 
     public double getFrontCenterXInches() {
-        return getFrontCenterX()/bot.COUNTS_PER_INCH_REV;
+        return getFrontCenterX()/bot.getEncoderCountsPerInch();
     }
 
 
     public double getFrontCenterYInches() {
-        return getFrontCenterY()/bot.COUNTS_PER_INCH_REV;
+        return getFrontCenterY()/bot.getEncoderCountsPerInch();
     }
 
     public BotMoveRequest getTarget() {

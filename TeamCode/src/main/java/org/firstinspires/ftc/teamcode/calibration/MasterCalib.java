@@ -10,10 +10,12 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
+import org.firstinspires.ftc.teamcode.bots.OdoBot;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.RobotMovementStats;
 import org.firstinspires.ftc.teamcode.bots.RobotVeer;
 import org.firstinspires.ftc.teamcode.bots.YellowBot;
+import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Geometry;
 //import org.openftc.revextensions2.ExpansionHubEx;
@@ -25,76 +27,77 @@ import java.util.concurrent.TimeUnit;
 @TeleOp(name="MasterCalib", group="Robot15173")
 public class MasterCalib extends LinearOpMode {
 
-    private YellowBot bot = new YellowBot();
-    ElapsedTime timer = new ElapsedTime();
+    protected OdoBot bot = null;
+    protected ElapsedTime timer = new ElapsedTime();
 
 
-    private static double CALIB_SPEED = 0.5;
-    private static double CALIB_SPEED_HIGH = 0.9;
-    private static double CALIB_SPEED_LOW = 0.2;
+    protected static double CALIB_SPEED = 0.5;
+    protected static double CALIB_SPEED_HIGH = 0.9;
+    protected static double CALIB_SPEED_LOW = 0.2;
 
-    private static double MARGIN_ERROR_DEGREES = 2;
+    protected static double MARGIN_ERROR_DEGREES = 2;
 
-    private static double MARGIN_ERROR_RADIUS = 4;
-
-
-    private double separation = 0;
-    private double horizontalTicksDegreeLeft = 0;
-    private double horizontalTicksDegreeRight = 0;
+    protected static double MARGIN_ERROR_RADIUS = 4;
 
 
-    Deadline gamepadRateLimit;
-    private final static int GAMEPAD_LOCKOUT = 500;
-
-    private static final int[] modes = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    private static final String[] modeNames = new String[]{"Straight", "Curve", "Break", "Spin", "Strafe", "Diag", "Spin Calib", "Calib Full", "Save", "Save Amps"};
-
-    private int selectedMode = 0;
-
-    private boolean speedSettingMode = false;
-    private boolean MRSettingMode = false;
-    private boolean MRSettingModeBack = false;
-    private boolean XSettingMode = false;
-    private boolean YSettingMode = false;
-    private boolean XFromSettingMode = true;
-    private boolean YFromSettingMode = false;
-    private boolean strafeModeLeft = false;
-    private boolean strafeModeRight = false;
-    private boolean diagModeLeft = false;
-    private boolean diagModeRight = false;
-
-    private boolean saveMode = false;
+    protected double separation = 0;
+    protected double horizontalTicksDegreeLeft = 0;
+    protected double horizontalTicksDegreeRight = 0;
 
 
-    private boolean bpSettingMode = false;
-    private boolean routeSettingMode  = false;
+    protected Deadline gamepadRateLimit;
+    protected final static int GAMEPAD_LOCKOUT = 500;
+
+    protected static final int[] modes = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    protected static final String[] modeNames = new String[]{"Straight", "Curve", "Break", "Spin", "Strafe", "Diag", "Spin Calib", "Calib Full", "Save", "Save Amps"};
+
+    protected int selectedMode = 0;
+
+    protected boolean speedSettingMode = false;
+    protected boolean MRSettingMode = false;
+    protected boolean MRSettingModeBack = false;
+    protected boolean XSettingMode = false;
+    protected boolean YSettingMode = false;
+    protected boolean XFromSettingMode = true;
+    protected boolean YFromSettingMode = false;
+    protected boolean strafeModeLeft = false;
+    protected boolean strafeModeRight = false;
+    protected boolean diagModeLeft = false;
+    protected boolean diagModeRight = false;
+
+    protected boolean saveMode = false;
 
 
-    private boolean tenIncrement = false;
+    protected boolean bpSettingMode = false;
+    protected boolean routeSettingMode  = false;
 
-    private double breakPointOverride = 0;
-    private double lastOrientation = 0;
 
-    private int desiredX = 30;
-    private int desiredY = 75;
-    int startX = 30;
-    int startY = 25;
-    private static int DIAG = 45;
-    private double desiredSpeed = CALIB_SPEED;
+    protected boolean tenIncrement = false;
 
-    MotorReductionBotCalib templateMRForward = new MotorReductionBotCalib();
-    MotorReductionBotCalib templateMRBack = new MotorReductionBotCalib();
+    protected double breakPointOverride = 0;
+    protected double lastOrientation = 0;
 
-    MotorReductionBotCalib templateStrafeLeft = new MotorReductionBotCalib();
-    MotorReductionBotCalib templateStrafeRight = new MotorReductionBotCalib();
+    protected int desiredX = 30;
+    protected int desiredY = 75;
+    protected int startX = 30;
+    protected int startY = 25;
+    protected static int DIAG = 45;
+    protected double desiredSpeed = CALIB_SPEED;
 
-    MotorReductionBotCalib templateDiagLeft = new MotorReductionBotCalib();
-    MotorReductionBotCalib templateDiagRight = new MotorReductionBotCalib();
+    protected MotorReductionBotCalib templateMRForward = new MotorReductionBotCalib();
+    protected MotorReductionBotCalib templateMRBack = new MotorReductionBotCalib();
+
+    protected MotorReductionBotCalib templateStrafeLeft = new MotorReductionBotCalib();
+    protected MotorReductionBotCalib templateStrafeRight = new MotorReductionBotCalib();
+
+    protected MotorReductionBotCalib templateDiagLeft = new MotorReductionBotCalib();
+    protected MotorReductionBotCalib templateDiagRight = new MotorReductionBotCalib();
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         try {
+            initBot();
             bot.init(this, hardwareMap, telemetry);
             bot.initGyro();
 //            bot.initCalibData();
@@ -174,6 +177,10 @@ public class MasterCalib extends LinearOpMode {
             telemetry.update();
             sleep(5000);
         }
+    }
+
+    protected void initBot(){
+        this.bot = new YellowBot();
     }
 
     private void changeMoveModes(){
@@ -587,15 +594,19 @@ public class MasterCalib extends LinearOpMode {
         telemetry.update();
     }
 
+    protected IBaseOdometry initLocator(){
+        RobotCoordinatePosition locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation, RobotCoordinatePosition.THREAD_INTERVAL);
+        locator.reverseHorEncoder();
+        Thread positionThread = new Thread(locator);
+        positionThread.start();
+        return locator;
+    }
 
     private void calibSpinPrecision(){
-        RobotCoordinatePosition locator = null;
+        IBaseOdometry locator = null;
         try {
             //tracker
-            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation, RobotCoordinatePosition.THREAD_INTERVAL);
-            locator.reverseHorEncoder();
-            Thread positionThread = new Thread(locator);
-            positionThread.start();
+            locator = initLocator();
             int selectedIndex = MotorReductionBot.POWER_SAMPLES.length - 1;
             while (selectedIndex >= 0) {
                 double power = MotorReductionBot.POWER_SAMPLES[selectedIndex];
@@ -628,7 +639,7 @@ public class MasterCalib extends LinearOpMode {
         }
     }
 
-    private void calibSpinPrecision(double speed, boolean left, RobotCoordinatePosition locator){
+    private void calibSpinPrecision(double speed, boolean left, IBaseOdometry locator){
         BotCalibConfig config = bot.getCalibConfig();
         try {
 
@@ -670,7 +681,7 @@ public class MasterCalib extends LinearOpMode {
         }
     }
 
-    private void testSpinPrecision(double speed, boolean left, RobotCoordinatePosition locator){
+    private void testSpinPrecision(double speed, boolean left, IBaseOdometry locator){
         BotCalibConfig config = bot.getCalibConfig();
         try {
 
@@ -716,13 +727,10 @@ public class MasterCalib extends LinearOpMode {
     }
 
     private void calibCurve(){
-        RobotCoordinatePosition locator = null;
+        IBaseOdometry locator = null;
         try {
             //tracker
-            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation,RobotCoordinatePosition.THREAD_INTERVAL);
-            locator.reverseHorEncoder();
-            Thread positionThread = new Thread(locator);
-            positionThread.start();
+            locator = initLocator();
 
             BotMoveProfile profile = BotMoveProfile.bestRoute(bot, startX, startY, new Point(desiredX, desiredY), RobotDirection.Optimal, desiredSpeed, MoveStrategy.Curve, BotMoveProfile.DEFAULT_HEADING, locator);
             profile.setStart(new Point(startX, startY));
@@ -799,7 +807,7 @@ public class MasterCalib extends LinearOpMode {
         }
     }
 
-    private void moveBot(MotorReductionBotCalib calibF, MotorReductionBotCalib calibB, RobotCoordinatePosition locator){
+    private void moveBot(MotorReductionBotCalib calibF, MotorReductionBotCalib calibB, IBaseOdometry locator){
 //        led.none();
         MotorReductionBot mrForward = calibF.getMR();
         MotorReductionBot mrBack = calibB.getMR();
@@ -808,11 +816,11 @@ public class MasterCalib extends LinearOpMode {
 
         double leftOdo = bot.getLeftOdometer();
         double rightOdo = bot.getRightOdometer();
-        calibF.setLeftOdoDistance(desiredX*bot.COUNTS_PER_INCH_REV);
-        calibF.setRightOdoDistance(desiredX*bot.COUNTS_PER_INCH_REV);
+        calibF.setLeftOdoDistance(desiredX*bot.getEncoderCountsPerInch());
+        calibF.setRightOdoDistance(desiredX*bot.getEncoderCountsPerInch());
         double bF = calibF.getBreakPoint(desiredSpeed);
         if (breakPointOverride > 0){
-            bF = breakPointOverride * bot.COUNTS_PER_INCH_REV;
+            bF = breakPointOverride * bot.getEncoderCountsPerInch();
         }
         int distance = Math.abs(desiredY - startY);
         RobotMovementStats statsF = bot.moveToCalib(desiredSpeed, desiredSpeed, distance, mrForward, bF);
@@ -844,13 +852,13 @@ public class MasterCalib extends LinearOpMode {
         currentHead = bot.getGyroHeading();
         leftOdo = bot.getLeftOdometer();
         rightOdo = bot.getRightOdometer();
-        calibB.setLeftOdoDistance(desiredX*bot.COUNTS_PER_INCH_REV);
-        calibB.setRightOdoDistance(desiredX*bot.COUNTS_PER_INCH_REV);
+        calibB.setLeftOdoDistance(desiredX*bot.getEncoderCountsPerInch());
+        calibB.setRightOdoDistance(desiredX*bot.getEncoderCountsPerInch());
 
 
         double bB = calibB.getBreakPoint(desiredSpeed);
         if (breakPointOverride > 0){
-            bF = breakPointOverride * bot.COUNTS_PER_INCH_REV;
+            bF = breakPointOverride * bot.getEncoderCountsPerInch();
         }
 
         telemetry.addData("Forw Location", "x:%.2f  y: %.2f ", locator.getXInches(), locator.getYInches());
@@ -933,9 +941,9 @@ public class MasterCalib extends LinearOpMode {
         double desiredHead = currentHead + 90;
         while (bot.getGyroHeading() < desiredHead && opModeIsActive()){
             if (bot.getGyroHeading() < desiredHead/2){
-                bot.turnLeft(bot.CALIB_SPEED, true);
+                bot.turnLeft(CALIB_SPEED, true);
             }else{
-                bot.turnLeft(bot.CALIB_SPEED/2, true);
+                bot.turnLeft(CALIB_SPEED/2, true);
             }
             telemetry.addData("Heading", bot.getGyroHeading());
             telemetry.update();
@@ -956,7 +964,7 @@ public class MasterCalib extends LinearOpMode {
 
         double dLeft = bot.getLeftOdometer();
         double dCenter = (dLeft + rightLong)/2;
-        double dCenterInches = dCenter/bot.COUNTS_PER_INCH_REV;
+        double dCenterInches = dCenter/bot.getEncoderCountsPerInch();
         double inchPerDegree = dCenterInches/actualAngle;
         double circleLength = inchPerDegree*360;
         minRadiusLeft = circleLength/Math.PI/2;
@@ -971,9 +979,9 @@ public class MasterCalib extends LinearOpMode {
         double startRight = bot.getRightOdometer();
         while (bot.getGyroHeading() > desiredHead && opModeIsActive()){
             if (bot.getGyroHeading() > desiredHead/2){
-                bot.turnRight(bot.CALIB_SPEED, true);
+                bot.turnRight(CALIB_SPEED, true);
             }else{
-                bot.turnRight(bot.CALIB_SPEED/2, true);
+                bot.turnRight(CALIB_SPEED/2, true);
             }
             telemetry.addData("Heading", bot.getGyroHeading());
             telemetry.update();
@@ -994,7 +1002,7 @@ public class MasterCalib extends LinearOpMode {
         double right = bot.getRightOdometer() - startRight;
 
         double dCenter = (leftLong + right)/2;
-        double dCenterInches = dCenter/bot.COUNTS_PER_INCH_REV;
+        double dCenterInches = dCenter/bot.getEncoderCountsPerInch();
         double inchPerDegree = dCenterInches/actualAngle;
         double circleLength = inchPerDegree*360;
         minRadiusRight = circleLength/Math.PI/2;
@@ -1095,9 +1103,9 @@ public class MasterCalib extends LinearOpMode {
         //separation
         double ticksPerDegree = (leftLong - rightLong)/actualAngle;
         double circumferance = 180 * ticksPerDegree;
-        double circumferanceInches = circumferance / bot.COUNTS_PER_INCH_REV;
+        double circumferanceInches = circumferance / bot.getEncoderCountsPerInch();
         separation = Math.abs(circumferanceInches / Math.PI);
-//        separation = 2*90 * ((leftLong - rightLong)/actualAngle)/(Math.PI*bot.COUNTS_PER_INCH_REV);
+//        separation = 2*90 * ((leftLong - rightLong)/actualAngle)/(Math.PI*bot.getEncoderCountsPerInch());
 
         BotCalibConfig config = bot.getCalibConfig();
         if (config == null){
@@ -1515,7 +1523,7 @@ public class MasterCalib extends LinearOpMode {
 //
 //            double startHead = bot.getGyroHeading();
 //
-////        double distance = Math.abs(distanceInches * bot.COUNTS_PER_INCH_REV);
+////        double distance = Math.abs(distanceInches * bot.getEncoderCountsPerInch());
 ////        double horDistance = distance * Math.sin(Math.toRadians(desiredAngle));
 ////        double verDistance = distance * Math.cos(Math.toRadians(desiredAngle));
 ////        calib.setHorOdoDistance(horDistance);
@@ -1613,7 +1621,7 @@ public class MasterCalib extends LinearOpMode {
 
             double startHead = bot.getGyroHeading();
 
-//        double distance = Math.abs(distanceInches * bot.COUNTS_PER_INCH_REV);
+//        double distance = Math.abs(distanceInches * bot.getEncoderCountsPerInch());
 //        double horDistance = distance * Math.sin(Math.toRadians(desiredAngle));
 //        double verDistance = distance * Math.cos(Math.toRadians(desiredAngle));
 //        calib.setHorOdoDistance(horDistance);
@@ -1823,7 +1831,7 @@ public class MasterCalib extends LinearOpMode {
         }
         telemetry.addData("Calib", mr.getDirection().name());
         telemetry.addData("*  ", "%s: %.2f D/ratio; %.2f; FromTarget: %.2f", veer, mr.getHeadChange(), mr.getDistanceRatio(), mr.getDistanceFromTarget());
-        telemetry.addData("*  ", "L:%.2f R: %.2f ", mr.getOverDriveLeft()/bot.COUNTS_PER_INCH_REV, mr.getOverDriveRight()/bot.COUNTS_PER_INCH_REV);
+        telemetry.addData("*  ", "L:%.2f R: %.2f ", mr.getOverDriveLeft()/bot.getEncoderCountsPerInch(), mr.getOverDriveRight()/bot.getEncoderCountsPerInch());
         telemetry.addData("*  ", "--------------------");
         telemetry.addData("*  ","%.2f%s||--  --||%s%.2f", mr.getLF(), mr.getSelectedIndicator(0), mr.getSelectedIndicator(1), mr.getRF());
         telemetry.addData("*  ", "             ||");

@@ -41,66 +41,66 @@ public class MasterOdo extends OdoBase {
 
     public static String COORDINATE = "Coordinate";
 
-    private ArrayList<AutoRoute> routes = new ArrayList<>();
-    private ArrayList<Integer> blueRoutes = new ArrayList<>();
-    private ArrayList<Integer> redRoutes = new ArrayList<>();
+    protected ArrayList<AutoRoute> routes = new ArrayList<>();
+    protected ArrayList<Integer> blueRoutes = new ArrayList<>();
+    protected ArrayList<Integer> redRoutes = new ArrayList<>();
 
     protected double right = 0;
     protected double left = 0;
 
 
-    private int selectedTopMode = 0;
-    private int selectedGoToMode = 0;
-    private boolean topMode = true;
-    private boolean goToMode = false;
+    protected int selectedTopMode = 0;
+    protected int selectedGoToMode = 0;
+    protected boolean topMode = true;
+    protected boolean goToMode = false;
 
-    private boolean routeListMode = false;
+    protected boolean routeListMode = false;
 
-    private boolean startSettingMode  = false;
-    private boolean routeSettingMode  = false;
-    private boolean XSettingMode = true;
-    private boolean YSettingMode = false;
-    private boolean speedSettingMode = false;
-    private boolean strategySettingMode = false;
-    private boolean waitSettingMode = false;
-    private boolean desiredHeadSettingMode = false;
-    private boolean routeSavingMode = false;
-    private boolean actionSettingMode = false;
-    private boolean directionSettingMode = false;
+    protected boolean startSettingMode  = false;
+    protected boolean routeSettingMode  = false;
+    protected boolean XSettingMode = true;
+    protected boolean YSettingMode = false;
+    protected boolean speedSettingMode = false;
+    protected boolean strategySettingMode = false;
+    protected boolean waitSettingMode = false;
+    protected boolean desiredHeadSettingMode = false;
+    protected boolean routeSavingMode = false;
+    protected boolean actionSettingMode = false;
+    protected boolean directionSettingMode = false;
 
-    private boolean dynamicDestinationMode = false;
+    protected boolean dynamicDestinationMode = false;
 
-    private boolean stopSettingMode = false;
+    protected boolean stopSettingMode = false;
 
-    private boolean routeNameSettingMode = true;
-    private boolean routeIndexSettingMode = false;
+    protected boolean routeNameSettingMode = true;
+    protected boolean routeIndexSettingMode = false;
 
-    private boolean manualDriveMode = false;
-    private boolean coordinateSavingMode = false;
+    protected boolean manualDriveMode = false;
+    protected boolean coordinateSavingMode = false;
 
-    private AutoDot newDot = new AutoDot();
+    protected AutoDot newDot = new AutoDot();
 
-    private AutoStep goToInstructions = new AutoStep();
-    private AutoRoute newRoute = new AutoRoute();
-
-
-
-    private static final int[] modesTop = new int[]{0, 1, 2, 3, 4};
-    private static final String[] modeNamesTop = new String[]{"Start Position", "Go To", "Routes", "Save Route", "Manual Drive"};
-
-    private static final int[] modesStep = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
-    private static final String[] modeStepName = new String[]{"Destination", "Top Speed", "Strategy", "Wait", "Continue", "Heading", "Action", "Direction"};
+    protected AutoStep goToInstructions = new AutoStep();
+    protected AutoRoute newRoute = new AutoRoute();
 
 
-    private double SPEED_INCREMENT = 0.1;
 
-    private static int HEAD_INCREMENT = 45;
-    private int headIncrementValue = 1;
+    protected static final int[] modesTop = new int[]{0, 1, 2, 3, 4};
+    protected static final String[] modeNamesTop = new String[]{"Start Position", "Go To", "Routes", "Save Route", "Manual Drive"};
 
-    private Led led = null;
+    protected static final int[] modesStep = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
+    protected static final String[] modeStepName = new String[]{"Destination", "Top Speed", "Strategy", "Wait", "Continue", "Heading", "Action", "Direction"};
 
-    Deadline gamepadRateLimit;
-    private final static int GAMEPAD_LOCKOUT = 500;
+
+    protected double SPEED_INCREMENT = 0.1;
+
+    protected static int HEAD_INCREMENT = 45;
+    protected int headIncrementValue = 1;
+
+    protected Led led = null;
+
+    protected Deadline gamepadRateLimit;
+    protected final static int GAMEPAD_LOCKOUT = 500;
 
 
 
@@ -114,8 +114,7 @@ public class MasterOdo extends OdoBase {
 
             waitForStart();
 
-
-            startLocator();
+            initLocator();
 
             if (this.led != null){
                 this.led.none();
@@ -138,6 +137,19 @@ public class MasterOdo extends OdoBase {
             selectedRoute.getSteps().clear();
             selectedRoute = null;
         }
+    }
+
+    @Override
+    protected void initBot() {
+        this.bot = new UltimateBot();
+    }
+
+    @Override
+    protected void initLocator() {
+        this.locator = new RobotCoordinatePosition(bot, new Point(startX, startY), initHead, RobotCoordinatePosition.THREAD_INTERVAL);
+        locator.reverseHorEncoder();
+        locator.setPersistPosition(true);
+        startLocator(locator);
     }
 
     private void toggleRouteSettings(){

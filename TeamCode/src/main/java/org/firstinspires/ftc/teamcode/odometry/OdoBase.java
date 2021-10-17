@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.bots.BotAction;
 import org.firstinspires.ftc.teamcode.bots.BotActionObj;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
+import org.firstinspires.ftc.teamcode.bots.OdoBot;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 
@@ -39,17 +40,19 @@ public class OdoBase extends LinearOpMode {
 
     public static String BOT_ACTIONS = "bot-actions.json";
 
-    protected UltimateBot bot = new UltimateBot();
+    protected OdoBot bot = null;
     protected AutoRoute selectedRoute = new AutoRoute();
     protected HashMap<String, AutoDot> coordinateFunctions = new HashMap<>();
     protected List<Method> botActions = new ArrayList<Method>();
     ElapsedTime timer = new ElapsedTime();
 
-    protected RobotCoordinatePosition locator = null;
+    protected IBaseOdometry locator = null;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         try {
+            initBot();
             bot.init(this, hardwareMap, telemetry);
             bot.initGyro();
             bot.initCalibData();
@@ -62,11 +65,17 @@ public class OdoBase extends LinearOpMode {
         }
     }
 
-    protected void startLocator(){
-        if (locator == null && opModeIsActive()) {
-            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), initHead, RobotCoordinatePosition.THREAD_INTERVAL);
-            locator.reverseHorEncoder();
-            locator.setPersistPosition(true);
+    protected void initBot(){
+
+    }
+
+    protected void initLocator(){
+
+    }
+
+    protected void startLocator(IBaseOdometry locator){
+        this.locator = locator;
+        if (opModeIsActive()) {
             Thread positionThread = new Thread(locator);
             positionThread.start();
         }

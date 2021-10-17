@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.autonomous;
+import android.graphics.Point;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.odometry.OdoBase;
+import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 
@@ -15,11 +19,8 @@ public abstract class AutoBase extends OdoBase {
         try {
             super.runOpMode();
             preStart();
-            bot.initDetectorThread(this.getOpModeSide(), this);
-            bot.cameraInitAuto();
-            telemetry.update();
+            initLocator();
             waitForStart();
-            startLocator();
             act();
         }
         catch (Exception ex){
@@ -28,16 +29,11 @@ public abstract class AutoBase extends OdoBase {
         } finally {
             stopLocator();
             bot.stopDetection();
-//            bot.lightsOff();
         }
     }
 
     protected void preStart(){
 
-    }
-
-    protected String getModeName(){
-        return "";
     }
 
 
@@ -51,5 +47,20 @@ public abstract class AutoBase extends OdoBase {
 
     public void setOpModeSide(String opModeSide) {
         this.opModeSide = opModeSide;
+    }
+
+    protected String getModeName() {
+        Class<?> klass = this.getClass();
+        Autonomous annotation =  klass.getAnnotation(Autonomous.class);
+        if (annotation != null && annotation.group().equals("playback")){
+            String fullName = annotation.name();
+            int numOfDashes = fullName.length() - fullName.replace("-", "").length();
+            if (numOfDashes > 1){
+                int last = fullName.lastIndexOf("-");
+                fullName = fullName.substring(0, last);
+            }
+            return fullName;
+        }
+        return "";
     }
 }

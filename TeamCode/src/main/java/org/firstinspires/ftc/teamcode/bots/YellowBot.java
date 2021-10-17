@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
 import org.firstinspires.ftc.teamcode.calibration.DiagCalibConfig;
 import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
-import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
+import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.skills.Geometry;
 import org.firstinspires.ftc.teamcode.skills.Gyroscope;
 import org.firstinspires.ftc.teamcode.skills.Led;
@@ -32,7 +32,6 @@ import java.util.Random;
 import static java.lang.StrictMath.abs;
 
 public class YellowBot implements OdoBot {
-    public static double CALIB_SPEED = 0.5;
     protected DcMotorEx frontLeft = null;
     protected DcMotorEx frontRight = null;
     protected DcMotorEx leftOdo = null; //leftodo port 1 ext hub    forward positive
@@ -209,6 +208,16 @@ public class YellowBot implements OdoBot {
 
     }
 
+    @Override
+    public double getRobotCenterX() {
+        return ROBOT_CENTER_X;
+    }
+
+    @Override
+    public double getRobotCenterY() {
+        return ROBOT_CENTER_Y;
+    }
+
     public double getLeftVelocity() {
         return frontLeft.getVelocity();
     }
@@ -245,6 +254,16 @@ public class YellowBot implements OdoBot {
             this.backLeft.setPower(leftPower);
             this.backRight.setPower(rightPower);
         }
+    }
+
+    @Override
+    public void initDetectorThread(String side, LinearOpMode caller) {
+
+    }
+
+    @Override
+    public void stopDetection() {
+
     }
 
 
@@ -525,7 +544,7 @@ public class YellowBot implements OdoBot {
     }
 
 
-    public void curveTo(BotMoveProfile profile, RobotCoordinatePosition locator) {
+    public void curveTo(BotMoveProfile profile, IBaseOdometry locator) {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
 
             MotorReductionBot mr = profile.getMotorReduction();
@@ -701,7 +720,7 @@ public class YellowBot implements OdoBot {
         }
     }
 
-    public void spin(BotMoveProfile profile, RobotCoordinatePosition locator) {
+    public void spin(BotMoveProfile profile, IBaseOdometry locator) {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -813,7 +832,7 @@ public class YellowBot implements OdoBot {
     }
 
 
-    public void spinCalib(double degrees, double speed, RobotCoordinatePosition locator) {
+    public void spinCalib(double degrees, double speed, IBaseOdometry locator) {
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -903,6 +922,11 @@ public class YellowBot implements OdoBot {
         }
 
         this.stop();
+    }
+
+    @Override
+    public double getEncoderCountsPerInch() {
+        return COUNTS_PER_INCH_REV;
     }
 
     public double getLeftTarget(double inches) {

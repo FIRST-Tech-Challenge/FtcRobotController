@@ -106,7 +106,7 @@ public class CVDetector {
         if (activePipeline != null){
             return activePipeline.getGameElement();
         }
-        return GameElement.None;
+        return GameElement.CubeLocationNone;
     }
 
     public int getMeanVal(){
