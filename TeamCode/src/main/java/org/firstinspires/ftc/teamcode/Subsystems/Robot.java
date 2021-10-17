@@ -29,9 +29,9 @@ public class Robot extends Subsystem {
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
     private Telemetry telemetry;
-    protected ElapsedTime timer;
+    private ElapsedTime timer;
 
-    //DC Motors
+    // DC Motors
     public DcMotorEx frontLeftDriveMotor;
     public DcMotorEx frontRightDriveMotor;
     public DcMotorEx rearRightDriveMotor;
@@ -41,7 +41,7 @@ public class Robot extends Subsystem {
     public DcMotorEx launch2b;
     public DcMotorEx intake;
 
-    //Servos
+    // Servos
 
     public Servo elevatorR;
     public Servo elevatorL;
@@ -53,7 +53,7 @@ public class Robot extends Subsystem {
     public Servo launcherFeederL;
     public Servo launcherFeederR;
 
-    //Odometry
+    // Odometry
     public List<LynxModule> allHubs;
     public DigitalChannel odometryRA;
     public DigitalChannel odometryRB;
