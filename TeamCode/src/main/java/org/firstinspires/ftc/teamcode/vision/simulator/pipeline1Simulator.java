@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 public class pipeline1Simulator extends OpenCvPipeline {
     private Telemetry telemetry;
-    final Scalar red = new Scalar(255,0,0);
-    final Scalar yellow = new Scalar(255,255,0);
+    private final Scalar red = new Scalar(255,0,0);
+    private final Scalar yellow = new Scalar(255,255,0);
     private Mat matYCrCb = new Mat();
     private Mat matCbBottom = new Mat();
     private Mat matCbMiddle = new Mat();
