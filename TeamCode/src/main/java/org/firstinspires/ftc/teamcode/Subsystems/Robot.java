@@ -14,12 +14,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by AndrewC on 12/27/2019.
- */
 
 public class Robot extends Subsystem {
     public enum AllianceColor {
@@ -30,9 +29,10 @@ public class Robot extends Subsystem {
     public String name;
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
+    private Telemetry telemetry;
     public ElapsedTime timer;
 
-    //DC Motors
+    // DC Motors
     public DcMotorEx frontLeftDriveMotor;
     public DcMotorEx frontRightDriveMotor;
     public DcMotorEx rearRightDriveMotor;
@@ -42,7 +42,7 @@ public class Robot extends Subsystem {
     public DcMotorEx launch2b;
     public DcMotorEx intake;
 
-    //Servos
+    // Servos
 
     public Servo elevatorR;
     public Servo elevatorL;
@@ -54,7 +54,7 @@ public class Robot extends Subsystem {
     public Servo launcherFeederL;
     public Servo launcherFeederR;
 
-    //Odometry
+    // Odometry
     public List<LynxModule> allHubs;
     public DigitalChannel odometryRA;
     public DigitalChannel odometryRB;
@@ -158,6 +158,7 @@ public class Robot extends Subsystem {
     public Robot(LinearOpMode opMode, ElapsedTime timer) throws IOException {
         hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
         this.timer = timer;
         init();
     }
