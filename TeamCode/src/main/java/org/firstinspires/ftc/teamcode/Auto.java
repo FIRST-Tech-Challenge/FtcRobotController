@@ -9,13 +9,22 @@ import com.bravenatorsrobotics.vision.TensorFlowObjectDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.tensorflow.lite.Tensor;
 
 @Autonomous(name="Autonomous")
 public class Auto extends AutonomousMode<MecanumDrive> {
 
+    public static final int DUCK_LEFT_THRESHOLD = 200;
+    public static final int DUCK_RIGHT_THRESHOLD = 550;
+
     private Config config;
-    private TensorFlowObjectDetector objectDetector;
+
+    private enum DuckPosition {
+        LEFT, RIGHT, CENTER, UNKNOWN
+    }
+
+    private DuckPosition duckPosition = DuckPosition.UNKNOWN;
 
     public Auto() { super(new Specifications()); }
 
@@ -23,7 +32,7 @@ public class Auto extends AutonomousMode<MecanumDrive> {
     public void OnInitialize() {
         config = new Config(hardwareMap.appContext);
 
-        objectDetector = new TensorFlowObjectDetector(this, "Webcam 1");
+        TensorFlowObjectDetector objectDetector = new TensorFlowObjectDetector(this, "Webcam 1");
 
         telemetry.addData("Status", "Updating Recognitions");
         telemetry.update();
@@ -32,10 +41,22 @@ public class Auto extends AutonomousMode<MecanumDrive> {
         objectDetector.Initialize();
         while(!isStarted()) {
             objectDetector.UpdateRecognitions();
+
+            Recognition duckRecognition = objectDetector.GetFirstRecognitionByType(TensorFlowObjectDetector.ObjectType.DUCK);
+            if (duckRecognition != null) {
+                if (duckRecognition.getLeft() < DUCK_LEFT_THRESHOLD)
+                    duckPosition = DuckPosition.LEFT;
+                else if (duckRecognition.getLeft() > DUCK_RIGHT_THRESHOLD)
+                    duckPosition = DuckPosition.RIGHT;
+                else
+                    duckPosition = DuckPosition.CENTER;
+            }
+
+            telemetry.addData("Duck Position", duckPosition.toString());
+            telemetry.update();
+
             sleep(5);
         }
-
-//        objectDetector.UpdateRecognitions();
     }
 
     @Override

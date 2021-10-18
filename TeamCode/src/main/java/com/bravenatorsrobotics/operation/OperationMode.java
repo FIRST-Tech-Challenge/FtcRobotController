@@ -9,7 +9,7 @@ public abstract class OperationMode<T extends AbstractDrive> extends LinearOpMod
 
     protected Robot<T> robot = null;
 
-    protected final RobotSpecifications specifications;
+    public final RobotSpecifications specifications;
 
     public OperationMode(RobotSpecifications specifications) {
         this.specifications = specifications;
@@ -17,6 +17,11 @@ public abstract class OperationMode<T extends AbstractDrive> extends LinearOpMod
 
     @Override
     public void runOpMode() {
+        if(specifications.debugModeEnabled) {
+            telemetry.addLine("Debug Mode Enabled!");
+            telemetry.update();
+        }
+
         // TODO: Salvage the robot class
 //        if(OperationMode.robot == null)
         this.robot = new Robot<T>(this, specifications);

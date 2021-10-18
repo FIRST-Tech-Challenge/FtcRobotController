@@ -19,6 +19,7 @@ public class Specifications extends RobotSpecifications {
 
         this.useVelocity = false;
         this.maxVelocity = 3120;
+        this.debugModeEnabled = true;
     }
 
 }

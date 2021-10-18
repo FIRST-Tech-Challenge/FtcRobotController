@@ -16,9 +16,18 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 android {
+
+    androidResources {
+        noCompress 'tflite'
+    }
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8
+    }
+    packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so']
+        }
     }
 }
 

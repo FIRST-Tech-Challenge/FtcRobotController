@@ -29,6 +29,19 @@ public class TensorFlowObjectDetector {
             "Marker"
     };
 
+    public enum ObjectType {
+        BALL(0),
+        CUBE(1),
+        DUCK(2),
+        MARKER(3);
+
+        public final String objectLabel;
+
+        ObjectType(int index) {
+            this.objectLabel = OBJECT_LABELS[index];
+        }
+    }
+
     private static final String VUFORIA_KEY =
             "AYMJwEL/////AAABmXhnZUthlkQRqZtBBpNME36DsqdlCz6tt/5wuog/yF9PmuuAhfZZ8uAPCgQJ6WXXjB+fDSCT9z0knxMTAhrZ0Ey/0zpe5MGvDnae7MKDlFxK/GiUlr5PFSpZ+afiAYK7fc0SQOEjf6Oup+gRzn9sDe+3sZzkgTNQ7iSQ+NIltPSEQEO1lpyC7+fG47ya5i9YSA5CxZW1+R9J3FYkqvh+gMSniRAjeXY97wl3dPmahCuAcTSx+WYSijLQX6PLpiHyEe+Q1qAGdimhfq/mjrE1iWQU9OMVNAIoC0lZ+RmJr3+lPg8gR0UhjRLp9v3M1Giv08siHwRdlvb24W49SRdLNSqPqCxAcBvr0l1BkrpIbtIh";
 
@@ -78,12 +91,37 @@ public class TensorFlowObjectDetector {
         }
     }
 
+    public List<Recognition> GetAllRecognitions() { return recognitions; }
+
+    public ArrayList<Recognition> GetRecognitionType(ObjectType objectType) {
+        if(recognitions.size() <= 0)
+            return null;
+
+        ArrayList<Recognition> returnRecognitions = new ArrayList<>();
+
+        for(Recognition recognition : recognitions) {
+            if(recognition.getLabel().equals(objectType.objectLabel))
+                returnRecognitions.add(recognition);
+        }
+
+        return returnRecognitions;
+    }
+
+    public Recognition GetFirstRecognitionByType(ObjectType objectType) {
+        for(Recognition recognition : recognitions) {
+            if(recognition.getLabel().equals(objectType.objectLabel))
+                return recognition;
+        }
+
+        return null;
+    }
+
     public void UpdateRecognitions() {
 
         if(tfod != null) {
             recognitions = tfod.getUpdatedRecognitions();
 
-            if(recognitions != null && recognitions.size() > 0) {
+            if(opMode.specifications.debugModeEnabled && recognitions != null && recognitions.size() > 0) {
 
                 for(Recognition recognition : recognitions) {
                     opMode.telemetry.addLine(opMode.telemetry.getItemSeparator());
