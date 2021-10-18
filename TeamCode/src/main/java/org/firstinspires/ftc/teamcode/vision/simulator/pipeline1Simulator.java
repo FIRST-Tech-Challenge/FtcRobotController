@@ -130,9 +130,16 @@ public class pipeline1Simulator extends OpenCvPipeline {
         return input;
     }
 
-    public static int mostDifferent(double box1, double box2, double box3) {
-        double boxMean = (box1+box2+box3)/3;
-        double array[] = {Math.abs(boxMean - box1),Math.abs(boxMean - box2),Math.abs(boxMean - box3)};
+    /**
+     * Gets the most different value from 3 doubles.
+     * @param val1
+     * @param val2
+     * @param val3
+     * @return Most different, 1-3
+     */
+    public static int mostDifferent(double val1, double val2, double val3) {
+        double valMean = (val1+val2+val3)/3;
+        double array[] = {Math.abs(valMean - val1),Math.abs(valMean - val2),Math.abs(valMean - val3)};
         int max = array[0] > array[1] ? 1 : 2;
         return array[2] > array[max-1] ? 3 : max;
     }
