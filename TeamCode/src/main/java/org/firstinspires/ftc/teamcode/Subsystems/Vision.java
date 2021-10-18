@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -14,23 +15,22 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 // import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 // import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.Vision.DetectMarker;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.tensorflow.lite.task.vision.detector.Detection;
 
 /**
  * https://github.com/OpenFTC/OpenCV-Repackaged
  * Open CV library
  */
 
-public class Vision {
-    private HardwareMap hardwareMap;
+public class Vision extends MinorSubsystem{
     private Robot robot;
+    Telemetry telemetry;
 
-    public enum Color { // TODO: is this enum the one defining the allianceColor?
-        RED,
-        BLUE,
-    }
     private final Robot.AllianceColor allianceColor;
+    DetectMarker.MarkerLocation finalMarkerLocation; // Marker Location
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -40,7 +40,6 @@ public class Vision {
 
     private static final boolean USING_WEBCAM = true; // change to true if using webcam
     private static final String WEBCAM_NAME = "Webcam 1"; // insert webcam name from configuration if using webcam
-    private static final String WEBCAM_NAME2 = "Webcam 2"; // insert webcam name from configuration if using webcam
     WebcamName webcamName = null;
 
     private static final String VUFORIA_KEY =
@@ -56,16 +55,16 @@ public class Vision {
     private static final float quadField  = 36 * mmPerInch;
 
     // Define where camera is in relation to center of robot in inches
-    final float CAMERA_FORWARD_DISPLACEMENT  = 6.0f * mmPerInch;
+    final float CAMERA_FORWARD_DISPLACEMENT  = 6.0f * mmPerInch; // TODO: ADJUST VALUE
     final float CAMERA_VERTICAL_DISPLACEMENT = 6.5f * mmPerInch;
     final float CAMERA_LEFT_DISPLACEMENT     = -0.75f * mmPerInch;
 
     // Class Members
-    private OpenGLMatrix lastLocation = null;
+    private OpenGLMatrix lastLocation;
     OpenGLMatrix robotFromCamera = null;
-    private VuforiaLocalizer vuforia = null;
+    private VuforiaLocalizer vuforia;
 
-    private boolean targetVisible = false;
+    private boolean targetVisible;
     private VectorF targetTranslation;
     private Orientation targetRotation;
 
@@ -76,6 +75,9 @@ public class Vision {
     public Vision(HardwareMap hardwareMap, Robot robot, Robot.AllianceColor aC) {
         this.hardwareMap = hardwareMap;
         this.robot = robot;
+
+        this.opMode = robot.getOpMode();
+        this.telemetry = robot.getTelemetry();
         this.allianceColor = aC;
 
         webcamName = hardwareMap.get(WebcamName.class, WEBCAM_NAME);
@@ -83,12 +85,13 @@ public class Vision {
         viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
 
 
-        robot.getOpmode().telemetry.addLine("init Vuforia started");
-        robot.getOpmode().telemetry.update();
+        telemetry.addLine("init Vuforia started");
+        telemetry.update();
         initVuforia();
 
-        robot.getOpmode().telemetry.addLine("init Vuforia completed");
-        robot.getOpmode().telemetry.update();
+        telemetry.addLine("init Vuforia completed");
+        telemetry.update();
+        finalMarkerLocation = detectMarker(robot, aC);
     }
 
     private void initVuforia() {
@@ -110,5 +113,14 @@ public class Vision {
     public OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
         return OpenGLMatrix.translation(x, y, z)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
+    }
+
+    public DetectMarker.MarkerLocation detectMarker(Robot robot, Robot.AllianceColor aC) {
+        DetectMarker.MarkerLocation markerLocation = DetectMarker.MarkerLocation.NOT_FOUND;
+        DetectMarker m = new DetectMarker(robot, aC);
+        while (m.getSearchStatus() != DetectMarker.SearchStatus.FOUND) {
+            markerLocation = m.getMarkerLocation();
+        }
+        return markerLocation;
     }
 }
