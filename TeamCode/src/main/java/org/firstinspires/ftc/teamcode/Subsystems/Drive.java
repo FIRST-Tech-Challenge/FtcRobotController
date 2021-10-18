@@ -11,18 +11,16 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.TrcPose2D;
 
 import static java.lang.Thread.sleep;
 
 /** Mecanum drivetrain subsystem */
-public class Drive extends Subsystem {
-    private HardwareMap hardwareMap;
-    private LinearOpMode opMode;
-    //DC Motors
+public class Drive extends MinorSubsystem {
+    // DC Motors
     public DcMotorEx frontLeft;
     public DcMotorEx frontRight;
     public DcMotorEx rearLeft;
@@ -51,40 +49,40 @@ public class Drive extends Subsystem {
     private int odometryCountL = 0;
     private int odometryCountR = 0;
     private int odometryCountB = 0;
-    private static final double ODOMETRY_mm_PER_COUNT               = 38.85*3.14159265/8192.0;
-    private static final double ODOMETRY_RADIUS_X                   = 201.0;
-    private static final double ODOMETRY_RADIUS_Y                   = 178.0;
+    private static final double ODOMETRY_mm_PER_COUNT = 38.85*3.14159265/8192.0;
+    private static final double ODOMETRY_RADIUS_X = 201.0;
+    private static final double ODOMETRY_RADIUS_Y = 178.0;
 
     //DO WITH ENCODERS
-    private static final double     DRIVE_GEAR_REDUCTION            = 1.0 ;     // This is < 1.0 if geared UP
+    private static final double     DRIVE_GEAR_REDUCTION       = 1.0 ;     // This is < 1.0 if geared UP
 
-    private static final double     TICKS_PER_MOTOR_REV_20          = 537.6;    // AM Orbital 20 motor
-    private static final double     RPM_MAX_NEVERREST_20            = 340;
-    private static final double     ANGULAR_V_MAX_NEVERREST_20      = (TICKS_PER_MOTOR_REV_20 * RPM_MAX_NEVERREST_20) / 60.0;
+    private static final double     TICKS_PER_MOTOR_REV_20 = 537.6;    // AM Orbital 20 motor
+    private static final double     RPM_MAX_NEVERREST_20 = 340;
+    private static final double     ANGULAR_V_MAX_NEVERREST_20 = (TICKS_PER_MOTOR_REV_20 * RPM_MAX_NEVERREST_20) / 60.0;
 
     //NEW Chassis
-    private static final double     MOTOR_TICK_PER_REV_YELLOJACKET312   = 537.6;
-    private static final double     GOBUILDA_MECANUM_DIAMETER_MM        = 96.0;
-    private static final double     COUNTS_PER_MM                       = (MOTOR_TICK_PER_REV_YELLOJACKET312 * DRIVE_GEAR_REDUCTION) / (GOBUILDA_MECANUM_DIAMETER_MM * Math.PI);
+    private static final double     MOTOR_TICK_PER_REV_YELLOJACKET312 = 537.6;
+    private static final double     GOBUILDA_MECANUM_DIAMETER_MM = 96.0;
+    private static final double     COUNTS_PER_MM = (MOTOR_TICK_PER_REV_YELLOJACKET312 * DRIVE_GEAR_REDUCTION) / (GOBUILDA_MECANUM_DIAMETER_MM * Math.PI);
 
 
-    private static final double     WHEEL_DIAMETER_INCHES           = 100.0/25.4 ;     // For figuring circumference
-    private static final double     WHEEL_DIAMETER_MM               = 100.0;
-    private static final double     COUNTS_PER_INCH                 = (TICKS_PER_MOTOR_REV_20 * DRIVE_GEAR_REDUCTION) /
+    private static final double     WHEEL_DIAMETER_INCHES = 100.0/25.4 ;     // For figuring circumference
+    private static final double     WHEEL_DIAMETER_MM = 100.0;
+    private static final double     COUNTS_PER_INCH = (TICKS_PER_MOTOR_REV_20 * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    private static final double     COUNTS_CORRECTION_X             = 1.167;
-    private static final double     COUNTS_CORRECTION_Y             = 0.9918;
-    private static final double     COUNTS_PER_DEGREE             = 10.833*0.99;     // 975 ticks per 90 degrees
+    private static final double COUNTS_CORRECTION_X = 1.167;
+    private static final double COUNTS_CORRECTION_Y = 0.9918;
+    private static final double COUNTS_PER_DEGREE = 10.833*0.99;     // 975 ticks per 90 degrees
 
-    private static final double     DRIVE_SPEED             = 0.40;
-    private static final double     DRIVE_SPEED_X             = 0.35;
-    private static final double     DRIVE_SPEED_Y             = 0.40;
-    private static final double     TURN_SPEED              = 0.40;
-    private static boolean          driveFullPower          = false;
-    private static double           motorKp                 = 0.015;
-    private static double           motorKi                 = 0.02;
-    private static double           motorKd                 = 0.0003;
-    private static double           motorRampTime           = 0.3;
+    private static final double DRIVE_SPEED = 0.40;
+    private static final double DRIVE_SPEED_X = 0.35;
+    private static final double DRIVE_SPEED_Y = 0.40;
+    private static final double TURN_SPEED = 0.40;
+    private static boolean driveFullPower = false;
+    private static double motorKp = 0.015;
+    private static double motorKi = 0.02;
+    private static double motorKd = 0.0003;
+    private static double motorRampTime = 0.3;
 
     private static final double     ROBOT_INIT_POS_X    = 15.0;
     private static final double     ROBOT_INIT_POS_Y    = 15.0;
@@ -99,7 +97,7 @@ public class Drive extends Subsystem {
 
     private long startTime;
 
-    public Drive(DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx rearLeft, DcMotorEx rearRight, DcMotorEx odL, DcMotorEx odB, DcMotorEx odR, BNO055IMU imu, LinearOpMode opMode, ElapsedTime timer) {
+    public Drive(Robot robot, DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx rearLeft, DcMotorEx rearRight, DcMotorEx odL, DcMotorEx odB, DcMotorEx odR, BNO055IMU imu) {
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
         this.rearLeft = rearLeft;
@@ -107,10 +105,11 @@ public class Drive extends Subsystem {
         this.odL = odL;
         this.odB = odB;
         this.odR = odR;
-        this.opMode = opMode;
+        this.opMode = robot.getOpMode();
+        this.telemetry = robot.getTelemetry();
         this.hardwareMap = opMode.hardwareMap;
         this.imu = imu;
-        this.timer = timer;
+        this.timer = robot.getTimer();
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -758,7 +757,7 @@ public class Drive extends Subsystem {
         int currentCountFR = frontRight.getCurrentPosition();
         double currentTimeFR = ((double) (timer.nanoseconds() - startTime)) * 1.0e-6;
         int currentCountRL = rearLeft.getCurrentPosition();
-        double currentTimeRL = ((double) (timer.nanoseconds() - startTime)) * 1.0e-6;
+        double currentTimeRL = ((double) (this.timer.nanoseconds() - startTime)) * 1.0e-6;
         int currentCountRR = rearRight.getCurrentPosition();
         double currentTimeRR = ((double) (timer.nanoseconds() - startTime)) * 1.0e-6;
         String output = String.format("FL %.3f, %d, FR %.3f %d, RL %.3f %d, RR %.3f %d",
