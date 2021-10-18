@@ -73,11 +73,7 @@ public class Vision extends MinorSubsystem{
     private int[] viewportContainerIds;
 
     public Vision(HardwareMap hardwareMap, Robot robot, Robot.AllianceColor aC) {
-        this.hardwareMap = hardwareMap;
-        this.robot = robot;
-
-        this.opMode = robot.getOpMode();
-        this.telemetry = robot.getTelemetry();
+        super(robot);
         this.allianceColor = aC;
 
         webcamName = hardwareMap.get(WebcamName.class, WEBCAM_NAME);

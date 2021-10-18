@@ -4,14 +4,11 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import android.util.Log;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.TrcPose2D;
@@ -98,6 +95,7 @@ public class Drive extends MinorSubsystem {
     private long startTime;
 
     public Drive(Robot robot, DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx rearLeft, DcMotorEx rearRight, DcMotorEx odL, DcMotorEx odB, DcMotorEx odR, BNO055IMU imu) {
+        super(robot);
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
         this.rearLeft = rearLeft;
@@ -105,11 +103,7 @@ public class Drive extends MinorSubsystem {
         this.odL = odL;
         this.odB = odB;
         this.odR = odR;
-        this.opMode = robot.getOpMode();
-        this.telemetry = robot.getTelemetry();
-        this.hardwareMap = opMode.hardwareMap;
         this.imu = imu;
-        this.timer = robot.getTimer();
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 

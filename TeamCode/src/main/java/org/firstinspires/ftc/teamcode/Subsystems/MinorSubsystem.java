@@ -16,5 +16,11 @@ public class MinorSubsystem extends Subsystem {
     protected Telemetry telemetry;
     protected ElapsedTime timer;
     protected HardwareMap hardwareMap;
-    public void init() {}
+
+    public MinorSubsystem(Robot robot){
+        this.opMode = robot.getOpMode();
+        this.telemetry = robot.getTelemetry();
+        this.hardwareMap = opMode.hardwareMap;
+        this.timer = robot.getTimer();
+    }
 }
