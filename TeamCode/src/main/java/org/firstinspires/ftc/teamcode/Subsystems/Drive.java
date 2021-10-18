@@ -1054,34 +1054,29 @@ public class Drive extends MinorSubsystem {
         double targetSpeed;
         double tickCountD = (double) tickCount;
         double speedOffset = speed * 0.15; // ramp up and ramp down with this speed offset so that there is no time the speed is close to zero
-        double speedExcess= speed - speedOffset;
+        double speedExcess = speed - speedOffset;
 
-        if (tickCountD < rampTime*(speed + speedOffset)) {  // distance is shorter than a complete ramp up/ramp down cycle
-            double halfTime = (Math.sqrt(speedOffset*speedOffset + 4.0*tickCountD*speedExcess/rampTime) - speedOffset) * rampTime * 0.5 / speedExcess;
+        if (tickCountD < rampTime * (speed + speedOffset)) {  // distance is shorter than a complete ramp up/ramp down cycle
+            double halfTime = (Math.sqrt(speedOffset * speedOffset + 4.0 * tickCountD * speedExcess / rampTime) - speedOffset) * rampTime * 0.5 / speedExcess;
             if (elapsedTime < halfTime) { // during ramp up time
-                targetSpeed = speedExcess * elapsedTime/rampTime + speedOffset;
-            }
-            else {  // during ramp down time
+                targetSpeed = speedExcess * elapsedTime / rampTime + speedOffset;
+            } else {  // during ramp down time
                 double remainTime = halfTime + halfTime - elapsedTime;
-                targetSpeed = speedExcess * remainTime/rampTime + speedOffset;
+                targetSpeed = speedExcess * remainTime / rampTime + speedOffset;
             }
-        }
-        else { // distance is long enough to reach the cruise speed
+        } else { // distance is long enough to reach the cruise speed
             if (elapsedTime < rampTime) { // during ramp up time
-                targetSpeed = speedExcess * elapsedTime/rampTime + speedOffset;
-            }
-            else if (tickCountD - speedOffset*rampTime > speed * elapsedTime) { // during constant speed period
+                targetSpeed = speedExcess * elapsedTime / rampTime + speedOffset;
+            } else if (tickCountD - speedOffset * rampTime > speed * elapsedTime) { // during constant speed period
                 targetSpeed = speed;
-            }
-            else {  // during ramp down time
-                double remainTime = (tickCountD - speedOffset*rampTime)/speed + rampTime - elapsedTime;
-                targetSpeed = speedExcess * remainTime/rampTime + speedOffset;
+            } else {  // during ramp down time
+                double remainTime = (tickCountD - speedOffset * rampTime) / speed + rampTime - elapsedTime;
+                targetSpeed = speedExcess * remainTime / rampTime + speedOffset;
             }
         }
         if (targetSpeed < speedOffset) targetSpeed = speedOffset;
         return targetSpeed;
     }
-    */
     public static class Odometry
     {
         TrcPose2D position;
