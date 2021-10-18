@@ -7,8 +7,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 import java.lang.Math;
-import java.util.ArrayList;
-import java.util.Collections;
+import org.apache.commons.lang.ArrayUtils;
 public class pipeline1Simulator extends OpenCvPipeline {
     private final Telemetry telemetry;
     private final Scalar red = new Scalar(255,0,0);
@@ -134,11 +133,16 @@ public class pipeline1Simulator extends OpenCvPipeline {
 
     private int mostDifferent(double box1, double box2, double box3) {
         double boxMean = (box1+box2+box3)/3;
-        ArrayList<Double> list = new ArrayList<>();
-        list.add(Math.abs(boxMean - box1));
-        list.add(Math.abs(boxMean - box2));
-        list.add(Math.abs(boxMean - box3));
-        return list.indexOf(Collections.max(list)) + 1;
+        double array[] = {Math.abs(boxMean - box1),Math.abs(boxMean - box2),Math.abs(boxMean - box3)};
+        double max = 0;
+        int index = 0;
+        for(double l : array) {
+            index++;
+            if (max < l) {
+                max = l;
+                return index;
+            }
+        }
     }
 
     /**
