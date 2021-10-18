@@ -49,30 +49,30 @@ public class Drive extends MinorSubsystem {
     private int odometryCountL = 0;
     private int odometryCountR = 0;
     private int odometryCountB = 0;
-    private static final double ODOMETRY_mm_PER_COUNT = 38.85*3.14159265/8192.0;
+    private static final double ODOMETRY_mm_PER_COUNT = 38.85 * 3.14159265 / 8192.0;
     private static final double ODOMETRY_RADIUS_X = 201.0;
     private static final double ODOMETRY_RADIUS_Y = 178.0;
 
     //DO WITH ENCODERS
-    private static final double     DRIVE_GEAR_REDUCTION       = 1.0 ;     // This is < 1.0 if geared UP
+    private static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
 
-    private static final double     TICKS_PER_MOTOR_REV_20 = 537.6;    // AM Orbital 20 motor
-    private static final double     RPM_MAX_NEVERREST_20 = 340;
-    private static final double     ANGULAR_V_MAX_NEVERREST_20 = (TICKS_PER_MOTOR_REV_20 * RPM_MAX_NEVERREST_20) / 60.0;
+    private static final double TICKS_PER_MOTOR_REV_20 = 537.6;    // AM Orbital 20 motor
+    private static final double RPM_MAX_NEVERREST_20 = 340;
+    private static final double ANGULAR_V_MAX_NEVERREST_20 = (TICKS_PER_MOTOR_REV_20 * RPM_MAX_NEVERREST_20) / 60.0;
 
     //NEW Chassis
-    private static final double     MOTOR_TICK_PER_REV_YELLOJACKET312 = 537.6;
-    private static final double     GOBUILDA_MECANUM_DIAMETER_MM = 96.0;
-    private static final double     COUNTS_PER_MM = (MOTOR_TICK_PER_REV_YELLOJACKET312 * DRIVE_GEAR_REDUCTION) / (GOBUILDA_MECANUM_DIAMETER_MM * Math.PI);
+    private static final double MOTOR_TICK_PER_REV_YELLOJACKET312 = 537.6;
+    private static final double GOBUILDA_MECANUM_DIAMETER_MM = 96.0;
+    private static final double COUNTS_PER_MM = (MOTOR_TICK_PER_REV_YELLOJACKET312 * DRIVE_GEAR_REDUCTION) / (GOBUILDA_MECANUM_DIAMETER_MM * Math.PI);
 
 
-    private static final double     WHEEL_DIAMETER_INCHES = 100.0/25.4 ;     // For figuring circumference
-    private static final double     WHEEL_DIAMETER_MM = 100.0;
-    private static final double     COUNTS_PER_INCH = (TICKS_PER_MOTOR_REV_20 * DRIVE_GEAR_REDUCTION) /
+    private static final double WHEEL_DIAMETER_INCHES = 100.0 / 25.4;     // For figuring circumference
+    private static final double WHEEL_DIAMETER_MM = 100.0;
+    private static final double COUNTS_PER_INCH = (TICKS_PER_MOTOR_REV_20 * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     private static final double COUNTS_CORRECTION_X = 1.167;
     private static final double COUNTS_CORRECTION_Y = 0.9918;
-    private static final double COUNTS_PER_DEGREE = 10.833*0.99;     // 975 ticks per 90 degrees
+    private static final double COUNTS_PER_DEGREE = 10.833 * 0.99;     // 975 ticks per 90 degrees
 
     private static final double DRIVE_SPEED = 0.40;
     private static final double DRIVE_SPEED_X = 0.35;
@@ -84,10 +84,10 @@ public class Drive extends MinorSubsystem {
     private static double motorKd = 0.0003;
     private static double motorRampTime = 0.3;
 
-    private static final double     ROBOT_INIT_POS_X    = 15.0;
-    private static final double     ROBOT_INIT_POS_Y    = 15.0;
-    private static final double     ROBOT_INIT_ANGLE    = 45.0;
-    private static final float      mmPerInch        = 25.4f;
+    private static final double ROBOT_INIT_POS_X = 15.0;
+    private static final double ROBOT_INIT_POS_Y = 15.0;
+    private static final double ROBOT_INIT_ANGLE = 45.0;
+    private static final float mmPerInch = 25.4f;
 
     private boolean isBlue = false;
 
@@ -140,7 +140,7 @@ public class Drive extends MinorSubsystem {
         getOdometryCountR();
     }
 
-    public double getAngularVMaxNeverrest20(){
+    public double getAngularVMaxNeverrest20() {
         return ANGULAR_V_MAX_NEVERREST_20;
     }
 
@@ -157,10 +157,18 @@ public class Drive extends MinorSubsystem {
     }
 
     public void checkAndStopMotors() {
-        if (!frontLeft.isBusy()) { frontLeft.setPower(0); }
-        if (!frontRight.isBusy()) { frontRight.setPower(0); }
-        if (!rearLeft.isBusy()) { rearLeft.setPower(0); }
-        if (!rearRight.isBusy()) { rearRight.setPower(0); }
+        if (!frontLeft.isBusy()) {
+            frontLeft.setPower(0);
+        }
+        if (!frontRight.isBusy()) {
+            frontRight.setPower(0);
+        }
+        if (!rearLeft.isBusy()) {
+            rearLeft.setPower(0);
+        }
+        if (!rearRight.isBusy()) {
+            rearRight.setPower(0);
+        }
     }
 
     /**
@@ -202,18 +210,17 @@ public class Drive extends MinorSubsystem {
     }
 
     // robot move in all directions
-    public double[] calcMotorPowers(double leftStickX, double leftStickY, double rightStickX) {
-        double r = Math.hypot(leftStickX, leftStickY);
-    }
 
     // robot only move in forward/backward/left/right directions
-    public double[] calcMotorPowers2(double leftStickX, double leftStickY, double rightStickX) {
+    public double[] calcMotorPowers(double leftStickX, double leftStickY, double rightStickX, double rightStickY) {
         if(Math.abs(leftStickX) >= Math.abs((leftStickY))){
             leftStickY = 0;
         }
-        else{
+        else {
             leftStickX = 0;
         }
+        double[] out = {1, 1, 1, 1};
+        return out;
     }
 
     public void setDrivePower(double power) {
@@ -413,6 +420,11 @@ public class Drive extends MinorSubsystem {
         frontLeft.setPower(motorPowers[1]);
         rearRight.setPower(motorPowers[2]);
         frontRight.setPower(motorPowers[3]);
+    }
+
+    private double[] calcMotorPowers2D(double targetPositionX, double targetPositionY, double motorPower) {
+        double[] out = {0,0,0,0};
+        return out;
     }
 
     public void setTargetPosition2D(double targetPositionX, double targetPositionY) {
@@ -792,7 +804,7 @@ public class Drive extends MinorSubsystem {
         double prevTimeRL = 0.0;
         double prevTimeRR = 0.0;
         boolean initialized = false;        // disable Ki and Kd terms in first iteration
-        int currentCount, targetCount;
+        int currentCount = 0, targetCount = 0;
         int prevCountFL = 0;
         int prevCountFR = 0;
         int prevCountRL = 0;
@@ -820,17 +832,17 @@ public class Drive extends MinorSubsystem {
                         frontLeft.setPower(0.0);
                     }
                    // else {          TODO: The code below is commented out for further review
-                        currentError = (double) (currentCount-targetCount);
+                        //currentError = (double) (currentCount-targetCount);
                         }
                         else { // at the first point, use Kp only
-                            currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
+                            currentPower = 0; //currentTargetSpeed/maxSpeed - currentError*Kp;
                         }
                         if (currentPower > 1.0) currentPower = 1.0;
                         if (currentPower < 0.0) currentPower = 0.0;
                         frontLeft.setPower(currentPower);
                     }
                 }
-                else { // motorFLForward is false, tick count negative and decreasing
+                //else { // motorFLForward is false, tick count negative and decreasing
                     if (currentCount <= -tickCount) {
                         isMotorFLDone = true;
                         isMotorFLNotMoving = true;
@@ -841,9 +853,9 @@ public class Drive extends MinorSubsystem {
                         frontLeft.setPower(currentPower);
                     }
                 }
-                prevErrorFL = currentError;
+                /*prevErrorFL = currentError;
                 prevTimeFL = currentTime;
-                prevCountFL = currentCount;
+                prevCountFL = currentCount;*/
             } // if (!isMotorFLDone)
     /*
             if (!isMotorFRDone) {
@@ -1018,7 +1030,7 @@ public class Drive extends MinorSubsystem {
 
     }
 */
-    private int getTargetTickCount(int tickCount, double speed, double rampTime, double elapsedTime) {
+    /*private int getTargetTickCount(int tickCount, double speed, double rampTime, double elapsedTime) {
         int targetTick;
         double tickCountD = (double) tickCount;
         double speedOffset = speed * 0.15; // ramp up and ramp down with this speed offset so that there is no time the speed is close to zero
@@ -1095,7 +1107,7 @@ public class Drive extends MinorSubsystem {
          *
          * @param position specifies the initial position.
          * @param velocity specifies the initial velocity.
-         */
+
         Odometry(TrcPose2D position, TrcPose2D velocity)
         {
             this.position = position;
@@ -1106,7 +1118,7 @@ public class Drive extends MinorSubsystem {
          * This method returns the string representation of the object.
          *
          * @return string representation of the object.
-         */
+
         @Override
         public String toString()
         {
@@ -1117,7 +1129,7 @@ public class Drive extends MinorSubsystem {
          * This method creates and returns a copy of this odometry.
          *
          * @return a copy of this odometry.
-         */
+
         public Odometry clone()
         {
             return new Odometry(position.clone(), velocity.clone());
@@ -1127,7 +1139,7 @@ public class Drive extends MinorSubsystem {
          * This method sets the position info of the odometry to the given pose.
          *
          * @param pose specifies the pose to set the position info to.
-         */
+
         void setPositionAs(TrcPose2D pose)
         {
             this.position.setAs(pose);
@@ -1137,7 +1149,7 @@ public class Drive extends MinorSubsystem {
          * This method sets the velocity info of the odometry to the given pose.
          *
          * @param pose specifies the pose to set the velocity info to.
-         */
+
             void setVelocityAs(TrcPose2D pose)
         {
             this.velocity.setAs(pose);
@@ -1145,3 +1157,4 @@ public class Drive extends MinorSubsystem {
 
     }   //class Odometry
 }
+*/
