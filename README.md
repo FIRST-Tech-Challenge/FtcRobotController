@@ -7,14 +7,18 @@ This repository contains FTC Team 5206's repository for the Freight Frenzy (2021
 
 **master** - stable code here
 
-**vision** - vision code
+**auto** - auto code
 
 **dev-pid** - pid development
 
-**auto** - auto code
+**gh-pages** - Github Pages *does not have actual code*
+
+**latest** - Latest Code from all branches
 
 **teleop** - teleop development
 
-**\*-hotfix** - hotfix branch, quick fix
+**teleop-vision** - Teleop+vision
 
-**gh-pages** - Github Pages *does not have actual code*
+**vision** - vision code
+
+**\*-hotfix** - hotfix branch, quick fix
