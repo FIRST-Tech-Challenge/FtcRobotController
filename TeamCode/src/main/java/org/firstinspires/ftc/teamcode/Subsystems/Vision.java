@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 // import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 // import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Vision.DetectMarker;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -29,7 +30,7 @@ public class Vision extends MinorSubsystem{
     private Robot robot;
     Telemetry telemetry;
 
-    private final Robot.AllianceColor allianceColor;
+    private final AllianceColor allianceColor;
     DetectMarker.MarkerLocation finalMarkerLocation; // Marker Location
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
@@ -72,7 +73,7 @@ public class Vision extends MinorSubsystem{
 
     private int[] viewportContainerIds;
 
-    public Vision(HardwareMap hardwareMap, Robot robot, Robot.AllianceColor aC) {
+    public Vision(Robot robot, AllianceColor aC) {
         super(robot);
         this.allianceColor = aC;
 
@@ -111,7 +112,7 @@ public class Vision extends MinorSubsystem{
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
     }
 
-    public DetectMarker.MarkerLocation detectMarker(Robot robot, Robot.AllianceColor aC) {
+    public DetectMarker.MarkerLocation detectMarker(Robot robot, AllianceColor aC) {
         DetectMarker.MarkerLocation markerLocation = DetectMarker.MarkerLocation.NOT_FOUND;
         DetectMarker m = new DetectMarker(robot, aC);
         while (m.getSearchStatus() != DetectMarker.SearchStatus.FOUND) {

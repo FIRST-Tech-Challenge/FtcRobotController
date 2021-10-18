@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -13,19 +12,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.AllianceColor;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 
 public class Robot extends Subsystem {
-    public enum AllianceColor {
-        RED,
-        BLUE // undefined is not needed
-    }
     private AllianceColor allianceColor;
-    public String name;
+    private final String name = "Freight Mover";
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
     private Telemetry telemetry;
@@ -149,45 +145,59 @@ public class Robot extends Subsystem {
 
     private double joystickDeadZone = 0.1;
 
-    //Subsystems
+    // Subsystems
     public Drive drive;
     public Control control;
     public Vision vision;
 
-    public Robot(LinearOpMode opMode, ElapsedTime timer) throws IOException {
-        hardwareMap = opMode.hardwareMap;
-        this.opMode = opMode;
-        this.telemetry = opMode.telemetry;
-        this.timer = timer;
-        init();
-    }
 
     /**
      *
      * @param opMode
      * @param timer
-     * @param isBlue
+     * @param aC
      *          o: no camera is initialized
      *          1: only armWebcam is initialized for OpenCV
      *          2: backWebcam is initialized for Vuforia
      *          3: backWebcam is initialized for Vuforia and frontWebcam is initialized for OpenCV
      *          4: armWebcam is initialized for OpenCV and frontWebcam is initialized for OpenCV
      */
-    public Robot(LinearOpMode opMode, ElapsedTime timer, boolean isBlue) throws IOException {
+    public Robot(LinearOpMode opMode, ElapsedTime timer, AllianceColor aC) throws IOException {
         hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
         this.timer = timer;
-        if (isBlue) {
-            this.allianceColor = AllianceColor.BLUE;
-        }
-        else {
-            this.allianceColor = AllianceColor.RED;
-        }
+        allianceColor = aC;
+
         init();
     }
 
     public void init() throws IOException {
+        initMechanical(); // mechanical stuff
+        // Drive
+        telemetry.addData("Mode", " drive/control initializing...");
+        telemetry.update();
+        List<DcMotorEx> dcMotorExList = new ArrayList<>(4);
+        dcMotorExList.add(frontLeftDriveMotor);
+        dcMotorExList.add(frontRightDriveMotor);
+        dcMotorExList.add(rearLeftDriveMotor);
+        dcMotorExList.add(rearRightDriveMotor);
+
+        drive = new Drive(this, dcMotorExList, intake, launch1, launch2b, imu);
+//        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.addData("Mode", " vision initializing...");
+        telemetry.update();
+        vision = new Vision(this, allianceColor);
+
+
+        telemetry.addData("Mode", " control initializing...");
+        telemetry.update();
+        control = new Control(this);
+
+    }
+
+    public void initMechanical() {
         // DC Motors
         frontLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fl");
         frontRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fr");
@@ -236,7 +246,7 @@ public class Robot extends Subsystem {
 //        intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         intake.setPower(0.0);
 
-        //Servos
+        // Servos
 //        clawDeploy = hardwareMap.servo.get("clawDeploy");
 //        claw = hardwareMap.servo.get("claw");
 //        elevator1 = hardwareMap.crservo.get("e1");
@@ -292,33 +302,12 @@ public class Robot extends Subsystem {
             opMode.sleep(50);
             opMode.idle();
         }
-
-        // Subsystems
-        telemetry.addData("Mode", " drive/control initializing...");
-        telemetry.update();
-        drive = new Drive(this, frontLeftDriveMotor, frontRightDriveMotor, rearLeftDriveMotor, rearRightDriveMotor, intake, launch1, launch2b, imu);
-
-//        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        telemetry.addData("Mode", " vision initializing...");
-        telemetry.update();
-        vision = new Vision(hardwareMap, this, allianceColor);
-
-
-        telemetry.addData("Mode", " control initializing...");
-        telemetry.update();
-        control = new Control(this);
-
     }
 
-    public void initVisionTest() {
-        vision = new Vision(hardwareMap, this, allianceColor);
+    public String getName() {
+        return this.name;
     }
 
-    public void initServosAuto() {
-        // code here
-    }
 
     public LinearOpMode getOpMode() {
         return this.opMode;

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry; // TODO: Integrate this file with the rest of the codebase
 
+import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -28,7 +29,7 @@ public class DetectMarker extends OpenCvPipeline {
         FOUND
     }
 
-    private Robot.AllianceColor allianceColor;
+    private AllianceColor allianceColor;
     private MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
     private SearchStatus searchStatus = SearchStatus.INITIALIZING;
 
@@ -50,7 +51,7 @@ public class DetectMarker extends OpenCvPipeline {
 
     Mat mat = new Mat();
 
-    public DetectMarker(Robot robot, Robot.AllianceColor ac) {
+    public DetectMarker(Robot robot, AllianceColor ac) {
         telemetry = robot.getOpMode().telemetry;
         this.allianceColor = ac;
     }
@@ -110,14 +111,17 @@ public class DetectMarker extends OpenCvPipeline {
 
         Scalar colorNormal;
 
-        if (this.allianceColor == Robot.AllianceColor.RED) {
-            colorNormal = new Scalar(255, 0, 0);
+        if (this.allianceColor == AllianceColor.RED) {
+            colorNormal = new Scalar(255, 0, 0); // Pure Red
+        }
+        else if (this.allianceColor == AllianceColor.BLUE) {
+            colorNormal = new Scalar(0, 0, 255); // Pure Blue
         }
         else {
-            colorNormal = new Scalar(0, 0, 255);
+            colorNormal = new Scalar(255, 0, 255); // Pure Blue
         }
 
-        Scalar colorMarker = new Scalar(0, 255, 0);
+        Scalar colorMarker = new Scalar(0, 255, 0); // Pure Green
 
         Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.LEFT ? colorMarker : colorNormal);
         Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.MIDDLE ? colorMarker : colorNormal);
