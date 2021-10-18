@@ -42,7 +42,7 @@ public class MasterOdoCam extends MasterOdo {
 
     @Override
     protected void initLocator() {
-        this.locator = new VSlamOdometry(hardwareMap, VSlamOdometry.THREAD_INTERVAL);
+        this.locator = VSlamOdometry.getInstance(hardwareMap);
         this.locator.init(new Point(startX, startY), initHead);
         startLocator(locator);
     }
