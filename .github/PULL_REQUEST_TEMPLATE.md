@@ -1,1 +1,10 @@
-Before issuing a pull request, please see the contributing page.
+# Overview
+This pull request fixes/adds x
+
+# Info
+Task:
+Type (Bug fix, feature addition, Hotfix, etc.):
+Description:
+
+
+Additional Comments: 
