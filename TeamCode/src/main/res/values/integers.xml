@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="leftDriveID">1</integer>
+    <integer name="rightDriveID">2</integer>
+    <integer name="centerDriveID">3</integer>
+</resources>
