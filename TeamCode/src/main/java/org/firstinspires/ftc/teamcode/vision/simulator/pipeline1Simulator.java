@@ -134,8 +134,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
         double boxMean = (box1+box2+box3)/3;
         double array[] = {Math.abs(boxMean - box1),Math.abs(boxMean - box2),Math.abs(boxMean - box3)};
         int max = array[0] > array[1] ? 1 : 2;
-        max = array[2] > array[max-1] ? 3 : max;
-        return max;
+        return array[2] > array[max-1] ? 3 : max;
     }
 
     /**
