@@ -1,35 +1,30 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.utils.EncoderMotor;
-
-import kotlin.jvm.internal.MagicApiIntrinsics;
+import org.firstinspires.ftc.teamcode.utils.Motor;
 
 @TeleOp(name="ControllerTeleOp", group="Iterative")
 public class ControllerTeleOp extends OpMode {
 
     private final ElapsedTime TIME = new ElapsedTime();
-    private EncoderMotor spinner, motor0, motor1, motor2, motor3;
+    private Motor spinner, motor0, motor1, motor2, motor3;
     private float vertical, horizontal, pivot;
-//    private DcMotor motor0, motor1, motor2, motor3;
 
     /**
      * Code to run once when the OpMode is initialized.
      */
     @Override
     public void init() {
-        spinner = new EncoderMotor(telemetry, hardwareMap, "Spinner", DcMotorSimple.Direction.REVERSE, 400, 1, 1);
-        motor0 = new EncoderMotor(telemetry, hardwareMap, "DcMotor", DcMotorSimple.Direction.FORWARD, 400, 0, 0);
-        motor1 = new EncoderMotor(telemetry, hardwareMap, "DcMotor 1", DcMotorSimple.Direction.FORWARD, 400, 0, 0);
-        motor2 = new EncoderMotor(telemetry, hardwareMap, "DcMotor 2", DcMotorSimple.Direction.FORWARD, 400, 0, 0);
-        motor3 = new EncoderMotor(telemetry, hardwareMap, "DcMotor 3", DcMotorSimple.Direction.FORWARD, 400, 0, 0);
+        spinner = new Motor(telemetry, hardwareMap, "Spinner", DcMotorSimple.Direction.REVERSE, 400, 1, 1);
+        motor0 = new Motor(telemetry, hardwareMap, "DcMotor", DcMotorSimple.Direction.FORWARD, 400, 0, 0);
+        motor1 = new Motor(telemetry, hardwareMap, "DcMotor 1", DcMotorSimple.Direction.FORWARD, 400, 0, 0);
+        motor2 = new Motor(telemetry, hardwareMap, "DcMotor 2", DcMotorSimple.Direction.FORWARD, 400, 0, 0);
+        motor3 = new Motor(telemetry, hardwareMap, "DcMotor 3", DcMotorSimple.Direction.FORWARD, 400, 0, 0);
         telemetry.addData("Status", "Initialized");
 
     }
@@ -63,10 +58,10 @@ public class ControllerTeleOp extends OpMode {
         vertical = -gamepad1.right_stick_y;
         horizontal = gamepad1.right_stick_x;
         pivot = gamepad1.left_stick_x;
-        motor3.driveWithEncoder((int) (-pivot + (vertical - horizontal) * 100));
-        motor2.driveWithEncoder((int) (-pivot + vertical + horizontal * 100));
-        motor1.driveWithEncoder((int) (pivot + (vertical - horizontal) * 100));
-        motor0.driveWithEncoder((int) (pivot + vertical + horizontal * 100));
+        motor3.driveWithEncoder(Range.clip((int) (-pivot + (vertical - horizontal) * 100), -100, 100));
+        motor2.driveWithEncoder(Range.clip((int) (-pivot + (vertical + horizontal) * 100), -100, 100));
+        motor1.driveWithEncoder(Range.clip((int) (pivot + (vertical - horizontal) * 100), -100, 100));
+        motor0.driveWithEncoder(Range.clip((int) (pivot + (vertical + horizontal) * 100), -100, 100));
     }
 
     /*
