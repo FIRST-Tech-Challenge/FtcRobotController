@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -20,12 +19,8 @@ import org.firstinspires.ftc.teamcode.TrcPose2D;
 import static java.lang.Thread.sleep;
 
 /** Mecanum drivetrain subsystem */
-public class Drive extends Subsystem {
-    private HardwareMap hardwareMap;
-    private LinearOpMode opMode;
-    private Telemetry telemetry;
-
-    //DC Motors
+public class Drive extends MinorSubsystem {
+    // DC Motors
     public DcMotorEx frontLeft;
     public DcMotorEx frontRight;
     public DcMotorEx rearLeft;
@@ -111,7 +106,7 @@ public class Drive extends Subsystem {
         this.odB = odB;
         this.odR = odR;
         this.opMode = robot.getOpMode();
-        this.telemetry = opMode.telemetry;
+        this.telemetry = robot.getTelemetry();
         this.hardwareMap = opMode.hardwareMap;
         this.imu = imu;
         this.timer = robot.getTimer();
@@ -762,7 +757,7 @@ public class Drive extends Subsystem {
         int currentCountFR = frontRight.getCurrentPosition();
         double currentTimeFR = ((double) (timer.nanoseconds() - startTime)) * 1.0e-6;
         int currentCountRL = rearLeft.getCurrentPosition();
-        double currentTimeRL = ((double) (timer.nanoseconds() - startTime)) * 1.0e-6;
+        double currentTimeRL = ((double) (this.timer.nanoseconds() - startTime)) * 1.0e-6;
         int currentCountRR = rearRight.getCurrentPosition();
         double currentTimeRR = ((double) (timer.nanoseconds() - startTime)) * 1.0e-6;
         String output = String.format("FL %.3f, %d, FR %.3f %d, RL %.3f %d, RR %.3f %d",
