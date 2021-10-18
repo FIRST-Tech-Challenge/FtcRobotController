@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
     implementation 'com.spartronics4915.lib:ftc265:2.1.9'
-    api(name:'FtcDashboard-0.4.3', ext:'aar')
+    implementation(name:'FtcDashboard-0.4.3', ext:'aar')
 }
 
 

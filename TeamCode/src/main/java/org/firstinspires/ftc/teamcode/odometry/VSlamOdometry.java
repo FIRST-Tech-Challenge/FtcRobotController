@@ -46,16 +46,28 @@ public class VSlamOdometry implements IBaseOdometry {
     private int currentY;
     private int currentHeading;
 
+    private static VSlamOdometry theInstance;
+
     private boolean persistPosition = false;
 
     private static final String TAG = "RobotCoordinatePositionCam";
 
-    public VSlamOdometry(HardwareMap hwMap) {
-        init(hwMap, THREAD_INTERVAL, 0.8);
+    private VSlamOdometry(HardwareMap hwMap, int threadDelay) {
+        init(hwMap, threadDelay, 0.8);
     }
 
-    public VSlamOdometry(HardwareMap hwMap, int threadDelay) {
-        init(hwMap, threadDelay, 0.8);
+    public static VSlamOdometry getInstance(HardwareMap hwMap) {
+        if (theInstance != null) {
+            theInstance = new VSlamOdometry(hwMap, THREAD_INTERVAL);
+        }
+        return theInstance;
+    }
+
+    public static VSlamOdometry getInstance(HardwareMap hwMap, int threadDelay) {
+        if (theInstance != null) {
+            theInstance = new VSlamOdometry(hwMap, threadDelay);
+        }
+        return theInstance;
     }
 
     private void init(HardwareMap hwMap, int threadDelay, double encoderMeasurementCovariance){
@@ -78,7 +90,6 @@ public class VSlamOdometry implements IBaseOdometry {
         Pose2d startingPose = new Pose2d(startX, startY, startHeading);
         // This is the transformation between the center of the camera and the center of the robot
         final Transform2d cameraToRobot = new Transform2d();
-
 
         slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, this.hwMap.appContext);
         slamra.setPose(startingPose);
@@ -109,7 +120,6 @@ public class VSlamOdometry implements IBaseOdometry {
     public void stop() {
         isRunning = false;
         slamra.stop();
-        slamra.free();
     }
 
     @Override
