@@ -32,17 +32,9 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.utils.Drivetrain;
-import org.firstinspires.ftc.teamcode.utils.DrivetrainGamepad;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
 
 
 /**
@@ -64,12 +56,12 @@ public class BasicOpMode_With_Spinner extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DrivetrainGamepad gpad;
+    private RobotWithSpinner gpad;
 
     @Override
     public void runOpMode() {
 
-        gpad = new DrivetrainGamepad(gamepad1, gamepad2, hardwareMap);
+        gpad = new RobotWithSpinner(gamepad1, gamepad2, hardwareMap, telemetry);
 
         while (opModeIsActive()) {
 
