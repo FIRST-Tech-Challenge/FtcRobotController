@@ -25,15 +25,10 @@ import org.tensorflow.lite.task.vision.detector.Detection;
  * Open CV library
  */
 
-public class Vision {
-    private HardwareMap hardwareMap;
+public class Vision extends MinorSubsystem{
     private Robot robot;
     Telemetry telemetry;
 
-    public enum Color { // TODO: is this enum the one defining the allianceColor?
-        RED,
-        BLUE,
-    }
     private final Robot.AllianceColor allianceColor;
     DetectMarker.MarkerLocation finalMarkerLocation; // Marker Location
 
@@ -80,7 +75,8 @@ public class Vision {
     public Vision(HardwareMap hardwareMap, Robot robot, Robot.AllianceColor aC) {
         this.hardwareMap = hardwareMap;
         this.robot = robot;
-        this.telemetry = robot.getOpMode().telemetry;
+        this.opMode = robot.getOpMode();
+        this.telemetry = robot.getTelemetry();
         this.allianceColor = aC;
 
         webcamName = hardwareMap.get(WebcamName.class, WEBCAM_NAME);
