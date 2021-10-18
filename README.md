@@ -17,8 +17,6 @@ This repository contains FTC Team 5206's repository for the Freight Frenzy (2021
 
 **teleop** - teleop development
 
-**teleop-vision** - Teleop+vision
-
 **vision** - vision code
 
 **\*-hotfix** - hotfix branch, quick fix
