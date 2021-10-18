@@ -51,7 +51,6 @@ import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
  */
 
 @TeleOp(name="Basic OpMode with spinner attachment", group="Special Hardware")
-@Disabled
 public class BasicOpMode_With_Spinner extends LinearOpMode {
 
     // Declare OpMode members.
