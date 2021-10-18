@@ -204,12 +204,6 @@ public class Drive extends MinorSubsystem {
     // robot move in all directions
     public double[] calcMotorPowers(double leftStickX, double leftStickY, double rightStickX) {
         double r = Math.hypot(leftStickX, leftStickY);
-        double robotAngle = Math.atan2(leftStickY, leftStickX) - Math.PI / 4;
-        double lrPower = r * Math.sin(robotAngle) + rightStickX;
-        double lfPower = r * Math.cos(robotAngle) + rightStickX;
-        double rrPower = r * Math.cos(robotAngle) - rightStickX;
-        double rfPower = r * Math.sin(robotAngle) - rightStickX;
-        return new double[]{lfPower, rfPower, lrPower, rrPower};
     }
 
     // robot only move in forward/backward/left/right directions
@@ -220,13 +214,6 @@ public class Drive extends MinorSubsystem {
         else{
             leftStickX = 0;
         }
-        double r = Math.hypot(leftStickX, leftStickY);
-        double robotAngle = Math.atan2(leftStickY, leftStickX) - Math.PI / 4;
-        double lrPower = r * Math.sin(robotAngle) + rightStickX;
-        double lfPower = r * Math.cos(robotAngle) + rightStickX;
-        double rrPower = r * Math.cos(robotAngle) - rightStickX;
-        double rfPower = r * Math.sin(robotAngle) - rightStickX;
-        return new double[]{lfPower, rfPower, lrPower, rrPower};
     }
 
     public void setDrivePower(double power) {
@@ -282,12 +269,6 @@ public class Drive extends MinorSubsystem {
     /**
      * Positive encoder values correspond to rightward robot movement
      */
-    public void strafe(int targetPosition) {
-        frontLeft.setTargetPosition(targetPosition);
-        frontRight.setTargetPosition(-targetPosition);
-        rearLeft.setTargetPosition(-targetPosition);
-        rearRight.setTargetPosition(targetPosition);
-    }
 
     public void turnRobotByTick(double angle) {
 //        this.turnByTick(TURN_SPEED, angle);
@@ -446,7 +427,7 @@ public class Drive extends MinorSubsystem {
         rearRight.setTargetPosition((int)  (+ targetPositionX + targetPositionY));
     }
 
-    public double[] calcMotorPowers2D(double targetPositionX, double targetPositionY, double motorPower)
+    /*public double[] calcMotorPowers2D(double targetPositionX, double targetPositionY, double motorPower)
     {
         // targetPositionX and targetPositionY determine the direction of movement
         // motorPower determines the magnitude of motor power
@@ -457,6 +438,7 @@ public class Drive extends MinorSubsystem {
         double rfPower = motorPower * (- targetPositionX + targetPositionY) / angleScale;
         return new double[]{lrPower, lfPower, rrPower, rfPower};
     }
+    */
 
     public void moveToPosABS(double targetPositionX, double targetPositionY) {
         // move to (targetPositionX, targetPositionY) in absolute field coordinate
@@ -479,11 +461,6 @@ public class Drive extends MinorSubsystem {
 
     public void moveToPosREL(double targetPositionX, double targetPositionY) {
         // move to (targetPositionX, targetPositionY) in relative robot coordinate
-        this.moveToPos2D(DRIVE_SPEED, targetPositionX, targetPositionY);
-        robotCurrentPosX += targetPositionY * Math.cos(robotCurrentAngle*Math.PI/180.0)
-                + targetPositionX * Math.cos((robotCurrentAngle-90.0)*Math.PI/180.0);
-        robotCurrentPosY += targetPositionY * Math.sin(robotCurrentAngle*Math.PI/180.0)
-                + targetPositionX * Math.sin((robotCurrentAngle-90.0)*Math.PI/180.0);
         // Display it for the driver.
         opMode.telemetry.addData("moveToPosREL",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         opMode.telemetry.update();
@@ -688,7 +665,7 @@ public class Drive extends MinorSubsystem {
 //        sleep(100);
     }
 
-    public void printMotorPIDCoefficients() {
+  /*  public void printMotorPIDCoefficients() {
         PIDFCoefficients pidCoeff;
         pidCoeff = getMotorPIDCoefficients(frontLeft, DcMotor.RunMode.RUN_TO_POSITION);
         opMode.telemetry.addData("Front Left ", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
@@ -704,6 +681,7 @@ public class Drive extends MinorSubsystem {
                 pidCoeff.p, pidCoeff.i, pidCoeff.d, pidCoeff.f, pidCoeff.algorithm.toString());
         opMode.telemetry.update();
     }
+    */
 
     public void setMotorKp(double motorKPFL, double motorKPFR, double motorKPRL, double motorKPRR) {
         frontLeft.setPositionPIDFCoefficients(motorKPFL);
@@ -830,8 +808,8 @@ public class Drive extends MinorSubsystem {
             if (!isMotorFLDone) {
                 currentCount = frontLeft.getCurrentPosition();                          // get current motor tick
                 currentTime = ((double) timer.nanoseconds()) * 1.0e-9 - startTime;      // get current time
-                targetCount = getTargetTickCount(tickCount, peakSpeed, rampTime, currentTime);  // get integrated target tick on the speed profile
-                currentTargetSpeed = getTargetSpeed(tickCount, peakSpeed, rampTime, currentTime); // get the target speed on the speed profile
+                //targetCount = getTargetTickCount(tickCount, peakSpeed, rampTime, currentTime);  // get integrated target tick on the speed profile
+                //currentTargetSpeed = getTargetSpeed(tickCount, peakSpeed, rampTime, currentTime); // get the target speed on the speed profile
                 if (initialized) {  // check if the motor is rotating
                     isMotorFLNotMoving = Math.abs(currentCount - prevCountFL) < timeOutThreshold;
                 }
@@ -841,12 +819,8 @@ public class Drive extends MinorSubsystem {
                         isMotorFLNotMoving = true;
                         frontLeft.setPower(0.0);
                     }
-                    else {
+                   // else {          TODO: The code below is commented out for further review
                         currentError = (double) (currentCount-targetCount);
-                        if (initialized) { // after the first point, the previous data is valid
-                            acculErrorFL = acculErrorFL*alpha + currentError*(currentTime-prevTimeFL);  // integrate error
-                            errorSlope = (currentError - prevErrorFL)/(currentTime-prevTimeFL);         // error slope
-                            currentPower = currentTargetSpeed/maxSpeed - currentError*Kp - acculErrorFL*Ki - errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
@@ -864,16 +838,6 @@ public class Drive extends MinorSubsystem {
                     }
                     else {
                         currentError = (double) (-currentCount-targetCount);
-                        if (initialized) { // after the first point, the previous data is valid
-                            acculErrorFL = acculErrorFL*alpha + currentError*(currentTime-prevTimeFL);  // integrate error
-                            errorSlope = (currentError - prevErrorFL)/(currentTime-prevTimeFL);         // error slope
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp + acculErrorFL*Ki + errorSlope*Kd; // apply PID correction
-                        }
-                        else { // at the first point, use Kp only
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
-                        }
-                        if (currentPower < -1.0) currentPower = -1.0;
-                        if (currentPower > 0.0) currentPower = 0.0;
                         frontLeft.setPower(currentPower);
                     }
                 }
@@ -881,6 +845,7 @@ public class Drive extends MinorSubsystem {
                 prevTimeFL = currentTime;
                 prevCountFL = currentCount;
             } // if (!isMotorFLDone)
+    /*
             if (!isMotorFRDone) {
                 currentCount = frontRight.getCurrentPosition();
                 currentTime = ((double) timer.nanoseconds()) * 1.0e-9 - startTime;
@@ -897,10 +862,6 @@ public class Drive extends MinorSubsystem {
                     }
                     else {
                         currentError = (double) (currentCount-targetCount);
-                        if (initialized) { // after the first point, the previous data is valid
-                            acculErrorFR = acculErrorFR*alpha + currentError*(currentTime-prevTimeFR);  // integrate error
-                            errorSlope = (currentError - prevErrorFR)/(currentTime-prevTimeFR);         // error slope
-                            currentPower = currentTargetSpeed/maxSpeed - currentError*Kp - acculErrorFR*Ki - errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
@@ -919,9 +880,6 @@ public class Drive extends MinorSubsystem {
                     else {
                         currentError = (double) (-currentCount-targetCount);
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorFR = acculErrorFR*alpha + currentError*(currentTime-prevTimeFR);  // integrate error
-                            errorSlope = (currentError - prevErrorFR)/(currentTime-prevTimeFR);         // error slope
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp + acculErrorFR*Ki + errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
@@ -935,6 +893,7 @@ public class Drive extends MinorSubsystem {
                 prevTimeFR = currentTime;
                 prevCountFR = currentCount;
             } // if (!isMotorFRDone)
+
             if (!isMotorRLDone) {
                 currentCount = rearLeft.getCurrentPosition();
                 currentTime = ((double) timer.nanoseconds()) * 1.0e-9 - startTime;
@@ -952,9 +911,6 @@ public class Drive extends MinorSubsystem {
                     else {
                         currentError = (double) (currentCount-targetCount);
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorRL = acculErrorRL*alpha + currentError*(currentTime-prevTimeRL);  // integrate error
-                            errorSlope = (currentError - prevErrorRL)/(currentTime-prevTimeRL);         // error slope
-                            currentPower = currentTargetSpeed/maxSpeed - currentError*Kp - acculErrorRL*Ki - errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
@@ -973,9 +929,6 @@ public class Drive extends MinorSubsystem {
                     else {
                         currentError = (double) (-currentCount-targetCount);
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorRL = acculErrorRL*alpha + currentError*(currentTime-prevTimeRL);  // integrate error
-                            errorSlope = (currentError - prevErrorRL)/(currentTime-prevTimeRL);         // error slope
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp + acculErrorRL*Ki + errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
@@ -1007,9 +960,6 @@ public class Drive extends MinorSubsystem {
                     }
                     else {
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorRR = acculErrorRR*alpha + currentError*(currentTime-prevTimeRR);  // integrate error
-                            errorSlope = (currentError - prevErrorRR)/(currentTime-prevTimeRR);         // error slope
-                            currentPower = currentTargetSpeed/maxSpeed - currentError*Kp - acculErrorRR*Ki - errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
@@ -1030,9 +980,6 @@ public class Drive extends MinorSubsystem {
                     }
                     else {
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorRR = acculErrorRR*alpha + currentError*(currentTime-prevTimeRR);  // integrate error
-                            errorSlope = (currentError - prevErrorRR)/(currentTime-prevTimeRR);         // error slope
-                            currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp + acculErrorRR*Ki + errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
@@ -1042,7 +989,6 @@ public class Drive extends MinorSubsystem {
                         rearRight.setPower(currentPower);
                     }
                 }
-                prevErrorRR = currentError;
                 prevTimeRR = currentTime;
                 prevCountRR = currentCount;
             } // if (!isMotorRRDone)
@@ -1071,7 +1017,7 @@ public class Drive extends MinorSubsystem {
         }
 
     }
-
+*/
     private int getTargetTickCount(int tickCount, double speed, double rampTime, double elapsedTime) {
         int targetTick;
         double tickCountD = (double) tickCount;
@@ -1135,15 +1081,14 @@ public class Drive extends MinorSubsystem {
         if (targetSpeed < speedOffset) targetSpeed = speedOffset;
         return targetSpeed;
     }
-
+    */
     public static class Odometry
     {
         TrcPose2D position;
         TrcPose2D velocity;
-
         /**
          * Constructor: Create an instance of the object.
-         */
+
         Odometry()
         {
             position = new TrcPose2D();

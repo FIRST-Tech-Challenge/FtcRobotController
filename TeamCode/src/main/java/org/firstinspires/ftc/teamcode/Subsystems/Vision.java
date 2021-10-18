@@ -75,6 +75,7 @@ public class Vision extends MinorSubsystem{
     public Vision(HardwareMap hardwareMap, Robot robot, Robot.AllianceColor aC) {
         this.hardwareMap = hardwareMap;
         this.robot = robot;
+
         this.opMode = robot.getOpMode();
         this.telemetry = robot.getTelemetry();
         this.allianceColor = aC;
