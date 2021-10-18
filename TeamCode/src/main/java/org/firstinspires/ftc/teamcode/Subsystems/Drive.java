@@ -109,7 +109,7 @@ public class Drive extends MinorSubsystem {
         this.telemetry = robot.getTelemetry();
         this.hardwareMap = opMode.hardwareMap;
         this.imu = imu;
-        this.timer = timer;
+        this.timer = robot.getTimer();
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
