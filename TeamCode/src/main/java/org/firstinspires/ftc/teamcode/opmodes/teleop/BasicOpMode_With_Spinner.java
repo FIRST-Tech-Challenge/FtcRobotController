@@ -33,12 +33,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.utils.Drivetrain;
+import org.firstinspires.ftc.teamcode.utils.DrivetrainManager4WD;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +61,7 @@ public class BasicOpMode_With_Spinner extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private Drivetrain drivetrain;
+    private DrivetrainManager4WD drivetrain;
     private DcMotor spinner;
 
     @Override
@@ -76,7 +74,7 @@ public class BasicOpMode_With_Spinner extends LinearOpMode {
         motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_2));
         motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_2));
 
-        drivetrain = new Drivetrain(motorNames, hardwareMap);
+        drivetrain = new DrivetrainManager4WD(motorNames, hardwareMap);
 
         spinner = hardwareMap.dcMotor.get(
                 hardwareMap.appContext.getString(R.string.HW_SPINNER)

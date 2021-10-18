@@ -19,6 +19,7 @@ public class AutoEncoderDriveTest extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         Motor left = new Motor(telemetry, hardwareMap, "ld1", DcMotorSimple.Direction.FORWARD, 400, 2.0, 2.0);
         left.driveDistance(60, 50);
+
         while(left.getDcMotor().isBusy());
     }
 
