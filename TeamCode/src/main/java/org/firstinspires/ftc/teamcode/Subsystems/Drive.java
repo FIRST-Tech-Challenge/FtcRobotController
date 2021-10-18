@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.Config.DriveConfig;
-import org.firstinspires.ftc.teamcode.TrcPose2D;
 
 import java.util.List;
 import java.util.Locale;
@@ -725,7 +724,6 @@ public class Drive extends MinorSubsystem {
      * @param Kp: coefficient Kp
      * @param Ki: coefficient Ki
      * @param Kd: coefficient Kd
-     *          by Andrew Chiang on 1/28/2020
      */
     public void allMotorPIDControl(int tickCount, double peakSpeed, double maxSpeed, double rampTime,
                                    boolean motorFLForward, boolean motorFRForward, boolean motorRLForward, boolean motorRRForward,
@@ -745,9 +743,9 @@ public class Drive extends MinorSubsystem {
         boolean isMotorRRNotMoving = false;
         boolean isTimeOutStarted = false;
         boolean isTimeOutExceeded = false;
-        double timeOutPeriod = 0.1;         // program will time out if the motors got stuck for more than 0.1 second
+        double timeOutPeriod = 0.1; // program will time out if the motors got stuck for more than 0.1 second
         double timeOutStartedTime = 0.0;
-        int    timeOutThreshold = 3;        // motor is considered to be stuck if the motor count does not change more than 2 ticks
+        int    timeOutThreshold = 3; // motor is considered to be stuck if the motor count does not change more than 2 ticks
         double acculErrorFL = 0.0;
         double acculErrorFR = 0.0;
         double acculErrorRL = 0.0;
@@ -760,7 +758,7 @@ public class Drive extends MinorSubsystem {
         double prevTimeFR = 0.0;
         double prevTimeRL = 0.0;
         double prevTimeRR = 0.0;
-        boolean initialized = false;        // disable Ki and Kd terms in first iteration
+        boolean initialized = false; // disable Ki and Kd terms in first iteration
         int currentCount, targetCount;
         int prevCountFL = 0;
         int prevCountFR = 0;
@@ -775,8 +773,8 @@ public class Drive extends MinorSubsystem {
         double errorSlope = 0.0;
         while (((!isMotorFLDone) || (!isMotorFRDone) || (!isMotorRLDone) || (!isMotorRRDone)) && (!isTimeOutExceeded)){
             if (!isMotorFLDone) {
-                currentCount = frontLeft.getCurrentPosition();                          // get current motor tick
-                currentTime = ((double) timer.nanoseconds()) * 1.0e-9 - startTime;      // get current time
+                currentCount = frontLeft.getCurrentPosition(); // get current motor tick
+                currentTime = ((double) timer.nanoseconds()) * 1.0e-9 - startTime; // get current time
                 targetCount = getTargetTickCount(tickCount, peakSpeed, rampTime, currentTime);  // get integrated target tick on the speed profile
                 currentTargetSpeed = getTargetSpeed(tickCount, peakSpeed, rampTime, currentTime); // get the target speed on the speed profile
                 if (initialized) {  // check if the motor is rotating
@@ -791,8 +789,8 @@ public class Drive extends MinorSubsystem {
                     else {
                         currentError = (double) (currentCount-targetCount);
                         if (initialized) { // after the first point, the previous data is valid
-                            acculErrorFL = acculErrorFL*alpha + currentError*(currentTime-prevTimeFL);  // integrate error
-                            errorSlope = (currentError - prevErrorFL)/(currentTime-prevTimeFL);         // error slope
+                            acculErrorFL = acculErrorFL*alpha + currentError*(currentTime-prevTimeFL); // integrate error
+                            errorSlope = (currentError - prevErrorFL)/(currentTime-prevTimeFL); // error slope
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp - acculErrorFL*Ki - errorSlope*Kd; // apply PID correction
                         }
                         else { // at the first point, use Kp only
@@ -1083,72 +1081,4 @@ public class Drive extends MinorSubsystem {
         return targetSpeed;
     }
 
-    public static class Odometry
-    {
-        TrcPose2D position;
-        TrcPose2D velocity;
-
-        /**
-         * Constructor: Create an instance of the object.
-         */
-        Odometry()
-        {
-            position = new TrcPose2D();
-            velocity = new TrcPose2D();
-        }   //Odometry
-
-        /**
-         * Constructor: Create an instance of the object.
-         *
-         * @param position specifies the initial position.
-         * @param velocity specifies the initial velocity.
-         */
-        Odometry(TrcPose2D position, TrcPose2D velocity)
-        {
-            this.position = position;
-            this.velocity = velocity;
-        }   //Odometry
-
-        /**
-         * This method returns the string representation of the object.
-         *
-         * @return string representation of the object.
-         */
-        @Override
-        public String toString()
-        {
-            return "position=" + position.toString() + ", velocity=" + velocity.toString();
-        }   //toString
-
-        /**
-         * This method creates and returns a copy of this odometry.
-         *
-         * @return a copy of this odometry.
-         */
-        public Odometry clone()
-        {
-            return new Odometry(position.clone(), velocity.clone());
-        }   //clone
-
-        /**
-         * This method sets the position info of the odometry to the given pose.
-         *
-         * @param pose specifies the pose to set the position info to.
-         */
-        void setPositionAs(TrcPose2D pose)
-        {
-            this.position.setAs(pose);
-        }   //setPositionAs
-
-        /**
-         * This method sets the velocity info of the odometry to the given pose.
-         *
-         * @param pose specifies the pose to set the velocity info to.
-         */
-        void setVelocityAs(TrcPose2D pose)
-        {
-            this.velocity.setAs(pose);
-        }   //setVelocityAs
-
-    }   //class Odometry
 }
