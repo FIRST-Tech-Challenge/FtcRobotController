@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.Vision;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry; // TODO: Integrate this file with the rest of the codebase
 
+import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -14,30 +13,24 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 
-public class DetectMarker extends LinearOpMode {
-    @Override
-    public void runOpMode() throws InterruptedException {
-        DetectionPipeline pipeline = new DetectionPipeline(telemetry, "red");
-
-    }
-}
-
-class DetectionPipeline extends OpenCvPipeline {
+public class DetectMarker extends OpenCvPipeline {
     Telemetry telemetry;
     public enum MarkerLocation {
         LEFT,
         MIDDLE,
         RIGHT,
-        NOT_FOUND,
+        NOT_FOUND
     }
 
-    public enum AllianceColor { // TODO: See if this works as a solution for allianceColor standardization
-        RED, // Inserting it here because its the only place allianceColor seems to be referenced at.
-        BLUE // undefined is not needed
+    public enum SearchStatus {
+        INITIALIZING,
+        SEARCHING,
+        FOUND
     }
 
-    private AllianceColor allianceColor;
-    private MarkerLocation markerLocation;
+    private Robot.AllianceColor allianceColor;
+    private MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
+    private SearchStatus searchStatus = SearchStatus.INITIALIZING;
 
 
     static final Rect LEFT_RECT = new Rect(
@@ -57,18 +50,14 @@ class DetectionPipeline extends OpenCvPipeline {
 
     Mat mat = new Mat();
 
-    public DetectionPipeline(Telemetry t, String ac) {
-        telemetry = t;
-        if (ac.equals("blue")) { // ac stands for allianceColor
-            allianceColor = AllianceColor.BLUE;
-        }
-        else {
-            allianceColor = AllianceColor.RED;
-        }
+    public DetectMarker(Robot robot, Robot.AllianceColor ac) {
+        telemetry = robot.getOpMode().telemetry;
+        this.allianceColor = ac;
     }
 
     @Override
     public Mat processFrame(Mat input) {
+        this.searchStatus = SearchStatus.SEARCHING;
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful.
         Scalar lowHSV = new Scalar(23, 50, 70);
         Scalar highHSV = new Scalar(32, 255, 255);
@@ -90,10 +79,12 @@ class DetectionPipeline extends OpenCvPipeline {
         telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Middle raw value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("Right raw value", (int) Core.sumElems(right).val[0]);
+        telemetry.update();
 
         telemetry.addData("Left percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("Middle percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("Right percentage", Math.round(rightValue * 100) + "%");
+        telemetry.update();
 
         boolean markerLeft = leftValue > PERCENT_COLOR_THRESHOLD;
         boolean markerMiddle = middleValue > PERCENT_COLOR_THRESHOLD;
@@ -119,7 +110,7 @@ class DetectionPipeline extends OpenCvPipeline {
 
         Scalar colorNormal;
 
-        if (allianceColor == AllianceColor.RED) {
+        if (this.allianceColor == Robot.AllianceColor.RED) {
             colorNormal = new Scalar(255, 0, 0);
         }
         else {
@@ -132,6 +123,15 @@ class DetectionPipeline extends OpenCvPipeline {
         Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.MIDDLE ? colorMarker : colorNormal);
         Imgproc.rectangle(mat, RIGHT_RECT, markerLocation == MarkerLocation.RIGHT ? colorMarker : colorNormal);
 
+        this.searchStatus = SearchStatus.FOUND;
         return mat;
+    }
+
+    public MarkerLocation getMarkerLocation() {
+        return markerLocation;
+    }
+
+    public SearchStatus getSearchStatus() {
+        return searchStatus;
     }
 }

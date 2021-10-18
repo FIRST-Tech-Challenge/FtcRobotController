@@ -5,8 +5,6 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -14,12 +12,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.io.IOException;
 import java.util.List;
+import java.util.Timer;
 
-/**
- * Created by AndrewC on 12/27/2019.
- */
 
 public class Robot extends Subsystem {
     public enum AllianceColor {
@@ -30,9 +28,10 @@ public class Robot extends Subsystem {
     public String name;
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
-    public ElapsedTime timer;
+    private Telemetry telemetry;
+    private ElapsedTime timer;
 
-    //DC Motors
+    // DC Motors
     public DcMotorEx frontLeftDriveMotor;
     public DcMotorEx frontRightDriveMotor;
     public DcMotorEx rearRightDriveMotor;
@@ -42,7 +41,7 @@ public class Robot extends Subsystem {
     public DcMotorEx launch2b;
     public DcMotorEx intake;
 
-    //Servos
+    // Servos
 
     public Servo elevatorR;
     public Servo elevatorL;
@@ -54,7 +53,7 @@ public class Robot extends Subsystem {
     public Servo launcherFeederL;
     public Servo launcherFeederR;
 
-    //Odometry
+    // Odometry
     public List<LynxModule> allHubs;
     public DigitalChannel odometryRA;
     public DigitalChannel odometryRB;
@@ -158,6 +157,7 @@ public class Robot extends Subsystem {
     public Robot(LinearOpMode opMode, ElapsedTime timer) throws IOException {
         hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
         this.timer = timer;
         init();
     }
@@ -176,6 +176,7 @@ public class Robot extends Subsystem {
     public Robot(LinearOpMode opMode, ElapsedTime timer, boolean isBlue) throws IOException {
         hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
         this.timer = timer;
         if (isBlue) {
             this.allianceColor = AllianceColor.BLUE;
@@ -280,11 +281,11 @@ public class Robot extends Subsystem {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        opMode.telemetry.addData("Mode", " IMU initializing...");
-        opMode.telemetry.update();
+        telemetry.addData("Mode", " IMU initializing...");
+        telemetry.update();
         imu.initialize(parameters);
-        opMode.telemetry.addData("Mode", " IMU calibrating...");
-        opMode.telemetry.update();
+        telemetry.addData("Mode", " IMU calibrating...");
+        telemetry.update();
         // make sure the imu gyro is calibrated before continuing.
         while (opMode.opModeIsActive() && !imu.isGyroCalibrated())
         {
@@ -293,19 +294,21 @@ public class Robot extends Subsystem {
         }
 
         // Subsystems
-        opMode.telemetry.addData("Mode", " drive/control initializing...");
-        opMode.telemetry.update();
-        drive = new Drive(frontLeftDriveMotor, frontRightDriveMotor, rearLeftDriveMotor, rearRightDriveMotor, intake, launch1, launch2b, imu, opMode, timer);
+        telemetry.addData("Mode", " drive/control initializing...");
+        telemetry.update();
+        drive = new Drive(this, frontLeftDriveMotor, frontRightDriveMotor, rearLeftDriveMotor, rearRightDriveMotor, intake, launch1, launch2b, imu);
 
 //        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        control = new Control(intake, launch1, launch2, imu, opMode, timer, wobbleClaw, wobbleGoalArm);
-//        control = new Control(intake, launch1, launch2a, launch2b, imu, opMode, timer, wobbleClaw, wobbleGoalArm);
-
-        opMode.telemetry.addData("Mode", " vision initializing...");
-        opMode.telemetry.update();
+        telemetry.addData("Mode", " vision initializing...");
+        telemetry.update();
         vision = new Vision(hardwareMap, this, allianceColor);
+
+
+        telemetry.addData("Mode", " control initializing...");
+        telemetry.update();
+        control = new Control(this);
 
     }
 
@@ -317,8 +320,16 @@ public class Robot extends Subsystem {
         // code here
     }
 
-    public OpMode getOpmode(){
+    public LinearOpMode getOpMode() {
         return this.opMode;
+    }
+
+    public Telemetry getTelemetry() {
+        return this.telemetry;
+    }
+
+    public ElapsedTime getTimer() {
+        return this.timer;
     }
 
     public void getGamePadInputs() {
