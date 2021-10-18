@@ -51,6 +51,8 @@ public class CVDetector {
                 activePipeline = new CVRingStackPipeline(resX, resY);
             } else if (mode == CVDetectMode.Search) {
                 activePipeline = new CVRingSearchPipeline(resX, resY);
+            } else if (mode == CVDetectMode.Frenzy) {
+                activePipeline = new CVFrenzyPipeline(resX, resY);
             }
             if (webcam == null) {
                 Log.d(TAG, String.format("Webcam %s cannot be initialized", camID));
