@@ -58,7 +58,7 @@ public class DetectMarker extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         this.searchStatus = SearchStatus.SEARCHING;
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful.
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful. (not possible)
         Scalar lowHSV = new Scalar(23, 50, 70);
         Scalar highHSV = new Scalar(32, 255, 255);
 

@@ -29,7 +29,6 @@ public class Vision extends MinorSubsystem{
     private Robot robot;
     Telemetry telemetry;
 
-    private final Robot.AllianceColor allianceColor;
     DetectMarker.MarkerLocation finalMarkerLocation; // Marker Location
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
