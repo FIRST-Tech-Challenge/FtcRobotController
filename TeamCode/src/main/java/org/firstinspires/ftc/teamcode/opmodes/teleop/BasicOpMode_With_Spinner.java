@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.utils.Drivetrain;
+import org.firstinspires.ftc.teamcode.utils.DrivetrainGamepad;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,34 +64,20 @@ public class BasicOpMode_With_Spinner extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private Drivetrain drivetrain;
-    private DcMotor spinner;
+    private DrivetrainGamepad gpad;
 
     @Override
     public void runOpMode() {
 
-        List<String> motorNames = new ArrayList<String>();
-
-        motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_1));
-        motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_1));
-        motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_2));
-        motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_2));
-
-        drivetrain = new Drivetrain(motorNames, hardwareMap);
-
-        spinner = hardwareMap.dcMotor.get(
-                hardwareMap.appContext.getString(R.string.HW_SPINNER)
-        );
+        gpad = new DrivetrainGamepad(gamepad1, gamepad2, hardwareMap);
 
         while (opModeIsActive()) {
 
-            drivetrain.EvalGamepad(gamepad1.left_stick_x, gamepad1.left_stick_y);
-
-            spinner.setPower(gamepad1.right_stick_y);
+            gpad.main();
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", drivetrain.ld1.getPower(), drivetrain.rd1.getPower());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", gpad.drivetrain.ld1.getPower(), gpad.drivetrain.rd1.getPower());
             telemetry.update();
         }
     }
