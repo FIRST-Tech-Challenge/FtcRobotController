@@ -36,7 +36,7 @@ public class Lift {
         telemetry.addData("bottomSensor",bottomSensor.getState());
         telemetry.addData("topSensor", topSensor.getState());
         telemetry.addData("motor encoder",liftMotor.getCurrentPosition());
-        if ((stickValue >= 0.05 && !topSensor.getState()) || stickValue <= 0.05 && !bottomSensor.getState()) {
+        if ((stickValue >= 0.05 && !topSensor.getState()) || (stickValue <= 0.05 && !bottomSensor.getState())) {
             liftMotor.setPower(stickValue);
         } else if (bottomSensor.getState()) {
             liftMotor.setPower(0);
