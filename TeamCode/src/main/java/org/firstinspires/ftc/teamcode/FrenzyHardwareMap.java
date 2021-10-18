@@ -90,10 +90,10 @@ public class FrenzyHardwareMap
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
-        motorFrontRight.setPower(0);
-        motorFrontLeft.setPower(0);
-        motorBackLeft.setPower(0);
-        motorBackRight.setPower(0);
+        motorFrontRight.setPower(0.0);
+        motorFrontLeft.setPower(0.0);
+        motorBackLeft.setPower(0.0);
+        motorBackRight.setPower(0.0);
 
         // Set all motors to run with encoders.
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

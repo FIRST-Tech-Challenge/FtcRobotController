@@ -7,21 +7,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name="MecanumTeleOp", group="test")
 public class MecanumTeleOp extends LinearOpMode {
+
+    FrenzyHardwareMap robot = new FrenzyHardwareMap();
+
     @Override
     public void runOpMode() throws InterruptedException {
-        // Declare our motors
-        // Make sure your ID's match your configuration
-        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
 
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        //import the hardware map
 
-        FrenzyHardwareMap robot = new FrenzyHardwareMap();
+        robot.init(hardwareMap);
+        telemetry.addData("Say", "Hello Driver");
+
         waitForStart();
 
         if (isStopRequested()) return;
