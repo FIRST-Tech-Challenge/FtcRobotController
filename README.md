@@ -5,12 +5,12 @@ This repository contains FTC Team 5206's repository for the Freight Frenzy (2021
 
 ## Branches
 
-master - stable code here
+**master** - stable code here
 
-vision - vision code
+**vision** - vision code
 
-dev-pid - pid development
+**dev-pid** - pid development
 
-auto - auto code
+**auto** - auto code
 
-\*-hotfix - hotfix branch, quick fix
+**\*-hotfix** - hotfix branch, quick fix
