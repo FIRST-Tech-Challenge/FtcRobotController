@@ -149,7 +149,9 @@ public class Drive extends MinorSubsystem {
         rearLeft.setPower(0);
         rearRight.setPower(0);
     }
-
+    /**
+     * Stops all drive motors if they are not busy
+     */
     public void checkAndStopMotors() {
         if (!frontLeft.isBusy()) { frontLeft.setPower(0); }
         if (!frontRight.isBusy()) { frontRight.setPower(0); }
