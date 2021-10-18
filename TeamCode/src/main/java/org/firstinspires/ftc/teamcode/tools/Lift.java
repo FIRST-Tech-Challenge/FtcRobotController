@@ -9,10 +9,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Lift {
 
     /**
-     *
      * @param map local hardwareMap instance
      * @param telemetry local telemetry instance
-     * @param toolGamepad instance of FtcLib GamepadX
+     * @param toolGamepad instance of FtcLib GamepadEx
      */
     public Lift(@NonNull HardwareMap map, Telemetry telemetry, GamepadEx toolGamepad) {
         this.liftMotor = map.get(DcMotor.class,"liftMotor");
@@ -28,7 +27,7 @@ public class Lift {
     private final DigitalChannel bottomSensor;
     private final DigitalChannel topSensor;
     private final GamepadEx stick;
-    private double encoderOffset;
+    private final double encoderOffset;
     private double curPos = 0;
     
     public void update() {
@@ -43,7 +42,6 @@ public class Lift {
             liftMotor.setPower(stickValue);
         } else if (bottomSensor.getState()) {
             liftMotor.setPower(0);
-            encoderOffset = liftMotor.getCurrentPosition() * -1;
         } else {
             liftMotor.setPower(afloatValue);
         }
