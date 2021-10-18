@@ -130,11 +130,11 @@ public class pipeline1Simulator extends OpenCvPipeline {
         return input;
     }
 
-    public static byte mostDifferent(double box1, double box2, double box3) {
+    public static int mostDifferent(double box1, double box2, double box3) {
         //this is broken, i'll fix tmrmw
         double boxMean = (box1+box2+box3)/3;
         double array[] = {Math.abs(boxMean - box1),Math.abs(boxMean - box2),Math.abs(boxMean - box3)};
-        byte max = array[0] > array[1] ? 1 : 2;
+        int max = array[0] > array[1] ? 1 : 2;
         max = array[2] > array[max-1] ? 3 : max;
         return max;
     }
