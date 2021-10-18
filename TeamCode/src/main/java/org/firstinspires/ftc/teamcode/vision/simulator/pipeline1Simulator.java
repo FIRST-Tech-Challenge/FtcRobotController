@@ -7,7 +7,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 import java.lang.Math;
-import org.apache.commons.lang.ArrayUtils;
 public class pipeline1Simulator extends OpenCvPipeline {
     private final Telemetry telemetry;
     private final Scalar red = new Scalar(255,0,0);
@@ -131,19 +130,13 @@ public class pipeline1Simulator extends OpenCvPipeline {
         return input;
     }
 
-    private byte mostDifferent(double box1, double box2, double box3) {
+    public static byte mostDifferent(double box1, double box2, double box3) {
         //this is broken, i'll fix tmrmw
         double boxMean = (box1+box2+box3)/3;
         double array[] = {Math.abs(boxMean - box1),Math.abs(boxMean - box2),Math.abs(boxMean - box3)};
-        double max = 0;
-        byte i = 0;
-        for(double l : array) {
-            i++; //this code does work since i'd need to add 1 anyway
-            if (max < l) {
-                max = l;
-                return i;
-            }
-        }
+        byte max = array[0] > array[1] ? 1 : 2;
+        max = array[2] > array[max-1] ? 3 : max;
+        return max;
     }
 
     /**
