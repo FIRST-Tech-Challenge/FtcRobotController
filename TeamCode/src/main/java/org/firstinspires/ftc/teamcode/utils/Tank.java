@@ -97,11 +97,17 @@ public class Tank {
         LEFT_BOTTOM.driveWithoutEncoder(power);
     }
 
+    /**
+     * Brings the tank to a stop and resets it
+     */
     public void stop() {
         brake();
         reset();
     }
 
+    /**
+     * Brings the tank to a stop
+     */
     public void brake() {
         RIGHT_TOP.brake();
         RIGHT_BOTTOM.brake();
@@ -109,6 +115,9 @@ public class Tank {
         LEFT_BOTTOM.brake();
     }
 
+    /**
+     * Resets the tank
+     */
     public void reset() {
         RIGHT_TOP.reset();
         RIGHT_BOTTOM.reset();
