@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems.Vision;
+package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
 
 /**
  * The Marker Location is NOT_FOUND by default.

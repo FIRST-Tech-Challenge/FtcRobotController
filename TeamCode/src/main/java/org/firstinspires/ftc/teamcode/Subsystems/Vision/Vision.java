@@ -5,48 +5,37 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-// import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-// import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.AllianceColor;
+import org.firstinspires.ftc.teamcode.Config.VisionConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.MarkerLocation;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarker;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerThread;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 /**
- * Vision Subsystem
- * https://github.com/OpenFTC/OpenCV-Repackaged
- * Open CV library
+ * The Vision Subsystem
+ *
+ * @see DetectMarker
+ * @see <a href="https://github.com/OpenFTC/EasyOpenCV">EasyOpenCV</a>
  */
 
 public class Vision extends MinorSubsystem {
-    private Robot robot;
-
-    private final AllianceColor allianceColor;
     MarkerLocation finalMarkerLocation; // Marker Location
 
-    private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
-    private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
-    private static final int HORIZON = 100; // horizon value to tune
 
-    private static final boolean DEBUG = false; // if debug is wanted, change to true
-
-    private static final boolean USING_WEBCAM = true; // change to true if using webcam
-    private static final String WEBCAM_NAME = "Webcam 1"; // insert webcam name from configuration if using webcam
     WebcamName webcamName = null;
 
     private static final String VUFORIA_KEY =
-            "ATDGULf/////AAABmRRGSyLSbUY4lPoqBYjklpYqC4y9J7bCk42kjgYS5KtgpKL8FbpEDQTovzZG8thxB01dClvthxkSuSyCkaZi+JiD5Pu0cMVre3gDwRvwRXA7V9kpoYyMIPMVX/yBTGaW8McUaK9UeQUaFSepsTcKjX/itMtcy7nl1k84JChE4i8whbinHWDpaNwb5qcJsXlQwJhE8JE7t8NMxMm31AgzqjVf/7HwprTRfrxjTjVx5v2rp+wgLeeLTE/xk1JnL3fZMG6yyxPHgokWlIYEBZ5gBX+WJfgA+TDsdSPY/MnBp5Z7QxQsO9WJA59o/UzyEo/9BkbvYJZfknZqeoZWrJoN9jk9sivFh0wIPsH+JjZNFsPw";
+            "ATDGULf/////AAABmRRGSyLSbUY4lPoqBYjklpYqC4y9J7bCk42kjgYS5KtgpKL8FbpEDQTovzZG8thxB01dClvthxkSuSyCkaZi+JiD5Pu0cMVre3gDwRvwRXA7V9kpoYyMIPMVX/yBTGaW8McUaK9UeQUaFSepsTcKjX/itMtcy7nl1k84JChE4i8whbinHWDpaNwb5qcJsXlQwJhE8JE7t8NMxMm31AgzqjVf/7HwprTRfrxjTjVx5v2rp+wgLeeLTE/xk1JnL3fZMG6yyxPHgokWlIYEBZ5gBX+WJfgA+TDsdSPY/MnBp5Z7QxQsO9WJA59o/UzyEo/9BkbvYJZfknZqeoZWrJoN9jk9sivFh0wIPsH+JjZNFsPw"; // TODO: Get new VUFORIA KEY
 
     // Since ImageTarget trackable use mm to specify their dimensions, we must use mm for all the physical dimension.
     // Define constants
@@ -75,11 +64,16 @@ public class Vision extends MinorSubsystem {
 
     private int[] viewportContainerIds;
 
-    public Vision(Robot robot, AllianceColor aC) {
+    /**
+     * Class instantiation
+     *
+     * @param robot the robot
+     * @throws InterruptedException It might happen because the thread is interrupted.
+     */
+    public Vision(Robot robot) throws InterruptedException {
         super(robot);
-        this.allianceColor = aC;
 
-        webcamName = hardwareMap.get(WebcamName.class, WEBCAM_NAME);
+        webcamName = hardwareMap.get(WebcamName.class, VisionConfig.WEBCAM_NAME);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
 
@@ -90,7 +84,15 @@ public class Vision extends MinorSubsystem {
 
         telemetry.addLine("init Vuforia completed");
         telemetry.update();
-        finalMarkerLocation = detectMarker(robot, aC);
+
+        OpenCvInternalCamera robotCamera;
+
+        robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        DetectMarkerThread detectMarkerRunnable = new DetectMarkerThread(robot, robotCamera);
+        Thread detectMarkerThread = new Thread(detectMarkerRunnable);
+        detectMarkerThread.start();
+        detectMarkerThread.join();
+        finalMarkerLocation = detectMarkerRunnable.getMarkerLocation();
     }
 
     private void initVuforia() {
@@ -112,48 +114,5 @@ public class Vision extends MinorSubsystem {
     public OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
         return OpenGLMatrix.translation(x, y, z)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
-    }
-
-    /**
-     * This method waits until the search for the marker is done, and then it return the marker location.
-     * @param robot the robot
-     * @param aC The alliance color
-     * @return Where the marker is
-     *
-     * @see DetectMarker#getMarkerLocation()
-     */
-    public MarkerLocation detectMarker(Robot robot, AllianceColor aC) {
-        MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
-        DetectMarker detectMarker = new DetectMarker(robot, aC);
-        OpenCvInternalCamera robotCamera;
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        robotCamera.setPipeline(detectMarker);
-
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-        robotCamera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
-        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                robotCamera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.SIDEWAYS_LEFT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
-        while (detectMarker.getSearchStatus() != DetectMarker.SearchStatus.FOUND) {
-            markerLocation = detectMarker.getMarkerLocation();
-        }
-        return markerLocation;
     }
 }
