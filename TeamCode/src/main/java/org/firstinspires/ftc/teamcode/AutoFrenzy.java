@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Autonomous(name="Auton", group="Pushbot")
 //@Disabled
-public class Auton extends LinearOpMode {
+public class AutoFrenzy extends LinearOpMode {
 
     /* Declare OpMode members. */
     Hardware robot   = new Hardware();   // Use a Pushbot's hardware
