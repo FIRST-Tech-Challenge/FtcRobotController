@@ -1,16 +1,15 @@
-package org.firstinspires.ftc.teamcode.Subsystems.Vision;
+package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-
 import org.openftc.easyopencv.OpenCvPipeline;
 
 /**
@@ -24,12 +23,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
  */
 public class DetectMarker extends OpenCvPipeline {
     Telemetry telemetry;
-
-    public enum SearchStatus {
-        INITIALIZING,
-        SEARCHING,
-        FOUND
-    }
 
     private AllianceColor allianceColor;
     private MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
