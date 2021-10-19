@@ -20,13 +20,9 @@ public class FuckArcade extends OpMode {
 
     @Override
     public void loop() {
-        double drive = gamepad1.left_stick_y*.5;
-        double turn = gamepad1.right_stick_x*.5;
+        double drive = gamepad1.right_trigger;
+        double turn = gamepad1.left_stick_x;
 
-        robot.m0.set(drive - turn);
-        robot.m1.set(drive + turn);
-        robot.m2.set(drive - turn);
-        robot.m3.set(drive + turn);
-//        robot.m_drive.arcadeDrive(drive, turn);
+        robot.mecanum.driveRobotCentric(0,drive,turn);
     }
 }
