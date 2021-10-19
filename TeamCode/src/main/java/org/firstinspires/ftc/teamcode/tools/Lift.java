@@ -3,6 +3,8 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import androidx.annotation.NonNull;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -22,7 +24,8 @@ public class Lift {
         this.topSensor = map.get(DigitalChannel.class,"topSensor");
         this.topSensor.setMode(DigitalChannel.Mode.INPUT);
         this.telemetry = telemetry;
-        this.stick = toolGamepad;
+        this.gamepad = toolGamepad;
+        this.rBumpReader = new ToggleButtonReader(toolGamepad, GamepadKeys.Button.RIGHT_BUMPER);
     }
 
     private final Telemetry telemetry;
@@ -30,13 +33,14 @@ public class Lift {
     private final Servo armServo;
     private final DigitalChannel bottomSensor;
     private final DigitalChannel topSensor;
-    private final GamepadEx stick;
+    private final GamepadEx gamepad;
+    private final ToggleButtonReader rBumpReader;
     private final double encoderOffset;
     private double curPos = 0;
-    
+
     public void update() {
         final double afloatValue = 0.05;
-        final double stickValue = stick.getLeftY();
+        final double stickValue = gamepad.getLeftY();
         telemetry.addData("left stick",stickValue);
         telemetry.addData("lift motor power", liftMotor.getPower());
         telemetry.addData("bottomSensor",bottomSensor.getState());
@@ -51,5 +55,26 @@ public class Lift {
             liftMotor.setPower(afloatValue);
         }
         curPos = liftMotor.getCurrentPosition() + encoderOffset;
+        arm();
+    }
+
+    private void arm() {
+        double topLiftPosition = 0;
+        double bottomLiftPosition = 0;
+        double loadServoPosition = 0;
+        double liftingServoPosition = 0;
+        double dumpServoPosition = 0;
+        if (curPos >= topLiftPosition) {
+            rBumpReader.readValue();
+            if (rBumpReader.getState()) {
+                armServo.setPosition(dumpServoPosition);
+            } else {
+                armServo.setPosition(liftingServoPosition);
+            }
+        } else if (curPos >= bottomLiftPosition) {
+            armServo.setPosition(liftingServoPosition);
+        } else {
+            armServo.setPosition(loadServoPosition);
+        }
     }
 }
