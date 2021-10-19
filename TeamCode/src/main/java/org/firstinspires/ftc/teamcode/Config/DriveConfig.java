@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.Config;
 
+/**
+ * Drive Config has the static config values for the drive class in drive.java
+ *
+ * <p>This improves the readability of drive.java and is only for static variables, not for non-static variables or methods.</p>
+ * @see org.firstinspires.ftc.teamcode.Subsystems.Drive
+ */
 public class DriveConfig {
 
     public static final double ODOMETRY_mm_PER_COUNT      = 38.85*3.14159265/8192.0;
