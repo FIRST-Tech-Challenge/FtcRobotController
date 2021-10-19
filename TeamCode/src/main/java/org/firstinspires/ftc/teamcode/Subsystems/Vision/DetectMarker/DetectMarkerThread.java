@@ -48,7 +48,7 @@ public class DetectMarkerThread implements Runnable{
             @Override
             public void onOpened()
             {
-                robotCamera.startStreaming(VisionConfig.CAMERA_WIDTH, VisionConfig.CAMERA_HEIGHT, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                robotCamera.startStreaming(VisionConfig.CAMERA_WIDTH, VisionConfig.CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
