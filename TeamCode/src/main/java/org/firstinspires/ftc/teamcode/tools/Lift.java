@@ -8,8 +8,11 @@ import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.Servo;
-public class Lift {
 
+/**
+ * lift and arm
+ */
+public class Lift {
     /**
      * @param map local hardwareMap instance
      * @param telemetry local telemetry instance
