@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.Vision;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -15,21 +13,25 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 // import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 // import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.Vision.DetectMarker;
+import org.firstinspires.ftc.teamcode.AllianceColor;
+import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.MarkerLocation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.tensorflow.lite.task.vision.detector.Detection;
 
 /**
+ * Vision Subsystem
  * https://github.com/OpenFTC/OpenCV-Repackaged
  * Open CV library
  */
 
-public class Vision extends MinorSubsystem{
+public class Vision extends MinorSubsystem {
     private Robot robot;
-    Telemetry telemetry;
 
-    DetectMarker.MarkerLocation finalMarkerLocation; // Marker Location
+    private AllianceColor allianceColor;
+    MarkerLocation finalMarkerLocation; // Marker Location
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -71,12 +73,8 @@ public class Vision extends MinorSubsystem{
 
     private int[] viewportContainerIds;
 
-    public Vision(HardwareMap hardwareMap, Robot robot, Robot.AllianceColor aC) {
-        this.hardwareMap = hardwareMap;
-        this.robot = robot;
-
-        this.opMode = robot.getOpMode();
-        this.telemetry = robot.getTelemetry();
+    public Vision(Robot robot, AllianceColor aC) {
+        super(robot);
         this.allianceColor = aC;
 
         webcamName = hardwareMap.get(WebcamName.class, WEBCAM_NAME);
@@ -114,8 +112,16 @@ public class Vision extends MinorSubsystem{
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
     }
 
-    public DetectMarker.MarkerLocation detectMarker(Robot robot, Robot.AllianceColor aC) {
-        DetectMarker.MarkerLocation markerLocation = DetectMarker.MarkerLocation.NOT_FOUND;
+    /**
+     * This method waits until the search for the marker is done, and then it return the marker location.
+     * @param robot the robot
+     * @param aC The alliance color
+     * @return Where the marker is
+     *
+     * @see DetectMarker#getMarkerLocation()
+     */
+    public MarkerLocation detectMarker(Robot robot, AllianceColor aC) {
+        MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
         DetectMarker m = new DetectMarker(robot, aC);
         while (m.getSearchStatus() != DetectMarker.SearchStatus.FOUND) {
             markerLocation = m.getMarkerLocation();
