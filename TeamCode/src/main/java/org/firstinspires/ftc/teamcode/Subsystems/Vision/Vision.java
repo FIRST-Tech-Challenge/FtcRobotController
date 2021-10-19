@@ -117,6 +117,8 @@ public class Vision extends MinorSubsystem {
      * @param robot the robot
      * @param aC The alliance color
      * @return Where the marker is
+     *
+     * @see DetectMarker#getMarkerLocation()
      */
     public MarkerLocation detectMarker(Robot robot, AllianceColor aC) {
         MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;

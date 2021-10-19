@@ -77,7 +77,7 @@ public class DetectMarker extends OpenCvPipeline {
      * ({@link #allianceColor}), and that the marker color is (0, 255, 0), which is a bright green
      * ({@link Scalar}'s are used for colors). We compare the marker color with the alliance color
      * on each of the rectangles, if the marker color is on none or multiple of them, it is marked
-     * as {@link MarkerLocation#NOT_FOUND}, if otherwise, the respective rectangle is
+     * as {@link MarkerLocation#NOT_FOUND}, if otherwise, the respective Location it is in is
      * returned via a {@link MarkerLocation} variable called {@link #markerLocation}</p>
      *
      * @param input A Mat
