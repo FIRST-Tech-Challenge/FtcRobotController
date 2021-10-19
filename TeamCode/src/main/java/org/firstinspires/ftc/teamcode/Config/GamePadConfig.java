@@ -74,6 +74,8 @@ public class GamePadConfig {
      */
     public void mapGamePadInputs(Robot robot){
         LinearOpMode opMode = robot.getOpMode();
+
+        //button mapping for joystick #1
         isaButtonPressedPrev = aButton;
         isbButtonPressedPrev = bButton;
         isxButtonPressedPrev = xButton;
@@ -101,6 +103,7 @@ public class GamePadConfig {
         bumperLeft = opMode.gamepad1.left_bumper;
         bumperRight = opMode.gamepad1.right_bumper;
 
+        // button mapping for joystick #2
         isaButton2PressedPrev = aButton2;
         isbButton2PressedPrev = bButton2;
         isxButton2PressedPrev = xButton2;
