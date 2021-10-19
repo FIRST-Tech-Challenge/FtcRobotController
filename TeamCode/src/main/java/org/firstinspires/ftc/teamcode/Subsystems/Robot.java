@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
-import org.firstinspires.ftc.teamcode.Subsystems.control.Control;
+import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
 
 import java.io.IOException;
 import java.util.ArrayList;
