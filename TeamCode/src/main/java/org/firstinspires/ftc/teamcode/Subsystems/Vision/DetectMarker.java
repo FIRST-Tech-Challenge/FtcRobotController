@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.Vision;
+package org.firstinspires.ftc.teamcode.Subsystems.Vision;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry; // TODO: Integrate this file with the rest of the codebase
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -12,15 +13,17 @@ import org.opencv.imgproc.Imgproc;
 
 import org.openftc.easyopencv.OpenCvPipeline;
 
-
+/**
+ * This pipeline detects where the marker is.
+ *
+ * <p>It does this by splitting the camera input into 3 parts, the Left, Middle, and Right. It
+ * checks each part for a custom marker (which is set to be green in the code), or some blue or red
+ * tape, dependant on the alliance color.</p>
+ * @see org.openftc.easyopencv.OpenCvPipeline
+ * @see Vision
+ */
 public class DetectMarker extends OpenCvPipeline {
     Telemetry telemetry;
-    public enum MarkerLocation {
-        LEFT,
-        MIDDLE,
-        RIGHT,
-        NOT_FOUND
-    }
 
     public enum SearchStatus {
         INITIALIZING,
@@ -28,7 +31,7 @@ public class DetectMarker extends OpenCvPipeline {
         FOUND
     }
 
-    private Robot.AllianceColor allianceColor;
+    private AllianceColor allianceColor;
     private MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
     private SearchStatus searchStatus = SearchStatus.INITIALIZING;
 
@@ -50,15 +53,45 @@ public class DetectMarker extends OpenCvPipeline {
 
     Mat mat = new Mat();
 
-    public DetectMarker(Robot robot, Robot.AllianceColor ac) {
+    /**
+     * Class instantiation
+     * @param robot The robot (used for {@link Telemetry})
+     * @param ac The alliance color in {@link AllianceColor} format.
+     *
+     * @see Robot
+     * @see Telemetry
+     * @see AllianceColor
+     */
+    public DetectMarker(Robot robot, AllianceColor ac) {
         telemetry = robot.getOpMode().telemetry;
         this.allianceColor = ac;
     }
 
+    /**
+     * This method detects where the marker is.
+     *
+     * <p>It does this by splitting the camera input into left, right, and middle rectangles, these
+     * rectangles need to be calibrated. Combined, they do not have to encompass the whole camera
+     * input, they probably will only check a small part of it. We then assume the alliance color is
+     * either (255, 0, 0) or (0, 0, 255), we get the info when the object is instantiated
+     * ({@link #allianceColor}), and that the marker color is (0, 255, 0), which is a bright green
+     * ({@link Scalar}'s are used for colors). We compare the marker color with the alliance color
+     * on each of the rectangles, if the marker color is on none or multiple of them, it is marked
+     * as {@link MarkerLocation#NOT_FOUND}, if otherwise, the respective Location it is in is
+     * returned via a {@link MarkerLocation} variable called {@link #markerLocation}</p>
+     *
+     * @param input A Mat
+     * @return The marker location
+     *
+     * @see #allianceColor
+     * @see Mat
+     * @see Scalar
+     * @see MarkerLocation
+     */
     @Override
     public Mat processFrame(Mat input) {
         this.searchStatus = SearchStatus.SEARCHING;
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful.
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful. (not possible)
         Scalar lowHSV = new Scalar(23, 50, 70);
         Scalar highHSV = new Scalar(32, 255, 255);
 
@@ -110,14 +143,17 @@ public class DetectMarker extends OpenCvPipeline {
 
         Scalar colorNormal;
 
-        if (this.allianceColor == Robot.AllianceColor.RED) {
-            colorNormal = new Scalar(255, 0, 0);
+        if (this.allianceColor == AllianceColor.RED) {
+            colorNormal = new Scalar(255, 0, 0); // Pure Red
+        }
+        else if (this.allianceColor == AllianceColor.BLUE) {
+            colorNormal = new Scalar(0, 0, 255); // Pure Blue
         }
         else {
-            colorNormal = new Scalar(0, 0, 255);
+            colorNormal = new Scalar(255, 0, 255); // Pure Blue
         }
 
-        Scalar colorMarker = new Scalar(0, 255, 0);
+        Scalar colorMarker = new Scalar(0, 255, 0); // Pure Green
 
         Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.LEFT ? colorMarker : colorNormal);
         Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.MIDDLE ? colorMarker : colorNormal);
@@ -127,10 +163,20 @@ public class DetectMarker extends OpenCvPipeline {
         return mat;
     }
 
+    /**
+     * Gets the Marker Location, might be not found because of the Search Status.
+     * @return Where the marker is.
+     * @see MarkerLocation
+     */
     public MarkerLocation getMarkerLocation() {
         return markerLocation;
     }
 
+    /**
+     * Gets the search status
+     * @return the search status, which is in the {@link #searchStatus} enum format.
+     * @see #searchStatus
+     */
     public SearchStatus getSearchStatus() {
         return searchStatus;
     }

@@ -41,7 +41,7 @@ public class PIDController
      */
     private void calculate()
     {
-        int     sign = 1;
+        int sign = 1;
 
         // If enabled then proceed into controller calculations
         if (m_enabled)
