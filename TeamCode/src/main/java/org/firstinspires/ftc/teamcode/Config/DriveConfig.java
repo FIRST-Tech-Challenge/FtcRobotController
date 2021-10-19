@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.Config;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
+
 /**
  * Drive Config has the static config values for the drive class in drive.java
  *
  * <p>This improves the readability of drive.java and is only for static variables, not for non-static variables or methods.</p>
- * @see org.firstinspires.ftc.teamcode.Subsystems.Drive
+ * @see Drive
  */
 public class DriveConfig {
 

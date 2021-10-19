@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Vision;
+package org.firstinspires.ftc.teamcode.Subsystems.Vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * checks each part for a custom marker (which is set to be green in the code), or some blue or red
  * tape, dependant on the alliance color.</p>
  * @see org.openftc.easyopencv.OpenCvPipeline
- * @see org.firstinspires.ftc.teamcode.Subsystems.Vision
+ * @see Vision
  */
 public class DetectMarker extends OpenCvPipeline {
     Telemetry telemetry;

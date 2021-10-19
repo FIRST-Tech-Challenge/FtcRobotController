@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.Vision;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
@@ -14,19 +14,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 // import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 // import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.AllianceColor;
-import org.firstinspires.ftc.teamcode.Vision.DetectMarker;
-import org.firstinspires.ftc.teamcode.Vision.MarkerLocation;
+import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.MarkerLocation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
 /**
+ * Vision Subsystem
  * https://github.com/OpenFTC/OpenCV-Repackaged
  * Open CV library
  */
 
-public class Vision extends MinorSubsystem{
+public class Vision extends MinorSubsystem {
     private Robot robot;
-    Telemetry telemetry;
 
     private final AllianceColor allianceColor;
     MarkerLocation finalMarkerLocation; // Marker Location
@@ -110,6 +112,12 @@ public class Vision extends MinorSubsystem{
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
     }
 
+    /**
+     * This method waits until the search for the marker is done, and then it return the marker location.
+     * @param robot the robot
+     * @param aC The alliance color
+     * @return Where the marker is
+     */
     public MarkerLocation detectMarker(Robot robot, AllianceColor aC) {
         MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
         DetectMarker m = new DetectMarker(robot, aC);
