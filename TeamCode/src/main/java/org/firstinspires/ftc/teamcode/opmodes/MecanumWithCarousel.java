@@ -1,33 +1,23 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.chassis.Chassis;
+import org.firstinspires.ftc.teamcode.chassis.Carousel;
 import org.firstinspires.ftc.teamcode.chassis.MecanumChassis;
 
 @TeleOp(name = "Mecanum OpMode w/ Carousel", group = "Remote")
-public class MecanumWithCarousel extends BasicOpMode{
-    public static DcMotor carousel;
-    @Override
-    Chassis getChassis() {
-        return new MecanumChassis();
-    }
-
-    @Override
+public class MecanumWithCarousel extends OpMode {
+    MecanumChassis chassis = new MecanumChassis();
+    Carousel carousel = new Carousel();
     public void init() {
-        super.init();
-        carousel = hardwareMap.get(DcMotor.class, "carousel");
+        chassis.init(hardwareMap);
+        carousel.init(hardwareMap);
     }
 
     @Override
     public void loop() {
-        super.loop();
-
-        if(gamepad1.a) {
-            carousel.setPower(-0.55);
-        } else {
-            carousel.setPower(0);
-        }
+        chassis.drive(gamepad1);
+        carousel.run(gamepad1);
     }
 }

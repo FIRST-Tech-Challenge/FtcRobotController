@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public abstract class Chassis {
+public abstract class Chassis implements Mechanism {
     public static DcMotor frontRight;
     public static DcMotor frontLeft;
     public static DcMotor backRight;
