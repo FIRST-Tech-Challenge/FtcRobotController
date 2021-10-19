@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
 import org.firstinspires.ftc.teamcode.utils.TeleOpMovementPlane;
 
-@TeleOp(name="Basic OpMode with spinner attachment", group="Special Hardware")
+@TeleOp(name="Basic OpMode with Tank Robot", group="Special Hardware")
 public class TankOpMode_Test extends LinearOpMode {
 
     // Declare OpMode members.
