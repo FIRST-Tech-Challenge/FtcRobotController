@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * The code assumes a basic two-wheel Robot Configuration with motors named left_drive and right_drive.
  * The motor directions must be set so a positive drive goes forward and a positive turn rotates to the right.
  *
- * Under manual Control, the left stick will move forward/back, and the right stick will turn left/right.
+ * Under manual control, the left stick will move forward/back, and the right stick will turn left/right.
  * This is called POV Joystick mode, different than Tank Drive (where each joystick controls a wheel).
  * Manually drive the robot until it displays Target data on the Driver Station.
  * Press and hold the *Left Bumper* to enable the automatic "Drive to target" mode.
@@ -47,7 +47,7 @@ public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
     final double DESIRED_DISTANCE = 8.0; //  this is how close the camera should get to the target (inches)
                                          //  The GAIN constants set the relationship between the measured position error,
                                          //  and how much power is applied to the drive motors.  Drive = Error * Gain
-                                         //  Make these values smaller for smoother Control.
+                                         //  Make these values smaller for smoother control.
     final double SPEED_GAIN =   0.02 ;   //  Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     final double TURN_GAIN  =   0.01 ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
@@ -172,7 +172,7 @@ public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
             // Drive to target Automatically if Left Bumper is being pressed, AND we have found a target.
             if (gamepad1.left_bumper && targetFound) {
 
-                // Determine heading and range error so we can use them to Control the robot automatically.
+                // Determine heading and range error so we can use them to control the robot automatically.
                 double  rangeError   = (targetRange - DESIRED_DISTANCE);
                 double  headingError = targetBearing;
 

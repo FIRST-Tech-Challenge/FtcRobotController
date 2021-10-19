@@ -714,7 +714,7 @@ public class Drive extends MinorSubsystem {
     }
 
     /**
-     * PID motor Control program to ensure all four motors are synchronized
+     * PID motor control program to ensure all four motors are synchronized
      * @param tickCount: absolute value of target tickcount of motor
      * @param peakSpeed: peak speed of motor rotation in tick per second
      * @param maxSpeed: max speed of motor rotation in tick per second

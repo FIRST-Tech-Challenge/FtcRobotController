@@ -89,7 +89,7 @@ public class ConceptTelemetry extends LinearOpMode  {
 
         // We show the log in oldest-to-newest order, as that's better for poetry
         telemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.OLDEST_FIRST);
-        // We can Control the number of lines shown in the log
+        // We can control the number of lines shown in the log
         telemetry.log().setCapacity(6);
         // The interval between lines of poetry, in seconds
         double sPoemInterval = 0.6;

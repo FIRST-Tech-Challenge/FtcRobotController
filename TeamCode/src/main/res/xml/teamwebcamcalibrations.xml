@@ -3,9 +3,9 @@
   This file can provide additional camera calibration settings beyond those built into the SDK itself.
   Each calibration is for a particular camera (indicated by USB vid & pid pair) and a particular
   capture resolution for the camera. Note: it is very important when capturing images used to calibrate
-  a camera that the image acquisition tool can actually Control this capture resolution within the camera
+  a camera that the image acquisition tool can actually control this capture resolution within the camera
   itself and that you use this setting correctly. Many image acquistion tools do not in fact provide
-  this level of Control.
+  this level of control.
 
   Beyond simply providing additional, new camera calibrations, calibrations provided herein can
   *replace/update* those that are builtin to the SDK. This matching is keyed, of course, by the
@@ -26,7 +26,7 @@
   the camera's supported aspect ratios, you limit the choices of capture resolutions that Vuforia can
   select from.
 
-  One image acquisition program that supports Control of camera capture resolution is YouCam 7:
+  One image acquisition program that supports control of camera capture resolution is YouCam 7:
     https://www.cyberlink.com/products/youcam/features_en_US.html
 
   Programs that can process acquired images to determine camera calibration settings include:

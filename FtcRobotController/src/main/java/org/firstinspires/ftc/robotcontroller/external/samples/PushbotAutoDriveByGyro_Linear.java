@@ -84,7 +84,7 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
 
-    // These constants define the desired driving/Control characteristics
+    // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.7;     // Nominal speed for better accuracy.
     static final double     TURN_SPEED              = 0.5;     // Nominal half speed for better accuracy.
@@ -290,7 +290,7 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
     }
 
     /**
-     * Perform one cycle of closed loop heading Control.
+     * Perform one cycle of closed loop heading control.
      *
      * @param speed     Desired speed of turn.
      * @param angle     Absolute Angle (in Degrees) relative to last gyro reset.
