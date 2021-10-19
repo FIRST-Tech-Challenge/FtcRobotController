@@ -10,7 +10,7 @@
 // Use PID controller to manage motor power during 90 degree turn to reduce
 // overshoot.
 
-package org.firstinspires.ftc.teamcode.PID;
+package org.firstinspires.ftc.teamcode.Subsystems.Drive.PID;
 
 //import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -214,7 +214,7 @@ public class DrivePID extends LinearOpMode
                 rearLeftDriveMotor.setPower(-power);
                 frontRightDriveMotor.setPower(power);
                 rearRightDriveMotor.setPower(power);
-            } while (opModeIsActive() && !pidRotate.onTarget());
+            } while (opModeIsActive() && pidRotate.onTarget());
         }
         else    // left turn.
             do
@@ -224,7 +224,7 @@ public class DrivePID extends LinearOpMode
                 rearLeftDriveMotor.setPower(-power);
                 frontRightDriveMotor.setPower(power);
                 rearRightDriveMotor.setPower(power);
-            } while (opModeIsActive() && !pidRotate.onTarget());
+            } while (opModeIsActive() && pidRotate.onTarget());
 
         // turn the motors off.
         frontLeftDriveMotor.setPower(0);
@@ -261,7 +261,7 @@ public class DrivePID extends LinearOpMode
                 rearLeftDriveMotor.setPower(-power);
                 frontRightDriveMotor.setPower(-power);
                 rearRightDriveMotor.setPower(-power);
-            } while (opModeIsActive() && !pidDrive.onTarget());
+            } while (opModeIsActive() && pidDrive.onTarget());
         else    // forward
             do
             {
@@ -270,7 +270,7 @@ public class DrivePID extends LinearOpMode
                 rearLeftDriveMotor.setPower(power);
                 frontRightDriveMotor.setPower(power);
                 rearRightDriveMotor.setPower(power);
-            } while (opModeIsActive() && !pidDrive.onTarget());
+            } while (opModeIsActive() && pidDrive.onTarget());
 
         // turn the motors off.
         frontLeftDriveMotor.setPower(0);
