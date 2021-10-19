@@ -4,8 +4,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,9 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 // import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Vision.DetectMarker;
+import org.firstinspires.ftc.teamcode.Vision.MarkerLocation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.tensorflow.lite.task.vision.detector.Detection;
 
 /**
  * https://github.com/OpenFTC/OpenCV-Repackaged
@@ -31,7 +29,7 @@ public class Vision extends MinorSubsystem{
     Telemetry telemetry;
 
     private final AllianceColor allianceColor;
-    DetectMarker.MarkerLocation finalMarkerLocation; // Marker Location
+    MarkerLocation finalMarkerLocation; // Marker Location
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -112,8 +110,8 @@ public class Vision extends MinorSubsystem{
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
     }
 
-    public DetectMarker.MarkerLocation detectMarker(Robot robot, AllianceColor aC) {
-        DetectMarker.MarkerLocation markerLocation = DetectMarker.MarkerLocation.NOT_FOUND;
+    public MarkerLocation detectMarker(Robot robot, AllianceColor aC) {
+        MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
         DetectMarker m = new DetectMarker(robot, aC);
         while (m.getSearchStatus() != DetectMarker.SearchStatus.FOUND) {
             markerLocation = m.getMarkerLocation();

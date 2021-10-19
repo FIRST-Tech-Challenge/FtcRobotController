@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Vision;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry; // TODO: Integrate this file with the rest of the codebase
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
@@ -13,15 +13,17 @@ import org.opencv.imgproc.Imgproc;
 
 import org.openftc.easyopencv.OpenCvPipeline;
 
-
+/**
+ * This pipeline detects where the marker is.
+ *
+ * <p>It does this by splitting the camera input into 3 parts, the Left, Middle, and Right. It
+ * checks each part for a custom marker (which is set to be green in the code), or some blue or red
+ * tape, dependant on the alliance color.</p>
+ * @see org.openftc.easyopencv.OpenCvPipeline
+ * @see org.firstinspires.ftc.teamcode.Subsystems.Vision
+ */
 public class DetectMarker extends OpenCvPipeline {
     Telemetry telemetry;
-    public enum MarkerLocation {
-        LEFT,
-        MIDDLE,
-        RIGHT,
-        NOT_FOUND
-    }
 
     public enum SearchStatus {
         INITIALIZING,
@@ -56,6 +58,21 @@ public class DetectMarker extends OpenCvPipeline {
         this.allianceColor = ac;
     }
 
+    /**
+     * This method detects where the marker is.
+     *
+     * <p>It does this by splitting the camera input into left, right, and middle rectangles, these
+     * rectangles need to be calibrated. Combined, they do not have to encompass the whole camera
+     * input, they probably will only check a small part of it. We then assume the alliance color is
+     * either (255, 0, 0) or (0, 0, 255), and that the marker color is (0, 255, 0), which is a
+     * bright green. We compare the marker color with the alliance color on each of the rectangles,
+     * if the marker color is on none or multiple of them, it is marked as
+     * {@link MarkerLocation#NOT_FOUND}, if otherwise, the respective rectangle is returned via
+     * {@link MarkerLocation}</p>
+     * @param input A Mat
+     * @return The marker location
+     * @see MarkerLocation
+     */
     @Override
     public Mat processFrame(Mat input) {
         this.searchStatus = SearchStatus.SEARCHING;
@@ -131,10 +148,20 @@ public class DetectMarker extends OpenCvPipeline {
         return mat;
     }
 
+    /**
+     * Gets the Marker Location, might be not found because of the Search Status.
+     * @return Where the marker is.
+     * @see MarkerLocation
+     */
     public MarkerLocation getMarkerLocation() {
         return markerLocation;
     }
 
+    /**
+     * Gets the search status
+     * @return the search status, which is in the {@link #searchStatus} enum format.
+     * @see #searchStatus
+     */
     public SearchStatus getSearchStatus() {
         return searchStatus;
     }
