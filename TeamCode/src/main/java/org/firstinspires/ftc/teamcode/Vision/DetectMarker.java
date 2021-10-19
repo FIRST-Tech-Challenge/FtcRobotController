@@ -53,6 +53,15 @@ public class DetectMarker extends OpenCvPipeline {
 
     Mat mat = new Mat();
 
+    /**
+     * Class instantiation
+     * @param robot The robot (used for {@link Telemetry})
+     * @param ac The alliance color in {@link AllianceColor} format.
+     *
+     * @see Robot
+     * @see Telemetry
+     * @see AllianceColor
+     */
     public DetectMarker(Robot robot, AllianceColor ac) {
         telemetry = robot.getOpMode().telemetry;
         this.allianceColor = ac;
@@ -64,13 +73,19 @@ public class DetectMarker extends OpenCvPipeline {
      * <p>It does this by splitting the camera input into left, right, and middle rectangles, these
      * rectangles need to be calibrated. Combined, they do not have to encompass the whole camera
      * input, they probably will only check a small part of it. We then assume the alliance color is
-     * either (255, 0, 0) or (0, 0, 255), and that the marker color is (0, 255, 0), which is a
-     * bright green. We compare the marker color with the alliance color on each of the rectangles,
-     * if the marker color is on none or multiple of them, it is marked as
-     * {@link MarkerLocation#NOT_FOUND}, if otherwise, the respective rectangle is returned via
-     * {@link MarkerLocation}</p>
+     * either (255, 0, 0) or (0, 0, 255), we get the info when the class is initialed
+     * ({@link #allianceColor}), and that the marker color is (0, 255, 0), which is a bright green
+     * ({@link Scalar}'s are used for colors). We compare the marker color with the alliance color
+     * on each of the rectangles, if the marker color is on none or multiple of them, it is marked
+     * as {@link MarkerLocation#NOT_FOUND}, if otherwise, the respective rectangle is
+     * returned via a {@link MarkerLocation} variable called {@link #markerLocation}</p>
+     *
      * @param input A Mat
      * @return The marker location
+     *
+     * @see #allianceColor
+     * @see Mat
+     * @see Scalar
      * @see MarkerLocation
      */
     @Override
