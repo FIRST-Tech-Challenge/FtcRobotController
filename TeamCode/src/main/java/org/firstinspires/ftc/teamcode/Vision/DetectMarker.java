@@ -73,7 +73,7 @@ public class DetectMarker extends OpenCvPipeline {
      * <p>It does this by splitting the camera input into left, right, and middle rectangles, these
      * rectangles need to be calibrated. Combined, they do not have to encompass the whole camera
      * input, they probably will only check a small part of it. We then assume the alliance color is
-     * either (255, 0, 0) or (0, 0, 255), we get the info when the class is initialed
+     * either (255, 0, 0) or (0, 0, 255), we get the info when the object is instantiated
      * ({@link #allianceColor}), and that the marker color is (0, 255, 0), which is a bright green
      * ({@link Scalar}'s are used for colors). We compare the marker color with the alliance color
      * on each of the rectangles, if the marker color is on none or multiple of them, it is marked
