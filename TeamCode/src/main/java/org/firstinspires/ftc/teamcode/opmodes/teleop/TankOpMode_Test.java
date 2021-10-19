@@ -19,7 +19,7 @@ public class TankOpMode_Test extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        tank = new TankRobot(gamepad1, gamepad2, hardwareMap, telemetry);
+//        tank = new TankRobot(gamepad1, gamepad2, hardwareMap, telemetry);
 
         while (opModeIsActive()) {
 
