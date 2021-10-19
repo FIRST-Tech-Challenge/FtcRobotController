@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Autonomous(name="Auton", group="Pushbot")
-//@Disabled
 public class AutoFrenzy extends LinearOpMode {
 
     Hardware robot   = new Hardware();   // Use a Pushbot's hardware
