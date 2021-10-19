@@ -4,6 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
+/**
+ * GamePadConfig has the Config for the gamepad, which is used in robot.java.
+ *
+ * <p>It also maps the gamepad in mapGamePadInputs(), this is also used by the robot subsystem. This improves Robot.java's code quality</p>
+ * @see org.firstinspires.ftc.teamcode.Subsystems.Robot
+ */
 public class GamePadConfig {
     // Declare game pad objects
     public double leftStickX;
@@ -60,6 +66,12 @@ public class GamePadConfig {
     public boolean isdPadRight2PressedPrev = false;
     public boolean islBumper2PressedPrev = false;
     public boolean isrBumper2PressedPrev = false;
+
+    /**
+     * This maps the game pad inputs to variables, simplifying Robot.java's code and improving code quality
+     * @param robot the robot subsystem
+     * @see org.firstinspires.ftc.teamcode.Subsystems.Robot
+     */
     public void mapGamePadInputs(Robot robot){
         LinearOpMode opMode = robot.getOpMode();
         isaButtonPressedPrev = aButton;
