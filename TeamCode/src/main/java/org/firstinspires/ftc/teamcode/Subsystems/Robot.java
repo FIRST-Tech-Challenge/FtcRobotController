@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
-import org.firstinspires.ftc.teamcode.Subsystems.control.Control;
+import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -139,7 +139,7 @@ public class Robot extends Subsystem {
     public void init() throws IOException {
         initMechanical(); // mechanical stuff
         // Drive
-        telemetry.addData("Mode", " drive/control initializing...");
+        telemetry.addData("Mode", " drive/Control initializing...");
         telemetry.update();
         List<DcMotorEx> dcMotorExList = new ArrayList<>(4);
         dcMotorExList.add(frontLeftDriveMotor);
@@ -155,7 +155,7 @@ public class Robot extends Subsystem {
         vision = new Vision(this, allianceColor);
 
 
-        telemetry.addData("Mode", " control initializing...");
+        telemetry.addData("Mode", " Control initializing...");
         telemetry.update();
         control = new Control(this);
 

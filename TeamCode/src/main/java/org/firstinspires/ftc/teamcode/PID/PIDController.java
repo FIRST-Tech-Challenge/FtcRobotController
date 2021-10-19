@@ -4,9 +4,9 @@ package org.firstinspires.ftc.teamcode.PID;
 
 public class PIDController
 {
-    private double m_P;                     // factor for "proportional" control
-    private double m_I;                     // factor for "integral" control
-    private double m_D;                     // factor for "derivative" control
+    private double m_P;                     // factor for "proportional" Control
+    private double m_I;                     // factor for "integral" Control
+    private double m_D;                     // factor for "derivative" Control
     private double m_input;                 // sensor input for pid controller
     private double m_maximumOutput = 1.0;	// |maximum output|
     private double m_minimumOutput = 0.0;	// |minimum output|

@@ -40,7 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 
     /*
-        This sample illustrates how to use the Expansion Hub's Bulk-Read feature to speed up control cycle times.
+        This sample illustrates how to use the Expansion Hub's Bulk-Read feature to speed up Control cycle times.
         In this example there are 4 motors that need their encoder positions, and velocities read.
         The sample is written to work with one or two expansion hubs, with no assumption as to where the motors are located.
 
@@ -50,27 +50,27 @@ import java.util.List;
         Cache Mode = AUTO   This mode will attempt to minimize the number of discrete read commands, by performing bulk-reads
                             and then returning values that have been cached.  The cache is updated automatically whenever a specific read operation is repeated.
                             This mode will always return fresh data, but it may perform more bulk-reads than absolutely required.
-                            Extra reads will be performed if multiple identical encoder/velocity reads are performed in one control cycle.
+                            Extra reads will be performed if multiple identical encoder/velocity reads are performed in one Control cycle.
                             This mode is a good compromise between the OFF and MANUAL modes.
         Cache Mode = MANUAL This mode enables the user's code to determine the best time to refresh the cached bulk-read data.
-                            Well organized code can place all the sensor reads in one location, and then just reset the cache once per control cycle.
+                            Well organized code can place all the sensor reads in one location, and then just reset the cache once per Control cycle.
                             The approach will produce the shortest cycle times, but it does require the user to manually clear the cache.
 
         -------------------------------------
 
-        General tip to speed up your control cycles:
+        General tip to speed up your Control cycles:
         No matter what method you use to read encoders and other inputs, you should try to
-        avoid reading the same input multiple times around a control loop.
-        Under normal conditions, this will slow down the control loop.
+        avoid reading the same input multiple times around a Control loop.
+        Under normal conditions, this will slow down the Control loop.
         The preferred method is to read all the required inputs ONCE at the beginning of the loop,
-        and save the values in variable that can be used by other parts of the control code.
+        and save the values in variable that can be used by other parts of the Control code.
 
         eg: if you are sending encoder positions to your telemetry display, putting a getCurrentPosition()
         call in the telemetry statement will force the code to go and get another copy which will take time.
-        It's much better read the position into a variable once, and use that variable for control AND display.
+        It's much better read the position into a variable once, and use that variable for Control AND display.
         Reading saved variables takes no time at all.
 
-        Once you put all your sensor reads at the beginning of the control cycle, it's very easy to use
+        Once you put all your sensor reads at the beginning of the Control cycle, it's very easy to use
         the bulk-read AUTO mode to streamline your cycle timing.
 
      */
@@ -78,7 +78,7 @@ import java.util.List;
 @Disabled
 public class ConceptMotorBulkRead extends LinearOpMode {
 
-    final int       TEST_CYCLES    = 500;   // Number of control cycles to run to determine cycle times.
+    final int       TEST_CYCLES    = 500;   // Number of Control cycles to run to determine cycle times.
 
     private DcMotorEx m1, m2, m3, m4; // Motor Objects
     private long      e1, e2, e3, e4; // Encoder Values
@@ -111,7 +111,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         waitForStart();
 
         // --------------------------------------------------------------------------------------
-        // Run control loop using legacy encoder reads
+        // Run Control loop using legacy encoder reads
         // In this mode, a single read is done for each encoder position, and a bulk read is done for each velocity read.
         // This is the worst case scenario.
         // This is the same as using LynxModule.BulkCachingMode.OFF
@@ -171,8 +171,8 @@ public class ConceptMotorBulkRead extends LinearOpMode {
 
         // --------------------------------------------------------------------------------------
         // Run test cycles using MANUAL cache mode
-        // In this mode, only one block read is done each control cycle.
-        // This is the MOST efficient method, but it does require that the cache is cleared manually each control cycle.
+        // In this mode, only one block read is done each Control cycle.
+        // This is the MOST efficient method, but it does require that the cache is cleared manually each Control cycle.
         // --------------------------------------------------------------------------------------
 
         // Important Step 3: Option B. Set all Expansion hubs to use the MANUAL Bulk Caching mode
@@ -184,7 +184,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         cycles = 0;
         while (opModeIsActive() && (cycles++ < TEST_CYCLES)) {
 
-            // Important Step 4: If you are using MANUAL mode, you must clear the BulkCache once per control cycle
+            // Important Step 4: If you are using MANUAL mode, you must clear the BulkCache once per Control cycle
             for (LynxModule module : allHubs) {
                 module.clearBulkCache();
             }
