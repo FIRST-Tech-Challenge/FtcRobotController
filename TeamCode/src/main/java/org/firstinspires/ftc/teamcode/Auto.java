@@ -1,16 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.bravenatorsrobotics.drive.AbstractDrive;
-import com.bravenatorsrobotics.drive.FourWheelDrive;
 import com.bravenatorsrobotics.drive.MecanumDrive;
-import com.bravenatorsrobotics.drive.TwoWheelDrive;
 import com.bravenatorsrobotics.operation.AutonomousMode;
 import com.bravenatorsrobotics.vision.TensorFlowObjectDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.tensorflow.lite.Tensor;
 
 @Autonomous(name="Autonomous")
 public class Auto extends AutonomousMode<MecanumDrive> {
@@ -56,6 +51,15 @@ public class Auto extends AutonomousMode<MecanumDrive> {
             telemetry.update();
 
             sleep(5);
+        }
+
+        if(duckPosition == DuckPosition.UNKNOWN) {
+            if(specifications.debugModeEnabled) {
+                telemetry.addLine("ERROR: Could not detect the duck!!!");
+                telemetry.update();
+            }
+
+            duckPosition = DuckPosition.LEFT;
         }
     }
 
