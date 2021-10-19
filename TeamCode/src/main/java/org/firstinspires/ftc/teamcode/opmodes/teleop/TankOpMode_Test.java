@@ -1,20 +1,18 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
-import org.firstinspires.ftc.teamcode.utils.Tank;
-import org.firstinspires.ftc.teamcode.utils.TankRobot;
+import org.firstinspires.ftc.teamcode.utils.TeleOpMovementPlane;
 
 @TeleOp(name="Basic OpMode with spinner attachment", group="Special Hardware")
 public class TankOpMode_Test extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private TankRobot tank;
+    private TeleOpMovementPlane tank;
 
     @Override
     public void runOpMode() {
@@ -27,7 +25,7 @@ public class TankOpMode_Test extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", tank.drivetrain.ld1.getPower(), tank.drivetrain.rd1.getPower());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", tank.getDrivetrain().getLeftTop().getDcMotor().getPower(), tank.getDrivetrain().getLeftTop().getDcMotor().getPower());
             telemetry.update();
         }
     }

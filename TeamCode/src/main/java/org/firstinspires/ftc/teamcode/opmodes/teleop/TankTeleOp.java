@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.utils.ButtonPriority;
 import org.firstinspires.ftc.teamcode.utils.GamepadExtended;
 import org.firstinspires.ftc.teamcode.utils.Motor;
 import org.firstinspires.ftc.teamcode.utils.Tank;
+import org.firstinspires.ftc.teamcode.utils.TeleOpMovementPlane;
 
 @TeleOp(name="TankTeleOp", group="Iterative")
 public class TankTeleOp extends OpMode {
@@ -17,6 +18,7 @@ public class TankTeleOp extends OpMode {
     private Motor rightTop, rightBottom, leftTop, leftBottom, spinner, elevator, grabber;
     private Tank tank;
     private ButtonPriority PRIORITY = new ButtonPriority();
+    private TeleOpMovementPlane teleOpMovementPlane;
 
     /**
      * Code to run once when the OpMode is initialized.
@@ -31,6 +33,7 @@ public class TankTeleOp extends OpMode {
         elevator = new Motor(telemetry, hardwareMap, "elevator", DcMotorSimple.Direction.FORWARD, 1400, 1, 1);
         grabber = new Motor(telemetry, hardwareMap, "grabber", DcMotorSimple.Direction.FORWARD);
         tank = new Tank(telemetry, rightTop, rightBottom, leftTop, leftBottom);
+        teleOpMovementPlane = new TeleOpMovementPlane(gamepad1, gamepad2, telemetry, tank);
         telemetry.addData("Status", "Initialized");
     }
 
@@ -55,9 +58,7 @@ public class TankTeleOp extends OpMode {
      */
     @Override
     public void loop() {
-        double left = gamepad1.left_stick_x + gamepad1.left_stick_y * 100.0;
-        double right = gamepad1.left_stick_x - gamepad1.left_stick_y * 100.0;
-        tank.driveWithEncoder((int) right, (int) left);
+        teleOpMovementPlane.main();
     }
 
     /*
