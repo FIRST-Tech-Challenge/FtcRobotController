@@ -14,13 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [13, 14]
         os: [macos-latest, ubuntu-latest, windows-2022]
         experimental: [false]
-        include:
-          - node: 15
-            os: ubuntu-18.04
-            experimental: true
 
     steps:
     - uses: actions/checkout@v2
