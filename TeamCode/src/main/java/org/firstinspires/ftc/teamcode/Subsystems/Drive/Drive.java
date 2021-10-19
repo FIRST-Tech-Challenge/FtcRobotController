@@ -18,9 +18,12 @@ import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 import java.util.List;
 import java.util.Locale;
 
-/** Mecanum drivetrain subsystem */
+/** Mecanum drivetrain subsystem
+ *
+ * Mostly repetitive code.
+ */
 public class Drive extends MinorSubsystem {
-    // DC Motors
+    /** DC Motors initialization. */
     public DcMotorEx frontLeft;
     public DcMotorEx frontRight;
     public DcMotorEx rearLeft;
@@ -45,6 +48,20 @@ public class Drive extends MinorSubsystem {
 
     private long startTime;
 
+    /**
+     * The class instantiation.
+     *
+     * @param robot the robot
+     * @param motors given in a list for readability
+     * @param odL motor
+     * @param odB motor
+     * @param odR motor
+     * @param imu the imu
+     *
+     * @see Robot
+     * @see DcMotorEx
+     * @see BNO055IMU
+     */
     public Drive(Robot robot, List<DcMotorEx> motors, DcMotorEx odL, DcMotorEx odB, DcMotorEx odR, BNO055IMU imu) {
         super(robot);
         this.frontLeft = motors.get(0);

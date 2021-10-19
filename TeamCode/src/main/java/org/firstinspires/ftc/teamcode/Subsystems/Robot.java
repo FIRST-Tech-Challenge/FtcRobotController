@@ -14,9 +14,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
+import org.firstinspires.ftc.teamcode.Config.MainConfig;
+import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
-import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,11 +26,14 @@ import java.util.List;
 /**
  * The big umbrella subsystem.
  *
- * <p>This class starts with variable initializations</p></p>
+ * <p>This class starts with variable initializations then it initializes the subsystems and other
+ * mechanical things with the {@link #init()} method.</p>
+ *
+ * @see #init()
+ * @see #initMechanical()
  */
 public class Robot extends Subsystem {
-    private AllianceColor allianceColor;
-    private final String name = "Freight Mover"; // TODO: Better name needed
+    private AllianceColor allianceColor = MainConfig.getAllianceColor();
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
     private Telemetry telemetry;
@@ -46,7 +50,6 @@ public class Robot extends Subsystem {
     public DcMotorEx intake;
 
     // Servos
-
     public Servo elevatorR;
     public Servo elevatorL;
 
@@ -92,7 +95,7 @@ public class Robot extends Subsystem {
      * right elevator   4
      */
 
-    //Sensors
+    // Sensors
     public BNO055IMU imu;
 
     GamePadConfig gamePadConfig = new GamePadConfig();
@@ -110,7 +113,6 @@ public class Robot extends Subsystem {
      *
      * @param opMode the operational mode, the telemetry and hardware map is gotten from this
      * @param timer an timer
-     * @param aC The Alliance Color, in {@link AllianceColor} format.
      *
      * @throws IOException Might throw it.
      *
@@ -118,12 +120,11 @@ public class Robot extends Subsystem {
      * @see ElapsedTime
      * @see AllianceColor
      */
-    public Robot(LinearOpMode opMode, ElapsedTime timer, AllianceColor aC) throws IOException {
+    public Robot(LinearOpMode opMode, ElapsedTime timer) throws IOException, InterruptedException {
         this.hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
         this.timer = timer;
-        this.allianceColor = aC;
 
         init();
     }
@@ -136,7 +137,7 @@ public class Robot extends Subsystem {
      *
      * @see #initMechanical()
      */
-    public void init() throws IOException {
+    public void init() throws InterruptedException {
         initMechanical(); // mechanical stuff
         // Drive
         telemetry.addData("Mode", " drive/control initializing...");
@@ -152,7 +153,7 @@ public class Robot extends Subsystem {
 //        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("Mode", " vision initializing...");
         telemetry.update();
-        vision = new Vision(this, allianceColor);
+        vision = new Vision(this);
 
 
         telemetry.addData("Mode", " control initializing...");
@@ -269,8 +270,14 @@ public class Robot extends Subsystem {
         }
     }
 
+
+    /**
+     * Gets the name of the robot
+     * @return the name of the robot
+     * @see MainConfig#getName()
+     */
     public String getName() {
-        return this.name;
+        return MainConfig.getName();
     }
 
 
@@ -286,6 +293,10 @@ public class Robot extends Subsystem {
         return this.timer;
     }
 
+    /** gets the gamepad inputs
+     *
+     * @see GamePadConfig#mapGamePadInputs(Robot)
+     */
     public void getGamePadInputs() {
         gamePadConfig.mapGamePadInputs(this);
     }
