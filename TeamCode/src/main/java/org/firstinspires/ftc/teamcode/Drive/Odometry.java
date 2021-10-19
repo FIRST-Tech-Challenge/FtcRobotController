@@ -2,12 +2,21 @@ package org.firstinspires.ftc.teamcode.Drive;
 
 import androidx.annotation.NonNull;
 
+/**
+ * The Odometry class has two TrcPoses, one for position and another for velocity
+ *
+ * <p>The TrcPose2D's are edited with get and set methods</p>
+ * @see TrcPose2D
+ */
 public class Odometry {
     private TrcPose2D position;
     private TrcPose2D velocity;
 
     /**
      * Constructor: Create an instance of the object.
+     *
+     * <p>Defaults to a default TrcPose2D, position 0 and velocity 0.</p>
+     * @see TrcPose2D#TrcPose2D()
      */
     Odometry() {
         position = new TrcPose2D();
@@ -23,16 +32,17 @@ public class Odometry {
     Odometry(TrcPose2D position, TrcPose2D velocity) {
         this.position = position;
         this.velocity = velocity;
-    }   //Odometry
+    }
 
     /**
-     * This method returns the string representation of the object.
+     * This method returns the string representation of the object, it is dependent on the {@link TrcPose2D#toString()} method.
      *
      * @return string representation of the object.
+     * @see TrcPose2D#toString()
      */
     @Override
     public String toString() {
-        return "position=" + position.toString() + ", velocity=" + velocity.toString();
+        return "position = " + position.toString() + ", velocity = " + velocity.toString();
     }
 
     /**
@@ -43,8 +53,13 @@ public class Odometry {
     @NonNull
     public Odometry clone() {
         return new Odometry(position.clone(), velocity.clone());
-    }   //clone
+    }
 
+
+    /**
+     *
+     * @return the position TrcPose2D.
+     */
     public TrcPose2D getPosition() {
         return this.position;
     }
@@ -58,7 +73,10 @@ public class Odometry {
         this.position.setAs(pose);
     }
 
-
+    /**
+     * This method gets the velocity info of the odometry.
+     * @return The velocity pose
+     */
     public TrcPose2D getVelocity() {
         return this.velocity;
     }
@@ -73,4 +91,4 @@ public class Odometry {
         this.velocity.setAs(pose);
     }
 
-}   //class Odometry
+}
