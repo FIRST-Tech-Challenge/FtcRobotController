@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.Config;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 /**
  * GamePadConfig has the Config for the gamepad, which is used in robot.java.
  *
- * <p>It also maps the gamepad in mapGamePadInputs(), this is also used by the robot subsystem.
- * This improves Robot.java's code quality</p>
+ * <p>It also maps the gamepad in mapGamePadInputs(), this is also used by the robot subsystem. This improves Robot.java's code quality</p>
  * @see org.firstinspires.ftc.teamcode.Subsystems.Robot
  */
 public class GamePadConfig {
@@ -76,10 +74,6 @@ public class GamePadConfig {
      */
     public void mapGamePadInputs(Robot robot){
         LinearOpMode opMode = robot.getOpMode();
-        Gamepad gamepad1 = opMode.gamepad1;
-        Gamepad gamepad2 = opMode.gamepad2;
-
-        // button mapping for joystick #1
         isaButtonPressedPrev = aButton;
         isbButtonPressedPrev = bButton;
         isxButtonPressedPrev = xButton;
@@ -90,24 +84,23 @@ public class GamePadConfig {
         isdPadRightPressedPrev = dPadRight;
         islBumperPressedPrev = bumperLeft;
         isrBumperPressedPrev = bumperRight;
-        leftStickX = robot.joystickDeadzoneCorrection(gamepad1.left_stick_x);
+        leftStickX = robot.joystickDeadzoneCorrection(opMode.gamepad1.left_stick_x);
         leftStickY = robot.joystickDeadzoneCorrection(-opMode.gamepad1.left_stick_y);
         rightStickX = robot.joystickDeadzoneCorrection(opMode.gamepad1.right_stick_x);
         rightStickY = robot.joystickDeadzoneCorrection(opMode.gamepad1.right_stick_y);
-        triggerLeft = gamepad1.left_trigger;
-        triggerRight = gamepad1.right_trigger;
-        aButton = gamepad1.a;
-        bButton = gamepad1.b;
-        xButton = gamepad1.x;
-        yButton = gamepad1.y;
-        dPadUp = gamepad1.dpad_up;
-        dPadDown = gamepad1.dpad_down;
-        dPadLeft = gamepad1.dpad_left;
-        dPadRight = gamepad1.dpad_right;
-        bumperLeft = gamepad1.left_bumper;
-        bumperRight = gamepad1.right_bumper;
+        triggerLeft = opMode.gamepad1.left_trigger;
+        triggerRight = opMode.gamepad1.right_trigger;
+        aButton = opMode.gamepad1.a;
+        bButton = opMode.gamepad1.b;
+        xButton = opMode.gamepad1.x;
+        yButton = opMode.gamepad1.y;
+        dPadUp = opMode.gamepad1.dpad_up;
+        dPadDown = opMode.gamepad1.dpad_down;
+        dPadLeft = opMode.gamepad1.dpad_left;
+        dPadRight = opMode.gamepad1.dpad_right;
+        bumperLeft = opMode.gamepad1.left_bumper;
+        bumperRight = opMode.gamepad1.right_bumper;
 
-        // button mapping for joystick #2
         isaButton2PressedPrev = aButton2;
         isbButton2PressedPrev = bButton2;
         isxButton2PressedPrev = xButton2;
@@ -124,15 +117,15 @@ public class GamePadConfig {
         rightStickY2 = robot.joystickDeadzoneCorrection(-opMode.gamepad2.right_stick_y);
         triggerLeft2 = opMode.gamepad2.left_trigger;
         triggerRight2 = opMode.gamepad2.right_trigger;
-        aButton2 = gamepad2.a;
-        bButton2 = gamepad2.b;
-        xButton2 = gamepad2.x;
-        yButton2 = gamepad2.y;
-        dPadUp2 = gamepad2.dpad_up;
-        dPadDown2 = gamepad2.dpad_down;
-        dPadLeft2 = gamepad2.dpad_left;
-        dPadRight2 = gamepad2.dpad_right;
-        bumperLeft2 = gamepad2.left_bumper;
-        bumperRight2 = gamepad2.right_bumper;
+        aButton2 = opMode.gamepad2.a;
+        bButton2 = opMode.gamepad2.b;
+        xButton2 = opMode.gamepad2.x;
+        yButton2 = opMode.gamepad2.y;
+        dPadUp2 = opMode.gamepad2.dpad_up;
+        dPadDown2 = opMode.gamepad2.dpad_down;
+        dPadLeft2 = opMode.gamepad2.dpad_left;
+        dPadRight2 = opMode.gamepad2.dpad_right;
+        bumperLeft2 = opMode.gamepad2.left_bumper;
+        bumperRight2 = opMode.gamepad2.right_bumper;
     }
 }
