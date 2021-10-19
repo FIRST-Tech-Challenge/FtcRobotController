@@ -70,7 +70,7 @@ public class GamePadConfig {
     /**
      * This maps the game pad inputs to variables, simplifying Robot.java's code and improving code quality
      * @param robot the robot subsystem
-     * @see org.firstinspires.ftc.teamcode.Subsystems.Robot
+     * @see org.firstinspires.ftc.teamcode.Subsystems.Robot#getGamePadInputs()
      */
     public void mapGamePadInputs(Robot robot){
         LinearOpMode opMode = robot.getOpMode();
