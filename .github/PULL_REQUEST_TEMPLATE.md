@@ -4,7 +4,7 @@ This pull request fixes/adds x.
 
 # Info
 **Related Task:**
-**Type (Update, Feature, Bug Fix, Hotfix, etc.):**
+**Type (Update, Feature, Bug Fix, Hot Fix, etc.):**
 **Description:**
 
 
