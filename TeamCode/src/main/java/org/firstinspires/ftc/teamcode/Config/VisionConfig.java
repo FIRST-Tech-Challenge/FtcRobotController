@@ -5,7 +5,6 @@ public class VisionConfig {
     public static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
     public static final int HORIZON = 100; // horizon value to tune
 
-    public static final boolean DEBUG = false; // if debug is wanted, change to true
 
     public static final boolean USING_WEBCAM = true; // change to true if using webcam
     public static final String WEBCAM_NAME = "Webcam 1"; // insert webcam name from configuration if using webcam
