@@ -19,19 +19,6 @@ public class TankRobot extends GamepadExtended {
 
     public TankRobot(Gamepad gamepad1, Gamepad gamepad2, HardwareMap hardwareMap, Telemetry telemetry) {
         super(gamepad1, gamepad2, telemetry);
-        /*
-        List<String> motorNames = new ArrayList<String>();
-
-        motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_1));
-        motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_1));
-        motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_2));
-        motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_2));
-
-        this.drivetrain = new Drivetrain(motorNames, hardwareMap);
-
-        spinner = hardwareMap.dcMotor.get(hardwareMap.appContext.getString(R.string.HW_SPINNER));
-        */
-
         tank = new Tank(
                 telemetry,
                 new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_1), DcMotorSimple.Direction.FORWARD),
