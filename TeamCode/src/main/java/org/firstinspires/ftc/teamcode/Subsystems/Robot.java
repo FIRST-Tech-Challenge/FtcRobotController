@@ -19,10 +19,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * The big umbrella subsystem.
+ *
+ * <p>This class starts with variable initializations</p></p>
+ */
 public class Robot extends Subsystem {
     private AllianceColor allianceColor;
-    private final String name = "Freight Mover";
+    private final String name = "Freight Mover"; // TODO: Better name needed
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
     private Telemetry telemetry;
@@ -99,26 +103,36 @@ public class Robot extends Subsystem {
 
 
     /**
+     * Note that this method only changes some variables the real work is done in {@link #init()}
      *
-     * @param opMode
-     * @param timer
-     * @param aC
-     *          o: no camera is initialized
-     *          1: only armWebcam is initialized for OpenCV
-     *          2: backWebcam is initialized for Vuforia
-     *          3: backWebcam is initialized for Vuforia and frontWebcam is initialized for OpenCV
-     *          4: armWebcam is initialized for OpenCV and frontWebcam is initialized for OpenCV
+     * @param opMode the operational mode, the telemetry and hardware map is gotten from this
+     * @param timer an timer
+     * @param aC The Alliance Color, in {@link AllianceColor} format.
+     *
+     * @throws IOException Might throw it.
+     *
+     * @see LinearOpMode
+     * @see ElapsedTime
+     * @see AllianceColor
      */
     public Robot(LinearOpMode opMode, ElapsedTime timer, AllianceColor aC) throws IOException {
-        hardwareMap = opMode.hardwareMap;
+        this.hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
         this.timer = timer;
-        allianceColor = aC;
+        this.allianceColor = aC;
 
         init();
     }
 
+    /**
+     * Initializes everything
+     *
+     * <p>It first initializes some mechanical things, then it initializes the subsystems.</p>
+     * @throws IOException
+     *
+     * @see #initMechanical()
+     */
     public void init() throws IOException {
         initMechanical(); // mechanical stuff
         // Drive
@@ -200,16 +214,17 @@ public class Robot extends Subsystem {
 //        elevator2 = hardwareMap.crservo.get("e2");
 //
 //        elevator2.setDirection(DcMotorSimple.Direction.REVERSE);
-        wobbleClaw = hardwareMap.servo.get("wbc2");
-        wobbleGoalArm = hardwareMap.servo.get("wbc1");
-        launcherFeederR = hardwareMap.servo.get("feederR");
-        launcherFeederL = hardwareMap.servo.get("feederL");
-        intakeToElevatorR = hardwareMap.servo.get("iteR");
-        intakeToElevatorL = hardwareMap.servo.get("iteL");
+        HardwareMap.DeviceMapping<Servo> servo = hardwareMap.servo;
+        wobbleClaw = servo.get("wbc2");
+        wobbleGoalArm = servo.get("wbc1");
+        launcherFeederR = servo.get("feederR");
+        launcherFeederL = servo.get("feederL");
+        intakeToElevatorR = servo.get("iteR");
+        intakeToElevatorL = servo.get("iteL");
 
 
-        elevatorR = hardwareMap.servo.get("elevatorR");
-        elevatorL = hardwareMap.servo.get("elevatorL");
+        elevatorR = servo.get("elevatorR");
+        elevatorL = servo.get("elevatorL");
 
         allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -275,13 +290,13 @@ public class Robot extends Subsystem {
     public double joystickDeadzoneCorrection(double joystickInput) {
         double joystickOutput;
         if (joystickInput > joystickDeadZone) {
-            joystickOutput = (joystickInput - joystickDeadZone) / (1.0-joystickDeadZone);
+            joystickOutput = (joystickInput - joystickDeadZone) / (1.0 - joystickDeadZone);
         }
         else if (joystickInput > -joystickDeadZone) {
             joystickOutput = 0.0;
         }
         else {
-            joystickOutput = (joystickInput + joystickDeadZone) / (1.0-joystickDeadZone);
+            joystickOutput = (joystickInput + joystickDeadZone) / (1.0 - joystickDeadZone);
         }
         return joystickOutput;
     }
