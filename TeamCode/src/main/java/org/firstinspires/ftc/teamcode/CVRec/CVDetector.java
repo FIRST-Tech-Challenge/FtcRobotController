@@ -80,6 +80,11 @@ public class CVDetector {
                         Log.e(TAG, String.format("Cannot start streaming. %s", ex.toString()));
                     }
                 }
+
+                @Override
+                public void onError(int errorCode) {
+                    Log.e(TAG, String.format("Cannot open camera for streaming. Code  %d", errorCode));
+                }
             });
         }
     }
