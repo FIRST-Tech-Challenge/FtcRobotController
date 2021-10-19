@@ -18,6 +18,8 @@ public class LinearSlide {
      * @param maxConstraint max encoder position of motor between 0 and 360 (float)
      */
     public LinearSlide(DcMotor slide, float minConstraint, float maxConstraint){
+        this.linSlideMtr = slide;
+        
         this.minPosition = minConstraint;
         this.maxPosition = maxConstraint;
 
