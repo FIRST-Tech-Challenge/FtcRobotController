@@ -13,8 +13,8 @@ public class TrcPose2D
     public double x;
     public double y;
     public double angle;
-    private double speed;
-    private double speedAngle;
+    private double direction;
+    private double movementAngle;
 
     /**
      * Constructor: Create an instance of the object.
@@ -104,14 +104,8 @@ public class TrcPose2D
 
         newPose.x += xOffset*cosAngle + yOffset*sinAngle;
         newPose.y += -xOffset*sinAngle + yOffset*cosAngle;
-//
-//        if (debugEnabled)
-//        {
-//            dbgTrace.traceInfo(funcName, "xOffset=%.1f, yOffset=%.1f, Pose:%s, newPose:%s",
-//                    xOffset, yOffset, this, newPose);
-//        }
 
         return newPose;
-    }   //translatePose
+    }
 
-}   //class TrcPose2D
+}
