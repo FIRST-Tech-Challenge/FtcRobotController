@@ -13,18 +13,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Config.VisionConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarker;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerPipeline;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerThread;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 /**
  * The Vision Subsystem
  *
- * @see DetectMarker
+ * @see DetectMarkerPipeline
  * @see <a href="https://github.com/OpenFTC/EasyOpenCV">EasyOpenCV</a>
  */
 
