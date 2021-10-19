@@ -1082,5 +1082,4 @@ public class Drive extends MinorSubsystem {
         if (targetSpeed < speedOffset) targetSpeed = speedOffset;
         return targetSpeed;
     }
-
 }

@@ -30,7 +30,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 public class Vision extends MinorSubsystem {
     private Robot robot;
 
-    private final AllianceColor allianceColor;
+    private AllianceColor allianceColor;
     MarkerLocation finalMarkerLocation; // Marker Location
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
