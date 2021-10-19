@@ -34,7 +34,7 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
         DEBUGSELECT,
         DEBUGONE
     }
-    public enum Intake {
+    private enum Intake {
         WaitingForPush,
         WaitingForRelease,
         ChangeValue,
