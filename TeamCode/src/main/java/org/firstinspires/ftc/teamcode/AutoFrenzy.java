@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //@Disabled
 public class AutoFrenzy extends LinearOpMode {
 
-    /* Declare OpMode members. */
     Hardware robot   = new Hardware();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
     final double countPerRev = 384.5;
