@@ -28,16 +28,11 @@ public class AutoFrenzy extends LinearOpMode {
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous: ", "waiting for start");
         telemetry.update();
-        double distanceIN = robot.distance.getDistance(DistanceUnit.INCH);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        if (distanceIN > 10) {
-            move(1, 'f', 100);
-        }
-        else{
-            motorstop();
-        }
+        move(1, 'f', 100);
+        motorstop();
     }
     public void motorstop(){
         robot.m0.set(0);
