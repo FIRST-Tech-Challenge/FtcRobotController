@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Drive;
 
+import androidx.annotation.NonNull;
+
 public class Odometry {
     private TrcPose2D position;
     private TrcPose2D velocity;
@@ -38,25 +40,36 @@ public class Odometry {
      *
      * @return a copy of this odometry.
      */
+    @NonNull
     public Odometry clone() {
         return new Odometry(position.clone(), velocity.clone());
     }   //clone
+
+    public TrcPose2D getPosition() {
+        return this.position;
+    }
 
     /**
      * This method sets the position info of the odometry to the given pose.
      *
      * @param pose specifies the pose to set the position info to.
      */
-    void setPosition(TrcPose2D pose) {
+    public void setPosition(TrcPose2D pose) {
         this.position.setAs(pose);
     }
+
+
+    public TrcPose2D getVelocity() {
+        return this.velocity;
+    }
+
 
     /**
      * This method sets the velocity info of the odometry to the given pose.
      *
      * @param pose specifies the pose to set the velocity info to.
      */
-    void setVelocity(TrcPose2D pose) {
+    public void setVelocity(TrcPose2D pose) {
         this.velocity.setAs(pose);
     }
 
