@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -13,19 +12,24 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.AllianceColor;
+import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
+import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
+import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
-
+/**
+ * The big umbrella subsystem.
+ *
+ * <p>This class starts with variable initializations</p></p>
+ */
 public class Robot extends Subsystem {
-    public enum AllianceColor {
-        RED,
-        BLUE // undefined is not needed
-    }
     private AllianceColor allianceColor;
-    public String name;
+    private final String name = "Freight Mover"; // TODO: Better name needed
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
     private Telemetry telemetry;
@@ -91,103 +95,73 @@ public class Robot extends Subsystem {
     //Sensors
     public BNO055IMU imu;
 
-    // Declare game pad objects
-    public double leftStickX;
-    public double leftStickY;
-    public double rightStickX;
-    public double rightStickY;
-    public float triggerLeft;
-    public float triggerRight;
-    public boolean aButton = false;
-    public boolean bButton = false;
-    public boolean xButton = false;
-    public boolean yButton = false;
-    public boolean dPadUp = false;
-    public boolean dPadDown = false;
-    public boolean dPadLeft = false;
-    public boolean dPadRight = false;
-    public boolean bumperLeft = false;
-    public boolean bumperRight = false;
-
-    public double leftStickX2;
-    public double leftStickY2;
-    public double rightStickX2;
-    public double rightStickY2;
-    public float triggerLeft2;
-    public float triggerRight2;
-    public boolean aButton2 = false;
-    public boolean bButton2 = false;
-    public boolean xButton2 = false;
-    public boolean yButton2 = false;
-    public boolean dPadUp2 = false;
-    public boolean dPadDown2 = false;
-    public boolean dPadLeft2 = false;
-    public boolean dPadRight2 = false;
-    public boolean bumperLeft2 = false;
-    public boolean bumperRight2 = false;
-
-    public boolean isaButtonPressedPrev = false;
-    public boolean isbButtonPressedPrev = false;
-    public boolean isxButtonPressedPrev = false;
-    public boolean isyButtonPressedPrev = false;
-    public boolean isdPadUpPressedPrev = false;
-    public boolean isdPadDownPressedPrev = false;
-    public boolean isdPadLeftPressedPrev = false;
-    public boolean isdPadRightPressedPrev = false;
-    public boolean islBumperPressedPrev = false;
-    public boolean isrBumperPressedPrev = false;
-    public boolean isaButton2PressedPrev = false;
-    public boolean isbButton2PressedPrev = false;
-    public boolean isxButton2PressedPrev = false;
-    public boolean isyButton2PressedPrev = false;
-    public boolean isdPadUp2PressedPrev = false;
-    public boolean isdPadDown2PressedPrev = false;
-    public boolean isdPadLeft2PressedPrev = false;
-    public boolean isdPadRight2PressedPrev = false;
-    public boolean islBumper2PressedPrev = false;
-    public boolean isrBumper2PressedPrev = false;
+    GamePadConfig gamePadConfig = new GamePadConfig();
 
     private double joystickDeadZone = 0.1;
 
-    //Subsystems
+    // Subsystems
     public Drive drive;
     public Control control;
     public Vision vision;
 
-    public Robot(LinearOpMode opMode, ElapsedTime timer) throws IOException {
-        hardwareMap = opMode.hardwareMap;
+
+    /**
+     * Note that this method only changes some variables the real work is done in {@link #init()}
+     *
+     * @param opMode the operational mode, the telemetry and hardware map is gotten from this
+     * @param timer an timer
+     * @param aC The Alliance Color, in {@link AllianceColor} format.
+     *
+     * @throws IOException Might throw it.
+     *
+     * @see LinearOpMode
+     * @see ElapsedTime
+     * @see AllianceColor
+     */
+    public Robot(LinearOpMode opMode, ElapsedTime timer, AllianceColor aC) throws IOException {
+        this.hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
         this.timer = timer;
+        this.allianceColor = aC;
+
         init();
     }
 
     /**
+     * Initializes everything
      *
-     * @param opMode
-     * @param timer
-     * @param isBlue
-     *          o: no camera is initialized
-     *          1: only armWebcam is initialized for OpenCV
-     *          2: backWebcam is initialized for Vuforia
-     *          3: backWebcam is initialized for Vuforia and frontWebcam is initialized for OpenCV
-     *          4: armWebcam is initialized for OpenCV and frontWebcam is initialized for OpenCV
+     * <p>It first initializes some mechanical things, then it initializes the subsystems.</p>
+     * @throws IOException
+     *
+     * @see #initMechanical()
      */
-    public Robot(LinearOpMode opMode, ElapsedTime timer, boolean isBlue) throws IOException {
-        hardwareMap = opMode.hardwareMap;
-        this.opMode = opMode;
-        this.telemetry = opMode.telemetry;
-        this.timer = timer;
-        if (isBlue) {
-            this.allianceColor = AllianceColor.BLUE;
-        }
-        else {
-            this.allianceColor = AllianceColor.RED;
-        }
-        init();
+    public void init() throws IOException {
+        initMechanical(); // mechanical stuff
+        // Drive
+        telemetry.addData("Mode", " drive/control initializing...");
+        telemetry.update();
+        List<DcMotorEx> dcMotorExList = new ArrayList<>(4);
+        dcMotorExList.add(frontLeftDriveMotor);
+        dcMotorExList.add(frontRightDriveMotor);
+        dcMotorExList.add(rearLeftDriveMotor);
+        dcMotorExList.add(rearRightDriveMotor);
+
+        drive = new Drive(this, dcMotorExList, intake, launch1, launch2b, imu);
+//        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.addData("Mode", " vision initializing...");
+        telemetry.update();
+        vision = new Vision(this, allianceColor);
+
+
+        telemetry.addData("Mode", " control initializing...");
+        telemetry.update();
+        control = new Control(this);
+
     }
 
-    public void init() throws IOException {
+    public void initMechanical() {
         // DC Motors
         frontLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fl");
         frontRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fr");
@@ -236,23 +210,24 @@ public class Robot extends Subsystem {
 //        intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         intake.setPower(0.0);
 
-        //Servos
+        // Servos
 //        clawDeploy = hardwareMap.servo.get("clawDeploy");
 //        claw = hardwareMap.servo.get("claw");
 //        elevator1 = hardwareMap.crservo.get("e1");
 //        elevator2 = hardwareMap.crservo.get("e2");
 //
 //        elevator2.setDirection(DcMotorSimple.Direction.REVERSE);
-        wobbleClaw = hardwareMap.servo.get("wbc2");
-        wobbleGoalArm = hardwareMap.servo.get("wbc1");
-        launcherFeederR = hardwareMap.servo.get("feederR");
-        launcherFeederL = hardwareMap.servo.get("feederL");
-        intakeToElevatorR = hardwareMap.servo.get("iteR");
-        intakeToElevatorL = hardwareMap.servo.get("iteL");
+        HardwareMap.DeviceMapping<Servo> servo = hardwareMap.servo;
+        wobbleClaw = servo.get("wbc2");
+        wobbleGoalArm = servo.get("wbc1");
+        launcherFeederR = servo.get("feederR");
+        launcherFeederL = servo.get("feederL");
+        intakeToElevatorR = servo.get("iteR");
+        intakeToElevatorL = servo.get("iteL");
 
 
-        elevatorR = hardwareMap.servo.get("elevatorR");
-        elevatorL = hardwareMap.servo.get("elevatorL");
+        elevatorR = servo.get("elevatorR");
+        elevatorL = servo.get("elevatorL");
 
         allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -274,11 +249,11 @@ public class Robot extends Subsystem {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         telemetry.addData("Mode", " IMU initializing...");
@@ -292,33 +267,12 @@ public class Robot extends Subsystem {
             opMode.sleep(50);
             opMode.idle();
         }
-
-        // Subsystems
-        telemetry.addData("Mode", " drive/control initializing...");
-        telemetry.update();
-        drive = new Drive(this, frontLeftDriveMotor, frontRightDriveMotor, rearLeftDriveMotor, rearRightDriveMotor, intake, launch1, launch2b, imu);
-
-//        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        telemetry.addData("Mode", " vision initializing...");
-        telemetry.update();
-        vision = new Vision(hardwareMap, this, allianceColor);
-
-
-        telemetry.addData("Mode", " control initializing...");
-        telemetry.update();
-        control = new Control(this);
-
     }
 
-    public void initVisionTest() {
-        vision = new Vision(hardwareMap, this, allianceColor);
+    public String getName() {
+        return this.name;
     }
 
-    public void initServosAuto() {
-        // code here
-    }
 
     public LinearOpMode getOpMode() {
         return this.opMode;
@@ -333,71 +287,19 @@ public class Robot extends Subsystem {
     }
 
     public void getGamePadInputs() {
-        isaButtonPressedPrev = aButton;
-        isbButtonPressedPrev = bButton;
-        isxButtonPressedPrev = xButton;
-        isyButtonPressedPrev = yButton;
-        isdPadUpPressedPrev = dPadUp;
-        isdPadDownPressedPrev = dPadDown;
-        isdPadLeftPressedPrev = dPadLeft;
-        isdPadRightPressedPrev = dPadRight;
-        islBumperPressedPrev = bumperLeft;
-        isrBumperPressedPrev = bumperRight;
-        leftStickX = joystickDeadzoneCorrection(opMode.gamepad1.left_stick_x);
-        leftStickY = joystickDeadzoneCorrection(-opMode.gamepad1.left_stick_y);
-        rightStickX = joystickDeadzoneCorrection(opMode.gamepad1.right_stick_x);
-        rightStickY = joystickDeadzoneCorrection(opMode.gamepad1.right_stick_y);
-        triggerLeft = opMode.gamepad1.left_trigger;
-        triggerRight = opMode.gamepad1.right_trigger;
-        aButton = opMode.gamepad1.a;
-        bButton = opMode.gamepad1.b;
-        xButton = opMode.gamepad1.x;
-        yButton = opMode.gamepad1.y;
-        dPadUp = opMode.gamepad1.dpad_up;
-        dPadDown = opMode.gamepad1.dpad_down;
-        dPadLeft = opMode.gamepad1.dpad_left;
-        dPadRight = opMode.gamepad1.dpad_right;
-        bumperLeft = opMode.gamepad1.left_bumper;
-        bumperRight = opMode.gamepad1.right_bumper;
-
-        isaButton2PressedPrev = aButton2;
-        isbButton2PressedPrev = bButton2;
-        isxButton2PressedPrev = xButton2;
-        isyButton2PressedPrev = yButton2;
-        isdPadUp2PressedPrev = dPadUp2;
-        isdPadDown2PressedPrev = dPadDown2;
-        isdPadLeft2PressedPrev = dPadLeft2;
-        isdPadRight2PressedPrev = dPadRight2;
-        islBumper2PressedPrev = bumperLeft2;
-        isrBumper2PressedPrev = bumperRight2;
-        leftStickX2 = joystickDeadzoneCorrection(opMode.gamepad2.left_stick_x);
-        leftStickY2 = joystickDeadzoneCorrection(-opMode.gamepad2.left_stick_y);
-        rightStickX2 = joystickDeadzoneCorrection(opMode.gamepad2.right_stick_x);
-        rightStickY2 = joystickDeadzoneCorrection(-opMode.gamepad2.right_stick_y);
-        triggerLeft2 = opMode.gamepad2.left_trigger;
-        triggerRight2 = opMode.gamepad2.right_trigger;
-        aButton2 = opMode.gamepad2.a;
-        bButton2 = opMode.gamepad2.b;
-        xButton2 = opMode.gamepad2.x;
-        yButton2 = opMode.gamepad2.y;
-        dPadUp2 = opMode.gamepad2.dpad_up;
-        dPadDown2 = opMode.gamepad2.dpad_down;
-        dPadLeft2 = opMode.gamepad2.dpad_left;
-        dPadRight2 = opMode.gamepad2.dpad_right;
-        bumperLeft2 = opMode.gamepad2.left_bumper;
-        bumperRight2 = opMode.gamepad2.right_bumper;
+        gamePadConfig.mapGamePadInputs(this);
     }
 
     public double joystickDeadzoneCorrection(double joystickInput) {
         double joystickOutput;
         if (joystickInput > joystickDeadZone) {
-            joystickOutput = (joystickInput - joystickDeadZone) / (1.0-joystickDeadZone);
+            joystickOutput = (joystickInput - joystickDeadZone) / (1.0 - joystickDeadZone);
         }
         else if (joystickInput > -joystickDeadZone) {
             joystickOutput = 0.0;
         }
         else {
-            joystickOutput = (joystickInput + joystickDeadZone) / (1.0-joystickDeadZone);
+            joystickOutput = (joystickInput + joystickDeadZone) / (1.0 - joystickDeadZone);
         }
         return joystickOutput;
     }

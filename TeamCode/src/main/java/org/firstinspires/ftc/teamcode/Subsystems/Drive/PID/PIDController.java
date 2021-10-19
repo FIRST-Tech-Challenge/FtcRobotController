@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.PID;
+package org.firstinspires.ftc.teamcode.Subsystems.Drive.PID;
 
 // PID controller courtesy of Peter Tischler, with modifications.
 
@@ -41,7 +41,7 @@ public class PIDController
      */
     private void calculate()
     {
-        int     sign = 1;
+        int sign = 1;
 
         // If enabled then proceed into controller calculations
         if (m_enabled)
@@ -256,7 +256,7 @@ public class PIDController
      */
     public boolean onTarget()
     {
-        return (Math.abs(m_error) < Math.abs(m_tolerance / 100.0 * (m_maximumInput - m_minimumInput)));
+        return (!(Math.abs(m_error) < Math.abs(m_tolerance / 100.0 * (m_maximumInput - m_minimumInput))));
     }
 
     /**
