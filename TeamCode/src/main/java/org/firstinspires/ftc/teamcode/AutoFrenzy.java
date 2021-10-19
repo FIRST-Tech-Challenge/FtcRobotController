@@ -23,9 +23,30 @@ public class AutoFrenzy extends LinearOpMode {
         telemetry.addData("Autonomous: ", "waiting for start");
         telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        move(1, 'f', 100);
+        /*
+        int x = find(); //get an input of 1,2,3 on where the item is
+        if(x == 1){
+            move to first box
+        }
+        else if(x == 2){
+            move to second box
+        }
+        else if(x == 3){
+            move to third box
+        }
+        intake
+        move(.75, 'r', 1000); // rotate 90 degrees
+        move(.75, 'f', 1000); //drives to wall
+        code to drive parallel to the wall
+
+        //spins motor for platform
+        robot.m5.set(.25);
+        sleep(1000)
+        robot.m5.set(0);
+
+        code to drive parallel of the wall towards the parking area
+        */
         motorstop();
     }
     public void motorstop(){
