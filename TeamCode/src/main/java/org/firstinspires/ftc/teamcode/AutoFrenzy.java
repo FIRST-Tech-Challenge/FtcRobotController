@@ -14,10 +14,6 @@ public class AutoFrenzy extends LinearOpMode {
 
     Hardware robot   = new Hardware();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
-    final double countPerRev = 384.5;
-    final double gearRatio = 1;
-    final double wheelDi = 4.75;
-    final double countPerIN = countPerRev/(wheelDi*Math.PI);
 
     @Override
     public void runOpMode() {
