@@ -20,7 +20,7 @@ public class Lift {
      */
     public Lift(@NonNull HardwareMap map, Telemetry telemetry, GamepadEx toolGamepad) {
         this.liftMotor = map.get(DcMotor.class,"liftMotor");
-        this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+        this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.armServo = map.get(Servo.class,"armServo");
         this.encoderOffset = liftMotor.getCurrentPosition() * -1;
         this.bottomSensor = map.get(DigitalChannel.class,"bottomSensor");
