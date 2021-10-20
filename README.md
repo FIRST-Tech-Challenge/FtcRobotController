@@ -20,3 +20,13 @@ This repository contains FTC Team 5206's repository for the Freight Frenzy (2021
 **vision** - vision code
 
 **\*-hotfix** - hotfix branch, quick fix
+
+## Release Cadence
+
+**Sunday** - Come up with the new features to work on during the week
+
+**Monday-Wednesday** - Work on features.
+
+**Thursday-Friday** - Bugfixes only on master, features need to be on branches
+
+**Saturday** - Test on robot and fix bugs.
