@@ -20,6 +20,7 @@ public class Lift {
      */
     public Lift(@NonNull HardwareMap map, Telemetry telemetry, GamepadEx toolGamepad) {
         this.liftMotor = map.get(DcMotor.class,"liftMotor");
+        this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         this.armServo = map.get(Servo.class,"armServo");
         this.encoderOffset = liftMotor.getCurrentPosition() * -1;
         this.bottomSensor = map.get(DigitalChannel.class,"bottomSensor");
@@ -52,10 +53,8 @@ public class Lift {
         telemetry.addData("armServo",armServo.getPosition());
         if ((stickValue >= 0.05 && !topSensor.getState()) || (stickValue <= -0.05 && !bottomSensor.getState())) {
             liftMotor.setPower(stickValue);
-        } else if (bottomSensor.getState()) {
-            liftMotor.setPower(0);
         } else {
-            liftMotor.setPower(afloatValue);
+            liftMotor.setPower(0);
         }
         curPos = liftMotor.getCurrentPosition() + encoderOffset;
         arm();
