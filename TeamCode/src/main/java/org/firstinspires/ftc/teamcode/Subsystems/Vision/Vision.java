@@ -10,32 +10,27 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.teamcode.Config.VisionConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarker;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerPipeline;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerThread;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 
 /**
  * The Vision Subsystem
  *
- * @see DetectMarker
+ * @see DetectMarkerPipeline
  * @see <a href="https://github.com/OpenFTC/EasyOpenCV">EasyOpenCV</a>
  */
 
 public class Vision extends MinorSubsystem {
     MarkerLocation finalMarkerLocation; // Marker Location
 
-    private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
-    private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
-    private static final int HORIZON = 100; // horizon value to tune
 
-    private static final boolean DEBUG = false; // if debug is wanted, change to true
-
-    private static final boolean USING_WEBCAM = true; // change to true if using webcam
-    private static final String WEBCAM_NAME = "Webcam 1"; // insert webcam name from configuration if using webcam
     WebcamName webcamName = null;
 
     private static final String VUFORIA_KEY =
@@ -77,7 +72,7 @@ public class Vision extends MinorSubsystem {
     public Vision(Robot robot) throws InterruptedException {
         super(robot);
 
-        webcamName = hardwareMap.get(WebcamName.class, WEBCAM_NAME);
+        webcamName = hardwareMap.get(WebcamName.class, VisionConfig.WEBCAM_NAME);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
 
@@ -88,7 +83,11 @@ public class Vision extends MinorSubsystem {
 
         telemetry.addLine("init Vuforia completed");
         telemetry.update();
-        DetectMarkerThread detectMarkerRunnable = new DetectMarkerThread(robot);
+
+        OpenCvInternalCamera robotCamera;
+
+        robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        DetectMarkerThread detectMarkerRunnable = new DetectMarkerThread(robot, robotCamera);
         Thread detectMarkerThread = new Thread(detectMarkerRunnable);
         detectMarkerThread.start();
         detectMarkerThread.join();

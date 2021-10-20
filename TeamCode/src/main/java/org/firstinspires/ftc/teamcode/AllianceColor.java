@@ -2,5 +2,5 @@ package org.firstinspires.ftc.teamcode;
 
 public enum AllianceColor {
     RED,
-    BLUE
+    BLUE // undefined is unneeded
 }
