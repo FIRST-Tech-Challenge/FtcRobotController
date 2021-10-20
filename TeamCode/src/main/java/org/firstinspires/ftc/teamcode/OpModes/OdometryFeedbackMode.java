@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
-import org.firstinspires.ftc.teamcode.odometry.MecanumOdometry;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -35,14 +34,8 @@ public class OdometryFeedbackMode extends LinearOpMode {
 
 
         try {
-            if (true) {
-                // VSLAM odometry
-                odometry =  VSlamOdometry.getInstance(this.hardwareMap);
-            } else {
-                // Mecanum odometry
-                odometry = new MecanumOdometry(this.hardwareMap, this.telemetry, 10, 4);
-            }
-
+            // VSLAM odometry
+            odometry =  VSlamOdometry.getInstance(this.hardwareMap);
             odometry.setInitPosition(0, 0, 0);
         } catch (Exception ex) {
             telemetry.addData("Odometry Init", ex.getMessage());
