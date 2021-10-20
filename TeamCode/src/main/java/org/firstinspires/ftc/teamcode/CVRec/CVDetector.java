@@ -98,6 +98,7 @@ public class CVDetector {
                 public void onClose() {
                     Log.d(TAG, "CV Detector camera closed");
                 }
+
             });
         }
     }
