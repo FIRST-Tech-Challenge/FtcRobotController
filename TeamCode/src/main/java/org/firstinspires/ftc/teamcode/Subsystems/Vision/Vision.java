@@ -46,7 +46,7 @@ public class Vision extends MinorSubsystem {
     private static final float quadField  = 36 * mmPerInch;
 
     // Define where camera is in relation to center of robot in inches
-    final float CAMERA_FORWARD_DISPLACEMENT  = 6.0f * mmPerInch; // TODO: ADJUST VALUE
+    final float CAMERA_FORWARD_DISPLACEMENT  = 6.0f * mmPerInch; // TODO: CALIBRATE WHEN ROBOT IS BUILT
     final float CAMERA_VERTICAL_DISPLACEMENT = 6.5f * mmPerInch;
     final float CAMERA_LEFT_DISPLACEMENT     = -0.75f * mmPerInch;
 
@@ -111,7 +111,6 @@ public class Vision extends MinorSubsystem {
 
     // Helper method to create matrix to identify locations
     public OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
-        return OpenGLMatrix.translation(x, y, z)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
+        return OpenGLMatrix.translation(x, y, z).multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
     }
 }
