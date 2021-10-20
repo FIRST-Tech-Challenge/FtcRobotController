@@ -3,10 +3,11 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 
 import java.io.IOException;
 
@@ -22,11 +23,12 @@ import java.io.IOException;
 @Disabled
 public class Auto extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
+    AllianceColor allianceColor = AllianceColor.BLUE; // Switch to something else
 
     {
         try {
-            Robot robot = new Robot(this, timer);
-        } catch (IOException | InterruptedException e) {
+            Robot robot = new Robot(this, timer, allianceColor);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
