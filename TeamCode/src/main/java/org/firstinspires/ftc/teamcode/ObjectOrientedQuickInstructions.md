@@ -23,14 +23,15 @@ public class DriveTrain{
     private DcMotorEx lf = null;
     private DcMotorEx rf = null;
     
-    public Drivetrain(){
+    // read in the hardware map from the main
+    public Drivetrain(HardwareMap hardwareMap){
         lb = (DcMotorEx)hardwareMap.get(DcMotorEx.class, "lb");
         rb = (DcMotorEx)hardwareMap.get(DcMotorEx.class, "rb");
         lf = (DcMotorEx)hardwareMap.get(DcMotorEx.class, "lf");       //sets the names of the motors on the hardware map
         rf = (DcMotorEx)hardwareMap.get(DcMotorEx.class, "rf");
 
         lf.setDirection(DcMotorEx.Direction.FORWARD);
-        rf.setDirection(DcMotorEx.Direction.REVERSE);
+        rf.setDirection(DcMotorEx.Direction.REVERSE);`
         lb.setDirection(DcMotorEx.Direction.FORWARD);
         rb.setDirection(DcMotorEx.Direction.REVERSE);
     }
@@ -67,7 +68,8 @@ public class FTC_xxxxx_yyyy extends OpMode {
     private DriveTrain driveTrain = null;
     
     public void init(){
-        driveTrain = new DriveTrain();
+        // pass the hardware map into the constructor
+        driveTrain = new DriveTrain(hardwareMap);
     }
 
     public void init_loop() {}
