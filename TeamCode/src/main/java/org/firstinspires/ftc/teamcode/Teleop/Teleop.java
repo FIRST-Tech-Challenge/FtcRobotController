@@ -27,13 +27,14 @@ public class Teleop extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        while (opModeIsActive()) {
-            double y = gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x;
+        while (opModeIsActive()) { // clearer nomenclature for variables
+            double ly = gamepad1.left_stick_y;
+            double lx = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
+            double ry = gamepad1.right_stick_y;
 
-            double r = Math.hypot(x, y);
-            double robotAngle = Math.atan2(y, x) - Math.PI / 4;
+            double r = Math.hypot(lx, ly);
+            double robotAngle = Math.atan2(ly, lx) - Math.PI / 4;
             double lrPower = r * Math.sin(robotAngle) + rx;
             double lfPower = r * Math.cos(robotAngle) + rx;
             double rrPower = r * Math.cos(robotAngle) - rx;

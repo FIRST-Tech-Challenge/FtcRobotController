@@ -20,10 +20,11 @@ public class OmniDirectionalDrive extends LinearOpMode {
     private Robot robot;
     private BNO055IMU imu;
     Orientation lastAngles = new Orientation();
-    double                  globalAngle, power = .30;
+    double globalAngle;
+    double power = .30;
 
     private void initOpMode() throws IOException {
-        //Initialize DC motor objects
+        //Initialize DcMotor objects
         ElapsedTime timer = new ElapsedTime();
         robot = new Robot(this, timer, AllianceColor.BLUE);
 
