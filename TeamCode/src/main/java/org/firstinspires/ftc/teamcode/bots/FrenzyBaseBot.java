@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -33,6 +34,8 @@ public class FrenzyBaseBot implements OdoBot {
     protected HardwareMap hwMap = null;
     protected Telemetry telemetry;
 
+    protected ElapsedTime runtime;
+
     private Gyroscope gyro = null;
 
 
@@ -45,7 +48,7 @@ public class FrenzyBaseBot implements OdoBot {
 
     static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP. was 2 in the sample
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
-    public static final double COUNTS_PER_INCH_GB = (COUNTS_PER_MOTOR_GB * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    public static final double COUNTS_PER_INCH_GB = (COUNTS_PER_MOTOR_GB * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI); //42.8
 
 
     public static final double ROBOT_LENGTH_X = 17.25;
@@ -175,22 +178,32 @@ public class FrenzyBaseBot implements OdoBot {
         }
     }
 
-    public void moveToPos(BotMoveProfile profile){
+    public void moveToPos(BotMoveProfile profile, IBaseOdometry locator){
         resetEncoders();
-        this.frontLeft.setTargetPosition((int)profile.getLongTarget());
-        this.frontRight.setTargetPosition((int)profile.getLongTarget());
-        this.backLeft.setTargetPosition((int)profile.getLongTarget());
-        this.backRight.setTargetPosition((int)profile.getLongTarget());
+        this.frontLeft.setTargetPosition((int)profile.getLeftTarget());
+        this.frontRight.setTargetPosition((int)profile.getRightTarget());
+
 
         this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        this.frontLeft.setVelocity(MAX_VELOCITY_GB*profile.getTopSpeed());
-        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getTopSpeed());
-        this.backLeft.setVelocity(MAX_VELOCITY_GB*profile.getTopSpeed());
-        this.backRight.setVelocity(MAX_VELOCITY_GB*profile.getTopSpeed());
+        MotorReductionBot mr = profile.getMotorReduction();
+
+
+        runtime.reset();
+        while ( this.frontLeft.isBusy() && this.frontRight.isBusy()){
+            this.backLeft.setVelocity(this.frontLeft.getVelocity());
+            this.backRight.setVelocity(this.frontRight.getVelocity());
+            if (runtime.milliseconds() > 500){
+                locator.setTarget(profile.getTarget());
+                this.frontLeft.setTargetPosition((int)profile.getLeftTarget());
+                this.frontRight.setTargetPosition((int)profile.getRightTarget());
+                this.frontLeft.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
+                runtime.reset();
+            }
+
+        }
     }
 
 
@@ -630,6 +643,20 @@ public class FrenzyBaseBot implements OdoBot {
         }
     }
 
+    public void curveToPos(BotMoveProfile profile, IBaseOdometry locator) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
+
+            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            moveToPos(profile, locator);
+
+        }
+
+    }
+
     public void spin(BotMoveProfile profile, IBaseOdometry locator) {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -938,10 +965,18 @@ public class FrenzyBaseBot implements OdoBot {
             MotorReductionBot calib = null;
             calib = getCalibConfig().getStrafeRightReduction();
             power = power * power * power;
-            this.backLeft.setVelocity(MAX_VELOCITY_GB*power * calib.getLB());
-            this.backRight.setVelocity(MAX_VELOCITY_GB*-power * calib.getRB());
-            this.frontLeft.setVelocity(MAX_VELOCITY_GB*-power * calib.getLF());
-            this.frontRight.setVelocity(MAX_VELOCITY_GB*power * calib.getRF());
+            if (calib != null) {
+                this.backLeft.setVelocity(MAX_VELOCITY_GB * power * calib.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY_GB * -power * calib.getRB());
+                this.frontLeft.setVelocity(MAX_VELOCITY_GB * -power * calib.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY_GB * power * calib.getRF());
+            }
+            else{
+                this.backLeft.setVelocity(MAX_VELOCITY_GB*power);
+                this.backRight.setVelocity(MAX_VELOCITY_GB*-power);
+                this.frontLeft.setVelocity(MAX_VELOCITY_GB*-power);
+                this.frontRight.setVelocity(MAX_VELOCITY_GB*power);
+            }
             telemetry.addData("Motors", "Front: %.0f", power);
             telemetry.addData("Motors", "Back: %.0f", power);
         }
@@ -953,10 +988,18 @@ public class FrenzyBaseBot implements OdoBot {
             MotorReductionBot calib = null;
             calib = getCalibConfig().getStrafeRightReduction();
             power = power * power * power;
-            this.backLeft.setVelocity(MAX_VELOCITY_GB*-power * calib.getLB());
-            this.backRight.setVelocity(MAX_VELOCITY_GB*power * calib.getRB());
-            this.frontLeft.setVelocity(MAX_VELOCITY_GB*power * calib.getLF());
-            this.frontRight.setVelocity(MAX_VELOCITY_GB*-power * calib.getRF());
+            if (calib != null) {
+                this.backLeft.setVelocity(MAX_VELOCITY_GB * -power * calib.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY_GB * power * calib.getRB());
+                this.frontLeft.setVelocity(MAX_VELOCITY_GB * power * calib.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY_GB * -power * calib.getRF());
+            }
+            else{
+                this.backLeft.setVelocity(MAX_VELOCITY_GB * -power);
+                this.backRight.setVelocity(MAX_VELOCITY_GB * power);
+                this.frontLeft.setVelocity(MAX_VELOCITY_GB * power);
+                this.frontRight.setVelocity(MAX_VELOCITY_GB * -power);
+            }
             telemetry.addData("Motors", "Front: %.0f", power);
             telemetry.addData("Motors", "Back: %.0f", power);
         }

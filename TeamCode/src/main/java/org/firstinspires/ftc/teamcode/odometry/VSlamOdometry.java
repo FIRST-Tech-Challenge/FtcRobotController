@@ -57,14 +57,14 @@ public class VSlamOdometry implements IBaseOdometry {
     }
 
     public static VSlamOdometry getInstance(HardwareMap hwMap) {
-        if (theInstance != null) {
+        if (theInstance == null) {
             theInstance = new VSlamOdometry(hwMap, THREAD_INTERVAL);
         }
         return theInstance;
     }
 
     public static VSlamOdometry getInstance(HardwareMap hwMap, int threadDelay) {
-        if (theInstance != null) {
+        if (theInstance == null) {
             theInstance = new VSlamOdometry(hwMap, threadDelay);
         }
         return theInstance;
@@ -212,6 +212,7 @@ public class VSlamOdometry implements IBaseOdometry {
             if (up != null) {
                 this.currentX = (int) up.pose.getTranslation().getX();
                 this.currentY = (int) up.pose.getTranslation().getY();
+                Log.i(TAG, String.format("Cam coordinate: %d : %d", this.currentX, this.currentY));
                 this.currentHeading = (int) up.pose.getRotation().getDegrees();
                 if (persistPosition) {
                     saveLastPosition();

@@ -285,7 +285,7 @@ public class OdoBase extends LinearOpMode {
         }
     }
 
-    private void  curve(BotMoveProfile profile)
+    protected void curve(BotMoveProfile profile)
     {
         bot.curveTo(profile, locator);
     }

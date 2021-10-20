@@ -129,6 +129,7 @@ public class MasterOdo extends OdoBase {
         catch (Exception ex){
             telemetry.addData("Error", ex.getMessage());
             telemetry.update();
+            sleep(15000);
         }
         finally {
             if (locator != null){

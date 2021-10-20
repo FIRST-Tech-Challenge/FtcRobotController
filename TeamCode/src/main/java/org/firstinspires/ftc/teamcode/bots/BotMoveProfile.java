@@ -16,6 +16,9 @@ public class BotMoveProfile {
     private double realSpeedLeft = 0;
     private double realSpeedRight = 0;
     private double longTarget = 0;
+    private double shortTarget = 0;
+    private double rightTarget = 0;
+    private double leftTarget = 0;
     private double slowdownMarkLong = 0;
     private double slowdownMarkShort = 0;
     private boolean leftLong;
@@ -550,12 +553,22 @@ public class BotMoveProfile {
         double slowdownMarkShort = startingPointShort + sign*(Math.abs(distanceShort) - breakPoint - ticksShort);
 
         double longTarget = startingPointLong + sign*(Math.abs(distanceLong) - ticksLong);
+        double shortTarget = startingPointShort + sign*(Math.abs(distanceShort) - ticksShort);
 
+        if (leftLong){
+            profile.setLeftTarget(longTarget);
+            profile.setRightTarget(shortTarget);
+        }
+        else{
+            profile.setLeftTarget(shortTarget);
+            profile.setRightTarget(longTarget);
+        }
 
         profile.setLeftLong(leftLong);
         profile.setSlowdownMarkLong(slowdownMarkLong);
         profile.setSlowdownMarkShort(slowdownMarkShort);
         profile.setLongTarget(longTarget);
+        profile.setShortTarget(shortTarget);
         profile.setRealSpeedLeft(leftSpeed);
         profile.setRealSpeedRight(rightSpeed);
         profile.setMotorReduction(mr);
@@ -801,5 +814,29 @@ public class BotMoveProfile {
 
     public void setMinSpeedSpin(double minSpeedSpin) {
         this.minSpeedSpin = minSpeedSpin;
+    }
+
+    public double getShortTarget() {
+        return shortTarget;
+    }
+
+    public void setShortTarget(double shortTarget) {
+        this.shortTarget = shortTarget;
+    }
+
+    public double getRightTarget() {
+        return rightTarget;
+    }
+
+    public void setRightTarget(double rightTarget) {
+        this.rightTarget = rightTarget;
+    }
+
+    public double getLeftTarget() {
+        return leftTarget;
+    }
+
+    public void setLeftTarget(double leftTarget) {
+        this.leftTarget = leftTarget;
     }
 }
