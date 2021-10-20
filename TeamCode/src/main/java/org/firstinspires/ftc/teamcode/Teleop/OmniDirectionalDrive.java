@@ -5,9 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-// import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-// import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-// import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
@@ -25,13 +22,17 @@ public class OmniDirectionalDrive extends LinearOpMode {
     private void initOpMode() throws IOException {
         //Initialize DC motor objects
         ElapsedTime timer = new ElapsedTime();
-        robot = new Robot(this, timer, AllianceColor.BLUE);
+        try {
+            robot = new Robot(this, timer);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
     // called when init button is  pressed.
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         try {
             initOpMode();
         } catch (IOException e) {
