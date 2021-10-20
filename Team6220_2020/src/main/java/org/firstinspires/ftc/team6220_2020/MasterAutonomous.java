@@ -11,10 +11,9 @@ import org.firstinspires.ftc.team6220_2020.ResourceClasses.PIDFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-// todo - add is op mode active breakers
 public abstract class MasterAutonomous extends MasterOpMode {
 
-    public void turnDegrees(double targetAngle) {
+    public void turnDegrees (double targetAngle) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -53,7 +52,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
         }
     }
 
-    public void turnToAngle(double targetAngle){
+    public void turnToAngle (double targetAngle) {
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;

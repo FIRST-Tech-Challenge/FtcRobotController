@@ -19,7 +19,6 @@ public class BlueFarWarehouse extends LinearOpMode {
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
