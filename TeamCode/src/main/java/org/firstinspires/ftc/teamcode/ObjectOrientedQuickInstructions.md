@@ -1,4 +1,4 @@
-<!-- If you are seeing this it probably isn't the best way to read this document you can check it out @ https://github.com/FTC14133/FTC14133-2021-2022/tree/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/JakeInstructions.md -->
+<!-- If you are seeing this it probably isn't the best way to read this document you can check it out @ https://github.com/FTC14133/FTC14133-2021-2022/tree/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ObjectOrientedQuickInstructions.md -->
 
 # General Structure
 
