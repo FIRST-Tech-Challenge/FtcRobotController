@@ -1,41 +1,38 @@
-package org.firstinspires.ftc.team8923_2021;
+package org.firstinspires.team8923_2021;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 abstract public class MasterOpMode extends LinearOpMode {
     //declare drive motors
-    public DcMotor motorFL = null;
-    public DcMotor motorFR = null;
-    public DcMotor motorBL = null;
-    public DcMotor motorBR = null;
+    public DcMotor motorLeft = null;
+    public DcMotor motorRight = null;
+    public Servo CarouselServo = null;
+    public Servo linearServo = null;
 
     //declare imu
     public BNO055IMU imu;
 
-    public void initHardware(){
+    public void initHardware() {
         //init drive motors
-        motorFL = hardwareMap.dcMotor.get("motorFL");
-        motorFR = hardwareMap.dcMotor.get("motorFR");
-        motorBL = hardwareMap.dcMotor.get("motorBL");
-        motorBR = hardwareMap.dcMotor.get("motorBR");
+        motorLeft = hardwareMap.dcMotor.get("motorLeft");
+        motorRight = hardwareMap.dcMotor.get("motorRight");
+        CarouselServo = hardwareMap.servo.get("CarouselServo");
+        linearServo = hardwareMap.servo.get("linearServo");
 
         //reset encoder
-        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //CarouselServo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //linearServo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //init imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -48,7 +45,7 @@ abstract public class MasterOpMode extends LinearOpMode {
         imu.initialize(parameters);
     }
 
-    public void driveMecanum(double driveAngle, double drivePower, double turnPower){
+    public void driveMecanum(double driveAngle, double drivePower, double turnPower) {
         // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
         double x = drivePower * -Math.sin(Math.toRadians(driveAngle));
         double y = drivePower * Math.cos(Math.toRadians(driveAngle));
@@ -68,13 +65,12 @@ abstract public class MasterOpMode extends LinearOpMode {
             powerBR /= scaleFactor;
         }
 
-        motorFL.setPower(powerFL);
-        motorFR.setPower(powerFR);
-        motorBL.setPower(powerBL);
-        motorBR.setPower(powerBR);
+        motorLeft.setPower(powerFL);
+        motorRight.setPower(powerFR);
     }
 
-    //if you subtract 359 from 0, you would get -359 instead of 1
+
+    /*///if you subtract 359 from 0, you would get -359 instead of 1
     //this method handles cases when one angle is multiple rotations from the other
     public double adjustAngles(double firstAngle, double secondAngle)
     {
@@ -84,8 +80,7 @@ abstract public class MasterOpMode extends LinearOpMode {
         while(delta < -180)
             delta += 360;
         return delta;
-    }
-
+    }*/
     // Used for calculating distances between 2 points
     double calculateDistance(double deltaX, double deltaY)
     {
