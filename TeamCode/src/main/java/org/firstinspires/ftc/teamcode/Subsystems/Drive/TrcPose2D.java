@@ -13,8 +13,6 @@ public class TrcPose2D
     public double x;
     public double y;
     public double angle;
-    private double direction;
-    private double movementAngle;
 
     /**
      * Constructor: Create an instance of the object.

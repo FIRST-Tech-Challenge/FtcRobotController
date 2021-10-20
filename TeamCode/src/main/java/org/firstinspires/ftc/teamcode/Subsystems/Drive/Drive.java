@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.Subsystems.Drive;
 
 import android.util.Log;
@@ -18,9 +17,12 @@ import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 import java.util.List;
 import java.util.Locale;
 
-/** Mecanum drivetrain subsystem */
+/** Mecanum drivetrain subsystem
+ *
+ * Mostly repetitive code.
+ */
 public class Drive extends MinorSubsystem {
-    // DC Motors
+    /** DC Motors initialization. */
     public DcMotorEx frontLeft;
     public DcMotorEx frontRight;
     public DcMotorEx rearLeft;
@@ -38,12 +40,27 @@ public class Drive extends MinorSubsystem {
     private double robotCurrentPosX;    // unit in mm
     private double robotCurrentPosY;    // unit in mm
     private double robotCurrentAngle;   // unit in degrees
+    
 
     private OpenGLMatrix lastLocation = null;
     private boolean targetVisible = false;
 
     private long startTime;
 
+    /**
+     * The class instantiation.
+     *
+     * @param robot the robot
+     * @param motors given in a list for readability
+     * @param odL motor
+     * @param odB motor
+     * @param odR motor
+     * @param imu the imu
+     *
+     * @see Robot
+     * @see DcMotorEx
+     * @see BNO055IMU
+     */
     public Drive(Robot robot, List<DcMotorEx> motors, DcMotorEx odL, DcMotorEx odB, DcMotorEx odR, BNO055IMU imu) {
         super(robot);
         this.frontLeft = motors.get(0);
@@ -84,10 +101,6 @@ public class Drive extends MinorSubsystem {
         getOdometryCountR();
     }
 
-    public double getAngularVMaxNeverrest20(){
-        return DriveConfig.ANGULAR_V_MAX_NEVERREST_20;
-    }
-
     /**
      * Stops all drive motors
      */
@@ -120,16 +133,6 @@ public class Drive extends MinorSubsystem {
     }
 
     /**
-     * Initialize MaxVelocity of drive motors
-     */
-    public void initMaxVelocity() {
-        frontLeft.setVelocity(DriveConfig.ANGULAR_V_MAX_NEVERREST_20);
-        frontRight.setVelocity(DriveConfig.ANGULAR_V_MAX_NEVERREST_20);
-        rearLeft.setVelocity(DriveConfig.ANGULAR_V_MAX_NEVERREST_20);
-        rearRight.setVelocity(DriveConfig.ANGULAR_V_MAX_NEVERREST_20);
-    }
-
-    /**
      * Sets all drive motors to specified zero power behavior
      */
     private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior mode) {
@@ -158,23 +161,6 @@ public class Drive extends MinorSubsystem {
         return new double[]{lfPower, rfPower, lrPower, rrPower};
     }
 
-    // robot only move in forward/backward/left/right directions
-    public double[] calcMotorPowers2(double leftStickX, double leftStickY, double rightStickX) {
-        if(Math.abs(leftStickX) >= Math.abs((leftStickY))){
-            leftStickY = 0;
-        }
-        else{
-            leftStickX = 0;
-        }
-        double r = Math.hypot(leftStickX, leftStickY);
-        double robotAngle = Math.atan2(leftStickY, leftStickX) - Math.PI / 4;
-        double lrPower = r * Math.sin(robotAngle) + rightStickX;
-        double lfPower = r * Math.cos(robotAngle) + rightStickX;
-        double rrPower = r * Math.cos(robotAngle) - rightStickX;
-        double rfPower = r * Math.sin(robotAngle) - rightStickX;
-        return new double[]{lfPower, rfPower, lrPower, rrPower};
-    }
-
     public void setDrivePower(double power) {
         frontLeft.setPower(power);
         frontRight.setPower(power);
@@ -182,40 +168,8 @@ public class Drive extends MinorSubsystem {
         rearRight.setPower(power);
     }
 
-    public void setDrivePowers(double[] powers) {
-        frontLeft.setPower(powers[0]);
-        frontRight.setPower(powers[1]);
-        rearLeft.setPower(powers[2]);
-        rearRight.setPower(powers[3]);
-    }
-
-    public void setDriveFullPower(boolean fullPower) {
-        DriveConfig.driveFullPower = fullPower;
-    }
-
-    public void setTargetPosition(int targetPosition) {
-        frontLeft.setTargetPosition(targetPosition);
-        frontRight.setTargetPosition(targetPosition);
-        rearLeft.setTargetPosition(targetPosition);
-        rearRight.setTargetPosition(targetPosition);
-    }
-
-    public int[] getCurrentPositions() {
-        return new int[] {
-                frontLeft.getCurrentPosition() - DriveConfig.encoderOffsetFL,
-                frontRight.getCurrentPosition() - DriveConfig.encoderOffsetFR,
-                rearLeft.getCurrentPosition() - DriveConfig.encoderOffsetRL,
-                rearRight.getCurrentPosition() - DriveConfig.encoderOffsetRR
-        };
-    }
-
-    public int[] getDriveMotorEncoders() {
-        return new int[] {
-                frontLeft.getCurrentPosition(),
-                frontRight.getCurrentPosition(),
-                rearLeft.getCurrentPosition(),
-                rearRight.getCurrentPosition()
-        };
+    public int[] currentMotorsPos() {
+        return new int[] {frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), rearLeft.getCurrentPosition(), rearRight.getCurrentPosition()};
     }
 
     public void resetDriveMotorEncoders() {
@@ -253,7 +207,6 @@ public class Drive extends MinorSubsystem {
         // Display it for the driver.
         opMode.telemetry.addData("turnRobot",  "turn to %7.2f degrees", robotCurrentAngle);
         opMode.telemetry.update();
-//        opMode.sleep(100);
     }
 
     public void turnByTick(double power, double angle) {
@@ -295,7 +248,6 @@ public class Drive extends MinorSubsystem {
         // Display it for the driver.
         opMode.telemetry.addData("turnRobot",  "turn to %7.2f degrees", robotCurrentAngle);
         opMode.telemetry.update();
-//        opMode.sleep(100);
     }
 
     public double getYaw() {
@@ -421,7 +373,6 @@ public class Drive extends MinorSubsystem {
         // Display it for the driver.
         opMode.telemetry.addData("moveToPosABS",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         opMode.telemetry.update();
-//        sleep(100);
     }
 
     public void moveToPosREL(double targetPositionX, double targetPositionY) {
@@ -434,7 +385,6 @@ public class Drive extends MinorSubsystem {
         // Display it for the driver.
         opMode.telemetry.addData("moveToPosREL",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         opMode.telemetry.update();
-//        sleep(100);
     }
 
     public void moveForward_odometry(double distance) throws InterruptedException {
@@ -453,7 +403,6 @@ public class Drive extends MinorSubsystem {
         updateOdometry();
         opMode.telemetry.addData("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         opMode.telemetry.update();
-//        sleep(1000);
         double angleError = (((double) DriveConfig.odometryCountR) - ((double) DriveConfig.odometryCountL))*0.5* DriveConfig.ODOMETRY_mm_PER_COUNT*(180.0/3.14159265)/ DriveConfig.ODOMETRY_RADIUS_X;
         turnRobotByTick(-angleError);
         updateOdometry();
@@ -466,8 +415,6 @@ public class Drive extends MinorSubsystem {
         if (DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT < -25.0) {
             moveRight(-DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         }
-//        sleep(1000);
-//        sleep(100);
     }
 
     public void moveForward(double distance) {
@@ -483,7 +430,6 @@ public class Drive extends MinorSubsystem {
         // Display it for the driver.
         opMode.telemetry.addData("moveForward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         opMode.telemetry.update();
-//        sleep(100);
     }
 
     public void moveBackward_odometry(double distance) throws InterruptedException {
@@ -502,7 +448,6 @@ public class Drive extends MinorSubsystem {
         updateOdometry();
         opMode.telemetry.addData("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         opMode.telemetry.update();
-//        sleep(1000);
         double angleError = (((double) DriveConfig.odometryCountR) - ((double) DriveConfig.odometryCountL))*0.5* DriveConfig.ODOMETRY_mm_PER_COUNT*(180.0/3.14159265)/ DriveConfig.ODOMETRY_RADIUS_X;
         turnRobotByTick(-angleError);
         updateOdometry();
@@ -515,8 +460,6 @@ public class Drive extends MinorSubsystem {
         if (DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT < -25.0) {
             moveRight(-DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         }
-//        sleep(1000);
-//        sleep(100);
     }
 
     public void moveBackward(double distance) {
@@ -532,7 +475,6 @@ public class Drive extends MinorSubsystem {
         // Display it for the driver.
         opMode.telemetry.addData("moveBackward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         opMode.telemetry.update();
-//        sleep(100);
     }
 
     public void moveLeft_odometry(double distance) throws InterruptedException {
@@ -565,8 +507,6 @@ public class Drive extends MinorSubsystem {
         if (offsetY* DriveConfig.ODOMETRY_mm_PER_COUNT < -25.0) {
             moveForward(-offsetY* DriveConfig.ODOMETRY_mm_PER_COUNT);
         }
-//        sleep(1000);
-//        sleep(100);
     }
 
     public void moveLeft(double distance) {
@@ -615,8 +555,6 @@ public class Drive extends MinorSubsystem {
         if (offsetY* DriveConfig.ODOMETRY_mm_PER_COUNT < -25.0) {
             moveForward(-offsetY* DriveConfig.ODOMETRY_mm_PER_COUNT);
         }
-//        sleep(1000);
-//        sleep(100);
     }
 
     public void moveRight(double distance) {
@@ -676,13 +614,10 @@ public class Drive extends MinorSubsystem {
         // get a reference to the motor controller and cast it as an extended functionality controller.
         // we assume it's a REV Robotics Expansion Hub (which supports the extended controller functions).
         DcMotorControllerEx motorControllerEx = (DcMotorControllerEx) motor.getController();
-
         // get the port number of our configured motor.
         int motorIndex = motor.getPortNumber();
-
         // get the PID coefficients for the specific motor mode.
         PIDFCoefficients pidOrig = motorControllerEx.getPIDFCoefficients(motorIndex, mode);
-
         return pidOrig;
     }
 
@@ -690,10 +625,8 @@ public class Drive extends MinorSubsystem {
         // get a reference to the motor controller and cast it as an extended functionality controller.
         // we assume it's a REV Robotics Expansion Hub (which supports the extended controller functions).
         DcMotorControllerEx motorControllerEx = (DcMotorControllerEx) motor.getController();
-
         // get the port number of our configured motor.
         int motorIndex = motor.getPortNumber();
-
         // get the PID coefficients for the specific motor mode.
         motorControllerEx.setPIDFCoefficients(motorIndex, mode, pidfCoefficients);
     }
@@ -784,7 +717,6 @@ public class Drive extends MinorSubsystem {
                 if (motorFLForward) { // tick count increasing
                     if (currentCount >= tickCount) {
                         isMotorFLDone = true;
-                        isMotorFLNotMoving = true;
                         frontLeft.setPower(0.0);
                     }
                     else {
@@ -797,15 +729,13 @@ public class Drive extends MinorSubsystem {
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
                         }
-                        if (currentPower > 1.0) currentPower = 1.0;
-                        if (currentPower < 0.0) currentPower = 0.0;
-                        frontLeft.setPower(currentPower);
+                        if (currentPower > 1.0) frontLeft.setPower(1.0);
+                        if (currentPower < 0.0) frontLeft.setPower(0.0);
                     }
                 }
                 else { // motorFLForward is false, tick count negative and decreasing
                     if (currentCount <= -tickCount) {
                         isMotorFLDone = true;
-                        isMotorFLNotMoving = true;
                         frontLeft.setPower(0.0);
                     }
                     else {
@@ -818,9 +748,8 @@ public class Drive extends MinorSubsystem {
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
                         }
-                        if (currentPower < -1.0) currentPower = -1.0;
-                        if (currentPower > 0.0) currentPower = 0.0;
-                        frontLeft.setPower(currentPower);
+                        if (currentPower < -1.0) frontLeft.setPower(-1.0);
+                        if (currentPower > 0.0) frontLeft.setPower(0.0);
                     }
                 }
                 prevErrorFL = currentError;
@@ -838,7 +767,6 @@ public class Drive extends MinorSubsystem {
                 if (motorFRForward) {
                     if (currentCount >= tickCount) {
                         isMotorFRDone = true;
-                        isMotorFRNotMoving = true;
                         frontRight.setPower(0.0);
                     }
                     else {
@@ -851,15 +779,13 @@ public class Drive extends MinorSubsystem {
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
                         }
-                        if (currentPower > 1.0) currentPower = 1.0;
-                        if (currentPower < 0.0) currentPower = 0.0;
-                        frontRight.setPower(currentPower);
+                        if (currentPower > 1.0) frontRight.setPower(1.0);
+                        if (currentPower < 0.0) frontRight.setPower(0.0);
                     }
                 }
                 else { // motorFRForward is false
                     if (currentCount <= -tickCount) {
                         isMotorFRDone = true;
-                        isMotorFRNotMoving = true;
                         frontRight.setPower(0.0);
                     }
                     else {
@@ -872,9 +798,8 @@ public class Drive extends MinorSubsystem {
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
                         }
-                        if (currentPower < -1.0) currentPower = -1.0;
-                        if (currentPower > 0.0) currentPower = 0.0;
-                        frontRight.setPower(currentPower);
+                        if (currentPower < -1.0) frontRight.setPower(-1.0);
+                        if (currentPower > 0.0) frontRight.setPower(0.0);
                     }
                 }
                 prevErrorFR = currentError;
@@ -892,7 +817,6 @@ public class Drive extends MinorSubsystem {
                 if (motorRLForward) {
                     if (currentCount >= tickCount) {
                         isMotorRLDone = true;
-                        isMotorRLNotMoving = true;
                         rearLeft.setPower(0.0);
                     }
                     else {
@@ -905,15 +829,13 @@ public class Drive extends MinorSubsystem {
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
                         }
-                        if (currentPower > 1.0) currentPower = 1.0;
-                        if (currentPower < 0.0) currentPower = 0.0;
-                        rearLeft.setPower(currentPower);
+                        if (currentPower > 1.0) currentPower = 1.0; rearLeft.setPower(currentPower);
+                        if (currentPower < 0.0) currentPower = 0.0; rearLeft.setPower(currentPower);
                     }
                 }
                 else { // motorFLForward is false
                     if (currentCount <= -tickCount) {
                         isMotorRLDone = true;
-                        isMotorRLNotMoving = true;
                         rearLeft.setPower(0.0);
                     }
                     else {
@@ -926,9 +848,8 @@ public class Drive extends MinorSubsystem {
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
                         }
-                        if (currentPower < -1.0) currentPower = -1.0;
-                        if (currentPower > 0.0) currentPower = 0.0;
-                        rearLeft.setPower(currentPower);
+                        if (currentPower < -1.0) currentPower = -1.0; rearLeft.setPower(currentPower);
+                        if (currentPower > 0.0) currentPower = 0.0; rearLeft.setPower(currentPower);
                     }
                 }
                 prevErrorRL = currentError;
@@ -947,8 +868,6 @@ public class Drive extends MinorSubsystem {
                     currentError = (double) (currentCount-targetCount);
                     if (currentCount >= tickCount) {
                         isMotorRRDone = true;
-                        isMotorRRNotMoving = true;
-                        currentPower = 0.0;
                         rearRight.setPower(0.0);
                     }
                     else {
@@ -960,18 +879,14 @@ public class Drive extends MinorSubsystem {
                         else { // at the first point, use Kp only
                             currentPower = currentTargetSpeed/maxSpeed - currentError*Kp;
                         }
-                        if (currentPower > 1.0) currentPower = 1.0;
-                        if (currentPower < 0.0) currentPower = 0.0;
-                        rearRight.setPower(currentPower);
+                        if (currentPower > 1.0) currentPower = 1.0; rearRight.setPower(currentPower);
+                        if (currentPower < 0.0) currentPower = 0.0; rearRight.setPower(currentPower);
                     }
                 }
                 else { // motorFLForward is false
                     currentError = (double) (-currentCount-targetCount);
                     if (currentCount <= -tickCount) {
                         isMotorRRDone = true;
-                        isMotorRRNotMoving = true;
-
-                        currentPower = 0.0;
                         rearRight.setPower(0.0);
                     }
                     else {
@@ -983,9 +898,8 @@ public class Drive extends MinorSubsystem {
                         else { // at the first point, use Kp only
                             currentPower = -currentTargetSpeed/maxSpeed + currentError*Kp;
                         }
-                        if (currentPower < -1.0) currentPower = -1.0;
-                        if (currentPower > 0.0) currentPower = 0.0;
-                        rearRight.setPower(currentPower);
+                        if (currentPower < -1.0) currentPower = -1.0; rearRight.setPower(currentPower);
+                        if (currentPower > 0.0) currentPower = 0.0; rearRight.setPower(currentPower);
                     }
                 }
                 prevErrorRR = currentError;
