@@ -30,12 +30,10 @@ public class TankRobot extends GamepadExtended {
 
     @Override
     public void main() {
-        drivetrain.EvalGamepad(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        double left = gamepad1.left_stick_y + gamepad1.left_stick_x * 100.0;
+        double right = gamepad1.left_stick_y - gamepad1.left_stick_x * 100.0;
 
-        double left = gamepad1.left_stick_x + gamepad1.left_stick_y * 100.0;
-        double right = gamepad1.left_stick_x - gamepad1.left_stick_y * 100.0;
-
-        tank.driveWithoutEncoder((int) right, (int) left);
+        tank.driveWithoutEncoder((int) -right, (int) left);
 
         /*
         if ((gamepad2.left_stick_y >= 0.25 | gamepad2.left_stick_y <= -0.25) && priority.f2(false)) {

@@ -19,6 +19,8 @@ public class TankOpMode_Test extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        waitForStart();
+
         tank = new TankRobot(gamepad1, gamepad2, hardwareMap, telemetry);
 
         while (opModeIsActive()) {
@@ -27,7 +29,7 @@ public class TankOpMode_Test extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", tank.drivetrain.ld1.getPower(), tank.drivetrain.rd1.getPower());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", tank.tank.getLeftTop().getDcMotor().getPower(), tank.tank.getRightTop().getDcMotor().getPower());
             telemetry.update();
         }
     }
