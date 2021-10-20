@@ -35,5 +35,5 @@ This repository contains FTC Team 5206's repository for the Freight Frenzy (2021
 
 ### Release Versioning
 
-the releases are called _yyyy.mm.w_ when _yyyy_ is the year _mm_ is the month and _w_ is the week.
+the releases are called _yyyy.mm.w.p_ when _yyyy_ is the year _mm_ is the month and _w_ is the week and _p_ is the patch number (the default is 0).
 
