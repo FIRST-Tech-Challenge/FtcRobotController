@@ -59,6 +59,8 @@ public class DriveTrain{
 Now we have the code that executes inside your `FTC_xxxxx_yyyy.java` file instead of making motors and assigning the values in there we will let the new `DriveTrain` class handle it instead. So the new file will look something like this
 
 ```java
+import DriveTrain
+
 @TeleOp(name="FTC xxxxx yyyy", group="Iterative Opmode")
 @Disabled
 public class FTC_xxxxx_yyyy extends OpMode {
@@ -79,3 +81,34 @@ public class FTC_xxxxx_yyyy extends OpMode {
 ```
 
 this was a brief of example of how these things can work, one thing that is common is to use a class to handle all of your configurations which can be passed into the constructors of the class as need be.
+
+## Further separating data
+
+Java is an old programming language and sometimes we must accommodate for this age. To separate Java files into different scripts you must use packages
+
+### A brief word on packages
+
+A package is simply a folder with additional meta-properties that allow the JVM (Java Virtual Machine) to see and load code from. If you want to learn more just talk to Jake
+
+### Creating packages
+
+Most Development Environments will allow you to create new packages by navigating to the `File` option bar from there its `File -> new -> package` and then you give it a package name
+
+### Using your package
+
+your package will consist of java files for this example we will have a package called `myCode` which will also include the file `DriveTrain.java` so the file paths look something like this
+
+```bash
+teamCode/
+    FTC_xxxxx_yyyy.java
+    myCode/
+        DriveTrain.java
+```
+
+And we can use the code back in `FTC_xxxxx_yyyy.java` by updating the import to look like this
+
+```java
+import myCode.DriveTrain
+```
+
+The rest of the code can remain the same.
