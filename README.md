@@ -26,11 +26,13 @@ This repository contains FTC Team 5206's repository for the Freight Frenzy (2021
 
 ### Release Cadence
 
-**Sunday** - Come up with the new features to work on during the week
+**Sunday** - Come up with the new features to work on during the week and add the issues to the the current project.
 
 **Monday-Wednesday** - Work on features.
 
-**Thursday-Friday** - Bugfixes only on master, features need to be on branches
+**Thursday** - Bugfixes only on master, features need to be on branches
+
+**Friday** - Bugfixes only on master, features need to be on branches. Come up with the new features to work on next week and add the issues to the next project.
 
 **Saturday** - Test on robot and fix bugs.
 
