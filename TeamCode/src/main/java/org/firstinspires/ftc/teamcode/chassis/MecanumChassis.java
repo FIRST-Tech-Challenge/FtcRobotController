@@ -17,10 +17,10 @@ public class MecanumChassis extends Chassis {
     @Override
     public void drive(Gamepad gamepad){
         //This works, just trust me on it. Slack me or something if you need a full explanation.
-        double flPower = (-gamepad.left_stick_x + gamepad.left_stick_y - gamepad.right_stick_x);
-        double frPower = (gamepad.left_stick_x + gamepad.left_stick_y + gamepad.right_stick_x);
-        double blPower = (gamepad.left_stick_x + gamepad.left_stick_y - gamepad.right_stick_x);
-        double brPower = (-gamepad.left_stick_x + gamepad.left_stick_y + gamepad.right_stick_x);
+        double flPower = (-gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x);
+        double frPower = (gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x);
+        double blPower = (gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x);
+        double brPower = (-gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x);
 
         //This bit seems complicated, but it just gets the maximum absolute value of all the motors.
         double maxPower = Math.max(Math.max(Math.abs(flPower), Math.abs(frPower)), Math.max(Math.abs(blPower), Math.abs(brPower)));
