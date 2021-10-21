@@ -2,17 +2,17 @@
 
 # General Structure
 
-To split up your coding into more than one file you must implement object oriented programming concepts
+To split up your coding into more than one file you must implement object oriented programming concepts.
 
 ## Your files
 
-You can make as many files as for this example we will look at drive train but you can take this idea and apply it around to other aspects of the robot as well.
+You can make as many files as for this example we will look at a generic subsystem called "Subsystem" but you can take this idea and apply it around to other aspects of the robot as well.
 
-This file should only handle the logic as it pertains to the drive train and nothing else
+This file should only handle the logic as it pertains to the individual subsystem and nothing else.
 
-It should include an `Update` function that passes whatever values that you need this can be a controller, or calculated values or whatever you need.
+It should include an `Update` function that passes whatever values that you need. This can be a controller, or calculated values or whatever you need.
 
-You can copy this code, r-click, and refactor>rename to your subsystem and each hardware you wish to have
+You can copy this code, r-click, and refactor>rename to your subsystem and each hardware you wish to have.
 
 ```java
 // Subsystem.java
@@ -47,7 +47,7 @@ public class Subsystem {
 }
 ```
 
-Now we have the code that executes inside your `FTC_xxxxx_yyyy.java` file instead of making motors and assigning the values in there we will let the new `Subsystem` class handle it instead. So the new file will look something like this
+Now we have the code that executes inside your `FTC_xxxxx_yyyy.java` file instead of making motors and assigning the values in there we will let the new `Subsystem` class handle it instead. So the new file will look something like this:
 
 ```java
 import com.arcrobotics.ftclib.command.Subsystem;
@@ -80,28 +80,28 @@ This was a brief of example of how these things can work, one thing that is comm
 
 ## Further separating data
 
-Java is an old programming language and sometimes we must accommodate for this age. To separate Java files into different scripts you must use packages
+Java is an old programming language and sometimes we must accommodate for this age. To separate Java files into different scripts you must use packages.
 
 ### A brief word on packages
 
-A package is simply a folder with additional meta-properties that allow the JVM (Java Virtual Machine) to see and load code from. If you want to learn more just talk to Jake
+A package is simply a folder with additional meta-properties that allow the JVM (Java Virtual Machine) to see and load code from.
 
 ### Creating packages
 
-Most Development Environments will allow you to create new packages by navigating to the `File` option bar from there its `File -> new -> package` and then you give it a package name
+Most Development Environments will allow you to create new packages by navigating to the `File` option bar from there its `File -> new -> package` and then you give it a package name.
 
 ### Using your package
 
-your package will consist of java files for this example we will have a package called `myCode` which will also include the file `DriveTrain.java` so the file paths look something like this
+Your package will consist of java files for this example we will have a package called `myCode` which will also include the file `Subsystem.java` so the file paths look something like this.
 
 ```bash
 teamCode/
     FTC_xxxxx_yyyy.java
     myCode/
-        DriveTrain.java
+        Sybsystem.java
 ```
 
-And we can use the code back in `FTC_xxxxx_yyyy.java` by updating the import to look like this
+And we can use the code back in `FTC_xxxxx_yyyy.java` by updating the import to look like this:
 
 ```java
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
