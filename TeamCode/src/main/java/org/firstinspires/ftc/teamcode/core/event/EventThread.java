@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.core.event;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -8,62 +10,64 @@ import java.util.TreeSet;
  * and its not able to fulfill them faster than they are sent, it will not finish the queue.
  */
 public class EventThread extends Thread {
-    private final TreeSet<Event> queue = new TreeSet<>();
+    private final SortedSet<Event> queue = Collections.synchronizedSortedSet(new TreeSet<>());
+    private final Object waitObject = new Object();
 
     public void run() {
         while (!this.isInterrupted()) {
-            boolean queueEmpty;
-            synchronized (queue) {
-                queueEmpty = queue.isEmpty();
-            }
+            long fullNanos;
+            long ms;
+            int ns;
 
-            if (!queueEmpty) {
-                try {
-                    queue.wait();
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-
-            long currentTime = Event.time.nanoseconds();
-            long waitUntil = 0;
-
-            synchronized (queue) {
-                Iterator<Event> iterator = queue.iterator();
-
-                while (iterator.hasNext()) {
-                    Event event = iterator.next();
-
-                    if (event.runTime <= currentTime) {
-                        iterator.remove();
-                        // run the event
-                        event.listener.run();
-                    } else {
-                        waitUntil = event.runTime;
+            synchronized (waitObject) {
+                while (!queue.isEmpty()) {
+                    try {
+                        waitObject.wait();
+                    } catch (InterruptedException e) {
+                        break;
                     }
                 }
             }
+            long currentTime = Event.time.nanoseconds();
+            long waitUntil = 0;
 
-            try {
-                long fullNanos = waitUntil - currentTime;
-                long ms = fullNanos / 1000000;
-                int ns = (int) (fullNanos % 1000000);
+            Iterator<Event> iterator = queue.iterator();
 
-                queue.wait(ms, ns);
-            } catch (InterruptedException e) {
-                break;
+            while (iterator.hasNext()) {
+                Event event = iterator.next();
+                if (event.runTime <= currentTime) {
+                    iterator.remove();
+                    // run the event
+                    event.listener.run();
+                } else if (waitUntil > event.runTime){
+                    waitUntil = event.runTime;
+                }
+            }
+
+            if(waitUntil != 0) {
+                fullNanos = waitUntil - currentTime;
+                ms = fullNanos / 1000000;
+                ns = (int) (fullNanos % 1000000);
+
+                synchronized (waitObject) {
+                    try {
+                        waitObject.wait(ms, ns);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
             }
         }
     }
 
     /**
-     * Adds an event to the queue
+     * Adds an event to the queue.
      * @param event The event you want to add.
      */
     public void addEvent(Event event) {
-        synchronized (queue) {
+        synchronized (waitObject) {
             queue.add(event);
-            queue.notifyAll();
+            waitObject.notify();
         }
     }
 
