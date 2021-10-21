@@ -1,3 +1,4 @@
+[![Android CI](https://github.com/The-Knights-of-Ni/FreightFrenzy/actions/workflows/build.yml/badge.svg)](https://github.com/The-Knights-of-Ni/FreightFrenzy/actions/workflows/build.yml)
 # Freight Frenzy 2022
 ## About
 
