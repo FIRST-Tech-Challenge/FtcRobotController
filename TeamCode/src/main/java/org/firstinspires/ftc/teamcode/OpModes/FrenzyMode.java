@@ -53,6 +53,15 @@ public class FrenzyMode extends LinearOpMode {
                     turn = rtrigger;
                 }
 
+                double diagonalLeft = gamepad2.left_stick_y;
+                if (Math.abs(diagonalLeft) > 0) {
+                    robot.diagLeft(diagonalLeft);
+                }
+                double diagonalRight = gamepad2.right_stick_y;
+                if (Math.abs(diagonalRight) > 0) {
+                    robot.diagRight(diagonalRight);
+                }
+
                 double strafe = gamepad1.right_stick_x;
 
                 if (Math.abs(strafe) > 0) {
