@@ -27,6 +27,7 @@ public class CVDetector {
 
     public static final Scalar BLUE = new Scalar(0, 0, 255);
     public static final Scalar GREEN = new Scalar(0, 255, 0);
+    public static final Scalar YELLOW = new Scalar(255, 255, 0);
 
     public CVDetector(HardwareMap hw){
         this.hwMap = hw;

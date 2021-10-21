@@ -4,6 +4,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 public class CVFrenzyPipeline extends CVPipelineBase {
@@ -56,29 +57,35 @@ public class CVFrenzyPipeline extends CVPipelineBase {
         meanVal = (int) Core.mean(region_Cb).val[0];
         meanVal_2 = (int) Core.mean(region2_Cb).val[0];
 
+        Scalar box1Color = CVDetector.BLUE;
+        Scalar box2Color = CVDetector.BLUE;
+
+        if (getMeanVal() < ORANGE){
+            setGameElement(GameElement.CubeLocation1);
+            box1Color = CVDetector.YELLOW;
+        }
+        else if (getMeanVal_2() < ORANGE){
+            setGameElement(GameElement.CubeLocation2);
+            box2Color = CVDetector.YELLOW;
+        }
+        else {
+            setGameElement(GameElement.CubeLocationNone);
+        }
+
         //Draw rectangle
         Imgproc.rectangle(
                 input, // Buffer to draw on
                 region_pointA, // First point which defines the rectangle
                 region_pointB, // Second point which defines the rectangle
-                CVDetector.BLUE, // The color the rectangle is drawn in
+                box1Color, // The color the rectangle is drawn in
                 2); // Thickness of the rectangle lines
         Imgproc.rectangle(
                 input, // Buffer to draw on
                 region_pointA_2, // First point which defines the rectangle
                 region_pointB_2, // Second point which defines the rectangle
-                CVDetector.BLUE, // The color the rectangle is drawn in
+                box2Color, // The color the rectangle is drawn in
                 2); // Thickness of the rectangle lines
 
-        if (getMeanVal() < ORANGE){
-            setGameElement(GameElement.CubeLocation1);
-        }
-        else if (getMeanVal_2() < ORANGE){
-            setGameElement(GameElement.CubeLocation2);
-        }
-        else {
-            setGameElement(GameElement.CubeLocationNone);
-        }
         return input;
     }
 
