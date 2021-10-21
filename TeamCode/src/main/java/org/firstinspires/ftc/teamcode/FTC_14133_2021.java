@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name="FTC 14133 2021", group="Iterative Opmode")
-@Disabled
 
 //My favorite shape is a nonagon
 
