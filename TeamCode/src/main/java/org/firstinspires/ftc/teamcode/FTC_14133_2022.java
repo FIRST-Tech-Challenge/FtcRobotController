@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 
-@TeleOp(name="FTC 14133 2022", group="Iterative Opmode")
+@TeleOp(name="FTC_14133_2022", group="Iterative Opmode")
 @Disabled
 
 //My favorite shape is a nonagon
@@ -75,9 +75,11 @@ public class FTC_14133_2022 extends OpMode {
  public void init_loop() {
 
  }
-    double tbegin = getRuntime();
+
  public void start() {
  }
+
+    public double tbegin = getRuntime();
 
  public void loop() {
 
