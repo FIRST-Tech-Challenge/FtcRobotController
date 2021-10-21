@@ -349,11 +349,10 @@ public class Drive extends MinorSubsystem {
         // targetPositionX and targetPositionY determine the direction of movement
         // motorPower determines the magnitude of motor power
         double angleScale = Math.abs(targetPositionX) + Math.abs(targetPositionY);
-        double power = motorPower * (-targetPositionX + targetPositionY) / angleScale;
-        double lrPower = power;
+        double lrPower = motorPower * (-targetPositionX + targetPositionY) / angleScale;
         double lfPower = motorPower * (+ targetPositionX + targetPositionY) / angleScale;
-        double rrPower = motorPower * (+ targetPositionX + targetPositionY) / angleScale;
-        double rfPower = power;
+        double rrPower = lfPower;
+        double rfPower = lrPower;
         return new double[]{lrPower, lfPower, rrPower, rfPower};
     }
 
