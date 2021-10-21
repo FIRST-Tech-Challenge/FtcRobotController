@@ -225,8 +225,8 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
 
                 // Display drive status for the driver.
                 telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d",      newLeftTarget,  newRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d",      robot.leftDrive.getCurrentPosition(),
+                telemetry.addData("Target",  "",      newLeftTarget,  newRightTarget);
+                telemetry.addData("Actual",  "",      robot.leftDrive.getCurrentPosition(),
                                                              robot.rightDrive.getCurrentPosition());
                 telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
                 telemetry.update();

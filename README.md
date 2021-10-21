@@ -7,8 +7,10 @@ There is also documentation located there, which also includes the necessary `bu
 
 Also, please see [this discussion.](https://github.com/XaverianTeamRobotics/FtcRobotController/discussions/7)
 
-## NOTICE
+SDK docs can be found at https://gm0.org/en/latest/docs/software/index.html
 
+
+## NOTICE
 This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
 
 ## Welcome!

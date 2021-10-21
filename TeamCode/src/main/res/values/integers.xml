@@ -3,4 +3,8 @@
     <integer name="leftDriveID">1</integer>
     <integer name="rightDriveID">2</integer>
     <integer name="centerDriveID">3</integer>
+
+    <integer name="ld1_offset">-1</integer>
+    <integer name="rd1_offset">1</integer>
+    <integer name="cd1_offset">1</integer>
 </resources>
