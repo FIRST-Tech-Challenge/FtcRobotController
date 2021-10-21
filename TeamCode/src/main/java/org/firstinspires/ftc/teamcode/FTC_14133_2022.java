@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 
-@TeleOp(name="FTC 14133 2021", group="Iterative Opmode")
+@TeleOp(name="FTC 14133 2022", group="Iterative Opmode")
 @Disabled
 
 //My favorite shape is a nonagon
@@ -73,8 +73,9 @@ public class FTC_14133_2022 extends OpMode {
  }
 
  public void init_loop() {
- }
 
+ }
+    double tbegin = getRuntime();
  public void start() {
  }
 
@@ -82,7 +83,8 @@ public class FTC_14133_2022 extends OpMode {
 
      drivetrain.Update(gamepad1);
 
-
+     double currenttime = getRuntime()-tbegin;
+     telemetry.addData("Current time: ", currenttime);
      telemetry.addData("Up Is pressed? ", limitup.getState());
      telemetry.addData(" Down Is pressed? ", limitdown.getState());
      telemetry.addData("Shooter Speed ", shooterpower);
