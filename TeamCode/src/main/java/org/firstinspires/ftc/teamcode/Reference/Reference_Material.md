@@ -20,6 +20,12 @@ This is an amazing resource for getting up and running with the basics of progra
 
 https://github.com/alan412/LearnJavaForFTC/blob/master/LearnJavaForFTC.pdf
 
+### FTClib
+
+We've included FTClib into our code which has a lot of cool features we can implement if we would like.
+
+https://github.com/FTCLib/FTCLib
+
 
 ## Mecanum Resources
 ### Mobile Robot Kinematics for FTC

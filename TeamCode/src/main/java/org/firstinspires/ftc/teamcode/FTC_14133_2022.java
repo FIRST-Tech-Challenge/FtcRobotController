@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 //I like to ride dirt bikes RS
 
 public class FTC_14133_2022 extends OpMode {
- private ElapsedTime runtime = new ElapsedTime();
 
  // COMMENTED OUT THINGS ARE NOT TO BE DELETED
  static final double MOTOR_TICK_COUNT = 2800;
