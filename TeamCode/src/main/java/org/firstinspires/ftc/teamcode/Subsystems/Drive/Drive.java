@@ -40,7 +40,7 @@ public class Drive extends MinorSubsystem {
     private double robotCurrentPosX;    // unit in mm
     private double robotCurrentPosY;    // unit in mm
     private double robotCurrentAngle;   // unit in degrees
-    
+
 
     private OpenGLMatrix lastLocation = null;
     private boolean targetVisible = false;
