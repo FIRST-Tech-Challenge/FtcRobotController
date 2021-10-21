@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
+import org.firstinspires.ftc.teamcode.Config.MainConfig;
+import org.firstinspires.ftc.teamcode.QuickTelemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
 import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
@@ -28,11 +30,12 @@ import java.util.List;
  * <p>This class starts with variable initializations</p></p>
  */
 public class Robot extends Subsystem {
-    private AllianceColor allianceColor;
+    private final AllianceColor allianceColor = MainConfig.getAllianceColor();
     private final String name = "Freight Mover"; // TODO: Better name needed
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
-    private Telemetry telemetry;
+    private Telemetry oldTelemetry;
+    private QuickTelemetry telemetry;
     private ElapsedTime timer;
 
     // DC Motors
@@ -44,18 +47,6 @@ public class Robot extends Subsystem {
     public DcMotorEx launch2a;
     public DcMotorEx launch2b;
     public DcMotorEx intake;
-
-    // Servos
-
-    public Servo elevatorR;
-    public Servo elevatorL;
-
-    public Servo wobbleClaw;
-    public Servo wobbleGoalArm;
-    public Servo intakeToElevatorL;
-    public Servo intakeToElevatorR;
-    public Servo launcherFeederL;
-    public Servo launcherFeederR;
 
     // Odometry
     public List<LynxModule> allHubs;
@@ -110,7 +101,6 @@ public class Robot extends Subsystem {
      *
      * @param opMode the operational mode, the telemetry and hardware map is gotten from this
      * @param timer an timer
-     * @param aC The Alliance Color, in {@link AllianceColor} format.
      *
      * @throws IOException Might throw it.
      *
@@ -118,12 +108,12 @@ public class Robot extends Subsystem {
      * @see ElapsedTime
      * @see AllianceColor
      */
-    public Robot(LinearOpMode opMode, ElapsedTime timer, AllianceColor aC) throws IOException {
+    public Robot(LinearOpMode opMode, ElapsedTime timer) throws IOException {
         this.hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
-        this.telemetry = opMode.telemetry;
+        this.oldTelemetry = opMode.telemetry;
+        this.telemetry = new QuickTelemetry(oldTelemetry);
         this.timer = timer;
-        this.allianceColor = aC;
 
         init();
     }
@@ -139,8 +129,7 @@ public class Robot extends Subsystem {
     public void init() throws IOException {
         initMechanical(); // mechanical stuff
         // Drive
-        telemetry.addData("Mode", " drive/control initializing...");
-        telemetry.update();
+        telemetry.telemetry("Mode", " drive/control initializing...");
         List<DcMotorEx> dcMotorExList = new ArrayList<>(4);
         dcMotorExList.add(frontLeftDriveMotor);
         dcMotorExList.add(frontRightDriveMotor);
@@ -150,13 +139,15 @@ public class Robot extends Subsystem {
         drive = new Drive(this, dcMotorExList, intake, launch1, launch2b, imu);
 //        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.addData("Mode", " vision initializing...");
-        telemetry.update();
-        vision = new Vision(this, allianceColor);
+        telemetry.telemetry("Mode", " vision initializing...");
+        try {
+            vision = new Vision(this);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
-        telemetry.addData("Mode", " control initializing...");
-        telemetry.update();
+        telemetry.telemetry("Mode", " control initializing...");
         control = new Control(this);
 
     }
@@ -218,16 +209,6 @@ public class Robot extends Subsystem {
 //
 //        elevator2.setDirection(DcMotorSimple.Direction.REVERSE);
         HardwareMap.DeviceMapping<Servo> servo = hardwareMap.servo;
-        wobbleClaw = servo.get("wbc2");
-        wobbleGoalArm = servo.get("wbc1");
-        launcherFeederR = servo.get("feederR");
-        launcherFeederL = servo.get("feederL");
-        intakeToElevatorR = servo.get("iteR");
-        intakeToElevatorL = servo.get("iteL");
-
-
-        elevatorR = servo.get("elevatorR");
-        elevatorL = servo.get("elevatorL");
 
         allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -256,11 +237,9 @@ public class Robot extends Subsystem {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        telemetry.addData("Mode", " IMU initializing...");
-        telemetry.update();
+        telemetry.telemetry("Mode", " IMU initializing...");
         imu.initialize(parameters);
-        telemetry.addData("Mode", " IMU calibrating...");
-        telemetry.update();
+        telemetry.telemetry("Mode", " IMU calibrating...");
         // make sure the imu gyro is calibrated before continuing.
         while (opMode.opModeIsActive() && !imu.isGyroCalibrated())
         {
@@ -278,7 +257,19 @@ public class Robot extends Subsystem {
         return this.opMode;
     }
 
+    /**
+     * Gets the telemetry.
+     *
+     * Try to use {@link #getQuickTelemetry()} instead
+     * @return The telemetry
+     *
+     * @see #getQuickTelemetry()
+     */
     public Telemetry getTelemetry() {
+        return this.oldTelemetry;
+    }
+
+    public QuickTelemetry getQuickTelemetry() {
         return this.telemetry;
     }
 

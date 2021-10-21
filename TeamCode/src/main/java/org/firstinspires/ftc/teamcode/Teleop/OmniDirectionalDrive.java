@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-// import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-// import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-// import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.AllianceColor;
+import org.firstinspires.ftc.teamcode.QuickTelemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 import java.io.IOException;
@@ -18,15 +18,15 @@ import java.io.IOException;
 @TeleOp(name="OmniDirectionalDrive", group="Assisted Driving")
 public class OmniDirectionalDrive extends LinearOpMode {
     private Robot robot;
+    private final QuickTelemetry quickTelemetry = new QuickTelemetry(telemetry);
     private BNO055IMU imu;
     Orientation lastAngles = new Orientation();
-    double                  globalAngle, power = .30;
+    double globalAngle;
+    double power = .30;
 
     private void initOpMode() throws IOException {
-        //Initialize DC motor objects
         ElapsedTime timer = new ElapsedTime();
-        robot = new Robot(this, timer, AllianceColor.BLUE);
-
+        robot = new Robot(this, timer);
     }
 
     // called when init button is  pressed.
@@ -37,9 +37,6 @@ public class OmniDirectionalDrive extends LinearOpMode {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-        /*
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -57,8 +54,7 @@ public class OmniDirectionalDrive extends LinearOpMode {
         imu.initialize(parameters);
 
 
-        telemetry.addData("Mode", "calibrating...");
-        telemetry.update();
+        quickTelemetry.telemetry("Mode", "calibrating...");
 
         // make sure the imu gyro is calibrated before continuing.
         while (!isStopRequested() && !imu.isGyroCalibrated())
@@ -67,15 +63,13 @@ public class OmniDirectionalDrive extends LinearOpMode {
             idle();
         }
 
-        telemetry.addData("Mode", "waiting for start");
-        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-        telemetry.update();
+        quickTelemetry.telemetry("Mode", "waiting for start");
+        quickTelemetry.telemetry("imu calib status", imu.getCalibrationStatus().toString());
 
         // wait for start button.
         waitForStart();
 
-        telemetry.addData("Mode", "running");
-        telemetry.update();
+        quickTelemetry.telemetry("Mode", "running");
 
         // wait for 1 second
         sleep(1000);
@@ -116,8 +110,8 @@ public class OmniDirectionalDrive extends LinearOpMode {
             robot.drive.rearRight.setPower(powers[2]);
             robot.drive.frontRight.setPower(powers[3]);
 
-            telemetry.addData("Fake RBT Angle", robotAngle360);
-            telemetry.addData("CNTRL Angle", controllerAngle360);
+            quickTelemetry.telemetry("Fake RBT Angle", ((Double) robotAngle360).toString());
+            quickTelemetry.telemetry("CNTRL Angle", ((Double) controllerAngle360).toString());
 
 
             resetAngle();
@@ -131,7 +125,7 @@ public class OmniDirectionalDrive extends LinearOpMode {
      * Resets the cumulative angle tracking to zero.
      */
 
-    /*
+
     private void resetAngle()
     {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -200,5 +194,4 @@ public class OmniDirectionalDrive extends LinearOpMode {
         return new double[]{lrPower, lfPower, rrPower, rfPower};
     }
 
-     */
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Config.MainConfig;
+import org.firstinspires.ftc.teamcode.QuickTelemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
 import org.opencv.core.Core;
@@ -23,7 +24,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * @see Vision
  */
 public class DetectMarkerPipeline extends OpenCvPipeline {
-    Telemetry telemetry;
+    QuickTelemetry telemetry;
 
     private final AllianceColor allianceColor = MainConfig.getAllianceColor();
     private MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
@@ -49,15 +50,14 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
 
     /**
      * Class instantiation
-     * @param robot The robot (used for {@link Telemetry})
-     * @param ac The alliance color in {@link AllianceColor} format.
+     * @param robot The robot (used for {@link QuickTelemetry})
      *
      * @see Robot
-     * @see Telemetry
+     * @see QuickTelemetry
      * @see AllianceColor
      */
     public DetectMarkerPipeline(Robot robot) {
-        telemetry = robot.getOpMode().telemetry;
+        telemetry = robot.getQuickTelemetry();
     }
 
     /**
@@ -95,22 +95,20 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
         Mat right = mat.submat(RIGHT_RECT);
 
         double leftValue = Core.sumElems(left).val[0] / LEFT_RECT.area() / 255;
-        double middleValue = Core.sumElems(left).val[0] / MIDDLE_RECT.area() / 255;
+        double middleValue = Core.sumElems(middle).val[0] / MIDDLE_RECT.area() / 255;
         double rightValue = Core.sumElems(right).val[0] / RIGHT_RECT.area() / 255;
 
         left.release();
         middle.release();
         right.release();
 
-        telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
-        telemetry.addData("Middle raw value", (int) Core.sumElems(left).val[0]);
-        telemetry.addData("Right raw value", (int) Core.sumElems(right).val[0]);
-        telemetry.update();
+        telemetry.telemetry("Left raw value", ((Integer) ((int) Core.sumElems(left).val[0])).toString());
+        telemetry.telemetry("Middle raw value", ((Integer) ((int) Core.sumElems(middle).val[0])).toString());
+        telemetry.telemetry("Right raw value", ((Integer) ((int) Core.sumElems(right).val[0])).toString());
 
-        telemetry.addData("Left percentage", Math.round(leftValue * 100) + "%");
-        telemetry.addData("Middle percentage", Math.round(leftValue * 100) + "%");
-        telemetry.addData("Right percentage", Math.round(rightValue * 100) + "%");
-        telemetry.update();
+        telemetry.telemetry("Left percentage", Math.round(leftValue * 100) + "%");
+        telemetry.telemetry("Middle percentage", Math.round(leftValue * 100) + "%");
+        telemetry.telemetry("Right percentage", Math.round(rightValue * 100) + "%");
 
         boolean markerLeft = leftValue > PERCENT_COLOR_THRESHOLD;
         boolean markerMiddle = middleValue > PERCENT_COLOR_THRESHOLD;
@@ -119,16 +117,16 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
 
         if (markerLeft) {
             markerLocation = MarkerLocation.LEFT;
-            telemetry.addData("Marker Location", "right");
+            telemetry.telemetry("Marker Location", "right");
         } else if (markerMiddle) {
             markerLocation = MarkerLocation.MIDDLE;
-            telemetry.addData("Marker Location", "middle");
+            telemetry.telemetry("Marker Location", "middle");
         } else if (markerRight) {
             markerLocation = MarkerLocation.RIGHT;
-            telemetry.addData("Marker Location", "left");
+            telemetry.telemetry("Marker Location", "left");
         } else {
             markerLocation = MarkerLocation.NOT_FOUND;
-            telemetry.addData("Marker Location", "not found");
+            telemetry.telemetry("Marker Location", "not found");
         }
         telemetry.update();
 

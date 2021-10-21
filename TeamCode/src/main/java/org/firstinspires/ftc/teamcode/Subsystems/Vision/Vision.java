@@ -76,12 +76,9 @@ public class Vision extends MinorSubsystem {
         viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
 
 
-        telemetry.addLine("init Vuforia started");
-        telemetry.update();
+        telemetry.telemetry("Vision:", "init Vuforia started");
         initVuforia();
-
-        telemetry.addLine("init Vuforia completed");
-        telemetry.update();
+        telemetry.telemetry("Vision:", "init Vuforia completed");
 
         OpenCvInternalCamera robotCamera;
 

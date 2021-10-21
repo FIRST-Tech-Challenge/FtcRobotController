@@ -5,17 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.io.IOException;
 
@@ -29,7 +18,7 @@ public class DetectMarkerTest extends LinearOpMode {
         try {
             Robot robot = new Robot(this, timer);
         }
-        catch (IOException | InterruptedException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
         waitForStart();

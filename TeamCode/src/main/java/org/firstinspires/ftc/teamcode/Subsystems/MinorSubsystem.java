@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.QuickTelemetry;
 
 /**
  * Superclass to all minor subsystems, it does some bootstrapping for them (Vision, Control, and Drive)
@@ -12,13 +13,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 public class MinorSubsystem extends Subsystem {
     protected LinearOpMode opMode; // protected because of inheritance
-    protected Telemetry telemetry;
+    protected QuickTelemetry telemetry;
     protected ElapsedTime timer;
     protected HardwareMap hardwareMap;
 
     public MinorSubsystem(Robot robot){
         this.opMode = robot.getOpMode();
-        this.telemetry = robot.getTelemetry();
+        this.telemetry = robot.getQuickTelemetry();
         this.hardwareMap = opMode.hardwareMap;
         this.timer = robot.getTimer();
     }

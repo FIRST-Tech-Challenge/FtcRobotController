@@ -25,11 +25,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.QuickTelemetry;
 
 @Autonomous(name="Drive PID")
 @Disabled
-public class DrivePID extends LinearOpMode
-{
+public class DrivePID extends LinearOpMode {
     DcMotorEx frontLeftDriveMotor, frontRightDriveMotor, rearRightDriveMotor, rearLeftDriveMotor;
     TouchSensor touch;
     BNO055IMU imu;
@@ -38,10 +38,11 @@ public class DrivePID extends LinearOpMode
     boolean                 aButton, bButton, touched;
     PIDController pidRotate, pidDrive;
 
+    private final QuickTelemetry quickTelemetry = new QuickTelemetry(telemetry);
+
     // called when init button is  pressed.
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
         frontLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fl");
         frontRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fr");
         rearLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("bl");
@@ -75,8 +76,8 @@ public class DrivePID extends LinearOpMode
         pidRotate = new PIDController(.003, .00003, 0);
         pidDrive = new PIDController(.05, 0, 0);
 
-        telemetry.addData("Mode", "calibrating...");
-        telemetry.update();
+        quickTelemetry.telemetry("Mode", "calibrating...");
+        quickTelemetry.update();
 
         // make sure the imu gyro is calibrated before continuing.
         while (!isStopRequested() && !imu.isGyroCalibrated())
@@ -85,16 +86,16 @@ public class DrivePID extends LinearOpMode
             idle();
         }
 
-        telemetry.addData("Mode", "waiting for start");
-        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-        telemetry.update();
+        quickTelemetry.telemetry("Mode", "waiting for start");
+        quickTelemetry.telemetry("imu calib status", imu.getCalibrationStatus().toString());
+        quickTelemetry.update();
 
         // wait for start button.
 
         waitForStart();
 
-        telemetry.addData("Mode", "running");
-        telemetry.update();
+        quickTelemetry.telemetry("Mode", "running");
+        quickTelemetry.update();
 
         sleep(1000);
 
