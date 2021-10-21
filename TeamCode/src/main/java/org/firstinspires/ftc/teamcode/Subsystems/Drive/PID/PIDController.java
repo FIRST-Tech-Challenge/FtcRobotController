@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Drive.PID;
 
-// PID controller courtesy of Peter Tischler, with modifications.
-
-public class PIDController
-{
+public class PIDController {
     private double m_P;                     // factor for "proportional" control
     private double m_I;                     // factor for "integral" control
     private double m_D;                     // factor for "derivative" control
