@@ -176,13 +176,13 @@ public class RobotCoordinatePosition implements IBaseOdometry {
     public void stop(){ isRunning = false; }
 
     @Override
-    public int getCurrentX() {
-        return (int)getX();
+    public double getCurrentX() {
+        return getX();
     }
 
     @Override
-    public int getCurrentY() {
-        return (int)getY();
+    public double getCurrentY() {
+        return getY();
     }
 
     @Override

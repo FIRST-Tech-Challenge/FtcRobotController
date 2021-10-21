@@ -41,12 +41,12 @@ public interface IBaseOdometry extends Runnable {
     /**
      * @return the current X coordinate in inches
      */
-    int getCurrentX();
+    double getCurrentX();
 
     /**
      * @return the current Y coordinate in inches
      */
-    int getCurrentY();
+    double getCurrentY();
 
     /**
      * @return the current robot heading in degrees

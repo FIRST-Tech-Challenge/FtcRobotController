@@ -42,8 +42,8 @@ public class VSlamOdometry implements IBaseOdometry {
     private T265Camera slamra;
     private boolean isRunning = true;
 
-    private int currentX;
-    private int currentY;
+    private double currentX;
+    private double currentY;
     private int currentHeading;
 
     private static VSlamOdometry theInstance;
@@ -123,10 +123,10 @@ public class VSlamOdometry implements IBaseOdometry {
     }
 
     @Override
-    public int getCurrentX() { return currentX; }
+    public double getCurrentX() { return currentX; }
 
     @Override
-    public int getCurrentY() { return currentY; }
+    public double getCurrentY() { return currentY; }
 
     @Override
     public int getCurrentHeading() { return currentHeading % 360; }
@@ -210,8 +210,8 @@ public class VSlamOdometry implements IBaseOdometry {
             T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
 
             if (up != null) {
-                this.currentX = (int) up.pose.getTranslation().getX();
-                this.currentY = (int) up.pose.getTranslation().getY();
+                this.currentX = up.pose.getX();
+                this.currentY = up.pose.getY();
                 Log.i(TAG, String.format("Cam coordinate: %d : %d", this.currentX, this.currentY));
                 this.currentHeading = (int) up.pose.getRotation().getDegrees();
                 if (persistPosition) {
