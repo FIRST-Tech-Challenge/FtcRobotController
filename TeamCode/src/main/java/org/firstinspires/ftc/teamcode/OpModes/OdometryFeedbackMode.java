@@ -70,8 +70,6 @@ public class OdometryFeedbackMode extends LinearOpMode {
                         robot.move(drive, turn);
                     }
 
-
-                    int robotRadius = 9; // inches
                     double xPos = odometry.getCurrentX();
                     double yPos = odometry.getCurrentY();
                     double aDegrees = odometry.getAdjustedCurrentHeading();
