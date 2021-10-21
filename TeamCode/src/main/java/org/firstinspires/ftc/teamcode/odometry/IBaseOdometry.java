@@ -19,21 +19,6 @@ public interface IBaseOdometry extends Runnable {
     void setInitPosition(int startXInches, int startYInches, int startHeadingDegrees) throws Exception;
 
     /**
-      Current heading value in the range of 0-360
-    */
-    double getAdjustedCurrentHeading();
-
-    /**
-      X coordinate of the robot's current position in inches
-     */
-    double getXInches();
-
-    /**
-     Y coordinate of the robot's current position in inches
-     */
-    double getYInches();
-
-    /**
      * Stop the thread and stop collecting odometery
      */
     void stop();
@@ -49,7 +34,7 @@ public interface IBaseOdometry extends Runnable {
     double getCurrentY();
 
     /**
-     * @return the current robot heading in degrees
+     * @return the current robot heading in degrees (0 to 360)
      */
     int getCurrentHeading();
 

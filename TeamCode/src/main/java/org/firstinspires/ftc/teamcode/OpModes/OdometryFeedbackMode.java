@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,6 +16,7 @@ public class OdometryFeedbackMode extends LinearOpMode {
     IBaseOdometry odometry = null;
     private ElapsedTime runtime = new ElapsedTime();
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() {
         try {
@@ -72,11 +75,10 @@ public class OdometryFeedbackMode extends LinearOpMode {
 
                     double xPos = odometry.getCurrentX();
                     double yPos = odometry.getCurrentY();
-                    double aDegrees = odometry.getAdjustedCurrentHeading();
-                    double aRadians = aDegrees * Math.PI / 180.0;
+                    double aDegrees = odometry.getCurrentHeading();
 
-                    telemetry.addData("X ", xPos);
-                    telemetry.addData("Y ", yPos);
+                    telemetry.addData("X ", String.format("%.2f", xPos));
+                    telemetry.addData("Y ", String.format("%.2f", yPos));
                     telemetry.addData("H", aDegrees);
                     telemetry.update();
 
