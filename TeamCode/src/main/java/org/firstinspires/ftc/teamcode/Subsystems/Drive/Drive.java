@@ -921,7 +921,7 @@ public class Drive extends MinorSubsystem {
                 isTimeOutStarted = false;
                 isTimeOutExceeded = false;
             }
-            String output = String.format("FL %.1f, %d, FR %.1f %d, RL %.1f %d, RR %.1f %d %.1f %.3f %.1f %.3f %s %s %s %s %s %.1f %s",
+            String output = String.format(Locale.US, "FL %.1f, %d, FR %.1f %d, RL %.1f %d, RR %.1f %d %.1f %.3f %.1f %.3f %s %s %s %s %s %.1f %s",
                     prevTimeFL*1000.0, prevCountFL, prevTimeFR*1000.0, prevCountFR, prevTimeRL*1000.0, prevCountRL,
                     prevTimeRR*1000.0, prevCountRR, currentError, acculErrorRR, errorSlope, currentPower,
                     isMotorFLNotMoving?"Y":"N", isMotorFRNotMoving?"Y":"N", isMotorRLNotMoving?"Y":"N", isMotorRRNotMoving?"Y":"N",
