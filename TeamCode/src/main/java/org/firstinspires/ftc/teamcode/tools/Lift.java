@@ -18,7 +18,7 @@ public class Lift {
      * @param telemetry local telemetry instance
      * @param toolGamepad instance of FtcLib GamepadEx
      */
-    public Lift(@NonNull HardwareMap map, Telemetry telemetry, GamepadEx toolGamepad) {
+    public Lift(@NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
         this.liftMotor = map.get(DcMotor.class,"liftMotor");
         this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.armServo = map.get(Servo.class,"armServo");
@@ -43,7 +43,6 @@ public class Lift {
     private double curPos = 0;
 
     public void update() {
-        final double afloatValue = 0.05;
         final double stickValue = gamepad.getLeftY();
         telemetry.addData("left stick",stickValue);
         telemetry.addData("lift motor power", liftMotor.getPower());
@@ -61,11 +60,11 @@ public class Lift {
     }
 
     private void arm() {
-        double topLiftPosition = 0;
-        double bottomLiftPosition = 0;
-        double loadServoPosition = 0;
-        double liftingServoPosition = 0;
-        double dumpServoPosition = 0;
+        final double topLiftPosition = 0;
+        final double bottomLiftPosition = 0;
+        final double loadServoPosition = 0;
+        final double liftingServoPosition = 0;
+        final double dumpServoPosition = 0;
         if (curPos >= topLiftPosition) {
             rBumpReader.readValue();
             if (rBumpReader.getState()) {
