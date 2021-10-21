@@ -94,9 +94,9 @@ public class OdoBase extends LinearOpMode {
                 locator.init(selectedRoute.getStart(), initHead);
                 for (AutoStep s : selectedRoute.getSteps()) {
                     this.goTo(s, false, selectedRoute.getName());
-                    telemetry.addData("X: ", locator.getXInches());
-                    telemetry.addData("Y: ", locator.getYInches());
-                    telemetry.addData("Heading: ", locator.getAdjustedCurrentHeading());
+                    telemetry.addData("X: ", locator.getCurrentX());
+                    telemetry.addData("Y: ", locator.getCurrentY());
+                    telemetry.addData("Heading: ", locator.getCurrentHeading());
                     telemetry.update();
                 }
             }
@@ -115,15 +115,16 @@ public class OdoBase extends LinearOpMode {
 
         Log.d(TAG, String.format("Executing Step: %s", instruction.toString()));
         if (locator != null){
-            Log.d(TAG, String.format("Location: %.2f, %.2f. Orientation: %.2f", locator.getXInches(), locator.getYInches(), locator.getOrientation()));
+            Log.d(TAG, String.format("Location: %.2f, %.2f. Orientation: %.2f", locator.getCurrentX(), locator.getCurrentY(),
+                    locator.getCurrentHeading()));
         }
 
 
         try {
 
             if (dryRun && selectedRoute.getSteps().size() == 0) {
-                selectedRoute.setStartX((int) locator.getXInches());
-                selectedRoute.setStartY((int) locator.getYInches());
+                selectedRoute.setStartX((int) locator.getCurrentX());
+                selectedRoute.setStartY((int) locator.getCurrentY());
             }
             waitToStartStep(instruction.getWaitMS());
             MoveStrategy strategy = instruction.getMoveStrategy();
@@ -202,7 +203,7 @@ public class OdoBase extends LinearOpMode {
             profile = BotMoveProfile.buildStrafeProfile(bot.getCalibConfig(), angleChange, instruction.getTopSpeed(), Math.abs(distance), instruction.getRobotDirection(), null, desiredHead, desiredHead, locator, null);
         }
         else{
-            profile = BotMoveProfile.bestRoute(bot, (int)locator.getXInches(), (int)locator.getYInches(), target,
+            profile = BotMoveProfile.bestRoute(bot, (int)locator.getCurrentX(), (int)locator.getCurrentY(), target,
                     instruction.getRobotDirection(), instruction.getTopSpeed(), strategy, desiredHead, locator);
         }
 

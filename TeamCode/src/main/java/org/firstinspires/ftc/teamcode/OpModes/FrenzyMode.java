@@ -66,9 +66,9 @@ public class FrenzyMode extends LinearOpMode {
                 }
                 telemetry.addData("Left front", robot.getLeftOdometer());
                 telemetry.addData("Right front", robot.getRightOdometer());
-                telemetry.addData("X", odometry.getXInches());
-                telemetry.addData("Y", odometry.getYInches());
-                telemetry.addData("Heading", odometry.getAdjustedCurrentHeading());
+                telemetry.addData("X", odometry.getCurrentX());
+                telemetry.addData("Y", odometry.getCurrentY());
+                telemetry.addData("Heading", odometry.getCurrentHeading());
                 telemetry.update();
             }
         } catch (Exception ex) {

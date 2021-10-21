@@ -751,19 +751,19 @@ public class MasterCalib extends LinearOpMode {
             }
 
 
-            profile.setActual(new Point((int)Math.round(locator.getXInches()), (int)Math.round(locator.getYInches())));
+            profile.setActual(new Point((int)Math.round(locator.getCurrentX()), (int)Math.round(locator.getCurrentY())));
 
             lastOrientation = locator.getOrientation();
 
 
 
-            Point newStart = new Point((int)Math.round(locator.getXInches()), (int) Math.round(locator.getYInches()));
+            Point newStart = new Point((int)Math.round(locator.getCurrentX()), (int) Math.round(locator.getCurrentY()));
 
-            BotMoveProfile whatIfBack = BotMoveProfile.bestRoute(bot, locator.getXInches(), locator.getYInches(), new Point(startX, startY), RobotDirection.Optimal, desiredSpeed, MoveStrategy.Curve, BotMoveProfile.DEFAULT_HEADING, locator);
+            BotMoveProfile whatIfBack = BotMoveProfile.bestRoute(bot, locator.getCurrentX(), locator.getCurrentY(), new Point(startX, startY), RobotDirection.Optimal, desiredSpeed, MoveStrategy.Curve, BotMoveProfile.DEFAULT_HEADING, locator);
             bot.curveTo(whatIfBack, locator);
             whatIfBack.setStart(newStart);
             whatIfBack.setDestination(new Point(startX, startY));
-            whatIfBack.setActual(new Point((int)Math.round(locator.getXInches()), (int)Math.round(locator.getYInches())));
+            whatIfBack.setActual(new Point((int)Math.round(locator.getCurrentX()), (int)Math.round(locator.getCurrentY())));
 
             telemetry.addData("Profile Original", profile.toString());
             showMotorReduction(profile.getMotorReduction());
@@ -841,7 +841,7 @@ public class MasterCalib extends LinearOpMode {
         calibF.setRightOdoDistanceActual(rightDistance);
         calibF.setHeadChange(headChange);
         calibF.process(false);
-        double distanceFromTarget = Geometry.getDistance(locator.getXInches(), locator.getYInches(), startX, desiredY);
+        double distanceFromTarget = Geometry.getDistance(locator.getCurrentX(), locator.getCurrentY(), startX, desiredY);
         calibF.setDistanceFromTarget(distanceFromTarget );
 
 
@@ -861,7 +861,7 @@ public class MasterCalib extends LinearOpMode {
             bF = breakPointOverride * bot.getEncoderCountsPerInch();
         }
 
-        telemetry.addData("Forw Location", "x:%.2f  y: %.2f ", locator.getXInches(), locator.getYInches());
+        telemetry.addData("Forw Location", "x:%.2f  y: %.2f ", locator.getCurrentX(), locator.getCurrentY());
 
 
         RobotMovementStats statsB =  bot.moveToCalib(desiredSpeed, desiredSpeed, -distance, mrBack, bB);
@@ -878,10 +878,10 @@ public class MasterCalib extends LinearOpMode {
         headChange = Math.abs(actualHead - currentHead);
 
         calibB.setHeadChange(headChange);
-        double distanceFromTargetBack = Geometry.getDistance(locator.getXInches(), locator.getYInches(), startX, startY);
+        double distanceFromTargetBack = Geometry.getDistance(locator.getCurrentX(), locator.getCurrentY(), startX, startY);
         calibB.setDistanceFromTarget(distanceFromTargetBack);
 
-        telemetry.addData("Back Location", "x:%.2f  y: %.2f ", locator.getXInches(), locator.getYInches());
+        telemetry.addData("Back Location", "x:%.2f  y: %.2f ", locator.getCurrentX(), locator.getCurrentY());
 
         leftDistance = Math.abs(bot.getLeftOdometer() - leftOdo);
         rightDistance = Math.abs(bot.getRightOdometer() - rightOdo);

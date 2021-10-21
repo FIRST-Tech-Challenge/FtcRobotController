@@ -317,8 +317,8 @@ public class MasterOdo extends OdoBase {
 
             }
             else if (startSettingMode){
-                int x = (int)locator.getXInches();
-                int y = (int)locator.getYInches();
+                int x = (int)locator.getCurrentX();
+                int y = (int)locator.getCurrentY();
                 if (XSettingMode) {
                     x -= 5;
                 }
@@ -514,8 +514,8 @@ public class MasterOdo extends OdoBase {
 
             }
             else if (startSettingMode){
-                int x = (int)locator.getXInches();
-                int y = (int)locator.getYInches();
+                int x = (int)locator.getCurrentX();
+                int y = (int)locator.getCurrentY();
                 if (XSettingMode) {
                     x += 5;
                 }
@@ -857,8 +857,8 @@ public class MasterOdo extends OdoBase {
                 }else {
                     telemetry.addData("Manual Drive Mode", "Use sticks to operate the robot");
                     telemetry.addData("Save coordinates", "Press Start");
-                    telemetry.addData("X ", locator.getXInches());
-                    telemetry.addData("Y ", locator.getYInches());
+                    telemetry.addData("X ", locator.getCurrentX());
+                    telemetry.addData("Y ", locator.getCurrentY());
                     telemetry.addData("Orientation (Degrees)", locator.getOrientation());
                 }
             }
@@ -940,11 +940,11 @@ public class MasterOdo extends OdoBase {
         String toX = XSettingMode ? "*" : " ";
         String toY = YSettingMode ? "*" : " ";
 
-        telemetry.addData("Start", "%d%s : %d%s", (int)locator.getXInches(), toX, (int)locator.getYInches(), toY);
+        telemetry.addData("Start", "%d%s : %d%s", (int)locator.getCurrentX(), toX, (int)locator.getCurrentY(), toY);
     }
 
     private void showHeading(){
-        telemetry.addData("Current Heading", "%.2f", locator.getAdjustedCurrentHeading());
+        telemetry.addData("Current Heading", "%.2f", locator.getCurrentHeading());
     }
 
 
@@ -1024,8 +1024,8 @@ public class MasterOdo extends OdoBase {
         try {
             File configFile = getCoordinateFile(newDot.getFileName());
 
-            newDot.setX((int) locator.getXInches());
-            newDot.setY((int) locator.getYInches());
+            newDot.setX((int) locator.getCurrentX());
+            newDot.setY((int) locator.getCurrentY());
             newDot.setHeading(locator.getOrientation());
 
             String jsonPath = newDot.serialize();

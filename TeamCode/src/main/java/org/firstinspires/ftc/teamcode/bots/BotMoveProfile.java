@@ -225,7 +225,7 @@ public class BotMoveProfile {
             }
         }
 
-        double currentHead = locator.getAdjustedCurrentHeading();
+        double currentHead = locator.getCurrentHeading();
 
         if (direction == RobotDirection.Backward) {
             currentHead = (currentHead + 180) % 360;
@@ -579,7 +579,7 @@ public class BotMoveProfile {
         rq.setDirection(direction);
         rq.setMotorReduction(profile.getMotorReduction());
         profile.setTarget(rq);
-        profile.setStart(new Point((int)locator.getXInches(), (int)locator.getYInches()));
+        profile.setStart(new Point((int)locator.getCurrentX(), (int)locator.getCurrentY()));
         profile.setAngleChange(angleChange);
         profile.setCurrentHead(currentHead);
         profile.setTargetVector(targetVector);
@@ -635,7 +635,7 @@ public class BotMoveProfile {
         rq.setDirection(RobotDirection.Optimal);
         rq.setMotorReduction(profile.getMotorReduction());
         profile.setTarget(rq);
-        profile.setStart(new Point((int)locator.getXInches(), (int)locator.getYInches()));
+        profile.setStart(new Point((int)locator.getCurrentX(), (int)locator.getCurrentY()));
         profile.setAngleChange(angleChange);
         profile.setCurrentHead(currentHead);
         profile.setTargetVector(targetVector);
@@ -673,7 +673,7 @@ public class BotMoveProfile {
     public static BotMoveProfile getFinalHeadProfile(double desiredHeading, double speed, IBaseOdometry locator){
         BotMoveProfile profileSpin = null;
         if (desiredHeading != BotMoveProfile.DEFAULT_HEADING) {
-            double currentHead = locator.getAdjustedCurrentHeading();
+            double currentHead = locator.getCurrentHeading();
             double realAngleChange = Geometry.getAngle(desiredHeading, currentHead);
             profileSpin = BotMoveProfile.buildSpinProfile(realAngleChange, speed, null);
         }
