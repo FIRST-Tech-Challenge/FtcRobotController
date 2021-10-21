@@ -6,6 +6,7 @@ import android.util.Log;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.spartronics4915.lib.T265Camera;
@@ -75,6 +76,17 @@ public class VSlamOdometry implements IBaseOdometry {
         this.sleepTime = threadDelay;
         // Increase this value to trust encoder odometry less when fusing encoder measurements with VSLAM
         this.encoderMeasurementCovariance = encoderMeasurementCovariance;
+
+        // This is the transformation between the center of the camera and the center of the robot
+        // Set these three values to match the location/orientation of the camera with respect to the robot
+        double offsetXInches = 0;
+        double offsetYInches = 0;
+        double offsetHDegrees = 0;
+
+        Translation2d offsetTranslation = new Translation2d(offsetXInches * INCH_2_METER, offsetYInches * INCH_2_METER);
+        Rotation2d offsetRotation = Rotation2d.fromDegrees(offsetHDegrees);
+        final Transform2d cameraToRobot = new Transform2d(offsetTranslation, offsetRotation );
+        this.slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, this.hwMap.appContext);
     }
 
     @Override
@@ -88,10 +100,7 @@ public class VSlamOdometry implements IBaseOdometry {
         double startY = startYInches * INCH_2_METER;
         Rotation2d startHeading = Rotation2d.fromDegrees(startHeadingDegrees);
         Pose2d startingPose = new Pose2d(startX, startY, startHeading);
-        // This is the transformation between the center of the camera and the center of the robot
-        final Transform2d cameraToRobot = new Transform2d();
 
-        slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, this.hwMap.appContext);
         slamra.setPose(startingPose);
     }
 
