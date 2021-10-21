@@ -8,15 +8,14 @@ public class ServoClaw {
     private Servo claw;
     private float minturn;
     private float maxturn;
-    private float perc;
 
-    //constructor accepts min and max turn params
+    //constructor accepts servo object, min and max turn params
     public ServoClaw(Servo claw, float minturn1, float maxturn1) {
         this.minturn = minturn1;
         this.maxturn = maxturn1;
     }
     //turns servo in range of min and max; percentage is used for pos
-    public void actuateClawRestricted(float pos) {
+    public void actuateToPercent(float pos) {
 
         //corrects out of domain pos values
         if(pos>1){
@@ -33,18 +32,18 @@ public class ServoClaw {
     }
 
     //returns percentage turned within range
-    public double getperc(){
+    public double getPercentClosed(){
         double range = maxturn-minturn;
         return (claw.getPosition()-minturn)/range;
 
     }
     //returns current position
-    public double getpos(){
+    public double getPos(){
         return claw.getPosition();
     }
 
     //intended to be looped; turns claw based on input speed from [-1,1]
-    public void actuateClawSpeed(double speed) {
+    public void setClawSpeed(double speed) {
 
         //current position not child porn I swear
         double cp = claw.getPosition();
