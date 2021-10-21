@@ -76,18 +76,21 @@ public class Vision extends MinorSubsystem {
         viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
 
 
-        telemetry.telemetry("Vision:", "init Vuforia started");
+        telemetry.telemetry(3, "Vision:", "init Vuforia started");
         initVuforia();
-        telemetry.telemetry("Vision:", "init Vuforia completed");
+        telemetry.telemetry(2, "Vision:", "init Vuforia completed");
 
         OpenCvInternalCamera robotCamera;
 
         robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+
+        telemetry.telemetry(3, "Vision:", "Detecting Marker");
         DetectMarkerThread detectMarkerRunnable = new DetectMarkerThread(robot, robotCamera);
         Thread detectMarkerThread = new Thread(detectMarkerRunnable);
         detectMarkerThread.start();
         detectMarkerThread.join();
         finalMarkerLocation = detectMarkerRunnable.getMarkerLocation();
+        telemetry.telemetry(2, "Vision:", "Detected Marker");
     }
 
     private void initVuforia() {

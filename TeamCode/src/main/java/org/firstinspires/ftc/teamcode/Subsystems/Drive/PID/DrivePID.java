@@ -88,14 +88,12 @@ public class DrivePID extends LinearOpMode {
 
         quickTelemetry.telemetry("Mode", "waiting for start");
         quickTelemetry.telemetry("imu calib status", imu.getCalibrationStatus().toString());
-        quickTelemetry.update();
 
         // wait for start button.
 
         waitForStart();
 
         quickTelemetry.telemetry("Mode", "running");
-        quickTelemetry.update();
 
         sleep(1000);
 
@@ -159,16 +157,14 @@ public class DrivePID extends LinearOpMode {
     }
 
     private double getDistance() {
-        double distance = (frontLeftDriveMotor.getCurrentPosition() + frontRightDriveMotor.getCurrentPosition() + rearLeftDriveMotor.getCurrentPosition() + rearRightDriveMotor.getCurrentPosition()) / 4;
-        return distance;
+        return (frontLeftDriveMotor.getCurrentPosition() + frontRightDriveMotor.getCurrentPosition() + rearLeftDriveMotor.getCurrentPosition() + rearRightDriveMotor.getCurrentPosition()) / 4.0;
     }
 
     /**
      * Rotate left or right the number of degrees. Does not support turning more than 359 degrees.
      * @param degrees Degrees to turn, + is left - is right
      */
-    private void rotate(int degrees, double power)
-    {
+    private void rotate(int degrees, double power) {
         // restart imu angle tracking.
         resetAngle();
         
@@ -242,8 +238,8 @@ public class DrivePID extends LinearOpMode {
         resetAngle();
     }
 
-    private void moveForward(double distance, double power) // unit of measurement TBD
-    {
+    // unit of measurement TBD
+    private void moveForward(double distance, double power) {
         // restart odometry distance tracking.
         resetDistance();
 

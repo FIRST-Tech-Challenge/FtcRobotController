@@ -31,7 +31,10 @@ import java.util.List;
  */
 public class Robot extends Subsystem {
     private final AllianceColor allianceColor = MainConfig.getAllianceColor();
-    private final String name = "Freight Mover"; // TODO: Better name needed
+    private final String name = MainConfig.getName();
+    private final String version = MainConfig.getVersion();
+    private final boolean debug = MainConfig.getDebug();
+    private final int logLevel = MainConfig.getLogLevel();
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
     private Telemetry oldTelemetry;
@@ -127,9 +130,12 @@ public class Robot extends Subsystem {
      * @see #initMechanical()
      */
     public void init() throws IOException {
+        telemetry.telemetry(2, "Mode", " Hardware init started");
         initMechanical(); // mechanical stuff
+        telemetry.telemetry(2, "Mode", " Hardware init finished");
+
         // Drive
-        telemetry.telemetry("Mode", " drive/control initializing...");
+        telemetry.telemetry(2, "Mode", " Drive init started");
         List<DcMotorEx> dcMotorExList = new ArrayList<>(4);
         dcMotorExList.add(frontLeftDriveMotor);
         dcMotorExList.add(frontRightDriveMotor);
@@ -139,17 +145,19 @@ public class Robot extends Subsystem {
         drive = new Drive(this, dcMotorExList, intake, launch1, launch2b, imu);
 //        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.telemetry("Mode", " vision initializing...");
+        telemetry.telemetry(1, "Mode", " Drive init finished");
+
+        telemetry.telemetry(2, "Mode", " Vision init started");
         try {
             vision = new Vision(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        telemetry.telemetry(1, "Mode", " Vision init finished");
 
-
-        telemetry.telemetry("Mode", " control initializing...");
+        telemetry.telemetry(2, "Mode", " Control init started");
         control = new Control(this);
-
+        telemetry.telemetry(2, "Mode", " Control init finished");
     }
 
     public void initMechanical() {
@@ -237,12 +245,11 @@ public class Robot extends Subsystem {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        telemetry.telemetry("Mode", " IMU initializing...");
+        telemetry.telemetry(2, "Mode", " IMU initializing...");
         imu.initialize(parameters);
-        telemetry.telemetry("Mode", " IMU calibrating...");
+        telemetry.telemetry(2, "Mode", " IMU calibrating...");
         // make sure the imu gyro is calibrated before continuing.
-        while (opMode.opModeIsActive() && !imu.isGyroCalibrated())
-        {
+        while (opMode.opModeIsActive() && !imu.isGyroCalibrated()) {
             opMode.sleep(50);
             opMode.idle();
         }
@@ -252,6 +259,9 @@ public class Robot extends Subsystem {
         return this.name;
     }
 
+    public int getLogLevel() {
+        return this.logLevel;
+    }
 
     public LinearOpMode getOpMode() {
         return this.opMode;

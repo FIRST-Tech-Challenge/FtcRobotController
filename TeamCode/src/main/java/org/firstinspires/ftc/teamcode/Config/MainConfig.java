@@ -10,6 +10,11 @@ public class MainConfig {
     private static final String version = "0.0.0-alpha";
     private static final AllianceColor allianceColor = AllianceColor.BLUE;
     private static final boolean debug = false;
+    // 0 is quiet
+    // 1 is default
+    // 2 is rich
+    // 3 is verbose
+    private static final int logLevel = 1;
 
     public static String getName() {
         return name;
@@ -25,5 +30,9 @@ public class MainConfig {
 
     public static boolean getDebug() {
         return debug;
+    }
+
+    public static int getLogLevel() {
+        return logLevel;
     }
 }

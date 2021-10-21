@@ -63,10 +63,12 @@ public class Drive extends MinorSubsystem {
      */
     public Drive(Robot robot, List<DcMotorEx> motors, DcMotorEx odL, DcMotorEx odB, DcMotorEx odR, BNO055IMU imu) {
         super(robot);
+        telemetry.telemetry(3, "Drive:", "motors init started");
         this.frontLeft = motors.get(0);
         this.frontRight = motors.get(1);
         this.rearLeft = motors.get(2);
         this.rearRight = motors.get(3);
+        telemetry.telemetry(2, "Drive:", "motors init finished");
 
         this.odL = odL;
         this.odB = odB;
@@ -344,8 +346,7 @@ public class Drive extends MinorSubsystem {
         rearRight.setTargetPosition((int)  (+ targetPositionX + targetPositionY));
     }
 
-    public double[] calcMotorPowers2D(double targetPositionX, double targetPositionY, double motorPower)
-    {
+    public double[] calcMotorPowers2D(double targetPositionX, double targetPositionY, double motorPower) {
         // targetPositionX and targetPositionY determine the direction of movement
         // motorPower determines the magnitude of motor power
         double angleScale = Math.abs(targetPositionX) + Math.abs(targetPositionY);
@@ -686,7 +687,7 @@ public class Drive extends MinorSubsystem {
         double startTime = ((double) timer.nanoseconds()) * 1.0e-9;
         double currentTime = 0.0;
         double errorSlope = 0.0;
-        while (((!isMotorFLDone) || (!isMotorFRDone) || (!isMotorRLDone) || (!isMotorRRDone)) && (!isTimeOutExceeded)){
+        while (((!isMotorFLDone) || (!isMotorFRDone) || (!isMotorRLDone) || (!isMotorRRDone)) && (!isTimeOutExceeded)) {
             if (!isMotorFLDone) {
                 currentCount = frontLeft.getCurrentPosition(); // get current motor tick
                 currentTime = ((double) timer.nanoseconds()) * 1.0e-9 - startTime; // get current time
