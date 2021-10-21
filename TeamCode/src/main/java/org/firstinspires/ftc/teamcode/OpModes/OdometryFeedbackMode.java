@@ -8,22 +8,15 @@ import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-
 @TeleOp(name = "OdometryFeedback", group = "Robot15173")
 public class OdometryFeedbackMode extends LinearOpMode {
     FrenzyBot robot = new FrenzyBot();
-    private ElapsedTime runtime = new ElapsedTime();
-
     IBaseOdometry odometry = null;
-
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
-        try{
+        try {
             robot.init(this, this.hardwareMap, telemetry);
         } catch (Exception ex) {
             telemetry.addData("Robot Init", ex.getMessage());
@@ -32,10 +25,9 @@ public class OdometryFeedbackMode extends LinearOpMode {
             return;
         }
 
-
         try {
             // VSLAM odometry
-            odometry =  VSlamOdometry.getInstance(this.hardwareMap);
+            odometry = VSlamOdometry.getInstance(this.hardwareMap);
             odometry.setInitPosition(0, 0, 0);
         } catch (Exception ex) {
             telemetry.addData("Odometry Init", ex.getMessage());
@@ -47,9 +39,6 @@ public class OdometryFeedbackMode extends LinearOpMode {
         try {
             Thread odometryThread = new Thread(odometry);
             odometryThread.start();
-
-            TelemetryPacket packet = new TelemetryPacket();
-            Canvas field = packet.fieldOverlay();
 
             waitForStart();
             runtime.reset();
@@ -81,9 +70,10 @@ public class OdometryFeedbackMode extends LinearOpMode {
                         robot.move(drive, turn);
                     }
 
+
                     int robotRadius = 9; // inches
-                    double xPos = odometry.getXInches();
-                    double yPos = odometry.getYInches();
+                    double xPos = odometry.getCurrentX();
+                    double yPos = odometry.getCurrentY();
                     double aDegrees = odometry.getAdjustedCurrentHeading();
                     double aRadians = aDegrees * Math.PI / 180.0;
 
@@ -92,14 +82,6 @@ public class OdometryFeedbackMode extends LinearOpMode {
                     telemetry.addData("H", aDegrees);
                     telemetry.update();
 
-                    // Draw the robot on dashboard canvas
-                    field.strokeCircle(xPos, yPos, robotRadius);
-                    double arrowX = Math.cos(aRadians) * robotRadius, arrowY = Math.sin(aRadians) * robotRadius;
-                    double x1 = xPos+ arrowX  / 2, y1 = yPos + arrowY / 2;
-                    double x2 = xPos + arrowX, y2 = yPos + arrowY;
-                    field.strokeLine(x1, y1, x2, y2);
-
-                    dashboard.sendTelemetryPacket(packet);
 
                 } catch (Exception ex) {
                     telemetry.addData("Issues with the OpMode", ex.getMessage());
@@ -107,8 +89,7 @@ public class OdometryFeedbackMode extends LinearOpMode {
                     sleep(10000);
                 }
             }
-        }
-        finally {
+        } finally {
             odometry.stop();
         }
     }
