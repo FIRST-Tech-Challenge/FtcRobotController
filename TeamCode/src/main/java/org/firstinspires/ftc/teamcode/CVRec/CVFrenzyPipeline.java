@@ -14,13 +14,13 @@ public class CVFrenzyPipeline extends CVPipelineBase {
     private Mat YCrCb = new Mat();
     private Mat Cb = new Mat();
 
-    static final Point REGION_ANCHOR_POINT = new Point(40,100);
+    static final Point REGION_ANCHOR_POINT = new Point(0,0);
     static final int REGION_WIDTH = 70;
-    static final int REGION_HEIGHT = 100;
+    static final int REGION_HEIGHT = 50;
 
-    static final Point REGION_ANCHOR_POINT_2 = new Point(210,100);
+    static final Point REGION_ANCHOR_POINT_2 = new Point(210,0);
     static final int REGION_WIDTH_2 = 70;
-    static final int REGION_HEIGHT_2 = 100;
+    static final int REGION_HEIGHT_2 = 50;
 
     Point region_pointA = new Point(
             REGION_ANCHOR_POINT.x,

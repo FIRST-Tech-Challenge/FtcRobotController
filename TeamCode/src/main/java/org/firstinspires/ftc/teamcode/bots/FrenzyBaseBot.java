@@ -45,6 +45,7 @@ public class FrenzyBaseBot implements OdoBot {
     static final double MOTOR_RPM_GB = 312;
     static final double MOTOR_RPS_GB = MOTOR_RPM_GB/60;
     public static final double MAX_VELOCITY_GB = COUNTS_PER_MOTOR_GB * MOTOR_RPS_GB;
+    public static final double MAX_VELOCITY_REV = 2140;
 
     static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP. was 2 in the sample
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
