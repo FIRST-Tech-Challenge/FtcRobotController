@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.QuickTelemetry;
+import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 import java.io.IOException;

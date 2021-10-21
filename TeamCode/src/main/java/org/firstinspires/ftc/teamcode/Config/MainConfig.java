@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Config;
 
-import org.firstinspires.ftc.teamcode.AllianceColor;
+import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 
 /** Important configuration
  *
