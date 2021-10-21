@@ -43,6 +43,9 @@ public class OdometryFeedbackMode extends LinearOpMode {
             Thread odometryThread = new Thread(odometry);
             odometryThread.start();
 
+            telemetry.addData("Odometry", "Started");
+            telemetry.update();
+
             waitForStart();
             runtime.reset();
 
@@ -63,13 +66,13 @@ public class OdometryFeedbackMode extends LinearOpMode {
 
                     if (Math.abs(strafe) > 0) {
                         telemetry.addData("Strafing", "Left: %2f", strafe);
-                        telemetry.update();
                         if (strafe < 0) {
                             robot.strafeRight(Math.abs(strafe));
                         } else {
                             robot.strafeLeft(Math.abs(strafe));
                         }
                     } else {
+                        telemetry.addData("Moving", "Drive: %2f, Turn: %.2f", drive, turn);
                         robot.move(drive, turn);
                     }
 
