@@ -4,6 +4,13 @@
  * It is extraordinarily rare that you will ever need to edit this file.
  */
 
+<<<<<<< HEAD
+=======
+configurations {
+    doc { transitive false }
+}
+
+>>>>>>> drive
 buildscript {
     repositories {
         mavenCentral()
@@ -15,6 +22,7 @@ buildscript {
     }
 }
 
+<<<<<<< HEAD
 plugins {
     id 'idea' // optional (to generate IntelliJ IDEA project files)
 }
@@ -23,12 +31,18 @@ configurations {
     doc { transitive false }
 }
 
+=======
+>>>>>>> drive
 // This is now required because aapt2 has to be downloaded from the
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
     repositories {
         mavenCentral()
         google()
+<<<<<<< HEAD
+=======
+        // jcenter()  // Needed for tensorflow-lite
+>>>>>>> drive
     }
 }
 
@@ -40,6 +54,7 @@ repositories {
     }
 }
 
+<<<<<<< HEAD
 
 dependencies {
     doc('org.firstinspires.ftc:Hardware:7.0.0')
@@ -47,6 +62,14 @@ dependencies {
     doc('org.firstinspires.ftc:FtcCommon:7.0.0')
     doc('org.firstinspires.ftc:OnBotJava:7.0.0')
     doc('org.firstinspires.ftc:Inspection:7.0.0')
+=======
+dependencies {
+    doc 'org.firstinspires.ftc:Hardware:7.0.0'
+    doc 'org.firstinspires.ftc:RobotCore:7.0.0'
+    doc 'org.firstinspires.ftc:FtcCommon:7.0.0'
+    doc 'org.firstinspires.ftc:OnBotJava:7.0.0'
+    doc 'org.firstinspires.ftc:Inspection:7.0.0'
+>>>>>>> drive
 }
 
 task extractJavadoc {
@@ -70,3 +93,7 @@ task extractJavadoc {
         }
     }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> drive

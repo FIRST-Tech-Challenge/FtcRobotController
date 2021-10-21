@@ -100,6 +100,36 @@ public class PIDController
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Get the Proportional coefficient
+     * @return proportional coefficient
+     */
+    public double getP()
+    {
+        return m_P;
+    }
+
+    /**
+     * Get the Integral coefficient
+     * @return integral coefficient
+     */
+    public double getI()
+    {
+        return m_I;
+    }
+
+    /**
+     * Get the Differential coefficient
+     * @return differential coefficient
+     */
+    public double getD()
+    {
+        return m_D;
+    }
+
+    /**
+>>>>>>> drive
      * Return the current PID result for the last input set with setInput().
      * This is always centered on zero and constrained the the max and min outs
      * @return the latest calculated output

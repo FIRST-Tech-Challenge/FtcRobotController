@@ -30,7 +30,6 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class Vision extends MinorSubsystem {
     MarkerLocation finalMarkerLocation; // Marker Location
 
-
     WebcamName webcamName = null;
 
     private static final String VUFORIA_KEY =
