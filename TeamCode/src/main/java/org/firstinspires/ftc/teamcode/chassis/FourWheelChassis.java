@@ -17,8 +17,8 @@ public class FourWheelChassis extends Chassis {
     @Override
     public void drive(Gamepad gamepad){
         //This works, just trust me on it. Slack me or something if you need a full explanation.
-        double lPower = (gamepad.left_stick_y + gamepad.right_stick_x);
-        double rPower = (gamepad.left_stick_y - gamepad.right_stick_x);
+        double lPower = (-gamepad.left_stick_y + gamepad.right_stick_x);
+        double rPower = (-gamepad.left_stick_y - gamepad.right_stick_x);
 
         //This bit seems complicated, but it just gets the maximum absolute value of all the motors.
         double maxPower = Math.max(Math.abs(lPower), Math.abs(rPower));
