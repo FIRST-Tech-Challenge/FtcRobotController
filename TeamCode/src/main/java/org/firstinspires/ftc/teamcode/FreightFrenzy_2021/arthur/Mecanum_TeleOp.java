@@ -4,11 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp(name="Basic: BeeLine", group="Linear OpMode")
+@TeleOp(name="Basic: Mecanum", group="Linear OpMode")
 public class Mecanum_TeleOp extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private final int TICKS_PER_ROTATION = 800;
@@ -25,6 +26,13 @@ public class Mecanum_TeleOp extends LinearOpMode {
     private double rEncoderPos = 0;
     private DcMotorEx centerEncoder;
     private double cEncoderPos = 0;
+
+    private DcMotor frontLeft;
+    private DcMotor frontRight;
+    private DcMotor backLeft;
+    private DcMotor backRight;
+
+    private DcMotor lifterMotor;
 
     private double speedRate;
     private double x;
@@ -46,6 +54,10 @@ public class Mecanum_TeleOp extends LinearOpMode {
         } else {
             setBrakeBehavior();
         }
+    };
+
+    public Action liftUp = () -> {
+        lifterMotor.setPower(40);
     };
 
     private void setFloatingBehavior() {
@@ -80,7 +92,9 @@ public class Mecanum_TeleOp extends LinearOpMode {
         gamepad.onTriggerOnce("left", decreaseSpeedRate);
         gamepad.onTriggerOnce("right", increaseSpeedRate);
 
-        gamepad.onButtonOnce("x", toggleZeroPowerBehavior);
+        gamepad.onButtonOnce("a", toggleZeroPowerBehavior);
+
+        gamepad.onButtonOnce("x", liftUp);
 
         double leftPower = gamepad.calcLeftPower(speedRate);
         double rightPower = gamepad.calcRightPower(speedRate);
@@ -170,21 +184,28 @@ public class Mecanum_TeleOp extends LinearOpMode {
 
     private void initialize() {
         gamepad = new GamepadState(gamepad1);
-        leftMotors = hardwareMap.get(DcMotor.class, "leftMotors");
-        leftMotors.setDirection(DcMotor.Direction.FORWARD);
-        leftMotors.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotors = hardwareMap.get(DcMotor.class, "rightMotors");
-        rightMotors.setDirection(DcMotor.Direction.REVERSE);
-        rightMotors.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftEncoder = hardwareMap.get(DcMotorEx.class, "leftTracking");
-        leftEncoder.setDirection(DcMotorEx.Direction.FORWARD);
-        leftEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        rightEncoder = hardwareMap.get(DcMotorEx.class, "rightTracking");
-        rightEncoder.setDirection(DcMotorEx.Direction.FORWARD);
-        rightEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        centerEncoder = hardwareMap.get(DcMotorEx.class, "backTracking");
-        centerEncoder.setDirection(DcMotorEx.Direction.FORWARD);
-        centerEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        frontLeft = hardwareMap.get(DcMotor.class, "LF");
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        frontRight = hardwareMap.get(DcMotor.class, "RF");
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backLeft = hardwareMap.get(DcMotor.class, "LB");
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight = hardwareMap.get(DcMotor.class, "RB");
+        backRight.setDirection(DcMotor.Direction.REVERSE);
+
+        lifterMotor = hardwareMap.get(DcMotor.class, "Slide");
+        lifterMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        // Odometry wheels
+//        leftEncoder = hardwareMap.get(DcMotorEx.class, "leftTracking");
+//        leftEncoder.setDirection(DcMotorEx.Direction.FORWARD);
+//        leftEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        rightEncoder = hardwareMap.get(DcMotorEx.class, "rightTracking");
+//        rightEncoder.setDirection(DcMotorEx.Direction.FORWARD);
+//        rightEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        centerEncoder = hardwareMap.get(DcMotorEx.class, "backTracking");
+//        centerEncoder.setDirection(DcMotorEx.Direction.FORWARD);
+//        centerEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         speedRate = DEFAULT_SPEED_RATE;
 
