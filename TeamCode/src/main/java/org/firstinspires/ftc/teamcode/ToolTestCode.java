@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.tools.*;
+import org.firstinspires.ftc.teamcode.parts.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,10 +16,12 @@ public class ToolTestCode extends LinearOpMode {
     public void runOpMode() {
         hardwareMap.get(Blinker.class, "Control Hub");
         hardwareMap.get(Blinker.class, "Expansion Hub 2");
-        final GamepadEx controller = new GamepadEx(gamepad1);
-        final Lift lift = new Lift(hardwareMap, controller, telemetry);
-        final Carousel carousel = new Carousel(hardwareMap,controller);
-        final Intake intake = new Intake(hardwareMap,controller);
+        final GamepadEx moveGamepad = new GamepadEx(gamepad1);
+        final GamepadEx toolGamepad = new GamepadEx(gamepad2);
+        final Lift lift = new Lift(hardwareMap, toolGamepad, telemetry);
+        final Movement move = new Movement(hardwareMap,moveGamepad);
+        final Carousel carousel = new Carousel(hardwareMap,toolGamepad);
+        final Intake intake = new Intake(hardwareMap,toolGamepad);
         final ElapsedTime clocktimer = new ElapsedTime();
         int clocks = 0;
         int clockOutput = 0;
@@ -32,6 +34,7 @@ public class ToolTestCode extends LinearOpMode {
                 clocktimer.reset();
             }
             telemetry.addData("ClocksPerSecond", clockOutput);
+            move.update();
             lift.update();
             carousel.update();
             intake.update();

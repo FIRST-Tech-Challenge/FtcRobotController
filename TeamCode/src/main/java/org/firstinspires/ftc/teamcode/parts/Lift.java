@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tools;
+package org.firstinspires.ftc.teamcode.parts;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import androidx.annotation.NonNull;

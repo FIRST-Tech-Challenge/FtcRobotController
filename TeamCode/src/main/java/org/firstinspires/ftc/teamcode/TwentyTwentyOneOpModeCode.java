@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.teamcode.tools.Carousel;
+import org.firstinspires.ftc.teamcode.parts.Carousel;
 
 import com.arcrobotics.ftclib.gamepad.*;
 import java.lang.Math;
