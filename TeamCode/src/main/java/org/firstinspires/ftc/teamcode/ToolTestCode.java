@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
-
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.parts.*;
+import org.firstinspires.ftc.teamcode.parts.Carousel;
+import org.firstinspires.ftc.teamcode.parts.ControllerMovement;
+import org.firstinspires.ftc.teamcode.parts.Intake;
+import org.firstinspires.ftc.teamcode.parts.Lift;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +20,7 @@ public class ToolTestCode extends LinearOpMode {
         final GamepadEx moveGamepad = new GamepadEx(gamepad1);
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
         final Lift lift = new Lift(hardwareMap, toolGamepad, telemetry);
-        final Movement move = new Movement(hardwareMap,moveGamepad);
+        final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
         final Carousel carousel = new Carousel(hardwareMap,toolGamepad);
         final Intake intake = new Intake(hardwareMap,toolGamepad);
         final ElapsedTime clocktimer = new ElapsedTime();

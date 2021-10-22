@@ -91,8 +91,6 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
         double strafe;
         double rotate;
         double movementLength = 0;
-        double forwardLength;
-        double lateralMovement;
         double increaseIntensity = 5;
         boolean upWait = false;
         boolean downWait = false;
@@ -101,9 +99,7 @@ public class TwentyTwentyOneOpModeCode extends LinearOpMode {
         double drivePreset = 0;
         double increaseDecrease = 1;
         boolean aWait = false;
-        double autonomousTestStep = 0;
         double rotationGoal = chassis.imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
-        double banana2 = -1;
         boolean servoState = false;
 
         //double timerStopTime = 0;
