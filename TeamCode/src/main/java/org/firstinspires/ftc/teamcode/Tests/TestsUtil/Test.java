@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Tests.Util;
+package org.firstinspires.ftc.teamcode.Tests.TestsUtil;
 
 public class Test {
     private static boolean assertCase(Object first, Object second) {
