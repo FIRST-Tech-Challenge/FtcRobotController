@@ -24,6 +24,9 @@ public class AutoFrenzy extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+
+        //Do computer vision here
+
         /*
         int x = find(); //get an input of 1,2,3 on where the item is
         if(x == 1){
