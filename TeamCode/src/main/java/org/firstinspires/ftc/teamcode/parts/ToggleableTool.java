@@ -13,11 +13,12 @@ import androidx.annotation.NonNull;
  */
 public abstract class ToggleableTool<T extends DcMotorSimple> {
     private final T motor;
+    private final double power;
     private final ToggleButtonReader reader;
     public void update() {
         reader.readValue();
         if (reader.getState()) {
-            motor.setPower(1);
+            motor.setPower(power);
         } else {
             motor.setPower(0);
         }
@@ -29,9 +30,11 @@ public abstract class ToggleableTool<T extends DcMotorSimple> {
      * @param tClass Either DcMotor or CRServo, any extension of DcMotorSimple
      * @param name Hardware map name of tool motor/CRServo
      * @param button button to be pushed for toggle, uses GamepadKeys.Button
+     * @param power power motor should be set to upon toggle
      */
-    public ToggleableTool(@NonNull HardwareMap map, GamepadEx toolGamepad, Class<T> tClass, String name, GamepadKeys.Button button) {
+    public ToggleableTool(@NonNull HardwareMap map, GamepadEx toolGamepad, Class<T> tClass, String name, GamepadKeys.Button button, double power) {
         this.motor = map.get(tClass, name);
         this.reader = new ToggleButtonReader(toolGamepad, button);
+        this.power = power;
     }
 }

@@ -86,4 +86,5 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-eocvsim_workspace.json
+*workspace.json
+*.hprof

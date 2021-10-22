@@ -9,6 +9,6 @@ import androidx.annotation.NonNull;
  */
 public class Carousel extends ToggleableTool<CRServo> {
     public Carousel(@NonNull HardwareMap map, GamepadEx toolGamepad) {
-        super(map, toolGamepad, CRServo.class, "spinner", GamepadKeys.Button.B);
+        super(map, toolGamepad, CRServo.class, "spinner", GamepadKeys.Button.B, -1);
     }
 }
