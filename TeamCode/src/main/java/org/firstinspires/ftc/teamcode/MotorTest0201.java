@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="MotorTest0201", group="Teleop")
-//@Disabled
+@Disabled
 public class MotorTest0201 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

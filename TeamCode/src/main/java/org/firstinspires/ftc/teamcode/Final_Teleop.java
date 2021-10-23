@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.StrictMath.abs;
 
 @TeleOp(name="Final_Teleop", group="Teleop")
-//@Disabled
+@Disabled
 public class Final_Teleop extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

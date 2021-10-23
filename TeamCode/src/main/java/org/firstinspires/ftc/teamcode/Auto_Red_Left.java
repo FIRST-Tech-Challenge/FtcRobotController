@@ -20,7 +20,7 @@ import android.graphics.Color;
 import android.view.View;
 
 @Autonomous(name="Auto_Red_Left", group="Autonomous")
-//@Disabled
+@Disabled
 public class Auto_Red_Left extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor lf;
