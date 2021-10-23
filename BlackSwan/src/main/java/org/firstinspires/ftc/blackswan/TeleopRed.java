@@ -33,7 +33,7 @@ public class TeleopRed extends LinearOpMode {
         waitForStart();
 
         //telemetry testing delete later!!!
-        int detection = 0;
+        String detection = "none";
         while(opModeIsActive()) {
             //turn with right stick
             telemetry.addData("left stick value x", gamepad1.left_stick_x);
@@ -58,62 +58,62 @@ public class TeleopRed extends LinearOpMode {
                 backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 backRight.setPower(0);
                 frontLeft.setPower(0);
-                detection = 1;
+                detection = "UpLeft";
             } else if (gamepad1.left_stick_x > 0.4 && gamepad1.left_stick_y < -0.4){
                 //move UpRight
                 frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 backLeft.setPower(0);
                 frontRight.setPower(0);
-                detection = 2;
+                detection = "UpRight";
             } else if (gamepad1.left_stick_x > 0.4 && gamepad1.left_stick_y > 0.4){
                 //move DownRight
                 frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                 backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                 backRight.setPower(0);
                 frontLeft.setPower(0);
-                detection = 3;
-            } else if (gamepad1.left_stick_x > -0.4 && gamepad1.left_stick_y > 0.4){
+                detection = "DownRight";
+            } else if (gamepad1.left_stick_x < -0.4 && gamepad1.left_stick_y > 0.4){
                 //move DownLeft
                 frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                 backRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                 backLeft.setPower(0);
                 frontRight.setPower(0);
-                detection = 4;
+                detection = "DownLeft";
             } else if (gamepad1.left_stick_y > 0.1){
-                //move Up
-                frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
-                frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
-                backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
-                backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
-                detection = 5;
-            } else if (gamepad1.left_stick_y < -0.1){
                 //move Down
                 frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
-                detection = 6;
+                detection = "Down";
+            } else if (gamepad1.left_stick_y < -0.1){
+                //move Up
+                frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                detection = "Up";
             } else if (gamepad1.left_stick_x > 0.1){
                 //move Right
                 frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
                 backRight.setPower(gamepad1.left_stick_x * MAX_SPEED* -1);
                 frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
                 backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
-                detection = 7;
+                detection = "Right";
             } else if (gamepad1.left_stick_x < -0.1){
                 //move Left
                 frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
                 backRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
                 frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
                 backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
-                detection = 8;
+                detection = "Left";
             }else {
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
-                detection = 0;
+                detection = "None";
             }
 
 
