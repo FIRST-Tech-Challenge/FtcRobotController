@@ -339,5 +339,230 @@ public class DriveMethods extends LinearOpMode {
 
         }
 
+    public void straightDriving (double distance, double power, Direction direction, boolean brake) {
+
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double distanceTraveled = 0;
+        int TARGET_POSITION = (int) ((distance / DISTANCE_PER_CLICK) / 0.826 / 1.4);
+        double ScaleFactorForStrafing = 0.95;
+        double startingPosition = getCurrentZAngle() - 0.01;
+        double currentZ = getCurrentZAngle();
+        double difference = 0;
+
+        if (direction == Direction.LEFT) {
+            motorFrontRight.setTargetPosition((int) (TARGET_POSITION / ScaleFactorForStrafing));
+            motorFrontLeft.setTargetPosition((int) (TARGET_POSITION / ScaleFactorForStrafing));
+            motorBackRight.setTargetPosition((int) (TARGET_POSITION / ScaleFactorForStrafing));
+            motorBackLeft.setTargetPosition((int) (TARGET_POSITION / ScaleFactorForStrafing));
+
+        } else {
+
+            motorFrontRight.setTargetPosition((TARGET_POSITION));
+            motorFrontLeft.setTargetPosition((TARGET_POSITION));
+            motorBackRight.setTargetPosition((TARGET_POSITION));
+            motorBackLeft.setTargetPosition((TARGET_POSITION));
+
+        }
+
+
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        driveDirection(power, direction);
+        int i = 0;
+        while (distanceTraveled < TARGET_POSITION) {
+            distanceTraveled = (abs(motorFrontLeft.getCurrentPosition()) + abs(motorFrontRight.getCurrentPosition()) + abs(motorBackLeft.getCurrentPosition()) + abs(motorBackRight.getCurrentPosition())) / 4;
+            telemetry.addLine("Starting Position: " + startingPosition);
+            telemetry.addLine("Current Z: " + currentZ);
+            telemetry.addLine("Difference: " + difference);
+            telemetry.addLine("Using straight driving");
+            telemetry.addLine("motorFrontRight" + motorFrontRight.getPower());
+            telemetry.addLine("motorBackRight" + motorBackRight.getPower());
+            telemetry.addLine("motorFrontLeft" + motorFrontLeft.getPower());
+            telemetry.addLine("motorBackLeft" + motorBackLeft.getPower());
+
+            //This block of telemetry statements is used to tell us which we are turning if we are making corrections
+            //The "i" is activated in the below conditions, ex: if we increase power on the right side, we "turn left"
+            if (i == 0) {
+                telemetry.addLine("Not making corrections");
+            } else if (i == 1) {
+                telemetry.addLine("Turning Left...");
+            } else if (i == -1) {
+                telemetry.addLine("Turning Right...");
+            } else if (i == 2) {
+                telemetry.addLine("Turning Right...");
+            } else if (i == -2) {
+                telemetry.addLine("Turning Left...");
+            }
+            telemetry.update();
+            currentZ = getCurrentZAngle();
+            difference = startingPosition - currentZ;
+            switch (direction) {
+                case FORWARD:
+                    if (startingPosition < 0) {
+                        if (difference > 2) {
+                            motorFrontRight.setPower(power + 0.2);
+                            motorBackRight.setPower(power + 0.2);
+                            motorFrontLeft.setPower(power);
+                            motorBackLeft.setPower(power);
+
+                            i = 1;
+                        } else if (difference < -2) {
+                            motorFrontLeft.setPower(power + 0.2);
+                            motorBackLeft.setPower(power + 0.2);
+                            motorFrontRight.setPower(power);
+                            motorBackRight.setPower(power);
+                            i = -1;
+                        } else {
+                            i = 0;
+                            driveDirection(power, direction);
+                        }
+                    } else if (startingPosition > 0) {
+                        if (difference > 2) {
+                            motorFrontRight.setPower(power + 0.2);
+                            motorBackRight.setPower(power + 0.2);
+                            motorFrontLeft.setPower(power);
+                            motorBackLeft.setPower(power);
+                            i = 1;
+                        } else if (difference < -2) {
+                            motorFrontLeft.setPower(power + 0.2);
+                            motorBackLeft.setPower(power + 0.2);
+                            motorFrontRight.setPower(power);
+                            motorBackRight.setPower(power);
+                            i = -1;
+                        } else {
+                            i = 0;
+                            driveDirection(power, direction);
+                        }
+                    }
+                    break;
+
+
+                case BACKWARD:
+                    if (startingPosition < 0) {
+                        if (difference > 1.5) {
+                            motorFrontLeft.setPower(-power - 0.2);
+                            motorBackLeft.setPower(-power - 0.2);
+                            motorFrontRight.setPower(-power);
+                            motorBackRight.setPower(-power);
+
+                            i = 1;
+                        } else if (difference < -1.5) {
+                            motorFrontRight.setPower(-power - 0.2);
+                            motorBackRight.setPower(-power - 0.2);
+                            motorFrontLeft.setPower(-power);
+                            motorBackLeft.setPower(-power);
+                            i = -1;
+                        } else {
+                            i = 0;
+                            driveDirection(power, direction);
+                        }
+                    } else if (startingPosition > 0) {
+                        if (difference > 1.5) {
+                            motorFrontLeft.setPower(-power - 0.2);
+                            motorBackLeft.setPower(-power - 0.2);
+                            motorFrontRight.setPower(-power);
+                            motorBackRight.setPower(-power);
+                            i = 1;
+                        } else if (difference < -1.5) {
+                            motorFrontRight.setPower(-power - 0.2);
+                            motorBackRight.setPower(-power - 0.2);
+                            motorFrontLeft.setPower(-power);
+                            motorBackLeft.setPower(-power);
+                            i = -1;
+                        } else {
+                            i = 0;
+                            driveDirection(power, direction);
+                        }
+                    }
+                    break;
+                case LEFT:
+                    if (startingPosition < 0) {
+                        if (difference > 2) {
+                            motorFrontRight.setPower(power + 0.2);
+                            motorBackRight.setPower(-power);
+                            motorFrontLeft.setPower(-power - 0.2);
+                            motorBackLeft.setPower(power);
+
+                            i = 1;
+                        } else if (difference < -2) {
+                            motorFrontLeft.setPower(-power);
+                            motorBackLeft.setPower(power + 0.2);
+                            motorFrontRight.setPower(power);
+                            motorBackRight.setPower(-power - 0.2);
+                            i = -1;
+                        } else {
+                            i = 0;
+                            driveDirection(power, direction);
+                        }
+                    } else if (startingPosition > 0) {
+                        if (difference > 2) {
+                            motorFrontRight.setPower(power + 0.2);
+                            motorBackRight.setPower(-power);
+                            motorFrontLeft.setPower(-power - 0.2);
+                            motorBackLeft.setPower(power);
+                            i = 1;
+                        } else if (difference < -2) {
+                            motorFrontLeft.setPower(-power);
+                            motorBackLeft.setPower(power + 0.2);
+                            motorFrontRight.setPower(power);
+                            motorBackRight.setPower(-power - 0.2);
+                            i = -1;
+                        } else {
+                            i = 0;
+                            driveDirection(power, direction);
+                        }
+                    }
+                    break;
+                case RIGHT:
+                    if (startingPosition < 0) {
+                        if (difference > 0.5) {
+                            motorFrontRight.setPower(-power);
+                            motorBackRight.setPower(power + 0.2);
+                            motorFrontLeft.setPower(power);
+                            motorBackLeft.setPower(-power - 0.2);
+
+                            i = 1;
+                        } else if (difference < -0.5) {
+                            motorFrontLeft.setPower(power + 0.2);
+                            motorBackLeft.setPower(-power);
+                            motorFrontRight.setPower(-power - 0.2);
+                            motorBackRight.setPower(power);
+                            i = -1;
+                        } else {
+                            i = 0;
+                            driveDirection(power, direction);
+                        }
+                    } else if (startingPosition > 0) {
+                        if (difference > 0.5) {
+                            motorFrontRight.setPower(-power);
+                            motorBackRight.setPower(power + 0.2);
+                            motorFrontLeft.setPower(power);
+                            motorBackLeft.setPower(-power - 0.2);
+                            i = 1;
+                        } else if (difference < -0.5) {
+                            motorFrontLeft.setPower(power + 0.2);
+                            motorBackLeft.setPower(-power);
+                            motorFrontRight.setPower(-power - 0.2);
+                            motorBackRight.setPower(power);
+                            i = -1;
+                        } else {
+                            i = 0;
+                            driveDirection(power, direction);
+                        }
+                    }
+                    break;
+            }
+        }
+
+
+    }
+
 
 }

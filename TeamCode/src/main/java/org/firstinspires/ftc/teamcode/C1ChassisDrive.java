@@ -69,7 +69,6 @@ public class C1ChassisDrive extends DriveMethods {
     double leftY;
     double leftX;
     double rightX;
-    double rightY;
     double rightTrigger1;
     double carouselPosition;
     boolean xButton;
@@ -84,13 +83,12 @@ public class C1ChassisDrive extends DriveMethods {
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
         motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
-        motorTankTread = hardwareMap.get(DcMotor.class, "tanktread");
         servoCarousel = hardwareMap.get(Servo.class, "carousel");
 
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -104,7 +102,6 @@ public class C1ChassisDrive extends DriveMethods {
             leftY = -gamepad1.left_stick_y;
             leftX = gamepad1.left_stick_x;
             rightX = gamepad1.right_stick_x;
-            rightY = gamepad1.right_stick_y;
             rightTrigger1 = gamepad1.right_trigger;
             xButton = gamepad1.x;
 
@@ -114,7 +111,6 @@ public class C1ChassisDrive extends DriveMethods {
             motorBackLeft.setPower(leftY - leftX + rightX);
             motorFrontRight.setPower(leftY - leftX - rightX);
             motorBackRight.setPower(leftY + leftX - rightX);
-            motorTankTread.setPower(rightY);
 
 
 
@@ -131,15 +127,11 @@ public class C1ChassisDrive extends DriveMethods {
 
                 //gently pushes robot backward whilst rightTrigger1 engaged
             if (rightTrigger1 > 0) {
-                driveDirection(.2, Direction.BACKWARD);
+                driveDirection(.2, Direction.FORWARD);
             } else {
-                driveDirection(0, Direction.BACKWARD);
+                driveDirection(0, Direction.FORWARD);
             }
 
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            if(rightY > 0 || rightY < 0){
-                telemetry.addLine("Tank Tread Activated! Escape the Evil Pipes of Doom!");
-            }
             telemetry.addLine("Carousel Speed" + rightTrigger1);
             telemetry.update();
         }

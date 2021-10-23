@@ -29,13 +29,21 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
+import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
+import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
+import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
+import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -50,13 +58,16 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-//I
+@Autonomous(name="RedCarousel", group="Linear Opmode")
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+public class RedCarousel extends DriveMethods {
+    double leftY;
+    double leftX;
+    double rightX;
+    double rightTrigger1;
+    double carouselPosition;
+    boolean xButton;
 
-@Disabled // <-- Delete this line so that the program shows up on the phone.
-
-public class LinearOpModeTemplate extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -66,29 +77,41 @@ public class LinearOpModeTemplate extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        /**
-         * Any code for initilization goes here
-         */
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
+        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
+        servoCarousel = hardwareMap.get(Servo .class, "carousel");
 
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-        /**
-         * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
-         */
+        driveForDistance(.3,.3,Direction.BACKWARD);
+        driveForDistance(.3,.3, Direction.RIGHT);
+        driveForDistance(.1, .3,Direction.FORWARD);
+        servoCarousel.setPosition(.6);
+        driveDirection(.05,Direction.FORWARD);
+        sleep(3500);
+        servoCarousel.setPosition(.5);
+        driveDirection(0,Direction.FORWARD);
+        driveForDistance(.05,.3, Direction.BACKWARD);
+        driveForDistance(.2,.3,Direction.LEFT);
+        rotateToPosition(.3,90);
+        sleep(10000);
+        driveForDistance(.7,.3,Direction.FORWARD);
+        driveForDistance(.5,.3,Direction.RIGHT);
+        driveForDistance(1,.3,Direction.FORWARD);
+        driveForDistance(.1,.3,Direction.RIGHT);
+        driveForDistance(.6,.3,Direction.FORWARD);
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
 
-            /**
-             * Any Teleop code goes here.
-             */
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
-        }
+
     }
 }

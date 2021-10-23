@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -50,13 +51,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-//I
+@Autonomous(name="RedPark", group="Linear Opmode")
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-
-@Disabled // <-- Delete this line so that the program shows up on the phone.
-
-public class LinearOpModeTemplate extends DriveMethods {
+public class RedPark extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -66,29 +63,11 @@ public class LinearOpModeTemplate extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        /**
-         * Any code for initilization goes here
-         */
-
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-
-        /**
-         * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
-         */
-
+        driveForDistance(.8,.3,Direction.FORWARD);
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
 
-            /**
-             * Any Teleop code goes here.
-             */
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
-        }
     }
 }
