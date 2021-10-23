@@ -77,7 +77,14 @@ public class FrenzyHardwareMap
         // Save reference to Hardware map
         frenzyMap = hwMap;
 
-        //Define and Initialize Motors
+        //Setup Wheel measurements for REV Motors
+        // encoder clicks are originally 28
+        final int    REV_ENCODER_CLICKS = 28;
+        final double REV_WHEEL_DIAM = 7.5;
+        final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
+        final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
+
+        //Define and Initialize DriveTrain Motors
         motorFrontLeft = frenzyMap.get(DcMotor.class,"frontLeft");
         motorBackLeft = frenzyMap.get(DcMotor.class,"backLeft");
         motorFrontRight = frenzyMap.get(DcMotor.class,"frontRight");
