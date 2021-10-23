@@ -10,19 +10,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ArmMotor extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Servo motor = hardwareMap.get(Servo.class,"motor");
-        ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
+        Servo armMotor = hardwareMap.get(Servo.class,"armMotor");
 
         waitForStart();
         while (opModeIsActive()) {
-            float motorPower = gamepad1.left_stick_y;
-            motor.setPosition(9);
-            telemetry.addData("red", colorSensor.red());
-            telemetry.update();
+            if (gamepad2.a){
+                armMotor.setPosition(1);
+            }
+            if (gamepad2.b){
+                armMotor.setPosition(-1);
+            }
+
 
         }
-
-        motor.setPower(0.0);
+        armMotor.setPosition(0.0);
     }
 
 
