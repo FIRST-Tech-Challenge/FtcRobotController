@@ -126,7 +126,7 @@ public class TeleopRed extends LinearOpMode {
 
     protected void turnDuck(CRServo carousel){
         if(gamepad2.right_bumper){
-            carousel.setPower(-5);
+            carousel.setPower(-1);
         } else {
             carousel.setPower(0);
         }
