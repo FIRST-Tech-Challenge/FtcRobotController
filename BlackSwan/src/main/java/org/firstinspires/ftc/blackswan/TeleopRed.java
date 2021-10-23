@@ -54,29 +54,29 @@ public class TeleopRed extends LinearOpMode {
                 backRight.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
             } else if (gamepad1.left_stick_x < -0.1 && gamepad1.left_stick_y < -0.1){
                 //move UpLeft
-                frontRight.setPower(1 * MAX_SPEED);
-                backLeft.setPower(1 * MAX_SPEED);
+                frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 backRight.setPower(0);
                 frontLeft.setPower(0);
                 detection = "UpLeft";
             } else if (gamepad1.left_stick_x > 0.1 && gamepad1.left_stick_y < -0.1){
                 //move UpRight
-                frontLeft.setPower(1 * MAX_SPEED);
-                backRight.setPower(1 * MAX_SPEED);
+                frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 backLeft.setPower(0);
                 frontRight.setPower(0);
                 detection = "UpRight";
             } else if (gamepad1.left_stick_x > 0.1 && gamepad1.left_stick_y > 0.1){
                 //move DownRight
-                frontRight.setPower(1 * MAX_SPEED * -1);
-                backLeft.setPower(1 * MAX_SPEED * -1);
+                frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 backRight.setPower(0);
                 frontLeft.setPower(0);
                 detection = "DownRight";
             } else if (gamepad1.left_stick_x < -0.1 && gamepad1.left_stick_y > 0.1){
                 //move DownLeft
-                frontLeft.setPower(1 * MAX_SPEED * -1);
-                backRight.setPower(1 * MAX_SPEED * -1);
+                frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
                 backLeft.setPower(0);
                 frontRight.setPower(0);
                 detection = "DownLeft";
