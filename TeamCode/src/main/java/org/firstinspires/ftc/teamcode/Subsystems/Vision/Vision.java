@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Config.VisionConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarker;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerPipeline;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerThread;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
@@ -82,11 +83,8 @@ public class Vision extends MinorSubsystem {
         robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
         telemetry.telemetry(3, "Vision:", "Detecting Marker");
-        DetectMarkerThread detectMarkerRunnable = new DetectMarkerThread(robot, robotCamera);
-        Thread detectMarkerThread = new Thread(detectMarkerRunnable);
-        detectMarkerThread.start();
-        detectMarkerThread.join();
-        finalMarkerLocation = detectMarkerRunnable.getMarkerLocation();
+        DetectMarker detectMarkerRunnable = new DetectMarker(robot, robotCamera);
+        MarkerLocation finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
         telemetry.telemetry(2, "Vision:", "Detected Marker");
     }
 

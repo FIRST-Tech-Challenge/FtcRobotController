@@ -46,10 +46,6 @@ public class Robot extends Subsystem {
     public DcMotorEx frontRightDriveMotor;
     public DcMotorEx rearRightDriveMotor;
     public DcMotorEx rearLeftDriveMotor;
-    public DcMotorEx launch1;
-    public DcMotorEx launch2a;
-    public DcMotorEx launch2b;
-    public DcMotorEx intake;
 
     // Odometry
     public List<LynxModule> allHubs;
@@ -105,18 +101,19 @@ public class Robot extends Subsystem {
      * @param opMode the operational mode, the telemetry and hardware map is gotten from this
      * @param timer an timer
      *
-     * @throws IOException Might throw it.
-     *
      * @see LinearOpMode
      * @see ElapsedTime
      * @see AllianceColor
      */
-    public Robot(LinearOpMode opMode, ElapsedTime timer) throws IOException {
+    public Robot(LinearOpMode opMode, ElapsedTime timer) {
         this.hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
         this.oldTelemetry = opMode.telemetry;
         this.telemetry = new QuickTelemetry(oldTelemetry);
         this.timer = timer;
+
+
+        this.telemetry.telemetry(1, "running init()", "Running init()");
 
         init();
     }
@@ -125,24 +122,23 @@ public class Robot extends Subsystem {
      * Initializes everything
      *
      * <p>It first initializes some mechanical things, then it initializes the subsystems.</p>
-     * @throws IOException
      *
      * @see #initMechanical()
      */
-    public void init() throws IOException {
+    public void init() {
         telemetry.telemetry(2, "Mode", " Hardware init started");
         initMechanical(); // mechanical stuff
         telemetry.telemetry(2, "Mode", " Hardware init finished");
 
         // Drive
         telemetry.telemetry(2, "Mode", " Drive init started");
-        List<DcMotorEx> dcMotorExList = new ArrayList<>(4);
-        dcMotorExList.add(frontLeftDriveMotor);
-        dcMotorExList.add(frontRightDriveMotor);
-        dcMotorExList.add(rearLeftDriveMotor);
-        dcMotorExList.add(rearRightDriveMotor);
+        List<DcMotorEx> motors = new ArrayList<>(4);
+        motors.add(frontLeftDriveMotor);
+        motors.add(frontRightDriveMotor);
+        motors.add(rearLeftDriveMotor);
+        motors.add(rearRightDriveMotor);
 
-        drive = new Drive(this, dcMotorExList, intake, launch1, launch2b, imu);
+        drive = new Drive(this, motors, imu);
 //        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.telemetry(1, "Mode", " Drive init finished");
@@ -176,38 +172,6 @@ public class Robot extends Subsystem {
         frontRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearLeftDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-        launch1 = (DcMotorEx) hardwareMap.dcMotor.get("launch1");
-        launch1.setDirection(DcMotorSimple.Direction.REVERSE);
-        launch1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        launch1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        launch1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        launch1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        launch1.setPower(0.0);
-
-        launch2a = (DcMotorEx) hardwareMap.dcMotor.get("launch2a");
-        launch2a.setDirection(DcMotorSimple.Direction.REVERSE);
-        launch2a.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        launch2a.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        launch2a.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        launch2a.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        launch2a.setPower(0.0);
-
-        launch2b = (DcMotorEx) hardwareMap.dcMotor.get("launch2b");
-        launch2b.setDirection(DcMotorSimple.Direction.REVERSE);
-        launch2b.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        launch2b.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        launch2b.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        launch2b.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        launch2b.setPower(0.0);
-
-        intake = (DcMotorEx) hardwareMap.dcMotor.get("intake");
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        intake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        intake.setPower(0.0);
 
         // Servos
 //        clawDeploy = hardwareMap.servo.get("clawDeploy");

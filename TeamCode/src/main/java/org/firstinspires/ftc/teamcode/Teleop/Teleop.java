@@ -1,16 +1,20 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 @TeleOp(name = "Teleop")
-@Disabled
 public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        ElapsedTime timer = new ElapsedTime();
+        Robot robot = new Robot(this, timer);
+
         // Declare our motors
         // Make sure your ID's match your configuration
         DcMotor frontLeft = hardwareMap.dcMotor.get("fl");
@@ -43,6 +47,8 @@ public class Teleop extends LinearOpMode {
             frontRight.setPower(rfPower);
             backLeft.setPower(lrPower);
             backRight.setPower(rrPower);
+
+
         }
     }
 }

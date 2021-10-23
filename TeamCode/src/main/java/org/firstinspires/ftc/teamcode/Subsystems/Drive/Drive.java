@@ -52,16 +52,13 @@ public class Drive extends MinorSubsystem {
      *
      * @param robot the robot
      * @param motors given in a list for readability
-     * @param odL motor
-     * @param odB motor
-     * @param odR motor
      * @param imu the imu
      *
      * @see Robot
      * @see DcMotorEx
      * @see BNO055IMU
      */
-    public Drive(Robot robot, List<DcMotorEx> motors, DcMotorEx odL, DcMotorEx odB, DcMotorEx odR, BNO055IMU imu) {
+    public Drive(Robot robot, List<DcMotorEx> motors, BNO055IMU imu) {
         super(robot);
         telemetry.telemetry(3, "Drive:", "motors init started");
         this.frontLeft = motors.get(0);

@@ -21,14 +21,7 @@ import java.io.IOException;
 @Disabled
 public class Auto extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
-
-    {
-        try {
-            Robot robot = new Robot(this, timer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    Robot robot = new Robot(this, timer);
 
 
     /** Override of runOpMode()
