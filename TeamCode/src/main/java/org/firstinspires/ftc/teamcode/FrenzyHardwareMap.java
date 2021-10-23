@@ -29,9 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-//import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -62,6 +62,16 @@ public class FrenzyHardwareMap
     //Motor in Port 1
     public DcMotor motorBackRight = null;
     //Motor in Port 2
+    public BNO055IMU imu = null;
+    //IMU from RevHub
+
+
+    //Setup Wheel measurements for REV Motors
+    // encoder clicks are originally 28
+    final int    REV_ENCODER_CLICKS = 28;
+    final double REV_WHEEL_DIAM = 7.5;
+    final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
+    final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
 
     /* local OpMode members. */
     HardwareMap frenzyMap =  null;
@@ -77,18 +87,13 @@ public class FrenzyHardwareMap
         // Save reference to Hardware map
         frenzyMap = hwMap;
 
-        //Setup Wheel measurements for REV Motors
-        // encoder clicks are originally 28
-        final int    REV_ENCODER_CLICKS = 28;
-        final double REV_WHEEL_DIAM = 7.5;
-        final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
-        final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
-
         //Define and Initialize DriveTrain Motors
         motorFrontLeft = frenzyMap.get(DcMotor.class,"frontLeft");
         motorBackLeft = frenzyMap.get(DcMotor.class,"backLeft");
         motorFrontRight = frenzyMap.get(DcMotor.class,"frontRight");
         motorBackRight = frenzyMap.get(DcMotor.class,"backRight");
+        //Define imu
+        imu = imu = frenzyMap.get(BNO055IMU.class, "imu");
 
         // Set all motor Directions
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
