@@ -29,6 +29,7 @@ public class ServoTest extends LinearOpMode {
                 if (servoPos < servoMax) {
                     if (servoPos > servoMin) {
                         servoPos += speed;
+                        sleep(10);
                     }
                 }
             }
@@ -36,6 +37,7 @@ public class ServoTest extends LinearOpMode {
                 if (servoPos < servoMax) {
                     if (servoPos > servoMin) {
                         servoPos -= speed;
+                        sleep(10);
                     }
                 }
             }
