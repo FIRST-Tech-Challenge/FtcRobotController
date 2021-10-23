@@ -1,16 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
-import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 @TeleOp(name = "Frenzy", group = "Robot15173")
@@ -18,9 +13,20 @@ public class FrenzyMode extends LinearOpMode {
 
     // Declare OpMode Members
     FrenzyBot robot = new FrenzyBot();
-    private ElapsedTime runtime = new ElapsedTime();
     IBaseOdometry odometry = null;
 
+    // Timing related variables
+    ElapsedTime runtime = new ElapsedTime();
+    boolean buttonPressable = true;
+    double DEBOUNCE_DELAY_TIME_MS = 200;
+    double lastButtonPressed = 0;
+
+    // Intake related variables
+    boolean changedIntake = false;
+    boolean intakeReverse = false;
+
+    // Rotator related variable
+    boolean changedRotator = false;
 
     @Override
     public void runOpMode() {
@@ -28,7 +34,7 @@ public class FrenzyMode extends LinearOpMode {
             try{
                 robot.init(this, this.hardwareMap, telemetry);
                 odometry =  VSlamOdometry.getInstance(this.hardwareMap, 20);
-                odometry.setInitPosition(50, 15, 0);
+                odometry.setInitPosition(50, 15, 0); // TODO: Remove this
                 Thread odometryThread = new Thread(odometry);
                 odometryThread.start();
             } catch (Exception ex) {
@@ -64,6 +70,9 @@ public class FrenzyMode extends LinearOpMode {
                 } else {
                     robot.move(drive, turn);
                 }
+
+                handleSpecialActions();
+
                 telemetry.addData("Left front", robot.getLeftOdometer());
                 telemetry.addData("Right front", robot.getRightOdometer());
                 telemetry.addData("X", odometry.getCurrentX());
@@ -77,9 +86,78 @@ public class FrenzyMode extends LinearOpMode {
             sleep(1000);
         }
         finally {
+            robot.activateIntake(0);
+            robot.activateRotator(0);
+            robot.activateLift(0);
             if (odometry != null) {
                 odometry.stop();
             }
         }
+    }
+
+    protected void handleSpecialActions() {
+        handleLift();
+
+        // BUTTON PRESSABLE
+        buttonPressable = ((runtime.milliseconds() - lastButtonPressed) >= DEBOUNCE_DELAY_TIME_MS);
+
+        if (buttonPressable) {
+            handleIntake();
+            handleRotator();
+        }
+    }
+
+    protected void handleIntake() {
+        // MOVE INTAKE
+        if (gamepad1.a) {
+            recordButtonPressed();
+            changedIntake = !changedIntake;
+        }
+
+        if (changedIntake) {
+            robot.activateIntake(0.95);
+        } else {
+            robot.activateIntake(0);
+        }
+
+        if (gamepad1.b){
+            recordButtonPressed();
+            intakeReverse = !intakeReverse;
+        }
+
+        if (intakeReverse){
+            robot.activateIntake(-0.75);
+        } else {
+            robot.activateIntake(0);
+        }
+    }
+
+    protected void handleRotator() {
+        if (gamepad1.y) {
+            recordButtonPressed();
+            changedRotator = !changedRotator;
+        }
+
+        if (changedIntake) {
+            robot.activateRotator(0.5);
+        } else {
+            robot.activateRotator(0);
+        }
+    }
+
+    protected void handleLift() {
+        if (gamepad1.dpad_up) {
+            robot.activateLift(0.5);
+        }
+        else if (gamepad1.dpad_down) {
+            robot.activateLift(-0.5);
+        }
+        else {
+            robot.activateLift(0);
+        }
+    }
+
+    private void recordButtonPressed() {
+        lastButtonPressed = runtime.milliseconds();
     }
 }
