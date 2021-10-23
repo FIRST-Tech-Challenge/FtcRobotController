@@ -79,27 +79,27 @@ public class FrenzyHardwareMap
 
         //Define and Initialize Motors
         motorFrontLeft = frenzyMap.get(DcMotor.class,"frontLeft");
-        //motorBackLeft = frenzyMap.get(DcMotor.class,"backLeft");
-        //motorFrontRight = frenzyMap.get(DcMotor.class,"frontRight");
-        //motorBackRight = frenzyMap.get(DcMotor.class,"backRight");
+        motorBackLeft = frenzyMap.get(DcMotor.class,"backLeft");
+        motorFrontRight = frenzyMap.get(DcMotor.class,"frontRight");
+        motorBackRight = frenzyMap.get(DcMotor.class,"backRight");
 
         // Set all motor Directions
-        //motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        //motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
-        //motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
-        //motorFrontRight.setPower(0.0);
+        motorFrontRight.setPower(0.0);
         motorFrontLeft.setPower(0.0);
-        //motorBackLeft.setPower(0.0);
-        //motorBackRight.setPower(0.0);
+        motorBackLeft.setPower(0.0);
+        motorBackRight.setPower(0.0);
 
         // Set all motors to run with encoders.
-        //motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
         //leftClaw  = hwMap.get(Servo.class, "left_hand");
