@@ -26,8 +26,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.internal.camera.names.WebcamNameImpl;
-import org.firstinspires.ftc.robotcore.internal.camera.names.WebcamNameInternal;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -37,12 +35,11 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "TestComputerVision")
-public class EasyOpenCVLocateTeamItem extends LinearOpMode
+@TeleOp(name = "TestComputerVisionShippingElement")
+public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
 {
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
@@ -51,40 +48,56 @@ public class EasyOpenCVLocateTeamItem extends LinearOpMode
     public void runOpMode()
     {
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("CameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
-//        webcam = OpenCvCameraFactory.getInstance().createWebcam(OpenCvWebcam., cameraMonitorViewId);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
         pipeline = new SkystoneDeterminationPipeline(telemetry);
         webcam.setPipeline(pipeline);
-
-        // With live preview
-        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
             @Override
             public void onOpened()
             {
-                camera.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
+                /*
+                 * Tell the webcam to start streaming images to us! Note that you must make sure
+                 * the resolution you specify is supported by the camera. If it is not, an exception
+                 * will be thrown.
+                 *
+                 * Keep in mind that the SDK's UVC driver (what OpenCvWebcam uses under the hood) only
+                 * supports streaming from the webcam in the uncompressed YUV image format. This means
+                 * that the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
+                 * Streaming at e.g. 720p will limit you to up to 10FPS and so on and so forth.
+                 *
+                 * Also, we specify the rotation that the webcam is used in. This is so that the image
+                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
+                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
+                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
+                 * away from the user.
+                 */
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode) {
-
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
             }
         });
 
-
+        waitForStart();
+        telemetry.addData("Position", "HELLO");
+        telemetry.update();
 
         while (opModeIsActive())
         {
-            telemetry.addData("Analysis1", pipeline.getAnalysis1());
+            telemetry.addData("Analysis", pipeline.getAnalysis());
             telemetry.addData("Analysis2", pipeline.getAnalysis2());
             telemetry.addData("Analysis3", pipeline.getAnalysis3());
             telemetry.addData("Position", pipeline.position);
@@ -103,13 +116,13 @@ public class EasyOpenCVLocateTeamItem extends LinearOpMode
         }
 
         /*
-         * An enum to define the freight position
+         * An enum to define the skystone position
          */
         public enum RingPosition
         {
-                LEFT,
-                MIDDLE,
-                RIGHT
+            LEFT,
+            MIDDLE,
+            RIGHT
         }
 
         /*
@@ -138,20 +151,19 @@ public class EasyOpenCVLocateTeamItem extends LinearOpMode
         Point region1_pointB = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
         Point region2_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
+                REGION2_TOPLEFT_ANCHOR_POINT.x,
+                REGION2_TOPLEFT_ANCHOR_POINT.y);
         Point region2_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         Point region3_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
+                REGION3_TOPLEFT_ANCHOR_POINT.x,
+                REGION3_TOPLEFT_ANCHOR_POINT.y);
         Point region3_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         /*
          * Working variables
@@ -222,46 +234,54 @@ public class EasyOpenCVLocateTeamItem extends LinearOpMode
                     2); // Thickness of the rectangle lines
 
             position = RingPosition.LEFT; // Record our analysis
-            telemetry.addData("value", avg1);
+//            telemetry.addData("value", avg1);
+//            telemetry.update();
+            telemetry.addData("Analysis", avg1);
+            telemetry.addData("Analysis2", avg2);
+            telemetry.addData("Analysis3", avg3);
+            telemetry.addData("Position", position);
             telemetry.update();
+
             if(avg1 > FREIGHT_PRESENT_THRESHOLD){
                 position = RingPosition.LEFT;
-            }else if (avg2 > FREIGHT_PRESENT_THRESHOLD){
+            }else if (avg1 > FREIGHT_PRESENT_THRESHOLD){
                 position = RingPosition.MIDDLE;
-            }else if(avg3 > FREIGHT_PRESENT_THRESHOLD){
+            }else{
                 position = RingPosition.RIGHT;
             }
 
 
+//
+//            Imgproc.rectangle(
+//                    input, // Buffer to draw on
+//                    region1_pointA, // First point which defines the rectangle
+//                    region1_pointB, // Second point which defines the rectangle
+//                    GREEN, // The color the rectangle is drawn in
+//                    -1); // Negative thickness means solid fill
+//
+//            Imgproc.rectangle(
+//                    input, // Buffer to draw on
+//                    region2_pointA, // First point which defines the rectangle
+//                    region2_pointB, // Second point which defines the rectangle
+//                    GREEN, // The color the rectangle is drawn in
+//                    -1); // Negative thickness means solid fill
+//
+//            Imgproc.rectangle(
+//                    input, // Buffer to draw on
+//                    region3_pointA, // First point which defines the rectangle
+//                    region3_pointB, // Second point which defines the rectangle
+//                    GREEN, // The color the rectangle is drawn in
+//                    -1); // Negative thickness means solid fill
 
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region2_pointA, // First point which defines the rectangle
-                    region2_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region3_pointA, // First point which defines the rectangle
-                    region3_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
 
             return input;
         }
 
-        public int getAnalysis1()
+        public int getAnalysis()
         {
             return avg1;
         }
+
         public int getAnalysis2()
         {
             return avg2;
