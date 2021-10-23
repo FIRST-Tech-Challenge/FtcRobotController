@@ -70,8 +70,10 @@ public class C1ChassisDrive extends DriveMethods {
     double leftX;
     double rightX;
     double rightY;
-    double rightTrigger2;
+    double rightTrigger1;
     double carouselPosition;
+    boolean xButton;
+
 
     @Override
     public void runOpMode() {
@@ -103,7 +105,8 @@ public class C1ChassisDrive extends DriveMethods {
             leftX = gamepad1.left_stick_x;
             rightX = gamepad1.right_stick_x;
             rightY = gamepad1.right_stick_y;
-            rightTrigger2 = gamepad2.right_trigger;
+            rightTrigger1 = gamepad1.right_trigger;
+            xButton = gamepad1.x;
 
 
             //motors
@@ -116,12 +119,18 @@ public class C1ChassisDrive extends DriveMethods {
 
 
             //servos
-            carouselPosition = 0.5 + (rightTrigger2 / 2);
+            carouselPosition = 0.5 + (rightTrigger1 / 2);
                 //constrains servo motion to correct direction
+            if (carouselPosition > .6) {
+                carouselPosition = .6;
+            }
             servoCarousel.setPosition(carouselPosition);
+            if (xButton) {
+                servoCarousel.setPosition(1);
+            }
 
-                //gently pushes robot backward whilst rightTrigger2 engaged
-            if (rightTrigger2 > 0) {
+                //gently pushes robot backward whilst rightTrigger1 engaged
+            if (rightTrigger1 > 0) {
                 driveDirection(.2, Direction.BACKWARD);
             } else {
                 driveDirection(0, Direction.BACKWARD);
@@ -131,7 +140,7 @@ public class C1ChassisDrive extends DriveMethods {
             if(rightY > 0 || rightY < 0){
                 telemetry.addLine("Tank Tread Activated! Escape the Evil Pipes of Doom!");
             }
-            telemetry.addLine("Carousel Speed" + rightTrigger2);
+            telemetry.addLine("Carousel Speed" + rightTrigger1);
             telemetry.update();
         }
     }
