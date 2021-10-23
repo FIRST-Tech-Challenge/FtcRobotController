@@ -164,8 +164,8 @@ public class Robot extends Subsystem {
         rearLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("bl");
         rearRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("br");
 
-        // frontRightDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        // rearRightDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        // Reverse the right side motors
+        // Reverse left motors if you are using NeveRests
         frontLeftDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rearLeftDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 

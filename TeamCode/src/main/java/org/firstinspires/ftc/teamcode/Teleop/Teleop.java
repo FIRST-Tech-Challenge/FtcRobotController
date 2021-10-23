@@ -15,18 +15,6 @@ public class Teleop extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         Robot robot = new Robot(this, timer);
 
-        // Declare our motors
-        // Make sure your ID's match your configuration
-        DcMotor frontLeft = hardwareMap.dcMotor.get("fl");
-        DcMotor backLeft = hardwareMap.dcMotor.get("bl");
-        DcMotor frontRight = hardwareMap.dcMotor.get("fr");
-        DcMotor backRight = hardwareMap.dcMotor.get("br");
-
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
         waitForStart();
 
         if (isStopRequested()) return;
