@@ -24,6 +24,7 @@ package org.firstinspires.ftc.masters;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -172,7 +173,9 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
         Mat region2_Cb;
         Mat region3_Cb;
         Mat YCrCb = new Mat();
+        Mat LAB = new Mat();
         Mat Cb = new Mat();
+        Mat A = new Mat();
         int avg1;
         int avg2;
         int avg3;
@@ -190,23 +193,27 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
             Core.extractChannel(YCrCb, Cb, 1);
         }
 
+        void inputToLAB_A(Mat input) {
+            Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
+            Core.extractChannel(LAB, A, 1);
+        }
+
         @Override
         public void init(Mat firstFrame)
         {
-            inputToCb(firstFrame);
+            inputToLAB_A(firstFrame);
 
             region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
 
             region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
 
             region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
-
         }
 
         @Override
         public Mat processFrame(Mat input)
         {
-            inputToCb(input);
+            inputToLAB_A(input);
 
             avg1 = (int) Core.mean(region1_Cb).val[0];
             avg2 = (int) Core.mean(region2_Cb).val[0];
