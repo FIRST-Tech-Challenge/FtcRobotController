@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -37,9 +38,9 @@ public class MecanumTeleOp extends LinearOpMode {
             double backRightPower = (y + x - rx) / denominator;
 
             robot.motorFrontLeft.setPower(frontLeftPower);
-            robot.motorBackLeft.setPower(backLeftPower);
-            robot.motorFrontRight.setPower(frontRightPower);
-            robot.motorBackRight.setPower(backRightPower);
+            //robot.motorBackLeft.setPower(backLeftPower);
+            //robot.motorFrontRight.setPower(frontRightPower);
+            //robot.motorBackRight.setPower(backRightPower);
         }
     }
 }
