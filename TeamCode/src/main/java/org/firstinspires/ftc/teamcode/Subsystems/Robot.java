@@ -271,4 +271,19 @@ public class Robot extends Subsystem {
     }
 
 
+    public void setFrontLeftDriveMotor(double power) {
+        frontLeftDriveMotor.setPower(power);
+    }
+
+    public void setFrontRightDriveMotor(double power) {
+        frontRightDriveMotor.setPower(power);
+    }
+
+    public void setBackLeftPower(double power) {
+        rearLeftDriveMotor.setPower(power);
+    }
+
+    public void setRearLeftDriveMotor(double power) {
+        rearRightDriveMotor.setPower(power);
+    }
 }

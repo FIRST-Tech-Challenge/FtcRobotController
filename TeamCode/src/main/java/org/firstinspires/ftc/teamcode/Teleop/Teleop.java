@@ -27,14 +27,14 @@ public class Teleop extends LinearOpMode {
 
             double r = Math.hypot(lx, ly);
             double robotAngle = Math.atan2(ly, lx) - Math.PI / 4;
-            double lrPower = r * Math.sin(robotAngle) + rx;
-            double lfPower = r * Math.cos(robotAngle) + rx;
-            double rrPower = r * Math.cos(robotAngle) - rx;
-            double rfPower = r * Math.sin(robotAngle) - rx;
-            frontLeft.setPower(lfPower);
-            frontRight.setPower(rfPower);
-            backLeft.setPower(lrPower);
-            backRight.setPower(rrPower);
+            double rearLeftPower = r * Math.sin(robotAngle) + (rx / 2);
+            double frontLeftPower = r * Math.cos(robotAngle) + (rx / 2);
+            double rearRightPower = r * Math.cos(robotAngle) - (rx / 2);
+            double frontRightPower = r * Math.sin(robotAngle) - (rx / 2);
+            robot.setFrontLeftDriveMotor(frontLeftPower);
+            robot.setFrontRightDriveMotor(frontRightPower);
+            robot.setRearLeftDriveMotor(rearLeftPower);
+            robot.setFrontRightDriveMotor(rearRightPower);
 
 
         }
