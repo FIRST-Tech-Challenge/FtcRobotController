@@ -203,6 +203,16 @@ public class YellowBot implements OdoBot {
         return -rightOdo.getCurrentPosition();
     }
 
+    @Override
+    public double getLeftBackOdometer() {
+        return 0;
+    }
+
+    @Override
+    public double getRightBackOdometer() {
+        return 0;
+    }
+
     public double getHorizontalOdometer() {
         return  horizontalOdo.getCurrentPosition();
 

@@ -1074,6 +1074,16 @@ public class FrenzyBaseBot implements OdoBot {
         return this.frontRight.getCurrentPosition();
     }
 
+    @Override
+    public double getLeftBackOdometer() {
+        return this.backLeft.getCurrentPosition();
+    }
+
+    @Override
+    public double getRightBackOdometer() {
+        return this.backRight.getCurrentPosition();
+    }
+
     public File getCalibConfigFile() {
         return AppUtil.getInstance().getSettingsFile(BotCalibConfig.BOT_CALIB_CONFIG);
     }

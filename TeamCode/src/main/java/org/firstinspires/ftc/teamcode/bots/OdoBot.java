@@ -18,6 +18,8 @@ public interface OdoBot {
     BotCalibConfig getCalibConfig();
     double getLeftOdometer();
     double getRightOdometer();
+    double getLeftBackOdometer();
+    double getRightBackOdometer();
     Telemetry getTelemetry();
     void curveTo(BotMoveProfile profile, IBaseOdometry locator);
     void spin(BotMoveProfile profile, IBaseOdometry locator);
