@@ -115,7 +115,8 @@ public class Robot extends Subsystem {
 
         this.telemetry.telemetry(1, "running init()", "Running init()");
 
-        init();
+        getGamePadInputs();
+        // init();
     }
 
     /**
