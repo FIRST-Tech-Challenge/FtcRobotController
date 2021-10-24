@@ -3,7 +3,6 @@ package org.firstinspires.team8923_2021;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 abstract public class MasterOpMode extends LinearOpMode {
     //declare drive motors

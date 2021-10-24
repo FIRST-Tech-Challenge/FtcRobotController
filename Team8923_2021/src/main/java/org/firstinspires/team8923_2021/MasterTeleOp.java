@@ -18,8 +18,8 @@ abstract public class MasterTeleOp extends MasterOpMode {
         double forwardPower = gamepad1.left_stick_y;
         double turningPower = gamepad1.right_stick_x;
 
-        double leftPower = forwardPower - turningPower;
-        double rightPower = forwardPower + turningPower;
+        double leftPower = turningPower - forwardPower ;
+        double rightPower = turningPower + forwardPower;
 
         motorLeft.setPower(leftPower);
         motorRight.setPower(rightPower);
