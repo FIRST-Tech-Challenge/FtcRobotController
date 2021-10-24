@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.parts;
+import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import androidx.annotation.NonNull;
@@ -20,7 +21,11 @@ public class Lift {
      */
     public Lift(@NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
         this.liftMotor = map.get(DcMotor.class,"liftMotor");
-        this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+        this.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         this.armServo = map.get(Servo.class,"armServo");
         this.encoderOffset = liftMotor.getCurrentPosition() * -1;
         this.bottomSensor = map.get(DigitalChannel.class,"bottomSensor");
@@ -30,6 +35,7 @@ public class Lift {
         this.telemetry = telemetry;
         this.gamepad = toolGamepad;
         this.rBumpReader = new ToggleButtonReader(toolGamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        this.aReader = new ButtonReader(toolGamepad, GamepadKeys.Button.A);
     }
 
     private final Telemetry telemetry;
@@ -39,8 +45,11 @@ public class Lift {
     private final DigitalChannel topSensor;
     private final GamepadEx gamepad;
     private final ToggleButtonReader rBumpReader;
+    private final ButtonReader aReader;
     private final double encoderOffset;
     private double curPos = 0;
+    private boolean running = false;
+    private boolean first = true;
 
     public void update() {
         final double stickValue = gamepad.getLeftY();
@@ -50,10 +59,31 @@ public class Lift {
         telemetry.addData("topSensor", topSensor.getState());
         telemetry.addData("motor encoder",curPos);
         telemetry.addData("armServo",armServo.getPosition());
-        if ((stickValue >= 0.05 && !topSensor.getState()) || (stickValue <= -0.05 && !bottomSensor.getState())) {
-            liftMotor.setPower(stickValue);
-        } else {
-            liftMotor.setPower(0);
+        if (!liftMotor.isBusy()) {
+            if (running) {
+                liftMotor.setPower(0);
+                liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                running = false;
+            }
+            if (aReader.wasJustReleased()) { first = true; }
+            if ((stickValue >= 0.05 && !topSensor.getState()) || (stickValue <= -0.05 && !bottomSensor.getState())) {
+                liftMotor.setPower(stickValue);
+            } else {
+                if (bottomSensor.getState() && first) {
+                    liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    liftMotor.setPower(1);
+                    liftMotor.setTargetPosition(0);
+                    running = true;
+                    first = false;
+                } else { if (topSensor.getState()) {
+                        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    }
+                    liftMotor.setPower(0);
+                    first = true;
+                }
+            }
         }
         curPos = liftMotor.getCurrentPosition() + encoderOffset;
         arm();
