@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion 25
         targetSdkVersion 30
-        buildConfigField "String", "APP_BUILD_TIME", '"' + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT).format(new Date())) + '"'
+        buildConfigField "String", "BUILD_TIME", '"' + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT).format(new Date())) + '"'
     }
 
     compileSdkVersion 30
@@ -19,6 +19,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_10
         targetCompatibility JavaVersion.VERSION_1_10
     }
+    buildToolsVersion '30.0.2'
 }
 
 apply from: '../build.dependencies.gradle'
