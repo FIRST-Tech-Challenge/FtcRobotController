@@ -24,10 +24,10 @@ package org.firstinspires.ftc.masters;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
+import org.opencv.core.CvException;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -40,14 +40,12 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @TeleOp(name = "TestComputerVisionShippingElement")
-public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
-{
+public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
@@ -57,13 +55,12 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        // webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 /*
                  * Tell the webcam to start streaming images to us! Note that you must make sure
                  * the resolution you specify is supported by the camera. If it is not, an exception
@@ -84,8 +81,9 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
+                telemetry.addLine("can't open camera");
+                telemetry.update();
                 /*
                  * This will be called if the camera could not be opened
                  */
@@ -96,8 +94,7 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
         telemetry.addData("Position", "HELLO");
         telemetry.update();
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             telemetry.addData("Analysis", pipeline.getAnalysis());
             telemetry.addData("Analysis2", pipeline.getAnalysis2());
             telemetry.addData("Analysis3", pipeline.getAnalysis3());
@@ -107,20 +104,20 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
             // Don't burn CPU cycles busy-looping in this sample
             sleep(50);
         }
+
     }
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline
-    {
+    public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
         Telemetry telemetry;
-        public SkystoneDeterminationPipeline(Telemetry telemetry){
-            this.telemetry= telemetry;
+
+        public SkystoneDeterminationPipeline(Telemetry telemetry) {
+            this.telemetry = telemetry;
         }
 
         /*
          * An enum to define the skystone position
          */
-        public enum RingPosition
-        {
+        public enum RingPosition {
             LEFT,
             MIDDLE,
             RIGHT
@@ -131,14 +128,14 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
          */
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
-        static final Scalar RED = new Scalar(255,0,0);
+        static final Scalar RED = new Scalar(255, 0, 0);
 
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(85,176);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(50,176);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(120,176);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(85, 176);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(50, 176);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(120, 176);
 
 
         static final int REGION_WIDTH = 30;
@@ -169,55 +166,48 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
         /*
          * Working variables
          */
-        Mat region1_Cb;
-        Mat region2_Cb;
-        Mat region3_Cb;
-        Mat YCrCb = new Mat();
+        Mat region1_A;
+        Mat region2_A;
+        Mat region3_A;
         Mat LAB = new Mat();
-        Mat Cb = new Mat();
+
         Mat A = new Mat();
-        int avg1;
-        int avg2;
-        int avg3;
+        int avg1 = 0;
+        int avg2 = 0;
+        int avg3 = 0;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile RingPosition position = RingPosition.LEFT;
 
         /*
-         * This function takes the RGB frame, converts to YCrCb,
-         * and extracts the Cb channel to the 'Cb' variable
-         */
-        void inputToCb(Mat input)
-        {
-            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(YCrCb, Cb, 1);
-        }
+         * This function takes the RGB frame, converts to LAB,
+         * and extracts the A channel to the 'A' variable*/
 
         void inputToLAB_A(Mat input) {
+
             Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
             Core.extractChannel(LAB, A, 1);
         }
 
         @Override
-        public void init(Mat firstFrame)
-        {
+        public void init(Mat firstFrame) {
             inputToLAB_A(firstFrame);
 
-            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-
-            region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
-
-            region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
+            region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
+            region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
+            region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
         }
 
         @Override
-        public Mat processFrame(Mat input)
-        {
+        public Mat processFrame(Mat input) {
             inputToLAB_A(input);
+            region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
+            region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
+            region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
 
-            avg1 = (int) Core.mean(region1_Cb).val[0];
-            avg2 = (int) Core.mean(region2_Cb).val[0];
-            avg3 = (int) Core.mean(region3_Cb).val[0];
+            avg1 = (int) Core.mean(region1_A).val[0];
+            avg2 = (int) Core.mean(region2_A).val[0];
+            avg3 = (int) Core.mean(region3_A).val[0];
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
@@ -226,75 +216,48 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
+
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region2_pointA, // First point which defines the rectangle
                     region2_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
+                    GREEN, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region3_pointA, // First point which defines the rectangle
                     region3_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
+                    RED, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = RingPosition.LEFT; // Record our analysis
-//            telemetry.addData("value", avg1);
-//            telemetry.update();
+
+            if (avg1 > FREIGHT_PRESENT_THRESHOLD) {
+                position = RingPosition.LEFT;
+            } else if (avg2 > FREIGHT_PRESENT_THRESHOLD) {
+                position = RingPosition.MIDDLE;
+            } else {
+                position = RingPosition.RIGHT;
+            }
             telemetry.addData("Analysis", avg1);
             telemetry.addData("Analysis2", avg2);
             telemetry.addData("Analysis3", avg3);
             telemetry.addData("Position", position);
             telemetry.update();
 
-            if(avg1 > FREIGHT_PRESENT_THRESHOLD){
-                position = RingPosition.LEFT;
-            }else if (avg1 > FREIGHT_PRESENT_THRESHOLD){
-                position = RingPosition.MIDDLE;
-            }else{
-                position = RingPosition.RIGHT;
-            }
-
-
-//
-//            Imgproc.rectangle(
-//                    input, // Buffer to draw on
-//                    region1_pointA, // First point which defines the rectangle
-//                    region1_pointB, // Second point which defines the rectangle
-//                    GREEN, // The color the rectangle is drawn in
-//                    -1); // Negative thickness means solid fill
-//
-//            Imgproc.rectangle(
-//                    input, // Buffer to draw on
-//                    region2_pointA, // First point which defines the rectangle
-//                    region2_pointB, // Second point which defines the rectangle
-//                    GREEN, // The color the rectangle is drawn in
-//                    -1); // Negative thickness means solid fill
-//
-//            Imgproc.rectangle(
-//                    input, // Buffer to draw on
-//                    region3_pointA, // First point which defines the rectangle
-//                    region3_pointB, // Second point which defines the rectangle
-//                    GREEN, // The color the rectangle is drawn in
-//                    -1); // Negative thickness means solid fill
-
 
             return input;
         }
 
-        public int getAnalysis()
-        {
+        public int getAnalysis() {
             return avg1;
         }
 
-        public int getAnalysis2()
-        {
+        public int getAnalysis2() {
             return avg2;
         }
-        public int getAnalysis3()
-        {
+
+        public int getAnalysis3() {
             return avg3;
         }
 
