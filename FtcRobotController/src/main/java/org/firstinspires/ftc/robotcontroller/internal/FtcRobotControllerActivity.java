@@ -333,7 +333,7 @@ public class FtcRobotControllerActivity extends Activity
         });
         popupMenu.inflate(R.menu.ftc_robot_controller);
 
-        FtcDashboard.populateMenu(popupMenu.getMenu());
+        FtcDashboard.populateMenu(context, popupMenu.getMenu());
 
         AnnotatedHooksClassFilter.getInstance().callOnCreateMenuMethods(
             FtcRobotControllerActivity.this, popupMenu.getMenu());
@@ -415,7 +415,7 @@ public class FtcRobotControllerActivity extends Activity
     checkPreferredChannel();
 
     AnnotatedHooksClassFilter.getInstance().callOnCreateMethods(this);
-    FtcDashboard.start();
+    FtcDashboard.start(context);
   }
 
   protected UpdateUI createUpdateUI() {
@@ -488,7 +488,7 @@ public class FtcRobotControllerActivity extends Activity
 
     RobotLog.cancelWriteLogcatToDisk();
     AnnotatedHooksClassFilter.getInstance().callOnDestroyMethods(this);
-    FtcDashboard.stop();
+    FtcDashboard.stop(context);
   }
 
   protected void bindToService() {
@@ -544,7 +544,7 @@ public class FtcRobotControllerActivity extends Activity
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.ftc_robot_controller, menu);
-    FtcDashboard.populateMenu(menu);
+    FtcDashboard.populateMenu(context, menu);
     AnnotatedHooksClassFilter.getInstance().callOnCreateMenuMethods(this, menu);
     return true;
   }
@@ -711,7 +711,7 @@ public class FtcRobotControllerActivity extends Activity
         return service.getRobot().eventLoopManager;
       }
     });
-    FtcDashboard.attachWebServer(service.getWebServer());
+    FtcDashboard.attachWebServer(context, service.getWebServer().getWebHandlerManager());
     AnnotatedHooksClassFilter.getInstance().callWebHandlerRegistrarMethods(this,
         service.getWebServer().getWebHandlerManager());
 
@@ -759,7 +759,7 @@ public class FtcRobotControllerActivity extends Activity
 
     passReceivedUsbAttachmentsToEventLoop();
     AndroidBoard.showErrorIfUnknownControlHub();
-    FtcDashboard.attachEventLoop(eventLoop);
+    FtcDashboard.attachEventLoop(context, eventLoop);
     AnnotatedHooksClassFilter.getInstance().callOnCreateEventLoopMethods(this, eventLoop);
   }
 
