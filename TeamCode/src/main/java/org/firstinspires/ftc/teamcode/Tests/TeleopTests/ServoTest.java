@@ -14,8 +14,8 @@ public class ServoTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Servo servo = hardwareMap.servo.get("servo1");
         double servoPos = 0.0;
-        double servoMin = 0.0;
-        double servoMax = 1.0;
+        final double servoMin = 0.0;
+        final double servoMax = 1.0;
         final double speed = 0.01;
 
         waitForStart();
