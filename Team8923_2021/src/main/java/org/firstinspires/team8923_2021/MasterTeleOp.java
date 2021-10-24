@@ -1,6 +1,5 @@
 package org.firstinspires.team8923_2021;
 
-
 abstract public class MasterTeleOp extends MasterOpMode {
 
     private boolean isReverseMode = false;

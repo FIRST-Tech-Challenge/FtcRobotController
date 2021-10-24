@@ -15,6 +15,7 @@ public class Toggle {
         {
             toggleState = !toggleState;
         }
+
         if(! prevState && button)
         {
             press = true;
