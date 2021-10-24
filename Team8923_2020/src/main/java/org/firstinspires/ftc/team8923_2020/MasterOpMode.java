@@ -70,7 +70,7 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorWobble.setTargetPosition(motorWobble.getCurrentPosition());
         motorWobble.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //motorWobble.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorWobble.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         //init servos
