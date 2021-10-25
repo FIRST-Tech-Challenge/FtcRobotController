@@ -13,6 +13,7 @@ public class ServoClaw {
     public ServoClaw(Servo claw, float minturn1, float maxturn1) {
         this.minturn = minturn1;
         this.maxturn = maxturn1;
+        this.claw=claw;
     }
     //turns servo in range of min and max; percentage is used for pos
     public void actuateToPercent(float pos) {
