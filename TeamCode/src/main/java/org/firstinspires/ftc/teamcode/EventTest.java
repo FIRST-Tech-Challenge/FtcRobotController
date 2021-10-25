@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.core.event.Event;
-import org.firstinspires.ftc.teamcode.core.event.EventThread;
-import org.firstinspires.ftc.teamcode.core.movement.api.StrafingMovement;
-import org.firstinspires.ftc.teamcode.core.movement.impl.StrafedMovementImpl;
+import org.firstinspires.ftc.teamcode.core.thread.event.types.TimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.event.thread.EventThread;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -24,7 +22,7 @@ public class EventTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        int runTime = 1000;
+        int runTime = 5;
 //        double power = 0.3;
 //        int restTime = 1000;
 
@@ -32,21 +30,20 @@ public class EventTest extends LinearOpMode {
         waitForStart();
 
 //        StrafingMovement strafedMovement = new StrafedMovementImpl(hardwareMap);
-        telemetry.addLine("Doing nothing for " + runTime / 1000 + " second(s).");
+        telemetry.addLine("Doing nothing for " + runTime + " second(s).");
         telemetry.update();
 //        strafedMovement.drive(power);
 
+
         AtomicBoolean atomicBoolean = new AtomicBoolean();
 
-        //            strafedMovement.stop();
-        eventThread.addEvent(Event.createEventWithMilis(() -> {
-            telemetry.addLine("done!");
-            telemetry.update();
-            atomicBoolean.set(true);
-        }, runTime));
-
-        while (true) {
-            if(atomicBoolean.get()) break;
+//            strafedMovement.stop();
+        eventThread.addEvent(TimedEvent.createEventWithSeconds(() -> atomicBoolean.set(true), runTime));
+        while (opModeIsActive()) {
+            if (atomicBoolean.get()) break;
         }
+        telemetry.addLine("done!");
+        telemetry.update();
+        requestOpModeStop();
     }
 }
