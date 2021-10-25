@@ -59,7 +59,7 @@ public class Hardware
     /* Public OpMode members. */
     public Motor  flDrive   = null;
     public Motor  frDrive  = null;
-    public Motor  blDrive     = null;
+    public Motor blDrive = null;
     public Motor  brDrive = null;
     public double MIN_ANGLE = 0;
     public double MAX_ANGLE = 180;
@@ -88,7 +88,7 @@ public class Hardware
         // Define and Initialize Motors
         flDrive  = new Motor(hwMap, "m0");
         frDrive = new Motor(hwMap, "m2");
-        blDrive    = new Motor(hwMap, "m1");
+        blDrive = new Motor(hwMap, "m1");
         brDrive = new Motor(hwMap, "m3");
         dist = hwMap.get(DistanceSensor.class, "distsensor");
 
@@ -120,4 +120,3 @@ public class Hardware
         
     }
  }
-

@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
@@ -21,12 +20,12 @@ public class AutonDist extends LinearOpMode {
             if ( distIN < 5) {
                 robot.flDrive.set(0.3);
                 robot.frDrive.set(0.3);
-                robot.blDrive.set(0.3);
+                robot.frDrive.set(0.3);
                 robot.brDrive.set(0.3);
             } else {  // Otherwise, stop the motors
                 robot.flDrive.set(0);
                 robot.frDrive.set(0);
-                robot.blDrive.set(0);
+                robot.frDrive.set(0);
                 robot.brDrive.set(0);
             }
         }

@@ -69,7 +69,7 @@ public class Teleop extends LinearOpMode {
         waitForStart();
         robot.flDrive.set(drive - turn);
         robot.frDrive.set(drive + turn);
-        robot.blDrive.set(drive - turn);
+        robot.frDrive.set(drive - turn);
         robot.brDrive.set(drive + turn);
         // for some reason the arcade drive was not working as intended ^^
     }
