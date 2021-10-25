@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Tank extends Drivetrain {
+public class Tank {
 
     private final Telemetry TELEMETRY;
     private final Motor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
@@ -32,7 +32,6 @@ public class Tank extends Drivetrain {
      * @param leftDistance The distance of the left two motors
      * @param speed The speed of all four motors
      */
-    @Override
     public void driveDistance(int rightDistance, int leftDistance, int speed) {
         RIGHT_TOP.driveDistance(rightDistance, speed);
         RIGHT_BOTTOM.driveDistance(rightDistance, speed);
@@ -45,7 +44,6 @@ public class Tank extends Drivetrain {
      * @param distance The distance of all four motors
      * @param speed The speed of all four motors
      */
-    @Override
     public void driveDistance(int distance, int speed) {
         RIGHT_TOP.driveDistance(distance, speed);
         RIGHT_BOTTOM.driveDistance(distance, speed);
@@ -58,7 +56,6 @@ public class Tank extends Drivetrain {
      * @param rightSpeed The speed of the right two motors
      * @param leftSpeed The speed of the left two motors
      */
-    @Override
     public void driveWithEncoder(int rightSpeed, int leftSpeed) {
         RIGHT_TOP.driveWithEncoder(rightSpeed);
         RIGHT_BOTTOM.driveWithEncoder(rightSpeed);
@@ -70,7 +67,6 @@ public class Tank extends Drivetrain {
      * Drives the tank at a certain speed
      * @param speed The speed of all four motors
      */
-    @Override
     public void driveWithEncoder(int speed) {
         RIGHT_TOP.driveWithEncoder(speed);
         RIGHT_BOTTOM.driveWithEncoder(speed);
@@ -83,7 +79,6 @@ public class Tank extends Drivetrain {
      * @param rightPower The voltage to send to the right two motors
      * @param leftPower The voltage to send to the left two motors
      */
-    @Override
     public void driveWithoutEncoder(int rightPower, int leftPower) {
         RIGHT_TOP.driveWithoutEncoder(rightPower);
         RIGHT_BOTTOM.driveWithoutEncoder(rightPower);
@@ -95,7 +90,6 @@ public class Tank extends Drivetrain {
      * Sends a certain voltage to the tank
      * @param power The voltage to send
      */
-    @Override
     public void driveWithoutEncoder(int power) {
         RIGHT_TOP.driveWithoutEncoder(power);
         RIGHT_BOTTOM.driveWithoutEncoder(power);
@@ -106,7 +100,6 @@ public class Tank extends Drivetrain {
     /**
      * Brings the tank to a stop and resets it
      */
-    @Override
     public void stop() {
         brake();
         reset();
@@ -115,7 +108,6 @@ public class Tank extends Drivetrain {
     /**
      * Brings the tank to a stop
      */
-    @Override
     public void brake() {
         RIGHT_TOP.brake();
         RIGHT_BOTTOM.brake();
@@ -126,7 +118,6 @@ public class Tank extends Drivetrain {
     /**
      * Resets the tank
      */
-    @Override
     public void reset() {
         RIGHT_TOP.reset();
         RIGHT_BOTTOM.reset();
