@@ -32,9 +32,17 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
+import org.firstinspires.ftc.teamcode.utils.Drivetrain;
+//import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
+import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.utils.DrivetrainManager4WD;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -51,24 +59,39 @@ import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
  */
 
 @TeleOp(name="Basic OpMode with spinner attachment", group="Special Hardware")
+@Disabled
 public class BasicOpMode_With_Spinner extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private RobotWithSpinner gpad;
+    private DrivetrainManager4WD drivetrain;
+    private DcMotor spinner;
 
     @Override
     public void runOpMode() {
 
-        gpad = new RobotWithSpinner(gamepad1, gamepad2, hardwareMap, telemetry);
+        List<String> motorNames = new ArrayList<String>();
+
+        motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_1));
+        motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_1));
+        motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_2));
+        motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_2));
+
+        drivetrain = new DrivetrainManager4WD(motorNames, hardwareMap);
+
+        spinner = hardwareMap.dcMotor.get(
+                hardwareMap.appContext.getString(R.string.HW_SPINNER)
+        );
 
         while (opModeIsActive()) {
 
-            gpad.main();
+            drivetrain.EvalGamepad(gamepad1.left_stick_x, gamepad1.left_stick_y);
+
+            spinner.setPower(gamepad1.right_stick_y);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", gpad.drivetrain.ld1.getPower(), gpad.drivetrain.rd1.getPower());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", drivetrain.ld1.getPower(), drivetrain.rd1.getPower());
             telemetry.update();
         }
     }
