@@ -15,8 +15,10 @@ public class GamepadState {
     private final HashMap<String, Boolean> buttonsPressed = new HashMap<>();
     private final HashMap<String, Boolean> triggersPressed = new HashMap<>();
 
-    double leftPower = 0;
-    double rightPower= 0;
+    double leftFrontPower = 0;
+    double rightFrontPower= 0;
+    double leftBackPower = 0;
+    double rightBackPower = 0;
 
     private void initButtons() {
         buttonsPressed.put("a", false);
@@ -36,18 +38,36 @@ public class GamepadState {
         initTriggers();
     }
 
-    public double calcLeftPower(double speedRate) {
+    public double calcLeftFrontPower(double speedRate) {
         double drive = -gamepad.left_stick_y;
+        double strafe = -gamepad.left_stick_x;
         double turn = gamepad.right_stick_x;
-        leftPower = Range.clip(speedRate * (drive + 2*turn), -1.0, 1.0);
-        return leftPower;
+        leftFrontPower = Range.clip(gamepad.left_trigger + speedRate * (drive + turn - strafe), -1.0, 1.0);
+        return leftFrontPower;
     }
 
-    public double calcRightPower(double speedRate) {
+    public double calcRightFrontPower(double speedRate) {
         double drive = -gamepad.left_stick_y;
+        double strafe = -gamepad.left_stick_x;
         double turn = gamepad.right_stick_x;
-        rightPower = Range.clip(speedRate * (drive - 2*turn), -1.0, 1.0);
-        return rightPower;
+        rightFrontPower = Range.clip(gamepad.left_trigger + speedRate * (drive - turn + strafe), -1.0, 1.0);
+        return rightFrontPower;
+    }
+
+    public double calcLeftBackPower(double speedRate) {
+        double drive = -gamepad.left_stick_y;
+        double strafe = -gamepad.left_stick_x;
+        double turn = gamepad.right_stick_x;
+        leftBackPower = Range.clip(gamepad.left_trigger + speedRate * (drive + turn + strafe), -1.0, 1.0);
+        return leftBackPower;
+    }
+
+    public double calcRightBackPower(double speedRate) {
+        double drive = -gamepad.left_stick_y;
+        double strafe = -gamepad.left_stick_x;
+        double turn = gamepad.right_stick_x;
+        rightBackPower = Range.clip(gamepad.left_trigger + speedRate * (drive - turn - strafe), -1.0, 1.0);
+        return rightBackPower;
     }
 
     public float getLeftStickY() {

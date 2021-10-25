@@ -78,9 +78,6 @@ public class BeeLine_TeleOp extends LinearOpMode {
 
         gamepad.onButtonOnce("x", toggleZeroPowerBehavior);
 
-        leftMotors.setPower(gamepad.calcLeftPower(speedRate));
-        rightMotors.setPower(gamepad.calcRightPower(speedRate));
-
         printData();
         telemetry.update();
     }

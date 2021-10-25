@@ -3,41 +3,26 @@ package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.arthur;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name="Basic: Mecanum", group="Linear OpMode")
 public class Mecanum_TeleOp extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private final int TICKS_PER_ROTATION = 800;
+    private final int TICKS_PER_ROTATION = 537;
     private final double WHEEL_RADIUS = 0.025; // in meters
-    private final double WHEEL_DISTANCE = 0.30; // in meters
+    private final double LENGTH_LIFTER = 0.95; // in meters
+//    private final double WHEEL_DISTANCE = 0.30; // in meters
+    private final double WHEEL_DIAMETER = WHEEL_RADIUS * 2 * Math.PI; // in meters
 
-    Orientation angles;
+    private DcMotor leftFront;
+    private DcMotor rightFront;
+    private DcMotor leftBack;
+    private DcMotor rightBack;
 
-    private DcMotor leftMotors;
-    private DcMotor rightMotors;
-    private DcMotorEx leftEncoder;
-    private double lEncoderPos = 0;
-    private DcMotorEx rightEncoder;
-    private double rEncoderPos = 0;
-    private DcMotorEx centerEncoder;
-    private double cEncoderPos = 0;
-
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-
-    private DcMotor lifterMotor;
+    private DcMotor lifter;
 
     private double speedRate;
-    private double x;
-    private double y;
-    private double theta;
     private GamepadState gamepad;
 
     public static final double SPEED_RATE_INTERVAL = 0.1;
@@ -57,19 +42,47 @@ public class Mecanum_TeleOp extends LinearOpMode {
     };
 
     public Action liftUp = () -> {
-        lifterMotor.setPower(40);
+        int ticks = lifter.getCurrentPosition();
+        telemetry.addData("ticks", ticks);
+        double revs = (double)ticks / TICKS_PER_ROTATION;
+        double distance = revs * WHEEL_DIAMETER;
+        telemetry.addData("distance", distance);
+        if (distance < LENGTH_LIFTER) {
+            lifter.setPower(0.5);
+        } else {
+            lifter.setPower(0);
+        }
+    };
+
+    public Action liftDown = () -> {
+        int ticks = lifter.getCurrentPosition();
+        telemetry.addData("ticks", ticks);
+        double revs = (double)ticks / TICKS_PER_ROTATION;
+        double distance = revs * WHEEL_DIAMETER;
+        telemetry.addData("distance", distance);
+        if (distance > 0) {
+            lifter.setPower(-0.5);
+        } else {
+            lifter.setPower(0);
+        }
     };
 
     private void setFloatingBehavior() {
-        leftMotors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightMotors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         telemetry.addLine("FLOATING");
         floating = false;
     }
 
     private void setBrakeBehavior() {
-        leftMotors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightMotors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         telemetry.addLine("BRAKE");
         floating = true;
     }
@@ -92,17 +105,20 @@ public class Mecanum_TeleOp extends LinearOpMode {
         gamepad.onTriggerOnce("left", decreaseSpeedRate);
         gamepad.onTriggerOnce("right", increaseSpeedRate);
 
-        gamepad.onButtonOnce("a", toggleZeroPowerBehavior);
+        gamepad.onButtonOnce("x", toggleZeroPowerBehavior);
 
-        gamepad.onButtonOnce("x", liftUp);
+        gamepad.onButtonOnce("y", liftUp);
+        gamepad.onButtonOnce("a", liftDown);
 
-        double leftPower = gamepad.calcLeftPower(speedRate);
-        double rightPower = gamepad.calcRightPower(speedRate);
+        double leftFrontPower = gamepad.calcLeftFrontPower(speedRate);
+        double rightFrontPower = gamepad.calcRightFrontPower(speedRate);
+        double leftBackPower = gamepad.calcLeftBackPower(speedRate);
+        double rightBackPower = gamepad.calcRightBackPower(speedRate);
 
-        leftMotors.setPower(leftPower);
-        rightMotors.setPower(rightPower);
-
-        updatePosition();
+        leftFront.setPower(leftFrontPower);
+        rightFront.setPower(rightFrontPower);
+        leftBack.setPower(leftBackPower);
+        rightBack.setPower(rightBackPower);
 
         printData();
         telemetry.update();
@@ -130,71 +146,73 @@ public class Mecanum_TeleOp extends LinearOpMode {
         }
     }
 
-    private void updateTicks() {
-        updateLeftTicks();
-        updateRightTicks();
-        updateCenterTicks();
-    }
+    // ODOMETRY STUFF
+//    private void updateTicks() {
+//        updateLeftTicks();
+//        updateRightTicks();
+//        updateCenterTicks();
+//    }
 
-    private void updateLeftTicks() {
-        lEncoderPos = leftEncoder.getCurrentPosition();
-    }
-
-    private double getLeftTicks() {
-        return leftEncoder.getCurrentPosition() - lEncoderPos;
-    }
-
-    private void updateRightTicks() {
-        rEncoderPos = rightEncoder.getCurrentPosition();
-    }
-
-    private double getRightTicks() {
-        return rightEncoder.getCurrentPosition() - rEncoderPos;
-    }
-
-    private void updateCenterTicks() {
-        cEncoderPos = centerEncoder.getCurrentPosition();
-    }
-
-    private double getCenterTicks() {
-        return centerEncoder.getCurrentPosition() - cEncoderPos;
-    }
-
-    private void updatePosition() {
-        double dLeft = (getLeftTicks() / TICKS_PER_ROTATION) * Math.PI * 2 * WHEEL_RADIUS;
-        double dRight = (getRightTicks() / TICKS_PER_ROTATION) * Math.PI * 2 * WHEEL_RADIUS;
-        double dCenter = (getCenterTicks() / TICKS_PER_ROTATION) * Math.PI * 2 * WHEEL_RADIUS;
-
-        x += (dLeft + dRight) / 2.0 * Math.cos(theta);
-        y += (dLeft + dRight) / 2.0 * Math.sin(theta);
-        theta += (dLeft - dRight) / WHEEL_DISTANCE;
-
-        updateTicks();
-    }
+//    private void updateLeftTicks() {
+//        lEncoderPos = leftEncoder.getCurrentPosition();
+//    }
+//
+//    private double getLeftTicks() {
+//        return leftEncoder.getCurrentPosition() - lEncoderPos;
+//    }
+//
+//    private void updateRightTicks() {
+//        rEncoderPos = rightEncoder.getCurrentPosition();
+//    }
+//
+//    private double getRightTicks() {
+//        return rightEncoder.getCurrentPosition() - rEncoderPos;
+//    }
+//
+//    private void updateCenterTicks() {
+//        cEncoderPos = centerEncoder.getCurrentPosition();
+//    }
+//
+//    private double getCenterTicks() {
+//        return centerEncoder.getCurrentPosition() - cEncoderPos;
+//    }
+//
+//    private void updatePosition() {
+//        double dLeft = (getLeftTicks() / TICKS_PER_ROTATION) * Math.PI * 2 * WHEEL_RADIUS;
+//        double dRight = (getRightTicks() / TICKS_PER_ROTATION) * Math.PI * 2 * WHEEL_RADIUS;
+//        double dCenter = (getCenterTicks() / TICKS_PER_ROTATION) * Math.PI * 2 * WHEEL_RADIUS;
+//
+//        x += (dLeft + dRight) / 2.0 * Math.cos(theta);
+//        y += (dLeft + dRight) / 2.0 * Math.sin(theta);
+//        theta += (dLeft - dRight) / WHEEL_DISTANCE;
+//
+//        updateTicks();
+//    }
 
     private void printData() {
         telemetry.addData("speed rate", "%f%%", speedRate*100);
-        telemetry.addData("left motors power", leftMotors.getPower());
-        telemetry.addData("right motors power", rightMotors.getPower());
-        telemetry.addData("left motors encoder value", leftMotors.getCurrentPosition());
-        telemetry.addData("right motors encoder value", rightMotors.getCurrentPosition());
+        telemetry.addData("LF power", leftFront.getPower());
+        telemetry.addData("RF power", rightFront.getPower());
+        telemetry.addData("LB power", leftBack.getPower());
+        telemetry.addData("RB power", rightBack.getPower());
     }
 
     private static final double DEFAULT_SPEED_RATE = 0.5;
 
     private void initialize() {
         gamepad = new GamepadState(gamepad1);
-        frontLeft = hardwareMap.get(DcMotor.class, "LF");
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight = hardwareMap.get(DcMotor.class, "RF");
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backLeft = hardwareMap.get(DcMotor.class, "LB");
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight = hardwareMap.get(DcMotor.class, "RB");
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+        leftFront = hardwareMap.get(DcMotor.class, "LF");
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront = hardwareMap.get(DcMotor.class, "RF");
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack = hardwareMap.get(DcMotor.class, "LB");
+        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBack = hardwareMap.get(DcMotor.class, "RB");
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
 
-        lifterMotor = hardwareMap.get(DcMotor.class, "Slide");
-        lifterMotor.setDirection(DcMotor.Direction.FORWARD);
+        lifter = hardwareMap.get(DcMotor.class, "Slide");
+        lifter.setDirection(DcMotor.Direction.FORWARD);
+        lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Odometry wheels
 //        leftEncoder = hardwareMap.get(DcMotorEx.class, "leftTracking");
@@ -214,8 +232,10 @@ public class Mecanum_TeleOp extends LinearOpMode {
     }
 
     private void finish() {
-        leftMotors.close();
-        rightMotors.close();
+        leftFront.close();
+        rightFront.close();
+        leftBack.close();
+        rightBack.close();
 
         telemetry.addData("status", "finished");
         telemetry.addData("runtime", runtime.toString());
