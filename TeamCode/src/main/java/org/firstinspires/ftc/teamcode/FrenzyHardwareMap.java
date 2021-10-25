@@ -148,7 +148,7 @@ public class FrenzyHardwareMap {
         }
     }
     //sets motor target locations to right and left targets
-    public void setTargets(double target1, double target2){
+    public void setTargets(int target1, int target2){
         motorFrontLeft.setTargetPosition(target1);
         motorBackLeft.setTargetPosition(target1);
         motorFrontRight.setTargetPosition(target2);
