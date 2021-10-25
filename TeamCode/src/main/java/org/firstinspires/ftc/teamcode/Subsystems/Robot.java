@@ -248,6 +248,10 @@ public class Robot extends Subsystem {
         return this.telemetry;
     }
 
+    public QuickTelemetry getQuickTelemetry(String file) {
+        return this.telemetry.newQuickTelemetryFile(file);
+    }
+
     public ElapsedTime getTimer() {
         return this.timer;
     }
