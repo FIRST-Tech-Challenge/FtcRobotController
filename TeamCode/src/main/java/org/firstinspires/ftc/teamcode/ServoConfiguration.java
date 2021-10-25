@@ -12,14 +12,14 @@ import androidx.annotation.NonNull;
 // Utilizes FtcDashboard
 @Config
 class ServoConfigValue {
-    ServoConfigValue(@NonNull HardwareMap hardwareMap) {
-
-        //Put the name of the servo you want to config here.
-        this.servo = hardwareMap.get(Servo.class, "armServo");
-
-    }
     public static double servoValue = 0.27;
     final Servo servo;
+
+    ServoConfigValue(@NonNull HardwareMap hardwareMap) {
+        //Put the name of the servo you want to config here.
+        this.servo = hardwareMap.get(Servo.class, "armServo");
+    }
+
     void update() {
         servo.setPosition(servoValue);
     }
