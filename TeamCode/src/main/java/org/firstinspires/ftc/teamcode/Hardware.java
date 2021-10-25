@@ -61,6 +61,8 @@ public class Hardware
     public Motor  frDrive  = null;
     public Motor blDrive = null;
     public Motor  brDrive = null;
+    public Motor carousel = null;
+    public Motor intake = null;
     public double MIN_ANGLE = 0;
     public double MAX_ANGLE = 180;
     MotorGroup frontMotors = new MotorGroup(flDrive,frDrive);
@@ -90,28 +92,38 @@ public class Hardware
         frDrive = new Motor(hwMap, "m2");
         blDrive = new Motor(hwMap, "m1");
         brDrive = new Motor(hwMap, "m3");
+        intake = new Motor(hwMap, "m4");
+        carousel = new Motor(hwMap, "m5");
         dist = hwMap.get(DistanceSensor.class, "distsensor");
 
         flDrive.set(0);
         frDrive.set(0);
         blDrive.set(0);
         brDrive.set(0);
+        intake.set(0);
+        carousel.set(0);
 
         flDrive.setInverted(false);
         frDrive.setInverted(true);
         blDrive.setInverted(false);
         brDrive.setInverted(true);
+        intake.setInverted(false);
+        carousel.setInverted(false);
 
-        // Set all motors to run without encoders.
-        flDrive.setRunMode(Motor.RunMode.VelocityControl);
-        frDrive.setRunMode(Motor.RunMode.VelocityControl);
-        blDrive.setRunMode(Motor.RunMode.VelocityControl);
-        brDrive.setRunMode(Motor.RunMode.VelocityControl);
+        // Set motors to run with/without encoders
+        flDrive.setRunMode(Motor.RunMode.PositionControl);
+        frDrive.setRunMode(Motor.RunMode.PositionControl);
+        blDrive.setRunMode(Motor.RunMode.PositionControl);
+        brDrive.setRunMode(Motor.RunMode.PositionControl);
+        intake.setRunMode(Motor.RunMode.PositionControl);
+        carousel.setRunMode(Motor.RunMode.PositionControl);
 
         flDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         frDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         blDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         brDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        carousel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         servo.setRange(MIN_ANGLE, MAX_ANGLE);
         servo.setPosition(0);
