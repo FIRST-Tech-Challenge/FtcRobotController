@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+
+<Robot type="FirstInspires-FTC">
+
+    <!--
+
+    NOTE: The name “Expansion Hub Portal 1” is what the FTC robot controller
+    will call this if you scan for it, so leave it set to this value for
+    consistency.
+
+    You can retrieve the serial number value of the hub by configuring
+    it from the robot controller phone, and taking note of the value
+    found there. We always put that serial number (and the port numbers)
+    on a label somewhere visible on the hub - to make it straightforward
+    to swap in case one becomes damaged.
+
+    If you need to use two REV expansion hubs, you will need to change
+    the port number of at least one to something other than the default
+    value of ‘2’, see the documentation from FIRST on how to do this at
+
+    https://github.com/FIRST-Tech-Challenge/skystone/wiki/Using-Two-Expansion-Hubs
+
+    Everywhere that [...] appears, is a value that you must provide:
+
+    * For serial numbers, this must match the value in the physical
+    hardware.
+
+    * For a control hub, on the LynxUsbDevice element, the serial number must be
+    "(embedded)", the parent module address is as given by the control hub
+    itself, but is "2" by default.
+
+    * For port numbers, this must match the actual physical socket
+    on the REV hub
+
+    * For names, any value may be used. We always use the same name
+    in the XML file, as is used for the variable in Java that refers
+    to the physical hardware. We have found that this makes it easier
+    to keep things straight.
+    -->
+
+    <LynxUsbDevice
+        name="Expansion Hub Portal 1"
+        serialNumber="[...]" parentModuleAddress="5">
+
+        <LynxModule name="[...]" port="[...]">
+
+            <!-- The built-in IMU is always port="0" bus="0" -->
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+
+            <!-- **********************************************************
+
+            DC Motors
+
+            The "port" value refers to the physical port where the motor
+            is connected to the REV expansion hub, numbered 0 - 3.
+
+            The element named "Motor" is generic, but it will not set
+            tuned PID(F) values for the type of motor plugged into the hub.
+
+            You will observe more consistent velocity PID (RUN_WITH_ENCODERS)
+            or RUN_TO_POSITION behavior if you can use the specific motor types
+            provided by the SDK.
+
+            In this first example, you'll notice a color comment. We've found
+            that it is very helpful to use wire marking tape on the ports on
+            the expansion hub, the cables that plug into them, both sides
+            of any connections between the hub and the device, and the devices
+            itself. It makes it very easy to identify what to check or replace
+            when something is not working correctly.
+
+            ************************************************************* -->
+
+            <Motor name=".."  port="[...]" /> <!-- Yellow -->
+
+            <!--
+            Andymark Gearmotors
+
+            IMPORTANT: The NeveRest20GearMotor type does not contain
+            appropriate values for the orbital gear motor! You will need to
+            set these directly in software (at least for now)
+            -->
+
+            <NeveRest3.7v1Gearmotor name="[...]" port="[...]" />
+            <NeveRest20Gearmotor name="[...]" port="[...]" />
+            <NeveRest40Gearmotor name="[...]" port="[...]" />
+            <NeveRest60Gearmotor name="[...]" port="[...]" />
+
+            <!--
+            REV Robotics Gearmotors
+            -->
+
+            <RevRobotics20HDHexMotor name="[...]" port="[...]" />
+            <RevRobotics40HDHexMotor name="[...]" port="[...]" />
+            <RevRoboticsCoreHexMotor name="[...]" port="[...]" />
+
+            <!--
+            GoBILDA Gearmotors
+             -->
+
+            <goBILDA5201SeriesMotor name="[...]" port="[...]" />
+            <goBILDA5202SeriesMotor name="[...]" port="[...]" />
+
+            <!--
+            Tetrix Gearmotors
+            -->
+
+            <TetrixMotor  name="[...]" port="[...]" />
+
+            <!-- *************************************************************
+
+            Servos are pretty straightforward. Ports are numbered 0-5
+
+            Configuring a servo as a ContinuousRotationServo in this file
+            will present an interface in software that "feels" more like a
+            DCMotor for servos that are, or are able to be put into continuous
+            rotation mode.
+
+            See com.qualcomm.robotcore.hardware.CRServo in the SDK for more
+            details.
+
+            ************************************************************* -->
+
+            <Servo name="[...] port=[...]" />
+            <ContinuousRotationServo name="[...]" port="[...]" />
+
+            <!--
+
+            REV SparkMinis plug into a servo port, and allow you to use a 12V
+            gearmotor as you would a ContinuousRotationServo. When used from
+            your code they are of type DcMotorSimple.
+
+            -->
+
+            <RevSPARKMini name="[...]" port="[...]" />
+
+            <!-- *************************************************************
+
+            Digital Devices on REV hubs look like this.
+
+            REV's magnetic limit switch (http://www.revrobotics.com/rev-31-1462/)
+            sends output voltage on 'n' and 'n+1', so odd or even port
+            numbers work for the same sensor.
+
+            However, REV's touch sensor, which can either be configured as
+            a plain "DigitalDevice" or "RevTouchSensor" always sends on n+1,
+            so that will always be an odd port number.
+
+            Since we don't use any of REV's splitter cables on our robots,
+            we try and always use the odd port number in case we switch
+            one type of sensor out for the other.
+
+            If you're attaching something else to your REV Hub to the digital
+            I/O ports, check your spec sheet for which pin will send output
+            signal, and set "port" appropriately.
+
+            ************************************************************* -->
+
+            <DigitalDevice name="[...]" port="[... (odd)]" />
+            <RevTouchSensor name="[...] port=[... (odd)]" />
+
+            <!-- *************************************************************
+
+            I2C Devices
+
+            Bus numbers (sockets on the hub) run from 0 to 3. An I2C device
+            plugged into the physical socket labeled "0" on the hub should use
+            port="1" and bus="0". I2C devices plugged into sockets labeled 1-3
+            on the hub should use port="0" and bus="[socket number on hub]"
+
+            ************************************************************* -->
+
+            <!-- REV Time-of-Flight 2m Distance Sensor -->
+            <REV_VL53L0X_RANGE_SENSOR name="[...]" port="0" bus="[...]" />
+
+            <!-- V1 and V2 of the REV color/distance sensor -->
+
+            <LynxColorSensor name="[...]" port="0" bus="[...]" />
+
+            <!--
+
+            Use for the current v3 REV color sensor. NOTE that color and
+              distance values for v3 differ from V1-V2!
+
+            http://www.revrobotics.com/rev-31-1557/)
+
+            -->
+
+            <RevColorSensorV3 name="[...]" port="0" bus="[...]" />
+
+            <RevBlinkinLedDriver name="[...]" port="0" bus="[...]" />
+        </LynxModule>
+
+        <LynxModule name="Secondary Hub" port="3">
+
+            <!-- *************************************************************
+
+            Add devices here that are plugged into the secondary REV expansion
+            hub, following the syntax above.
+
+            ************************************************************* -->
+
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
