@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
@@ -30,10 +31,12 @@ public class TankRobot extends GamepadExtended {
 
     @Override
     public void main() {
-        double left = gamepad1.left_stick_y + gamepad1.left_stick_x * 100.0;
-        double right = gamepad1.left_stick_y - gamepad1.left_stick_x * 100.0;
+        double drive = -gamepad1.left_stick_y;
+        double turn  =  gamepad1.left_stick_x;
+        double left    = Range.clip((drive + turn)*100, -100.0, 100.0) ;
+        double right   = Range.clip((drive - turn)*100, -100.0, 100.0) ;
 
-        tank.driveWithoutEncoder((int) -right, (int) left);
+        tank.driveWithoutEncoder((int) -right, (int) -left);
 
         /*
         if ((gamepad2.left_stick_y >= 0.25 | gamepad2.left_stick_y <= -0.25) && priority.f2(false)) {
