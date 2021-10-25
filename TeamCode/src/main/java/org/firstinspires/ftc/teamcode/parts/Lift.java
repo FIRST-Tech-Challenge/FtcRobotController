@@ -21,6 +21,7 @@ public class Lift {
      */
     public Lift(@NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
         this.liftMotor = map.get(DcMotor.class,"liftMotor");
+        this.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         this.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         try { Thread.sleep(100); } catch (InterruptedException ignored) {}
@@ -72,9 +73,9 @@ public class Lift {
             } else {
                 if (bottomSensor.getState() && first) {
                     liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    liftMotor.setTargetPosition(0);
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     liftMotor.setPower(1);
-                    liftMotor.setTargetPosition(0);
                     running = true;
                     first = false;
                 } else { if (topSensor.getState()) {
