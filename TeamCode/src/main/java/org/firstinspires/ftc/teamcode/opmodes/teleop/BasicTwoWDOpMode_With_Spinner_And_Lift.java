@@ -33,7 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
+import org.firstinspires.ftc.teamcode.utils.TwoWDRobotWithSpinnerAndLift;
 
 
 /**
@@ -49,17 +49,17 @@ import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic OpMode with spinner attachment", group="Special Hardware")
-public class BasicOpMode_With_Spinner extends LinearOpMode {
+@TeleOp(name="Basic OpMode for 2WD with spinner and lift attachments", group="Special Hardware")
+public class BasicTwoWDOpMode_With_Spinner_And_Lift extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private RobotWithSpinner gpad;
+    private TwoWDRobotWithSpinnerAndLift gpad;
 
     @Override
     public void runOpMode() {
 
-        gpad = new RobotWithSpinner(gamepad1, gamepad2, hardwareMap, telemetry);
+        gpad = new TwoWDRobotWithSpinnerAndLift(gamepad1, gamepad2, hardwareMap, telemetry);
 
         while (opModeIsActive()) {
 

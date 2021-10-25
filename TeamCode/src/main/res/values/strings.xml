@@ -12,4 +12,5 @@
     <string name="RIGHT_DRIVE_2">rd2</string>
 
     <string name="HW_SPINNER">spin</string>
+    <string name="HW_LIFT">lift</string>
 </resources>
