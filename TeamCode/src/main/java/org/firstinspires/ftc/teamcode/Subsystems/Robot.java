@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
 import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +93,6 @@ public class Robot extends Subsystem {
     public Control control;
     public Vision vision;
 
-
     /**
      * Note that this method only changes some variables the real work is done in {@link #init()}
      *
@@ -112,11 +110,15 @@ public class Robot extends Subsystem {
         this.telemetry = new QuickTelemetry(oldTelemetry);
         this.timer = timer;
 
+        this.telemetry.telemetry(1, "Finished Basic init", "Finished Basic Initialization");
+
+        this.telemetry.telemetry(3, "Get gamePad inputs", "Getting gamePad inputs");
+        getGamePadInputs();
+        this.telemetry.telemetry(2, "Get gamePad inputs", "Finished getting gamePad inputs");
 
         this.telemetry.telemetry(1, "running init()", "Running init()");
 
-        getGamePadInputs();
-        // init();
+        init();
     }
 
     /**
@@ -127,12 +129,12 @@ public class Robot extends Subsystem {
      * @see #initMechanical()
      */
     public void init() {
-        telemetry.telemetry(2, "Mode", " Hardware init started");
+        telemetry.telemetry(3, "Mode", " Hardware init started");
         initMechanical(); // mechanical stuff
         telemetry.telemetry(2, "Mode", " Hardware init finished");
 
         // Drive
-        telemetry.telemetry(2, "Mode", " Drive init started");
+        telemetry.telemetry(3, "Mode", " Drive init started");
         List<DcMotorEx> motors = new ArrayList<>(4);
         motors.add(frontLeftDriveMotor);
         motors.add(frontRightDriveMotor);
@@ -142,17 +144,17 @@ public class Robot extends Subsystem {
         drive = new Drive(this, motors, imu);
 //        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.telemetry(1, "Mode", " Drive init finished");
+        telemetry.telemetry(2, "Mode", " Drive init finished");
 
-        telemetry.telemetry(2, "Mode", " Vision init started");
+        telemetry.telemetry(3, "Mode", " Vision init started");
         try {
             vision = new Vision(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        telemetry.telemetry(1, "Mode", " Vision init finished");
+        telemetry.telemetry(2, "Mode", " Vision init finished");
 
-        telemetry.telemetry(2, "Mode", " Control init started");
+        telemetry.telemetry(3, "Mode", " Control init started");
         control = new Control(this);
         telemetry.telemetry(2, "Mode", " Control init finished");
     }
@@ -169,18 +171,13 @@ public class Robot extends Subsystem {
         frontLeftDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rearLeftDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        telemetry.telemetry(4, "Motors", "Stopping all motors");
+        // Stops all the motors
         frontLeftDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         frontRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearLeftDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        // Servos
-//        clawDeploy = hardwareMap.servo.get("clawDeploy");
-//        claw = hardwareMap.servo.get("claw");
-//        elevator1 = hardwareMap.crservo.get("e1");
-//        elevator2 = hardwareMap.crservo.get("e2");
-//
-//        elevator2.setDirection(DcMotorSimple.Direction.REVERSE);
         HardwareMap.DeviceMapping<Servo> servo = hardwareMap.servo;
 
         allHubs = hardwareMap.getAll(LynxModule.class);
@@ -210,14 +207,15 @@ public class Robot extends Subsystem {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        telemetry.telemetry(2, "Mode", " IMU initializing...");
+        telemetry.telemetry(3, "Mode", " IMU initializing...");
         imu.initialize(parameters);
-        telemetry.telemetry(2, "Mode", " IMU calibrating...");
+        telemetry.telemetry(4, "Mode", " IMU calibrating...");
         // make sure the imu gyro is calibrated before continuing.
         while (opMode.opModeIsActive() && !imu.isGyroCalibrated()) {
             opMode.sleep(50);
             opMode.idle();
         }
+        telemetry.telemetry(2, "Mode", " IMU calibration finished...");
     }
 
     public String getName() {

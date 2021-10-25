@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
-import java.io.IOException;
-
 
 /**
  * Auto creates a robots and runs it in auto mode.
