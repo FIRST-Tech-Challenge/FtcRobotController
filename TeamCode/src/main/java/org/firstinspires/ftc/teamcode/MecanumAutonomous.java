@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="MecanumAutonomous", group="FreightFrenzy")
 public class MecanumAutonomous extends LinearOpMode {
 
+    private ElapsedTime runtime = new ElapsedTime();
     /*
     get the robot's hardware map outside of runOpMode
     this is so functions outside of runOpMode can also access it
@@ -15,21 +17,21 @@ public class MecanumAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-
         //import the hardware map
         robot.init(hardwareMap);
         telemetry.addData("Say", "Hello Driver");
 
         waitForStart();
 
-        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-        double rx = gamepad1.right_stick_x;
+        //double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+        //double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        //double rx = gamepad1.right_stick_x;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
         // at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+
+        /*double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (y + x + rx) / denominator;
         double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
@@ -39,7 +41,10 @@ public class MecanumAutonomous extends LinearOpMode {
         robot.motorBackLeft.setPower(backLeftPower);
         robot.motorFrontRight.setPower(frontRightPower);
         robot.motorBackRight.setPower(backRightPower);
+        */
 
+        driveBot(10,10, 0.4, 5.0);
+        driveBot(-10,-10, 0.4, 5.0);
     }
     //END OF RUN OPMODE
 
@@ -48,15 +53,11 @@ public class MecanumAutonomous extends LinearOpMode {
      * Drive Method
      * Left & Right travel distance in CM +/-, power to both wheels, timeout in seconds
      */
-    /*
     public void driveBot(double distanceInCMleft, double distanceInCMright, double power, double timeoutS)
     {
         telemetry.addData("status","encoder reset");
         telemetry.update();
-        robot.motorbackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.motorbackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.motorfrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.motorfrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.restartEncoders();
 
         int rightTarget;
         int leftTarget;
@@ -69,35 +70,26 @@ public class MecanumAutonomous extends LinearOpMode {
             rightTarget = (int) driveDistance(distanceInCMright);
             leftTarget = (int) driveDistance(distanceInCMleft);
 
-            right.setTargetPosition(rightTarget);
-            left.setTargetPosition(leftTarget);
-
-            right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.setTargets(leftTarget, rightTarget);
+            robot.setRunToPosition();
 
             runtime.reset();
 
-            right.setPower(power);
-            left.setPower(power);
+            robot.setPowers(power);
 
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (left.isBusy() && right.isBusy()))
+                    (robot.motorsBusy()))
             {
                 telemetry.addData("Path1", "leftTarget, rightTarget" );
                 telemetry.update();
             }
-            left.setPower(0);
-            right.setPower(0);
-
-            right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //set the motor powers to 0
+            robot.setPowers(0.0);
+            //stop and reset encoders
+            robot.restartEncoders();
         }
     }
-    */
     // END driveBot method
 
 
@@ -107,8 +99,7 @@ public class MecanumAutonomous extends LinearOpMode {
     public double driveDistance(double distance)
     {
         double drive  = (robot.REV_ENCODER_CLICKS/ robot.REV_WHEEL_CIRC);
-        int outputClicks= (int)Math.floor(drive * distance);
-        return outputClicks;
+        return (int)Math.floor(drive * distance);
     }
 
     /*

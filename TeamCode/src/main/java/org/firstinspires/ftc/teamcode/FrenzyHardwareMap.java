@@ -50,8 +50,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
-public class FrenzyHardwareMap
-{
+public class FrenzyHardwareMap {
 
     /* Public OpMode members. */
     public DcMotor motorFrontLeft = null;
@@ -68,17 +67,17 @@ public class FrenzyHardwareMap
 
     //Setup Wheel measurements for REV Motors
     // encoder clicks are originally 28
-    final int    REV_ENCODER_CLICKS = 28;
+    final int REV_ENCODER_CLICKS = 28;
     final double REV_WHEEL_DIAM = 7.5;
     final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
     final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
 
     /* local OpMode members. */
-    HardwareMap frenzyMap =  null;
-    private ElapsedTime period  = new ElapsedTime();
+    HardwareMap frenzyMap = null;
+    private ElapsedTime period = new ElapsedTime();
 
     /* Constructor */
-    public FrenzyHardwareMap(){
+    public FrenzyHardwareMap() {
 
     }
 
@@ -88,10 +87,10 @@ public class FrenzyHardwareMap
         frenzyMap = hwMap;
 
         //Define and Initialize DriveTrain Motors
-        motorFrontLeft = frenzyMap.get(DcMotor.class,"frontLeft");
-        motorBackLeft = frenzyMap.get(DcMotor.class,"backLeft");
-        motorFrontRight = frenzyMap.get(DcMotor.class,"frontRight");
-        motorBackRight = frenzyMap.get(DcMotor.class,"backRight");
+        motorFrontLeft = frenzyMap.get(DcMotor.class, "frontLeft");
+        motorBackLeft = frenzyMap.get(DcMotor.class, "backLeft");
+        motorFrontRight = frenzyMap.get(DcMotor.class, "frontRight");
+        motorBackRight = frenzyMap.get(DcMotor.class, "backRight");
         //Define imu
         imu = imu = frenzyMap.get(BNO055IMU.class, "imu");
 
@@ -119,5 +118,47 @@ public class FrenzyHardwareMap
         //leftClaw.setPosition(MID_SERVO);
         //rightClaw.setPosition(MID_SERVO);
     }
- }
+
+    //stops and resets the encoders before setting them to run again
+    public void restartEncoders(){
+            motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    //sets the powers of all motors
+    public void setPowers(double input){
+        motorFrontRight.setPower(input);
+        motorFrontLeft.setPower(input);
+        motorBackLeft.setPower(input);
+        motorBackRight.setPower(input);
+    }
+    //checks if all motors are busy
+    public boolean motorsBusy(){
+        if(motorFrontRight.isBusy() && motorFrontLeft.isBusy() && motorBackRight.isBusy() && motorBackLeft.isBusy()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    //sets motor target locations to right and left targets
+    public void setTargets(double target1, double target2){
+        motorFrontLeft.setTargetPosition(target1);
+        motorBackLeft.setTargetPosition(target1);
+        motorFrontRight.setTargetPosition(target2);
+        motorBackRight.setTargetPosition(target2);
+    }
+    public void setRunToPosition(){
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+}
 
