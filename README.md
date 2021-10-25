@@ -27,9 +27,9 @@ This GitHub repository contains the source code that is used to build an Android
 
 ## Cloning the Repository
 
-1. Touch base with [Charlie Gray](https://github.com/charlie-gray) in order to be **added to the GitHub group**, especially if you are an underclassman. This allows us to keep all of the code from each year in one place so we can look back and steal our own code. You can email Charlie at `cgray@lsoc.org` if you need to be added to the group <strike>or if you want to complain about the obnoxious emoticions in this readme document.</strike>
-2. Once we've taken care of that housekeeping item, the next step is to **install git**. You can learn how to do that [here](https://git-scm.com/downloads)
-3. After you've installed git, you'll need to clone the repository to your computer. In order to do this, you'll need some experience using your computer's command line prompt. If you don't know how to do that, I'd *highly* reccomend checking out [this codeacademy course](https://www.codecademy.com/learn/learn-the-command-line). Refreshed on command line work? Great! Change directories to where you want to clone (or "download") this repository. Then make a directory using `mkdir`. `cd` into that directory you just made, then run `git clone https://github.com/Latin-School-robotics/LSOC-Freight-Frenzy.git`. Horray! We just cloned the repository! \(^ヮ^)/
+1. Touch base with [Charlie Gray](https://github.com/charlie-gray) in order to be **added to the GitHub group**, especially if you are an underclassman. This allows us to keep all of the code from each year in one place so we can look back and steal our own code. You can email Charlie at `cgray@lsoc.org` if you need to be added to the group <strike>or if you want to complain about the obnoxious emoticons in this readme document.</strike>
+2. Once we've taken care of that housekeeping item, the next step is to **install git**. For simplicity, our team uses GitHub Desktop. You can download GitHub Desktop [here](https://desktop.github.com/)
+3. After you've installed GitHub Desktop, you'll need to clone this repository to your computer. Check out [this article](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/adding-and-cloning-repositories/cloning-a-repository-from-github-to-github-desktop) on how cloning works. Horary! We just cloned our first repository! \(^ヮ^)/
 
 ## Pushing to the Repository
 
@@ -40,29 +40,30 @@ If you've never used git before it is **highly** reccomended that you go through
 
 It is essential that you understand the [GitHub Flow](https://guides.github.com/introduction/flow/) before proceeding.
 
-**ALWAYS ALWAYS ALWAYS PUSH CODE TO A SEPRATE BRANCH**
+**ALWAYS ALWAYS ALWAYS PUSH CODE TO A SEPARATE BRANCH**
 NEVER push new code to the `main` branch. Ever. 
 
 1. First [create your branch](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-and-deleting-branches-within-your-repository).
-2. Next, run `git checkout "branch-name"` filling in the name of the branch you just created
-    **tip** to see a list of all of the branches, run `git branch -a`
+2. Next, click on the `Fetch Origin` button
+3. Finally, click on the `Current Branch` button. Select the branch you just made.
 
 ## Commiting
 
 This is how we send your code to your new branch.
 
-1. Run `git status` to double check that you're staging the right branch
-2. Run `git add "filename"` to choose what files you want to push
-3. Run `git status again`. All of the green files will be pushed. **Make sure to only push the files you changed/added.**
-5. Run `git commit -m "message"` 
+1. **BE ABSOLUTELY SURE** that you are NOT in the `master` branch.
+3. On the left hand column, make sure that **ONLY** the files you want to push are checked. 
+5. Title and put in a description of your commit.
     **NOTE:** ALWAYS fill out your message with a basic summary of what you changed.
-4. Finally, push your code by running `git push origin "your-new-branch"`
+4. Commit your code by clicking the blue `commit` button.
+5. Finally, push your code to the repo by pressing `push to origin` in the top right.
 
-You've succesfully submitted your first commit! Congrats! (ﾉ^ヮ^)ﾉ*:・ﾟ✧
+You've successfully submitted your first commit! Congrats! (ﾉ^ヮ^)ﾉ*:・ﾟ✧
 
 ## Pull Requests
 
 We merge code from your branch to the `main` branch using Pull Requests. To learn how pull requests work [click here](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request). 
+**ENSURE YOU ARE MAKING A PR TO OUR REPO AND NOT THE OFFICIAL FTC REPO**
 
 # Getting Started With FIRST Code
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Blocks-Tutorial) to get familiar with how to use the control system:
