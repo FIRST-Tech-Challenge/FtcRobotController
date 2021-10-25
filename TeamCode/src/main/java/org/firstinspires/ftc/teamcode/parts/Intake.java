@@ -10,6 +10,6 @@ import androidx.annotation.NonNull;
  */
 public class Intake extends ToggleableTool<DcMotor> {
     public Intake(@NonNull HardwareMap map, GamepadEx toolGamepad) {
-        super(map, toolGamepad, DcMotor.class, "intake", GamepadKeys.Button.X, 1);
+        super(map, toolGamepad, DcMotor.class, "intake", GamepadKeys.Button.X, -1);
     }
 }
