@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.core.thread.event.types;
 /**
  * An event.
  */
-public interface IEvent {
+public interface Event {
     /**
      * Whether the event should run.
      */
