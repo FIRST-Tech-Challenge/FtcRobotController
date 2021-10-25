@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public class Drivetrain {
+public class DrivetrainManager4WD {
 
     public String ld1_name;
     public String ld2_name;
@@ -25,7 +25,7 @@ public class Drivetrain {
 
     private HardwareMap hardware;
 
-    public Drivetrain(List<String> driveMotors, HardwareMap hardwareMap) {
+    public DrivetrainManager4WD(List<String> driveMotors, HardwareMap hardwareMap) {
         ld1_name = driveMotors.get(0);
         rd1_name = driveMotors.get(1);
         ld2_name = driveMotors.get(2);

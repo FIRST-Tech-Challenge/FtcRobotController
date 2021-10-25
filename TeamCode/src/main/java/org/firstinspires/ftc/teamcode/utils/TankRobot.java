@@ -9,12 +9,9 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TankRobot extends GamepadExtended {
 
-    public Drivetrain drivetrain;
+    public DrivetrainManager4WD drivetrainManager4WD;
     public Tank tank;
     public DcMotor spinner;
 

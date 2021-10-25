@@ -12,7 +12,7 @@ import java.util.List;
 
 public class RobotWithSpinner extends GamepadExtended {
 
-    public Drivetrain drivetrain;
+    public DrivetrainManager4WD drivetrainManager4WD;
     public DcMotor spinner;
 
     public RobotWithSpinner(Gamepad gamepad1, Gamepad gamepad2, HardwareMap hardwareMap, Telemetry telemetry) {
@@ -25,14 +25,14 @@ public class RobotWithSpinner extends GamepadExtended {
         motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_2));
         motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_2));
 
-        this.drivetrain = new Drivetrain(motorNames, hardwareMap);
+        this.drivetrainManager4WD = new DrivetrainManager4WD(motorNames, hardwareMap);
 
         spinner = hardwareMap.dcMotor.get(hardwareMap.appContext.getString(R.string.HW_SPINNER));
     }
 
     @Override
     public void main() {
-        drivetrain.EvalGamepad(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        drivetrainManager4WD.EvalGamepad(gamepad1.left_stick_x, gamepad1.left_stick_y);
 
         if ((gamepad2.left_stick_y >= 0.25 | gamepad2.left_stick_y <= -0.25) && priority.f2(false)) {
             spinner.setPower(gamepad2.left_stick_y);

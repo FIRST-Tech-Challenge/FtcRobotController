@@ -67,7 +67,7 @@ public class BasicTwoWDOpMode_With_Spinner_And_Lift extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", gpad.drivetrain.ld1.getPower(), gpad.drivetrain.rd1.getPower());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", gpad.drivetrainManager4WD.ld1.getPower(), gpad.drivetrainManager4WD.rd1.getPower());
             telemetry.update();
         }
     }

@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -68,7 +67,7 @@ public class BasicOpMode_With_Spinner extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", gpad.drivetrain.ld1.getPower(), gpad.drivetrain.rd1.getPower());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", gpad.drivetrainManager4WD.ld1.getPower(), gpad.drivetrainManager4WD.rd1.getPower());
             telemetry.update();
         }
     }
