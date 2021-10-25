@@ -39,7 +39,11 @@ public class AutonFrenz extends LinearOpMode {
             move(.75,'r',800);
         }
         //intake**not started
-
+        robot.intake.set(.50);
+        move(.50,'b',1000);
+        sleep(1000);
+        robot.intake.set(0);
+        //getting to the carousel
         move(.75, 'l', 1000); // rotate 90 degrees
         move(.75, 'f', 800); //drives to wall
         move(.75,'l',1000);//driving parrallel to back wall towards carousel
