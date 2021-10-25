@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.Util.AllianceColor;
  *
  */
 public class MainConfig {
-    private static final String name = "Terry the Truck";
+    private static final String name = "UwU the Potato";
 
     private static final String version = "2021.10.23.0-alpha";
     private static final AllianceColor allianceColor = AllianceColor.BLUE;
