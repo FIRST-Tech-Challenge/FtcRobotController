@@ -89,13 +89,15 @@ public class Lift {
         curPos = liftMotor.getCurrentPosition() + encoderOffset;
         arm();
     }
-
+    //0.76 - lift
+//0.07 - dump
+//0.88 - intake
     private void arm() {
-        final double topLiftPosition = 0;
-        final double bottomLiftPosition = 0;
-        final double loadServoPosition = 0;
-        final double liftingServoPosition = 0;
-        final double dumpServoPosition = 0;
+        final int topLiftPosition = 1500;
+        final int bottomLiftPosition = 700;
+        final double loadServoPosition = 0.88;
+        final double liftingServoPosition = 0.76;
+        final double dumpServoPosition = 0.07;
         if (curPos >= topLiftPosition) {
             rBumpReader.readValue();
             if (rBumpReader.getState()) {

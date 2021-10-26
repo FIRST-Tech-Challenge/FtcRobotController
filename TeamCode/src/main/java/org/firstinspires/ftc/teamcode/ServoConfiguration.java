@@ -31,10 +31,8 @@ class ServoConfigValue {
 class MotorPos {
     public static int motorPos = 0;
 }
-//0.76 - lift
-//0.07 - dump
-//0.88 - intake
-@Config
+
+@TeleOp
 public class ServoConfiguration extends LinearOpMode {
     protected boolean withMotor = false;
     @Override
