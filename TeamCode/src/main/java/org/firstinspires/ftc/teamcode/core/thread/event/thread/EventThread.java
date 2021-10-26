@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.core.thread.event.thread;
 
-import org.firstinspires.ftc.teamcode.core.thread.event.types.Event;
-import org.firstinspires.ftc.teamcode.core.thread.event.types.TimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.event.types.api.Event;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -25,7 +24,9 @@ public class EventThread extends Thread {
 
             while (iterator.hasNext()) {
                 Event event = iterator.next();
-                if (event.shouldRun()) {
+                if (event.cancelled()) {
+                    iterator.remove();
+                } else if (event.shouldRun()) {
                     // run the event
                     if(event.run()) {
                         iterator.remove();

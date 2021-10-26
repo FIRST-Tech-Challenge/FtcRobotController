@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.core.thread.event.types;
+package org.firstinspires.ftc.teamcode.core.thread.event.types.api;
 
 /**
  * Abstract class for a event that runs a listener a single time.
  */
-public abstract class RunListenerOnceEvent implements Event {
+public abstract class RunListenerOnceEvent extends EventAbstract {
     private final Runnable listener;
 
     /**
