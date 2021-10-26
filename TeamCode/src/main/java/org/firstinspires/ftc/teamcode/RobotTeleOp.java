@@ -51,10 +51,10 @@ public class RobotTeleOp extends CommandOpMode {
         telemetry.setAutoClear(true);
 
         // Drive Motors
-        MotorEx motorBackLeft = new MotorEx(hardwareMap, "motorBackLeft", Motor.GoBILDA.RPM_223);
-        MotorEx motorBackRight = new MotorEx(hardwareMap, "motorBackRight", Motor.GoBILDA.RPM_223);
-        MotorEx motorFrontLeft = new MotorEx(hardwareMap, "motorFrontLeft", Motor.GoBILDA.RPM_223);
-        MotorEx motorFrontRight = new MotorEx(hardwareMap, "motorFrontRight", Motor.GoBILDA.RPM_223);
+        MotorEx motorBackLeft = new MotorEx(hardwareMap, "motorBackLeft", Motor.GoBILDA.RPM_312);
+        MotorEx motorBackRight = new MotorEx(hardwareMap, "motorBackRight", Motor.GoBILDA.RPM_312);
+        MotorEx motorFrontLeft = new MotorEx(hardwareMap, "motorFrontLeft", Motor.GoBILDA.RPM_312);
+        MotorEx motorFrontRight = new MotorEx(hardwareMap, "motorFrontRight", Motor.GoBILDA.RPM_312);
 
         ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
         RevTouchSensor touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
@@ -128,7 +128,8 @@ public class RobotTeleOp extends CommandOpMode {
             Holding the DPAD_RIGHT drives the arm forward at a set speed using the ArmDriveForward
              */
 
-            MotorEx motorArm = new MotorEx(hardwareMap, "motorArm");
+            MotorEx motorArm = new MotorEx(hardwareMap, "motorArm", Motor.GoBILDA.RPM_312);
+            motorArm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             motorArm.resetEncoder();
 
             Arm m_arm = new Arm(motorArm, telemetry);
