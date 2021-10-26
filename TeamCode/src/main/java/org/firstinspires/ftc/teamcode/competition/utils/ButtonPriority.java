@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.competition.utils;
 
 public class ButtonPriority {
     public boolean g1HasF1 = true;

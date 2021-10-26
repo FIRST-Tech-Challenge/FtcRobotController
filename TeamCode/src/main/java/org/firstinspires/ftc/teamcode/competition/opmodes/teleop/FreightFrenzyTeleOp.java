@@ -1,16 +1,13 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous;
+package org.firstinspires.ftc.teamcode.competition.opmodes.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="TemplateOpMode", group="Iterative")
+@TeleOp(name="FreightFrenzyTeleOp", group="Iterative")
 @Disabled
-public class IterativeTemplate extends OpMode {
-
-    private final ElapsedTime TIME = new ElapsedTime();
+public class FreightFrenzyTeleOp extends OpMode {
 
     /**
      * Code to run once when the OpMode is initialized.
@@ -33,7 +30,7 @@ public class IterativeTemplate extends OpMode {
      */
     @Override
     public void start() {
-
+        resetStartTime();
     }
 
     /*

@@ -1,15 +1,14 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.other.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.utils.ButtonPriority;
-import org.firstinspires.ftc.teamcode.utils.GamepadExtended;
-import org.firstinspires.ftc.teamcode.utils.Motor;
-import org.firstinspires.ftc.teamcode.utils.Tank;
-import org.firstinspires.ftc.teamcode.utils.TeleOpMovementPlane;
+import org.firstinspires.ftc.teamcode.competition.utils.ButtonPriority;
+import org.firstinspires.ftc.teamcode.other.utils.Motor;
+import org.firstinspires.ftc.teamcode.other.utils.Tank;
+import org.firstinspires.ftc.teamcode.other.utils.TeleOpMovementPlane;
 
 @TeleOp(name="TankTeleOp", group="Iterative")
 public class TankTeleOp extends OpMode {

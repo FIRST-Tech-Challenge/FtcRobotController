@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous;
+package org.firstinspires.ftc.teamcode.competition.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.utils.Motor;
+import org.firstinspires.ftc.teamcode.other.utils.Motor;
 
 @Autonomous(name="Encoder Drive Test (H-Drive)", group="H.Testing.Autonomous")
 public class AutoEncoderDriveTest extends LinearOpMode {
