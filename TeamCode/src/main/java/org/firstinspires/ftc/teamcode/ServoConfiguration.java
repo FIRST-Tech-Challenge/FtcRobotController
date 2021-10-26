@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 // Utilizes FtcDashboard
 @Config
 class ServoConfigValue {
-    public static double servoValue = 0.27;
+    public static double servoPos = 0.27;
     final Servo servo;
 
     ServoConfigValue(@NonNull HardwareMap hardwareMap) {
@@ -24,14 +24,16 @@ class ServoConfigValue {
     }
 
     void update() {
-        servo.setPosition(servoValue);
+        servo.setPosition(servoPos);
     }
 }
 //0.76 - lift
 //0.07 - dump
 //0.88 - intake
 @TeleOp
+@Config
 public class ServoConfiguration extends LinearOpMode {
+    public static int motorPos = 0;
     protected boolean withMotor = false;
     @Override
     public void runOpMode() {
@@ -41,16 +43,19 @@ public class ServoConfiguration extends LinearOpMode {
         GamepadEx toolGamepad = null;
         if (withMotor) {
             motor = hardwareMap.get(DcMotor.class, "liftMotor");
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+            motor.setTargetPosition(motorPos);
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             toolGamepad = new GamepadEx(gamepad2);
         }
         waitForStart();
         while(opModeIsActive()) {
             arm.update();
-            telemetry.addData("servoPower",arm.servo.getPosition());
+            telemetry.addData("servoPos",arm.servo.getPosition());
             if (withMotor) {
-                assert motor != null;
-                assert toolGamepad != null;
-                motor.setPower(toolGamepad.getLeftY());
+                motor.setPower(motorPos);
+                telemetry.addData("motorPos", motor.getCurrentPosition());
             }
             telemetry.update();
         }
