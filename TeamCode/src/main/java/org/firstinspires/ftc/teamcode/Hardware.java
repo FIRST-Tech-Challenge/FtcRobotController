@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 public class Hardware extends LinearOpMode {
 
@@ -12,16 +13,15 @@ public class Hardware extends LinearOpMode {
     //You should put constants here
 
     protected DcMotor frontLeft, frontRight, backLeft, backRight, clawStrafe, clawRotate ;
-    protected Servo clawGrab;
+    protected Servo clawGrabber;
 
-    static final double     COUNTS_PER_MOTOR_REV    = 420 ;    // Needs to be fixed based on the motors
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     COUNTS_PER_MOTOR_REV    = 1680 ;    // CHECK THIS
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference. Not sure what it is
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
+            (WHEEL_DIAMETER_INCHES * Math.PI);
 
     public ElapsedTime runtime = new ElapsedTime();
-
 
     // Setup your drivetrain (Define your motors etc.)
     public void hardwareSetup() {
@@ -36,7 +36,14 @@ public class Hardware extends LinearOpMode {
         backLeft = hardwareMap.dcMotor.get("backLeft");
         clawStrafe = hardwareMap.dcMotor.get("clawStrafe");
         clawRotate = hardwareMap.dcMotor.get("clawRotate");
-        clawGrab = hardwareMap.servo.get("clawGrab");
+        clawGrabber = hardwareMap.servo.get("clawGrab");
+
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+
+        //@AHUHIRI
 
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -58,8 +65,44 @@ public class Hardware extends LinearOpMode {
         telemetry.addData("Status:", "Setup Complete");
         telemetry.update();
     }
+
+    public void rotateClockwise(double power) {
+        frontLeft.setPower(power);
+        backLeft.setPower(power);
+        frontRight.setPower(-power);
+        backRight.setPower(-power);
+    }
+
+    public void strafe(double forwardLeftPower, double forwardRightPower) {
+        frontLeft.setPower(forwardRightPower);
+        backLeft.setPower(forwardLeftPower);
+        frontRight.setPower(forwardLeftPower);
+        backRight.setPower(forwardRightPower);
+    }
+
+    public void driveForward(final double power) {
+        strafe(power, power);
+    }
+    public void strafeRight(final double power) { strafe(-power, power); }
+
+    public void tankControl(double maxPower) { // 0 < maxPower <= 1
+        double leftPower = -gamepad1.left_stick_y * maxPower;
+        double rightPower = -gamepad1.right_stick_y * maxPower;
+        double strafePower = gamepad1.right_stick_x * maxPower;
+        //double strafePower = (gamepad1.right_trigger - gamepad1.left_trigger) * maxPower; //positive is to the right
+
+        double strafePowerLimit = Math.min(1 - Math.abs(rightPower) , 1 - Math.abs(leftPower));
+        strafePower = Range.clip(strafePower, -strafePowerLimit, strafePowerLimit);
+
+        // This will set each motor to a power between -1 and +1 such that the equation for
+        // holonomic wheels works.
+        frontLeft.setPower(leftPower  + strafePower);
+        backLeft.setPower(leftPower  - strafePower);
+        frontRight.setPower(rightPower - strafePower);
+        backRight.setPower(rightPower + strafePower);
+    }
     // Pinchas should make an encoder drive
-    public int encoderDrive(double maxPower, double frontRightInches, double frontLeftInches, double backLeftInches, double backRightInches){
+    public void encoderDrive(double maxPower, double frontRightInches, double frontLeftInches, double backLeftInches, double backRightInches){
         // stop and reset the encoders? Maybe not. Might want to get position and add from there
         double newFRTarget;
         double newFLTarget;
@@ -121,7 +164,6 @@ public class Hardware extends LinearOpMode {
         }
 
 
-        return 0;
     }
     // Last thing is an empty runOpMode because it's a linearopmode
     @Override
