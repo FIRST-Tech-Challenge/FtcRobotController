@@ -12,6 +12,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Generic_Lift;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Turn_Table;
 
 @TeleOp(name="FTC_14133_2022", group="Iterative Opmode")
 @Disabled
@@ -19,7 +22,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 //My favorite shape is a nonagon
 //I like to ride dirt bikes RS
 
-public class FTC_14133_2022 extends OpMode {
+public class  FTC_14133_2022 extends OpMode {
 
  // COMMENTED OUT THINGS ARE NOT TO BE DELETED
  static final double MOTOR_TICK_COUNT = 2800;
@@ -37,10 +40,16 @@ public class FTC_14133_2022 extends OpMode {
  DigitalChannel limitup;
  DigitalChannel limitdown;
  private Drivetrain drivetrain=null;
+ private Intake Intake=null;
+ private Turn_Table Turn_Table=null;
+    private Generic_Lift Generic_Lift=null;
 
  public void init() {
 
      drivetrain = new Drivetrain(hardwareMap);
+     Intake = new Intake(hardwareMap);
+     Turn_Table = new Turn_Table(hardwareMap);
+     Generic_Lift = new Generic_Lift(hardwareMap);
 
      arm = hardwareMap.get(DcMotor.class, "arm");
      shooter = (DcMotorEx)hardwareMap.get(DcMotorEx.class, "shooter");
@@ -83,6 +92,9 @@ public class FTC_14133_2022 extends OpMode {
  public void loop() {
 
      drivetrain.Update(gamepad1);
+     Intake.Update(gamepad2);
+     Turn_Table.Update(gamepad2);
+     Generic_Lift.Update(gamepad2);
 
      double currenttime = getRuntime()-tbegin;
      telemetry.addData("Current time: ", currenttime);
