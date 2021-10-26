@@ -72,6 +72,7 @@ public class Drive extends MinorSubsystem {
         this.imu = imu;
 
         setZeroPowerBehavior();
+        telemetry.telemetry(2, "Drive initialized", "Drive initialized");
     }
 
     private int getOdometryCountL() {

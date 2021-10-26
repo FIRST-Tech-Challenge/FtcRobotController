@@ -81,10 +81,11 @@ public class Vision extends MinorSubsystem {
 
         robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
-        telemetry.telemetry(3, "Detecting Marker");
+        telemetry.telemetry(4, "Detecting Marker");
         DetectMarker detectMarkerRunnable = new DetectMarker(robot, robotCamera);
         MarkerLocation finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
-        telemetry.telemetry(2, "Detected Marker");
+        telemetry.telemetry(3, "Detected Marker");
+        telemetry.telemetry(2, "Vision initialized", "Vision initialized");
     }
 
     private void initVuforia() {
