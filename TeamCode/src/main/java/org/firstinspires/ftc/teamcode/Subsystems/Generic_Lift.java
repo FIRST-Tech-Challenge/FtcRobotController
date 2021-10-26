@@ -14,7 +14,7 @@ public class Generic_Lift {
 
 
     public Generic_Lift(HardwareMap hardwareMap){                 // Motor Mapping
-    lift = hardwareMap.get(DcMotorEx.class, "lf");      //Sets the names of the hardware on the hardware map
+    lift = hardwareMap.get(DcMotorEx.class, "lift");      //Sets the names of the hardware on the hardware map
 // "DeviceName" must match the Config EXACTLY
 
     // Set motor direction based on which side of the robot the motors are on
