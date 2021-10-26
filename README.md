@@ -9,6 +9,10 @@ Also, please see [this discussion.](https://github.com/XaverianTeamRobotics/FtcR
 
 SDK docs can be found at https://gm0.org/en/latest/docs/software/index.html
 
+### GitHub Actions CI Status:
+
+[![Gradle Java Build](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/gradle-build.yml)
+[![CodeQL Analysis](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/codeql.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/codeql.yml)
 
 ## NOTICE
 This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
