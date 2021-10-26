@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
-public class MyFirstOpMode extends LinearOpMode {
+public class Test_MyFirstOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor motor = hardwareMap.get(DcMotor.class,"motor");

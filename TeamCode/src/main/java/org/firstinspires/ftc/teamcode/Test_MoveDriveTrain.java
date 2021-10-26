@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
-public class MoveDriveTrain extends LinearOpMode {
+public class Test_MoveDriveTrain extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 

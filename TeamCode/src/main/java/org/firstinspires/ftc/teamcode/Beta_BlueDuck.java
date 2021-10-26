@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous
-public class AutoMoveDriveTrain extends LinearOpMode {
+@Autonomous(preselectTeleOp = "Beta_TeleOp")
+public class Beta_BlueDuck extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -57,7 +57,7 @@ public class AutoMoveDriveTrain extends LinearOpMode {
             backRightMotor.setPower(0.4);
             backLeftMotor.setPower(0.4);
 
-            sleep (1000);
+            sleep (800);
 
             frontRightMotor.setPower(0);
             frontLeftMotor.setPower(0);

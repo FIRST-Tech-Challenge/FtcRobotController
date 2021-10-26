@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class CarouselBeta extends LinearOpMode {
+public class Test_Carousel extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 

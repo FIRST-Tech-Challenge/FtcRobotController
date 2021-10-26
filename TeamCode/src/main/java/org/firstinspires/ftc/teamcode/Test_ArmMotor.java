@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class ArmMotor extends LinearOpMode {
+public class Test_ArmMotor extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Servo armMotor = hardwareMap.get(Servo.class,"armMotor");

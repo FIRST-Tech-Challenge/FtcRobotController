@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class BetaFinal extends LinearOpMode {
+public class Beta_TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -25,7 +25,7 @@ public class BetaFinal extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
 
-            //speed control
+            //Speed Control
             double speed;
             if (gamepad1.right_bumper) {
                 speed = 1;
@@ -35,8 +35,9 @@ public class BetaFinal extends LinearOpMode {
                 speed = 0.5;
             }
 
-            if (gamepad1.a) {
-                double speedSpinner = 0.5; //figure out the speed for the Ducks
+            //Carousel Spinner
+            if (gamepad2.a) {
+                double speedSpinner = 0.5;
                 rightSpinner.setPower(speedSpinner);
                 leftSpinner.setPower(-speedSpinner);
             } else {
@@ -44,17 +45,10 @@ public class BetaFinal extends LinearOpMode {
                 leftSpinner.setPower(0.0);
             }
 
-            if (gamepad2.a){
-                armMotor.setPosition(1);
-            }
-            if (gamepad2.b){
-                armMotor.setPosition(-1);
-            }
-
-            //controller input
+            //Controller Input - Moves Drive Train
             double vertical = gamepad1.left_stick_y * speed;
-            double horizontal = gamepad1.left_stick_x * speed;
-            double pivot = -gamepad1.right_stick_x * speed;
+            double horizontal = -gamepad1.left_stick_x * speed;
+            double pivot = gamepad1.right_stick_x * speed;
 
             frontRightMotor.setPower(pivot + vertical + horizontal);
             frontLeftMotor.setPower(pivot + vertical - horizontal);
