@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Reference;
 // https://first-tech-challenge.github.io/SkyStone/  This is the link to ALL metered of FTC
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="FTC 14133 2021", group="Iterative Opmode")
+@Disabled
 public class FTC_19427_2022 extends OpMode {
  private ElapsedTime runtime = new ElapsedTime();
  private DcMotorEx lb = null;        // Sets the variables of the mecanum wheels

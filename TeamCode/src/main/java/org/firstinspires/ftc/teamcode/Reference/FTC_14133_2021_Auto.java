@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 @SuppressWarnings("StatementWithEmptyBody")
 @Autonomous(name="FTC 14133 2021 Auto", group="Auto")
+@Disabled
 public class FTC_14133_2021_Auto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx lb = null;        // Sets the variables of the mecanum wheels
