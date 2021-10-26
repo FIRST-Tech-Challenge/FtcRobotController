@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 public class MainConfig {
     private static final String name = "UwU the Potato";
 
-    private static final String version = "2021.10.23.0-alpha";
+    private static final String version = "2021.10.30.0-alpha";
     private static final AllianceColor allianceColor = AllianceColor.BLUE;
     private static final boolean debug = false;
     /* "none" means no target
@@ -22,7 +22,10 @@ public class MainConfig {
        2 is rich
        3 is verbose */
     private static final int logLevel = 3;
-    private static final boolean initBasic = false;
+
+    private static final boolean initMinorSubsystems = false;
+    private static final boolean initMechanical = false;
+    private static final boolean initGetGamePadInputs = false;
 
     public static String getName() {
         return name;
@@ -48,7 +51,15 @@ public class MainConfig {
         return logLevel;
     }
 
-    public static boolean getInitBasic() {
-        return initBasic;
+    public static boolean getInitMinorSubsystems() {
+        return initMinorSubsystems;
+    }
+
+    public static boolean getInitMechanical() {
+        return initMechanical;
+    }
+
+    public static boolean getInitGamePadInputs() {
+        return initGetGamePadInputs;
     }
 }

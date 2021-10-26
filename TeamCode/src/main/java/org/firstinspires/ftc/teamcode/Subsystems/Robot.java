@@ -29,11 +29,6 @@ import java.util.List;
  * <p>This class starts with variable initializations</p></p>
  */
 public class Robot extends Subsystem {
-    private final AllianceColor allianceColor = MainConfig.getAllianceColor();
-    private final String name = MainConfig.getName();
-    private final String version = MainConfig.getVersion();
-    private final boolean debug = MainConfig.getDebug();
-    private final int logLevel = MainConfig.getLogLevel();
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
     private Telemetry oldTelemetry;
@@ -104,21 +99,32 @@ public class Robot extends Subsystem {
      * @see AllianceColor
      */
     public Robot(LinearOpMode opMode, ElapsedTime timer) {
-        this.hardwareMap = opMode.hardwareMap;
         this.opMode = opMode;
         this.oldTelemetry = opMode.telemetry;
         this.telemetry = new QuickTelemetry(oldTelemetry);
+        this.hardwareMap = opMode.hardwareMap;
         this.timer = timer;
 
+        this.telemetry.telemetry(1, MainConfig.getName(), "v" + MainConfig.getVersion());
+
+        this.telemetry.telemetry(4,  "Config", "Main Config Variables:");
+        this.telemetry.telemetry(4, "name", "name = " + MainConfig.getName());
+        this.telemetry.telemetry(4, "version", "version = " + MainConfig.getVersion());
+        this.telemetry.telemetry(4, "allianceColor", "allianceColor = " + MainConfig.getAllianceColor());
+        this.telemetry.telemetry(4, "debug", "debug = " + MainConfig.getDebug());
+        this.telemetry.telemetry(4, "debugTarget", "debugTarget = " + MainConfig.getDebugTarget());
+        this.telemetry.telemetry(4, "logLevel", "logLevel = " + MainConfig.getLogLevel());
+        this.telemetry.telemetry(4, "initMinorSubsystems", "initMinorSubsystems = " + MainConfig.getInitMinorSubsystems());
+        this.telemetry.telemetry(4, "initMechanical", "initMechanical = " + MainConfig.getInitMechanical());
+        this.telemetry.telemetry(4, "initGetGamePadInputs", "initGetGamePadInputs = " + MainConfig.getInitGamePadInputs());
+        this.oldTelemetry.addLine();
         this.telemetry.telemetry(1, "Finished Basic init", "Finished Basic Initialization");
 
-        this.telemetry.telemetry(3, "Get gamePad inputs", "Getting gamePad inputs");
-        getGamePadInputs();
-        this.telemetry.telemetry(2, "Get gamePad inputs", "Finished getting gamePad inputs");
-
-        this.telemetry.telemetry(1, "running init()", "Running init()");
+        this.telemetry.telemetry(2, "running init()", "Running init()");
 
         init();
+
+        this.telemetry.telemetry(1, "running init()", "Finished running init()");
     }
 
     /**
@@ -129,37 +135,36 @@ public class Robot extends Subsystem {
      * @see #initMechanical()
      */
     public void init() {
-        telemetry.telemetry(3, "Mode", " Hardware init started");
-        initMechanical(); // mechanical stuff
-        telemetry.telemetry(2, "Mode", " Hardware init finished");
-
-        // Drive
-        telemetry.telemetry(3, "Mode", " Drive init started");
-        List<DcMotorEx> motors = new ArrayList<>(4);
-        motors.add(frontLeftDriveMotor);
-        motors.add(frontRightDriveMotor);
-        motors.add(rearLeftDriveMotor);
-        motors.add(rearRightDriveMotor);
-
-        drive = new Drive(this, motors, imu);
-//        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.telemetry(2, "Mode", " Drive init finished");
-
-        telemetry.telemetry(3, "Mode", " Vision init started");
-        try {
-            vision = new Vision(this);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (MainConfig.getInitGamePadInputs()) {
+            this.telemetry.telemetry(3, "Get gamePad inputs", "gamePad init started");
+            getGamePadInputs();
+            this.telemetry.telemetry(2, "Get gamePad inputs", "gamePad init finished");
         }
-        telemetry.telemetry(2, "Mode", " Vision init finished");
+        else {
+            telemetry.telemetry(1, "Get gamePad inputs", " gamePad init skipped");
+        }
 
-        telemetry.telemetry(3, "Mode", " Control init started");
-        control = new Control(this);
-        telemetry.telemetry(2, "Mode", " Control init finished");
+        if (MainConfig.getInitMechanical()) {
+            telemetry.telemetry(3, "Hardware init", " Hardware init started");
+            initMechanical(); // mechanical stuff
+            telemetry.telemetry(2, "Hardware init", " Hardware init finished");
+        }
+        else {
+            telemetry.telemetry(1, "Hardware init", " Hardware init skipped");
+        }
+
+        if (MainConfig.getInitMinorSubsystems()) {
+            telemetry.telemetry(2, "Subsystems init", " Subsystems init started");
+            initSubsystems();
+            telemetry.telemetry(1, "Subsystems init", " Subsystems init finished");
+        }
+        else {
+            telemetry.telemetry(1, "Subsystems init", " Subsystems init skipped");
+        }
+
     }
 
-    public void initMechanical() {
+    private void initMechanical() {
         // DC Motors
         frontLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fl");
         frontRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fr");
@@ -218,12 +223,31 @@ public class Robot extends Subsystem {
         telemetry.telemetry(2, "Mode", " IMU calibration finished...");
     }
 
-    public String getName() {
-        return this.name;
-    }
+    private void initSubsystems() {
+        // Drive
+        telemetry.telemetry(3, "Mode", " Drive init started");
+        List<DcMotorEx> motors = new ArrayList<>(4);
+        motors.add(frontLeftDriveMotor);
+        motors.add(frontRightDriveMotor);
+        motors.add(rearLeftDriveMotor);
+        motors.add(rearRightDriveMotor);
 
-    public int getLogLevel() {
-        return this.logLevel;
+        drive = new Drive(this, motors, imu);
+//        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.telemetry(2, "Mode", " Drive init finished");
+
+        telemetry.telemetry(3, "Mode", " Vision init started");
+        try {
+            vision = new Vision(this);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        telemetry.telemetry(2, "Mode", " Vision init finished");
+
+        telemetry.telemetry(3, "Mode", " Control init started");
+        control = new Control(this);
+        telemetry.telemetry(2, "Mode", " Control init finished");
     }
 
     public LinearOpMode getOpMode() {
@@ -236,12 +260,18 @@ public class Robot extends Subsystem {
      * Try to use {@link #getQuickTelemetry()} instead
      * @return The telemetry
      *
+     * @see Telemetry
      * @see #getQuickTelemetry()
      */
     public Telemetry getTelemetry() {
         return this.oldTelemetry;
     }
 
+    /**
+     *
+     * @return Quick Telemetry
+     * @see QuickTelemetry
+     */
     public QuickTelemetry getQuickTelemetry() {
         return this.telemetry;
     }
