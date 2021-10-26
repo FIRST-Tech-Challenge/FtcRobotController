@@ -17,10 +17,12 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Turn_Table;
 
 @TeleOp(name="FTC_14133_2022", group="Iterative Opmode")
-@Disabled
+
 
 //My favorite shape is a nonagon
 //I like to ride dirt bikes RS
+
+//ToDo: Add light subsystem for Blinkin' which will run primarily with while loops likely
 
 public class  FTC_14133_2022 extends OpMode {
  private Drivetrain drivetrain=null;

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+//ToDo: Ideally this class could work for Auto and Teleop, being commanded either distances/angles and outputting power to motors
 
 public class Drivetrain  {
     // Instantiate the drivetrain motor variables

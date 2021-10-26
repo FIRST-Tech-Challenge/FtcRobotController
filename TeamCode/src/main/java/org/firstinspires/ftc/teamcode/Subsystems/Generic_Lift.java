@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-// Mecanum Drivetrain
+// Generic Lift
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -8,10 +8,14 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-public class Generic_Lift {
+public class Generic_Lift { //ToDo: Rename to specific lift type once we make decision (Elevator, arm, etc.)
     // Instantiate the drivetrain motor variables
     private DcMotorEx lift;
 
+    //ToDo: Add encoder count amount (still undetermined, just put a number in now)
+    //ToDo: Add stop and reset encoder in init(), and run using encoder. See FTC_14133_2021_Auto.java
+    //ToDo: Add limit switch sensing for either extreme location and to reset to 0 on one side (Homing)
+    //ToDo: Create set-point positions for different arm positions (Intake, place low, place mid, place high, different sides)
 
     public Generic_Lift(HardwareMap hardwareMap){                 // Motor Mapping
     lift = hardwareMap.get(DcMotorEx.class, "lift");      //Sets the names of the hardware on the hardware map
@@ -23,7 +27,7 @@ public class Generic_Lift {
 
     public void Update(Gamepad gamepad2){ //Code to be run in Op Mode void Loop at top level
         if (gamepad2.y) {
-            lift.setPower(0.3);        //Sets the power for the Long arm
+            lift.setPower(0.3);                 //Sets the power for the Long arm
             lift.setTargetPosition(100);        //Tell the motor to go to 90 degrees when told to
             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }

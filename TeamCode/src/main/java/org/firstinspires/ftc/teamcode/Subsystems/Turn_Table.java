@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-// Mecanum Drivetrain
+// Turntable
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
+//ToDo: May need multiple turntable spinners
+//ToDo: Make red-side and blue-side set from beginning of match, ideally based on what auto routine was run. In other words, the same button will cause the spinner to rotate in different directions based on what side of the field we started on
+//ToDo: Make pre-set program that auto goes the right distance, stops to place a new one, and then starts again (faster than a human can)
 
 public class Turn_Table {
-    // Instantiate the drivetrain motor variables
+    // Instantiate the  motor variables
     private DcMotorEx spin_table;
 
 
