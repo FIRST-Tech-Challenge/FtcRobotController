@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Config.MainConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 @TeleOp(name = "Teleop")
@@ -18,10 +19,10 @@ public class Teleop extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) { // clearer nomenclature for variables
-            double ly = gamepad1.left_stick_y;
-            double lx = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
-            double ry = gamepad1.right_stick_y;
+            double ly = Math.pow(gamepad1.left_stick_y, 3);
+            double lx = Math.pow(gamepad1.left_stick_x, 3);
+            double rx = Math.pow(gamepad1.right_stick_x, 3);
+            double ry = Math.pow(gamepad1.right_stick_y, 3);
 
             double r = Math.hypot(lx, ly);
             double robotAngle = Math.atan2(ly, lx) - Math.PI / 4;
