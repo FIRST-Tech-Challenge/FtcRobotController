@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.core.thread.event.thread;
 
-import org.firstinspires.ftc.teamcode.core.thread.event.types.IEvent;
-import org.firstinspires.ftc.teamcode.core.thread.event.types.TimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.event.types.api.Event;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -9,11 +8,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Thread to handle {@link TimedEvent events} as requests. Watch out, if it is overloaded with requests
+ * Thread to handle {@link Event events} as requests. Watch out, if it is overloaded with requests
  * and its not able to fulfill them faster than they are sent, it will not finish the queue.
  */
 public class EventThread extends Thread {
-    private final List<IEvent> queue = Collections.synchronizedList(new LinkedList<>());
+    private final List<Event> queue = Collections.synchronizedList(new LinkedList<>());
 
     public EventThread() {
         this.setPriority(3);
@@ -21,11 +20,13 @@ public class EventThread extends Thread {
 
     public void run() {
         while (!this.isInterrupted()) {
-            Iterator<IEvent> iterator = queue.iterator();
+            Iterator<Event> iterator = queue.iterator();
 
             while (iterator.hasNext()) {
-                IEvent event = iterator.next();
-                if (event.shouldRun()) {
+                Event event = iterator.next();
+                if (event.cancelled()) {
+                    iterator.remove();
+                } else if (event.shouldRun()) {
                     // run the event
                     if(event.run()) {
                         iterator.remove();
@@ -39,7 +40,7 @@ public class EventThread extends Thread {
      * Adds an event to the queue.
      * @param event The event you want to add.
      */
-    public void addEvent(TimedEvent event) {
+    public void addEvent(Event event) {
         queue.add(event);
     }
 
