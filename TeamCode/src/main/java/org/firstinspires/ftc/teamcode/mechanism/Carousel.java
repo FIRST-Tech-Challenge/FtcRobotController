@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.chassis;
+package org.firstinspires.ftc.teamcode.mechanism;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.mechanism.Mechanism;
 
 public class Carousel implements Mechanism {
     static DcMotor carousel;
