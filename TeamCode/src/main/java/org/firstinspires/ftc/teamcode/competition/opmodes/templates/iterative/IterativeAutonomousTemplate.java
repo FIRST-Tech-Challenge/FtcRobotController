@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.competition.opmodes.templates;
+package org.firstinspires.ftc.teamcode.competition.opmodes.templates.iterative;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="TemplateOpMode", group="Iterative")
+@Autonomous(name="IterativeTemplate", group="iterative")
 @Disabled
-public class AutonomousTemplate extends OpMode {
+public class IterativeAutonomousTemplate extends OpMode {
 
     /**
      * Code to run once when the OpMode is initialized.

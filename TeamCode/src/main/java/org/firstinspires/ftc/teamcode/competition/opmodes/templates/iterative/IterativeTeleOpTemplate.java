@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition.opmodes.templates;
+package org.firstinspires.ftc.teamcode.competition.opmodes.templates.iterative;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="TemplateOpMode", group="Iterative")
+@TeleOp(name="IterativeTemplate", group="iterative")
 @Disabled
-public class TeleOpTemplate extends OpMode {
+public class IterativeTeleOpTemplate extends OpMode {
 
     /**
      * Code to run once when the OpMode is initialized.
