@@ -1,0 +1,30 @@
+name: Gradle Java Build
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up the JDK environment
+      uses: actions/setup-java@v2
+      with:
+        java-version: 16
+        distribution: 'adopt'
+        cache: gradle
+
+    - name: Gradle version
+      run: ./gradlew --version
+
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: |
+          build
+          --info
+          --warning-mode all
+          --scan
+          --stacktrace
