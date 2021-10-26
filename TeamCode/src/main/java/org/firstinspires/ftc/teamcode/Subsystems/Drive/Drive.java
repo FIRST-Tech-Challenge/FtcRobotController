@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Drive;
 
-import android.util.Log;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
@@ -74,6 +72,7 @@ public class Drive extends MinorSubsystem {
         this.imu = imu;
 
         setZeroPowerBehavior();
+        telemetry.telemetry(2, "Drive initialized", "Drive initialized");
     }
 
     private int getOdometryCountL() {

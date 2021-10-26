@@ -7,6 +7,6 @@ public class Control extends MinorSubsystem {
 
     public Control(Robot robot) {
         super(robot, "Control");
-        telemetry.telemetry("Control initialized", "Control initialized");
+        telemetry.telemetry(2, "Control initialized", "Control initialized");
     }
 }

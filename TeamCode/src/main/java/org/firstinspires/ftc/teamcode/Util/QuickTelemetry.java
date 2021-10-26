@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.Util;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Config.MainConfig;
 
-import java.nio.channels.ClosedChannelException;
-
 public class QuickTelemetry {
     private Telemetry telemetry;
     private final int logLevel = MainConfig.getLogLevel();

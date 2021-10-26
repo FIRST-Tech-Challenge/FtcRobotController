@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarker;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerPipeline;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerThread;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -82,10 +81,11 @@ public class Vision extends MinorSubsystem {
 
         robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
-        telemetry.telemetry(3, "Detecting Marker");
+        telemetry.telemetry(4, "Detecting Marker");
         DetectMarker detectMarkerRunnable = new DetectMarker(robot, robotCamera);
         MarkerLocation finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
-        telemetry.telemetry(2, "Detected Marker");
+        telemetry.telemetry(3, "Detected Marker");
+        telemetry.telemetry(2, "Vision initialized", "Vision initialized");
     }
 
     private void initVuforia() {
