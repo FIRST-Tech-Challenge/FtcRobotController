@@ -25,10 +25,20 @@ public class TensorflowDetector extends LinearOpMode {
     protected TFObjectDetector tfod;
     private static final String VUFORIA_KEY =
             "ASJ84HD/////AAABmRoapDQCMUVDsobE/TsERteBT/byfHigXNEF2qLnOl7XfT98+cbIJA2YIN0aAWkQjcn5auEYl861a1geKL9WarkoFWWN9GlCUSzte7rr/bvtZ5QK0bYpGvN428j0jaYFd24N59osAY7JsiVrs8E4fjzudhN82YVsC0vs11yYcDzTtSxtIZ2JEZcaiLEjoyOhJCe0H8FwnqP7z3XMIo8JmxlqKcDOD4YCc6VImHR4D/hUADmzvv5w2Genyq143rT/E2Zx6FzqIy0zY/tbNBtz2irIqGizqiNlyl3/bVbBa+Wqzyfhsxv4Z6v8dkAMYJCPT23fcdsHhMCKIaxvIDhX44LF4/AqVdhQPjGRwr5XPI3o";
+    public int leftBound;
+    public int rightBound;
+    public TensorflowDetector(int leftBound, int rightBound){
 
-    public TensorflowDetector(int leftBound, int rightBound, int object){
+
+        this.rightBound = rightBound;
+        this.leftBound = leftBound;
+
+
         initVuforia();
         initTfod();
+
+        this.leftBound = leftBound;
+
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -51,16 +61,42 @@ public class TensorflowDetector extends LinearOpMode {
 
 
     public int recognizeObjects(){
+        int mostConfidant = 0;
+        int confidencePlace = 0;
         if (this.tfod != null) {
-
             List<Recognition> updatedRecognitions = tfod.getRecognitions();
             if (updatedRecognitions != null) {
                 telemetry.addData("# Object Detected", updatedRecognitions.size());
-                // TODO: Find the most confidant one and use that one. Then return a place value.
+                telemetry.update();
+                // Find the most confident duck
+                for (int i = 0; i < updatedRecognitions.size(); i++) {
+                    Recognition recognition = updatedRecognitions.get(i);
+                    if (recognition.getLabel() == "Duck"){
+                        if (recognition.getConfidence() > mostConfidant){
+                            mostConfidant = (int) recognition.getConfidence();
+                            confidencePlace = i;
+                        }
+                    }
+                }
+
+                Recognition correctDuck = updatedRecognitions.get(confidencePlace);
+                int place = (int) correctDuck.getLeft();
+
+                // If it's all the way to the right, 2.
+                // If middle, 1.
+                // If Left, 0.
+
+                if (place > this.rightBound){
+                    return 2;
+                } else if (leftBound < place && place < rightBound){
+                    return 1;
+                } else{
+                    return 0;
+                }
 
             }
         }
-        return 0;
+
     }
 
 
