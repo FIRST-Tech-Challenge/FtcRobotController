@@ -38,7 +38,7 @@ public class AutonFrenz extends LinearOpMode {
             move(.75,'f',500);
             move(.75,'r',800);
         }
-        //intake**not started
+        //intake
         robot.intake.set(.50);
         move(.50,'b',1000);
         sleep(1000);
