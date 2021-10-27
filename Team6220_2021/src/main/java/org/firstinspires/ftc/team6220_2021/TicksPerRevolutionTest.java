@@ -20,6 +20,11 @@ public class TicksPerRevolutionTest extends LinearOpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -43,26 +48,26 @@ public class TicksPerRevolutionTest extends LinearOpMode {
             if (gamepad1.dpad_up) {
                 input = 537.6 * (18/4);
                 int value = (int)input;
-                motorFrontLeft.setTargetPosition(value);
+                motorFrontLeft.setTargetPosition(-value);
                 motorFrontRight.setTargetPosition(value);
                 motorBackRight.setTargetPosition(value);
                 motorBackLeft.setTargetPosition(-value);
 
-                motorFrontRight.setPower(-0.7);
+                motorFrontRight.setPower(0.7);
                 motorFrontLeft.setPower(0.7);
-                motorBackRight.setPower(-0.7);
+                motorBackRight.setPower(0.7);
                 motorBackLeft.setPower(0.7);
             }
 
             else if (gamepad1.dpad_right) {
                 input = 537.6 * (18/16);
                 int value = (int)input;
-                while (motorFrontRight.getCurrentPosition()<value) ;
+                while (motorFrontRight.getCurrentPosition()<value && opModeIsActive())
                 {
                     motorFrontLeft.setTargetPosition(value);
                     motorFrontRight.setTargetPosition(value);
                     motorBackRight.setTargetPosition(value);
-                    motorBackLeft.setTargetPosition(-value);
+                    motorBackLeft.setTargetPosition(value);
 
                     motorFrontRight.setPower(-0.7);
                     motorFrontLeft.setPower(0.7);
@@ -77,7 +82,7 @@ public class TicksPerRevolutionTest extends LinearOpMode {
                 motorFrontLeft.setTargetPosition(value);
                 motorFrontRight.setTargetPosition(value);
                 motorBackRight.setTargetPosition(value);
-                motorBackLeft.setTargetPosition(-value);
+                motorBackLeft.setTargetPosition(value);
 
                 motorFrontRight.setPower(-0.7);
                 motorFrontLeft.setPower(0.7);
@@ -91,35 +96,13 @@ public class TicksPerRevolutionTest extends LinearOpMode {
                 motorFrontLeft.setTargetPosition(value);
                 motorFrontRight.setTargetPosition(value);
                 motorBackRight.setTargetPosition(value);
-                motorBackLeft.setTargetPosition(-value);
+                motorBackLeft.setTargetPosition(value);
 
                 motorFrontRight.setPower(-0.7);
                 motorFrontLeft.setPower(0.7);
                 motorBackRight.setPower(-0.7);
                 motorBackLeft.setPower(0.7);
-            }
-
-           /* if (gamepad1.a) {
-                int value = (int)input;
-                motorFrontLeft.setTargetPosition(value);
-                motorFrontRight.setTargetPosition(value);
-                motorBackRight.setTargetPosition(value);
-                motorBackLeft.setTargetPosition(-value);
-
-                motorFrontRight.setPower(-0.7);
-                motorFrontLeft.setPower(0.7);
-                motorBackRight.setPower(-0.7);
-                motorBackLeft.setPower(0.7);
-
-            }*/
-
-        }
-
-        }
-        public void pauseMillis ( double time){
-            double startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() - startTime < time && opModeIsActive()) {
-                idle();
             }
         }
     }
+}

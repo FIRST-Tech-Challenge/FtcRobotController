@@ -42,6 +42,10 @@ public class TankDriveTest01 extends LinearOpMode {
         servoArm = hardwareMap.servo.get("servoArm");
 
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
         motorDuck.setDirection(DcMotorSimple.Direction.REVERSE);
         servoGrabber.setPosition(0.3);
         servoArm.setPosition(0.4);
@@ -57,10 +61,10 @@ public class TankDriveTest01 extends LinearOpMode {
          motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
          motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorArm.setTargetPosition(0);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
