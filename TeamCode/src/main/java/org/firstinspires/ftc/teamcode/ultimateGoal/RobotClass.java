@@ -35,17 +35,21 @@
 //    public DcMotor frontRight;
 //    public DcMotor backLeft;
 //    public DcMotor backRight;
+//    private DcMotorImplEx shooterMotor;
+//    private DcMotor wobbleGoalRaise;
 //    private double ticks = 537;//537
 //    private double ticksTheSequel = 2786;
+//  //  private CRServo continuous1;
+//    private Servo wobbleGoalGrippyThing;
+//    private CRServo intakeServo;
+//    private CRServo trigger;
 //    BNO055IMU imu;
 //
 //    public Telemetry telemetry;
-//    ColorSensor leftColorSensor;
-//    ColorSensor rightColorSensor;
-//    ColorSensor frontColorSensor;
+//    ColorSensor colorSensor;
 //
 //    OpenCvInternalCamera phoneCam;
-//    EasyOpenCVExample.SkystoneDeterminationPipeline pipeline;
+//    SkystoneDeterminationPipeline pipeline;
 //
 //    LinearOpMode opmode;
 //    HardwareMap hardwareMap;
@@ -60,7 +64,13 @@
 //        frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
 //        backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
 //        backRight = hardwareMap.get(DcMotor.class, "backRight" );
-////        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+//        shooterMotor = hardwareMap.get(DcMotorImplEx.class, "shooterMotor");
+//       // continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
+//        wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
+//        wobbleGoalRaise = hardwareMap.dcMotor.get("wobbleLift");
+//        intakeServo = hardwareMap.crservo.get("intakeServoOne");
+//        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+//        trigger = hardwareMap.crservo.get("trigger");
 //
 //        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //
@@ -75,7 +85,7 @@
 //
 //        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
 //        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        // parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+//       // parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
 //        parameters.loggingEnabled      = true;
 //        parameters.loggingTag          = "IMU";
 //        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
@@ -85,7 +95,7 @@
 //
 //        this.opmode = opmode;
 //        REGION1_TOPLEFT_ANCHOR_POINT = new Point(192,176);
-//        this.color= color;
+//this.color= color;
 //
 //    }
 //
@@ -95,7 +105,13 @@
 //        frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
 //        backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
 //        backRight = hardwareMap.get(DcMotor.class, "backRight" );
-//
+//        shooterMotor = hardwareMap.get(DcMotorImplEx.class, "shooterMotor");
+//        // continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
+//        wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
+//        wobbleGoalRaise = hardwareMap.dcMotor.get("wobbleLift");
+//        intakeServo = hardwareMap.crservo.get("intakeServoOne");
+//        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+//        trigger = hardwareMap.crservo.get("trigger");
 //
 //        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //
@@ -139,13 +155,28 @@
 //            telemetry.update();
 //        }
 //    }
-//
+////    public void innitDisplayTelemetryGyro() {
+////        while(!opmode.opModeIsActive()) {
+////            telemetry.addData("Current Gyro Reading: ", getAngleFromGyro());
+////            telemetry.update();
+////        }
+////    }
 //    public double getAngleFromGyro() {
 //
 //        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 //
 //        return angles.firstAngle;
 //    }
+////    public double relegateTargetAngle(double targetAngle) {
+////        if (targetAngle > 180) {
+////            double newTargetAngle = (targetAngle - 180);
+////            targetAngle = -180+newTargetAngle;
+////        }else if (targetAngle < -180) {
+////            double newTargetAngle = (targetAngle + 180);
+////            targetAngle = 180-newTargetAngle;
+////        }
+////        return targetAngle;
+////    }
 //
 //    public void forward (double speed, double rotations){
 //        int leftCurrent = frontLeft.getCurrentPosition();
@@ -158,7 +189,11 @@
 //        telemetry.addData("Target Back Left Motor Position", backLeftCurrent);
 //        telemetry.addData("Target Back Right Motor Position", backRightCurrent);
 //        telemetry.update();
-//
+////        try {
+////
+////        } catch (InterruptedException e) {
+////            e.printStackTrace();
+////        }
 //
 //        double toPositionLeft = leftCurrent + rotations*ticks;
 //        double toPositionRight = rightCurrent + rotations*ticks;
@@ -216,35 +251,41 @@
 //        frontRight.setPower(speed);
 //        backLeft.setPower(speed);
 //        backRight.setPower(speed);
-//    }
-//    public void setSpeedForTurnRight (double speed) {
-//        frontLeft.setPower(speed);
-//        frontRight.setPower(-speed);
-//        backLeft.setPower(speed);
-//        backRight.setPower(-speed);
-//    }
 //
-//    public void setSpeedForTurnLeft (double speed) {
-//        frontLeft.setPower(-speed);
-//        frontRight.setPower(speed);
-//        backLeft.setPower(-speed);
-//        backRight.setPower(speed);
+////        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
+////        telemetry.addData("Target Front Right Motor Position", toPositionRight);
+////        telemetry.addData("Target Back Left Motor Position", toPositionBackLeft);
+////        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
+////        telemetry.update();
 //    }
+//        public void setSpeedForTurnRight (double speed) {
+//            frontLeft.setPower(speed);
+//            frontRight.setPower(-speed);
+//            backLeft.setPower(speed);
+//            backRight.setPower(-speed);
+//        }
 //
-//    public void stopMotors () {
-//        frontLeft.setPower(0);
-//        frontRight.setPower(0);
-//        backLeft.setPower(0);
-//        backRight.setPower(0);
-//    }
+//        public void setSpeedForTurnLeft (double speed) {
+//            frontLeft.setPower(-speed);
+//            frontRight.setPower(speed);
+//            backLeft.setPower(-speed);
+//            backRight.setPower(speed);
+//        }
 //
-//    protected void motorTelemetry(){
-//        telemetry.addData("Target Front Left Motor Position", frontLeft.getCurrentPosition());
-//        telemetry.addData("Target Front Right Motor Position", frontRight.getCurrentPosition());
-//        telemetry.addData("Target Back Left Motor Position", backLeft.getCurrentPosition());
-//        telemetry.addData("Target Back Right Motor Position", backRight.getCurrentPosition());
-//        telemetry.update();
-//    }
+//        public void stopMotors () {
+//            frontLeft.setPower(0);
+//            frontRight.setPower(0);
+//            backLeft.setPower(0);
+//            backRight.setPower(0);
+//        }
+//
+//        protected void motorTelemetry(){
+//            telemetry.addData("Target Front Left Motor Position", frontLeft.getCurrentPosition());
+//            telemetry.addData("Target Front Right Motor Position", frontRight.getCurrentPosition());
+//            telemetry.addData("Target Back Left Motor Position", backLeft.getCurrentPosition());
+//            telemetry.addData("Target Back Right Motor Position", backRight.getCurrentPosition());
+//            telemetry.update();
+//        }
 //
 //
 //    public void pivotRightSloppy (double speed, double angle) {
@@ -326,11 +367,11 @@
 //        backLeft.setPower(speed2);
 //        backRight.setPower(speed2);
 //
-////        while (colorSensor.alpha() < 600) {
-////
-////            telemetry.addData("Light Level: ", colorSensor.alpha());
-////            telemetry.update();
-////        }
+//        while (colorSensor.alpha() < 600) {
+//
+//            telemetry.addData("Light Level: ", colorSensor.alpha());
+//            telemetry.update();
+//        }
 //
 //        stopMotors();
 //    }
@@ -341,11 +382,11 @@
 //        backLeft.setPower(speed2);
 //        backRight.setPower(speed2);
 //
-////        while (colorSensor.blue() < 20) {
-////
-//////            telemetry.addData("Blue Level: ", colorSensor.blue());
-////            telemetry.update();
-////        }
+//        while (colorSensor.blue() < 20) {
+//
+//            telemetry.addData("Blue Level: ", colorSensor.blue());
+//            telemetry.update();
+//        }
 //
 //        stopMotors();
 //    }
@@ -355,12 +396,12 @@
 //        frontRight.setPower(speed2);
 //        backLeft.setPower(speed2);
 //        backRight.setPower(speed2);
-////
-////        while (colorSensor.red() < 20) {
-////
-////            telemetry.addData("Red Level: ", colorSensor.red());
-////            telemetry.update();
-////        }
+//
+//        while (colorSensor.red() < 20) {
+//
+//            telemetry.addData("Red Level: ", colorSensor.red());
+//            telemetry.update();
+//        }
 //
 //        stopMotors();
 //    }
@@ -373,7 +414,7 @@
 //        frontRight.setPower(y - x);
 //        backRight.setPower(y + x);
 //
-//        pauseButInSecondsForThePlebeians(time);
+//
 //        stopMotors();
 //
 //    }
@@ -386,21 +427,21 @@
 //        frontRight.setPower(y - x);
 //        backRight.setPower(y + x);
 //
-////        if (color == 1) {
-////            while (colorSensor.alpha() < 20) {
-////
-////            }
-////        } else if (color == 2)  {
-////            while (colorSensor.red() < 20) {
-////
-////            }
-////        } else {
-////            while (colorSensor.blue() < 20) {
-////
-////            }
-////        }
-////        stopMotors();
-////    }
+//        if (color == 1) {
+//            while (colorSensor.alpha() < 20) {
+//
+//            }
+//        } else if (color == 2)  {
+//            while (colorSensor.red() < 20) {
+//
+//            }
+//        } else {
+//            while (colorSensor.blue() < 20) {
+//
+//            }
+//        }
+//        stopMotors();
+//    }
 //    public void strafeLeft (double speed, double rotations) {
 //
 //        int leftCurrent = frontLeft.getCurrentPosition();
@@ -479,6 +520,82 @@
 //        backRight.setMode(runMode);
 //    }
 //
+////    public void testServo1 (double speed) {
+////        continuous1.setPower(speed);
+////
+////        while (true){
+////            //laughter
+////        }
+////
+//////        for (int num = 0; num < duration; num ++) {
+//////            //LAUGHTER
+//////            telemetry.addData("LAUGHTER: Now ", num);
+//////            telemetry.update();
+////
+////    }
+//    //Pretend "Engage" is actually "ENGAGE!"
+//
+//    public void shooterEngageTeleop () {
+//        double targetVelocity = -5400*0.85*28/60;
+//        shooterMotor.setVelocity(targetVelocity);
+//
+//    }
+//    public void shooterEngage () {
+//        double targetVelocity = -5400*0.80*28/60;
+//        shooterMotor.setVelocity(targetVelocity);
+//        while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()) {
+//
+//        }
+//    }
+//
+//    public void shooterEngageAlt () {
+//        double targetVelocity = -5400*0.85*28/60;
+//        shooterMotor.setVelocity(targetVelocity);
+//        while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()){
+//        }
+//    }
+//
+//    public void shooterStop () {
+//        shooterMotor.setPower(0);
+//    }
+//
+//    public void wobbleGoalGrippyThingGrab () {
+//        wobbleGoalGrippyThing.setPosition(.2);
+//    }
+//    public void wobbleGoalGrippyThingRelease () {
+//        wobbleGoalGrippyThing.setPosition(.9);
+//    }
+//
+//    public void moveWobbleGoalArm (double speed, double rotation) {
+//        int currentPosition = wobbleGoalRaise.getCurrentPosition();
+//        telemetry.addData("current:",currentPosition);
+//        telemetry.update();
+//
+//        double toPosition = currentPosition + rotation*ticksTheSequel;
+//        wobbleGoalRaise.setTargetPosition((int)toPosition);
+//        wobbleGoalRaise.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        wobbleGoalRaise.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        wobbleGoalRaise.setPower(speed);
+//        while (this.opmode.opModeIsActive() && wobbleGoalRaise.isBusy()) {
+//            telemetry.addData("start:",currentPosition);
+//            telemetry.addData("target ", toPosition);
+//            telemetry.addData("current: ", wobbleGoalRaise.getCurrentPosition());
+//            telemetry.update();
+//        }
+//        wobbleGoalRaise.setPower(0);
+//
+//
+//
+//    }
+//
+//    public void intakeServoEngage(double speed) {
+//        intakeServo.setPower(speed);
+//    }
+//
+//    public void intakeServoStop() {
+//        intakeServo.setPower(0);
+//    }
+//
 //    public void pause(int millis){
 //        long startTime = new Date().getTime();
 //        long time = 0;
@@ -486,6 +603,13 @@
 //        while (time<millis && opmode.opModeIsActive()) {
 //            time = new Date().getTime() - startTime;
 //        }
+//    }
+//    public void depositWobbleGoal() {
+//            moveWobbleGoalArm(.7,-.5);
+//            pause(500);
+//            wobbleGoalGrippyThingRelease();
+//            pause(350);
+//            moveWobbleGoalArm(.7, .5);
 //    }
 //
 //    public void pauseButInSecondsForThePlebeians(double seconds) {
@@ -497,6 +621,27 @@
 //        }
 //    }
 //
+//    public void justShootGood() {
+//        double targetVelocity = -5400*0.80*28/60;
+//        shooterMotor.setVelocity(targetVelocity);
+//        while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()) {
+//
+//        }
+//        trigger.setPower(1);
+//        pause(700);
+//        trigger.setPower(-1);
+//        pause(700);
+//        trigger.setPower(1);
+//        pause(700);
+//        trigger.setPower(-1);
+//        pause(700);
+//        trigger.setPower(1);
+//        pause(700);
+//        trigger.setPower(-1);
+//        pause(700);
+//        trigger.setPower(0);
+//
+//    }
 //    public void openCVInnitShenanigans() {
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 //        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);
@@ -559,8 +704,8 @@
 //        static final int REGION_WIDTH = 30;
 //        static final int REGION_HEIGHT = 42;
 //
-//        int FOUR_RING_THRESHOLD = 150;
-//        int ONE_RING_THRESHOLD = 135;
+//         int FOUR_RING_THRESHOLD = 150;
+//         int ONE_RING_THRESHOLD = 135;
 //
 //        Point region1_pointA = new Point(
 //                REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -637,4 +782,13 @@
 //            return avg1;
 //        }
 //    }
-//}
+//
+//
+//
+////inner blue 68,176 size 30,42
+//        //outer blue 192, 176 size 30,42
+//        //inside red, the same as outer blue
+//        //outer red, the same as inside blue
+//
+//
+//    }
