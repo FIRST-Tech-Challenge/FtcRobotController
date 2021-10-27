@@ -23,7 +23,7 @@ public class AutonFrenz extends LinearOpMode {
         //Do computer vision here
 //THE BELOW CODE IS FOR THE CAROUSEL BEING ON THE LEFT OF THE ROBOT
         int x = 1; //get an input of 1,2,3 on where the item is from comp vision
-        if(x == 1){
+        if(x == 1){//
             move(.75,'r',800);
             move(.75,'f',500);
             move(.75,'l',800);
