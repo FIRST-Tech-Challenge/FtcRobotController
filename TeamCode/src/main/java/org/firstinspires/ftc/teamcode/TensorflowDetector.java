@@ -96,6 +96,9 @@ public class TensorflowDetector extends LinearOpMode {
 
             }
         }
+        // Let's call 3 the something went wrong case, since we need to return something no matter what.
+        return 5;
+
 
     }
 
