@@ -9,6 +9,7 @@ abstract public class RedWarehouseNoDetect extends MasterAutonomous{
 
         while (opModeIsActive()){
             moveAuto(0, 5, 20, 10);
+            break;
         }
     }
 
