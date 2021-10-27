@@ -8,6 +8,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.ftclib.ftclib:core:1.2.1'
     implementation 'org.firstinspires.ftc:Inspection:7.0.0'
     implementation 'org.firstinspires.ftc:Blocks:7.0.0'
     implementation 'org.firstinspires.ftc:Tfod:7.0.0'
