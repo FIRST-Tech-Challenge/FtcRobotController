@@ -60,54 +60,54 @@ public class AutoFrenzy extends LinearOpMode {
 
     }
     public void motorstop(){
-        robot.flDrive.set(0);
-        robot.blDrive.set(0);
-        robot.frDrive.set(0);
-        robot.brDrive.set(0);
+        robot.m0.set(0);
+        robot.m1.set(0);
+        robot.m2.set(0);
+        robot.m3.set(0);
         sleep(100);
     }
     public void move(double power, char direction, long SLEEP){
         switch (direction){
             case 'f':
-                robot.flDrive.set(power);
-                robot.blDrive.set(power);//dirve forward
-                robot.frDrive.set(power);
-                robot.brDrive.set(power);
+                robot.m0.set(power);
+                robot.m1.set(power);//dirve forward
+                robot.m2.set(power);
+                robot.m3.set(power);
                 sleep(SLEEP);
                 break;
             case 'b':
-                robot.flDrive.set(-power);
-                robot.blDrive.set(-power);//reverse
-                robot.frDrive.set(-power);
-                robot.brDrive.set(-power);
+                robot.m0.set(-power);
+                robot.m1.set(-power);//reverse
+                robot.m2.set(-power);
+                robot.m3.set(-power);
                 sleep(SLEEP);
                 break;
             case 'l':
-                robot.flDrive.set(-power);
-                robot.blDrive.set(-power);
-                robot.frDrive.set(power);//turn left
-                robot.brDrive.set(power);
+                robot.m0.set(-power);
+                robot.m1.set(-power);
+                robot.m2.set(power);//turn left
+                robot.m3.set(power);
                 sleep(SLEEP);
                 break;
             case 'r':
-                robot.flDrive.set(power);
-                robot.blDrive.set(power);//turn right
-                robot.frDrive.set(-power);
-                robot.brDrive.set(-power);
+                robot.m0.set(power);
+                robot.m1.set(power);//turn right
+                robot.m2.set(-power);
+                robot.m3.set(-power);
                 sleep(SLEEP);
                 break;
             case 'x':
-                robot.flDrive.set(1);
-                robot.blDrive.set(.25);
-                robot.frDrive.set(1);//idk what this is, pls tell me Daniel (i assume it is strafing)
-                robot.brDrive.set(.25);
+                robot.m0.set(1);
+                robot.m1.set(.25);
+                robot.m2.set(1);//idk what this is, pls tell me Daniel (i assume it is strafing)
+                robot.m3.set(.25);
                 sleep(SLEEP);
                 break;
             case 'y':
-                robot.flDrive.set(.25);
-                robot.blDrive.set(1);
-                robot.frDrive.set(.25);//put comments, u bastard
-                robot.brDrive.set(1);
+                robot.m0.set(.25);
+                robot.m1.set(1);
+                robot.m2.set(.25);//put comments, u bastard
+                robot.m3.set(1);
                 sleep(SLEEP);
                 break;
         }
