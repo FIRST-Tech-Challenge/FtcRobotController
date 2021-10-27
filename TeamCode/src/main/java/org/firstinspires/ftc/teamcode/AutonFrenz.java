@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+//Autonomous Code
+
 @Autonomous(name="Auton", group="Pushbot")
 public class AutonFrenz extends LinearOpMode {
 
