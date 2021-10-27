@@ -28,3 +28,19 @@ jobs:
           --warning-mode all
           --scan
           --stacktrace
+
+    - name: Upload the FtcRobotController build
+      uses: actions/upload-artifact@v2
+      with:
+        name: FtcRobotController-Build
+        path: |
+          ./FtcRobotController/build/outputs/
+          ./FtcRobotController/build/reports/
+
+    - name: Upload the TeamCode build
+      uses: actions/upload-artifact@v2
+      with:
+        name: TeamCode-Build
+        path: |
+          ./TeamCode/build/outputs/
+          ./TeamCode/build/reports/
