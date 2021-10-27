@@ -32,7 +32,6 @@ public class Drivetrain  {
         double leftPowerY = -gamepad1.left_stick_y;      //find the value of y axis on the left joystick;
         double leftPowerX = gamepad1.left_stick_x;      //find the value of x axis on the left joystick;
         double rightPowerX = gamepad1.right_stick_x;     //find the value of x axis on the right joystick;
-
         //Power of Mecanum wheels;
         double leftfrontpower = leftPowerY + leftPowerX - rightPowerX;     //Power level for leftfront
         double rightbackpower = leftPowerY - leftPowerX + rightPowerX;     //Power level for rightback

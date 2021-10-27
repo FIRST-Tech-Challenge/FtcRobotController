@@ -14,8 +14,23 @@ public class Generic_Lift { //ToDo: Rename to specific lift type once we make de
 
     //ToDo: Add encoder count amount (still undetermined, just put a number in now)
     //ToDo: Add stop and reset encoder in init(), and run using encoder. See FTC_14133_2021_Auto.java
-    //ToDo: Add limit switch sensing for either extreme location and to reset to 0 on one side (Homing)
+    //ToDo: Add limit switch sensing for either extreme location and to reset to 0 on one side (Homing) or in the middle
     //ToDo: Create set-point positions for different arm positions (Intake, place low, place mid, place high, different sides)
+        //This can likely be done with looking at different states and using the arrows, bumpers, or something else to move up the integer positions
+        //Pseudo code:
+            // integer position == 0; //initial position of arm
+            // if (gamepad.dpadup==1){
+            // position = position + 1
+            // else if(gamepad.dpaddown==1)
+            // position = position - 1}
+
+            // if (position == 0){
+            // set encoder position to x
+            // else if(position==1){
+            // set encoder position to y //etc}
+            // else if(position==-1){
+            // set encoder position to -y //etc}
+            //}
 
     public Generic_Lift(HardwareMap hardwareMap){                 // Motor Mapping
     lift = hardwareMap.get(DcMotorEx.class, "lift");      //Sets the names of the hardware on the hardware map
