@@ -1,9 +1,11 @@
 package org.firstinspires.team8923_2021;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+@Autonomous(name="MasterAutonomous")
 abstract public class MasterAutonomous extends MasterOpMode{
     private ElapsedTime runtime = new ElapsedTime();
 
