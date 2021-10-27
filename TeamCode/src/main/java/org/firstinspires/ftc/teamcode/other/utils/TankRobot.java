@@ -20,10 +20,10 @@ public class TankRobot extends GamepadExtended {
         super(gamepad1, gamepad2, telemetry);
         tank = new Tank(
                 telemetry,
-                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_1), DcMotorSimple.Direction.FORWARD),
-                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_2), DcMotorSimple.Direction.FORWARD),
-                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.LEFT_DRIVE_1), DcMotorSimple.Direction.FORWARD),
-                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.LEFT_DRIVE_2), DcMotorSimple.Direction.FORWARD)
+                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_1), DcMotorSimple.Direction.FORWARD),
+                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_2), DcMotorSimple.Direction.FORWARD),
+                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_1), DcMotorSimple.Direction.FORWARD),
+                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_2), DcMotorSimple.Direction.FORWARD)
         );
     }
 

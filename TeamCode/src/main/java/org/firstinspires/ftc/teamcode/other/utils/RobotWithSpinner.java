@@ -21,10 +21,10 @@ public class RobotWithSpinner extends GamepadExtended {
 
         List<String> motorNames = new ArrayList<String>();
 
-        motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_1));
-        motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_1));
-        motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_2));
-        motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_2));
+        motorNames.add(hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_1));
+        motorNames.add(hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_1));
+        motorNames.add(hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_2));
+        motorNames.add(hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_2));
 
         this.drivetrainManager4WD = new DrivetrainManager4WD(motorNames, hardwareMap);
 

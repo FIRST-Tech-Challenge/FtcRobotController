@@ -2,15 +2,15 @@
     <string name="title_activity_imgproc">imgproc</string>
     <string name="VUFORIA_KEY">AcQbfNb/////AAABmUoZxvy9bUCeksf5rYATLidV6rQS+xwgakOfD4C+LPj4FmsvqtRDFihtnTBZUUxxFbyM7CJMfiYTUEwcDMJERl938oY8iVD43E/SxeO64bOSBfLC0prrE1H4E5SS/IzsVcQCa9GsNaWrTEushMhdoXA3VSaW6R9KrrwvKYdNN/SbaN4TPslQkTqSUr63K60pkE5GqpeadAQuIm8V6LK63JD1TlF665EgpfsDZeVUBeAiJE86iGlT1/vNJ9kisAqKpBHsRyokaVClRnjlp28lmodjVRqeSk8cjCuYryn74tClfxfHQpkDDIsJO+7IYwJQCZQZZ+U9KJaMUeben4HOj0JTnQaEE6MZLaLQzY+C/6MS</string>
     <string name="webcam">Webcam</string>
-
-    <string name="LEFT_DRIVE_1">ld1</string>
-    <string name="LEFT_DRIVE_2">ld2</string>
-
-    <string name="CNTR_DRIVE_1">cd1</string>
-
-    <string name="RIGHT_DRIVE_1">rd1</string>
-    <string name="RIGHT_DRIVE_2">rd2</string>
-
+    <!---->
+    <string name="DRIVETRAIN_LEFT_DRIVE_1">ld1</string>
+    <string name="DRIVETRAIN_LEFT_DRIVE_2">ld2</string>
+    <string name="DRIVETRAIN_CNTR_DRIVE_1">cd1</string>
+    <string name="DRIVETRAIN_RIGHT_DRIVE_1">rd1</string>
+    <string name="DRIVETRAIN_RIGHT_DRIVE_2">rd2</string>
     <string name="HW_SPINNER">spin</string>
     <string name="HW_LIFT">lift</string>
+    <string name="HW_GRABBER">grabber</string>
+    <string name="HW_TRAPPER">trapper</string>
+    <string name="HW_TRAPPER_TRIGGER">distance</string>
 </resources>
