@@ -65,25 +65,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Hardware
 {
     /* Public OpMode members. */
-    public Motor m0 = null;
-    public Motor m1 = null;
-    public Motor m2 = null;
-    public Motor m3 = null;
-    public Motor carousel = null;
-    public Motor intake = null;
-    public double MIN_ANGLE = 0;
-    public double MAX_ANGLE = 180;
-    MotorGroup frontMotors = new MotorGroup(m0, m1);
-    MotorGroup backMotors = new MotorGroup(m2, m3);
-    DifferentialDrive drive;
-    MecanumDrive mecanum = new MecanumDrive(m1 , m1, m2, m3);
+    public Motor m0 = null, m1 = null, m2 = null, m3 = null;
+    public Motor carousel = null, intake = null;
+    public double MIN_ANGLE = 0, MAX_ANGLE = 180;
     DistanceSensor dist = null;
-
-
-
-    /* local OpMode members. */
-    HardwareMap hwMap   =  null;
-    ServoEx servo = new SimpleServo(hwMap,"servo", MIN_ANGLE, MAX_ANGLE);
+    MecanumDrive m;
+    ServoEx servo;
 
     /* Constructor */
     public Hardware(){
@@ -91,18 +78,17 @@ public class Hardware
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
-        // Save reference to Hardware map
-        hwMap = ahwMap;
+    public void init(HardwareMap h) {
+        servo = new SimpleServo(h,"servo", MIN_ANGLE, MAX_ANGLE);
 
         // Define and Initialize Motors
-        m0 = new Motor(hwMap, "m0");
-        m1 = new Motor(hwMap, "m2");
-        m2 = new Motor(hwMap, "m1");
-        m3 = new Motor(hwMap, "m3");
-        intake = new Motor(hwMap, "m4");
-        carousel = new Motor(hwMap, "m5");
-        dist = hwMap.get(DistanceSensor.class, "distsensor");
+        m0 = new Motor(h, "m0");
+        m1 = new Motor(h, "m2");
+        m2 = new Motor(h, "m1");
+        m3 = new Motor(h, "m3");
+        intake = new Motor(h, "m4");
+        carousel = new Motor(h, "m5");
+        dist = h.get(DistanceSensor.class, "distsensor");
 
         m0.set(0);
         m1.set(0);
@@ -136,7 +122,7 @@ public class Hardware
         servo.setRange(MIN_ANGLE, MAX_ANGLE);
         servo.setPosition(0);
 
-        drive = new DifferentialDrive(frontMotors,backMotors);
+        m = new MecanumDrive(m0,m1,m2,m3);
 
     }
 }
