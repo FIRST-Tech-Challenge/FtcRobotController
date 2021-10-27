@@ -22,7 +22,7 @@ public class CarouselDriveForward extends CommandBase {
     }
 
     @Override
-    public void execute() { m_carousel.drive(0.5); }
+    public void execute() { m_carousel.drive(1.0); }
 
     @Override
     public boolean isFinished() { return false; }

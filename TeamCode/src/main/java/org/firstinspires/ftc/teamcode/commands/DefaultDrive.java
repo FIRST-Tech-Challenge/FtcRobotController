@@ -26,7 +26,7 @@ public class DefaultDrive extends CommandBase {
 
     @Override
     public void execute() {
-        m_drivetrain.drive(m_driver.getRightX(), -m_driver.getRightY(), m_driver.getLeftX());
+        m_drivetrain.drive(m_driver.getRightX(), -m_driver.getRightY(), -m_driver.getLeftX());
     }
 
     @Override

@@ -114,8 +114,8 @@ public class RobotTeleOp extends CommandOpMode {
 
             Intake m_intake = new Intake(servoIntakeLeft, servoIntakeRight, telemetry);
 
-            GamepadButton driver_a = m_driverGamepad.getGamepadButton(GamepadKeys.Button.A);
-            GamepadButton driver_y = m_driverGamepad.getGamepadButton(GamepadKeys.Button.Y);
+            GamepadButton driver_a = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.A);
+            GamepadButton driver_y = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.Y);
 
             driver_a.whileHeld(new IntakeIn(m_intake, telemetry)).whenReleased(() -> m_intake.stopIntake());
             driver_y.whileHeld(new IntakeOut(m_intake, telemetry)).whenReleased(() -> m_intake.stopIntake());
@@ -141,15 +141,11 @@ public class RobotTeleOp extends CommandOpMode {
 
             Arm m_arm = new Arm(motorArm, telemetry);
 
-            GamepadButton driver_dpad_up = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP);
-            GamepadButton driver_dpad_down = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN);
-            GamepadButton driver_dpad_left = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT);
-            GamepadButton driver_dpad_right = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT);
+            GamepadButton oper_dpad_left = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT);
+            GamepadButton oper_dpad_right = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT);
 
-//            dpad_up.whenPressed(new ArmToPosition(m_arm, 100, telemetry));
-//            dpad_down.whenPressed(new ArmToPosition(m_arm, 0, telemetry));
-            driver_dpad_left.whileHeld(new ArmDriveBackward(m_arm, telemetry)).whenReleased(() -> m_arm.stopAll());
-            driver_dpad_right.whileHeld(new ArmDriveForward(m_arm, telemetry)).whenReleased(() -> m_arm.stopAll());
+            oper_dpad_left.whileHeld(new ArmDriveBackward(m_arm, telemetry)).whenReleased(() -> m_arm.stopAll());
+            oper_dpad_right.whileHeld(new ArmDriveForward(m_arm, telemetry)).whenReleased(() -> m_arm.stopAll());
         }
 
         if (CAROUSEL_ENABLED) {
@@ -162,19 +158,15 @@ public class RobotTeleOp extends CommandOpMode {
             Holding the DPAD_RIGHT drives the arm forward at a set speed using the CarouselDriveForward
              */
 
-            CRServo servoCarousel = new CRServo(hardwareMap, "servoArm");
+            CRServo servoCarousel = new CRServo(hardwareMap, "servoCarousel");
 
             Carousel m_carousel = new Carousel(servoCarousel, telemetry);
 
             GamepadButton oper_dpad_up = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP);
             GamepadButton oper_dpad_down = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN);
-            GamepadButton oper_dpad_left = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT);
-            GamepadButton oper_dpad_right = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT);
 
-//            oper_dpad_up.whenPressed(new ArmToPosition(m_arm, 100, telemetry));
-//            oper_dpad_down.whenPressed(new ArmToPosition(m_arm, 0, telemetry));
-            oper_dpad_left.whileHeld(new CarouselDriveBackward(m_carousel, telemetry)).whenReleased(() -> m_carousel.stopAll());
-            oper_dpad_right.whileHeld(new CarouselDriveForward(m_carousel, telemetry)).whenReleased(() -> m_carousel.stopAll());
+            oper_dpad_up.whileHeld(new CarouselDriveBackward(m_carousel, telemetry)).whenReleased(() -> m_carousel.stopAll());
+            oper_dpad_down.whileHeld(new CarouselDriveForward(m_carousel, telemetry)).whenReleased(() -> m_carousel.stopAll());
         }
 
         telemetry.addLine("Robot Initialized");
