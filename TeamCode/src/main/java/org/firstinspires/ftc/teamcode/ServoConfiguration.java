@@ -12,26 +12,27 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import androidx.annotation.NonNull;
 
-// Utilizes FtcDashboard
-@Config
-class ServoConfigValue {
-    public static double servoPos = 0.27;
-    final Servo servo;
-
-    ServoConfigValue(@NonNull HardwareMap hardwareMap) {
-        //Put the name of the servo you want to config here.
-        this.servo = hardwareMap.get(Servo.class, "armServo");
-    }
-
-    void update() {
-        servo.setPosition(servoPos);
-    }
-    @Config
-    static class MotorPos { public static int motorPos = 0; }
-}
-
 @TeleOp
 public class ServoConfiguration extends LinearOpMode {
+
+    // Utilizes FtcDashboard
+    @Config
+    static class ServoConfigValue {
+        public static double servoPos = 0.27;
+        final Servo servo;
+
+        ServoConfigValue(@NonNull HardwareMap hardwareMap) {
+            //Put the name of the servo you want to config here.
+            this.servo = hardwareMap.get(Servo.class, "armServo");
+        }
+
+        void update() {
+            servo.setPosition(servoPos);
+        }
+        @Config
+        static class MotorPos { public static int motorPos = 0; }
+    }
+
     protected boolean withMotor = false;
     @Override
     public void runOpMode() {
