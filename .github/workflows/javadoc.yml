@@ -1,0 +1,37 @@
+name: Javadoc Generation
+on:
+  push:
+    branches: master
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up the JDK environment
+      uses: actions/setup-java@v2
+      with:
+        java-version: 16
+        distribution: 'adopt'
+        cache: gradle
+
+    - name: Gradle version
+      run: ./gradlew --version
+
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: build
+
+    - name: Generate documentation with Javadoc
+      run: javadoc -d javadoc-output $(find . -name "*.java") -Xdoclint:none --ignore-source-errors
+
+    - name: Upload the Javadoc output
+      uses: actions/upload-artifact@v2
+      with:
+        name: Javadoc-output
+        path: ./javadoc-output/
