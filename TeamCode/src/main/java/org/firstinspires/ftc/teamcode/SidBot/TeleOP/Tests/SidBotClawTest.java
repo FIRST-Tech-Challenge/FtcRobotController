@@ -1,15 +1,18 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.SidBot.TeleOP.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.LinearSlide;
+import org.firstinspires.ftc.teamcode.ServoClaw;
+
 @TeleOp(name="SidBotClawTest ClawTest", group="tests")
 public class SidBotClawTest extends OpMode {
 
-    private ServoClaw clawObject;
-    private LinearSlide armObject;
+    private org.firstinspires.ftc.teamcode.ServoClaw clawObject;
+    private org.firstinspires.ftc.teamcode.LinearSlide armObject;
 
     private float slowdownModifierP1;
 
@@ -24,7 +27,6 @@ public class SidBotClawTest extends OpMode {
         DcMotor arm = hardwareMap.dcMotor.get("arm");
 
         // Init Claw Object
-        // Min = 800, Max = 1800
         this.clawObject = new ServoClaw(claw,0.33f,1);
 
         // Init Arm Object
