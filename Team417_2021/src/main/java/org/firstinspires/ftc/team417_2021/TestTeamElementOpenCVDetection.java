@@ -43,7 +43,10 @@ public class TestTeamElementOpenCVDetection extends LinearOpMode {
             else if (barcodeDetector.barcodeIndex == 2){
                 side = "right";
             }
-
+            telemetry.addData("contours length", barcodeDetector.contours.size());
+            telemetry.addData("index", barcodeDetector.index);
+            telemetry.addData("area", barcodeDetector.maxArea); // switches between zero and number
+            telemetry.addData("x", barcodeDetector.x);
             telemetry.addData("Side", side);
             telemetry.update();
         }

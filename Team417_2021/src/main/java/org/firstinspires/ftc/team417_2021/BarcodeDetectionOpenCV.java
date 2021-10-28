@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team417_2021;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -37,11 +38,17 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
     List<MatOfPoint> rightContours = new ArrayList<>();
     List<MatOfPoint> contours = new ArrayList<>();
     List<MatOfPoint> mainContours = new ArrayList<>();
-+
+
     //                         y, u, v
     Scalar lower = new Scalar (0, 62, 0);
     Scalar higher = new Scalar (255, 117, 116);
     Scalar blackScalar = new Scalar (0,0,0);
+
+    Rect rect = new Rect();
+    Rect maxRect = new Rect();
+
+    int x;
+    int index;
 
 
     @Override
@@ -50,7 +57,7 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
         input.copyTo(frame);
 
 
-        Imgproc.cvtColor(input, yuv, Imgproc.COLOR_RGB2YUV);
+        Imgproc.cvtColor(input, yuv, Imgproc.COLOR_RGB2YUV);/*
         yuvLeft = yuv.submat(160,350, 0, 213);
         yuvMiddle = yuv.submat(160, 350, 213, 426);
         yuvRight = yuv.submat(160, 350, 426, 640);
@@ -64,7 +71,7 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
         for (MatOfPoint contour : mainContours) {
             Imgproc.drawContours(frame, mainContours, i, blackScalar, 5);
             i++;
-        }
+        }*/
         //Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 
         /*
@@ -74,19 +81,36 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
         */
 
         //findBarcodeIndex();
+        maxArea = 0.0;
 
         Imgproc.GaussianBlur(yuv, blurred, new Size(13,13), 0);
-        Core.inRange(yuv, lower, higher, mask);
+        Core.inRange(blurred, lower, higher, mask);
 
+        Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL,
+                Imgproc.CHAIN_APPROX_SIMPLE);
+        for (MatOfPoint contour : contours) {
+            rect = Imgproc.boundingRect(contour);
+            double area = Imgproc.contourArea(contour);
+            if (area > maxArea) {
+                // max rect is not changing
+                maxRect = rect;
+                maxArea = area;
+                x = maxRect.x;
+            }
+        }
+        contours.clear();
+
+
+/*
         maskLeft = mask.submat(160,350, 0, 213);
         maskMiddle = mask.submat(160, 350, 213, 426);
         maskRight = mask.submat(160, 350, 426, 640);
 
         leftMaxArea = tempMethodName(maskLeft);
         middleMaxArea = tempMethodName(maskMiddle);
-        rightMaxArea = tempMethodName(maskRight);
+        rightMaxArea = tempMethodName(maskRight);*/
 
-        findBarcodeIndex();
+        index = findBarcodeIndex2(x);
 
         return mask;
     }
@@ -140,5 +164,17 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
         return barcodeIndex;
     }
 
+    public int findBarcodeIndex2(int x) {
+        // 213, 426
+        int index = 0;
+        if (x < 213) {
+            index = 0;
+        } else if (x > 213 && x < 426) {
+            index = 1;
+        } else if (x > 426) {
+            index = 2;
+        }
+        return index;
+    }
 
 }

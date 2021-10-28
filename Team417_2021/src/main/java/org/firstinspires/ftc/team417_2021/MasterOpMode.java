@@ -4,6 +4,10 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.team417_2021.Resources.FIRFilter;
+import org.firstinspires.ftc.team417_2021.Resources.PIDFilter;
+import org.firstinspires.ftc.team417_2021.Resources.Polynomial;
+
 abstract public class MasterOpMode extends LinearOpMode {
 
     DcMotor motorFL = null;
@@ -15,13 +19,26 @@ abstract public class MasterOpMode extends LinearOpMode {
 
     public BNO055IMU imu;
 
+    PIDFilter turnFilter;
+    PIDFilter moveFilter;
+    FIRFilter accelerationFilter;
+    int filterLength = 10;
+
     // drive constants
     static final double COUNTS_PER_MOTOR_REV = 537.7; // GoBilda 5302 19:2:1 motor
-    static final double DRIVE_GEAR_REDUCTION = 1.0; // todo figure out if we have geared
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     protected void initializeHardware() {
+
+        // initialize move filters
+        turnFilter = new PIDFilter(0.008, 0, 0.0001);
+        moveFilter = new PIDFilter(0.04, 0, 0);
+        // weights for weighted average
+        double[] filterCoefficients = {1};
+        accelerationFilter = new FIRFilter(new Polynomial(filterCoefficients),filterLength);
+        accelerationFilter.values = new double[filterLength];
 
         // Initialize motors to be the hardware motors
         motorFL = hardwareMap.dcMotor.get("motorFL");

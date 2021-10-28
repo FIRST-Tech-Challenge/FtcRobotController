@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team417_2021;
 public class Robot {
 
     double curAngle = 0;
+    double currentHypotenuse = 0;
     double currentX = 0;
     double currentY = 0;
     private double initialHeading;
@@ -27,8 +28,9 @@ public class Robot {
         // plug in motor values to check the equations below
         // multiply currentX by 0.91 to account for x movement being 9% short in testing
         // todo Properly account for this factor
-        currentY = ( (float) (master.motorFL.getCurrentPosition() + master.motorBL.getCurrentPosition() + master.motorFR.getCurrentPosition() + master.motorBR.getCurrentPosition()) ) / ( 4 * master.COUNTS_PER_INCH );
         curAngle = getCorrectedHeading();
-        currentX = Math.sin(curAngle) * currentY;
+        currentHypotenuse = ((float) master.motorFL.getCurrentPosition() + master.motorBL.getCurrentPosition() + master.motorFR.getCurrentPosition() + master.motorBR.getCurrentPosition() ) / ( 4 * master.COUNTS_PER_INCH );
+        currentY = Math.cos(Math.toRadians(curAngle)) * currentHypotenuse;
+        currentX = Math.sin(Math.toRadians(curAngle)) * currentHypotenuse;
     }
 }
