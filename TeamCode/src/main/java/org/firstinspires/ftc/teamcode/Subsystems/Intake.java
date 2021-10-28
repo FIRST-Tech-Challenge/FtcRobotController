@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
     // Instantiate the motor variables
     private DcMotorEx intake;
+    int pos= 0 ;
 
     public Intake(HardwareMap hardwareMap){                 // Motor Mapping
         intake = hardwareMap.get(DcMotorEx.class, "intake_m");      //Sets the names of the hardware on the hardware map
@@ -23,13 +24,19 @@ public class Intake {
         intake.setDirection(DcMotorEx.Direction.FORWARD);
     }
 
-    public void Update(Gamepad gamepad2){ //Code to be run in Op Mode void Loop at top level
-        if (gamepad2.right_trigger > 0) {       //runs the intake forward
+    public void Update(Gamepad gamepad2, Generic_Lift lift){ //Code to be run in Op Mode void Loop at top level
+        pos = lift.getArmPosition();                    // gets the current arm position
+        if (gamepad2.right_trigger > 0 && pos>0 ) {       //runs the intake forward based on arm position
             intake.setPower(1);
+        }else if (gamepad2.right_trigger > 0 && pos<0){
+            intake.setPower(-1);                           // runs the intake forward, but the arm is backwards so it is negative
         }
+
 
         if (gamepad2.left_trigger > 0) {        //runs the intake backwards
             intake.setPower(-1);
         }
+
     }
+
 }

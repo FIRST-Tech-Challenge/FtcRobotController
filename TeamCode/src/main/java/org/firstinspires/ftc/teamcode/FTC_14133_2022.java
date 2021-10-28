@@ -25,10 +25,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Turn_Table;
 //ToDo: Add light subsystem for Blinkin' which will run primarily with while loops likely
 
 public class  FTC_14133_2022 extends OpMode {
- private Drivetrain drivetrain=null;
- private Intake Intake=null;
- private Turn_Table Turn_Table=null;
- private Generic_Lift Generic_Lift=null;
+ public Drivetrain drivetrain=null;
+ public Intake Intake=null;
+ public Turn_Table Turn_Table=null;
+ public Generic_Lift Generic_Lift=null;
 
  public void init() {
      drivetrain = new Drivetrain(hardwareMap);
@@ -49,9 +49,10 @@ public class  FTC_14133_2022 extends OpMode {
  public void loop() {
 
      drivetrain.Update(gamepad1);
-     Intake.Update(gamepad2);
-     Turn_Table.Update(gamepad2);
      Generic_Lift.Update(gamepad2);
+     Intake.Update(gamepad2, Generic_Lift);
+     Turn_Table.Update(gamepad2);
+
 
 
 }

@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Generic_Lift { //ToDo: Rename to specific lift type once we make decision (Elevator, arm, etc.)
     // Instantiate the drivetrain motor variables
     private DcMotorEx lift;
+    public int position = 0; // Integer position of the arm
 
     //ToDo: Add encoder count amount (still undetermined, just put a number in now)
     //ToDo: Add stop and reset encoder in init(), and run using encoder. See FTC_14133_2021_Auto.java
@@ -38,20 +39,27 @@ public class Generic_Lift { //ToDo: Rename to specific lift type once we make de
 
     // Set motor direction based on which side of the robot the motors are on
     lift.setDirection(DcMotorEx.Direction.FORWARD);
+    position=0; //initial arm position
     }
 
     public void Update(Gamepad gamepad2){ //Code to be run in Op Mode void Loop at top level
-        if (gamepad2.y) {
-            lift.setPower(0.3);                 //Sets the power for the Long arm
-            lift.setTargetPosition(100);        //Tell the motor to go to 90 degrees when told to
-            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
 
-        if (gamepad2.a) {
-            lift.setPower(0.3);        //Sets the power for the Long arm
-            lift.setTargetPosition(100);        //Tell the motor to go to 90 degrees when told to
-            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+        // if (gamepad.dpadup==1){   this needs to be a toggle methinks rather than simply a check
+        // position = position + 1
+        // else if(gamepad.dpaddown==1)
+        // position = position - 1}
+        //Limit this to however many positions we want (maybe 3 per side?
 
+        // if (position == 0){
+        // set encoder position to x
+        // else if(position==1){
+        // set encoder position to y //etc}
+        // else if(position==-1){
+        // set encoder position to -y //etc}
+        //}
+
+    }
+    public int getArmPosition(){
+        return position;
     }
 }
