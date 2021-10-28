@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="TemplateOpMode", group="Iterative")
+@Autonomous(name="TemplateOpModeother", group="Iterative")
 @Disabled
 public class IterativeTemplate extends OpMode {
 

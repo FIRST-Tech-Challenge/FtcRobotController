@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.other.utils.Motor;
 
-@Autonomous(name="Encoder Drive Test (H-Drive)", group="H.Testing.Autonomous")
+@Autonomous(name="Encoder Drive Test (H-Drive) other", group="H.Testing.Autonomous")
 public class AutoEncoderDriveTest extends LinearOpMode {
 
     @Override

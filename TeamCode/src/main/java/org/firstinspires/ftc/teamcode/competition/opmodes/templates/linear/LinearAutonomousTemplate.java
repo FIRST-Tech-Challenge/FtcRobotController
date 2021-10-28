@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.other.utils.Motor;
 
-@Autonomous(name="LinearTemplate", group="linear")
+@Autonomous(name="LinearTeleOpTemplate", group="linear")
 public class LinearAutonomousTemplate extends LinearOpMode {
 
     @Override

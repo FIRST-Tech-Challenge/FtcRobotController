@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.other.utils.Motor;
 import org.firstinspires.ftc.teamcode.other.utils.Tank;
 import org.firstinspires.ftc.teamcode.other.utils.TeleOpMovementPlane;
 
-@TeleOp(name="TankTeleOp", group="Iterative")
+@TeleOp(name="TankTeleOpother", group="Iterative")
 public class TankTeleOp extends OpMode {
 
     private final ElapsedTime TIME = new ElapsedTime();

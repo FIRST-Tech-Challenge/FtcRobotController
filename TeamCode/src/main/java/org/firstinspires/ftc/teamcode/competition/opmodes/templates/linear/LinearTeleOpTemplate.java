@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.competition.opmodes.templates.linear;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="LinearTemplate", group="linear")
+@TeleOp(name="LinearAutonomousTemplate", group="linear")
 public class LinearTeleOpTemplate extends LinearOpMode {
 
     @Override
