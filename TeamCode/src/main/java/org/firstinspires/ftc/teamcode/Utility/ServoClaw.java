@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 //class for operating claw
 public class ServoClaw {
 
-    //var declarations
+//var declarations
     private Servo claw;
     private float minturn;
     private float maxturn;
