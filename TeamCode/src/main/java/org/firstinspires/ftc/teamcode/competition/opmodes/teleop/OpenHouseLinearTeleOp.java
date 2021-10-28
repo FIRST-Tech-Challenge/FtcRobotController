@@ -18,16 +18,17 @@ public class OpenHouseLinearTeleOp extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()) {
             if(isStopRequested()) {
-                r.stop();
-                l.stop();
-                intake.stop();
-                stop();
+                break;
             }else{
                 r.driveWithEncoder((int) Range.clip((-gamepad1.left_stick_y + gamepad1.right_stick_x) * 100, -100, 100));
                 l.driveWithEncoder((int) Range.clip((-gamepad1.left_stick_y - gamepad1.right_stick_x) * 100, -100, 100));
                 intake.driveWithEncoder((int) Range.clip(gamepad1.left_trigger * 100, -100, 100));
             }
         }
+        r.stop();
+        l.stop();
+        intake.stop();
+        stop();
     }
 
 }
