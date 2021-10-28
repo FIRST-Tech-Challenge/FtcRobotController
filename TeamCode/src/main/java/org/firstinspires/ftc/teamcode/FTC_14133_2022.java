@@ -48,10 +48,12 @@ public class  FTC_14133_2022 extends OpMode {
 
  public void loop() {
 
-     drivetrain.Update(gamepad1);
-     Generic_Lift.Update(gamepad2);
-     Intake.Update(gamepad2, Generic_Lift);
-     Turn_Table.Update(gamepad2);
+    drivetrain.Update(gamepad1);
+    Generic_Lift.Update(gamepad2);
+
+    // getArmPosition here so that we can pass the minimal amount of data
+    Intake.Update(gamepad2, Generic_Lift.getArmPosition());
+    Turn_Table.Update(gamepad2);
 
 
 
