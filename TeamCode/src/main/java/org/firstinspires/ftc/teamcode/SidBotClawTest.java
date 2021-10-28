@@ -25,7 +25,7 @@ public class SidBotClawTest extends OpMode {
 
         // Init Claw Object
         // Min = 800, Max = 1800
-        this.clawObject = new ServoClaw(claw,800,1800);
+        this.clawObject = new ServoClaw(claw,0.33f,1);
 
         // Init Arm Object
         // NOTE: Arm is unrestricted
@@ -44,13 +44,13 @@ public class SidBotClawTest extends OpMode {
         this.slowdownModifierP1 = 1 - (gamepad1.right_trigger * 0.85f);
 
         //Manage claw
-        clawObject.turninrange(1-gamepad1.left_trigger);
+        clawObject.actuateToPercent(gamepad1.left_trigger);
 
         //Manage arm
         armObject.MoveSlideUnrestricted(gamepad1.left_stick_y * slowdownModifierP1);
 
         //Telemetry
-        telemetry.addData("Claw Position", 1-gamepad1.left_trigger);
+        telemetry.addData("Claw Position", clawObject.getPos());
         telemetry.addData("Rotation", gamepad1.left_stick_y * slowdownModifierP1);
         telemetry.update();
     }
