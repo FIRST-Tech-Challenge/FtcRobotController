@@ -1447,7 +1447,6 @@ public class YellowBot implements OdoBot {
                     break;
                 }
 
-
                 this.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 this.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 this.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

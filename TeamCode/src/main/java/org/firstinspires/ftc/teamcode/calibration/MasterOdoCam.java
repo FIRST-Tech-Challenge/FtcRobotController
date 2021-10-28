@@ -48,8 +48,4 @@ public class MasterOdoCam extends MasterOdo {
         startLocator(locator);
     }
 
-    @Override
-    protected void curve(BotMoveProfile profile) {
-        bot.moveToPos(profile, null);
-    }
 }

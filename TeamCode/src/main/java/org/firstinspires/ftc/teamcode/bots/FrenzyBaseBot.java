@@ -343,6 +343,43 @@ public class FrenzyBaseBot implements OdoBot {
 
     @Override
     public void diagTo(BotMoveProfile profile) {
+        if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
+
+            MotorReductionBot calib = profile.getMotorReduction();
+
+            boolean leftAxis = profile.getAngleChange() > 0;
+            double power = profile.getTopSpeed();
+
+            this.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            this.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            this.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            this.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+            if (!leftAxis) {
+
+                this.frontLeft.setTargetPosition((int) profile.getLeftTarget());
+                this.backRight.setTargetPosition((int)profile.getRightTargetBack());
+                this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                this.frontLeft.setVelocity(MAX_VELOCITY_GB * power * calib.getLF());
+                this.backRight.setVelocity(MAX_VELOCITY_GB * power * calib.getRB());
+
+                this.backLeft.setVelocity(0);
+                this.frontRight.setVelocity(0);
+            } else {
+                this.backLeft.setTargetPosition((int)profile.getLeftTargetBack());
+                this.frontRight.setTargetPosition((int)profile.getRightTarget());
+                this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                this.backLeft.setVelocity(MAX_VELOCITY_GB * power * calib.getLB());
+                this.frontRight.setVelocity(MAX_VELOCITY_GB * power * calib.getRF());
+
+                this.frontLeft.setVelocity(0);
+                this.backRight.setVelocity(0);
+            }
+
+        }
 
     }
 
@@ -506,184 +543,9 @@ public class FrenzyBaseBot implements OdoBot {
 
 
     public void curveTo(BotMoveProfile profile, IBaseOdometry locator) {
-        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
-
-            MotorReductionBot mr = profile.getMotorReduction();
-
-            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-            boolean forward = profile.getDirection() == RobotDirection.Forward;
-            boolean leftLong = profile.isLeftLong();
-
-
-            double startPower = 0;
-            double speedIncrementLeft = 0.05;
-            double speedIncrementRight = speedIncrementLeft;
-
-            double slowdownMarkLong = profile.getSlowdownMarkLong();
-            double slowdownMarkShort = profile.getSlowdownMarkShort();
-
-            double longTarget = profile.getLongTarget();
-
-
-            double minSpeed = profile.getMinSpeed();
-
-            double lastMileSpeed = minSpeed;
-
-            double speedDropStep = profile.getSpeedDecrement();
-
-            double originalRight = profile.getRealSpeedRight();
-            double originalLeft = profile.getRealSpeedLeft();
-
-            if (originalLeft > originalRight) {
-                speedIncrementRight = speedIncrementLeft * profile.getSpeedRatio();
-                startPower = originalRight / 2;
-            } else if (originalRight > originalLeft) {
-                leftLong = false;
-                speedIncrementLeft = speedIncrementRight * profile.getSpeedRatio();
-                startPower = originalLeft / 2;
-            }
-
-
-            if (forward) {
-                speedIncrementLeft = -speedIncrementLeft;
-                speedIncrementRight = -speedIncrementRight;
-            }
-
-
-            double realSpeedLF = startPower;
-            double realSpeedLB = startPower;
-            double realSpeedRF = startPower;
-            double realSpeedRB = startPower;
-
-            if (profile.shouldStop() == false) {
-                //will terminate earlier, at the slowdown point, to start the next move
-                longTarget = slowdownMarkLong;
-            }
-
-
-            boolean accelerating = true;
-            boolean slowingDown = false;
-            boolean cruising = false;
-
-            boolean stop = false;
-            while (!stop && owner.opModeIsActive()) {
-                double longReading = leftLong == true ? this.getLeftOdometer() : this.getRightOdometer();
-                double shortReading = leftLong == true ? this.getRightOdometer() : this.getLeftOdometer();
-
-                slowingDown = (forward && (longReading >= slowdownMarkLong || shortReading >= slowdownMarkShort)) ||
-                        (forward == false && (longReading <= slowdownMarkLong || shortReading <= slowdownMarkShort));
-                if (slowingDown) {
-                    //slowing down
-                    cruising = false;
-                    //stop course correction
-                    locator.setTarget(null);
-                    if (forward) {
-                        realSpeedRF = realSpeedRF + speedDropStep;
-                        realSpeedRB = realSpeedRB + speedDropStep;
-                        realSpeedLF = realSpeedLF + speedDropStep;
-                        realSpeedLB = realSpeedLB + speedDropStep;
-                        if (realSpeedRF >= -minSpeed || realSpeedRB >= -minSpeed
-                                || realSpeedLF >= -minSpeed || realSpeedLB >= -minSpeed) {
-                            realSpeedRF = -lastMileSpeed;
-                            realSpeedRB = -lastMileSpeed;
-                            realSpeedLF = -lastMileSpeed;
-                            realSpeedLB = -lastMileSpeed;
-                            stop = longReading >= longTarget;
-                            if (stop) {
-                                break;
-                            }
-                        }
-                    } else {
-                        realSpeedRF = realSpeedRF - speedDropStep;
-                        realSpeedRB = realSpeedRB - speedDropStep;
-                        realSpeedLF = realSpeedLF - speedDropStep;
-                        realSpeedLB = realSpeedLB - speedDropStep;
-                        if (realSpeedRF <= minSpeed || realSpeedRB <= minSpeed
-                                || realSpeedLF <= minSpeed || realSpeedLB <= minSpeed) {
-                            realSpeedRF = lastMileSpeed;
-                            realSpeedRB = lastMileSpeed;
-                            realSpeedLF = lastMileSpeed;
-                            realSpeedLB = lastMileSpeed;
-                            stop = longReading <= longTarget;
-                            if (stop) {
-                                break;
-                            }
-                        }
-                    }
-
-                } else if (accelerating) {
-                    if ((forward && realSpeedRF + speedIncrementRight >= originalRight && realSpeedLF + speedIncrementLeft >= originalLeft) ||
-                            (!forward && realSpeedRF + speedIncrementRight <= originalRight && realSpeedLF + speedIncrementLeft <= originalLeft)) {
-                        accelerating = true;
-                        realSpeedRF += speedIncrementRight;
-                        realSpeedRB += speedIncrementRight;
-                        realSpeedLF += speedIncrementLeft;
-                        realSpeedLB += speedIncrementLeft;
-
-                    } else {
-                        if (!cruising) {
-                            accelerating = false;
-                            cruising = true;
-                            realSpeedRF = originalRight;
-                            realSpeedRB = originalRight;
-                            realSpeedLF = originalLeft;
-                            realSpeedLB = originalLeft;
-                            //start course adjustment
-                            locator.setTarget(profile.getTarget());
-                        }
-                    }
-                }
-                if (cruising) {
-                    //adjust left and right speeds based on the locator
-                    double adjustedLeft = locator.getRealSpeedLeft();
-                    double adjustedRight = locator.getRealSpeedRight();
-                    if (Math.abs(adjustedLeft) > 0 && Math.abs(adjustedRight) > 0) {
-                        realSpeedRF = adjustedRight;
-                        realSpeedRB = adjustedRight;
-                        realSpeedLF = adjustedLeft;
-                        realSpeedLB = adjustedLeft;
-//                        telemetry.addData("Adj Left", adjustedLeft);
-//                        telemetry.addData("Adj Right", adjustedRight);
-                        leftLong = locator.isLeftLong();
-//                        slowdownMarkLong = locator.getSlowdownMarkLong();
-//                        slowdownMarkShort = locator.getSlowdownMarkShort();
-//                        longTarget = locator.getLongTarget();
-//                        telemetry.addData("LeftLong", leftLong);
-//                        telemetry.addData("SlowdownMarkLong", slowdownMarkLong);
-//                        telemetry.addData("SlowdownMarkShort", slowdownMarkShort);
-//                        telemetry.addData("longTarget", longTarget);
-                    }
-                }
-
-                this.frontLeft.setVelocity(MAX_VELOCITY_GB *realSpeedLF * mr.getLF());
-                this.frontRight.setVelocity(MAX_VELOCITY_GB *realSpeedRF * mr.getRF());
-                this.backLeft.setVelocity(MAX_VELOCITY_GB *realSpeedLB * mr.getLB());
-                this.backRight.setVelocity(MAX_VELOCITY_GB *realSpeedRB * mr.getRB());
-            }
-
-            if (profile.shouldStop()) {
-                this.stop();
-            }
-        }
+        moveToPos(profile, locator);
     }
 
-    public void curveToPos(BotMoveProfile profile, IBaseOdometry locator) {
-        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
-
-            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-            moveToPos(profile, locator);
-
-        }
-
-    }
 
     public void spin(BotMoveProfile profile, IBaseOdometry locator) {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {

@@ -276,7 +276,7 @@ public class OdoBase extends LinearOpMode {
         }
     }
 
-    private void diag(BotMoveProfile profile){
+    protected void diag(BotMoveProfile profile){
         try {
             if (profile != null) {
                 bot.diagTo(profile);
@@ -296,8 +296,6 @@ public class OdoBase extends LinearOpMode {
         double angleChange = profile.getAngleChange();
         bot.strafeToCalib(profile.getTopSpeed(), distance, angleChange > 0, profile.getMotorReduction());
     }
-
-
 
     protected void loadRoute(String routeName){
         File routeFile = getRouteFile(routeName);

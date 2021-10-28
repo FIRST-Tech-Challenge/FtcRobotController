@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -13,7 +14,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx intake = null;
     private DcMotorEx lift = null;
     private DcMotorEx rotator = null;
-    private static final String TAG = "YellowBot";
+    private static final String TAG = "FrenzyBot";
+    private static int LIFT_FULL_EXTENSION = 1400;
+    private static int LIFT_HALF_EXTENSION = 650;
+    private static int LIFT_NO_EXTENSION = 20;
+    private static double LIFT_SPEED = 0.5;
 
     /* Constructor */
     public FrenzyBot() {
@@ -33,7 +38,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
         try {
             lift = hwMap.get(DcMotorEx.class, "lift");
-            lift.setDirection(DcMotor.Direction.FORWARD);
+            lift.setDirection(DcMotor.Direction.REVERSE);
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lift.setVelocity(0);
         } catch (Exception ex) {
@@ -66,6 +71,24 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     public int getLiftPosition(){
         return this.lift.getCurrentPosition();
+    }
+
+    public void liftToUpper(){
+        this.lift.setTargetPosition(LIFT_FULL_EXTENSION);
+        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+    }
+
+    public void liftToMid(){
+        this.lift.setTargetPosition(LIFT_HALF_EXTENSION);
+        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+    }
+
+    public void liftToLower(){
+        this.lift.setTargetPosition(LIFT_NO_EXTENSION);
+        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
     }
 
     public void dropElement(){
