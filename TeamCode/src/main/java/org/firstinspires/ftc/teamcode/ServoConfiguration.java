@@ -18,7 +18,7 @@ public class ServoConfiguration extends LinearOpMode {
     // Utilizes FtcDashboard
     @Config
     static class ServoConfigValue {
-        public static double servoPos = 0.27;
+        public static double servoPos = 0.88;
         final Servo servo;
 
         ServoConfigValue(@NonNull HardwareMap hardwareMap) {
@@ -48,14 +48,13 @@ public class ServoConfiguration extends LinearOpMode {
             motor.setTargetPosition(ServoConfigValue.MotorPos.motorPos);
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setPower(1);
-            toolGamepad = new GamepadEx(gamepad2);
         }
         waitForStart();
         while(opModeIsActive()) {
             arm.update();
             telemetry.addData("servoPos",arm.servo.getPosition());
             if (withMotor) {
-                motor.setPower(ServoConfigValue.MotorPos.motorPos);
+                motor.setTargetPosition(ServoConfigValue.MotorPos.motorPos);
                 telemetry.addData("motorPos", motor.getCurrentPosition());
             }
             telemetry.update();

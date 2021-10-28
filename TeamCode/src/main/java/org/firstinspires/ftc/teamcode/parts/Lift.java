@@ -93,8 +93,7 @@ public class Lift {
 //0.07 - dump
 //0.88 - intake
     private void arm() {
-        final int topLiftPosition = 1500;
-        final int bottomLiftPosition = 700;
+        final int topLiftPosition = 850;
         final double loadServoPosition = 0.88;
         final double liftingServoPosition = 0.76;
         final double dumpServoPosition = 0.07;
@@ -105,8 +104,6 @@ public class Lift {
             } else {
                 armServo.setPosition(liftingServoPosition);
             }
-        } else if (curPos >= bottomLiftPosition) {
-            armServo.setPosition(liftingServoPosition);
         } else {
             armServo.setPosition(loadServoPosition);
         }
