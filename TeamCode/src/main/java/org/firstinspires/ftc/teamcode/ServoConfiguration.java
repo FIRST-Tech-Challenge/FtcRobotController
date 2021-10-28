@@ -26,10 +26,8 @@ class ServoConfigValue {
     void update() {
         servo.setPosition(servoPos);
     }
-}
-@Config
-class MotorPos {
-    public static int motorPos = 0;
+    @Config
+    static class MotorPos { public static int motorPos = 0; }
 }
 
 @TeleOp
@@ -46,7 +44,7 @@ public class ServoConfiguration extends LinearOpMode {
             motor.setPower(0);
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             try { Thread.sleep(100); } catch (InterruptedException ignored) {}
-            motor.setTargetPosition(MotorPos.motorPos);
+            motor.setTargetPosition(ServoConfigValue.MotorPos.motorPos);
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setPower(1);
             toolGamepad = new GamepadEx(gamepad2);
@@ -56,10 +54,11 @@ public class ServoConfiguration extends LinearOpMode {
             arm.update();
             telemetry.addData("servoPos",arm.servo.getPosition());
             if (withMotor) {
-                motor.setPower(MotorPos.motorPos);
+                motor.setPower(ServoConfigValue.MotorPos.motorPos);
                 telemetry.addData("motorPos", motor.getCurrentPosition());
             }
             telemetry.update();
         }
     }
 }
+
