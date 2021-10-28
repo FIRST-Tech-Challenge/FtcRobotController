@@ -14,12 +14,11 @@ public class TestOuttake extends LinearOpMode {
         while (opModeIsActive()) {
             if (gamepad1.a) {
                 if (FlapOpenOrClosed) {
-
-
+                outtake.FlapOpen();
                 }
 
                 else {
-
+                outtake.FlapClosed();
 
                 }
 
