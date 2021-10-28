@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -58,6 +59,7 @@ public class RobotClass {
         colorSensor1 = hardwareMap.colorSensor.get("colorSensor1");
         colorSensor2 = hardwareMap.colorSensor.get("colorSensor2");
 
+        this.opmode= opmode;
 
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -77,7 +79,7 @@ public class RobotClass {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu1");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
     }
@@ -107,10 +109,10 @@ public class RobotClass {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu1");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-
+        this.opmode= opmode;
     }
 
     public void testGyro(){
@@ -233,10 +235,10 @@ public class RobotClass {
         }
 
         protected void motorTelemetry(){
-            telemetry.addData("Target Front Left Motor Position", frontLeft.getCurrentPosition());
-            telemetry.addData("Target Front Right Motor Position", frontRight.getCurrentPosition());
-            telemetry.addData("Target Back Left Motor Position", backLeft.getCurrentPosition());
-            telemetry.addData("Target Back Right Motor Position", backRight.getCurrentPosition());
+            telemetry.addData("Current Front Left Motor Position", frontLeft.getCurrentPosition());
+            telemetry.addData("Current Front Right Motor Position", frontRight.getCurrentPosition());
+            telemetry.addData("Current Back Left Motor Position", backLeft.getCurrentPosition());
+            telemetry.addData("Current Back Right Motor Position", backRight.getCurrentPosition());
             telemetry.update();
         }
 
@@ -407,7 +409,7 @@ public class RobotClass {
      * This code was taken and modified from https://ftcforum.usfirst.org/forum/ftc-technology/53477-rev-imu-questions?p=53481#post53481.
      * @return The integrated heading on the interval (-inf, inf).
      */
-    private double getIntegratedHeading() {
+    public double getIntegratedHeading() {
         double currentHeading = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
         double deltaHeading = currentHeading - previousHeading;
 
@@ -425,6 +427,7 @@ public class RobotClass {
 
 
     public void turnToHeading (double speed, double targetHeading, int tolerance) {
+        motorSetMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double currentHeading = getIntegratedHeading();
 
         while (currentHeading > targetHeading + tolerance && currentHeading < targetHeading - tolerance) {
