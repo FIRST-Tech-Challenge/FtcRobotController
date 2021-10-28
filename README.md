@@ -11,7 +11,7 @@ SDK docs can be found at https://gm0.org/en/latest/docs/software/index.html
 
 ### GitHub Actions CI Status:
 
-[![Gradle Java Build](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/gradle-build.yml)
+[![Gradle Java Build](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/build.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/build.yml)
 [![CodeQL Analysis](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/codeql.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/codeql.yml)
 
 ## NOTICE
