@@ -13,7 +13,6 @@ import static java.lang.StrictMath.abs;
 
 
 @TeleOp(name="Servos", group="Teleop")
-@Disabled
 public class Servos extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
