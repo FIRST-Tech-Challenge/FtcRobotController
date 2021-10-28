@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -37,6 +38,8 @@ public class FrenzyBaseBot implements OdoBot {
     protected ElapsedTime runtime;
 
     private Gyroscope gyro = null;
+
+    private int encoderDirection = 1;
 
 
     protected LinearOpMode owner = null;
@@ -100,12 +103,12 @@ public class FrenzyBaseBot implements OdoBot {
             }
 
             if (frontLeft != null) {
-                frontLeft.setDirection(DcMotor.Direction.FORWARD);
+                frontLeft.setDirection(DcMotor.Direction.REVERSE);
                 frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             if (frontRight != null) {
-                frontRight.setDirection(DcMotor.Direction.REVERSE);
+                frontRight.setDirection(DcMotor.Direction.FORWARD);
                 frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
@@ -179,7 +182,7 @@ public class FrenzyBaseBot implements OdoBot {
         }
     }
 
-    public void moveToPos(BotMoveProfile profile, IBaseOdometry locator){
+    public void moveToPos2(BotMoveProfile profile, IBaseOdometry locator){
         resetEncoders();
         this.frontLeft.setTargetPosition((int)profile.getLeftTarget());
         this.frontRight.setTargetPosition((int)profile.getRightTarget());
@@ -189,6 +192,9 @@ public class FrenzyBaseBot implements OdoBot {
         this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         MotorReductionBot mr = profile.getMotorReduction();
+
+        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
+        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
 
 
         runtime.reset();
@@ -203,9 +209,30 @@ public class FrenzyBaseBot implements OdoBot {
                 this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
                 runtime.reset();
             }
-
         }
     }
+
+    public void moveToPos(BotMoveProfile profile, IBaseOdometry locator){
+        resetEncoders();
+        this.frontLeft.setTargetPosition((int)profile.getLeftTarget());
+        this.frontRight.setTargetPosition((int)profile.getRightTarget());
+        this.backLeft.setTargetPosition((int)profile.getLeftTargetBack());
+        this.backRight.setTargetPosition((int)profile.getRightTargetBack());
+
+
+        this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        MotorReductionBot mr = profile.getMotorReduction();
+
+        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
+        this.backLeft.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
+        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
+        this.backRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
+    }
+
 
 
     public void moveTo(BotMoveProfile profile) {
@@ -769,6 +796,10 @@ public class FrenzyBaseBot implements OdoBot {
         }
     }
 
+    public void spinToPos(BotMoveProfile profile){
+        moveToPos(profile, null);
+    }
+
 
     public void spinCalib(double degrees, double speed, IBaseOdometry locator) {
 
@@ -1126,4 +1157,17 @@ public class FrenzyBaseBot implements OdoBot {
         this.namedCoordinates.add(dot);
     }
 
+    public int getEncoderDirection() {
+        return encoderDirection;
+    }
+
+    public void reverseEncoderDirection() {
+        if (this.encoderDirection == 1){
+            this.encoderDirection = -1;
+        }
+        else{
+            this.encoderDirection = 1;
+        }
+
+    }
 }

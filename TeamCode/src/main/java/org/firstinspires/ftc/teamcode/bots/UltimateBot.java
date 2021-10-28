@@ -632,7 +632,7 @@ public class UltimateBot extends YellowBot {
         double diff = newOrientation - originalOrientation;
         if (abs(diff) > marginError) {
             double updated = originalOrientation + diff/2;
-            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(this, updated, spinSpeed, locator);
             spin(profileSpin, locator);
         }
 

@@ -185,10 +185,6 @@ public class RobotCoordinatePosition implements IBaseOdometry {
         return getY();
     }
 
-    @Override
-    public int getCurrentHeading() {
-        return 0;
-    }
 
     public double getX(){ return robotGlobalXCoordinatePosition; }
 

@@ -730,6 +730,11 @@ public class YellowBot implements OdoBot {
         }
     }
 
+    @Override
+    public void moveToPos(BotMoveProfile profile, IBaseOdometry locator) {
+
+    }
+
     public void spin(BotMoveProfile profile, IBaseOdometry locator) {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -1388,6 +1393,15 @@ public class YellowBot implements OdoBot {
             }
         }
         this.stop();
+    }
+
+    @Override
+    public void reverseEncoderDirection() {
+
+    }
+
+    public int getEncoderDirection(){
+        return 1;
     }
 
     public void diagTo(BotMoveProfile profile) {

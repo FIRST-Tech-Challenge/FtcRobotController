@@ -33,11 +33,6 @@ public interface IBaseOdometry extends Runnable {
      */
     double getCurrentY();
 
-    /**
-     * @return the current robot heading in degrees (0 to 360)
-     */
-    int getCurrentHeading();
-
      void reverseHorEncoder();
 
     void setPersistPosition(boolean persistPosition);
@@ -46,7 +41,15 @@ public interface IBaseOdometry extends Runnable {
 
     double getInitialOrientation();
 
+    /**
+     * @return the current robot heading in degrees
+     */
     double getOrientation();
+
+    /**
+     * @return the current robot positive heading in degrees (0 to 360)
+     */
+    double getAdjustedCurrentHeading();
 
     int getThreadSleepTime();
 

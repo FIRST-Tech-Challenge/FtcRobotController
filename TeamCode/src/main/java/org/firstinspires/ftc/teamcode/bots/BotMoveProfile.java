@@ -17,8 +17,12 @@ public class BotMoveProfile {
     private double realSpeedRight = 0;
     private double longTarget = 0;
     private double shortTarget = 0;
+    private double longTargetBack = 0;
+    private double shortTargetBack = 0;
     private double rightTarget = 0;
     private double leftTarget = 0;
+    private double rightTargetBack = 0;
+    private double leftTargetBack = 0;
     private double slowdownMarkLong = 0;
     private double slowdownMarkShort = 0;
     private boolean leftLong;
@@ -225,7 +229,7 @@ public class BotMoveProfile {
             }
         }
 
-        double currentHead = locator.getCurrentHeading();
+        double currentHead = locator.getAdjustedCurrentHeading();
 
         if (direction == RobotDirection.Backward) {
             currentHead = (currentHead + 180) % 360;
@@ -295,7 +299,7 @@ public class BotMoveProfile {
             else {
                 //spin
                 bot.getTelemetry().addData("Route",  "Spin");
-                return buildSpinProfile(realAngleChange, topSpeed, MoveStrategy.Curve);
+                return buildSpinProfile(bot, realAngleChange, topSpeed, MoveStrategy.Curve);
             }
         }
 
@@ -340,15 +344,15 @@ public class BotMoveProfile {
         }
 
         if(preferredStrategy == MoveStrategy.SpinNCurve ){
-            return buildSpinProfile(realAngleChange, topSpeed, MoveStrategy.Curve);
+            return buildSpinProfile(bot, realAngleChange, topSpeed, MoveStrategy.Curve);
         }
 
         if(preferredStrategy == MoveStrategy.SpinNStraight){
-            return buildSpinProfile(realAngleChange, topSpeed, MoveStrategy.Straight);
+            return buildSpinProfile(bot, realAngleChange, topSpeed, MoveStrategy.Straight);
         }
 
         if (preferredStrategy == MoveStrategy.Spin){
-            return getFinalHeadProfile(desiredHead, topSpeed, locator);
+            return getFinalHeadProfile(bot, desiredHead, topSpeed, locator);
         }
 
         if (preferredStrategy == MoveStrategy.Strafe){
@@ -462,7 +466,7 @@ public class BotMoveProfile {
             // and if the radius is too small
             if (direction == RobotDirection.Backward ||  (reduceLeft && radius <= botConfig.getMinRadiusLeft()) ||
                     (reduceLeft == false && radius <= botConfig.getMinRadiusRight())) {
-                return  buildSpinProfile(angleChange, topSpeed, MoveStrategy.Curve);
+                return  buildSpinProfile(bot, angleChange, topSpeed, MoveStrategy.Curve);
             }
             else{
                 //curve
@@ -518,20 +522,25 @@ public class BotMoveProfile {
         }
 
 
-        double distanceLong = longArch * YellowBot.COUNTS_PER_INCH_REV;
-        double distanceShort = shortArch * YellowBot.COUNTS_PER_INCH_REV;
+        double distanceLong = longArch * bot.getEncoderCountsPerInch()*bot.getEncoderDirection();
+        double distanceShort = shortArch * bot.getEncoderCountsPerInch()*bot.getEncoderDirection();
 
         boolean leftLong = true;
-        double startingPointLong = 0, startingPointShort = 0;
+        double startingPointLong = 0, startingPointShort = 0, startingPointLongBack = 0, startingPointShortBack = 0;
 
 
         if (leftSpeed >= rightSpeed) {
             startingPointLong = bot.getLeftOdometer();
+            startingPointLongBack = bot.getLeftBackOdometer();
             startingPointShort = bot.getRightOdometer();
+            startingPointShortBack = bot.getRightBackOdometer();
         } else if (rightSpeed > leftSpeed) {
             leftLong = false;
             startingPointShort = bot.getLeftOdometer();
+            startingPointShortBack = bot.getLeftBackOdometer();
             startingPointLong = bot.getRightOdometer();
+            startingPointLongBack = bot.getRightBackOdometer();
+
         }
 
         double averagePower = (Math.abs(rightSpeed) + Math.abs(leftSpeed))/2;
@@ -553,15 +562,22 @@ public class BotMoveProfile {
         double slowdownMarkShort = startingPointShort + sign*(Math.abs(distanceShort) - breakPoint - ticksShort);
 
         double longTarget = startingPointLong + sign*(Math.abs(distanceLong) - ticksLong);
+        double longTargetBack = startingPointLongBack + sign*(Math.abs(distanceLong) - ticksLong);
         double shortTarget = startingPointShort + sign*(Math.abs(distanceShort) - ticksShort);
+        double shortTargetBack = startingPointShortBack + sign*(Math.abs(distanceShort) - ticksShort);
+
 
         if (leftLong){
             profile.setLeftTarget(longTarget);
+            profile.setLeftTargetBack(longTargetBack);
             profile.setRightTarget(shortTarget);
+            profile.setRightTargetBack(shortTargetBack);
         }
         else{
             profile.setLeftTarget(shortTarget);
+            profile.setLeftTargetBack(shortTargetBack);
             profile.setRightTarget(longTarget);
+            profile.setRightTargetBack(longTargetBack);
         }
 
         profile.setLeftLong(leftLong);
@@ -569,6 +585,8 @@ public class BotMoveProfile {
         profile.setSlowdownMarkShort(slowdownMarkShort);
         profile.setLongTarget(longTarget);
         profile.setShortTarget(shortTarget);
+        profile.setLongTargetBack(longTargetBack);
+        profile.setShortTargetBack(shortTargetBack);
         profile.setRealSpeedLeft(leftSpeed);
         profile.setRealSpeedRight(rightSpeed);
         profile.setMotorReduction(mr);
@@ -586,20 +604,41 @@ public class BotMoveProfile {
         return profile;
     }
 
-    private static BotMoveProfile buildSpinProfile(double angleChange, double topSpeed, MoveStrategy next){
+    private static BotMoveProfile buildSpinProfile(OdoBot bot, double angleChange, double topSpeed, MoveStrategy next){
         BotMoveProfile profile = new BotMoveProfile();
         profile.setAngleChange(angleChange);
         profile.setStrategy(MoveStrategy.Spin);
         profile.setTopSpeed(topSpeed);
-        if(next != null && next == MoveStrategy.Straight){
-            if (Math.abs(profile.getAngleChange()) < 30){
-                profile.setTopSpeed(0.1);
-            }
-            else{
-                profile.setTopSpeed(0.2);
-            }
-        }
+        profile.setRealSpeedLeft(topSpeed);
+        profile.setRealSpeedRight(topSpeed);
+//        if(next != null && next == MoveStrategy.Straight){
+//            if (Math.abs(profile.getAngleChange()) < 30){
+//                profile.setTopSpeed(0.1);
+//            }
+//            else{
+//                profile.setTopSpeed(0.2);
+//            }
+//        }
         profile.setNextStep(next);
+
+        boolean spinLeft = false;
+        if (angleChange > 0) {
+            spinLeft = true;
+        }
+        double ticksLeft = bot.getCalibConfig().getLeftTicksPerDegree()*angleChange;
+        double ticksRight = bot.getCalibConfig().getRightTicksPerDegree()*angleChange;
+        if (spinLeft){
+            ticksRight = -ticksRight;
+        }
+        else{
+            ticksLeft = -ticksLeft;
+        }
+        profile.setLeftTarget(bot.getLeftOdometer() + ticksLeft);
+        profile.setRightTarget(bot.getRightOdometer() + ticksRight);
+        profile.setLeftTargetBack(bot.getLeftBackOdometer() + ticksLeft);
+        profile.setRightTargetBack(bot.getRightBackOdometer() + ticksRight);
+
+
         return profile;
     }
 
@@ -670,12 +709,12 @@ public class BotMoveProfile {
         return profile;
     }
 
-    public static BotMoveProfile getFinalHeadProfile(double desiredHeading, double speed, IBaseOdometry locator){
+    public static BotMoveProfile getFinalHeadProfile(OdoBot bot, double desiredHeading, double speed, IBaseOdometry locator){
         BotMoveProfile profileSpin = null;
         if (desiredHeading != BotMoveProfile.DEFAULT_HEADING) {
-            double currentHead = locator.getCurrentHeading();
+            double currentHead = locator.getAdjustedCurrentHeading();
             double realAngleChange = Geometry.getAngle(desiredHeading, currentHead);
-            profileSpin = BotMoveProfile.buildSpinProfile(realAngleChange, speed, null);
+            profileSpin = BotMoveProfile.buildSpinProfile(bot,realAngleChange, speed, null);
         }
         return profileSpin;
     }
@@ -838,5 +877,37 @@ public class BotMoveProfile {
 
     public void setLeftTarget(double leftTarget) {
         this.leftTarget = leftTarget;
+    }
+
+    public double getRightTargetBack() {
+        return rightTargetBack;
+    }
+
+    public void setRightTargetBack(double rightTargetBack) {
+        this.rightTargetBack = rightTargetBack;
+    }
+
+    public double getLeftTargetBack() {
+        return leftTargetBack;
+    }
+
+    public void setLeftTargetBack(double leftTargetBack) {
+        this.leftTargetBack = leftTargetBack;
+    }
+
+    public double getLongTargetBack() {
+        return longTargetBack;
+    }
+
+    public void setLongTargetBack(double longTargetBack) {
+        this.longTargetBack = longTargetBack;
+    }
+
+    public double getShortTargetBack() {
+        return shortTargetBack;
+    }
+
+    public void setShortTargetBack(double shortTargetBack) {
+        this.shortTargetBack = shortTargetBack;
     }
 }

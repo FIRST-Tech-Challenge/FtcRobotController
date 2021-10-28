@@ -96,7 +96,7 @@ public class OdoBase extends LinearOpMode {
                     this.goTo(s, false, selectedRoute.getName());
                     telemetry.addData("X: ", locator.getCurrentX());
                     telemetry.addData("Y: ", locator.getCurrentY());
-                    telemetry.addData("Heading: ", locator.getCurrentHeading());
+                    telemetry.addData("Heading: ", locator.getAdjustedCurrentHeading());
                     telemetry.update();
                 }
             }
@@ -116,7 +116,7 @@ public class OdoBase extends LinearOpMode {
         Log.d(TAG, String.format("Executing Step: %s", instruction.toString()));
         if (locator != null){
             Log.d(TAG, String.format("Location: %.2f, %.2f. Orientation: %.2f", locator.getCurrentX(), locator.getCurrentY(),
-                    locator.getCurrentHeading()));
+                    locator.getOrientation()));
         }
 
 
@@ -248,7 +248,7 @@ public class OdoBase extends LinearOpMode {
         //set the desired heading
         if (finalSpin && profile.getNextStep() == null && desiredHead != BotMoveProfile.DEFAULT_HEADING) {
             sleep(locator.getThreadSleepTime());
-            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(desiredHead, instruction.getTopSpeed(), locator);
+            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(bot, desiredHead, instruction.getTopSpeed(), locator);
             if (Math.abs(profile.getAngleChange()) < 30){
                 profile.setTopSpeed(0.1);
             }

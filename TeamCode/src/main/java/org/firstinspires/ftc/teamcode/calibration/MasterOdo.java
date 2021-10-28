@@ -112,9 +112,9 @@ public class MasterOdo extends OdoBase {
             gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
             listRoutes();
 
-            waitForStart();
-
             initLocator();
+
+            waitForStart();
 
             if (this.led != null){
                 this.led.none();
@@ -944,7 +944,7 @@ public class MasterOdo extends OdoBase {
     }
 
     private void showHeading(){
-        telemetry.addData("Current Heading", "%.2f", locator.getCurrentHeading());
+        telemetry.addData("Current Heading", "%.2f", locator.getAdjustedCurrentHeading());
     }
 
 

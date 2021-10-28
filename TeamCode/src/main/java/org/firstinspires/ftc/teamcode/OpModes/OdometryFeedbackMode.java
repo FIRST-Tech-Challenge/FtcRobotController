@@ -78,7 +78,7 @@ public class OdometryFeedbackMode extends LinearOpMode {
 
                     double xPos = odometry.getCurrentX();
                     double yPos = odometry.getCurrentY();
-                    double aDegrees = odometry.getCurrentHeading();
+                    double aDegrees = odometry.getAdjustedCurrentHeading();
 
                     telemetry.addData("X ", String.format("%.2f", xPos));
                     telemetry.addData("Y ", String.format("%.2f", yPos));

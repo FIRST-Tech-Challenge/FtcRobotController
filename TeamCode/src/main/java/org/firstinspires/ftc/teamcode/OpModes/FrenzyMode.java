@@ -71,13 +71,18 @@ public class FrenzyMode extends LinearOpMode {
                     robot.move(drive, turn);
                 }
 
+
                 handleSpecialActions();
 
                 telemetry.addData("Left front", robot.getLeftOdometer());
                 telemetry.addData("Right front", robot.getRightOdometer());
+                telemetry.addData("Left Back", robot.getLeftBackOdometer());
+                telemetry.addData("Right Back", robot.getRightBackOdometer());
                 telemetry.addData("X", odometry.getCurrentX());
                 telemetry.addData("Y", odometry.getCurrentY());
-                telemetry.addData("Heading", odometry.getCurrentHeading());
+                telemetry.addData("Heading", odometry.getOrientation());
+                telemetry.addData("Heading Adjusted", odometry.getAdjustedCurrentHeading());
+                telemetry.addData("List position", robot.getLiftPosition());
                 telemetry.update();
             }
         } catch (Exception ex) {
@@ -96,7 +101,9 @@ public class FrenzyMode extends LinearOpMode {
     }
 
     protected void handleSpecialActions() {
+
         handleLift();
+        handleDDropper();
 
         // BUTTON PRESSABLE
         buttonPressable = ((runtime.milliseconds() - lastButtonPressed) >= DEBOUNCE_DELAY_TIME_MS);
@@ -109,7 +116,7 @@ public class FrenzyMode extends LinearOpMode {
 
     protected void handleIntake() {
         // MOVE INTAKE
-        if (gamepad1.a) {
+        if (gamepad2.left_bumper) {
             recordButtonPressed();
             changedIntake = !changedIntake;
         }
@@ -120,7 +127,7 @@ public class FrenzyMode extends LinearOpMode {
             robot.activateIntake(0);
         }
 
-        if (gamepad1.b){
+        if (gamepad2.right_bumper){
             recordButtonPressed();
             intakeReverse = !intakeReverse;
         }
@@ -146,14 +153,16 @@ public class FrenzyMode extends LinearOpMode {
     }
 
     protected void handleLift() {
-        if (gamepad1.dpad_up) {
-            robot.activateLift(0.5);
+        double liftVal = gamepad2.left_stick_y;
+        robot.activateLift(liftVal);
+    }
+
+    protected void handleDDropper() {
+        if ( gamepad2.dpad_up){
+            robot.dropElement();
         }
-        else if (gamepad1.dpad_down) {
-            robot.activateLift(-0.5);
-        }
-        else {
-            robot.activateLift(0);
+        else if (gamepad2.dpad_down){
+            robot.resetDropper();
         }
     }
 

@@ -10,6 +10,8 @@ public class BotCalibConfig implements Serializable {
     private double horizontalTicksDegree;
     private double horizontalTicksDegreeLeft;
     private double horizontalTicksDegreeRight;
+    private double leftTicksPerDegree;
+    private double rightTicksPerDegree;
     private double minRadiusLeft;
     private double minRadiusRight;
     private MotorReductionBot strafeLeftReduction;
@@ -144,5 +146,21 @@ public class BotCalibConfig implements Serializable {
 
     public void setSpinRightConfig(MotorReductionBot spinRightConfig) {
         this.spinRightConfig = spinRightConfig;
+    }
+
+    public double getLeftTicksPerDegree() {
+        return leftTicksPerDegree;
+    }
+
+    public void setLeftTicksPerDegree(double leftTicksPerDegree) {
+        this.leftTicksPerDegree = leftTicksPerDegree;
+    }
+
+    public double getRightTicksPerDegree() {
+        return rightTicksPerDegree;
+    }
+
+    public void setRightTicksPerDegree(double rightTicksPerDegree) {
+        this.rightTicksPerDegree = rightTicksPerDegree;
     }
 }

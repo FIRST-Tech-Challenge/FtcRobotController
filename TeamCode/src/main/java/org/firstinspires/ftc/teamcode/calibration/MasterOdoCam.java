@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
+import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.OdoBase;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
@@ -45,5 +46,10 @@ public class MasterOdoCam extends MasterOdo {
         this.locator = VSlamOdometry.getInstance(hardwareMap);
         this.locator.init(new Point(startX, startY), initHead);
         startLocator(locator);
+    }
+
+    @Override
+    protected void curve(BotMoveProfile profile) {
+        bot.moveToPos(profile, null);
     }
 }

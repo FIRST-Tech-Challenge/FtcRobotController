@@ -22,6 +22,7 @@ public interface OdoBot {
     double getRightBackOdometer();
     Telemetry getTelemetry();
     void curveTo(BotMoveProfile profile, IBaseOdometry locator);
+    void moveToPos(BotMoveProfile profile, IBaseOdometry locator);
     void spin(BotMoveProfile profile, IBaseOdometry locator);
     void spinCalib(double degrees, double speed, IBaseOdometry locator);
     double getEncoderCountsPerInch();
@@ -46,4 +47,6 @@ public interface OdoBot {
     void spinLeft(double speed, boolean forward);
     void spinRight(double speed, boolean forward);
     void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib);
+    void reverseEncoderDirection();
+    int getEncoderDirection();
 }

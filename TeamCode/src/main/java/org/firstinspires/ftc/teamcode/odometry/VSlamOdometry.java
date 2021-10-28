@@ -45,7 +45,8 @@ public class VSlamOdometry implements IBaseOdometry {
 
     private double currentX;    // in Inches
     private double currentY;    // in Inches
-    private int currentHeading; // in Degrees
+    private double currentOrientation; // in Degrees
+    private double initialOrientation; // in Degrees
 
     private static VSlamOdometry theInstance;
 
@@ -94,7 +95,8 @@ public class VSlamOdometry implements IBaseOdometry {
 
         this.currentX = startXInches;
         this.currentY = startYInches;
-        this.currentHeading = startHeadingDegrees;
+        this.currentOrientation = startHeadingDegrees;
+        setInitialOrientation(startHeadingDegrees);
 
         double startX = startXInches * INCH_2_METER;
         double startY = startYInches * INCH_2_METER;
@@ -115,9 +117,6 @@ public class VSlamOdometry implements IBaseOdometry {
 
     @Override
     public double getCurrentY() { return currentY; }
-
-    @Override
-    public int getCurrentHeading() { return currentHeading; }
 
     @Override
     public void reverseHorEncoder() {
@@ -141,17 +140,28 @@ public class VSlamOdometry implements IBaseOdometry {
 
     @Override
     public double getInitialOrientation() {
-        return 0;
+        return this.initialOrientation;
     }
 
     @Override
     public double getOrientation() {
-        return 0;
+        return this.currentOrientation % 360;
+    }
+
+    @Override
+    public double getAdjustedCurrentHeading() {
+        double currentHead = this.getOrientation();
+
+        boolean clockwise = currentHead >= 0;
+        if (!clockwise){
+            currentHead = 360 + currentHead;
+        }
+        return currentHead;
     }
 
     @Override
     public int getThreadSleepTime() {
-        return 0;
+        return this.sleepTime;
     }
 
     @Override
@@ -199,14 +209,13 @@ public class VSlamOdometry implements IBaseOdometry {
 
             if (up != null) {
                 // ensure a value between 0 and 360
-                double heading = up.pose.getRotation().getDegrees();
-                this.currentHeading = (int) ((heading % 360) + 360) % 360;
+                this.currentOrientation = up.pose.getRotation().getDegrees();
 
                 // get current position in inches
                 this.currentX = up.pose.getX() / INCH_2_METER;
                 this.currentY = up.pose.getY() / INCH_2_METER;
 
-                Log.i(TAG, String.format("Cam Location: %.2f : %.2f. Heading: %d", this.currentX, this.currentY, this.currentHeading));
+                Log.i(TAG, String.format("Cam Location: %.2f : %.2f. Heading: %d", this.currentX, this.currentY, this.getOrientation()));
 
                 if (persistPosition) {
                     saveLastPosition();
@@ -222,7 +231,7 @@ public class VSlamOdometry implements IBaseOdometry {
         BotPosition lastPos = new BotPosition();
         lastPos.setPosX((int)this.currentX);
         lastPos.setPosY((int)this.currentY);
-        lastPos.setHeading(this.currentHeading);
+        lastPos.setHeading(this.getOrientation());
         File file = AppUtil.getInstance().getSettingsFile(BotPosition.BOT_LAST_POSITION);
         ReadWriteFile.writeFile(file, lastPos.serialize());
     }
@@ -237,6 +246,10 @@ public class VSlamOdometry implements IBaseOdometry {
         }
 
         return lastPos;
+    }
+
+    public void setInitialOrientation(double initialOrientation) {
+        this.initialOrientation = initialOrientation;
     }
 }
 

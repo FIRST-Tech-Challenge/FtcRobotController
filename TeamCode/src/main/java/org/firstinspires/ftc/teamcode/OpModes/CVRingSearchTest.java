@@ -119,7 +119,7 @@ public class CVRingSearchTest extends LinearOpMode {
                     if (heading > 360){
                         heading = 0;
                     }
-                    BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(heading, 0.3, locator);
+                    BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(robot, heading, 0.3, locator);
                     robot.spin(profileSpin, locator);
                     searchTimer.reset();
                 }
@@ -140,7 +140,7 @@ public class CVRingSearchTest extends LinearOpMode {
     }
 
     private void turnAndGetIt(double heading, double distance){
-        BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(heading, 0.3, locator);
+        BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(robot, heading, 0.3, locator);
         robot.spin(profileSpin, locator);
 
         robot.intake();

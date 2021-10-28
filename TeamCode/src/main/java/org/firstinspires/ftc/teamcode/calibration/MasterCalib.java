@@ -93,6 +93,8 @@ public class MasterCalib extends LinearOpMode {
     protected MotorReductionBotCalib templateDiagLeft = new MotorReductionBotCalib();
     protected MotorReductionBotCalib templateDiagRight = new MotorReductionBotCalib();
 
+    protected IBaseOdometry locator = null;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -100,6 +102,7 @@ public class MasterCalib extends LinearOpMode {
             initBot();
             bot.init(this, hardwareMap, telemetry);
             bot.initGyro();
+            initLocator();
 //            bot.initCalibData();
 
             BotCalibConfig config = bot.getCalibConfig();
@@ -161,8 +164,13 @@ public class MasterCalib extends LinearOpMode {
 //                telemetry.addData("Error", String.format("Issues whe getting extended info....%s"), ex.getMessage());
 //                telemetry.update();
 //            }
+            if (locator != null) {
+                while (getLocator().getCurrentX() < 1){
+                    //wait till locator initializes
+                }
+            }
 
-            telemetry.addData("Master Cali", "Ready to calibrate....");
+            telemetry.addData("Master Calib", "Ready to calibrate....");
             telemetry.update();
 
             waitForStart();
@@ -1048,7 +1056,7 @@ public class MasterCalib extends LinearOpMode {
 
     }
 
-    private void calibSpin(){
+    protected void calibSpin(){
         double currentHead = bot.getGyroHeading();
         double desiredHead = currentHead + 90;
         double horizontalStart = bot.getHorizontalOdometer();
@@ -1859,4 +1867,7 @@ public class MasterCalib extends LinearOpMode {
         telemetry.addData("*  ", "--------------------");
     }
 
+    public IBaseOdometry getLocator() {
+        return locator;
+    }
 }

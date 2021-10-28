@@ -59,8 +59,21 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
     public void activateRotator(double velocity) {
-        if (rotator != null) {            rotator.setVelocity(MAX_VELOCITY_REV*velocity);
+        if (rotator != null) {
+            rotator.setVelocity(MAX_VELOCITY_REV*velocity);
         }
+    }
+
+    public int getLiftPosition(){
+        return this.lift.getCurrentPosition();
+    }
+
+    public void dropElement(){
+
+    }
+
+    public void resetDropper(){
+
     }
 
 
