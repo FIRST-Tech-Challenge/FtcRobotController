@@ -90,6 +90,7 @@ public class FrenzyBaseBot implements OdoBot {
             backRight = hwMap.get(DcMotorEx.class, RIGHT_BACK);
 
             resetEncoders();
+            this.encoderDirection = -1;
 
 
             if (backLeft != null) {

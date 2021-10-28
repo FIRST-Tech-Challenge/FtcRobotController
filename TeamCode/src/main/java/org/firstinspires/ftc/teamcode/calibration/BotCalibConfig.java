@@ -14,12 +14,12 @@ public class BotCalibConfig implements Serializable {
     private double rightTicksPerDegree;
     private double minRadiusLeft;
     private double minRadiusRight;
-    private MotorReductionBot strafeLeftReduction;
-    private MotorReductionBot strafeRightReduction;
-    private MotorReductionBot diagMRLeft;
-    private MotorReductionBot diagMRRight;
-    private MotorReductionBot moveMRForward;
-    private MotorReductionBot moveMRBack;
+    private MotorReductionBot strafeLeftReduction  = new MotorReductionBot();
+    private MotorReductionBot strafeRightReduction  = new MotorReductionBot();
+    private MotorReductionBot diagMRLeft  = new MotorReductionBot();
+    private MotorReductionBot diagMRRight  = new MotorReductionBot();
+    private MotorReductionBot moveMRForward = new MotorReductionBot();
+    private MotorReductionBot moveMRBack  = new MotorReductionBot();
     private MotorReductionBot spinLeftConfig = new MotorReductionBot();
     private MotorReductionBot spinRightConfig  = new MotorReductionBot();;
 

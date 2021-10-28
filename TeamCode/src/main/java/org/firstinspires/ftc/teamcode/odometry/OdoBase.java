@@ -113,7 +113,7 @@ public class OdoBase extends LinearOpMode {
             return;
         }
 
-        Log.d(TAG, String.format("Executing Step: %s", instruction.toString()));
+        Log.d(TAG, String.format("Goto Step: %s", instruction.toString()));
         if (locator != null){
             Log.d(TAG, String.format("Location: %.2f, %.2f. Orientation: %.2f", locator.getCurrentX(), locator.getCurrentY(),
                     locator.getOrientation()));
@@ -176,6 +176,7 @@ public class OdoBase extends LinearOpMode {
     }
 
     private void executeStep(AutoStep instruction,  MoveStrategy strategy, boolean dryRun){
+        Log.d(TAG, String.format("Executing Step: %s", instruction.toString()));
         Point target = new Point(instruction.getTargetX(), instruction.getTargetY());
         double desiredHead = instruction.getDesiredHead();
         String targetReference = instruction.getTargetReference();
@@ -210,6 +211,7 @@ public class OdoBase extends LinearOpMode {
         if (profile == null){
             return;
         }
+        Log.d(TAG, String.format("Built %s profile: %s", profile.getStrategy(), profile.toString()));
         profile.setDryRun(dryRun);
         profile.setContinuous(instruction.isContinuous());
 
@@ -237,6 +239,7 @@ public class OdoBase extends LinearOpMode {
                 break;
             default: break;
         }
+        Log.d(TAG, String.format("Proceeding to next step"));
         if (profile.getNextStep() != null){
             //let the locator catch up
             if (!profile.isContinuous()) {
@@ -262,7 +265,8 @@ public class OdoBase extends LinearOpMode {
     }
 
     private void moveStraight(BotMoveProfile profile){
-        bot.moveTo(profile);
+        Log.d(TAG, String.format("Straight: %s", profile.toString()));
+        bot.curveTo(profile, null);
     }
 
     private void spin(BotMoveProfile profile){
@@ -279,6 +283,7 @@ public class OdoBase extends LinearOpMode {
     protected void diag(BotMoveProfile profile){
         try {
             if (profile != null) {
+                Log.d(TAG, String.format("Diag: %s", profile.toString()));
                 bot.diagTo(profile);
             }
         }catch (Exception ex){
@@ -288,10 +293,12 @@ public class OdoBase extends LinearOpMode {
 
     protected void curve(BotMoveProfile profile)
     {
+        Log.d(TAG, String.format("Curve: %s", profile.toString()));
         bot.curveTo(profile, locator);
     }
 
     private void strafe(BotMoveProfile profile){
+        Log.d(TAG, String.format("strafe: %s", profile.toString()));
         double distance = profile.getDistance();
         double angleChange = profile.getAngleChange();
         bot.strafeToCalib(profile.getTopSpeed(), distance, angleChange > 0, profile.getMotorReduction());

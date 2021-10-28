@@ -60,4 +60,6 @@ public interface IBaseOdometry extends Runnable {
     double getRealSpeedRight();
 
     boolean isLeftLong();
+
+    boolean isTrackingInitialized();
 }

@@ -28,6 +28,7 @@ public class PositionTest extends LinearOpMode {
         try {
             try {
                 robot.init(this, this.hardwareMap, telemetry);
+                robot.initCalibData();
                 locator =  VSlamOdometry.getInstance(this.hardwareMap, 20);
                 locator.setInitPosition(50, 15, 0); // TODO: Remove this
                 Thread odometryThread = new Thread(locator);
@@ -46,7 +47,7 @@ public class PositionTest extends LinearOpMode {
             Point target = new Point(50, 50);
 
             BotMoveProfile profile = BotMoveProfile.bestRoute(robot, (int)locator.getCurrentX(), (int)locator.getCurrentY(), target,
-                    RobotDirection.Optimal, 0.5, MoveStrategy.Curve, -1, locator);
+                    RobotDirection.Optimal, 0.8, MoveStrategy.Curve, -1, locator);
 
 
             robot.moveToPos(profile, locator);
@@ -54,6 +55,10 @@ public class PositionTest extends LinearOpMode {
 
             while (opModeIsActive()) {
 
+                telemetry.addData("LeftTarget", profile.getLeftTarget());
+                telemetry.addData("RightTarget", profile.getRightTarget());
+                telemetry.addData("LeftTargetBack", profile.getLeftTargetBack());
+                telemetry.addData("RightTargetBack", profile.getRightTargetBack());
 
                 telemetry.addData("Left front", robot.getLeftOdometer());
                 telemetry.addData("Right front", robot.getRightOdometer());

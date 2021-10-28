@@ -25,7 +25,7 @@ public class MasterCalibCam extends MasterCalib {
         getLocator().init(new Point(startX, startY), lastOrientation);
         Thread positionThread = new Thread(getLocator());
         positionThread.start();
-        return getLocator();
+        return this.locator;
     }
 
     @Override

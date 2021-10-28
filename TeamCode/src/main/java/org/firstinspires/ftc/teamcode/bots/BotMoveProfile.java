@@ -30,7 +30,7 @@ public class BotMoveProfile {
     private double topSpeed = 0;
     private double lowSpeed = 0;
     private RobotDirection direction;
-    private MotorReductionBot motorReduction = null;
+    private MotorReductionBot motorReduction = new MotorReductionBot();
     private BotMoveRequest target = new BotMoveRequest();
     private MoveStrategy strategy = MoveStrategy.Curve;
     private MoveStrategy nextStep = null;
@@ -555,16 +555,16 @@ public class BotMoveProfile {
         double sign = Math.signum(distanceLong);
 
         //account for processing time
-        double ticksLong = YellowBot.MAX_VELOCITY_PER_PROC_DELAY*topSpeed;
-        double ticksShort = YellowBot.MAX_VELOCITY_PER_PROC_DELAY*lowSpeed;
+//        double ticksLong = YellowBot.MAX_VELOCITY_PER_PROC_DELAY*topSpeed;
+//        double ticksShort = YellowBot.MAX_VELOCITY_PER_PROC_DELAY*lowSpeed;
 
-        double slowdownMarkLong = startingPointLong + sign*(Math.abs(distanceLong) - breakPoint - ticksLong);
-        double slowdownMarkShort = startingPointShort + sign*(Math.abs(distanceShort) - breakPoint - ticksShort);
+        double slowdownMarkLong = startingPointLong + sign*(Math.abs(distanceLong) - breakPoint);
+        double slowdownMarkShort = startingPointShort + sign*(Math.abs(distanceShort) - breakPoint);
 
-        double longTarget = startingPointLong + sign*(Math.abs(distanceLong) - ticksLong);
-        double longTargetBack = startingPointLongBack + sign*(Math.abs(distanceLong) - ticksLong);
-        double shortTarget = startingPointShort + sign*(Math.abs(distanceShort) - ticksShort);
-        double shortTargetBack = startingPointShortBack + sign*(Math.abs(distanceShort) - ticksShort);
+        double longTarget = startingPointLong + sign*(Math.abs(distanceLong));
+        double longTargetBack = startingPointLongBack + sign*(Math.abs(distanceLong));
+        double shortTarget = startingPointShort + sign*(Math.abs(distanceShort));
+        double shortTargetBack = startingPointShortBack + sign*(Math.abs(distanceShort));
 
 
         if (leftLong){

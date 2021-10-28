@@ -165,11 +165,17 @@ public class MasterCalib extends LinearOpMode {
 //                telemetry.update();
 //            }
             if (locator != null) {
-                while (getLocator().getCurrentX() < 1){
+                while (getLocator().getCurrentX() < 5){
                     //wait till locator initializes
+                    telemetry.addData("Waiting for locator", String.format("X: %.2f", getLocator().getCurrentX()));
+                    telemetry.addData("isTrackingInitialized", getLocator().isTrackingInitialized());
+                    telemetry.update();
                 }
             }
 
+            telemetry.addData("X", locator.getCurrentX());
+            telemetry.addData("Y", locator.getCurrentY());
+            telemetry.addData("Heading", locator.getOrientation());
             telemetry.addData("Master Calib", "Ready to calibrate....");
             telemetry.update();
 
@@ -603,11 +609,14 @@ public class MasterCalib extends LinearOpMode {
     }
 
     protected IBaseOdometry initLocator(){
-        RobotCoordinatePosition locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation, RobotCoordinatePosition.THREAD_INTERVAL);
+        if (this.locator != null){
+            return this.locator;
+        }
+        this.locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation, RobotCoordinatePosition.THREAD_INTERVAL);
         locator.reverseHorEncoder();
         Thread positionThread = new Thread(locator);
         positionThread.start();
-        return locator;
+        return this.locator;
     }
 
     private void calibSpinPrecision(){
@@ -759,23 +768,23 @@ public class MasterCalib extends LinearOpMode {
             }
 
 
-            profile.setActual(new Point((int)Math.round(locator.getCurrentX()), (int)Math.round(locator.getCurrentY())));
+//            profile.setActual(new Point((int)Math.round(locator.getCurrentX()), (int)Math.round(locator.getCurrentY())));
+//
+//            lastOrientation = locator.getOrientation();
+//
+//
+//
+//            Point newStart = new Point((int)Math.round(locator.getCurrentX()), (int) Math.round(locator.getCurrentY()));
+//
+//            BotMoveProfile whatIfBack = BotMoveProfile.bestRoute(bot, locator.getCurrentX(), locator.getCurrentY(), new Point(startX, startY), RobotDirection.Optimal, desiredSpeed, MoveStrategy.Curve, BotMoveProfile.DEFAULT_HEADING, locator);
+//            bot.curveTo(whatIfBack, locator);
+//            whatIfBack.setStart(newStart);
+//            whatIfBack.setDestination(new Point(startX, startY));
+//            whatIfBack.setActual(new Point((int)Math.round(locator.getCurrentX()), (int)Math.round(locator.getCurrentY())));
 
-            lastOrientation = locator.getOrientation();
-
-
-
-            Point newStart = new Point((int)Math.round(locator.getCurrentX()), (int) Math.round(locator.getCurrentY()));
-
-            BotMoveProfile whatIfBack = BotMoveProfile.bestRoute(bot, locator.getCurrentX(), locator.getCurrentY(), new Point(startX, startY), RobotDirection.Optimal, desiredSpeed, MoveStrategy.Curve, BotMoveProfile.DEFAULT_HEADING, locator);
-            bot.curveTo(whatIfBack, locator);
-            whatIfBack.setStart(newStart);
-            whatIfBack.setDestination(new Point(startX, startY));
-            whatIfBack.setActual(new Point((int)Math.round(locator.getCurrentX()), (int)Math.round(locator.getCurrentY())));
-
-            telemetry.addData("Profile Original", profile.toString());
+//            telemetry.addData("Profile Original", profile.toString());
             showMotorReduction(profile.getMotorReduction());
-            telemetry.addData("Profile Back", whatIfBack.toString());
+//            telemetry.addData("Profile Back", whatIfBack.toString());
 
 
             telemetry.update();

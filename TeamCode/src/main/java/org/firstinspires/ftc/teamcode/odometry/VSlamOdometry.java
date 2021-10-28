@@ -51,6 +51,7 @@ public class VSlamOdometry implements IBaseOdometry {
     private static VSlamOdometry theInstance;
 
     private boolean persistPosition = false;
+    private boolean trackingInitialized = false;
 
     private static final String TAG = "RobotCoordinatePositionCam";
 
@@ -109,6 +110,7 @@ public class VSlamOdometry implements IBaseOdometry {
     @Override
     public void stop() {
         isRunning = false;
+        trackingInitialized = false;
         slamra.stop();
     }
 
@@ -217,6 +219,8 @@ public class VSlamOdometry implements IBaseOdometry {
 
                 Log.i(TAG, String.format("Cam Location: %.2f : %.2f. Heading: %d", this.currentX, this.currentY, this.getOrientation()));
 
+                trackingInitialized = true;
+
                 if (persistPosition) {
                     saveLastPosition();
                 }
@@ -250,6 +254,10 @@ public class VSlamOdometry implements IBaseOdometry {
 
     public void setInitialOrientation(double initialOrientation) {
         this.initialOrientation = initialOrientation;
+    }
+
+    public boolean isTrackingInitialized() {
+        return trackingInitialized;
     }
 }
 

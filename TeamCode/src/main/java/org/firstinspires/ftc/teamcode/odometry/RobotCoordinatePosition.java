@@ -334,4 +334,8 @@ public class RobotCoordinatePosition implements IBaseOdometry {
     public void setPersistPosition(boolean persistPosition) {
         this.persistPosition = persistPosition;
     }
+
+    public boolean isTrackingInitialized() {
+        return true;
+    }
 }

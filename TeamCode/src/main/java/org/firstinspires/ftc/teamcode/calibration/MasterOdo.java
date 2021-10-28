@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.calibration;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -101,6 +102,8 @@ public class MasterOdo extends OdoBase {
 
     protected Deadline gamepadRateLimit;
     protected final static int GAMEPAD_LOCKOUT = 500;
+
+    private static final String TAG = "MasterOdo";
 
 
 
@@ -668,7 +671,7 @@ public class MasterOdo extends OdoBase {
         }
 
         if (gamepad1.start){
-
+            Log.d(TAG, String.format("Start pressed. Goto mode is %b", goToMode ));
             if (goToMode){
                 goTo(this.goToInstructions, true, NAME_RED);
             }
