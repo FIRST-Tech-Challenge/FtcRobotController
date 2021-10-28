@@ -92,12 +92,30 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     public void dropElement(){
-
+        // TODO: Move servo to drop the element
     }
 
     public void resetDropper(){
-
+        // TODO: Move servo to reset the dropper to default position
     }
 
+    public void startIntake() {
+        activateIntake(0.95);
+    }
 
+    public void reverseIntake() {
+        activateIntake(-0.75);
+    }
+
+    public void stopIntake() {
+        activateIntake(0);
+    }
+
+    public void startTurntable() {
+        activateRotator(0.5);
+    }
+
+    public void stopTurntable() {
+        activateRotator(0.0);
+    }
 }

@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
+
+import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "Frenzy", group = "Robot15173")
 public class FrenzyMode extends LinearOpMode {
@@ -16,10 +18,8 @@ public class FrenzyMode extends LinearOpMode {
     IBaseOdometry odometry = null;
 
     // Timing related variables
-    ElapsedTime runtime = new ElapsedTime();
-    boolean buttonPressable = true;
-    double DEBOUNCE_DELAY_TIME_MS = 200;
-    double lastButtonPressed = 0;
+    long GAMEPAD_LOCKOUT_TIME_MS = 200;
+    Deadline gamepadRateLimit;
 
     // Intake related variables
     boolean changedIntake = false;
@@ -32,9 +32,13 @@ public class FrenzyMode extends LinearOpMode {
     public void runOpMode() {
         try {
             try{
+                gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT_TIME_MS, TimeUnit.MILLISECONDS);
+
                 robot.init(this, this.hardwareMap, telemetry);
+
                 odometry =  VSlamOdometry.getInstance(this.hardwareMap, 20);
                 odometry.setInitPosition(50, 15, 0); // TODO: Remove this
+
                 Thread odometryThread = new Thread(odometry);
                 odometryThread.start();
             } catch (Exception ex) {
@@ -42,48 +46,14 @@ public class FrenzyMode extends LinearOpMode {
             }
             telemetry.update();
 
-
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
-            runtime.reset();
 
             while (opModeIsActive()) {
-                // DRIVING
-                double drive = gamepad1.left_stick_y;
-                double turn = 0;
-                double ltrigger = gamepad1.left_trigger;
-                double rtrigger = gamepad1.right_trigger;
-                if (ltrigger > 0) {
-                    turn = -ltrigger;
-                } else if (rtrigger > 0) {
-                    turn = rtrigger;
-                }
-
-                double strafe = gamepad1.right_stick_x;
-
-                if (Math.abs(strafe) > 0) {
-                    if (strafe < 0) {
-                        robot.strafeRight(Math.abs(strafe));
-                    } else {
-                        robot.strafeLeft(Math.abs(strafe));
-                    }
-                } else {
-                    robot.move(drive, turn);
-                }
-
-
+                handleDriveTrain();
                 handleSpecialActions();
 
-                telemetry.addData("Left front", robot.getLeftOdometer());
-                telemetry.addData("Right front", robot.getRightOdometer());
-                telemetry.addData("Left Back", robot.getLeftBackOdometer());
-                telemetry.addData("Right Back", robot.getRightBackOdometer());
-                telemetry.addData("X", odometry.getCurrentX());
-                telemetry.addData("Y", odometry.getCurrentY());
-                telemetry.addData("Heading", odometry.getOrientation());
-                telemetry.addData("Heading Adjusted", odometry.getAdjustedCurrentHeading());
-                telemetry.addData("List position", robot.getLiftPosition());
-                telemetry.update();
+                sendTelemetry();
             }
         } catch (Exception ex) {
             telemetry.addData("Issues with the OpMode", ex.getMessage());
@@ -100,55 +70,94 @@ public class FrenzyMode extends LinearOpMode {
         }
     }
 
+    private void sendTelemetry() {
+        telemetry.addData("Left front", robot.getLeftOdometer());
+        telemetry.addData("Right front", robot.getRightOdometer());
+        telemetry.addData("Left Back", robot.getLeftBackOdometer());
+        telemetry.addData("Right Back", robot.getRightBackOdometer());
+        telemetry.addData("X", odometry.getCurrentX());
+        telemetry.addData("Y", odometry.getCurrentY());
+        telemetry.addData("Heading", odometry.getOrientation());
+        telemetry.addData("Heading Adjusted", odometry.getAdjustedCurrentHeading());
+        telemetry.addData("List position", robot.getLiftPosition());
+        telemetry.update();
+    }
+
+    private void handleDriveTrain() {
+        // DRIVING
+        double drive = gamepad1.left_stick_y;
+        double turn = 0;
+        double ltrigger = gamepad1.left_trigger;
+        double rtrigger = gamepad1.right_trigger;
+        if (ltrigger > 0) {
+            turn = -ltrigger;
+        } else if (rtrigger > 0) {
+            turn = rtrigger;
+        }
+
+        double strafe = gamepad1.right_stick_x;
+
+        if (Math.abs(strafe) > 0) {
+            if (strafe < 0) {
+                robot.strafeRight(Math.abs(strafe));
+            } else {
+                robot.strafeLeft(Math.abs(strafe));
+            }
+        } else {
+            robot.move(drive, turn);
+        }
+    }
+
     protected void handleSpecialActions() {
-
         handleLift();
-        handleDDropper();
+        handleDropper();
+        handleIntake();
+        handleOuttake();
+        handleTurntable();
+    }
 
-        // BUTTON PRESSABLE
-        buttonPressable = ((runtime.milliseconds() - lastButtonPressed) >= DEBOUNCE_DELAY_TIME_MS);
+    protected void handleOuttake() {
+        if (isButtonPressable()) {
+            if (gamepad2.right_bumper){
+                startGamepadLockout();
+                intakeReverse = !intakeReverse;
 
-        if (buttonPressable) {
-            handleIntake();
-            handleRotator();
+                if (intakeReverse){
+                    robot.startIntake();
+                } else {
+                    robot.stopIntake();
+                }
+            }
         }
     }
 
     protected void handleIntake() {
-        // MOVE INTAKE
-        if (gamepad2.left_bumper) {
-            recordButtonPressed();
-            changedIntake = !changedIntake;
-        }
+        if (isButtonPressable()) {
+            if (gamepad2.left_bumper) {
+                startGamepadLockout();
+                changedIntake = !changedIntake;
 
-        if (changedIntake) {
-            robot.activateIntake(0.95);
-        } else {
-            robot.activateIntake(0);
-        }
-
-        if (gamepad2.right_bumper){
-            recordButtonPressed();
-            intakeReverse = !intakeReverse;
-        }
-
-        if (intakeReverse){
-            robot.activateIntake(-0.75);
-        } else {
-            robot.activateIntake(0);
+                if (changedIntake) {
+                    robot.reverseIntake();
+                } else {
+                    robot.stopIntake();
+                }
+            }
         }
     }
 
-    protected void handleRotator() {
-        if (gamepad1.y) {
-            recordButtonPressed();
-            changedRotator = !changedRotator;
-        }
+    protected void handleTurntable() {
+        if (isButtonPressable()) {
+            if (gamepad1.y) {
+                startGamepadLockout();
+                changedRotator = !changedRotator;
 
-        if (changedIntake) {
-            robot.activateRotator(0.5);
-        } else {
-            robot.activateRotator(0);
+                if (changedIntake) {
+                    robot.startTurntable();
+                } else {
+                    robot.stopTurntable();
+                }
+            }
         }
     }
 
@@ -157,7 +166,7 @@ public class FrenzyMode extends LinearOpMode {
         robot.activateLift(liftVal);
     }
 
-    protected void handleDDropper() {
+    protected void handleDropper() {
         if ( gamepad2.dpad_up){
             robot.dropElement();
         }
@@ -166,7 +175,10 @@ public class FrenzyMode extends LinearOpMode {
         }
     }
 
-    private void recordButtonPressed() {
-        lastButtonPressed = runtime.milliseconds();
+    private void startGamepadLockout() {
+        gamepadRateLimit.reset();
+    }
+    private boolean isButtonPressable() {
+        return gamepadRateLimit.hasExpired();
     }
 }
