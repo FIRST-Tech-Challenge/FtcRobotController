@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.mechanism.Mechanism;
 
 public class Carousel implements Mechanism {
-    static DcMotor carousel;
+    public static DcMotor carousel;
     boolean aWasDown = false;
     boolean bWasDown = false;
     public void init(HardwareMap hardwareMap) {
@@ -40,7 +40,8 @@ public class Carousel implements Mechanism {
 
     public void turnCarousel() {
         carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        carousel.setTargetPosition(-2500);
         carousel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        carousel.setTargetPosition(2000);
+        carousel.setPower(0.55);
     }
 }
