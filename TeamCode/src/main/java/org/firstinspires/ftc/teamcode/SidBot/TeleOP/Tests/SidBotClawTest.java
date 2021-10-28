@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.ServoClaw;
 @TeleOp(name="SidBotClawTest ClawTest", group="tests")
 public class SidBotClawTest extends OpMode {
 
-    private org.firstinspires.ftc.teamcode.ServoClaw clawObject;
-    private org.firstinspires.ftc.teamcode.LinearSlide armObject;
+    private ServoClaw clawObject;
+    private LinearSlide armObject;
 
     private float slowdownModifierP1;
 
