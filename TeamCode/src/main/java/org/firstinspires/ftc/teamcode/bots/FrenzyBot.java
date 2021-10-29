@@ -87,6 +87,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         telemetry.addData("Element: ", detectedElement);
         telemetry.addData("Mean Val: ", detector.getMeanVal());
         telemetry.update();
+        detector.stopDetection();
         return detectedElement;
     }
 
