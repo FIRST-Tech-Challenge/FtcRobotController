@@ -26,7 +26,7 @@ public class Lift {
         this.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         try { Thread.sleep(100); } catch (InterruptedException ignored) {}
         this.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        assert !liftMotor.isBusy();
         this.armServo = map.get(Servo.class,"armServo");
         this.encoderOffset = liftMotor.getCurrentPosition() * -1;
         this.bottomSensor = map.get(DigitalChannel.class,"bottomSensor");
@@ -56,9 +56,10 @@ public class Lift {
         final double stickValue = gamepad.getLeftY();
         telemetry.addData("left stick",stickValue);
         telemetry.addData("lift motor power", liftMotor.getPower());
+        telemetry.addData("lift motor state",liftMotor.getMode());
         telemetry.addData("bottomSensor",bottomSensor.getState());
-        telemetry.addData("topSensor", topSensor.getState());
         telemetry.addData("motor encoder",curPos);
+        telemetry.addData("topSensor", topSensor.getState());
         telemetry.addData("armServo",armServo.getPosition());
         if (!liftMotor.isBusy()) {
             if (running) {
@@ -80,9 +81,8 @@ public class Lift {
                     first = false;
                 } else { if (topSensor.getState()) {
                         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    }
+                    } else if (!bottomSensor.getState()) { first = true; }
                     liftMotor.setPower(0);
-                    first = true;
                 }
             }
         }
@@ -93,17 +93,21 @@ public class Lift {
 //0.07 - dump
 //0.88 - intake
     private void arm() {
-        final int topLiftPosition = 850;
+        final int topLiftPosition = 810;
+        final int bottomLiftPosition = 50;
         final double loadServoPosition = 0.88;
-        final double liftingServoPosition = 0.76;
+        final double middleLoadServoPosition = 0.85;
+        final double normalServoPosition = 0.76;
         final double dumpServoPosition = 0.07;
         if (curPos >= topLiftPosition) {
             rBumpReader.readValue();
             if (rBumpReader.getState()) {
                 armServo.setPosition(dumpServoPosition);
             } else {
-                armServo.setPosition(liftingServoPosition);
+                armServo.setPosition(normalServoPosition);
             }
+        } else if (curPos >= bottomLiftPosition) {
+            armServo.setPosition(middleLoadServoPosition);
         } else {
             armServo.setPosition(loadServoPosition);
         }
