@@ -5,8 +5,8 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -14,11 +14,16 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx intake = null;
     private DcMotorEx lift = null;
     private DcMotorEx rotator = null;
+    private Servo dropperServo = null;
     private static final String TAG = "FrenzyBot";
     private static int LIFT_FULL_EXTENSION = 1400;
     private static int LIFT_HALF_EXTENSION = 650;
     private static int LIFT_NO_EXTENSION = 20;
     private static double LIFT_SPEED = 0.5;
+
+    // Dropper Servo positions
+    private static double DROPPER_SERVO_POS_READY = 0.5;
+    private static double DROPPER_SERVO_POS_DROP = 1.0;
 
     /* Constructor */
     public FrenzyBot() {
@@ -51,6 +56,12 @@ public class FrenzyBot extends FrenzyBaseBot {
             rotator.setVelocity(0);
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize rotator", ex);
+        }
+        try {
+            dropperServo =  hwMap.get(Servo.class, "dropper");
+            dropperServo.setPosition(DROPPER_SERVO_POS_READY);
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize dropperServo", ex);
         }
     }
     public void activateIntake(double velocity) {
@@ -92,11 +103,15 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     public void dropElement(){
-        // TODO: Move servo to drop the element
+        if (dropperServo != null) {
+            dropperServo.setPosition(DROPPER_SERVO_POS_DROP);
+        }
     }
 
     public void resetDropper(){
-        // TODO: Move servo to reset the dropper to default position
+        if (dropperServo != null) {
+            dropperServo.setPosition(DROPPER_SERVO_POS_READY);
+        }
     }
 
     public void startIntake() {
@@ -111,10 +126,12 @@ public class FrenzyBot extends FrenzyBaseBot {
         activateIntake(0);
     }
 
-    public void startTurntable() {
+    public void startTurntableBlue() {
         activateRotator(0.5);
     }
-
+    public void startTurntableRed() {
+        activateRotator(-0.5);
+    }
     public void stopTurntable() {
         activateRotator(0.0);
     }

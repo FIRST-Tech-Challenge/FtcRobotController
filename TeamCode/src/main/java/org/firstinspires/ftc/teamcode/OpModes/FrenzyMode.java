@@ -154,7 +154,19 @@ public class FrenzyMode extends LinearOpMode {
                 changedRotator = !changedRotator;
 
                 if (changedRotator) {
-                    robot.startTurntable();
+                    robot.startTurntableBlue();
+                } else {
+                    robot.stopTurntable();
+                }
+            }
+        }
+        if (isButtonPressable()) {
+            if (gamepad1.x) {
+                startGamepadLockout();
+                changedRotator = !changedRotator;
+
+                if (changedRotator) {
+                    robot.startTurntableRed();
                 } else {
                     robot.stopTurntable();
                 }
