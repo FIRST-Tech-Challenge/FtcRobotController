@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
-@Disabled
+//@Disabled
 @TeleOp(name = "Position To", group = "Robot15173")
 public class PositionTest extends LinearOpMode {
 
@@ -46,7 +46,7 @@ public class PositionTest extends LinearOpMode {
             waitForStart();
             runtime.reset();
 
-            Point target = new Point(60, 25);
+            Point target = new Point(65, 30);
 
             BotMoveProfile profile = BotMoveProfile.bestRoute(robot, (int)locator.getCurrentX(), (int)locator.getCurrentY(), target,
                     RobotDirection.Optimal, 0.5, MoveStrategy.Diag, -1, locator);

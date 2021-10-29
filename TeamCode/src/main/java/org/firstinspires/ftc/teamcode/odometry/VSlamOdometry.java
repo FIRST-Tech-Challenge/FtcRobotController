@@ -58,7 +58,7 @@ public class VSlamOdometry implements IBaseOdometry {
     private boolean persistPosition = false;
     private boolean trackingInitialized = false;
 
-    private static final String TAG = "RobotCoordinatePositionCam";
+    private static final String TAG = "VSlamOdometry";
 
     private String coordinateAdjustmentMode = AutoRoute.NAME_RED;
 
@@ -152,6 +152,7 @@ public class VSlamOdometry implements IBaseOdometry {
             } else {
                 rawX = originalX + delta;
             }
+            Log.d(TAG, String.format("adjustXCoordinate to %.2f", rawX));
         }
 
         return rawX;
@@ -166,6 +167,7 @@ public class VSlamOdometry implements IBaseOdometry {
             } else {
                 rawY = originalY + delta;
             }
+            Log.d(TAG, String.format("adjustYCoordinate to %.2f", rawY));
         }
 
         return rawY;
