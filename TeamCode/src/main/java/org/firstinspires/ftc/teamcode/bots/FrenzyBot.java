@@ -23,7 +23,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     // Dropper Servo positions
     private static double DROPPER_SERVO_POS_READY = 0.5;
-    private static double DROPPER_SERVO_POS_DROP = 1.0;
+    private static double DROPPER_SERVO_POS_DROP = 0.0;
 
     /* Constructor */
     public FrenzyBot() {
@@ -127,10 +127,10 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     public void startTurntableBlue() {
-        activateRotator(0.5);
+        activateRotator(0.75);
     }
     public void startTurntableRed() {
-        activateRotator(-0.5);
+        activateRotator(-0.75);
     }
     public void stopTurntable() {
         activateRotator(0.0);
