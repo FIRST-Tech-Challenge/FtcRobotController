@@ -7,7 +7,7 @@ abstract public class RedWarehouseNoDetect extends MasterAutonomous{
 
 
     public void runOpMode() throws InterruptedException {
-        initHardware();
+        initAuto();
         waitForStart();
 
         while (opModeIsActive()){
