@@ -111,10 +111,12 @@ public class FrenzyBot extends FrenzyBaseBot {
         activateIntake(0);
     }
 
-    public void startTurntable() {
+    public void startTurntableBlue() {
         activateRotator(0.5);
     }
-
+    public void startTurntableRed() {
+        activateRotator(-0.5);
+    }
     public void stopTurntable() {
         activateRotator(0.0);
     }
