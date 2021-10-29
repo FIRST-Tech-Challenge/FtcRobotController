@@ -198,7 +198,9 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
                 Slide.setPower(0.8);
             }
             Rotate.setPosition(1.0);
-            sleep(800);
+            sleep(500);
+            Push.setPosition(0.0);
+            sleep(300);
             Push.setPosition(0.4);
             sleep(500);
             Rotate.setPosition(0.03);
@@ -558,7 +560,7 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.minResultConfidence = 0.7f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
