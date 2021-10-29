@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "TankDriveTest01", group = "TeleOp")
 public class TankDriveTest01 extends LinearOpMode {
 
-    //Motors
+    // Declaring motors and servos
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
@@ -31,7 +31,7 @@ public class TankDriveTest01 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        //Initialize
+        //Initialize the motors and servos
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
@@ -41,26 +41,25 @@ public class TankDriveTest01 extends LinearOpMode {
         servoGrabber = hardwareMap.servo.get("servoGrabber");
         servoArm = hardwareMap.servo.get("servoArm");
 
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        //Set direction of the motors
+        motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorDuck.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //Set position of servos
         servoGrabber.setPosition(0.3);
         servoArm.setPosition(0.4);
+
+        //Declare variables
         int position = 0;
         boolean ispressed=false;
         double motorPower = 0.4;
         double increase = 1;
         double oldPosition = 0;
 
-         /* DISABLE ENCODER
-         motorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-         motorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-         motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-         motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
-
+        //Set run mode of motors (encoders --> run to position)
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -71,21 +70,9 @@ public class TankDriveTest01 extends LinearOpMode {
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu". Certain parameters must be specified before using the imu.
-         /*
-         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-         parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
-         parameters.loggingEnabled = true;
-         parameters.loggingTag = "IMU";
-         imu = hardwareMap.get(BNO055IMU.class, "imu");
-         imu.initialize(parameters);*/
-
         waitForStart();
 
+        //Set power of motors
         while (opModeIsActive()) {
             motorBackLeft.setPower((gamepad1.left_stick_y));
             motorFrontLeft.setPower((gamepad1.left_stick_y));
@@ -97,43 +84,44 @@ public class TankDriveTest01 extends LinearOpMode {
             motorBackLeft.setPower(-(gamepad1.right_stick_x));
             motorFrontLeft.setPower(-(gamepad1.right_stick_x));
 
-            if (position==6){
-                motorArm.setTargetPosition(-1650);
-                servoArm.setPosition(0.9);
-                motorArm.setPower(motorPower);
-            }
-
-            if (position==5){
-                motorArm.setTargetPosition(-1475);
-                servoArm.setPosition(0.8);
-                motorArm.setPower(motorPower);
-            }
-            if(position==4) {
-                    motorArm.setTargetPosition(-1275);
+            //Use switch to declare values for each arm position
+            switch (position) {
+                case 0:
+                    motorArm.setTargetPosition(0);
+                    servoArm.setPosition(0.4);
+                    motorArm.setPower(motorPower);
+                    break;
+                case 1:
+                    motorArm.setTargetPosition(-260);
                     servoArm.setPosition(0.6);
                     motorArm.setPower(motorPower);
-            }
-            if(position==3) {
-                motorArm.setTargetPosition(-900);
-                motorArm.setPower(0.4);
-            }
-            if(position==2) {
+                    break;
+                case 2:
                     motorArm.setTargetPosition(-500);
                     servoArm.setPosition(0.7);
                     motorArm.setPower(motorPower);
+                    break;
+                case 3:
+                    motorArm.setTargetPosition(-900);
+                    motorArm.setPower(0.4);
+                    break;
+                case 4:
+                    motorArm.setTargetPosition(-1275);
+                    servoArm.setPosition(0.6);
+                    motorArm.setPower(motorPower);
+                    break;
+                case 5:
+                    motorArm.setTargetPosition(-1475);
+                    servoArm.setPosition(0.8);
+                    motorArm.setPower(motorPower);
+                    break;
+                case 6:
+                    motorArm.setTargetPosition(-1650);
+                    servoArm.setPosition(0.9);
+                    motorArm.setPower(motorPower);
+                    break;
             }
-
-            else if (position==1) {
-                motorArm.setTargetPosition(-260);
-                servoArm.setPosition(0.6);
-                motorArm.setPower(motorPower);
-            }
-
-            else if (position==0) {
-                motorArm.setTargetPosition(0);
-                servoArm.setPosition(0.4);
-                motorArm.setPower(motorPower);
-            }
+            
             if (gamepad1.dpad_up){
                 if (!ispressed) {
                     if (position == 3) {
@@ -143,9 +131,11 @@ public class TankDriveTest01 extends LinearOpMode {
                 }
                 ispressed=true;
             }
+
             if (!gamepad1.dpad_up && !gamepad1.dpad_down){
                 ispressed=false;
             }
+
             else if (gamepad1.dpad_down){
                 if (!ispressed) {
                     if (position == 3) {
@@ -155,12 +145,15 @@ public class TankDriveTest01 extends LinearOpMode {
                 }
                 ispressed=true;
             }
+
             else {
                 motorPower = 0.5;
             }
+
             if (position<0){
                 position=0;
             }
+
             if (position>6){
                 position=6;
             }

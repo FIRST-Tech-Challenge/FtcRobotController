@@ -37,29 +37,10 @@ public class TankDriveTest02 extends LinearOpMode {
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-         /* DISABLE ENCODER
-         motorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-         motorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-         motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-         motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
-
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu". Certain parameters must be specified before using the imu.
-         /*     I AINT USING IMU
-         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-         parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
-         parameters.loggingEnabled = true;
-         parameters.loggingTag = "IMU";
-         imu = hardwareMap.get(BNO055IMU.class, "imu");
-         imu.initialize(parameters);*/
 
         telemetry.addData("Init", "Done");
         telemetry.update();
@@ -79,13 +60,6 @@ public class TankDriveTest02 extends LinearOpMode {
             telemetry.addData("motorFrontLeft: ", -motorFrontLeft.getPower());
             telemetry.addData("motorFrontRight: ", -motorFrontRight.getPower());
 
-             /*     NO ENCODERS
-             telemetry.addData("EncoderLeft: ", motorLeft.getCurrentPosition());
-             telemetry.addData("EncoderRight: ", motorRight.getCurrentPosition());
-                    NO IMU
-             telemetry.addData("IMU Angle: ", imu.getAngularOrientation().firstAngle);
-             telemetry.addData("IMU x Acceleration: ", imu.getLinearAcceleration().xAccel);
-             telemetry.addData("IMU y Acceleration: ", imu.getLinearAcceleration().yAccel);*/
             telemetry.update();
 
         }

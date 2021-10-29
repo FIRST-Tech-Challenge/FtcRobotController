@@ -58,6 +58,13 @@ public class speedtest extends LinearOpMode {
                 motorFrontLeft.setPower(0);
                 motorFrontRight.setPower(0);
             }
+            telemetry.addData("motorBackLeft: ", motorBackLeft.getPower());
+            telemetry.addData("motorBackRight: ", motorBackRight.getPower());
+            telemetry.addData("motorFrontLeft: ", motorFrontLeft.getPower());
+            telemetry.addData("motorFrontRight: ", motorFrontRight.getPower());
+            telemetry.update();
+
+
         }
     }
 }

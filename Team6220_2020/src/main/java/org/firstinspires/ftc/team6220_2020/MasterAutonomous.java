@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class MasterAutonomous extends MasterOpMode {
 
-    public void turnDegrees (double targetAngle) {
+    public void turnDegrees(double targetAngle) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -52,7 +52,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
         }
     }
 
-    public void turnToAngle (double targetAngle) {
+    public void turnToAngle(double targetAngle) {
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -75,19 +75,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
         }
 
         driveMecanum(0,0,0);
-
-        //double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-//
-        //if(targetAngle < startAngle){
-        //    while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
-        //        driveMecanum(0,0,-0.2);
-        //    }
-        //} else{
-        //    while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
-        //        driveMecanum(0,0,0.2);
-        //    }
-        //}
-
 
     }
 
