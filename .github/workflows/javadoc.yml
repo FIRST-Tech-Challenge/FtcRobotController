@@ -33,5 +33,24 @@ jobs:
     - name: Upload the Javadoc output
       uses: actions/upload-artifact@v2
       with:
-        name: Javadoc-output
+        name: javadoc-output
         path: ./javadoc-output/
+
+    - name: Commit and push new Javadoc folder
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "actions@github.com"
+        mv javadoc-output/ ..
+        git remote set-branches origin '*'
+        git fetch -v
+        git checkout gh-pages
+        rm -r javadoc/
+        mv ../javadoc-output/ ./javadoc/
+        git add .
+        git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
+          Information:
+          Repository: $GITHUB_REPOSITORY
+          Branch: $GITHUB_REF
+          Commit: $GITHUB_SHA
+          Who triggered action: $GITHUB_ACTOR"
+        git push
