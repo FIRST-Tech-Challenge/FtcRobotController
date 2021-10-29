@@ -69,6 +69,7 @@ public class VSlamOdometry implements IBaseOdometry {
     public static VSlamOdometry getInstance(HardwareMap hwMap) {
         if (theInstance == null) {
             theInstance = new VSlamOdometry(hwMap, THREAD_INTERVAL);
+            theInstance.setInitPosition(0, 0, 0);
         }
         return theInstance;
     }
@@ -76,6 +77,15 @@ public class VSlamOdometry implements IBaseOdometry {
     public static VSlamOdometry getInstance(HardwareMap hwMap, int threadDelay) {
         if (theInstance == null) {
             theInstance = new VSlamOdometry(hwMap, threadDelay);
+            theInstance.setInitPosition(0, 0, 0);
+        }
+        return theInstance;
+    }
+
+    public static VSlamOdometry getInstance(HardwareMap hwMap, int threadDelay, int startXInches, int startYInches, int startHeadingDegrees) {
+        if (theInstance == null) {
+            theInstance = new VSlamOdometry(hwMap, threadDelay);
+            theInstance.setInitPosition(startXInches, startYInches, startHeadingDegrees);
         }
         return theInstance;
     }
@@ -96,10 +106,11 @@ public class VSlamOdometry implements IBaseOdometry {
 //        Rotation2d offsetRotation = Rotation2d.fromDegrees(offsetHDegrees);
         final Transform2d cameraToRobot = new Transform2d();
         this.slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, this.hwMap.appContext);
+        slamra.start();
     }
 
     @Override
-    public void setInitPosition(int startXInches, int startYInches, int startHeadingDegrees) throws Exception {
+    public void setInitPosition(int startXInches, int startYInches, int startHeadingDegrees)  {
 
         this.originalX = startXInches;
         this.originalY = startYInches;
@@ -120,7 +131,6 @@ public class VSlamOdometry implements IBaseOdometry {
     public void stop() {
         isRunning = false;
         trackingInitialized = false;
-        slamra.stop();
     }
 
     @Override
@@ -135,28 +145,28 @@ public class VSlamOdometry implements IBaseOdometry {
 
     protected double adjustXCoordinate(double rawX){
 
-//        if (coordinateAdjustmentMode.equals(AutoRoute.NAME_RED)) {
+        if (AutoRoute.NAME_RED.equals(coordinateAdjustmentMode)) {
             double delta = Math.abs(originalX - rawX);
             if (rawX > originalX) {
                 rawX = originalX - delta;
             } else {
                 rawX = originalX + delta;
             }
-//        }
+        }
 
         return rawX;
     }
 
     protected double adjustYCoordinate(double rawY){
 
-//        if (coordinateAdjustmentMode.equals(AutoRoute.NAME_RED)) {
+        if (AutoRoute.NAME_RED.equals(coordinateAdjustmentMode)) {
             double delta = Math.abs(originalY - rawY);
             if (rawY > originalY) {
                 rawY = originalY - delta;
             } else {
                 rawY = originalY + delta;
             }
-//        }
+        }
 
         return rawY;
     }
@@ -230,7 +240,6 @@ public class VSlamOdometry implements IBaseOdometry {
     @Override
     public void run() {
         try {
-            slamra.start();
             isRunning = true;
             while (isRunning) {
                 updatePosition();
@@ -301,10 +310,12 @@ public class VSlamOdometry implements IBaseOdometry {
         return trackingInitialized;
     }
 
+    @Override
     public String getCoordinateAdjustmentMode() {
         return coordinateAdjustmentMode;
     }
 
+    @Override
     public void setCoordinateAdjustmentMode(String coordinateAdjustmentMode) {
         this.coordinateAdjustmentMode = coordinateAdjustmentMode;
     }
