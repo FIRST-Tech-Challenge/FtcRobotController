@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import android.graphics.Point;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 // Control Hub ADB Terminal Command for Reference
 // adb.exe connect 192.168.43.1:5555
 
+@Disabled
 // Main Op Mode
 @TeleOp(name = "Ultimate", group = "Robot15173")
 public class UltimateMode extends LinearOpMode {

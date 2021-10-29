@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import android.graphics.Point;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 // adb.exe connect 192.168.43.1:5555
 
 @TeleOp(name = "CV Ring Search", group = "Robot15173")
-//@Disabled
+@Disabled
 public class CVRingSearchTest extends LinearOpMode {
 
     CVDetector detector;

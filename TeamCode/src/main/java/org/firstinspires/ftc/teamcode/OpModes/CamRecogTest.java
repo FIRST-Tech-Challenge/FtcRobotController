@@ -15,7 +15,7 @@ import com.spartronics4915.lib.T265Camera;
 
 
 @TeleOp(name = "Cam Rec Test", group = "Robot15173")
-//@Disabled
+@Disabled
 public class CamRecogTest extends LinearOpMode {
 
 
