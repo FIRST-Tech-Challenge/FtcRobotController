@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class CVPipelineBase extends OpenCvPipeline {
     protected volatile RingStackSize stackSize = RingStackSize.Undefined;
-    private volatile GameElement gameElement = GameElement.CubeLocation2;
+    private volatile GameElement gameElement = GameElement.BarcodeLevel2;
     protected List<CVRoi> targets;
     protected volatile int meanVal;
     protected volatile int meanVal_2;

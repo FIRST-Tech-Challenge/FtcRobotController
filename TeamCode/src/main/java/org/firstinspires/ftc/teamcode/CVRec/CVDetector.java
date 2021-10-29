@@ -5,14 +5,12 @@ import android.util.Log;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.NavUtil;
+import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.opencv.core.Scalar;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CVDetector {
@@ -20,6 +18,7 @@ public class CVDetector {
     private OpenCvCamera webcam = null;
     private int resX = 320;
     private int resY = 240;
+    private String opModeSide = AutoRoute.NAME_RED;
 
     private CVPipelineBase activePipeline = null;
 
@@ -29,8 +28,9 @@ public class CVDetector {
     public static final Scalar GREEN = new Scalar(0, 255, 0);
     public static final Scalar YELLOW = new Scalar(255, 255, 0);
 
-    public CVDetector(HardwareMap hw){
+    public CVDetector(HardwareMap hw, String side){
         this.hwMap = hw;
+        this.opModeSide = side;
     }
 
     public void init(CVDetectMode mode, String camID, String monitorID){
@@ -115,7 +115,7 @@ public class CVDetector {
         if (activePipeline != null){
             return activePipeline.getGameElement();
         }
-        return GameElement.CubeLocationNone;
+        return GameElement.BarcodeLevel3;
     }
 
     public int getMeanVal(){

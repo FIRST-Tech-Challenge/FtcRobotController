@@ -50,10 +50,10 @@ public class CVRingStackPipeline extends CVPipelineBase {
                 2); // Thickness of the rectangle lines
 
         if (getMeanVal() < ORANGE){
-            setGameElement(GameElement.CubeLocation1);
+            setGameElement(GameElement.BarcodeLevel1);
         }
         else{
-            setGameElement(GameElement.CubeLocation2);
+            setGameElement(GameElement.BarcodeLevel2);
         }
 
         // ring  stack recognition
