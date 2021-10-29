@@ -52,6 +52,7 @@ public class Motor {
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MOTOR.setDirection(offset);
         MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        MOTOR.setPower(0);
         TYPE = MotorType.COMPLEX;
         TELEMETRY.addLine("Motor " + getName() + " is ready.");
     }
@@ -76,6 +77,7 @@ public class Motor {
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MOTOR.setDirection(offset);
         MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        MOTOR.setPower(0);
         TYPE = MotorType.SIMPLE;
         TELEMETRY.addLine("Motor " + getName() + " is ready.");
 
