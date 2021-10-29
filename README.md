@@ -27,7 +27,7 @@ If no one on the team can help, get answers to technical questions regarding FTC
 * [FTC Discord Server](https://discord.com/invite/first-tech-challenge)
 
 ### Sample OpModes
-This project contains a large selection of Sample OpModes (robot code examples) in `FtcRobotController/external` which can be cut and pasted into your `TeamCode` folder to be used as-is, or modified to suit your team's needs.
+This project contains a large selection of Sample OpModes (robot code examples) in `FtcRobotController/external` which can be cut and pasted into your `TeamCode` folder to be used as-is, or modified to suit your needs.
 
 # Release Information
 
