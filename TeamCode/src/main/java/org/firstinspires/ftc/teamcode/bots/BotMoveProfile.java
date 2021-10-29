@@ -639,15 +639,15 @@ public class BotMoveProfile {
         double ticksLeft = bot.getCalibConfig().getLeftTicksPerDegree()*angleChange;
         double ticksRight = bot.getCalibConfig().getRightTicksPerDegree()*angleChange;
         if (spinLeft){
-            ticksRight = -ticksRight*bot.getEncoderDirection();
+            ticksRight = -ticksRight;
         }
         else{
-            ticksLeft = -ticksLeft*bot.getEncoderDirection();
+            ticksLeft = -ticksLeft;
         }
-        profile.setLeftTarget(ticksLeft);
-        profile.setRightTarget(ticksRight);
-        profile.setLeftTargetBack(ticksLeft);
-        profile.setRightTargetBack(ticksRight);
+        profile.setLeftTarget(ticksLeft*bot.getEncoderDirection());
+        profile.setRightTarget(ticksRight*bot.getEncoderDirection());
+        profile.setLeftTargetBack(ticksLeft*bot.getEncoderDirection());
+        profile.setRightTargetBack(ticksRight*bot.getEncoderDirection());
 
 
         return profile;

@@ -117,6 +117,18 @@ public class MasterOdo extends OdoBase {
 
             initLocator();
 
+            if (locator != null) {
+                while (locator.getCurrentX() < 5){
+                    //wait till locator initializes
+                    telemetry.addData("Waiting for locator", String.format("X: %.2f", locator.getCurrentX()));
+                    telemetry.addData("isTrackingInitialized", locator.isTrackingInitialized());
+                    telemetry.update();
+                }
+            }
+            telemetry.addData("Locator", String.format("X: %.2f, Y: %.2f", locator.getCurrentX(), locator.getCurrentY()));
+            telemetry.addData("Orientation", locator.getAdjustedCurrentHeading());
+            telemetry.update();
+
             waitForStart();
 
             if (this.led != null){
@@ -911,9 +923,9 @@ public class MasterOdo extends OdoBase {
                 }
             }
 
-            telemetry.addData("Locator X", this.locator.getCurrentX());
-            telemetry.addData("Locator Y", this.locator.getCurrentY());
-            telemetry.addData("Locator heading", this.locator.getAdjustedCurrentHeading());
+//            telemetry.addData("Locator X", this.locator.getCurrentX());
+//            telemetry.addData("Locator Y", this.locator.getCurrentY());
+//            telemetry.addData("Locator heading", this.locator.getAdjustedCurrentHeading());
             telemetry.update();
         }
         catch (Exception ex){

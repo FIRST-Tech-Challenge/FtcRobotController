@@ -75,10 +75,9 @@ public class OdoBase extends LinearOpMode {
 
     protected void startLocator(IBaseOdometry locator){
         this.locator = locator;
-        if (opModeIsActive()) {
-            Thread positionThread = new Thread(locator);
-            positionThread.start();
-        }
+        Thread positionThread = new Thread(locator);
+        positionThread.start();
+
     }
 
     protected void stopLocator(){
