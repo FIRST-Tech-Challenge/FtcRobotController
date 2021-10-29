@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
+import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
+import org.firstinspires.ftc.teamcode.CVRec.GameElement;
 
 public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx intake = null;
@@ -24,6 +27,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     // Dropper Servo positions
     private static double DROPPER_SERVO_POS_READY = 0.5;
     private static double DROPPER_SERVO_POS_DROP = 0.0;
+
+    // Detection
+    CVDetector detector;
+
+    private GameElement detectedElement;
 
     /* Constructor */
     public FrenzyBot() {
@@ -63,7 +71,25 @@ public class FrenzyBot extends FrenzyBaseBot {
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize dropperServo", ex);
         }
+        try {
+            detector = new CVDetector(hwMap);
+            detector.init(CVDetectMode.Frenzy, "wcam", "cameraMonitorViewId");
+            detector.startDetection();
+            telemetry.addData("Info", "Detector initialized");
+            telemetry.update();
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize Detector", ex);
+        }
     }
+
+    public GameElement getDetection() {
+        detectedElement = detector.getGameElement();
+        telemetry.addData("Element: ", detectedElement);
+        telemetry.addData("Mean Val: ", detector.getMeanVal());
+        telemetry.update();
+        return detectedElement;
+    }
+
     public void activateIntake(double velocity) {
         if (intake != null) {
             intake.setVelocity(MAX_VELOCITY_REV*velocity);
