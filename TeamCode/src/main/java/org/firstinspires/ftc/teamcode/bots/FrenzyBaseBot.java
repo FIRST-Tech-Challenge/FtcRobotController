@@ -347,6 +347,7 @@ public class FrenzyBaseBot implements OdoBot {
     @Override
     public void diagTo(BotMoveProfile profile) {
         if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
+            resetEncoders();
 
             MotorReductionBot calib = profile.getMotorReduction();
 
