@@ -526,20 +526,20 @@ public class BotMoveProfile {
         double distanceShort = shortArch * bot.getEncoderCountsPerInch()*bot.getEncoderDirection();
 
         boolean leftLong = true;
-        double startingPointLong = 0, startingPointShort = 0, startingPointLongBack = 0, startingPointShortBack = 0;
+//        double startingPointLong = 0, startingPointShort = 0, startingPointLongBack = 0, startingPointShortBack = 0;
 
 
         if (leftSpeed >= rightSpeed) {
-            startingPointLong = bot.getLeftOdometer();
-            startingPointLongBack = bot.getLeftBackOdometer();
-            startingPointShort = bot.getRightOdometer();
-            startingPointShortBack = bot.getRightBackOdometer();
+//            startingPointLong = bot.getLeftOdometer();
+//            startingPointLongBack = bot.getLeftBackOdometer();
+//            startingPointShort = bot.getRightOdometer();
+//            startingPointShortBack = bot.getRightBackOdometer();
         } else if (rightSpeed > leftSpeed) {
             leftLong = false;
-            startingPointShort = bot.getLeftOdometer();
-            startingPointShortBack = bot.getLeftBackOdometer();
-            startingPointLong = bot.getRightOdometer();
-            startingPointLongBack = bot.getRightBackOdometer();
+//            startingPointShort = bot.getLeftOdometer();
+//            startingPointShortBack = bot.getLeftBackOdometer();
+//            startingPointLong = bot.getRightOdometer();
+//            startingPointLongBack = bot.getRightBackOdometer();
 
         }
 
@@ -558,13 +558,13 @@ public class BotMoveProfile {
 //        double ticksLong = YellowBot.MAX_VELOCITY_PER_PROC_DELAY*topSpeed;
 //        double ticksShort = YellowBot.MAX_VELOCITY_PER_PROC_DELAY*lowSpeed;
 
-        double slowdownMarkLong = startingPointLong + sign*(Math.abs(distanceLong) - breakPoint);
-        double slowdownMarkShort = startingPointShort + sign*(Math.abs(distanceShort) - breakPoint);
+        double slowdownMarkLong = sign*(Math.abs(distanceLong) - breakPoint);
+        double slowdownMarkShort = sign*(Math.abs(distanceShort) - breakPoint);
 
-        double longTarget = startingPointLong + sign*(Math.abs(distanceLong));
-        double longTargetBack = startingPointLongBack + sign*(Math.abs(distanceLong));
-        double shortTarget = startingPointShort + sign*(Math.abs(distanceShort));
-        double shortTargetBack = startingPointShortBack + sign*(Math.abs(distanceShort));
+        double longTarget = sign*(Math.abs(distanceLong));
+        double longTargetBack = sign*(Math.abs(distanceLong));
+        double shortTarget = sign*(Math.abs(distanceShort));
+        double shortTargetBack = sign*(Math.abs(distanceShort));
 
 
         if (leftLong){
@@ -633,10 +633,10 @@ public class BotMoveProfile {
         else{
             ticksLeft = -ticksLeft*bot.getEncoderDirection();
         }
-        profile.setLeftTarget(bot.getLeftOdometer() + ticksLeft);
-        profile.setRightTarget(bot.getRightOdometer() + ticksRight);
-        profile.setLeftTargetBack(bot.getLeftBackOdometer() + ticksLeft);
-        profile.setRightTargetBack(bot.getRightBackOdometer() + ticksRight);
+        profile.setLeftTarget(ticksLeft);
+        profile.setRightTarget(ticksRight);
+        profile.setLeftTargetBack(ticksLeft);
+        profile.setRightTargetBack(ticksRight);
 
 
         return profile;
@@ -704,10 +704,10 @@ public class BotMoveProfile {
             distanceTicks = - distanceTicks;
         }
         distanceTicks = distanceTicks * bot.getEncoderDirection();
-        profile.setLeftTarget(bot.getLeftOdometer() + distanceTicks);
-        profile.setRightTarget(bot.getRightOdometer() + distanceTicks);
-        profile.setLeftTargetBack(bot.getLeftBackOdometer() + distanceTicks);
-        profile.setRightTargetBack(bot.getRightBackOdometer() + distanceTicks);
+        profile.setLeftTarget(distanceTicks);
+        profile.setRightTarget(distanceTicks);
+        profile.setLeftTargetBack(distanceTicks);
+        profile.setRightTargetBack(distanceTicks);
 
         profile.setDistance(distance);
         profile.setLongTarget(distanceTicks);
