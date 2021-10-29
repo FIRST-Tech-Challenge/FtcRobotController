@@ -33,7 +33,7 @@ jobs:
     - name: Upload the Javadoc output
       uses: actions/upload-artifact@v2
       with:
-        name: javadoc-output
+        name: Javadoc-output
         path: ./javadoc-output/
 
     - name: Commit and push new Javadoc folder
@@ -41,11 +41,17 @@ jobs:
         git config user.name "GitHub Actions Bot"
         git config user.email "actions@github.com"
         mv javadoc-output/ ..
+        mv ./TeamCode/build/reports/  ..
+        mkdir ../sdk-reports/
+        mv ./FtcRobotController/build/reports/* ../sdk-reports/
         git remote set-branches origin '*'
         git fetch -v
         git checkout gh-pages
-        rm -r javadoc/
+        rm -rf javadoc/ || true
         mv ../javadoc-output/ ./javadoc/
+        rm -rf reports/ || true
+        mv ../reports/ .
+        mv ../sdk-reports/ ./reports/sdk-reports
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
           Information:
