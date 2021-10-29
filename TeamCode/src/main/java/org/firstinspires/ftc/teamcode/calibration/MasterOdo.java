@@ -911,6 +911,9 @@ public class MasterOdo extends OdoBase {
                 }
             }
 
+            telemetry.addData("Locator X", this.locator.getCurrentX());
+            telemetry.addData("Locator Y", this.locator.getCurrentY());
+            telemetry.addData("Locator heading", this.locator.getAdjustedCurrentHeading());
             telemetry.update();
         }
         catch (Exception ex){

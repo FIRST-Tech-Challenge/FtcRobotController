@@ -6,6 +6,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.BotMoveRequest;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
@@ -28,6 +29,8 @@ public class RobotCoordinatePosition implements IBaseOdometry {
     private double slowdownMarkLong = 0;
     private double slowdownMarkShort = 0;
     private boolean leftLong;
+
+    private String fieldSide = AutoRoute.NAME_RED;
 
     private double robotEncoderWheelDistance;
     private double horizontalEncoderTickPerDegreeOffset;
@@ -337,5 +340,15 @@ public class RobotCoordinatePosition implements IBaseOdometry {
 
     public boolean isTrackingInitialized() {
         return true;
+    }
+
+    @Override
+    public void setCoordinateAdjustmentMode(String side) {
+        fieldSide = side;
+    }
+
+    @Override
+    public String getCoordinateAdjustmentMode() {
+        return fieldSide;
     }
 }

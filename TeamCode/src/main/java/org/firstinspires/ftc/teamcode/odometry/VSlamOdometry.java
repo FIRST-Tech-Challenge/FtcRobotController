@@ -13,6 +13,8 @@ import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
+import org.firstinspires.ftc.teamcode.autonomous.AutoStep;
 import org.firstinspires.ftc.teamcode.bots.BotMoveRequest;
 
 import java.io.File;
@@ -48,12 +50,17 @@ public class VSlamOdometry implements IBaseOdometry {
     private double currentOrientation; // in Degrees
     private double initialOrientation; // in Degrees
 
+    private double originalX;    // in Inches
+    private double originalY;    // in Inches
+
     private static VSlamOdometry theInstance;
 
     private boolean persistPosition = false;
     private boolean trackingInitialized = false;
 
     private static final String TAG = "RobotCoordinatePositionCam";
+
+    private String coordinateAdjustmentMode = AutoRoute.NAME_RED;
 
     private VSlamOdometry(HardwareMap hwMap, int threadDelay) {
         init(hwMap, threadDelay, 0.8);
@@ -81,19 +88,21 @@ public class VSlamOdometry implements IBaseOdometry {
 
         // This is the transformation between the center of the camera and the center of the robot
         // Set these three values to match the location/orientation of the camera with respect to the robot
-        double offsetXInches = -5.5;
-        double offsetYInches = -2;
-        double offsetHDegrees = 90;
+//        double offsetXInches = -5.5;
+//        double offsetYInches = -2;
+//        double offsetHDegrees = 90;
 
-        Translation2d offsetTranslation = new Translation2d(offsetXInches * INCH_2_METER, offsetYInches * INCH_2_METER);
-        Rotation2d offsetRotation = Rotation2d.fromDegrees(offsetHDegrees);
-        final Transform2d cameraToRobot = new Transform2d(offsetTranslation, offsetRotation );
+//        Translation2d offsetTranslation = new Translation2d(offsetXInches * INCH_2_METER, offsetYInches * INCH_2_METER);
+//        Rotation2d offsetRotation = Rotation2d.fromDegrees(offsetHDegrees);
+        final Transform2d cameraToRobot = new Transform2d();
         this.slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, this.hwMap.appContext);
     }
 
     @Override
     public void setInitPosition(int startXInches, int startYInches, int startHeadingDegrees) throws Exception {
 
+        this.originalX = startXInches;
+        this.originalY = startYInches;
         this.currentX = startXInches;
         this.currentY = startYInches;
         this.currentOrientation = startHeadingDegrees;
@@ -115,10 +124,42 @@ public class VSlamOdometry implements IBaseOdometry {
     }
 
     @Override
-    public double getCurrentX() { return currentX; }
+    public double getCurrentX() {
+        return adjustXCoordinate(currentX);
+    }
 
     @Override
-    public double getCurrentY() { return currentY; }
+    public double getCurrentY() {
+        return adjustYCoordinate(currentY);
+    }
+
+    protected double adjustXCoordinate(double rawX){
+
+//        if (coordinateAdjustmentMode.equals(AutoRoute.NAME_RED)) {
+            double delta = Math.abs(originalX - rawX);
+            if (rawX > originalX) {
+                rawX = originalX - delta;
+            } else {
+                rawX = originalX + delta;
+            }
+//        }
+
+        return rawX;
+    }
+
+    protected double adjustYCoordinate(double rawY){
+
+//        if (coordinateAdjustmentMode.equals(AutoRoute.NAME_RED)) {
+            double delta = Math.abs(originalY - rawY);
+            if (rawY > originalY) {
+                rawY = originalY - delta;
+            } else {
+                rawY = originalY + delta;
+            }
+//        }
+
+        return rawY;
+    }
 
     @Override
     public void reverseHorEncoder() {
@@ -258,6 +299,14 @@ public class VSlamOdometry implements IBaseOdometry {
 
     public boolean isTrackingInitialized() {
         return trackingInitialized;
+    }
+
+    public String getCoordinateAdjustmentMode() {
+        return coordinateAdjustmentMode;
+    }
+
+    public void setCoordinateAdjustmentMode(String coordinateAdjustmentMode) {
+        this.coordinateAdjustmentMode = coordinateAdjustmentMode;
     }
 }
 

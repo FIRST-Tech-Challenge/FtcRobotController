@@ -218,6 +218,8 @@ public class BotMoveProfile {
             return null;
         }
 
+        Point currentPos = new Point((int)currentX, (int)currentY);
+
         //if AutoLine, set the ideal destination
         if (preferredStrategy == MoveStrategy.AutoLine){
             if (target.x == 0){
@@ -299,7 +301,7 @@ public class BotMoveProfile {
             else {
                 //spin
                 bot.getTelemetry().addData("Route",  "Spin");
-                return buildSpinProfile(bot, realAngleChange, topSpeed, MoveStrategy.Curve);
+                return buildSpinProfile(bot, realAngleChange, topSpeed, currentPos, direction, MoveStrategy.Curve);
             }
         }
 
@@ -339,16 +341,16 @@ public class BotMoveProfile {
             else{
                 //diag
                 realAngleChange = 45 * sign;
-                return  buildDiagRawProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, diagDistance, direction,null);
+                return  buildDiagRawProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, diagDistance, currentPos, target, direction,null);
             }
         }
 
         if(preferredStrategy == MoveStrategy.SpinNCurve ){
-            return buildSpinProfile(bot, realAngleChange, topSpeed, MoveStrategy.Curve);
+            return buildSpinProfile(bot, realAngleChange, topSpeed, currentPos, direction, MoveStrategy.Curve);
         }
 
         if(preferredStrategy == MoveStrategy.SpinNStraight){
-            return buildSpinProfile(bot, realAngleChange, topSpeed, MoveStrategy.Straight);
+            return buildSpinProfile(bot, realAngleChange, topSpeed, currentPos, direction, MoveStrategy.Straight);
         }
 
         if (preferredStrategy == MoveStrategy.Spin){
@@ -360,12 +362,12 @@ public class BotMoveProfile {
         }
 
         if (preferredStrategy == MoveStrategy.Diag){
-            return  buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, direction, MoveStrategy.Straight);
+            return  buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, currentPos, target, direction, MoveStrategy.Straight);
         }
 
         if (preferredStrategy == MoveStrategy.Curve && angleChange >= 42 && angleChange <= 48){
             bot.getTelemetry().addData("Route",  "Diag");
-            return  buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, direction,null);
+            return  buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, currentPos, target, direction,null);
         }
 
         double chord = distance;
@@ -386,7 +388,7 @@ public class BotMoveProfile {
 
         //Auto mode
         if (preferredStrategy == MoveStrategy.Auto){
-            return buildAutoProfile(bot, chord, realAngleChange, topSpeed, distance, direction, target, currentHead, targetVector, desiredHead, radius, reduceLeft, locator, MoveStrategy.Straight);
+            return buildAutoProfile(bot, chord, realAngleChange, topSpeed, distance, direction, currentPos, target, currentHead, targetVector, desiredHead, radius, reduceLeft, locator, MoveStrategy.Straight);
         }
 
         //straight
@@ -399,7 +401,7 @@ public class BotMoveProfile {
                 (reduceLeft == false && radius <= bot.getCalibConfig().getMinRadiusRight())) {
             bot.getTelemetry().addData("Radius", "Too small. Cannot turn");
             if (Math.abs(realAngleChange) < 45) {
-                return buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, direction, MoveStrategy.Straight);
+                return buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, currentPos, target, direction, MoveStrategy.Straight);
             }
             else{
                 return buildStrafeProfile(bot.getCalibConfig(), realAngleChange, topSpeed, distance, direction, target, currentHead, targetVector, locator, MoveStrategy.Straight);
@@ -411,7 +413,7 @@ public class BotMoveProfile {
         return profile;
     }
 
-    private static BotMoveProfile buildAutoProfile(OdoBot bot, double chord, double realAngleChange, double topSpeed, double distance, RobotDirection direction, Point target, double currentHead, double targetVector, double desiredHead, double radius, boolean reduceLeft, IBaseOdometry locator, MoveStrategy next){
+    private static BotMoveProfile buildAutoProfile(OdoBot bot, double chord, double realAngleChange, double topSpeed, double distance, RobotDirection direction, Point currentPos, Point target, double currentHead, double targetVector, double desiredHead, double radius, boolean reduceLeft, IBaseOdometry locator, MoveStrategy next){
 
         BotCalibConfig botConfig = bot.getCalibConfig();
 
@@ -434,7 +436,7 @@ public class BotMoveProfile {
                 return buildStrafeProfile(botConfig, realAngleChange, topSpeed, distance, direction, target, currentHead, targetVector, locator, MoveStrategy.Straight);
             }
             else{
-                return buildDiagProfile(bot, botConfig, realAngleChange, topSpeed, distance, direction, MoveStrategy.Straight);
+                return buildDiagProfile(bot, botConfig, realAngleChange, topSpeed, distance, currentPos, target, direction, MoveStrategy.Straight);
             }
         }
 
@@ -444,11 +446,11 @@ public class BotMoveProfile {
         // important to preserve orientation
         if (keepHead){
             if (angleChange <= 45) {
-                return buildDiagProfile(bot, botConfig, realAngleChange, topSpeed, distance, direction, MoveStrategy.Straight);
+                return buildDiagProfile(bot, botConfig, realAngleChange, topSpeed, distance, currentPos, target, direction, MoveStrategy.Straight);
             }
             else{
                 if (Math.abs(angleChange) <= 75){
-                    return buildDiagProfile(bot, botConfig, realAngleChange, topSpeed, distance, direction, MoveStrategy.Strafe);
+                    return buildDiagProfile(bot, botConfig, realAngleChange, topSpeed, distance, currentPos, target, direction, MoveStrategy.Strafe);
                 }
                 else {
                     return buildStrafeProfile(botConfig, realAngleChange, topSpeed, distance, direction, target, currentHead, targetVector, locator, MoveStrategy.Straight);
@@ -459,14 +461,14 @@ public class BotMoveProfile {
             //orientation does not matter
             //diag
             if (angleChange >= 42 && angleChange <= 48){
-                return  buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, direction, MoveStrategy.Straight);
+                return  buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, currentPos, target, direction, MoveStrategy.Straight);
             }
 
             //curve backwards does not work very well, hence spin and straight
             // and if the radius is too small
             if (direction == RobotDirection.Backward ||  (reduceLeft && radius <= botConfig.getMinRadiusLeft()) ||
                     (reduceLeft == false && radius <= botConfig.getMinRadiusRight())) {
-                return  buildSpinProfile(bot, angleChange, topSpeed, MoveStrategy.Curve);
+                return  buildSpinProfile(bot, angleChange, topSpeed, currentPos, direction, MoveStrategy.Curve);
             }
             else{
                 //curve
@@ -604,7 +606,7 @@ public class BotMoveProfile {
         return profile;
     }
 
-    private static BotMoveProfile buildSpinProfile(OdoBot bot, double angleChange, double topSpeed, MoveStrategy next){
+    private static BotMoveProfile buildSpinProfile(OdoBot bot, double angleChange, double topSpeed, Point currentPos, RobotDirection direction, MoveStrategy next){
         BotMoveProfile profile = new BotMoveProfile();
         profile.setAngleChange(angleChange);
         profile.setStrategy(MoveStrategy.Spin);
@@ -620,6 +622,15 @@ public class BotMoveProfile {
 //            }
 //        }
         profile.setNextStep(next);
+        profile.setStart(currentPos);
+
+        BotMoveRequest rq = new BotMoveRequest();
+        rq.setTarget(currentPos);
+        rq.setTopSpeed(topSpeed);
+        rq.setDirection(direction);
+        rq.setMotorReduction(profile.getMotorReduction());
+        profile.setTarget(rq);
+        profile.setDirection(direction);
 
         boolean spinLeft = false;
         if (angleChange > 0) {
@@ -682,14 +693,14 @@ public class BotMoveProfile {
         return profile;
     }
 
-    private static BotMoveProfile buildDiagProfile(OdoBot bot, BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, RobotDirection direction, MoveStrategy next){
+    private static BotMoveProfile buildDiagProfile(OdoBot bot, BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, Point currentPos, Point target, RobotDirection direction, MoveStrategy next){
         double strafeDistance = distance * Math.sin(Math.toRadians(Math.abs(angleChange)));
         double diagDistance = strafeDistance/Math.cos(Math.toRadians(45));
 
-       return buildDiagRawProfile(bot, botConfig, angleChange, topSpeed, diagDistance, direction, next);
+       return buildDiagRawProfile(bot, botConfig, angleChange, topSpeed, diagDistance, currentPos, target, direction, next);
     }
 
-    private static BotMoveProfile buildDiagRawProfile(OdoBot bot, BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, RobotDirection direction, MoveStrategy next){
+    private static BotMoveProfile buildDiagRawProfile(OdoBot bot, BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, Point currentPos, Point target, RobotDirection direction, MoveStrategy next){
         BotMoveProfile profile = new BotMoveProfile();
 
         boolean left = angleChange > 0;
@@ -716,15 +727,25 @@ public class BotMoveProfile {
         profile.setTopSpeed(topSpeed);
         profile.setDirection(direction);
         profile.setNextStep(next);
+
+        BotMoveRequest rq = new BotMoveRequest();
+        rq.setTarget(target);
+        rq.setTopSpeed(topSpeed);
+        rq.setDirection(direction);
+        rq.setMotorReduction(profile.getMotorReduction());
+        profile.setTarget(rq);
+        profile.setStart(currentPos);
+
         return profile;
     }
 
     public static BotMoveProfile getFinalHeadProfile(OdoBot bot, double desiredHeading, double speed, IBaseOdometry locator){
         BotMoveProfile profileSpin = null;
         if (desiredHeading != BotMoveProfile.DEFAULT_HEADING) {
+            Point currentPos = new Point((int)locator.getCurrentX(), (int)locator.getCurrentY());
             double currentHead = locator.getAdjustedCurrentHeading();
             double realAngleChange = Geometry.getAngle(desiredHeading, currentHead);
-            profileSpin = BotMoveProfile.buildSpinProfile(bot,realAngleChange, speed, null);
+            profileSpin = BotMoveProfile.buildSpinProfile(bot,realAngleChange, speed, currentPos, RobotDirection.Optimal, null);
         }
         return profileSpin;
     }
