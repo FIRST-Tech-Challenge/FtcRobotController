@@ -62,15 +62,15 @@ public class CVFrenzyPipeline extends CVPipelineBase {
         Scalar box2Color = CVDetector.BLUE;
 
         if (getMeanVal() < ORANGE){
-            setGameElement(GameElement.CubeLocation1);
+            setGameElement(GameElement.BarcodeLevel2);
             box1Color = CVDetector.YELLOW;
         }
         else if (getMeanVal_2() < ORANGE){
-            setGameElement(GameElement.CubeLocation2);
+            setGameElement(GameElement.BarcodeLevel3);
             box2Color = CVDetector.YELLOW;
         }
         else {
-            setGameElement(GameElement.CubeLocationNone);
+            setGameElement(GameElement.BarcodeLevel1);
         }
 
         //Draw rectangle

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
 import org.firstinspires.ftc.teamcode.CVRec.GameElement;
+import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 
 public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx intake = null;
@@ -30,12 +31,17 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     // Detection
     CVDetector detector;
+    String opModeSide = AutoRoute.NAME_RED;
 
     private GameElement detectedElement;
 
     /* Constructor */
     public FrenzyBot() {
+        opModeSide = AutoRoute.NAME_RED; // defult
+    }
 
+    public FrenzyBot(String fieldSide) {
+        this.opModeSide = fieldSide;
     }
 
     @Override
@@ -72,7 +78,7 @@ public class FrenzyBot extends FrenzyBaseBot {
             Log.e(TAG, "Cannot initialize dropperServo", ex);
         }
         try {
-            detector = new CVDetector(hwMap);
+            detector = new CVDetector(hwMap, opModeSide);
             detector.init(CVDetectMode.Frenzy, "wcam", "cameraMonitorViewId");
             detector.startDetection();
             telemetry.addData("Info", "Detector initialized");
@@ -88,6 +94,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         telemetry.addData("Mean Val: ", detector.getMeanVal());
         telemetry.update();
         detector.stopDetection();
+
         return detectedElement;
     }
 
