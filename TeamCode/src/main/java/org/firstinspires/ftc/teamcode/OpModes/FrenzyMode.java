@@ -72,15 +72,15 @@ public class FrenzyMode extends LinearOpMode {
     }
 
     private void sendTelemetry() {
-        telemetry.addData("Left front", robot.getLeftOdometer());
-        telemetry.addData("Right front", robot.getRightOdometer());
-        telemetry.addData("Left Back", robot.getLeftBackOdometer());
-        telemetry.addData("Right Back", robot.getRightBackOdometer());
-        telemetry.addData("X", odometry.getCurrentX());
-        telemetry.addData("Y", odometry.getCurrentY());
-        telemetry.addData("Heading", odometry.getOrientation());
-        telemetry.addData("Heading Adjusted", odometry.getAdjustedCurrentHeading());
-        telemetry.addData("List position", robot.getLiftPosition());
+        telemetry.addData("Left front", "%.3f", robot.getLeftOdometer());
+        telemetry.addData("Right front", "%.3f", robot.getRightOdometer());
+        telemetry.addData("Left Back", "%.3f", robot.getLeftBackOdometer());
+        telemetry.addData("Right Back", "%.3f", robot.getRightBackOdometer());
+        telemetry.addData("X", "%.3f", odometry.getCurrentX());
+        telemetry.addData("Y", "%.3f", odometry.getCurrentY());
+        telemetry.addData("Heading", "%.3f", odometry.getOrientation());
+        telemetry.addData("Heading Adjusted", "%.3f", odometry.getAdjustedCurrentHeading());
+        telemetry.addData("List position", "%d", robot.getLiftPosition());
         telemetry.update();
     }
 
