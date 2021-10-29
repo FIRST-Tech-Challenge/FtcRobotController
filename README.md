@@ -4,6 +4,7 @@ This GitHub repository contains the source code that is used to build an Android
 [![Gradle Java Build](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/build.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/build.yml)
 [![CodeQL Analysis](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/codeql.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/codeql.yml)
 [![DevSkim Analysis](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/devskim.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/devskim.yml)
+[![Javadoc Generation](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/javadoc.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/javadoc.yml)
 
 ## Getting Started
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Blocks-Tutorial) to get familiar with how to use the control system, and from there migrate to the [OnBot Java Tool](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/OnBot-Java-Tutorial).
