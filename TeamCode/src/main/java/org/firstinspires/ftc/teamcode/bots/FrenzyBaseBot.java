@@ -146,13 +146,18 @@ public class FrenzyBaseBot implements OdoBot {
         info = String.format("%sLeftFront PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, fle.p, fle.i, fle.d, fle.f);
 
         info = String.format("%sRightFront PIDF pos: %.2f, %.2f, %.2f, %.2f\n", info, frp.p, frp.i, frp.d, frp.f);
-        info = String.format("%ssRightFront PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, fre.p, fle.i, fre.d, fre.f);
+        info = String.format("%sRightFront PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, fre.p, fle.i, fre.d, fre.f);
 
         info = String.format("%sLeftBack PIDF pos: %.2f, %.2f, %.2f, %.2f\n", info, blp.p, blp.i, blp.d, blp.f);
         info = String.format("%sLeftBack PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, ble.p, ble.i, ble.d, ble.f);
 
-        info = String.format("%srightBack PIDF pos: %.2f, %.2f, %.2f, %.2f\n", info, brp.p, brp.i, brp.d, brp.f);
-        info = String.format("%srightBack PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, bre.p, bre.i, bre.d, bre.f);
+        info = String.format("%sRightBack PIDF pos: %.2f, %.2f, %.2f, %.2f\n", info, brp.p, brp.i, brp.d, brp.f);
+        info = String.format("%sRightBack PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, bre.p, bre.i, bre.d, bre.f);
+
+        info = String.format("%sTargetPositionTolerance Left Front: %d\n", info, frontLeft.getTargetPositionTolerance());
+        info = String.format("%sTargetPositionTolerance Left Back: %d\n", info, backLeft.getTargetPositionTolerance());
+        info = String.format("%sTargetPositionTolerance Right Front: %d\n", info, frontRight.getTargetPositionTolerance());
+        info = String.format("%sTargetPositionTolerance Right Back: %d\n", info, backRight.getTargetPositionTolerance());
 
         return info;
     }
@@ -363,7 +368,6 @@ public class FrenzyBaseBot implements OdoBot {
 
 
             if (!leftAxis) {
-
                 this.frontLeft.setTargetPosition((int) profile.getLeftTarget());
                 this.backRight.setTargetPosition((int)profile.getRightTargetBack());
                 this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -371,8 +375,8 @@ public class FrenzyBaseBot implements OdoBot {
                 this.frontLeft.setVelocity(MAX_VELOCITY_GB * power * calib.getLF());
                 this.backRight.setVelocity(MAX_VELOCITY_GB * power * calib.getRB());
 
-                this.backLeft.setVelocity(0);
-                this.frontRight.setVelocity(0);
+                this.backLeft.setPower(0);
+                this.frontRight.setPower(0);
             } else {
                 this.backLeft.setTargetPosition((int)profile.getLeftTargetBack());
                 this.frontRight.setTargetPosition((int)profile.getRightTarget());
@@ -381,12 +385,10 @@ public class FrenzyBaseBot implements OdoBot {
                 this.backLeft.setVelocity(MAX_VELOCITY_GB * power * calib.getLB());
                 this.frontRight.setVelocity(MAX_VELOCITY_GB * power * calib.getRF());
 
-                this.frontLeft.setVelocity(0);
-                this.backRight.setVelocity(0);
+                this.frontLeft.setPower(0);
+                this.backRight.setPower(0);
             }
-
         }
-
     }
 
     @Override
@@ -401,6 +403,33 @@ public class FrenzyBaseBot implements OdoBot {
 
     @Override
     public double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib) {
+        resetEncoders();
+
+        int target = (int)(inches * this.getEncoderCountsPerInch()*this.getEncoderDirection());
+
+        if (left){
+            this.backLeft.setTargetPosition(target);
+            this.backRight.setTargetPosition(-target);
+            this.frontLeft.setTargetPosition(-target);
+            this.frontRight.setTargetPosition(target);
+        }
+        else{
+            this.backLeft.setTargetPosition(-target);
+            this.backRight.setTargetPosition(target);
+            this.frontLeft.setTargetPosition(target);
+            this.frontRight.setTargetPosition(-target);
+        }
+
+        this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        this.backLeft.setVelocity(MAX_VELOCITY_GB*speed);
+        this.backRight.setVelocity(MAX_VELOCITY_GB*speed);
+        this.frontLeft.setVelocity(MAX_VELOCITY_GB*speed);
+        this.frontRight.setVelocity(MAX_VELOCITY_GB*speed);
+
         return 0;
     }
 
