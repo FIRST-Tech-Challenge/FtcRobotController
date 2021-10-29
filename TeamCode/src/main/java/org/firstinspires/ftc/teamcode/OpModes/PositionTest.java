@@ -46,13 +46,13 @@ public class PositionTest extends LinearOpMode {
             waitForStart();
             runtime.reset();
 
-            Point target = new Point(50, 50);
+            Point target = new Point(60, 25);
 
             BotMoveProfile profile = BotMoveProfile.bestRoute(robot, (int)locator.getCurrentX(), (int)locator.getCurrentY(), target,
-                    RobotDirection.Optimal, 0.5, MoveStrategy.Spin, 120, locator);
+                    RobotDirection.Optimal, 0.5, MoveStrategy.Diag, -1, locator);
 
 
-            robot.moveToPos(profile, locator);
+            robot.diagTo(profile);
 
 
             while (opModeIsActive()) {
