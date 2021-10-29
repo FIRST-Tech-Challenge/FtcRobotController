@@ -35,7 +35,7 @@ public class TwoWDRobotWithSpinnerAndLift extends GamepadExtended {
         drivetrainManager4WD.EvalGamepad(gamepad1.left_stick_x, gamepad1.left_stick_y);
 
         if ((gamepad2.left_stick_y >= 0.25 | gamepad2.left_stick_y <= -0.25) && priority.f2(false)) {
-            spinner.setPower(gamepad2.left_stick_y);
+            spinner.setPower(-gamepad2.left_stick_y);
         }
         else if (gamepad1.right_trigger >= 0.25) { spinner.setPower(gamepad1.right_trigger); }
         else { spinner.setPower(0.0); }
@@ -43,9 +43,9 @@ public class TwoWDRobotWithSpinnerAndLift extends GamepadExtended {
 
 
         if ((gamepad2.left_stick_x >= 0.25 | gamepad2.left_stick_x <= -0.25) && priority.f3(false)) {
-            lift.setPower(gamepad2.left_stick_x);
+            lift.setPower(-gamepad2.left_stick_x);
         }
-        else if (gamepad1.right_stick_y >= 0.25 | gamepad1.right_stick_y <= -0.25) { lift.setPower(gamepad1.right_stick_y); }
+        else if (gamepad1.right_stick_y >= 0.25 | gamepad1.right_stick_y <= -0.25) { lift.setPower(-gamepad1.right_stick_y); }
 
         else { lift.setPower(0.0); }
     }
