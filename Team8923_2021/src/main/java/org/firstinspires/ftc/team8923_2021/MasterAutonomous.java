@@ -1,12 +1,15 @@
-package org.firstinspires.team8923_2021;
+package org.firstinspires.ftc.team8923_2021;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.team8923_2021.Constants;
+import org.firstinspires.ftc.team8923_2021.MasterOpMode;
+
 @Autonomous(name="MasterAutonomous")
-public abstract class MasterAutonomous extends MasterOpMode{
+public abstract class MasterAutonomous extends MasterOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     double robotX;
@@ -14,20 +17,14 @@ public abstract class MasterAutonomous extends MasterOpMode{
     double robotAngle;
     double headingOffset = 0.0;
 
-    int newTargetFL;
-    int newTargetFR;
-    int newTargetBL;
-    int newTargetBR;
+    int newTargetLeft;
+    int newTargetRight;
 
-    int errorFR;
-    int errorFL;
-    int errorBR;
-    int errorBL;
+    int errorLeft;
+    int errorRight;
 
-    double speedFL;
-    double speedFR;
-    double speedBL;
-    double speedBR;
+    double speedLeft;
+    double speedRight;
 
     double Kmove = 1.0f/1200.0f;
 
@@ -37,10 +34,8 @@ public abstract class MasterAutonomous extends MasterOpMode{
     boolean isDoneSettingUp = false;
 
     //Used to calculate distance traveled between loops
-    int lastEncoderFL = 0;
-    int lastEncoderFR = 0;
-    int lastEncoderBL = 0;
-    int lastEncoderBR = 0;
+    int lastEncoderLeft = 0;
+    int lastEncoderRight = 0;
 
     boolean autoReverseDrive = false;
 
@@ -81,12 +76,8 @@ public abstract class MasterAutonomous extends MasterOpMode{
         telemetry.addData("Alliance", alliance.name());
         telemetry.addData("Delay Time", delayTime);
 
-
-
         //Set last know encoder values
-        lastEncoderFR = motorLeft.getCurrentPosition();
-        lastEncoderBL = motorRight.getCurrentPosition();
-
+        lastEncoderRight = motorLeft.getCurrentPosition();
 
         //set IMU heading offset
         headingOffset = imu.getAngularOrientation().firstAngle - robotAngle;
@@ -94,10 +85,6 @@ public abstract class MasterAutonomous extends MasterOpMode{
         telemetry.clear();
         telemetry.update();
         telemetry.addLine("Initialized. Ready to start!");
-
-
-
-
     }
 
     public void configureAutonomous(){
@@ -143,29 +130,27 @@ public abstract class MasterAutonomous extends MasterOpMode{
         }
     }
 
-    public void moveAuto(double x, double y, double speed, double minSpeed) throws InterruptedException {
-
-        newTargetFR = motorLeft.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * y) + (int) Math.round(Constants.TICKS_PER_INCH * x * 1.15);
-        newTargetBR = motorRight.getCurrentPosition() - (int) Math.round(Constants.TICKS_PER_INCH * y) - (int) Math.round(Constants.TICKS_PER_INCH * x * 1.15);
-
+    public void moveAuto( double distance, double speed, double minSpeed) throws InterruptedException {
+        newTargetLeft = motorLeft.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
+        newTargetRight = motorRight.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
         do {
+            errorLeft = newTargetLeft - motorLeft.getCurrentPosition();
+            speedLeft = Math.abs(errorLeft * Kmove);
+            speedLeft = Range.clip(speedLeft, minSpeed, speed);
+            speedLeft = (speedLeft * Math.signum(errorLeft));
 
-            errorFL = newTargetFL - motorLeft.getCurrentPosition();
-            speedFL = Math.abs(errorFL * Kmove);
-            speedFL = Range.clip(speedFL, minSpeed, speed);
-            speedFL = (speedFL * Math.signum(errorFL));
+            errorRight = newTargetRight - motorRight.getCurrentPosition();
+            speedRight = Math.abs(errorRight * Kmove);
+            speedRight = Range.clip(speedRight, minSpeed, speed);
+            speedRight = (speedRight * Math.signum(errorRight));
 
-            errorFR = newTargetFR - motorRight.getCurrentPosition();
-            speedFR = Math.abs(errorFR * Kmove);
-            speedFR = Range.clip(speedFR, minSpeed, speed);
-            speedFR = (speedFR * Math.signum(errorFR));
-
-            motorLeft.setPower(speedFL);
-            motorRight.setPower(speedFR);
+            motorLeft.setPower(speedLeft);
+            motorRight.setPower(speedRight);
 
             idle();
         }
-        while (opModeIsActive() && Math.abs(errorFL) > TOL || Math.abs(errorFR) > TOL || Math.abs(errorBR) > TOL || Math.abs(errorBL) > TOL);
+
+        while (opModeIsActive() && Math.abs(errorLeft) > TOL || Math.abs(errorRight) > TOL);
         stopDriving();
     }
 
@@ -191,13 +176,11 @@ public abstract class MasterAutonomous extends MasterOpMode{
                 pivot = Range.clip(pivot, -maxSpeed, -0.15);
             }
 
-            speedFL = pivot;
-            speedFR = pivot;
-            speedBL = pivot;
-            speedBR = pivot;
+            speedLeft = pivot;
+            speedRight = pivot;
 
-            motorLeft.setPower(speedFL);
-            motorRight.setPower(speedFR);
+            motorLeft.setPower(speedLeft);
+            motorRight.setPower(speedRight);
 
             idle();
         }
@@ -231,14 +214,11 @@ public abstract class MasterAutonomous extends MasterOpMode{
                 pivot = Range.clip(pivot, -maxSpeed, -0.15);
             }
 
-            speedFL = -pivot;
-            speedFR = pivot;
-            speedBL = -pivot;
-            speedBR = pivot;
+            speedLeft = -pivot;
+            speedRight = pivot;
 
-
-            motorLeft.setPower(speedBL);
-            motorRight.setPower(speedBR);
+            motorLeft.setPower(speedLeft);
+            motorRight.setPower(speedRight);
             idle();
         } while(opModeIsActive() && (Math.abs(angleError) > 3.0) && (runtime.seconds() < timeout));
 
@@ -284,17 +264,12 @@ public abstract class MasterAutonomous extends MasterOpMode{
         // subtraction here b/c imu returns a negative rotation when turned to the right
         robotAngle = headingOffset - imu.getAngularOrientation().firstAngle;
 
-        // Calculate how far each motor has turned since last time
-
-        int deltaBL = motorLeft.getCurrentPosition() - lastEncoderBL;
-        int deltaBR = motorRight.getCurrentPosition() - lastEncoderBR;
-
-        // Take average of encoder ticks to find translational x and y components. FR and BL are
+        // Take average of encoder ticks to find translational x and y components. Right and BL are
         // negative because of the direction at which they turn when going sideways
-        int deltaFL = motorLeft.getCurrentPosition() - lastEncoderFL;
-        int deltaFR = motorRight.getCurrentPosition() - lastEncoderFR;
-        double deltaX = (deltaFL - deltaFR - deltaBL + deltaBR) / 4.0;
-        double deltaY = (deltaFL + deltaFR + deltaBL + deltaBR) / 4.0;
+        int deltaLeft = motorLeft.getCurrentPosition() - lastEncoderLeft;
+        int deltaRight = motorRight.getCurrentPosition() - lastEncoderRight;
+        double deltaX = (deltaLeft - deltaRight - deltaLeft + deltaRight) / 4.0;
+        double deltaY = (deltaLeft + deltaRight + deltaLeft + deltaRight) / 4.0;
 
         telemetry.addData("deltaX", deltaX);
         telemetry.addData("deltaY", deltaY);
@@ -316,47 +291,11 @@ public abstract class MasterAutonomous extends MasterOpMode{
 
         // Set last encoder values for next loop
 
-        lastEncoderBL = motorLeft.getCurrentPosition();
-        lastEncoderBR = motorRight.getCurrentPosition();
+        lastEncoderLeft = motorLeft.getCurrentPosition();
+        lastEncoderRight = motorRight.getCurrentPosition();
 
 
     }
-
-    public void runIntake() throws InterruptedException{
-        //intakeLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        //intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        //intakeLeft.setPower(Constants.INTAKE_PWR);
-        //intakeLeft.setPower(Constants.INTAKE_PWR);
-    }
-
-    public void turnOffIntake() throws InterruptedException{
-        //intakeLeft.setPower(0);
-        //intakeRight.setPower(0);
-    }
-
-
-
-
-
-
-
-    public void moveBackAndIntake() throws InterruptedException{
-        //runIntake();
-        moveAuto(0, -12, 1, 0.3);
-        sleep(900);
-    }
-
-    public void moveForwardAndIntake() throws InterruptedException{
-        //runIntake();
-        moveAuto(0, 12, 1, 0.3);
-        sleep(900);
-    }
-
-
-
-
-
-
 }
 
 

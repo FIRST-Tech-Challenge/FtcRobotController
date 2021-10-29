@@ -1,4 +1,4 @@
-package org.firstinspires.team8923_2021;
+package org.firstinspires.ftc.team8923_2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -11,7 +11,7 @@ public class RedWarehouseNoDetect extends MasterAutonomous{
         waitForStart();
 
         while (opModeIsActive()){
-            moveAuto(0, 5, 20, 10);
+            moveAuto(5, 20, 10);
         }
     }
 
