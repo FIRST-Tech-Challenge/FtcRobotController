@@ -75,7 +75,7 @@ public class MasterCalibCam extends MasterCalib {
 
 
         //separation
-        double ticksPerDegree = (leftLong - rightLong)/actualAngle;
+        double ticksPerDegree = (leftDist + rightDist)/actualAngle;
         double circumferance = 180 * ticksPerDegree;
         double circumferanceInches = circumferance / bot.getEncoderCountsPerInch();
         separation = Math.abs(circumferanceInches / Math.PI);

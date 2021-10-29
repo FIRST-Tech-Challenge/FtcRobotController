@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ReadWriteFile;
@@ -124,6 +125,36 @@ public class FrenzyBaseBot implements OdoBot {
         return this.telemetry;
     }
 
+    public String printInfo(){
+        PIDFCoefficients flp = this.frontLeft.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        PIDFCoefficients fle = this.frontLeft.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        PIDFCoefficients frp = this.frontRight.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        PIDFCoefficients fre = this.frontRight.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        PIDFCoefficients blp = this.backLeft.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        PIDFCoefficients ble = this.backLeft.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        PIDFCoefficients brp = this.backRight.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        PIDFCoefficients bre = this.backRight.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        String info = "";
+        info = String.format("LeftFront PIDF pos: %.2f, %.2f, %.2f, %.2f\n", flp.p, flp.i, flp.d, flp.f);
+        info = String.format("%sLeftFront PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, fle.p, fle.i, fle.d, fle.f);
+
+        info = String.format("%sRightFront PIDF pos: %.2f, %.2f, %.2f, %.2f\n", info, frp.p, frp.i, frp.d, frp.f);
+        info = String.format("%ssRightFront PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, fre.p, fle.i, fre.d, fre.f);
+
+        info = String.format("%sLeftBack PIDF pos: %.2f, %.2f, %.2f, %.2f\n", info, blp.p, blp.i, blp.d, blp.f);
+        info = String.format("%sLeftBack PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, ble.p, ble.i, ble.d, ble.f);
+
+        info = String.format("%srightBack PIDF pos: %.2f, %.2f, %.2f, %.2f\n", info, brp.p, brp.i, brp.d, brp.f);
+        info = String.format("%srightBack PIDF vel: %.2f, %.2f, %.2f, %.2f\n", info, bre.p, bre.i, bre.d, bre.f);
+
+        return info;
+    }
+
 
     protected void resetEncoders() {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
@@ -183,35 +214,6 @@ public class FrenzyBaseBot implements OdoBot {
         }
     }
 
-    public void moveToPos2(BotMoveProfile profile, IBaseOdometry locator){
-        resetEncoders();
-        this.frontLeft.setTargetPosition((int)profile.getLeftTarget());
-        this.frontRight.setTargetPosition((int)profile.getRightTarget());
-
-
-        this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        MotorReductionBot mr = profile.getMotorReduction();
-
-        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
-        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
-
-
-        runtime.reset();
-        while ( this.frontLeft.isBusy() && this.frontRight.isBusy()){
-            this.backLeft.setVelocity(this.frontLeft.getVelocity());
-            this.backRight.setVelocity(this.frontRight.getVelocity());
-            if (runtime.milliseconds() > 500){
-                locator.setTarget(profile.getTarget());
-                this.frontLeft.setTargetPosition((int)profile.getLeftTarget());
-                this.frontRight.setTargetPosition((int)profile.getRightTarget());
-                this.frontLeft.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
-                this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
-                runtime.reset();
-            }
-        }
-    }
 
     public void moveToPos(BotMoveProfile profile, IBaseOdometry locator){
         resetEncoders();
@@ -228,9 +230,9 @@ public class FrenzyBaseBot implements OdoBot {
 
         MotorReductionBot mr = profile.getMotorReduction();
 
-        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
+        this.frontLeft.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getRF());
+        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getLF());
         this.backLeft.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
-        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
         this.backRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
     }
 
@@ -550,112 +552,7 @@ public class FrenzyBaseBot implements OdoBot {
 
     public void spin(BotMoveProfile profile, IBaseOdometry locator) {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
-            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-            double speed = Math.abs(profile.getTopSpeed());
-            double degrees = profile.getAngleChange();
-            boolean spinLeft = false;
-            if (degrees > 0) {
-                spinLeft = true;
-            }
-
-            double leftDesiredSpeed = speed;
-            double rightDesiredSpeed = speed;
-
-            double startHead = locator.getOrientation();
-            Log.d(TAG, String.format("Bot Spin. Orientation: %.2f. Degrees Raw: %.2f", startHead, degrees));
-
-
-            MotorReductionBot reduction;
-            if (spinLeft) {
-                rightDesiredSpeed = -rightDesiredSpeed;
-                reduction = botConfig.getSpinLeftConfig();
-            } else {
-                leftDesiredSpeed = -leftDesiredSpeed;
-                reduction = botConfig.getSpinRightConfig();
-            }
-
-            double desired = Math.abs(degrees);
-            double slowdownMark = Math.abs(degrees) * reduction.getBreakPoint(profile.getTopSpeed());
-            //adjust slow down by 100ms to account for processing time
-            double ticksAdjustment = MAX_VELOCITY_GB*profile.getTopSpeed();
-            double ticksAdjustmentDegrees = ticksAdjustment/botConfig.getHorizontalTicksDegree();
-            slowdownMark = slowdownMark - ticksAdjustmentDegrees;
-            desired = desired - ticksAdjustmentDegrees;
-
-
-            if (!profile.shouldStop()) {
-                 desired = slowdownMark;
-            }
-
-
-            double leftPower = 0;
-            double rightPower = 0;
-
-            double realSpeedLeft = leftPower;
-            double realSpeedRight = rightPower;
-
-            double speedIncrement = profile.getSpeedIncrement();
-
-            boolean stop = false;
-            int step = 0;
-            double minSpeed = profile.getMinSpeedSpin();
-
-            double speedDropStep = profile.getSpeedDecrement();
-            while (!stop && this.owner.opModeIsActive()) {
-                double currentHead = locator.getOrientation();
-                double change = Math.abs(currentHead - startHead);
-                if (change >= desired) {
-                    stop = true;
-                }
-                if (!stop) {
-                    //slow down
-                    if (change >= slowdownMark) {
-                        step++;
-
-                        if (spinLeft) {
-                            rightPower = realSpeedRight + speedDropStep * step;
-                            leftPower = realSpeedLeft - speedDropStep * step;
-                            if (rightPower >= -minSpeed || leftPower <= minSpeed) {
-                                leftPower = minSpeed;
-                                rightPower = -minSpeed;
-                            }
-                        } else {
-                            rightPower = realSpeedRight - speedDropStep * step;
-                            leftPower = realSpeedLeft + speedDropStep * step;
-                            if (rightPower <= minSpeed || leftPower >= -minSpeed) {
-                                leftPower = -minSpeed;
-                                rightPower = minSpeed;
-                            }
-                        }
-                    } else {
-                        //accelerate
-                        if ((spinLeft && leftPower + speedIncrement <= leftDesiredSpeed) ||
-                                (!spinLeft && rightPower + speedIncrement <= rightDesiredSpeed)) {
-                            if (spinLeft) {
-                                leftPower = leftPower + speedIncrement;
-                                rightPower = -leftPower;
-                            } else {
-                                rightPower = rightPower + speedIncrement;
-                                leftPower = -rightPower;
-                            }
-                            realSpeedLeft = leftPower;
-                            realSpeedRight = rightPower;
-                        }
-                    }
-                }
-                this.frontLeft.setVelocity(MAX_VELOCITY_GB *leftPower);
-                this.frontRight.setVelocity(MAX_VELOCITY_GB *rightPower);
-                this.backLeft.setVelocity(MAX_VELOCITY_GB *leftPower);
-                this.backRight.setVelocity(MAX_VELOCITY_GB *rightPower);
-            }
-
-            if (profile.shouldStop()) {
-                this.stop();
-            }
+            spinToPos(profile);
         }
     }
 

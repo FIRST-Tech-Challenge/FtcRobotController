@@ -44,6 +44,7 @@ public class FrenzyMode extends LinearOpMode {
             } catch (Exception ex) {
                 telemetry.addData("Init", ex.getMessage());
             }
+            telemetry.addData("Bot Info", robot.printInfo());
             telemetry.update();
 
             // Wait for the game to start (driver presses PLAY)
@@ -152,7 +153,7 @@ public class FrenzyMode extends LinearOpMode {
                 startGamepadLockout();
                 changedRotator = !changedRotator;
 
-                if (changedIntake) {
+                if (changedRotator) {
                     robot.startTurntable();
                 } else {
                     robot.stopTurntable();
