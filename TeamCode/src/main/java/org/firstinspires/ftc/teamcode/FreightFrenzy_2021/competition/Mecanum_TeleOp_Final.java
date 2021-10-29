@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 
-@TeleOp(name = "Mecanum TeleOp Final", group = "Linear OpMode")
+@TeleOp(name = "Mecanum TeleOp Final", group = "Competition")
 public class Mecanum_TeleOp_Final extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -76,6 +76,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean releasedX = true;
         boolean releasedLB = true;
         boolean releasedRB = true;
+        boolean releasedRB1 = true;
         boolean releasedLT = true;
         boolean releasedRT = true;
         boolean releasedA = true;
@@ -87,6 +88,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean releasedDL = true;
         boolean toggleX = true;
         boolean toggleRB = true;
+        boolean toggleRB1 = true;
         boolean toggleLB = true;
         boolean toggleRT = true;
         boolean toggleLT = true;
@@ -98,8 +100,8 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             double strafe  = -gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
 
-            if(gamepad1.right_bumper) {
-                if(releasedRightBumper && releasedLeftBumper) {
+            if(gamepad1.dpad_up) {
+                if(releasedRightBumper) {
                     increaseSpeed(0.05);
                     releasedRightBumper = false;
                 }
@@ -107,8 +109,8 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 releasedRightBumper = true;
             }
 
-            if(gamepad1.left_bumper){
-                if(releasedRightBumper && releasedLeftBumper) {
+            if(gamepad1.dpad_down){
+                if(releasedLeftBumper) {
                     decreaseSpeed(0.05);
                     releasedLeftBumper = false;
                 }
@@ -116,38 +118,40 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 releasedLeftBumper = true;
             }
 
-            if(gamepad1.a){
+            if(gamepad2.a){
                 if(releasedA) {
-                    Slide.setTargetPosition(initialHeight);
 
+                    Slide.setTargetPosition(initialHeight);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.6);
+                    Slide.setPower(0.8);
                 }
 
             } else if(!releasedA){
                 releasedA = true;
             }
-            if(gamepad1.b){
+            if(gamepad2.b){
                 if(releasedB) {
+                    Rotate.setPosition(1.0);
+                    sleep(500);
                     Slide.setTargetPosition(initialHeight + 750);
-
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.6);
+                    Slide.setPower(0.8);
                 }
 
             } else if(!releasedB){
                 releasedB = true;
             }
-            if(gamepad1.y){
+            if(gamepad2.y){
                 if(releasedY) {
+                    Rotate.setPosition(1.0);
+                    sleep(500);
                     Slide.setTargetPosition(initialHeight + 1400);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.6);
+                    Slide.setPower(0.8);
                 }
             } else if(!releasedY){
                 releasedY = true;
             }
-
 
             if (gamepad1.x) {
                 if (releasedX){
@@ -172,22 +176,28 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 releasedX = true;
             }
 
-//            if (gamepad1.dpad_up) {
-//                if (releasedDU){
-//                    Slide.setPower(0.6);
-//                    releasedDU = false;
-//                }
-//            } else if (!releasedDU){
-//                releasedDU = true;
-//            }
-//            if (gamepad1.dpad_down) {
-//                if (releasedDD){
-//                    Slide.setPower(-0.6);
-//                    releasedDD = false;
-//                }
-//            } else if (!releasedDD){
-//                releasedDD = true;
-//            }
+            if (gamepad2.dpad_up) {
+                if (releasedDU){
+                    Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    Slide.setPower(0.5);
+                    releasedDU = false;
+                }
+            } else if (!releasedDU){
+                Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                Slide.setPower(0);
+                releasedDU = true;
+            }
+            if (gamepad2.dpad_down) {
+                if (releasedDD){
+                    Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    Slide.setPower(-0.5);
+                    releasedDD = false;
+                }
+            } else if (!releasedDD){
+                Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                Slide.setPower(0);
+                releasedDD = true;
+            }
 //            if (gamepad1.dpad_left) {
 //                if (releasedDL){
 //                    Slide.setPower(0.0);
@@ -199,26 +209,32 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
 
             if (gamepad1.left_bumper) {
-                if (releasedLB){
-                    if (toggleLB) {
-                        intakePower = 0.8;
-                        telemetry.addLine("INTAKE STARTS");
-                        toggleLB = false;
-                    } else {
-                        intakePower = 0;
-                        telemetry.addLine("INTAKE STOPS");
-                        toggleLB = true;
-                    }
+                if (releasedLB && Slide.getCurrentPosition() < initialHeight + 30){
+                    intakePower = 1.0;
+                    telemetry.addLine("INTAKE STARTS");
                     releasedLB = false;
                 }
             } else if (!releasedLB){
+                intakePower = 0;
+                telemetry.addLine("INTAKE STOPS");
                 releasedLB = true;
+            }
+            if (gamepad1.right_bumper) {
+                if (releasedRB1 && Slide.getCurrentPosition() < initialHeight + 30){
+                    intakePower = -1.0;
+                    telemetry.addLine("INTAKE REVERSE STARTS");
+                    releasedRB1 = false;
+                }
+            } else if (!releasedRB1){
+                telemetry.addLine("INTAKE STOPS");
+                intakePower = 0;
+                releasedRB1 = true;
             }
 
             if (gamepad2.right_bumper) {
                 if (releasedRB){
                     if (toggleRB) {
-                        spinPower = 0.5;
+                        spinPower = 0.8;
                         telemetry.addLine("SPIN STARTS");
                         toggleRB = false;
                     } else {
@@ -244,7 +260,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
             if(gamepad2.left_trigger == 1){
                 if (releasedLT){
-                    if (toggleLT) {
+                    if (toggleLT && !Slide.isBusy()) {
                         Rotate.setPosition(0.03);
                         telemetry.addLine("ROTATE STARTS");
                         toggleLT = false;
