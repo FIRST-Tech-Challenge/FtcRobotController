@@ -53,8 +53,8 @@ public class TwoWDDrivetrain {
     }
 
     public void EvalGamepad(double x, double y) {
-        double drive = -y;
-        double turn  =  x;
+        double drive = y;
+        double turn  =  -x;
         double left    = Range.clip(drive + turn, -100.0, 100.0) ;
         double right   = Range.clip(drive - turn, -100.0, 100.0) ;
         SetPower(left, -right);

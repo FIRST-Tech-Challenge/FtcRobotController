@@ -61,6 +61,8 @@ public class BasicOpMode_With_Spinner extends LinearOpMode {
 
         gpad = new RobotWithSpinner(gamepad1, gamepad2, hardwareMap, telemetry);
 
+        waitForStart();
+
         while (opModeIsActive()) {
 
             gpad.main();

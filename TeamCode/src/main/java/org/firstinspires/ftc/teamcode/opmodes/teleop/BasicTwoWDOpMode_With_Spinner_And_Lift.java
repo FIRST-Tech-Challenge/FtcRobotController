@@ -61,6 +61,8 @@ public class BasicTwoWDOpMode_With_Spinner_And_Lift extends LinearOpMode {
 
         gpad = new TwoWDRobotWithSpinnerAndLift(gamepad1, gamepad2, hardwareMap, telemetry);
 
+        waitForStart();
+
         while (opModeIsActive()) {
 
             gpad.main();
