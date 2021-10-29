@@ -433,6 +433,44 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
         }
         stopMotion();
     }
+    void driveStrafeLeft(boolean isForward, double margin, double power, double timeInterval) {
+        ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        final double currentAngle = aquireHeading();
+        int straightFactor = -1;
+        if (isForward) {
+            straightFactor = 1;
+        }
+        double targetAngle = currentAngle;
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        while (driveTime.milliseconds() < timeInterval) {
+
+            LF_power = straightFactor * power;
+            LB_power = straightFactor * power;
+            RF_power = straightFactor * power;
+            RB_power = straightFactor * power;
+
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(0);
+            RF.setPower(RF_power);
+            LB.setPower(-LB_power);
+            RB.setPower(0);
+            telemetry.addData("RF_power", RF_power);
+            telemetry.addData("RB_power", RB_power);
+            telemetry.addData("LF_power", -LF_power);
+            telemetry.addData("LB_power", -LB_power);
+
+            telemetry.update();
+            displayEncoderValue();
+        }
+        stopMotion();
+    }
+
     //make a turn that based on the current heading in a certain direction and angle
     void rotateAtAngle(boolean isClockwise, double degree, double margin, double power) {
         int angleFactor = -1;
