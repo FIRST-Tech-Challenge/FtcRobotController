@@ -24,8 +24,9 @@ public class MainConfig {
     private static final int logLevel = 3;
 
     private static final boolean initMinorSubsystems = false;
-    private static final boolean initMechanical = false;
-    private static final boolean initGetGamePadInputs = false;
+    private static final boolean initMechanical = true;
+    private static final boolean initGetGamePadInputs = true;
+    private static final boolean initHardwareMap = true;
 
     public static String getName() {
         return name;
@@ -61,5 +62,9 @@ public class MainConfig {
 
     public static boolean getInitGamePadInputs() {
         return initGetGamePadInputs;
+    }
+
+    public static boolean getInitHardwareMap() {
+        return initHardwareMap;
     }
 }

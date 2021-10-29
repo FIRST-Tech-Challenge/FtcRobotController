@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.android.dx.command.Main;
 import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Config.MainConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
@@ -177,11 +178,13 @@ public class Robot extends Subsystem {
         rearLeftDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         telemetry.telemetry(4, "Motors", "Stopping all motors");
+
         // Stops all the motors
         frontLeftDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         frontRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearLeftDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
 
         HardwareMap.DeviceMapping<Servo> servo = hardwareMap.servo;
 
