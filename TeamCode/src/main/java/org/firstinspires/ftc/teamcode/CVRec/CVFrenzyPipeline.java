@@ -16,7 +16,7 @@ public class CVFrenzyPipeline extends CVPipelineBase {
     private Mat Cb = new Mat();
 
     // Subject to change based on camera movements
-    static final Point REGION_ANCHOR_POINT = new Point(0,0);
+    static final Point REGION_ANCHOR_POINT = new Point(15,0);
     static final int REGION_WIDTH = 70;
     static final int REGION_HEIGHT = 50;
 

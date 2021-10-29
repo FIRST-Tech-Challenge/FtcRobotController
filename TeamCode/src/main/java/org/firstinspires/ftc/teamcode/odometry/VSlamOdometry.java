@@ -258,7 +258,7 @@ public class VSlamOdometry implements IBaseOdometry {
                 this.currentX = up.pose.getX() / INCH_2_METER;
                 this.currentY = up.pose.getY() / INCH_2_METER;
 
-                Log.i(TAG, String.format("Cam Location: %.2f : %.2f. Heading: %.1f", this.currentX, this.currentY, this.getOrientation()));
+                // Log.i(TAG, String.format("Cam Location: %.2f : %.2f. Heading: %.1f", this.currentX, this.currentY, this.getOrientation()));
 
                 trackingInitialized = true;
 
