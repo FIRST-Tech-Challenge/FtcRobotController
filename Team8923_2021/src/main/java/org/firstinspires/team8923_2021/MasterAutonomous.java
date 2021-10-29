@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @Autonomous(name="MasterAutonomous")
-abstract public class MasterAutonomous extends MasterOpMode{
+public abstract class MasterAutonomous extends MasterOpMode{
     private ElapsedTime runtime = new ElapsedTime();
 
     double robotX;
@@ -47,7 +47,7 @@ abstract public class MasterAutonomous extends MasterOpMode{
     Alliance alliance = Alliance.BLUE;
     Destinations destination = Destinations.SQUAREA;
 
-    int rings;
+    int element;
 
 
 
@@ -112,12 +112,12 @@ abstract public class MasterAutonomous extends MasterOpMode{
             }else if(gamepad1.dpad_down){
                 delays--;
             }
-            if(rings == 0){
+            if(element == 0){
                 destination = Destinations.SQUAREA;
 
-            }else if(rings == 1){
+            }else if(element == 1){
                 destination = Destinations.SQUAREB;
-            }else if(rings == 4){
+            }else if(element == 4){
                 destination = Destinations.SQUAREC;
             }
 
