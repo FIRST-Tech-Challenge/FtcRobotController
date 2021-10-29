@@ -38,9 +38,12 @@ public class FrenzyModeBase extends LinearOpMode {
 
                 String fieldSide = getSide();
 
-                odometry =  VSlamOdometry.getInstance(this.hardwareMap, 20);
+                int startXInches = 50;
+                int startYInches = 15;
+                int startHeading = 0;
+
+                odometry =  VSlamOdometry.getInstance(this.hardwareMap, 20, startXInches, startYInches, startHeading);
                 odometry.setCoordinateAdjustmentMode(fieldSide);
-                odometry.setInitPosition(50, 15, 0); // TODO: Remove this
 
                 Thread odometryThread = new Thread(odometry);
                 odometryThread.start();
@@ -48,6 +51,7 @@ public class FrenzyModeBase extends LinearOpMode {
                 telemetry.addData("Init", ex.getMessage());
             }
             telemetry.addData("Bot Info", robot.printInfo());
+            telemetry.addData("Coord Adjust Mode", odometry.getCoordinateAdjustmentMode());
             telemetry.update();
 
             // Wait for the game to start (driver presses PLAY)
