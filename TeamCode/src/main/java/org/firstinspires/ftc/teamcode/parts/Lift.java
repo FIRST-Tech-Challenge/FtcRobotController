@@ -57,7 +57,7 @@ public class Lift {
         telemetry.addData("left stick",stickValue);
         telemetry.addData("lift motor power", liftMotor.getPower());
         telemetry.addData("lift motor state",liftMotor.getMode());
-        telemetry.addData("bottomSensor",bottomSensor.getState());
+        telemetry.addData("bottomSensor",curPos <= 10);
         telemetry.addData("motor encoder",curPos);
         telemetry.addData("topSensor", topSensor.getState());
         telemetry.addData("armServo",armServo.getPosition());
@@ -68,11 +68,14 @@ public class Lift {
                 liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 running = false;
             }
-            if (aReader.wasJustReleased()) { first = true; }
-            if ((stickValue >= 0.05 && !topSensor.getState()) || (stickValue <= -0.05 && !bottomSensor.getState())) {
+            if (aReader.wasJustReleased()) {
+                first = true;
+                curPos = 10;
+            }
+            if ((stickValue >= 0.05 && !topSensor.getState()) || (stickValue <= -0.05 && curPos >= 10)) {
                 liftMotor.setPower(stickValue);
             } else {
-                if (bottomSensor.getState() && first) {
+                if (curPos <= 10 && first) {
                     liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     liftMotor.setTargetPosition(0);
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -81,7 +84,7 @@ public class Lift {
                     first = false;
                 } else { if (topSensor.getState()) {
                         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    } else if (!bottomSensor.getState()) { first = true; }
+                    } else if (curPos >= 10) { first = true; }
                     liftMotor.setPower(0);
                 }
             }
@@ -89,9 +92,7 @@ public class Lift {
         curPos = liftMotor.getCurrentPosition() + encoderOffset;
         arm();
     }
-    //0.76 - lift
-//0.07 - dump
-//0.88 - intake
+
     private void arm() {
         final int topLiftPosition = 810;
         final int bottomLiftPosition = 50;
