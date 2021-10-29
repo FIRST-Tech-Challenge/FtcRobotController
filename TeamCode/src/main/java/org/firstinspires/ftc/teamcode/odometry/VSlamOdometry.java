@@ -81,9 +81,9 @@ public class VSlamOdometry implements IBaseOdometry {
 
         // This is the transformation between the center of the camera and the center of the robot
         // Set these three values to match the location/orientation of the camera with respect to the robot
-        double offsetXInches = 0;
-        double offsetYInches = 0;
-        double offsetHDegrees = 0;
+        double offsetXInches = -5.5;
+        double offsetYInches = -2;
+        double offsetHDegrees = 90;
 
         Translation2d offsetTranslation = new Translation2d(offsetXInches * INCH_2_METER, offsetYInches * INCH_2_METER);
         Rotation2d offsetRotation = Rotation2d.fromDegrees(offsetHDegrees);
@@ -217,7 +217,7 @@ public class VSlamOdometry implements IBaseOdometry {
                 this.currentX = up.pose.getX() / INCH_2_METER;
                 this.currentY = up.pose.getY() / INCH_2_METER;
 
-                Log.i(TAG, String.format("Cam Location: %.2f : %.2f. Heading: %d", this.currentX, this.currentY, this.getOrientation()));
+                Log.i(TAG, String.format("Cam Location: %.2f : %.2f. Heading: %.1f", this.currentX, this.currentY, this.getOrientation()));
 
                 trackingInitialized = true;
 
