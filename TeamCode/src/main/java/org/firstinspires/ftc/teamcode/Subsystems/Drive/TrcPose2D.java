@@ -9,9 +9,12 @@ import java.util.Locale;
  */
 public class TrcPose2D
 {
-
+    // The following attributes describe the reference frame of the robot
+    // The x, y attributes signify relative position
     public double x;
     public double y;
+    // The angle signifies the angle between the robot's perspective and the driver's perspective
+    // The angle is essentially an angle between the coordinate systems of the observer and the robot in 2d space
     public double angle;
     private double direction;
     private double movementAngle;
@@ -89,6 +92,8 @@ public class TrcPose2D
 
     /**
      * This method translates this pose with the x and y offset in reference to the angle of the pose.
+     * TL;DR: This method translates the pose from the observer's point of view.
+     * The x and y offsets in the reference frame of the robot is calculated accordingly.
      *
      * @param xOffset specifies the x offset in reference to the angle of the pose.
      * @param yOffset specifies the y offset in reference to the angle of the pose.
@@ -102,7 +107,10 @@ public class TrcPose2D
         double cosAngle = Math.cos(angleRadians);
         double sinAngle = Math.sin(angleRadians);
 
+        // Calculate the new position using the reference frame of the robot
+        // Calculate the x offset in the reference frame of the robot
         newPose.x += xOffset*cosAngle + yOffset*sinAngle;
+        // Calculate the y offset in the reference frame of the robot
         newPose.y += -xOffset*sinAngle + yOffset*cosAngle;
 
         return newPose;
