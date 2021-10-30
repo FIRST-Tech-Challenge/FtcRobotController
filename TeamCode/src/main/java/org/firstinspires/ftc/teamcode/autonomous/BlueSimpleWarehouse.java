@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 
-@Autonomous(name="Red Simple Warehouse", group ="15173")
-public class RedSimpleWarehouse extends AutoBase {
-    private static String TAG = "RedSimpleStorage";
+@Autonomous(name="Blue Simple Warehouse", group ="15173")
+public class BlueSimpleWarehouse extends AutoBase {
+    private static String TAG = "BlueSimpleStorage";
 
     @Override
     protected void initBot() {
@@ -27,7 +27,7 @@ public class RedSimpleWarehouse extends AutoBase {
     protected void initLocator() {
         //position the robot facing the warehouse
         startX = 76;
-        startY = 10;
+        startY = 134;
         initHead = 0;
         this.locator = VSlamOdometry.getInstance(hardwareMap);
         this.locator.setCoordinateAdjustmentMode(getOpModeSide());
@@ -44,7 +44,7 @@ public class RedSimpleWarehouse extends AutoBase {
         Log.d(TAG, String.format("Detected %s", detected.toString()));
 
         //define a coordinate in the ware house (same Y as the start, different X)
-        Point target = new Point(115, 10);
+        Point target = new Point(115, 134);
         //Build profile for the robot to move
         BotMoveProfile profile = BotMoveProfile.bestRoute(this.bot, (int)locator.getCurrentX(), (int)locator.getCurrentY(), target,
                 RobotDirection.Optimal, 0.7, MoveStrategy.Straight, -1, locator);

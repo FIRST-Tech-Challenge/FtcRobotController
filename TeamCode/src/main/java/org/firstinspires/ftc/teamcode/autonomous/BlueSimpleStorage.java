@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 
-@Autonomous(name="Red Simple Warehouse", group ="15173")
-public class RedSimpleWarehouse extends AutoBase {
-    private static String TAG = "RedSimpleStorage";
+@Autonomous(name="Blue Simple Storage", group ="15173")
+public class BlueSimpleStorage extends AutoBase {
+    private static String TAG = "BlueSimpleStorage";
 
     @Override
     protected void initBot() {
@@ -25,12 +25,10 @@ public class RedSimpleWarehouse extends AutoBase {
 
     @Override
     protected void initLocator() {
-        //position the robot facing the warehouse
-        startX = 76;
-        startY = 10;
-        initHead = 0;
+        startX = 40;
+        startY = 134;
+        initHead = 180;
         this.locator = VSlamOdometry.getInstance(hardwareMap);
-        this.locator.setCoordinateAdjustmentMode(getOpModeSide());
         this.locator.init(new Point(startX, startY), initHead);
         startLocator(locator);
     }
@@ -43,21 +41,16 @@ public class RedSimpleWarehouse extends AutoBase {
 
         Log.d(TAG, String.format("Detected %s", detected.toString()));
 
-        //define a coordinate in the ware house (same Y as the start, different X)
-        Point target = new Point(115, 10);
-        //Build profile for the robot to move
+        //move sideways to the storage area
+        //define a point in the storage area
+        Point target = new Point(1, 99);
+        //build profile for the robot to move to the storage area using diagonal strategy
         BotMoveProfile profile = BotMoveProfile.bestRoute(this.bot, (int)locator.getCurrentX(), (int)locator.getCurrentY(), target,
-                RobotDirection.Optimal, 0.7, MoveStrategy.Straight, -1, locator);
-        //move the robot using the profile
-        moveStraight(profile);
+                RobotDirection.Optimal, 0.7, MoveStrategy.Diag, -1, locator);
+        //move the robot diagonally using the profile object.
+        diag(profile);
         //let it sit, as everything is async
         waitToStartStep(3000);
-        while (opModeIsActive()){
-            telemetry.addData("X", "%.3f", locator.getCurrentX());
-            telemetry.addData("Y", "%.3f", locator.getCurrentY());
-            telemetry.addData("Heading", "%.3f", locator.getOrientation());
-            telemetry.update();
-        }
 
     }
 }

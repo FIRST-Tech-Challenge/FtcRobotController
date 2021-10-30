@@ -222,6 +222,11 @@ public class FrenzyBaseBot implements OdoBot {
         }
     }
 
+    protected boolean motorsBusy(){
+        boolean busy = this.frontLeft.isBusy() | this.frontRight.isBusy() | this.backLeft.isBusy() | this.backRight.isBusy();
+        return busy;
+    }
+
 
     public void moveToPos(BotMoveProfile profile, IBaseOdometry locator){
         resetEncoders();
@@ -242,6 +247,11 @@ public class FrenzyBaseBot implements OdoBot {
         this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getLF());
         this.backLeft.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
         this.backRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
+
+        while (motorsBusy()){
+            //wait for at least one motor to stop
+        }
+        stop();
     }
 
 
