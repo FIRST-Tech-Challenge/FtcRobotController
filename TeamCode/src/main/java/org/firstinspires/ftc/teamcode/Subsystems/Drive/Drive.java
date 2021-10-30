@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.Config.DriveConfig;
-import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.Locale;
  *
  * Mostly repetitive code.
  */
-public class Drive extends MinorSubsystem {
+public class Drive extends Subsystem {
     /** DC Motors initialization. */
     public DcMotorEx frontLeft;
     public DcMotorEx frontRight;

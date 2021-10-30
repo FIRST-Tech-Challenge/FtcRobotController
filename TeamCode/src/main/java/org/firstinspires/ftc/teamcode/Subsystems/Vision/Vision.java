@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Config.VisionConfig;
-import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarker;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerPipeline;
@@ -27,7 +27,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
  * @see <a href="https://github.com/OpenFTC/EasyOpenCV">EasyOpenCV</a>
  */
 
-public class Vision extends MinorSubsystem {
+public class Vision extends Subsystem {
     MarkerLocation finalMarkerLocation; // Marker Location
 
     WebcamName webcamName = null;

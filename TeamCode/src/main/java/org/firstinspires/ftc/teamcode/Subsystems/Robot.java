@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.internal.android.dx.command.Main;
 import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Config.MainConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
@@ -29,7 +28,7 @@ import java.util.List;
  *
  * <p>This class starts with variable initializations</p></p>
  */
-public class Robot extends Subsystem {
+public class Robot {
     private HardwareMap hardwareMap;
     private LinearOpMode opMode;
     private Telemetry oldTelemetry;
@@ -308,9 +307,7 @@ public class Robot extends Subsystem {
 
     public void setFrontLeftDriveMotor(double power) { frontLeftDriveMotor.setPower(power); }
 
-    public void setFrontRightDriveMotor(double power) {
-        frontRightDriveMotor.setPower(power);
-    }
+    public void setFrontRightDriveMotor(double power) { frontRightDriveMotor.setPower(power); }
 
     public void setRearLeftDriveMotor(double power) { rearLeftDriveMotor.setPower(power); }
 
