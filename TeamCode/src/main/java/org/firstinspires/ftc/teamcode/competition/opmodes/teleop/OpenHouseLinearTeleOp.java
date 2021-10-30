@@ -30,14 +30,15 @@ public class OpenHouseLinearTeleOp extends LinearOpMode {
                 intake.driveWithEncoder(100);
             }else if(gamepad1.dpad_down) {
                 intake.driveWithEncoder(-100);
-            }else if(gamepad1.dpad_left) {
-                lift.driveWithEncoder(10);
-            }else if(gamepad1.dpad_right) {
-                lift.driveWithEncoder(10);
             }else if(gamepad2.dpad_up) {
                 intake.driveWithEncoder(100);
             }else if(gamepad2.dpad_down) {
                 intake.driveWithEncoder(-100);
+            }
+            if(gamepad1.dpad_left) {
+                lift.driveWithEncoder(10);
+            }else if(gamepad1.dpad_right) {
+                lift.driveWithEncoder(10);
             }else if(gamepad2.dpad_left) {
                 lift.driveWithEncoder(10);
             }else if(gamepad2.dpad_right) {
