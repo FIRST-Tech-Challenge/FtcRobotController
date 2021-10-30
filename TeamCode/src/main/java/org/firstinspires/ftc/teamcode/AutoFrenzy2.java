@@ -28,7 +28,26 @@ public class AutoFrenzy2 extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(1600, 1200, OpenCvCameraRotation.UPRIGHT);
+                /*
+                 * Tell the camera to start streaming images to us! Note that you must make sure
+                 * the resolution you specify is supported by the camera. If it is not, an exception
+                 * will be thrown.
+                 *
+                 * Also, we specify the rotation that the camera is used in. This is so that the image
+                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
+                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
+                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
+                 * away from the user.
+                 */
+                phoneCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
             }
         });
 
@@ -36,7 +55,8 @@ public class AutoFrenzy2 extends LinearOpMode {
 
         //Do computer vision here
 //THE BELOW CODE IS FOR THE CAROUSEL BEING ON THE LEFT OF THE ROBOT
-        int x = p.getPosition(); //get an input of 1,2,3 on where the item is from comp vision
+        int x = 1;
+        //p.getPosition(); //get an input of 1,2,3 on where the item is from comp vision
         phoneCam.stopStreaming();
         if(x == 1){
             move(-90,800);

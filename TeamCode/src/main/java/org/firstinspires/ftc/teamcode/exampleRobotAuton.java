@@ -25,11 +25,13 @@ public class exampleRobotAuton extends LinearOpMode
     @Override
     public void runOpMode()
     {
+
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using. In this sample, we're using the phone's internal camera. We pass it a
          * CameraDirection enum indicating whether to use the front or back facing camera.
          */
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
         /*
          * Specify the image processing pipeline we wish to invoke upon receipt of a frame from the camera. Note that switching pipelines on-the-fly
@@ -46,29 +48,45 @@ public class exampleRobotAuton extends LinearOpMode
             public void onOpened()
             {
                 /*
-                 * Tell the camera to start streaming images to us! Note that you must make sure the resolution you specify is supported by the camera. If it is not,
-                 * an exception will be thrown.
+                 * Tell the camera to start streaming images to us! Note that you must make sure
+                 * the resolution you specify is supported by the camera. If it is not, an exception
+                 * will be thrown.
                  *
-                 * Also, we specify the rotation that the camera is used in. This is so that the image from the camera sensor can be rotated such that it
-                 * is always displayed with the image upright. For a front facing camera, rotation is defined assuming the user is looking at the screen.
-                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing away from the user.
+                 * Also, we specify the rotation that the camera is used in. This is so that the image
+                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
+                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
+                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
+                 * away from the user.
                  */
-                phoneCam.startStreaming(1600, 1200, OpenCvCameraRotation.UPRIGHT);
+                phoneCam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
             }
         });
 
         waitForStart();
 
-        while (opModeIsActive())
-        {
-            telemetry.addData("Frame Count", phoneCam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", phoneCam.getFps()));
-            telemetry.addData("Total frame time ms", phoneCam.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", phoneCam.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
-            telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
-            telemetry.addData("Position", p.getPosition());
-            telemetry.update();
+        while(opModeIsActive()) {
+            boolean[] pos = p.getPositions();
+            if(pos != null) {
+                if(pos[0] && pos[1] && !pos[2]) {
+                    telemetry.addLine("Marker on right");
+                } else if(pos[0] && pos[2] && !pos[1]) {
+                    telemetry.addLine("Marker in middle");
+                } else if(pos[1] && pos[2] && !pos[0]) {
+                    telemetry.addLine("Marker on left");
+                } else {
+                    telemetry.addLine("Default case");
+                }
+                telemetry.update();
+            }
+
         }
     }
 }

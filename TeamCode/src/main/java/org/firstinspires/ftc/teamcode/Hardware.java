@@ -68,7 +68,7 @@ public class Hardware
     public Motor m0 = null, m1 = null, m2 = null, m3 = null;
     public Motor carousel = null, intake = null;
     public double MIN_ANGLE = 0, MAX_ANGLE = 180;
-    DistanceSensor dist = null;
+    //DistanceSensor dist = null;
     MecanumDrive m;
     ServoEx servo;
 
@@ -88,7 +88,7 @@ public class Hardware
         m3 = new Motor(h, "m3");
         intake = new Motor(h, "m4");
         carousel = new Motor(h, "m5");
-        dist = h.get(DistanceSensor.class, "distsensor");
+        //dist = h.get(DistanceSensor.class, "distsensor");
 
         m0.set(0);
         m1.set(0);
