@@ -12,7 +12,8 @@ import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
  *
  */
 public class Subsystem {
-    protected LinearOpMode opMode; // protected because of inheritance
+    // protected because of inheritance
+    protected LinearOpMode opMode;
     protected QuickTelemetry telemetry;
     protected ElapsedTime timer;
     protected HardwareMap hardwareMap;

@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.Robot;
  * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
  */
 @Autonomous(name = "Auto", group = "Concept")
-@Disabled
 public class Auto extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
     Robot robot = new Robot(this, timer);
