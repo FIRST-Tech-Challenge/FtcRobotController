@@ -57,9 +57,10 @@ jobs:
         mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports/
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
-          Information:
-          Repository: $GITHUB_REPOSITORY
-          Branch: $GITHUB_REF
-          Commit: $GITHUB_SHA
-          Who triggered action: $GITHUB_ACTOR"
+
+        Information:
+            Repository: $GITHUB_REPOSITORY
+            Branch: $GITHUB_REF
+            Commit: $GITHUB_SHA
+            Who triggered action: $GITHUB_ACTOR"
         git push
