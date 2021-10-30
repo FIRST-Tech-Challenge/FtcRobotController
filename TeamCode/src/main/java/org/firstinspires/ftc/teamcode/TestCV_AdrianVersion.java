@@ -31,48 +31,73 @@ public class TestCV_AdrianVersion extends LinearOpMode {
     double sensitivity;
 
     @Override
-    public void runOpMode() throws InterruptedException{
+    public void runOpMode() throws InterruptedException {
         int camViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());//view for viewing what the webcam sees I think, on ds. Double check :grimacing:
         cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), camViewID);
+        mainPipeline = new Pipeline();//create new pipeline
 
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                mainPipeline = new Pipeline();//create new pipeline
                 cam.setPipeline(mainPipeline);//set webcam pipeline
-
                 width = 640;
                 height = 480;
-
                 cam.startStreaming(width, height, OpenCvCameraRotation.UPRIGHT);//can add rotation if needed
-
-                /*switch(mainPipeline.getCode()) {
-                    case 0:
-                        telemetry.addData("Box", "None");
-                    case 1:
-                        telemetry.addData("Box", "1");
-                    case 2:
-                        telemetry.addData("Box", "2");
-                    case 3:
-                        telemetry.addData("Box", "3");
-                }
-                telemetry.update();*/
             }
 
             @Override
             public void onError(int errorCode) {
-                telemetry.addData("Camera Error...",":(");
+                telemetry.addData("Camera Error...", ":(");
                 System.exit(0);
             }
         });
 
+        int code = mainPipeline.getCode();
+        telemetry.addData("barcode value", code);
+        telemetry.update();
+
+        switch (code) {
+            case 0:
+                telemetry.addData("Box", "None");
+                break;
+            case 1:
+                telemetry.addData("Box", "1");
+                break;
+            case 2:
+                telemetry.addData("Box", "2");
+                break;
+            case 3:
+                telemetry.addData("Box", "3");
+                break;
+        }
+
 
 
         waitForStart();
+        while (opModeIsActive()) {
 
-        //now start button is pressed, robot go!
+            //now start button is pressed, robot go!
 
+            code = mainPipeline.getCode();
+            telemetry.addData("barcode value", code);
+            telemetry.update();
 
+            switch (code) {
+                case 0:
+                    telemetry.addData("Box", "None");
+                    break;
+                case 1:
+                    telemetry.addData("Box", "1");
+                    break;
+                case 2:
+                    telemetry.addData("Box", "2");
+                    break;
+                case 3:
+                    telemetry.addData("Box", "3");
+                    break;
+            }
+            telemetry.update();
+        }
     }
 
     class Pipeline extends OpenCvPipeline{
@@ -128,15 +153,15 @@ public class TestCV_AdrianVersion extends LinearOpMode {
                 //Determine which box it's in
                 if (largestRect.x<240) {
                     barcode=1;
-                    telemetry.addData("Box", "1");
+                    //telemetry.addData("Box", "1");
                 }
                 else if (largestRect.x<400) {
                     barcode=2;
-                    telemetry.addData("Box", "2");
+                    //telemetry.addData("Box", "2");
                 }
                 else {
                     barcode=3;
-                    telemetry.addData("Box", "3");
+                    //telemetry.addData("Box", "3");
                 }
 
             }
