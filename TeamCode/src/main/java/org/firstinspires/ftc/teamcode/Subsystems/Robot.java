@@ -309,7 +309,9 @@ public class Robot {
 
     public void setFrontRightDriveMotor(double power) { frontRightDriveMotor.setPower(power); }
 
-    public void setRearLeftDriveMotor(double power) { rearLeftDriveMotor.setPower(power); }
+    public void setRearLeftDrivePower(double power) {
+        rearLeftDriveMotor.setPower(power);
+    }
 
     public void setRearRightDriveMotor(double power) { rearRightDriveMotor.setPower(power); }
 }
