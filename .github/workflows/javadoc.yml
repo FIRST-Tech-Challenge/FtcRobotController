@@ -14,7 +14,7 @@ jobs:
     - name: Checkout branch
       uses: actions/checkout@v2
       with:
-        ref: $env.NAME_OF_BRANCH
+        ref: $NAME_OF_BRANCH
 
     - name: Set up the JDK environment
       uses: actions/setup-java@v2
@@ -52,10 +52,10 @@ jobs:
         git fetch -v
         git checkout gh-pages
         rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/$env.NAME_OF_BRANCH
+        mv ../javadoc-output/ ./javadocs/$NAME_OF_BRANCH
         rm -rf reports/ || true
         mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/$env.NAME_OF_BRANCH
+        mv ../sdk-reports/ ./reports/sdk-reports/$NAME_OF_BRANCH
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
           Information:
@@ -76,7 +76,7 @@ jobs:
     - name: Checkout branch
       uses: actions/checkout@v2
       with:
-        ref: $env.NAME_OF_BRANCH
+        ref: $NAME_OF_BRANCH
 
     - name: Set up the JDK environment
       uses: actions/setup-java@v2
@@ -114,10 +114,10 @@ jobs:
         git fetch -v
         git checkout gh-pages
         rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/$env.NAME_OF_BRANCH
+        mv ../javadoc-output/ ./javadocs/$NAME_OF_BRANCH
         rm -rf reports/ || true
         mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/$env.NAME_OF_BRANCH
+        mv ../sdk-reports/ ./reports/sdk-reports/$NAME_OF_BRANCH
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
           Information:
@@ -138,7 +138,7 @@ jobs:
     - name: Checkout branch
       uses: actions/checkout@v2
       with:
-        ref: $env.NAME_OF_BRANCH
+        ref: $NAME_OF_BRANCH
 
     - name: Set up the JDK environment
       uses: actions/setup-java@v2
@@ -176,10 +176,10 @@ jobs:
         git fetch -v
         git checkout gh-pages
         rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/$env.NAME_OF_BRANCH
+        mv ../javadoc-output/ ./javadocs/$NAME_OF_BRANCH
         rm -rf reports/ || true
         mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/$env.NAME_OF_BRANCH
+        mv ../sdk-reports/ ./reports/sdk-reports/$NAME_OF_BRANCH
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
           Information:
@@ -200,7 +200,7 @@ jobs:
     - name: Checkout branch
       uses: actions/checkout@v2
       with:
-        ref: $env.NAME_OF_BRANCH
+        ref: $NAME_OF_BRANCH
 
     - name: Set up the JDK environment
       uses: actions/setup-java@v2
@@ -238,10 +238,10 @@ jobs:
         git fetch -v
         git checkout gh-pages
         rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/$env.NAME_OF_BRANCH
+        mv ../javadoc-output/ ./javadocs/$NAME_OF_BRANCH
         rm -rf reports/ || true
         mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/$env.NAME_OF_BRANCH
+        mv ../sdk-reports/ ./reports/sdk-reports/$NAME_OF_BRANCH
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
           Information:
@@ -262,7 +262,7 @@ jobs:
     - name: Checkout branch
       uses: actions/checkout@v2
       with:
-        ref: $env.NAME_OF_BRANCH
+        ref: $NAME_OF_BRANCH
 
     - name: Set up the JDK environment
       uses: actions/setup-java@v2
@@ -300,10 +300,10 @@ jobs:
         git fetch -v
         git checkout gh-pages
         rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/$env.NAME_OF_BRANCH
+        mv ../javadoc-output/ ./javadocs/$NAME_OF_BRANCH
         rm -rf reports/ || true
         mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/$env.NAME_OF_BRANCH
+        mv ../sdk-reports/ ./reports/sdk-reports/$NAME_OF_BRANCH
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
           Information:
