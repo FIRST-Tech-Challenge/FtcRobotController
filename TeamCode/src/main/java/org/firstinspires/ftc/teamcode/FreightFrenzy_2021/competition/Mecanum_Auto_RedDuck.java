@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-        import com.qualcomm.robotcore.hardware.CRServo;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.DcMotorSimple;
-        import com.qualcomm.robotcore.hardware.Servo;
-        import com.qualcomm.robotcore.util.ElapsedTime;
-        import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "BLUE DUCK", group = "Competition")
-public class Mecanum_Auto_BlueDuck extends LinearOpMode {
+@Autonomous(name = "RED DUCK", group = "Competition")
+public class Mecanum_Auto_RedDuck extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -157,11 +157,11 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
                 }
             }
             if (center < 0) {
-                visionResult = "LEFT";
-            } else if (center < 280.56) {
-                visionResult = "MIDDLE";
-            } else {
                 visionResult = "RIGHT";
+            } else if (center < 358.3) {
+                visionResult = "LEFT";
+            } else {
+                visionResult = "MIDDLE";
             }
             telemetry.addLine(visionResult);
             telemetry.update();
@@ -169,13 +169,13 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             //MOTION TO PLATE
             driveStraight(false, 1.0, 0.3, 150);
             stopMotion(100);
-            rotateToAngle(40.0,2.0, 0.3);
+            rotateToAngle(-40.0,2.0, 0.3);
             //driveLeftTurn(false, 1.0, 0.5, 650);
             stopMotion(100);
             driveStraight(false, 1.0, 0.4, 1400);
             stopMotion(200);
-            RB.setPower(-0.4);
-            RF.setPower(-0.4);
+            LB.setPower(-0.4);
+            LF.setPower(-0.4);
             sleep(300);
             stopMotion(200);
 
@@ -211,19 +211,20 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             driveStraight(true, 1.0, 0.3, 150);
             stopMotion(100);
             rotateToAngle(0.0,2.0, 0.3);
-            driveStraight(true, 1.0, 0.6, 550);
+            driveStraight(true, 1.0, 0.6, 400);
             stopMotion(100);
-            drivePerpendicularly(true,2.0, 0.6, 2300);
+            rotateToAngle(-90, 2.0, 0.3);
+            driveStraight(true,2.0, 0.6, 2050);
             stopMotion(100);
-            driveStraight(true,2.0, 0.3, 700);
+            drivePerpendicularly(true,2.0, 0.3, 800);
             stopMotion(100);
 
             //ROTATE DUCK
-            Spin.setPower(0.6);
+            Spin.setPower(-0.6);
             sleep(3500);
             Spin.setPower(0.0);
             //PARK
-            driveStraight(false, 1.0, 0.5, 800);
+            drivePerpendicularly(false,2.0, 0.5, 950);
             stopMotion(100);
 
         }
@@ -451,44 +452,6 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
         }
         stopMotion();
     }
-    void driveStrafeLeft(boolean isForward, double margin, double power, double timeInterval) {
-        ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        final double currentAngle = aquireHeading();
-        int straightFactor = -1;
-        if (isForward) {
-            straightFactor = 1;
-        }
-        double targetAngle = currentAngle;
-        double LF_power;
-        double LB_power;
-        double RF_power;
-        double RB_power;
-        while (driveTime.milliseconds() < timeInterval) {
-
-            LF_power = straightFactor * power;
-            LB_power = straightFactor * power;
-            RF_power = straightFactor * power;
-            RB_power = straightFactor * power;
-
-            RF_power = Range.clip(RF_power, -1, 1);
-            RB_power = Range.clip(RB_power, -1, 1);
-            LF_power = Range.clip(LF_power, -1, 1);
-            LB_power = Range.clip(LB_power, -1, 1);
-            LF.setPower(0);
-            RF.setPower(RF_power);
-            LB.setPower(-LB_power);
-            RB.setPower(0);
-            telemetry.addData("RF_power", RF_power);
-            telemetry.addData("RB_power", RB_power);
-            telemetry.addData("LF_power", -LF_power);
-            telemetry.addData("LB_power", -LB_power);
-
-            telemetry.update();
-            displayEncoderValue();
-        }
-        stopMotion();
-    }
-
     //make a turn that based on the current heading in a certain direction and angle
     void rotateAtAngle(boolean isClockwise, double degree, double margin, double power) {
         int angleFactor = -1;
