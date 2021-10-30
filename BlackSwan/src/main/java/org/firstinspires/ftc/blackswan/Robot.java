@@ -37,6 +37,11 @@ public class Robot {
         frontRight = hardwareMap.get(DcMotor.class,"frontRight");
         backRight = hardwareMap.get(DcMotor.class,"backRight");
 
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+
         carousel = hardwareMap.get(CRServo.class, "carousel");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
