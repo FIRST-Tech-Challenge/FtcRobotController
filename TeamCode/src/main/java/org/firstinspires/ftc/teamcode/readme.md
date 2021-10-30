@@ -1,8 +1,8 @@
 ## TeamCode Module
-Subsystems/ contains the Submodules.
+Subsystems/ contains the Subsystems.
 
 Auto/ has the auto code
 
-Teleop has the Teleop code.
+Config/ has config 
 
-PID has the PID stuff.
+Teleop/ has the Teleop code.
