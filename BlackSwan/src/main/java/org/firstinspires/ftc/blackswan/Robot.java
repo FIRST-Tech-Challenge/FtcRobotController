@@ -48,7 +48,7 @@ public class Robot {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu1");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
         this.opMode= opMode;
