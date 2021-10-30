@@ -1,20 +1,18 @@
 name: Javadoc Generation
 on:
   push:
-    branches: [master, testing-Thomas-Ricci, testing-Michael-Lachut, testing-Donald-Hicks, testing-Colin-Teahan]
+    branches:
+      - 'master'
+      - 'testing-*'
   workflow_dispatch:
 
 jobs:
-  master:
+  generate:
     runs-on: ubuntu-latest
-    env:
-      NAME_OF_BRANCH: master
 
     steps:
     - name: Checkout branch
       uses: actions/checkout@v2
-      with:
-        ref: ${NAME_OF_BRANCH}
 
     - name: Set up the JDK environment
       uses: actions/setup-java@v2
@@ -23,7 +21,7 @@ jobs:
         distribution: 'adopt'
         cache: gradle
 
-    - name: Check gradle version
+    - name: Check Gradle version
       run: ./gradlew --version
 
     - name: Build with Gradle
@@ -44,6 +42,7 @@ jobs:
       run: |
         git config user.name "GitHub Actions Bot"
         git config user.email "actions@github.com"
+        export BRANCH_NAME=$(echo $GITHUB_REF | sed -e "s/refs\/heads\///")
         mv javadoc-output/ ..
         mv ./TeamCode/build/reports/  ..
         mkdir ../sdk-reports/
@@ -51,259 +50,11 @@ jobs:
         git remote set-branches origin '*'
         git fetch -v
         git checkout gh-pages
-        rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/${NAME_OF_BRANCH}
-        rm -rf reports/ || true
-        mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/${NAME_OF_BRANCH}
-        git add .
-        git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
-          Information:
-          Repository: $GITHUB_REPOSITORY
-          Branch: $GITHUB_REF
-          Commit: $GITHUB_SHA
-          Who triggered action: $GITHUB_ACTOR"
-        git push
-
-  testing-Thomas-Ricci:
-    runs-on: ubuntu-latest
-    env:
-      NAME_OF_BRANCH: testing-Thomas-Ricci
-    needs: [master]
-    if: always()
-
-    steps:
-    - name: Checkout branch
-      uses: actions/checkout@v2
-      with:
-        ref: ${NAME_OF_BRANCH}
-
-    - name: Set up the JDK environment
-      uses: actions/setup-java@v2
-      with:
-        java-version: 16
-        distribution: 'adopt'
-        cache: gradle
-
-    - name: Check gradle version
-      run: ./gradlew --version
-
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: build
-
-    - name: Generate documentation with Javadoc
-      run: javadoc -d javadoc-output $(find . -name "*.java") -Xdoclint:none --ignore-source-errors
-
-    - name: Upload the Javadoc output
-      uses: actions/upload-artifact@v2
-      with:
-        name: Javadoc-output
-        path: ./javadoc-output/
-
-    - name: Commit and push new Javadoc folder
-      run: |
-        git config user.name "GitHub Actions Bot"
-        git config user.email "actions@github.com"
-        mv javadoc-output/ ..
-        mv ./TeamCode/build/reports/  ..
-        mkdir ../sdk-reports/
-        mv ./FtcRobotController/build/reports/* ../sdk-reports/
-        git remote set-branches origin '*'
-        git fetch -v
-        git checkout gh-pages
-        rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/${NAME_OF_BRANCH}
-        rm -rf reports/ || true
-        mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/${NAME_OF_BRANCH}
-        git add .
-        git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
-          Information:
-          Repository: $GITHUB_REPOSITORY
-          Branch: $GITHUB_REF
-          Commit: $GITHUB_SHA
-          Who triggered action: $GITHUB_ACTOR"
-        git push
-
-  testing-Michael-Lachut:
-    runs-on: ubuntu-latest
-    env:
-      NAME_OF_BRANCH: testing-Michael-Lachut
-    needs: [master, testing-Thomas-Ricci]
-    if: always()
-
-    steps:
-    - name: Checkout branch
-      uses: actions/checkout@v2
-      with:
-        ref: ${NAME_OF_BRANCH}
-
-    - name: Set up the JDK environment
-      uses: actions/setup-java@v2
-      with:
-        java-version: 16
-        distribution: 'adopt'
-        cache: gradle
-
-    - name: Check gradle version
-      run: ./gradlew --version
-
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: build
-
-    - name: Generate documentation with Javadoc
-      run: javadoc -d javadoc-output $(find . -name "*.java") -Xdoclint:none --ignore-source-errors
-
-    - name: Upload the Javadoc output
-      uses: actions/upload-artifact@v2
-      with:
-        name: Javadoc-output
-        path: ./javadoc-output/
-
-    - name: Commit and push new Javadoc folder
-      run: |
-        git config user.name "GitHub Actions Bot"
-        git config user.email "actions@github.com"
-        mv javadoc-output/ ..
-        mv ./TeamCode/build/reports/  ..
-        mkdir ../sdk-reports/
-        mv ./FtcRobotController/build/reports/* ../sdk-reports/
-        git remote set-branches origin '*'
-        git fetch -v
-        git checkout gh-pages
-        rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/${NAME_OF_BRANCH}
-        rm -rf reports/ || true
-        mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/${NAME_OF_BRANCH}
-        git add .
-        git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
-          Information:
-          Repository: $GITHUB_REPOSITORY
-          Branch: $GITHUB_REF
-          Commit: $GITHUB_SHA
-          Who triggered action: $GITHUB_ACTOR"
-        git push
-
-  testing-Donald-Hicks:
-    runs-on: ubuntu-latest
-    env:
-      NAME_OF_BRANCH: testing-Donald-Hicks
-    needs: [master, testing-Thomas-Ricci, testing-Michael-Lachut]
-    if: always()
-
-    steps:
-    - name: Checkout branch
-      uses: actions/checkout@v2
-      with:
-        ref: ${NAME_OF_BRANCH}
-
-    - name: Set up the JDK environment
-      uses: actions/setup-java@v2
-      with:
-        java-version: 16
-        distribution: 'adopt'
-        cache: gradle
-
-    - name: Check gradle version
-      run: ./gradlew --version
-
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: build
-
-    - name: Generate documentation with Javadoc
-      run: javadoc -d javadoc-output $(find . -name "*.java") -Xdoclint:none --ignore-source-errors
-
-    - name: Upload the Javadoc output
-      uses: actions/upload-artifact@v2
-      with:
-        name: Javadoc-output
-        path: ./javadoc-output/
-
-    - name: Commit and push new Javadoc folder
-      run: |
-        git config user.name "GitHub Actions Bot"
-        git config user.email "actions@github.com"
-        mv javadoc-output/ ..
-        mv ./TeamCode/build/reports/  ..
-        mkdir ../sdk-reports/
-        mv ./FtcRobotController/build/reports/* ../sdk-reports/
-        git remote set-branches origin '*'
-        git fetch -v
-        git checkout gh-pages
-        rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/${NAME_OF_BRANCH}
-        rm -rf reports/ || true
-        mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/${NAME_OF_BRANCH}
-        git add .
-        git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
-          Information:
-          Repository: $GITHUB_REPOSITORY
-          Branch: $GITHUB_REF
-          Commit: $GITHUB_SHA
-          Who triggered action: $GITHUB_ACTOR"
-        git push
-
-  testing-Colin-Teahan:
-    runs-on: ubuntu-latest
-    env:
-      NAME_OF_BRANCH: testing-Colin-Teahan
-    needs: [master, testing-Thomas-Ricci, testing-Michael-Lachut, testing-Donald-Hicks]
-    if: always()
-
-    steps:
-    - name: Checkout branch
-      uses: actions/checkout@v2
-      with:
-        ref: ${NAME_OF_BRANCH}
-
-    - name: Set up the JDK environment
-      uses: actions/setup-java@v2
-      with:
-        java-version: 16
-        distribution: 'adopt'
-        cache: gradle
-
-    - name: Check gradle version
-      run: ./gradlew --version
-
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: build
-
-    - name: Generate documentation with Javadoc
-      run: javadoc -d javadoc-output $(find . -name "*.java") -Xdoclint:none --ignore-source-errors
-
-    - name: Upload the Javadoc output
-      uses: actions/upload-artifact@v2
-      with:
-        name: Javadoc-output
-        path: ./javadoc-output/
-
-    - name: Commit and push new Javadoc folder
-      run: |
-        git config user.name "GitHub Actions Bot"
-        git config user.email "actions@github.com"
-        mv javadoc-output/ ..
-        mv ./TeamCode/build/reports/  ..
-        mkdir ../sdk-reports/
-        mv ./FtcRobotController/build/reports/* ../sdk-reports/
-        git remote set-branches origin '*'
-        git fetch -v
-        git checkout gh-pages
-        rm -rf javadocs/ || true
-        mv ../javadoc-output/ ./javadocs/${NAME_OF_BRANCH}
-        rm -rf reports/ || true
-        mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports/${NAME_OF_BRANCH}
+        rm -rf ./javadoc/${BRANCH_NAME}/ || true
+        mv ../javadoc-output/ ./javadoc/${BRANCH_NAME}
+        rm -rf ./reports/${BRANCH_NAME} || true
+        mv ../reports/ ./reports/${BRANCH_NAME}
+        mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
           Information:
