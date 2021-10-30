@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
+import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 
 // Control Hub ADB Terminal Command for Reference
 // adb.exe connect 192.168.43.1:5555
@@ -19,7 +20,7 @@ public class CVFrenzyRecTest extends LinearOpMode {
     public void runOpMode() {
         try {
 
-            detector = new CVDetector(this.hardwareMap);
+            detector = new CVDetector(this.hardwareMap, AutoRoute.NAME_RED);
             detector.init(CVDetectMode.Frenzy, "wcam", "cameraMonitorViewId");
 
             detector.startDetection();

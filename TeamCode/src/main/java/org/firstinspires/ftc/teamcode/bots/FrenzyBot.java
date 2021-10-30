@@ -20,9 +20,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx rotator = null;
     private Servo dropperServo = null;
     private static final String TAG = "FrenzyBot";
-    private static int LIFT_FULL_EXTENSION = -1400;
+    private static int LIFT_FULL_EXTENSION = -1380;
     private static int LIFT_HALF_EXTENSION = -650;
-    private static int LIFT_NO_EXTENSION = -10;
+    private static int LIFT_NO_EXTENSION = 0;
     private static double LIFT_SPEED = 0.8;
 
     // Dropper Servo positions
@@ -88,6 +88,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
+    @Override
     public GameElement getDetection() {
         detectedElement = detector.getGameElement();
         telemetry.addData("Element: ", detectedElement);

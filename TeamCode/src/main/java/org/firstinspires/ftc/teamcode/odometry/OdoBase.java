@@ -263,12 +263,12 @@ public class OdoBase extends LinearOpMode {
         telemetry.update();
     }
 
-    private void moveStraight(BotMoveProfile profile){
+    protected void moveStraight(BotMoveProfile profile){
         Log.d(TAG, String.format("Straight: %s", profile.toString()));
         bot.curveTo(profile, null);
     }
 
-    private void spin(BotMoveProfile profile){
+    protected void spin(BotMoveProfile profile){
         try {
             if (profile != null) {
                 Log.d(TAG, String.format("Spin. Angle change: %.2f", profile.getAngleChange()));

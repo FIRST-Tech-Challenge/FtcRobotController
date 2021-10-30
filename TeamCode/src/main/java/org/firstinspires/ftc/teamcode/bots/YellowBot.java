@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.CVRec.GameElement;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
 import org.firstinspires.ftc.teamcode.calibration.DiagCalibConfig;
@@ -1402,6 +1403,11 @@ public class YellowBot implements OdoBot {
 
     public int getEncoderDirection(){
         return 1;
+    }
+
+    @Override
+    public GameElement getDetection() {
+        return null;
     }
 
     public void diagTo(BotMoveProfile profile) {

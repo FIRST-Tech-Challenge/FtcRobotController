@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CVRec.GameElement;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
 import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
@@ -49,4 +50,5 @@ public interface OdoBot {
     void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib);
     void reverseEncoderDirection();
     int getEncoderDirection();
+    GameElement getDetection();
 }

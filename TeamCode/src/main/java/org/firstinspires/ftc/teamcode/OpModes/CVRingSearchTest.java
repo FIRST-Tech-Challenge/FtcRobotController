@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
 import org.firstinspires.ftc.teamcode.CVRec.CVRoi;
+import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
@@ -41,7 +42,7 @@ public class CVRingSearchTest extends LinearOpMode {
 
             gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
 
-            detector = new CVDetector(this.hardwareMap);
+            detector = new CVDetector(this.hardwareMap, AutoRoute.NAME_RED);
             detector.init(CVDetectMode.Search, "wcam", "cameraMonitorViewId");
 
             detector.startDetection();
