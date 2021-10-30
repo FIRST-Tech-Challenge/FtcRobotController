@@ -33,9 +33,7 @@ public class Teleop extends LinearOpMode {
             robot.setFrontLeftDriveMotor(frontLeftPower);
             robot.setFrontRightDriveMotor(frontRightPower);
             robot.setRearLeftDriveMotor(rearLeftPower);
-            robot.setFrontRightDriveMotor(rearRightPower);
-
-
+            robot.setRearRightDriveMotor(rearRightPower);
         }
     }
 }
