@@ -481,8 +481,11 @@ public class RobotClass {
     public void turnToHeading (double speed, double targetHeading, int tolerance) {
         double currentHeading = getIntegratedHeading();
 
-        while (currentHeading > targetHeading + tolerance && currentHeading < targetHeading - tolerance) {
+        while (currentHeading > targetHeading + tolerance || currentHeading < targetHeading - tolerance) {
             currentHeading = getIntegratedHeading();
+            telemetry.addData("Turning to: ", 90);
+            telemetry.addData("Current Heading: ", imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle);
+            telemetry.addData("Integrated Heading: ", getIntegratedHeading());
             if (currentHeading > targetHeading) {
                 if (abs(currentHeading - targetHeading) > (tolerance+1)*2) {
                     setSpeedForTurnLeft(speed);
@@ -491,16 +494,36 @@ public class RobotClass {
                 }
             } else if (currentHeading < targetHeading) {
                 if (abs(currentHeading - targetHeading) > tolerance*2) {
-                    setSpeedForTurnLeft(speed);
+                    setSpeedForTurnRight(speed);
                 } else if (abs(currentHeading - targetHeading) <= (tolerance+1)*2) {
-                    setSpeedForTurnLeft(speed/2);
+                    setSpeedForTurnRight(speed/2);
                 }
             }
         }
         stopMotors();
     }
 
+    public void turnToHeadingSloppy (double speed, double targetHeading) { // -175 175
+        motorSetMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (targetHeading > 0) {
+            setSpeedForTurnRight(speed);
+            while (getAngleFromGyro() < targetHeading) {
+                telemetry.addData("Current Angle: ",getAngleFromGyro());
+                telemetry.addData("Target Heading: ",targetHeading);
+            }
+        } else if (targetHeading < 0) {
+            setSpeedForTurnLeft(speed);
+            while (getAngleFromGyro() > targetHeading) {
+                telemetry.addData("Current Angle: ",getAngleFromGyro());
+                telemetry.addData("Target Heading: ",targetHeading);
+            }
+        }
+        stopMotors();
+    }
+/*
+if 360-abs(currentHeading)-abs(targetHeading) > 180
 
+ */
 
     protected void motorSetMode(DcMotor.RunMode runMode){
         frontLeft.setMode(runMode);

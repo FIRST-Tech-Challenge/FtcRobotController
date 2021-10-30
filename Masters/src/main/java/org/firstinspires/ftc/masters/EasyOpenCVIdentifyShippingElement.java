@@ -12,7 +12,7 @@
  * copies or substantial portions of the Software.
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -27,7 +27,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
-import org.opencv.core.CvException;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -82,7 +81,7 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
 
             @Override
             public void onError(int errorCode) {
-                telemetry.addLine("can't open camera");
+                telemetry.addLine("Can't open camera");
                 telemetry.update();
                 /*
                  * This will be called if the camera could not be opened
@@ -133,9 +132,9 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(85, 176);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(50, 176);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(120, 176);
+        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(85, 176);
+        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(50, 176);
+        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(120, 176);
 
 
         static final int REGION_WIDTH = 30;
@@ -144,24 +143,24 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         final int FREIGHT_PRESENT_THRESHOLD = 150;
 
         Point region1_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
+                REGION1_TOP_LEFT_ANCHOR_POINT.x,
+                REGION1_TOP_LEFT_ANCHOR_POINT.y);
         Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION1_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION1_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
         Point region2_pointA = new Point(
-                REGION2_TOPLEFT_ANCHOR_POINT.x,
-                REGION2_TOPLEFT_ANCHOR_POINT.y);
+                REGION2_TOP_LEFT_ANCHOR_POINT.x,
+                REGION2_TOP_LEFT_ANCHOR_POINT.y);
         Point region2_pointB = new Point(
-                REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION2_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION2_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         Point region3_pointA = new Point(
-                REGION3_TOPLEFT_ANCHOR_POINT.x,
-                REGION3_TOPLEFT_ANCHOR_POINT.y);
+                REGION3_TOP_LEFT_ANCHOR_POINT.x,
+                REGION3_TOP_LEFT_ANCHOR_POINT.y);
         Point region3_pointB = new Point(
-                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION3_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION3_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         /*
          * Working variables
