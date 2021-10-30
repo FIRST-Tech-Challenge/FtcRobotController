@@ -52,7 +52,7 @@ jobs:
         git checkout gh-pages
         rm -rf ./javadoc/${BRANCH_NAME}/ || true
         mv ../javadoc-output/ ./javadoc/${BRANCH_NAME}
-        rm -rf ./reports/${BRANCH_NAME} || true
+        rm -rf ./reports/${BRANCH_NAME}/ || true
         mv ../reports/ ./reports/${BRANCH_NAME}
         mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports
         git add .
