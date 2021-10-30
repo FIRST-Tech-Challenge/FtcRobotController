@@ -51,10 +51,10 @@ jobs:
         git fetch -v
         git checkout gh-pages
         rm -rf ./javadoc/${BRANCH_NAME}/ || true
-        mv ../javadoc-output/ ./javadoc/${BRANCH_NAME}
+        mv ../javadoc-output/ ./javadoc/${BRANCH_NAME}/
         rm -rf ./reports/${BRANCH_NAME}/ || true
-        mv ../reports/ ./reports/${BRANCH_NAME}
-        mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports
+        mv ../reports/ ./reports/${BRANCH_NAME}/
+        mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports/
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
           Information:
