@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Control;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Robot;
 
 public class Control extends Subsystem {
 
