@@ -17,7 +17,7 @@ public class Specifications extends RobotSpecifications {
                 ), MecanumDrive.class,
                 1120, 1, 3.78, 11.9);
 
-        this.useVelocity = false;
+        this.useVelocity = true;
         this.maxVelocity = 3120;
         this.debugModeEnabled = true;
     }
