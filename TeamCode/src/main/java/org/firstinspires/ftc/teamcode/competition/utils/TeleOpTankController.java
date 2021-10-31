@@ -54,6 +54,11 @@ public class TeleOpTankController extends GamepadExtended {
         */
     }
 
+    @Override
+    public void stop() {
+
+    }
+
     public Tank getTank() {
         return TANK;
     }

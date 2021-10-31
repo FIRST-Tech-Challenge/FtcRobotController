@@ -50,4 +50,9 @@ public class TwoWDRobotWithSpinnerAndLift extends GamepadExtended {
 
         else { lift.setPower(0.0); }
     }
+
+    @Override
+    public void stop() {
+
+    }
 }

@@ -43,4 +43,9 @@ public class TankRobot extends GamepadExtended {
         else if (gamepad1.right_trigger >= 0.25) { spinner.setPower(gamepad1.left_stick_y); }
         */
     }
+
+    @Override
+    public void stop() {
+
+    }
 }

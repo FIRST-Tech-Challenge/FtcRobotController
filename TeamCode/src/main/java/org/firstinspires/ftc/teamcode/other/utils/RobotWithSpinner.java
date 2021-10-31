@@ -40,4 +40,9 @@ public class RobotWithSpinner extends GamepadExtended {
         }
         else if (gamepad1.right_trigger >= 0.25) { spinner.setPower(gamepad1.right_trigger); }
     }
+
+    @Override
+    public void stop() {
+
+    }
 }

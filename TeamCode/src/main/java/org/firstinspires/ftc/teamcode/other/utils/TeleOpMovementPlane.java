@@ -27,6 +27,11 @@ public class TeleOpMovementPlane extends GamepadExtended {
 
     }
 
+    @Override
+    public void stop() {
+
+    }
+
     public Tank getDrivetrain() {
         return DRIVETRAIN;
     }

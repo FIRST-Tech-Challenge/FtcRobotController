@@ -17,4 +17,7 @@ public abstract class GamepadExtended {
     }
 
     public abstract void main();
+
+    public abstract void stop();
+
 }
