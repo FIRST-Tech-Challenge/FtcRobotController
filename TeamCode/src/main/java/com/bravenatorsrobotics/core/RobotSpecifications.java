@@ -31,7 +31,8 @@ public class RobotSpecifications {
      */
     public final double wheelDiameterInches;
     /**
-     * The Pivot diameter inches. (Distance between wheels on the same side from axle to axle).
+     * The Pivot diameter inches. (Distance between edge of two wheels on the opposite side).
+     * HINT: (To find this amount, measure from the outside of both rear wheels)
      */
     public final double pivotDiameterInches;
 

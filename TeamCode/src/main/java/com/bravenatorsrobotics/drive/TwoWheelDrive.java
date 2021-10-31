@@ -69,13 +69,14 @@ public class TwoWheelDrive extends AbstractDrive {
 
     @Override
     public void TurnDegrees(double power, int degrees, TurnDirection turnDirection) {
-        // Calculate Distance
-        double distance = Math.abs(degrees) * (robot.specifications.pivotDiameterInches / 45.0) * 2.0;
+        // Calculate the Distance in Inches
+        double distance = Math.abs(degrees) / (pivotCircleCircumfrence * 360.0);
 
         // Reverse if turning counter-clockwise
-        distance *= turnDirection == TurnDirection.COUNTER_CLOCKWISE ? 1 : -1;
+        if(turnDirection == TurnDirection.COUNTER_CLOCKWISE)
+            distance = -distance;
 
-        // Drive the sides in different directions the specified distances
+        // Drive the sides in different direction of the specified distance
         this.DriveByInches(power, -distance, distance);
     }
 }

@@ -8,12 +8,15 @@ public abstract class AbstractDrive {
     protected final Robot<? extends AbstractDrive> robot;
 
     protected final double ticksPerInch;
+    protected final double pivotCircleCircumfrence;
 
     public AbstractDrive(Robot<? extends AbstractDrive> robot) {
         this.robot = robot;
 
         this.ticksPerInch = (robot.specifications.ticksPerMotorRev * robot.specifications.driveGearReduction) /
                 (robot.specifications.wheelDiameterInches * Math.PI);
+
+        this.pivotCircleCircumfrence = robot.specifications.pivotDiameterInches * Math.PI;
     }
 
     public enum TurnDirection {
