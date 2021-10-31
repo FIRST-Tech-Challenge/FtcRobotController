@@ -56,9 +56,9 @@ jobs:
         rm -rf ./reports/${BRANCH_NAME}/ || true
         mkdir -p ./reports/${BRANCH_NAME}/
         mv ../reports/ ./reports/${BRANCH_NAME}/
+        mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports/
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
-
         Information:
             Repository: $GITHUB_REPOSITORY
             Branch: $GITHUB_REF
