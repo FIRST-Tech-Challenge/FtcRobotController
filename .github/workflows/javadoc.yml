@@ -54,7 +54,8 @@ jobs:
         mkdir -p ./javadocs/${BRANCH_NAME}/
         mv ../javadoc-output/ ./javadocs/${BRANCH_NAME}/
         mv ./javadocs/${BRANCH_NAME}/javadoc-output/ ./javadocs/${BRANCH_NAME}/javadoc
-        mv ./javadocs/${BRANCH_NAME}/javadoc -r ./javadocs/${BRANCH_NAME}/
+        cp -rp ./javadocs/${BRANCH_NAME}/javadoc ./javadocs/${BRANCH_NAME}/
+        rm -rf ./javadocs/${BRANCH_NAME}/javadoc
         rm -rf ./reports/${BRANCH_NAME}/ || true
         mkdir -p ./reports/${BRANCH_NAME}/
         mv ../reports/ ./reports/${BRANCH_NAME}/
