@@ -7,6 +7,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 import java.lang.Math;
+import androidx.annotation.NonNull;
 public class pipeline1Simulator extends OpenCvPipeline {
     private final Telemetry telemetry;
     private final Scalar red = new Scalar(255,0,0);
@@ -142,7 +143,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
      * @param val3
      * @return Most different, 1-3
      */
-    public static int mostDifferent(double val1, double val2, double val3) {
+    public static int mostDifferent(@NonNull double val1, @NonNull double val2, @NonNull double val3) {
         double valMean = (val1+val2+val3)/3;
         double[] array = {Math.abs(valMean - val1),Math.abs(valMean - val2),Math.abs(valMean - val3)};
         int max = array[0] > array[1] ? 1 : 2;
