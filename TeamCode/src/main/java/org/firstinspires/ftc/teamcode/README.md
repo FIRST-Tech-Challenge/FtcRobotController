@@ -64,3 +64,5 @@ complexMotorController.stopMotor(motor);
 ```
 
 **Note: Reverse movement requires a negative direction, not speed**
+
+Other note: The original TeamCode readme can be found [here](https://github.com/FIRST-Tech-Challenge/FtcRobotController/blob/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/readme.md)

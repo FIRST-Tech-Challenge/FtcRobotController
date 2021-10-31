@@ -409,7 +409,7 @@ public class FtcRobotControllerActivity extends Activity
     // check to see if there is a preferred Wi-Fi to use.
     checkPreferredChannel();
 
-    // AnnotatedHooksClassFilter.getInstance().callOnCreateMethods(this);
+    AnnotatedHooksClassFilter.getInstance().callOnCreateMethods(this);
   }
 
   protected UpdateUI createUpdateUI() {

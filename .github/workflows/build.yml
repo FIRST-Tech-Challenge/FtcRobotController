@@ -1,0 +1,52 @@
+name: Gradle Java Build
+on:
+  push:
+    branches:
+      - 'master'
+      - 'testing-*'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up the JDK environment
+      uses: actions/setup-java@v2
+      with:
+        java-version: 16
+        distribution: 'adopt'
+        cache: gradle
+
+    - name: Gradle version
+      run: ./gradlew --version
+
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: |
+          build
+          --info
+          --warning-mode all
+          --scan
+          --stacktrace
+
+    - name: Upload the FtcRobotController build
+      uses: actions/upload-artifact@v2
+      with:
+        name: FtcRobotController-Build
+        path: |
+          ./FtcRobotController/build/outputs/
+          ./FtcRobotController/build/reports/
+
+    - name: Upload the TeamCode build
+      uses: actions/upload-artifact@v2
+      with:
+        name: TeamCode-Build
+        path: |
+          ./TeamCode/build/outputs/
+          ./TeamCode/build/reports/
