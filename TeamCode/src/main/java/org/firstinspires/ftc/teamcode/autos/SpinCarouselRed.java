@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
 import org.firstinspires.ftc.teamcode.chassis.MecanumChassis;
 
-@Autonomous(name = "Spin Carousel", group = "Sensor")
-public class SpinCarousel extends LinearOpMode {
+@Autonomous(name = "Spin Carousel (Red)", group = "Sensor")
+public class SpinCarouselRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();
     private Carousel carousel = new Carousel();
@@ -22,6 +22,12 @@ public class SpinCarousel extends LinearOpMode {
         while (opModeIsActive()) {
             // Start button is pressed
 
+            // Move to the carousel
+            chassis.strafeLeftWithEncoders(0.6,700);
+            chassis.moveBackwardWithEncoders(0.6, 2000);
+            chassis.strafeRightWithEncoders(0.6,300);
+
+            // Spin the carousel
             carousel.turnCarousel();
             delay(2000);
             carousel.carousel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -30,6 +36,10 @@ public class SpinCarousel extends LinearOpMode {
             carousel.carousel.setPower(-0.55);
             delay(300);
             carousel.carousel.setPower(0);
+
+            // Move into the warehouse
+            chassis.strafeLeftWithEncoders(0.6,50);
+            chassis.moveForwardWithEncoders(1,5500);
 
 
             // End of auto
