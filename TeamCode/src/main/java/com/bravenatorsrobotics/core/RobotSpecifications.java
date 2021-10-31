@@ -39,7 +39,7 @@ public class RobotSpecifications {
     /**
      * If the drive system should use velocity. (Recommended).
      */
-    public boolean useVelocity = false;
+    public boolean useVelocity = true;
     /**
      * The maximum amount of velocity the drive system motors can spin at. (Run the max velocity test to figure out).
      */
