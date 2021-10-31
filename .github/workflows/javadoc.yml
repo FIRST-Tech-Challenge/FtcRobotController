@@ -59,6 +59,8 @@ jobs:
         mv ../reports/ ./reports/${BRANCH_NAME}/
         mv ./reports/${BRANCH_NAME}/reports ./reports/${BRANCH_NAME}/team-reports
         mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports/
+        mv ./reports/master/team-reports/lint-results-debug.html ./reports/master/team-reports/index.html
+        mv ./reports/master/sdk-reports/lint-results-debug.html ./reports/master/sdk-reports/index.html
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
         Information:
