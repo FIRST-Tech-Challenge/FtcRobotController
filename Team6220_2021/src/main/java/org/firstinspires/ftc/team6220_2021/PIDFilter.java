@@ -35,7 +35,6 @@ public class PIDFilter implements Filter
     public double sum = 0;
     public double dV  = 0;
 
-
     // Update with new value
     public void roll(double newValue)
     {
@@ -47,7 +46,6 @@ public class PIDFilter implements Filter
         values[1] = values[0];
         values[0] = newValue;
     }
-
 
     public double getFilteredValue()
     {

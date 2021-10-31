@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "speedtest", group = "TeleOp")
-public class speedtest extends LinearOpMode {
+public class SpeedTest extends LinearOpMode {
 
     //Motors
     DcMotor motorBackLeft;
@@ -63,8 +63,6 @@ public class speedtest extends LinearOpMode {
             telemetry.addData("motorFrontLeft: ", motorFrontLeft.getPower());
             telemetry.addData("motorFrontRight: ", motorFrontRight.getPower());
             telemetry.update();
-
-
         }
     }
 }

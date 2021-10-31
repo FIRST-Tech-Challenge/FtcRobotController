@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TankDriveTest01", group = "TeleOp")
-public class TankDriveTest01 extends LinearOpMode {
+public class TankDriveTest01 extends MasterTeleOp {
     // Declaring motors and servos
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
@@ -52,17 +52,18 @@ public class TankDriveTest01 extends LinearOpMode {
 
         //Declare variables
         int position = 0;
-        boolean ispressed=false;
+        boolean isPressed = false;
         double motorPower = 0.4;
         double increase = 1;
         double oldPosition = 0;
 
-        //Set run mode of motors (encoders --> run to position)
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Set run mode of arm motor (encoders --> run to position)
         motorArm.setTargetPosition(0);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -72,15 +73,10 @@ public class TankDriveTest01 extends LinearOpMode {
 
         //Set power of motors
         while (opModeIsActive()) {
-            motorBackLeft.setPower((gamepad1.left_stick_y));
-            motorFrontLeft.setPower((gamepad1.left_stick_y));
-            motorBackRight.setPower((gamepad1.left_stick_y));
-            motorFrontRight.setPower((gamepad1.left_stick_y));
-
-            motorBackRight.setPower((gamepad1.right_stick_x));
-            motorFrontRight.setPower((gamepad1.right_stick_x));
-            motorBackLeft.setPower(-(gamepad1.right_stick_x));
-            motorFrontLeft.setPower(-(gamepad1.right_stick_x));
+            motorBackLeft.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x);
+            motorFrontLeft.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x);
+            motorBackRight.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x);
+            motorFrontRight.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x);
 
             //Use switch to declare values for each arm position
             switch (position) {
@@ -119,48 +115,46 @@ public class TankDriveTest01 extends LinearOpMode {
                     motorArm.setPower(motorPower);
                     break;
             }
-            
+
+            // checks old position of arm, right when it goes over top of robot from front to back, it reduces speed
             if (gamepad1.dpad_up){
-                if (!ispressed) {
+                if (!isPressed) {
                     if (position == 3) {
                         motorPower = 0.15;
                     }
                     position += increase;
                 }
-                ispressed=true;
+                isPressed = true;
             }
 
+            // checks old arm position, when it goes over the top of the robot from back to front, it reduces speed
             if (!gamepad1.dpad_up && !gamepad1.dpad_down){
-                ispressed=false;
+                isPressed = false;
             }
-
             else if (gamepad1.dpad_down){
-                if (!ispressed) {
+                if (!isPressed) {
                     if (position == 3) {
                         motorPower = 0.15;
                     }
                     position -= increase;
                 }
-                ispressed=true;
+                isPressed = true;
             }
 
             else {
                 motorPower = 0.5;
             }
 
-            if (position<0){
-                position=0;
+            if (position < 0){
+                position = 0;
             }
-
-            if (position>6){
-                position=6;
+            else if (position > 6){
+                position = 6;
             }
-
 
             if(gamepad1.x) {
                 servoGrabber.setPosition(0.3);
             }
-
             else if(gamepad1.a) {
                 servoGrabber.setPosition(0.7);
             }
@@ -172,7 +166,7 @@ public class TankDriveTest01 extends LinearOpMode {
                     x += 0.05;
                     telemetry.addData("duckPower", motorDuck.getPower());
                     telemetry.update();
-                    if (x>=0.85){
+                    if (x >= 0.85){
                         pauseMillis(1000);
                         motorDuck.setPower(-.1);
                         pauseMillis(30);
@@ -182,14 +176,6 @@ public class TankDriveTest01 extends LinearOpMode {
                     }
                 }
             }
-
-        }
-    }
-
-    public void pauseMillis(double time) {
-        double startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime < time && opModeIsActive()) {
-            idle();
         }
     }
 }

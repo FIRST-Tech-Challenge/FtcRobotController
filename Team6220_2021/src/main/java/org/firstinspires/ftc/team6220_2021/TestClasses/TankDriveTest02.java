@@ -11,8 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "TankDriveTest02", group = "TeleOp")
-public class TankDriveTest02 extends LinearOpMode {
-
+public class TankDriveTest02 extends MasterTeleOp {
     //Motors
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
@@ -20,13 +19,11 @@ public class TankDriveTest02 extends LinearOpMode {
     DcMotor motorFrontRight;
     DcMotor motorDuck;
 
-
     //Other Devices
     BNO055IMU imu;
 
     @Override
     public void runOpMode() {
-
         //Initialize
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");

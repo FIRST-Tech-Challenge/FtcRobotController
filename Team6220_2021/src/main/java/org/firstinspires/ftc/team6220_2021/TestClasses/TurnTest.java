@@ -62,20 +62,6 @@ public class TurnTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
-            /*if (gamepad1.dpad_up) {
-                targetAngle = 360;
-            }
-            else if (gamepad1.dpad_right) {
-                targetAngle = 90;
-            }
-            else if (gamepad1.dpad_down) {
-                targetAngle = 180;
-            }
-            else if (gamepad1.dpad_left) {
-                targetAngle = 270;
-            }*/
-
             double startTime = System.currentTimeMillis();
             while (System.currentTimeMillis() - startTime < 3000 && opModeIsActive()) {
                 idle();
@@ -85,7 +71,6 @@ public class TurnTest extends LinearOpMode {
                 currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
                 angleTraveled = currentAngle - startAngle;
-                //angleLeft = targetAngle - angleTraveled;
 
                 motorFrontRight.setPower(-0.5);
                 motorFrontLeft.setPower(0.5);

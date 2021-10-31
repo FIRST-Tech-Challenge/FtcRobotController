@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "Ticks Per Revolution", group = "TeleOp")
 public class TicksPerRevolutionTest extends LinearOpMode {
-
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
@@ -44,7 +43,6 @@ public class TicksPerRevolutionTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-
             if (gamepad1.dpad_up) {
                 input = 537.6 * (18/4);
                 int value = (int)input;
@@ -58,7 +56,6 @@ public class TicksPerRevolutionTest extends LinearOpMode {
                 motorBackRight.setPower(0.7);
                 motorBackLeft.setPower(0.7);
             }
-
             else if (gamepad1.dpad_right) {
                 input = 537.6 * (18/16);
                 int value = (int)input;
@@ -75,7 +72,6 @@ public class TicksPerRevolutionTest extends LinearOpMode {
                     motorBackLeft.setPower(0.7);
                 }
             }
-
             else if (gamepad1.dpad_down) {
                 input = 537.6 * (18/8);
                 int value = (int)input;
@@ -89,7 +85,6 @@ public class TicksPerRevolutionTest extends LinearOpMode {
                 motorBackRight.setPower(-0.7);
                 motorBackLeft.setPower(0.7);
             }
-
             else if (gamepad1.dpad_left) {
                 input = 537.6 * (18/12);
                 int value = (int)input;
