@@ -1,7 +1,9 @@
 name: Javadoc Generation
 on:
   push:
-    branches: master
+    branches:
+      - 'master'
+      - 'testing-*'
   workflow_dispatch:
 
 jobs:
@@ -9,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout branch
       uses: actions/checkout@v2
 
     - name: Set up the JDK environment
@@ -19,7 +21,7 @@ jobs:
         distribution: 'adopt'
         cache: gradle
 
-    - name: Gradle version
+    - name: Check Gradle version
       run: ./gradlew --version
 
     - name: Build with Gradle
@@ -40,6 +42,7 @@ jobs:
       run: |
         git config user.name "GitHub Actions Bot"
         git config user.email "actions@github.com"
+        export BRANCH_NAME=$(echo $GITHUB_REF | sed -e "s/refs\/heads\///")
         mv javadoc-output/ ..
         mv ./TeamCode/build/reports/  ..
         mkdir ../sdk-reports/
@@ -47,16 +50,19 @@ jobs:
         git remote set-branches origin '*'
         git fetch -v
         git checkout gh-pages
-        rm -rf javadoc/ || true
-        mv ../javadoc-output/ ./javadoc/
-        rm -rf reports/ || true
-        mv ../reports/ .
-        mv ../sdk-reports/ ./reports/sdk-reports
+        rm -rf ./javadocs/${BRANCH_NAME}/ || true
+        mkdir -p ./javadocs/${BRANCH_NAME}/
+        mv ../javadoc-output/ ./javadocs/${BRANCH_NAME}/
+        rm -rf ./reports/${BRANCH_NAME}/ || true
+        mkdir -p ./reports/${BRANCH_NAME}/
+        mv ../reports/ ./reports/${BRANCH_NAME}/
+        mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports/
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
-          Information:
-          Repository: $GITHUB_REPOSITORY
-          Branch: $GITHUB_REF
-          Commit: $GITHUB_SHA
-          Who triggered action: $GITHUB_ACTOR"
+
+        Information:
+            Repository: $GITHUB_REPOSITORY
+            Branch: $GITHUB_REF
+            Commit: $GITHUB_SHA
+            Who triggered action: $GITHUB_ACTOR"
         git push
