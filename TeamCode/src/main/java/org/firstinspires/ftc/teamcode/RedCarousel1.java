@@ -45,7 +45,6 @@ import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
 import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
 
-
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
  * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
@@ -59,9 +58,16 @@ import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="RedPark", group="Linear Opmode")
+@Autonomous(name="RedCarousel1", group="Linear Opmode")
 
-public class RedPark extends DriveMethods {
+public class RedCarousel1 extends DriveMethods {
+    double leftY;
+    double leftX;
+    double rightX;
+    double rightTrigger1;
+    double carouselPosition;
+    boolean xButton;
+
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -75,7 +81,7 @@ public class RedPark extends DriveMethods {
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
         motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
-        servoCarousel = hardwareMap.get(Servo.class, "carousel");
+        servoCarousel = hardwareMap.get(Servo .class, "carousel");
 
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -85,11 +91,26 @@ public class RedPark extends DriveMethods {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        driveForDistance(.8,.3, Direction.FORWARD);
-        driveForDistance(.5,.3,Direction.LEFT);
+
+        driveForDistance(.3,.3,Direction.BACKWARD);
+        driveForDistance(.3,.3, Direction.RIGHT);
+        driveForDistance(.1, .3,Direction.FORWARD);
+        servoCarousel.setPosition(.6);
+        driveDirection(.05,Direction.FORWARD);
+        sleep(3500);
+        servoCarousel.setPosition(.5);
+        driveDirection(0,Direction.FORWARD);
+        driveForDistance(.05,.3, Direction.BACKWARD);
+        driveForDistance(.2,.3,Direction.LEFT);
+        rotateToPosition(.3,90);
+        driveForDistance(.7,.3,Direction.FORWARD);
+        driveForDistance(.5,.3,Direction.RIGHT);
+        driveForDistance(1,.3,Direction.FORWARD);
+        driveForDistance(.1,.3,Direction.RIGHT);
         driveForDistance(.6,.3,Direction.FORWARD);
 
-        // run until the end of the match (driver presses STOP)
+
+
 
     }
 }

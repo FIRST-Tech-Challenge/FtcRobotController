@@ -70,6 +70,7 @@ public class C1ChassisDrive extends DriveMethods {
     double leftX;
     double rightX;
     double rightTrigger1;
+    double leftTrigger1;
     double carouselPosition;
     boolean xButton;
 
@@ -103,6 +104,7 @@ public class C1ChassisDrive extends DriveMethods {
             leftX = gamepad1.left_stick_x;
             rightX = gamepad1.right_stick_x;
             rightTrigger1 = gamepad1.right_trigger;
+            leftTrigger1 = gamepad1.left_trigger;
             xButton = gamepad1.x;
 
 
@@ -115,24 +117,44 @@ public class C1ChassisDrive extends DriveMethods {
 
 
             //servos
-            carouselPosition = 0.5 + (rightTrigger1 / 2);
-                //constrains servo motion to correct direction
-            if (carouselPosition > .6) {
-                carouselPosition = .6;
-            }
-            servoCarousel.setPosition(carouselPosition);
-            if (xButton) {
-                servoCarousel.setPosition(1);
-            }
+//            carouselPosition = 0.5 + (rightTrigger1 / 2);
+//                //constrains servo motion to correct direction
+//            if (carouselPosition > .6) {
+//                carouselPosition = .6;
+//            }
+//            servoCarousel.setPosition(carouselPosition);
+//            if (xButton) {
+//                servoCarousel.setPosition(1);
+//            }
 
                 //gently pushes robot backward whilst rightTrigger1 engaged
             if (rightTrigger1 > 0) {
-                driveDirection(.2, Direction.FORWARD);
+                servoCarousel.setPosition(0.6);
+                while(rightTrigger1 > 0){
+                    rightTrigger1 = gamepad1.right_trigger;
+                    driveDirection(.2, Direction.FORWARD);
+                }
+                driveForTime(0.2,250, Direction.BACKWARD);
+                servoCarousel.setPosition(0.5);
             } else {
                 driveDirection(0, Direction.FORWARD);
             }
 
-            telemetry.addLine("Carousel Speed" + rightTrigger1);
+
+
+            if (leftTrigger1 > 0) {
+                servoCarousel.setPosition(0.4);
+                while(leftTrigger1 > 0){
+                    leftTrigger1 = gamepad1.left_trigger;
+                    driveDirection(.2, Direction.FORWARD);
+                }
+                driveForTime(0.2,250, Direction.BACKWARD);
+                servoCarousel.setPosition(0.5);
+            } else {
+                driveDirection(0, Direction.FORWARD);
+            }
+
+            telemetry.addLine("Run Time: " + runtime.toString());
             telemetry.update();
         }
     }
