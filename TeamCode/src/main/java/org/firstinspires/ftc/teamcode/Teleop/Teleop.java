@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
+import java.io.IOException;
+
 @TeleOp(name = "Teleop")
 public class Teleop extends LinearOpMode {
     private Robot robot;
@@ -19,50 +21,72 @@ public class Teleop extends LinearOpMode {
 
     ElapsedTime timer;
 
+    private double robotAngle;
+    private boolean isIntakeOn = false;
+
+    private void initOpMode() {
+        //Initialize DC motor objects
+        timer = new ElapsedTime();
+        robot = new Robot(this, timer);
+
+        timeCurrent = timer.nanoseconds();
+        timePre = timeCurrent;
+
+        telemetry.addData("Wait for start", "");
+        telemetry.update();
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
+        initOpMode();
+
         ElapsedTime timer = new ElapsedTime();
-        // Declare our motors
-        // Make sure your ID's match your configuration
-        DcMotor frontLeft = hardwareMap.dcMotor.get("fl");
-        DcMotor backLeft = hardwareMap.dcMotor.get("bl");
-        DcMotor frontRight = hardwareMap.dcMotor.get("fr");
-        DcMotor backRight = hardwareMap.dcMotor.get("br");
-        // Servo servo = hardwareMap.servo.get("servo1");
 
-        Robot robot = new Robot(this, timer);
         GamePadConfig gamePadConfig = new GamePadConfig();
-
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
         if (isStopRequested()) return;
 
+        telemetry.clearAll();
+        timeCurrent = timer.nanoseconds();
+        timePre = timeCurrent;
+
         while (opModeIsActive()) { // clearer nomenclature for variables
             robot.getGamePadInputs();
 
             timeCurrent = timer.nanoseconds();
+            deltaT = timeCurrent - timePre;
+            timePre = timeCurrent;
 
+            double[] motorPowers;
+            robotAngle = robot.imu.getAngularOrientation().firstAngle;
+            motorPowers = robot.drive.calcMotorPowers(robot.gamePadConfig.leftStickX*0.5, robot.gamePadConfig.leftStickY*0.5, robot.gamePadConfig.rightStickX*0.5);
+            robot.drive.setDrivePowers(motorPowers);
 
-            if (gamepad1.a) {
-                if (!gamePadConfig.isbButtonPressedPrev) {
+            robot.drive.setDrivePowers(motorPowers);
+
+            //Toggle intake regular
+            if (robot.gamePadConfig.aButton && !robot.gamePadConfig.isaButtonPressedPrev){
+                if(isIntakeOn){
+                    robot.control.setIntake(false);
+                    isIntakeOn = false;
+                }
+                else{
                     robot.control.setIntake(true);
-                    if (gamePadConfig.isbButtonPressedPrev) {
-                        robot.control.setIntake(false);
-                    }
+                    isIntakeOn = true;
                 }
             }
 
-            if (gamepad1.b) {
-                if (!gamePadConfig.isbButtonPressedPrev) {
-                    robot.control.setIntakeReverse(true);
-                }
-                if (gamePadConfig.isbButtonPressedPrev) {
+            //Toggle intake REVERSE
+            if (robot.gamePadConfig.bButton && !robot.gamePadConfig.isbButtonPressedPrev){
+                if(isIntakeOn){
                     robot.control.setIntakeReverse(false);
+                    isIntakeOn = false;
+                }
+                else{
+                    robot.control.setIntakeReverse(true);
+                    isIntakeOn = true;
                 }
             }
         }

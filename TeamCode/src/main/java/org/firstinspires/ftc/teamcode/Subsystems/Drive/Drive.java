@@ -57,7 +57,6 @@ public class Drive extends Subsystem {
      * @see BNO055IMU
      */
     public Drive(Robot robot, List<DcMotorEx> motors, BNO055IMU imu) {
-        super(robot, "Drive");
         telemetry.telemetry(3, "motors init started");
         this.frontLeft = motors.get(0);
         this.frontRight = motors.get(1);
@@ -968,5 +967,11 @@ public class Drive extends Subsystem {
             targetSpeed = speedOffset;
         }
         return targetSpeed;
+    }
+    public void setDrivePowers(double[] powers) {
+        frontLeft.setPower(powers[0]);
+        frontRight.setPower(powers[1]);
+        rearLeft.setPower(powers[2]);
+        rearRight.setPower(powers[3]);
     }
 }

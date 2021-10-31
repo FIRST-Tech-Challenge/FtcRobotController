@@ -79,7 +79,7 @@ public class Robot {
     //Sensors
     public BNO055IMU imu;
 
-    GamePadConfig gamePadConfig = new GamePadConfig();
+    public GamePadConfig gamePadConfig;
 
     private double joystickDeadZone = 0.1;
 
@@ -104,6 +104,8 @@ public class Robot {
         this.telemetry = new QuickTelemetry(oldTelemetry);
         this.hardwareMap = opMode.hardwareMap;
         this.timer = timer;
+
+        this.gamePadConfig = new GamePadConfig();
 
         this.telemetry.telemetry(1, MainConfig.getName(), "v" + MainConfig.getVersion());
 
@@ -184,7 +186,7 @@ public class Robot {
         frontRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearLeftDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
+        intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         HardwareMap.DeviceMapping<Servo> servo = hardwareMap.servo;
 
