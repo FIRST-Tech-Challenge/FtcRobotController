@@ -98,14 +98,14 @@ public class Lift {
     }
 
     private void arm() {
-        if (curPos >= 810) { // completely away from intake interference
+        if (curPos >= (double) 850) { // completely away from intake interference
             rBumpReader.readValue();
             if (rBumpReader.getState()) {
                 armServo.setPosition(0.07); // dump pos
             } else {
                 armServo.setPosition(0.76); // lift pos
             }
-        } else if (curPos >= 50) { // if it is away from load zone but still interfering
+        } else if (curPos >= (double) 50) { // if it is away from load zone but still interfering
             armServo.setPosition(0.85); // in between load and lift pos
         } else { // in load zone
             armServo.setPosition(0.88); // load pos
