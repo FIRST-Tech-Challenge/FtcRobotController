@@ -68,6 +68,7 @@ public class Lift {
                 liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 running = false;
             }
+            aReader.readValue();
             if (aReader.wasJustReleased()) {
                 first = true;
                 curPos = 10;
@@ -82,9 +83,12 @@ public class Lift {
                     liftMotor.setPower(1);
                     running = true;
                     first = false;
-                } else { if (topSensor.getState()) {
+                } else {
+                    if (topSensor.getState()) {
                         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    } else if (curPos >= 10) { first = true; }
+                    } else if (curPos >= 10) {
+                        first = true;
+                    }
                     liftMotor.setPower(0);
                 }
             }
@@ -94,23 +98,17 @@ public class Lift {
     }
 
     private void arm() {
-        final int topLiftPosition = 810;
-        final int bottomLiftPosition = 50;
-        final double loadServoPosition = 0.88;
-        final double middleLoadServoPosition = 0.85;
-        final double normalServoPosition = 0.76;
-        final double dumpServoPosition = 0.07;
-        if (curPos >= topLiftPosition) {
+        if (curPos >= 810) { // completely away from intake interference
             rBumpReader.readValue();
             if (rBumpReader.getState()) {
-                armServo.setPosition(dumpServoPosition);
+                armServo.setPosition(0.07); // dump pos
             } else {
-                armServo.setPosition(normalServoPosition);
+                armServo.setPosition(0.76); // lift pos
             }
-        } else if (curPos >= bottomLiftPosition) {
-            armServo.setPosition(middleLoadServoPosition);
-        } else {
-            armServo.setPosition(loadServoPosition);
+        } else if (curPos >= 50) { // if it is away from load zone but still interfering
+            armServo.setPosition(0.85); // in between load and lift pos
+        } else { // in load zone
+            armServo.setPosition(0.88); // load pos
         }
     }
 }
