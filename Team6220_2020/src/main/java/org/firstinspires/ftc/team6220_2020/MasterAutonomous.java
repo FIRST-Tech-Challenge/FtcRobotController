@@ -11,7 +11,6 @@ import org.firstinspires.ftc.team6220_2020.ResourceClasses.PIDFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-// todo - add is op mode active breakers
 public abstract class MasterAutonomous extends MasterOpMode {
 
     public void turnDegrees(double targetAngle) {
@@ -53,7 +52,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
         }
     }
 
-    public void turnToAngle(double targetAngle){
+    public void turnToAngle(double targetAngle) {
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -76,19 +75,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
         }
 
         driveMecanum(0,0,0);
-
-        //double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-//
-        //if(targetAngle < startAngle){
-        //    while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
-        //        driveMecanum(0,0,-0.2);
-        //    }
-        //} else{
-        //    while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
-        //        driveMecanum(0,0,0.2);
-        //    }
-        //}
-
 
     }
 
