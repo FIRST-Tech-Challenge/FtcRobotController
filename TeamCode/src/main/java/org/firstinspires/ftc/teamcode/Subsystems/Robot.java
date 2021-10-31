@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Config.MainConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
@@ -40,6 +39,7 @@ public class Robot {
     public DcMotorEx frontRightDriveMotor;
     public DcMotorEx rearRightDriveMotor;
     public DcMotorEx rearLeftDriveMotor;
+    public DcMotorEx intake;
 
     // Odometry
     public List<LynxModule> allHubs;
@@ -170,6 +170,7 @@ public class Robot {
         frontRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fr");
         rearLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("bl");
         rearRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("br");
+        intake = (DcMotorEx) hardwareMap.dcMotor.get("intake");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -248,7 +249,7 @@ public class Robot {
         telemetry.telemetry(2, "Mode", " Vision init finished");
 
         telemetry.telemetry(3, "Mode", " Control init started");
-        control = new Control(this);
+        control = new Control(intake);
         telemetry.telemetry(2, "Mode", " Control init finished");
     }
 
@@ -312,4 +313,5 @@ public class Robot {
     public void setRearLeftDrivePower(double power) { rearLeftDriveMotor.setPower(power); }
 
     public void setRearRightDriveMotor(double power) { rearRightDriveMotor.setPower(power); }
+
 }

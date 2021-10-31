@@ -14,12 +14,4 @@ public class Subsystem {
     protected LinearOpMode opMode; // protected because of inheritance
     protected QuickTelemetry telemetry;
     protected ElapsedTime timer;
-    protected HardwareMap hardwareMap;
-
-    public Subsystem(Robot robot, String file){
-        this.opMode = robot.getOpMode();
-        this.telemetry = robot.getQuickTelemetry(file);
-        this.hardwareMap = opMode.hardwareMap;
-        this.timer = robot.getTimer();
-    }
 }

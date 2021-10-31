@@ -6,10 +6,19 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Subsystems.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 @TeleOp(name = "Teleop")
 public class Teleop extends LinearOpMode {
+    private Robot robot;
+
+    double deltaT;
+    double timeCurrent;
+    double timePre;
+
+    ElapsedTime timer;
+
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime timer = new ElapsedTime();
@@ -22,6 +31,7 @@ public class Teleop extends LinearOpMode {
         // Servo servo = hardwareMap.servo.get("servo1");
 
         Robot robot = new Robot(this, timer);
+        GamePadConfig gamePadConfig = new GamePadConfig();
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -33,21 +43,28 @@ public class Teleop extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) { // clearer nomenclature for variables
-            double ly = Math.pow(gamepad1.left_stick_y, 3);
-            double lx = Math.pow(gamepad1.left_stick_x, 3);
-            double rx = Math.pow(gamepad1.right_stick_x, 3);
-            double ry = Math.pow(gamepad1.right_stick_y, 3);
+            robot.getGamePadInputs();
 
-            double r = Math.hypot(lx, ly);
-            double robotAngle = Math.atan2(ly, lx) - Math.PI / 4;
-            double rearLeftPower = r * Math.sin(robotAngle) + (rx / 2);
-            double frontLeftPower = r * Math.cos(robotAngle) + (rx / 2);
-            double rearRightPower = r * Math.cos(robotAngle) - (rx / 2);
-            double frontRightPower = r * Math.sin(robotAngle) - (rx / 2);
-            frontLeft.setPower(frontLeftPower);
-            frontRight.setPower(frontRightPower);
-            backLeft.setPower(rearLeftPower);
-            backRight.setPower(rearRightPower);
+            timeCurrent = timer.nanoseconds();
+
+
+            if (gamepad1.a) {
+                if (!gamePadConfig.isbButtonPressedPrev) {
+                    robot.control.setIntake(true);
+                    if (gamePadConfig.isbButtonPressedPrev) {
+                        robot.control.setIntake(false);
+                    }
+                }
+            }
+
+            if (gamepad1.b) {
+                if (!gamePadConfig.isbButtonPressedPrev) {
+                    robot.control.setIntakeReverse(true);
+                }
+                if (gamePadConfig.isbButtonPressedPrev) {
+                    robot.control.setIntakeReverse(false);
+                }
+            }
         }
     }
 }
