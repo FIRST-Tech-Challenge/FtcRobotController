@@ -79,24 +79,29 @@ public class pipeline1Simulator extends OpenCvPipeline {
         );
 
         //The rectangle is drawn into the mat
-        switch (mostDifferent(topAverage,middleAverage,bottomAverage)) {
-            case 1:
-                drawRectOnToMat(input, topRect, yellow);
-                drawRectOnToMat(input, middleRect, red);
-                drawRectOnToMat(input, bottomRect, red);
-                break;
-            case 2:
-                drawRectOnToMat(input, topRect, red);
-                drawRectOnToMat(input, middleRect, yellow);
-                drawRectOnToMat(input, bottomRect, red);
-                break;
-            case 3:
-                drawRectOnToMat(input, topRect, red);
-                drawRectOnToMat(input, middleRect, red);
-                drawRectOnToMat(input, bottomRect, yellow);
-                break;
+        try {
+            switch (mostDifferent(topAverage,middleAverage,bottomAverage)) {
+                case 1:
+                    drawRectOnToMat(input, topRect, yellow);
+                    drawRectOnToMat(input, middleRect, red);
+                    drawRectOnToMat(input, bottomRect, red);
+                    break;
+                case 2:
+                    drawRectOnToMat(input, topRect, red);
+                    drawRectOnToMat(input, middleRect, yellow);
+                    drawRectOnToMat(input, bottomRect, red);
+                    break;
+                case 3:
+                    drawRectOnToMat(input, topRect, red);
+                    drawRectOnToMat(input, middleRect, red);
+                    drawRectOnToMat(input, bottomRect, yellow);
+                    break;
+            }
+        } catch (Exception e) {
+            drawRectOnToMat(input, topRect, red);
+            drawRectOnToMat(input, middleRect, red);
+            drawRectOnToMat(input, bottomRect, red);
         }
-
         //We crop the image so it is only everything inside the rectangles and find the cb value inside of them
         topBlock = matYCrCb.submat(topRect);
         middleBlock = matYCrCb.submat(middleRect);
