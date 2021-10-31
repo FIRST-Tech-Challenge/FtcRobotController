@@ -148,6 +148,10 @@ public abstract class MasterAutonomous extends MasterOpMode {
             motorLeft.setPower(-speedLeft);
             motorRight.setPower(speedRight);
 
+            // loop until both motors are not busy, then stop.
+            motorLeft.isBusy();
+            motorRight.isBusy();
+
             idle();
         }
 
@@ -229,20 +233,22 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     public void moveForward(int distance, double speed, double minSpeed) {
         //sets a target position to drive to
-        newTargetLeft = motorLeft.getCurrentPosition() - (int) Math.round(Constants.TICKS_PER_INCH * distance);
+        newTargetLeft = motorLeft.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
         newTargetRight = motorRight.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
 
-        motorLeft.setTargetPosition(distance);
-        motorRight.setTargetPosition(distance);
+        motorLeft.setTargetPosition(newTargetLeft);
+        motorRight.setTargetPosition(newTargetRight);
 
         //set to RUN_TO_POSITION
         motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //sets the speed
-        motorLeft.setPower(speed);
-        motorRight.setPower(speed);
-        idle();
+        // loop until both motors are not busy, then stop.
+        do {
+            //sets the speed
+            motorLeft.setPower(speed);
+            motorRight.setPower(speed);
+        } while (!motorLeft.isBusy() && !motorRight.isBusy());
     }
 
     public void sendTelemetry(){

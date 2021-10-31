@@ -27,6 +27,9 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        motorLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorRight.setDirection(DcMotor.Direction.FORWARD);
+
         //init imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;

@@ -4,20 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="RedWarehouseNoDetect")
 public class RedWarehouseNoDetect extends MasterAutonomous{
-
-
     public void runOpMode() throws InterruptedException {
         initAuto();
         waitForStart();
 
         while (opModeIsActive()){
-            moveAuto(5, 20, 10);
+            moveForward(5, 80, 10);
         }
     }
-
-
-
-
-
 }
 
