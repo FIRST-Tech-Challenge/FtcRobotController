@@ -144,7 +144,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             speedRight = Range.clip(speedRight, minSpeed, speed);
             speedRight = (speedRight * Math.signum(errorRight));
 
-            motorLeft.setPower(speedLeft);
+            motorLeft.setPower(-speedLeft);
             motorRight.setPower(speedRight);
 
             idle();
