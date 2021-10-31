@@ -114,10 +114,16 @@ android {
     packagingOptions {
         pickFirst '**/*.so'
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
     sourceSets.main {
         jni.srcDirs = []
         jniLibs.srcDir rootProject.file('libs')
     }
+
     ndkVersion '21.3.6528147'
 }
 

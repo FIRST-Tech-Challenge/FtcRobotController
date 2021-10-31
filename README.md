@@ -1,68 +1,35 @@
-## IMPORTANT
+# Welcome!
+This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot for Hawks Robotics: The Ryken Force.
 
-I would like to thank @22jmiller for his help and contribution of the driving code.
-
-Most of the image processing code is located under the `org.firstinspires.ftc.teamcode.imgproc.ImgProc` package.
-There is also documentation located there, which also includes the necessary `build.gradle` modifications.
-
-Also, please see [this discussion.](https://github.com/XaverianTeamRobotics/FtcRobotController/discussions/7)
-
-SDK docs can be found at https://gm0.org/en/latest/docs/software/index.html
-
-
-## NOTICE
-This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
-
-## Welcome!
-This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
+[![Gradle Java Build](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/build.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/build.yml)
+[![CodeQL Analysis](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/codeql.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/codeql.yml)
+[![DevSkim Analysis](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/devskim.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/devskim.yml)
+[![Javadoc Generation](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/javadoc.yml/badge.svg)](https://github.com/XaverianTeamRobotics/FtcRobotController/actions/workflows/javadoc.yml)
 
 ## Getting Started
-If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Blocks-Tutorial) to get familiar with how to use the control system:
+If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Blocks-Tutorial) to get familiar with how to use the control system, and from there migrate to the [OnBot Java Tool](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/OnBot-Java-Tutorial).
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Blocks Online Tutorial](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Blocks-Tutorial)
+Once you have an understanding of the core FTC mechanics under the hood, we recommend using Android Studio. [Check out our onboarding guide](https://xaverianteamrobotics.github.io/FtcRobotController/onboarding) to learn how to get set up with Android Studio and make sure to read other parts of our team documentation to understand the differences between coding with FTC provided tools and with our tools.
 
-Even if you are an advanced Java programmer, it is helpful to start with the [FTC Blocks tutorial](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Blocks-Tutorial), and then migrate to the [OnBot Java Tool](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/OnBot-Java-Tutorial) or to [Android Studio](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Android-Studio-Tutorial) afterwards.
-
-## Downloading the Project
-If you are an Android Studio programmer, there are several ways to download this repo.  Note that if you use the Blocks or OnBot Java Tool to program your robot, then you do not need to download this repository.
-
-* If you are a git user, you can clone the most current version of the repository:
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git clone https://github.com/FIRST-Tech-Challenge/FtcRobotController.git</p>
-
-* Or, if you prefer, you can use the "Download Zip" button available through the main repository page.  Downloading the project as a .ZIP file will keep the size of the download manageable.
-
-* You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the [Releases](https://github.com/FIRST-Tech-Challenge/FtcRobotController/releases) page for this repository.
-
-* The Releases page also contains prebuilt APKs.
-
-Once you have downloaded and uncompressed (if needed) your folder, you can use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
-
-## Getting Help
+## Support
 ### User Documentation and Tutorials
-*FIRST* maintains online documentation with information and tutorials on how to use the *FIRST* Tech Challenge software and robot control system.  You can access this documentation using the following link:
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FtcRobotController Online Documentation](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki)
-
-Note that the online documentation is an "evergreen" document that is constantly being updated and edited.  It contains the most current information about the *FIRST* Tech Challenge software and control system.
+Both *FIRST* and our team have documentation and support.
+* [*FIRST* Online Documentation](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki)
+* [GM0 Software Section](https://gm0.org/en/latest/docs/software/index.html)
+* [Internal Team Documentation](https://xaverianteamrobotics.github.io/FtcRobotController)
 
 ### Javadoc Reference Material
-The Javadoc reference documentation for the FTC SDK is now available online.  Click on the following link to view the FTC SDK Javadoc documentation as a live website:
+* [FTC Javadoc](https://javadoc.io/doc/org.firstinspires.ftc)
+* [Internal Team Javadoc](https://xaverianteamrobotics.github.io/FtcRobotController/javadoc/index.html)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Javadoc Documentation](https://javadoc.io/org.firstinspires.ftc)
-
-### Online User Forum
-For technical questions regarding the Control System or the FTC SDK, please visit the FTC Technology forum:
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Technology Forum](https://ftcforum.firstinspires.org/forum/ftc-technology)
+### Getting Help
+If no one on the team can help, get answers to technical questions regarding FTC from the following resources:
+* [FTC Technology Forum](https://ftcforum.firstinspires.org/forum/ftc-technology)
+* [FTC Discord Server](https://discord.com/invite/first-tech-challenge)
 
 ### Sample OpModes
-This project contains a large selection of Sample OpModes (robot code examples) which can be cut and pasted into your /teamcode folder to be used as-is, or modified to suit your team's needs.
-
-Samples Folder: &nbsp;&nbsp; [/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples](FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples)
-
-The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](TeamCode/src/main/java/org/firstinspires/ftc/teamcode) folder contains an explanation of the sample naming convention, and instructions on how to copy them to your own project space.
+This project contains a large selection of Sample OpModes (robot code examples) in `FtcRobotController/external` which can be cut and pasted into your `TeamCode` folder to be used as-is, or modified to suit your needs.
 
 # Release Information
 
-(Removed because the release notes are too long and not useful. See the repository this was forked from for details.)
+(Removed because the release notes are too long and not useful. See upstream for details.)
