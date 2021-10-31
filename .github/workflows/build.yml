@@ -1,5 +1,11 @@
 name: Gradle Java Build
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - 'master'
+      - 'testing-*'
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
