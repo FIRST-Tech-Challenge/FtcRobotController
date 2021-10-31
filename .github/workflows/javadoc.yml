@@ -52,14 +52,17 @@ jobs:
         git checkout gh-pages
         rm -rf ./javadocs/${BRANCH_NAME}/ || true
         mkdir -p ./javadocs/${BRANCH_NAME}/
-        mv ../javadoc-output/ ./javadocs/${BRANCH_NAME}/
+        mv ../javadoc-output/ ./${BRANCH_NAME}/
+        mv ./${BRANCH_NAME}/ ./javadocs/
         rm -rf ./reports/${BRANCH_NAME}/ || true
         mkdir -p ./reports/${BRANCH_NAME}/
         mv ../reports/ ./reports/${BRANCH_NAME}/
+        mv ./reports/${BRANCH_NAME}/reports ./reports/${BRANCH_NAME}/team-reports
         mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports/
+        mv ./reports/master/team-reports/lint-results-debug.html ./reports/master/team-reports/index.html
+        mv ./reports/master/sdk-reports/lint-results-debug.html ./reports/master/sdk-reports/index.html
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
-
         Information:
             Repository: $GITHUB_REPOSITORY
             Branch: $GITHUB_REF
