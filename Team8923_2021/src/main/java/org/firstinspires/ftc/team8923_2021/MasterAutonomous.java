@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team8923_2021;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -224,6 +225,24 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         stopDriving();
 
+    }
+
+    public void moveForward(int distance, double speed, double minSpeed) {
+        //sets a target position to drive to
+        newTargetLeft = motorLeft.getCurrentPosition() - (int) Math.round(Constants.TICKS_PER_INCH * distance);
+        newTargetRight = motorRight.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
+
+        motorLeft.setTargetPosition(distance);
+        motorRight.setTargetPosition(distance);
+
+        //set to RUN_TO_POSITION
+        motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //sets the speed
+        motorLeft.setPower(speed);
+        motorRight.setPower(speed);
+        idle();
     }
 
     public void sendTelemetry(){
