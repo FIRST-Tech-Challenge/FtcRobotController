@@ -40,27 +40,39 @@ jobs:
 
     - name: Commit and push new Javadoc folder
       run: |
+        # Set up Git and environment variables
         git config user.name "GitHub Actions Bot"
         git config user.email "actions@github.com"
+        shopt -s dotglob
         export BRANCH_NAME=$(echo $GITHUB_REF | sed -e "s/refs\/heads\///")
+
+        # Move Javadocs and build reports
         mv javadoc-output/ ..
-        mv ./TeamCode/build/reports/  ..
+        mkdir ../team-reports/
+        mv ./TeamCode/build/reports/*  ../team-reports/
         mkdir ../sdk-reports/
         mv ./FtcRobotController/build/reports/* ../sdk-reports/
+
+        # Checkout gh-pages branch
         git remote set-branches origin '*'
         git fetch -v
         git checkout gh-pages
+
+        # Copy Javadocs to gh-pages
         rm -rf ./javadocs/${BRANCH_NAME}/ || true
         mkdir -p ./javadocs/${BRANCH_NAME}/
-        mv ../javadoc-output/ ./${BRANCH_NAME}/
-        mv ./${BRANCH_NAME}/ ./javadocs/
+        mv ../javadoc-output/* ./javadocs/${BRANCH_NAME}/
+
+        # Copy build reports to gh-pages
         rm -rf ./reports/${BRANCH_NAME}/ || true
-        mkdir -p ./reports/${BRANCH_NAME}/
-        mv ../reports/ ./reports/${BRANCH_NAME}/
-        mv ./reports/${BRANCH_NAME}/reports ./reports/${BRANCH_NAME}/team-reports
-        mv ../sdk-reports/ ./reports/${BRANCH_NAME}/sdk-reports/
-        mv ./reports/master/team-reports/lint-results-debug.html ./reports/master/team-reports/index.html
-        mv ./reports/master/sdk-reports/lint-results-debug.html ./reports/master/sdk-reports/index.html
+        mkdir -p ./reports/${BRANCH_NAME}/team-reports/
+        mkdir -p ./reports/${BRANCH_NAME}/sdk-reports/
+        mv ../team-reports/* ./reports/${BRANCH_NAME}/team-reports/
+        mv ../sdk-reports/* ./reports/${BRANCH_NAME}/sdk-reports/
+        mv ./reports/${BRANCH_NAME}/team-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/team-reports/index.html
+        mv ./reports/${BRANCH_NAME}/sdk-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/sdk-reports/index.html
+
+        # Commit and push changes
         git add .
         git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
         Information:
