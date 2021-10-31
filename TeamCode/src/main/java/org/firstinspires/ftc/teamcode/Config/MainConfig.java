@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.Config;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.Util.AllianceColor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** Important configuration
  *
@@ -23,7 +28,12 @@ public class MainConfig {
        3 is verbose */
     private static final int logLevel = 3;
 
-    private static final boolean initMinorSubsystems = false;
+
+    private static final boolean initMinorSubsystems = true;
+    private static final boolean initMinorSubsystemsControl = (true && initMinorSubsystems);
+    private static final boolean initMinorSubsystemsDrive = (true && initMinorSubsystems);
+    private static final boolean initMinorSubsystemsVision = (false && initMinorSubsystems);
+
     private static final boolean initMechanical = true;
     private static final boolean initGetGamePadInputs = true;
     private static final boolean initHardwareMap = true;
@@ -54,6 +64,16 @@ public class MainConfig {
 
     public static boolean getInitMinorSubsystems() {
         return initMinorSubsystems;
+    }
+
+    public static boolean getInitMinorSubsystemsControl() {
+        return initMinorSubsystemsControl;
+    }
+    public static boolean getInitMinorSubsystemsDrive() {
+        return initMinorSubsystemsDrive;
+    }
+    public static boolean getInitMinorSubsystemsVision() {
+        return initMinorSubsystemsVision;
     }
 
     public static boolean getInitMechanical() {

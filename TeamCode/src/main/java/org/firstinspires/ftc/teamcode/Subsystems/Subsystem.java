@@ -8,10 +8,10 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 
 /**
- * Superclass to all minor subsystems, it does some bootstrapping for them (Vision, Control, and Drive)
+ * Superclass to all subsystems, it does some bootstrapping for them (Vision, Control, and Drive)
  *
  */
-public class Subsystem {
+public abstract class Subsystem {
     // protected because of inheritance
     protected LinearOpMode opMode;
     protected QuickTelemetry telemetry;
@@ -24,4 +24,6 @@ public class Subsystem {
         this.hardwareMap = opMode.hardwareMap;
         this.timer = robot.getTimer();
     }
+
+    public void init() {}
 }

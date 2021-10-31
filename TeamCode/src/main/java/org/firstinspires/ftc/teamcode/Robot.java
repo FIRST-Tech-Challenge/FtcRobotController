@@ -226,30 +226,36 @@ public class Robot {
     }
 
     private void initSubsystems() {
-        // Drive
-        telemetry.telemetry(3, "Mode", " Drive init started");
-        List<DcMotorEx> motors = new ArrayList<>(4);
-        motors.add(frontLeftDriveMotor);
-        motors.add(frontRightDriveMotor);
-        motors.add(rearLeftDriveMotor);
-        motors.add(rearRightDriveMotor);
+        if (MainConfig.getInitMinorSubsystemsDrive()) {
+            // Drive
+            telemetry.telemetry(3, "Mode", " Drive init started");
+            List<DcMotorEx> motors = new ArrayList<>(4);
+            motors.add(frontLeftDriveMotor);
+            motors.add(frontRightDriveMotor);
+            motors.add(rearLeftDriveMotor);
+            motors.add(rearRightDriveMotor);
 
-        drive = new Drive(this, motors, imu);
+            drive = new Drive(this, motors, imu);
 //        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.telemetry(2, "Mode", " Drive init finished");
-
-        telemetry.telemetry(3, "Mode", " Vision init started");
-        try {
-            vision = new Vision(this);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            telemetry.telemetry(2, "Mode", " Drive init finished");
         }
-        telemetry.telemetry(2, "Mode", " Vision init finished");
 
-        telemetry.telemetry(3, "Mode", " Control init started");
-        control = new Control(this);
-        telemetry.telemetry(2, "Mode", " Control init finished");
+        if (MainConfig.getInitMinorSubsystemsVision()) {
+            telemetry.telemetry(3, "Mode", " Vision init started");
+            try {
+                vision = new Vision(this);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            telemetry.telemetry(2, "Mode", " Vision init finished");
+        }
+
+        if (MainConfig.getInitMinorSubsystemsControl()) {
+            telemetry.telemetry(3, "Mode", " Control init started");
+            control = new Control(this);
+            telemetry.telemetry(2, "Mode", " Control init finished");
+        }
     }
 
     public LinearOpMode getOpMode() {
