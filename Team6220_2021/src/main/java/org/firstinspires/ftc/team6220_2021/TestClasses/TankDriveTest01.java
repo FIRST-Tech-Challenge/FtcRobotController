@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TankDriveTest01", group = "TeleOp")
 public class TankDriveTest01 extends LinearOpMode {
-
     // Declaring motors and servos
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
@@ -30,7 +29,6 @@ public class TankDriveTest01 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         //Initialize the motors and servos
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
