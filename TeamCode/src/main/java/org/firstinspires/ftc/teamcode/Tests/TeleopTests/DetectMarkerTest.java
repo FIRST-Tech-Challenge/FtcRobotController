@@ -14,8 +14,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 public class DetectMarkerTest extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         Robot robot;
         robot = new Robot(this, timer);
         waitForStart();
@@ -25,7 +24,7 @@ public class DetectMarkerTest extends LinearOpMode {
             int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
-            DetectMarker detectMarkerRunnable = new DetectMarker(robot, robotCamera);
+            DetectMarker detectMarkerRunnable = new DetectMarker(hardwareMap, robotCamera, robot.getQuickTelemetry());
             MarkerLocation finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
             telemetry.addData("Marker Location: ", "found");
             telemetry.update();

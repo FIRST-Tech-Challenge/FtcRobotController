@@ -114,7 +114,7 @@ public class Robot {
         this.telemetry.telemetry(4, "debug", "debug = " + MainConfig.getDebug());
         this.telemetry.telemetry(4, "debugTarget", "debugTarget = " + MainConfig.getDebugTarget());
         this.telemetry.telemetry(4, "logLevel", "logLevel = " + MainConfig.getLogLevel());
-        this.telemetry.telemetry(4, "initMinorSubsystems", "initMinorSubsystems = " + MainConfig.getInitMinorSubsystems());
+        this.telemetry.telemetry(4, "initMinorSubsystems", "initMinorSubsystems = " + MainConfig.getInitSubsystems());
         this.telemetry.telemetry(4, "initMechanical", "initMechanical = " + MainConfig.getInitMechanical());
         this.telemetry.telemetry(4, "initGetGamePadInputs", "initGetGamePadInputs = " + MainConfig.getInitGamePadInputs());
         this.oldTelemetry.addLine();
@@ -153,7 +153,7 @@ public class Robot {
             telemetry.telemetry(1, "Hardware init", " Hardware init skipped");
         }
 
-        if (MainConfig.getInitMinorSubsystems()) {
+        if (MainConfig.getInitSubsystems()) {
             telemetry.telemetry(2, "Subsystems init", " Subsystems init started");
             initSubsystems();
             telemetry.telemetry(1, "Subsystems init", " Subsystems init finished");
@@ -226,7 +226,7 @@ public class Robot {
     }
 
     private void initSubsystems() {
-        if (MainConfig.getInitMinorSubsystemsDrive()) {
+        if (MainConfig.getInitSubsystemDrive()) {
             // Drive
             telemetry.telemetry(3, "Mode", " Drive init started");
             List<DcMotorEx> motors = new ArrayList<>(4);
@@ -235,25 +235,25 @@ public class Robot {
             motors.add(rearLeftDriveMotor);
             motors.add(rearRightDriveMotor);
 
-            drive = new Drive(this, motors, imu);
+            drive = new Drive(this.getQuickTelemetry("Drive"), hardwareMap, timer, motors, imu);
 //        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             telemetry.telemetry(2, "Mode", " Drive init finished");
         }
 
-        if (MainConfig.getInitMinorSubsystemsVision()) {
+        if (MainConfig.getInitSubsystemVision()) {
             telemetry.telemetry(3, "Mode", " Vision init started");
             try {
-                vision = new Vision(this);
+                vision = new Vision(this.getQuickTelemetry("Drive"), hardwareMap, timer);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             telemetry.telemetry(2, "Mode", " Vision init finished");
         }
 
-        if (MainConfig.getInitMinorSubsystemsControl()) {
+        if (MainConfig.getInitSubsystemControl()) {
             telemetry.telemetry(3, "Mode", " Control init started");
-            control = new Control(this);
+            control = new Control(this.getQuickTelemetry("Drive"), hardwareMap, timer);
             telemetry.telemetry(2, "Mode", " Control init finished");
         }
     }

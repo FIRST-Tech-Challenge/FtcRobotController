@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.Config;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 import org.firstinspires.ftc.teamcode.Util.AllianceColor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** Important configuration
  *
@@ -29,10 +24,10 @@ public class MainConfig {
     private static final int logLevel = 3;
 
 
-    private static final boolean initMinorSubsystems = true;
-    private static final boolean initMinorSubsystemsControl = (true && initMinorSubsystems);
-    private static final boolean initMinorSubsystemsDrive = (true && initMinorSubsystems);
-    private static final boolean initMinorSubsystemsVision = (false && initMinorSubsystems);
+    private static final boolean initSubsystems = true;
+    private static final boolean initSubsystemControl = (true && initSubsystems);
+    private static final boolean initSubsystemDrive = (true && initSubsystems);
+    private static final boolean initSubsystemVision = (false && initSubsystems);
 
     private static final boolean initMechanical = true;
     private static final boolean initGetGamePadInputs = true;
@@ -62,18 +57,18 @@ public class MainConfig {
         return logLevel;
     }
 
-    public static boolean getInitMinorSubsystems() {
-        return initMinorSubsystems;
+    public static boolean getInitSubsystems() {
+        return initSubsystems;
     }
 
-    public static boolean getInitMinorSubsystemsControl() {
-        return initMinorSubsystemsControl;
+    public static boolean getInitSubsystemControl() {
+        return initSubsystemControl;
     }
-    public static boolean getInitMinorSubsystemsDrive() {
-        return initMinorSubsystemsDrive;
+    public static boolean getInitSubsystemDrive() {
+        return initSubsystemDrive;
     }
-    public static boolean getInitMinorSubsystemsVision() {
-        return initMinorSubsystemsVision;
+    public static boolean getInitSubsystemVision() {
+        return initSubsystemVision;
     }
 
     public static boolean getInitMechanical() {

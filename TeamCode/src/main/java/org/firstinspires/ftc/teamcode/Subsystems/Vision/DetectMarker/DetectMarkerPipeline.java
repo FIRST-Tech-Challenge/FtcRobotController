@@ -55,8 +55,8 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
      * @see QuickTelemetry
      * @see AllianceColor
      */
-    public DetectMarkerPipeline(Robot robot) {
-        telemetry = robot.getQuickTelemetry();
+    public DetectMarkerPipeline(QuickTelemetry quickTelemetry) {
+        this.telemetry = quickTelemetry;
     }
 
     /**

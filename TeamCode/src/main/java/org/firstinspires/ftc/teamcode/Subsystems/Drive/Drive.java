@@ -4,13 +4,16 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.Config.DriveConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 
 import java.util.List;
 import java.util.Locale;
@@ -56,8 +59,8 @@ public class Drive extends Subsystem {
      * @see DcMotorEx
      * @see BNO055IMU
      */
-    public Drive(Robot robot, List<DcMotorEx> motors, BNO055IMU imu) {
-        super(robot, "Drive");
+    public Drive(QuickTelemetry telemetry, HardwareMap hardwareMap, ElapsedTime timer, List<DcMotorEx> motors, BNO055IMU imu) {
+        super(telemetry, hardwareMap, timer);
         telemetry.telemetry(3, "motors init started");
         this.frontLeft = motors.get(0);
         this.frontRight = motors.get(1);
@@ -285,9 +288,7 @@ public class Drive extends Subsystem {
         telemetry.telemetry(5, "initial angle",  "%7.2f degrees", initialAngle);
         telemetry.telemetry(5, "last read angle",  "%7.2f degrees", currentAngle);
         telemetry.telemetry(5, "final angle",  "%7.2f degrees", getYaw());
-        opMode.sleep(3000);
         telemetry.telemetry(5, "final2 angle",  "%7.2f degrees", getYaw());
-        opMode.sleep(3000);
     }
 
     public void moveToPos2D(double power, double targetPositionX, double targetPositionY){

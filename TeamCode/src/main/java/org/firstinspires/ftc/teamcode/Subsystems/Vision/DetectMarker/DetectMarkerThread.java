@@ -22,7 +22,7 @@ public class DetectMarkerThread implements Runnable {
 
     @Override
     public void run() {
-        DetectMarker detectMarker = new DetectMarker(robot, robotCamera);
+        DetectMarker detectMarker = new DetectMarker(this.hardwareMap, robotCamera, robot.getQuickTelemetry());
         markerLocation = detectMarker.DetectMarkerRun();
     }
 
