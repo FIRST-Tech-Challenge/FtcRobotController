@@ -53,7 +53,7 @@ jobs:
         rm -rf ./javadocs/${BRANCH_NAME}/ || true
         mkdir -p ./javadocs/${BRANCH_NAME}/
         mv ../javadoc-output/ ./javadocs/${BRANCH_NAME}/
-        mv ./javadocs/${BRANCH_NAME}/javadoc-output/ ./javadocs/${BRANCH_NAME}/
+        mv ./javadocs/${BRANCH_NAME}/javadoc-output/javadoc-output/ ./javadocs/${BRANCH_NAME}/
         rm -rf ./reports/${BRANCH_NAME}/ || true
         mkdir -p ./reports/${BRANCH_NAME}/
         mv ../reports/ ./reports/${BRANCH_NAME}/
