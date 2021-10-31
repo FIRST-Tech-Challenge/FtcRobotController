@@ -68,24 +68,26 @@ public class Vision extends Subsystem {
     public Vision(Robot robot) throws InterruptedException {
         super(robot, "Vision");
 
+        telemetry.telemetry(3, "Vision Status", "Vision initializing started");
+
         webcamName = hardwareMap.get(WebcamName.class, VisionConfig.WEBCAM_NAME);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
 
 
-        telemetry.telemetry(3, "init Vuforia started");
+        telemetry.telemetry(3, "init Vuforia", "init Vuforia started");
         initVuforia();
-        telemetry.telemetry(2, "init Vuforia completed");
+        telemetry.telemetry(2, "init Vuforia", "init Vuforia completed");
 
         OpenCvInternalCamera robotCamera;
 
         robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
-        telemetry.telemetry(4, "Detecting Marker");
+        telemetry.telemetry(4, "Detect Marker","Detecting Marker");
         DetectMarker detectMarkerRunnable = new DetectMarker(robot, robotCamera);
         MarkerLocation finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
-        telemetry.telemetry(3, "Detected Marker");
-        telemetry.telemetry(2, "Vision initialized", "Vision initialized");
+        telemetry.telemetry(3, "Detect Marker", "Detected Marker");
+        telemetry.telemetry(2, "Vision Status", "Vision initialized");
     }
 
     private void initVuforia() {
