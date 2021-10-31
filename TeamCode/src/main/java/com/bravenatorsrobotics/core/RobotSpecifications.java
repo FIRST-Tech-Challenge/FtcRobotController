@@ -43,7 +43,7 @@ public class RobotSpecifications {
     /**
      * The maximum amount of velocity the drive system motors can spin at. (Run the max velocity test to figure out).
      */
-    public int maxVelocity; // Run the max velocity test to figure out
+    public int maxVelocity = -1; // Run the max velocity test to figure out
 
     /**
      * Enabling debug mode will print out different text to the screen.
