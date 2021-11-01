@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 import java.util.concurrent.TimeUnit;
 
+@TeleOp(name = "Frenzy", group = "Robot15173")
 public class FrenzyModeBase extends LinearOpMode {
 
     // Declare OpMode Members
@@ -36,14 +37,12 @@ public class FrenzyModeBase extends LinearOpMode {
 
                 robot.init(this, this.hardwareMap, telemetry);
 
-                String fieldSide = getSide();
 
                 int startXInches = 50;
                 int startYInches = 15;
-                int startHeading = 0;
+                int startHeading = 180;
 
                 odometry =  VSlamOdometry.getInstance(this.hardwareMap, 20, startXInches, startYInches, startHeading);
-                odometry.setCoordinateAdjustmentMode(fieldSide);
 
                 Thread odometryThread = new Thread(odometry);
                 odometryThread.start();
@@ -51,7 +50,7 @@ public class FrenzyModeBase extends LinearOpMode {
                 telemetry.addData("Init", ex.getMessage());
             }
             telemetry.addData("Bot Info", robot.printInfo());
-            telemetry.addData("Coord Adjust Mode", odometry.getCoordinateAdjustmentMode());
+
             telemetry.update();
 
             // Wait for the game to start (driver presses PLAY)
@@ -76,10 +75,6 @@ public class FrenzyModeBase extends LinearOpMode {
                 odometry.stop();
             }
         }
-    }
-
-    protected String getSide(){
-        return AutoRoute.NAME_RED;
     }
 
     private void sendTelemetry() {

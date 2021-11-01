@@ -63,7 +63,4 @@ public interface IBaseOdometry extends Runnable {
 
     boolean isTrackingInitialized();
 
-    void setCoordinateAdjustmentMode(String side);
-
-    String getCoordinateAdjustmentMode();
 }

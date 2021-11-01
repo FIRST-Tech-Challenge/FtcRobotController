@@ -342,13 +342,4 @@ public class RobotCoordinatePosition implements IBaseOdometry {
         return true;
     }
 
-    @Override
-    public void setCoordinateAdjustmentMode(String side) {
-        fieldSide = side;
-    }
-
-    @Override
-    public String getCoordinateAdjustmentMode() {
-        return fieldSide;
-    }
 }

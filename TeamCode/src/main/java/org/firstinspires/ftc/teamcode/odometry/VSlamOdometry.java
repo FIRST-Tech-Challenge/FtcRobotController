@@ -60,7 +60,6 @@ public class VSlamOdometry implements IBaseOdometry {
 
     private static final String TAG = "VSlamOdometry";
 
-    private String coordinateAdjustmentMode = AutoRoute.NAME_RED;
 
     private VSlamOdometry(HardwareMap hwMap, int threadDelay) {
         init(hwMap, threadDelay, 0.8);
@@ -135,43 +134,28 @@ public class VSlamOdometry implements IBaseOdometry {
 
     @Override
     public double getCurrentX() {
-        return adjustXCoordinate(currentX);
+        return currentX;
     }
 
     @Override
     public double getCurrentY() {
-        return adjustYCoordinate(currentY);
+        return currentY;
     }
 
-    protected double adjustXCoordinate(double rawX){
+//    protected double adjustXCoordinate(double rawX){
+//
+//        if (initialOrientation < 45) {
+//            double delta = Math.abs(originalX - rawX);
+//            if (rawX > originalX) {
+//                rawX = originalX - delta;
+//            } else {
+//                rawX = originalX + delta;
+//            }
+//        }
+//
+//        return rawX;
+//    }
 
-        if (AutoRoute.NAME_RED.equals(coordinateAdjustmentMode)) {
-            double delta = Math.abs(originalX - rawX);
-            if (rawX > originalX) {
-                rawX = originalX - delta;
-            } else {
-                rawX = originalX + delta;
-            }
-            Log.d(TAG, String.format("adjustXCoordinate to %.2f", rawX));
-        }
-
-        return rawX;
-    }
-
-    protected double adjustYCoordinate(double rawY){
-
-        if (AutoRoute.NAME_RED.equals(coordinateAdjustmentMode)) {
-            double delta = Math.abs(originalY - rawY);
-            if (rawY > originalY) {
-                rawY = originalY - delta;
-            } else {
-                rawY = originalY + delta;
-            }
-            Log.d(TAG, String.format("adjustYCoordinate to %.2f", rawY));
-        }
-
-        return rawY;
-    }
 
     @Override
     public void reverseHorEncoder() {
@@ -312,14 +296,5 @@ public class VSlamOdometry implements IBaseOdometry {
         return trackingInitialized;
     }
 
-    @Override
-    public String getCoordinateAdjustmentMode() {
-        return coordinateAdjustmentMode;
-    }
-
-    @Override
-    public void setCoordinateAdjustmentMode(String coordinateAdjustmentMode) {
-        this.coordinateAdjustmentMode = coordinateAdjustmentMode;
-    }
 }
 

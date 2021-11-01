@@ -223,7 +223,7 @@ public class FrenzyBaseBot implements OdoBot {
     }
 
     protected boolean motorsBusy(){
-        boolean busy = this.frontLeft.isBusy() | this.frontRight.isBusy() | this.backLeft.isBusy() | this.backRight.isBusy();
+        boolean busy = this.frontLeft.isBusy() && this.frontRight.isBusy() && this.backLeft.isBusy() && this.backRight.isBusy();
         return busy;
     }
 
@@ -388,6 +388,10 @@ public class FrenzyBaseBot implements OdoBot {
 
                 this.backLeft.setPower(0);
                 this.frontRight.setPower(0);
+
+                while (this.frontLeft.isBusy() && this.backRight.isBusy()){
+
+                }
             } else {
                 this.backLeft.setTargetPosition((int)profile.getLeftTargetBack());
                 this.frontRight.setTargetPosition((int)profile.getRightTarget());
@@ -398,7 +402,13 @@ public class FrenzyBaseBot implements OdoBot {
 
                 this.frontLeft.setPower(0);
                 this.backRight.setPower(0);
+
+                while (this.backLeft.isBusy() && this.frontRight.isBusy()){
+
+                }
             }
+
+            stop();
         }
     }
 
@@ -440,6 +450,10 @@ public class FrenzyBaseBot implements OdoBot {
         this.backRight.setVelocity(MAX_VELOCITY_GB*speed);
         this.frontLeft.setVelocity(MAX_VELOCITY_GB*speed);
         this.frontRight.setVelocity(MAX_VELOCITY_GB*speed);
+        while (motorsBusy()){
+
+        }
+        stop();
 
         return 0;
     }
