@@ -155,9 +155,9 @@ public class SensorColor extends LinearOpMode {
       // Update the gain value if either of the A or B gamepad buttons is being held
       if (gamepad1.a) {
         // Only increase the gain by a small amount, since this loop will occur multiple times per second.
-        gain += 0.005;
+        gain += 0.005f;
       } else if (gamepad1.b && gain > 1) { // A gain of less than 1 will make the values smaller, which is not helpful.
-        gain -= 0.005;
+        gain -= 0.005f;
       }
 
       // Show the gain value via telemetry
