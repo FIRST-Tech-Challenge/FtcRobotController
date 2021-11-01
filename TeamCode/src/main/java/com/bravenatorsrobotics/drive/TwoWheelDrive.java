@@ -31,6 +31,9 @@ public class TwoWheelDrive extends AbstractDrive {
         }
     }
 
+    // Two wheel drive (contains two motors)
+    @Override public int GetExpectedMotorCount() { return 2; }
+
     @Override
     public void Drive(double v, double h, double r) {
         double leftPower  = Range.clip(v + r, -1.0, 1.0);

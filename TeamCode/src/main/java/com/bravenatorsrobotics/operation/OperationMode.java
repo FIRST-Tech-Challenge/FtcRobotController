@@ -41,6 +41,6 @@ public abstract class OperationMode<T extends AbstractDrive> extends LinearOpMod
 
         // TODO: Salvage the robot class
 //        if(OperationMode.robot == null)
-        this.robot = new Robot<T>(this, specifications);
+        this.robot = new Robot<>(this, specifications);
     }
 }

@@ -24,6 +24,20 @@ public class Robot<DriveType extends AbstractDrive> {
         this.opMode = opMode;
         this.specifications = specifications;
 
+        // Create Instance of Drive
+        try {
+            Constructor<DriveType> constructor = ((Class<DriveType>) specifications.driveType).getConstructor(Robot.class);
+            this.drive = constructor.newInstance(this);
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new BravenatorRuntimeException(Arrays.toString(e.getStackTrace()));
+        }
+
+        // Motor Count Check
+        if(specifications.robotMotors.length != drive.GetExpectedMotorCount()) {
+            throw new BravenatorRuntimeException("Expected \"" + drive.GetExpectedMotorCount() +
+                    "\", but \"" + specifications.robotMotors.length + "\" were specified.");
+        }
+
         this.motors = new DcMotorEx[specifications.robotMotors.length];
 
         // Get the motors from the hardware map with correct direction
@@ -38,13 +52,6 @@ public class Robot<DriveType extends AbstractDrive> {
             this.motors[i] = opMode.hardwareMap.get(DcMotorEx.class, specifications.robotMotors[i]);
             if(shouldReverse)
                 this.motors[i].setDirection(DcMotorSimple.Direction.REVERSE);
-        }
-
-        try {
-            Constructor<DriveType> constructor = ((Class<DriveType>) specifications.driveType).getConstructor(Robot.class);
-            this.drive = constructor.newInstance(this);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new BravenatorRuntimeException(Arrays.toString(e.getStackTrace()));
         }
 
         // Set Zero Power Behavior

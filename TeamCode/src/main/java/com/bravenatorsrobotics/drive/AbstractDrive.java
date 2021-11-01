@@ -45,6 +45,8 @@ public abstract class AbstractDrive {
 
     // Abstract Methods
 
+    public abstract int GetExpectedMotorCount();
+
     public abstract void Drive(double v, double h, double r);
     public abstract void Stop();
 
