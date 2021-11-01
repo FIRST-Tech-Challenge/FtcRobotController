@@ -2,28 +2,28 @@ package org.firstinspires.ftc.teamcode.competition.utils;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Car {
+public class Carfax {
 
     private final Telemetry TELEMETRY;
     private final Motor RIGHT, LEFT;
 
     /**
-     * Creates a new car drivetrain.
+     * Creates a new carfax drivetrain.
      * @param telemetry The telemetry to log to
-     * @param right The right top motor of the car
+     * @param right The right top motor of the carfax
      */
-    public Car(Telemetry telemetry, Motor right, Motor left) {
+    public Carfax(Telemetry telemetry, Motor right, Motor left) {
         RIGHT = right;
         LEFT = left;
         TELEMETRY = telemetry;
-        TELEMETRY.addData("Car Ready", "Motors added and car ready to drive.");
+        TELEMETRY.addData("Carfax Ready", "Motors added and carfax ready to drive.");
     }
 
     /**
-     * Drives the car a distance
-     * @param rightDistance The distance of the right two motors
-     * @param leftDistance The distance of the left two motors
-     * @param speed The speed of all four motors
+     * Drives the carfax a distance
+     * @param rightDistance The distance of the right motor
+     * @param leftDistance The distance of the left motor
+     * @param speed The speed of both motors
      */
     public void driveDistance(int rightDistance, int leftDistance, int speed) {
         RIGHT.driveDistance(rightDistance, speed);
@@ -31,9 +31,9 @@ public class Car {
     }
 
     /**
-     * Drives the car a distance
-     * @param distance The distance of all four motors
-     * @param speed The speed of all four motors
+     * Drives the carfax a distance
+     * @param distance The distance of both motors
+     * @param speed The speed of both motors
      */
     public void driveDistance(int distance, int speed) {
         RIGHT.driveDistance(distance, speed);
@@ -41,9 +41,9 @@ public class Car {
     }
 
     /**
-     * Drives the car at a certain speed
-     * @param rightSpeed The speed of the right two motors
-     * @param leftSpeed The speed of the left two motors
+     * Drives the carfax at a certain speed
+     * @param rightSpeed The speed of the right motor
+     * @param leftSpeed The speed of the left motor
      */
     public void driveWithEncoder(int rightSpeed, int leftSpeed) {
         RIGHT.driveWithEncoder(rightSpeed);
@@ -51,8 +51,8 @@ public class Car {
     }
 
     /**
-     * Drives the car at a certain speed
-     * @param speed The speed of all four motors
+     * Drives the carfax at a certain speed
+     * @param speed The speed of both motors
      */
     public void driveWithEncoder(int speed) {
         RIGHT.driveWithEncoder(speed);
@@ -60,9 +60,9 @@ public class Car {
     }
 
     /**
-     * Sends a certain voltage to the car
-     * @param rightPower The voltage to send to the right two motors
-     * @param leftPower The voltage to send to the left two motors
+     * Sends a certain voltage to the carfax
+     * @param rightPower The voltage to send to the right motor
+     * @param leftPower The voltage to send to the left motor
      */
     public void driveWithoutEncoder(int rightPower, int leftPower) {
         RIGHT.driveWithoutEncoder(rightPower);
@@ -70,7 +70,7 @@ public class Car {
     }
 
     /**
-     * Sends a certain voltage to the car
+     * Sends a certain voltage to the holonomic drivetrain
      * @param power The voltage to send
      */
     public void driveWithoutEncoder(int power) {
@@ -79,7 +79,7 @@ public class Car {
     }
 
     /**
-     * Brings the car to a stop and resets it
+     * Brings the carfax to a stop and resets it
      */
     public void stop() {
         brake();
@@ -87,7 +87,7 @@ public class Car {
     }
 
     /**
-     * Brings the car to a stop
+     * Brings the carfax to a stop
      */
     public void brake() {
         RIGHT.brake();
@@ -95,7 +95,7 @@ public class Car {
     }
 
     /**
-     * Resets the car
+     * Resets the carfax
      */
     public void reset() {
         RIGHT.reset();
@@ -106,11 +106,11 @@ public class Car {
         return TELEMETRY;
     }
 
-    public Motor getright() {
+    public Motor getRight() {
         return RIGHT;
     }
 
-    public Motor getleft() {
+    public Motor getLeft() {
         return LEFT;
     }
     
