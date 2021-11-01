@@ -61,6 +61,7 @@ public class MasterOdo extends OdoBase {
     protected boolean routeSettingMode  = false;
     protected boolean XSettingMode = true;
     protected boolean YSettingMode = false;
+    protected boolean initHeadSettingsMode = false;
     protected boolean speedSettingMode = false;
     protected boolean strategySettingMode = false;
     protected boolean waitSettingMode = false;
@@ -79,6 +80,8 @@ public class MasterOdo extends OdoBase {
     protected boolean manualDriveMode = false;
     protected boolean coordinateSavingMode = false;
 
+    protected boolean locatorStartMode = false;
+
     protected AutoDot newDot = new AutoDot();
 
     protected AutoStep goToInstructions = new AutoStep();
@@ -86,8 +89,8 @@ public class MasterOdo extends OdoBase {
 
 
 
-    protected static final int[] modesTop = new int[]{0, 1, 2, 3, 4};
-    protected static final String[] modeNamesTop = new String[]{"Start Position", "Go To", "Routes", "Save Route", "Manual Drive"};
+    protected static final int[] modesTop = new int[]{0, 1, 2, 3, 4, 5};
+    protected static final String[] modeNamesTop = new String[]{"Start Position", "Go To", "Routes", "Save Route", "Manual Drive", "Start Locator"};
 
     protected static final int[] modesStep = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
     protected static final String[] modeStepName = new String[]{"Destination", "Top Speed", "Strategy", "Wait", "Continue", "Heading", "Action", "Direction"};
@@ -114,20 +117,6 @@ public class MasterOdo extends OdoBase {
 //            this.led = bot.getLights();
             gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
             listRoutes();
-
-            initLocator();
-
-            if (locator != null) {
-                while (!locator.isTrackingInitialized()){
-                    //wait till locator initializes
-                    telemetry.addData("Waiting for locator", String.format("X: %.2f", locator.getCurrentX()));
-                    telemetry.addData("isTrackingInitialized", locator.isTrackingInitialized());
-                    telemetry.update();
-                }
-            }
-            telemetry.addData("Locator", String.format("X: %.2f, Y: %.2f", locator.getCurrentX(), locator.getCurrentY()));
-            telemetry.addData("Orientation", locator.getAdjustedCurrentHeading());
-            telemetry.update();
 
             waitForStart();
 
@@ -162,20 +151,41 @@ public class MasterOdo extends OdoBase {
 
     @Override
     protected void initLocator() {
-        this.locator = new RobotCoordinatePosition(bot, new Point(startX, startY), initHead, RobotCoordinatePosition.THREAD_INTERVAL);
-        locator.reverseHorEncoder();
-        locator.setPersistPosition(true);
-        startLocator(locator);
+        if (locator == null) {
+            this.locator = new RobotCoordinatePosition(bot, new Point(startX, startY), initHead, RobotCoordinatePosition.THREAD_INTERVAL);
+            locator.reverseHorEncoder();
+            locator.setPersistPosition(true);
+            startLocator(locator);
+        }
     }
 
     private void toggleRouteSettings(){
-        if (XSettingMode){
-            XSettingMode = false;
-            YSettingMode = true;
+        if (startSettingMode) {
+            if (XSettingMode) {
+                XSettingMode = false;
+                YSettingMode = true;
+                initHeadSettingsMode = false;
+            } else if (YSettingMode) {
+                YSettingMode = false;
+                XSettingMode = false;
+                initHeadSettingsMode = true;
+            } else if (initHeadSettingsMode) {
+                initHeadSettingsMode = false;
+                YSettingMode = false;
+                XSettingMode = true;
+            }
         }
-        else if (YSettingMode){
-            YSettingMode = false;
-            XSettingMode = true;
+        else{
+            if (XSettingMode) {
+                XSettingMode = false;
+                YSettingMode = true;
+            } else if (YSettingMode) {
+                YSettingMode = false;
+                XSettingMode = true;
+            }
+            else if (!XSettingMode && !YSettingMode){
+                XSettingMode = true;
+            }
         }
     }
 
@@ -246,7 +256,7 @@ public class MasterOdo extends OdoBase {
         }
 
         if (gamepad1.left_bumper){
-            if (desiredHeadSettingMode){
+            if (desiredHeadSettingMode || startSettingMode){
                 switch (headIncrementValue){
                     case 1:
                         headIncrementValue = 10;
@@ -332,17 +342,23 @@ public class MasterOdo extends OdoBase {
 
             }
             else if (startSettingMode){
-                int x = (int)locator.getCurrentX();
-                int y = (int)locator.getCurrentY();
                 if (XSettingMode) {
-                    x -= 5;
+                    startX -= 5;
                 }
                 else if (YSettingMode){
-                    y -= 5;
+                    startY -= 5;
                 }
-                locator.init(new Point(x, y), locator.getInitialOrientation());
-                goToInstructions.setTargetX(x);
-                goToInstructions.setTargetY(y);
+                else if (initHeadSettingsMode){
+                    if (initHead == -1){
+                        initHead = 0;
+                    }
+                    initHead -= headIncrementValue;
+                    if (initHead < 0){
+                        initHead = 0;
+                    }
+                }
+                goToInstructions.setTargetX(startX);
+                goToInstructions.setTargetY(startY);
             }
             else if (speedSettingMode){
                 double speed = goToInstructions.getTopSpeed();
@@ -479,6 +495,12 @@ public class MasterOdo extends OdoBase {
                 if (topMode) {
                     if (selectedTopMode < modesTop.length) {
                         selectedTopMode++;
+                        if (selectedTopMode == modesTop.length-1){
+                            locatorStartMode = true;
+                        }
+                        else{
+                            locatorStartMode = false;
+                        }
                     }
                 }
                 else if (goToMode){
@@ -529,17 +551,20 @@ public class MasterOdo extends OdoBase {
 
             }
             else if (startSettingMode){
-                int x = (int)locator.getCurrentX();
-                int y = (int)locator.getCurrentY();
                 if (XSettingMode) {
-                    x += 5;
+                    startX += 5;
                 }
                 else if (YSettingMode){
-                    y += 5;
+                    startY += 5;
                 }
-                locator.init(new Point(x, y), locator.getInitialOrientation());
-                goToInstructions.setTargetX(x);
-                goToInstructions.setTargetY(y);
+                else if (initHeadSettingsMode){
+                    if (initHead == -1){
+                        initHead = 0;
+                    }
+                    initHead += headIncrementValue;
+                }
+                goToInstructions.setTargetX(startX);
+                goToInstructions.setTargetY(startY);
             }
             else if (speedSettingMode){
                 double speed = goToInstructions.getTopSpeed();
@@ -669,6 +694,9 @@ public class MasterOdo extends OdoBase {
                 if (topMode) {
                     if (selectedTopMode > 0) {
                         selectedTopMode--;
+                        if (selectedTopMode < modesTop.length - 1){
+                            locatorStartMode = false;
+                        }
                     }
                 }
                 else if (goToMode){
@@ -701,6 +729,9 @@ public class MasterOdo extends OdoBase {
                     coordinateSavingMode = false;
                     saveCoordinate();
                 }
+            }
+            else if (locatorStartMode){
+                initLocator();
             }
             showConfig();
             gamepadRateLimit.reset();
@@ -736,6 +767,7 @@ public class MasterOdo extends OdoBase {
                         break;
                     case 4:
                         manualDriveMode = !manualDriveMode;
+                        break;
                 }
             }
             else if (goToMode){
@@ -872,9 +904,11 @@ public class MasterOdo extends OdoBase {
                 }else {
                     telemetry.addData("Manual Drive Mode", "Use sticks to operate the robot");
                     telemetry.addData("Save coordinates", "Press Start");
-                    telemetry.addData("X ", locator.getCurrentX());
-                    telemetry.addData("Y ", locator.getCurrentY());
-                    telemetry.addData("Orientation (Degrees)", locator.getOrientation());
+                    if (locator != null) {
+                        telemetry.addData("X ", locator.getCurrentX());
+                        telemetry.addData("Y ", locator.getCurrentY());
+                        telemetry.addData("Orientation (Degrees)", locator.getOrientation());
+                    }
                 }
             }
             else if (waitSettingMode) {
@@ -912,7 +946,12 @@ public class MasterOdo extends OdoBase {
             else if (topMode) {
                 for (int i = 0; i < modesTop.length; i++) {
                     String selected = i == selectedTopMode ? "*" : " ";
-                    telemetry.addData(selected, modeNamesTop[i]);
+                    if (i == modesTop.length - 1 && locator != null){
+                        telemetry.addData(selected, "Locator is running");
+                    }
+                    else{
+                        telemetry.addData(selected, modeNamesTop[i]);
+                    }
                 }
             } else if (goToMode) {
                 showHeading();
@@ -923,9 +962,11 @@ public class MasterOdo extends OdoBase {
                 }
             }
 
-            telemetry.addData("\n\nLocator X", this.locator.getCurrentX());
-            telemetry.addData("Locator Y", this.locator.getCurrentY());
-            telemetry.addData("Locator heading", this.locator.getAdjustedCurrentHeading());
+            if(locator != null) {
+                telemetry.addData("\n\nLocator X", this.locator.getCurrentX());
+                telemetry.addData("Locator Y", this.locator.getCurrentY());
+                telemetry.addData("Locator heading", this.locator.getAdjustedCurrentHeading());
+            }
             telemetry.update();
         }
         catch (Exception ex){
@@ -957,12 +998,22 @@ public class MasterOdo extends OdoBase {
     private void showStart(){
         String toX = XSettingMode ? "*" : " ";
         String toY = YSettingMode ? "*" : " ";
+        String head = initHeadSettingsMode ? "*" : " ";
 
-        telemetry.addData("Start", "%d%s : %d%s", (int)locator.getCurrentX(), toX, (int)locator.getCurrentY(), toY);
+        telemetry.addData("Increment", headIncrementValue);
+
+        if (locator != null) {
+            telemetry.addData("Start", "%d%s : %d%s : %d%s", (int) locator.getCurrentX(), toX, (int) locator.getCurrentY(), toY, (int) locator.getAdjustedCurrentHeading(), head);
+        }
+        else{
+            telemetry.addData("Start", "%d%s : %d%s : %d%s", startX, toX, startY, toY, (int)initHead, head);
+        }
     }
 
     private void showHeading(){
-        telemetry.addData("Current Heading", "%.2f", locator.getAdjustedCurrentHeading());
+        if (locator != null) {
+            telemetry.addData("Current Heading", "%.2f", locator.getAdjustedCurrentHeading());
+        }
     }
 
 
@@ -1070,7 +1121,7 @@ public class MasterOdo extends OdoBase {
                 }
             }
             if (selected != null) {
-                locator.init(selected.getStart(), initHead);
+                locator.init(selected.getStart(), selected.getInitRotation());
                 bot.initDetectorThread(selected.getName(), this);
                 long startTime = System.currentTimeMillis();
                 for (AutoStep s : selected.getSteps()) {
@@ -1179,8 +1230,14 @@ public class MasterOdo extends OdoBase {
         else{
             newRoute.setNameIndex(getMinAvailableIndex(redRoutes));
         }
-        goToInstructions.setTargetX(startX);
-        goToInstructions.setTargetY(startY);
+        if (locator == null) {
+            goToInstructions.setTargetX(startX);
+            goToInstructions.setTargetY(startY);
+        }
+        else{
+            goToInstructions.setTargetX((int)locator.getCurrentX());
+            goToInstructions.setTargetY((int)locator.getCurrentY());
+        }
     }
 
 

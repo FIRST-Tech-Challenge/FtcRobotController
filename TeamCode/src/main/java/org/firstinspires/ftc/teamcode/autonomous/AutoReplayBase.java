@@ -25,7 +25,7 @@ public class AutoReplayBase extends AutoBase {
     protected void act() {
         super.act();
         if (opModeIsActive()) {
-            runRoute();
+            runRoute(true);
         }
     }
 

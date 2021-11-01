@@ -25,7 +25,7 @@ public class AutoReplayBaseCam extends AutoBase {
     protected void act() {
         super.act();
         if (opModeIsActive()) {
-            runRoute();
+            runRoute(false);
         }
     }
 
@@ -36,8 +36,7 @@ public class AutoReplayBaseCam extends AutoBase {
 
     @Override
     protected void initLocator() {
-        this.locator = VSlamOdometry.getInstance(hardwareMap);
-        this.locator.init(new Point(startX, startY), initHead);
+        this.locator = VSlamOdometry.getInstance(hardwareMap, VSlamOdometry.THREAD_INTERVAL, this.selectedRoute.getStartX(), this.selectedRoute.getStartY(), (int) this.selectedRoute.getInitRotation());
         startLocator(locator);
     }
 }

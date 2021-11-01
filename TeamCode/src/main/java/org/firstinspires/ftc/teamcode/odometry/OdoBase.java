@@ -78,6 +78,18 @@ public class OdoBase extends LinearOpMode {
         Thread positionThread = new Thread(locator);
         positionThread.start();
 
+        if (locator != null) {
+            while (!locator.isTrackingInitialized()) {
+                //wait till locator initializes
+                telemetry.addData("Waiting for locator", String.format("X: %.2f", locator.getCurrentX()));
+                telemetry.addData("isTrackingInitialized", locator.isTrackingInitialized());
+                telemetry.update();
+            }
+        }
+        telemetry.addData("Locator", String.format("X: %.2f, Y: %.2f", locator.getCurrentX(), locator.getCurrentY()));
+        telemetry.addData("Orientation", locator.getAdjustedCurrentHeading());
+        telemetry.update();
+
     }
 
     protected void stopLocator(){
@@ -87,10 +99,12 @@ public class OdoBase extends LinearOpMode {
         }
     }
 
-    protected void runRoute(){
+    protected void runRoute(boolean updateLocator){
         try {
             if (this.selectedRoute != null) {
-                locator.init(selectedRoute.getStart(), initHead);
+                if (updateLocator) {
+                    locator.init(selectedRoute.getStart(), initHead);
+                }
                 for (AutoStep s : selectedRoute.getSteps()) {
                     this.goTo(s, false, selectedRoute.getName());
                     telemetry.addData("X: ", locator.getCurrentX());
