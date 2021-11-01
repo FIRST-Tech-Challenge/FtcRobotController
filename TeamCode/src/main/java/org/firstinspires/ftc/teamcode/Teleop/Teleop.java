@@ -69,23 +69,23 @@ public class Teleop extends LinearOpMode {
             //Toggle intake regular
             if (robot.gamePadConfig.aButton && !robot.gamePadConfig.isaButtonPressedPrev){
                 if(isIntakeOn){
-                    robot.control.setIntake(false);
+                    robot.control.setIntakeDirection(true);
                     isIntakeOn = false;
                 }
-                else{
-                    robot.control.setIntake(true);
+                else {
+                    robot.control.setIntakeDirection(true);
                     isIntakeOn = true;
                 }
             }
 
-            //Toggle intake REVERSE
+            //Toggle intake reverse
             if (robot.gamePadConfig.bButton && !robot.gamePadConfig.isbButtonPressedPrev){
                 if(isIntakeOn){
-                    robot.control.setIntakeReverse(false);
+                    robot.control.setIntakeDirection(false);
                     isIntakeOn = false;
                 }
-                else{
-                    robot.control.setIntakeReverse(true);
+                else {
+                    robot.control.setIntakeDirection(false);
                     isIntakeOn = true;
                 }
             }
