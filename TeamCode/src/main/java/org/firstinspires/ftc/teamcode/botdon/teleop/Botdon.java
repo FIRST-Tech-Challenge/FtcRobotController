@@ -44,7 +44,7 @@ public class Botdon extends OpMode {
         this.elevator = new LinearSlide(elevator_motor, 0,360);
 
         //IMPORTANT: Declare claw range constraints below
-        this.clawservo = new ServoClaw(claw_servo, .25, .75);
+        this.clawservo = new ServoClaw(claw_servo, .25f, .75f);
 
         //Telemetry B
         telemetry.addData("Ready for launch!" , "＼(≧▽≦)／");
