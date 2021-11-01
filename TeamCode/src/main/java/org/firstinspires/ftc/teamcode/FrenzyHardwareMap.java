@@ -34,22 +34,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * This is NOT an opmode.
- *
- * This class can be used to define all the specific hardware for a single robot.
- * In this case that robot is a Pushbot.
- * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
- *
- * This hardware class assumes the following device names have been configured on the robot:
- * Note:  All names are lower case and some have single spaces between words.
- *
- * Motor channel:  Left  drive motor:        "left_drive"
- * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
- */
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+
 public class FrenzyHardwareMap {
 
     /* Public OpMode members. */
@@ -66,14 +53,15 @@ public class FrenzyHardwareMap {
 
 
     //Setup Wheel measurements for REV Motors
-    // encoder clicks are originally 28
-    final int REV_ENCODER_CLICKS = 28;
+    // encoder clicks are originally 28 per rotation, but multiply by 20:1
+    final int REV_ENCODER_CLICKS = 560;
     final double REV_WHEEL_DIAM = 7.5;
     final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
     final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
 
     /* local OpMode members. */
     HardwareMap frenzyMap = null;
+    Telemetry telemetry = null;
     private ElapsedTime period = new ElapsedTime();
 
     /* Constructor */
@@ -82,10 +70,10 @@ public class FrenzyHardwareMap {
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap hwMap) {
+    public void init(HardwareMap hwMap, Telemetry frenzyTelemetry) {
         // Save reference to Hardware map
         frenzyMap = hwMap;
-
+        telemetry = frenzyTelemetry;
         //Define and Initialize DriveTrain Motors
         motorFrontLeft = frenzyMap.get(DcMotor.class, "frontLeft");
         motorBackLeft = frenzyMap.get(DcMotor.class, "backLeft");
@@ -140,6 +128,12 @@ public class FrenzyHardwareMap {
     }
     //checks if all motors are busy
     public boolean motorsBusy(){
+        telemetry.addData("frontLeft",motorFrontLeft.isBusy());
+        telemetry.addData("frontRight",motorFrontRight.isBusy());
+        telemetry.addData("backRight",motorBackRight.isBusy());
+        telemetry.addData("backLeft",motorBackLeft.isBusy());
+        telemetry.update();
+
         if(motorFrontRight.isBusy() && motorFrontLeft.isBusy() && motorBackRight.isBusy() && motorBackLeft.isBusy()) {
             return true;
         }
