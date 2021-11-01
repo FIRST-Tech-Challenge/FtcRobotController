@@ -25,18 +25,39 @@ public class Auto extends AutonomousMode<MecanumDrive> {
 
     @Override
     public void OnInitialize() {
-        config = new Config(hardwareMap.appContext);
+        config = new Config(hardwareMap.appContext); // Get the saved configuration for later
 
-        TensorFlowObjectDetector objectDetector = new TensorFlowObjectDetector(this, "Webcam 1");
+        ScanBarcode(); // Scan for the duck's position
+    }
 
+    @Override
+    public void OnStart() {
+        // 1 if on blue alliance -1 if on red alliance
+        int movementModifier = config.allianceColor == Config.AllianceColor.BLUE ? 1 : -1;
+
+        // Call the appropriate method and pass in the movement modifier
+        switch (config.startingPosition) {
+            case WAREHOUSE:
+                RunWarehouse(movementModifier);
+                break;
+            case STORAGE_UNIT:
+                RunStorageUnit(movementModifier);
+                break;
+        }
+    }
+
+    private void ScanBarcode() {
         telemetry.addData("Status", "Updating Recognitions");
         telemetry.update();
 
-        // Detect for the gold brick
-        objectDetector.Initialize();
-        while(!isStarted()) {
-            objectDetector.UpdateRecognitions();
+        TensorFlowObjectDetector objectDetector = new TensorFlowObjectDetector(this, "Webcam 1");
 
+        // Detect for the duck
+        objectDetector.Initialize(); // Initialize the object detector
+        while(!isStarted()) { // Loop until the start button is pressed
+            objectDetector.UpdateRecognitions(); // Scan for all game objects
+
+            // Get the duck's position and determine which spot it's in using the threshold values.
             Recognition duckRecognition = objectDetector.GetFirstRecognitionByType(TensorFlowObjectDetector.ObjectType.DUCK);
             if (duckRecognition != null) {
                 if (duckRecognition.getLeft() < DUCK_LEFT_THRESHOLD)
@@ -47,15 +68,17 @@ public class Auto extends AutonomousMode<MecanumDrive> {
                     duckPosition = DuckPosition.CENTER;
             }
 
+            // Push the duck's estimated position to the drivers.
             telemetry.addData("Duck Position", duckPosition.toString());
             telemetry.update();
 
-            sleep(5);
+            sleep(5); // Allow the CPU to ramp-down
         }
 
+        // If the duck wasn't found, assume it's in the left position and print a warning.
         if(duckPosition == DuckPosition.UNKNOWN) {
             if(specifications.debugModeEnabled) {
-                telemetry.addLine("ERROR: Could not detect the duck!!!");
+                telemetry.addLine("WARNING: Could not detect the duck!!!");
                 telemetry.update();
             }
 
@@ -63,16 +86,26 @@ public class Auto extends AutonomousMode<MecanumDrive> {
         }
     }
 
-    @Override
-    public void OnStart() {
-        double movementModifier = config.allianceColor == Config.AllianceColor.RED ? 1 : -1;
+    // Warehouse Code (compatible for both sides with the 'movementModifier')
+    private void RunWarehouse(int movementModifier) {
+        // Drive to the alliance shipping hub
 
-        switch (config.startingPosition) {
-            case WAREHOUSE:
-                break;
-            case STORAGE_UNIT:
-                break;
-        }
+        // Deliver the preloaded block (make sure the robot has this)
+
+        // Strafe and park fully in the warehouse
+    }
+
+    // Storage Unit Code (compatible for both sides with the 'movementModifier')
+    private void RunStorageUnit(int movementModifier) {
+        // Drive to the alliance shipping hub
+
+        // Deliver the preloaded block (make sure the robot has this)
+
+        // Drive to the turn-table
+
+        // Spin the turn-table
+
+        // Park fully in the Storage Unit
     }
 
     @Override
