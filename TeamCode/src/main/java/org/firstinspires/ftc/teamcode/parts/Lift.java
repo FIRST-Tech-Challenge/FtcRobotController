@@ -20,23 +20,22 @@ public class Lift {
      * @param toolGamepad instance of FtcLib GamepadEx
      */
     public Lift(@NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
-        this.liftMotor = map.get(DcMotor.class,"liftMotor");
-        this.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        this.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor = map.get(DcMotor.class,"liftMotor");
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         try { Thread.sleep(100); } catch (InterruptedException ignored) {}
-        this.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        assert !liftMotor.isBusy();
-        this.armServo = map.get(Servo.class,"armServo");
-        this.encoderOffset = liftMotor.getCurrentPosition() * -1;
-        this.bottomSensor = map.get(DigitalChannel.class,"bottomSensor");
-        this.bottomSensor.setMode(DigitalChannel.Mode.INPUT);
-        this.topSensor = map.get(DigitalChannel.class,"topSensor");
-        this.topSensor.setMode(DigitalChannel.Mode.INPUT);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armServo = map.get(Servo.class,"armServo");
+        encoderOffset = liftMotor.getCurrentPosition() * -1;
+        bottomSensor = map.get(DigitalChannel.class,"bottomSensor");
+        bottomSensor.setMode(DigitalChannel.Mode.INPUT);
+        topSensor = map.get(DigitalChannel.class,"topSensor");
+        topSensor.setMode(DigitalChannel.Mode.INPUT);
         this.telemetry = telemetry;
-        this.gamepad = toolGamepad;
-        this.rBumpReader = new ToggleButtonReader(toolGamepad, GamepadKeys.Button.RIGHT_BUMPER);
-        this.aReader = new ButtonReader(toolGamepad, GamepadKeys.Button.A);
+        gamepad = toolGamepad;
+        rBumpReader = new ToggleButtonReader(toolGamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        aReader = new ButtonReader(toolGamepad, GamepadKeys.Button.A);
     }
 
     private final Telemetry telemetry;
@@ -61,7 +60,7 @@ public class Lift {
         telemetry.addData("motor encoder",curPos);
         telemetry.addData("topSensor", topSensor.getState());
         telemetry.addData("armServo",armServo.getPosition());
-        if (!liftMotor.isBusy()) {
+        if (liftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION || !liftMotor.isBusy()) {
             if (running) {
                 liftMotor.setPower(0);
                 liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -69,7 +68,7 @@ public class Lift {
                 running = false;
             }
             aReader.readValue();
-            if (aReader.wasJustReleased()) {
+            if (aReader.wasJustReleased() && armServo.getPosition() > 0.1) {
                 first = true;
                 curPos = 10;
             }
@@ -98,16 +97,17 @@ public class Lift {
     }
 
     private void arm() {
-        if (curPos >= (double) 850) { // completely away from intake interference
-            rBumpReader.readValue();
-            if (rBumpReader.getState()) {
+        rBumpReader.readValue();
+        boolean curState = rBumpReader.getState();
+        if (curPos >= (double) 910) { // completely away from intake interference
+            if (curState) {
                 armServo.setPosition(0.07); // dump pos
             } else {
                 armServo.setPosition(0.76); // lift pos
             }
-        } else if (curPos >= (double) 50) { // if it is away from load zone but still interfering
-            armServo.setPosition(0.85); // in between load and lift pos
-        } else { // in load zone
+        } else if (curPos >= (double) 50 && !curState) { // if it is away from load zone but still interfering
+            armServo.setPosition(0.847); // in between load and lift pos
+        } else if (!curState) { // in load zone
             armServo.setPosition(0.88); // load pos
         }
     }
