@@ -87,7 +87,7 @@ public class FourWheelDrive extends AbstractDrive {
     @Override
     public void TurnDegrees(double power, int degrees, TurnDirection turnDirection) {
         // Calculate the Distance in Inches
-        double distance = Math.abs(degrees) / (pivotCircleCircumference * 360.0);
+        double distance = Math.abs(degrees) * (pivotCircleCircumference / 360.0);
 
         // Reverse if turning counter-clockwise
         if(turnDirection == TurnDirection.COUNTER_CLOCKWISE)
