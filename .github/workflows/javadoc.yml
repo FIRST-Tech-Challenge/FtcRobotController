@@ -69,8 +69,8 @@ jobs:
         mkdir -p ./reports/${BRANCH_NAME}/sdk-reports/
         mv ../team-reports/* ./reports/${BRANCH_NAME}/team-reports/
         mv ../sdk-reports/* ./reports/${BRANCH_NAME}/sdk-reports/
-        mv ./reports/${BRANCH_NAME}/team-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/team-reports/index.html
-        mv ./reports/${BRANCH_NAME}/sdk-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/sdk-reports/index.html
+        mv ./reports/${BRANCH_NAME}/team-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/team-reports/index.html || true
+        mv ./reports/${BRANCH_NAME}/sdk-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/sdk-reports/index.html || true
 
         # Commit and push changes
         git add .
