@@ -1,10 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.botdon.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.BasicOpTrain;
+import org.firstinspires.ftc.teamcode.LinearSlide;
+import org.firstinspires.ftc.teamcode.ServoClaw;
 
 @TeleOp(name="TeleOp Drive", group="TeleOp")
 public class Botdon extends OpMode {
@@ -76,7 +79,7 @@ public class Botdon extends OpMode {
 
         //Manage Claw
 
-        clawservo.turninrange(gamepad2.right_trigger * this.slowdownModifierp2);
+        clawservo.actuateToPercent(gamepad2.right_trigger * this.slowdownModifierp2);
 
         //Telemetry
 
