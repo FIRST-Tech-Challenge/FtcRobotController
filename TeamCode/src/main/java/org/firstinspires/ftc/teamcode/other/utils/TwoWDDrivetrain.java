@@ -1,14 +1,12 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.other.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
-public class Drivetrain {
+public class TwoWDDrivetrain {
 
     public String ld1_name;
     public String ld2_name;
@@ -25,18 +23,14 @@ public class Drivetrain {
 
     private HardwareMap hardware;
 
-    public Drivetrain(List<String> driveMotors, HardwareMap hardwareMap) {
+    public TwoWDDrivetrain(List<String> driveMotors, HardwareMap hardwareMap) {
         ld1_name = driveMotors.get(0);
         rd1_name = driveMotors.get(1);
-        ld2_name = driveMotors.get(2);
-        rd2_name = driveMotors.get(3);
 
         hardware = hardwareMap;
 
         ld1 = hardwareMap.dcMotor.get(ld1_name);
-        ld2 = hardwareMap.dcMotor.get(ld2_name);
         rd1 = hardwareMap.dcMotor.get(rd1_name);
-        rd2 = hardwareMap.dcMotor.get(rd2_name);
     }
 
     public void SetPower(double ld1, double rd1, double ld2, double rd2) {
@@ -47,11 +41,8 @@ public class Drivetrain {
     }
 
     public void SetPower(double left, double right) {
-        SetPower(left, right, left, right);
-    }
-
-    public void Translate(double powerY) {
-        SetPower(powerY, powerY, powerY, powerY);
+        this.ld1.setPower(left);
+        this.rd1.setPower(right);
     }
 
     /**
@@ -62,10 +53,10 @@ public class Drivetrain {
     }
 
     public void EvalGamepad(double x, double y) {
-        double drive = -y;
-        double turn  =  x;
+        double drive = y;
+        double turn  =  -x;
         double left    = Range.clip(drive + turn, -100.0, 100.0) ;
         double right   = Range.clip(drive - turn, -100.0, 100.0) ;
-        SetPower(left, right);
+        SetPower(left, -right);
     }
 }

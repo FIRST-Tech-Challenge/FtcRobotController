@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
+package org.firstinspires.ftc.teamcode.other.utils;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 

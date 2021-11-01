@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.other.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,13 +8,11 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.firstinspires.ftc.teamcode.competition.utils.GamepadExtended;
 
 public class TankRobot extends GamepadExtended {
 
-    public Drivetrain drivetrain;
+    public DrivetrainManager4WD drivetrainManager4WD;
     public Tank tank;
     public DcMotor spinner;
 
@@ -22,10 +20,10 @@ public class TankRobot extends GamepadExtended {
         super(gamepad1, gamepad2, telemetry);
         tank = new Tank(
                 telemetry,
-                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_1), DcMotorSimple.Direction.FORWARD),
-                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_2), DcMotorSimple.Direction.FORWARD),
-                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.LEFT_DRIVE_1), DcMotorSimple.Direction.FORWARD),
-                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.LEFT_DRIVE_2), DcMotorSimple.Direction.FORWARD)
+                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_1), DcMotorSimple.Direction.FORWARD),
+                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_2), DcMotorSimple.Direction.FORWARD),
+                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_1), DcMotorSimple.Direction.FORWARD),
+                new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_2), DcMotorSimple.Direction.FORWARD)
         );
     }
 
@@ -44,5 +42,10 @@ public class TankRobot extends GamepadExtended {
         }
         else if (gamepad1.right_trigger >= 0.25) { spinner.setPower(gamepad1.left_stick_y); }
         */
+    }
+
+    @Override
+    public void stop() {
+
     }
 }

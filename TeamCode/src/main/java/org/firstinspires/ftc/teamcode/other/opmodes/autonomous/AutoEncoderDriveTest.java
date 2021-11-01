@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous;
+package org.firstinspires.ftc.teamcode.other.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.utils.Motor;
+import org.firstinspires.ftc.teamcode.other.utils.Motor;
 
-@Autonomous(name="Encoder Drive Test (H-Drive)", group="H.Testing.Autonomous")
+@Autonomous(name="Encoder Drive Test (H-Drive) other", group="H.Testing.Autonomous")
 public class AutoEncoderDriveTest extends LinearOpMode {
 
     @Override
@@ -19,6 +19,7 @@ public class AutoEncoderDriveTest extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         Motor left = new Motor(telemetry, hardwareMap, "ld1", DcMotorSimple.Direction.FORWARD, 400, 2.0, 2.0);
         left.driveDistance(60, 50);
+
         while(left.getDcMotor().isBusy());
     }
 

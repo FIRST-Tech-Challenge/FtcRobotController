@@ -27,14 +27,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.other.opmodes.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
+import org.firstinspires.ftc.teamcode.other.utils.TwoWDRobotWithSpinnerAndLift;
 
 
 /**
@@ -50,17 +49,19 @@ import org.firstinspires.ftc.teamcode.utils.RobotWithSpinner;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic OpMode with spinner attachment", group="Special Hardware")
-public class BasicOpMode_With_Spinner extends LinearOpMode {
+@TeleOp(name="Basic OpMode for 2WD with spinner and lift attachments", group="Special Hardware")
+public class BasicTwoWDOpMode_With_Spinner_And_Lift extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private RobotWithSpinner gpad;
+    private TwoWDRobotWithSpinnerAndLift gpad;
 
     @Override
     public void runOpMode() {
 
-        gpad = new RobotWithSpinner(gamepad1, gamepad2, hardwareMap, telemetry);
+        gpad = new TwoWDRobotWithSpinnerAndLift(gamepad1, gamepad2, hardwareMap, telemetry);
+
+        waitForStart();
 
         while (opModeIsActive()) {
 
@@ -68,7 +69,7 @@ public class BasicOpMode_With_Spinner extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", gpad.drivetrain.ld1.getPower(), gpad.drivetrain.rd1.getPower());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", gpad.drivetrainManager4WD.ld1.getPower(), gpad.drivetrainManager4WD.rd1.getPower());
             telemetry.update();
         }
     }

@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.competition.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -54,6 +52,7 @@ public class Motor {
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MOTOR.setDirection(offset);
         MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        MOTOR.setPower(0);
         TYPE = MotorType.COMPLEX;
         TELEMETRY.addLine("Motor " + getName() + " is ready.");
     }
@@ -78,6 +77,7 @@ public class Motor {
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MOTOR.setDirection(offset);
         MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        MOTOR.setPower(0);
         TYPE = MotorType.SIMPLE;
         TELEMETRY.addLine("Motor " + getName() + " is ready.");
 

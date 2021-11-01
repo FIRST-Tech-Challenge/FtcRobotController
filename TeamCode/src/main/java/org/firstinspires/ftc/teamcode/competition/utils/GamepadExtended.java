@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.competition.utils;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -17,4 +17,7 @@ public abstract class GamepadExtended {
     }
 
     public abstract void main();
+
+    public abstract void stop();
+
 }
