@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.calibration;
 
-import org.firstinspires.ftc.teamcode.bots.YellowBotI;
+import org.firstinspires.ftc.teamcode.bots.YellowBot;
 
 import java.io.Serializable;
 
@@ -137,7 +137,7 @@ public class MotorReductionBot implements Serializable {
 
     public double getBreakPointInches(double power) {
         double raw = getBreakPoint(power);
-        return raw/ YellowBotI.COUNTS_PER_INCH_REV;
+        return raw/ YellowBot.COUNTS_PER_INCH_REV;
     }
 
 

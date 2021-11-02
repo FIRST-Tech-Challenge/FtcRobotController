@@ -7,14 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.bots.FrenzyBotI;
+import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 @Disabled
 @TeleOp(name = "OdometryFeedback", group = "Robot15173")
 public class OdometryFeedbackMode extends LinearOpMode {
-    FrenzyBotI robot = new FrenzyBotI();
+    FrenzyBot robot = new FrenzyBot();
     IBaseOdometry odometry = null;
     private ElapsedTime runtime = new ElapsedTime();
 

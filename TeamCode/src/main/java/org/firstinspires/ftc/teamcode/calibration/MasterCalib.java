@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.bots.IOdoBot;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.RobotMovementStats;
 import org.firstinspires.ftc.teamcode.bots.RobotVeer;
-import org.firstinspires.ftc.teamcode.bots.YellowBotI;
+import org.firstinspires.ftc.teamcode.bots.YellowBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Geometry;
@@ -194,7 +194,7 @@ public class MasterCalib extends LinearOpMode {
     }
 
     protected void initBot(){
-        this.bot = new YellowBotI();
+        this.bot = new YellowBot();
     }
 
     private void changeMoveModes(){

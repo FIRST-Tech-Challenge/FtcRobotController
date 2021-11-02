@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import android.graphics.Point;
 
-import org.firstinspires.ftc.teamcode.bots.UltimateBotI;
+import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 
 public class AutoReplayBase extends AutoBase {
@@ -29,9 +29,9 @@ public class AutoReplayBase extends AutoBase {
 
     @Override
     protected void initBot() {
-        this.bot = new UltimateBotI();
+        this.bot = new UltimateBot();
         bot.initDetectorThread(this.getOpModeSide(), this);
-        ((UltimateBotI)bot).cameraInitAuto();
+        ((UltimateBot)bot).cameraInitAuto();
     }
 
     @Override

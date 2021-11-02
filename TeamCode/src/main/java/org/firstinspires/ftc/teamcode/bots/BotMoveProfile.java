@@ -673,7 +673,7 @@ public class BotMoveProfile {
             profile.setMotorReduction(botConfig.getStrafeRightReduction());
         }
         profile.setDistance(strafeDistance);
-        profile.setLongTarget(strafeDistance* YellowBotI.COUNTS_PER_INCH_REV);
+        profile.setLongTarget(strafeDistance* YellowBot.COUNTS_PER_INCH_REV);
         profile.setAngleChange(angleChange);
         profile.setStrategy(MoveStrategy.Strafe);
         profile.setTopSpeed(topSpeed);
@@ -870,11 +870,11 @@ public class BotMoveProfile {
     }
 
     public double getTopVelocity() {
-        return this.getTopSpeed() * YellowBotI.MAX_VELOCITY;
+        return this.getTopSpeed() * YellowBot.MAX_VELOCITY;
     }
 
     public double getLowVelocity() {
-        return getLowSpeed() * YellowBotI.MAX_VELOCITY;
+        return getLowSpeed() * YellowBot.MAX_VELOCITY;
     }
 
     public double getMinSpeedSpin() {

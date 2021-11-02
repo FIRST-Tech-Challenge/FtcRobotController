@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import static java.lang.StrictMath.abs;
 
-public class FrenzyBaseBotI implements IOdoBot {
+public class FrenzyBaseBot implements IOdoBot {
 
     protected DcMotorEx frontLeft = null;
     protected DcMotorEx frontRight = null;
@@ -75,7 +75,7 @@ public class FrenzyBaseBotI implements IOdoBot {
     private static final String TAG = "FrenzyBaseBot";
 
 
-    public FrenzyBaseBotI() {
+    public FrenzyBaseBot() {
 
     }
 

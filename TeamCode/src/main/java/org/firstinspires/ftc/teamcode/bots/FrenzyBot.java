@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.CVRec.GameElement;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 
-public class FrenzyBotI extends FrenzyBaseBotI {
+public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx intake = null;
     private DcMotorEx lift = null;
     private DcMotorEx rotator = null;
@@ -37,11 +37,11 @@ public class FrenzyBotI extends FrenzyBaseBotI {
     private GameElement detectedElement;
 
     /* Constructor */
-    public FrenzyBotI() {
+    public FrenzyBot() {
         opModeSide = AutoRoute.NAME_RED; // defult
     }
 
-    public FrenzyBotI(String fieldSide) {
+    public FrenzyBot(String fieldSide) {
         this.opModeSide = fieldSide;
     }
 

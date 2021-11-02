@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import static java.lang.StrictMath.abs;
 
-public class YellowBotI implements IOdoBot {
+public class YellowBot implements IOdoBot {
     protected DcMotorEx frontLeft = null;
     protected DcMotorEx frontRight = null;
     protected DcMotorEx leftOdo = null; //leftodo port 1 ext hub    forward positive
@@ -71,7 +71,7 @@ public class YellowBotI implements IOdoBot {
     private static final String TAG = "YellowBot";
 
 
-    public YellowBotI() {
+    public YellowBot() {
 
     }
 

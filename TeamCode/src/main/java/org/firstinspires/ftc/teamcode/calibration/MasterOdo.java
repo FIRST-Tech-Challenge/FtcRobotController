@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.bots.BotActionObj;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
-import org.firstinspires.ftc.teamcode.bots.UltimateBotI;
+import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 import org.firstinspires.ftc.teamcode.odometry.OdoBase;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Led;
@@ -141,7 +141,7 @@ public class MasterOdo extends OdoBase {
 
     @Override
     protected void initBot() {
-        this.bot = new UltimateBotI();
+        this.bot = new UltimateBot();
     }
 
     @Override

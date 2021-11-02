@@ -5,7 +5,7 @@ import android.graphics.Point;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
-import org.firstinspires.ftc.teamcode.bots.FrenzyBotI;
+import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 public class MasterCalibCam extends MasterCalib {
 
     protected void initBot(){
-        this.bot = new FrenzyBotI();
+        this.bot = new FrenzyBot();
     }
 
     protected IBaseOdometry initLocator(){

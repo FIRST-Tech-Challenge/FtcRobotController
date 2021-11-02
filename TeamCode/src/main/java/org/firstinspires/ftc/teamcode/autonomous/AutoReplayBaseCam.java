@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import org.firstinspires.ftc.teamcode.bots.FrenzyBotI;
+import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 public class AutoReplayBaseCam extends AutoBase {
@@ -27,7 +27,7 @@ public class AutoReplayBaseCam extends AutoBase {
 
     @Override
     protected void initBot() {
-        this.bot = new FrenzyBotI(this.getOpModeSide());
+        this.bot = new FrenzyBot(this.getOpModeSide());
         bot.initDetectorThread(this.getOpModeSide(), this);
     }
 

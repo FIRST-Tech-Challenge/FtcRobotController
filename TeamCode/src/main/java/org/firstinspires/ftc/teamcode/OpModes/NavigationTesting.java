@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.bots.UltimateBotI;
+import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class NavigationTesting extends LinearOpMode {
     private VuforiaLocalizer vuforia = null;
 
     WebcamName webcamName = null;
-    UltimateBotI robot = new UltimateBotI();
+    UltimateBot robot = new UltimateBot();
     RobotCoordinatePosition locator = null;
 
     private boolean targetVisible = false;

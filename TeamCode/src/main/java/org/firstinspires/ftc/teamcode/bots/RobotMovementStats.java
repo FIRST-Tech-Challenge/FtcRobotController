@@ -111,7 +111,7 @@ public class RobotMovementStats {
     }
 
     public double getSlowDownDistanceRaw() {
-        return slowDownDistance* YellowBotI.COUNTS_PER_INCH_REV;
+        return slowDownDistance* YellowBot.COUNTS_PER_INCH_REV;
     }
 
     public void setSlowDownDistance(double slowDownDistance) {
@@ -130,7 +130,7 @@ public class RobotMovementStats {
 
     public void stopAccelerateTimer(double stopAcceleratePoint){
         setAccelerateTime(accelerateTimer.milliseconds());
-        this.setAccelerateDistance(Math.abs(stopAcceleratePoint - startingPoint)/ YellowBotI.COUNTS_PER_INCH_REV);
+        this.setAccelerateDistance(Math.abs(stopAcceleratePoint - startingPoint)/ YellowBot.COUNTS_PER_INCH_REV);
     }
 
     //full speed
@@ -141,7 +141,7 @@ public class RobotMovementStats {
 
     public void stopFullSpeedTimer(double stopPoint){
         setFullSpeedTime(fullSpeedTimer.milliseconds());
-        this.setFullSpeedDistance(Math.abs(stopPoint - startFullSpeedPoint)/ YellowBotI.COUNTS_PER_INCH_REV);
+        this.setFullSpeedDistance(Math.abs(stopPoint - startFullSpeedPoint)/ YellowBot.COUNTS_PER_INCH_REV);
         this.setFullSpeed(fullSpeedDistance/fullSpeedTime*1000);
     }
 
@@ -156,12 +156,12 @@ public class RobotMovementStats {
 
     public void stopSlowdownTimer(double stopPoint){
         setSlowDownTime(slowDownTimer.milliseconds());
-        this.setSlowDownDistance((Math.abs(stopPoint - slowDownPoint) + this.slowDownDelay)/ YellowBotI.COUNTS_PER_INCH_REV);
+        this.setSlowDownDistance((Math.abs(stopPoint - slowDownPoint) + this.slowDownDelay)/ YellowBot.COUNTS_PER_INCH_REV);
     }
 
     //totals
     public void computeTotals(double stopPoint){
-        this.setTotalDistance(Math.abs(stopPoint - startingPoint)/ YellowBotI.COUNTS_PER_INCH_REV);
+        this.setTotalDistance(Math.abs(stopPoint - startingPoint)/ YellowBot.COUNTS_PER_INCH_REV);
         this.setTotalTime(this.getAccelerateTime() + this.getFullSpeedTime() + this.getSlowDownTime());
         this.setAverageSpeed(this.getTotalDistance()/this.getTotalTime()*1000);
     }

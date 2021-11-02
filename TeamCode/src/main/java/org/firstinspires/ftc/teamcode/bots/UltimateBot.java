@@ -20,7 +20,7 @@ import static java.lang.Math.abs;
 // Control Hub ADB Terminal Command for Reference
 // adb.exe connect 192.168.43.1:5555
 
-public class UltimateBotI extends YellowBotI {
+public class UltimateBot extends YellowBot {
     private Servo wobbleSwing = null;
     private Servo wobbleClaw1 = null;
     private Servo wobbleClaw2 = null;
@@ -45,7 +45,7 @@ public class UltimateBotI extends YellowBotI {
 
 
     /* Constructor */
-    public UltimateBotI() {
+    public UltimateBot() {
 
     }
 
