@@ -19,14 +19,13 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Pchassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.vision.RGBVisionV1Blue;
-import org.firstinspires.ftc.teamcode.vision.RGBVisionV1Blue2;
+import org.firstinspires.ftc.teamcode.vision.BlueVisionRGB;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -69,7 +68,7 @@ public class InternalCamera1Example extends LinearOpMode
          * of a frame from the camera. Note that switching pipelines on-the-fly
          * (while a streaming session is in flight) *IS* supported.
          */
-        phoneCam.setPipeline(new RGBVisionV1Blue(telemetry));
+        phoneCam.setPipeline(new BlueVisionRGB(telemetry));
 
         /*
          * Open the connection to the camera device. New in v1.4.0 is the ability

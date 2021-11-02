@@ -14,24 +14,27 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RGBVisionV1BlueTele extends OpenCvPipeline {
+public class BlueVisionYCbCr extends OpenCvPipeline {
     boolean viewportPaused = false;
 
     private volatile boolean[] positions;
 
     public Scalar x = new Scalar(87,179,232);
-    public Scalar low = new Scalar(35, 111.9, 160.1), high =new Scalar(106.3, 188.4, 201.2);
+    public Scalar low = new Scalar(0, 87.8, 138.8, 0), high =new Scalar(255, 117.6, 194.1, 255);
+    //public Scalar low = new Scalar(25,25,25), high = new Scalar(200,200,200);
 
     Mat mask, hierarchy = new Mat();
 
     Telemetry telemetry;
-    public RGBVisionV1BlueTele(Telemetry telemetry) {
+    public BlueVisionYCbCr(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
     @Override
     public Mat processFrame(Mat input) {
         // Process frame
+        Imgproc.cvtColor(input,input,Imgproc.COLOR_RGB2YCrCb);
+
         mask = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
 
         Core.inRange(input, low, high, mask);
@@ -47,7 +50,7 @@ public class RGBVisionV1BlueTele extends OpenCvPipeline {
         // Return information
 
         ArrayList<MatOfPoint> cont2 = new ArrayList<MatOfPoint>();
-        telemetry.addData("ContourN",cont.size());
+
         for(MatOfPoint m : cont) {
             int x = 0, y = 0, xmax = Integer.MIN_VALUE, xmin = Integer.MAX_VALUE, ymax = Integer.MIN_VALUE, ymin = Integer.MAX_VALUE;
             // Find average value of point
@@ -67,11 +70,13 @@ public class RGBVisionV1BlueTele extends OpenCvPipeline {
             }
             int xrange = xmax-xmin;
             int yrange = ymax-ymin;
-            int k = 50;
+            int k_low = 40;
+            int k_high = 20;
             x /= points.size();
             y /= points.size();
-            telemetry.addLine("("+x+","+y+")");
-            if(y > 3*input.height()/4 && xrange > input.width()/k && yrange > input.height()/k) {
+            if(within(y,5*input.height()/8,3*input.height()/4)
+                    && within(xrange,input.width()/k_low,input.width()/k_high)
+                    && within(yrange ,input.height()/k_low,input.height()/k_high)) {
                 cont2.add(m);
                 if(x < 3*input.width()/8) {
                     positions[0] = true;
@@ -84,21 +89,21 @@ public class RGBVisionV1BlueTele extends OpenCvPipeline {
                 }
             }
         }
-        Imgproc.drawContours(input ,cont2,-1, new Scalar(255,0,0), 5);
+        telemetry.addData("validContours",String.valueOf(cont2.size()));
         telemetry.addData("left",positions[0]);
         telemetry.addData("middle",positions[1]);
         telemetry.addData("right",positions[2]);
         telemetry.update();
+        Imgproc.drawContours(input, cont2,-1, new Scalar(255,0,0), 5);
         return input;
     }
-    public int getPosition() {
-        if(positions[0] && positions[1]) {
-            return 3;
-        }else if(positions[1] && positions[2]) {
-            return 1;
-        }else {
-            return 2;
-        }
+
+    public boolean[] getPositions() {
+        return positions;
+    }
+
+    public static boolean within(double check, double low, double high) {
+        return check > low && check < high;
     }
 
 }

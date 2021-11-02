@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Pchassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="ShitHead2", group="Pushbot")
+@Autonomous
+@Disabled
+
 public class AutoFrenzy extends LinearOpMode {
     public static final double dPower = 0.75;
 

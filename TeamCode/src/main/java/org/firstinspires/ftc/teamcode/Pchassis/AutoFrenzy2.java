@@ -1,15 +1,17 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Pchassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.vision.RGBVisionV1Blue;
+import org.firstinspires.ftc.teamcode.vision.BlueVisionRGB;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="ShitHead3", group="Pushbot")
+@Autonomous
+@Disabled
 public class AutoFrenzy2 extends LinearOpMode {
     public static final double dPower = 0.75;
 
@@ -21,7 +23,7 @@ public class AutoFrenzy2 extends LinearOpMode {
     public void runOpMode() {
         robot.init(hardwareMap);
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
-        RGBVisionV1Blue p = new RGBVisionV1Blue(telemetry);
+        BlueVisionRGB p = new BlueVisionRGB(telemetry);
         phoneCam.setPipeline(p);
         phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {

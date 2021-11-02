@@ -1,21 +1,15 @@
 // modified from https://github.com/OpenFTC/EasyOpenCV/blob/master/examples/src/main/java/org/firstinspires/ftc/teamcode/InternalCamera1Example.java
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Pchassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.vision.RGBVisionV1Blue;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
+import org.firstinspires.ftc.teamcode.vision.BlueVisionRGB;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 @Autonomous(name="Example Marker Detection")
 public class exampleRobotAuton extends LinearOpMode
@@ -37,7 +31,7 @@ public class exampleRobotAuton extends LinearOpMode
          * Specify the image processing pipeline we wish to invoke upon receipt of a frame from the camera. Note that switching pipelines on-the-fly
          * (while a streaming session is in flight) *IS* supported.
          */
-        RGBVisionV1Blue p = new RGBVisionV1Blue(telemetry);
+        BlueVisionRGB p = new BlueVisionRGB(telemetry);
         phoneCam.setPipeline(p);
 
         // Open the connection to the camera device.

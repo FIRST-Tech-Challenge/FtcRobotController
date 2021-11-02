@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RGBVisionV1Blue extends OpenCvPipeline {
+public class BlueVisionRGBNoTele extends OpenCvPipeline {
     boolean viewportPaused = false;
 
     private volatile boolean[] positions;
@@ -25,10 +25,7 @@ public class RGBVisionV1Blue extends OpenCvPipeline {
 
     Mat mask, hierarchy = new Mat();
 
-    Telemetry telemetry;
-    public RGBVisionV1Blue(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
+    public BlueVisionRGBNoTele() {}
 
     @Override
     public Mat processFrame(Mat input) {
@@ -43,7 +40,6 @@ public class RGBVisionV1Blue extends OpenCvPipeline {
 
         Imgproc.findContours(mask, cont, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
-        telemetry.addData("numContours",cont.size());
         positions = new boolean[]{false, false, false};
         // Return information
 
