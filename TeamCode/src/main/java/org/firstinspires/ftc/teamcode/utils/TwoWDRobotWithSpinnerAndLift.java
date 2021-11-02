@@ -41,7 +41,6 @@ public class TwoWDRobotWithSpinnerAndLift extends GamepadExtended {
         else { spinner.setPower(0.0); }
 
 
-
         if ((gamepad2.left_stick_x >= 0.25 | gamepad2.left_stick_x <= -0.25) && priority.f3(false)) {
             lift.setPower(-gamepad2.left_stick_x);
         }

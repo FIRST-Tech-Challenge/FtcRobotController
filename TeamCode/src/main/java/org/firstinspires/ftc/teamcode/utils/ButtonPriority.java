@@ -1,6 +1,30 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 public class ButtonPriority {
+    public void setG1HasF1(boolean g1HasF1) {
+        this.g1HasF1 = g1HasF1;
+    }
+
+    public void setG1HasF2(boolean g1HasF2) {
+        this.g1HasF2 = g1HasF2;
+    }
+
+    public void setG1HasF3(boolean g1HasF3) {
+        this.g1HasF3 = g1HasF3;
+    }
+
+    public void setG1HasF4(boolean g1HasF4) {
+        this.g1HasF4 = g1HasF4;
+    }
+
+    public void setG1HasF5(boolean g1HasF5) {
+        this.g1HasF5 = g1HasF5;
+    }
+
+    public void setG1HasF6(boolean g1HasF6) {
+        this.g1HasF6 = g1HasF6;
+    }
+
     public boolean g1HasF1 = true;
     public boolean g1HasF2 = false;
     public boolean g1HasF3 = false;

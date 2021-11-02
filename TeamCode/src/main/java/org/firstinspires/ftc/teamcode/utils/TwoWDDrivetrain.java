@@ -9,14 +9,10 @@ import java.util.List;
 public class TwoWDDrivetrain {
 
     public String ld1_name;
-    public String ld2_name;
     public String rd1_name;
-    public String rd2_name;
 
     public DcMotor ld1;
-    public DcMotor ld2;
     public DcMotor rd1;
-    public DcMotor rd2;
 
     public int LeftOffset = 1;
     public int RightOffset = 1;
@@ -31,13 +27,6 @@ public class TwoWDDrivetrain {
 
         ld1 = hardwareMap.dcMotor.get(ld1_name);
         rd1 = hardwareMap.dcMotor.get(rd1_name);
-    }
-
-    public void SetPower(double ld1, double rd1, double ld2, double rd2) {
-        this.ld1.setPower(ld1);
-        this.ld2.setPower(ld2);
-        this.rd1.setPower(rd1);
-        this.rd2.setPower(rd2);
     }
 
     public void SetPower(double left, double right) {
