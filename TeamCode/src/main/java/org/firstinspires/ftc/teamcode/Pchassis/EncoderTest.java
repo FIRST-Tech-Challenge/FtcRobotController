@@ -42,9 +42,7 @@ public class EncoderTest extends LinearOpMode {
         encoder2.setDistancePerPulse(18.0);
         encoder3.setDistancePerPulse(18.0);
 
-// get the distance traveled
-        double distance = encoder.getDistance();
-        distance = m_motor.getDistance(); // also an option
-
+        // get the distance traveled
+        double distance = encoder0.getDistance();
     }
 }
