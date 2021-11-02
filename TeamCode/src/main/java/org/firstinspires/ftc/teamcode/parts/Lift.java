@@ -34,23 +34,22 @@ public class Lift {
         topSensor.setMode(DigitalChannel.Mode.INPUT);
         this.telemetry = telemetry;
         gamepad = toolGamepad;
-        rBumpReader = new ToggleButtonReader(toolGamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        rBumpReader = new ButtonReader(toolGamepad, GamepadKeys.Button.RIGHT_BUMPER);
         aReader = new ButtonReader(toolGamepad, GamepadKeys.Button.A);
     }
-
     private final Telemetry telemetry;
     private final DcMotor liftMotor;
     private final Servo armServo;
     private final DigitalChannel bottomSensor;
     private final DigitalChannel topSensor;
     private final GamepadEx gamepad;
-    private final ToggleButtonReader rBumpReader;
+    private final ButtonReader rBumpReader;
     private final ButtonReader aReader;
     private final double encoderOffset;
     private double curPos = 0;
     private boolean running = false;
     private boolean first = true;
-
+    private boolean dumping = false;
     public void update() {
         final double stickValue = gamepad.getLeftY();
         telemetry.addData("left stick",stickValue);
@@ -95,19 +94,24 @@ public class Lift {
         curPos = liftMotor.getCurrentPosition() + encoderOffset;
         arm();
     }
-
     private void arm() {
         rBumpReader.readValue();
-        boolean curState = rBumpReader.getState();
-        if (curPos >= (double) 910) { // completely away from intake interference
-            if (curState) {
-                armServo.setPosition(0.07); // dump pos
-            } else {
-                armServo.setPosition(0.76); // lift pos
+        if (curPos >= (double) 960) { // completely away from intake interference
+            if (rBumpReader.wasJustReleased()) {
+                dumping = !dumping;
             }
-        } else if (curPos >= (double) 50 && !curState) { // if it is away from load zone but still interfering
+            if (dumping) {
+                armServo.setPosition(0.07);
+                try { Thread.sleep(500);} catch (InterruptedException ignored) {}
+                if (armServo.getPosition() <= 0.08) {
+                    dumping = false;
+                }
+            } else {
+                armServo.setPosition(0.7);
+            }
+        } else if (curPos >= (double) 50) { // if it is away from load zone but still interfering
             armServo.setPosition(0.847); // in between load and lift pos
-        } else if (!curState) { // in load zone
+        } else { // in load zone
             armServo.setPosition(0.88); // load pos
         }
     }
