@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Pchassis;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Encoder Test", group="Pushbot")
@@ -16,32 +18,33 @@ public class EncoderTest extends LinearOpMode {
         waitForStart();
         robot.m.driveRobotCentric(0,0,0);
 
-// reset the encoder
+        // reset the encoders
         robot.m0.resetEncoder();
+        robot.m1.resetEncoder();
+        robot.m2.resetEncoder();
+        robot.m3.resetEncoder();
 
-//// get the current velocity
-//        double velocity = m_motor.getVelocity(); // only for MotorEx
-//        double corrected = m_motor.getCorrectedVelocity();
+        // grab the encoder instances
+        Motor.Encoder encoder0 = robot.m0.encoder;
+        Motor.Encoder encoder1 = robot.m0.encoder;
+        Motor.Encoder encoder2 = robot.m0.encoder;
+        Motor.Encoder encoder3 = robot.m0.encoder;
 
-// grab the encoder instance
-        Motor.Encoder encoder = m_motor.encoder;
+        // get number of revolutions for each encoder
+        double revolutions0 = encoder0.getRevolutions();
+        double revolutions1 = encoder1.getRevolutions();
+        double revolutions2 = encoder2.getRevolutions();
+        double revolutions3 = encoder3.getRevolutions();
 
-// get number of revolutions
-        double revolutions = encoder.getRevolutions();
-
-// set the distance per pulse to 18 mm / tick
-        encoder.setDistancePerPulse(18.0);
-        m_motor.setDistancePerPulse(18.0); // also an option
+        // set the distance per pulse to 18 mm / tick
+        encoder0.setDistancePerPulse(18.0);
+        encoder1.setDistancePerPulse(18.0);
+        encoder2.setDistancePerPulse(18.0);
+        encoder3.setDistancePerPulse(18.0);
 
 // get the distance traveled
         double distance = encoder.getDistance();
         distance = m_motor.getDistance(); // also an option
-
-/** USEFUL FEATURE **/
-
-// you can set the encoder of the motor to a different motor's
-// encoder
-        m_motor.encoder = other_motor.encoder;
 
     }
 }
