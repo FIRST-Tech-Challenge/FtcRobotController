@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.bots;
 
+import android.nfc.Tag;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -100,21 +101,32 @@ public class FrenzyBaseBot implements OdoBot {
             if (backLeft != null) {
                 backLeft.setDirection(DcMotor.Direction.FORWARD);
                 backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backLeft.setVelocityPIDFCoefficients(1.17, 0.12, 0, 11.7);
+                backLeft.setPositionPIDFCoefficients(5);
             }
 
             if (backRight != null) {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
                 backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                backRight.setVelocityPIDFCoefficients(1.17, 0.12, 0, 11.7);
+                backRight.setPositionPIDFCoefficients(5);
             }
 
             if (frontLeft != null) {
                 frontLeft.setDirection(DcMotor.Direction.REVERSE);
                 frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                frontLeft.setVelocityPIDFCoefficients(1.17, 0.12, 0, 11.7);
+                frontLeft.setPositionPIDFCoefficients(5);
             }
 
             if (frontRight != null) {
                 frontRight.setDirection(DcMotor.Direction.FORWARD);
                 frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                frontRight.setVelocityPIDFCoefficients(1.17, 0.12, 0, 11.7);
+                frontRight.setPositionPIDFCoefficients(5);
             }
 
             stop();
@@ -369,6 +381,7 @@ public class FrenzyBaseBot implements OdoBot {
 
             MotorReductionBot calib = profile.getMotorReduction();
 
+
             boolean leftAxis = profile.getAngleChange() > 0;
             double power = profile.getTopSpeed();
 
@@ -377,6 +390,7 @@ public class FrenzyBaseBot implements OdoBot {
             this.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             this.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+            Log.d(TAG, String.format("About to Diag at power %.2f Left Axis: %b Left pos: %.2f Right pos: %.2f", power, leftAxis, profile.getLeftTarget(), profile.getRightTarget()));
 
             if (!leftAxis) {
                 this.frontLeft.setTargetPosition((int) profile.getLeftTarget());
@@ -407,9 +421,12 @@ public class FrenzyBaseBot implements OdoBot {
 
                 }
             }
+            Log.d(TAG, String.format("Moved diag at power %.2f. Left axis: %b.  left pos %d : right pos %d", power, leftAxis, frontLeft.getCurrentPosition(), backRight.getCurrentPosition()));
 
             stop();
+            Log.d(TAG, "Diag to stopped");
         }
+        Log.d(TAG, "Diag to exited");
     }
 
     @Override
@@ -978,10 +995,10 @@ public class FrenzyBaseBot implements OdoBot {
         return encoderDirection;
     }
 
-    @Override
-    public GameElement getDetection() {
+      public AutoDot getDetectionResult(){
         return null;
-    }
+      }
+
 
     public void reverseEncoderDirection() {
         if (this.encoderDirection == 1){

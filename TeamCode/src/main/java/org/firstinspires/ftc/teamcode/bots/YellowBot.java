@@ -1405,10 +1405,6 @@ public class YellowBot implements OdoBot {
         return 1;
     }
 
-    @Override
-    public GameElement getDetection() {
-        return null;
-    }
 
     public void diagTo(BotMoveProfile profile) {
         if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
@@ -1554,6 +1550,10 @@ public class YellowBot implements OdoBot {
 
     public void addNamedCoordinate(AutoDot dot){
         this.namedCoordinates.add(dot);
+    }
+
+    public AutoDot getDetectionResult() {
+        return null;
     }
 
 }

@@ -50,5 +50,5 @@ public interface OdoBot {
     void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib);
     void reverseEncoderDirection();
     int getEncoderDirection();
-    GameElement getDetection();
+    AutoDot getDetectionResult();
 }

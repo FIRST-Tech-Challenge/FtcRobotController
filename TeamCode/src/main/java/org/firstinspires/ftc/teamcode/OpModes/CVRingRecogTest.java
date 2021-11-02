@@ -24,8 +24,7 @@ public class CVRingRecogTest extends LinearOpMode {
     public void runOpMode() {
         try {
 
-            detector = new CVDetector(this.hardwareMap, AutoRoute.NAME_RED);
-            detector.init(CVDetectMode.Stack, "wcam", "cameraMonitorViewId");
+            detector = new CVDetector(this.hardwareMap, AutoRoute.NAME_RED, CVDetectMode.Stack);
 
             detector.startDetection();
             telemetry.addData("Info", "Detector initialized");

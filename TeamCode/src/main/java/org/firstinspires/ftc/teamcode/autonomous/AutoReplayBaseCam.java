@@ -32,6 +32,7 @@ public class AutoReplayBaseCam extends AutoBase {
     @Override
     protected void initBot() {
         this.bot = new FrenzyBot(this.getOpModeSide());
+        bot.initDetectorThread(this.getOpModeSide(), this);
     }
 
     @Override

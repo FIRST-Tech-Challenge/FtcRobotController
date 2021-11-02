@@ -34,7 +34,7 @@ import java.io.File;
  */
 public class VSlamOdometry implements IBaseOdometry {
 
-    public static final int THREAD_INTERVAL = 100;
+    public static final int THREAD_INTERVAL = 20;
     static double INCH_2_METER = 0.0254;
 
     private HardwareMap hwMap;

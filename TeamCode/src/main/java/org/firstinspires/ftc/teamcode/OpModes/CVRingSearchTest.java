@@ -42,8 +42,7 @@ public class CVRingSearchTest extends LinearOpMode {
 
             gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
 
-            detector = new CVDetector(this.hardwareMap, AutoRoute.NAME_RED);
-            detector.init(CVDetectMode.Search, "wcam", "cameraMonitorViewId");
+            detector = new CVDetector(this.hardwareMap, AutoRoute.NAME_RED, CVDetectMode.Search);
 
             detector.startDetection();
             telemetry.addData("Info", "Detector initialized");

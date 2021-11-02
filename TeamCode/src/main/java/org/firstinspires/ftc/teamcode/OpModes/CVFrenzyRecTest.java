@@ -20,8 +20,7 @@ public class CVFrenzyRecTest extends LinearOpMode {
     public void runOpMode() {
         try {
 
-            detector = new CVDetector(this.hardwareMap, AutoRoute.NAME_RED);
-            detector.init(CVDetectMode.Frenzy, "wcam", "cameraMonitorViewId");
+            detector = new CVDetector(this.hardwareMap, AutoRoute.NAME_RED, CVDetectMode.Frenzy);
 
             detector.startDetection();
             telemetry.addData("Info", "Detector initialized");

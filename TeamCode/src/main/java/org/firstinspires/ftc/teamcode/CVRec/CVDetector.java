@@ -5,12 +5,14 @@ import android.util.Log;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.opencv.core.Scalar;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CVDetector {
@@ -28,12 +30,45 @@ public class CVDetector {
     public static final Scalar GREEN = new Scalar(0, 255, 0);
     public static final Scalar YELLOW = new Scalar(255, 255, 0);
 
-    public CVDetector(HardwareMap hw, String side){
-        this.hwMap = hw;
-        this.opModeSide = side;
+    private ArrayList<AutoDot> namedCoordinates = new ArrayList<>();
+
+    private static AutoDot levelA = new AutoDot("A", 75, 75, -1, AutoRoute.NAME_RED);
+    private static AutoDot levelB = new AutoDot("B", 65, 100, -1, AutoRoute.NAME_RED);
+    private static AutoDot levelC = new AutoDot("C", 75, 120, -1, AutoRoute.NAME_RED);
+
+    public CVDetector(HardwareMap hw, String side, CVDetectMode mode){
+        this(hw, side, mode, null);
     }
 
-    public void init(CVDetectMode mode, String camID, String monitorID){
+    public CVDetector(HardwareMap hw, String side, CVDetectMode mode, ArrayList<AutoDot> namedCoordinates){
+        this.hwMap = hw;
+        this.opModeSide = side;
+        if (namedCoordinates != null) {
+            this.namedCoordinates = namedCoordinates;
+        }
+        configLevels(this.opModeSide);
+        init(mode, "wcam", "cameraMonitorViewId");
+    }
+
+    protected void configLevels(String side){
+        if (this.namedCoordinates.size() > 0){
+            for(AutoDot d : namedCoordinates){
+                if (d.getFieldSide().equals(side)) {
+                    if (d.getFieldSide().equals(side)) {
+                        if (d.getDotName().equals("A")) {
+                            levelA = d;
+                        } else if (d.getDotName().equals("B")) {
+                            levelB = d;
+                        } else if (d.getDotName().equals("C")) {
+                            levelC = d;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void init(CVDetectMode mode, String camID, String monitorID){
 
         try {
             int cameraMonitorViewId = -1;
@@ -116,6 +151,24 @@ public class CVDetector {
             return activePipeline.getGameElement();
         }
         return GameElement.BarcodeLevel3;
+    }
+
+    public AutoDot getLevel(){
+        AutoDot level = null;
+        if (activePipeline != null){
+            switch (activePipeline.getGameElement()){
+                case BarcodeLevel1:
+                    level = levelA;
+                    break;
+                case BarcodeLevel2:
+                    level = levelB;
+                    break;
+                case BarcodeLevel3:
+                    level = levelC;
+                    break;
+            }
+        }
+        return level;
     }
 
     public int getMeanVal(){

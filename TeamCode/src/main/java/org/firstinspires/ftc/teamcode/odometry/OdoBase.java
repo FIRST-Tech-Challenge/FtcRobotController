@@ -175,6 +175,11 @@ public class OdoBase extends LinearOpMode {
         if (!step.getConditionFunction().isEmpty() && !step.getConditionValue().isEmpty()){
             if (coordinateFunctions.containsKey(step.getConditionFunction())){
                 AutoDot dot = coordinateFunctions.get(step.getConditionFunction());
+                String dotName = "";
+                if (dot != null){
+                    dotName = dot.getDotName();
+                }
+                Log.d(TAG, String.format("Checking condition. Dot name: %s. Condition value: %s", dotName,  step.getConditionFunction()));
                 return dot != null && dot.equals(step.getConditionValue());
             }
         }
@@ -252,8 +257,9 @@ public class OdoBase extends LinearOpMode {
                 break;
             default: break;
         }
-        Log.d(TAG, String.format("Proceeding to next step"));
+        Log.d(TAG, String.format("Done moving"));
         if (profile.getNextStep() != null){
+            Log.d(TAG, String.format("Proceeding to next step %s", profile.getNextStep().name()));
             //let the locator catch up
             if (!profile.isContinuous()) {
                 sleep(locator.getThreadSleepTime());
@@ -300,6 +306,7 @@ public class OdoBase extends LinearOpMode {
                 bot.diagTo(profile);
             }
         }catch (Exception ex){
+            Log.e(TAG, String.format("Diag error: %s", ex.getMessage()));
             telemetry.addData("error diag", ex.getMessage());
         }
     }

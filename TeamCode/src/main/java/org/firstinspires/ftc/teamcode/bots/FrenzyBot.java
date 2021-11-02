@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
 import org.firstinspires.ftc.teamcode.CVRec.GameElement;
+import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 
 public class FrenzyBot extends FrenzyBaseBot {
@@ -77,9 +78,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize dropperServo", ex);
         }
+
+    }
+
+    @Override
+    public void initDetectorThread(String side, LinearOpMode caller) {
         try {
-            detector = new CVDetector(hwMap, opModeSide);
-            detector.init(CVDetectMode.Frenzy, "wcam", "cameraMonitorViewId");
+            detector = new CVDetector(hwMap, opModeSide, CVDetectMode.Frenzy, this.namedCoordinates);
             detector.startDetection();
             telemetry.addData("Info", "Detector initialized");
             telemetry.update();
@@ -88,15 +93,16 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
+    @BotAction(displayName = "Get Detection Result", defaultReturn = "C")
     @Override
-    public GameElement getDetection() {
-        detectedElement = detector.getGameElement();
-        telemetry.addData("Element: ", detectedElement);
-        telemetry.addData("Mean Val: ", detector.getMeanVal());
+    public AutoDot getDetectionResult() {
+        AutoDot level = detector.getLevel();
+        Log.d(TAG, String.format("Detection result: Level $s", level.getDotName()));
+        telemetry.addData("Level: ", level);
         telemetry.update();
         detector.stopDetection();
 
-        return detectedElement;
+        return level;
     }
 
     public void activateIntake(double velocity) {
@@ -119,44 +125,52 @@ public class FrenzyBot extends FrenzyBaseBot {
         return this.lift.getCurrentPosition();
     }
 
+    @BotAction(displayName = "Lift to upper", defaultReturn = "")
     public void liftToUpper(){
         this.lift.setTargetPosition(LIFT_FULL_EXTENSION);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
     }
 
+    @BotAction(displayName = "Lift to mid", defaultReturn = "")
     public void liftToMid(){
         this.lift.setTargetPosition(LIFT_HALF_EXTENSION);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
     }
 
+    @BotAction(displayName = "Lift to lower", defaultReturn = "")
     public void liftToLower(){
         this.lift.setTargetPosition(LIFT_NO_EXTENSION);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
     }
 
+    @BotAction(displayName = "Drop element", defaultReturn = "")
     public void dropElement(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_DROP);
         }
     }
 
+    @BotAction(displayName = "Reset dropper", defaultReturn = "")
     public void resetDropper(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_READY);
         }
     }
 
+    @BotAction(displayName = "Start intake", defaultReturn = "")
     public void startIntake() {
         activateIntake(0.95);
     }
 
+    @BotAction(displayName = "Reverse intake", defaultReturn = "")
     public void reverseIntake() {
         activateIntake(-0.75);
     }
 
+    @BotAction(displayName = "Stop intake", defaultReturn = "")
     public void stopIntake() {
         activateIntake(0);
     }
