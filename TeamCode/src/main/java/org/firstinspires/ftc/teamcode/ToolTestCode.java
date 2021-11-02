@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.parts.Carousel;
 import org.firstinspires.ftc.teamcode.parts.ControllerMovement;
 import org.firstinspires.ftc.teamcode.parts.Intake;
@@ -46,6 +47,12 @@ public class ToolTestCode extends LinearOpMode {
         telemetry.update();
         waitForStart();
         telemetry.clearAll();
+        Thread thread = new Thread(() -> {
+            while (opModeIsActive()) {
+                lift.update();
+            }
+        });
+        thread.start();
         while (opModeIsActive()) {
             if (clocktimer.time(TimeUnit.SECONDS) <= 1) { clocks++; }
             else {
@@ -55,7 +62,6 @@ public class ToolTestCode extends LinearOpMode {
             }
             telemetry.addData("ClocksPerSecond", clockOutput);
             move.update();
-            lift.update();
             carousel.update();
             intake.update();
             telemetry.update();
