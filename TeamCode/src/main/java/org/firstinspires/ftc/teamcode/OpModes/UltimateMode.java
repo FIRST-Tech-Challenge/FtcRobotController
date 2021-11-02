@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import android.graphics.Point;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
-import org.firstinspires.ftc.teamcode.bots.DummyBot;
-import org.firstinspires.ftc.teamcode.bots.SwingPosition;
-import org.firstinspires.ftc.teamcode.bots.UltimateBot;
+import org.firstinspires.ftc.teamcode.bots.UltimateBotI;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.BotThreadAction;
-import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class UltimateMode extends LinearOpMode {
 
     // Declare OpMode members.
-    UltimateBot robot = new UltimateBot();
+    UltimateBotI robot = new UltimateBotI();
     private ElapsedTime runtime = new ElapsedTime();
 
     //Just a comment to see if I can push code to github-Rudra

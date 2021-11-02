@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
-import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
@@ -16,9 +15,8 @@ import org.firstinspires.ftc.teamcode.bots.BotAction;
 import org.firstinspires.ftc.teamcode.bots.BotActionObj;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
-import org.firstinspires.ftc.teamcode.bots.OdoBot;
+import org.firstinspires.ftc.teamcode.bots.IOdoBot;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
-import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -40,7 +38,7 @@ public class OdoBase extends LinearOpMode {
 
     public static String BOT_ACTIONS = "bot-actions.json";
 
-    protected OdoBot bot = null;
+    protected IOdoBot bot = null;
     protected AutoRoute selectedRoute = new AutoRoute();
     protected HashMap<String, AutoDot> coordinateFunctions = new HashMap<>();
     protected List<Method> botActions = new ArrayList<Method>();

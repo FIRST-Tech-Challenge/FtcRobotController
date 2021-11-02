@@ -15,10 +15,9 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
-import org.firstinspires.ftc.teamcode.bots.UltimateBot;
+import org.firstinspires.ftc.teamcode.bots.UltimateBotI;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 // Control Hub ADB Terminal Command for Reference
@@ -32,7 +31,7 @@ public class CVRingSearchTest extends LinearOpMode {
     Deadline gamepadRateLimit;
     private final static int GAMEPAD_LOCKOUT = 500;
     RobotCoordinatePosition locator = null;
-    UltimateBot robot   = new UltimateBot();
+    UltimateBotI robot   = new UltimateBotI();
     ElapsedTime timer = new ElapsedTime();
     ElapsedTime searchTimer = new ElapsedTime();
 

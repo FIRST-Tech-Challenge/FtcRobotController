@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.autonomous;
-import android.graphics.Point;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.odometry.OdoBase;
-import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
-import org.firstinspires.ftc.teamcode.skills.RingDetector;
-import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 
 public abstract class AutoBase extends OdoBase {
     protected ElapsedTime runtime = new ElapsedTime();

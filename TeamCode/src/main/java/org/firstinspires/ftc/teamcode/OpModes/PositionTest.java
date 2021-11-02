@@ -2,13 +2,12 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import android.graphics.Point;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
-import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
+import org.firstinspires.ftc.teamcode.bots.FrenzyBotI;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
@@ -19,7 +18,7 @@ import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 public class PositionTest extends LinearOpMode {
 
     // Declare OpMode Members
-    FrenzyBot robot = new FrenzyBot();
+    FrenzyBotI robot = new FrenzyBotI();
 
     // Timing related variables
     ElapsedTime runtime = new ElapsedTime();

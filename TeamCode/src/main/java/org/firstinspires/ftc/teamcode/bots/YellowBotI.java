@@ -1,26 +1,20 @@
 package org.firstinspires.ftc.teamcode.bots;
 
-import android.graphics.Point;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.CVRec.GameElement;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
-import org.firstinspires.ftc.teamcode.calibration.DiagCalibConfig;
 import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
-import org.firstinspires.ftc.teamcode.skills.Geometry;
 import org.firstinspires.ftc.teamcode.skills.Gyroscope;
 import org.firstinspires.ftc.teamcode.skills.Led;
 //import org.openftc.revextensions2.ExpansionHubEx;
@@ -28,11 +22,10 @@ import org.firstinspires.ftc.teamcode.skills.Led;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static java.lang.StrictMath.abs;
 
-public class YellowBot implements OdoBot {
+public class YellowBotI implements IOdoBot {
     protected DcMotorEx frontLeft = null;
     protected DcMotorEx frontRight = null;
     protected DcMotorEx leftOdo = null; //leftodo port 1 ext hub    forward positive
@@ -78,7 +71,7 @@ public class YellowBot implements OdoBot {
     private static final String TAG = "YellowBot";
 
 
-    public YellowBot() {
+    public YellowBotI() {
 
     }
 

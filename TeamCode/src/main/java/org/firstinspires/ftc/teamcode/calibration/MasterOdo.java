@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.calibration;
 import android.graphics.Point;
 import android.util.Log;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
@@ -19,7 +17,7 @@ import org.firstinspires.ftc.teamcode.bots.BotActionObj;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
-import org.firstinspires.ftc.teamcode.bots.UltimateBot;
+import org.firstinspires.ftc.teamcode.bots.UltimateBotI;
 import org.firstinspires.ftc.teamcode.odometry.OdoBase;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Led;
@@ -27,12 +25,9 @@ import org.firstinspires.ftc.teamcode.skills.Led;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.firstinspires.ftc.robotcore.internal.system.AppUtil.FIRST_FOLDER;
 import static org.firstinspires.ftc.teamcode.autonomous.AutoRoute.NAME_BLUE;
 import static org.firstinspires.ftc.teamcode.autonomous.AutoRoute.NAME_RED;
 import static org.firstinspires.ftc.teamcode.autonomous.AutoStep.NO_ACTION;
@@ -146,7 +141,7 @@ public class MasterOdo extends OdoBase {
 
     @Override
     protected void initBot() {
-        this.bot = new UltimateBot();
+        this.bot = new UltimateBotI();
     }
 
     @Override

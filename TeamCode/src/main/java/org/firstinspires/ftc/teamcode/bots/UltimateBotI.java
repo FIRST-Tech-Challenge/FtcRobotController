@@ -1,21 +1,16 @@
 package org.firstinspires.ftc.teamcode.bots;
 
-import android.graphics.Point;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
-import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
-import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 import org.firstinspires.ftc.teamcode.skills.TurretAngler;
@@ -25,7 +20,7 @@ import static java.lang.Math.abs;
 // Control Hub ADB Terminal Command for Reference
 // adb.exe connect 192.168.43.1:5555
 
-public class UltimateBot extends YellowBot {
+public class UltimateBotI extends YellowBotI {
     private Servo wobbleSwing = null;
     private Servo wobbleClaw1 = null;
     private Servo wobbleClaw2 = null;
@@ -50,7 +45,7 @@ public class UltimateBot extends YellowBot {
 
 
     /* Constructor */
-    public UltimateBot() {
+    public UltimateBotI() {
 
     }
 

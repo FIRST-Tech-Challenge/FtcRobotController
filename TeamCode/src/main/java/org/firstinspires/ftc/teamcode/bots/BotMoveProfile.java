@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
 import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
 import org.firstinspires.ftc.teamcode.gamefield.FieldStats;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
-import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Geometry;
 
 public class BotMoveProfile {
@@ -213,7 +212,7 @@ public class BotMoveProfile {
         this.actual = actual;
     }
 
-    public static BotMoveProfile bestRoute(OdoBot bot, double currentX, double currentY, Point target, RobotDirection direction, double topSpeed, MoveStrategy preferredStrategy, double desiredHead, IBaseOdometry locator){
+    public static BotMoveProfile bestRoute(IOdoBot bot, double currentX, double currentY, Point target, RobotDirection direction, double topSpeed, MoveStrategy preferredStrategy, double desiredHead, IBaseOdometry locator){
         if (topSpeed == 0){
             return null;
         }
@@ -413,7 +412,7 @@ public class BotMoveProfile {
         return profile;
     }
 
-    private static BotMoveProfile buildAutoProfile(OdoBot bot, double chord, double realAngleChange, double topSpeed, double distance, RobotDirection direction, Point currentPos, Point target, double currentHead, double targetVector, double desiredHead, double radius, boolean reduceLeft, IBaseOdometry locator, MoveStrategy next){
+    private static BotMoveProfile buildAutoProfile(IOdoBot bot, double chord, double realAngleChange, double topSpeed, double distance, RobotDirection direction, Point currentPos, Point target, double currentHead, double targetVector, double desiredHead, double radius, boolean reduceLeft, IBaseOdometry locator, MoveStrategy next){
 
         BotCalibConfig botConfig = bot.getCalibConfig();
 
@@ -477,7 +476,7 @@ public class BotMoveProfile {
         }
     }
 
-    public static BotMoveProfile buildMoveProfile(OdoBot bot, double chord, double topSpeed, double radius, double angleChange, boolean reduceLeft, RobotDirection direction, Point target, double currentHead, double targetVector, IBaseOdometry locator){
+    public static BotMoveProfile buildMoveProfile(IOdoBot bot, double chord, double topSpeed, double radius, double angleChange, boolean reduceLeft, RobotDirection direction, Point target, double currentHead, double targetVector, IBaseOdometry locator){
         BotMoveProfile profile = new BotMoveProfile();
 
         double longArch = chord;
@@ -606,7 +605,7 @@ public class BotMoveProfile {
         return profile;
     }
 
-    private static BotMoveProfile buildSpinProfile(OdoBot bot, double angleChange, double topSpeed, Point currentPos, RobotDirection direction, MoveStrategy next){
+    private static BotMoveProfile buildSpinProfile(IOdoBot bot, double angleChange, double topSpeed, Point currentPos, RobotDirection direction, MoveStrategy next){
         BotMoveProfile profile = new BotMoveProfile();
         profile.setAngleChange(angleChange);
         profile.setStrategy(MoveStrategy.Spin);
@@ -674,7 +673,7 @@ public class BotMoveProfile {
             profile.setMotorReduction(botConfig.getStrafeRightReduction());
         }
         profile.setDistance(strafeDistance);
-        profile.setLongTarget(strafeDistance*YellowBot.COUNTS_PER_INCH_REV);
+        profile.setLongTarget(strafeDistance* YellowBotI.COUNTS_PER_INCH_REV);
         profile.setAngleChange(angleChange);
         profile.setStrategy(MoveStrategy.Strafe);
         profile.setTopSpeed(topSpeed);
@@ -693,14 +692,14 @@ public class BotMoveProfile {
         return profile;
     }
 
-    private static BotMoveProfile buildDiagProfile(OdoBot bot, BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, Point currentPos, Point target, RobotDirection direction, MoveStrategy next){
+    private static BotMoveProfile buildDiagProfile(IOdoBot bot, BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, Point currentPos, Point target, RobotDirection direction, MoveStrategy next){
         double strafeDistance = distance * Math.sin(Math.toRadians(Math.abs(angleChange)));
         double diagDistance = strafeDistance/Math.cos(Math.toRadians(45));
 
        return buildDiagRawProfile(bot, botConfig, angleChange, topSpeed, diagDistance, currentPos, target, direction, next);
     }
 
-    private static BotMoveProfile buildDiagRawProfile(OdoBot bot, BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, Point currentPos, Point target, RobotDirection direction, MoveStrategy next){
+    private static BotMoveProfile buildDiagRawProfile(IOdoBot bot, BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, Point currentPos, Point target, RobotDirection direction, MoveStrategy next){
         BotMoveProfile profile = new BotMoveProfile();
 
         boolean left = angleChange > 0;
@@ -739,7 +738,7 @@ public class BotMoveProfile {
         return profile;
     }
 
-    public static BotMoveProfile getFinalHeadProfile(OdoBot bot, double desiredHeading, double speed, IBaseOdometry locator){
+    public static BotMoveProfile getFinalHeadProfile(IOdoBot bot, double desiredHeading, double speed, IBaseOdometry locator){
         BotMoveProfile profileSpin = null;
         if (desiredHeading != BotMoveProfile.DEFAULT_HEADING) {
             Point currentPos = new Point((int)locator.getCurrentX(), (int)locator.getCurrentY());
@@ -871,11 +870,11 @@ public class BotMoveProfile {
     }
 
     public double getTopVelocity() {
-        return this.getTopSpeed() * YellowBot.MAX_VELOCITY;
+        return this.getTopSpeed() * YellowBotI.MAX_VELOCITY;
     }
 
     public double getLowVelocity() {
-        return getLowSpeed() * YellowBot.MAX_VELOCITY;
+        return getLowSpeed() * YellowBotI.MAX_VELOCITY;
     }
 
     public double getMinSpeedSpin() {

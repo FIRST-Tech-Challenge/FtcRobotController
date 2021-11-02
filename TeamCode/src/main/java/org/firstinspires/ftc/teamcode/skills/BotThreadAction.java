@@ -3,16 +3,16 @@ package org.firstinspires.ftc.teamcode.skills;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.bots.UltimateBot;
+import org.firstinspires.ftc.teamcode.bots.UltimateBotI;
 
 
 public class BotThreadAction implements Runnable {
     private Telemetry telemetry;
     private LinearOpMode caller = null;
-    private UltimateBot robot = null;
+    private UltimateBotI robot = null;
     private String function = "";
 
-    public BotThreadAction(UltimateBot bot, Telemetry telemetry, String function, LinearOpMode caller) {
+    public BotThreadAction(UltimateBotI bot, Telemetry telemetry, String function, LinearOpMode caller) {
         robot = bot;
         this.telemetry = telemetry;
         this.caller = caller;

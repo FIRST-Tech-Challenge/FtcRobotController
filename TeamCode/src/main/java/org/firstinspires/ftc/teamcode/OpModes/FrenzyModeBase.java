@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
-import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
-import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
+import org.firstinspires.ftc.teamcode.bots.FrenzyBotI;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
@@ -15,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class FrenzyModeBase extends LinearOpMode {
 
     // Declare OpMode Members
-    FrenzyBot robot = new FrenzyBot();
+    FrenzyBotI robot = new FrenzyBotI();
     IBaseOdometry odometry = null;
 
     // Timing related variables

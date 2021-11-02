@@ -10,9 +10,7 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.BotMoveRequest;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
-import org.firstinspires.ftc.teamcode.bots.OdoBot;
-import org.firstinspires.ftc.teamcode.bots.RobotDirection;
-import org.firstinspires.ftc.teamcode.bots.YellowBot;
+import org.firstinspires.ftc.teamcode.bots.IOdoBot;
 import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
 
 import java.io.File;
@@ -20,7 +18,7 @@ import java.io.File;
 public class RobotCoordinatePosition implements IBaseOdometry {
 
     BotCalibConfig config;
-    OdoBot bot;
+    IOdoBot bot;
     private boolean isRunning = true;
     private int sleepTime;
     private double realSpeedLeft = 0;
@@ -54,7 +52,7 @@ public class RobotCoordinatePosition implements IBaseOdometry {
 
     private static final String TAG = "RobotCoordinatePosition";
 
-    public RobotCoordinatePosition(OdoBot bot, int sleepTimeMS){
+    public RobotCoordinatePosition(IOdoBot bot, int sleepTimeMS){
         this.bot = bot;
         config = bot.getCalibConfig();
         sleepTime = sleepTimeMS;
@@ -73,7 +71,7 @@ public class RobotCoordinatePosition implements IBaseOdometry {
         init(startPos, initialOrientation);
     }
 
-    public RobotCoordinatePosition(OdoBot bot, Point startPos, double initialOrientation, int sleepTimeMS){
+    public RobotCoordinatePosition(IOdoBot bot, Point startPos, double initialOrientation, int sleepTimeMS){
         this.bot = bot;
         config = bot.getCalibConfig();
         sleepTime = sleepTimeMS;

@@ -10,11 +10,11 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
-import org.firstinspires.ftc.teamcode.bots.OdoBot;
+import org.firstinspires.ftc.teamcode.bots.IOdoBot;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.RobotMovementStats;
 import org.firstinspires.ftc.teamcode.bots.RobotVeer;
-import org.firstinspires.ftc.teamcode.bots.YellowBot;
+import org.firstinspires.ftc.teamcode.bots.YellowBotI;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Geometry;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @TeleOp(name="MasterCalib", group="Robot15173")
 public class MasterCalib extends LinearOpMode {
 
-    protected OdoBot bot = null;
+    protected IOdoBot bot = null;
     protected ElapsedTime timer = new ElapsedTime();
 
 
@@ -194,7 +194,7 @@ public class MasterCalib extends LinearOpMode {
     }
 
     protected void initBot(){
-        this.bot = new YellowBot();
+        this.bot = new YellowBotI();
     }
 
     private void changeMoveModes(){

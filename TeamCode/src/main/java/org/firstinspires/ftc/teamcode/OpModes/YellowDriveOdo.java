@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.bots.YellowBot;
+import org.firstinspires.ftc.teamcode.bots.YellowBotI;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 
 
@@ -58,7 +58,7 @@ import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 public class YellowDriveOdo extends LinearOpMode {
 
     // Declare OpMode members.
-    YellowBot robot   = new YellowBot();
+    YellowBotI robot   = new YellowBotI();
     private ElapsedTime     runtime = new ElapsedTime();
     RobotCoordinatePosition locator = null;
 

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 
 import java.io.File;
 
-public interface OdoBot {
+public interface IOdoBot {
     void init(LinearOpMode owner, HardwareMap hw, Telemetry t) throws Exception;
     void initGyro();
     void initCalibData() throws Exception;
