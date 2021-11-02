@@ -101,9 +101,9 @@ public class Lift {
                 dumping = !dumping;
             }
             if (dumping) {
-                armServo.setPosition(0.07);
-                try { Thread.sleep(750);} catch (InterruptedException ignored) {}
-                if (armServo.getPosition() <= 0.08) {
+                armServo.setPosition(0);
+                try { Thread.sleep(800);} catch (InterruptedException ignored) {}
+                if (armServo.getPosition() <= 0.01) {
                     dumping = false;
                 }
             } else {
