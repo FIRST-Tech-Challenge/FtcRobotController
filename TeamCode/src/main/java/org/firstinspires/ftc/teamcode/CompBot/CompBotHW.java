@@ -54,7 +54,6 @@ public class CompBotHW {
         intake.setRunMode(Motor.RunMode.VelocityControl);
         intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-
         spin = new Motor(h,"spin");
         spin.set(0);
         spin.setInverted(false);
