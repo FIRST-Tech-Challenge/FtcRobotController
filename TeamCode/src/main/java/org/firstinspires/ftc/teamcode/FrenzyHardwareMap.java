@@ -26,120 +26,86 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.firstinspires.ftc.teamcode;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-
 public class FrenzyHardwareMap {
-
-    /* Public OpMode members. */
-    public DcMotor motorFrontLeft = null;
     //Motor in Port 0
-    public DcMotor motorBackLeft = null;
-    //Motor in Port 3
-    public DcMotor motorFrontRight = null;
+    public DcMotor motorFrontLeft = null;
     //Motor in Port 1
+    public DcMotor motorFrontRight = null;
+    //Motor in Port 2.
     public DcMotor motorBackRight = null;
-    //Motor in Port 2
+    //Motor in Port 3.
+    public DcMotor motorBackLeft = null;
+    //IMU from RevHub.
     public BNO055IMU imu = null;
-    //IMU from RevHub
-
-
-    //Setup Wheel measurements for REV Motors
-    // encoder clicks are originally 28 per rotation, but multiply by 20:1
+    //Setup Wheel measurements for REV motors.
+    //Encoder clicks are originally 28 per rotation, but multiply by 20:1.
     final int REV_ENCODER_CLICKS = 560;
     final double REV_WHEEL_DIAM = 7.5;
     final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
     final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
-
-    /* local OpMode members. */
+    //Setup local opmode members.
     HardwareMap frenzyMap = null;
     Telemetry telemetry = null;
     private ElapsedTime period = new ElapsedTime();
-
-    /* Constructor */
+    //Constructor
     public FrenzyHardwareMap() {
-
     }
-
-    /* Initialize standard Hardware interfaces */
+    //Initialize the hardware interface
     public void init(HardwareMap hwMap, Telemetry frenzyTelemetry) {
-        // Save reference to Hardware map
+        //Save reference to the hardware map.
         frenzyMap = hwMap;
         telemetry = frenzyTelemetry;
-        //Define and Initialize DriveTrain Motors
+        //Define and initialize drivetrain motors.
         motorFrontLeft = frenzyMap.get(DcMotor.class, "frontLeft");
         motorBackLeft = frenzyMap.get(DcMotor.class, "backLeft");
         motorFrontRight = frenzyMap.get(DcMotor.class, "frontRight");
         motorBackRight = frenzyMap.get(DcMotor.class, "backRight");
-        //Define imu
+        //Define the imu
         imu = imu = frenzyMap.get(BNO055IMU.class, "imu");
-
-        // Set all motor Directions
+        // Set all motor directions.
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
-
-        // Set all motors to zero power
+        // Set all motors to zero power.
         motorFrontRight.setPower(0.0);
         motorFrontLeft.setPower(0.0);
         motorBackLeft.setPower(0.0);
         motorBackRight.setPower(0.0);
-
         // Set all motors to run with encoders.
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Define and initialize ALL installed servos.
-        //leftClaw  = hwMap.get(Servo.class, "left_hand");
-        //rightClaw = hwMap.get(Servo.class, "right_hand");
-        //leftClaw.setPosition(MID_SERVO);
-        //rightClaw.setPosition(MID_SERVO);
     }
-
-    //stops and resets the encoders before setting them to run again
+    //Stops and resets the encoders before setting them to run again.
     public void restartEncoders(){
             motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
             motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    //sets the powers of all motors
+    //Sets the powers of all motors.
     public void setPowers(double input){
         motorFrontRight.setPower(input);
         motorFrontLeft.setPower(input);
         motorBackLeft.setPower(input);
         motorBackRight.setPower(input);
     }
-    //checks if all motors are busy
+    //Checks if all motors are busy
     public boolean motorsBusy(){
-        telemetry.addData("frontLeft",motorFrontLeft.isBusy());
-        telemetry.addData("frontRight",motorFrontRight.isBusy());
-        telemetry.addData("backRight",motorBackRight.isBusy());
-        telemetry.addData("backLeft",motorBackLeft.isBusy());
-        telemetry.update();
-
-        if(motorFrontRight.isBusy() && motorFrontLeft.isBusy() && motorBackRight.isBusy() && motorBackLeft.isBusy()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        if(motorFrontRight.isBusy() && motorFrontLeft.isBusy() && motorBackRight.isBusy() && motorBackLeft.isBusy()) return true;
+        else return false;
     }
     //sets motor target locations to right and left targets
     public void setTargets(int target1, int target2){
@@ -148,6 +114,7 @@ public class FrenzyHardwareMap {
         motorFrontRight.setTargetPosition(target2);
         motorBackRight.setTargetPosition(target2);
     }
+    //set motor mode to run To position
     public void setRunToPosition(){
         motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
