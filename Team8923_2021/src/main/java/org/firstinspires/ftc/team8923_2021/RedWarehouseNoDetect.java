@@ -9,7 +9,11 @@ public class RedWarehouseNoDetect extends MasterAutonomous{
         waitForStart();
 
         while (opModeIsActive()){
-            moveForward(5, 80, 10);
+            moveForward(16, 80, 10);
+            double refAngle =  imu.getAngularOrientation().firstAngle; // Get a reference ange from the IMU for future movements using IMU
+            imuPivot(refAngle, -90, 30, 0.015, 3.0);
+            moveForward(50, 80, 10);
+            break;
         }
     }
 }
