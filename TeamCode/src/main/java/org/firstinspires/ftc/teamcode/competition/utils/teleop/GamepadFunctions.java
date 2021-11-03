@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition.utils.teleopmanagers;
+package org.firstinspires.ftc.teamcode.competition.utils.teleop;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -6,7 +6,17 @@ public class GamepadFunctions {
 
     private final Gamepad GAMEPAD;
     private boolean f1, f2, f3, f4, f5, f6;
-    
+
+    /**
+     * Makes a new object containing the functions associated with a gamepad
+     * @param gamepad The gamepad
+     * @param f1 Whether the gamepad is allowed to execute function 1
+     * @param f2 Whether the gamepad is allowed to execute function 2
+     * @param f3 Whether the gamepad is allowed to execute function 3
+     * @param f4 Whether the gamepad is allowed to execute function 4
+     * @param f5 Whether the gamepad is allowed to execute function 5
+     * @param f6 Whether the gamepad is allowed to execute function 6
+     */
     public GamepadFunctions(Gamepad gamepad, boolean f1, boolean f2, boolean f3, boolean f4, boolean f5, boolean f6) {
         GAMEPAD = gamepad;
         this.f1 = f1;

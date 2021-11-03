@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition.utils.teleopmanagers;
+package org.firstinspires.ftc.teamcode.competition.utils.teleop;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
