@@ -13,19 +13,19 @@ public class Path {
         this.path = path;
     }
 
-    public void addCoordinate (Coordinate c) {
+    public void add (Coordinate c) {
         path.add(c);
     }
 
-    public void addCoordinate (int index, Coordinate c) {
+    public void add (int index, Coordinate c) {
         path.add(index, c);
     }
 
-    public Coordinate getCoordinate (int index) {
+    public Coordinate get (int index) {
         return path.get(index);
     }
 
-    public int getLength () {
+    public int length () {
         return path.size();
     }
 }
