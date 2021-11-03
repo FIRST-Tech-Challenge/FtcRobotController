@@ -10,7 +10,7 @@ public class Grabber {
     private boolean isOpen;
 
     private static final float openPosition = 0.5f;
-    private static final float closePosition = .95f;
+    private static final float closePosition = .8f;
 
 
     public Grabber(HardwareMap hardwareMap, String servoName) {

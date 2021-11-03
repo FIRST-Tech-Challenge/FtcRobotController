@@ -58,40 +58,41 @@ public class JavaDriveProgram extends LinearOpMode {
                     aDepressed = false;
                     grabber.open();
                 }
-            }
 
-            //Gamepad 2 B Red Duck
-            {
-                if (!gamepad2.x) {
-                    bDepressed = true;
+                //Gamepad 2 B Red Duck
+                {
+                    if (!gamepad2.x) {
+                        bDepressed = true;
+                    }
+                    if (gamepad2.x && bDepressed) {
+                        driveTrain.stopAll();
+                        spinner.spinOffRedDuck();
+                        bDepressed = false;
+                    }
                 }
-                if (gamepad2.x && bDepressed) {
-                    driveTrain.stopAll();
-                    spinner.spinOffRedDuck();
-                    bDepressed = false;
-                }
-            }
 
-            //Gamepad2 X BlueDuck
-            {
-                if (!gamepad2.b) {
-                    bDepressed = true;
+                //Gamepad2 X BlueDuck
+                {
+                    if (!gamepad2.b) {
+                        bDepressed = true;
+                    }
+                    if (gamepad2.b && bDepressed) {
+                        driveTrain.stopAll();
+                        spinner.spinOffBlueDuck();
+                        bDepressed = false;
+                    }
                 }
-                if (gamepad2.b && bDepressed) {
-                    driveTrain.stopAll();
-                    spinner.spinOffBlueDuck();
-                    bDepressed = false;
-                }
-            }
 
-            if (gamepad1.b) {
-                driveTrain.setDrivePowerMult(0.3);
-            }
-            if (gamepad1.x) {
-                driveTrain.setDrivePowerMult(1);
-            }
-            if (gamepad1.a) {
-                driveTrain.setDrivePowerMult(0.6);
+                if (gamepad1.b) {
+                    driveTrain.setDrivePowerMult(0.3);
+                }
+                if (gamepad1.x) {
+                    driveTrain.setDrivePowerMult(1);
+
+                }
+                if (gamepad1.a) {
+                    driveTrain.setDrivePowerMult(0.6);
+                }
             }
         }
     }
