@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.image;
 
-import android.nfc.tech.Ndef;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
