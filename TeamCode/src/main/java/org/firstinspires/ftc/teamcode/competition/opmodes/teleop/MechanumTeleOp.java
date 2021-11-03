@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.competition.utils.teleopmanagers.GamepadFunctions;
 import org.firstinspires.ftc.teamcode.competition.utils.teleopmanagers.MechanumTeleOpManager;
 
-@TeleOp(name="LinearAutonomousTemplate", group="linear")
+@TeleOp(name="MechanumTeleOp", group="PostOpenHouseTeleOp")
 
 public class MechanumTeleOp extends LinearOpMode {
 
