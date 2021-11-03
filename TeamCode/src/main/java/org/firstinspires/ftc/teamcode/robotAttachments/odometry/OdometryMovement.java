@@ -9,10 +9,10 @@ public class OdometryMovement {
     DcMotor front_right, front_left, back_right, back_left;
     Telemetry telemetry;
     OdometryGlobalCoordinatePosition odometry;
-    Executable _isStopRequested;
-    Executable _opModeIsActive;
+    Executable<Boolean> _isStopRequested;
+    Executable<Boolean> _opModeIsActive;
 
-    public OdometryMovement(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable isStopRequested, Executable opmodeIsActive) {
+    public OdometryMovement(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
         this.back_left = back_left;
         this.back_right = back_right;
         this.front_left = front_left;

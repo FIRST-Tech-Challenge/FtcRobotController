@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.robotAttachments;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Grabber {
-    private DcMotor linearSlide;
     private Servo grabberServo;
     private boolean isOpen;
 

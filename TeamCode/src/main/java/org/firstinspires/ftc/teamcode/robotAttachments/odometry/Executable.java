@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotAttachments.odometry;
 
-public interface Executable {
+public interface Executable <ReturnType> {
 
-    boolean call();
+    ReturnType call();
 
 }
