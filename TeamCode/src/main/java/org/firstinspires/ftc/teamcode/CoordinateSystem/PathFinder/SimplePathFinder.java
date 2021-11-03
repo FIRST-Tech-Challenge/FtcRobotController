@@ -9,7 +9,6 @@ public class SimplePathFinder implements PathFinder {
         Path path = new Path();
         int xMove = end.getX() - start.getX();
         int yMove = end.getY() - start.getY();
-        path.add(start);
 
         int xMoveNow;
         int yMoveNow;
