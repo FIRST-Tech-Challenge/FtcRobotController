@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.chassis;
 
+import static org.firstinspires.ftc.teamcode.Constants.driveStickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.sensitivity;
+import static org.firstinspires.ftc.teamcode.Constants.slowModeSensitivity;
+import static org.firstinspires.ftc.teamcode.Constants.triggerThreshold;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -19,10 +22,10 @@ public class MecanumChassis extends Chassis {
     @Override
     public void drive(Gamepad gamepad){
         //This works, just trust me on it. Slack me or something if you need a full explanation.
-        double flPower = (gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x);
-        double frPower = (-gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x);
-        double blPower = (-gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x);
-        double brPower = (gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x);
+        double flPower = (gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x)*driveStickThreshold;
+        double frPower = (-gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x)*driveStickThreshold;
+        double blPower = (-gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x)*driveStickThreshold;
+        double brPower = (gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x)*driveStickThreshold;
 
         //This bit seems complicated, but it just gets the maximum absolute value of all the motors.
         double maxPower = Math.max(Math.max(Math.abs(flPower), Math.abs(frPower)), Math.max(Math.abs(blPower), Math.abs(brPower)));
@@ -37,10 +40,20 @@ public class MecanumChassis extends Chassis {
         brPower = (brPower / maxPower) * sensitivity;
 
         //Actually set them
-        frontLeft.setPower(flPower);
-        frontRight.setPower(frPower);
-        backLeft.setPower(blPower);
-        backRight.setPower(brPower);
+
+        if (gamepad.left_trigger > triggerThreshold ) {
+            frontLeft.setPower(flPower);
+            frontRight.setPower(frPower);
+            backLeft.setPower(blPower);
+            backRight.setPower(brPower);
+        }
+        else {
+            frontLeft.setPower(flPower*slowModeSensitivity);
+            frontRight.setPower(frPower*slowModeSensitivity);
+            backLeft.setPower(blPower*slowModeSensitivity);
+            backRight.setPower(brPower*slowModeSensitivity);
+        }
+
     }
 
     // Movement functions
