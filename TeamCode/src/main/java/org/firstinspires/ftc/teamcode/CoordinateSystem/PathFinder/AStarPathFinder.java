@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.CoordinateSystem.PathFinder;
 
-import android.os.Build;
 import org.firstinspires.ftc.teamcode.CoordinateSystem.Coordinate;
 import org.firstinspires.ftc.teamcode.CoordinateSystem.Field;
 
@@ -14,12 +13,12 @@ class AStarPathFinder {
     private final List<Node> path;
     private final Field field;
     private Node now;
-    private final int xstart;
-    private final int ystart;
-    private int xend, yend;
-    private final boolean diag;
+    private final int xStart;
+    private final int yStart;
+    private int xEnd, yEnd;
+    private final boolean diagonal;
 
-    // Node class for convienience
+    // Node class for convenience
     static class Node implements Comparable {
         public Node parent;
         public int x, y;
@@ -46,33 +45,33 @@ class AStarPathFinder {
         this.path = new ArrayList<>();
         this.field = field;
         this.now = new Node(null, xstart, ystart, 0, 0);
-        this.xstart = xstart;
-        this.ystart = ystart;
-        this.diag = diag;
+        this.xStart = xstart;
+        this.yStart = ystart;
+        this.diagonal = diag;
     }
     /*
-     ** Finds path to xend/yend or returns null
+     ** Finds path to xEnd/yEnd or returns null
      **
-     ** @param (int) xend coordinates of the target position
-     ** @param (int) yend
+     ** @param (int) xEnd coordinates of the target position
+     ** @param (int) yEnd
      ** @return (List<Node> | null) the path
      */
-    public List<Node> findPathTo(int xend, int yend) {
-        this.xend = xend;
-        this.yend = yend;
+    public List<Node> findPathTo(int xEnd, int yEnd) {
+        this.xEnd = xEnd;
+        this.yEnd = yEnd;
         this.closed.add(this.now);
-        addNeigborsToOpenList();
-        while (this.now.x != this.xend || this.now.y != this.yend) {
+        addNeighborsToOpenList();
+        while (this.now.x != this.xEnd || this.now.y != this.yEnd) {
             if (this.open.isEmpty()) { // Nothing to examine
                 return null;
             }
             this.now = this.open.get(0); // get first node (lowest f score)
             this.open.remove(0); // remove it
             this.closed.add(this.now); // and add to the closed
-            addNeigborsToOpenList();
+            addNeighborsToOpenList();
         }
         this.path.add(0, this.now);
-        while (this.now.x != this.xstart || this.now.y != this.ystart) {
+        while (this.now.x != this.xStart || this.now.y != this.yStart) {
             this.now = this.now.parent;
             this.path.add(0, this.now);
         }
@@ -92,17 +91,17 @@ class AStarPathFinder {
      ** @return (int) distance
      */
     private double distance(int dx, int dy) {
-        if (this.diag) { // if diagonal movement is alloweed
-            return Math.hypot(this.now.x + dx - this.xend, this.now.y + dy - this.yend); // return hypothenuse
+        if (this.diagonal) { // if diagonal movement is allowed
+            return Math.hypot(this.now.x + dx - this.xEnd, this.now.y + dy - this.yEnd); // return hypotenuse
         } else {
-            return Math.abs(this.now.x + dx - this.xend) + Math.abs(this.now.y + dy - this.yend); // else return "Manhattan distance"
+            return Math.abs(this.now.x + dx - this.xEnd) + Math.abs(this.now.y + dy - this.yEnd); // else return "Manhattan distance"
         }
     }
-    private void addNeigborsToOpenList() {
+    private void addNeighborsToOpenList() {
         Node node;
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
-                if (!this.diag && x != 0 && y != 0) {
+                if (!this.diagonal && x != 0 && y != 0) {
                     continue; // skip if diagonal movement is not allowed
                 }
                 node = new Node(this.now, this.now.x + x, this.now.y + y, this.now.g, this.distance(x, y));
