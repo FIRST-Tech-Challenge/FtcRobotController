@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
-class AStar {
+class AStarPathFinder {
     private final List<Node> open;
     private final List<Node> closed;
     private final List<Node> path;
@@ -38,7 +38,7 @@ class AStar {
         }
     }
 
-    AStar(int[][] maze, int xstart, int ystart, boolean diag) {
+    AStarPathFinder(int[][] maze, int xstart, int ystart, boolean diag) {
         this.open = new ArrayList<>();
         this.closed = new ArrayList<>();
         this.path = new ArrayList<>();
@@ -142,7 +142,7 @@ class AStar {
                 {  0,  0,100,100,100,100,  0,  0},
                 {  0,  0,  0,  0,  0,  0,  0,  0},
         };
-        AStar as = new AStar(maze, 0, 0, true);
+        AStarPathFinder as = new AStarPathFinder(maze, 0, 0, true);
         List<Node> path = as.findPathTo(7, 7);
         if (path != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
