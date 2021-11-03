@@ -1,4 +1,4 @@
-
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -135,16 +135,19 @@ public class AutonomousCode extends LinearOpMode {
                                 motoryay.setPower(1.0);
                                 telemetry.addData("Motor power: ", motoryay.getPower());
 //                                telemetry.update();
+                                autonomousBall();
                             }
                             else if  (recognition.getLabel().equals("Cube")){
                                 motoryay.setPower(1.0);
                                 telemetry.addData("Motor power: ", motoryay.getPower());
 //                                telemetry.update();
+                                autonomousBlock();
                             }
                             else if (recognition.getLabel().equals("Duck")){
                                 motoryay.setPower(1.0);
                                 telemetry.addData("Motor power: ", motoryay.getPower());
 //                                telemetry.update();
+                                autonomousDuck();
                             }
                             else{
                                 motoryay.setPower(0.0);
@@ -164,7 +167,23 @@ public class AutonomousCode extends LinearOpMode {
      */
     public void autonomousBlock(){
         topLeftMotor.setPower(10);
+        topRightMotor.setPower(10);
+    }
+
+    public void autonomousBall(){
         topLeftMotor.setPower(10);
+        topRightMotor.setPower(10);
+    }
+
+    public void autonomousDuck(){
+        topLeftMotor.setPower(10);
+        topRightMotor.setPower(10);
+    }
+
+    public void autonomousTeamMarker(){
+        topLeftMotor.setPower(10);
+        topRightMotor.setPower(10);
+
     }
 
     /**

@@ -199,6 +199,10 @@ public class ObiectDetection2021 extends LinearOpMode {
 
     }
 
+    public void autonomousBall(){
+
+    }
+
     /**
      * Initialize the Vuforia localization engine.
      */
