@@ -82,10 +82,7 @@ class AStarPathFinder {
      ** @return (bool) NeightborInListFound
      */
     private static boolean findNeighborInList(List<Node> array, Node node) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return array.stream().anyMatch((n) -> (n.x == node.x && n.y == node.y));
-        }
-        throw new UnsupportedOperationException("Please Upgrade your Android SDK");
+        return array.stream().anyMatch((n) -> (n.x == node.x && n.y == node.y));
     }
     /*
      ** Calulate distance between this.now and xend/yend
@@ -132,31 +129,26 @@ class AStarPathFinder {
     public static void main(String[] args) {
         // -1 = blocked
         // 0+ = additional movement cost
-        int[][] maze = {
-                {  0,  0,  0,  0,  0,  0,  0,  0},
-                {  0,  0,  0,  0,  0,  0,  0,  0},
-                {  0,  0,  0,100,100,100,  0,  0},
-                {  0,  0,  0,  0,  0,100,  0,  0},
-                {  0,  0,100,  0,  0,100,  0,  0},
-                {  0,  0,100,  0,  0,100,  0,  0},
-                {  0,  0,100,100,100,100,  0,  0},
-                {  0,  0,  0,  0,  0,  0,  0,  0},
+        int[][] field = {
+                {0, 0, 0,  0,  0,  0,  0,  0},
+                {0, 0, 0,  0,  0,  0,  0,  0},
+                {0, 0, 0,100,100,100,  0,  0},
+                {0, 0, 0,  0,  0,100,  0,  0},
+                {0, 0, -1,  0,  0,100,  0,  0},
+                {0, 0, -1,  0,  0,100,  0,  0},
+                {0, 0, -1,100,100,100,  0,  0},
+                {0, 0,  0,  0,  0,  0,  0,  0},
         };
-        AStarPathFinder as = new AStarPathFinder(maze, 0, 0, true);
+        AStarPathFinder as = new AStarPathFinder(field, 0, 0, true);
         List<Node> path = as.findPathTo(7, 7);
         if (path != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                path.forEach((n) -> {
-                    System.out.print("[" + n.x + ", " + n.y + "] ");
-                    maze[n.y][n.x] = -1;
-                });
-            }
-            else {
-                throw new UnsupportedOperationException("Please Upgrade your Android SDK");
-            }
+            path.forEach((n) -> {
+                System.out.print("[" + n.x + ", " + n.y + "] ");
+                field[n.y][n.x] = -1;
+            });
             System.out.printf("\nTotal cost: %.02f\n", path.get(path.size() - 1).g);
 
-            for (int[] maze_row : maze) {
+            for (int[] maze_row : field) {
                 for (int maze_entry : maze_row) {
                     switch (maze_entry) {
                         case 0:
