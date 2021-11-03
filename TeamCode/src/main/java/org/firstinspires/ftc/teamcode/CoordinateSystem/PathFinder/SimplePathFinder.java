@@ -42,6 +42,6 @@ public class SimplePathFinder implements PathFinder {
             current = new Coordinate(current.getX() + xMoveNow, current.getY() + yMoveNow);
             path.add(current);
         }
-        return null;
+        return path;
     }
 }
