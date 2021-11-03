@@ -31,13 +31,13 @@ public class Field implements Iterable<int[]>{
         this.Objects = Objects;
         for (Object object:Objects) {
             for (Coordinate coordinate:object.getOccupies()) {
-                this.field[coordinate.x][coordinate.y] = 1;
+                this.field[coordinate.getX()][coordinate.getY()] = 1;
             }
         }
     }
 
     public boolean isBlocked(Coordinate goTo) {
-        if (field[goTo.x][goTo.y] == -1) {
+        if (field[goTo.getX()][goTo.getY()] == -1) {
             return true;
         }
         return false;
@@ -45,7 +45,7 @@ public class Field implements Iterable<int[]>{
 
     public void addObject(Object object) {
         for (Coordinate coordinate:object.getOccupies()) {
-            this.field[coordinate.x][coordinate.y] = 1;
+            this.field[coordinate.getX()][coordinate.getY()] = 1;
         }
         Objects.add(object);
     }

@@ -2,66 +2,43 @@ package org.firstinspires.ftc.teamcode.CoordinateSystem.PathFinder;
 
 import org.firstinspires.ftc.teamcode.CoordinateSystem.Coordinate;
 import org.firstinspires.ftc.teamcode.CoordinateSystem.Field;
+import org.firstinspires.ftc.teamcode.CoordinateSystem.Path;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
-class AStarPathFinder {
+public class AStarPathFinder {
     private final List<Node> open;
     private final List<Node> closed;
-    private final List<Node> path;
+    private final Path path;
     private final Field field;
     private Node now;
-    private final int xStart;
-    private final int yStart;
-    private int xEnd, yEnd;
+    private Coordinate start;
+    private Coordinate end;
     private final boolean diagonal;
 
-    // Node class for convenience
-    static class Node implements Comparable {
-        public Node parent;
-        public int x, y;
-        public double g;
-        public double h;
-        Node(Node parent, int xpos, int ypos, double g, double h) {
-            this.parent = parent;
-            this.x = xpos;
-            this.y = ypos;
-            this.g = g;
-            this.h = h;
-        }
-        // Compare by f value (g + h)
-        @Override
-        public int compareTo(Object o) {
-            Node that = (Node) o;
-            return (int)((this.g + this.h) - (that.g + that.h));
-        }
-    }
-
-    AStarPathFinder(Field field, int xstart, int ystart, boolean diag) {
+    AStarPathFinder(Field field, boolean diagonal) {
         this.open = new ArrayList<>();
         this.closed = new ArrayList<>();
-        this.path = new ArrayList<>();
+        this.path = new Path();
         this.field = field;
-        this.now = new Node(null, xstart, ystart, 0, 0);
-        this.xStart = xstart;
-        this.yStart = ystart;
-        this.diagonal = diag;
+        this.diagonal = diagonal;
     }
-    /*
-     ** Finds path to xEnd/yEnd or returns null
-     **
-     ** @param (int) xEnd coordinates of the target position
-     ** @param (int) yEnd
-     ** @return (List<Node> | null) the path
+    /**
+     * Finds path to xEnd/yEnd or returns null
+     *
+     * @param start the starting coordinate
+     * @param end coordinates of the target position
+     * @return (List<Node> | null) the path
      */
-    public List<Node> findPathTo(int xEnd, int yEnd) {
-        this.xEnd = xEnd;
-        this.yEnd = yEnd;
+    public Path getShortestPath(Coordinate start, Coordinate end) {
+        this.start = start;
+        this.now = new Node(null, start.getX(), start.getY(), 0, 0);
+        this.end = end;
         this.closed.add(this.now);
         addNeighborsToOpenList();
-        while (this.now.x != this.xEnd || this.now.y != this.yEnd) {
+        while (this.now.getX() != this.end.getX() || this.now.getY() != this.end.getY()) {
             if (this.open.isEmpty()) { // Nothing to examine
                 return null;
             }
@@ -71,30 +48,30 @@ class AStarPathFinder {
             addNeighborsToOpenList();
         }
         this.path.add(0, this.now);
-        while (this.now.x != this.xStart || this.now.y != this.yStart) {
+        while (this.now.getX() != this.start.getX() || this.now.getY() != this.start.getY()) {
             this.now = this.now.parent;
             this.path.add(0, this.now);
         }
         return this.path;
     }
-    /*
+    /**
      ** Looks in a given List<> for a node
      **
-     ** @return (bool) NeightborInListFound
+     ** @return (bool) NeighborInListFound
      */
     private static boolean findNeighborInList(List<Node> array, Node node) {
-        return array.stream().anyMatch((n) -> (n.x == node.x && n.y == node.y));
+        return array.stream().anyMatch((n) -> (n.getX() == node.getX() && n.getY() == node.getY()));
     }
-    /*
-     ** Calulate distance between this.now and xend/yend
+    /**
+     ** Calculate distance between this.now and xEnd/yEnd
      **
      ** @return (int) distance
      */
     private double distance(int dx, int dy) {
         if (this.diagonal) { // if diagonal movement is allowed
-            return Math.hypot(this.now.x + dx - this.xEnd, this.now.y + dy - this.yEnd); // return hypotenuse
+            return Math.hypot(this.now.getX() + dx - this.end.getX(), this.now.getY() + dy - this.end.getY()); // return the hypotenuse
         } else {
-            return Math.abs(this.now.x + dx - this.xEnd) + Math.abs(this.now.y + dy - this.yEnd); // else return "Manhattan distance"
+            return Math.abs(this.now.getX() + dx - this.end.getX()) + Math.abs(this.now.getY() + dy - this.end.getY()); // return the "Manhattan distance"
         }
     }
     private void addNeighborsToOpenList() {
@@ -104,14 +81,14 @@ class AStarPathFinder {
                 if (!this.diagonal && x != 0 && y != 0) {
                     continue; // skip if diagonal movement is not allowed
                 }
-                node = new Node(this.now, this.now.x + x, this.now.y + y, this.now.g, this.distance(x, y));
+                node = new Node(this.now, this.now.getY() + x, this.now.getY() + y, this.now.getG(), this.distance(x, y));
                 if ((x != 0 || y != 0) // not this.now
-                        && this.now.x + x >= 0 && this.now.x + x < this.field.length // check maze boundaries
-                        && this.now.y + y >= 0 && this.now.y + y < this.field.width
-                        && this.field.isBlocked( new Coordinate(this.now.y + y, this.now.x + x)) // check if square is walkable
+                        && this.now.getX() + x >= 0 && this.now.getX() + x < this.field.length // check maze boundaries
+                        && this.now.getY() + y >= 0 && this.now.getY() + y < this.field.width
+                        && this.field.isBlocked( new Coordinate(this.now.getY() + y, this.now.getX() + x)) // check if square is walkable
                         && !findNeighborInList(this.open, node) && !findNeighborInList(this.closed, node)) { // if not already done
-                    node.g = node.parent.g + 1.; // Horizontal/vertical cost = 1.0
-                    node.g += field.get(new Coordinate(this.now.y + y, this.now.x + x)); // add movement cost for this square
+                    node.setG(node.parent.getG() + 1.); // Horizontal/vertical cost = 1.0
+                    node.setG(node.getG() + field.get(new Coordinate(this.now.getY() + y, this.now.getX() + x))); // add movement cost for this square
 
                     // diagonal cost = sqrt(hor_cost² + vert_cost²)
                     // in this example the cost would be 12.2 instead of 11
@@ -131,14 +108,14 @@ class AStarPathFinder {
         // -1 = blocked
         // 0+ = additional movement cost
         Field field = new Field();
-        AStarPathFinder as = new AStarPathFinder(field, 0, 0, true);
-        List<Node> path = as.findPathTo(7, 7);
+        AStarPathFinder as = new AStarPathFinder(field, true);
+        Path path = as.getShortestPath(new Coordinate(0, 0), new Coordinate(7, 7));
         if (path != null) {
-            path.forEach((n) -> {
-                System.out.print("[" + n.x + ", " + n.y + "] ");
-                field.set(new Coordinate(n.x, n.y), -1);
+            path.getPath().forEach((n) -> {
+                System.out.print("[" + n.getX()+ ", " + n.getY() + "] ");
+                field.set(new Coordinate(n.getX(), n.getY()), -1);
             });
-            System.out.printf("\nTotal cost: %.02f\n", path.get(path.size() - 1).g);
+            System.out.printf("\nTotal cost: %.02f\n", path.get(path.length() - 1).getG());
 
             for (int[] fieldRow : field.getField()) {
                 for (int maze_entry : fieldRow) {

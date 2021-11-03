@@ -1,11 +1,20 @@
 package org.firstinspires.ftc.teamcode.CoordinateSystem;
 
 public class Coordinate {
-    int x;
-    int y;
+    protected int x, y;
+    protected double g, h;
     public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
+        this.g = 0;
+        this. h = 0;
+    }
+
+    public Coordinate(int x, int y, double g, double h) {
+        this.x = x;
+        this.y = y;
+        this.g = g;
+        this. h = h;
     }
 
     public int getX() {
@@ -14,6 +23,38 @@ public class Coordinate {
 
     public int getY() {
         return y;
+    }
+
+    public double getG() {
+        return g;
+    }
+
+    public double getH() {
+        return h;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setG(double g) {
+        this.g = g;
+    }
+
+    public void setH(double h) {
+        this.h = h;
+    }
+
+    public boolean equals(Coordinate c) {
+        return (this.x == c.x && this.y == c.y);
+    }
+
+    public String toString() {
+        return "(" + this.x + "," + this.y + ")";
     }
 
     public Coordinate[] getPossibleMoves() {
