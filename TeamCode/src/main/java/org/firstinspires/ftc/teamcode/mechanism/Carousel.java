@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.mechanism.Mechanism;
 
 public class Carousel implements Mechanism {
-    public static DcMotor carousel;
+    public DcMotor carousel;
     boolean aWasDown = false;
     boolean bWasDown = false;
     public void init(HardwareMap hardwareMap) {
