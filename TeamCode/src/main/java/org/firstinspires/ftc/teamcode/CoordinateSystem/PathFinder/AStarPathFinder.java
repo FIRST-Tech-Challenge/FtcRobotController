@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.CoordinateSystem.PathFinder;
 
 import android.os.Build;
+import org.firstinspires.ftc.teamcode.CoordinateSystem.Coordinate;
+import org.firstinspires.ftc.teamcode.CoordinateSystem.Field;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ class AStarPathFinder {
     private final List<Node> open;
     private final List<Node> closed;
     private final List<Node> path;
-    private final int[][] maze;
+    private final Field field;
     private Node now;
     private final int xstart;
     private final int ystart;
@@ -38,11 +40,11 @@ class AStarPathFinder {
         }
     }
 
-    AStarPathFinder(int[][] maze, int xstart, int ystart, boolean diag) {
+    AStarPathFinder(Field field, int xstart, int ystart, boolean diag) {
         this.open = new ArrayList<>();
         this.closed = new ArrayList<>();
         this.path = new ArrayList<>();
-        this.maze = maze;
+        this.field = field;
         this.now = new Node(null, xstart, ystart, 0, 0);
         this.xstart = xstart;
         this.ystart = ystart;
@@ -105,12 +107,12 @@ class AStarPathFinder {
                 }
                 node = new Node(this.now, this.now.x + x, this.now.y + y, this.now.g, this.distance(x, y));
                 if ((x != 0 || y != 0) // not this.now
-                        && this.now.x + x >= 0 && this.now.x + x < this.maze[0].length // check maze boundaries
-                        && this.now.y + y >= 0 && this.now.y + y < this.maze.length
-                        && this.maze[this.now.y + y][this.now.x + x] != -1 // check if square is walkable
+                        && this.now.x + x >= 0 && this.now.x + x < this.field.length // check maze boundaries
+                        && this.now.y + y >= 0 && this.now.y + y < this.field.width
+                        && this.field.isBlocked( new Coordinate(this.now.y + y, this.now.x + x)) // check if square is walkable
                         && !findNeighborInList(this.open, node) && !findNeighborInList(this.closed, node)) { // if not already done
                     node.g = node.parent.g + 1.; // Horizontal/vertical cost = 1.0
-                    node.g += maze[this.now.y + y][this.now.x + x]; // add movement cost for this square
+                    node.g += field.get(new Coordinate(this.now.y + y, this.now.x + x)); // add movement cost for this square
 
                     // diagonal cost = sqrt(hor_cost² + vert_cost²)
                     // in this example the cost would be 12.2 instead of 11
@@ -129,27 +131,18 @@ class AStarPathFinder {
     public static void main(String[] args) {
         // -1 = blocked
         // 0+ = additional movement cost
-        int[][] field = {
-                {0, 0, 0,  0,  0,  0,  0,  0},
-                {0, 0, 0,  0,  0,  0,  0,  0},
-                {0, 0, 0,100,100,100,  0,  0},
-                {0, 0, 0,  0,  0,100,  0,  0},
-                {0, 0, -1,  0,  0,100,  0,  0},
-                {0, 0, -1,  0,  0,100,  0,  0},
-                {0, 0, -1,100,100,100,  0,  0},
-                {0, 0,  0,  0,  0,  0,  0,  0},
-        };
+        Field field = new Field();
         AStarPathFinder as = new AStarPathFinder(field, 0, 0, true);
         List<Node> path = as.findPathTo(7, 7);
         if (path != null) {
             path.forEach((n) -> {
                 System.out.print("[" + n.x + ", " + n.y + "] ");
-                field[n.y][n.x] = -1;
+                field.set(new Coordinate(n.x, n.y), -1);
             });
             System.out.printf("\nTotal cost: %.02f\n", path.get(path.size() - 1).g);
 
-            for (int[] maze_row : field) {
-                for (int maze_entry : maze_row) {
+            for (int[] fieldRow : field.getField()) {
+                for (int maze_entry : fieldRow) {
                     switch (maze_entry) {
                         case 0:
                             System.out.print("_");
