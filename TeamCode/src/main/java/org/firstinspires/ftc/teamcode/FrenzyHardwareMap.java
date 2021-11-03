@@ -104,10 +104,8 @@ public class FrenzyHardwareMap {
     }
     //Checks if all motors are busy
     public boolean motorsBusy(){
-        if(motorFrontRight.isBusy() && motorFrontLeft.isBusy() && motorBackRight.isBusy() && motorBackLeft.isBusy())
-            return true;
-        else
-            return false;
+        if(motorFrontRight.isBusy() && motorFrontLeft.isBusy() && motorBackRight.isBusy() && motorBackLeft.isBusy()) return true;
+        else return false;
     }
     //sets motor target locations to right and left targets
     public void setTargets(int target1, int target2){
