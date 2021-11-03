@@ -17,6 +17,10 @@ public class Path {
         path.add(c);
     }
 
+    public void addCoordinate (int index, Coordinate c) {
+        path.add(index, c);
+    }
+
     public Coordinate getCoordinate (int index) {
         return path.get(index);
     }
