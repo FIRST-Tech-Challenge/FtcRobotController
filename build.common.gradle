@@ -55,7 +55,7 @@ android {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
         minSdkVersion 24
-        targetSdkVersion 29
+        targetSdkVersion 28
         multiDexEnabled true
 
         def manifestFile = project(':FtcRobotController').file('src/main/AndroidManifest.xml')
