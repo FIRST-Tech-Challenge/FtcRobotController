@@ -116,7 +116,7 @@ public class Robot {
         this.telemetry.telemetry(4, "debug", "debug = " + MainConfig.getDebug());
         this.telemetry.telemetry(4, "debugTarget", "debugTarget = " + MainConfig.getDebugTarget());
         this.telemetry.telemetry(4, "logLevel", "logLevel = " + MainConfig.getLogLevel());
-        this.telemetry.telemetry(4, "initMinorSubsystems", "initMinorSubsystems = " + MainConfig.getInitMinorSubsystems());
+        this.telemetry.telemetry(4, "initMinorSubsystems", "initMinorSubsystems = " + MainConfig.getInitSubsystems());
         this.telemetry.telemetry(4, "initMechanical", "initMechanical = " + MainConfig.getInitMechanical());
         this.telemetry.telemetry(4, "initGetGamePadInputs", "initGetGamePadInputs = " + MainConfig.getInitGamePadInputs());
         this.oldTelemetry.addLine();
@@ -155,7 +155,7 @@ public class Robot {
             telemetry.telemetry(1, "Hardware init", " Hardware init skipped");
         }
 
-        if (MainConfig.getInitMinorSubsystems()) {
+        if (MainConfig.getInitSubsystems()) {
             telemetry.telemetry(2, "Subsystems init", " Subsystems init started");
             initSubsystems();
             telemetry.telemetry(1, "Subsystems init", " Subsystems init finished");

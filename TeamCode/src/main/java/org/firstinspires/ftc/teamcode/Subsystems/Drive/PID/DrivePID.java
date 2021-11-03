@@ -33,8 +33,8 @@ public class DrivePID extends LinearOpMode {
     TouchSensor touch;
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
-    double                  globalAngle, power = .30, correction, rotation;
-    boolean                 aButton, bButton, touched;
+    double globalAngle, power = .30, correction, rotation;
+    boolean aButton, bButton, touched;
     PIDController pidRotate, pidDrive;
 
     private final QuickTelemetry quickTelemetry = new QuickTelemetry(telemetry);

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
 
 import org.firstinspires.ftc.teamcode.Config.MainConfig;
-import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
 import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
@@ -45,7 +45,7 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
     static double PERCENT_COLOR_THRESHOLD = 0.4;
 
 
-    Mat mat = new Mat();
+    Mat mask = new Mat();
 
     /**
      * Class instantiation
@@ -55,8 +55,8 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
      * @see QuickTelemetry
      * @see AllianceColor
      */
-    public DetectMarkerPipeline(Robot robot) {
-        telemetry = robot.getQuickTelemetry();
+    public DetectMarkerPipeline(QuickTelemetry quickTelemetry) {
+        this.telemetry = quickTelemetry;
     }
 
     /**
@@ -83,15 +83,15 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         this.searchStatus = SearchStatus.SEARCHING;
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful. (not possible)
+        Imgproc.cvtColor(input, mask, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful. (not possible)
         Scalar lowHSV = new Scalar(23, 50, 70);
         Scalar highHSV = new Scalar(32, 255, 255);
 
-        Core.inRange(mat, lowHSV, highHSV, mat);
+        Core.inRange(mask, lowHSV, highHSV, mask);
 
-        Mat left = mat.submat(LEFT_RECT);
-        Mat middle = mat.submat(MIDDLE_RECT);
-        Mat right = mat.submat(RIGHT_RECT);
+        Mat left = mask.submat(LEFT_RECT);
+        Mat middle = mask.submat(MIDDLE_RECT);
+        Mat right = mask.submat(RIGHT_RECT);
 
         double leftValue = Core.sumElems(left).val[0] / LEFT_RECT.area() / 255;
         double middleValue = Core.sumElems(middle).val[0] / MIDDLE_RECT.area() / 255;
@@ -129,7 +129,7 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
         }
         telemetry.update();
 
-        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB); // TODO: Change COLOR_GRAY2RGB to something more useful.
+        Imgproc.cvtColor(mask, mask, Imgproc.COLOR_GRAY2RGB); // TODO: Change COLOR_GRAY2RGB to something more useful.
 
         Scalar colorNormal;
 
@@ -145,12 +145,12 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
 
         Scalar colorMarker = new Scalar(0, 255, 0); // Pure Green
 
-        Imgproc.rectangle(mat, LEFT_RECT, markerLocation == MarkerLocation.LEFT ? colorMarker : colorNormal);
-        Imgproc.rectangle(mat, MIDDLE_RECT, markerLocation == MarkerLocation.MIDDLE ? colorMarker : colorNormal);
-        Imgproc.rectangle(mat, RIGHT_RECT, markerLocation == MarkerLocation.RIGHT ? colorMarker : colorNormal);
+        Imgproc.rectangle(mask, LEFT_RECT, markerLocation == MarkerLocation.LEFT ? colorMarker : colorNormal);
+        Imgproc.rectangle(mask, MIDDLE_RECT, markerLocation == MarkerLocation.MIDDLE ? colorMarker : colorNormal);
+        Imgproc.rectangle(mask, RIGHT_RECT, markerLocation == MarkerLocation.RIGHT ? colorMarker : colorNormal);
 
         this.searchStatus = SearchStatus.FOUND;
-        return mat;
+        return mask;
     }
 
     /**

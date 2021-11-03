@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Robot;
 
 
 /**
@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Robot;
  * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
  */
 @Autonomous(name = "Auto", group = "Concept")
-@Disabled
 public class Auto extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
     Robot robot = new Robot(this, timer);

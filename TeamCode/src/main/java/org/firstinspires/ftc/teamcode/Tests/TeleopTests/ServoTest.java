@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-/** made by Alessandro Bonecchi on 10.23.2021 **/
-
 @TeleOp(name = "Servo Test")
-@Disabled
 public class ServoTest extends LinearOpMode { // TODO: servo test/operation code here
     @Override
     public void runOpMode() throws InterruptedException {

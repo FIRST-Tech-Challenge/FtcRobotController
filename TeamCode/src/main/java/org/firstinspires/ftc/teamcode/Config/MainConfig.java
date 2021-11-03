@@ -23,7 +23,12 @@ public class MainConfig {
        3 is verbose */
     private static final int logLevel = 3;
 
-    private static final boolean initMinorSubsystems = false;
+
+    private static final boolean initSubsystems = true;
+    private static final boolean initSubsystemControl = (true && initSubsystems);
+    private static final boolean initSubsystemDrive = (true && initSubsystems);
+    private static final boolean initSubsystemVision = (false && initSubsystems);
+
     private static final boolean initMechanical = true;
     private static final boolean initGetGamePadInputs = true;
     private static final boolean initHardwareMap = true;
@@ -52,8 +57,18 @@ public class MainConfig {
         return logLevel;
     }
 
-    public static boolean getInitMinorSubsystems() {
-        return initMinorSubsystems;
+    public static boolean getInitSubsystems() {
+        return initSubsystems;
+    }
+
+    public static boolean getInitSubsystemControl() {
+        return initSubsystemControl;
+    }
+    public static boolean getInitSubsystemDrive() {
+        return initSubsystemDrive;
+    }
+    public static boolean getInitSubsystemVision() {
+        return initSubsystemVision;
     }
 
     public static boolean getInitMechanical() {
