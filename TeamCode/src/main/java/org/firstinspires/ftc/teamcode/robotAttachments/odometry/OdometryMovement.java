@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.TreeMap;
+
 
 public class OdometryMovement {
     DcMotor front_right, front_left, back_right, back_left;
@@ -11,8 +13,7 @@ public class OdometryMovement {
     OdometryGlobalCoordinatePosition odometry;
     Executable<Boolean> _isStopRequested;
     Executable<Boolean> _opModeIsActive;
-
-    public OdometryMovement(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
+    public OdometryMovement(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable isStopRequested, Executable opmodeIsActive) {
         this.back_left = back_left;
         this.back_right = back_right;
         this.front_left = front_left;
@@ -33,6 +34,7 @@ public class OdometryMovement {
     boolean opModeIsActive() {
         return _opModeIsActive.call();
     }
+
 
 
     /**
