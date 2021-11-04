@@ -41,9 +41,10 @@ public class MechanumTeleOpManager extends TeleOpManager {
     public void main() {
         if(getGamepad1Functions().hasF1()) {
             // do the math
-            double y = -getGamepad1().left_stick_y;
+            // FIXME: i do not have a good enough understanding of math to do this
+            double y = -getGamepad1().left_stick_x;
             double x = getGamepad1().right_stick_x * 1.1;
-            double rx = getGamepad1().left_stick_x;
+            double rx = getGamepad1().left_stick_y;
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double rightTopPower = (y - x - rx) / denominator;
             double rightBottomPower = (y + x - rx) / denominator;
@@ -53,6 +54,7 @@ public class MechanumTeleOpManager extends TeleOpManager {
             MECHANUM.driveWithEncoder((int) Range.clip(rightTopPower * 100, -100, 100), (int) Range.clip(rightBottomPower * 100, -100, 100), (int) Range.clip(leftTopPower * 100, -100, 100), (int) Range.clip(leftBottomPower * 100, -100, 100));
         }else if(getGamepad2Functions().hasF1()) {
             // do the math
+            // FIXME: also need to replace this code with the first fix
             double y = -getGamepad2().left_stick_y;
             double x = getGamepad1().right_stick_x * 1.1;
             double rx = getGamepad1().left_stick_x;
