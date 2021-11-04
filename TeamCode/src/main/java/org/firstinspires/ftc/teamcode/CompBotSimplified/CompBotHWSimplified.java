@@ -88,11 +88,14 @@ public class CompBotHWSimplified {
 
         setTargetPositions(new double[]{dForward+dStrafe, dForward-dStrafe, dForward-dStrafe, dForward+dStrafe});
 
-        m.driveRobotCentric(sStrafe,sForward,0);
 
         while(fl.motor.isBusy() && fr.motor.isBusy() && bl.motor.isBusy() && br.motor.isBusy()) {
-            
+            m.driveRobotCentric(sStrafe,sForward,0);
         }
+
+        m.stop();
+
+        velocityControl();
     }
 
     public void positionControl() {

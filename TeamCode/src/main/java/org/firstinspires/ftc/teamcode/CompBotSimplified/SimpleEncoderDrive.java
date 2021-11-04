@@ -14,7 +14,5 @@ public class SimpleEncoderDrive extends LinearOpMode {
 
         // Drive 12 in at 45 degree angle
         r.encoderDrive(12/Math.sqrt(2), 12/Math.sqrt(2), 0.5, 0.5);
-
-        r.
     }
 }
