@@ -70,38 +70,38 @@ public class Hardware
         m1 = new Motor(h, "m2");
         m2 = new Motor(h, "m1");
         m3 = new Motor(h, "m3");
-        //intake = new Motor(h, "m4");
-        //carousel = new Motor(h, "m5");
+        intake = new Motor(h, "m4");
+        carousel = new Motor(h, "m5");
         //dist = h.get(DistanceSensor.class, "distsensor");
 
         m0.set(0);
         m1.set(0);
         m2.set(0);
         m3.set(0);
-        //intake.set(0);
-        //carousel.set(0);
+        intake.set(0);
+        carousel.set(0);
 
         m0.setInverted(false);
         m1.setInverted(true);
         m2.setInverted(false);
         m3.setInverted(true);
-        //intake.setInverted(false);
-        //carousel.setInverted(false);
+        intake.setInverted(false);
+        carousel.setInverted(false);
 
         // Set motors to run with/without encoders
         m0.setRunMode(Motor.RunMode.PositionControl);
         m1.setRunMode(Motor.RunMode.PositionControl);
         m2.setRunMode(Motor.RunMode.PositionControl);
         m3.setRunMode(Motor.RunMode.PositionControl);
-        //intake.setRunMode(Motor.RunMode.PositionControl);
-        //carousel.setRunMode(Motor.RunMode.PositionControl);
+        intake.setRunMode(Motor.RunMode.PositionControl);
+        carousel.setRunMode(Motor.RunMode.PositionControl);
 
         m0.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m3.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        //intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        //carousel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        carousel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         //servo.setRange(MIN_ANGLE, MAX_ANGLE);
         //servo.setPosition(0);

@@ -30,10 +30,10 @@ public class CompBotHW {
     public CompBotHW() {}
 
     public void init(HardwareMap h) {
-        fl = new Motor(h,"fl");
-        fr = new Motor(h,"fr");
-        bl = new Motor(h,"bl");
-        br = new Motor(h,"br");
+        fl = new Motor(h,"m0");
+        fr = new Motor(h,"m2");
+        bl = new Motor(h,"m1");
+        br = new Motor(h,"m3");
         m = new MecanumDrive(fl,fr,bl,br);
 
         m.stop();
@@ -91,7 +91,7 @@ public class CompBotHW {
                 @Override
                 public void onOpened() { phoneCam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_LEFT); }
 
-                @Override
+                //@Override
                 public void onError(int errorCode) {}
             });
         }
