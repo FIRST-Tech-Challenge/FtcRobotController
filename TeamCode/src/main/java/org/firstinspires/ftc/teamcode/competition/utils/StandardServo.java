@@ -26,10 +26,18 @@ public class StandardServo {
      */
     public void setPosition(int position) throws ArithmeticException {
         if(position >= -180 && position <= 180) {
-            SERVO.setPosition(position / 180.0);
+            SERVO.setPosition((position + 180) / 360.0);
         }else{
             throw new ArithmeticException("Position must be between -100 and 100!");
         }
+    }
+
+    /**
+     * Gets the degree of the servo's set position. Note that this does not return the physical degree of rotation of the servo, only the position the servo is commanded to be in, as no API returning the true position is exposed by the servo
+     * @return The position of the servo between -180 and 180
+     */
+    public int getPosition() {
+        return (int) (SERVO.getPosition() * 360) - 180;
     }
 
     public void setDirection(Servo.Direction direction) {
