@@ -23,11 +23,15 @@ public class QuickTelemetry {
         this.file = file;
     }
 
+    protected void logToConsole(String caption, String format) {
+        System.out.println(caption + ": " + format);
+    }
+
     public boolean canLog(int logLevel) {
         return ((logLevel >= this.logLevel) || (this.file.equals(this.targetDebug)));
     }
 
-    public void update() {
+    protected void update() {
         this.telemetry.update();
     }
 
@@ -38,6 +42,7 @@ public class QuickTelemetry {
     public void telemetry(String format) {
         if (logLevel > 0) {
             this.telemetry.addData(this.file, format);
+            logToConsole(this.file, format);
             update();
         }
     }
@@ -45,6 +50,7 @@ public class QuickTelemetry {
     public void telemetry(String caption, String format) {
         if (logLevel > 0) {
             this.telemetry.addData(this.file + ": " + caption, format);
+            logToConsole(this.file + ": " + caption, format);
             update();
         }
     }
@@ -52,6 +58,7 @@ public class QuickTelemetry {
     public void telemetry(String caption, String format, Object... args) {
         if (logLevel > 0) {
             this.telemetry.addData(this.file + ": " + caption, format, args);
+            logToConsole(this.file + ": " + caption, String.format(format, args));
             update();
         }
     }
