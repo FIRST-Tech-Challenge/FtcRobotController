@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.CompBot;
+package org.firstinspires.ftc.teamcode.CompBotSimplified;
 
-// Hardware class for Viridian's competition bot
+// Hardware class for Viridian's competition bot, but simplified
 // Version 1.0.0
 
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
@@ -16,18 +16,18 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-public class CompBotHW {
-    public Motor fl = null, fr = null, bl = null, br = null, intake = null, spin = null, lift = null;
-    public MecanumDrive m;
+public class CompBotHWSimplified {
+    public static double distanceK = 4554.756025274308733;
 
-    public Servo bucket;
+    public Motor fl = null, fr = null, bl = null, br = null;
+    public MecanumDrive m;
 
     public RevIMU imu = null;
 
     public int cameraMonitorViewId;
     public OpenCvCamera phoneCam = null;
 
-    public CompBotHW() {}
+    public CompBotHWSimplified() {}
 
     public void init(HardwareMap h) {
         fl = new Motor(h,"fl");
@@ -38,33 +38,20 @@ public class CompBotHW {
 
         m.stop();
 
-        fl.setRunMode(Motor.RunMode.RawPower);
-        fr.setRunMode(Motor.RunMode.RawPower);
-        bl.setRunMode(Motor.RunMode.RawPower);
-        br.setRunMode(Motor.RunMode.RawPower);
+        fl.setRunMode(Motor.RunMode.VelocityControl);
+        fr.setRunMode(Motor.RunMode.VelocityControl);
+        bl.setRunMode(Motor.RunMode.VelocityControl);
+        br.setRunMode(Motor.RunMode.VelocityControl);
 
         fl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        intake = new Motor(h, "intake");
-        intake.set(0);
-        intake.setInverted(false);
-        intake.setRunMode(Motor.RunMode.VelocityControl);
-        intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        spin = new Motor(h,"spin");
-        spin.set(0);
-        spin.setInverted(false);
-        spin.setRunMode(Motor.RunMode.VelocityControl);
-        spin.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        lift = new Motor(h,"lift");
-        lift.set(0);
-        lift.setInverted(false);
-        lift.setRunMode(Motor.RunMode.VelocityControl);
-        lift.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        fl.setDistancePerPulse(distanceK);
+        fr.setDistancePerPulse(distanceK);
+        bl.setDistancePerPulse(distanceK);
+        br.setDistancePerPulse(distanceK);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -75,8 +62,6 @@ public class CompBotHW {
         imu = new RevIMU(h,"imu");
         imu.init(parameters);
 
-        bucket = h.get(Servo.class, "bucket");
-        bucket.setPosition(0);
 
     }
     public void init(HardwareMap h, boolean cameraInit) {
@@ -96,5 +81,41 @@ public class CompBotHW {
             });
         }
         init(h);
+    }
+
+    public void encoderDrive(double dStrafe, double dForward, double sStrafe, double sForward) {
+        positionControl();
+
+        setTargetPositions(new double[]{dForward+dStrafe, dForward-dStrafe, dForward-dStrafe, dForward+dStrafe});
+
+
+        while(fl.motor.isBusy() && fr.motor.isBusy() && bl.motor.isBusy() && br.motor.isBusy()) {
+            m.driveRobotCentric(sStrafe,sForward,0);
+        }
+
+        m.stop();
+
+        velocityControl();
+    }
+
+    public void positionControl() {
+        fl.setRunMode(Motor.RunMode.PositionControl);
+        fr.setRunMode(Motor.RunMode.PositionControl);
+        bl.setRunMode(Motor.RunMode.PositionControl);
+        br.setRunMode(Motor.RunMode.PositionControl);
+    }
+
+    public void velocityControl() {
+        fl.setRunMode(Motor.RunMode.PositionControl);
+        fr.setRunMode(Motor.RunMode.PositionControl);
+        bl.setRunMode(Motor.RunMode.PositionControl);
+        br.setRunMode(Motor.RunMode.PositionControl);
+    }
+
+    public void setTargetPositions(double[] dist) {
+        fl.setTargetDistance(dist[0]);
+        fr.setTargetDistance(dist[1]);
+        bl.setTargetDistance(dist[2]);
+        br.setTargetDistance(dist[3]);
     }
 }
