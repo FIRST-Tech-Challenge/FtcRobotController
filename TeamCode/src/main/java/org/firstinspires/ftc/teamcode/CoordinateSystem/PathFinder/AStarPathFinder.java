@@ -118,8 +118,8 @@ public class AStarPathFinder {
             System.out.printf("\nTotal cost: %.02f\n", path.get(path.length() - 1).getG());
 
             for (int[] fieldRow : field.getField()) {
-                for (int maze_entry : fieldRow) {
-                    switch (maze_entry) {
+                for (int vertex : fieldRow) {
+                    switch (vertex) {
                         case 0:
                             System.out.print("_");
                             break;
