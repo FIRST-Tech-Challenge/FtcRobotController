@@ -22,11 +22,11 @@ public class StandardServo {
     /**
      * Sets the position of the servo, between -180 and 180
      * @param position The position to set
-     * @throws ArithmeticException The exception thrown when the position is not between -180 and 180
+     * @throws ArithmeticException The exception thrown when the position is not between -100 and 100
      */
     public void setPosition(int position) throws ArithmeticException {
-        if(position >= -180 && position <= 180) {
-            SERVO.setPosition((position + 180) / 360.0);
+        if(position >= -100 && position <= 100) {
+            SERVO.setPosition(position / 100.0);
         }else{
             throw new ArithmeticException("Position must be between -100 and 100!");
         }
@@ -37,7 +37,7 @@ public class StandardServo {
      * @return The position of the servo between -180 and 180
      */
     public int getPosition() {
-        return (int) (SERVO.getPosition() * 360) - 180;
+        return (int) SERVO.getPosition() * 100;
     }
 
     public void setDirection(Servo.Direction direction) {
