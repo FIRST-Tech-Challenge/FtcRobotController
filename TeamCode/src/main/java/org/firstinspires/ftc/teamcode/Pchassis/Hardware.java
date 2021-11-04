@@ -27,14 +27,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Pchassis;
 
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
+import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -44,22 +46,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-/**
- * This is NOT an opmode.
- *
- * This class can be used to define all the specific hardware for a single robot.
- * In this case that robot is a Pushbot.
- * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
- *
- * This hardware class assumes the following device names have been configured on the robot:
- * Note:  All names are lower case and some have single spaces between words.
- *
- * Motor channel:  Left  drive motor:        "left_drive"
- * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
- */
 
 
 public class Hardware
@@ -67,10 +53,9 @@ public class Hardware
     /* Public OpMode members. */
     public Motor m0 = null, m1 = null, m2 = null, m3 = null;
     public Motor carousel = null, intake = null;
-    public double MIN_ANGLE = 0, MAX_ANGLE = 180;
-    DistanceSensor dist = null;
-    MecanumDrive m;
-    ServoEx servo;
+    //DistanceSensor dist = null;
+    public MecanumDrive m;
+    public RevIMU imu;
 
     /* Constructor */
     public Hardware(){
@@ -79,50 +64,58 @@ public class Hardware
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap h) {
-        servo = new SimpleServo(h,"servo", MIN_ANGLE, MAX_ANGLE);
 
         // Define and Initialize Motors
         m0 = new Motor(h, "m0");
         m1 = new Motor(h, "m2");
         m2 = new Motor(h, "m1");
         m3 = new Motor(h, "m3");
-        intake = new Motor(h, "m4");
-        carousel = new Motor(h, "m5");
-        dist = h.get(DistanceSensor.class, "distsensor");
+        //intake = new Motor(h, "m4");
+        //carousel = new Motor(h, "m5");
+        //dist = h.get(DistanceSensor.class, "distsensor");
 
         m0.set(0);
         m1.set(0);
         m2.set(0);
         m3.set(0);
-        intake.set(0);
-        carousel.set(0);
+        //intake.set(0);
+        //carousel.set(0);
 
         m0.setInverted(false);
         m1.setInverted(true);
         m2.setInverted(false);
         m3.setInverted(true);
-        intake.setInverted(false);
-        carousel.setInverted(false);
+        //intake.setInverted(false);
+        //carousel.setInverted(false);
 
         // Set motors to run with/without encoders
         m0.setRunMode(Motor.RunMode.PositionControl);
         m1.setRunMode(Motor.RunMode.PositionControl);
         m2.setRunMode(Motor.RunMode.PositionControl);
         m3.setRunMode(Motor.RunMode.PositionControl);
-        intake.setRunMode(Motor.RunMode.PositionControl);
-        carousel.setRunMode(Motor.RunMode.PositionControl);
+        //intake.setRunMode(Motor.RunMode.PositionControl);
+        //carousel.setRunMode(Motor.RunMode.PositionControl);
 
         m0.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m3.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        carousel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        //intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        //carousel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        servo.setRange(MIN_ANGLE, MAX_ANGLE);
-        servo.setPosition(0);
+        //servo.setRange(MIN_ANGLE, MAX_ANGLE);
+        //servo.setPosition(0);
 
         m = new MecanumDrive(m0,m1,m2,m3);
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        imu = new RevIMU(h,"imu");
+        imu.init(parameters);
 
     }
 }
