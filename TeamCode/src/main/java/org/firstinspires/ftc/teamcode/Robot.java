@@ -40,6 +40,7 @@ public class Robot {
     public DcMotorEx frontRightDriveMotor;
     public DcMotorEx rearRightDriveMotor;
     public DcMotorEx rearLeftDriveMotor;
+    public DcMotorEx intake;
 
     // Odometry
     public List<LynxModule> allHubs;
@@ -53,28 +54,6 @@ public class Robot {
     public int odBCount = 0;
     public int odLCount = 0;
 
-
-    /**
-     * Control Hub
-     *
-     * fr        0
-     * br        1
-     * launch2   2
-     * launch1   3
-     *
-     * --------------------
-     * Expansion Hub 2
-     *
-     * fl        0
-     * bl        1
-     * intake    2
-     *
-     * feeding          0
-     * left elevator    1
-     * wbc1             2
-     * wbc2             3
-     * right elevator   4
-     */
 
     //Sensors
     public BNO055IMU imu;
@@ -170,6 +149,7 @@ public class Robot {
         frontRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("fr");
         rearLeftDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("bl");
         rearRightDriveMotor = (DcMotorEx) hardwareMap.dcMotor.get("br");
+        intake = (DcMotorEx) hardwareMap.dcMotor.get("intake");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -253,7 +233,7 @@ public class Robot {
 
         if (MainConfig.getInitSubsystemControl()) {
             telemetry.telemetry(3, "Mode", " Control init started");
-            control = new Control(this.getQuickTelemetry("Drive"), hardwareMap, timer);
+            control = new Control(this.getQuickTelemetry("Drive"), hardwareMap, timer, intake);
             telemetry.telemetry(2, "Mode", " Control init finished");
         }
     }
