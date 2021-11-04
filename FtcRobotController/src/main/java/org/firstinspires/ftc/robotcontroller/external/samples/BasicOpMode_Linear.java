@@ -59,8 +59,12 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
 
+
+
+
     @Override
     public void runOpMode() {
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -76,7 +80,11 @@ public class BasicOpMode_Linear extends LinearOpMode {
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
+
+
+
         waitForStart();
+
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
