@@ -136,7 +136,7 @@ public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
             }
             double initialHeading = normalizeAngle(aquireHeading());
             displayEncoderValue();
-            while (recogTime.milliseconds() <= 1500.0) {
+            while (recogTime.milliseconds() <= 2500.0) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
@@ -562,7 +562,7 @@ public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.65f;
+        tfodParameters.minResultConfidence = 0.60f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);

@@ -32,8 +32,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+
 
         LF  = hardwareMap.get(DcMotor.class, "LF");
         RF = hardwareMap.get(DcMotor.class, "RF");
@@ -69,6 +68,9 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         double spinPower = 0;
         int initialHeight = Slide.getCurrentPosition();
 
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
         waitForStart();
 
         boolean releasedRightBumper = true;
@@ -76,6 +78,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean releasedX = true;
         boolean releasedLB = true;
         boolean releasedRB = true;
+        boolean releasedLB2 = true;
         boolean releasedRB1 = true;
         boolean releasedLT = true;
         boolean releasedRT = true;
@@ -90,6 +93,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean toggleRB = true;
         boolean toggleRB1 = true;
         boolean toggleLB = true;
+        boolean toggleLB2 = true;
         boolean toggleRT = true;
         boolean toggleLT = true;
 
@@ -234,7 +238,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             if (gamepad2.right_bumper) {
                 if (releasedRB){
                     if (toggleRB) {
-                        spinPower = 0.8;
+                        spinPower = 0.6;
                         telemetry.addLine("SPIN STARTS");
                         toggleRB = false;
                     } else {
@@ -246,6 +250,23 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 }
             } else if (!releasedRB){
                 releasedRB = true;
+            }
+
+            if (gamepad2.left_bumper) {
+                if (releasedLB2){
+                    if (toggleLB2) {
+                        spinPower = -0.6;
+                        telemetry.addLine("SPIN STARTS REVERSE");
+                        toggleLB2 = false;
+                    } else {
+                        spinPower = 0;
+                        telemetry.addLine("SPIN STOPS");
+                        toggleLB2 = true;
+                    }
+                    releasedLB2 = false;
+                }
+            } else if (!releasedLB2){
+                releasedLB2 = true;
             }
 
             if(gamepad2.right_trigger == 1 && Rotate.getPosition() > 0.4){

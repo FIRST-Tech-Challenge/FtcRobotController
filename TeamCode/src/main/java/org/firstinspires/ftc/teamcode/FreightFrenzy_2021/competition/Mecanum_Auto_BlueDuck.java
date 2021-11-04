@@ -139,7 +139,7 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             }
             double initialHeading = normalizeAngle(aquireHeading());
             displayEncoderValue();
-            while (recogTime.milliseconds() <= 1500.0) {
+            while (recogTime.milliseconds() <= 2500.0) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
@@ -215,11 +215,11 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             stopMotion(100);
             drivePerpendicularly(true,2.0, 0.6, 2300);
             stopMotion(100);
-            driveStraight(true,2.0, 0.3, 700);
+            driveStraight(true,2.0, 0.3, 850);
             stopMotion(100);
 
             //ROTATE DUCK
-            Spin.setPower(0.6);
+            Spin.setPower(0.5);
             sleep(3500);
             Spin.setPower(0.0);
             //PARK
@@ -616,7 +616,7 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.65f;
+        tfodParameters.minResultConfidence = 0.60f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);

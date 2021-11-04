@@ -111,7 +111,7 @@ public class Mecanum_TeleOp extends LinearOpMode {
                         telemetry.addLine("FLOAT");
                         toggleGamePad1 = true;
                     }
-                releasedGamePad1 = false;
+                    releasedGamePad1 = false;
                 }
             } else if (!releasedGamePad1){
                 releasedGamePad1 = true;
