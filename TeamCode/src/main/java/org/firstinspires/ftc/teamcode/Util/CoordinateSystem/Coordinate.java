@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CoordinateSystem;
+package org.firstinspires.ftc.teamcode.Util.CoordinateSystem;
 
 public class Coordinate {
     protected int x, y;

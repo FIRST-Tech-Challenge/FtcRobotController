@@ -26,7 +26,7 @@ public class OmniDirectionalDrive extends LinearOpMode {
 
     private void initOpMode() throws IOException {
         ElapsedTime timer = new ElapsedTime();
-        robot = new Robot(this, timer);
+        robot = new Robot(this, timer, true);
     }
 
     // called when init button is  pressed.

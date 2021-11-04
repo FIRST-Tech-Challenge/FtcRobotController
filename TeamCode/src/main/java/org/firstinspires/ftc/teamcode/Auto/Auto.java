@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 @Autonomous(name = "Auto", group = "Concept")
 public class Auto extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
-    Robot robot = new Robot(this, timer);
+    Robot robot = new Robot(this, timer, true);
 
 
     /** Override of runOpMode()

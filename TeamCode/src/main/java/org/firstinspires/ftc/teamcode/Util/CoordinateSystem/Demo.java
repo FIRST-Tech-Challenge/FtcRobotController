@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.CoordinateSystem;
+package org.firstinspires.ftc.teamcode.Util.CoordinateSystem;
 
-import org.firstinspires.ftc.teamcode.CoordinateSystem.PathFinder.SimplePathFinder;
+import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.PathFinder.SimplePathFinder;
 
 import java.util.ArrayList;
 

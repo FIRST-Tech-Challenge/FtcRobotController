@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.CoordinateSystem.PathFinder;
+package org.firstinspires.ftc.teamcode.Util.CoordinateSystem.PathFinder;
 
-import org.firstinspires.ftc.teamcode.CoordinateSystem.Coordinate;
-import org.firstinspires.ftc.teamcode.CoordinateSystem.Path;
+import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.Coordinate;
+import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.Path;
 
 public class SimplePathFinder implements PathFinder {
     @Override

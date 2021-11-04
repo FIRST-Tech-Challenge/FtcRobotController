@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.CoordinateSystem;
+package org.firstinspires.ftc.teamcode.Util.CoordinateSystem;
 
-import org.firstinspires.ftc.teamcode.CoordinateSystem.PathFinder.PathFinder;
+import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.PathFinder.PathFinder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Path {

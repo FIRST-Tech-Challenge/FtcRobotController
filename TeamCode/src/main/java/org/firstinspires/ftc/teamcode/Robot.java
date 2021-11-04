@@ -30,10 +30,11 @@ import java.util.List;
  */
 public class Robot {
     private HardwareMap hardwareMap;
-    private LinearOpMode opMode;
-    private Telemetry oldTelemetry;
-    private QuickTelemetry telemetry;
+    private final LinearOpMode opMode;
+    private final Telemetry oldTelemetry;
+    private final QuickTelemetry telemetry;
     private ElapsedTime timer;
+    private final boolean auto;
 
     // DC Motors
     public DcMotorEx frontLeftDriveMotor;
@@ -58,7 +59,7 @@ public class Robot {
     //Sensors
     public BNO055IMU imu;
 
-    GamePadConfig gamePadConfig = new GamePadConfig();
+    public final GamePadConfig gamePadConfig = new GamePadConfig();
 
     private double joystickDeadZone = 0.1;
 
@@ -75,14 +76,14 @@ public class Robot {
      *
      * @see LinearOpMode
      * @see ElapsedTime
-     * @see AllianceColor
      */
-    public Robot(LinearOpMode opMode, ElapsedTime timer) {
+    public Robot(LinearOpMode opMode, ElapsedTime timer, boolean auto) {
         this.opMode = opMode;
         this.oldTelemetry = opMode.telemetry;
         this.telemetry = new QuickTelemetry(oldTelemetry);
         this.hardwareMap = opMode.hardwareMap;
         this.timer = timer;
+        this.auto = auto;
 
         this.telemetry.telemetry(1, MainConfig.getName(), "v" + MainConfig.getVersion());
 

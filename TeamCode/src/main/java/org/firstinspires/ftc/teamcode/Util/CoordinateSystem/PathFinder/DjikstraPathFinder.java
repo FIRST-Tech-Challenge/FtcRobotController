@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CoordinateSystem.PathFinder;
+package org.firstinspires.ftc.teamcode.Util.CoordinateSystem.PathFinder;
 // Java Program to Implement Dijkstra's Algorithm
 // Using Priority Queue
 

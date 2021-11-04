@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.CoordinateSystem.PathFinder;
+package org.firstinspires.ftc.teamcode.Util.CoordinateSystem.PathFinder;
 
-import org.firstinspires.ftc.teamcode.CoordinateSystem.Coordinate;
+import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.Coordinate;
 
 // Node class for convenience
 public class Node extends Coordinate implements Comparable {
