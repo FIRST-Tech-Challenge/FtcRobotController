@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Subsystems.Control;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Robot;
 
 public class Control extends Subsystem {
     DcMotorEx intake;

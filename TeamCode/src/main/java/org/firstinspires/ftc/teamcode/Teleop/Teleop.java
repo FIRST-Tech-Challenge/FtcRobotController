@@ -2,15 +2,10 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Subsystems.GamePadConfig;
-import org.firstinspires.ftc.teamcode.Subsystems.Robot;
-
-
-import java.io.IOException;
+import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
+import org.firstinspires.ftc.teamcode.Robot;
 
 @TeleOp(name = "Teleop")
 public class Teleop extends LinearOpMode {
