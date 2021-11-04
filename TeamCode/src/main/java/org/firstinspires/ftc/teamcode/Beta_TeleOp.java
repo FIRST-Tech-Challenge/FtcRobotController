@@ -47,8 +47,8 @@ public class Beta_TeleOp extends LinearOpMode {
 
             //Controller Input - Moves Drive Train
             double vertical = gamepad1.left_stick_y * speed;
-            double horizontal = -gamepad1.left_stick_x * speed;
-            double pivot = gamepad1.right_stick_x * speed;
+            double horizontal = gamepad1.left_stick_x * speed; //Normal is positive
+            double pivot = -gamepad1.right_stick_x * speed; //Normalhas negative
 
             frontRightMotor.setPower(pivot + vertical + horizontal);
             frontLeftMotor.setPower(pivot + vertical - horizontal);

@@ -20,7 +20,7 @@ public class Beta_BlueDuck extends LinearOpMode {
         CRServo leftSpinner = hardwareMap.get(CRServo.class,"leftSpinner");
 
         waitForStart();
-        while (opModeIsActive()) {
+        if (opModeIsActive()) {
 
             frontRightMotor.setPower(0.45);
             frontLeftMotor.setPower(-0.45);
@@ -64,18 +64,8 @@ public class Beta_BlueDuck extends LinearOpMode {
             backRightMotor.setPower(0);
             backLeftMotor.setPower(0);
 
-            sleep(1000);
-
-            break;
-
-
-
 
         }
-        frontRightMotor.setPower(0.0);
-        frontLeftMotor.setPower(0.0);
-        backRightMotor.setPower(0.0);
-        backLeftMotor.setPower(0.0);
 
     }
 

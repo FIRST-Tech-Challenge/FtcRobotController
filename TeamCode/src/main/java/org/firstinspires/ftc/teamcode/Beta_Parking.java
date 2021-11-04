@@ -15,8 +15,7 @@ public class Beta_Parking extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.get(DcMotor.class,"backLeftMotor");
 
         waitForStart();
-        while (opModeIsActive()) {
-
+        if (opModeIsActive()) {
 
             frontRightMotor.setPower(-0.4);
             frontLeftMotor.setPower(-0.55);
@@ -25,16 +24,13 @@ public class Beta_Parking extends LinearOpMode {
 
             sleep(500);
 
-            break;
-
-
-
+            frontRightMotor.setPower(0.0);
+            frontLeftMotor.setPower(0.0);
+            backRightMotor.setPower(0.0);
+            backLeftMotor.setPower(0.0);
 
         }
-        frontRightMotor.setPower(0.0);
-        frontLeftMotor.setPower(0.0);
-        backRightMotor.setPower(0.0);
-        backLeftMotor.setPower(0.0);
+
 
     }
 
