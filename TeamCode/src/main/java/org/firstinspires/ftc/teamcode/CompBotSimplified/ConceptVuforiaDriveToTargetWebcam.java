@@ -66,14 +66,14 @@ public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " --- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "AQXJtf3/////AAABmRNtqRHOi01ztX4zAd+KuPdOXWfS1wa0VbmgatYieybPLp6S7F+PpEIxktdGYJhBEd9SBRox+HmVviMD3XQdouhnWR8NtrjrlFXN63orJIBQHEhUC8vZTbO1Sq/EsAELA4VhNOHmERzTXhJ4Kz8h4Cy4tJr192IiMB7W02Czjts055dln8QTMQPXqXgFU4qeY7mxKrpFco1pKT/OFCdwVHWWvkozJBXEIujp/eqjknmpKgrlPQPRkFOzyLRHHCybs/R9Agw6EDiVGgE92XCU/lFOaU0U92R/WlWoFGh/LlyHgqlFg6N/SskENvsnX1j7tbCF68Bz78meWiaRYSktMJRgshC1Fk3G7EnmMKaCPFMJ";
 
     VuforiaLocalizer vuforia    = null;
     OpenGLMatrix targetPose     = null;
     String targetName           = "";
 
     private DcMotor fl   = null;
-    private DcMotor fr  = null;
+    private DcMotor fr  = null;//setting up the motors
     private DcMotor bl = null;
     private DcMotor br = null;
 
@@ -147,7 +147,7 @@ public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
                     if (targetPose != null)
                     {
                         targetFound = true;
-                        targetName  = trackable.getName();
+                        targetName  = trackable.getName();//getting id name of image detected
                         VectorF trans = targetPose.getTranslation();
 
                         // Extract the X & Y components of the offset of the target relative to the robot
@@ -190,15 +190,15 @@ public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
             } else {
 
                 // drive using manual POV Joystick mode.
-                drive = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
-                turn  =  gamepad1.right_stick_x / 4.0;  // Reduce turn rate to 25%.
+                drive = -gamepad1.left_stick_y  / 2;  // Reduce drive rate to 50%.
+                turn  =  gamepad1.right_stick_x / 4;  // Reduce turn rate to 25%.
                 telemetry.addData("Manual","Drive %5.2f, Turn %5.2f", drive, turn);
             }
             telemetry.update();
 
             // Calculate left and right wheel powers and send to them to the motors.
-            double lpower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            double rpower   = Range.clip(drive - turn, -1.0, 1.0) ;
+            double lpower    = Range.clip(drive + turn, -1.0, 1.0) ;//power for left-side motors
+            double rpower   = Range.clip(drive - turn, -1.0, 1.0) ;//power for right-side motors
 
             fl.setPower(lpower);
             fr.setPower(rpower);
