@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Config.MainConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
@@ -54,32 +55,10 @@ public class Robot {
     public int odLCount = 0;
 
 
-    /**
-     * Control Hub
-     *
-     * fr        0
-     * br        1
-     * launch2   2
-     * launch1   3
-     *
-     * --------------------
-     * Expansion Hub 2
-     *
-     * fl        0
-     * bl        1
-     * intake    2
-     *
-     * feeding          0
-     * left elevator    1
-     * wbc1             2
-     * wbc2             3
-     * right elevator   4
-     */
-
     //Sensors
     public BNO055IMU imu;
 
-    public GamePadConfig gamePadConfig;
+    public GamePadConfig gamePadConfig = new GamePadConfig();
 
     private double joystickDeadZone = 0.1;
 
@@ -104,8 +83,6 @@ public class Robot {
         this.telemetry = new QuickTelemetry(oldTelemetry);
         this.hardwareMap = opMode.hardwareMap;
         this.timer = timer;
-
-        this.gamePadConfig = new GamePadConfig();
 
         this.telemetry.telemetry(1, MainConfig.getName(), "v" + MainConfig.getVersion());
 
@@ -186,7 +163,7 @@ public class Robot {
         frontRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearLeftDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rearRightDriveMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
 
         HardwareMap.DeviceMapping<Servo> servo = hardwareMap.servo;
 
@@ -229,30 +206,36 @@ public class Robot {
     }
 
     private void initSubsystems() {
-        // Drive
-        telemetry.telemetry(3, "Mode", " Drive init started");
-        List<DcMotorEx> motors = new ArrayList<>(4);
-        motors.add(frontLeftDriveMotor);
-        motors.add(frontRightDriveMotor);
-        motors.add(rearLeftDriveMotor);
-        motors.add(rearRightDriveMotor);
+        if (MainConfig.getInitSubsystemDrive()) {
+            // Drive
+            telemetry.telemetry(3, "Mode", " Drive init started");
+            List<DcMotorEx> motors = new ArrayList<>(4);
+            motors.add(frontLeftDriveMotor);
+            motors.add(frontRightDriveMotor);
+            motors.add(rearLeftDriveMotor);
+            motors.add(rearRightDriveMotor);
 
-        drive = new Drive(this, motors, imu);
+            drive = new Drive(this.getQuickTelemetry("Drive"), hardwareMap, timer, motors, imu);
 //        drive.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        drive.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.telemetry(2, "Mode", " Drive init finished");
-
-        telemetry.telemetry(3, "Mode", " Vision init started");
-        try {
-            vision = new Vision(this);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            telemetry.telemetry(2, "Mode", " Drive init finished");
         }
-        telemetry.telemetry(2, "Mode", " Vision init finished");
 
-        telemetry.telemetry(3, "Mode", " Control init started");
-        control = new Control(intake);
-        telemetry.telemetry(2, "Mode", " Control init finished");
+        if (MainConfig.getInitSubsystemVision()) {
+            telemetry.telemetry(3, "Mode", " Vision init started");
+            try {
+                vision = new Vision(this.getQuickTelemetry("Drive"), hardwareMap, timer);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            telemetry.telemetry(2, "Mode", " Vision init finished");
+        }
+
+        if (MainConfig.getInitSubsystemControl()) {
+            telemetry.telemetry(3, "Mode", " Control init started");
+            control = new Control(this.getQuickTelemetry("Drive"), hardwareMap, timer, intake);
+            telemetry.telemetry(2, "Mode", " Control init finished");
+        }
     }
 
     public LinearOpMode getOpMode() {
@@ -315,5 +298,4 @@ public class Robot {
     public void setRearLeftDrivePower(double power) { rearLeftDriveMotor.setPower(power); }
 
     public void setRearRightDriveMotor(double power) { rearRightDriveMotor.setPower(power); }
-
 }

@@ -4,14 +4,24 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 
 /**
- * Superclass to all minor subsystems, it does some bootstrapping for them (Vision, Control, and Drive)
+ * Superclass to all subsystems, it does some bootstrapping for them (Vision, Control, and Drive)
  *
  */
-public class Subsystem {
-    protected LinearOpMode opMode; // protected because of inheritance
+public abstract class Subsystem {
+    // protected because of inheritance
     protected QuickTelemetry telemetry;
     protected ElapsedTime timer;
+    protected HardwareMap hardwareMap;
+
+    public Subsystem(QuickTelemetry telemetry, HardwareMap hardwareMap, ElapsedTime timer){
+        this.telemetry = telemetry;
+        this.hardwareMap = hardwareMap;
+        this.timer = timer;
+    }
+
+    public void init() {}
 }
