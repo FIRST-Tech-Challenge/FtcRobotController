@@ -193,7 +193,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     /**
      * Stops the position update thread
      */
-    protected void stop() {
+    public void stop() {
         isRunning = false;
     }
 
