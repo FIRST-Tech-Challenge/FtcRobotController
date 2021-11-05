@@ -40,16 +40,20 @@ public class FrenzyBaseBot implements IOdoBot {
 
     private int encoderDirection = 1;
 
+    //    MaxVelocityTest: maxLF: 2440.00, maxRF: 2640.00, maxLB: 2520.00, maxRB: 2600.00
+    protected static double MAX_VELOCITY_BACK_LEFT = 2520.00;
+    protected static double MAX_VELOCITY_BACK_RIGHT = 2600.00;
+    protected static double MAX_VELOCITY_FRONT_LEFT = 2440.00;
+    protected static double MAX_VELOCITY_FRONT_RIGHT = 2640.00;
 
     protected LinearOpMode owner = null;
 
     static final double COUNTS_PER_MOTOR_GB = 537.7;
     static final double MOTOR_RPM_GB = 312;
     static final double MOTOR_RPS_GB = MOTOR_RPM_GB/60;
-    public static final double MAX_VELOCITY_GB = COUNTS_PER_MOTOR_GB * MOTOR_RPS_GB;  // 2,796
+    public static final double MAX_VELOCITY_GB = MAX_VELOCITY_FRONT_LEFT; //Lowest of max velocities
     public static final double MAX_VELOCITY_REV = 2140;
 
-//    MaxVelocityTest: maxLF: 2440.00, maxRF: 2640.00, maxLB: 2520.00, maxRB: 2600.00
 
     protected static double P = 1.17;
     protected static double I = 0.12;
@@ -104,32 +108,29 @@ public class FrenzyBaseBot implements IOdoBot {
             if (backLeft != null) {
                 backLeft.setDirection(DcMotor.Direction.FORWARD);
                 backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backLeft.setVelocityPIDFCoefficients(P, I, D, F);
-                backLeft.setPositionPIDFCoefficients(positionPIDF);
+
+                setPIDF(backLeft, MAX_VELOCITY_BACK_LEFT, positionPIDF);
             }
 
             if (backRight != null) {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
                 backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                backRight.setVelocityPIDFCoefficients(P, I, D, F);
-                backRight.setPositionPIDFCoefficients(positionPIDF);
+                setPIDF(backRight, MAX_VELOCITY_BACK_RIGHT, positionPIDF);
             }
 
             if (frontLeft != null) {
                 frontLeft.setDirection(DcMotor.Direction.REVERSE);
                 frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                frontLeft.setVelocityPIDFCoefficients(P, I, D, F);
-                frontLeft.setPositionPIDFCoefficients(positionPIDF);
+                setPIDF(frontLeft, MAX_VELOCITY_FRONT_LEFT, positionPIDF);
             }
 
             if (frontRight != null) {
                 frontRight.setDirection(DcMotor.Direction.FORWARD);
                 frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                frontRight.setVelocityPIDFCoefficients(P, I, D, F);
-                frontRight.setPositionPIDFCoefficients(positionPIDF);
+                setPIDF(frontRight, MAX_VELOCITY_FRONT_RIGHT, positionPIDF);
             }
 
             stop();
@@ -137,6 +138,16 @@ public class FrenzyBaseBot implements IOdoBot {
             //issues accessing drive resources
             throw new Exception("Issues accessing one of drive motors. Check the controller config", ex);
         }
+    }
+
+    protected void setPIDF(DcMotorEx motor, double maxVelocity, double positionPIDF) {
+        double F = 32767 / maxVelocity;
+        double P = 0.1 * F;
+        double I = 0.1 * P;
+        double D = 0;
+
+        motor.setVelocityPIDFCoefficients(P, I, D, F);
+        motor.setPositionPIDFCoefficients(positionPIDF);
     }
 
     public Telemetry getTelemetry() {
