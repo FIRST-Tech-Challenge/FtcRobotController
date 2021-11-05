@@ -44,7 +44,7 @@ public class AutoFrenzy2 extends LinearOpMode {
                 phoneCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
-            @Override
+            //@Override
             public void onError(int errorCode)
             {
                 /*
