@@ -15,6 +15,12 @@ import org.firstinspires.ftc.teamcode.Robot;
  *
  * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
  */
+
+//Tasks:
+// Deliver duck from carousel (10)
+//Deliver freight to hub (6)
+// - deliver freight to corresponding level of custom element (20)
+//Park in warehouse (10)
 @Autonomous(name = "Auto", group = "Concept")
 public class Auto extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
