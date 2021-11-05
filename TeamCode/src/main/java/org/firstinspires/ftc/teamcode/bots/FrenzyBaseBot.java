@@ -438,7 +438,7 @@ public class FrenzyBaseBot implements IOdoBot {
                 this.backLeft.setPower(0);
                 this.frontRight.setPower(0);
 
-                while (this.frontLeft.isBusy() || this.backRight.isBusy()){
+                while (this.frontLeft.isBusy() && this.backRight.isBusy()){
 
                 }
             } else {
@@ -452,7 +452,7 @@ public class FrenzyBaseBot implements IOdoBot {
                 this.frontLeft.setPower(0);
                 this.backRight.setPower(0);
 
-                while (this.backLeft.isBusy() || this.frontRight.isBusy()){
+                while (this.backLeft.isBusy() && this.frontRight.isBusy()){
 
                 }
             }

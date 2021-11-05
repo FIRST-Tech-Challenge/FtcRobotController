@@ -86,8 +86,6 @@ public class FrenzyBot extends FrenzyBaseBot {
         try {
             detector = new CVDetector(hwMap, opModeSide, CVDetectMode.Frenzy, this.namedCoordinates);
             detector.startDetection();
-            telemetry.addData("Info", "Detector initialized");
-            telemetry.update();
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize Detector", ex);
         }
