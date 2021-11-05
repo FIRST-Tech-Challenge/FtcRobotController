@@ -58,7 +58,7 @@ public class Robot {
     //Sensors
     public BNO055IMU imu;
 
-    GamePadConfig gamePadConfig = new GamePadConfig();
+    public GamePadConfig gamePadConfig = new GamePadConfig();
 
     private double joystickDeadZone = 0.1;
 

@@ -970,4 +970,10 @@ public class Drive extends Subsystem {
         }
         return targetSpeed;
     }
+    public void setDrivePowers(double[] powers) {
+        frontLeft.setPower(powers[0]);
+        frontRight.setPower(powers[1]);
+        rearLeft.setPower(powers[2]);
+        rearRight.setPower(powers[3]);
+    }
 }
