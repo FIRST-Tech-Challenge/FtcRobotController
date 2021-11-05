@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -37,10 +38,10 @@ public class Robot {
         frontRight = hardwareMap.get(DcMotor.class,"frontRight");
         backRight = hardwareMap.get(DcMotor.class,"backRight");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
         carousel = hardwareMap.get(CRServo.class, "carousel");
 
@@ -57,6 +58,7 @@ public class Robot {
         imu.initialize(parameters);
 
         this.opMode= opMode;
+        this.telemetry = telemetry;
     }
 
     public void forward(double distance, double speed){
@@ -151,9 +153,9 @@ public class Robot {
 
     }
     public double gyroAngle(){
-        Orientation angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYX, AngleUnit.DEGREES);
+        Orientation angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        return angles.firstAngle;
+        return angles.secondAngle;
     }
     public void right(double distance, double speed){
         left(distance, -speed);
@@ -165,9 +167,9 @@ public class Robot {
         backLeft.setPower(-speed);
         backRight.setPower(speed);
 
-        double targetAngle = gyroAngle() + angle;
+        double targetAngle = gyroAngle() - angle;
 
-        while(targetAngle > gyroAngle()){
+        while(targetAngle < gyroAngle()){
             telemetry.addData("Current Gyro Angle", gyroAngle());
             telemetry.update();
         }
@@ -180,9 +182,9 @@ public class Robot {
         backLeft.setPower(speed);
         backRight.setPower(-speed);
 
-        double targetAngle = gyroAngle() - angle;
+        double targetAngle = gyroAngle() + angle;
 
-        while(targetAngle < gyroAngle()){
+        while(targetAngle > gyroAngle()){
             telemetry.addData("Current Gyro Angle", gyroAngle());
             telemetry.update();
         }
