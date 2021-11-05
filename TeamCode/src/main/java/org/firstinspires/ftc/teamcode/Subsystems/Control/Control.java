@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Control;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,10 +17,10 @@ public class Control extends Subsystem {
         telemetry.telemetry(2, "Control initialized", "Control initialized");
     }
 
-    public void setIntakeDirection(boolean status) { // simplified so only one method is needed for intake.
-        boolean isIntakeOn = intake.isMotorEnabled();                          // parameter true is for regular motion, false is for reverse.
-        if (status = true) {                         // toggles on/off when invoked while in opposite state, e.g. turns off when previously on, turns on when previously off.
-            if (!isIntakeOn) {
+    public void setIntakeDirection(boolean status) {      // simplified so only one method is needed for intake.
+        boolean isIntakeOn = intake.isMotorEnabled();     // parameter true is for regular motion, false is for reverse.
+        if (status = true) {                              // toggles on/off when invoked while in opposite state, e.g.
+            if (!isIntakeOn) {                            // turns off when previously on, turns on when previously off.
                 intake.setPower(1.0);
                 isIntakeOn = true;
             } else {
