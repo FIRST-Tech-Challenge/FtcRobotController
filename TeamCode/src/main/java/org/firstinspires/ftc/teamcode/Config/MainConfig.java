@@ -9,7 +9,7 @@ public class MainConfig {
     private static final String name = "UwU the Potato";
 
     private static final String version = "2021.10.30.0-alpha";
-    private static final AllianceColor allianceColor = AllianceColor.BLUE;
+    private static AllianceColor allianceColor = AllianceColor.BLUE;
     private static final boolean debug = false;
     /* "none" means no target
     enter a file path to debug a file
@@ -81,5 +81,9 @@ public class MainConfig {
 
     public static boolean getInitHardwareMap() {
         return initHardwareMap;
+    }
+    
+    public static void setAllianceColor(AllianceColor color) {
+        allianceColor = color;
     }
 }

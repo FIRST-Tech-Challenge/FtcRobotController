@@ -222,10 +222,10 @@ public class Robot {
             telemetry.telemetry(2, "Mode", " Drive init finished");
         }
 
-        if (MainConfig.getInitSubsystemVision()) {
+        if (MainConfig.getInitSubsystemVision() || auto) {
             telemetry.telemetry(3, "Mode", " Vision init started");
             try {
-                vision = new Vision(this.getQuickTelemetry("Drive"), hardwareMap, timer);
+                vision = new Vision(this.getQuickTelemetry("Vision"), hardwareMap, timer);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -234,7 +234,7 @@ public class Robot {
 
         if (MainConfig.getInitSubsystemControl()) {
             telemetry.telemetry(3, "Mode", " Control init started");
-            control = new Control(this.getQuickTelemetry("Drive"), hardwareMap, timer, intake);
+            control = new Control(this.getQuickTelemetry("Control"), hardwareMap, timer, intake);
             telemetry.telemetry(2, "Mode", " Control init finished");
         }
     }

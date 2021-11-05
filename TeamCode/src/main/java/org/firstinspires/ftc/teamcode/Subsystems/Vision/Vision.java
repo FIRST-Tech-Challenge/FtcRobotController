@@ -33,7 +33,6 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 public class Vision extends Subsystem {
     MarkerLocation finalMarkerLocation; // Marker Location
-
     WebcamName webcamName = null;
 
     // Since ImageTarget trackable use mm to specify their dimensions, we must use mm for all the physical dimension.
