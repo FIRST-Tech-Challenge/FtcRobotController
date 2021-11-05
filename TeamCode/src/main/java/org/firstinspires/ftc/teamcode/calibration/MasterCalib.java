@@ -165,9 +165,7 @@ public class MasterCalib extends LinearOpMode {
 //                telemetry.update();
 //            }
             if (locator != null) {
-                while (getLocator().getCurrentX() < 5){
-                    //wait till locator initializes
-                    telemetry.addData("Waiting for locator", String.format("X: %.2f", getLocator().getCurrentX()));
+                while (!getLocator().isTrackingInitialized()){
                     telemetry.addData("isTrackingInitialized", getLocator().isTrackingInitialized());
                     telemetry.update();
                 }
@@ -1397,7 +1395,7 @@ public class MasterCalib extends LinearOpMode {
 //        return headChange;
 //
 //    }
-    private void calibDiag(){
+    protected void calibDiag(){
         diagBot(templateDiagLeft, templateDiagRight);
 //        restoreHead();
 //        led.none();
@@ -1409,7 +1407,7 @@ public class MasterCalib extends LinearOpMode {
         telemetry.update();
     }
 
-    private void diagBot(MotorReductionBotCalib calibLeft, MotorReductionBotCalib calibRight){
+    protected void diagBot(MotorReductionBotCalib calibLeft, MotorReductionBotCalib calibRight){
 //        led.none();
         MotorReductionBot mrLeft = calibLeft.getMR();
         MotorReductionBot mrRight = calibRight.getMR();
@@ -1418,7 +1416,7 @@ public class MasterCalib extends LinearOpMode {
 
         double leftOdo = bot.getLeftOdometer();
         double rightOdo = bot.getRightOdometer();
-        bot.diagToCalib(desiredSpeed, 0, desiredX, true, mrLeft);
+        bot.diagToCalib(desiredSpeed, 0, desiredX, true, mrLeft, null);
 
         timer.reset();
         while(timer.milliseconds() < 1000 && opModeIsActive()){
@@ -1444,7 +1442,7 @@ public class MasterCalib extends LinearOpMode {
         leftOdo = bot.getLeftOdometer();
         rightOdo = bot.getRightOdometer();
 
-        bot.diagToCalib(desiredSpeed, 0, desiredX, false, mrRight);
+        bot.diagToCalib(desiredSpeed, 0, desiredX, false, mrRight, null);
 
         timer.reset();
         while(timer.milliseconds() < 1000 && opModeIsActive()){
@@ -1645,7 +1643,7 @@ public class MasterCalib extends LinearOpMode {
 //        calib.setLeftOdoDistance(verDistance);
 //        calib.setRightOdoDistance(verDistance);
 
-            bot.diagToCalib(desiredSpeed, speeds[i], distanceInches, left, calib);
+            bot.diagToCalib(desiredSpeed, speeds[i], distanceInches, left, calib, null);
 
 
             timer.reset();
@@ -1686,7 +1684,7 @@ public class MasterCalib extends LinearOpMode {
             }
 
             //go back
-            bot.diagToCalib(desiredSpeed, speeds[i], -distanceInches, left, null);
+            bot.diagToCalib(desiredSpeed, speeds[i], -distanceInches, left, null, null);
 
             timer.reset();
             while (timer.milliseconds() < 1000 && opModeIsActive()) {

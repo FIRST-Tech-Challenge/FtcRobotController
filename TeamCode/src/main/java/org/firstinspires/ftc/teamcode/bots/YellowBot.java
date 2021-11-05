@@ -1309,7 +1309,7 @@ public class YellowBot implements IOdoBot {
         }
     }
 
-    public void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib) {
+    public void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib, IBaseOdometry locator) {
         if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
 
 

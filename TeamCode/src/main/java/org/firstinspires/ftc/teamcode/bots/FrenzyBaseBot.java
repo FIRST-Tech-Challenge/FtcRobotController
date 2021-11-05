@@ -49,7 +49,12 @@ public class FrenzyBaseBot implements IOdoBot {
     public static final double MAX_VELOCITY_GB = COUNTS_PER_MOTOR_GB * MOTOR_RPS_GB;  // 2,796
     public static final double MAX_VELOCITY_REV = 2140;
 
-    //F = 11.7 P = 1.17  I = 0.12
+    protected static double P = 1.17;
+    protected static double I = 0.12;
+    protected static double D = 0;
+    protected static double F = 11.7;
+    protected static double positionPIDF = 10;
+
 
     static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP. was 2 in the sample
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
@@ -97,32 +102,32 @@ public class FrenzyBaseBot implements IOdoBot {
             if (backLeft != null) {
                 backLeft.setDirection(DcMotor.Direction.FORWARD);
                 backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backLeft.setVelocityPIDFCoefficients(1.17, 0.12, 0, 11.7);
-                backLeft.setPositionPIDFCoefficients(5);
+                backLeft.setVelocityPIDFCoefficients(P, I, D, F);
+                backLeft.setPositionPIDFCoefficients(positionPIDF);
             }
 
             if (backRight != null) {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
                 backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                backRight.setVelocityPIDFCoefficients(1.17, 0.12, 0, 11.7);
-                backRight.setPositionPIDFCoefficients(5);
+                backRight.setVelocityPIDFCoefficients(P, I, D, F);
+                backRight.setPositionPIDFCoefficients(positionPIDF);
             }
 
             if (frontLeft != null) {
                 frontLeft.setDirection(DcMotor.Direction.REVERSE);
                 frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                frontLeft.setVelocityPIDFCoefficients(1.17, 0.12, 0, 11.7);
-                frontLeft.setPositionPIDFCoefficients(5);
+                frontLeft.setVelocityPIDFCoefficients(P, I, D, F);
+                frontLeft.setPositionPIDFCoefficients(positionPIDF);
             }
 
             if (frontRight != null) {
                 frontRight.setDirection(DcMotor.Direction.FORWARD);
                 frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                frontRight.setVelocityPIDFCoefficients(1.17, 0.12, 0, 11.7);
-                frontRight.setPositionPIDFCoefficients(5);
+                frontRight.setVelocityPIDFCoefficients(P, I, D, F);
+                frontRight.setPositionPIDFCoefficients(positionPIDF);
             }
 
             stop();
@@ -187,6 +192,10 @@ public class FrenzyBaseBot implements IOdoBot {
             frontRight.setPower(0);
             backLeft.setPower(0);
             backRight.setPower(0);
+            this.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            this.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            this.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            this.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -198,6 +207,23 @@ public class FrenzyBaseBot implements IOdoBot {
 
     public double getRightVelocity() {
         return frontRight.getVelocity();
+    }
+
+    public double getLeftBackVelocity() {
+        return backLeft.getVelocity();
+    }
+
+    public double getRightBackVelocity() {
+        return backRight.getVelocity();
+    }
+
+    public void moveAtMaxSpeed(){
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null){
+            this.frontLeft.setPower(1);
+            this.frontRight.setPower(1);
+            this.backLeft.setPower(1);
+            this.backRight.setPower(1);
+        }
     }
 
     public void move(double drive, double turn) {
@@ -399,7 +425,7 @@ public class FrenzyBaseBot implements IOdoBot {
                 this.backLeft.setPower(0);
                 this.frontRight.setPower(0);
 
-                while (this.frontLeft.isBusy() && this.backRight.isBusy()){
+                while (this.frontLeft.isBusy() || this.backRight.isBusy()){
 
                 }
             } else {
@@ -413,7 +439,7 @@ public class FrenzyBaseBot implements IOdoBot {
                 this.frontLeft.setPower(0);
                 this.backRight.setPower(0);
 
-                while (this.backLeft.isBusy() && this.frontRight.isBusy()){
+                while (this.backLeft.isBusy() || this.frontRight.isBusy()){
 
                 }
             }
@@ -787,8 +813,29 @@ public class FrenzyBaseBot implements IOdoBot {
     }
 
     @Override
-    public void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib) {
+    public void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib, IBaseOdometry locator) {
+        if (leftAxis) {
+            this.frontLeft.setVelocity(MAX_VELOCITY_GB * speed * calib.getLF());
+            this.backRight.setVelocity(MAX_VELOCITY_GB * speed * calib.getRB());
 
+            this.backLeft.setPower(0);
+            this.frontRight.setPower(0);
+
+            while (locator.getCurrentX() > diagInches){
+
+            }
+        } else {
+            this.backLeft.setVelocity(MAX_VELOCITY_GB * speed * calib.getLB());
+            this.frontRight.setVelocity(MAX_VELOCITY_GB * speed * calib.getRF());
+
+            this.frontLeft.setPower(0);
+            this.backRight.setPower(0);
+
+            while (locator.getCurrentX() < diagInches){
+
+            }
+        }
+        stop();
     }
 
     public void turnLeft(double speed, boolean forward) {

@@ -117,4 +117,61 @@ public class MasterCalibCam extends MasterCalib {
 
         telemetry.update();
     }
+
+    @Override
+    protected void diagBot(MotorReductionBotCalib calibLeft, MotorReductionBotCalib calibRight){
+//        led.none();
+        MotorReductionBot mrLeft = calibLeft.getMR();
+        MotorReductionBot mrRight = calibRight.getMR();
+
+        double currentHead = getLocator().getOrientation();
+
+        double leftOdo = bot.getLeftOdometer();
+        double rightOdo = bot.getRightOdometer();
+        bot.diagToCalib(desiredSpeed, 0, desiredX, true, mrLeft, locator);
+
+        timer.reset();
+        while(timer.milliseconds() < 1000 && opModeIsActive()){
+
+        }
+
+        double actualHead = getLocator().getOrientation();
+        double headChange = Math.abs(actualHead - currentHead);
+
+        double leftDistance = Math.abs(bot.getLeftOdometer() - leftOdo);
+        double rightDistance = Math.abs(bot.getRightOdometer() - rightOdo);
+        calibLeft.setLeftOdoDistanceActual(leftDistance);
+        calibLeft.setRightOdoDistanceActual(rightDistance);
+        calibLeft.setHeadChange(headChange);
+        calibLeft.process(false);
+
+//        restoreHead();
+
+        timer.reset();
+        while(timer.milliseconds() < 1000 && opModeIsActive()){
+        }
+        currentHead = getLocator().getOrientation();
+        leftOdo = bot.getLeftOdometer();
+        rightOdo = bot.getRightOdometer();
+
+        bot.diagToCalib(desiredSpeed, 0, desiredX, false, mrRight, locator);
+
+        timer.reset();
+        while(timer.milliseconds() < 1000 && opModeIsActive()){
+
+        }
+
+        actualHead = getLocator().getOrientation();
+        headChange = Math.abs(actualHead - currentHead);
+
+        calibRight.setHeadChange(headChange);
+
+        leftDistance = Math.abs(bot.getLeftOdometer() - leftOdo);
+        rightDistance = Math.abs(bot.getRightOdometer() - rightOdo);
+
+        calibRight.setLeftOdoDistanceActual(leftDistance);
+        calibRight.setRightOdoDistanceActual(rightDistance);
+        calibRight.process(false);
+    }
+
 }

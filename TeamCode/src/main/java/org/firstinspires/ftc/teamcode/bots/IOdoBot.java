@@ -47,7 +47,7 @@ public interface IOdoBot {
     void stop();
     void spinLeft(double speed, boolean forward);
     void spinRight(double speed, boolean forward);
-    void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib);
+    void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib, IBaseOdometry locator);
     void reverseEncoderDirection();
     int getEncoderDirection();
     AutoDot getDetectionResult();
