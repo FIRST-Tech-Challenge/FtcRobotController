@@ -1,14 +1,19 @@
-package org.firstinspires.ftc.teamcode.vision.simulator;
+package org.firstinspires.ftc.teamcode.vision.newrobot;
+
+import android.util.Pair;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.vision.util.myOpenCvPipeline;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
-import java.lang.Math;
+
 import androidx.annotation.NonNull;
-public class pipeline1Simulator extends OpenCvPipeline {
+
+public class barcodePipeline extends myOpenCvPipeline {
     private final Telemetry telemetry;
     private final Scalar red = new Scalar(255,0,0);
     private final Scalar yellow = new Scalar(255,255,0);
@@ -41,7 +46,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
     private final int rectangleHeight = 10;
 
 
-    public pipeline1Simulator(Telemetry telemetry) {
+    public barcodePipeline(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
@@ -49,7 +54,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
      * @param input input frame matrix
      */
     @Override
-    public Mat processFrame(Mat input) {
+    public Pair<Mat, Integer> processFrame(Mat input) {
         Imgproc.cvtColor(input, matYCrCb, Imgproc.COLOR_RGB2YCrCb);
         telemetry.addData("topBoxAverage",topAverage);
         telemetry.addData("topBoxAverage",middleAverage);
@@ -75,10 +80,10 @@ public class pipeline1Simulator extends OpenCvPipeline {
                 rectangleWidth,
                 rectangleHeight
         );
-
+        int different = mostDifferent(topAverage,middleAverage,bottomAverage);
         //The rectangle is drawn into the mat
         try {
-            switch (mostDifferent(topAverage,middleAverage,bottomAverage)) {
+            switch (different) {
                 case 1:
                     drawRectOnToMat(input, topRect, yellow);
                     drawRectOnToMat(input, middleRect, red);
@@ -130,7 +135,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
 
 
         //return the mat to be shown onto the screen
-        return input;
+        return new Pair<Mat, Integer>(input, different) ;
     }
 
     /**

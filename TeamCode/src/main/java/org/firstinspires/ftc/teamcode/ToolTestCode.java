@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.core.thread.event.thread.EventThread;
 import org.firstinspires.ftc.teamcode.parts.Carousel;
 import org.firstinspires.ftc.teamcode.parts.ControllerMovement;
 import org.firstinspires.ftc.teamcode.parts.Intake;
@@ -18,11 +19,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.annotation.RequiresApi;
 
 @TeleOp
 public class ToolTestCode extends LinearOpMode {
+    public EventThread eventThread = new EventThread();
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void runOpMode() {
@@ -43,10 +46,11 @@ public class ToolTestCode extends LinearOpMode {
                 list.add(entry.getKey());
             }
         }
-        telemetry.addData("list", String.join(",",list));
+        telemetry.addData("list", String.join("," ,list));
         telemetry.update();
         waitForStart();
         telemetry.clearAll();
+        eventThread.start();
         Thread thread = new Thread(() -> {
             while (opModeIsActive()) {
                 lift.update();

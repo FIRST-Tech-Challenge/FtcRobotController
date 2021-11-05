@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.parts;
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import androidx.annotation.NonNull;
@@ -28,8 +29,8 @@ public class Lift {
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armServo = map.get(Servo.class,"armServo");
         encoderOffset = liftMotor.getCurrentPosition() * -1;
-        bottomSensor = map.get(DigitalChannel.class,"bottomSensor");
-        bottomSensor.setMode(DigitalChannel.Mode.INPUT);
+        // bottomSensor = map.get(DigitalChannel.class,"bottomSensor");
+        // bottomSensor.setMode(DigitalChannel.Mode.INPUT);
         topSensor = map.get(DigitalChannel.class,"topSensor");
         topSensor.setMode(DigitalChannel.Mode.INPUT);
         this.telemetry = telemetry;
@@ -40,7 +41,7 @@ public class Lift {
     private final Telemetry telemetry;
     private final DcMotor liftMotor;
     private final Servo armServo;
-    private final DigitalChannel bottomSensor;
+    // private final DigitalChannel bottomSensor;
     private final DigitalChannel topSensor;
     private final GamepadEx gamepad;
     private final ButtonReader rBumpReader;
