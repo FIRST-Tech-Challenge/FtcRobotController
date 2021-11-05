@@ -49,6 +49,8 @@ public class FrenzyBaseBot implements IOdoBot {
     public static final double MAX_VELOCITY_GB = COUNTS_PER_MOTOR_GB * MOTOR_RPS_GB;  // 2,796
     public static final double MAX_VELOCITY_REV = 2140;
 
+//    MaxVelocityTest: maxLF: 2440.00, maxRF: 2640.00, maxLB: 2520.00, maxRB: 2600.00
+
     protected static double P = 1.17;
     protected static double I = 0.12;
     protected static double D = 0;
