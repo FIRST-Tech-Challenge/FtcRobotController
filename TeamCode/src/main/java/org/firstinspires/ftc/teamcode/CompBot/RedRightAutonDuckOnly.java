@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.CompBot;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Red Right Autonomous, Duck Only",group="CompBot")
+@Disabled
 public class RedRightAutonDuckOnly extends LinearOpMode {
     CompBotHW r = new CompBotHW();
 

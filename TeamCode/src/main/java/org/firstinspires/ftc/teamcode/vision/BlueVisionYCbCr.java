@@ -29,6 +29,7 @@ public class BlueVisionYCbCr extends OpenCvPipeline {
     public BlueVisionYCbCr(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
+    public BlueVisionYCbCr() {}
 
     @Override
     public Mat processFrame(Mat input) {
@@ -45,7 +46,6 @@ public class BlueVisionYCbCr extends OpenCvPipeline {
 
         Imgproc.findContours(mask, cont, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
-        telemetry.addData("numContours",cont.size());
         positions = new boolean[]{false, false, false};
         // Return information
 
@@ -89,11 +89,14 @@ public class BlueVisionYCbCr extends OpenCvPipeline {
                 }
             }
         }
-        telemetry.addData("validContours",String.valueOf(cont2.size()));
-        telemetry.addData("left",positions[0]);
-        telemetry.addData("middle",positions[1]);
-        telemetry.addData("right",positions[2]);
-        telemetry.update();
+        if(telemetry != null) {
+            telemetry.addData("numContours",cont.size());
+            telemetry.addData("validContours",String.valueOf(cont2.size()));
+            telemetry.addData("left",positions[0]);
+            telemetry.addData("middle",positions[1]);
+            telemetry.addData("right",positions[2]);
+            telemetry.update();
+        }
         Imgproc.drawContours(input, cont2,-1, new Scalar(255,0,0), 5);
         return input;
     }

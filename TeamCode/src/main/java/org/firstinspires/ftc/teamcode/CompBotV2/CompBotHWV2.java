@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CompBotSimplified;
+package org.firstinspires.ftc.teamcode.CompBotV2;
 
 // Hardware class for Viridian's competition bot, but simplified
 // Version 1.0.0
@@ -10,19 +10,16 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.teamcode.vision.BlueVisionRGBNoTele;
 import org.firstinspires.ftc.teamcode.vision.BlueVisionYCbCr;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 
-public class CompBotHWSimplified {
+public class CompBotHWV2 {
     public final static double distanceK = 4554.756025274308733, corrCoeff = 0.03;
 
-    public Motor fl = null, fr = null, bl = null, br = null;
+    public Motor fl = null, fr = null, bl = null, br = null, intake = null, spin = null, lift = null;
     public MecanumDrive m;
 
     public RevIMU imu = null;
@@ -31,7 +28,9 @@ public class CompBotHWSimplified {
     public OpenCvCamera phoneCam = null;
     public BlueVisionYCbCr p;
 
-    public CompBotHWSimplified() {}
+    public Servo bucket;
+
+    public CompBotHWV2() {}
 
     public void init(HardwareMap h) {
         fl = new Motor(h,"fl");
@@ -53,6 +52,27 @@ public class CompBotHWSimplified {
         fr.setDistancePerPulse(distanceK);
         bl.setDistancePerPulse(distanceK);
         br.setDistancePerPulse(distanceK);
+
+        intake = new Motor(h, "intake");
+        intake.set(0);
+        intake.setInverted(false);
+        intake.setRunMode(Motor.RunMode.VelocityControl);
+        intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        spin = new Motor(h,"spin");
+        spin.set(0);
+        spin.setInverted(false);
+        spin.setRunMode(Motor.RunMode.VelocityControl);
+        spin.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        lift = new Motor(h,"lift");
+        lift.set(0);
+        lift.setInverted(false);
+        lift.setRunMode(Motor.RunMode.VelocityControl);
+        lift.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        bucket = h.get(Servo.class, "bucket");
+        bucket.setPosition(0);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -87,7 +107,7 @@ public class CompBotHWSimplified {
     // distances are in inches
     public void encoderDrive(double dStrafe, double dForward, double sStrafe, double sForward) {
         positionControl();
-        setTargetDist(new double[]{dForward+dStrafe, dForward-dStrafe, dForward-dStrafe, dForward+dStrafe});
+        setTargetPositions(new double[]{dForward+dStrafe, dForward-dStrafe, dForward-dStrafe, dForward+dStrafe});
         while(!(fl.atTargetPosition() || fr.atTargetPosition() || bl.atTargetPosition() || br.atTargetPosition())) {
             m.driveRobotCentric(sStrafe,sForward,0);
         }
@@ -96,7 +116,7 @@ public class CompBotHWSimplified {
     }
     public void assistedEncoderDrive(double dStrafe, double dForward, double sStrafe, double sForward) {
         positionControl();
-        setTargetDist(new double[]{dForward+dStrafe, dForward-dStrafe, dForward-dStrafe, dForward+dStrafe});
+        setTargetPositions(new double[]{dForward+dStrafe, dForward-dStrafe, dForward-dStrafe, dForward+dStrafe});
         double initialHeading = imu.getHeading(), error;
         while(!(fl.atTargetPosition() || fr.atTargetPosition() || bl.atTargetPosition() || br.atTargetPosition())) {
             error = imu.getHeading() - initialHeading;
@@ -137,7 +157,7 @@ public class CompBotHWSimplified {
         br.setRunMode(Motor.RunMode.RawPower);
     }
 
-    public void setTargetDist(double[] dist) {
+    public void setTargetPositions(double[] dist) {
         fl.setTargetDistance(dist[0]);
         fr.setTargetDistance(dist[1]);
         bl.setTargetDistance(dist[2]);
