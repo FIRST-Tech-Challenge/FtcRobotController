@@ -28,7 +28,6 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
  */
 
 public class Vision extends MinorSubsystem {
-    MarkerLocation finalMarkerLocation; // Marker Location
 
     WebcamName webcamName = null;
 
@@ -58,6 +57,8 @@ public class Vision extends MinorSubsystem {
     private OpenCvCamera camera;
 
     private int[] viewportContainerIds;
+
+    private MarkerLocation finalMarkerLocation;
 
     /**
      * Class instantiation
@@ -108,5 +109,9 @@ public class Vision extends MinorSubsystem {
     // Helper method to create matrix to identify locations
     public OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
         return OpenGLMatrix.translation(x, y, z).multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
+    }
+
+    public MarkerLocation getFinalMarkerLocation() {
+        return this.finalMarkerLocation;
     }
 }
