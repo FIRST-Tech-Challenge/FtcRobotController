@@ -3,20 +3,26 @@ package org.firstinspires.ftc.teamcode.robotAttachments.odometry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robotAttachments.BasicDrivetrain;
 
 
-public class OdometryMovement {
-    DcMotor front_right, front_left, back_right, back_left;
+public class OdometryMovement extends BasicDrivetrain {
     Telemetry telemetry;
     OdometryGlobalCoordinatePosition odometry;
     Executable<Boolean> _isStopRequested;
     Executable<Boolean> _opModeIsActive;
 
+
     public OdometryMovement(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
-        this.back_left = back_left;
-        this.back_right = back_right;
-        this.front_left = front_left;
-        this.front_right = front_right;
+        super(front_right,front_left,back_right,back_left);
+        this.telemetry = telemetry;
+        this.odometry = odometry;
+        this._isStopRequested = isStopRequested;
+        this._opModeIsActive = opmodeIsActive;
+    }
+
+    public OdometryMovement(BasicDrivetrain drivetrain, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive){
+        super(drivetrain.front_right,drivetrain.front_left,drivetrain.back_right,drivetrain.back_left);
         this.telemetry = telemetry;
         this.odometry = odometry;
         this._isStopRequested = isStopRequested;
@@ -54,7 +60,7 @@ public class OdometryMovement {
      * @param robotRot The orientation of the robot
      * @return The heading the point is from the robot
      */
-    public static double getAngle(double rx, double ry, double x, double y, double robotRot) {
+    private static double getAngle(double rx, double ry, double x, double y, double robotRot) {
         double angle;
         x = x - rx;
         y = y - ry;
@@ -78,10 +84,7 @@ public class OdometryMovement {
             strafeAtAngle(getAngle(odometry.returnXCoordinate() / 1892.3724283364, odometry.returnYCoordinate() / 1892.3724283364, x, y, odometry.returnOrientation()), 0.5);
 
         }
-        front_left.setPower(0);
-        front_right.setPower(0);
-        back_right.setPower(0);
-        back_left.setPower(0);
+        stopAll();
     }
 
 
@@ -92,7 +95,7 @@ public class OdometryMovement {
      * @param y2 the y-value of the second point
      * @return The distance between two points
      */
-    public static double distance(double x1, double y1, double x2, double y2) {
+    private static double distance(double x1, double y1, double x2, double y2) {
         return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
     }
 
@@ -119,8 +122,8 @@ public class OdometryMovement {
         while (distance > tolerance && !isStopRequested() && opModeIsActive()) {
             //By calculating the values here once in this loop and declaring the variables above, we minimize the number
             //of memory allocation calls and the number of variable calculations.
-            odometry_x = odometry.returnXCoordinate() / 1892.3724283364; //odometry x
-            odometry_y = odometry.returnYCoordinate() / 1892.3724283364; //odometry y
+            odometry_x = odometry.returnXCoordinate() / odometry.getCOUNTS_PER_INCH(); //odometry x
+            odometry_y = odometry.returnYCoordinate() / odometry.getCOUNTS_PER_INCH(); //odometry y
             distance = distance(odometry_x, odometry_y, x, y); //distance value
             odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
 
@@ -154,49 +157,7 @@ public class OdometryMovement {
             strafeAtAngle(odometry_angle, power);
 
         }
-        front_left.setPower(0);
-        front_right.setPower(0);
-        back_right.setPower(0);
-        back_left.setPower(0);
+        stopAll();
     }
-
-    /**
-     * This makes the robot strafe at an heading at a power
-     * Assumes the drive motor configuration of the Ultimate Goal robot
-     * The set power section may need to be updated
-     *
-     * @param angle The angle to strafe at, 0 degrees is straight, 90 degrees is to the right
-     * @param power The power to strafe at
-     */
-    public void strafeAtAngle(double angle, double power) {
-        power = boundNumber(power);
-        double power1 = 0;
-        double power2 = 0;
-        angle = angle % 360;
-
-        power1 = Math.cos(Math.toRadians(angle + 45.0));
-        power2 = Math.cos(Math.toRadians(angle - 45));
-
-        power1 = power * power1;
-        power2 = power * power2;
-
-        front_right.setPower(power1);
-        back_left.setPower(power1);
-
-        front_left.setPower(power2);
-        back_right.setPower(-power2);
-
-    }
-
-    private static double boundNumber(double num) {
-        if (num > 1) {
-            num = 1;
-        }
-        if (num < -1) {
-            num = -1;
-        }
-        return num;
-    }
-
 
 }
