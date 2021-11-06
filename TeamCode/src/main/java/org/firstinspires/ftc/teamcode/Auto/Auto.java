@@ -38,5 +38,32 @@ public class Auto extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
+         //**NOTE** The directions here are based on an orientation where the audience is at the bottom, blue alliance on the left, and red alliance on the right
+
+        //Assume start on position closest to carousels
+
+        //Detect frieght position (vision)
+
+        //Move down 2ft
+
+        //Deliver duck from carousel
+
+        //Park in warehouse (completely)
+
+        //Move towards center horizontally 7ft
+
+        //Move up 5ft
+
+        //Deliver frieght to hub 
+            //Vision to detect custom element position
+
+            //Determine corresponding level on shipping hub & drop in frieght
+
+        //Move up 3ft
+
+        //Move towards (our) alliance 3.5ft
+
+        //Move up 3ft to park
+        
     }
 }
