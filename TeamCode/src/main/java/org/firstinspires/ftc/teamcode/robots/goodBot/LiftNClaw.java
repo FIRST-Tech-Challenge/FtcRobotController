@@ -13,14 +13,13 @@ public class LiftNClaw {
     private Servo gripperPitchServo = null;
 
     private boolean gripperOpen = true;
-    private int gripperOpenPos = 1090;
     private int deployStartPitch= 1360;
     private int foldedBackPitch= 2105;
-    private int pitchMax = 1360;
-    private int pitchMin = 1290;
+
     private int gripperPitchPos = foldedBackPitch;
     private int liftMin = 15;
     private int liftMax = 3000;
+    private int liftTopPrefered = 2600;
     private int liftHeight = liftMin;
 
     public LiftNClaw(DcMotor lift, Servo gripperActuator, Servo gripperPitch){
@@ -44,7 +43,7 @@ public class LiftNClaw {
     int targetLiftPos = 0;
     public void update(){
         if(gripperOpen){
-            gripperActuator.setPosition(Conversions.servoNormalize(gripperOpenPos));
+            gripperActuator.setPosition(Conversions.servoNormalize(Constants.gripperOpenPos));
         }
         else{
             gripperActuator.setPosition(Conversions.servoNormalize(Constants.gripperClosedPos));
@@ -81,10 +80,11 @@ public class LiftNClaw {
     public void toggleLiftHeight(){
         int halfway = (liftMax - liftMin)/2 + liftMin;
         if(liftHeight < halfway){
-            liftHeight = liftMax;
+            liftHeight = liftTopPrefered;
         }
         else{
             liftHeight = liftMin;
+            gripperPitchPos = Constants.pitchMax;
         }
     }
 
@@ -93,11 +93,11 @@ public class LiftNClaw {
     }
 
     public void increasePitchHeight(){
-        gripperPitchPos = Math.min(Math.max(gripperPitchPos + 20, pitchMin), pitchMax);
+        gripperPitchPos = Math.min(Math.max(gripperPitchPos + 20, Constants.pitchMin), Constants.pitchMax);
     }
 
     public void decreasePitchHeight(){
-        gripperPitchPos = Math.min(Math.max(gripperPitchPos - 20, pitchMin), pitchMax);
+        gripperPitchPos = Math.min(Math.max(gripperPitchPos - 20, Constants.pitchMin), Constants.pitchMax);
     }
 
     public void increaseLiftHeight(){
