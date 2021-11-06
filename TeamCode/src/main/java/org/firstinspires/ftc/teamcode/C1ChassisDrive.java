@@ -134,6 +134,8 @@ public class C1ChassisDrive extends DriveMethods {
                     rightTrigger1 = gamepad1.right_trigger;
                     driveDirection(.2, Direction.FORWARD);
                 }
+                servoCarousel.setPosition(1);
+                sleep(500);
                 driveForTime(0.2,250, Direction.BACKWARD);
                 servoCarousel.setPosition(0.5);
             } else {
@@ -148,6 +150,8 @@ public class C1ChassisDrive extends DriveMethods {
                     leftTrigger1 = gamepad1.left_trigger;
                     driveDirection(.2, Direction.FORWARD);
                 }
+                servoCarousel.setPosition(0);
+                sleep(500);
                 driveForTime(0.2,250, Direction.BACKWARD);
                 servoCarousel.setPosition(0.5);
             } else {

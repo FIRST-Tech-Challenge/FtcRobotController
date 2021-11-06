@@ -58,7 +58,7 @@ import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="BlueCarousel1", group="Linear Opmode")
+@Autonomous(name="NewBlueCarousel1", group="Linear Opmode")
 
 public class BlueCarousel1 extends DriveMethods {
     double leftY;
@@ -92,25 +92,18 @@ public class BlueCarousel1 extends DriveMethods {
         waitForStart();
         runtime.reset();
 
-        driveForDistance(.3,.3,Direction.BACKWARD);
-        driveForDistance(.3,.3, Direction.LEFT);
-        driveForDistance(.1, .3,Direction.FORWARD);
+        driveForDistance(.05,.3,Direction.LEFT);
+        driveForDistance(.3,.3,Direction.FORWARD);
         servoCarousel.setPosition(.4);
         driveDirection(.05,Direction.FORWARD);
-        sleep(4000);
+        sleep(3500);
         servoCarousel.setPosition(.5);
-        driveDirection(0,Direction.FORWARD);
-        driveForDistance(.05,.3, Direction.BACKWARD);
-        driveForDistance(.2,.3,Direction.RIGHT);
-        rotateToPosition(.3,-90);
-        driveForDistance(.7,.3,Direction.FORWARD);
-        driveForDistance(.5,.3,Direction.LEFT);
-        driveForDistance(1,.3,Direction.FORWARD);
+        driveDirection(0,Direction.BACKWARD);
         driveForDistance(.1,.3,Direction.LEFT);
-        driveForDistance(.6,.3,Direction.FORWARD);
-
-
-
-
+        driveForDistance(.5,.3,Direction.BACKWARD);
+        driveForDistance(.2,.3,Direction.RIGHT);
+        driveForDistance(1.1,.3, Direction.BACKWARD);
+        driveForDistance(.1,.3,Direction.RIGHT);
+        driveForDistance(.55,.3,Direction.BACKWARD);
     }
 }
