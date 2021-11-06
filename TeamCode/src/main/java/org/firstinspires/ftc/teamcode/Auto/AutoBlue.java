@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 //Deliver freight to hub (6)
 // - deliver freight to corresponding level of custom element (20)
 //Park in warehouse (10)
-@Autonomous(name = "Auto", group = "Concept")
+@Autonomous(name = "Auto Blue", group = "Concept")
 public class AutoBlue extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
     Robot robot = new Robot(this, timer, true);
