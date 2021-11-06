@@ -127,7 +127,6 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
             markerLocation = MarkerLocation.NOT_FOUND;
             telemetry.telemetry("Marker Location", "not found");
         }
-        telemetry.update();
 
         Imgproc.cvtColor(mask, mask, Imgproc.COLOR_GRAY2RGB); // TODO: Change COLOR_GRAY2RGB to something more useful.
 
