@@ -12,18 +12,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake extends SubsystemBase {
     Telemetry m_telemetry;
-    MotorEx m_intakeLeft, m_intakeRight;
-    Double m_leftmultiplier, m_rightmultiplier;
+    CRServo m_intake;
+    Double m_multiplier;
 
 
 
-    public Intake(MotorEx intakeLeft, MotorEx intakeRight, Telemetry telemetry) {
+    public Intake(CRServo intake, Telemetry telemetry) {
 
         m_telemetry = telemetry;
-        m_intakeLeft = intakeLeft;
-        m_intakeRight = intakeRight;
-        m_leftmultiplier = 1.0;
-        m_rightmultiplier = 1.0;
+        m_intake = intake;
+        m_multiplier = 1.0;
 
         m_telemetry.addLine("Intake Initialized");
 
@@ -37,14 +35,12 @@ public class Intake extends SubsystemBase {
 
     public void runIntake(Double speed) {
 
-        m_intakeLeft.set(speed * m_leftmultiplier);
-        m_intakeRight.set(-speed * m_leftmultiplier);
-        m_telemetry.addData("Intake speeds", "Left Intake: %.2f, Right Intake: %.2f",
-                m_intakeLeft.get(), m_intakeRight.get());
+        m_intake.set(speed * m_multiplier);
+        m_telemetry.addData("Intake speeds", "Intake: %.2f",
+                m_intake.get());
     }
 
     public void stopIntake() {
-        m_intakeLeft.set(0.0);
-        m_intakeRight.set(0.0);
+        m_intake.set(0.0);
     }
 }

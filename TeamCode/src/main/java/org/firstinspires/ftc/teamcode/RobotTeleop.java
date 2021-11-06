@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -95,10 +96,9 @@ public class RobotTeleop extends CommandOpMode {
             Holding the A button runs them "inward" using the IntakeIn command
             Letting go of the button stops the servos
              */
-            MotorEx motorIntakeLeft = new MotorEx(hardwareMap, "motorIntakeLeft");
-            MotorEx motorIntakeRight = new MotorEx(hardwareMap, "motorIntakeRight");
+            CRServo servoIntake = new CRServo(hardwareMap, "servoIntake");
 
-            Intake m_intake = new Intake(motorIntakeLeft, motorIntakeRight, telemetry);
+            Intake m_intake = new Intake(servoIntake, telemetry);
 
             GamepadButton driver_a = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.A);
             GamepadButton driver_y = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.Y);
