@@ -10,13 +10,19 @@ public class CarouselPseudocode {
 
     // Constructor
     public CarouselPseudocode(HardwareMap hardwareMap) {
-        carouselTurningMotor = hardwareMap.dcMotor.get("motorCarousel");
-        touchSensor = hardwareMap.digitalChannel.get("CarouselTouchSensor");
+        carouselTurningMotor = hardwareMap.dcMotor.get("carouselTurningMotor");
+        touchSensor = hardwareMap.digitalChannel.get("carouselTouchSensor");
+
+        // Sets the touch sensor mode to an input so we can call getState()
+        touchSensor.setMode(DigitalChannel.Mode.INPUT);
     }
 
     public void CarouselHandler() {
-
-
+        // if the state of touch sensor is true, turn on motor. if not then set power to 0
+        if (touchSensor.getState()) {
+            carouselTurningMotor.setPower(0.2);
+        } else {
+            carouselTurningMotor.setPower(0);
+        }
     }
-
 }
