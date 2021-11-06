@@ -55,10 +55,10 @@ public class FrenzyBaseBot implements IOdoBot {
     public static final double MAX_VELOCITY_REV = 2140;
 
 
-    protected static double P = 1.17;
-    protected static double I = 0.12;
-    protected static double D = 0;
-    protected static double F = 11.7;
+//    protected static double P = 1.17;
+//    protected static double I = 0.12;
+//    protected static double D = 0;
+//    protected static double F = 11.7;
     protected static double positionPIDF = 10;
 
 

@@ -405,12 +405,12 @@ public class MasterOdo extends OdoBase {
             }
             else if (desiredHeadSettingMode){
                 double desiredHead = goToInstructions.getDesiredHead();
-                if (desiredHead == -1){
-                    desiredHead = 0;
+                if (desiredHead < -1){
+                    desiredHead = -1;
                 }
                 desiredHead -= headIncrementValue;
-                if (desiredHead < 0){
-                    desiredHead = 0;
+                if (desiredHead < -1){
+                    desiredHead = -1;
                 }
                 goToInstructions.setDesiredHead(desiredHead);
             }
@@ -590,9 +590,7 @@ public class MasterOdo extends OdoBase {
             }
             else if (desiredHeadSettingMode){
                 double desiredHead = goToInstructions.getDesiredHead();
-                if (desiredHead == -1){
-                    desiredHead = 0;
-                }
+
                 desiredHead += headIncrementValue;
                 goToInstructions.setDesiredHead(desiredHead);
             }
@@ -847,7 +845,7 @@ public class MasterOdo extends OdoBase {
                 telemetry.addData("Top Speed", "%.2f", goToInstructions.getTopSpeed());
             }
             else if (desiredHeadSettingMode){
-                telemetry.addData("Increment", headIncrementValue);
+                telemetry.addData("Heading Increment", headIncrementValue);
                 showHeading();
                 telemetry.addData("Desired Head", "%.2f", goToInstructions.getDesiredHead());
             }

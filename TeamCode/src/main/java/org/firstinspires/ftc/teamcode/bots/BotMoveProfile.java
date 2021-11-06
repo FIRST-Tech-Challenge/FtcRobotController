@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.bots;
 
 import android.graphics.Point;
+import android.nfc.Tag;
 import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
 import org.firstinspires.ftc.teamcode.gamefield.FieldStats;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.skills.Geometry;
+import org.opencv.core.Mat;
 
 public class BotMoveProfile {
     private double realSpeedLeft = 0;
@@ -231,12 +233,14 @@ public class BotMoveProfile {
         }
 
         double currentHead = locator.getAdjustedCurrentHeading();
+        Log.d(TAG, String.format("currentHead: %.2f", currentHead));
 
         if (direction == RobotDirection.Backward) {
             currentHead = (currentHead + 180) % 360;
         }
 
         double distance = Geometry.getDistance(currentX, currentY, target.x, target.y);
+        Log.d(TAG, String.format("Distance: %.2f", distance));
 
 
         //do not move if within margin of error, unless spinning
@@ -247,7 +251,10 @@ public class BotMoveProfile {
         //determine the new heading to the target
         double distanceX = target.x - currentX;
         double distanceY = target.y - currentY;
-        double targetVector = Math.toDegrees(Math.atan2(distanceY, distanceX));
+        double targetVectorLocal = Math.toDegrees(Math.atan2(Math.abs(distanceY), Math.abs(distanceX)));
+        double targetVector = targetVectorLocal;
+        Log.d(TAG, String.format("Distance X: %.2f, Distance Y: %.2f", distanceX, distanceY));
+        Log.d(TAG, String.format("targetVectorLocal: %.2f", targetVectorLocal));
 
         if (distanceY == 0){
             if (distanceX < 0){
@@ -268,25 +275,30 @@ public class BotMoveProfile {
         else{
             //lower left
             if (distanceX < 0 && distanceY < 0){
-                targetVector = (-targetVector) + 90;
+//                targetVector = (-targetVector) + 90;
+                targetVector = targetVectorLocal + 90;
             }
             //lower right
             if (distanceX > 0 && distanceY < 0){
-                targetVector = (-targetVector) + 90;
+//                targetVector = (-targetVector) + 90;
+                targetVector =  270 - targetVectorLocal;
             }
             //upper right
             if (distanceX > 0 && distanceY > 0){
-                targetVector = 90 - targetVector;
+//                targetVector = 90 - targetVector;
+                targetVector = 270 + targetVectorLocal;
             }
             //upper left
             if (distanceX < 0 && distanceY > 0){
-                targetVector = 360 - (targetVector - 90);
+//                targetVector = 360 - (targetVector - 90);
+                targetVector = 90 - targetVectorLocal;
             }
         }
 
-
+        Log.d(TAG, String.format("targetVector adjuted: %.2f", targetVector));
         double realAngleChange = Geometry.getAngle(targetVector, currentHead);
         double angleChange = Math.abs(realAngleChange);
+        Log.d(TAG, String.format("angleChange: %.2f, realchange: %.2f", angleChange, realAngleChange));
 
 
         if (angleChange > 90){
@@ -296,10 +308,11 @@ public class BotMoveProfile {
                 realAngleChange = Geometry.getAngle(targetVector, currentHead);
                 angleChange = Math.abs(realAngleChange);
                 direction = RobotDirection.Backward;
+                Log.d(TAG, String.format("Go backwards. angleChange: %.2f, realchange: %.2f", angleChange, realAngleChange));
             }
             else {
                 //spin
-                bot.getTelemetry().addData("Route",  "Spin");
+                Log.d(TAG, String.format("Spinning before curve"));
                 return buildSpinProfile(bot, realAngleChange, topSpeed, currentPos, direction, MoveStrategy.Curve);
             }
         }
@@ -365,7 +378,7 @@ public class BotMoveProfile {
         }
 
         if (preferredStrategy == MoveStrategy.Curve && angleChange >= 42 && angleChange <= 48){
-            bot.getTelemetry().addData("Route",  "Diag");
+            Log.d(TAG, String.format("Diagonal is better than curve"));
             return  buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, currentPos, target, direction,null);
         }
 
@@ -398,7 +411,7 @@ public class BotMoveProfile {
         //curve
         if ((reduceLeft && radius <= bot.getCalibConfig().getMinRadiusLeft()) ||
                 (reduceLeft == false && radius <= bot.getCalibConfig().getMinRadiusRight())) {
-            bot.getTelemetry().addData("Radius", "Too small. Cannot turn");
+            Log.d(TAG, String.format("Radius %.2f is too small to curve. Will strafe or diagonal", radius));
             if (Math.abs(realAngleChange) < 45) {
                 return buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, currentPos, target, direction, MoveStrategy.Straight);
             }
@@ -635,18 +648,20 @@ public class BotMoveProfile {
         if (angleChange > 0) {
             spinLeft = true;
         }
-        double ticksLeft = bot.getCalibConfig().getLeftTicksPerDegree()*angleChange;
-        double ticksRight = bot.getCalibConfig().getRightTicksPerDegree()*angleChange;
+        double ticksLeft = Math.abs(bot.getCalibConfig().getLeftTicksPerDegree()*angleChange);
+        double ticksRight = Math.abs(bot.getCalibConfig().getRightTicksPerDegree()*angleChange);
         if (spinLeft){
-            ticksRight = -ticksRight;
+            ticksLeft = -ticksLeft;
         }
         else{
-            ticksLeft = -ticksLeft;
+            ticksRight = -ticksRight;
         }
         profile.setLeftTarget(ticksLeft*bot.getEncoderDirection());
         profile.setRightTarget(ticksRight*bot.getEncoderDirection());
         profile.setLeftTargetBack(ticksLeft*bot.getEncoderDirection());
         profile.setRightTargetBack(ticksRight*bot.getEncoderDirection());
+
+        Log.d(TAG, String.format("buildSpinProfile. Angle change: %.2f  spinLeft: %b  ticksLeft: %.2f  ticksRight: %.2f ", angleChange, spinLeft, ticksLeft, ticksRight));
 
 
         return profile;
