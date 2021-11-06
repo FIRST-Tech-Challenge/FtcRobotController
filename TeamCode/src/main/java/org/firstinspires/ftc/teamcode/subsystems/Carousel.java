@@ -10,14 +10,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Carousel extends SubsystemBase {
     Telemetry m_telemetry;
     MotorEx m_carouselMotor;
-
+    Double m_multiplier = 1.0;
 
     public Carousel(MotorEx carouselMotor, Telemetry telemetry) {
 
         m_carouselMotor = carouselMotor;
         m_telemetry = telemetry;
-
-
         m_telemetry.addLine("Carousel Initialized");
 
     }
@@ -29,7 +27,7 @@ public class Carousel extends SubsystemBase {
     }
 
     public void drive(Double speed) {
-        m_carouselMotor.set(speed);
+        m_carouselMotor.set(speed * m_multiplier);
     }
 
     public void stopAll() { m_carouselMotor.set(0); }
