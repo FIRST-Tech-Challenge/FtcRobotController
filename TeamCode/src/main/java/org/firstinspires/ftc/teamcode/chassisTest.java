@@ -1,3 +1,4 @@
+//
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,39 +21,52 @@ public class chassisTest extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         waitForStart();
 
         while (opModeIsActive()) {
 
             //defining driving variables.
-            double fwd_throttle;
-            double bk_throttle;
+            double throttle;
             double turn;
+            double strafeValue;
 
-            fwd_throttle = gamepad1.right_trigger;
-            bk_throttle = -gamepad1.left_trigger;
+            throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
+            strafeValue = gamepad1.left_stick_x;
 
             //making motors run.
-            frontLeft.setPower(fwd_throttle);
-            frontRight.setPower(fwd_throttle);
-            backLeft.setPower(fwd_throttle);
-            backRight.setPower(fwd_throttle);
+                //strafing
+            if (strafeValue > 0.1){
+                frontLeft.setPower(-strafeValue);
+                frontRight.setPower(strafeValue);
+                backLeft.setPower(strafeValue);
+                backRight.setPower(-strafeValue);
+            }else if (strafeValue < -0.1){
+                frontLeft.setPower(-strafeValue);
+                frontRight.setPower(strafeValue);
+                backLeft.setPower(strafeValue);
+                backRight.setPower(-strafeValue);
+            }
+            //forward and backward movement
+            frontLeft.setPower(throttle);
+            frontRight.setPower(throttle);
+            backLeft.setPower(throttle);
+            backRight.setPower(throttle);
 
-            frontLeft.setPower(bk_throttle);
-            frontRight.setPower(bk_throttle);
-            backLeft.setPower(bk_throttle);
-            backRight.setPower(bk_throttle);
-
+            //turning
             frontLeft.setPower(-turn);
             frontRight.setPower(turn);
             backLeft.setPower(-turn);
             backRight.setPower(turn);
-        }
+            }
+//            telemetry.addData("Throttle", throttle);
+//            telemetry.addData("Strafing", strafeValue);
+//            telemetry.addData("Turning", turn);
+//            telemetry.update();
     }
 }
