@@ -9,10 +9,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Carousel extends SubsystemBase {
     Telemetry m_telemetry;
-    CRServo m_carouselMotor;
+    MotorEx m_carouselMotor;
 
 
-    public Carousel(CRServo carouselMotor, Telemetry telemetry) {
+    public Carousel(MotorEx carouselMotor, Telemetry telemetry) {
 
         m_carouselMotor = carouselMotor;
         m_telemetry = telemetry;

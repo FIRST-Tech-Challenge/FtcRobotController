@@ -35,12 +35,12 @@ public class Mecanum extends LinearOpMode {
     MotorEx motorFrontLeft = new MotorEx(hardwareMap, "motorFrontLeft", Motor.GoBILDA.RPM_1620);
     MotorEx motorFrontRight = new MotorEx(hardwareMap, "motorFrontRight", Motor.GoBILDA.RPM_1620);
 
-    CRServo servoIntakeLeft = new CRServo(hardwareMap, "servoIntakeLeft");
-    CRServo servoIntakeRight = new CRServo(hardwareMap, "servoIntakeRight");
+    MotorEx motorIntakeLeft = new MotorEx(hardwareMap, "servoIntakeLeft");
+    MotorEx motorIntakeRight = new MotorEx(hardwareMap, "servoIntakeRight");
 
     GamepadEx driver = new GamepadEx(gamepad1);
 
-    Intake m_intake = new Intake(servoIntakeLeft, servoIntakeRight, telemetry);
+    Intake m_intake = new Intake(motorIntakeLeft, motorIntakeRight, telemetry);
 
     GamepadButton driver_x = driver.getGamepadButton(GamepadKeys.Button.X);
     GamepadButton driver_b = driver.getGamepadButton(GamepadKeys.Button.B);
@@ -60,9 +60,9 @@ public class Mecanum extends LinearOpMode {
         drive.driveRobotCentric(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x);
 
         if (gamepad1.b) {
-          servoIntakeLeft.set(0.25);
+          motorIntakeLeft.set(0.25);
         } else if (gamepad1.x) {
-          servoIntakeRight.set(-0.25);
+          motorIntakeRight.set(-0.25);
         }
 
         telemetry.addData("Button X", driver_x.get());
