@@ -1,31 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
-import com.arcrobotics.ftclib.hardware.SensorColor;
-import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.commands.ArmDriveBackward;
 import org.firstinspires.ftc.teamcode.commands.ArmDriveForward;
-import org.firstinspires.ftc.teamcode.commands.ArmToPosition;
 import org.firstinspires.ftc.teamcode.commands.CarouselDriveBackward;
 import org.firstinspires.ftc.teamcode.commands.CarouselDriveForward;
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
@@ -38,11 +26,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
-import java.io.IOException;
 
-
-@TeleOp(name="Robot TeleOp", group="Competition")
-public class RobotTeleOp extends CommandOpMode {
+@TeleOp(name="RobotTeleop", group="Competition")
+public class RobotTeleop extends CommandOpMode {
 
     static final String DRIVE_MODE = "RC";
     static final Boolean INTAKE_ENABLED = true;
@@ -109,10 +95,10 @@ public class RobotTeleOp extends CommandOpMode {
             Holding the A button runs them "inward" using the IntakeIn command
             Letting go of the button stops the servos
              */
-            CRServo servoIntakeLeft = new CRServo(hardwareMap, "servoIntakeLeft");
-            CRServo servoIntakeRight = new CRServo(hardwareMap, "servoIntakeRight");
+            MotorEx motorIntakeLeft = new MotorEx(hardwareMap, "motorIntakeLeft");
+            MotorEx motorIntakeRight = new MotorEx(hardwareMap, "motorIntakeRight");
 
-            Intake m_intake = new Intake(servoIntakeLeft, servoIntakeRight, telemetry);
+            Intake m_intake = new Intake(motorIntakeLeft, motorIntakeRight, telemetry);
 
             GamepadButton driver_a = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.A);
             GamepadButton driver_y = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.Y);
@@ -158,9 +144,9 @@ public class RobotTeleOp extends CommandOpMode {
             Holding the DPAD_RIGHT drives the arm forward at a set speed using the CarouselDriveForward
              */
 
-            CRServo servoCarousel = new CRServo(hardwareMap, "servoCarousel");
+            MotorEx motorCarousel = new MotorEx(hardwareMap, "motorCarousel");
 
-            Carousel m_carousel = new Carousel(servoCarousel, telemetry);
+            Carousel m_carousel = new Carousel(motorCarousel, telemetry);
 
             GamepadButton oper_dpad_up = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP);
             GamepadButton oper_dpad_down = m_operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN);
