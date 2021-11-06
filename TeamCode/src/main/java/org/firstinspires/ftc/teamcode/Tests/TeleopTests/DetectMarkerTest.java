@@ -16,7 +16,7 @@ public class DetectMarkerTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         Robot robot;
-        robot = new Robot(this, timer);
+        robot = new Robot(this, timer, true);
         waitForStart();
 
         while (opModeIsActive()) {
