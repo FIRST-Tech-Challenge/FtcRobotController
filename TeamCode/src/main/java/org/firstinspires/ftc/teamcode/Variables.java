@@ -18,9 +18,12 @@ public class Variables {
     public static DcMotor motorFrontRight;
     public static DcMotor motorBackRight;
     public static DcMotor motorTankTread;
+    public static DcMotor motorConveyer;
+    public static DcMotor motorMajorArm;
 
     //servos
     public static Servo servoCarousel;
+    public static Servo servoClamp;
 
     //sensors
     public static Gyroscope imu;

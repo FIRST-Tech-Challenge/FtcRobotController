@@ -33,8 +33,10 @@ import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
+import static org.firstinspires.ftc.teamcode.Variables.motorMajorArm;
 import static org.firstinspires.ftc.teamcode.Variables.motorTankTread;
 import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
+import static org.firstinspires.ftc.teamcode.Variables.servoClamp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -66,13 +68,15 @@ public class C1ChassisDrive extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    double leftY;
-    double leftX;
-    double rightX;
+    double leftY1;
+    double leftX1;
+    double rightX1;
     double rightTrigger1;
     double leftTrigger1;
     double carouselPosition;
     boolean xButton;
+    double leftY2;
+    double rightTrigger2;
 
 
     @Override
@@ -85,11 +89,14 @@ public class C1ChassisDrive extends DriveMethods {
         motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
         servoCarousel = hardwareMap.get(Servo.class, "carousel");
+        motorMajorArm = hardwareMap.get(DcMotor.class, "majorarm");
+        servoClamp = hardwareMap.get(Servo.class, "clamp");
+
 
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
 
@@ -100,19 +107,21 @@ public class C1ChassisDrive extends DriveMethods {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            leftY = -gamepad1.left_stick_y;
-            leftX = gamepad1.left_stick_x;
-            rightX = gamepad1.right_stick_x;
+            leftY1 = -gamepad1.left_stick_y;
+            leftX1 = gamepad1.left_stick_x;
+            rightX1 = gamepad1.right_stick_x;
             rightTrigger1 = gamepad1.right_trigger;
             leftTrigger1 = gamepad1.left_trigger;
             xButton = gamepad1.x;
+            leftY2 = gamepad2.left_stick_y;
+            rightTrigger2 = gamepad2.right_trigger;
 
 
             //motors
-            motorFrontLeft.setPower(leftY + leftX + rightX);
-            motorBackLeft.setPower(leftY - leftX + rightX);
-            motorFrontRight.setPower(leftY - leftX - rightX);
-            motorBackRight.setPower(leftY + leftX - rightX);
+            motorFrontLeft.setPower(leftY1 + leftX1 + rightX1);
+            motorBackLeft.setPower(leftY1 - leftX1 + rightX1);
+            motorFrontRight.setPower(leftY1 - leftX1 - rightX1);
+            motorBackRight.setPower(leftY1 + leftX1 - rightX1);
 
 
 
@@ -157,7 +166,20 @@ public class C1ChassisDrive extends DriveMethods {
             } else {
                 driveDirection(0, Direction.FORWARD);
             }
+            if (leftY2 < 0){
+                motorMajorArm.setPower(0.75 * leftY2);
+            }
+            if (leftY2 > 0) {
+                motorMajorArm.setPower(0.75 * leftY2);
+            }
+            if (rightTrigger2 > 0) {
+                servoClamp.setPosition(.6 * rightTrigger2);
+            }
+            if (rightTrigger2 == 0) {
+                servoClamp.setPosition(0);
+            }
 
+            telemetry.addLine("LeftY2" + leftY2);
             telemetry.addLine("Run Time: " + runtime.toString());
             telemetry.update();
         }
