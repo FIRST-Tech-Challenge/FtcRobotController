@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team8923_2021;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -220,6 +221,11 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void runIntake() {
+        motorIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorIntake.setPower(Constants.INTAKE_PWR);
     }
 
     public void sendTelemetry() {

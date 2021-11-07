@@ -23,4 +23,7 @@ public class Constants {
     public static final double TRANSLATION_D = 0.0;
     public static final double ANGLE_TOLERANCE_DEG = 5.0;
     public static final double POSITION_TOLERANCE_MM = 2*25.4;
+
+    //intake
+    public static final double INTAKE_PWR = 1;
 }
