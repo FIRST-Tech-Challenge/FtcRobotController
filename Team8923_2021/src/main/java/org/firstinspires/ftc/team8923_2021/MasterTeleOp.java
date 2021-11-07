@@ -31,12 +31,19 @@ abstract public class MasterTeleOp extends MasterOpMode {
     }
 
     public void runIntake() {
-        if (gamepad1.right_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
+        if (gamepad2.right_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
             motorIntake.setPower(0.8);
 
 
         } else motorIntake.setPower(0.0);
 
+    }
+
+    public void runCarousel() {
+        if (gamepad2.left_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
+            motorCarousel.setPower(0.4);
+
+        } else motorCarousel.setPower(0.0);
     }
 }
 

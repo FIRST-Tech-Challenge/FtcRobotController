@@ -9,7 +9,11 @@ abstract public class MasterOpMode extends LinearOpMode {
     //declare drive motors
     public DcMotor motorLeft = null;
     public DcMotor motorRight = null;
+
+
+    //declare misc motors
     public DcMotor motorIntake = null;
+    public DcMotor motorCarousel = null;
 
     //declare imu
     public BNO055IMU imu;
@@ -37,6 +41,9 @@ abstract public class MasterOpMode extends LinearOpMode {
         //init misc motors
         motorIntake = hardwareMap.dcMotor.get("motorIntake");
         motorIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorCarousel = hardwareMap.dcMotor.get("motorCarousel");
+        motorCarousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //init imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
