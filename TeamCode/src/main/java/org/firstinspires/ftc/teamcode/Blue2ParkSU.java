@@ -29,21 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
-import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
-import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
-import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
-import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
 
 
 /**
@@ -59,9 +47,13 @@ import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="RedPark", group="Linear Opmode")
+//I
 
-public class RedPark extends DriveMethods {
+@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+
+@Disabled // <-- Delete this line so that the program shows up on the phone.
+
+public class Blue2ParkSU extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -71,25 +63,31 @@ public class RedPark extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
-        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
-        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
-        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
-        servoCarousel = hardwareMap.get(Servo.class, "carousel");
+        /**
+         * Any code for initilization goes here
+         */
 
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        driveForDistance(.8,.3, Direction.FORWARD);
-        driveForDistance(.5,.3,Direction.LEFT);
-        driveForDistance(.6,.3,Direction.FORWARD);
+
+        /**
+         * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
+         */
+
+        // start near the carousel, do the duck, park in the storage unit (blue side)
 
         // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
 
+            /**
+             * Any Teleop code goes here.
+             */
+
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.update();
+        }
     }
 }
