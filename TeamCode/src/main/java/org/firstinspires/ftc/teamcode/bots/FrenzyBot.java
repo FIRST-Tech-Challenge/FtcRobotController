@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -18,7 +19,8 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx intake = null;
     private DcMotorEx lift = null;
-    private DcMotorEx rotator = null;
+    private DcMotorEx rotatorRight = null;
+    private DcMotorEx rotatorLeft = null;
     private Servo dropperServo = null;
     private static final String TAG = "FrenzyBot";
     private static int LIFT_FULL_EXTENSION = -1380;
@@ -65,10 +67,18 @@ public class FrenzyBot extends FrenzyBaseBot {
             Log.e(TAG, "Cannot initialize lift", ex);
         }
         try {
-            rotator = hwMap.get(DcMotorEx.class, "rotator");
-            rotator.setDirection(DcMotor.Direction.FORWARD);
-            rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rotator.setVelocity(0);
+            rotatorRight = hwMap.get(DcMotorEx.class, "rotatorRight");
+            rotatorRight.setDirection(DcMotor.Direction.FORWARD);
+            rotatorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rotatorRight.setVelocity(0);
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize rotator", ex);
+        }
+        try {
+            rotatorLeft = hwMap.get(DcMotorEx.class, "rotatorLeft");
+            rotatorLeft.setDirection(DcMotor.Direction.FORWARD);
+            rotatorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rotatorLeft.setVelocity(0);
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize rotator", ex);
         }
@@ -113,9 +123,14 @@ public class FrenzyBot extends FrenzyBaseBot {
             lift.setVelocity(MAX_VELOCITY_REV*velocity);
         }
     }
-    public void activateRotator(double velocity) {
-        if (rotator != null) {
-            rotator.setVelocity(MAX_VELOCITY_REV*velocity);
+    public void activateRotatorRight(double velocity) {
+        if (rotatorRight != null) {
+            rotatorRight.setVelocity(MAX_VELOCITY_REV*velocity);
+        }
+    }
+    public void activateRotatorLeft(double velocity) {
+        if (rotatorLeft != null) {
+            rotatorLeft.setVelocity(MAX_VELOCITY_REV*velocity);
         }
     }
 
@@ -173,13 +188,19 @@ public class FrenzyBot extends FrenzyBaseBot {
         activateIntake(0);
     }
 
+    @BotAction(displayName = "Start turntable blue", defaultReturn = "")
     public void startTurntableBlue() {
-        activateRotator(0.75);
+        activateRotatorRight(0.75);
+        activateRotatorLeft(0.75);
     }
+    @BotAction(displayName = "Start turntable red", defaultReturn = "")
     public void startTurntableRed() {
-        activateRotator(-0.75);
+        activateRotatorRight(-0.75);
+        activateRotatorLeft(-0.75);
     }
+    @BotAction(displayName = "Stop turntable", defaultReturn = "")
     public void stopTurntable() {
-        activateRotator(0.0);
+        activateRotatorRight(0.0);
+        activateRotatorLeft(0.0);
     }
 }

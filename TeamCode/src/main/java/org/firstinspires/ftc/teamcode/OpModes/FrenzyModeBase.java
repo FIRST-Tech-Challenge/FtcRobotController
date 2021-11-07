@@ -26,7 +26,8 @@ public class FrenzyModeBase extends LinearOpMode {
     boolean intakeReverse = false;
 
     // Rotator related variable
-    boolean changedRotator = false;
+    boolean changedRotator1 = false;
+    boolean changedRotator2 = false;
 
     @Override
     public void runOpMode() {
@@ -68,7 +69,7 @@ public class FrenzyModeBase extends LinearOpMode {
         }
         finally {
             robot.activateIntake(0);
-            robot.activateRotator(0);
+            robot.activateRotatorRight(0);
             robot.activateLift(0);
             if (odometry != null) {
                 odometry.stop();
@@ -120,6 +121,7 @@ public class FrenzyModeBase extends LinearOpMode {
         handleIntake();
         handleOuttake();
         handleTurntable();
+        handleTurntable2();
     }
 
     protected void handleOuttake() {
@@ -156,21 +158,23 @@ public class FrenzyModeBase extends LinearOpMode {
         if (isButtonPressable()) {
             if (gamepad1.y) {
                 startGamepadLockout();
-                changedRotator = !changedRotator;
+                changedRotator1 = !changedRotator1;
 
-                if (changedRotator) {
+                if (changedRotator1) {
                     robot.startTurntableBlue();
                 } else {
                     robot.stopTurntable();
                 }
             }
         }
+    }
+    protected void handleTurntable2() {
         if (isButtonPressable()) {
             if (gamepad1.x) {
                 startGamepadLockout();
-                changedRotator = !changedRotator;
+                changedRotator2 = !changedRotator2;
 
-                if (changedRotator) {
+                if (changedRotator2) {
                     robot.startTurntableRed();
                 } else {
                     robot.stopTurntable();

@@ -97,6 +97,6 @@ public class CVFrenzyPipeline extends CVPipelineBase {
         // it keeps values consistent under different lighting
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         //Extracts the blue channel in Cb variable
-        Core.extractChannel(YCrCb, Cb, 2);
+        Core.extractChannel(YCrCb, Cb, 2);  
     }
 }
