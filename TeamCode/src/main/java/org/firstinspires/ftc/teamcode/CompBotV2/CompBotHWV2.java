@@ -10,7 +10,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.vision.BlueVisionYCbCr;
+import org.firstinspires.ftc.teamcode.vision.BlueVisionYCbCrImproved;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -26,7 +26,7 @@ public class CompBotHWV2 {
 
     public int cameraMonitorViewId;
     public OpenCvCamera phoneCam = null;
-    public BlueVisionYCbCr p;
+    public BlueVisionYCbCrImproved p;
 
     public Servo bucket;
 
@@ -89,7 +89,7 @@ public class CompBotHWV2 {
         if(cameraInit) {
             cameraMonitorViewId = h.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", h.appContext.getPackageName());
             phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-            p = new BlueVisionYCbCr();
+            p = new BlueVisionYCbCrImproved();
             phoneCam.setPipeline(p);
 
             phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()

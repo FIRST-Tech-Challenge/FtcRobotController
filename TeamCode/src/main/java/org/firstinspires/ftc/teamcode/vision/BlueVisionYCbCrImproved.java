@@ -14,28 +14,27 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlueVisionYCbCr extends OpenCvPipeline {
+public class BlueVisionYCbCrImproved extends OpenCvPipeline {
     boolean viewportPaused = false;
 
     private volatile boolean[] positions;
 
     public Scalar x = new Scalar(87,179,232);
-    public Scalar low = new Scalar(0, 87.8, 138.8, 0), high =new Scalar(255, 117.6, 194.1, 255);
+    public Scalar low = new Scalar(0, 83.6, 79.3, 0), high =new Scalar(255, 110.5, 177.1, 255);
     //public Scalar low = new Scalar(25,25,25), high = new Scalar(200,200,200);
 
     Mat mask, hierarchy = new Mat();
 
     Telemetry telemetry;
-    public BlueVisionYCbCr(Telemetry telemetry) {
+    public BlueVisionYCbCrImproved(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
-    public BlueVisionYCbCr() {}
+    public BlueVisionYCbCrImproved() {}
 
     @Override
     public Mat processFrame(Mat input) {
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YCrCb);
         // Process frame
-        Imgproc.cvtColor(input,input,Imgproc.COLOR_RGB2YCrCb);
-
         mask = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
 
         Core.inRange(input, low, high, mask);
@@ -70,13 +69,14 @@ public class BlueVisionYCbCr extends OpenCvPipeline {
             }
             int xrange = xmax-xmin;
             int yrange = ymax-ymin;
-            int k_low = 40;
-            int k_high = 20;
+            int k_low = 10;
+            int k_high = 1;
             x /= points.size();
             y /= points.size();
-            if(within(y,5*input.height()/8,3*input.height()/4)
-                    && within(xrange,input.width()/k_low,input.width()/k_high)
-                    && within(yrange ,input.height()/k_low,input.height()/k_high)) {
+            if(within(y,input.height()/2,input.height())
+                    && within(Math.sqrt(Math.pow(xrange,2)+Math.pow(yrange,2)),
+                    Math.sqrt(Math.pow(input.width(),2)+Math.pow(input.height(),2))/k_low,
+                    Math.sqrt(Math.pow(input.width(),2)+Math.pow(input.height(),2))/k_high)) {
                 cont2.add(m);
                 if(x < 3*input.width()/8) {
                     positions[0] = true;
@@ -98,6 +98,7 @@ public class BlueVisionYCbCr extends OpenCvPipeline {
             telemetry.update();
         }
         Imgproc.drawContours(input, cont2,-1, new Scalar(255,0,0), 5);
+        mask.release();
         return input;
     }
 

@@ -8,16 +8,12 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.teamcode.vision.BlueVisionRGBNoTele;
-import org.firstinspires.ftc.teamcode.vision.BlueVisionYCbCr;
+import org.firstinspires.ftc.teamcode.vision.BlueVisionYCbCrImproved;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 public class CompBotHWSimplified {
     public final static double distanceK = 4554.756025274308733, corrCoeff = 0.03;
@@ -29,7 +25,7 @@ public class CompBotHWSimplified {
 
     public int cameraMonitorViewId;
     public OpenCvCamera phoneCam = null;
-    public BlueVisionYCbCr p;
+    public BlueVisionYCbCrImproved p;
 
     public CompBotHWSimplified() {}
 
@@ -69,7 +65,7 @@ public class CompBotHWSimplified {
         if(cameraInit) {
             cameraMonitorViewId = h.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", h.appContext.getPackageName());
             phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-            p = new BlueVisionYCbCr();
+            p = new BlueVisionYCbCrImproved();
             phoneCam.setPipeline(p);
 
             phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
