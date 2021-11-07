@@ -11,7 +11,6 @@ public class RedWarehouseNoDetect extends MasterAutonomous{
         waitForStart();
 
         while (opModeIsActive()){
-            moveAuto(5, 20, 10);
         }
     }
 
