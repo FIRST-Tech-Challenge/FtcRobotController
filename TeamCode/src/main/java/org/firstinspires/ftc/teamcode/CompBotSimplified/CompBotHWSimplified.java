@@ -73,7 +73,7 @@ public class CompBotHWSimplified {
                 @Override
                 public void onOpened() { phoneCam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_LEFT); }
 
-                @Override
+                //@Override
                 public void onError(int errorCode) {}
             });
         }
