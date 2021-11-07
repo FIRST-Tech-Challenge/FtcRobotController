@@ -1,0 +1,25 @@
+{
+  "name": "freightfrenzyteam9533",
+  "version": "0.0.1",
+  "description": "Team 9533 (Bravenators) code for the Freight Frenzy FTC Robotics Season",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-changelog": "standard-version --skip.bump --skip.commit --skip.tag"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nick-Fanelli/FtcRobotController.git"
+  },
+  "author": "Nick Fanelli",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nick-Fanelli/FtcRobotController/issues"
+  },
+  "homepage": "https://github.com/Nick-Fanelli/FtcRobotController#readme",
+  "devDependencies": {
+    "standard-version": "^9.3.2"
+  }
+}
