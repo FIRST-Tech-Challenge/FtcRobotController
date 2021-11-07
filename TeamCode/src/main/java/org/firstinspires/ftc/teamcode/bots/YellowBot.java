@@ -405,7 +405,7 @@ public class YellowBot implements IOdoBot {
     }
 
 
-    public RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint) {
+    public RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint, IBaseOdometry locator) {
         RobotMovementStats stats = new RobotMovementStats();
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double rightPower = rightspeed;

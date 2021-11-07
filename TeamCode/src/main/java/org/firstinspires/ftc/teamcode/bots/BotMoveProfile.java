@@ -251,6 +251,14 @@ public class BotMoveProfile {
         //determine the new heading to the target
         double distanceX = target.x - currentX;
         double distanceY = target.y - currentY;
+        //locator maybe off within 1 inch
+        if (distanceX > -1 && distanceX < 1){
+            distanceX = 0;
+        }
+        if (distanceY > -1 && distanceY < 1){
+            distanceY = 0;
+        }
+        //////
         double targetVectorLocal = Math.toDegrees(Math.atan2(Math.abs(distanceY), Math.abs(distanceX)));
         double targetVector = targetVectorLocal;
         Log.d(TAG, String.format("Distance X: %.2f, Distance Y: %.2f", distanceX, distanceY));
@@ -275,28 +283,29 @@ public class BotMoveProfile {
         else{
             //lower left
             if (distanceX < 0 && distanceY < 0){
-//                targetVector = (-targetVector) + 90;
                 targetVector = targetVectorLocal + 90;
             }
             //lower right
             if (distanceX > 0 && distanceY < 0){
-//                targetVector = (-targetVector) + 90;
                 targetVector =  270 - targetVectorLocal;
             }
             //upper right
             if (distanceX > 0 && distanceY > 0){
-//                targetVector = 90 - targetVector;
                 targetVector = 270 + targetVectorLocal;
             }
             //upper left
             if (distanceX < 0 && distanceY > 0){
-//                targetVector = 360 - (targetVector - 90);
                 targetVector = 90 - targetVectorLocal;
             }
         }
 
-        Log.d(TAG, String.format("targetVector adjuted: %.2f", targetVector));
+        Log.d(TAG, String.format("targetVector adjusted: %.2f", targetVector));
         double realAngleChange = Geometry.getAngle(targetVector, currentHead);
+        //locator heading may be off within 1 degree.
+        if (realAngleChange > -1 && realAngleChange < 1){
+            realAngleChange = 0;
+        }
+        ///////////////
         double angleChange = Math.abs(realAngleChange);
         Log.d(TAG, String.format("angleChange: %.2f, realchange: %.2f", angleChange, realAngleChange));
 
@@ -306,6 +315,9 @@ public class BotMoveProfile {
                 //better go backwards
                 currentHead = (currentHead + 180) % 360;
                 realAngleChange = Geometry.getAngle(targetVector, currentHead);
+                if (realAngleChange > -1 && realAngleChange < 1){
+                    realAngleChange = 0;
+                }
                 angleChange = Math.abs(realAngleChange);
                 direction = RobotDirection.Backward;
                 Log.d(TAG, String.format("Go backwards. angleChange: %.2f, realchange: %.2f", angleChange, realAngleChange));

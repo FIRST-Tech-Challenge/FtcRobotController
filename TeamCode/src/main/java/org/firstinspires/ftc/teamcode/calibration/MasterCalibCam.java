@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
+import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 //import org.openftc.revextensions2.ExpansionHubEx;
@@ -173,5 +174,4 @@ public class MasterCalibCam extends MasterCalib {
         calibRight.setRightOdoDistanceActual(rightDistance);
         calibRight.process(false);
     }
-
 }

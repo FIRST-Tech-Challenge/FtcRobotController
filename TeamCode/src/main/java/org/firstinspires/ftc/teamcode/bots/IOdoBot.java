@@ -40,7 +40,7 @@ public interface IOdoBot {
     double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib);
     void addNamedCoordinate(AutoDot dot);
     double getGyroHeading();
-    RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint);
+    RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint, IBaseOdometry locator);
     File getCalibConfigFile();
     void turnLeft(double speed, boolean forward);
     void turnRight(double speed, boolean forward);

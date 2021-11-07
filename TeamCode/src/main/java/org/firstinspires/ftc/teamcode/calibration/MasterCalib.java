@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.calibration;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -94,6 +95,7 @@ public class MasterCalib extends LinearOpMode {
     protected MotorReductionBotCalib templateDiagRight = new MotorReductionBotCalib();
 
     protected IBaseOdometry locator = null;
+    private static String TAG = "MasterCalib";
 
 
     @Override
@@ -799,13 +801,10 @@ public class MasterCalib extends LinearOpMode {
         }
     }
 
-    private void calibMove(){
-        RobotCoordinatePosition locator = null;
+    protected void calibMove(){
+
         try {
-            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation,RobotCoordinatePosition.THREAD_INTERVAL);
-            locator.reverseHorEncoder();
-            Thread positionThread = new Thread(locator);
-            positionThread.start();
+            locator = getLocator();
             moveBot(templateMRForward, templateMRBack, locator);
 //            restoreHead();
 //            led.none();
@@ -815,11 +814,10 @@ public class MasterCalib extends LinearOpMode {
             telemetry.update();
 
         }
-        finally {
-            if (locator != null){
-                locator.stop();
-            }
+        catch (Exception ex){
+            Log.e(TAG, String.format("Error calibrating straight movement. %s", ex.getMessage()));
         }
+
     }
 
     private void moveBot(MotorReductionBotCalib calibF, MotorReductionBotCalib calibB, IBaseOdometry locator){
@@ -838,7 +836,7 @@ public class MasterCalib extends LinearOpMode {
             bF = breakPointOverride * bot.getEncoderCountsPerInch();
         }
         int distance = Math.abs(desiredY - startY);
-        RobotMovementStats statsF = bot.moveToCalib(desiredSpeed, desiredSpeed, distance, mrForward, bF);
+        RobotMovementStats statsF = bot.moveToCalib(desiredSpeed, desiredSpeed, distance, mrForward, bF, locator);
         calibF.setStats(statsF);
 
         timer.reset();
@@ -879,7 +877,7 @@ public class MasterCalib extends LinearOpMode {
         telemetry.addData("Forw Location", "x:%.2f  y: %.2f ", locator.getCurrentX(), locator.getCurrentY());
 
 
-        RobotMovementStats statsB =  bot.moveToCalib(desiredSpeed, desiredSpeed, -distance, mrBack, bB);
+        RobotMovementStats statsB =  bot.moveToCalib(desiredSpeed, desiredSpeed, -distance, mrBack, bB, locator);
         calibB.setStats(statsB);
         telemetry.addData("Actual BP Forw", bF);
         telemetry.addData("Actual BP Back", bB);
@@ -913,7 +911,7 @@ public class MasterCalib extends LinearOpMode {
         int selectedIndex = 0;
         while(selectedIndex < MotorReductionBot.POWER_SAMPLES.length){
             double power = MotorReductionBot.POWER_SAMPLES[selectedIndex];
-            RobotMovementStats statsF =  bot.moveToCalib(power, power, desiredX, templateMRForward, 0);
+            RobotMovementStats statsF =  bot.moveToCalib(power, power, desiredX, templateMRForward, 0, locator);
             templateMRForward.setBreakPoint(statsF.getSlowDownDistanceRaw(), power);
             statsConfig.setStatsForward(power, statsF);
 
@@ -921,7 +919,7 @@ public class MasterCalib extends LinearOpMode {
             while (timer.milliseconds() < 1000 && opModeIsActive()) {
 
             }
-            RobotMovementStats statsB =  bot.moveToCalib(power, power, -desiredX, templateMRBack, 0);
+            RobotMovementStats statsB =  bot.moveToCalib(power, power, -desiredX, templateMRBack, 0, locator);
             templateMRBack.setBreakPoint(statsB.getSlowDownDistanceRaw(), power);
             statsConfig.setStatsBack(power, statsB);
             selectedIndex++;
@@ -1400,7 +1398,7 @@ public class MasterCalib extends LinearOpMode {
 //        restoreHead();
 //        led.none();
         //bring bot back
-        bot.moveToCalib(CALIB_SPEED, CALIB_SPEED, -desiredX, templateMRBack, 0);
+        bot.moveToCalib(CALIB_SPEED, CALIB_SPEED, -desiredX, templateMRBack, 0, locator);
         saveConfigDiag(templateDiagLeft, templateDiagRight);
         showMotorReductionCalib(templateDiagLeft);
         showMotorReductionCalib(templateDiagRight);

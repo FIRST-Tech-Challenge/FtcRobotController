@@ -511,144 +511,16 @@ public class FrenzyBaseBot implements IOdoBot {
     }
 
 
-    public RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint) {
+    public RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint, IBaseOdometry locator) {
         RobotMovementStats stats = new RobotMovementStats();
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
-            double rightPower = rightspeed;
-            double leftPower = leftspeed;
-            stats.setMotorPower(Math.abs(leftPower));
-            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-            boolean forward = inches > 0;
-
-            //reverse speed
-            if (forward) {
-                rightPower = -rightPower;
-                leftPower = -leftPower;
-            } else {
-                breakPoint = -breakPoint;
+            RobotDirection direction = RobotDirection.Forward;
+            if (inches < 0){
+                direction = RobotDirection.Backward;
             }
-
-            double distance = inches * COUNTS_PER_INCH_GB;
-
-            double startingPoint = this.getLeftOdometer();
-
-
-            double slowdownMark = startingPoint + (distance - breakPoint);
-
-            double leftTarget = startingPoint + distance;
-
-
-            double minSpeed = 0.1;
-
-            double speedDropStep = 0.05;
-
-            double originalRight = rightPower;
-            double originalLeft = leftPower;
-
-
-            double speedIncrement = 0.05;
-
-            if (abs(leftPower) > 0.6 && abs(rightPower) > 0.6) {
-                speedIncrement = 0.03;
-            }
-
-            if (forward) {
-                speedIncrement = -speedIncrement;
-            }
-            leftPower = 0;
-            rightPower = 0;
-
-            double realSpeedLeft = leftPower;
-            double realSpeedRight = rightPower;
-
-            boolean fullSpeedReached = false;
-
-            stats.startAccelerateTimer(startingPoint);
-
-            boolean stop = false;
-            boolean slowDown = false;
-            int step = 0;
-            while (!stop && owner.opModeIsActive()) {
-                double leftreading = this.getLeftOdometer();
-                if ((forward && leftreading >= slowdownMark) ||
-                        (forward == false && leftreading <= slowdownMark)) {
-
-                    if (!slowDown) {
-                        if (fullSpeedReached) {
-                            fullSpeedReached = false;
-                            stats.stopFullSpeedTimer(leftreading);
-                        } else {
-                            stats.stopAccelerateTimer(leftreading);
-                        }
-                        stats.startSlowDownTimer(leftreading, slowdownMark);
-                        slowDown = true;
-                    }
-                    step++;
-                    if (Math.abs(leftPower) <= Math.abs(minSpeed) || Math.abs(rightPower) <= Math.abs(minSpeed)) {
-                        stop = (forward && leftreading >= leftTarget) ||
-                                (forward == false && leftreading <= leftTarget);
-                        if (stop) {
-                            break;
-                        }
-                    }
-
-                    if (forward) {
-                        rightPower = realSpeedRight + speedDropStep * step;
-                        leftPower = realSpeedLeft + speedDropStep * step;
-                        if (rightPower >= -minSpeed || leftPower >= -minSpeed) {
-                            leftPower = -minSpeed;
-                            rightPower = -minSpeed;
-                        }
-                    } else {
-                        rightPower = realSpeedRight - speedDropStep * step;
-                        leftPower = realSpeedLeft - speedDropStep * step;
-                        if (rightPower <= minSpeed || leftPower <= minSpeed) {
-                            leftPower = minSpeed;
-                            rightPower = minSpeed;
-                        }
-                    }
-                } else {
-                    //acceleration
-                    if ((forward && rightPower + speedIncrement >= originalRight) ||
-                            (!forward && rightPower + speedIncrement <= originalRight)) {
-                        rightPower = rightPower + speedIncrement;
-                        leftPower = rightPower;
-                        realSpeedLeft = leftPower;
-                        realSpeedRight = rightPower;
-                    } else {
-                        //full speed
-                        if (!fullSpeedReached) {
-                            fullSpeedReached = true;
-                            stats.stopAccelerateTimer(leftreading);
-                            stats.startFullSpeedTimer(leftreading);
-                        }
-                    }
-                }
-
-                if (abs(leftPower) > 0.6 && abs(rightPower) > 0.6 && forward) {
-                    this.frontLeft.setVelocity(MAX_VELOCITY_GB * leftPower * mr.getLF());
-                    this.frontRight.setVelocity(MAX_VELOCITY_GB * rightPower * (mr.getRF() - 0.04));
-                    this.backLeft.setVelocity(MAX_VELOCITY_GB * leftPower * mr.getLB());
-                    this.backRight.setVelocity(MAX_VELOCITY_GB * rightPower * (mr.getRB() - 0.04));
-                } else {
-                    this.frontLeft.setVelocity(MAX_VELOCITY_GB * leftPower * mr.getLF());
-                    this.frontRight.setVelocity(MAX_VELOCITY_GB * rightPower * mr.getRF());
-                    this.backLeft.setVelocity(MAX_VELOCITY_GB * leftPower * mr.getLB());
-                    this.backRight.setVelocity(MAX_VELOCITY_GB * rightPower * mr.getRB());
-                }
-
-                stats.updateVelocity(this.getLeftVelocity(), this.getRightVelocity());
-            }
-            stats.stopSlowdownTimer(this.getLeftOdometer());
-
-            stats.computeTotals(this.getLeftOdometer());
-
-            this.stop();
+            BotMoveProfile profile =
+                    BotMoveProfile.buildMoveProfile(this, Math.abs(inches), leftspeed, 0, 0, false, direction, null, -1, -1, locator );
+            curveTo(profile, locator);
         }
         return stats;
     }
@@ -827,24 +699,24 @@ public class FrenzyBaseBot implements IOdoBot {
 
     @Override
     public void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib, IBaseOdometry locator) {
-        if (leftAxis) {
-            this.frontLeft.setVelocity(MAX_VELOCITY_GB * speed * calib.getLF());
-            this.backRight.setVelocity(MAX_VELOCITY_GB * speed * calib.getRB());
+        if (!leftAxis) {
+            this.frontLeft.setVelocity(MAX_VELOCITY_GB * -speed * calib.getLF());
+            this.backRight.setVelocity(MAX_VELOCITY_GB * -speed * calib.getRB());
 
             this.backLeft.setPower(0);
             this.frontRight.setPower(0);
 
-            while (locator.getCurrentX() > diagInches){
+            while (locator.getCurrentX() > 0){
 
             }
         } else {
-            this.backLeft.setVelocity(MAX_VELOCITY_GB * speed * calib.getLB());
-            this.frontRight.setVelocity(MAX_VELOCITY_GB * speed * calib.getRF());
+            this.backLeft.setVelocity(MAX_VELOCITY_GB * -speed * calib.getLB());
+            this.frontRight.setVelocity(MAX_VELOCITY_GB * -speed * calib.getRF());
 
             this.frontLeft.setPower(0);
             this.backRight.setPower(0);
 
-            while (locator.getCurrentX() < diagInches){
+            while (locator.getCurrentX() < diagInches*2){
 
             }
         }
