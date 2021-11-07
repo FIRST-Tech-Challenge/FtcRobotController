@@ -29,7 +29,8 @@ public class Variables {
     public static Gyroscope imu;
 
     //other (static constants for computation)
-    public static final double CLICKS_PER_ROTATION = 537.6;
+    public static final double CLICKS_PER_ROTATION = 537.6; //This is for a 312 RPM GoBilda motor that is standard for chassis
     public static final double DISTANCE_PER_ROTATION = 0.3015928947; //In meters
     public static final double DISTANCE_PER_CLICK = (DISTANCE_PER_ROTATION/CLICKS_PER_ROTATION);
+    public static final double CLICKS_PER_ROTATION_117RPM = 1425.1;
 }

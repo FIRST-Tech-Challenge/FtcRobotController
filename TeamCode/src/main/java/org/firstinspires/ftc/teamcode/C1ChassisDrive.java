@@ -54,15 +54,15 @@ import com.sun.tools.javac.tree.DCTree;
  * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
  * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
- *
+ * <p>
  * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
  * It includes all the skeletal structure that all linear OpModes contain.
- *
+ * <p>
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="C1 Chassis Drive", group="A")
+@TeleOp(name = "C1 Chassis Drive", group = "A")
 
 public class C1ChassisDrive extends DriveMethods {
 
@@ -77,6 +77,19 @@ public class C1ChassisDrive extends DriveMethods {
     boolean xButton;
     double leftY2;
     double rightTrigger2;
+    double level1;
+    double level2;
+    double level3;
+    double level0;
+    double currentPosition;
+    double difference;
+    boolean movingToLevel0 = false;
+    boolean movingToLevel1 = false;
+    boolean movingToLevel2 = false;
+    boolean movingToLevel3 = false;
+
+    private final String replacement = "";
+    private final String target = " seconds";
 
 
     @Override
@@ -86,7 +99,7 @@ public class C1ChassisDrive extends DriveMethods {
 
         motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
-        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
+        motorBackRight = hardwareMap.get(DcMotor.class, "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
         servoCarousel = hardwareMap.get(Servo.class, "carousel");
         motorMajorArm = hardwareMap.get(DcMotor.class, "majorarm");
@@ -98,14 +111,17 @@ public class C1ChassisDrive extends DriveMethods {
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        motorMajorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
 
             leftY1 = -gamepad1.left_stick_y;
             leftX1 = gamepad1.left_stick_x;
@@ -124,6 +140,25 @@ public class C1ChassisDrive extends DriveMethods {
             motorBackRight.setPower(leftY1 + leftX1 - rightX1);
 
 
+            if (movingToLevel0 && currentPosition == level0) {
+
+
+            }
+
+            if (movingToLevel0 && currentPosition == level0) {
+
+
+            }
+
+            if (movingToLevel0 && currentPosition == level0) {
+
+
+            }
+
+            if (movingToLevel0 && currentPosition == level0) {
+
+
+            }
 
             //servos
 //            carouselPosition = 0.5 + (rightTrigger1 / 2);
@@ -136,37 +171,36 @@ public class C1ChassisDrive extends DriveMethods {
 //                servoCarousel.setPosition(1);
 //            }
 
-                //gently pushes robot backward whilst rightTrigger1 engaged
+            //gently pushes robot backward whilst rightTrigger1 engaged
             if (rightTrigger1 > 0) {
                 servoCarousel.setPosition(0.6);
-                while(rightTrigger1 > 0){
+                while (rightTrigger1 > 0) {
                     rightTrigger1 = gamepad1.right_trigger;
                     driveDirection(.2, Direction.FORWARD);
                 }
                 servoCarousel.setPosition(1);
                 sleep(500);
-                driveForTime(0.2,250, Direction.BACKWARD);
+                driveForTime(0.2, 250, Direction.BACKWARD);
                 servoCarousel.setPosition(0.5);
             } else {
                 driveDirection(0, Direction.FORWARD);
             }
 
 
-
             if (leftTrigger1 > 0) {
                 servoCarousel.setPosition(0.4);
-                while(leftTrigger1 > 0){
+                while (leftTrigger1 > 0) {
                     leftTrigger1 = gamepad1.left_trigger;
                     driveDirection(.2, Direction.FORWARD);
                 }
                 servoCarousel.setPosition(0);
                 sleep(500);
-                driveForTime(0.2,250, Direction.BACKWARD);
+                driveForTime(0.2, 250, Direction.BACKWARD);
                 servoCarousel.setPosition(0.5);
             } else {
                 driveDirection(0, Direction.FORWARD);
             }
-            if (leftY2 < 0){
+            if (leftY2 < 0) {
                 motorMajorArm.setPower(0.75 * leftY2);
             }
             if (leftY2 > 0) {
@@ -177,6 +211,82 @@ public class C1ChassisDrive extends DriveMethods {
             }
             if (rightTrigger2 == 0) {
                 servoClamp.setPosition(0);
+            }
+
+
+            //Major Excavator Arm Control is in 3 levels, denoted by the dpad (in order): up, right, bottom
+            if (gamepad2.dpad_up) {
+                level0 = 0;
+                currentPosition = motorMajorArm.getCurrentPosition();
+                while (currentPosition > level0) {
+                    currentPosition = motorMajorArm.getCurrentPosition();
+                    motorMajorArm.setPower(0.1);
+                }
+                motorMajorArm.setPower(0);
+            }
+
+            if (gamepad2.dpad_right) {
+                level1 = 100;
+                currentPosition = motorMajorArm.getCurrentPosition();
+                difference = level1 - currentPosition;
+                if (difference > 0) {
+                    while (currentPosition < level1) {
+                        currentPosition = motorMajorArm.getCurrentPosition();
+                        motorMajorArm.setPower(0.5);
+                    }
+                    motorMajorArm.setPower(0.15);
+                } else if (difference < 0) {
+                    while (currentPosition > level1) {
+                        currentPosition = motorMajorArm.getCurrentPosition();
+                        motorMajorArm.setPower(0.1);
+                    }
+                    motorMajorArm.setPower(0.15);
+                } else {
+                    motorMajorArm.setPower(0.15);
+                }
+            }
+
+            if (gamepad2.dpad_down) {
+                level2 = 300;
+                currentPosition = motorMajorArm.getCurrentPosition();
+                difference = level2 - currentPosition;
+                if (difference > 0) {
+                    while (currentPosition < level2) {
+                        currentPosition = motorMajorArm.getCurrentPosition();
+                        motorMajorArm.setPower(0.5);
+                    }
+                    motorMajorArm.setPower(0.175);
+                } else if (difference < 0) {
+                    while (currentPosition > level2) {
+                        currentPosition = motorMajorArm.getCurrentPosition();
+                        motorMajorArm.setPower(0.1);
+                    }
+                    motorMajorArm.setPower(0.175);
+                } else {
+                    motorMajorArm.setPower(0.175);
+                }
+
+            }
+
+            if (gamepad2.dpad_left) {
+                level3 = 500;
+                currentPosition = motorMajorArm.getCurrentPosition();
+                difference = level3 - currentPosition;
+                if (difference > 0) {
+                    while (currentPosition < level3) {
+                        currentPosition = motorMajorArm.getCurrentPosition();
+                        motorMajorArm.setPower(0.5);
+                    }
+                    motorMajorArm.setPower(0.2);
+                } else if (difference < 0) {
+                    while (currentPosition > level3) {
+                        currentPosition = motorMajorArm.getCurrentPosition();
+                        motorMajorArm.setPower(0.1);
+                    }
+                    motorMajorArm.setPower(0.15);
+                } else {
+                    motorMajorArm.setPower(0.15);
+                }
             }
 
             telemetry.addLine("LeftY2" + leftY2);
