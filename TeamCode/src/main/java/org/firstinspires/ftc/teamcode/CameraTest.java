@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "Camera Testing idk")
+@Autonomous(name = "Camera Testing idk")//great name....
 public class CameraTest extends LinearOpMode {
     OpenCvCamera cam;// webcam
     int width;

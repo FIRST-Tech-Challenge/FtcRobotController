@@ -9,6 +9,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+
 @Autonomous(name = "QQ code")
 public class QQDriverCode  extends LinearOpMode {
     double hue;//color we want, yellow
