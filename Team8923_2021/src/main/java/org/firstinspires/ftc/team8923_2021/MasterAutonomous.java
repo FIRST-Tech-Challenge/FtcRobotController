@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team8923_2021;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -28,7 +29,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     double Kmove = 1.0f/1200.0f;
 
-
     int TOL = 100;
 
     boolean isDoneSettingUp = false;
@@ -44,8 +44,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     int element;
 
-
-
     int delays = 0;
     int numOfSecondsDelay = 0;
     int delayTime = 0;
@@ -58,7 +56,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
     enum Alliance{
         BLUE,RED
     }
-
 
     enum Destinations{
         SQUAREA, SQUAREB, SQUAREC
@@ -108,8 +105,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
                 destination = Destinations.SQUAREC;
             }
 
-
-
             if(gamepad1.start){
                 isDoneSettingUp = true;
             }
@@ -124,34 +119,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             telemetry.addData("delays:", delays);
             telemetry.addData("destination", destination);
             telemetry.update();
-
-
-
         }
-    }
-
-    public void moveAuto( double distance, double speed, double minSpeed) throws InterruptedException {
-        newTargetLeft = motorLeft.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
-        newTargetRight = motorRight.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
-        do {
-            errorLeft = newTargetLeft - motorLeft.getCurrentPosition();
-            speedLeft = Math.abs(errorLeft * Kmove);
-            speedLeft = Range.clip(speedLeft, minSpeed, speed);
-            speedLeft = (speedLeft * Math.signum(errorLeft));
-
-            errorRight = newTargetRight - motorRight.getCurrentPosition();
-            speedRight = Math.abs(errorRight * Kmove);
-            speedRight = Range.clip(speedRight, minSpeed, speed);
-            speedRight = (speedRight * Math.signum(errorRight));
-
-            motorLeft.setPower(-speedLeft);
-            motorRight.setPower(speedRight);
-
-            idle();
-        }
-
-        while (opModeIsActive() && Math.abs(errorLeft) > TOL || Math.abs(errorRight) > TOL);
-        stopDriving();
     }
 
     //using imu
@@ -164,32 +132,29 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         targetAngle = referenceAngle + targetAngle;
         targetAngle = adjustAngles(targetAngle);
-        do{
+        do {
             currentRobotAngle = imu.getAngularOrientation().firstAngle;
             angleError =  currentRobotAngle - targetAngle;
             angleError = adjustAngles(angleError);
             pivot = angleError * kAngle;
 
-            if (pivot >= 0.0){
+            if (pivot >= 0.0) {
                 pivot = Range.clip(pivot, 0.15, maxSpeed);
-            }else{
+            } else {
                 pivot = Range.clip(pivot, -maxSpeed, -0.15);
             }
 
             speedLeft = pivot;
-            speedRight = pivot;
+            speedRight = -pivot;
 
             motorLeft.setPower(speedLeft);
             motorRight.setPower(speedRight);
 
             idle();
         }
+
         while((opModeIsActive() && (Math.abs(angleError) > 3.0)) && (runtime.seconds() < timeout));
         stopDriving();
-
-
-
-
     }
 
     public void reverseImuPivot(double referenceAngle, double targetAngle, double maxSpeed, double kAngle, double timeout){
@@ -223,23 +188,50 @@ public abstract class MasterAutonomous extends MasterOpMode {
         } while(opModeIsActive() && (Math.abs(angleError) > 3.0) && (runtime.seconds() < timeout));
 
         stopDriving();
-
     }
 
-    public void sendTelemetry(){
+    public void moveForward(int distance, double speed, double minSpeed) {
+        //sets a target position to drive to
+        newTargetLeft = motorLeft.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
+        newTargetRight = motorRight.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
 
+        motorLeft.setTargetPosition(newTargetLeft);
+        motorRight.setTargetPosition(newTargetRight);
+
+        //set to RUN_TO_POSITION
+        motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //sets the speed
+        motorLeft.setPower(speed);
+        motorRight.setPower(speed);
+
+        // loop until both motors are not busy, then stop.
+        while (motorLeft.isBusy() && motorRight.isBusy()) {
+            telemetry.addData("Path1",  "Running to %7d :%7d", newTargetLeft,  newTargetRight);
+            telemetry.addData("Path2",  "Running at %7d :%7d",
+                    motorLeft.getCurrentPosition(),
+                    motorRight.getCurrentPosition());
+            telemetry.update();
+        }
+
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+
+        motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void sendTelemetry() {
         //Informs drivers of robot location
         telemetry.addData("X", robotX);
         telemetry.addData("Y", robotY);
         telemetry.addData("Robot Angle", imu.getAngularOrientation().firstAngle);
     }
 
-    private void stopDriving(){
-
-
+    private void stopDriving() {
         motorLeft.setPower(0.0);
         motorRight.setPower(0.0);
-
     }
 
     //normalizing the angle to be between -180 to 180
@@ -249,7 +241,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
         while(angle < -180)
             angle += 360;
         return angle;
-
     }
 
     private double normalizeAngle(double rawAngle){
@@ -293,13 +284,5 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         lastEncoderLeft = motorLeft.getCurrentPosition();
         lastEncoderRight = motorRight.getCurrentPosition();
-
-
     }
 }
-
-
-
-
-
-

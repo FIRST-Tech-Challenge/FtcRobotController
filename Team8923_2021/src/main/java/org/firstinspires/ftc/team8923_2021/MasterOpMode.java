@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team8923_2021;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 abstract public class MasterOpMode extends LinearOpMode {
     //declare drive motors
@@ -26,6 +27,9 @@ abstract public class MasterOpMode extends LinearOpMode {
 
         motorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        motorLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorRight.setDirection(DcMotor.Direction.REVERSE);
 
         //init imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
