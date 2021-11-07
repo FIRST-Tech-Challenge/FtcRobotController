@@ -23,14 +23,4 @@ public class Constants {
     public static final double TRANSLATION_D = 0.0;
     public static final double ANGLE_TOLERANCE_DEG = 5.0;
     public static final double POSITION_TOLERANCE_MM = 2*25.4;
-
-    //Intake
-    public static final double INTAKE_PWR = 1;
-
-    //Lift
-    public static final double LIFT_PWR = 1;
-
-    //Shooter
-    public static final double SHOOTER_PWR = 1;
-
 }

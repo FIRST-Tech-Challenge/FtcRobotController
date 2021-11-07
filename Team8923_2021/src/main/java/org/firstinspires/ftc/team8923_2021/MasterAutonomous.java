@@ -132,15 +132,15 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         targetAngle = referenceAngle + targetAngle;
         targetAngle = adjustAngles(targetAngle);
-        do{
+        do {
             currentRobotAngle = imu.getAngularOrientation().firstAngle;
             angleError =  currentRobotAngle - targetAngle;
             angleError = adjustAngles(angleError);
             pivot = angleError * kAngle;
 
-            if (pivot >= 0.0){
+            if (pivot >= 0.0) {
                 pivot = Range.clip(pivot, 0.15, maxSpeed);
-            }else{
+            } else {
                 pivot = Range.clip(pivot, -maxSpeed, -0.15);
             }
 
@@ -152,6 +152,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
             idle();
         }
+
         while((opModeIsActive() && (Math.abs(angleError) > 3.0)) && (runtime.seconds() < timeout));
         stopDriving();
     }
@@ -221,8 +222,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void sendTelemetry(){
-
+    public void sendTelemetry() {
         //Informs drivers of robot location
         telemetry.addData("X", robotX);
         telemetry.addData("Y", robotY);
@@ -284,13 +284,5 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         lastEncoderLeft = motorLeft.getCurrentPosition();
         lastEncoderRight = motorRight.getCurrentPosition();
-
-
     }
 }
-
-
-
-
-
-
