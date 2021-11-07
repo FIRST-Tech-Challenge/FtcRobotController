@@ -1,0 +1,21 @@
+The sound files listed below in this SDK were purchased from www.audioblocks.com under the 
+following license.
+
+    http://support.audioblocks.com/customer/en/portal/topics/610636-licensing-faq-s/articles
+
+    How am I allowed to use your content?
+    Last Updated: Aug 11, 2016 01:51PM EDT
+    Our content may be used for nearly any project, commercial or otherwise, including feature
+    films, broadcast, commercial, industrial, educational video, print projects, multimedia, 
+    games, and the internet, so long as substantial value is added to the content. (For example, 
+    incorporating an audio clip into a commercial qualifies, while reposting our audio clip on 
+    YouTube with no modification or no visual component does not.) Once you download a file it is 
+    yours to keep and use forever, royalty-	free, even if you change your subscription or cancel 
+    your account.
+
+List of applicable sound files
+
+	chimeconnect.wav
+        chimedisconnect.wav
+	errormessage.wav
+	warningmessage.wav
