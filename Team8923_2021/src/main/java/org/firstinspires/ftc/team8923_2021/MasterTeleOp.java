@@ -29,5 +29,14 @@ abstract public class MasterTeleOp extends MasterOpMode {
         if (isSlowMode) driveSpeed = 0.25;
         else driveSpeed = 1.0;
     }
+
+    public void runIntake() {
+        if (gamepad1.right_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
+            motorIntake.setPower(0.8);
+            else motorIntake.setPower(0.0);
+
+        }
+
+    }
 }
 
