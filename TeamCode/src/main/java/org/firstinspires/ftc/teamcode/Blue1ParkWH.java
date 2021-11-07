@@ -61,7 +61,7 @@ import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
 
 @Autonomous(name="BluePark", group="Linear Opmode")
 
-public class BluePark extends DriveMethods {
+public class Blue1ParkWH extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
