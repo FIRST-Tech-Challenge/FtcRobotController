@@ -3,21 +3,22 @@ package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Config.VisionConfig;
-import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 public class DetectMarker {
-    Robot robot;
     HardwareMap hardwareMap;
     OpenCvInternalCamera robotCamera;
     MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
+    QuickTelemetry quickTelemetry;
 
-    public DetectMarker(Robot robot, OpenCvInternalCamera camera) {
-        this.robot = robot;
-        this.hardwareMap = robot.getOpMode().hardwareMap;
+    public DetectMarker(HardwareMap hardwareMap, OpenCvInternalCamera camera, QuickTelemetry quickTelemetry) {
+        this.hardwareMap = hardwareMap;
         this.robotCamera = camera;
+        this.quickTelemetry = quickTelemetry.newQuickTelemetryFile("Detect Marker Pipeline");
     }
 
     /**
@@ -30,7 +31,7 @@ public class DetectMarker {
      * @see DetectMarkerPipeline#getMarkerLocation()
      */
     public MarkerLocation DetectMarkerRun() {
-        DetectMarkerPipeline detectMarkerPipeline = new DetectMarkerPipeline(robot);
+        DetectMarkerPipeline detectMarkerPipeline = new DetectMarkerPipeline(quickTelemetry);
         robotCamera.setPipeline(detectMarkerPipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
@@ -38,17 +39,14 @@ public class DetectMarker {
         // landscape orientation, though.
         robotCamera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 robotCamera.startStreaming(VisionConfig.CAMERA_WIDTH, VisionConfig.CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
                 /*
                  * This will be called if the camera could not be opened
                  */

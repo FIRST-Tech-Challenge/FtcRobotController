@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 public class DetectMarkerThread implements Runnable {
@@ -22,7 +22,7 @@ public class DetectMarkerThread implements Runnable {
 
     @Override
     public void run() {
-        DetectMarker detectMarker = new DetectMarker(robot, robotCamera);
+        DetectMarker detectMarker = new DetectMarker(this.hardwareMap, robotCamera, robot.getQuickTelemetry());
         markerLocation = detectMarker.DetectMarkerRun();
     }
 

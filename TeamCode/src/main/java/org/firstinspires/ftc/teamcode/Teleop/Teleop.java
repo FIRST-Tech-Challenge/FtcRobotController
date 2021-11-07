@@ -1,48 +1,90 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
+import org.firstinspires.ftc.teamcode.Robot;
 
 @TeleOp(name = "Teleop")
-@Disabled
 public class Teleop extends LinearOpMode {
+    private Robot robot;
+
+    double deltaT;
+    double timeCurrent;
+    double timePre;
+
+    ElapsedTime timer;
+
+    private double robotAngle;
+    private boolean isIntakeOn = false;
+
+    private void initOpMode() {
+        //Initialize DC motor objects
+        timer = new ElapsedTime();
+        robot = new Robot(this, timer, true);
+
+        timeCurrent = timer.nanoseconds();
+        timePre = timeCurrent;
+
+        telemetry.addData("Wait for start", "");
+        telemetry.update();
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
-        // Declare our motors
-        // Make sure your ID's match your configuration
-        DcMotor frontLeft = hardwareMap.dcMotor.get("fl");
-        DcMotor backLeft = hardwareMap.dcMotor.get("bl");
-        DcMotor frontRight = hardwareMap.dcMotor.get("fr");
-        DcMotor backRight = hardwareMap.dcMotor.get("br");
+        initOpMode();
 
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        ElapsedTime timer = new ElapsedTime();
+
+        GamePadConfig gamePadConfig = new GamePadConfig();
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        while (opModeIsActive()) { // clearer nomenclature for variables
-            double ly = gamepad1.left_stick_y;
-            double lx = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
-            double ry = gamepad1.right_stick_y;
+        telemetry.clearAll();
+        timeCurrent = timer.nanoseconds();
+        timePre = timeCurrent;
 
-            double r = Math.hypot(lx, ly);
-            double robotAngle = Math.atan2(ly, lx) - Math.PI / 4;
-            double lrPower = r * Math.sin(robotAngle) + rx;
-            double lfPower = r * Math.cos(robotAngle) + rx;
-            double rrPower = r * Math.cos(robotAngle) - rx;
-            double rfPower = r * Math.sin(robotAngle) - rx;
-            frontLeft.setPower(lfPower);
-            frontRight.setPower(rfPower);
-            backLeft.setPower(lrPower);
-            backRight.setPower(rrPower);
+        while (opModeIsActive()) { // clearer nomenclature for variables
+            robot.getGamePadInputs();
+
+            timeCurrent = timer.nanoseconds();
+            deltaT = timeCurrent - timePre;
+            timePre = timeCurrent;
+
+            double[] motorPowers;
+            robotAngle = robot.imu.getAngularOrientation().firstAngle;
+            motorPowers = robot.drive.calcMotorPowers(robot.gamePadConfig.leftStickX*0.5, robot.gamePadConfig.leftStickY*0.5, robot.gamePadConfig.rightStickX*0.5);
+            robot.drive.setDrivePowers(motorPowers);
+
+            robot.drive.setDrivePowers(motorPowers);
+
+            //Toggle intake regular
+            if (robot.gamePadConfig.aButton && !robot.gamePadConfig.isaButtonPressedPrev){
+                if(isIntakeOn){
+                    robot.control.setIntakeDirection(true);
+                    isIntakeOn = false;
+                }
+                else {
+                    robot.control.setIntakeDirection(true);
+                    isIntakeOn = true;
+                }
+            }
+
+            //Toggle intake reverse
+            if (robot.gamePadConfig.bButton && !robot.gamePadConfig.isbButtonPressedPrev){
+                if(isIntakeOn){
+                    robot.control.setIntakeDirection(false);
+                    isIntakeOn = false;
+                }
+                else {
+                    robot.control.setIntakeDirection(false);
+                    isIntakeOn = true;
+                }
+            }
         }
     }
 }

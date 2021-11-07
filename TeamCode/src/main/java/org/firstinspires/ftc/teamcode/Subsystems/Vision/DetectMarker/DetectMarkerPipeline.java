@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
 
 import org.firstinspires.ftc.teamcode.Config.MainConfig;
-import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
 import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
@@ -55,8 +55,8 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
      * @see QuickTelemetry
      * @see AllianceColor
      */
-    public DetectMarkerPipeline(Robot robot) {
-        telemetry = robot.getQuickTelemetry();
+    public DetectMarkerPipeline(QuickTelemetry quickTelemetry) {
+        this.telemetry = quickTelemetry;
     }
 
     /**

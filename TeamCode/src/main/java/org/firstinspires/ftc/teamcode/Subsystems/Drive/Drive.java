@@ -1,18 +1,19 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Drive;
 
-import android.util.Log;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.Config.DriveConfig;
-import org.firstinspires.ftc.teamcode.Subsystems.MinorSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Robot;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 
 import java.util.List;
 import java.util.Locale;
@@ -21,7 +22,7 @@ import java.util.Locale;
  *
  * Mostly repetitive code.
  */
-public class Drive extends MinorSubsystem {
+public class Drive extends Subsystem {
     /** DC Motors initialization. */
     public DcMotorEx frontLeft;
     public DcMotorEx frontRight;
@@ -52,23 +53,20 @@ public class Drive extends MinorSubsystem {
      *
      * @param robot the robot
      * @param motors given in a list for readability
-     * @param odL motor
-     * @param odB motor
-     * @param odR motor
      * @param imu the imu
      *
      * @see Robot
      * @see DcMotorEx
      * @see BNO055IMU
      */
-    public Drive(Robot robot, List<DcMotorEx> motors, DcMotorEx odL, DcMotorEx odB, DcMotorEx odR, BNO055IMU imu) {
-        super(robot);
-        telemetry.telemetry(3, "Drive:", "motors init started");
+    public Drive(QuickTelemetry telemetry, HardwareMap hardwareMap, ElapsedTime timer, List<DcMotorEx> motors, BNO055IMU imu) {
+        super(telemetry, hardwareMap, timer);
+        telemetry.telemetry(3, "motors init started");
         this.frontLeft = motors.get(0);
         this.frontRight = motors.get(1);
         this.rearLeft = motors.get(2);
         this.rearRight = motors.get(3);
-        telemetry.telemetry(2, "Drive:", "motors init finished");
+        telemetry.telemetry(2, "motors init finished");
 
         this.odL = odL;
         this.odB = odB;
@@ -77,6 +75,7 @@ public class Drive extends MinorSubsystem {
         this.imu = imu;
 
         setZeroPowerBehavior();
+        telemetry.telemetry(2, "Drive initialized", "Drive initialized");
     }
 
     private int getOdometryCountL() {
@@ -210,7 +209,7 @@ public class Drive extends MinorSubsystem {
 //                - Math.sin(robotCurrentAngle*Math.PI/180.0));
         robotCurrentAngle += angle;
         // Display it for the driver.
-        telemetry.telemetry("turnRobot",  "turn to %7.2f degrees", robotCurrentAngle);
+        telemetry.telemetry(4, "turnRobot",  "turn to %7.2f degrees", robotCurrentAngle);
     }
 
     public void turnByTick(double power, double angle) {
@@ -250,7 +249,7 @@ public class Drive extends MinorSubsystem {
 //                - Math.sin(robotCurrentAngle*Math.PI/180.0));
         robotCurrentAngle += degrees;
         // Display it for the driver.
-        telemetry.telemetry("turnRobot",  "turn to %7.2f degrees", robotCurrentAngle);
+        telemetry.telemetry(4, "turnRobot",  "turn to %7.2f degrees", robotCurrentAngle);
     }
 
     public double getYaw() {
@@ -286,12 +285,10 @@ public class Drive extends MinorSubsystem {
             }
         }
         stop();
-        telemetry.telemetry("initial angle",  "%7.2f degrees", initialAngle);
-        telemetry.telemetry("last read angle",  "%7.2f degrees", currentAngle);
-        telemetry.telemetry("final angle",  "%7.2f degrees", getYaw());
-        opMode.sleep(3000);
-        telemetry.telemetry("final2 angle",  "%7.2f degrees", getYaw());
-        opMode.sleep(3000);
+        telemetry.telemetry(5, "initial angle",  "%7.2f degrees", initialAngle);
+        telemetry.telemetry(5, "last read angle",  "%7.2f degrees", currentAngle);
+        telemetry.telemetry(5, "final angle",  "%7.2f degrees", getYaw());
+        telemetry.telemetry(5, "final2 angle",  "%7.2f degrees", getYaw());
     }
 
     public void moveToPos2D(double power, double targetPositionX, double targetPositionY){
@@ -369,7 +366,7 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosX = targetPositionX;
         robotCurrentPosY = targetPositionY;
         // Display it for the driver.
-        telemetry.telemetry("moveToPosABS",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveToPosABS",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
     }
 
     public void moveToPosREL(double targetPositionX, double targetPositionY) {
@@ -380,7 +377,7 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosY += targetPositionY * Math.sin(robotCurrentAngle*Math.PI/180.0)
                 + targetPositionX * Math.sin((robotCurrentAngle-90.0)*Math.PI/180.0);
         // Display it for the driver.
-        telemetry.telemetry("moveToPosREL",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveToPosREL",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
     }
 
     public void moveForward_odometry(double distance) throws InterruptedException {
@@ -395,14 +392,14 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosX += distance * Math.cos(robotCurrentAngle*Math.PI/180.0);
         robotCurrentPosY += distance * Math.sin(robotCurrentAngle*Math.PI/180.0);
         // Display it for the driver.
-        telemetry.telemetry("moveForward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveForward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         updateOdometry();
-        telemetry.telemetry("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
+        telemetry.telemetry(4, "odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         double angleError = (((double) DriveConfig.odometryCountR) - ((double) DriveConfig.odometryCountL))*0.5* DriveConfig.ODOMETRY_mm_PER_COUNT*(180.0/3.14159265)/ DriveConfig.ODOMETRY_RADIUS_X;
         turnRobotByTick(-angleError);
         updateOdometry();
-        telemetry.telemetry("correction angle",  " %7.2f", -angleError);
-        telemetry.telemetry("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
+        telemetry.telemetry(4, "correction angle",  " %7.2f", -angleError);
+        telemetry.telemetry(4, "odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         if (DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT > 25.0) {
             moveLeft(DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         }
@@ -422,7 +419,7 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosX += distance * Math.cos(robotCurrentAngle*Math.PI/180.0);
         robotCurrentPosY += distance * Math.sin(robotCurrentAngle*Math.PI/180.0);
         // Display it for the driver.
-        telemetry.telemetry("moveForward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveForward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
     }
 
     public void moveBackward_odometry(double distance) throws InterruptedException {
@@ -437,14 +434,14 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosX += distance * Math.cos((robotCurrentAngle+180.0)*Math.PI/180.0);
         robotCurrentPosY += distance * Math.sin((robotCurrentAngle+180.0)*Math.PI/180.0);
         // Display it for the driver.
-        telemetry.telemetry("moveBackward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveBackward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         updateOdometry();
-        telemetry.telemetry("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
+        telemetry.telemetry(4, "odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         double angleError = (((double) DriveConfig.odometryCountR) - ((double) DriveConfig.odometryCountL))*0.5* DriveConfig.ODOMETRY_mm_PER_COUNT*(180.0/3.14159265)/ DriveConfig.ODOMETRY_RADIUS_X;
         turnRobotByTick(-angleError);
         updateOdometry();
-        telemetry.telemetry("correction angle",  " %7.2f", -angleError);
-        telemetry.telemetry("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
+        telemetry.telemetry(4, "correction angle",  " %7.2f", -angleError);
+        telemetry.telemetry(4, "odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         if (DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT > 25.0) {
             moveLeft(DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         }
@@ -464,7 +461,7 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosX += distance * Math.cos((robotCurrentAngle+180.0)*Math.PI/180.0);
         robotCurrentPosY += distance * Math.sin((robotCurrentAngle+180.0)*Math.PI/180.0);
         // Display it for the driver.
-        telemetry.telemetry("moveBackward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveBackward",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
     }
 
     public void moveLeft_odometry(double distance) {
@@ -479,15 +476,15 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosX += distance * Math.cos((robotCurrentAngle+90.0)*Math.PI/180.0);
         robotCurrentPosY += distance * Math.sin((robotCurrentAngle+90.0)*Math.PI/180.0);
         // Display it for the driver.
-        telemetry.telemetry("moveLeft",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveLeft",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         updateOdometry();
-        telemetry.telemetry("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
+        telemetry.telemetry(4, "odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
 //        sleep(1000);
         double angleError = (((double) DriveConfig.odometryCountR) - ((double) DriveConfig.odometryCountL))*0.5* DriveConfig.ODOMETRY_mm_PER_COUNT*(180.0/3.14159265)/ DriveConfig.ODOMETRY_RADIUS_X;
         turnRobotByTick(-angleError);
         updateOdometry();
-        telemetry.telemetry("correction angle",  " %7.2f", -angleError);
-        telemetry.telemetry("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
+        telemetry.telemetry(4, "correction angle",  " %7.2f", -angleError);
+        telemetry.telemetry(4, "odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         double offsetY = (((double) DriveConfig.odometryCountR) + ((double) DriveConfig.odometryCountL))*0.5;
         if (offsetY* DriveConfig.ODOMETRY_mm_PER_COUNT > 25.0) {
             moveBackward(offsetY* DriveConfig.ODOMETRY_mm_PER_COUNT);
@@ -508,7 +505,7 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosX += distance * Math.cos((robotCurrentAngle+90.0)*Math.PI/180.0);
         robotCurrentPosY += distance * Math.sin((robotCurrentAngle+90.0)*Math.PI/180.0);
         // Display it for the driver.
-        telemetry.telemetry("moveLeft",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveLeft",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
 //        sleep(100);
     }
 
@@ -524,14 +521,14 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosX += distance * Math.cos((robotCurrentAngle-90.0)*Math.PI/180.0);
         robotCurrentPosY += distance * Math.sin((robotCurrentAngle-90.0)*Math.PI/180.0);
         // Display it for the driver.
-        telemetry.telemetry("moveRight",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveRight",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
         updateOdometry();
-        telemetry.telemetry("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
+        telemetry.telemetry(4, "odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
 //        sleep(1000);
         double angleError = (((double) DriveConfig.odometryCountR) - ((double) DriveConfig.odometryCountL))*0.5* DriveConfig.ODOMETRY_mm_PER_COUNT*(180.0/3.14159265)/ DriveConfig.ODOMETRY_RADIUS_X;
         turnRobotByTick(-angleError);
         updateOdometry();
-        telemetry.telemetry("correction angle",  " %7.2f", -angleError);
+        telemetry.telemetry(4, "correction angle",  " %7.2f", -angleError);
         telemetry.telemetry("odometry",  " L %7.2f R %7.2f B %7.2f", DriveConfig.odometryCountL* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountR* DriveConfig.ODOMETRY_mm_PER_COUNT, DriveConfig.odometryCountB* DriveConfig.ODOMETRY_mm_PER_COUNT);
         double offsetY = (((double) DriveConfig.odometryCountR) + ((double) DriveConfig.odometryCountL))*0.5;
         if (offsetY* DriveConfig.ODOMETRY_mm_PER_COUNT > 25.0) {
@@ -553,23 +550,23 @@ public class Drive extends MinorSubsystem {
         robotCurrentPosX += distance * Math.cos((robotCurrentAngle-90.0)*Math.PI/180.0);
         robotCurrentPosY += distance * Math.sin((robotCurrentAngle-90.0)*Math.PI/180.0);
         // Display it for the driver.
-        telemetry.telemetry("moveRight",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
+        telemetry.telemetry(4, "moveRight",  "move to %7.2f, %7.2f", robotCurrentPosX,  robotCurrentPosY);
 //        sleep(100);
     }
 
     public void printMotorPIDCoefficients() {
         PIDFCoefficients pidCoeff;
         pidCoeff = getMotorPIDCoefficients(frontLeft, DcMotor.RunMode.RUN_TO_POSITION);
-        telemetry.telemetry("Front Left ", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
+        telemetry.telemetry(1, "Front Left ", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
                 pidCoeff.p, pidCoeff.i, pidCoeff.d, pidCoeff.f, pidCoeff.algorithm.toString());
         pidCoeff = getMotorPIDCoefficients(frontRight, DcMotor.RunMode.RUN_TO_POSITION);
-        telemetry.telemetry("Front Right", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
+        telemetry.telemetry(1, "Front Right", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
                 pidCoeff.p, pidCoeff.i, pidCoeff.d, pidCoeff.f, pidCoeff.algorithm.toString());
         pidCoeff = getMotorPIDCoefficients(rearLeft, DcMotor.RunMode.RUN_TO_POSITION);
-        telemetry.telemetry("Rear Left  ", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
+        telemetry.telemetry(1, "Rear Left  ", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
                 pidCoeff.p, pidCoeff.i, pidCoeff.d, pidCoeff.f, pidCoeff.algorithm.toString());
         pidCoeff = getMotorPIDCoefficients(rearRight, DcMotor.RunMode.RUN_TO_POSITION);
-        telemetry.telemetry("Rear Right ", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
+        telemetry.telemetry(1, "Rear Right ", "P: %.2f I: %.2f D: %.2f F: %.2f A: %s",
                 pidCoeff.p, pidCoeff.i, pidCoeff.d, pidCoeff.f, pidCoeff.algorithm.toString());
     }
 
@@ -624,7 +621,7 @@ public class Drive extends MinorSubsystem {
         double currentTimeRR = ((double) (timer.nanoseconds() - startTime)) * 1.0e-6;
         String output = String.format(Locale.US, "FL %.3f, %d, FR %.3f %d, RL %.3f %d, RR %.3f %d",
                 currentTimeFL, currentCountFL, currentTimeFR, currentCountFR, currentTimeRL, currentCountRL, currentTimeRR, currentCountRR);
-        Log.d("motorEnc", output);
+        telemetry.telemetry(3, "motorEnc", output);
     }
 
     /**
@@ -909,7 +906,7 @@ public class Drive extends MinorSubsystem {
                     prevTimeRR*1000.0, prevCountRR, currentError, acculErrorRR, errorSlope, currentPower,
                     isMotorFLNotMoving?"Y":"N", isMotorFRNotMoving?"Y":"N", isMotorRLNotMoving?"Y":"N", isMotorRRNotMoving?"Y":"N",
                     isTimeOutStarted?"Y":"N", timeOutStartedTime*1000.0, isTimeOutExceeded?"Y":"N");
-            Log.d("motorEnc", output);
+            telemetry.telemetry(2,"motorEnc", output);
         }
 
     }
@@ -972,5 +969,11 @@ public class Drive extends MinorSubsystem {
             targetSpeed = speedOffset;
         }
         return targetSpeed;
+    }
+    public void setDrivePowers(double[] powers) {
+        frontLeft.setPower(powers[0]);
+        frontRight.setPower(powers[1]);
+        rearLeft.setPower(powers[2]);
+        rearRight.setPower(powers[3]);
     }
 }
