@@ -14,10 +14,10 @@ import androidx.annotation.NonNull;
  * Interface for simple button push toggleable tool
  */
 public abstract class ToggleableTool<T extends DcMotorSimple>{
-    private final T motor;
-    private final double power;
-    private final ToggleButtonReader reader;
-    private boolean isPressed = false;
+    protected final T motor;
+    protected final double power;
+    protected final ToggleButtonReader reader;
+    protected boolean isPressed = false;
     protected void run() {
         isPressed = reader.getState();
         if (isPressed) {

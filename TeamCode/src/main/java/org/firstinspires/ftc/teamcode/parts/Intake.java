@@ -10,7 +10,20 @@ import androidx.annotation.NonNull;
  * intake, extension of ToggleableTool
  */
 public class Intake extends ToggleableTool<DcMotor> {
+    private final GamepadEx toolGamepad;
     public Intake(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad) {
         super(eventThread, map, toolGamepad, DcMotor.class, "intake", GamepadKeys.Button.X, -1);
+        this.toolGamepad = toolGamepad;
+    }
+    @Override
+    protected void run() {
+        isPressed = reader.getState();
+        if (isPressed) {
+            motor.setPower(power);
+        } else if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
+            motor.setPower(-power);
+        } else {
+            motor.setPower(0);
+        }
     }
 }

@@ -43,7 +43,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
     private final int rectangleWidth = 10;
     private final int rectangleHeight = 10;
 
-
+    private int different = 1;
     public pipeline1Simulator(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
@@ -80,8 +80,9 @@ public class pipeline1Simulator extends OpenCvPipeline {
         );
 
         //The rectangle is drawn into the mat
+        different = mostDifferent(topAverage,middleAverage,bottomAverage);
         try {
-            switch (mostDifferent(topAverage,middleAverage,bottomAverage)) {
+            switch (different) {
                 case 1:
                     drawRectOnToMat(input, topRect, yellow);
                     drawRectOnToMat(input, middleRect, red);
@@ -143,7 +144,7 @@ public class pipeline1Simulator extends OpenCvPipeline {
      * @param val3
      * @return Most different, 1-3
      */
-    public static int mostDifferent(@NonNull double val1, @NonNull double val2, @NonNull double val3) {
+    public static int mostDifferent(double val1, double val2, double val3) {
         double valMean = (val1+val2+val3)/3;
         double[] array = {Math.abs(valMean - val1),Math.abs(valMean - val2),Math.abs(valMean - val3)};
         int max = array[0] > array[1] ? 1 : 2;
