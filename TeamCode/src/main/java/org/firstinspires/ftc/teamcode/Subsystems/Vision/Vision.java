@@ -31,9 +31,8 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
  * @see <a href="https://github.com/OpenFTC/EasyOpenCV">EasyOpenCV</a>
  */
 
-
 public class Vision extends Subsystem {
-
+    MarkerLocation finalMarkerLocation; // Marker Location
     WebcamName webcamName = null;
 
     // Since ImageTarget trackable use mm to specify their dimensions, we must use mm for all the physical dimension.
@@ -63,8 +62,6 @@ public class Vision extends Subsystem {
 
     private int[] viewportContainerIds;
 
-    private MarkerLocation finalMarkerLocation;
-
     /**
      * Class instantiation
      *
@@ -93,7 +90,7 @@ public class Vision extends Subsystem {
 
         telemetry.telemetry(4, "Detect Marker","Detecting Marker");
         DetectMarker detectMarkerRunnable = new DetectMarker(hardwareMap, robotCamera, telemetry);
-        finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
+        VisionConfig.finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
         telemetry.telemetry(3, "Detect Marker", "Detected Marker");
         telemetry.telemetry(2, "Vision Status", "Vision initialized");
     }
@@ -116,9 +113,5 @@ public class Vision extends Subsystem {
     // Helper method to create matrix to identify locations
     public OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
         return OpenGLMatrix.translation(x, y, z).multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
-    }
-
-    public MarkerLocation getFinalMarkerLocation() {
-        return this.finalMarkerLocation;
     }
 }

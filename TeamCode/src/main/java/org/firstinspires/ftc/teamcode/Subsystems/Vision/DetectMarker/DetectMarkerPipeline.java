@@ -49,7 +49,7 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
 
     /**
      * Class instantiation
-     * @param robot The robot (used for {@link QuickTelemetry})
+     * @param quickTelemetry used for {@link QuickTelemetry}
      *
      * @see Robot
      * @see QuickTelemetry
@@ -72,7 +72,7 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
      * as {@link MarkerLocation#NOT_FOUND}, if otherwise, the respective Location it is in is
      * returned via a {@link MarkerLocation} variable called {@link #markerLocation}</p>
      *
-     * @param input A Mat
+     * @param input A Mask (the class is called {@link Mat})
      * @return The marker location
      *
      * @see #allianceColor
@@ -127,7 +127,6 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
             markerLocation = MarkerLocation.NOT_FOUND;
             telemetry.telemetry("Marker Location", "not found");
         }
-        telemetry.update();
 
         Imgproc.cvtColor(mask, mask, Imgproc.COLOR_GRAY2RGB); // TODO: Change COLOR_GRAY2RGB to something more useful.
 

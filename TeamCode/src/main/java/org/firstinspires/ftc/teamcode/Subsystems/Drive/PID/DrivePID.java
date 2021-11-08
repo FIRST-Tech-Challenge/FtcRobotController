@@ -76,7 +76,6 @@ public class DrivePID extends LinearOpMode {
         pidDrive = new PIDController(.05, 0, 0);
 
         quickTelemetry.telemetry("Mode", "calibrating...");
-        quickTelemetry.update();
 
         // make sure the imu gyro is calibrated before continuing.
         while (!isStopRequested() && !imu.isGyroCalibrated())
