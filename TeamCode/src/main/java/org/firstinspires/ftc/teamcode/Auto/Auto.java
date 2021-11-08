@@ -23,10 +23,6 @@ import org.firstinspires.ftc.teamcode.Robot;
 //Park in warehouse (10)
 @Autonomous(name = "Auto", group = "Concept")
 public class Auto extends LinearOpMode {
-    ElapsedTime timer = new ElapsedTime();
-    Robot robot = new Robot(this, timer, true);
-
-
     /** Override of runOpMode()
      *
      * <p>Please do not swallow the InterruptedException, as it is used in cases
@@ -38,6 +34,9 @@ public class Auto extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
+        ElapsedTime timer = new ElapsedTime();
+
+        Robot robot = new Robot(this, timer, true);
          //**NOTE** The directions here are based on an orientation where the audience is at the bottom, blue alliance on the left, and red alliance on the right
 
         //Assume start on position closest to carousels

@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Config.MainConfig;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 
 
 /**
@@ -22,12 +23,8 @@ import org.firstinspires.ftc.teamcode.Robot;
 //Deliver freight to hub (6)
 // - deliver freight to corresponding level of custom element (20)
 //Park in warehouse (10)
-@Autonomous(name = "Auto Blue", group = "Concept")
+@Autonomous(name = "Auto Blue", group = "Auto")
 public class AutoBlue extends LinearOpMode {
-    ElapsedTime timer = new ElapsedTime();
-    Robot robot = new Robot(this, timer, true);
-
-
     /** Override of runOpMode()
      *
      * <p>Please do not swallow the InterruptedException, as it is used in cases
@@ -39,8 +36,9 @@ public class AutoBlue extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
-
-        // TODO: Detect position for freight
+        ElapsedTime timer = new ElapsedTime();
+        MainConfig.setAllianceColor(AllianceColor.BLUE);
+        Robot robot = new Robot(this, timer, true);
 
         // TODO: Move downwards and deliver duck
 

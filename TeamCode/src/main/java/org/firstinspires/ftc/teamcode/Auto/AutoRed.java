@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Config.MainConfig;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 
 
 /**
@@ -24,10 +26,6 @@ import org.firstinspires.ftc.teamcode.Robot;
 //Park in warehouse (10)
 @Autonomous(name = "Auto Red", group = "Concept")
 public class AutoRed extends LinearOpMode {
-    ElapsedTime timer = new ElapsedTime();
-    Robot robot = new Robot(this, timer, true);
-
-
     /** Override of runOpMode()
      *
      * <p>Please do not swallow the InterruptedException, as it is used in cases
@@ -39,8 +37,9 @@ public class AutoRed extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
-
-        // TODO: Detect position for freight
+        ElapsedTime timer = new ElapsedTime();
+        MainConfig.setAllianceColor(AllianceColor.RED);
+        Robot robot = new Robot(this, timer, true);
 
         // TODO: Move downwards and deliver duck
 
