@@ -59,7 +59,7 @@ import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="BluePark", group="Linear Opmode")
+@Autonomous(name="Blue1ParkWH", group="Linear Opmode")
 
 public class Blue1ParkWH extends DriveMethods {
 

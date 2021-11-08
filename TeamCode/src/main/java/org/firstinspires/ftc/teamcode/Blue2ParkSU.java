@@ -29,9 +29,19 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
+import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
+import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
+import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
+import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
 
 
 /**
@@ -49,11 +59,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 //I
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+@Autonomous(name="Blue2ParkSU", group="Linear Opmode")
 
-@Disabled // <-- Delete this line so that the program shows up on the phone.
+//@Disabled // <-- Delete this line so that the program shows up on the phone.
 
 public class Blue2ParkSU extends DriveMethods {
+
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -66,6 +77,16 @@ public class Blue2ParkSU extends DriveMethods {
         /**
          * Any code for initilization goes here
          */
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
+        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
+        servoCarousel = hardwareMap.get(Servo.class, "carousel");
+
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -75,6 +96,15 @@ public class Blue2ParkSU extends DriveMethods {
         /**
          * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
          */
+        driveForDistance(.05,.3,Direction.LEFT);
+        driveForDistance(.3,.3,Direction.FORWARD);
+        servoCarousel.setPosition(.4);
+        driveDirection(.05,Direction.FORWARD);
+        sleep(3500);
+        servoCarousel.setPosition(.5);
+        StopMotors();
+        driveForDistance(.7,.3,Direction.LEFT);
+
 
         // start near the carousel, do the duck, park in the storage unit (blue side)
 
