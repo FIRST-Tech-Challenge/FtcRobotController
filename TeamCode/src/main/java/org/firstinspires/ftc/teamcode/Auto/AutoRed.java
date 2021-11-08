@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 // - deliver freight to corresponding level of custom element (20)
 //Park in warehouse (10)
 @Autonomous(name = "Auto Red", group = "Concept")
-public class AutoRed extends LinearOpMode {
+public class AutoRed extends Auto {
     /** Override of runOpMode()
      *
      * <p>Please do not swallow the InterruptedException, as it is used in cases
@@ -37,15 +37,8 @@ public class AutoRed extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
-        ElapsedTime timer = new ElapsedTime();
-        MainConfig.setAllianceColor(AllianceColor.RED);
-        Robot robot = new Robot(this, timer, true);
+        init(AllianceColor.RED);
 
-        // TODO: Navigate to center of field and deliver freight
-
-        // TODO: Move downwards and deliver duck
-
-        // TODO: Navigate to warehouse and park
-
+        int placementLevel = getHubLevel();
     }
 }

@@ -23,12 +23,12 @@ public class Teleop extends LinearOpMode {
     private void initOpMode() {
         //Initialize DC motor objects
         timer = new ElapsedTime();
-        robot = new Robot(this, timer, true);
+        robot = new Robot(this, timer, false);
 
         timeCurrent = timer.nanoseconds();
         timePre = timeCurrent;
 
-        telemetry.addData("Wait for start", "");
+        telemetry.addData("Waiting for start", "...");
         telemetry.update();
     }
 
