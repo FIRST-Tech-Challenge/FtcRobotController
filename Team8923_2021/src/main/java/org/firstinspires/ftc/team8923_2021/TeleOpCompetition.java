@@ -16,9 +16,10 @@ public class TeleOpCompetition extends MasterTeleOp
         {
             splitArcadeDrive();
             runDriveSpeed();
-            idle();
             runIntake();
             runCarousel();
+            idle();
+
         }
     }
 }

@@ -224,8 +224,9 @@ public abstract class MasterAutonomous extends MasterOpMode {
     }
 
     public void runIntake() {
-        motorIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorIntake.setDirection(DcMotorSimple.Direction.REVERSE);
         motorIntake.setPower(Constants.INTAKE_PWR);
+        sleep(900);
     }
 
     public void sendTelemetry() {

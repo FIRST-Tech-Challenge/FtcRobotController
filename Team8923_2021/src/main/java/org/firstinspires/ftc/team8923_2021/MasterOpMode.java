@@ -36,14 +36,15 @@ abstract public class MasterOpMode extends LinearOpMode {
 
         motorLeft.setDirection(DcMotor.Direction.FORWARD);
         motorRight.setDirection(DcMotor.Direction.REVERSE);
-        motorIntake.setDirection(DcMotor.Direction.FORWARD);
 
         //init misc motors
         motorIntake = hardwareMap.dcMotor.get("motorIntake");
         motorIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+
         motorCarousel = hardwareMap.dcMotor.get("motorCarousel");
         motorCarousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         //init imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

@@ -9,10 +9,11 @@ public class BlueWarehouseNoIntake extends MasterAutonomous{
         waitForStart();
 
         while (opModeIsActive()){
-            moveForward(16, 80, 10);
+            //moveForward(16, 80, 10);
             double referenceAngle =  imu.getAngularOrientation().firstAngle; // Get a reference ange from the IMU for future movements using IMU
             imuPivot(referenceAngle, 90, 30, 0.015, 3.0);
             moveForward(50, 80, 10);
+            runIntake();
             break;
         }
     }
