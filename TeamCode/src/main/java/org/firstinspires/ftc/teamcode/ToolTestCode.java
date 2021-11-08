@@ -33,10 +33,10 @@ public class ToolTestCode extends LinearOpMode {
         hardwareMap.get(Blinker.class, "Expansion Hub 2");
         final GamepadEx moveGamepad = new GamepadEx(gamepad1);
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
-        final Lift lift = new Lift(hardwareMap, toolGamepad, telemetry);
+        final Lift lift = new Lift(eventThread, hardwareMap, toolGamepad, telemetry);
         final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
-        final Carousel carousel = new Carousel(hardwareMap,toolGamepad);
-        final Intake intake = new Intake(hardwareMap,toolGamepad);
+        final Carousel carousel = new Carousel(eventThread, hardwareMap,toolGamepad);
+        final Intake intake = new Intake(eventThread, hardwareMap,toolGamepad);
         final ElapsedTime clocktimer = new ElapsedTime();
         int clocks = 0;
         int clockOutput = 0;
@@ -56,19 +56,16 @@ public class ToolTestCode extends LinearOpMode {
                 lift.update();
             }
         });
-        thread.start();
-        while (opModeIsActive()) {
-            if (clocktimer.time(TimeUnit.SECONDS) <= 1) { clocks++; }
-            else {
-                clockOutput = clocks;
-                clocks = 0;
-                clocktimer.reset();
+        Thread thread2 = new Thread(() -> {
+            while (opModeIsActive()) {
+                move.update();
             }
-            telemetry.addData("ClocksPerSecond", clockOutput);
-            move.update();
-            carousel.update();
-            intake.update();
-            telemetry.update();
-        }
+        });
+        thread.setPriority(3);
+        thread2.setPriority(3);
+        thread.start();
+        thread2.start();
+        //noinspection StatementWithEmptyBody
+        while (opModeIsActive()) {}
     }
 }

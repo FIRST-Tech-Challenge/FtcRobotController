@@ -9,7 +9,12 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.core.thread.event.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.event.types.impl.TimedEvent;
+
 import com.qualcomm.robotcore.hardware.Servo;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * lift and arm
@@ -20,7 +25,7 @@ public class Lift {
      * @param telemetry local telemetry instance
      * @param toolGamepad instance of FtcLib GamepadEx
      */
-    public Lift(@NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
+    public Lift(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
         liftMotor = map.get(DcMotor.class,"liftMotor");
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -37,6 +42,7 @@ public class Lift {
         gamepad = toolGamepad;
         rBumpReader = new ButtonReader(toolGamepad, GamepadKeys.Button.RIGHT_BUMPER);
         aReader = new ButtonReader(toolGamepad, GamepadKeys.Button.A);
+        this.eventThread = eventThread;
     }
     private final Telemetry telemetry;
     private final DcMotor liftMotor;
@@ -48,9 +54,11 @@ public class Lift {
     private final ButtonReader aReader;
     private final double encoderOffset;
     private double curPos = 0;
-    private boolean running = false;
-    private boolean first = true;
-    private boolean dumping = false;
+    private boolean running = false; // currently moving down
+    private boolean first = true; // first time its reached bottom
+    private final AtomicBoolean dumping = new AtomicBoolean(false);
+    private final AtomicBoolean dumpingEventRunning = new AtomicBoolean(false);
+    private final EventThread eventThread;
     public void update() {
         final double stickValue = gamepad.getLeftY();
         telemetry.addData("left stick",stickValue);
@@ -60,7 +68,7 @@ public class Lift {
         telemetry.addData("motor encoder",curPos);
         telemetry.addData("topSensor", topSensor.getState());
         telemetry.addData("armServo",armServo.getPosition());
-        if (liftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION || !liftMotor.isBusy()) {
+        if ((liftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION || !liftMotor.isBusy()) && !dumpingEventRunning.get()) {
             if (running) {
                 liftMotor.setPower(0);
                 liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -99,12 +107,16 @@ public class Lift {
         rBumpReader.readValue();
         if (curPos >= (double) 960) { // completely away from intake interference
             if (rBumpReader.wasJustReleased()) {
-                dumping = !dumping;
+                dumping.set(!dumping.get());
             }
-            if (dumping) {
-                armServo.setPosition(0);
-                try { Thread.sleep(800);} catch (InterruptedException ignored) {}
-                dumping = false;
+            if (dumping.get()) {
+                if (!dumpingEventRunning.get()) {
+                    armServo.setPosition(0);
+                    eventThread.addEvent(new TimedEvent(() -> {
+                        dumping.set(false);
+                        dumpingEventRunning.set(false);
+                    }, 800));
+                }
             } else {
                 armServo.setPosition(0.7);
             }
