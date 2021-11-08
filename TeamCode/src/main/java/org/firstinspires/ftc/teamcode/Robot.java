@@ -292,11 +292,19 @@ public class Robot {
     }
 
 
-    public void setFrontLeftDriveMotor(double power) { frontLeftDriveMotor.setPower(power); }
+    public void setFrontLeftDriveMotor(double power) {
+        frontLeftDriveMotor.setPower(power);
+    }
 
-    public void setFrontRightDriveMotor(double power) { frontRightDriveMotor.setPower(power); }
+    public void setFrontRightDriveMotor(double power) {
+        frontRightDriveMotor.setPower(power);
+    }
 
-    public void setRearLeftDrivePower(double power) { rearLeftDriveMotor.setPower(power); }
+    public void setRearLeftDrivePower(double power) {
+        rearLeftDriveMotor.setPower(power);
+    }
 
-    public void setRearRightDriveMotor(double power) { rearRightDriveMotor.setPower(power); }
+    public void setRearRightDriveMotor(double power) {
+        rearRightDriveMotor.setPower(power);
+    }
 }
