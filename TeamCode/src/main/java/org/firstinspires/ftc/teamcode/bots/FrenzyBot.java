@@ -169,6 +169,8 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Lift to lower", defaultReturn = "")
     public void liftToLower(){
+        //reset dropper before retracting the lift all the way
+        resetDropper();
         liftLocation = LIFT_NO_EXTENSION;
         this.lift.setTargetPosition(LIFT_NO_EXTENSION);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
