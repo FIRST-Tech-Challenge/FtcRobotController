@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.core.thread.event.types.impl;
+package org.firstinspires.ftc.teamcode.core.thread.types.impl;
 
 import androidx.annotation.NonNull;
 
-import org.firstinspires.ftc.teamcode.core.thread.event.types.api.RunListenerOnceEvent;
+import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerOnceEvent;
 import org.jetbrains.annotations.Contract;
 
 /**

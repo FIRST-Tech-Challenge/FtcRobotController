@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.parts;
+package org.firstinspires.ftc.teamcode.core.robot;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -6,12 +6,12 @@ import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.core.thread.event.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.event.types.api.RunListenerIndefinitelyEvent;
+import org.firstinspires.ftc.teamcode.core.thread.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerIndefinitelyEvent;
 import androidx.annotation.NonNull;
 
 /**
- * Interface for simple button push toggleable tool
+ * simple button push toggleable tool
  */
 public abstract class ToggleableTool<T extends DcMotorSimple>{
     protected final T motor;
@@ -26,7 +26,9 @@ public abstract class ToggleableTool<T extends DcMotorSimple>{
             motor.setPower(0);
         }
     }
+
     /**
+     * @param eventThread local instance of eventThread
      * @param map pass this through, this will be handled by user opmode. hardwaremap instance.
      * @param toolGamepad same as above, instance of GamepadEx from FtcLib
      * @param tClass Either DcMotor or CRServo, any extension of DcMotorSimple

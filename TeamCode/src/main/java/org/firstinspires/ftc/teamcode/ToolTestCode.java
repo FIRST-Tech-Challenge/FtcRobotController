@@ -4,18 +4,16 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.softwaretools.hardwareMapListGenerator;
-import org.firstinspires.ftc.teamcode.core.thread.event.thread.EventThread;
-import org.firstinspires.ftc.teamcode.parts.Carousel;
-import org.firstinspires.ftc.teamcode.parts.ControllerMovement;
-import org.firstinspires.ftc.teamcode.parts.Intake;
-import org.firstinspires.ftc.teamcode.parts.Lift;
+import org.firstinspires.ftc.teamcode.core.thread.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.robot.Carousel;
+import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
+import org.firstinspires.ftc.teamcode.core.robot.Intake;
+import org.firstinspires.ftc.teamcode.core.robot.Lift;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
 import androidx.annotation.RequiresApi;
 
 @TeleOp

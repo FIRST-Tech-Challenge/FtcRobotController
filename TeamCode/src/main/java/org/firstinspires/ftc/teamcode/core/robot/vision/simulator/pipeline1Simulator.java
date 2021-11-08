@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision.simulator;
+package org.firstinspires.ftc.teamcode.core.robot.vision.simulator;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -7,7 +7,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 import java.lang.Math;
-import androidx.annotation.NonNull;
+
 public class pipeline1Simulator extends OpenCvPipeline {
     private final Telemetry telemetry;
     private final Scalar red = new Scalar(255,0,0);
@@ -150,6 +150,8 @@ public class pipeline1Simulator extends OpenCvPipeline {
         int max = array[0] > array[1] ? 1 : 2;
         return array[2] > array[max-1] ? 3 : max;
     }
+
+    public int getDifferent() { return different; }
 
     /**
      * Draw the rectangle onto the desired mat

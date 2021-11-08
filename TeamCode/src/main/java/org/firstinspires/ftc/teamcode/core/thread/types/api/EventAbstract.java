@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.core.thread.event.types.api;
+package org.firstinspires.ftc.teamcode.core.thread.types.api;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

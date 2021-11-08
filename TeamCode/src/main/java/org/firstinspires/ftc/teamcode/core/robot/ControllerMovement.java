@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.parts;
+package org.firstinspires.ftc.teamcode.core.robot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import org.firstinspires.ftc.teamcode.core.movement.api.StrafingMovement;

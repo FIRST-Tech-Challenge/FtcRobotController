@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.core.thread.event.types.impl;
+package org.firstinspires.ftc.teamcode.core.thread.types.impl;
 
-import org.firstinspires.ftc.teamcode.core.thread.event.types.api.RunListenerOnceEvent;
+import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerOnceEvent;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

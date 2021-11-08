@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.core.thread.event.types.impl;
+package org.firstinspires.ftc.teamcode.core.thread.types.impl;
 
-import org.firstinspires.ftc.teamcode.core.thread.event.types.api.RunListenerIndefinitelyEvent;
+import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerIndefinitelyEvent;
 
 /**
  * An event that runs every so often.

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.parts;
+package org.firstinspires.ftc.teamcode.core.robot;
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,8 +7,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.thread.event.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.event.types.impl.TimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 import com.qualcomm.robotcore.hardware.Servo;
 import java.util.concurrent.atomic.AtomicBoolean;
 

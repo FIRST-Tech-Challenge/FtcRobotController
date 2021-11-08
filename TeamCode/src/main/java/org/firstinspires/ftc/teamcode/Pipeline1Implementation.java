@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.vision.robot.pipeline1Detector;
+import org.firstinspires.ftc.teamcode.core.robot.vision.demo.pipeline1Detector;
 
 public class Pipeline1Implementation extends LinearOpMode {
     pipeline1Detector pipeline1Detector;

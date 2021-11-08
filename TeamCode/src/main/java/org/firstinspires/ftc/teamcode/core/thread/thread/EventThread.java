@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.core.thread.event.thread;
+package org.firstinspires.ftc.teamcode.core.thread.thread;
 
-import org.firstinspires.ftc.teamcode.core.thread.event.types.api.Event;
+import org.firstinspires.ftc.teamcode.core.thread.types.api.Event;
 
 import java.util.Collections;
 import java.util.Iterator;
