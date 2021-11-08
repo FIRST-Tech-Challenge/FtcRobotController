@@ -23,8 +23,7 @@ public class DetectMarker {
 
     /**
      * This method waits until the search for the marker is done, and then it return the marker
-     * location. It waits until {@link DetectMarkerPipeline#getSearchStatus() } returns the marker
-     * location.
+     * location. It waits until the marker is found, then it returns the marker location.
      *
      * @return Where the marker is
      *
@@ -47,12 +46,12 @@ public class DetectMarker {
 
             @Override
             public void onError(int errorCode) {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
+                markerLocation = MarkerLocation.NOT_FOUND;
             }
         });
-        markerLocation = detectMarkerPipeline.getMarkerLocation();
+        if (!(markerLocation == MarkerLocation.NOT_FOUND)) {
+            markerLocation = detectMarkerPipeline.getMarkerLocation();
+        }
         return markerLocation;
     }
 }

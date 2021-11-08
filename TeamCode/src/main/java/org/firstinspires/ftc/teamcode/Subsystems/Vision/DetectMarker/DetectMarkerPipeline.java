@@ -27,8 +27,6 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
 
     private final AllianceColor allianceColor = MainConfig.getAllianceColor();
     private MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
-    private SearchStatus searchStatus = SearchStatus.INITIALIZING;
-
 
     static final Rect LEFT_RECT = new Rect(
             new Point(60, 35),
@@ -82,7 +80,6 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
      */
     @Override
     public Mat processFrame(Mat input) {
-        this.searchStatus = SearchStatus.SEARCHING;
         Imgproc.cvtColor(input, mask, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful. (not possible)
         Scalar lowHSV = new Scalar(23, 50, 70);
         Scalar highHSV = new Scalar(32, 255, 255);
@@ -148,7 +145,6 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
         Imgproc.rectangle(mask, MIDDLE_RECT, markerLocation == MarkerLocation.MIDDLE ? colorMarker : colorNormal);
         Imgproc.rectangle(mask, RIGHT_RECT, markerLocation == MarkerLocation.RIGHT ? colorMarker : colorNormal);
 
-        this.searchStatus = SearchStatus.FOUND;
         return mask;
     }
 
@@ -159,14 +155,5 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
      */
     public MarkerLocation getMarkerLocation() {
         return markerLocation;
-    }
-
-    /**
-     * Gets the search status
-     * @return the search status, which is in the {@link #searchStatus} enum format.
-     * @see #searchStatus
-     */
-    public SearchStatus getSearchStatus() {
-        return searchStatus;
     }
 }

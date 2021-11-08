@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Config.MainConfig;
+import org.firstinspires.ftc.teamcode.Config.VisionConfig;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 
 
 /**
@@ -32,37 +35,35 @@ public class Auto extends LinearOpMode {
      *
      * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
      */
-    @Override
-    public void runOpMode() throws InterruptedException {
+
+    public Robot init(AllianceColor allianceColor) {
         ElapsedTime timer = new ElapsedTime();
 
-        Robot robot = new Robot(this, timer, true);
-         //**NOTE** The directions here are based on an orientation where the audience is at the bottom, blue alliance on the left, and red alliance on the right
+        MainConfig.setAllianceColor(allianceColor);
 
-        //Assume start on position closest to carousels
+        return new Robot(this, timer, true);
+    }
 
-        //Detect frieght position (vision)
+    public int getHubLevel() {
+        int placementLevel;
+        switch (VisionConfig.finalMarkerLocation) {
+            case LEFT:
+                placementLevel = 1;
+                break;
+            case MIDDLE:
+                placementLevel = 2;
+                break;
+            case RIGHT:
+                placementLevel = 3;
+                break;
+            default:
+                placementLevel = -1;
+                break;
+        }
+        return placementLevel;
+    }
 
-        //Move down 2ft
-
-        //Deliver duck from carousel
-
-        //Park in warehouse (completely)
-
-        //Move towards center horizontally 7ft
-
-        //Move up 5ft
-
-        //Deliver frieght to hub 
-            //Vision to detect custom element position
-
-            //Determine corresponding level on shipping hub & drop in frieght
-
-        //Move up 3ft
-
-        //Move towards (our) alliance 3.5ft
-
-        //Move up 3ft to park
-        
+    @Override
+    public void runOpMode() throws InterruptedException {
     }
 }
