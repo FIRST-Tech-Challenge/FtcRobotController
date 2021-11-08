@@ -72,8 +72,6 @@ public class MecanumTeleop extends DriveMethods {
         telemetry.update();
 
 
-        initializeMotors();
-        setMotorDirections();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -83,10 +81,7 @@ public class MecanumTeleop extends DriveMethods {
         motorBackRight = hardwareMap.get(DcMotor.class, "backright");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
 
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+       setMotorDirections();
 
 
         // Most robots need the motor on one side to be reversed to drive forward

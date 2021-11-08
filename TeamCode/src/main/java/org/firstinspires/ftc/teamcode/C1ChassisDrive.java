@@ -108,10 +108,7 @@ public class C1ChassisDrive extends DriveMethods {
         servoStable = hardwareMap.get(Servo.class, "stabilizer");
 
 
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        setMotorDirections();
 
         motorMajorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -142,28 +139,28 @@ public class C1ChassisDrive extends DriveMethods {
             motorBackRight.setPower(leftY1 + leftX1 - rightX1);
 
 
-//            if (movingToLevel0 && currentPosition == level0) {
-//                motorMajorArm.setPower(0);
-//                movingToLevel0 = false;
-//
-//            }
-//
-//            if (movingToLevel1 && currentPosition == level1) {
-//                motorMajorArm.setPower(0.15);
-//                movingToLevel1 = false;
-//            }
-//
-//            if (movingToLevel2 && currentPosition == level2) {
-//                motorMajorArm.setPower(0.175);
-//                movingToLevel2 = false;
-//
-//            }
-//
-//            if (movingToLevel3 && currentPosition == level3) {
-//                motorMajorArm.setPower(0.175);
-//                movingToLevel3 = false;
-//
-//            }
+            if (movingToLevel0 && currentPosition == level0) {
+                motorMajorArm.setPower(0);
+                movingToLevel0 = false;
+
+            }
+
+            if (movingToLevel1 && currentPosition == level1) {
+                motorMajorArm.setPower(0.15);
+                movingToLevel1 = false;
+            }
+
+            if (movingToLevel2 && currentPosition == level2) {
+                motorMajorArm.setPower(0.175);
+                movingToLevel2 = false;
+
+            }
+
+            if (movingToLevel3 && currentPosition == level3) {
+                motorMajorArm.setPower(0.175);
+                movingToLevel3 = false;
+
+            }
 
             //servos
 //            carouselPosition = 0.5 + (rightTrigger1 / 2);
@@ -205,12 +202,9 @@ public class C1ChassisDrive extends DriveMethods {
             } else {
                 driveDirection(0, Direction.FORWARD);
             }
-            if (leftY2 < 0) {
-                motorMajorArm.setPower(0.75 * leftY2);
-            }
-            if (leftY2 > 0) {
-                motorMajorArm.setPower(0.75 * leftY2);
-            }
+
+            motorMajorArm.setPower(1 * leftY2);
+
             if (rightTrigger2 > 0) {
                 servoClamp.setPosition(.6 * rightTrigger2);
             }
@@ -219,67 +213,66 @@ public class C1ChassisDrive extends DriveMethods {
             }
 
 
-
             //Major Excavator Arm Control is in 3 levels, denoted by the dpad (in order): up, right, bottom
-            if (gamepad2.dpad_up) {
-                motorMajorArm.setPower(0.1);
-                movingToLevel0 = true;
-                currentPosition = motorMajorArm.getCurrentPosition();
-                servoClamp.setPosition(0);
-            }
-
-            if (gamepad2.dpad_right) {
-                currentPosition = motorMajorArm.getCurrentPosition();
-                difference = level1 - currentPosition;
-                if (difference > 0) {
-                    currentPosition = motorMajorArm.getCurrentPosition();
-                    motorMajorArm.setPower(0.5);
-                    movingToLevel1 = true;
-
-                    motorMajorArm.setPower(0.15);
-                } else if (difference < 0) {
-                    currentPosition = motorMajorArm.getCurrentPosition();
-                    motorMajorArm.setPower(0.1);
-                    movingToLevel1 = true;
-
-                } else {
-                    motorMajorArm.setPower(0.15);
-                }
-                currentPosition = motorMajorArm.getCurrentPosition();
-                servoClamp.setPosition((.25));
-            }
-
-            if (gamepad2.dpad_down) {
-                currentPosition = motorMajorArm.getCurrentPosition();
-                difference = level2 - currentPosition;
-                if (difference > 0) {
-                    motorMajorArm.setPower(0.5);
-                    movingToLevel2 = true;
-                } else if (difference < 0) {
-                    motorMajorArm.setPower(0.1);
-                    movingToLevel2 = true;
-                } else {
-                    motorMajorArm.setPower(0.175);
-                }
-                currentPosition = motorMajorArm.getCurrentPosition();
-                servoClamp.setPosition(.5);
-            }
-
-            if (gamepad2.dpad_left) {
-                currentPosition = motorMajorArm.getCurrentPosition();
-                difference = level3 - currentPosition;
-                if (difference > 0) {
-                    motorMajorArm.setPower(0.5);
-                    movingToLevel3 = true;
-                } else if (difference < 0) {
-                    motorMajorArm.setPower(0.1);
-                    movingToLevel3 = true;
-                } else {
-                    motorMajorArm.setPower(0.175);
-                }
-                currentPosition = motorMajorArm.getCurrentPosition();
-                servoClamp.setPosition(1);
-            }
+//            if (gamepad2.dpad_up) {
+//                motorMajorArm.setPower(0.1);
+//                movingToLevel0 = true;
+//                currentPosition = motorMajorArm.getCurrentPosition();
+//                servoClamp.setPosition(0);
+//            }
+//
+//            if (gamepad2.dpad_right) {
+//                currentPosition = motorMajorArm.getCurrentPosition();
+//                difference = level1 - currentPosition;
+//                if (difference > 0) {
+//                    currentPosition = motorMajorArm.getCurrentPosition();
+//                    motorMajorArm.setPower(0.5);
+//                    movingToLevel1 = true;
+//
+//                    motorMajorArm.setPower(0.15);
+//                } else if (difference < 0) {
+//                    currentPosition = motorMajorArm.getCurrentPosition();
+//                    motorMajorArm.setPower(0.1);
+//                    movingToLevel1 = true;
+//
+//                } else {
+//                    motorMajorArm.setPower(0.15);
+//                }
+//                currentPosition = motorMajorArm.getCurrentPosition();
+//                servoClamp.setPosition((.25));
+//            }
+//
+//            if (gamepad2.dpad_down) {
+//                currentPosition = motorMajorArm.getCurrentPosition();
+//                difference = level2 - currentPosition;
+//                if (difference > 0) {
+//                    motorMajorArm.setPower(0.5);
+//                    movingToLevel2 = true;
+//                } else if (difference < 0) {
+//                    motorMajorArm.setPower(0.1);
+//                    movingToLevel2 = true;
+//                } else {
+//                    motorMajorArm.setPower(0.175);
+//                }
+//                currentPosition = motorMajorArm.getCurrentPosition();
+//                servoClamp.setPosition(.5);
+//            }
+//
+//            if (gamepad2.dpad_left) {
+//                currentPosition = motorMajorArm.getCurrentPosition();
+//                difference = level3 - currentPosition;
+//                if (difference > 0) {
+//                    motorMajorArm.setPower(0.5);
+//                    movingToLevel3 = true;
+//                } else if (difference < 0) {
+//                    motorMajorArm.setPower(0.1);
+//                    movingToLevel3 = true;
+//                } else {
+//                    motorMajorArm.setPower(0.175);
+//                }
+//                currentPosition = motorMajorArm.getCurrentPosition();
+//                servoClamp.setPosition(1);
+//            }
 
             /**
              * Safety precaution potentially

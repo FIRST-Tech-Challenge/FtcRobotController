@@ -83,10 +83,7 @@ public class Blue2ParkWH extends DriveMethods {
         motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
         servoCarousel = hardwareMap.get(Servo .class, "carousel");
 
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        setMotorDirections();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
