@@ -90,7 +90,7 @@ public class Vision extends Subsystem {
 
         telemetry.telemetry(4, "Detect Marker","Detecting Marker");
         DetectMarker detectMarkerRunnable = new DetectMarker(hardwareMap, robotCamera, telemetry);
-        MarkerLocation finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
+        VisionConfig.finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
         telemetry.telemetry(3, "Detect Marker", "Detected Marker");
         telemetry.telemetry(2, "Vision Status", "Vision initialized");
     }
