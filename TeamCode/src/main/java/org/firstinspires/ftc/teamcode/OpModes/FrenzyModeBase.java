@@ -116,7 +116,9 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleSpecialActions() {
-        handleLift();
+//        handleLift(); //todo: uncomment once ready to use set position
+        handleLiftManual(); //todo: comment out once the positions for all levels are determined.
+        handleLiftIntermediate();
         handleDropper();
         handleIntake();
         handleOuttake();
@@ -191,7 +193,35 @@ public class FrenzyModeBase extends LinearOpMode {
                 robot.liftToLower();
             } else if (liftVal < -0.5) {
                 startGamepadLockout();
-                robot.liftToUpper();
+                robot.liftToLevel3();
+            }
+        }
+    }
+
+    protected void handleLiftManual() {
+        if (isButtonPressable()) {
+            double liftVal = gamepad2.right_stick_y;
+            robot.activateLift(liftVal);
+
+        }
+    }
+
+    protected void handleLiftIntermediate() {
+        if (isButtonPressable()) {
+            double liftVal = gamepad2.left_stick_y;
+            if (liftVal > 0.5) {
+                startGamepadLockout();
+                robot.liftToLower();
+            } else if (liftVal < -0.5) {
+                startGamepadLockout();
+                int location = robot.getLiftLocation();
+                if (location == FrenzyBot.LIFT_LEVEL_ONE){
+                    robot.liftToLevel2();
+                }
+                else{
+                    robot.liftToLevel1();
+                }
+
             }
         }
     }

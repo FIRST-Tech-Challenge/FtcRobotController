@@ -23,9 +23,12 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx rotatorLeft = null;
     private Servo dropperServo = null;
     private static final String TAG = "FrenzyBot";
-    private static int LIFT_FULL_EXTENSION = -1380;
-    private static int LIFT_HALF_EXTENSION = -650;
-    private static int LIFT_NO_EXTENSION = 0;
+    public static int LIFT_LEVEL_THREE = -3450; // TODO: 11/7/21 Change values based on the empirical observations 
+    public static int LIFT_LEVEL_TWO = -1840;
+    public static int LIFT_LEVEL_ONE = -740;
+    public static int LIFT_NO_EXTENSION = 0;
+
+    private int liftLocation = LIFT_NO_EXTENSION;
     private static double LIFT_SPEED = 0.8;
 
     // Dropper Servo positions
@@ -63,6 +66,7 @@ public class FrenzyBot extends FrenzyBaseBot {
             lift.setDirection(DcMotor.Direction.REVERSE);
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lift.setVelocity(0);
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize lift", ex);
         }
@@ -135,28 +139,44 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     public int getLiftPosition(){
+
         return this.lift.getCurrentPosition();
     }
 
-    @BotAction(displayName = "Lift to upper", defaultReturn = "")
-    public void liftToUpper(){
-        this.lift.setTargetPosition(LIFT_FULL_EXTENSION);
+    @BotAction(displayName = "Lift level 3", defaultReturn = "")
+    public void liftToLevel3(){
+        liftLocation = LIFT_LEVEL_THREE;
+        this.lift.setTargetPosition(LIFT_LEVEL_THREE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
     }
 
-    @BotAction(displayName = "Lift to mid", defaultReturn = "")
-    public void liftToMid(){
-        this.lift.setTargetPosition(LIFT_HALF_EXTENSION);
+    @BotAction(displayName = "Lift level 2", defaultReturn = "")
+    public void liftToLevel2(){
+        liftLocation = LIFT_LEVEL_TWO;
+        this.lift.setTargetPosition(LIFT_LEVEL_TWO);
+        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+    }
+
+    @BotAction(displayName = "Lift level 1", defaultReturn = "")
+    public void liftToLevel1(){
+        liftLocation = LIFT_LEVEL_ONE;
+        this.lift.setTargetPosition(LIFT_LEVEL_ONE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
     }
 
     @BotAction(displayName = "Lift to lower", defaultReturn = "")
     public void liftToLower(){
+        liftLocation = LIFT_NO_EXTENSION;
         this.lift.setTargetPosition(LIFT_NO_EXTENSION);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+    }
+
+    public int getLiftLocation(){
+        return liftLocation;
     }
 
     @BotAction(displayName = "Drop element", defaultReturn = "")
