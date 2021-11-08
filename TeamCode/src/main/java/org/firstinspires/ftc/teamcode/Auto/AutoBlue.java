@@ -40,9 +40,9 @@ public class AutoBlue extends LinearOpMode {
         MainConfig.setAllianceColor(AllianceColor.BLUE);
         Robot robot = new Robot(this, timer, true);
 
-        // TODO: Move downwards and deliver duck
-
         // TODO: Navigate to center of field and deliver freight
+
+        // TODO: Move downwards and deliver duck
 
         // TODO: Navigate to warehouse and park
 
