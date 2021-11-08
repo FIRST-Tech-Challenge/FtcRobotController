@@ -32,9 +32,6 @@ public class ToolTestCode extends LinearOpMode {
         new Intake(eventThread, hardwareMap,toolGamepad);
         List<String> list = new LinkedList<>();
         hardwareMapListGenerator.listGen(hardwareMap, telemetry);
-        waitForStart();
-        telemetry.clearAll();
-        eventThread.start();
         Thread thread = new Thread(() -> {
             while (opModeIsActive()) {
                 lift.update();
@@ -47,6 +44,9 @@ public class ToolTestCode extends LinearOpMode {
         });
         thread.setPriority(3);
         thread2.setPriority(3);
+        waitForStart();
+        telemetry.clearAll();
+        eventThread.start();
         thread.start();
         thread2.start();
         //noinspection StatementWithEmptyBody
