@@ -14,16 +14,16 @@ public class MecanumAutonomous extends LinearOpMode {
         //Import the hardware map
         robot.init(hardwareMap, telemetry);
         telemetry.addData("Say", "Hello Driver");
-        telemetry.addData("IMU Calibration: ", IMU_Calibrated());
+        IMU_Calibrated();
         //Begin after program's start
         waitForStart();
         //Start of actual code for movement
-        forward(20, 0.4, 5.0);
-        forward(-20, 0.4, 5.0);
-        move(45, 40, 0.1, 5.0);
-        move(225, 40, 0.1, 5.0);
-        move(135, 40, 0.1, 5.0);
-        move(315, 40, 0.1, 5.0);
+        forward(20, 0.8, 5.0);
+        forward(-20, 0.8, 5.0);
+        move(45, 40, 0.8, 5.0);
+        move(225, 40, 0.8, 5.0);
+        move(135, 40, 0.8, 5.0);
+        move(315, 40, 0.8, 5.0);
     }
     //Drive forward/backward. Travel distance in CM.
     public void forward(double distanceInCM, double power, double timeoutS) {
@@ -144,11 +144,10 @@ public class MecanumAutonomous extends LinearOpMode {
         return (int)Math.floor(drive * distance);
     }
     //Rturns telemetry for IMU Calibration.
-    public boolean IMU_Calibrated() {
+    public void IMU_Calibrated() {
         telemetry.addData("IMU Calibration Status", robot.imu.getCalibrationStatus());
         telemetry.addData("Gyro Calibrated", robot.imu.isGyroCalibrated() ? "True" : "False");
         telemetry.addData("System Status", robot.imu.getSystemStatus().toString());
         telemetry.update();
-        return robot.imu.isGyroCalibrated();
     }
 }
