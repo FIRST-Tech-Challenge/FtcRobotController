@@ -32,17 +32,26 @@ public class Teleop extends LinearOpMode {
         telemetry.update();
     }
 
+    /** Override of runOpMode()
+     *
+     * <p>Please do not swallow the InterruptedException, as it is used in cases
+     * where the op mode needs to be terminated early.</p>
+     *
+     * @throws InterruptedException
+     *
+     * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+     */
     @Override
     public void runOpMode() throws InterruptedException {
         initOpMode();
 
         ElapsedTime timer = new ElapsedTime();
 
-        GamePadConfig gamePadConfig = new GamePadConfig();
-
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested()) {
+            return;
+        }
 
         telemetry.clearAll();
         timeCurrent = timer.nanoseconds();
