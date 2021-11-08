@@ -8,9 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.thread.event.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.event.types.api.RunListenerIndefinitelyEvent;
-
-import java.util.concurrent.atomic.AtomicReference;
-
 import androidx.annotation.NonNull;
 
 /**
