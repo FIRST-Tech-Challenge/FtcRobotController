@@ -37,6 +37,7 @@ import static org.firstinspires.ftc.teamcode.Variables.motorMajorArm;
 import static org.firstinspires.ftc.teamcode.Variables.motorTankTread;
 import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
 import static org.firstinspires.ftc.teamcode.Variables.servoClamp;
+import static org.firstinspires.ftc.teamcode.Variables.servoStable;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -77,10 +78,10 @@ public class C1ChassisDrive extends DriveMethods {
     boolean xButton;
     double leftY2;
     double rightTrigger2;
-    double level1;
-    double level2;
-    double level3;
-    double level0;
+    double level0 = 0;
+    double level1 = 100;
+    double level2 = 200;
+    double level3 = 300;
     double currentPosition;
     double difference;
     boolean movingToLevel0 = false;
@@ -104,6 +105,7 @@ public class C1ChassisDrive extends DriveMethods {
         servoCarousel = hardwareMap.get(Servo.class, "carousel");
         motorMajorArm = hardwareMap.get(DcMotor.class, "majorarm");
         servoClamp = hardwareMap.get(Servo.class, "clamp");
+        servoStable = hardwareMap.get(Servo.class, "stabilizer");
 
 
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -121,7 +123,7 @@ public class C1ChassisDrive extends DriveMethods {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
+            currentPosition = motorMajorArm.getCurrentPosition();
 
             leftY1 = -gamepad1.left_stick_y;
             leftX1 = gamepad1.left_stick_x;
@@ -140,25 +142,28 @@ public class C1ChassisDrive extends DriveMethods {
             motorBackRight.setPower(leftY1 + leftX1 - rightX1);
 
 
-            if (movingToLevel0 && currentPosition == level0) {
-
-
-            }
-
-            if (movingToLevel0 && currentPosition == level0) {
-
-
-            }
-
-            if (movingToLevel0 && currentPosition == level0) {
-
-
-            }
-
-            if (movingToLevel0 && currentPosition == level0) {
-
-
-            }
+//            if (movingToLevel0 && currentPosition == level0) {
+//                motorMajorArm.setPower(0);
+//                movingToLevel0 = false;
+//
+//            }
+//
+//            if (movingToLevel1 && currentPosition == level1) {
+//                motorMajorArm.setPower(0.15);
+//                movingToLevel1 = false;
+//            }
+//
+//            if (movingToLevel2 && currentPosition == level2) {
+//                motorMajorArm.setPower(0.175);
+//                movingToLevel2 = false;
+//
+//            }
+//
+//            if (movingToLevel3 && currentPosition == level3) {
+//                motorMajorArm.setPower(0.175);
+//                movingToLevel3 = false;
+//
+//            }
 
             //servos
 //            carouselPosition = 0.5 + (rightTrigger1 / 2);
@@ -214,82 +219,80 @@ public class C1ChassisDrive extends DriveMethods {
             }
 
 
+
             //Major Excavator Arm Control is in 3 levels, denoted by the dpad (in order): up, right, bottom
             if (gamepad2.dpad_up) {
-                level0 = 0;
+                motorMajorArm.setPower(0.1);
+                movingToLevel0 = true;
                 currentPosition = motorMajorArm.getCurrentPosition();
-                while (currentPosition > level0) {
-                    currentPosition = motorMajorArm.getCurrentPosition();
-                    motorMajorArm.setPower(0.1);
-                }
-                motorMajorArm.setPower(0);
+                servoClamp.setPosition(0);
             }
 
             if (gamepad2.dpad_right) {
-                level1 = 100;
                 currentPosition = motorMajorArm.getCurrentPosition();
                 difference = level1 - currentPosition;
                 if (difference > 0) {
-                    while (currentPosition < level1) {
-                        currentPosition = motorMajorArm.getCurrentPosition();
-                        motorMajorArm.setPower(0.5);
-                    }
+                    currentPosition = motorMajorArm.getCurrentPosition();
+                    motorMajorArm.setPower(0.5);
+                    movingToLevel1 = true;
+
                     motorMajorArm.setPower(0.15);
                 } else if (difference < 0) {
-                    while (currentPosition > level1) {
-                        currentPosition = motorMajorArm.getCurrentPosition();
-                        motorMajorArm.setPower(0.1);
-                    }
-                    motorMajorArm.setPower(0.15);
+                    currentPosition = motorMajorArm.getCurrentPosition();
+                    motorMajorArm.setPower(0.1);
+                    movingToLevel1 = true;
+
                 } else {
                     motorMajorArm.setPower(0.15);
                 }
+                currentPosition = motorMajorArm.getCurrentPosition();
+                servoClamp.setPosition((.25));
             }
 
             if (gamepad2.dpad_down) {
-                level2 = 300;
                 currentPosition = motorMajorArm.getCurrentPosition();
                 difference = level2 - currentPosition;
                 if (difference > 0) {
-                    while (currentPosition < level2) {
-                        currentPosition = motorMajorArm.getCurrentPosition();
-                        motorMajorArm.setPower(0.5);
-                    }
-                    motorMajorArm.setPower(0.175);
+                    motorMajorArm.setPower(0.5);
+                    movingToLevel2 = true;
                 } else if (difference < 0) {
-                    while (currentPosition > level2) {
-                        currentPosition = motorMajorArm.getCurrentPosition();
-                        motorMajorArm.setPower(0.1);
-                    }
-                    motorMajorArm.setPower(0.175);
+                    motorMajorArm.setPower(0.1);
+                    movingToLevel2 = true;
                 } else {
                     motorMajorArm.setPower(0.175);
                 }
-
+                currentPosition = motorMajorArm.getCurrentPosition();
+                servoClamp.setPosition(.5);
             }
 
             if (gamepad2.dpad_left) {
-                level3 = 500;
                 currentPosition = motorMajorArm.getCurrentPosition();
                 difference = level3 - currentPosition;
                 if (difference > 0) {
-                    while (currentPosition < level3) {
-                        currentPosition = motorMajorArm.getCurrentPosition();
-                        motorMajorArm.setPower(0.5);
-                    }
-                    motorMajorArm.setPower(0.2);
+                    motorMajorArm.setPower(0.5);
+                    movingToLevel3 = true;
                 } else if (difference < 0) {
-                    while (currentPosition > level3) {
-                        currentPosition = motorMajorArm.getCurrentPosition();
-                        motorMajorArm.setPower(0.1);
-                    }
-                    motorMajorArm.setPower(0.15);
+                    motorMajorArm.setPower(0.1);
+                    movingToLevel3 = true;
                 } else {
-                    motorMajorArm.setPower(0.15);
+                    motorMajorArm.setPower(0.175);
                 }
+                currentPosition = motorMajorArm.getCurrentPosition();
+                servoClamp.setPosition(1);
             }
 
-            telemetry.addLine("LeftY2" + leftY2);
+            /**
+             * Safety precaution potentially
+             */
+//            if(currentPosition >= 600){
+//                motorMajorArm.setPower(-0.1);
+//                sleep(500);
+//                motorMajorArm.setPower(0.1);
+//            }
+
+
+            telemetry.addLine("Arm Encoder Value: " + currentPosition);
+            telemetry.addLine("LeftY2 power: " + leftY2);
             telemetry.addLine("Run Time: " + runtime.toString());
             telemetry.update();
         }

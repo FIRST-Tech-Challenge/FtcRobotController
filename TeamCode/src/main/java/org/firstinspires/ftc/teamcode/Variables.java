@@ -24,6 +24,7 @@ public class Variables {
     //servos
     public static Servo servoCarousel;
     public static Servo servoClamp;
+    public static Servo servoStable;
 
     //sensors
     public static Gyroscope imu;
