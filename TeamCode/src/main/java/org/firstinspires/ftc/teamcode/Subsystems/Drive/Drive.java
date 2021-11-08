@@ -322,8 +322,13 @@ public class Drive extends Subsystem {
         logDriveEncoders();
     }
 
+    /**
+     * Distribute power appropriately according to the direction of motion.
+     * @param targetPositionX
+     * @param targetPositionY
+     * @param motorPower
+     */
     public void setPower2D(double targetPositionX, double targetPositionY, double motorPower) {
-        // distribute power appropriately according to the direction of motion
         double[] motorPowers = calcMotorPowers2D(targetPositionX, targetPositionY, motorPower);
         rearLeft.setPower(motorPowers[0]);
         frontLeft.setPower(motorPowers[1]);
