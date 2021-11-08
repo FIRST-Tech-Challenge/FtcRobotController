@@ -22,6 +22,9 @@ public class pipeline1Simulator extends OpenCvPipeline {
     private final Mat matCbBottom2 = new Mat();
     private final Mat matCbMiddle2 = new Mat();
     private final Mat matCbTop2 = new Mat();
+    private Mat topBlock = new Mat();
+    private Mat middleBlock = new Mat();
+    private Mat bottomBlock = new Mat();
 
     //Where the average CB value of the rectangles are stored
     private double topAverage = 0;
@@ -101,9 +104,9 @@ public class pipeline1Simulator extends OpenCvPipeline {
             drawRectOnToMat(input, bottomRect, red);
         }
         //We crop the image so it is only everything inside the rectangles and find the cb value inside of them
-        Mat topBlock = matYCrCb.submat(topRect);
-        Mat middleBlock = matYCrCb.submat(middleRect);
-        Mat bottomBlock = matYCrCb.submat(bottomRect);
+        topBlock = matYCrCb.submat(topRect);
+        middleBlock = matYCrCb.submat(middleRect);
+        bottomBlock = matYCrCb.submat(bottomRect);
         Core.extractChannel(topBlock, matCbTop, 0);
         Core.extractChannel(middleBlock,matCbMiddle,0);
         Core.extractChannel(bottomBlock, matCbBottom, 0);
