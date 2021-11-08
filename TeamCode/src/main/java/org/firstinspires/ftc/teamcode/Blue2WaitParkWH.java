@@ -58,9 +58,9 @@ import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="NewBlueCarousel2", group="Linear Opmode")
+@Autonomous(name="Blue2WaitParkWH", group="Linear Opmode")
 
-public class Blue2Wait extends DriveMethods {
+public class Blue2WaitParkWH extends DriveMethods {
     double leftY;
     double leftX;
     double rightX;
@@ -98,7 +98,7 @@ public class Blue2Wait extends DriveMethods {
         driveDirection(.05,Direction.FORWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
-        driveDirection(0,Direction.BACKWARD);
+        StopMotors();
         driveForDistance(.1,.3,Direction.LEFT);
         driveForDistance(.5,.3,Direction.BACKWARD);
         driveForDistance(.2,.3,Direction.RIGHT);

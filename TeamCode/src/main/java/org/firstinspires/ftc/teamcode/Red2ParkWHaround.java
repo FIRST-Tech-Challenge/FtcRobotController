@@ -29,9 +29,19 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
+import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
+import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
+import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
+import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
 
 
 /**
@@ -49,9 +59,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 //I
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+@Autonomous(name="Red2ParkWHaround", group="Linear Opmode")
 
-@Disabled // <-- Delete this line so that the program shows up on the phone.
+//@Disabled // <-- Delete this line so that the program shows up on the phone.
 
 public class Red2ParkWHaround extends DriveMethods {
 
@@ -66,6 +76,16 @@ public class Red2ParkWHaround extends DriveMethods {
         /**
          * Any code for initilization goes here
          */
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
+        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
+        servoCarousel = hardwareMap.get(Servo.class, "carousel");
+
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -75,19 +95,26 @@ public class Red2ParkWHaround extends DriveMethods {
         /**
          * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
          */
+        driveForDistance(.3,.3,Direction.BACKWARD);
+        driveForDistance(.3,.3, Direction.RIGHT);
+        driveForDistance(.1, .3,Direction.FORWARD);
+        servoCarousel.setPosition(.6);
+        driveDirection(.05,Direction.FORWARD);
+        sleep(3500);
+        servoCarousel.setPosition(.5);
+        StopMotors();
+        driveForDistance(.05,.3, Direction.BACKWARD);
+        driveForDistance(.2,.3,Direction.LEFT);
+        rotateToPosition(.3,90);
+        driveForDistance(.5,.3,Direction.FORWARD);
+        driveForDistance(.5,.3,Direction.LEFT);
+        driveForDistance(1.2,.3,Direction.FORWARD);
+        driveForDistance(.6,.3,Direction.RIGHT);
+        driveForDistance(.6,.3,Direction.FORWARD);
 
         // start near the carousel, do the duck, go around the dead robot and park in the warehouse (red side)
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
 
-            /**
-             * Any Teleop code goes here.
-             */
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
-        }
     }
 }
