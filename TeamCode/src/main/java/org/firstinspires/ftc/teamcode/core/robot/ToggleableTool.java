@@ -17,15 +17,6 @@ public abstract class ToggleableTool<T extends DcMotorSimple>{
     protected final T motor;
     protected final double power;
     protected final ToggleButtonReader reader;
-    protected boolean isPressed = false;
-    protected void run() {
-        isPressed = reader.getState();
-        if (isPressed) {
-            motor.setPower(power);
-        } else {
-            motor.setPower(0);
-        }
-    }
 
     /**
      * @param eventThread local instance of eventThread
@@ -44,8 +35,16 @@ public abstract class ToggleableTool<T extends DcMotorSimple>{
             @Override
             public boolean shouldRun() {
                 reader.readValue();
-                return reader.getState() != isPressed;
+                return reader.wasJustPressed();
             }
         });
+    }
+
+    protected void run() {
+        if (reader.getState()) {
+            motor.setPower(power);
+        } else {
+            motor.setPower(0);
+        }
     }
 }
