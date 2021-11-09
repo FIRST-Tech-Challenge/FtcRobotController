@@ -9,9 +9,9 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-public class hardwareMapListGenerator {
+public class HardwareMapListGenerator {
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void listGen(@NonNull HardwareMap hardwareMap, Telemetry telemetry) {
+    public static void gen(@NonNull HardwareMap hardwareMap, Telemetry telemetry) {
         List<String> list = new LinkedList<>();
         for (HardwareMap.DeviceMapping<? extends HardwareDevice> deviceMapping : hardwareMap.allDeviceMappings) {
             for (Map.Entry<String, ? extends HardwareDevice> entry : deviceMapping.entrySet()) {

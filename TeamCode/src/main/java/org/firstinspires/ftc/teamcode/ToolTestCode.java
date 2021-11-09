@@ -5,14 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
 
-import org.firstinspires.ftc.teamcode.core.softwaretools.hardwareMapListGenerator;
+import org.firstinspires.ftc.teamcode.core.softwaretools.HardwareMapListGenerator;
 import org.firstinspires.ftc.teamcode.core.thread.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.robot.Carousel;
 import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
 import org.firstinspires.ftc.teamcode.core.robot.Intake;
 import org.firstinspires.ftc.teamcode.core.robot.Lift;
-import java.util.LinkedList;
-import java.util.List;
 
 import androidx.annotation.RequiresApi;
 
@@ -30,8 +28,7 @@ public class ToolTestCode extends LinearOpMode {
         final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
         new Carousel(eventThread, hardwareMap,toolGamepad);
         new Intake(eventThread, hardwareMap,toolGamepad);
-        List<String> list = new LinkedList<>();
-        hardwareMapListGenerator.listGen(hardwareMap, telemetry);
+        HardwareMapListGenerator.gen(hardwareMap, telemetry);
         Thread thread = new Thread(() -> {
             while (opModeIsActive()) {
                 lift.update();
@@ -51,5 +48,6 @@ public class ToolTestCode extends LinearOpMode {
         thread2.start();
         //noinspection StatementWithEmptyBody
         while (opModeIsActive()) {}
+        eventThread.interrupt();
     }
 }
