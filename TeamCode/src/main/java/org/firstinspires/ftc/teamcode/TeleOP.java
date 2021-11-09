@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.Range;
 import java.lang.Math;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="Mecanum TeleOPTEST", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
-public class MecanumTeleOPTEST extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
+@TeleOp(name="TeleOP", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
+public class TeleOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
     private final ElapsedTime linearSlidePressDelay = new ElapsedTime();
@@ -107,14 +107,17 @@ public class MecanumTeleOPTEST extends OpMode {           //Declares the class T
         final double leftBackSpeed = (r * Math.cos(angleDC) - gamepad1.right_stick_x)*acc;
         final double rightBackSpeed = (r * Math.sin(angleDC) + gamepad1.right_stick_x)*acc;
         //INTAKE
-        double intakePower = gamepad1.right_trigger;
+        double intakePower = 0.0;
+        if(gamepad2.right_trigger > 0) intakePower = gamepad2.right_trigger;
+        if(gamepad1.right_trigger >0) intakePower = gamepad1.right_trigger;
         if(gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
         //CAROUSEL
-        if(gamepad1.x || gamepad2.x) carouselPower = -0.2;
-        else if(gamepad1.a || gamepad2.a) carouselPower = 0.2;
+        if(gamepad1.x || gamepad2.x) carouselPower = -1.0;
+        else if(gamepad1.a || gamepad2.a) carouselPower = 1.0;
         else carouselPower = 0.0;
         //LINEAR SLIDE
-        linearSlidePos += gamepad1.left_trigger*3;
+        if(gamepad1.left_trigger > 0) linearSlidePos += gamepad1.left_trigger*3;
+        else if(gamepad2.left_trigger > 0) linearSlidePos += gamepad2.left_trigger*3;
         if(gamepad1.left_bumper || gamepad2.left_bumper) {
            if(linearSlidePressDelay.milliseconds() <= 10) linearSlidePos = 0.0;
            else linearSlidePos = Range.clip(linearSlidePos - 10, 0.0, linearSlidePos - 5);
@@ -123,8 +126,8 @@ public class MecanumTeleOPTEST extends OpMode {           //Declares the class T
 
 
 //SERVOS
-        if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
-        else if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
+        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos+0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
+        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos-0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
         if(gamepad1.dpad_left || gamepad2.dpad_left) intakeServoPos = intakeServo.MIN_POSITION;
         else if(gamepad1.dpad_right || gamepad2.dpad_right) intakeServoPos = Range.clip(intakeServoPos + 0.01,intakeServo.MIN_POSITION,intakeServo.MAX_POSITION);
         if(gamepad1.b || gamepad2.b) preset3 = !preset3;

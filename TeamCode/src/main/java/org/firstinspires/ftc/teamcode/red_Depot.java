@@ -11,28 +11,30 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="MecanumAutoTEST", group="Linear Opmode")
+@Autonomous(name="Red Depot", group="Linear Opmode")
 
-public class MecanumAutoTEST extends LinearOpMode {
+public class red_Depot extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
     private DcMotor rightDCFront = null;
     private DcMotor leftDCBack = null;
     private DcMotor rightDCBack = null;
+    private DcMotor linearSlideDC = null;
+    private DcMotor carouselDC = null;
     private boolean slowMode = false;
     private double acc = 1.0;
-    private Servo servo1 = null;
+    private Servo releaseServo = null;
     private BNO055IMU imu = null;
     private final static double TICKS_PER_REVOLUTION = 537.7; //TPR, RPI, and TPI are all for GoBilda 312 RPM 19:2 planetary Yellow Jacket motors
-    private final static double REVOLUTIONS_PER_INCH = 1 / 11.873736;
+    private final static double REVOLUTIONS_PER_INCH = 0.5;
     private final static double TICKS_PER_INCH = TICKS_PER_REVOLUTION * REVOLUTIONS_PER_INCH;
     private static final double minAccel = 0.3;
     private static final double minDecel = 0.1;
     private static final double ticksAccel = 600.0;
     private static final double ticksDecel = 1200.0;
     private static final double degsAccel = 20.0;
-    private static final double degsDecel = 30.0;
+    private static final double degsDecel = 15.0;
     private double heading;             // the current heading of the robot
     private int heading_revs = 0;       // the complete revolutions of the robot
     private double heading_raw_last;    // the last raw heading from the IMU
@@ -47,6 +49,10 @@ public class MecanumAutoTEST extends LinearOpMode {
         rightDCFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftDCBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightDCBack = hardwareMap.get(DcMotor.class, "rightBack");
+        linearSlideDC = hardwareMap.get(DcMotor.class, "linearSlideDC");
+        carouselDC = hardwareMap.get(DcMotor.class, "carouselDC");
+        releaseServo = hardwareMap.get(Servo.class, "releaseServo");
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -67,9 +73,13 @@ public class MecanumAutoTEST extends LinearOpMode {
         rightDCFront.setDirection(DcMotor.Direction.REVERSE);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
+        carouselDC.setDirection(DcMotor.Direction.REVERSE);
 
         //Set DC motors to run with encoder
         resetEncoders();
+
+        linearSlideDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlideDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -79,8 +89,33 @@ public class MecanumAutoTEST extends LinearOpMode {
 
         if(!opModeIsActive()) return;
 
-        mecanumStrafe(10, 0, 0.7);
-        sleep(2000);
+        releaseServoMove(0.65);
+        mecanumStrafe(10.5, 0, 0.7);
+        sleep(1000);
+        linearSlideMove(1750,0.8);
+        sleep(1000);
+        releaseServoMove(releaseServo.MIN_POSITION);
+        sleep(1000);
+        mecanumStrafe(-3,0,-0.7);
+        sleep(500);
+        sleep(500);
+        mecanumStrafe(35,90,-0.7);
+        sleep(500);
+        mecanumRotate(90,0.5);
+        sleep(500);
+        mecanumStrafe(8,100,0.8);
+        sleep(500);
+        mecanumStrafe(3,10.0,0.7);
+        carouselMove(-1);
+        sleep(5000);
+        mecanumStrafe(20,75,0.6);
+        sleep(500);
+        carouselMove(0.0);
+        linearSlideMove(0,1.0);
+        sleep(100);
+        releaseServoMove(releaseServo.MAX_POSITION);
+        sleep(4000);
+
         telemetry.addData("Status", "Path Complete");
         telemetry.update();
 
@@ -91,6 +126,7 @@ public class MecanumAutoTEST extends LinearOpMode {
         leftDCFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftDCBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftDCBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         rightDCFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightDCFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDCBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -194,6 +230,7 @@ public class MecanumAutoTEST extends LinearOpMode {
                         sideways * (forwardBias + turningBias - 1.0) +
                         rotate);
         // set the powers to each of the motors
+
         lclSetPower(power_rf, power_rr, power_lf, power_lr);
     }
 
@@ -202,19 +239,23 @@ public class MecanumAutoTEST extends LinearOpMode {
         double radians = Math.toRadians(degrees);
         double sin = Math.sin(radians);
         double cos = Math.cos(radians);
-        double forward_max_speed = Math.abs(cos * max_speed);
+        double forward_max_speed = cos * max_speed;
         double forward_inches = cos * inches;
         double forward_direction_mult = (forward_inches > 0.0) ? 1.0 : -1.0;
-        double sideways_max_speed = Math.abs(sin * max_speed);
+        double sideways_max_speed = sin * max_speed;
         double sideways_inches = sin * inches;
         double sideways_direction_mult = (sideways_inches > 0.0) ? 1.0 : -1.0;
         double target_tics = (forward_max_speed >= sideways_max_speed) ?
                 (TICKS_PER_INCH * forward_inches * forward_direction_mult) :
                 (TICKS_PER_INCH * sideways_inches * sideways_direction_mult);
+        telemetry.addData("Target","Target(%.2f)",target_tics);
+        telemetry.addData("Motors","Forward(%.2f),Sideways(%.2f)",forward_direction_mult,sideways_direction_mult);
+        telemetry.update();
         while (opModeIsActive()) {
             double current_tics = (forward_max_speed >= sideways_max_speed) ?
                     (forward_tics() * forward_direction_mult) : (sideways_tics() * sideways_direction_mult);
-            if (current_tics > target_tics) {
+            telemetry.addData("Current","Current(%.2f)",current_tics);
+            if ((target_tics > 0 && current_tics > target_tics) || (target_tics < 0 && current_tics < target_tics) || target_tics == 0) {
                 break;
             }
             double speed_mult = powerMultiplier(current_tics, target_tics, minAccel, minDecel,
@@ -229,8 +270,6 @@ public class MecanumAutoTEST extends LinearOpMode {
         double start_heading = heading;
         // Rotate as specified - there is normally some overshoot.
         turn(degrees);
-        // Test the heading and correct for error (overshoot)
-        turn(degrees - (heading - start_heading));
     }
 
     private void turn(double degrees) {
@@ -238,9 +277,9 @@ public class MecanumAutoTEST extends LinearOpMode {
         double direction_mult = (degrees > 0.0) ? 1.0 : -1.0;
         double start_heading = heading;
         double target = degrees * direction_mult;
-        while (true) {
+        while (opModeIsActive()) {
             double current = direction_mult * (heading - start_heading);
-            if (current >= target) {
+            if (Math.abs(current) >= target) {
                 break;
             }
             setSpeeds(0.0, 0.0,
@@ -249,5 +288,19 @@ public class MecanumAutoTEST extends LinearOpMode {
                             degsAccel, degsDecel));
         }
         setSpeeds(0.0, 0.0, 0.0);
+    }
+
+    private void carouselMove(double speed) {
+       carouselDC.setPower(speed);
+    }
+
+    private void linearSlideMove(int position, double speed) {
+        linearSlideDC.setPower(speed);
+        linearSlideDC.setTargetPosition(position);
+        linearSlideDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    private void releaseServoMove(double position) {
+        releaseServo.setPosition(position);
     }
 }
