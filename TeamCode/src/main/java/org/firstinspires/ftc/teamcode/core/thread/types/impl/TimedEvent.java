@@ -36,6 +36,6 @@ public class TimedEvent extends RunListenerOnceEvent {
 
     @Override
     public boolean shouldRun() {
-        return runTime - System.currentTimeMillis() < 0;
+        return runTime <= System.currentTimeMillis();
     }
 }
