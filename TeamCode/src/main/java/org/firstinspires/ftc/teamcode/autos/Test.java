@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
-import org.firstinspires.ftc.teamcode.chassis.MecanumChassis;
+import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
 @Autonomous(name = "Test", group = "Sensor")
 public class Test extends LinearOpMode {

@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
-import org.firstinspires.ftc.teamcode.chassis.MecanumChassis;
+import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
 @Autonomous(name = "Park (Red)", group = "Sensor")
 public class Park extends LinearOpMode {

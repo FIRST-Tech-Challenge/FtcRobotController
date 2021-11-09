@@ -4,14 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.mechanism.Mechanism;
-
 public class Carousel implements Mechanism {
-    public DcMotor carousel;
+    public DcMotor carouselMotor;
     boolean aWasDown = false;
     boolean bWasDown = false;
     public void init(HardwareMap hardwareMap) {
-        carousel = hardwareMap.get(DcMotor.class, "carousel");
+        carouselMotor = hardwareMap.get(DcMotor.class, "carousel");
         //carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
@@ -20,28 +18,28 @@ public class Carousel implements Mechanism {
         if (gamepad.a) {
             if (!aWasDown) {
                 // turnCarousel();
-                carousel.setPower(-0.55);
+                carouselMotor.setPower(-0.55);
                 aWasDown = true;
                 bWasDown = false;
             }
         } else if (gamepad.b) {
             if (!bWasDown) {
                 // turnCarousel();
-                carousel.setPower(0.55);
+                carouselMotor.setPower(0.55);
                 aWasDown = false;
                 bWasDown = true;
             }
         } else {
             aWasDown = false;
             bWasDown = false;
-            carousel.setPower(0);
+            carouselMotor.setPower(0);
         }
     }
 
     public void turnCarousel() {
-        carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        carousel.setTargetPosition(-2500);
-        carousel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        carousel.setPower(0.55);
+        carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        carouselMotor.setTargetPosition(-2500);
+        carouselMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        carouselMotor.setPower(0.55);
     }
 }
