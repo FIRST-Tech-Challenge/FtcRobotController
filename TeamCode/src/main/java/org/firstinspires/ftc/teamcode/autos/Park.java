@@ -6,14 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
-@Autonomous(name = "Park (Red)", group = "Sensor")
+@Autonomous(name = "Park", group = "Sensor")
 public class Park extends LinearOpMode {
     private MecanumChassis chassis = new MecanumChassis();
     private Carousel carousel = new Carousel();
 
     public void runOpMode() {
-        chassis.init(hardwareMap);
-        carousel.init(hardwareMap);
+        chassis.init(hardwareMap, true);
+        carousel.init(hardwareMap, true);
 
         waitForStart();
         while (opModeIsActive()) {

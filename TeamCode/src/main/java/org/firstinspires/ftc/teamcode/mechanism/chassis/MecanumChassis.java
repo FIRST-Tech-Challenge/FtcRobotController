@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class MecanumChassis extends Chassis {
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     @Override
-    public void init(HardwareMap hardwareMap) {
-        super.init(hardwareMap);
+    public void init(HardwareMap hardwareMap, boolean red) {
+        super.init(hardwareMap, red);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }

@@ -14,8 +14,8 @@ public class Test extends LinearOpMode {
     private Carousel carousel = new Carousel();
 
     public void runOpMode() {
-        chassis.init(hardwareMap);
-        carousel.init(hardwareMap);
+        chassis.init(hardwareMap, true);
+        carousel.init(hardwareMap, true);
 
         waitForStart();
         while (opModeIsActive()) {

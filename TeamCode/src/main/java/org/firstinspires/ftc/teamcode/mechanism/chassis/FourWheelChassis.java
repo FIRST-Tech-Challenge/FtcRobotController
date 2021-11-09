@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class FourWheelChassis extends Chassis {
     @Override
-    public void init(HardwareMap hardwareMap) {
-        super.init(hardwareMap);
+    public void init(HardwareMap hardwareMap, boolean red) {
+        super.init(hardwareMap, red);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }

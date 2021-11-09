@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake implements Mechanism {
     DcMotor intakeMotor;
     @Override
-    public void init(HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap, boolean red) {
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
     }
 

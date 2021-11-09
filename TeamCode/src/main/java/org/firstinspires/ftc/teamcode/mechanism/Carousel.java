@@ -8,9 +8,13 @@ public class Carousel implements Mechanism {
     public DcMotor carouselMotor;
     boolean aWasDown = false;
     boolean bWasDown = false;
-    public void init(HardwareMap hardwareMap) {
+    int colorMultiplier = 1;
+    public void init(HardwareMap hardwareMap, boolean red) {
         carouselMotor = hardwareMap.get(DcMotor.class, "carousel");
         //carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if(red) {
+            colorMultiplier = -1;
+        }
     }
 
     public void run(Gamepad gamepad) {
@@ -18,14 +22,14 @@ public class Carousel implements Mechanism {
         if (gamepad.a) {
             if (!aWasDown) {
                 // turnCarousel();
-                carouselMotor.setPower(-0.55);
+                carouselMotor.setPower(colorMultiplier * 0.55);
                 aWasDown = true;
                 bWasDown = false;
             }
         } else if (gamepad.b) {
             if (!bWasDown) {
                 // turnCarousel();
-                carouselMotor.setPower(0.55);
+                carouselMotor.setPower(-colorMultiplier * 0.55);
                 aWasDown = false;
                 bWasDown = true;
             }
@@ -38,7 +42,7 @@ public class Carousel implements Mechanism {
 
     public void turnCarousel() {
         carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        carouselMotor.setTargetPosition(-2500);
+        carouselMotor.setTargetPosition(colorMultiplier * 2500);
         carouselMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         carouselMotor.setPower(0.55);
     }
