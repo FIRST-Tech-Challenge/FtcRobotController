@@ -55,6 +55,7 @@ public class Lift {
     private final AtomicBoolean dumping = new AtomicBoolean(false);
     private final AtomicBoolean dumpingEventRunning = new AtomicBoolean(false);
     private final EventThread eventThread;
+    private TimedEvent event;
     public void update() {
         final double stickValue = gamepad.getLeftY();
         telemetry.addData("left stick",stickValue);
@@ -64,7 +65,7 @@ public class Lift {
         telemetry.addData("motor encoder",curPos);
         telemetry.addData("topSensor", topSensor.getState());
         telemetry.addData("armServo",armServo.getPosition());
-        if ((liftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION || !liftMotor.isBusy()) && !dumpingEventRunning.get()) {
+        if (liftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION || !liftMotor.isBusy()) {
             if (running) {
                 liftMotor.setPower(0);
                 liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -104,14 +105,17 @@ public class Lift {
         if (curPos >= (double) 960) { // completely away from intake interference
             if (rBumpReader.wasJustReleased()) {
                 dumping.set(!dumping.get());
+                event.cancel();
             }
             if (dumping.get()) {
                 if (!dumpingEventRunning.get()) {
                     armServo.setPosition(0);
-                    eventThread.addEvent(new TimedEvent(() -> {
+                    dumpingEventRunning.set(true);
+                    event = new TimedEvent(() -> {
                         dumping.set(false);
                         dumpingEventRunning.set(false);
-                    }, 800));
+                    }, 800);
+                    eventThread.addEvent(event);
                 }
             } else {
                 armServo.setPosition(0.7);
