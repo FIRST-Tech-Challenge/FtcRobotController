@@ -17,8 +17,7 @@ public class Intake extends ToggleableTool<DcMotor> {
     }
     @Override
     protected void run() {
-        isPressed = reader.getState();
-        if (isPressed) {
+        if (reader.getState()) {
             motor.setPower(power);
         } else if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
             motor.setPower(-power);
