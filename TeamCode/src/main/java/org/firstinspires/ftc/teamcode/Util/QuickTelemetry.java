@@ -9,10 +9,10 @@ import org.firstinspires.ftc.teamcode.Config.MainConfig;
  * @see Telemetry
  */
 public class QuickTelemetry {
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     private final int logLevel = MainConfig.getLogLevel();
     private String file = "";
-    private String targetDebug = MainConfig.getDebugTarget();
+    private final String targetDebug = MainConfig.getDebugTarget();
 
     public QuickTelemetry(Telemetry telemetry) {
         this.telemetry = telemetry;

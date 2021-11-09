@@ -17,17 +17,14 @@ public class MainConfig {
     "*" means debug all
      */
     private static final String debugTarget = "none";
-    /* 0 is quiet
-       1 is default
-       2 is rich
-       3 is verbose */
+    /* Scale from 0-5*/
     private static final int logLevel = 3;
 
 
     private static final boolean initSubsystems = true;
     private static final boolean initSubsystemControl = (true && initSubsystems);
     private static final boolean initSubsystemDrive = (true && initSubsystems);
-    private static final boolean initSubsystemVision = (false && initSubsystems);
+    private static final boolean initSubsystemVision = (true && initSubsystems);
 
     private static final boolean initMechanical = true;
     private static final boolean initGetGamePadInputs = true;

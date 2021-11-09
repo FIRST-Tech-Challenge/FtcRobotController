@@ -184,26 +184,8 @@ public class Robot {
 //        odometryLA.setMode(DigitalChannel.Mode.INPUT);          // Set the direction of each channel
 //        odometryLB.setMode(DigitalChannel.Mode.INPUT);
 
+        initIMU();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        telemetry.telemetry(3, "Mode", " IMU initializing...");
-        imu.initialize(parameters);
-        telemetry.telemetry(4, "Mode", " IMU calibrating...");
-        // make sure the imu gyro is calibrated before continuing.
-        while (opMode.opModeIsActive() && !imu.isGyroCalibrated()) {
-            opMode.sleep(50);
-            opMode.idle();
-        }
-        telemetry.telemetry(2, "Mode", " IMU calibration finished...");
     }
 
     private void initSubsystems() {
@@ -237,6 +219,31 @@ public class Robot {
             control = new Control(this.getQuickTelemetry("Control"), hardwareMap, timer, intake);
             telemetry.telemetry(2, "Mode", " Control init finished");
         }
+    }
+
+    /** <p>Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port on a Core
+     * Device Interface Module, configured to be a sensor of type "AdaFruit IMU", and named "imu".</p>
+     */
+    private void initIMU() {
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        telemetry.telemetry(3, "Mode", " IMU initializing...");
+        imu.initialize(parameters);
+        telemetry.telemetry(4, "Mode", " IMU calibrating...");
+        // make sure the imu gyro is calibrated before continuing.
+        while (opMode.opModeIsActive() && !imu.isGyroCalibrated()) {
+            opMode.sleep(50);
+            opMode.idle();
+        }
+        telemetry.telemetry(2, "Mode", " IMU calibration finished...");
     }
 
     public LinearOpMode getOpMode() {
@@ -277,7 +284,7 @@ public class Robot {
         gamePadConfig.mapGamePadInputs(this);
     }
 
-    public double joystickDeadzoneCorrection(double joystickInput) {
+    public double joystickDeadZoneCorrection(double joystickInput) {
         double joystickOutput;
         if (joystickInput > joystickDeadZone) {
             joystickOutput = (joystickInput - joystickDeadZone) / (1.0 - joystickDeadZone);

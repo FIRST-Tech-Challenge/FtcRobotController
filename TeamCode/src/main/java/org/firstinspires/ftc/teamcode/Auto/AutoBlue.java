@@ -32,7 +32,7 @@ public class AutoBlue extends Auto {
      * <p>Please do not swallow the InterruptedException, as it is used in cases
      * where the op mode needs to be terminated early.</p>
      *
-     * @throws InterruptedException
+     * @throws InterruptedException If the robot is terminated this is thrown.
      *
      * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
      */

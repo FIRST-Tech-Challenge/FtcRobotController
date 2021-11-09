@@ -66,7 +66,7 @@ public class Teleop extends LinearOpMode {
 
             double[] motorPowers;
             robotAngle = robot.imu.getAngularOrientation().firstAngle;
-            motorPowers = robot.drive.calcMotorPowers(robot.gamePadConfig.leftStickX*0.5, robot.gamePadConfig.leftStickY*0.5, robot.gamePadConfig.rightStickX*0.5);
+            motorPowers = robot.drive.calcMotorPowers(robot.gamePadConfig.leftStickX, robot.gamePadConfig.leftStickY, robot.gamePadConfig.rightStickX);
             robot.drive.setDrivePowers(motorPowers);
 
             robot.drive.setDrivePowers(motorPowers);
