@@ -15,7 +15,7 @@ public class FourWheelChassis extends Chassis {
     }
 
     @Override
-    public void drive(Gamepad gamepad){
+    public void run(Gamepad gamepad){
         //This works, just trust me on it. Slack me or something if you need a full explanation.
         double lPower = (-gamepad.left_stick_y + gamepad.right_stick_x);
         double rPower = (-gamepad.left_stick_y - gamepad.right_stick_x);

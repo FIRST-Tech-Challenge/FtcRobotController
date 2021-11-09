@@ -16,6 +16,6 @@ public class MecanumOpMode extends OpMode {
 
     @Override
     public void loop() {
-        chassis.drive(gamepad1);
+        chassis.run(gamepad1);
     }
 }

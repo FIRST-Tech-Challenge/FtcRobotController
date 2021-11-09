@@ -20,7 +20,7 @@ public class MecanumChassis extends Chassis {
     }
 
     @Override
-    public void drive(Gamepad gamepad){
+    public void run(Gamepad gamepad){
         //This works, just trust me on it. Slack me or something if you need a full explanation.
         double flPower = (gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x)*driveStickThreshold;
         double frPower = (-gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x)*driveStickThreshold;

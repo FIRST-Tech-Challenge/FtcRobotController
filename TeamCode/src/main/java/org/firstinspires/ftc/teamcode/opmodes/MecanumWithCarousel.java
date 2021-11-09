@@ -11,13 +11,15 @@ public class MecanumWithCarousel extends OpMode {
     MecanumChassis chassis = new MecanumChassis();
     Carousel carousel = new Carousel();
     public void init() {
+        // Initialize each mechanism
         chassis.init(hardwareMap);
         carousel.init(hardwareMap);
     }
 
     @Override
     public void loop() {
-        chassis.drive(gamepad1);
+        // Run each mechanism
+        chassis.run(gamepad1);
         carousel.run(gamepad1);
     }
 }
