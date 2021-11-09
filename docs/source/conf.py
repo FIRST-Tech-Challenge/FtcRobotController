@@ -19,7 +19,7 @@
 
 project = 'Freight Frenzy'
 copyright = '2021, The Knights of Ni'
-author = 'Ashwin Naren'
+author = 'The Knights of Ni'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'

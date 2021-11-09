@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Configuration</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="configuration">
+<h1>Configuration</h1>
+<p>This discusses the configuration files (in <code class="docutils literal notranslate"><span class="pre">/teamcode/org/ftc/firstinspires/teamcode/Config/</span></code>) that you might have to edit, the others do not have to be edited.</p>
+<section id="main-configuration">
+<h2>Main Configuration</h2>
+<p><code class="docutils literal notranslate"><span class="pre">name</span></code> - The robot’s name</p>
+<p><code class="docutils literal notranslate"><span class="pre">version</span></code> - The robot’s version</p>
+<p><code class="docutils literal notranslate"><span class="pre">allianceColor</span></code> - The alliance color, it’s either AllianceColor.BLUE or AllianceColor.RED.</p>
+<p><code class="docutils literal notranslate"><span class="pre">debug</span></code> - Either true or false, at the current moment it does not do anything</p>
+<p><code class="docutils literal notranslate"><span class="pre">debugTarget</span></code> - “none” means no target enter a file path to debug a file enter a folder path to debug a folder, “*” means
+debug all</p>
+<p><code class="docutils literal notranslate"><span class="pre">logLevel</span></code> - 0 is quiet, the maximum is 5.</p>
+<p><code class="docutils literal notranslate"><span class="pre">initSubsystems</span></code> - Whether to initialize the subsystems, it might break stuff if it is false.</p>
+<p><code class="docutils literal notranslate"><span class="pre">initSubsystemControl</span></code> - Whether to initialize control (It might crash).</p>
+<p><code class="docutils literal notranslate"><span class="pre">initSubsystemDrive</span></code> - Whether to initialize drive.</p>
+<p><code class="docutils literal notranslate"><span class="pre">initSubsystemVision</span></code> - Whether to initialize vision.</p>
+<p><code class="docutils literal notranslate"><span class="pre">initMechanical</span></code> - Set to false if you don’t want to init Mechanical stuff</p>
+<p><code class="docutils literal notranslate"><span class="pre">initGetGamePadInputs</span></code> - Set to false if you are not using the game pad.</p>
+<p><code class="docutils literal notranslate"><span class="pre">initHardwareMap</span></code> - Set to false if you do not want to init the hardware map.</p>
+</section>
+<section id="vision-configuration">
+<h2>Vision Configuration</h2>
+<p><code class="docutils literal notranslate"><span class="pre">CAMERA_WIDTH</span></code> - the width of the wanted camera resolution</p>
+<p><code class="docutils literal notranslate"><span class="pre">CAMERA_HEIGHT</span></code> - the height of the wanted camera resolution</p>
+<p><code class="docutils literal notranslate"><span class="pre">HORIZON</span></code> - the horizon value to tune</p>
+<p><code class="docutils literal notranslate"><span class="pre">WEBCAM_NAME</span></code> - the name of the webcam</p>
+<p><code class="docutils literal notranslate"><span class="pre">VUFORIA_KEY</span></code> - The Vuforia Key</p>
+<p><code class="docutils literal notranslate"><span class="pre">finalMarkerLocation</span></code> - Where the marker is</p>
+</section>
+</section>
+<p class="rubric">Footnotes</p>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>
