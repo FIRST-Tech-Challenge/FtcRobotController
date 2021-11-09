@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robotAttachments;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;

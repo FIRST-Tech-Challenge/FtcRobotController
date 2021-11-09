@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.robotAttachments;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Deprecated
 public class Grabber {
-    private Servo grabberServo;
+    private final Servo grabberServo;
     private boolean isOpen;
 
     private static final float openPosition = 0.5f;

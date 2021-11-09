@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robotAttachments;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class IMU {
 
-    private BNO055IMU imu;
+    private final BNO055IMU imu;
 
     public IMU(HardwareMap hardwareMap, String deviceName) {
 

@@ -1,36 +1,38 @@
-package org.firstinspires.ftc.teamcode.robotAttachments;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robotAttachments.odometry.Executable;
-import org.firstinspires.ftc.teamcode.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
-import org.firstinspires.ftc.teamcode.robotAttachments.odometry.OdometryMovement;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
+import org.firstinspires.ftc.teamcode.Executable;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
-public class AutonomousDriveSystem {
+public class AutonomousDriveSystem extends OdometryDrivetrain {
     OdometryPodServos pod;
-
-    OdometryGlobalCoordinatePosition odometry;
-    OdometryMovement odMovement;
     Thread positionThread;
 
-    Executable<Boolean> isStopRequested;
-    Executable<Boolean> isOpModeActive;
-    Telemetry telemetry;
+    public AutonomousDriveSystem(HardwareMap hardwareMap, String front_right, String front_left, String back_right, String back_left,
+                                 String horizontalEncoderName, String leftEncoderName, String rightEncoderName,String horizontalServo,
+                                 String leftVerticalServo,String rightVerticalServo,
+                                 Executable<Boolean> isStopRequested, Executable<Boolean> isOpModeActive,Telemetry telemetry) {
 
 
-
-
-    public AutonomousDriveSystem(HardwareMap hardwareMap, String front_right, String front_left, String back_right, String back_left, String horizontalEncoderName, String leftEncoderName, String rightEncoderName,String horizontalServo, String leftVerticalServo,String rightVerticalServo, Executable<Boolean> isStopRequested, Executable<Boolean> isOpModeActive) {
-        this.isStopRequested = isStopRequested;
-        this.isOpModeActive = isOpModeActive;
+        super(); //initializes the underlying OdometryDrivetrain and BasicDrivetrain to null
 
         //Initializes dc motor array where the name of motorObjects[x] is motorNames[x]
+        //for example motorNames[1] could be "Motor 1", thus the DcMotor object motorObjects[1]
+        //would have been created from the string "Motor 1"
         String[] motorNames = {front_left, front_right, back_left, back_right};
-        DcMotor[] motorObjects = new DcMotor[4];
+        DcMotor[] motorObjects =  {
+            hardwareMap.dcMotor.get(front_left),
+            hardwareMap.dcMotor.get(front_right),
+            hardwareMap.dcMotor.get(back_left),
+            hardwareMap.dcMotor.get(back_right)
+
+        };
+        //loops over the array of motorObjects and initializes them
         for (int i = 0; i < motorNames.length; i++) {
-            motorObjects[i] = hardwareMap.dcMotor.get(motorNames[i]);
             motorObjects[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorObjects[i].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
@@ -64,12 +66,16 @@ public class AutonomousDriveSystem {
                 encoderObjects[y].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         }
+        //DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left
+        this.front_right = motorObjects[1];
+        this.front_left = motorObjects[0];
+        this.back_right = motorObjects[3];
+        this.back_left = motorObjects[2];
+        this.odometry= new OdometryGlobalCoordinatePosition(encoderObjects[1], encoderObjects[2], encoderObjects[0],1892.3724283364, 25);
 
-        //
-        odometry = new OdometryGlobalCoordinatePosition(encoderObjects[1], encoderObjects[2], encoderObjects[0], 1892.3724283364, 25);
-
-        odMovement = new OdometryMovement(motorObjects[1],motorObjects[0],motorObjects[3],motorObjects[2], telemetry, odometry, isStopRequested, isOpModeActive);
-        odMovement.reinitializeMotors();
+        this.reinitializeMotors();
+        this._isStopRequested = isStopRequested;
+        this._opModeIsActive = isOpModeActive;
 
 
         pod = new OdometryPodServos(hardwareMap, rightVerticalServo, leftVerticalServo, horizontalServo);
@@ -91,18 +97,6 @@ public class AutonomousDriveSystem {
     public void start() {
         positionThread = new Thread(odometry);
         positionThread.start();
-    }
-
-    public void stop() {
-        odometry.stop();
-    }
-
-    public void moveToPosition(double x, double y, double tolerance) throws InterruptedException {
-        odMovement.moveToPosition(x, y, tolerance);
-    }
-
-    public void strafeAtAngle(double power, double angle){
-        odMovement.strafeAtAngle(45,0.1);
     }
 
     public double returnXCoordinate() {

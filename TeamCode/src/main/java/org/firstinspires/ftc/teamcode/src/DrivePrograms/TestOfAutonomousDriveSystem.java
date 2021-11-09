@@ -1,21 +1,15 @@
-package org.firstinspires.ftc.teamcode.src;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.robotAttachments.AutonomousDriveSystem;
-import org.firstinspires.ftc.teamcode.robotAttachments.BasicDrivetrain;
-import org.firstinspires.ftc.teamcode.robotAttachments.OdometryPodServos;
-import org.firstinspires.ftc.teamcode.robotAttachments.odometry.Executable;
-import org.firstinspires.ftc.teamcode.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
-import org.firstinspires.ftc.teamcode.robotAttachments.odometry.OdometryMovement;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.AutonomousDriveSystem;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
+import org.firstinspires.ftc.teamcode.Executable;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.OdometryDrivetrain;
 
 
 @Autonomous(name = "TestOfAutonomousDriveSystem")
@@ -100,7 +94,7 @@ public class TestOfAutonomousDriveSystem extends LinearOpMode {
         Thread positionThread = new Thread(odometry);
         positionThread.start();
 
-        OdometryMovement driveSystem = new OdometryMovement(front_right, front_left, back_right, back_left, telemetry, odometry, new Executable<Boolean>() {
+        OdometryDrivetrain driveSystem = new OdometryDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, new Executable<Boolean>() {
             @Override
             public Boolean call() {
                 return isStopRequested();

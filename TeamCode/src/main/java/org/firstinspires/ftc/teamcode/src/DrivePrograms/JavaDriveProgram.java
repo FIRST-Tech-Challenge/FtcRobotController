@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.src;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.robotAttachments.CarouselSpinner;
-import org.firstinspires.ftc.teamcode.robotAttachments.OdometryPodServos;
-import org.firstinspires.ftc.teamcode.robotAttachments.TeleopDriveTrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.CarouselSpinner;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.TeleopDriveTrain;
 
 
 @TeleOp(name = "2022 Drive Program")

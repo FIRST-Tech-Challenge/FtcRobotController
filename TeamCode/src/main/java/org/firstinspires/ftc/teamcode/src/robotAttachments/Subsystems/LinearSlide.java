@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.robotAttachments;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class LinearSlide {
 
-    private DcMotor linearSlide;
+    private final DcMotor linearSlide;
 
 
     private static final double motorPower = 0.5;

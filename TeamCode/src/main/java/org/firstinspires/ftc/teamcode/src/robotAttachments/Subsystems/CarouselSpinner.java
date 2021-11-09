@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.robotAttachments;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class CarouselSpinner {
-    private CRServo spinnerServo;
+    private final CRServo spinnerServo;
     private static final double servoPower = -1;
-    private static long duckSleepTime = 1750;
+    private static final long duckSleepTime = 1750;
 
     public CarouselSpinner(HardwareMap hardwareMap, String deviceName){
         spinnerServo = hardwareMap.crservo.get(deviceName);

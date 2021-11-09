@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robotAttachments;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -36,6 +36,8 @@ public class BasicDrivetrain {
         back_right.setDirection(DcMotorSimple.Direction.REVERSE);
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
     }
+
+    protected BasicDrivetrain(){}
 
     public void turnRight(double power){
         front_right.setPower(-power);

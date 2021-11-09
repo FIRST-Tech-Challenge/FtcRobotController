@@ -1,19 +1,22 @@
-package org.firstinspires.ftc.teamcode.robotAttachments.odometry;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robotAttachments.BasicDrivetrain;
+import org.firstinspires.ftc.teamcode.Executable;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
 
-public class OdometryMovement extends BasicDrivetrain {
+public class OdometryDrivetrain extends BasicDrivetrain {
     Telemetry telemetry;
     OdometryGlobalCoordinatePosition odometry;
     Executable<Boolean> _isStopRequested;
     Executable<Boolean> _opModeIsActive;
 
+    protected OdometryDrivetrain(){super();}
 
-    public OdometryMovement(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
+
+    public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
         super(front_right,front_left,back_right,back_left);
         this.telemetry = telemetry;
         this.odometry = odometry;
@@ -21,7 +24,7 @@ public class OdometryMovement extends BasicDrivetrain {
         this._opModeIsActive = opmodeIsActive;
     }
 
-    public OdometryMovement(BasicDrivetrain drivetrain, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive){
+    public OdometryDrivetrain(BasicDrivetrain drivetrain, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive){
         super(drivetrain.front_right,drivetrain.front_left,drivetrain.back_right,drivetrain.back_left);
         this.telemetry = telemetry;
         this.odometry = odometry;
