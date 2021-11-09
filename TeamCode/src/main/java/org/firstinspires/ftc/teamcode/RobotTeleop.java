@@ -48,10 +48,10 @@ public class RobotTeleop extends CommandOpMode {
         MotorEx motorFrontLeft = new MotorEx(hardwareMap, "motorFrontLeft", Motor.GoBILDA.RPM_312);
         MotorEx motorFrontRight = new MotorEx(hardwareMap, "motorFrontRight", Motor.GoBILDA.RPM_312);
 
-        ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
-        RevTouchSensor touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
-
-        Sensors m_sensors = new Sensors(colorSensor, touchSensor, telemetry);
+//        ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
+//        RevTouchSensor touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
+//
+//        Sensors m_sensors = new Sensors(colorSensor, touchSensor, telemetry);
 
 
 
@@ -81,8 +81,8 @@ public class RobotTeleop extends CommandOpMode {
         register(m_defaultdrive);
         m_defaultdrive.setDefaultCommand(new DefaultDrive(m_defaultdrive, m_driverGamepad, telemetry));
 
-        Vision m_vision = new Vision(hardwareMap, telemetry);
-        register(m_vision);
+//        Vision m_vision = new Vision(hardwareMap, telemetry);
+//        register(m_vision);
 
 
         if (INTAKE_ENABLED) {
