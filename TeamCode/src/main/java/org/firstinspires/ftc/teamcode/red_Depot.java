@@ -245,7 +245,7 @@ public class red_Depot extends LinearOpMode {
         double sideways_max_speed = sin * max_speed;
         double sideways_inches = sin * inches;
         double sideways_direction_mult = (sideways_inches > 0.0) ? 1.0 : -1.0;
-        double target_tics = (forward_max_speed >= sideways_max_speed) ?
+        double target_tics = (Math.abs(forward_max_speed) >= Math.abs(sideways_max_speed)) ?
                 (TICKS_PER_INCH * forward_inches * forward_direction_mult) :
                 (TICKS_PER_INCH * sideways_inches * sideways_direction_mult);
         telemetry.addData("Target","Target(%.2f)",target_tics);
