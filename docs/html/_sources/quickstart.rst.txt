@@ -6,9 +6,15 @@ This guide will help you quickstart the robot.
 Game Pad Mapping
 ________________
 
-To start the robot press the A key, and then the B key.
-Use the joystick to move the robot forwards and backwards, and strafe left and right.
-Use the other to turn the robot.
+To start the robot press the Start key, and then the A key.
+
+Joystick 1 - Up and down are forwards and backwards. Left and right strafe.
+
+Y - "Fast Mode" switch
+
+B - Omni Directional drive switch
+
+Joystick 2 - Rotate the duck wheel (Left and Right), and move the duck wheel up and down (Up and Down)
 
 Robot Configuration
 ___________________

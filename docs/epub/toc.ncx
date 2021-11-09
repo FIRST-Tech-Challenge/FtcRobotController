@@ -87,6 +87,12 @@
         </navLabel>
         <content src="common_errors.xhtml#out-of-memory-error" />  
       </navPoint>
+      <navPoint id="navPoint14" playOrder="11">
+        <navLabel>
+          <text>Java 1.8 Error</text>
+        </navLabel>
+        <content src="common_errors.xhtml#java-1-8-error" />  
+      </navPoint>
     </navPoint>
   </navMap>
 </ncx>

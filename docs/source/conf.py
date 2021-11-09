@@ -30,8 +30,7 @@ release = '1.0.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-]
+extensions = ['sphinx.ext.duration']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -47,11 +46,17 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
+
+supported_image_types = ['image/svg+xml', 'image/png', 'image/gif', 'image/jpeg']
 html_theme = 'alabaster'
 html_theme_options = {
+    'logo': 'logo.png',
+    'logo_name': 'true',
+    'description': 'The Knights of Ni, Freight Frenzy',
     'github_user': 'The-Knights-of-Ni',
     'github_repo': 'FreightFrenzy',
-    'github_button': True
+    'github_button': 'true',
+    'show_powered_by': 'false'
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
