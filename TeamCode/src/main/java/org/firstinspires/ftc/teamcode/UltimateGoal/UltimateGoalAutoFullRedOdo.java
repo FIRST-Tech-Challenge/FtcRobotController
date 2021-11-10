@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 /**
  * Created by 7592 RoarBots
  */
-@Autonomous(name="Full Red Odo", group ="Ultimate Goal Red", preselectTeleOp = "UltimateGoal: TeleOp")
+//@Autonomous(name="Full Red Odo", group ="Ultimate Goal Red", preselectTeleOp = "UltimateGoal: TeleOp")
 public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
 {
     protected static final double REGULAR_SPEED = 1.0;

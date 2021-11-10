@@ -21,7 +21,7 @@ import static org.firstinspires.ftc.teamcode.UltimateGoal.UltimateGoalRobot.WOBB
  * Created by 7592 Roarbots.
  */
 
-@TeleOp(name="UltimateGoal: TeleOp", group ="TeleOp")
+//@TeleOp(name="UltimateGoal: TeleOp", group ="TeleOp")
 public class UltimateGoalTeleOp extends OpMode {
 
     public UltimateGoalRobot robot = new UltimateGoalRobot();
