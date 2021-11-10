@@ -202,7 +202,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
     }
 
     public void spinCarouselRed() {
-        motorCarousel.setPower(-1.2);
+        motorCarousel.setPower(-1.4);
         sleep(4500);
     }
 
