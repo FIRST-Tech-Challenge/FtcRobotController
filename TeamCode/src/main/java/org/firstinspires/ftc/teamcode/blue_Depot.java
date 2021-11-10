@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="Red Depot", group="Linear Opmode")
+@Autonomous(name="Blue Depot", group="Linear Opmode")
 
 public class blue_Depot extends LinearOpMode {
 
@@ -72,7 +72,7 @@ public class blue_Depot extends LinearOpMode {
         rightDCFront.setDirection(DcMotor.Direction.REVERSE);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
-        carouselDC.setDirection(DcMotor.Direction.FORWARD);
+        carouselDC.setDirection(DcMotor.Direction.REVERSE);
 
         //Set DC motors to run with encoder
         resetEncoders();
@@ -89,28 +89,29 @@ public class blue_Depot extends LinearOpMode {
         if(!opModeIsActive()) return;
 
         releaseServoMove(0.65);
-        mecanumStrafe(12.25, 0, 0.5);
+        mecanumStrafe(13.15, 0, 0.5);
         sleep(1000);
-        linearSlideMove(1750,0.8);
-        sleep(1000);
-        releaseServoMove(0.275);
+        linearSlideMove(1800,0.8);
+        sleep(2000);
+        releaseServoMove(0.30);
         sleep(1000);
         changeDirection();
         mecanumStrafe(3,0,0.7);
         sleep(500);
+        changeDirection();
         mecanumStrafe(35,90,0.7);
         sleep(500);
         changeDirection();
-        mecanumRotate(80,0.4);
+        mecanumRotate(150,0.4);
         sleep(500);
         changeDirection();
-        mecanumStrafe(7,90,0.8);
+        mecanumStrafe(4.75,0,0.8);
         sleep(500);
         changeDirection();
-        carouselMove(-0.6);
+        carouselMove(0.6);
         sleep(3000);
         carouselMove(0.0);
-        mecanumStrafe(17,75,0.6);
+        mecanumStrafe(13,20,0.6);
         sleep(500);
         linearSlideMove(0,1.0);
         sleep(100);

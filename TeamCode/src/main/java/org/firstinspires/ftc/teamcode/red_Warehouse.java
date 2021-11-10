@@ -90,9 +90,9 @@ public class red_Warehouse extends LinearOpMode {
 
         mecanumStrafe(11,0,0.7);
         changeDirection();
-        mecanumRotate(90,0.5);
+        mecanumRotate(80,0.5);
         changeDirection();
-        mecanumStrafe(11,0,0.7);
+        mecanumStrafe(25,0,0.7);
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();

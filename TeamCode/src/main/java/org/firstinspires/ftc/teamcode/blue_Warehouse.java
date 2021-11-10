@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="Red Warehouse", group="Linear Opmode")
+@Autonomous(name="Blue Warehouse", group="Linear Opmode")
 
 public class blue_Warehouse extends LinearOpMode {
 
@@ -88,10 +88,8 @@ public class blue_Warehouse extends LinearOpMode {
 
         if(!opModeIsActive()) return;
 
-        mecanumStrafe(11,0,0.7);
-        changeDirection();
+        mecanumStrafe(15,0,0.7);
         mecanumRotate(90,0.5);
-        changeDirection();
         mecanumStrafe(11,0,0.7);
 
         telemetry.addData("Status", "Path Complete");

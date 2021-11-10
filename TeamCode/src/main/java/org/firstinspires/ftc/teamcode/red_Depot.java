@@ -101,6 +101,10 @@ public class red_Depot extends LinearOpMode {
         sleep(500);
         mecanumStrafe(35,90,0.7);
         sleep(500);
+        linearSlideMove(0,1.0);
+        sleep(100);
+        releaseServoMove(releaseServo.MAX_POSITION)
+        sleep(500);
         changeDirection();
         mecanumRotate(80,0.4);
         sleep(500);
@@ -112,10 +116,7 @@ public class red_Depot extends LinearOpMode {
         sleep(3000);
         carouselMove(0.0);
         mecanumStrafe(17,75,0.6);
-        sleep(500);
-        linearSlideMove(0,1.0);
-        sleep(100);
-        releaseServoMove(releaseServo.MAX_POSITION);
+
         sleep(3000);
 
         telemetry.addData("Status", "Path Complete");
