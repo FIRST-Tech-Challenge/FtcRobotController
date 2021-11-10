@@ -216,25 +216,20 @@ public class C1ChassisDrive extends DriveMethods {
             }
 
 
-//            if (leftTrigger1 > 0) {
-//                servoCarousel.setPosition(0.4);
-//                while (leftTrigger1 > 0) {
-//                    leftTrigger1 = gamepad1.left_trigger;
-//                    driveDirection(.2, Direction.BACKWARD);
-//                }
-//                servoCarousel.setPosition(0);
-//                sleep(500);
-//                driveForTime(0.2, 250, Direction.FORWARD);
-//                servoCarousel.setPosition(0.5);
-//            } else {
-//                driveDirection(0, Direction.BACKWARD);
-//            }
-
-            if (leftTrigger1 != 0) {
-                servoCarousel.setPosition(0.7 * leftTrigger1);
-            } else {
+            if (leftTrigger1 > 0) {
+                servoCarousel.setPosition(0.4);
+                while (leftTrigger1 > 0) {
+                    leftTrigger1 = gamepad1.left_trigger;
+                    driveDirection(.2, Direction.BACKWARD);
+                }
+                servoCarousel.setPosition(0);
+                sleep(500);
+                driveForTime(0.2, 250, Direction.FORWARD);
                 servoCarousel.setPosition(0.5);
+            } else {
+                driveDirection(0, Direction.BACKWARD);
             }
+
 
             servoClamp.setPosition(.6 * rightTrigger2);
 
