@@ -503,19 +503,27 @@ public class RobotClass {
         stopMotors();
     }
 
-    public void turnToHeadingSloppy (double speed, double targetHeading) { // -175 175
+    public void turnToHeadingSloppy (double speed, double targetHeading, double slowAt) { // -175 175
         motorSetMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if (targetHeading > 0) {
-            setSpeedForTurnRight(speed);
+            setSpeedForTurnLeft(speed);
             while (getAngleFromGyro() < targetHeading) {
                 telemetry.addData("Current Angle: ",getAngleFromGyro());
                 telemetry.addData("Target Heading: ",targetHeading);
+                telemetry.update();
+                if (getAngleFromGyro() > targetHeading-slowAt) {
+                    setSpeedForTurnLeft(.1);
+                }
             }
         } else if (targetHeading < 0) {
-            setSpeedForTurnLeft(speed);
+            setSpeedForTurnRight(speed);
             while (getAngleFromGyro() > targetHeading) {
                 telemetry.addData("Current Angle: ",getAngleFromGyro());
                 telemetry.addData("Target Heading: ",targetHeading);
+                telemetry.update();
+                if (getAngleFromGyro() < targetHeading+slowAt) {
+                    setSpeedForTurnRight(.1);
+                }
             }
         }
         stopMotors();
