@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Autonomous(name="Red Warehouse", group="Linear Opmode")
 
-public class red_Warehouse extends LinearOpMode {
+public class blue_Warehouse extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
@@ -72,7 +72,7 @@ public class red_Warehouse extends LinearOpMode {
         rightDCFront.setDirection(DcMotor.Direction.REVERSE);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
-        carouselDC.setDirection(DcMotor.Direction.REVERSE);
+        carouselDC.setDirection(DcMotor.Direction.FORWARD);
 
         //Set DC motors to run with encoder
         resetEncoders();
@@ -89,8 +89,10 @@ public class red_Warehouse extends LinearOpMode {
         if(!opModeIsActive()) return;
 
         mecanumStrafe(11,0,0.7);
-        mecanumRotate(260,0.7);
-        mecanumStrafe(25,0,0.7);
+        changeDirection();
+        mecanumRotate(90,0.5);
+        changeDirection();
+        mecanumStrafe(11,0,0.7);
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();
@@ -107,6 +109,21 @@ public class red_Warehouse extends LinearOpMode {
         rightDCFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDCBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightDCBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    private void changeDirection() {
+        if(leftDCBack.getDirection() == DcMotor.Direction.FORWARD) {
+            leftDCFront.setDirection(DcMotor.Direction.REVERSE);
+            rightDCFront.setDirection(DcMotor.Direction.FORWARD);
+            leftDCBack.setDirection(DcMotor.Direction.REVERSE);
+            rightDCBack.setDirection(DcMotor.Direction.FORWARD);
+        }
+        else {
+            leftDCFront.setDirection(DcMotor.Direction.FORWARD);
+            rightDCFront.setDirection(DcMotor.Direction.REVERSE);
+            leftDCBack.setDirection(DcMotor.Direction.FORWARD);
+            rightDCBack.setDirection(DcMotor.Direction.REVERSE);
+        }
     }
 
     private double forward_tics() {
@@ -206,6 +223,7 @@ public class red_Warehouse extends LinearOpMode {
                         sideways * (forwardBias + turningBias - 1.0) +
                         rotate);
         // set the powers to each of the motors
+
         lclSetPower(power_rf, power_rr, power_lf, power_lr);
     }
 
@@ -214,23 +232,34 @@ public class red_Warehouse extends LinearOpMode {
         double radians = Math.toRadians(degrees);
         double sin = Math.sin(radians);
         double cos = Math.cos(radians);
-        double forward_max_speed = Math.abs(cos * max_speed);
+        double forward_max_speed = cos * max_speed;
         double forward_inches = cos * inches;
-        double forward_direction_mult = (forward_inches > 0.0) ? 1.0 : 1.0;
-        double sideways_max_speed = Math.abs(sin * max_speed);
+        double forward_direction_mult = (forward_inches > 0.0) ? 1.0 : -1.0;
+        double sideways_max_speed = sin * max_speed;
         double sideways_inches = sin * inches;
-        double sideways_direction_mult = (sideways_inches > 0.0) ? 1.0 : 1.0;
-        double target_tics = (forward_max_speed >= sideways_max_speed) ?
-                (TICKS_PER_INCH * forward_inches * forward_direction_mult) :
-                (TICKS_PER_INCH * sideways_inches * sideways_direction_mult);
+        double sideways_direction_mult = (sideways_inches > 0.0) ? 1.0 : -1.0;
+        double target_tics = (Math.abs(forward_max_speed) >= Math.abs(sideways_max_speed)) ?
+                (Math.abs(TICKS_PER_INCH * forward_inches) * forward_direction_mult) :
+                (Math.abs(TICKS_PER_INCH * sideways_inches) * sideways_direction_mult);
+        telemetry.addData("Inches", "forward_inches(%.2f), sideways_inches(%.2f)",forward_inches,sideways_inches);
+        telemetry.addData("Target","Target(%.2f)",target_tics);
+        telemetry.addData("MaxSpeeds","forward_max_speed(%.2f), sideways_max_speed(%.2f)",forward_max_speed,sideways_max_speed);
+        telemetry.addData("Motors","Forward(%.2f),Sideways(%.2f)",forward_direction_mult,sideways_direction_mult);
+        telemetry.update();
+        sleep(1000);
         while (opModeIsActive()) {
-            double current_tics = (forward_max_speed >= sideways_max_speed) ?
-                    (forward_tics() * forward_direction_mult) : (sideways_tics() * sideways_direction_mult);
-            if (current_tics > target_tics) {
+            double forward_tics = forward_tics();
+            double sideways_tics = sideways_tics();
+            double current_tics = (Math.abs(forward_max_speed) >= Math.abs(sideways_max_speed)) ?
+                    (forward_tics * forward_direction_mult) : (sideways_tics * sideways_direction_mult);
+            telemetry.addData("Current","current_tics(%.2f), forward_tics(%.2f),sideways_tics(%.2f)",current_tics,forward_tics,sideways_tics);
+            telemetry.update();
+            if ((target_tics > 0 && current_tics > target_tics) || (target_tics < 0 && current_tics < target_tics) || target_tics == 0) {
                 break;
             }
             double speed_mult = powerMultiplier(current_tics, target_tics, minAccel, minDecel,
                     ticksAccel, ticksDecel);
+            telemetry.addData("speed_mult","speed_mult(%.2f)",speed_mult);
             setSpeeds(forward_max_speed * speed_mult * forward_direction_mult,
                     sideways_max_speed * speed_mult * sideways_direction_mult, 0.0);
         }
