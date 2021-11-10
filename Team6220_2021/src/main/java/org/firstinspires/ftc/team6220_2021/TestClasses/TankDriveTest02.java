@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "TankDriveTest02", group = "TeleOp")
-public class TankDriveTest02 extends MasterTeleOp {
+public class TankDriveTest02 extends LinearOpMode {
     //Motors
     DcMotor motorBackLeft;
     DcMotor motorBackRight;

@@ -4,33 +4,44 @@
 
 package org.firstinspires.ftc.team6220_2021.TestClasses;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "speedtest", group = "TeleOp")
-public class SpeedTest extends LinearOpMode {
-
-    //Motors
+@TeleOp(name = "Speed Test", group = "TeleOp")
+public class SpeedTest extends LinearOpMode{
+    // Declaring motors and servos
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
     DcMotor motorFrontRight;
+    double x = 0.7;
+
+    //Other Devices
+    BNO055IMU imu;
 
     @Override
     public void runOpMode() {
-
-        //Initialize
+        //Initialize the motors and servos
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
 
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        //Set direction of the motors
+        motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //Declare variables
+        int position = 0;
+        boolean isPressed = false;
+        double motorPower = 0.9;
+        double increase = 1;
+        double oldPosition = 0;
 
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -39,30 +50,26 @@ public class SpeedTest extends LinearOpMode {
 
         waitForStart();
 
+        //Set power of motors
         while (opModeIsActive()) {
-            if (gamepad1.a) {
+            if (gamepad1.b) {
                 motorFrontRight.setPower(gamepad1.left_stick_y);
             }
             else if (gamepad1.x) {
                 motorFrontLeft.setPower(gamepad1.left_stick_y);
             }
-            else if (gamepad1.b) {
+            else if (gamepad1.a) {
                 motorBackRight.setPower(gamepad1.left_stick_y);
             }
             else if (gamepad1.y) {
                 motorBackLeft.setPower(gamepad1.left_stick_y);
             }
-            else {
-                motorBackLeft.setPower(0);
-                motorBackRight.setPower(0);
-                motorFrontLeft.setPower(0);
-                motorFrontRight.setPower(0);
-            }
-            telemetry.addData("motorBackLeft: ", motorBackLeft.getPower());
-            telemetry.addData("motorBackRight: ", motorBackRight.getPower());
-            telemetry.addData("motorFrontLeft: ", motorFrontLeft.getPower());
-            telemetry.addData("motorFrontRight: ", motorFrontRight.getPower());
-            telemetry.update();
+        }
+    }
+    public void pauseMillis(double time) {
+        double startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < time && opModeIsActive()) {
+            idle();
         }
     }
 }

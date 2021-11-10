@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TankDriveTest01", group = "TeleOp")
-public class TankDriveTest01 extends MasterTeleOp {
+public class TankDriveTest01 extends LinearOpMode{
     // Declaring motors and servos
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
@@ -47,13 +47,13 @@ public class TankDriveTest01 extends MasterTeleOp {
         motorDuck.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Set position of servos
-        servoGrabber.setPosition(0.3);
+        servoGrabber.setPosition(0.34);
         servoArm.setPosition(0.4);
 
         //Declare variables
         int position = 0;
         boolean isPressed = false;
-        double motorPower = 0.4;
+        double motorPower = 0.9;
         double increase = 1;
         double oldPosition = 0;
 
@@ -119,9 +119,9 @@ public class TankDriveTest01 extends MasterTeleOp {
             // checks old position of arm, right when it goes over top of robot from front to back, it reduces speed
             if (gamepad1.dpad_up){
                 if (!isPressed) {
-                    if (position == 3) {
-                        motorPower = 0.15;
-                    }
+//                    if (position == 3) {
+//                        motorPower = 0.15;
+//                    }
                     position += increase;
                 }
                 isPressed = true;
@@ -133,9 +133,9 @@ public class TankDriveTest01 extends MasterTeleOp {
             }
             else if (gamepad1.dpad_down){
                 if (!isPressed) {
-                    if (position == 3) {
-                        motorPower = 0.15;
-                    }
+//                    if (position == 3) {
+//                        motorPower = 0.15;
+//                    }
                     position -= increase;
                 }
                 isPressed = true;
@@ -153,10 +153,10 @@ public class TankDriveTest01 extends MasterTeleOp {
             }
 
             if(gamepad1.x) {
-                servoGrabber.setPosition(0.3);
+                servoGrabber.setPosition(0.34);
             }
-            else if(gamepad1.a) {
-                servoGrabber.setPosition(0.7);
+            else if (gamepad1.a) {
+                servoGrabber.setPosition(0.9);
             }
 
             if (gamepad1.right_bumper) {
@@ -176,6 +176,12 @@ public class TankDriveTest01 extends MasterTeleOp {
                     }
                 }
             }
+        }
+    }
+    public void pauseMillis(double time) {
+        double startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < time && opModeIsActive()) {
+            idle();
         }
     }
 }
