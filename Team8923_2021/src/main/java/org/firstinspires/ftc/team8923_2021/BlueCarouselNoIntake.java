@@ -9,10 +9,14 @@ public class BlueCarouselNoIntake extends MasterAutonomous{
         waitForStart();
 
         while (opModeIsActive()){
-            moveForward(16, 80, 10);
-            double referenceAngle =  imu.getAngularOrientation().firstAngle; // Get a reference angle from the IMU for future movements using IMU
-            imuPivot(referenceAngle, 90, 30, 0.015, 3.0);
-            moveForward(90, 80, 10);
+            double referenceAngle =  imu.getAngularOrientation().firstAngle;
+            moveForward(-2.5, 10, 10);
+            spinCarouselBlue();
+            moveForward(13, 50, 10);
+            imuPivot(referenceAngle, -90, 30, 0.015, 3.0);
+            moveForward(10, 50, 10); //check distance on this
+            imuPivot(referenceAngle, referenceAngle, 30, 0.015, 3.0);
+            moveForward(80, 50, 10);
             break;
         }
     }

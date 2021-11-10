@@ -158,7 +158,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
         stopDriving();
     }
 
-    public void moveForward(int distance, double speed, double minSpeed) {
+    public void moveForward(double distance, double speed, double minSpeed) {
         //sets a target position to drive to
         newTargetLeft = motorLeft.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
         newTargetRight = motorRight.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
@@ -194,6 +194,16 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorIntake.setDirection(DcMotorSimple.Direction.REVERSE);
         motorIntake.setPower(Constants.INTAKE_PWR);
         sleep(900);
+    }
+
+    public void spinCarouselBlue() {
+        motorCarousel.setPower(1.2);
+        sleep(4500);
+    }
+
+    public void spinCarouselRed() {
+        motorCarousel.setPower(-1.2);
+        sleep(4500);
     }
 
     public void sendTelemetry() {
