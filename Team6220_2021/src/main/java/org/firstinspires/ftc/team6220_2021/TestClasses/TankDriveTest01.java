@@ -86,31 +86,31 @@ public class TankDriveTest01 extends LinearOpMode{
                     motorArm.setPower(motorPower);
                     break;
                 case 1:
-                    motorArm.setTargetPosition(-260);
+                    motorArm.setTargetPosition(100);
                     servoArm.setPosition(0.6);
                     motorArm.setPower(motorPower);
                     break;
                 case 2:
-                    motorArm.setTargetPosition(-500);
+                    motorArm.setTargetPosition(200);
                     servoArm.setPosition(0.7);
                     motorArm.setPower(motorPower);
                     break;
                 case 3:
-                    motorArm.setTargetPosition(-900);
+                    motorArm.setTargetPosition(250);
                     motorArm.setPower(0.4);
                     break;
                 case 4:
-                    motorArm.setTargetPosition(-1275);
+                    motorArm.setTargetPosition(725);
                     servoArm.setPosition(0.6);
                     motorArm.setPower(motorPower);
                     break;
                 case 5:
-                    motorArm.setTargetPosition(-1475);
+                    motorArm.setTargetPosition(800);
                     servoArm.setPosition(0.8);
                     motorArm.setPower(motorPower);
                     break;
                 case 6:
-                    motorArm.setTargetPosition(-1650);
+                    motorArm.setTargetPosition(900);
                     servoArm.setPosition(0.9);
                     motorArm.setPower(motorPower);
                     break;
@@ -119,9 +119,6 @@ public class TankDriveTest01 extends LinearOpMode{
             // checks old position of arm, right when it goes over top of robot from front to back, it reduces speed
             if (gamepad1.dpad_up){
                 if (!isPressed) {
-//                    if (position == 3) {
-//                        motorPower = 0.15;
-//                    }
                     position += increase;
                 }
                 isPressed = true;
@@ -133,9 +130,6 @@ public class TankDriveTest01 extends LinearOpMode{
             }
             else if (gamepad1.dpad_down){
                 if (!isPressed) {
-//                    if (position == 3) {
-//                        motorPower = 0.15;
-//                    }
                     position -= increase;
                 }
                 isPressed = true;
