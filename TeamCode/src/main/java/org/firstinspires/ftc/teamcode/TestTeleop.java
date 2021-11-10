@@ -33,11 +33,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.Variables.motorConveyer;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
+import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
 
 
 /**
@@ -45,17 +47,17 @@ import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
  * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
  * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
- *
+ * <p>
  * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
  * It includes all the skeletal structure that all linear OpModes contain.
- *
+ * <p>
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
 //I
 
-@TeleOp(name="Test Teleop", group="A")
+@TeleOp(name = "Test Teleop", group = "A")
 
 
 public class TestTeleop extends DriveMethods {
@@ -70,8 +72,7 @@ public class TestTeleop extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        motorConveyer = hardwareMap.get(DcMotor.class, "conveyer");
-
+        servoCarousel = hardwareMap.get(Servo.class,"carousel");
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -88,16 +89,8 @@ public class TestTeleop extends DriveMethods {
             rightTrigger1 = gamepad1.right_trigger;
             leftTrigger1 = gamepad1.left_trigger;
 
-            if (rightTrigger1 > 0) {
-                motorConveyer.setPower(rightTrigger1);
 
-
-            }else if(leftTrigger1 > 0){
-                motorConveyer.setPower(-leftTrigger1);
-
-            }else{
-                motorConveyer.setPower(0);
-            }
+            servoCarousel.setPosition(rightTrigger1);
 
 
             // Show the elapsed game time and wheel power.
