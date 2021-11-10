@@ -158,39 +158,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
         stopDriving();
     }
 
-    public void reverseImuPivot(double referenceAngle, double targetAngle, double maxSpeed, double kAngle, double timeout){
-        runtime.reset();
-        //counter-clockwise is positive
-        double pivot;
-        double currentRobotAngle;
-        double angleError;
-
-        targetAngle = referenceAngle + targetAngle;
-        targetAngle = adjustAngles(targetAngle);
-        do{
-            currentRobotAngle = imu.getAngularOrientation().firstAngle;
-            targetAngle = adjustAngles(targetAngle);
-            angleError = currentRobotAngle - targetAngle;
-            angleError = adjustAngles(angleError);
-            pivot = angleError * kAngle;
-
-            if(pivot >= 0.0){
-                pivot = Range.clip(pivot, 0.15, maxSpeed);
-            }else{
-                pivot = Range.clip(pivot, -maxSpeed, -0.15);
-            }
-
-            speedLeft = -pivot;
-            speedRight = pivot;
-
-            motorLeft.setPower(speedLeft);
-            motorRight.setPower(speedRight);
-            idle();
-        } while(opModeIsActive() && (Math.abs(angleError) > 3.0) && (runtime.seconds() < timeout));
-
-        stopDriving();
-    }
-
     public void moveForward(int distance, double speed, double minSpeed) {
         //sets a target position to drive to
         newTargetLeft = motorLeft.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
