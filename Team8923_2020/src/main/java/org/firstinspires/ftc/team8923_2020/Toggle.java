@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team8923_2020;
+package org.firstinspires.team8923_2021;
 
 public class Toggle {
     public boolean toggleState = false;
@@ -15,6 +15,7 @@ public class Toggle {
         {
             toggleState = !toggleState;
         }
+
         if(! prevState && button)
         {
             press = true;
@@ -32,5 +33,3 @@ public class Toggle {
         return toggleState;
     }
 }
-
-

@@ -1,4 +1,4 @@
-package org.firstinspires.team8923_2021;
+package org.firstinspires.ftc.team8923_2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,6 +16,8 @@ public class TeleOpCompetition extends MasterTeleOp
         {
             splitArcadeDrive();
             runDriveSpeed();
+            runIntake();
+            runCarousel();
             idle();
         }
     }
