@@ -33,9 +33,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -58,15 +56,15 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Red Auto", group = "Autonomous")
-//@Disabled
+@Autonomous(name = "Red Auto backup", group = "Autonomous")
+ //@Disabled
 
-public class RedAuto extends LinearOpMode {
+public class RedAutobackup extends LinearOpMode {
 
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
-    private String targetZone = "D";
+    private String targetZone = "A";
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -103,18 +101,12 @@ TRAJECTORIES
  */
         MecanumDrive6340 drive = new MecanumDrive6340(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-36,  -54, Math.toRadians(0));
+        Pose2d startPose = new Pose2d(-62,-55, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
 
-        Trajectory goToDuck = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(-58,-54))
-                .splineTo(new Vector2d( 60,0), Math.toRadians(0))
-                .build();
-
         Trajectory shooterLine = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(-58,-54))
-                .splineTo(new Vector2d( 60,0), Math.toRadians(0))
+                .splineTo(new Vector2d( -17,-55), Math.toRadians(0))
                 .build();
 
 
@@ -360,10 +352,6 @@ drive.shooterServo.setPosition(0); //Hold
 
 
 
-        }else if(targetZone == "D")
-        {
-            drive.shooter.setVelocity(1600);
-            drive.followTrajectory(shooterLine);
         }
         telemetry.addData("targetVelocity", drive.shooter.getVelocity());
         telemetry.update();
