@@ -80,11 +80,11 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     private void preciseMovement(double x, double y, double tolerance) throws InterruptedException {
         double power = 0.1;
         final String s = x + " , " + y;
-        while (distance(odometry.returnXCoordinate() / 1892.3724283364, odometry.returnYCoordinate() / 1892.3724283364, x, y) > tolerance && !isStopRequested()) {
+        while (distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y) > tolerance && !isStopRequested()) {
             telemetry.addData("Moving to", s);
             telemetry.update();
 
-            strafeAtAngle(getAngle(odometry.returnXCoordinate() / 1892.3724283364, odometry.returnYCoordinate() / 1892.3724283364, x, y, odometry.returnOrientation()), 0.5);
+            strafeAtAngle(getAngle(odometry.returnRelativeXPosition(), odometry.returnRelativeXPosition(), x, y, odometry.returnOrientation()), 0.5);
 
         }
         stopAll();
@@ -125,8 +125,8 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         while (distance > tolerance && !isStopRequested() && opModeIsActive()) {
             //By calculating the values here once in this loop and declaring the variables above, we minimize the number
             //of memory allocation calls and the number of variable calculations.
-            odometry_x = odometry.returnXCoordinate() / odometry.getCOUNTS_PER_INCH(); //odometry x
-            odometry_y = odometry.returnYCoordinate() / odometry.getCOUNTS_PER_INCH(); //odometry y
+            odometry_x = odometry.returnRelativeXPosition(); //odometry x
+            odometry_y = odometry.returnRelativeYPosition(); //odometry y
             distance = distance(odometry_x, odometry_y, x, y); //distance value
             odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
 

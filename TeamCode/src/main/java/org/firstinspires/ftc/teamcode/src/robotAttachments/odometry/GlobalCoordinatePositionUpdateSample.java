@@ -81,7 +81,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
         initHardwareMap(rfName, rbName, lfName, lbName, verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
 
         //Create and start GlobalCoordinatePosition thread to constantly update the global coordinate positions\
-        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
+        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, 75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
@@ -132,8 +132,8 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
                     left_back.setPower(blPower);
                 }
                 //Display Global (x, y, theta) coordinates
-                telemetry.addData("X Position", (Math.round((globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) * 100.0)) / 100.0);
-                telemetry.addData("Y Position", Math.round((globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) * 100.0) / 100.0);
+                telemetry.addData("X Position", (Math.round((globalPositionUpdate.returnRelativeXPosition()) * 100.0)) / 100.0);
+                telemetry.addData("Y Position", Math.round((globalPositionUpdate.returnRelativeYPosition()) * 100.0) / 100.0);
                 telemetry.addData("Orientation (Degrees, ODO)", Math.round(globalPositionUpdate.returnOrientation() * 100.0) / 100.0);
                 telemetry.addData("Orientation (Degrees, IMU)", getZAngle());
                 telemetry.addData("Thread Active", positionThread.isAlive());

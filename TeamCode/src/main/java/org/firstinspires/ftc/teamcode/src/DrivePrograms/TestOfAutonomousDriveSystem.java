@@ -4,14 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.src.Utills.ExceptionPrinter;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.AutonomousDriveSystem;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.Utills.Executable;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.AutonomousDriveSystem;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.OdometryDrivetrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
 
 @Autonomous(name = "TestOfAutonomousDriveSystem")
@@ -91,7 +89,8 @@ public class TestOfAutonomousDriveSystem extends LinearOpMode {
 
 
         //front_left, front_right, back_left
-        OdometryGlobalCoordinatePosition odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_left, 1892.3724283364, 25);
+        OdometryGlobalCoordinatePosition odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_right, 25);
+        //odometry.reverseLeftEncoder();
         Thread positionThread = new Thread(odometry);
         positionThread.start();
 
@@ -108,11 +107,13 @@ public class TestOfAutonomousDriveSystem extends LinearOpMode {
         });
 
         waitForStart();
+        driveSystem.reinitializeMotors();
+        odometry.setPosition(0, 0, 0);
         while (
 
                 opModeIsActive()) {
-            telemetry.addData("x: ", odometry.returnXCoordinate());
-            telemetry.addData("y: ", odometry.returnYCoordinate());
+            telemetry.addData("x: ", odometry.returnRelativeXPosition());
+            telemetry.addData("y: ", odometry.returnRelativeYPosition());
             telemetry.addData("rot", odometry.returnOrientation());
             telemetry.addData("Right Encoder: ", odometry.returnRightEncoderPosition());
             telemetry.addData("Left Encoder: ", odometry.returnLeftEncoderPosition());
@@ -120,6 +121,6 @@ public class TestOfAutonomousDriveSystem extends LinearOpMode {
             telemetry.update();
         }
 
-        driveSystem.strafeAtAngle(0,0.1);
+        //driveSystem.strafeAtAngle(0,0.1);
     }
 }

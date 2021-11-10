@@ -1,37 +1,26 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.Grabber;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.TeleopDriveTrain;
 
-@Disabled
+
 @Autonomous(name = "BlueAutonomousNearSpinner")
-public class BlueAutonomousNearSpinner extends LinearOpMode {
-    private TeleopDriveTrain driveTrain;
+public class BlueAutonomousNearSpinner extends AutonomousTemplate {
     private Grabber grabber;
     private LinearSlide slide;
     private CarouselSpinner spinner;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        driveTrain = new TeleopDriveTrain(hardwareMap, "back_left", "back_right", "front_left", "front_right");
-
-        grabber = new Grabber(hardwareMap, "freight grabber");
-        grabber.open();
-
-        slide = new LinearSlide(hardwareMap, "linear slide arm");
-
-        spinner = new CarouselSpinner(hardwareMap, "carousel wheel");
-
-        telemetry.addData("Initialization Status", "Initialized");
-        telemetry.update();
-
+        this.initAll();
         waitForStart();
+        telemetry.addData("HI", 0);
+        telemetry.update();
+        driveSystem.moveToPosition(12, 0, 1, true); //TODO Verify that this moves correctly
 
     }
 }

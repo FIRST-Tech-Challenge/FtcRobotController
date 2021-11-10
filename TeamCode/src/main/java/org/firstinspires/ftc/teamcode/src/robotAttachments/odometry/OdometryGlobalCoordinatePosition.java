@@ -18,7 +18,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     private final DcMotor verticalEncoderRight;
     private final DcMotor horizontalEncoder;
 
-    private final double COUNTS_PER_INCH;
+    private final double COUNTS_PER_INCH = 1892.3724283364;
 
     private boolean isActive = false;
 
@@ -53,11 +53,10 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
      * @param horizontalEncoder    horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      * @param threadSleepDelay     delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
      */
-    public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, int threadSleepDelay) {
+    public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, int threadSleepDelay) {
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
         this.horizontalEncoder = horizontalEncoder;
-        this.COUNTS_PER_INCH = COUNTS_PER_INCH;
         sleepTime = threadSleepDelay;
 
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
@@ -79,15 +78,15 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     }
 
     public int returnRightEncoderPosition(){
-        return verticalEncoderRight.getCurrentPosition();
+        return verticalRightEncoderPositionMultiplier * verticalEncoderRight.getCurrentPosition();
     }
 
     public int returnLeftEncoderPosition(){
-        return verticalEncoderLeft.getCurrentPosition();
+        return verticalLeftEncoderPositionMultiplier * verticalEncoderLeft.getCurrentPosition();
     }
 
     public int returnHorizontalEncoderPosition(){
-        return horizontalEncoder.getCurrentPosition();
+        return normalEncoderPositionMultiplier * horizontalEncoder.getCurrentPosition();
     }
 
     //Vertical Right, Vertical Left, Horizontal
@@ -180,7 +179,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
      *
      * @return global x coordinate
      */
-    public double returnXCoordinate() {
+    public double returnRawXCoordinate() {
         return robotGlobalXCoordinatePosition;
     }
 
@@ -189,7 +188,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
      *
      * @return global y coordinate
      */
-    public double returnYCoordinate() {
+    public double returnRawYCoordinate() {
         return robotGlobalYCoordinatePosition;
     }
 
@@ -200,6 +199,14 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
      */
     public double returnOrientation() {
         return Math.toDegrees(robotOrientationRadians) % 360;
+    }
+
+    public double returnRelativeXPosition() {
+        return robotGlobalXCoordinatePosition / COUNTS_PER_INCH;
+    }
+
+    public double returnRelativeYPosition() {
+        return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
     }
 
     /**
