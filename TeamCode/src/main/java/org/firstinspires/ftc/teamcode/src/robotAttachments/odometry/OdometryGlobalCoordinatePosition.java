@@ -78,9 +78,21 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
         return COUNTS_PER_INCH;
     }
 
+    public int returnRightEncoderPosition(){
+        return verticalEncoderRight.getCurrentPosition();
+    }
+
+    public int returnLeftEncoderPosition(){
+        return verticalEncoderLeft.getCurrentPosition();
+    }
+
+    public int returnHorizontalEncoderPosition(){
+        return horizontalEncoder.getCurrentPosition();
+    }
+
     //Vertical Right, Vertical Left, Horizontal
-    public Integer[] returnRaw() {
-        Integer[] positions = new Integer[3];
+    public int[] returnRaw() {
+        int[] positions = new int[3];
         positions[0] = verticalEncoderRight.getCurrentPosition();
         positions[1] = verticalEncoderLeft.getCurrentPosition();
         positions[2] = horizontalEncoder.getCurrentPosition();

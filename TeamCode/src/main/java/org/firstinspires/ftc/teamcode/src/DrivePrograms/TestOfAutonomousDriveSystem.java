@@ -4,10 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.src.Utills.ExceptionPrinter;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.AutonomousDriveSystem;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
-import org.firstinspires.ftc.teamcode.Executable;
+import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.OdometryDrivetrain;
 
@@ -32,36 +34,35 @@ public class TestOfAutonomousDriveSystem extends LinearOpMode {
             public Boolean call() {
                 return opModeIsActive();
             }
-        });
+        }, telemetry);
         driveSystem.start();
         driveSystem.lowerOdometryPods();
-        driveSystem.setPosition(0,0,0);
+        driveSystem.setPosition(0, 0, 0);
 
         waitForStart();
 
-        driveSystem.strafeAtAngle(45,45);
+        driveSystem.strafeAtAngle(45, 45);
         ElapsedTime t = new ElapsedTime();
-        while (t.seconds() < 1){}
+        while (t.seconds() < 1) {
+        }
 
-        try{
+        try {
 
-            //driveSystem.moveToPosition(50,50,.5);
-        }catch (NullPointerException error){
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            error.printStackTrace(pw);
-            String exceptionString = sw.toString();
-            while (opModeIsActive()){
-                telemetry.addData("Error: ",exceptionString);
-                telemetry.update();
+            driveSystem.moveToPosition(50, 50, .5);
+        } catch (NullPointerException error) {
+            ExceptionPrinter ep = new ExceptionPrinter(error, telemetry);
+            while (opModeIsActive()) {
+                ep.printError();
             }
         }
 
-        return;*
+        */
 
-         */
+
+
         OdometryPodServos servos = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
         servos.lower();
+
 
         DcMotor front_right = hardwareMap.dcMotor.get("front_right");
         DcMotor front_left = hardwareMap.dcMotor.get("front_left");
@@ -89,7 +90,7 @@ public class TestOfAutonomousDriveSystem extends LinearOpMode {
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-//front_left, front_right, back_left
+        //front_left, front_right, back_left
         OdometryGlobalCoordinatePosition odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_left, 1892.3724283364, 25);
         Thread positionThread = new Thread(odometry);
         positionThread.start();
@@ -107,11 +108,18 @@ public class TestOfAutonomousDriveSystem extends LinearOpMode {
         });
 
         waitForStart();
-        while (opModeIsActive()) {
+        while (
+
+                opModeIsActive()) {
             telemetry.addData("x: ", odometry.returnXCoordinate());
             telemetry.addData("y: ", odometry.returnYCoordinate());
             telemetry.addData("rot", odometry.returnOrientation());
+            telemetry.addData("Right Encoder: ", odometry.returnRightEncoderPosition());
+            telemetry.addData("Left Encoder: ", odometry.returnLeftEncoderPosition());
+            telemetry.addData("Horizontal Encoder", odometry.returnHorizontalEncoderPosition());
             telemetry.update();
         }
+
+        driveSystem.strafeAtAngle(0,0.1);
     }
 }

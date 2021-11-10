@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Executable;
+import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
 
@@ -163,4 +163,19 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+    public int[] getOdometryRaw(){
+        return odometry.returnRaw();
+    }
+
+    public int returnRightEncoderPosition(){
+        return odometry.returnRightEncoderPosition();
+    }
+
+    public int returnLeftEncoderPosition(){
+        return odometry.returnLeftEncoderPosition();
+    }
+
+    public int returnHorizontalEncoderPosition(){
+        return odometry.returnHorizontalEncoderPosition();
+    }
 }

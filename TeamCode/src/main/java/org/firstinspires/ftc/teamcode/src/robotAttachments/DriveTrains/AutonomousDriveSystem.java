@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
-import org.firstinspires.ftc.teamcode.Executable;
+import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
 public class AutonomousDriveSystem extends OdometryDrivetrain {
@@ -71,6 +71,7 @@ public class AutonomousDriveSystem extends OdometryDrivetrain {
         this.front_left = motorObjects[0];
         this.back_right = motorObjects[3];
         this.back_left = motorObjects[2];
+
         this.odometry= new OdometryGlobalCoordinatePosition(encoderObjects[1], encoderObjects[2], encoderObjects[0],1892.3724283364, 25);
 
         this.reinitializeMotors();
@@ -92,6 +93,18 @@ public class AutonomousDriveSystem extends OdometryDrivetrain {
 
     public void lowerOdometryPods() {
         pod.lower();
+    }
+
+    public void reverseLeftOdometryEncoder(){
+        this.odometry.reverseLeftEncoder();
+    }
+
+    public void reverseRightOdometryEncoder(){
+        this.odometry.reverseRightEncoder();
+    }
+
+    public void reverseHorizontalOdometryEncoder(){
+        this.odometry.reverseNormalEncoder();
     }
 
     public void start() {
