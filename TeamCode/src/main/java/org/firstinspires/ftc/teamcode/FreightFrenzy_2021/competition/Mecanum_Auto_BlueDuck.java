@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,10 +23,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Math.toRadians;
 
 @Autonomous(name = "BLUE DUCK", group = "Competition")
 public class Mecanum_Auto_BlueDuck extends LinearOpMode {
@@ -104,16 +110,6 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Rotate.setPosition(0.03);
 
-        //Gyro
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
         //Vision
         initVuforia();
         initTfod();
@@ -129,6 +125,13 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(-41, 62.125, toRadians(90));
+        drive.setPoseEstimate(startPose);
+        Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
+                .splineToConstantHeading(new Vector2d(-11.875, 40), toRadians(-90))
+                .build();
+
         waitForStart();
         if(opModeIsActive()) {
 
@@ -137,8 +140,7 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             if (visionResult == null) {
                 recogTime.reset();
             }
-            double initialHeading = normalizeAngle(aquireHeading());
-            displayEncoderValue();
+
             while (recogTime.milliseconds() <= 2500.0) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -158,7 +160,7 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             }
             if (center < 0) {
                 visionResult = "LEFT";
-            } else if (center < 280.56) {
+            } else if (center < 321.85) {
                 visionResult = "MIDDLE";
             } else {
                 visionResult = "RIGHT";
@@ -167,17 +169,8 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             telemetry.update();
 
             //MOTION TO PLATE
-            driveStraight(false, 1.0, 0.3, 150);
-            stopMotion(100);
-            rotateToAngle(40.0,2.0, 0.3);
-            //driveLeftTurn(false, 1.0, 0.5, 650);
-            stopMotion(100);
-            driveStraight(false, 1.0, 0.4, 1400);
-            stopMotion(200);
-            RB.setPower(-0.4);
-            RF.setPower(-0.4);
-            sleep(300);
-            stopMotion(200);
+            drive.followTrajectory(myTrajectory1);
+            sleep(500);
 
             //SLIDE UP
             if (visionResult == "LEFT") {
@@ -208,23 +201,26 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             Slide.setPower(0.8);
 
             //BACK TO WALL
-            driveStraight(true, 1.0, 0.3, 150);
-            stopMotion(100);
-            rotateToAngle(0.0,2.0, 0.3);
-            driveStraight(true, 1.0, 0.6, 550);
-            stopMotion(100);
-            drivePerpendicularly(true,2.0, 0.6, 2300);
-            stopMotion(100);
-            driveStraight(true,2.0, 0.3, 850);
-            stopMotion(100);
+            Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory1.end())
+                    .splineToConstantHeading(new Vector2d(-65, 53), toRadians(90))
+                    .build();
+            drive.followTrajectory(myTrajectory2);
+            sleep(500);
+
+            Pose2d wall = new Pose2d(-65, 53, Math.toRadians(90));
+            drive.setPoseEstimate(wall);
 
             //ROTATE DUCK
             Spin.setPower(0.5);
             sleep(3500);
             Spin.setPower(0.0);
+
             //PARK
-            driveStraight(false, 1.0, 0.5, 800);
-            stopMotion(100);
+            Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end(),true)
+                    .forward(-19)
+                    .build();
+
+            drive.followTrajectory(myTrajectory3);
 
         }
 

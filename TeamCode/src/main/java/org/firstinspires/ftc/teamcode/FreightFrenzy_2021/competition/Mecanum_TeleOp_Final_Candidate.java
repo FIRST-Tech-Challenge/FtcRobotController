@@ -1,18 +1,21 @@
 package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+
 import java.util.ArrayList;
 
-@TeleOp(name = "Mecanum TeleOp Final", group = "Competition")
-public class Mecanum_TeleOp_Final extends LinearOpMode {
+import static java.lang.Math.toRadians;
+
+@TeleOp(name = "Mecanum TeleOp Candidate", group = "Competition")
+public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -27,12 +30,11 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     double rotate = 0;
-    double speed = 0.8;
+    double speed = 0.5;
     boolean reverse = false;
 
     @Override
     public void runOpMode() {
-
 
         LF  = hardwareMap.get(DcMotor.class, "LF");
         RF = hardwareMap.get(DcMotor.class, "RF");
@@ -71,6 +73,11 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(-41, 62.125, Math.toRadians(90));
+        drive.setPoseEstimate(startPose);
+
+
         waitForStart();
 
         boolean releasedRB1 = true;
@@ -92,9 +99,20 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean toggleLT2 = true;
 
         while (opModeIsActive()) {
+            // Make sure to call drive.update() on *every* loop
+            // Increasing loop time by utilizing bulk reads and minimizing writes will increase your odometry accuracy
+            drive.update();
+
+            // Retrieve your pose
+            Pose2d myPose = drive.getPoseEstimate();
+
+            telemetry.addData("x", myPose.getX());
+            telemetry.addData("y", myPose.getY());
+            telemetry.addData("heading", myPose.getHeading());
+
             runtime.reset();
 
-            double drive = -gamepad1.left_stick_y;
+            double straight = -gamepad1.left_stick_y;
             double strafe  = -gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
 
@@ -280,10 +298,10 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 releasedLT2 = true;
             }
 
-            LFPower  = Range.clip(gamepad1.left_trigger + speed*(drive + rotate - strafe), -1.0, 1.0) ;
-            LBPower  = Range.clip(gamepad1.left_trigger + speed*(drive + rotate + strafe), -1.0, 1.0) ;
-            RFPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate + strafe), -1.0, 1.0) ;
-            RBPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate - strafe), -1.0, 1.0) ;
+            LFPower  = Range.clip(gamepad1.left_trigger + speed*(straight + rotate - strafe), -1.0, 1.0) ;
+            LBPower  = Range.clip(gamepad1.left_trigger + speed*(straight + rotate + strafe), -1.0, 1.0) ;
+            RFPower  = Range.clip(gamepad1.right_trigger + speed*(straight - rotate + strafe), -1.0, 1.0) ;
+            RBPower  = Range.clip(gamepad1.right_trigger + speed*(straight - rotate - strafe), -1.0, 1.0) ;
 
             LF.setPower(LFPower);
             RF.setPower(RFPower);
@@ -299,7 +317,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             telemetry.addLine("Slide Target: " + Slide.getTargetPosition());
             telemetry.addData("Front Motors", "LF (%.2f), RF (%.2f)", LFPower, RFPower);
             telemetry.addData("Back Motors", "LB (%.2f), RB (%.2f)", LBPower, RBPower);
-            telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, drive);
+            telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, straight);
             telemetry.addData("Speed:", speed);
 
             telemetry.update();

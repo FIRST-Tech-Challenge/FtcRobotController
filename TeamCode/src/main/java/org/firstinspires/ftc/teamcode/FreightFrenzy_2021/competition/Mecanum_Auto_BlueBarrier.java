@@ -155,7 +155,7 @@ public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
             }
             if (center < 0) {
                 visionResult = "LEFT";
-            } else if (center < 280.56) {
+            } else if (center < 321.85) {
                 visionResult = "MIDDLE";
             } else {
                 visionResult = "RIGHT";
