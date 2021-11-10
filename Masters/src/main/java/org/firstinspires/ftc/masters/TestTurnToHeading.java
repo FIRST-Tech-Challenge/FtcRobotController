@@ -23,7 +23,9 @@ public class TestTurnToHeading extends LinearOpMode {
 
         waitForStart();
 
-        robot.turnToHeadingSloppy(.5,90);
-        robot.pauseButInSecondsForThePlebeians(10);
+        robot.turnToHeadingSloppy(.5,45, 60);
+        robot.pauseButInSecondsForThePlebeians(3);
+        robot.turnToHeadingSloppy(.5,90,60);
+        robot.pauseButInSecondsForThePlebeians(3);
     }
 }

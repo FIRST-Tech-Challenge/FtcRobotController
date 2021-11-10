@@ -13,7 +13,7 @@ public class TestMovement extends LinearOpMode {
 
         waitForStart();
 
-        robot.forward(.05,10);
+        robot.forward(.05,1);
 
     }
 }
