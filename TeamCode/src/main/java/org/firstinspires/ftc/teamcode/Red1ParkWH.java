@@ -84,7 +84,7 @@ public class Red1ParkWH extends DriveMethods {
         runtime.reset();
         driveForDistance(.8,.3, Direction.FORWARD);
         driveForDistance(.5,.3,Direction.LEFT);
-        driveForDistance(.6,.3,Direction.FORWARD);
+        driveForDistance(.4,.3,Direction.FORWARD);
 
         // run until the end of the match (driver presses STOP)
 

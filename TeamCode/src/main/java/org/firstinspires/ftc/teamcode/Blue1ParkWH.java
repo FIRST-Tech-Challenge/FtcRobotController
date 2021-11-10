@@ -82,9 +82,9 @@ public class Blue1ParkWH extends DriveMethods {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        driveForDistance(.8,.3,Direction.FORWARD);
+        driveForDistance(1,.3,Direction.FORWARD);
         driveForDistance(.5,.3,Direction.RIGHT);
-        driveForDistance(.6,.3,Direction.FORWARD);
+        driveForDistance(.2,.3,Direction.FORWARD);
 
         // run until the end of the match (driver presses STOP)
 

@@ -93,28 +93,20 @@ public class Blue2ParkSU extends DriveMethods {
         /**
          * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
          */
-        driveForDistance(.05,.3,Direction.LEFT);
-        driveForDistance(.3,.3,Direction.FORWARD);
+        driveForDistance(.05,.3,Direction.RIGHT);
+        driveForDistance(.3,.3,Direction.BACKWARD);
         servoCarousel.setPosition(.4);
-        driveDirection(.05,Direction.FORWARD);
+        driveDirection(.05,Direction.BACKWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
         StopMotors();
-        driveForDistance(.7,.3,Direction.LEFT);
+        driveForDistance(.7,.3,Direction.RIGHT);
+        driveForDistance(.2,.3,Direction.BACKWARD);
 
 
         // start near the carousel, do the duck, park in the storage unit (blue side)
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
 
-            /**
-             * Any Teleop code goes here.
-             */
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
-        }
     }
 }

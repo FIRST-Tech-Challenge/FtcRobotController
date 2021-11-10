@@ -92,15 +92,16 @@ public class Red2ParkSU extends DriveMethods {
         /**
          * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
          */
-        driveForDistance(.3,.3,Direction.BACKWARD);
-        driveForDistance(.3,.3, Direction.RIGHT);
-        driveForDistance(.1, .3,Direction.FORWARD);
+        driveForDistance(.3,.3,Direction.FORWARD);
+        driveForDistance(.3,.3, Direction.LEFT);
+        driveForDistance(.1, .3,Direction.BACKWARD);
         servoCarousel.setPosition(.6);
-        driveDirection(.05,Direction.FORWARD);
+        driveDirection(.05,Direction.BACKWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
         StopMotors();
         driveForDistance(.5,.3, Direction.BACKWARD);
+        driveForDistance(.2,.3, Direction.LEFT);
 
 
         // start near the carousel, do the duck, park in the storage unit (red side)
