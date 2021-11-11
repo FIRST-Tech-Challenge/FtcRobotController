@@ -11,12 +11,12 @@ public class RedCarouselNoIntake extends MasterAutonomous {
         while (opModeIsActive()) {
             double referenceAngle = imu.getAngularOrientation().firstAngle;
 
-            imuPivot(referenceAngle,15, 35, 0.015, 3.0);
-            moveForward(-3.5,10,10);
+            imuPivot(referenceAngle,30, 35, 0.015, 3.0);
+            moveForward(-3.9,10,10);
             spinCarouselRed();
             moveForward(2.5, 10, 10);
-            imuPivot(referenceAngle, -10, 30, 0.015, 3.0);
-            moveForward(90, 10, 10);
+            imuPivot(referenceAngle, 15, 35, 0.015, 3.0);
+            moveForward(98, 10, 10);
             break;
         }
     }

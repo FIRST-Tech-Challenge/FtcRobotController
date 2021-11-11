@@ -11,11 +11,11 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     // one joystick moves forwards and backwards, the other controls left and right.
     public void splitArcadeDrive() {
-        double forwardPower = gamepad1.left_stick_x;
-        double turningPower = gamepad1.right_stick_y;
+        double forwardPower = -gamepad1.left_stick_y;
+        double turningPower = gamepad1.right_stick_x;
 
-        double leftPower = turningPower - forwardPower;
-        double rightPower = turningPower + forwardPower;
+        double leftPower = forwardPower + turningPower;
+        double rightPower = forwardPower - turningPower;
 
         motorLeft.setPower(leftPower);
         motorRight.setPower(rightPower);
@@ -40,20 +40,13 @@ abstract public class MasterTeleOp extends MasterOpMode {
         }
     }
 
-    public void runCarouselRed() {
+    public void runCarousel() {
         if (gamepad2.left_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
-            motorCarousel.setPower(-0.8);
+            motorCarousel.setPower(-1.5);
+        } else if (gamepad2.right_trigger > Constants.MINIMUM_TRIGGER_VALUE){
+            motorCarousel.setPower(1.5);
         } else {
-            motorCarousel.setPower(0.0);
-        }
-    }
-
-    public void runCarouselBlue() {
-        if (gamepad2.right_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
-            motorCarousel.setPower(0.8);
-        } else {
-            motorCarousel.setPower(0.0);
+            motorCarousel.setPower(1.5);
         }
     }
 }
-
