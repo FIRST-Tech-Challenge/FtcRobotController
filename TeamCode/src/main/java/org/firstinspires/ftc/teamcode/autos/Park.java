@@ -17,15 +17,9 @@ public class Park extends LinearOpMode {
         carousel.init(hardwareMap);
 
         waitForStart();
-        while (opModeIsActive()) {
-            // Start button is pressed
+        // Start button is pressed
 
-            // Drive into the warehouse
-            chassis.moveForwardWithEncoders(0.6,1000);
-
-
-            // End of auto
-            break;
-        }
+        // Drive into the warehouse
+        chassis.moveForwardWithEncoders(0.6,1000);
     }
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -7,10 +8,10 @@ import org.firstinspires.ftc.teamcode.mechanism.Carousel;
 import org.firstinspires.ftc.teamcode.mechanism.Color;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
-@TeleOp(name = "Mecanum OpMode w/ Carousel", group = "Remote")
-public class MecanumWithCarousel extends OpMode {
+@TeleOp(name = "Mecanum OpMode (Blue)", group = "Remote")
+public class MecanumBlue extends OpMode {
     MecanumChassis chassis = new MecanumChassis();
-    Carousel carousel = new Carousel(Color.RED);
+    Carousel carousel = new Carousel(Color.BLUE);
     public void init() {
         // Initialize each mechanism
         chassis.init(hardwareMap);

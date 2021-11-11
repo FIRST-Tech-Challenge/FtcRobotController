@@ -1,21 +1,26 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.mechanism.Carousel;
+import org.firstinspires.ftc.teamcode.mechanism.Color;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
-@Disabled
-@TeleOp(name = "Mecanum OpMode", group = "Remote")
-public class MecanumOpMode extends OpMode {
+
+@TeleOp(name = "Mecanum OpMode (Red)", group = "Remote")
+public class MecanumRed extends OpMode {
     MecanumChassis chassis = new MecanumChassis();
-    @Override
+    Carousel carousel = new Carousel(Color.RED);
     public void init() {
+        // Initialize each mechanism
         chassis.init(hardwareMap);
+        carousel.init(hardwareMap);
     }
 
     @Override
     public void loop() {
+        // Run each mechanism
         chassis.run(gamepad1);
+        carousel.run(gamepad1);
     }
 }

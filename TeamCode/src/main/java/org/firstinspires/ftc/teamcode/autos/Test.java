@@ -19,19 +19,14 @@ public class Test extends LinearOpMode {
         carousel.init(hardwareMap);
 
         waitForStart();
-        while (opModeIsActive()) {
-            // Start button is pressed
+        // Start button is pressed
 
-            chassis.moveForwardByTime(0.5,1000);
-            chassis.moveBackwardByTime(0.5,1000);
-            chassis.strafeLeftByTime(0.5,1000);
-            chassis.strafeRightByTime(0.5,1000);
-            chassis.turnLeftByTime(0.5,1000);
-            chassis.turnRightByTime(0.5,1000);
-
-            // End of auto
-            break;
-        }
+        chassis.moveForwardByTime(0.5,1000);
+        chassis.moveBackwardByTime(0.5,1000);
+        chassis.strafeLeftByTime(0.5,1000);
+        chassis.strafeRightByTime(0.5,1000);
+        chassis.turnLeftByTime(0.5,1000);
+        chassis.turnRightByTime(0.5,1000);
     }
 
 }

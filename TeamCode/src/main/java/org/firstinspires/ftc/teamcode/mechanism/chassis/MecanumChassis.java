@@ -42,16 +42,16 @@ public class MecanumChassis extends Chassis {
         //Actually set them
 
         if (gamepad.left_trigger > triggerThreshold ) {
-            frontLeft.setPower(flPower);
-            frontRight.setPower(frPower);
-            backLeft.setPower(blPower);
-            backRight.setPower(brPower);
-        }
-        else {
             frontLeft.setPower(flPower*slowModeSensitivity);
             frontRight.setPower(frPower*slowModeSensitivity);
             backLeft.setPower(blPower*slowModeSensitivity);
             backRight.setPower(brPower*slowModeSensitivity);
+        }
+        else {
+            frontLeft.setPower(flPower);
+            frontRight.setPower(frPower);
+            backLeft.setPower(blPower);
+            backRight.setPower(brPower);
         }
 
     }
