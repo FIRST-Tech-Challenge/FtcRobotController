@@ -1,5 +1,0 @@
-User Manual
-============
-
-Robot Configuration files
-=========================

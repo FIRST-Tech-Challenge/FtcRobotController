@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
  * <p>This improves the readability of drive.java and is only for static variables, not for non-static variables or methods.</p>
  * @see Drive
  */
-public class DriveConfig {
+public class DriveConfig extends Config {
 
     public static final double ODOMETRY_mm_PER_COUNT      = 38.85*3.14159265/8192.0;
     public static final double ODOMETRY_RADIUS_X          = 201.0;
@@ -53,4 +53,14 @@ public class DriveConfig {
     public static final double COUNTS_PER_MM = (MOTOR_TICK_PER_REV_YELLOJACKET312 * DRIVE_GEAR_REDUCTION) / (GOBUILDA_MECANUM_DIAMETER_MM * Math.PI);
     public static final double RPM_MAX_NEVERREST_20 = 340;
     public static final double ANGULAR_V_MAX_NEVERREST_20 = (TICKS_PER_MOTOR_REV_20 * RPM_MAX_NEVERREST_20) / 60.0;
+
+    @Override
+    public Object get(String key) {
+        return null;
+    }
+
+    @Override
+    public void set(String key, Object value) {
+
+    }
 }

@@ -29,7 +29,7 @@ import java.util.List;
  * <p>This class starts with variable initializations</p></p>
  */
 public class Robot {
-    private HardwareMap hardwareMap;
+    private final HardwareMap hardwareMap;
     private final LinearOpMode opMode;
     private final Telemetry oldTelemetry;
     private final QuickTelemetry telemetry;

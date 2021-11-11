@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Robot;
  *
  * @see Robot
  */
-public class GamePadConfig {
+public class GamePadConfig extends Config {
     // Declare game pad objects
     public double leftStickX, leftStickY, rightStickX, rightStickY;
     public float triggerLeft, triggerRight;
@@ -96,5 +96,15 @@ public class GamePadConfig {
         dPadRight2 = gamePad2.dpad_right;
         bumperLeft2 = gamePad2.left_bumper;
         bumperRight2 = gamePad2.right_bumper;
+    }
+
+    @Override
+    public Object get(String key) {
+        return null;
+    }
+
+    @Override
+    public void set(String key, Object value) {
+
     }
 }

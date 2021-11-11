@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 /** Important configuration
  *
  */
-public class MainConfig {
+public class MainConfig extends Config {
     private static final String name = "UwU the Potato";
 
     private static final String version = "2021.10.30.0-alpha";
@@ -82,5 +82,15 @@ public class MainConfig {
     
     public static void setAllianceColor(AllianceColor color) {
         allianceColor = color;
+    }
+
+    @Override
+    public Object get(String key) {
+        return null;
+    }
+
+    @Override
+    public void set(String key, Object value) {
+
     }
 }

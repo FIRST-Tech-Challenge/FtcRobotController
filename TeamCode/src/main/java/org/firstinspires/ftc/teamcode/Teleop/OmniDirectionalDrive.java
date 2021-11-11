@@ -106,7 +106,7 @@ public class OmniDirectionalDrive extends LinearOpMode {
 
     /** Stops the motors
      * 
-     * @implNote uses .setPower
+     * uses {@link #setPower}
      * 
      * @see Drive
      * @see com.qualcomm.robotcore.hardware.DcMotorEx#setPower(double)
@@ -133,7 +133,7 @@ public class OmniDirectionalDrive extends LinearOpMode {
     /** Returns the smallest angle between angle1 and angle 2
      * Accepts the range 0 - 360 for both angles.
      *
-     * @implNote It checks whether 360 - (angle2 - angle 1) or angle 2 - angle 1 is the smallest.
+     * It checks whether 360 - (angle2 - angle 1) or angle 2 - angle 1 is the smallest.
      *
      * @param angle1 first angle
      * @param angle2 second angle
