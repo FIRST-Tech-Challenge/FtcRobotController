@@ -58,7 +58,6 @@ public class PIDTuner extends LinearOpMode {
                 downCurPressed, downPrevPressed = false,
                 leftCurPressed, leftPrevPressed = false,
                 rightCurPressed, rightPrevPressed = false;
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -155,10 +154,11 @@ public class PIDTuner extends LinearOpMode {
 
             //run PID and power front right motor accordingly
             double power;
-            if (gamepad1.a) pid.setSetpoint(1000);
-            else pid.setSetpoint(100);
-            power = pid.performPID(robot.driveFrontRight.getCurrentPosition());
+            if (gamepad1.a) pid.setSetpoint(10);
+            else pid.setSetpoint(1000);
+            power = pid.performPID(robot.driveFrontRight.getCurrentPosition(), runtime.seconds());
             robot.driveFrontRight.setPower(power);
+
 
             //telemetry
             telemetry.addData("current PID output: ", power);

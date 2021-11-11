@@ -102,7 +102,7 @@ public class Hardware {
 
     /* --local OpMode members.-- */
     HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
+    private ElapsedTime runtime  = new ElapsedTime();
     //**PIDS**//
     //PID coefficients
     private PIDCoefficients FrBlStrafePIDCoeffecients, FlBrStrafePIDCoeffecients, rotatePIDCoeffecients;
@@ -130,6 +130,8 @@ public class Hardware {
 
     /* --Initialize standard Hardware interfaces-- */
     public void init(HardwareMap ahwMap) {
+        runtime.reset();
+
         // Save reference to Hardware map
         hwMap = ahwMap;
 
@@ -172,6 +174,7 @@ public class Hardware {
         driveBackRight.setPower(0);
 
         // Set run modes
+        //TODO: set drive motors to RUN_WITHOUT_ENCODER when PIDs are integrated for movement in order to improve output power
         //reset encoders
         driveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -292,19 +295,19 @@ public class Hardware {
         FrBlStrafePIDController.reset();
         FrBlStrafePIDController.setOutputRange(-1,1);   //(-1,1) because those are the range of powers for DcMotors
         FrBlStrafePIDController.setTolerance(1);        //percent
-        FrBlStrafePIDController.enable();
+        //FrBlStrafePIDController.enable();
 
         FlBrStrafePIDController.reset();
         FlBrStrafePIDController.setOutputRange(-1,1);   //(-1,1) because those are the range of powers for DcMotors
         FlBrStrafePIDController.setTolerance(1);        //percent
-        FlBrStrafePIDController.enable();
+        //FlBrStrafePIDController.enable();
 
         rotatePIDController.reset();
         rotatePIDController.setInputRange(-Math.PI, Math.PI);   // convention for angles
         rotatePIDController.setOutputRange(-1,1);               // (-1,1) because those are the range of powers for DcMotors
         rotatePIDController.setTolerance(1);                    // percent
         rotatePIDController.setContinuous(true);                // we want input angles to wrap, because angles wrap
-        rotatePIDController.enable();
+        //rotatePIDController.enable();
     }
 
     ////////////////////////////// Methods //////////////////////////////
@@ -329,36 +332,40 @@ public class Hardware {
      * @param angle             direction to strafe relative to robot, measure in radians, angle of 0 == starboard
      * @param targetDistance    distance to strafe, measured in meters
      */
-    public void strafeToDistance(double power, double angle, double targetDistance){
+    public void strafeToDistance(double power, double angle, double targetDistance) {
         //initial heading and encoder counts
         //double initialHeading = getGlobalAngle();
         int initialFrBlAxisEncoderCount = (driveFrontRight.getCurrentPosition() + driveBackLeft.getCurrentPosition())/2;
         int initialFlBrAxisEncoderCount = (driveFrontLeft.getCurrentPosition() + driveBackRight.getCurrentPosition())/2;
 
         //calculate desired power for each diagonal motor pair
-        double FrBlPairPower = Math.sin(angle - (Math.PI/4)) * power;
-        double FlBrPairPower = Math.sin(angle + (Math.PI/4)) * power;
+        double FrBlPairPower = Math.sin(angle - (Math.PI/4));
+        double FlBrPairPower = Math.sin(angle + (Math.PI/4));
 
         //find the desired target for each strafe PID
-        int FrBlAxisTarget = (int) (targetDistance * (FrBlPairPower/power)); //in meters
-        int FlBrAxisTarget = (int) (targetDistance * (FlBrPairPower/power)); //in meters
+        int FrBlAxisTarget = (int) (targetDistance * (FrBlPairPower)); //in meters
+        int FlBrAxisTarget = (int) (targetDistance * (FlBrPairPower)); //in meters
         // convert to encoder counts
         FrBlAxisTarget *= NADO_COUNTS_PER_METER;
         FlBrAxisTarget *= NADO_COUNTS_PER_METER;
 
         //set up the PIDs
+        power = Math.abs(power);
         //FrBl PID
         FrBlStrafePIDController.reset();
         FrBlStrafePIDController.setSetpoint(FrBlAxisTarget);
-        FrBlStrafePIDController.enable();
+        FrBlStrafePIDController.setOutputRange(-power*FrBlPairPower, power*FrBlPairPower);
+        FrBlStrafePIDController.enable(runtime.seconds());
         //FlBr PID
         FlBrStrafePIDController.reset();
         FlBrStrafePIDController.setSetpoint(FlBrAxisTarget);
-        FlBrStrafePIDController.enable();
+        FlBrStrafePIDController.setOutputRange(-power*FlBrPairPower, power*FlBrPairPower);
+        FlBrStrafePIDController.enable(runtime.seconds());
         //rotation PID (will be used to maintain constant heading)
         //rotatePIDController.reset();
         //rotatePIDController.setSetpoint(initialHeading);
-        //rotatePIDController.enable();
+        //rotatePIDController.setOutputRange(-power, power);
+        //rotatePIDController.enable(runtime.seconds());
 
 
         while (!FrBlStrafePIDController.onTarget() || !FlBrStrafePIDController.onTarget()) {
@@ -367,16 +374,16 @@ public class Hardware {
             int FlBrAxisEncoderCount = (driveFrontLeft.getCurrentPosition() + driveBackRight.getCurrentPosition())/2;
 
             //get correction values
-            double FrBlCorrection = FrBlStrafePIDController.performPID(FrBlAxisEncoderCount - initialFrBlAxisEncoderCount);
-            double FlBrCorrection = FlBrStrafePIDController.performPID(FlBrAxisEncoderCount - initialFlBrAxisEncoderCount);
-            //double rotationCorrection = rotatePIDController.performPID(getGlobalAngle());
+            FrBlPairPower = FrBlStrafePIDController.performPID(FrBlAxisEncoderCount - initialFrBlAxisEncoderCount,runtime.seconds());
+            FlBrPairPower = FlBrStrafePIDController.performPID(FlBrAxisEncoderCount - initialFlBrAxisEncoderCount,runtime.seconds());
+            //double rotationCorrection = rotatePIDController.performPID(getGlobalAngle(),runtime.seconds());
 
             //assign drive motor powers
             setDrivetrainPower(
-                    (FrBlPairPower*FrBlCorrection),// - rotationCorrection,
-                    (FlBrPairPower*FlBrCorrection),// + rotationCorrection,
-                    (FrBlPairPower*FrBlCorrection),// + rotationCorrection,
-                    (FlBrPairPower*FlBrCorrection)// - rotationCorrection
+                    FrBlPairPower,// - rotationCorrection,
+                    FlBrPairPower,// + rotationCorrection,
+                    FrBlPairPower,// + rotationCorrection,
+                    FlBrPairPower// - rotationCorrection
             );
         }
 

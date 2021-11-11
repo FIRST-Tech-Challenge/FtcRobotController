@@ -24,6 +24,7 @@ public class PIDController
     private double m_setpoint = 0.0;
     private double m_error = 0.0;
     private double m_result = 0.0;
+    private double prev_time = 0.0;         //time of previous call performPID (seconds)
     ///////////////////////////////////////////////////////// Constructor(s) /////////////////////////////////////////////////////////
     /**
      * Allocate a PID object with the given constants for P, I, D
@@ -46,30 +47,33 @@ public class PIDController
     ///////////////////////////////////////////////////////// Methods /////////////////////////////////////////////////////////
     /**
      * Return the current PID result for the last input set with setInput().
+     * @param currentTime current runtime in seconds
      * This is always centered on zero and constrained the the max and min outs
      * @return the latest calculated output
      */
-    public double performPID() {
-        calculate();
+    public double performPID(double currentTime) {
+        calculate(currentTime - prev_time);
         return m_result;
     }
     /**
      * Return the current PID result for the specified input.
      * @param input The input value to be used to calculate the PID result.
+     * @param currentTime current runtime in seconds
      * This is always centered on zero and constrained the the max and min outs
      * @return the latest calculated output
      */
-    public double performPID(double input) {
+    public double performPID(double input, double currentTime) {
         setInput(input);
-        return performPID();
+        return performPID(currentTime);
     }
 
     /**
      * Read the input, calculate the output accordingly, and write to the output.
      * This should only be called by the PIDTask
      * and is created during initialization.
+     * @param deltaTime change in time since last call
      */
-    private void calculate() {
+    private void calculate(double deltaTime) {
         int     sign = 1;
 
         // If enabled then proceed into controller calculations
@@ -89,14 +93,13 @@ public class PIDController
 
             // Integrate the errors as long as the upcoming integrator does
             // not exceed the minimum and maximum output thresholds.
-
             if ((Math.abs(m_totalError + m_error) * pidCoefficients.i < m_maximumOutput) &&
                     (Math.abs(m_totalError + m_error) * pidCoefficients.i > m_minimumOutput)) {
-                m_totalError += m_error;
+                m_totalError += m_error * deltaTime;
             }
 
             // Perform the PID calculation
-            m_result = (pidCoefficients.p * m_error) + (pidCoefficients.i * m_totalError) + (pidCoefficients.d * (m_error - m_prevError));
+            m_result = (pidCoefficients.p * m_error) + (pidCoefficients.i * m_totalError) + (pidCoefficients.d * ((m_error - m_prevError)/deltaTime));
 
             // Save the current error to the previous error for the next cycle.
             m_prevError = m_error;
@@ -124,9 +127,11 @@ public class PIDController
 
     /**
      * Begin running the PIDController
+     * @param currentTime the current time, in seconds
      */
-    public void enable() {
+    public void enable(double currentTime) {
         m_enabled = true;
+        prev_time = currentTime;
     }
     /**
      * Stop running the PIDController.

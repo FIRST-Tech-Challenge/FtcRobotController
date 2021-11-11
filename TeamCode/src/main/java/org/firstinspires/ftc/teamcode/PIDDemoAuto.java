@@ -30,40 +30,38 @@ public class PIDDemoAuto extends LinearOpMode {
 
         //auto routine
         strafe(1, 0, .1);
-
-        //strafeToDistanceNoHeading(1, Math.PI/2, 0.1);
-        //robot.strafeToDistance(0.3, 4*Math.PI/6, 0.2);
-        //strafeToDistanceNoHeading(0.3, -7*Math.PI/6, 0.2);
-        //robot.strafeToDistance(0.3, -10*Math.PI/6, 0.2);
+        strafeToDistanceNoHeading(1,Math.PI,.2);
+        //strafeToDistanceNoHeading(1, Math.PI/2.0, 0.1);
+        //robot.strafeToDistance(0.3, 4.0*Math.PI/6.0, 0.2);
+        //strafeToDistanceNoHeading(0.3, -7.0*Math.PI/6.0, 0.2);
+        //robot.strafeToDistance(0.3, -10.0*Math.PI/6.0, 0.2);
     }
 
     public void strafe(double power, double angle, double targetDistance){
+        //DATA
         //initial heading and encoder counts
         int initialFrBlAxisEncoderCount = (robot.driveFrontRight.getCurrentPosition() + robot.driveBackLeft.getCurrentPosition())/2;
         int initialFlBrAxisEncoderCount = (robot.driveFrontLeft.getCurrentPosition() + robot.driveBackRight.getCurrentPosition())/2;
 
         //calculate desired power for each diagonal motor pair
-        double FrBlPairPower = Math.sin(angle - (Math.PI/4)) * power;
-        double FlBrPairPower = Math.sin(angle + (Math.PI/4)) * power;
-
+        double FrBlPairPower = Math.sin(angle - (Math.PI/4));
+        double FlBrPairPower = Math.sin(angle + (Math.PI/4));
         //find the desired target for each strafe PID
-        // convert to encoder counts
-        int FrBlAxisTarget = (int) (targetDistance * (FrBlPairPower/power) * robot.NADO_COUNTS_PER_METER); //in meters
-        int FlBrAxisTarget = (int) (targetDistance * (FlBrPairPower/power) * robot.NADO_COUNTS_PER_METER); //in meters
-
-        //set the power pairs to the absolute value of said powers
-        FrBlPairPower = Math.abs(FrBlPairPower);
-        FlBrPairPower = Math.abs(FlBrPairPower);
+        int FrBlAxisTarget = (int) (targetDistance * (FrBlPairPower) * robot.NADO_COUNTS_PER_METER); //in encoder counts
+        int FlBrAxisTarget = (int) (targetDistance * (FlBrPairPower) * robot.NADO_COUNTS_PER_METER); //in encoder counts
 
         //set up the PIDs
+        power = Math.abs(power);
         //FrBl PID
         robot.FrBlStrafePIDController.reset();
         robot.FrBlStrafePIDController.setSetpoint(FrBlAxisTarget);
-        robot.FrBlStrafePIDController.enable();
+        robot.FrBlStrafePIDController.setOutputRange(-power*FrBlPairPower,power*FrBlPairPower);
+        robot.FrBlStrafePIDController.enable(runtime.seconds());
         //FlBr PID
         robot.FlBrStrafePIDController.reset();
         robot.FlBrStrafePIDController.setSetpoint(FlBrAxisTarget);
-        robot.FlBrStrafePIDController.enable();
+        robot.FlBrStrafePIDController.setOutputRange(-power*FrBlPairPower,power*FrBlPairPower);
+        robot.FlBrStrafePIDController.enable(runtime.seconds());
 
         //try doing the two movements separately before doing them at the same time
         while(!robot.FrBlStrafePIDController.onTarget() && opModeIsActive()) {
@@ -71,20 +69,19 @@ public class PIDDemoAuto extends LinearOpMode {
             int FrBlAxisEncoderCount = (robot.driveFrontRight.getCurrentPosition() + robot.driveBackLeft.getCurrentPosition())/2;
 
             //get correction values
-            double FrBlCorrection = robot.FrBlStrafePIDController.performPID(FrBlAxisEncoderCount - initialFrBlAxisEncoderCount);
+            /*double FrBlCorrection*/FrBlPairPower = robot.FrBlStrafePIDController.performPID(FrBlAxisEncoderCount - initialFrBlAxisEncoderCount, runtime.seconds());
 
             //assign drive motor powers
-            //robot.setDrivetrainPower(
-            //        FrBlPairPower * FrBlCorrection,
-            //        FlBrPairPower * 0,
-            //        FrBlPairPower * FrBlCorrection,
-            //        FlBrPairPower * 0
-            //);
+            robot.setDrivetrainPower(
+                    FrBlPairPower,
+                    0,
+                    FrBlPairPower,
+                    0
+            );
 
             telemetry.addData("target: ", FrBlAxisTarget);
             telemetry.addData("position: ", FrBlAxisEncoderCount);
             telemetry.addData("power: ", FrBlPairPower);
-            telemetry.addData("correction: ", FrBlCorrection);
             telemetry.addData("error: ", robot.FrBlStrafePIDController.getError());
             telemetry.update();
         }
@@ -93,19 +90,18 @@ public class PIDDemoAuto extends LinearOpMode {
             int FlBrAxisEncoderCount = (robot.driveFrontLeft.getCurrentPosition() + robot.driveBackRight.getCurrentPosition())/2;
 
             //get correction values
-            double FlBrCorrection = robot.FlBrStrafePIDController.performPID(FlBrAxisEncoderCount - initialFlBrAxisEncoderCount);
+            /*double FlBrCorrection*/FlBrPairPower = robot.FlBrStrafePIDController.performPID(FlBrAxisEncoderCount - initialFlBrAxisEncoderCount,runtime.seconds());
 
             //assign drive motor powers
-            //robot.setDrivetrainPower(
-            //        FrBlPairPower * 0,
-            //        FlBrPairPower * FlBrCorrection,
-            //        FrBlPairPower * 0,
-            //        FlBrPairPower * FlBrCorrection
-            //);
+            robot.setDrivetrainPower(
+                    0,
+                    FlBrPairPower,
+                    0,
+                    FlBrPairPower
+            );
             telemetry.addData("target: ", FlBrAxisTarget);
             telemetry.addData("position: ", FlBrAxisEncoderCount);
             telemetry.addData("power: ", FlBrPairPower);
-            telemetry.addData("correction: ", FlBrCorrection);
             telemetry.addData("error: ", robot.FlBrStrafePIDController.getError());
             telemetry.update();
         }
@@ -119,47 +115,50 @@ public class PIDDemoAuto extends LinearOpMode {
      * @param targetDistance    distance to strafe, measured in meters
      */
     public void strafeToDistanceNoHeading(double power, double angle, double targetDistance){
+        //DATA
         //initial heading and encoder counts
         int initialFrBlAxisEncoderCount = (robot.driveFrontRight.getCurrentPosition() + robot.driveBackLeft.getCurrentPosition())/2;
         int initialFlBrAxisEncoderCount = (robot.driveFrontLeft.getCurrentPosition() + robot.driveBackRight.getCurrentPosition())/2;
 
         //calculate desired power for each diagonal motor pair
-        double FrBlPairPower = Math.sin(angle - (Math.PI/4)) * power;
-        double FlBrPairPower = Math.sin(angle + (Math.PI/4)) * power;
-
+        double FrBlPairPower = Math.sin(angle - (Math.PI/4)); //this is just done to help convert the radial inputs (magnitude and angle) into target distances that the PID can use
+        double FlBrPairPower = Math.sin(angle + (Math.PI/4));
         //find the desired target for each strafe PID
-        int FrBlAxisTarget = (int) (targetDistance * (FrBlPairPower/power)); //in meters
-        int FlBrAxisTarget = (int) (targetDistance * (FlBrPairPower/power)); //in meters
+        int FrBlAxisTarget = (int) (targetDistance * (FrBlPairPower)); //in meters
+        int FlBrAxisTarget = (int) (targetDistance * (FlBrPairPower)); //in meters
         // convert to encoder counts
         FrBlAxisTarget *= robot.NADO_COUNTS_PER_METER;
         FlBrAxisTarget *= robot.NADO_COUNTS_PER_METER;
 
         //set up the PIDs
+        power = Math.abs(power);
         //FrBl PID
         robot.FrBlStrafePIDController.reset();
         robot.FrBlStrafePIDController.setSetpoint(FrBlAxisTarget);
-        robot.FrBlStrafePIDController.enable();
+        robot.FrBlStrafePIDController.setOutputRange(-power*FrBlPairPower,power*FrBlPairPower);
+        robot.FrBlStrafePIDController.enable(runtime.seconds());
         //FlBr PID
         robot.FlBrStrafePIDController.reset();
         robot.FlBrStrafePIDController.setSetpoint(FlBrAxisTarget);
-        robot.FlBrStrafePIDController.enable();
+        robot.FlBrStrafePIDController.setOutputRange(-power*FlBrPairPower,power*FlBrPairPower);
+        robot.FlBrStrafePIDController.enable(runtime.seconds());
 
-
+        //run PID
         while ((!robot.FrBlStrafePIDController.onTarget() || !robot.FlBrStrafePIDController.onTarget()) && opModeIsActive()) {
             //calculate distance travelled by each diagonal pair
             int FrBlAxisEncoderCount = (robot.driveFrontRight.getCurrentPosition() + robot.driveBackLeft.getCurrentPosition())/2;
             int FlBrAxisEncoderCount = (robot.driveFrontLeft.getCurrentPosition() + robot.driveBackRight.getCurrentPosition())/2;
 
-            //get correction values
-            double FrBlCorrection = robot.FrBlStrafePIDController.performPID(FrBlAxisEncoderCount - initialFrBlAxisEncoderCount);
-            double FlBrCorrection = robot.FlBrStrafePIDController.performPID(FlBrAxisEncoderCount - initialFlBrAxisEncoderCount);
+            //get motor power
+            /*double FrBlCorrection*/ FrBlPairPower = robot.FrBlStrafePIDController.performPID(FrBlAxisEncoderCount - initialFrBlAxisEncoderCount, runtime.seconds());
+            /*double FlBrCorrection*/ FlBrPairPower = robot.FlBrStrafePIDController.performPID(FlBrAxisEncoderCount - initialFlBrAxisEncoderCount, runtime.seconds());
 
             //assign drive motor powers
             robot.setDrivetrainPower(
-                    FrBlPairPower * FrBlCorrection,
-                    FlBrPairPower * FlBrCorrection,
-                    FrBlPairPower * FrBlCorrection,
-                    FlBrPairPower * FlBrCorrection
+                    FrBlPairPower,// * FrBlCorrection,
+                    FlBrPairPower,// * FlBrCorrection,
+                    FrBlPairPower,// * FrBlCorrection,
+                    FlBrPairPower// * FlBrCorrection
             );
         }
     }
