@@ -6,16 +6,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
 import org.firstinspires.ftc.teamcode.mechanism.Color;
+import org.firstinspires.ftc.teamcode.mechanism.Lift;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
 @TeleOp(name = "Mecanum OpMode (Blue)", group = "Remote")
 public class MecanumBlue extends OpMode {
     MecanumChassis chassis = new MecanumChassis();
     Carousel carousel = new Carousel(Color.BLUE);
+    Lift lift = new Lift();
     public void init() {
         // Initialize each mechanism
         chassis.init(hardwareMap);
         carousel.init(hardwareMap);
+        lift.init(hardwareMap);
     }
 
     @Override
@@ -23,5 +26,6 @@ public class MecanumBlue extends OpMode {
         // Run each mechanism
         chassis.run(gamepad1);
         carousel.run(gamepad1);
+        lift.run(gamepad2);
     }
 }

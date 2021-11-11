@@ -8,7 +8,7 @@ public class Lift implements Mechanism {
     DcMotor liftMotor;
     @Override
     public void init(HardwareMap hardwareMap) {
-        liftMotor = hardwareMap.dcMotor.get("liftMotor");
+        liftMotor = hardwareMap.dcMotor.get("lift");
     }
 
     @Override
