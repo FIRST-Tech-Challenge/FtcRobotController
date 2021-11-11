@@ -30,7 +30,7 @@ public class AStarPathFinder {
      *
      * @param start the starting coordinate
      * @param end coordinates of the target position
-     * @return (List<Node> | null) the path
+     * @return the path
      */
     public Path getShortestPath(Coordinate start, Coordinate end) {
         this.start = start;
@@ -55,7 +55,7 @@ public class AStarPathFinder {
         return this.path;
     }
     /**
-     ** Looks in a given List<> for a node
+     ** Looks in a given List for a node
      **
      ** @return (bool) NeighborInListFound
      */

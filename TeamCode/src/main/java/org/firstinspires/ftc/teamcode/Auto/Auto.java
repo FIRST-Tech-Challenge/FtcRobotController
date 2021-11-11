@@ -31,7 +31,7 @@ public class Auto extends LinearOpMode {
      * <p>Please do not swallow the InterruptedException, as it is used in cases
      * where the op mode needs to be terminated early.</p>
      *
-     * @throws InterruptedException
+     * @param allianceColor The alliance color
      *
      * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
      */

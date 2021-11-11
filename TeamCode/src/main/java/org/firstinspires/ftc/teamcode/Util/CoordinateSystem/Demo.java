@@ -4,6 +4,9 @@ import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.PathFinder.SimplePat
 
 import java.util.ArrayList;
 
+/** A pathfinder demo
+ * Uses the Freight Frenzy board
+ */
 public class Demo {
     public Demo() {
         Field field = new Field();

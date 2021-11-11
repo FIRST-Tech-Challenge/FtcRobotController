@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Robot;
 
+/** Normal Teleop, not omnidirectional drive.
+ */
 @TeleOp(name = "Teleop")
 public class Teleop extends LinearOpMode {
     private Robot robot;

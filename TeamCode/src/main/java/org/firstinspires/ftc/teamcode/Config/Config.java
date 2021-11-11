@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.Config;
 
 import java.util.Hashtable;
 
+/**
+ *  Abstract config superclass.
+ */
 public abstract class Config {
 
     Hashtable<String, String> getTable = new Hashtable<>();

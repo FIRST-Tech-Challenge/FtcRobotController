@@ -16,6 +16,9 @@ import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 import java.io.IOException;
 
 
+/**
+ * OmniDirectional Drive allows the robot to be operated in third person rather than first person.
+ */
 @TeleOp(name="OmniDirectionalDrive", group="Assisted Driving")
 public class OmniDirectionalDrive extends LinearOpMode {
     private Robot robot;
@@ -106,7 +109,7 @@ public class OmniDirectionalDrive extends LinearOpMode {
 
     /** Stops the motors
      * 
-     * uses {@link #setPower}
+     * uses {@link com.qualcomm.robotcore.hardware.DcMotorEx#setPower(double)}
      * 
      * @see Drive
      * @see com.qualcomm.robotcore.hardware.DcMotorEx#setPower(double)

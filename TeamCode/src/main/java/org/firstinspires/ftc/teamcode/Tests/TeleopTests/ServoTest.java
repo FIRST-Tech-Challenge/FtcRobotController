@@ -24,19 +24,15 @@ public class ServoTest extends LinearOpMode {
             boolean aBtn = gamepad1.a;
             boolean bBtn = gamepad1.b;
             if (aBtn) {
-                if (servoPos < servoMax) {
-                    if (servoPos > servoMin) {
-                        servoPos += speed;
-                        sleep(10);
-                    }
+                if ((servoPos < servoMax) && (servoPos > servoMin)) {
+                    servoPos += speed;
+                    sleep(10);
                 }
             }
-            if (bBtn) {
-                if (servoPos < servoMax) {
-                    if (servoPos > servoMin) {
-                        servoPos -= speed;
-                        sleep(10);
-                    }
+            else if (bBtn) {
+                if ((servoPos < servoMax) && (servoPos > servoMin)) {
+                    servoPos -= speed;
+                    sleep(10);
                 }
             }
             servo.setPosition(servoPos);

@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.Config;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
 
+/** Vision Config
+ * WARNING: YOU SHOULD NOT NORMALLY HAVE TO EDIT THIS FILE.
+ */
 public class VisionConfig extends Config {
     public static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     public static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution

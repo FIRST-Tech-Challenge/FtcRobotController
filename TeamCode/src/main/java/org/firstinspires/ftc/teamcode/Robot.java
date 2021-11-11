@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * The big umbrella subsystem.
  *
- * <p>This class starts with variable initializations</p></p>
+ * <p>This class starts with variable initializations, then it has initialization functions, has some get and set functions.</p>
  */
 public class Robot {
     private final HardwareMap hardwareMap;

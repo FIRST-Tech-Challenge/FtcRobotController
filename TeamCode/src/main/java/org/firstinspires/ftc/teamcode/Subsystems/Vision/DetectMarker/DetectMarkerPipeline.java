@@ -28,19 +28,19 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
     private final AllianceColor allianceColor = MainConfig.getAllianceColor();
     private MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
 
-    static final Rect LEFT_RECT = new Rect(
+    private final Rect LEFT_RECT = new Rect(
             new Point(60, 35),
             new Point(110, 75));
 
-    static final Rect MIDDLE_RECT = new Rect(
+    private final Rect MIDDLE_RECT = new Rect(
             new Point(110, 35),
             new Point(150, 75));
 
-    static final Rect RIGHT_RECT = new Rect(
+    private final Rect RIGHT_RECT = new Rect(
             new Point(150, 35),
             new Point(200, 75));
 
-    static double PERCENT_COLOR_THRESHOLD = 0.4;
+    private final double PERCENT_COLOR_THRESHOLD = 0.4;
 
 
     Mat mask = new Mat();

@@ -97,8 +97,6 @@ public class PIDController {
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Get the Proportional coefficient
      * @return proportional coefficient
      */
@@ -126,7 +124,6 @@ public class PIDController {
     }
 
     /**
->>>>>>> drive
      * Return the current PID result for the last input set with setInput().
      * This is always centered on zero and constrained the the max and min outs
      * @return the latest calculated output

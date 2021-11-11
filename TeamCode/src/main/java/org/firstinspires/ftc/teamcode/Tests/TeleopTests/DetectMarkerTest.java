@@ -10,6 +10,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocat
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
+/** Tests the detect marker capability of the robot
+ *
+ */
 @TeleOp(name="Detect Marker Test")
 public class DetectMarkerTest extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();

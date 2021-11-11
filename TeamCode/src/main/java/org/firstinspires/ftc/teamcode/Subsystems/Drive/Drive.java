@@ -51,7 +51,9 @@ public class Drive extends Subsystem {
     /**
      * The class instantiation.
      *
-     * @param robot the robot
+     * @param telemetry quick telemetry
+     * @param hardwareMap the hardware map
+     * @param timer the timer
      * @param motors given in a list for readability
      * @param imu the imu
      *
