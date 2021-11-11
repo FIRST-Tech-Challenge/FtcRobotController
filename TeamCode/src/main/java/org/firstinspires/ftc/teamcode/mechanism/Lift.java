@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Lift implements Mechanism {
     DcMotor liftMotor;
     @Override
-    public void init(HardwareMap hardwareMap, boolean red) {
+    public void init(HardwareMap hardwareMap) {
         liftMotor = hardwareMap.dcMotor.get("liftMotor");
     }
 

@@ -6,17 +6,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
+import org.firstinspires.ftc.teamcode.mechanism.Color;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
 @Autonomous(name = "Spin Carousel (Blue)", group = "Sensor")
 public class SpinCarouselBlue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();
-    private Carousel carousel = new Carousel();
+    private Carousel carousel = new Carousel(Color.BLUE);
 
     public void runOpMode() {
-        chassis.init(hardwareMap, false);
-        carousel.init(hardwareMap, false);
+        chassis.init(hardwareMap);
+        carousel.init(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {

@@ -6,17 +6,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
+import org.firstinspires.ftc.teamcode.mechanism.Color;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
 @Autonomous(name = "Drop Box (Red)", group = "Sensor")
 public class DropBoxRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();
-    private Carousel carousel = new Carousel();
+    private Carousel carousel = new Carousel(Color.RED);
 
     public void runOpMode() {
-        chassis.init(hardwareMap, true);
-        carousel.init(hardwareMap, true);
+        chassis.init(hardwareMap);
+        carousel.init(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {

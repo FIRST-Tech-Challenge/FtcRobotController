@@ -11,7 +11,7 @@ public abstract class Chassis implements Mechanism {
     public static DcMotor frontLeft;
     public static DcMotor backRight;
     public static DcMotor backLeft;
-    public void init(HardwareMap hardwareMap, boolean red){
+    public void init(HardwareMap hardwareMap){
         frontRight = hardwareMap.get(DcMotor.class, "fr");
         frontLeft = hardwareMap.get(DcMotor.class, "fl");
         backRight = hardwareMap.get(DcMotor.class, "br");

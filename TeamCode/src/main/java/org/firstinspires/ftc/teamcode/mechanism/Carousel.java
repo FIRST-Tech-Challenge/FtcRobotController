@@ -5,16 +5,21 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Carousel implements Mechanism {
+    int colorMultiplier;
+    public Carousel(Color color) {
+        if (color == Color.RED) {
+            colorMultiplier = -1;
+        } else if (color == Color.BLUE) {
+            colorMultiplier = 1;
+        }
+    }
     public DcMotor carouselMotor;
     boolean aWasDown = false;
     boolean bWasDown = false;
-    int colorMultiplier = 1;
-    public void init(HardwareMap hardwareMap, boolean red) {
+
+    public void init(HardwareMap hardwareMap) {
         carouselMotor = hardwareMap.get(DcMotor.class, "carousel");
         //carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        if(red) {
-            colorMultiplier = -1;
-        }
     }
 
     public void run(Gamepad gamepad) {
