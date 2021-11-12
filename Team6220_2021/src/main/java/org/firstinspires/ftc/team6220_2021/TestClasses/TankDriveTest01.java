@@ -48,14 +48,14 @@ public class TankDriveTest01 extends LinearOpMode{
 
         //Set position of servos
         servoGrabber.setPosition(0.34);
-        servoArm.setPosition(0.4);
+        servoArm.setPosition(0.3);
 
         //Declare variables
         int position = 0;
         boolean isPressed = false;
         double motorPower = 0.9;
         double increase = 1;
-        double oldPosition = 0;
+        double speed =1;
 
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -73,51 +73,61 @@ public class TankDriveTest01 extends LinearOpMode{
 
         //Set power of motors
         while (opModeIsActive()) {
-            motorBackLeft.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x);
-            motorFrontLeft.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x);
-            motorBackRight.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x);
-            motorFrontRight.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x);
+            motorBackLeft.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * speed);
+            motorFrontLeft.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * speed);
+            motorBackRight.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * speed);
+            motorFrontRight.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * speed);
 
             //Use switch to declare values for each arm position
             switch (position) {
                 case 0:
-                    motorArm.setTargetPosition(0);
-                    servoArm.setPosition(0.4);
+                    motorArm.setTargetPosition(-27);
+                    servoArm.setPosition(0.3);
                     motorArm.setPower(motorPower);
                     break;
                 case 1:
-                    motorArm.setTargetPosition(100);
-                    servoArm.setPosition(0.6);
+                    motorArm.setTargetPosition(-195);
+                    servoArm.setPosition(0.4);
                     motorArm.setPower(motorPower);
                     break;
                 case 2:
-                    motorArm.setTargetPosition(200);
-                    servoArm.setPosition(0.7);
-                    motorArm.setPower(motorPower);
-                    break;
-                case 3:
-                    motorArm.setTargetPosition(250);
-                    motorArm.setPower(0.4);
-                    break;
-                case 4:
-                    motorArm.setTargetPosition(725);
+                    motorArm.setTargetPosition(-430);
                     servoArm.setPosition(0.6);
                     motorArm.setPower(motorPower);
                     break;
-                case 5:
-                    motorArm.setTargetPosition(800);
+                case 3:
+                    motorArm.setTargetPosition(-690);
                     servoArm.setPosition(0.8);
                     motorArm.setPower(motorPower);
                     break;
+                case 4:
+                    motorArm.setTargetPosition(-1260);
+                    servoArm.setPosition(0.4);
+                    motorArm.setPower(motorPower);
+                    break;
+                case 5:
+                    motorArm.setTargetPosition(-1540);
+                    servoArm.setPosition(0.7);
+                    motorArm.setPower(motorPower);
+                    break;
                 case 6:
-                    motorArm.setTargetPosition(900);
-                    servoArm.setPosition(0.9);
+                    motorArm.setTargetPosition(-1620);
+                    servoArm.setPosition(0.6);
                     motorArm.setPower(motorPower);
                     break;
             }
+            if (gamepad1.left_trigger>0){
+                speed = 0.3;
+
+            }
+            else {
+                speed = 1;
+            }
+            telemetry.addData("Motor Ticks: ", motorArm.getCurrentPosition());
+            telemetry.update();
 
             // checks old position of arm, right when it goes over top of robot from front to back, it reduces speed
-            if (gamepad1.dpad_up){
+            if (gamepad2.dpad_up){
                 if (!isPressed) {
                     position += increase;
                 }
@@ -125,10 +135,10 @@ public class TankDriveTest01 extends LinearOpMode{
             }
 
             // checks old arm position, when it goes over the top of the robot from back to front, it reduces speed
-            if (!gamepad1.dpad_up && !gamepad1.dpad_down){
+            if (!gamepad2.dpad_up && !gamepad2.dpad_down){
                 isPressed = false;
             }
-            else if (gamepad1.dpad_down){
+            else if (gamepad2.dpad_down){
                 if (!isPressed) {
                     position -= increase;
                 }
@@ -146,11 +156,11 @@ public class TankDriveTest01 extends LinearOpMode{
                 position = 6;
             }
 
-            if(gamepad1.x) {
+            if(gamepad2.x) {
                 servoGrabber.setPosition(0.34);
             }
-            else if (gamepad1.a) {
-                servoGrabber.setPosition(0.9);
+            else if (gamepad2.a) {
+                servoGrabber.setPosition(1);
             }
 
             if (gamepad1.right_bumper) {
