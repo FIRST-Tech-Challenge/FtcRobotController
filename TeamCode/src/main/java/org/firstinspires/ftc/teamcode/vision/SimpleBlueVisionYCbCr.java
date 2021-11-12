@@ -22,12 +22,12 @@ public class SimpleBlueVisionYCbCr extends OpenCvPipeline {
     }
     public SimpleBlueVisionYCbCr() {}
 
-    public Scalar x = new Scalar(0,0,0,0), low = new Scalar(0, 83.6, 150.3, 0), high = new Scalar(255, 117.5, 160.1, 255), low2 = new Scalar(0,0,0,0), high2 = new Scalar(255,0,0,255);
+    public Scalar x = new Scalar(0,0,0,0), low = new Scalar(0, 83.6, 150.3, 0), high = new Scalar(255, 117.5, 160.1, 255), low2 = new Scalar(0,100,100,0), high2 = new Scalar(255,120,120,255);
     @Override
     public Mat processFrame(Mat input) {
         // YCbCr scalars
         ArrayList<VisionThing> capstonePotential = DetectionMethods.detectYCrCb(input, low2, high2, 0,
-                1,0,1,0.15,0.2,"capstone"); // detect the capstone
+                1,0,1,0.1,0.2,"capstone"); // detect the capstone
         ArrayList<VisionThing> capstone = new ArrayList<>();
         for(VisionThing v : capstonePotential) {
             capstone.add(v);
@@ -39,15 +39,15 @@ public class SimpleBlueVisionYCbCr extends OpenCvPipeline {
         double ymin, ymax;
         if(capstone.size() > 0) {
             // Calculate minimum and maximum bounds for height of the tape
-            ymin = (capstone.get(0).y-capstone.get(0).ysize*2)/input.height();
+            ymin = capstone.get(0).y/input.height();
             ymax = (capstone.get(0).y+capstone.get(0).ysize*2)/input.height();
         } else {
             // In case the capstone wasn't found
             ymin = 0;
             ymax = 1;
         }
-        ArrayList<VisionThing> tapePotential = DetectionMethods.detectYCrCb(input, new Scalar(0, 83.6, 157.3, 0), new Scalar(255, 107.5, 174.1, 255), 0,
-                1,ymin, ymax,0.05,0.1,"tape"); // Detect the tape
+        ArrayList<VisionThing> tapePotential = DetectionMethods.detectYCrCb(input, low, high, 0,
+                1,ymin, ymax,0.03,0.8,"tape"); // Detect the tape
         ArrayList<VisionThing> tape = new ArrayList<>();
         for(VisionThing v : tapePotential) {
             if(capstone.size() < 1 || !(Math.abs(v.x-capstone.get(0).x)/input.width() < 0.2)) {

@@ -17,6 +17,6 @@ public class VisionThing {
     }
 
     public String toString() {
-        return kind+" at ("+x+","+y+") with size ("+xsize+","+ysize+")";
+        return kind+" at ("+x+","+y+") with size ("+xsize+","+ysize+") and magSize " + magSize();
     }
 }
