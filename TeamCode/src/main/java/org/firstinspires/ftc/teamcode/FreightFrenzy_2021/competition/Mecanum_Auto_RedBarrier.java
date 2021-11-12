@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,10 +20,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Math.toRadians;
 
 @Autonomous(name = "RED BARRIER", group = "Competition")
 public class Mecanum_Auto_RedBarrier extends LinearOpMode {
@@ -101,16 +107,6 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Rotate.setPosition(0.03);
 
-        //Gyro
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
         //Vision
         initVuforia();
         initTfod();
@@ -126,6 +122,14 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
+        //Traj
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(6.5, -62.125, toRadians(-90));
+        drive.setPoseEstimate(startPose);
+        Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
+                .splineToConstantHeading(new Vector2d(-11.875, -42), toRadians(90))
+                .build();
+
         waitForStart();
         if(opModeIsActive()) {
 
@@ -134,9 +138,8 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             if (visionResult == null) {
                 recogTime.reset();
             }
-            double initialHeading = normalizeAngle(aquireHeading());
-            displayEncoderValue();
-            while (recogTime.milliseconds() <= 2500.0) {
+
+            while (recogTime.milliseconds() <= 2000.0) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
@@ -164,16 +167,12 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             telemetry.update();
 
             //MOTION TO PLATE
-            driveStraight(false, 1.0, 0.3, 150);
-            stopMotion(100);
-            rotateToAngle(20,2.0, 0.3);
-            stopMotion(100);
-            driveStraight(false, 1.0, 0.4, 1200);
-            stopMotion(200);
-            LB.setPower(-0.4);
-            LF.setPower(-0.4);
-            sleep(300);
-            stopMotion(200);
+            drive.followTrajectory(myTrajectory1);
+            sleep(600);
+
+            //ROTATE
+            Rotate.setPosition(1.0);
+            sleep(800);
 
             //SLIDE UP
             if (visionResult == "LEFT") {
@@ -189,10 +188,15 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.8);
             }
+            sleep(600);
+
+            //CLOSER TO PLATE
+            Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory1.end())
+                    .back(1)
+                    .build();
+            drive.followTrajectory(myTrajectory2);
 
             //DUMP AND SLIDE DOWN
-            Rotate.setPosition(1.0);
-            sleep(700);
             Push.setPosition(0.0);
             sleep(300);
             Push.setPosition(0.4);
@@ -203,13 +207,17 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Slide.setPower(0.8);
 
-            //BACK TO WALL & PARK
-            rotateToAngle(90,2.0, 0.3);
-            drivePerpendicularly(false, 1.0, 0.5, 1800);
-            stopMotion(100);
-            driveStraight(true, 1.0, 0.5, 1850);
+            //BACK TO WALL
+            Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end())
+                    .splineToLinearHeading(new Pose2d(6.5, -65), toRadians(-180))
+                    .build();
+            drive.followTrajectory(myTrajectory3);
+            sleep(300);
 
-            stopMotion();
+            Trajectory myTrajectory4 = drive.trajectoryBuilder(myTrajectory3.end())
+                    .forward(35)
+                    .build();
+            drive.followTrajectory(myTrajectory4);
         }
 
     }

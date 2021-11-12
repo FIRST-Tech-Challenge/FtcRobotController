@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import static java.lang.Math.toRadians;
 
-@TeleOp(name = "Mecanum TeleOp Candidate", group = "Competition")
+@TeleOp(name = "Mecanum TeleOp Candidate", group = "Linear OpMode")
 public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -74,7 +74,7 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
         telemetry.update();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-41, 62.125, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(-41, -62.125, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
 

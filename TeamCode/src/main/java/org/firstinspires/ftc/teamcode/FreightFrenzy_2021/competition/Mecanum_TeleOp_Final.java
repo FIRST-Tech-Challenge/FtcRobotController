@@ -83,9 +83,11 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean releasedA2 = true;
         boolean releasedB2 = true;
         boolean releasedY2 = true;
-
+        boolean releasedDD1 = true;
         boolean releasedDD2 = true;
+        boolean releasedDU1 = true;
         boolean releasedDU2 = true;
+
         boolean toggleX1 = true;
         boolean toggleRB2 = true;
         boolean toggleLB2 = true;
@@ -98,23 +100,23 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             double strafe  = -gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
 
-//            if(gamepad1.dpad_up) {
-//                if(releasedRB1) {
-//                    increaseSpeed(0.05);
-//                    releasedRB1 = false;
-//                }
-//            } else if(!releasedRB1){
-//                releasedRB1 = true;
-//            }
-//
-//            if(gamepad1.dpad_down){
-//                if(releasedLB1) {
-//                    decreaseSpeed(0.05);
-//                    releasedLB1 = false;
-//                }
-//            } else if (!releasedLB1){
-//                releasedLB1 = true;
-//            }
+            if(gamepad1.dpad_up) {
+                if(releasedDU1) {
+                    increaseSpeed(0.05);
+                    releasedDU1 = false;
+                }
+            } else if(!releasedDU1){
+                releasedDU1 = true;
+            }
+
+            if(gamepad1.dpad_down){
+                if(releasedDD1) {
+                    decreaseSpeed(0.05);
+                    releasedDD1 = false;
+                }
+            } else if (!releasedDD1){
+                releasedDD1 = true;
+            }
 
             if(gamepad2.a){
                 if(releasedA2) {
@@ -222,7 +224,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             if (gamepad2.right_bumper) {
                 if (releasedRB2){
                     if (toggleRB2) {
-                        spinPower = 0.6;
+                        spinPower = 0.8;
                         telemetry.addLine("SPIN STARTS");
                         toggleRB2 = false;
                     } else {
@@ -239,7 +241,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             if (gamepad2.left_bumper) {
                 if (releasedLB2){
                     if (toggleLB2) {
-                        spinPower = -0.6;
+                        spinPower = -0.8;
                         telemetry.addLine("SPIN STARTS REVERSE");
                         toggleLB2 = false;
                     } else {
@@ -324,4 +326,6 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         }
         speed = increased;
     }
+
+
 }

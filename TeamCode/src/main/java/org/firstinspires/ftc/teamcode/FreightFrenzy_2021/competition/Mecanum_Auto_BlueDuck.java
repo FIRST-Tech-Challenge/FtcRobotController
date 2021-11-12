@@ -43,7 +43,6 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
     private DcMotor Slide = null;
     private Servo Rotate = null;
     private Servo Push = null;
-    private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
     private ElapsedTime runtime = new ElapsedTime();
 
     BNO055IMU imu;
@@ -59,10 +58,6 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             Robot4100Common.VUFORIA_LICENSE;
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-
-    double rotate = 0;
-    double speed = 0.5;
-    boolean reverse = false;
 
     @Override
     public void runOpMode() {
@@ -125,11 +120,12 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
+        //Traj
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(-41, 62.125, toRadians(90));
         drive.setPoseEstimate(startPose);
         Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
-                .splineToConstantHeading(new Vector2d(-11.875, 40), toRadians(-90))
+                .splineToConstantHeading(new Vector2d(-11.875, 42), toRadians(-90))
                 .build();
 
         waitForStart();
@@ -141,7 +137,7 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
                 recogTime.reset();
             }
 
-            while (recogTime.milliseconds() <= 2500.0) {
+            while (recogTime.milliseconds() <= 2000.0) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
@@ -172,6 +168,10 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             drive.followTrajectory(myTrajectory1);
             sleep(500);
 
+            //ROTATE
+            Rotate.setPosition(1.0);
+            sleep(800);
+
             //SLIDE UP
             if (visionResult == "LEFT") {
                 Slide.setTargetPosition(initialHeight);
@@ -186,10 +186,15 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.8);
             }
+            sleep(600);
+
+            //CLOSER TO PLATE
+            Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory1.end())
+                    .back(1)
+                    .build();
+            drive.followTrajectory(myTrajectory2);
 
             //DUMP AND SLIDE DOWN
-            Rotate.setPosition(1.0);
-            sleep(700);
             Push.setPosition(0.0);
             sleep(300);
             Push.setPosition(0.4);
@@ -201,13 +206,13 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             Slide.setPower(0.8);
 
             //BACK TO WALL
-            Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory1.end())
+            Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end())
                     .splineToConstantHeading(new Vector2d(-65, 53), toRadians(90))
                     .build();
-            drive.followTrajectory(myTrajectory2);
+            drive.followTrajectory(myTrajectory3);
             sleep(500);
 
-            Pose2d wall = new Pose2d(-65, 53, Math.toRadians(90));
+            Pose2d wall = new Pose2d(-63.88, 53.25, Math.toRadians(90));
             drive.setPoseEstimate(wall);
 
             //ROTATE DUCK
@@ -216,15 +221,23 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             Spin.setPower(0.0);
 
             //PARK
-            Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end(),true)
-                    .forward(-19)
+            Trajectory myTrajectory4 = drive.trajectoryBuilder(wall,true)
+                    .forward(-18.5)
                     .build();
 
-            drive.followTrajectory(myTrajectory3);
+            drive.followTrajectory(myTrajectory4);
 
         }
 
     }
+
+    void twoPhaseSpin(double startingSpeed, double endSpeed){
+        ElapsedTime tSpin = new ElapsedTime();
+        while(tSpin.milliseconds() < 3000)
+            Spin.setPower(startingSpeed);
+
+    }
+
     void stopMotion() {
         LF.setPower(0);
         RF.setPower(0);
@@ -324,9 +337,7 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
         stopMotion();
     }
 
-//    void encoderDrive(double LF_D, double RF_D, double LB_D, double RB_D){
-//        LF_D/
-//    }
+
 
     void drivePerpendicularly(boolean isLeft, double margin, double power, double timeInterval) {
         ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
