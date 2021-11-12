@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.src.DrivePrograms;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.CarouselSpinner;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.TeleopDriveTrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.CarouselSpinner;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.ContinuousIntake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 
 
 @TeleOp(name = "2022 Drive Program")
@@ -14,6 +16,8 @@ public class JavaDriveProgram extends LinearOpMode {
     private TeleopDriveTrain driveTrain;
     private CarouselSpinner spinner;
     private OdometryPodServos pod;
+    private LinearSlide slide;
+    private ContinuousIntake intake;
 
 
     public void runOpMode() throws InterruptedException {
@@ -28,8 +32,13 @@ public class JavaDriveProgram extends LinearOpMode {
 
         spinner = new CarouselSpinner(hardwareMap, "duck_spinner");
 
-        pod = new OdometryPodServos(hardwareMap,"right_odometry_servo","left_odometry_servo","horizontal_odometry_servo");
+        pod = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
         pod.raise();
+
+        slide = new LinearSlide(hardwareMap, "slide_motor");
+
+        intake = new ContinuousIntake(hardwareMap, "intake_motor");
+
 
         telemetry.addData("Initialization Status", "Initialized");
         telemetry.update();
@@ -41,22 +50,8 @@ public class JavaDriveProgram extends LinearOpMode {
             angle = angle + 4;
 
             //Handles Linear Slide Control
-            //slide.setMotorPower(0.75 * gamepad2.left_stick_y);
-
-            //Toggles Attachment A Button for Grabber
-           /* {
-                if (!gamepad2.a) {
-                    aDepressed = true;
-                }
-                if (gamepad2.a && grabber.isOpen() && aDepressed) {
-                    aDepressed = false;
-                    grabber.close();
-                }
-                if (gamepad2.a && !grabber.isOpen() && aDepressed) {
-                    aDepressed = false;
-                    grabber.open();
-                }
-            }*/
+            slide.setMotorPower(0.75 * gamepad2.left_stick_y);
+            intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
 
 
             //Gamepad 2 B Red Duck

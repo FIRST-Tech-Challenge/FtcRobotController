@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.OdometryDrivetrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.IMU;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.CarouselSpinner;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
@@ -13,6 +16,9 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlob
 public class AutonomousTemplate extends LinearOpMode {
     public OdometryPodServos podServos;
     public OdometryDrivetrain driveSystem;
+    public CarouselSpinner spinner;
+    public OdometryGlobalCoordinatePosition odometry;
+    public LinearSlide slide;
 
     public void initAll() {
         podServos = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
@@ -46,8 +52,12 @@ public class AutonomousTemplate extends LinearOpMode {
 
 
         //front_left, front_right, back_right
-        OdometryGlobalCoordinatePosition odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_right, 25);
-        //odometry.reverseLeftEncoder();
+        odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_right, 25);
+        IMU imu = new IMU(hardwareMap, "imu");
+        odometry.setImu(imu.getImu());
+
+
+        odometry.reverseLeftEncoder();
         Thread positionThread = new Thread(odometry);
         positionThread.start();
 
@@ -62,6 +72,15 @@ public class AutonomousTemplate extends LinearOpMode {
                 return opModeIsActive();
             }
         });
+
+
+        spinner = new CarouselSpinner(hardwareMap, "duck_spinner"
+        );
+
+        slide = new LinearSlide(hardwareMap, "slide_motor");
+
+        telemetry.addData("Default Initialization: ", "Finished");
+        telemetry.update();
 
     }
 

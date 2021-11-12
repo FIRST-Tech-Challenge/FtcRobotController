@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     private int verticalLeftEncoderPositionMultiplier = 1;
     private int verticalRightEncoderPositionMultiplier = 1;
     private int normalEncoderPositionMultiplier = 1;
+    private double angleOffset = 0;
 
     /**
      * Constructor for GlobalCoordinatePosition Thread
@@ -73,19 +75,26 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
         return ports;
     }
 
+    public void showPosition(Telemetry telemetry) {
+        telemetry.addData("X: ", this.returnRelativeXPosition());
+        telemetry.addData("Y: ", this.returnRelativeYPosition());
+        telemetry.addData("Rotation: ", this.returnOrientation());
+        telemetry.update();
+    }
+
     public double getCOUNTS_PER_INCH() {
         return COUNTS_PER_INCH;
     }
 
-    public int returnRightEncoderPosition(){
+    public int returnRightEncoderPosition() {
         return verticalRightEncoderPositionMultiplier * verticalEncoderRight.getCurrentPosition();
     }
 
-    public int returnLeftEncoderPosition(){
+    public int returnLeftEncoderPosition() {
         return verticalLeftEncoderPositionMultiplier * verticalEncoderLeft.getCurrentPosition();
     }
 
-    public int returnHorizontalEncoderPosition(){
+    public int returnHorizontalEncoderPosition() {
         return normalEncoderPositionMultiplier * horizontalEncoder.getCurrentPosition();
     }
 
@@ -107,14 +116,19 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     }
 
     public boolean setPosition(double x, double y, double angle) {
-        if (isActive) {
-            return false;
-        } else {
-            robotGlobalXCoordinatePosition = x * COUNTS_PER_INCH;
-            robotGlobalYCoordinatePosition = y * COUNTS_PER_INCH;
-            robotOrientationRadians = Math.toRadians(angle);
-            return true;
+
+        while (isActive) {
+            continue;
         }
+        robotGlobalXCoordinatePosition = x * COUNTS_PER_INCH;
+        robotGlobalYCoordinatePosition = y * COUNTS_PER_INCH;
+        if (imu != null) {
+            angleOffset = Math.toRadians(angle);
+        } else {
+            robotOrientationRadians = Math.toRadians(angle);
+        }
+        return true;
+
     }
 
     public boolean isActive() {
@@ -143,7 +157,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     private void globalCoordinatePositionUpdate() {
         isActive = true;
         if (imu != null) {
-            robotOrientationRadians = Math.toRadians(getImu());
+            robotOrientationRadians = Math.toRadians(getImu()) + angleOffset;
+            robotOrientationRadians = robotOrientationRadians % 360;
         }
         //Get Current Positions
         verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);

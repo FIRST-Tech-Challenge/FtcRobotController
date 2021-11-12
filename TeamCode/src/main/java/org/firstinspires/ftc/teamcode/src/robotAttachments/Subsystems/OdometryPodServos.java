@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class OdometryPodServos {
 
     private static final double rightServoRaisePosition = 0.45;
-    private static final double rightServoLowerPosition = .77;
+    private static final double rightServoLowerPosition = .76;
 
     private static final double leftServoRaisePosition = 0.8;
     private static final double leftServoLowerPosition = 0.52;

@@ -22,7 +22,7 @@ public class IMU {
 
     }
 
-    public double getImu() {
+    public double getAngle() {
         double returnVal;
         if (imu.getAngularOrientation().firstAngle < 0) {
             returnVal = Math.abs(imu.getAngularOrientation().firstAngle);
@@ -31,5 +31,9 @@ public class IMU {
         }
         return returnVal % 360;
 
+    }
+
+    public BNO055IMU getImu() {
+        return imu;
     }
 }
