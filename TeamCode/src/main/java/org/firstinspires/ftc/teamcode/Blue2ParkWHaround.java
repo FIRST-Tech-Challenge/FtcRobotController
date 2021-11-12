@@ -76,11 +76,7 @@ public class Blue2ParkWHaround extends DriveMethods {
         /**
          * Any code for initilization goes here
          */
-        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
-        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
-        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
-        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
-        servoCarousel = hardwareMap.get(Servo.class, "carousel");
+        initializeDevices();
 
         setMotorDirections();
 

@@ -71,11 +71,7 @@ public class Blue1ParkWH extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
-        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
-        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
-        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
-        servoCarousel = hardwareMap.get(Servo.class, "carousel");
+        initializeDevices();
 
         setMotorDirections();
 

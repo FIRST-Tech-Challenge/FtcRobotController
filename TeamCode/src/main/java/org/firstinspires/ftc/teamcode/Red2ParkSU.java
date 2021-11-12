@@ -76,11 +76,7 @@ public class Red2ParkSU extends DriveMethods {
         /**
          * Any code for initilization goes here
          */
-        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
-        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
-        motorBackRight = hardwareMap.get(DcMotor.class,  "backright");
-        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
-        servoCarousel = hardwareMap.get(Servo.class, "carousel");
+        initializeDevices();
 
         setMotorDirections();
 
@@ -100,7 +96,7 @@ public class Red2ParkSU extends DriveMethods {
         sleep(3500);
         servoCarousel.setPosition(.5);
         StopMotors();
-        driveForDistance(.5,.3, Direction.BACKWARD);
+        driveForDistance(.5,.3, Direction.FORWARD);
         driveForDistance(.2,.3, Direction.LEFT);
 
 
