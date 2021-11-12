@@ -1,9 +1,10 @@
-/* FTC Team 7572 - Version 1.0 (10/01/2021)
+/* FTC Team 7572 - Version 1.1 (11/12/2021)
 */
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * TeleOp Full Control.
@@ -13,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class TeleopFull extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Duck motor on/off
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Backwards Drive mode (also turns off driver-centric mode)
-    boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // UNUSED
+    boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // sweeper on/off (collect)
     boolean gamepad1_square_last,     gamepad1_square_now     = false;  // Enables/calibrates driver-centric mode
 //  boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;  // gamepad1.dpad_up used live/realtime
 //  boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;  //   (see processDpadDriveMode() below)
@@ -22,16 +23,28 @@ public class TeleopFull extends LinearOpMode {
     boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;  // Duck Motor (slower)
     boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;  // Duck Motor (faster)
 
-    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // 
-    boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // 
-    boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // UNUSED
-    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // 
-    boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;
-    boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;
-    boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;
-    boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;
-    boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  //
-    boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  //
+    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // Freight Arm (Transport Vertical)
+    boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Freight Arm (Transport Horizontal)
+    boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // Freight Arm (Collect)
+    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // claw servo open/close 
+    boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;  // Freight Arm (Hub-Top)
+    boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Freight Arm (Hub-Bottom) 
+    boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Freight Arm (Raise/Spin)
+    boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Freight Arm (Hub-Middle)
+    boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // sweeper (reverse)
+    boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // box servo (dump)
+
+    boolean sweeperRunning  = false;  // controlled by driver (gamepad1)
+    boolean sweeperReversed = false;  // controlled by operator (gamepad2)
+
+    boolean clawServoOpen   = false;  // true=OPEN; false=CLOSED on team element
+
+    final int FREIGHT_CYCLECOUNT_START = 20;  // Freight Arm just started moving (1st cycle)
+    final int FREIGHT_CYCLECOUNT_SERVO = 10;  // Freight Arm off the floor (safe to rotate box servo)
+    final int FREIGHT_CYCLECOUNT_CHECK = 1;   // Time to check if Freight Arm is still moving?
+    final int FREIGHT_CYCLECOUNT_DONE  = 0;   // Movement is complete (cycle count is reset)
+    int       freightArmCycleCount     = FREIGHT_CYCLECOUNT_DONE;
+    boolean   freightArmTweaked        = false;  // Reminder to zero power when trigger released
 
     double  yTranslation, xTranslation, rotation;                  /* Driver control inputs */
     double  rearLeft, rearRight, frontLeft, frontRight, maxPower;  /* Motor power levels */
@@ -43,9 +56,9 @@ public class TeleopFull extends LinearOpMode {
     int       driverMode               = DRIVER_MODE_STANDARD;
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
 
-    boolean duckMotorEnable = false;
-    double  duckPower = 0.750;
-    double  duckVelocity = 1800;      // target counts per second
+    boolean   duckMotorEnable = false;
+    double    duckPower = 0.750;
+    double    duckVelocity = 1800;      // target counts per second
 
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
@@ -78,119 +91,39 @@ public class TeleopFull extends LinearOpMode {
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
 
+            // Process all the driver/operator inputs
+            processSweeperControls();
+            processDuckMotorControls();
+            processFreightArmControls();
+            processCappingArmControls();
+
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
             {
                 driverMode = DRIVER_MODE_DRV_CENTRIC;
             }
 
-            // Check for an OFF-to-ON toggle of the gamepad1 CIRCLE button (toggles STANDARD/BACKWARD drive control)
-            if( gamepad1_circle_now && !gamepad1_circle_last)
+            // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button (toggles STANDARD/BACKWARD drive control)
+            if( gamepad1_triangle_now && !gamepad1_triangle_last)
             {
                 // If currently in DRIVER-CENTRIC mode, switch to STANDARD (robot-centric) mode
                 if( driverMode != DRIVER_MODE_STANDARD ) {
                     driverMode = DRIVER_MODE_STANDARD;
-                    backwardDriveControl = true;  // start with phone-end as front of robot
+//                  backwardDriveControl = false;  // reset to forward mode
                 }
                 // Already in STANDARD mode; Just toggle forward/backward mode
-                else {
-                    backwardDriveControl = !backwardDriveControl; // reverses which end of robot is "FRONT"
+                else {  //(disabled for now)
+//                  backwardDriveControl = !backwardDriveControl; // reverses which end of robot is "FRONT"
                 }
             }
 
-            // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button (Duck Motor ON/OFF)
-            if( gamepad1_triangle_now && !gamepad1_triangle_last)
-            {
-                duckMotorEnable = !duckMotorEnable;
-                if( duckMotorEnable )
-                    robot.duckMotor.setPower( duckPower );
-//                  robot.duckMotor.setVelocity( duckVelocity );
-                else
-                    robot.duckMotor.setPower( 0.0 );
-            }
-
-            // Check for an OFF-to-ON toggle of the gamepad1 left bumper
-            if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last)
-            {
-                // decrease duck motor speed
-                duckPower -= 0.02;   // 2% decrements
-                robot.duckMotor.setPower( duckPower );
-//              duckVelocity -= 20;
-//              robot.duckMotor.setVelocity( duckVelocity );
-            }
-
-            // Check for an OFF-to-ON toggle of the gamepad1 right bumper
-            if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last)
-            {
-                // increase duck motor speed
-                duckPower += 0.02;   // 2% increments
-                robot.duckMotor.setPower( duckPower );
-//              duckVelocity += 20;
-//              robot.duckMotor.setVelocity( duckVelocity );
-            }
-
-            //====================================================================
-            // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button ()
-            if( gamepad2_square_now && !gamepad2_square_last)
-            {
-                robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE );
-            }
-
-            // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button ()
-            if( gamepad2_circle_now && !gamepad2_circle_last)
-            {
-               robot.cappingArmPosition( robot.CAPPING_ARM_POS_CAP_HUB );
-            }
-
-            // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button ()
-            if( gamepad2_triangle_now && !gamepad2_triangle_last)
-            {
-               robot.cappingArmPosition( robot.CAPPING_ARM_POS_CAP_PARTNER );
-            }
-
-            // Check for an OFF-to-ON toggle of the gamepad2 CROSS button ()
-            if( gamepad2_cross_now && !gamepad2_cross_last)
-            {
-                robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB );
-            }
-
-            //===================================================================
-           // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
-            if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
-            {
-                robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_TOP );
-            }
-            // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
-            if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
-            {
-                robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT );
-            }
-            // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
-            if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
-            {
-                robot.freightArmPosition( robot.FREIGHT_ARM_POS_SPIN );
-            }
-            // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
-            if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
-            {
-                robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT );
-            }
-            // Check for an OFF-to-ON toggle of the gamepad2 LEFT BUMPER
-            if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last)
-            {
-                robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE );
-            }
-            // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
-            if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
-            {
-                robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_BOTTOM );
-            }
-
-            telemetry.addData("circle","Robot-centric (fwd/back modes)");
+            telemetry.addData("triangle","Robot-centric");
             telemetry.addData("square","Driver-centric (set joystick!)");
             telemetry.addData("d-pad","Fine control (20%)");
-            telemetry.addData("triangle","Duck Motor On/Off");
+            telemetry.addData("circle","Duck Motor On/Off");
             telemetry.addData("bumpers","Duck Motor Speed");
+            telemetry.addData("bumpers","Duck Motor Speed");
+            telemetry.addData("cross","Sweeper On/Off");
             telemetry.addData(" "," ");
 
             if( processDpadDriveMode() == false ) {
@@ -265,6 +198,210 @@ public class TeleopFull extends LinearOpMode {
         gamepad2_l_bumper_last   = gamepad2_l_bumper_now;    gamepad2_l_bumper_now   = gamepad2.left_bumper;
         gamepad2_r_bumper_last   = gamepad2_r_bumper_now;    gamepad2_r_bumper_now   = gamepad2.right_bumper;
     } // captureGamepad2Buttons
+
+    /*---------------------------------------------------------------------------------*/
+    void processSweeperControls() {
+        // Check if gamepad2 LEFT BUMPER is pressed
+        if( gamepad2_l_bumper_now ) {
+            robot.sweepServo.setPower( -1.0 );  // ON (reverse)
+            sweeperReversed = true;   // note that we need to turn it back OFF
+        }
+        // or not. but was PREVIOUSLY
+        else if( sweeperReversed ) {
+            robot.sweepServo.setPower( 0.0 );  // OFF
+            sweeperReversed = false;   // only do this once!
+        }
+        // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
+        else if( gamepad1_cross_now && !gamepad1_cross_last) {
+            if( sweeperRunning ) {  // currently running, so toggle OFF
+                robot.sweepServo.setPower( 0.0 );  // OFF
+            }
+            else {  // currently stopped, so toggle ON
+                robot.sweepServo.setPower( 1.0 );  // ON (forward)
+            }
+            sweeperRunning = !sweeperRunning;
+        }
+    } // processSweeperControls
+
+    /*---------------------------------------------------------------------------------*/
+    void processDuckMotorControls() {
+        // Check for an OFF-to-ON toggle of the gamepad1 CIRCLE button
+        if( gamepad1_circle_now && !gamepad1_circle_last)
+        {   // toggle motor ON/OFF
+            if( duckMotorEnable ) {
+                robot.duckMotor.setPower( 0.0 );
+            }
+            else {
+                robot.duckMotor.setPower( duckPower );
+//              robot.duckMotor.setVelocity( duckVelocity );
+            }
+            duckMotorEnable = !duckMotorEnable;
+        }
+        // Check for an OFF-to-ON toggle of the gamepad1 left bumper
+        if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last)
+        {
+            // decrease duck motor speed
+            duckPower -= 0.02;   // 2% decrements
+//          duckVelocity -= 20;
+            if( duckMotorEnable ) {
+                robot.duckMotor.setPower( duckPower );
+//              robot.duckMotor.setVelocity( duckVelocity );
+            }
+        }
+        // Check for an OFF-to-ON toggle of the gamepad1 right bumper
+        if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last)
+        {
+            // increase duck motor speed
+            duckPower += 0.02;   // 2% increments
+//          duckVelocity += 20;
+            if( duckMotorEnable ) {
+                robot.duckMotor.setPower( duckPower );
+//              robot.duckMotor.setVelocity( duckVelocity );
+            }
+        }
+    } // processDuckMotorControls
+
+    /*---------------------------------------------------------------------------------*/
+    void processFreightArmControls() {
+        // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
+        if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
+        {
+            robot.boxServo.setPosition( robot.BOX_SERVO_DUMP_TOP );
+        }
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
+        if( gamepad2_triangle_now && !gamepad2_triangle_last)
+        {
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT2, 0.80 );
+            freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
+        if( gamepad2_circle_now && !gamepad2_circle_last)
+        {
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.80 );
+            freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 CROSS button ()
+        if( gamepad2_cross_now && !gamepad2_cross_last)
+        {
+            robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.20 );
+            freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+        }
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
+        if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
+        {
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_TOP, 0.80 );
+            freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
+        if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
+        {
+            // UNUSED
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
+        if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
+        {
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE, 0.50 );
+            freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
+        if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
+        {
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_BOTTOM, 0.30 );
+            freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+        }
+        //===================================================================
+        if( freightArmCycleCount > FREIGHT_CYCLECOUNT_SERVO ) {
+            // nothing to do yet (just started moving)
+            freightArmCycleCount--;
+        }
+        else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SERVO ) {
+            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
+            freightArmCycleCount--;
+        }
+        else if( freightArmCycleCount > FREIGHT_CYCLECOUNT_CHECK ) {
+            // nothing to do yet (too soon to check motor state)
+            freightArmCycleCount--;
+        }
+        else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_CHECK ) {
+            if( robot.freightMotor.isBusy() ) {
+                // still moving; hold at this cycle count
+            }
+            else { // no longer busy; turn off motor power
+                robot.freightMotor.setPower( 0.0 );
+                robot.freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;   // ensure we're reset
+            }
+        }
+        else { // freightArmCycleCount == FREIGHT_CYCLECOUNT_DONE
+            // arm must be idle; check for manual arm control
+            freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;   // ensure we're reset
+            if( gamepad2.left_trigger > 0.05 ) {
+                robot.freightMotor.setPower( 0.10 );
+                freightArmTweaked = true;
+            }
+            else if( gamepad2.right_trigger > 0.05 ) {
+                robot.freightMotor.setPower( -0.10 );
+                freightArmTweaked = true;
+            }
+            else if( freightArmTweaked ) {
+                robot.freightMotor.setPower( 0.0 );
+                freightArmTweaked = false;
+            }
+        }
+    } // processFreightArmControls
+
+    /*---------------------------------------------------------------------------------*/
+    void processCappingArmControls() {
+        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
+        if( gamepad2_square_now && !gamepad2_square_last)
+        {
+            if( clawServoOpen ) {
+                robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );
+            }
+            else {
+                robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );
+            }
+            clawServoOpen = !clawServoOpen;
+        }
+        //===================================================================
+        if( gamepad2.left_stick_y < -0.05 ) {
+            // limit how far we can drive this direction
+            if( true ) {
+                double motorPower = 0.25 * gamepad2.left_stick_y;
+                robot.cappingMotor.setPower( motorPower );
+            }
+        }
+        else if( gamepad2.left_stick_y > 0.05 ) {
+            // limit how far we can drive this direction
+            if( true ) {
+                double motorPower = 0.25 * gamepad2.left_stick_y;
+                robot.cappingMotor.setPower( motorPower );
+            }
+        }
+        else {
+            robot.cappingMotor.setPower( 0.0 );
+        }
+        //===================================================================
+        if( gamepad2.right_stick_y < -0.05 ) {
+            // What was the last commanded position?
+            double curPos = robot.wristServo.getPosition();
+            if( curPos >  -0.99 ) {
+                double newPos = curPos - 0.01;
+                robot.wristServo.setPosition( newPos );
+            }
+        }
+        else if( gamepad2.right_stick_y > 0.05 ) {
+            // What was the last commanded position?
+            double curPos = robot.wristServo.getPosition();
+            if( curPos <  0.99 ) {
+                double newPos = curPos + 0.01;
+                robot.wristServo.setPosition( newPos );
+            }
+        }
+    } // processCappingArmControls
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */

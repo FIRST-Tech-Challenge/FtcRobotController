@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -86,8 +87,8 @@ public class HardwareBothHubs
 
     public Servo   clawServo = null;
     public double  CLAW_SERVO_INIT   = -0.10;
-    public double  CLAW_SERVO_CLOSED = 0.00;
-    public double  CLAW_SERVO_OPEN   = 0.00;
+    public double  CLAW_SERVO_CLOSED = -0.10;
+    public double  CLAW_SERVO_OPEN   =  0.30;
 
     //====== FREIGHT ARM MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx freightMotor     = null;
@@ -95,16 +96,24 @@ public class HardwareBothHubs
     public int          freightMotorPos  = 0;          // current encoder count
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
 
-    public int          FREIGHT_ARM_POS_COLLECT    = 0;     // DPAD DOWN
-    public int          FREIGHT_ARM_POS_SPIN       = 50;    // DPAD LEFT
-    public int          FREIGHT_ARM_POS_TRANSPORT  = 300;   // DPAD RIGHT
-    public int          FREIGHT_ARM_POS_HUB_TOP    = 2100;  // DPAD UP
-    public int          FREIGHT_ARM_POS_HUB_MIDDLE = 2350;  // LEFT BUMPER
-    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2600;  // RIGHT BUMPER
+    public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
+    public int          FREIGHT_ARM_POS_SPIN       = 50;    // Raised enough for box to spin clearly
+    public int          FREIGHT_ARM_POS_TRANSPORT1 = 400;   // Horizontal transport position
+    public int          FREIGHT_ARM_POS_TRANSPORT2 = 1200;  // Vertical transport position
+    public int          FREIGHT_ARM_POS_HUB_TOP    = 2100;  // For dumping into hub top level
+    public int          FREIGHT_ARM_POS_HUB_MIDDLE = 2350;  // For dumping into hub middle level
+    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2600;  // For dumping into hub bottom level
     public int          freightArmPos = FREIGHT_ARM_POS_COLLECT;
 
-    public Servo        boxServo = null;
-    public double       BOX_SERVO_INIT   = 0.50;
+    public Servo        boxServo                   = null;
+    public double       BOX_SERVO_INIT             = 0.50;
+    public double       BOX_SERVO_COLLECT          = 0.50;  // same as init
+    public double       BOX_SERVO_TRANSPORT        = 0.70;
+    public double       BOX_SERVO_DUMP_TOP         = 0.50;
+    public double       BOX_SERVO_DUMP_MIDDLE      = 0.50;
+    public double       BOX_SERVO_DUMP_BOTTOM      = 0.50;
+
+    public CRServo      sweepServo                 = null;
 
     //====== NAVIGATION DISTANCE SENSORS =====
 //  private MaxSonarI2CXL sonar_left  = null;
@@ -221,8 +230,12 @@ public class HardwareBothHubs
         freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         freightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        boxServo = hwMap.servo.get("BoxServo");        // servo port 4 (hub 2)
+        boxServo = hwMap.servo.get("BoxServo");          // servo port 4 (hub 2)
         boxServo.setPosition( BOX_SERVO_INIT );
+
+        sweepServo = hwMap.crservo.get("SweepServo");    // servo port 5 (hub 2)
+        sweepServo.setDirection( CRServo.Direction.REVERSE );
+        sweepServo.setPower( 0.0 );
 
         //Instantiate Maxbotics ultrasonic range sensors
 //      sonar_left  = hwMap.get( MaxSonarI2CXL.class, "left_ultrasonic" );
@@ -366,8 +379,9 @@ public class HardwareBothHubs
     
     /*--------------------------------------------------------------------------------------------*/
     /* freightArmPosition()                                                                       */
-    /* - newPos = desired new arm position                                                        */
-    public void freightArmPosition( int newPos )
+    /* - newPos     = desired new arm position                                                    */
+    /* - motorPower = desired motor power level to get there                                      */
+    public void freightArmPosition( int newPos, double motorPower )
     {
         // Are we ALREADY  at the specific position?
         if( freightMotorTgt == newPos )
@@ -387,7 +401,7 @@ public class HardwareBothHubs
         freightMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
 
         // Initiate motor movement to the new position
-        freightMotor.setPower( 0.80 );     // 10% power (until we get this code debugged!)
+        freightMotor.setPower( motorPower );
 
     } // freightArmPosition
 
