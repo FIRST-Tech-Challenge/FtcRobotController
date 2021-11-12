@@ -23,9 +23,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx rotatorLeft = null;
     private Servo dropperServo = null;
     private static final String TAG = "FrenzyBot";
-    public static int LIFT_LEVEL_THREE = -3450; // TODO: 11/7/21 Change values based on the empirical observations 
-    public static int LIFT_LEVEL_TWO = -1840;
-    public static int LIFT_LEVEL_ONE = -740;
+    public static int LIFT_LEVEL_THREE = -1930; // TODO: 11/7/21 Change values based on the empirical observations
+    public static int LIFT_LEVEL_TWO = -1190;
+    public static int LIFT_LEVEL_ONE = -650;
     public static int LIFT_NO_EXTENSION = 0;
 
     private int liftLocation = LIFT_NO_EXTENSION;
