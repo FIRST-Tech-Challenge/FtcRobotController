@@ -38,8 +38,8 @@ public class FrenzyBot extends FrenzyBaseBot {
     // Detection
     CVDetector detector;
     String opModeSide = AutoRoute.NAME_RED;
-
     private GameElement detectedElement;
+
 
     /* Constructor */
     public FrenzyBot() {
