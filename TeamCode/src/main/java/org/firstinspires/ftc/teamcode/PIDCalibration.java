@@ -70,6 +70,9 @@ public class PIDCalibration extends LinearOpMode {
             //press left bumper if need to reset robot
             //press right bumper BEFORE left bumper if you're in driver control mode
             //if about to hit something, please HIT STOP don't try left bumper!!!!!!!!
+            telemetry.addData("kp", kp);
+            telemetry.addData("kd", kd);
+            telemetry.update();
         }
     }
 }
