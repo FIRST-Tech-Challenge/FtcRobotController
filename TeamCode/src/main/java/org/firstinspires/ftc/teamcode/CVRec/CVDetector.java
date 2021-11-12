@@ -155,6 +155,7 @@ public class CVDetector {
 
     public AutoDot getLevel(){
         AutoDot level = null;
+        Log.d(TAG, String.format("active pipeline is null %b", activePipeline == null));
         if (activePipeline != null){
             switch (activePipeline.getGameElement()){
                 case BarcodeLevel1:
@@ -167,6 +168,11 @@ public class CVDetector {
                     level = levelC;
                     break;
             }
+        }
+        if (level != null) {
+            Log.d(TAG, String.format("level is %s", level.getDotName()));
+        } else {
+            Log.d(TAG, "Levl is null :(");
         }
         return level;
     }

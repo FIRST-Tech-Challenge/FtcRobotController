@@ -109,7 +109,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @Override
     public AutoDot getDetectionResult() {
         AutoDot level = detector.getLevel();
-        Log.d(TAG, String.format("Detection result: Level $s", level.getDotName()));
+        Log.d(TAG, String.format("Detection result: Level %s", level.getDotName()));
         telemetry.addData("Level: ", level);
         telemetry.update();
         detector.stopDetection();
