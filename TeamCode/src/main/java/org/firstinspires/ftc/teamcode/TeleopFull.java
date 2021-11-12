@@ -39,6 +39,8 @@ public class TeleopFull extends LinearOpMode {
 
     boolean clawServoOpen   = false;  // true=OPEN; false=CLOSED on team element
 
+    double    freightArmServoPos = 0.50;      // Which servo setting to target once movement starts
+
     final int FREIGHT_CYCLECOUNT_START = 20;  // Freight Arm just started moving (1st cycle)
     final int FREIGHT_CYCLECOUNT_SERVO = 10;  // Freight Arm off the floor (safe to rotate box servo)
     final int FREIGHT_CYCLECOUNT_CHECK = 1;   // Time to check if Freight Arm is still moving?
@@ -272,19 +274,21 @@ public class TeleopFull extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
         if( gamepad2_triangle_now && !gamepad2_triangle_last)
         {
+            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT2, 0.80 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         if( gamepad2_circle_now && !gamepad2_circle_last)
         {
+            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.80 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button ()
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {
-            robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
+            freightArmServoPos =  robot.BOX_SERVO_COLLECT;
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.20 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
@@ -292,23 +296,28 @@ public class TeleopFull extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {
+            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_TOP, 0.80 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {
-            // UNUSED
+            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE, 0.50 );
+            freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {
+            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE, 0.50 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {
+            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_BOTTOM, 0.30 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
@@ -318,7 +327,7 @@ public class TeleopFull extends LinearOpMode {
             freightArmCycleCount--;
         }
         else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SERVO ) {
-            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
+            robot.boxServo.setPosition( freightArmServoPos );
             freightArmCycleCount--;
         }
         else if( freightArmCycleCount > FREIGHT_CYCLECOUNT_CHECK ) {
@@ -369,35 +378,41 @@ public class TeleopFull extends LinearOpMode {
         //===================================================================
         if( gamepad2.left_stick_y < -0.05 ) {
             // limit how far we can drive this direction
-            if( true ) {
+            if( robot.cappingMotorPos > 0 ) {
                 double motorPower = 0.25 * gamepad2.left_stick_y;
                 robot.cappingMotor.setPower( motorPower );
+            }
+            else {
+                robot.cappingMotor.setPower( 0.0 );
             }
         }
         else if( gamepad2.left_stick_y > 0.05 ) {
             // limit how far we can drive this direction
-            if( true ) {
+            if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_GRAB ) {
                 double motorPower = 0.25 * gamepad2.left_stick_y;
                 robot.cappingMotor.setPower( motorPower );
+            }
+            else {
+                robot.cappingMotor.setPower( 0.0 );
             }
         }
         else {
             robot.cappingMotor.setPower( 0.0 );
         }
         //===================================================================
-        if( gamepad2.right_stick_y < -0.05 ) {
+        if( gamepad2.right_stick_y < -0.03 ) {
             // What was the last commanded position?
             double curPos = robot.wristServo.getPosition();
-            if( curPos >  -0.99 ) {
-                double newPos = curPos - 0.01;
+            if( curPos >  -0.95 ) {
+                double newPos = curPos - 0.005;
                 robot.wristServo.setPosition( newPos );
             }
         }
-        else if( gamepad2.right_stick_y > 0.05 ) {
+        else if( gamepad2.right_stick_y > 0.03 ) {
             // What was the last commanded position?
             double curPos = robot.wristServo.getPosition();
-            if( curPos <  0.99 ) {
-                double newPos = curPos + 0.01;
+            if( curPos <  0.95 ) {
+                double newPos = curPos + 0.005;
                 robot.wristServo.setPosition( newPos );
             }
         }

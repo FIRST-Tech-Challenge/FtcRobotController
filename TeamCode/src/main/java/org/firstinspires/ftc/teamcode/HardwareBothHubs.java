@@ -73,11 +73,8 @@ public class HardwareBothHubs
     public int          cappingMotorPos  = 0;          // current encoder count
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
 
-    public int          CAPPING_ARM_POS_START       = 0;
-    public int          CAPPING_ARM_POS_STORE       = 100;   // 100
-    public int          CAPPING_ARM_POS_CAP_HUB     = 150;   // 350
-    public int          CAPPING_ARM_POS_CAP_PARTNER = 200;   // 360
-    public int          CAPPING_ARM_POS_GRAB        = 250;   // 570
+    public int          CAPPING_ARM_POS_START       = 0;     // also used for STORE
+    public int          CAPPING_ARM_POS_GRAB        = 2462;
 
     public int          cappingArmPos = CAPPING_ARM_POS_START;
 
@@ -99,7 +96,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
     public int          FREIGHT_ARM_POS_SPIN       = 50;    // Raised enough for box to spin clearly
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 400;   // Horizontal transport position
-    public int          FREIGHT_ARM_POS_TRANSPORT2 = 1200;  // Vertical transport position
+    public int          FREIGHT_ARM_POS_TRANSPORT2 = 1350;  // Vertical transport position
     public int          FREIGHT_ARM_POS_HUB_TOP    = 2100;  // For dumping into hub top level
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 2350;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2600;  // For dumping into hub bottom level
