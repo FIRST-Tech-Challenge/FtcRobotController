@@ -4,16 +4,20 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 abstract public class MasterOpMode extends LinearOpMode {
     //declare drive motors
     public DcMotor motorLeft = null;
     public DcMotor motorRight = null;
 
-
     //declare misc motors
     public DcMotor motorIntake = null;
     public DcMotor motorCarousel = null;
+    public DcMotor motorLift = null;
+
+    //declare servos
+    public Servo servoGrabber = null;
 
     //declare imu
     public BNO055IMU imu;
@@ -22,7 +26,6 @@ abstract public class MasterOpMode extends LinearOpMode {
         //init drive motors
         motorLeft = hardwareMap.dcMotor.get("motorLeft");
         motorRight = hardwareMap.dcMotor.get("motorRight");
-
 
         //reset encoder
         motorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -41,10 +44,17 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorIntake = hardwareMap.dcMotor.get("motorIntake");
         motorIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
         motorCarousel = hardwareMap.dcMotor.get("motorCarousel");
         motorCarousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        motorLift = hardwareMap.dcMotor.get("motorIntake");
+        motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLift.setTargetPosition(motorLift.getCurrentPosition());
+        motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //init servos
+        servoGrabber = hardwareMap.get(Servo.class, "bucket");
+        servoGrabber.setPosition(0.0);
 
         //init imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

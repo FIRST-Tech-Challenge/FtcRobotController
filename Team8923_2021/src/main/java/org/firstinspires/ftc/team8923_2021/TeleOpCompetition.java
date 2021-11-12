@@ -18,6 +18,8 @@ public class TeleOpCompetition extends MasterTeleOp
             runDriveSpeed();
             runIntake();
             runCarousel();
+            runLift();
+            runGrabber();
             idle();
         }
     }
