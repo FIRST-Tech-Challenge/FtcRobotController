@@ -32,7 +32,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private static double LIFT_SPEED = 0.8;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_READY = 0.5;
+    private static double DROPPER_SERVO_POS_READY = 0.7;
     private static double DROPPER_SERVO_POS_DROP = 0.0;
 
     // Detection
