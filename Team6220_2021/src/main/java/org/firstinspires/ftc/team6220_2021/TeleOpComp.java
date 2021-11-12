@@ -2,7 +2,7 @@
 //  You can install this program to the rev control hub without any edits.
 //  Using the logitech controller, you can move the robot in tank drive.
 
-package org.firstinspires.ftc.team6220_2021.TestClasses;
+package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "TankDriveTest01", group = "TeleOp")
-public class TankDriveTest01 extends LinearOpMode{
+@TeleOp(name = "TeleOp Comp", group = "TeleOp")
+public class TeleOpComp extends LinearOpMode{
     // Declaring motors and servos
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
@@ -81,7 +81,7 @@ public class TankDriveTest01 extends LinearOpMode{
             //Use switch to declare values for each arm position
             switch (position) {
                 case 0:
-                    motorArm.setTargetPosition(-27);
+                    motorArm.setTargetPosition(-55);
                     servoArm.setPosition(0.3);
                     motorArm.setPower(motorPower);
                     break;
@@ -149,6 +149,14 @@ public class TankDriveTest01 extends LinearOpMode{
                 motorPower = 0.5;
             }
 
+            while (gamepad2.left_trigger >= 0.5) {
+                motorArm.setTargetPosition(motorArm.getCurrentPosition()+2);
+            }
+            while (gamepad2.right_trigger >= 0.5) {
+                motorArm.setTargetPosition(motorArm.getCurrentPosition()-2);
+            }
+
+
             if (position < 0){
                 position = 0;
             }
@@ -164,6 +172,7 @@ public class TankDriveTest01 extends LinearOpMode{
             }
 
             if (gamepad1.right_bumper) {
+                x = 0.7;
                 while (true) {
                     motorDuck.setPower(x);
                     pauseMillis(150);
@@ -171,8 +180,26 @@ public class TankDriveTest01 extends LinearOpMode{
                     telemetry.addData("duckPower", motorDuck.getPower());
                     telemetry.update();
                     if (x >= 0.85){
-                        pauseMillis(1000);
+                        pauseMillis(1500);
                         motorDuck.setPower(-.1);
+                        pauseMillis(30);
+                        motorDuck.setPower(0);
+                        x=0.7;
+                        break;
+                    }
+                }
+            }
+            else if (gamepad1.left_bumper) {
+                x = -0.7;
+                while (true) {
+                    motorDuck.setPower(x);
+                    pauseMillis(150);
+                    x -= 0.05;
+                    telemetry.addData("duckPower", motorDuck.getPower());
+                    telemetry.update();
+                    if (x <= -0.85){
+                        pauseMillis(1500);
+                        motorDuck.setPower(.1);
                         pauseMillis(30);
                         motorDuck.setPower(0);
                         x=0.7;
