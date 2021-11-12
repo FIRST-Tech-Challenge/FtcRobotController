@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.CompBotV3;
 
+import com.arcrobotics.ftclib.util.InterpLUT;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class CompBotV3Attachments extends CompBotV3 {
     public DcMotor intake = null, spin = null, lift = null;
 
-    public Servo bucket;
+    public CRServo bucket;
 
     public CompBotV3Attachments() {
         super();
@@ -17,9 +21,9 @@ public class CompBotV3Attachments extends CompBotV3 {
         super.init(hardwareMap);
         thisInit(hardwareMap);
     }
-    public void init(HardwareMap hardwareMap, boolean cameraInit) {
+    public void init(HardwareMap hardwareMap, boolean cameraInit, Telemetry telemetry) {
         if(cameraInit) {
-            super.init(hardwareMap, cameraInit);
+            super.init(hardwareMap, cameraInit, telemetry);
         }
         thisInit(hardwareMap);
     }
@@ -27,7 +31,7 @@ public class CompBotV3Attachments extends CompBotV3 {
         intake = hardwareMap.get(DcMotor.class, "intake");
         spin = hardwareMap.get(DcMotor.class, "spin");
         lift = hardwareMap.get(DcMotor.class, "lift");
-        bucket = hardwareMap.get(Servo.class, "bucket");
+        bucket = hardwareMap.get(CRServo.class, "bucket");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -41,7 +45,7 @@ public class CompBotV3Attachments extends CompBotV3 {
         spin.setPower(0);
         lift.setPower(0);
 
-        bucket.setPosition(0);
+        bucket.setPower(0);
     }
 
     public void stop() {
@@ -49,6 +53,11 @@ public class CompBotV3Attachments extends CompBotV3 {
         intake.setPower(0);
         spin.setPower(0);
         lift.setPower(0);
+    }
+
+    public void PhysicsLiftDetection() {
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
 }

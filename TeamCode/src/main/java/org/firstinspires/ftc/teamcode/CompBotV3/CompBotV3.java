@@ -9,7 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.vision.BlueVisionRGBNoTele;
+import org.firstinspires.ftc.teamcode.vision.SimpleBlueVisionYCbCr;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -17,16 +19,16 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.Arrays;
 
-@Autonomous
 public class CompBotV3 {
-    public final static double distanceK = 384.5/(100*Math.PI)*25.4, corrCoeff = 0.05, corrCoeff2 = 1;
+
+    public final static double distanceK = 384.5/(100*Math.PI)*25.4, corrCoeff = 0.05, corrCoeff2 = 1, dervCoeff = 0, intCoeff = 0;
 
     public DcMotor fl = null, fr = null, bl = null, br = null;
     public RevIMU imu = null;
 
     public int cameraMonitorViewId;
     public OpenCvCamera phoneCam = null;
-    public BlueVisionRGBNoTele p;
+    public SimpleBlueVisionYCbCr p;
 
     public CompBotV3() {}
 
@@ -55,11 +57,11 @@ public class CompBotV3 {
         imu = new RevIMU(hardwareMap,"imu");
         imu.init(parameters);
     }
-    public void init(HardwareMap h, boolean cameraInit) {
+    public void init(HardwareMap h, boolean cameraInit, Telemetry telemetry) {
         if(cameraInit) {
             cameraMonitorViewId = h.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", h.appContext.getPackageName());
             phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-            p = new BlueVisionRGBNoTele();
+            p = new SimpleBlueVisionYCbCr(telemetry);
             phoneCam.setPipeline(p);
 
             phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -87,27 +89,45 @@ public class CompBotV3 {
         bl.setTargetPosition(bl.getCurrentPosition() + (int) -(distanceK*(dForward-dStrafe))); // distances the wheel would need to travel to do the strafing and
         br.setTargetPosition(br.getCurrentPosition() + (int) (distanceK*(dForward+dStrafe))); // forward/back distances separately
         runToPositionMode(); // Set motors to RUN_TO_POSITION mode - they will automatically spin in the direction of the set position
-        double initialHeading = imu.getHeading(), error=0; // Create variables for the gyro correction, and measure the initial angle the robot is facing
+        double initialHeading = imu.getHeading(); // Create variables for the gyro correction, and measure the initial angle the robot is facing
+        double pastError = 0, intError = 0;
+        ElapsedTime e = new ElapsedTime();
         while(fl.isBusy() || fr.isBusy() || bl.isBusy() || br.isBusy()) {
-            error = imu.getHeading() - initialHeading; // Calculate the deviation from the initial angle of the robot using the gyro
-            if(fl.isBusy()) { fl.setPower(-(sForward + sStrafe) + corrCoeff*error); // DCMotor.isBusy is a boolean variable signifying whether the motor has finished moving to the position
-            } else { fl.setPower(MathUtils.clamp((fl.getCurrentPosition()-fl.getTargetPosition() < 0 ? -1 : 1)*corrCoeff*error, -1, 1));
-            }if(fr.isBusy()) { fr.setPower(sForward - sStrafe - corrCoeff*error); // This code looks complicated but it's simple
-            } else { fr.setPower(MathUtils.clamp((fr.getCurrentPosition()-fr.getTargetPosition() < 0 ? -1 : 1)*corrCoeff*error,-1,1));
-            }if(bl.isBusy()) { bl.setPower(-(sForward - sStrafe) + corrCoeff*error); // If the motor is not finished, apply the given speed + a correction based on the angle error
-            } else { bl.setPower(MathUtils.clamp((bl.getCurrentPosition()-bl.getTargetPosition() < 0 ? -1 : 1)*corrCoeff*error,-1,1));
-            } if(br.isBusy()) { br.setPower(sForward + sStrafe - corrCoeff*error); // If the motor is finished, apply only the correction (flip flops signs because we're in RUN_TO_POSITION mode)
-            } else { br.setPower(MathUtils.clamp((br.getCurrentPosition()-br.getTargetPosition() < 0 ? -1 : 1)*corrCoeff*error,-1,1));
+            double elapsedTime = e.milliseconds()/1000;
+            e.reset(); // Reset the timer
+            double error = imu.getHeading() - initialHeading; // Calculate the deviation from the initial angle of the robot using the gyro
+            double dervError = (error-pastError)/elapsedTime; // Calculate the derivative = rate of change of the error
+            intError += error*elapsedTime; // Calculate the integral = sum over time of error
+            double totalError = corrCoeff*error + dervCoeff*dervError + intCoeff*intError; // Sum the errors and apply coefficients
+            if(fl.isBusy()) { fl.setPower(-(sForward + sStrafe) - totalError); // DCMotor.isBusy is a boolean variable signifying whether the motor has finished moving to the position
+            } else { fl.setPower(MathUtils.clamp((fl.getCurrentPosition()-fl.getTargetPosition() < 0 ? -1 : 1)*-1*totalError, -1, 1));
+            }if(fr.isBusy()) { fr.setPower(sForward - sStrafe + totalError); // This code looks complicated but it's simple
+            } else { fr.setPower(MathUtils.clamp((fr.getCurrentPosition()-fr.getTargetPosition() < 0 ? -1 : 1)*totalError,-1,1));
+            }if(bl.isBusy()) { bl.setPower(-(sForward - sStrafe) - totalError); // If the motor is not finished, apply the given speed + a correction based on the angle error
+            } else { bl.setPower(MathUtils.clamp((bl.getCurrentPosition()-bl.getTargetPosition() < 0 ? -1 : 1)*-1*totalError,-1,1));
+            } if(br.isBusy()) { br.setPower(sForward + sStrafe + totalError); // If the motor is finished, apply only the correction (flip flops signs because we're in RUN_TO_POSITION mode)
+            } else { br.setPower(MathUtils.clamp((br.getCurrentPosition()-br.getTargetPosition() < 0 ? -1 : 1)*totalError,-1,1));
             }
+            pastError = error; // Move error into pastError for next loop
         }
         useEncoders(); // Switch back to normal RUN_USING_ENCODERS velocity control mode
     }
 
+    public static void nEncDrive(DcMotor m, int ticksToDrive, double speed) {
+        m.setTargetPosition(m.getCurrentPosition() + ticksToDrive);
+        m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(m.isBusy()) {
+            m.setPower(speed);
+        }
+        m.setPower(0);
+        m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     public void driveRobotCentric(double x, double y, double turn) {
-        fl.setPower(MathUtils.clamp(-(y + x) + turn,-1,1));
-        fr.setPower(MathUtils.clamp(y - x - turn,-1,1));
-        bl.setPower(MathUtils.clamp(-(y - x) + turn,-1,1));
-        br.setPower(MathUtils.clamp(y + x - turn,-1,1));
+        fl.setPower(MathUtils.clamp(-(y - x) + turn,-1,1));
+        fr.setPower(MathUtils.clamp(y - x + turn,-1,1));
+        bl.setPower(MathUtils.clamp(-(y + x) + turn,-1,1));
+        br.setPower(MathUtils.clamp(y - x - turn,-1,1));
     }
     public void gyroTurn(double turn, double sTurn) { // turn is degrees
         useEncoders();

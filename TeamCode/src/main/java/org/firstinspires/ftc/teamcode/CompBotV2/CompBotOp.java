@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.CompBotV2;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.CompBot.CompBotHW;
 
 @TeleOp(name="Viridian Competition Teleop",group="CompBotV2")
+@Disabled
 public class CompBotOp extends OpMode {
     CompBotHWV2 r = new CompBotHWV2();
 
