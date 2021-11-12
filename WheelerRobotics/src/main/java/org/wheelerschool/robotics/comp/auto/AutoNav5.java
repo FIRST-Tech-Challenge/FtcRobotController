@@ -1,3 +1,5 @@
+// Battery side of Control Hub is front and we care about the heading (in degrees, we have +-180)
+
 package org.wheelerschool.robotics.comp.auto;
 
 import static com.sun.tools.doclint.Entity.and;
