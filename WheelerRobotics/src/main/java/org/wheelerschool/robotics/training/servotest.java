@@ -31,6 +31,8 @@ package org.wheelerschool.robotics.training;
 
 import static java.lang.Math.pow;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -40,6 +42,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.sun.tools.javac.tree.DocTreeMaker;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import java.lang.reflect.ParameterizedType;
 
 
 /**
@@ -63,20 +72,47 @@ public class servotest extends LinearOpMode {
     private Servo servo0;
     private DcMotor arm;
 
+    private BNO055IMU imu;
+
     private DcMotor motorFrontRight;
     private DcMotor motorBackRight;
     private DcMotor motorFrontLeft;
     private DcMotor motorBackLeft;
+
+    private Orientation angles;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        telemetry.addAction(new Runnable() { @Override public void run()
+        {
+            // Acquiring the angles is relatively expensive; we don't want
+            // to do that in each of the three items that need that info, as that's
+            // three times the necessary expense.
+
+
+        }
+        });
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+
+        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -89,7 +125,7 @@ public class servotest extends LinearOpMode {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         servo0 = hardwareMap.get(Servo.class, "servo-0");
-        arm = hardwareMap.get(DcMotor.class, "arm");
+        arm = hardwareMap.get(DcMotor.class, "motorFrontRight");
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
@@ -102,6 +138,9 @@ public class servotest extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+            telemetry.addData("rotation", angles.axesReference);
             double y = pow(-gamepad1.left_stick_y,3); // Remember, this is reversed!
             double x = pow(gamepad1.left_stick_x * 1.1,3); // Counteract imperfect strafing
             double rx = pow(gamepad1.right_stick_x,3);
@@ -138,8 +177,7 @@ public class servotest extends LinearOpMode {
             servo0.setPosition(servo_angle);
 
 
-            telemetry.addData("Servo", servo0.getPosition());
-            telemetry.addData("angle", servo_angle);
+            telemetry.addData("angle", angles.firstAngle);
 
             // Show the elapsed game time and wheel power.
             telemetry.update();
