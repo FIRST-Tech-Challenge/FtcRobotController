@@ -27,6 +27,9 @@ public class Robot_2022FF {
     private Orientation angles, lastAngles, startAngles;
     private double globalAngle;
 
+    private double kp = 1;//TODO Change AFTER you do PIDCalibration!!
+    private double kd = 0;//TODO Change AFTER you do PIDCalibration!!
+
     //other variables
     private double gain = 0.1;
     double ticksperrev;
@@ -40,6 +43,8 @@ public class Robot_2022FF {
     private final double MOTOR_SPR = 60/MOTOR_RPM;//CHANGE
     private final double SECONDS_PER_CM = MOTOR_SPR/DRIVE_WHEEL_CIRCUMFERENCE;
     private final double TICKS_PER_CM =34.225;//CHANGE!!!!!!
+
+    private static double lastCm = 0;
     //also ^^ isn't used except once...
 
     //setup
@@ -53,10 +58,9 @@ public class Robot_2022FF {
      * @param duck
      * @param imu
      * @param opMode
-     * @param telemetry
      * */
     public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                        DcMotor intake, CRServo duck, BNO055IMU imu, LinearOpMode opMode, Telemetry telemetry){
+                        DcMotor intake, CRServo duck, BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -65,7 +69,7 @@ public class Robot_2022FF {
         this.duck = duck;
         this.imu = imu;
         this.opMode = opMode;
-        this.telemetry = telemetry;
+        this.telemetry = opMode.telemetry;
         ticksperrev = motorBackLeft.getMotorType().getTicksPerRev();
     }
 
@@ -77,17 +81,16 @@ public class Robot_2022FF {
      * @param motorBackLeft
      * @param imu
      * @param opMode
-     * @param telemetry
      * */
     public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                        BNO055IMU imu, LinearOpMode opMode, Telemetry telemetry){
+                        BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
         this.motorBackLeft = motorBackLeft;
         this.imu = imu;
         this.opMode = opMode;
-        this.telemetry = telemetry;
+        this.telemetry = opMode.telemetry;
         ticksperrev = motorBackLeft.getMotorType().getTicksPerRev();
     }
 
@@ -242,10 +245,10 @@ public class Robot_2022FF {
      * @param power power for motors, + is CW, - is CCW
      */
     public void turn(double power){
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-        motorFrontRight.setPower(-power);
-        motorBackRight.setPower(-power);
+        motorFrontLeft.setPower(-power);
+        motorBackLeft.setPower(-power);
+        motorFrontRight.setPower(power);
+        motorBackRight.setPower(power);
     }
 
     /**
@@ -285,7 +288,6 @@ public class Robot_2022FF {
         //Wait .5 seconds to ensure robot is stopped before continuing
         Thread.sleep(500);
         resetAngle();
-        ///////////////////////////////////////////////////////////////////////////////
     }
 
     /**
@@ -293,7 +295,7 @@ public class Robot_2022FF {
      * Power is calculated within function
      * @param degrees to turn
      * */
-    public void pidGyroTurn(int degrees) throws InterruptedException{/////////////////////////////////////////////////////////
+    public void pidGyroTurn(int degrees) throws InterruptedException{
         //restart angle tracking
         resetAngle();
 
@@ -306,8 +308,6 @@ public class Robot_2022FF {
             return;
         }
         //values needed for pd tuner
-        double kp = 0;
-        double kd = 0;
         double angle = getAngle();
         double error = angle-degrees;
         double lastError = 0;
@@ -331,15 +331,14 @@ public class Robot_2022FF {
             power = kp*error + kd*derivative;
             //turn accordingly
             if(clockwise){
-                //positive
-                power = power<= 1? power : 1;
-                turn(power);///////////////////////////////////////
+                //negative
+                power = power<= -1? power : -1;
             }
             else{
-                //negative
-                power = power<= -1? power : 1;
-                turn(power);
+                //positive
+                power = power<= 1? power : 1;
             }
+            turn(power);///////////////////////////////////////
 
             lastError = error;
             timer.reset();
@@ -434,6 +433,7 @@ public class Robot_2022FF {
     /**
      * PD tuned Gyro drive with power and distance
      * Straight drive, no angles
+     * forwards (+) and backwards (-) only
      * Power is calculated in the function
      * @param cm distance to travel
      */
@@ -441,14 +441,11 @@ public class Robot_2022FF {
         resetAngle();
         resetEncoders();
 
-        double kp = 0;
-        double kd = 0;
-
         double dist = getDistanceTraveled();
         double error = cm-dist;
         double lastError = 0;
         double derivative;
-        double correction = getCorrection();
+        double correction;
         double power;
 
         ElapsedTime timer = new ElapsedTime();
@@ -465,14 +462,14 @@ public class Robot_2022FF {
             correction = getCorrection();
             double abspow = Math.abs(kp*error+kd*derivative);
             power = abspow <= 1? kp*error+kd*derivative : abspow/(kp*error+kd*derivative);
-            correctedTankStrafe(power,power,correction);
+            tankDrive(power+correction, power-correction);
 
             lastError = error;
             timer.reset();
         }
         completeStop();
         resetAngle();
-    }////////////////////////////////////////////////////////////////////////////////////////////////////////////todo
+    }
 
     /**
      * Drives forward using encoders and gyro (uses gyroStrafe)
@@ -558,7 +555,7 @@ public class Robot_2022FF {
      * @param cm distance to go
      * @throws InterruptedException if the robot is stopped
      */
-    public void pidGyroStrafeSec(double angle, double cm) throws InterruptedException{
+    public void pidGyroStrafeCm(double angle, double cm) throws InterruptedException{
         resetAngle();
         resetEncoders();
         //set gain???
@@ -568,9 +565,6 @@ public class Robot_2022FF {
         //calculate powers needed using direction
         double leftPower;
         double rightPower;
-
-        double kp = 0;
-        double kd = 0;
 
         double dist = getDistanceTraveled();
         double error = cm-dist;
@@ -605,6 +599,62 @@ public class Robot_2022FF {
         resetEncoders();
     }
 
+    /**
+     * PID Tuner Method
+     * Copy the values after using tuner!!!
+     * @param angle direction to strafe, in degrees (0 = forward, 180 = backward)
+     * @param cm distance to go
+     * @throws InterruptedException if the robot is stopped
+     */
+    public void pidTunerStrafe(double angle, double cm) throws InterruptedException{
+        if(cm != lastCm) {
+            resetAngle();
+            resetEncoders();
+            lastCm = cm;
+        }
+        //set gain???
+
+        double newDirection = angle * Math.PI/180 + Math.PI/4;
+
+        //calculate powers needed using direction
+        double leftPower;
+        double rightPower;
+
+        double kp = PIDCalibration.getKp();//Todo
+        double kd = PIDCalibration.getKd();//todo
+
+        double dist = getDistanceTraveled();
+        double error = cm-dist;
+        double lastError = 0;
+        double derivative = 0;
+        double correction = getCorrection();
+        double power;
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
+        while(opMode.opModeIsActive() && Math.abs(error) > 0) {
+            telemetry.addData("current position",dist);
+            telemetry.update();
+            dist = getDistanceTraveled();
+            error = cm-dist;
+
+            derivative = (error-lastError) / timer.seconds();
+            correction = getCorrection();
+            double abspow = Math.abs(kp*error+kd*derivative);
+            power = abspow <= 1? kp*error+kd*derivative : abspow/(kp*error+kd*derivative);
+            leftPower = Math.cos(newDirection) * power;
+            rightPower = Math.sin(newDirection) * power;
+            correctedTankStrafe(leftPower, rightPower, correction);
+
+            lastError = error;
+            timer.reset();
+        }
+        completeStop();
+        //Wait .5 seconds to ensure robot is stopped before continuing
+        Thread.sleep(500);
+        resetAngle();
+        resetEncoders();
+    }
     /**
      * Strafe in any direction using encoders.
      * sorta closed loop...
@@ -651,7 +701,7 @@ public class Robot_2022FF {
      * @return Absolute value of Current position of front left motor, in ticks
      */
     public double getDistanceTraveled() {
-        return Math.abs(motorFrontLeft.getCurrentPosition()) / ticksperrev * DRIVE_WHEEL_CIRCUMFERENCE;
+        return motorFrontLeft.getCurrentPosition() / ticksperrev * DRIVE_WHEEL_CIRCUMFERENCE;
     }
     //make more?/////////////////////////////////////////////////////////////////////////////////////////
     //may need to change this...
