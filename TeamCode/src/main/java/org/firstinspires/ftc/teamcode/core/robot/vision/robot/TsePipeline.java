@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.teamcode.core.robot.vision.simulator;
+package org.firstinspires.ftc.teamcode.core.robot.vision.robot;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
-import java.lang.Math;
 
-public class pipeline1Simulator extends OpenCvPipeline {
-    private final Telemetry telemetry;
+public class TsePipeline extends OpenCvPipeline {
     private final Scalar red = new Scalar(255,0,0);
     private final Scalar yellow = new Scalar(255,255,0);
     private final Mat matYCrCb = new Mat();
@@ -35,22 +33,14 @@ public class pipeline1Simulator extends OpenCvPipeline {
     private double middleRectHeightPercentage = 0.50;
     private double bottomRectWidthPercentage = 0.75;
     private double bottomRectHeightPercentage = 0.50;
-    private long framecount = 0;
     private int different = 1;
-    public pipeline1Simulator(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
-
+    private long framecount = 0;
     /**
      * @param input input frame matrix
      */
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, matYCrCb, Imgproc.COLOR_RGB2YCrCb);
-        telemetry.addData("topBoxAverage",topAverage);
-        telemetry.addData("topBoxAverage",middleAverage);
-        telemetry.addData("bottomBoxAverage",bottomAverage);
-        telemetry.update();
 
         //The points needed for the rectangles are calculated here
         int rectangleHeight = 10;
@@ -141,18 +131,17 @@ public class pipeline1Simulator extends OpenCvPipeline {
      * @param val3 double
      * @return Most different, 1-3
      */
-    public static byte mostDifferent(double val1, double val2, double val3) {
+    public static int mostDifferent(double val1, double val2, double val3) {
         double valMean = (val1+val2+val3)/3;
         double[] array = {Math.abs(valMean - val1),Math.abs(valMean - val2),Math.abs(valMean - val3)};
-        byte max = (byte) (array[0] > array[1] ? 1 : 2);
+        int max = array[0] > array[1] ? 1 : 2;
         return array[2] > array[max-1] ? 3 : max;
     }
 
     public int getDifferent() { return different; }
-
+    public long getFramecount() { return framecount; }
     /**
      * Draw the rectangle onto the desired mat
-     *
      * @param mat   The mat that the rectangle should be drawn on
      * @param rect  The rectangle
      * @param color The color the rectangle will be

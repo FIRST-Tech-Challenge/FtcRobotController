@@ -33,11 +33,6 @@ public class pipeline1Robot extends OpenCvPipeline {
     //The width and height of the rectangles in terms of pixels
     private int rectangleWidth = 10;
     private int rectangleHeight = 10;
-    /*
-    public pipeline1Simulator(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
-    */
     @Override
     public Mat processFrame(Mat input) {
 
@@ -89,7 +84,6 @@ public class pipeline1Robot extends OpenCvPipeline {
 
     /**
      * Draw the rectangle onto the desired mat
-     *
      * @param mat   The mat that the rectangle should be drawn on
      * @param rect  The rectangle
      * @param color The color the rectangle will be
