@@ -39,32 +39,29 @@ public class MechanumTeleOpManager extends TeleOpManager {
 
     @Override
     public void main() {
+        // someone could probably do this math better than me. if you can, please do. i spent 3 weeks on this and i still dont understand it. please
         if(getGamepad1Functions().hasF1()) {
             // do the math
-            // FIXME: i do not have a good enough understanding of math to do this
-            double y = -getGamepad1().left_stick_x;
-            double x = getGamepad1().right_stick_x * 1.1;
-            double rx = getGamepad1().left_stick_y;
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double rightTopPower = (y - x - rx) / denominator;
-            double rightBottomPower = (y + x - rx) / denominator;
-            double leftTopPower = (y + x + rx) / denominator;
-            double leftBottomPower = (y - x + rx) / denominator;
+            double rx = -getGamepad1().right_stick_x;
+            double x = getGamepad1().left_stick_x;
+            double y = getGamepad1().left_stick_y;
+            double rightTopPower = (y + x) - rx;
+            double rightBottomPower = (y - x) - rx;
+            double leftTopPower = (-(y - x)) - rx;
+            double leftBottomPower = (-(y + x)) - rx;
             // normal drive code
-            MECHANUM.driveWithEncoder((int) Range.clip(rightTopPower * 100, -100, 100), (int) Range.clip(rightBottomPower * 100, -100, 100), (int) Range.clip(leftTopPower * 100, -100, 100), (int) Range.clip(leftBottomPower * 100, -100, 100));
+            MECHANUM.driveWithEncoder((int) Range.clip(rightTopPower * 50, -50, 50), (int) Range.clip(rightBottomPower * 50, -50, 50), (int) Range.clip(leftTopPower * 50, -50, 50), (int) Range.clip(leftBottomPower * 50, -50, 50));
         }else if(getGamepad2Functions().hasF1()) {
             // do the math
-            // FIXME: also need to replace this code with the first fix
-            double y = -getGamepad2().left_stick_y;
-            double x = getGamepad1().right_stick_x * 1.1;
-            double rx = getGamepad1().left_stick_x;
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double rightTopPower = (y - x - rx) / denominator;
-            double rightBottomPower = (y + x - rx) / denominator;
-            double leftTopPower = (y + x + rx) / denominator;
-            double leftBottomPower = (y - x + rx) / denominator;
+            double rx = -getGamepad2().right_stick_x;
+            double x = getGamepad2().left_stick_x;
+            double y = getGamepad2().left_stick_y;
+            double rightTopPower = (y + x) - rx;
+            double rightBottomPower = (y - x) - rx;
+            double leftTopPower = (-(y - x)) - rx;
+            double leftBottomPower = (-(y + x)) - rx;
             // normal drive code
-            MECHANUM.driveWithEncoder((int) Range.clip(rightTopPower * 100, -100, 100), (int) Range.clip(rightBottomPower * 100, -100, 100), (int) Range.clip(leftTopPower * 100, -100, 100), (int) Range.clip(leftBottomPower * 100, -100, 100));
+            MECHANUM.driveWithEncoder((int) Range.clip(rightTopPower * 50, -50, 50), (int) Range.clip(rightBottomPower * 50, -50, 50), (int) Range.clip(leftTopPower * 50, -50, 50), (int) Range.clip(leftBottomPower * 50, -50, 50));
         }
         if(getGamepad1Functions().hasF2()) {
             if(DEVICES.isSpinnerMotorAllowed()) {

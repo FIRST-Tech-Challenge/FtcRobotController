@@ -14,7 +14,7 @@ public class TankTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         GamepadFunctions gamepad1Functions = new GamepadFunctions(gamepad1, true, true, true, true, true, true);
         GamepadFunctions gamepad2Functions = new GamepadFunctions(gamepad2, false, false, false, false, false, false);
-        TeleOpHWDevices devices = new TeleOpHWDevices(true, false, true, false, false, false);
+        TeleOpHWDevices devices = new TeleOpHWDevices(false, false, false, false, false, false);
         TankTeleOpManager manager = new TankTeleOpManager(telemetry, hardwareMap, gamepad1, gamepad2, gamepad1Functions, gamepad2Functions, devices);
         waitForStart();
         resetStartTime();
