@@ -46,7 +46,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
         } else if (gamepad2.right_trigger > Constants.MINIMUM_TRIGGER_VALUE){
             motorCarousel.setPower(1.5);
         } else {
-            motorCarousel.setPower(1.5);
+            motorCarousel.setPower(0.0);
         }
     }
 
@@ -61,10 +61,10 @@ abstract public class MasterTeleOp extends MasterOpMode {
     public void runLift() {
         if(gamepad2.dpad_up) {
             motorLift.setPower(0.3);
-            motorLift.setTargetPosition(800);
         } else if (gamepad2.dpad_down) {
-            motorLift.setPower(0.3);
-            motorLift.setTargetPosition(0);
+            motorLift.setPower(-0.3);
+        } else {
+            motorLift.setPower(0.0);
         }
     }
 }

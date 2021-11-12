@@ -47,13 +47,13 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorCarousel = hardwareMap.dcMotor.get("motorCarousel");
         motorCarousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        motorLift = hardwareMap.dcMotor.get("motorIntake");
+        motorLift = hardwareMap.dcMotor.get("motorLift");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setTargetPosition(motorLift.getCurrentPosition());
         motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //init servos
-        servoGrabber = hardwareMap.get(Servo.class, "bucket");
+        servoGrabber = hardwareMap.get(Servo.class, "servoGrabber");
         servoGrabber.setPosition(0.0);
 
         //init imu
