@@ -1,17 +1,11 @@
-package org.firstinspires.ftc.teamcode.CompBotV3Autons;
-
-import static org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3.nEncDrive;
-import static org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3.runMotorTime;
+package org.firstinspires.ftc.teamcode.Autons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.CompBotSimplified.CompBotHWSimplified;
 import org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3Attachments;
-
-import java.util.Arrays;
 
 // Start blue storage side
 

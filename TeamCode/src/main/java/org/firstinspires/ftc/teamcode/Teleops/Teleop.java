@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CompBotV3;
+package org.firstinspires.ftc.teamcode.Teleops;
 
 import androidx.core.math.MathUtils;
 
@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.CompBot.CompBotHW;
+import org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3;
 
 @TeleOp
 @Disabled

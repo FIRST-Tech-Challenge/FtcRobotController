@@ -4,22 +4,17 @@ import androidx.core.math.MathUtils;
 
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.vision.BlueVisionRGBNoTele;
 import org.firstinspires.ftc.teamcode.vision.SimpleBlueVisionYCbCr;
 import org.firstinspires.ftc.teamcode.vision.SimpleRedVisionYCbCr;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
-
-import java.util.Arrays;
 
 public class CompBotV3 {
 

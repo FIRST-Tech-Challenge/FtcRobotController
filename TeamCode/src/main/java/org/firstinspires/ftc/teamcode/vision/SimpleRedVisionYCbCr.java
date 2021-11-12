@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.vision.VisionThing.VisionThing;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -25,10 +24,10 @@ public class SimpleRedVisionYCbCr extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // YCbCr scalars
-        ArrayList<VisionThing> capstonePotential = DetectionMethods.detectYCrCb(input, low2, high2, 0,
+        ArrayList<VisionObject> capstonePotential = DetectionMethods.detectYCrCb(input, low2, high2, 0,
                 1,0,1,0.1,0.2,"capstone"); // detect the capstone
-        ArrayList<VisionThing> capstone = new ArrayList<>();
-        for(VisionThing v : capstonePotential) {
+        ArrayList<VisionObject> capstone = new ArrayList<>();
+        for(VisionObject v : capstonePotential) {
             capstone.add(v);
             Imgproc.circle(input,new Point(v.x,v.y), (int) v.magSize(),new Scalar(0,255,0,0),5);
             if(telemetry != null) {
@@ -45,10 +44,10 @@ public class SimpleRedVisionYCbCr extends OpenCvPipeline {
             ymin = 0;
             ymax = 1;
         }
-        ArrayList<VisionThing> tapePotential = DetectionMethods.detectYCrCb(input, low, high, 0,
+        ArrayList<VisionObject> tapePotential = DetectionMethods.detectYCrCb(input, low, high, 0,
                 1,ymin, ymax,0.03,0.8,"tape"); // Detect the tape
-        ArrayList<VisionThing> tape = new ArrayList<>();
-        for(VisionThing v : tapePotential) {
+        ArrayList<VisionObject> tape = new ArrayList<>();
+        for(VisionObject v : tapePotential) {
             if(capstone.size() < 1 || !(Math.abs(v.x-capstone.get(0).x)/input.width() < 0.2)) {
                 tape.add(v);
                 Imgproc.circle(input,new Point(v.x,v.y), (int) v.magSize(),new Scalar(255,0,0,0),5);
@@ -63,7 +62,7 @@ public class SimpleRedVisionYCbCr extends OpenCvPipeline {
             assert telemetry != null;
             telemetry.addLine("Hybrid capstone and tape detection");
             int leftTape = 0, rightTape = 0;
-            for(VisionThing t : tape) { // Count the number of pieces of tape on each side of the capstone
+            for(VisionObject t : tape) { // Count the number of pieces of tape on each side of the capstone
                 if(t.x < capstone.get(0).x) {
                     leftTape++;
                 } else {
@@ -95,7 +94,7 @@ public class SimpleRedVisionYCbCr extends OpenCvPipeline {
             assert telemetry != null;
             telemetry.addLine("Tape-only detection");
             positions = new boolean[]{true,true,true};
-            for(VisionThing t : tape) {
+            for(VisionObject t : tape) {
                 if((double)(t.x/input.width())<2.0/5) { // If tape is found in the left portion of the screen, the capstone cannot be there
                     positions[0] = false;
                 } else if((double)(t.x/input.width())>3.0/5) { // Same as above, but with right

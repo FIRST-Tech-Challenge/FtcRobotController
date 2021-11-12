@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.vision.VisionThing;
+package org.firstinspires.ftc.teamcode.vision;
 
-public class VisionThing {
+public class VisionObject {
     public double x, y, xsize, ysize;
     public String kind;
 
-    public VisionThing(double x, double y, double xsize, double ysize, String kind) {
+    public VisionObject(double x, double y, double xsize, double ysize, String kind) {
         this.x = x;
         this.y = y;
         this.xsize = xsize;

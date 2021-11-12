@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.vision.VisionThing.VisionThing;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -11,19 +10,18 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DetectionMethods {
-    public static ArrayList<VisionThing> detectYCrCb(Mat RGBin, Scalar low, Scalar high, double minX, double maxX, double minY, double maxY, double minSize, double maxSize, String kind) {
+    public static ArrayList<VisionObject> detectYCrCb(Mat RGBin, Scalar low, Scalar high, double minX, double maxX, double minY, double maxY, double minSize, double maxSize, String kind) {
         Mat mask = new Mat(RGBin.rows(), RGBin.cols(), CvType.CV_8UC1); // Create new Mat so we don't edit the old one
         Imgproc.cvtColor(RGBin, mask, Imgproc.COLOR_RGB2YCrCb); // Convert to YCrCb
         Core.inRange(mask, low, high, mask); // Mask the copied frame so that it shows the regions we want
         Imgproc.GaussianBlur(mask, mask, new Size(5.0, 15.0), 0.00); // Blur to improve detection accuracy
         ArrayList<MatOfPoint> cont = new ArrayList<MatOfPoint>(); // Create an ArrayList to store contours of blobs of color
         Imgproc.findContours(mask, cont, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE); // Find those blobs and store them in cont
-        ArrayList<VisionThing> v = new ArrayList<>(); // Create an ArrayList of VisionThings to store the objects we like
+        ArrayList<VisionObject> v = new ArrayList<>(); // Create an ArrayList of VisionThings to store the objects we like
         for(MatOfPoint m : cont) { // Iterate through each contour
             int x = 0, y = 0, xmax = Integer.MIN_VALUE, xmin = Integer.MAX_VALUE, ymax = Integer.MIN_VALUE, ymin = Integer.MAX_VALUE;
             // Find average x and y values, plus the x and y-ranges for each contour
@@ -51,7 +49,7 @@ public class DetectionMethods {
                     Math.sqrt(Math.pow(mask.width(),2)+Math.pow(mask.height(),2))*minSize,
                     Math.sqrt(Math.pow(mask.width(),2)+Math.pow(mask.height(),2))*maxSize)) {
                 // Create a new VisionThing with the contour's information
-                v.add(new VisionThing(x,y,xrange,yrange,kind));
+                v.add(new VisionObject(x,y,xrange,yrange,kind));
             }
         }
         mask.release(); // Release the Mat to prevent memory overflow
@@ -65,7 +63,7 @@ public class DetectionMethods {
         Imgproc.GaussianBlur(mask, mask, new Size(5.0, 15.0), 0.00); // Blur to improve detection accuracy
         ArrayList<MatOfPoint> cont = new ArrayList<MatOfPoint>(); // Create an ArrayList to store contours of blobs of color
         Imgproc.findContours(mask, cont, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE); // Find those blobs and store them in cont
-        ArrayList<VisionThing> v = new ArrayList<>(); // Create an ArrayList of VisionThings to store the objects we like
+        ArrayList<VisionObject> v = new ArrayList<>(); // Create an ArrayList of VisionThings to store the objects we like
         for(MatOfPoint m : cont) { // Iterate through each contour
             int x = 0, y = 0, xmax = Integer.MIN_VALUE, xmin = Integer.MAX_VALUE, ymax = Integer.MIN_VALUE, ymin = Integer.MAX_VALUE;
             // Find average x and y values, plus the x and y-ranges for each contour
@@ -94,7 +92,7 @@ public class DetectionMethods {
                     && within(Math.sqrt(Math.pow(xrange,2)+Math.pow(yrange,2))/Math.sqrt(Math.pow(mask.width(),2)+Math.pow(mask.height(),2)),
                     minSize,maxSize)) {
                 // Create a new VisionThing with the contour's information
-                v.add(new VisionThing(x,y,xrange,yrange,kind));
+                v.add(new VisionObject(x,y,xrange,yrange,kind));
                 telemetry.addLine("Contour is good");
             }
         }

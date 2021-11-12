@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CompBotV3Autons;
+package org.firstinspires.ftc.teamcode.Autons;
 
 import static org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3.runMotorTime;
 
