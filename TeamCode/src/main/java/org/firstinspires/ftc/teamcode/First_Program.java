@@ -27,7 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package TeamCode/src/main/java/org/firstinspires/ftc/teamcode/First Program.java
+package org.firstinspires.ftc.teamcode;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -51,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-public class BasicOpMode_Linear extends LinearOpMode {
+public class First_Program extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
