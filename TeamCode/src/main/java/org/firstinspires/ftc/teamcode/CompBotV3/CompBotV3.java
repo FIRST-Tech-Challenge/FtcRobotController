@@ -12,10 +12,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.vision.BlueVisionRGBNoTele;
 import org.firstinspires.ftc.teamcode.vision.SimpleBlueVisionYCbCr;
+import org.firstinspires.ftc.teamcode.vision.SimpleRedVisionYCbCr;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.Arrays;
 
@@ -29,6 +31,7 @@ public class CompBotV3 {
     public int cameraMonitorViewId;
     public OpenCvCamera phoneCam = null;
     public SimpleBlueVisionYCbCr p;
+    public SimpleRedVisionYCbCr q;
 
     public CompBotV3() {}
 
@@ -57,12 +60,17 @@ public class CompBotV3 {
         imu = new RevIMU(hardwareMap,"imu");
         imu.init(parameters);
     }
-    public void init(HardwareMap h, boolean cameraInit, Telemetry telemetry) {
+    public void init(HardwareMap h, boolean cameraInit, Telemetry telemetry, String color) {
         if(cameraInit) {
             cameraMonitorViewId = h.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", h.appContext.getPackageName());
             phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-            p = new SimpleBlueVisionYCbCr(telemetry);
-            phoneCam.setPipeline(p);
+            if(color.equals("blue")) {
+                p = new SimpleBlueVisionYCbCr(telemetry);
+                phoneCam.setPipeline(p);
+            } else if (color.equals("red")) {
+                q = new SimpleRedVisionYCbCr(telemetry);
+                phoneCam.setPipeline(q);
+            }
 
             phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
             {
@@ -74,6 +82,9 @@ public class CompBotV3 {
             });
         }
         init(h);
+    }
+    public void init(HardwareMap h, boolean cameraInit, Telemetry telemetry) {
+        init(h,cameraInit,telemetry,"blue");
     }
     public void stop() {
         fl.setPower(0);
@@ -98,7 +109,7 @@ public class CompBotV3 {
             double error = imu.getHeading() - initialHeading; // Calculate the deviation from the initial angle of the robot using the gyro
             double dervError = (error-pastError)/elapsedTime; // Calculate the derivative = rate of change of the error
             intError += error*elapsedTime; // Calculate the integral = sum over time of error
-            double totalError = corrCoeff*error + dervCoeff*dervError + intCoeff*intError; // Sum the errors and apply coefficients
+            double totalError = -1*(corrCoeff*error + dervCoeff*dervError + intCoeff*intError); // Sum the errors and apply coefficients
             if(fl.isBusy()) { fl.setPower(-(sForward + sStrafe) - totalError); // DCMotor.isBusy is a boolean variable signifying whether the motor has finished moving to the position
             } else { fl.setPower(MathUtils.clamp((fl.getCurrentPosition()-fl.getTargetPosition() < 0 ? -1 : 1)*-1*totalError, -1, 1));
             }if(fr.isBusy()) { fr.setPower(sForward - sStrafe + totalError); // This code looks complicated but it's simple
