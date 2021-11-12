@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.CompBot.CompBotHW;
 
 @TeleOp
+@Disabled
 public class Teleop extends OpMode {
     CompBotV3 r = new CompBotV3();
     double initialHeading;
@@ -21,9 +22,13 @@ public class Teleop extends OpMode {
 
     @Override
     public void loop() {
-        double y = gamepad1.left_stick_y, x = gamepad1.left_stick_x, turn = gamepad1.right_stick_x;
+        double y = gamepad1.left_stick_y, x = -1*gamepad1.left_stick_x, turn = gamepad1.right_stick_x;
 
-        if (Math.abs(turn) < 0.1) {
+        y *= (gamepad1.right_bumper?0.4:1);
+        x *= (gamepad1.right_bumper?0.4:1);
+        turn *= (gamepad1.right_bumper?0.4:1);
+
+        if (Math.abs(turn) < 0.1 && Math.abs(x) > 0 && Math.abs(y) > 0) {
             if(!headingReset) {
                 initialHeading = r.imu.getHeading();
                 headingReset = true;

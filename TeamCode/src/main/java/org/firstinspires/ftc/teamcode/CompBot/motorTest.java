@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.CompBot;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
+@Disabled
 public class motorTest extends LinearOpMode {
     CompBotHW r = new CompBotHW();
     @Override
