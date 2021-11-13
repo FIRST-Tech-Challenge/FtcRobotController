@@ -23,16 +23,17 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx rotatorLeft = null;
     private Servo dropperServo = null;
     private static final String TAG = "FrenzyBot";
-    public static int LIFT_LEVEL_THREE = -1930; // TODO: 11/7/21 Change values based on the empirical observations
+    public static int LIFT_LEVEL_THREE = -1930;
     public static int LIFT_LEVEL_TWO = -1190;
     public static int LIFT_LEVEL_ONE = -650;
     public static int LIFT_NO_EXTENSION = 0;
 
     private int liftLocation = LIFT_NO_EXTENSION;
-    private static double LIFT_SPEED = 0.8;
+    private static double LIFT_SPEED = 0.95;
+    private static double LIFT_SPEED_LOW = 0.7;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_READY = 0.7;
+    private static double DROPPER_SERVO_POS_READY = 0.75;
     private static double DROPPER_SERVO_POS_DROP = 0.0;
 
     // Detection
@@ -174,7 +175,12 @@ public class FrenzyBot extends FrenzyBaseBot {
         liftLocation = LIFT_NO_EXTENSION;
         this.lift.setTargetPosition(LIFT_NO_EXTENSION);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+        if (getLiftPosition() == LIFT_LEVEL_ONE){
+            this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED_LOW);
+        }
+        else {
+            this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED);
+        }
     }
 
     public boolean isLiftBusy(){
