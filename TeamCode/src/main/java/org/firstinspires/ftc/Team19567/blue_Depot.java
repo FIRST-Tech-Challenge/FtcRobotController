@@ -72,7 +72,7 @@ public class blue_Depot extends LinearOpMode {
         rightDCFront.setDirection(DcMotor.Direction.REVERSE);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
-        carouselDC.setDirection(DcMotor.Direction.REVERSE);
+        carouselDC.setDirection(DcMotor.Direction.FORWARD);
 
         //Set DC motors to run with encoder
         resetEncoders();
@@ -89,7 +89,7 @@ public class blue_Depot extends LinearOpMode {
         if(!opModeIsActive()) return;
 
         releaseServoMove(0.65);
-        mecanumStrafe(13.15, 0, 0.5);
+        mecanumStrafe(13, 0, 0.5);
         sleep(1000);
         linearSlideMove(1800,0.8);
         sleep(2000);
@@ -114,7 +114,7 @@ public class blue_Depot extends LinearOpMode {
         carouselMove(0.6);
         sleep(3000);
         carouselMove(0.0);
-        mecanumStrafe(13,20,0.6);
+        mecanumStrafe(14,20,0.6);
         sleep(3000);
 
         telemetry.addData("Status", "Path Complete");

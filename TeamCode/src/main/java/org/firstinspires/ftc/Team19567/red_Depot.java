@@ -89,7 +89,7 @@ public class red_Depot extends LinearOpMode {
         if(!opModeIsActive()) return;
 
         releaseServoMove(0.65);
-        mecanumStrafe(12.25, 0, 0.5);
+        mecanumStrafe(12.5, 0, 0.5);
         sleep(1000);
         linearSlideMove(1750,0.8);
         sleep(1000);

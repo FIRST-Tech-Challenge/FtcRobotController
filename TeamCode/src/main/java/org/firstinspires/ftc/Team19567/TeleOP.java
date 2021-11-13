@@ -25,7 +25,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private Servo releaseServo = null;
     private Servo intakeServo = null;
     private double carouselPower = 0.0;
-    private double linearSlidePower = 0.8;
+    private double linearSlidePower = 1.0;
     private double linearSlidePos = 0.0;
     private double releaseServoPos = 0.0;
     private double intakeServoPos = 0.0;
@@ -109,12 +109,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.right_trigger >0) intakePower = gamepad1.right_trigger;
         if(gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
         //CAROUSEL
-        if(gamepad1.x || gamepad2.x) carouselPower = -1.0;
-        else if(gamepad1.a || gamepad2.a) carouselPower = 1.0;
+        if(gamepad1.x || gamepad2.x) carouselPower = -0.5;
+        else if(gamepad1.a || gamepad2.a) carouselPower = 0.5;
         else carouselPower = 0.0;
         //LINEAR SLIDE
-        if(gamepad1.left_trigger > 0) linearSlidePos += gamepad1.left_trigger*3;
-        else if(gamepad2.left_trigger > 0) linearSlidePos += gamepad2.left_trigger*3;
+        if(gamepad1.left_trigger > 0) linearSlidePos += gamepad1.left_trigger*5;
+        else if(gamepad2.left_trigger > 0) linearSlidePos += gamepad2.left_trigger*5;
         if(gamepad1.left_bumper || gamepad2.left_bumper) {
            if(linearSlidePressDelay.milliseconds() <= 10) linearSlidePos = 0.0;
            else linearSlidePos = Range.clip(linearSlidePos - 10, 0.0, linearSlidePos - 5);
@@ -129,11 +129,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else if(gamepad1.dpad_right || gamepad2.dpad_right) intakeServoPos = Range.clip(intakeServoPos + 0.01,intakeServo.MIN_POSITION,intakeServo.MAX_POSITION);
         if(gamepad1.b || gamepad2.b) preset3 = !preset3;
         if(preset3) {
-            linearSlidePower = 1.0;
             linearSlidePos = 600;
             releaseServoPos = releaseServo.MIN_POSITION;
         }
-        else linearSlidePower = 0.8;
+
 //MOTOR SET POWER
         leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
         rightDCFront.setPower(rightFrontSpeed);
