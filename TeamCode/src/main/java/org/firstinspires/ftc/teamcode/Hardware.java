@@ -140,7 +140,7 @@ public class Hardware {
         initMotors();
 
         /* Servos */
-        initServos();
+        //initServos();
 
         /* Sensors */
         initSensors();
@@ -158,7 +158,7 @@ public class Hardware {
         initDriveMotors();
 
         //other motors
-        initOtherMotors();
+        //initOtherMotors();
     }
     private void initDriveMotors() {
         // Define and initialize all Motors

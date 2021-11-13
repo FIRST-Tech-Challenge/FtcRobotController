@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Autonomous(name = "PID Demo Auto", group = "Off Season")
-@Disabled
+//@Disabled
 public class PIDDemoAuto extends LinearOpMode {
     /*declare OpMode members, initialize some classes*/
     Hardware robot          = new Hardware();
@@ -29,7 +29,7 @@ public class PIDDemoAuto extends LinearOpMode {
         runtime.reset();
 
         //auto routine
-        strafe(1, 0, .1);
+        //strafe(1, 0, .1);
         strafeToDistanceNoHeading(1,Math.PI,.2);
         //strafeToDistanceNoHeading(1, Math.PI/2.0, 0.1);
         //robot.strafeToDistance(0.3, 4.0*Math.PI/6.0, 0.2);
