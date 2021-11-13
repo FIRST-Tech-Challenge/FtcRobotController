@@ -10,12 +10,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Enhancement.Config.VisionConfig;
 import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker.DetectMarker;
-import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker.DetectMarkerPipeline;
-import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker.MarkerLocation;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarkerPipeline.MarkerLocation;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -56,6 +55,12 @@ public class Vision extends Subsystem {
 
     private int[] viewportContainerIds;
 
+    // Move stuff
+    HardwareMap hardwareMap;
+    OpenCvInternalCamera robotCamera;
+    MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
+    QuickTelemetry quickTelemetry;
+
     /**
      * Class instantiation
      *
@@ -81,12 +86,19 @@ public class Vision extends Subsystem {
         OpenCvInternalCamera robotCamera;
 
         robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-
+/*
         telemetry.telemetry(4, "Detect Marker", "Detecting Marker");
         DetectMarker detectMarkerRunnable = new DetectMarker(hardwareMap, robotCamera, telemetry);
         VisionConfig.finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
         telemetry.telemetry(3, "Detect Marker", "Detected Marker");
         telemetry.telemetry(2, "Vision Status", "Vision initialized");
+*/
+
+        // Detect marker stuff
+        this.hardwareMap = hardwareMap;
+        this.robotCamera = robotCamera;
+        this.quickTelemetry = quickTelemetry.newQuickTelemetryFile("Detect Marker Pipeline");
+        VisionConfig.finalMarkerLocation = DetectMarkerRun();
     }
 
     private void initVuforia() {
@@ -107,5 +119,38 @@ public class Vision extends Subsystem {
     // Helper method to create matrix to identify locations
     public OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
         return OpenGLMatrix.translation(x, y, z).multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v, w));
+    }
+
+    /**
+     * This method waits until the search for the marker is done, and then it return the marker
+     * location. It waits until the marker is found, then it returns the marker location.
+     *
+     * @return Where the marker is
+     * @see DetectMarkerPipeline#getMarkerLocation()
+     */
+    public MarkerLocation DetectMarkerRun() {
+        DetectMarkerPipeline detectMarkerPipeline = new DetectMarkerPipeline(quickTelemetry);
+        robotCamera.setPipeline(detectMarkerPipeline);
+
+        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
+        // out when the RC activity is in portrait. We do our actual image processing assuming
+        // landscape orientation, though.
+        robotCamera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+
+        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                robotCamera.startStreaming(VisionConfig.CAMERA_WIDTH, VisionConfig.CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                markerLocation = MarkerLocation.NOT_FOUND;
+            }
+        });
+        if (!(markerLocation == MarkerLocation.NOT_FOUND)) {
+            markerLocation = detectMarkerPipeline.getMarkerLocation();
+        }
+        return markerLocation;
     }
 }
