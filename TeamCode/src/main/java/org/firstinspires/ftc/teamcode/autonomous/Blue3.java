@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name="Blue-3-WarehouseTwo", group ="playback")
-//@Disabled
+@Disabled
 public class Blue3 extends AutoReplayBaseCam {
 
 }

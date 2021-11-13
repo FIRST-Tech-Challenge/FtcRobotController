@@ -297,6 +297,9 @@ public class FrenzyBaseBot implements IOdoBot {
 
         while (motorsBusy()){
             //wait for at least one motor to stop
+            if (!owner.opModeIsActive()){
+                break;
+            }
         }
         stop();
     }
@@ -503,7 +506,9 @@ public class FrenzyBaseBot implements IOdoBot {
         this.frontLeft.setVelocity(MAX_VELOCITY_GB*speed);
         this.frontRight.setVelocity(MAX_VELOCITY_GB*speed);
         while (motorsBusy()){
-
+            if (!owner.opModeIsActive()){
+                break;
+            }
         }
         stop();
 

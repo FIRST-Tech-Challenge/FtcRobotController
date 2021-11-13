@@ -34,6 +34,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     // Dropper Servo positions
     private static double DROPPER_SERVO_POS_READY = 0.75;
+    private static double DROPPER_SERVO_POS_MOVE = 0.6;
     private static double DROPPER_SERVO_POS_DROP = 0.0;
 
     // Detection
@@ -44,7 +45,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     /* Constructor */
     public FrenzyBot() {
-        opModeSide = AutoRoute.NAME_RED; // defult
+        opModeSide = AutoRoute.NAME_RED; // default
     }
 
     public FrenzyBot(String fieldSide) {
@@ -147,6 +148,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift level 3", defaultReturn = "")
     public void liftToLevel3(){
         liftLocation = LIFT_LEVEL_THREE;
+        prepDropperToMove();
         this.lift.setTargetPosition(LIFT_LEVEL_THREE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
@@ -163,6 +165,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift level 1", defaultReturn = "")
     public void liftToLevel1(){
         liftLocation = LIFT_LEVEL_ONE;
+        prepDropperToMove();
         this.lift.setTargetPosition(LIFT_LEVEL_ONE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
@@ -206,6 +209,12 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void resetDropper(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_READY);
+        }
+    }
+
+    private void prepDropperToMove(){
+        if (dropperServo != null) {
+            dropperServo.setPosition(DROPPER_SERVO_POS_MOVE);
         }
     }
 

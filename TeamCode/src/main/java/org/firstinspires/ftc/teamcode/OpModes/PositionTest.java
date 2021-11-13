@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import android.graphics.Point;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 //@Disabled
 @TeleOp(name = "Position To", group = "Robot15173")
+@Disabled
 public class PositionTest extends LinearOpMode {
 
     // Declare OpMode Members
