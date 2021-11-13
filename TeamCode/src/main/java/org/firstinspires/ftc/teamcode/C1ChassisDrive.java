@@ -253,9 +253,13 @@ public class C1ChassisDrive extends DriveMethods {
                 motorMajorArm.setPower(0);
                 movingToLevel0 = true;
                 currentPosition = -motorMajorArm.getCurrentPosition();
-                if (difference == ?) {
-                    motorMajorArm.setPower();
+                if (difference < 120 && difference > 10) {
+                    motorMajorArm.setPower(-.0015);
+                    while (difference == 20) {
+                        motorMajorArm.setPower(-.075);
+                    }
                 }
+                motorMajorArm.setPower(0);
                 servoStable.setPosition(0.52);
             }
 
