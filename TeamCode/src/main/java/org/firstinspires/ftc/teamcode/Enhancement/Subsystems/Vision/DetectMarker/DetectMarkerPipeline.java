@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
+package org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker;
 
-import org.firstinspires.ftc.teamcode.Config.MainConfig;
-import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
+import org.firstinspires.ftc.teamcode.Enhancement.Config.MainConfig;
+import org.firstinspires.ftc.teamcode.Enhancement.Robot;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.Vision;
 import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 import org.opencv.core.*;

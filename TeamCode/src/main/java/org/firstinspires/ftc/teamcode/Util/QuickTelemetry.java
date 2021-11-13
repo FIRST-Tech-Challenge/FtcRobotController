@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Util;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Config.MainConfig;
+import org.firstinspires.ftc.teamcode.Enhancement.Config.MainConfig;
 
 
 /**

@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.Config.MainConfig;
-import org.firstinspires.ftc.teamcode.Config.VisionConfig;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Enhancement.Config.MainConfig;
+import org.firstinspires.ftc.teamcode.Enhancement.Config.VisionConfig;
+import org.firstinspires.ftc.teamcode.Enhancement.Robot;
 import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 
 

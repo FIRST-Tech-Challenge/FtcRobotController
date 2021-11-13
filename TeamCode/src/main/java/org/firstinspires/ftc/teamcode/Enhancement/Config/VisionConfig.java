@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.Config;
+package org.firstinspires.ftc.teamcode.Enhancement.Config;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker.MarkerLocation;
 
 /**
  * Vision Config

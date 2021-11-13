@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.Config;
+package org.firstinspires.ftc.teamcode.Enhancement.Config;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Drive.Drive;
 
 /**
  * Drive Config has the static config values for the drive class in drive.java
