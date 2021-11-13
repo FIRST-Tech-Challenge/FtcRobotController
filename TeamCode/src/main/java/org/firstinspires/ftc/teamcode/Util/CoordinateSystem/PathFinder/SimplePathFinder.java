@@ -17,24 +17,20 @@ public class SimplePathFinder implements PathFinder {
             if (xMove > 0) {
                 xMoveNow = 1;
                 xMove--;
-            }
-            else if (xMove < 0) {
+            } else if (xMove < 0) {
                 xMoveNow = -1;
                 xMove++;
-            }
-            else {
+            } else {
                 xMoveNow = 0;
             }
 
             if (yMove > 0) {
                 yMoveNow = 1;
                 yMove--;
-            }
-            else if (yMove < 0) {
+            } else if (yMove < 0) {
                 yMoveNow = -1;
                 yMove++;
-            }
-            else {
+            } else {
                 yMoveNow = 0;
             }
 

@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
 
 /**
- * The Marker Location is NOT_FOUND by default.
+ * The Marker Location is {@link #SEARCHING} by default.
  */
 public enum MarkerLocation {
     LEFT,
     MIDDLE,
     RIGHT,
-    NOT_FOUND
+    NOT_FOUND,
+    SEARCHING
 }

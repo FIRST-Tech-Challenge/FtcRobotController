@@ -1,12 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Vision;
 
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -15,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Config.VisionConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarker;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerPipeline;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
@@ -23,6 +17,10 @@ import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
 /**
  * The Vision Subsystem
@@ -32,26 +30,22 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
  */
 
 public class Vision extends Subsystem {
-    MarkerLocation finalMarkerLocation; // Marker Location
-    WebcamName webcamName = null;
-
     // Since ImageTarget trackable use mm to specify their dimensions, we must use mm for all the physical dimension.
     // Define constants
-    private static final float mmPerInch        = 25.4f;
-    private static final float mmTargetHeight   = (6) * mmPerInch;
-
+    private static final float mmPerInch = 25.4f;
+    private static final float mmTargetHeight = (6) * mmPerInch;
     // Constants for perimeter targets
     private static final float halfField = 72 * mmPerInch;
-    private static final float quadField  = 36 * mmPerInch;
-
+    private static final float quadField = 36 * mmPerInch;
     // Define where camera is in relation to center of robot in inches
-    final float CAMERA_FORWARD_DISPLACEMENT  = 6.0f * mmPerInch; // TODO: CALIBRATE WHEN ROBOT IS BUILT
+    final float CAMERA_FORWARD_DISPLACEMENT = 6.0f * mmPerInch; // TODO: CALIBRATE WHEN ROBOT IS BUILT
     final float CAMERA_VERTICAL_DISPLACEMENT = 6.5f * mmPerInch;
-    final float CAMERA_LEFT_DISPLACEMENT     = -0.75f * mmPerInch;
-
+    final float CAMERA_LEFT_DISPLACEMENT = -0.75f * mmPerInch;
+    MarkerLocation finalMarkerLocation; // Marker Location
+    WebcamName webcamName = null;
+    OpenGLMatrix robotFromCamera = null;
     // Class Members
     private OpenGLMatrix lastLocation;
-    OpenGLMatrix robotFromCamera = null;
     private VuforiaLocalizer vuforia;
 
     private boolean targetVisible;
@@ -65,9 +59,9 @@ public class Vision extends Subsystem {
     /**
      * Class instantiation
      *
-     * @param telemetry Quick Telemetry
-     * @param  hardwareMap the hardware map
-     * @param timer how much time elapsed
+     * @param telemetry   Quick Telemetry
+     * @param hardwareMap the hardware map
+     * @param timer       how much time elapsed
      * @throws InterruptedException It might happen because the thread is interrupted.
      */
     public Vision(QuickTelemetry telemetry, HardwareMap hardwareMap, ElapsedTime timer) throws InterruptedException {
@@ -88,9 +82,9 @@ public class Vision extends Subsystem {
 
         robotCamera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
-        telemetry.telemetry(4, "Detect Marker","Detecting Marker");
+        telemetry.telemetry(4, "Detect Marker", "Detecting Marker");
         DetectMarker detectMarkerRunnable = new DetectMarker(hardwareMap, robotCamera, telemetry);
-        MarkerLocation finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
+        VisionConfig.finalMarkerLocation = detectMarkerRunnable.DetectMarkerRun();
         telemetry.telemetry(3, "Detect Marker", "Detected Marker");
         telemetry.telemetry(2, "Vision Status", "Vision initialized");
     }
@@ -112,6 +106,6 @@ public class Vision extends Subsystem {
 
     // Helper method to create matrix to identify locations
     public OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
-        return OpenGLMatrix.translation(x, y, z).multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v , w));
+        return OpenGLMatrix.translation(x, y, z).multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, u, v, w));
     }
 }

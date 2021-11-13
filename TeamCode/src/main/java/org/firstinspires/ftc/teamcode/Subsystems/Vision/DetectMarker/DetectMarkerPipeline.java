@@ -5,11 +5,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
 import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -19,38 +15,30 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * <p>It does this by splitting the camera input into 3 parts, the Left, Middle, and Right. It
  * checks each part for a custom marker (which is set to be green in the code), or some blue or red
  * tape, dependant on the alliance color.</p>
+ *
  * @see org.openftc.easyopencv.OpenCvPipeline
  * @see Vision
  */
 public class DetectMarkerPipeline extends OpenCvPipeline {
-    QuickTelemetry telemetry;
-
     private final AllianceColor allianceColor = MainConfig.getAllianceColor();
-    private MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
-    private SearchStatus searchStatus = SearchStatus.INITIALIZING;
-
-
-    static final Rect LEFT_RECT = new Rect(
+    private final Rect LEFT_RECT = new Rect(
             new Point(60, 35),
             new Point(110, 75));
-
-    static final Rect MIDDLE_RECT = new Rect(
+    private final Rect MIDDLE_RECT = new Rect(
             new Point(110, 35),
             new Point(150, 75));
-
-    static final Rect RIGHT_RECT = new Rect(
+    private final Rect RIGHT_RECT = new Rect(
             new Point(150, 35),
             new Point(200, 75));
-
-    static double PERCENT_COLOR_THRESHOLD = 0.4;
-
-
+    private final double PERCENT_COLOR_THRESHOLD = 0.4;
+    QuickTelemetry telemetry;
     Mat mask = new Mat();
+    private MarkerLocation markerLocation = MarkerLocation.NOT_FOUND;
 
     /**
      * Class instantiation
-     * @param robot The robot (used for {@link QuickTelemetry})
      *
+     * @param quickTelemetry used for {@link QuickTelemetry}
      * @see Robot
      * @see QuickTelemetry
      * @see AllianceColor
@@ -72,9 +60,8 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
      * as {@link MarkerLocation#NOT_FOUND}, if otherwise, the respective Location it is in is
      * returned via a {@link MarkerLocation} variable called {@link #markerLocation}</p>
      *
-     * @param input A Mat
+     * @param input A Mask (the class is called {@link Mat})
      * @return The marker location
-     *
      * @see #allianceColor
      * @see Mat
      * @see Scalar
@@ -82,8 +69,7 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
      */
     @Override
     public Mat processFrame(Mat input) {
-        this.searchStatus = SearchStatus.SEARCHING;
-        Imgproc.cvtColor(input, mask, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful. (not possible)
+        Imgproc.cvtColor(input, mask, Imgproc.COLOR_RGB2HSV); // TODO: Change COLOR_RGB2HSV to something more useful.
         Scalar lowHSV = new Scalar(23, 50, 70);
         Scalar highHSV = new Scalar(32, 255, 255);
 
@@ -134,11 +120,9 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
 
         if (this.allianceColor == AllianceColor.RED) {
             colorNormal = new Scalar(255, 0, 0); // Pure Red
-        }
-        else if (this.allianceColor == AllianceColor.BLUE) {
+        } else if (this.allianceColor == AllianceColor.BLUE) {
             colorNormal = new Scalar(0, 0, 255); // Pure Blue
-        }
-        else {
+        } else {
             colorNormal = new Scalar(255, 0, 255); // Pure Blue
         }
 
@@ -148,25 +132,16 @@ public class DetectMarkerPipeline extends OpenCvPipeline {
         Imgproc.rectangle(mask, MIDDLE_RECT, markerLocation == MarkerLocation.MIDDLE ? colorMarker : colorNormal);
         Imgproc.rectangle(mask, RIGHT_RECT, markerLocation == MarkerLocation.RIGHT ? colorMarker : colorNormal);
 
-        this.searchStatus = SearchStatus.FOUND;
         return mask;
     }
 
     /**
      * Gets the Marker Location, might be not found because of the Search Status.
+     *
      * @return Where the marker is.
      * @see MarkerLocation
      */
     public MarkerLocation getMarkerLocation() {
         return markerLocation;
-    }
-
-    /**
-     * Gets the search status
-     * @return the search status, which is in the {@link #searchStatus} enum format.
-     * @see #searchStatus
-     */
-    public SearchStatus getSearchStatus() {
-        return searchStatus;
     }
 }

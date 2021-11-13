@@ -40,3 +40,11 @@ This repository contains FTC Team 5206's repository for the Freight Frenzy (2021
 
 the releases are called _yyyy.mm.dd.p_ when _yyyy_ is the year _mm_ is the month and _dd_ is the day and _p_ is the patch number (the default is 0).
 
+# Docs
+
+To view the latest docs install python 3.8, 3.9, or 3.10 and run the following commands
+`pip install sphinx`
+`cd docs`
+`sphinx-build -b html source/ html`
+
+the docs index page is in `/docs/html/index.html`

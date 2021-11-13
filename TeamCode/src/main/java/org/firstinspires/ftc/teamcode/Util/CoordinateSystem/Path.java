@@ -7,14 +7,14 @@ import java.util.ArrayList;
 public class Path {
     ArrayList<Coordinate> path;
     ArrayList<Move> moves;
-    private int pathParsed = 1;
     int current = 0;
+    private int pathParsed = 1;
 
-    public Path () {
+    public Path() {
         path = new ArrayList<Coordinate>();
     }
 
-    public Path (ArrayList<Coordinate> path) {
+    public Path(ArrayList<Coordinate> path) {
         this.path = path;
         updateMoves();
     }
@@ -23,23 +23,23 @@ public class Path {
         return this.path;
     }
 
-    public void add (Coordinate c) {
+    public void add(Coordinate c) {
         path.add(c);
     }
 
-    public void add (int index, Coordinate c) {
+    public void add(int index, Coordinate c) {
         path.add(index, c);
     }
 
-    public void add (Path p) {
+    public void add(Path p) {
         path.addAll(p.getPath());
     }
 
-    public Coordinate get (int index) {
+    public Coordinate get(int index) {
         return path.get(index);
     }
 
-    public int length () {
+    public int length() {
         return path.size();
     }
 
@@ -49,17 +49,17 @@ public class Path {
     }
 
     public void goTo(Coordinate place, PathFinder pF) {
-        add(pF.getShortestPath(path.get(path.size()-1), place));
+        add(pF.getShortestPath(path.get(path.size() - 1), place));
     }
 
     public void goTo(Object place, PathFinder pF) {
-        add(pF.getShortestPath(path.get(path.size()-1), place.getClosestCoordinate(path.get(path.size()-1), pF)));
+        add(pF.getShortestPath(path.get(path.size() - 1), place.getClosestCoordinate(path.get(path.size() - 1), pF)));
     }
 
     private void optimizeMoves() {
         Move previousMove = new Move(0, 0, 0);
         int previousMovePlace;
-        for (Move move: moves) {
+        for (Move move : moves) {
             if (move.getAngle() == previousMove.getAngle()) {
                 moves.remove(move);
                 previousMovePlace = moves.indexOf(previousMove);
@@ -73,51 +73,40 @@ public class Path {
         Coordinate previousMove = null;
         int x;
         int y;
-        for (Coordinate c: path) {
+        for (Coordinate c : path) {
             if (!(previousMove == null)) {
                 if (c.getX() == previousMove.getX()) {
                     x = 0;
-                }
-                else if (c.getX() == previousMove.getX() + 1) {
+                } else if (c.getX() == previousMove.getX() + 1) {
                     x = 1;
-                }
-                else {
+                } else {
                     x = -1;
                 }
 
                 if (c.getY() == previousMove.getY()) {
                     y = 0;
-                }
-                else if (c.getY() == previousMove.getY() + 1) {
+                } else if (c.getY() == previousMove.getY() + 1) {
                     y = 1;
-                }
-                else {
+                } else {
                     y = -1;
                 }
 
                 if (!(x == 0 && y == 0)) {
                     if (x == 0 && y == 1) {
                         moves.add(new Move(x, y, 90, 1));
-                    }
-                    else if (x == 0 && y == -1) {
+                    } else if (x == 0 && y == -1) {
                         moves.add(new Move(x, y, -90, 1));
-                    }
-                    else if (x == 1 && y == 0) {
+                    } else if (x == 1 && y == 0) {
                         moves.add(new Move(x, y, 0, 1));
-                    }
-                    else if (x == -1 && y == 0) {
+                    } else if (x == -1 && y == 0) {
                         moves.add(new Move(x, y, 180, 1));
-                    }
-                    else if (x == 1 && y == 1) {
+                    } else if (x == 1 && y == 1) {
                         moves.add(new Move(x, y, 45, 1));
-                    }
-                    else if (x == -1 && y == 1) {
+                    } else if (x == -1 && y == 1) {
                         moves.add(new Move(x, y, 135, 1));
-                    }
-                    else if (x == 1 && y == -1) {
+                    } else if (x == 1 && y == -1) {
                         moves.add(new Move(x, y, -45, 1));
-                    }
-                    else {
+                    } else {
                         moves.add(new Move(x, y, -135, 1));
                     }
                 }

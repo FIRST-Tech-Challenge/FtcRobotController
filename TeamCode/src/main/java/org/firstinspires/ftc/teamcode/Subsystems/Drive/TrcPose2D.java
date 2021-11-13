@@ -7,8 +7,7 @@ import java.util.Locale;
 /**
  * This class implements a 2D pose object that represents the positional state of an object.
  */
-public class TrcPose2D
-{
+public class TrcPose2D {
     // The following attributes describe the reference frame of the robot
     // The x, y attributes signify relative position
     public double x;
@@ -22,12 +21,11 @@ public class TrcPose2D
     /**
      * Constructor: Create an instance of the object.
      *
-     * @param x specifies the x component of the position.
-     * @param y specifies the y component of the position.
+     * @param x     specifies the x component of the position.
+     * @param y     specifies the y component of the position.
      * @param angle specifies the angle.
      */
-    public TrcPose2D(double x, double y, double angle)
-    {
+    public TrcPose2D(double x, double y, double angle) {
         this.x = x;
         this.y = y;
         this.angle = angle;
@@ -39,16 +37,14 @@ public class TrcPose2D
      * @param x specifies the x coordinate of the position.
      * @param y specifies the y coordinate of the position.
      */
-    public TrcPose2D(double x, double y)
-    {
+    public TrcPose2D(double x, double y) {
         this(x, y, 0.0);
     }   //TrcPose2D
 
     /**
      * Constructor: Create an instance of the object.
      */
-    public TrcPose2D()
-    {
+    public TrcPose2D() {
         this(0.0, 0.0, 0.0);
     }   //TrcPose2D
 
@@ -58,8 +54,7 @@ public class TrcPose2D
      * @return string representation of the pose.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format(Locale.US, "(x=%.1f,y=%.1f,angle=%.1f)", x, y, angle);
     }
 
@@ -73,8 +68,7 @@ public class TrcPose2D
      * @return a copy of this pose.
      */
     @NonNull
-    public TrcPose2D clone()
-    {
+    public TrcPose2D clone() {
         return new TrcPose2D(this.x, this.y, this.angle);
     }   //clone
 
@@ -83,8 +77,7 @@ public class TrcPose2D
      *
      * @param pose specifies the pose to make this pose equal to.
      */
-    public void setAs(TrcPose2D pose)
-    {
+    public void setAs(TrcPose2D pose) {
         this.x = pose.x;
         this.y = pose.y;
         this.angle = pose.angle;
@@ -99,8 +92,7 @@ public class TrcPose2D
      * @param yOffset specifies the y offset in reference to the angle of the pose.
      * @return translated pose.
      */
-    public TrcPose2D translatePose(double xOffset, double yOffset)
-    {
+    public TrcPose2D translatePose(double xOffset, double yOffset) {
         final String funcName = "translatePose";
         TrcPose2D newPose = clone();
         double angleRadians = Math.toRadians(newPose.angle);
@@ -109,9 +101,9 @@ public class TrcPose2D
 
         // Calculate the new position using the reference frame of the robot
         // Calculate the x offset in the reference frame of the robot
-        newPose.x += xOffset*cosAngle + yOffset*sinAngle;
+        newPose.x += xOffset * cosAngle + yOffset * sinAngle;
         // Calculate the y offset in the reference frame of the robot
-        newPose.y += -xOffset*sinAngle + yOffset*cosAngle;
+        newPose.y += -xOffset * sinAngle + yOffset * cosAngle;
 
         return newPose;
     }

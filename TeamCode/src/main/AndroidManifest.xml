@@ -5,8 +5,6 @@
      So it won't ultimately be as empty as it might here appear to be :-) -->
 
 <!-- The package name here determines the package for your R class and your BuildConfig class -->
-<manifest
-    package="org.firstinspires.ftc.teamcode"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="org.firstinspires.ftc.teamcode">
     <application/>
 </manifest>

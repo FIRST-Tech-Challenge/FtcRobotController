@@ -3,46 +3,47 @@ package org.firstinspires.ftc.teamcode.Util.CoordinateSystem;
 public class Coordinate {
     protected int x, y;
     protected double g, h;
+
     public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
         this.g = 0;
-        this. h = 0;
+        this.h = 0;
     }
 
     public Coordinate(int x, int y, double g, double h) {
         this.x = x;
         this.y = y;
         this.g = g;
-        this. h = h;
+        this.h = h;
     }
 
     public int getX() {
         return x;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public double getG() {
-        return g;
-    }
-
-    public double getH() {
-        return h;
-    }
-
     public void setX(int x) {
         this.x = x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public void setY(int y) {
         this.y = y;
     }
 
+    public double getG() {
+        return g;
+    }
+
     public void setG(double g) {
         this.g = g;
+    }
+
+    public double getH() {
+        return h;
     }
 
     public void setH(double h) {

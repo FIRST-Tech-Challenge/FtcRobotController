@@ -4,19 +4,19 @@ import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.Coordinate;
 import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.Field;
 import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.Path;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class AStarPathFinder {
     private final List<Node> open;
     private final List<Node> closed;
     private final Path path;
     private final Field field;
+    private final boolean diagonal;
     private Node now;
     private Coordinate start;
     private Coordinate end;
-    private final boolean diagonal;
 
     AStarPathFinder(Field field, boolean diagonal) {
         this.open = new ArrayList<>();
@@ -25,12 +25,53 @@ public class AStarPathFinder {
         this.field = field;
         this.diagonal = diagonal;
     }
+
+    /**
+     * * Looks in a given List for a node
+     * *
+     * * @return (bool) NeighborInListFound
+     */
+    private static boolean findNeighborInList(List<Node> array, Node node) {
+        return array.stream().anyMatch((n) -> (n.getX() == node.getX() && n.getY() == node.getY()));
+    }
+
+    public static void main(String[] args) {
+        // -1 = blocked
+        // 0+ = additional movement cost
+        Field field = new Field();
+        AStarPathFinder as = new AStarPathFinder(field, true);
+        Path path = as.getShortestPath(new Coordinate(0, 0), new Coordinate(7, 7));
+        if (path != null) {
+            path.getPath().forEach((n) -> {
+                System.out.print("[" + n.getX() + ", " + n.getY() + "] ");
+                field.set(new Coordinate(n.getX(), n.getY()), -1);
+            });
+            System.out.printf("\nTotal cost: %.02f\n", path.get(path.length() - 1).getG());
+
+            for (int[] fieldRow : field.getField()) {
+                for (int vertex : fieldRow) {
+                    switch (vertex) {
+                        case 0:
+                            System.out.print("_");
+                            break;
+                        case -1:
+                            System.out.print("*");
+                            break;
+                        default:
+                            System.out.print("#");
+                    }
+                }
+                System.out.println();
+            }
+        }
+    }
+
     /**
      * Finds path to xEnd/yEnd or returns null
      *
      * @param start the starting coordinate
-     * @param end coordinates of the target position
-     * @return (List<Node> | null) the path
+     * @param end   coordinates of the target position
+     * @return the path
      */
     public Path getShortestPath(Coordinate start, Coordinate end) {
         this.start = start;
@@ -54,18 +95,11 @@ public class AStarPathFinder {
         }
         return this.path;
     }
+
     /**
-     ** Looks in a given List<> for a node
-     **
-     ** @return (bool) NeighborInListFound
-     */
-    private static boolean findNeighborInList(List<Node> array, Node node) {
-        return array.stream().anyMatch((n) -> (n.getX() == node.getX() && n.getY() == node.getY()));
-    }
-    /**
-     ** Calculate distance between this.now and xEnd/yEnd
-     **
-     ** @return (int) distance
+     * * Calculate distance between this.now and xEnd/yEnd
+     * *
+     * * @return (int) distance
      */
     private double distance(int dx, int dy) {
         if (this.diagonal) { // if diagonal movement is allowed
@@ -74,6 +108,7 @@ public class AStarPathFinder {
             return Math.abs(this.now.getX() + dx - this.end.getX()) + Math.abs(this.now.getY() + dy - this.end.getY()); // return the "Manhattan distance"
         }
     }
+
     private void addNeighborsToOpenList() {
         Node node;
         for (int x = -1; x <= 1; x++) {
@@ -85,7 +120,7 @@ public class AStarPathFinder {
                 if ((x != 0 || y != 0) // not this.now
                         && this.now.getX() + x >= 0 && this.now.getX() + x < this.field.length // check maze boundaries
                         && this.now.getY() + y >= 0 && this.now.getY() + y < this.field.width
-                        && this.field.isBlocked( new Coordinate(this.now.getY() + y, this.now.getX() + x)) // check if square is walkable
+                        && this.field.isBlocked(new Coordinate(this.now.getY() + y, this.now.getX() + x)) // check if square is walkable
                         && !findNeighborInList(this.open, node) && !findNeighborInList(this.closed, node)) { // if not already done
                     node.setG(node.parent.getG() + 1.); // Horizontal/vertical cost = 1.0
                     node.setG(node.getG() + field.get(new Coordinate(this.now.getY() + y, this.now.getX() + x))); // add movement cost for this square
@@ -102,36 +137,5 @@ public class AStarPathFinder {
             }
         }
         Collections.sort(this.open);
-    }
-
-    public static void main(String[] args) {
-        // -1 = blocked
-        // 0+ = additional movement cost
-        Field field = new Field();
-        AStarPathFinder as = new AStarPathFinder(field, true);
-        Path path = as.getShortestPath(new Coordinate(0, 0), new Coordinate(7, 7));
-        if (path != null) {
-            path.getPath().forEach((n) -> {
-                System.out.print("[" + n.getX()+ ", " + n.getY() + "] ");
-                field.set(new Coordinate(n.getX(), n.getY()), -1);
-            });
-            System.out.printf("\nTotal cost: %.02f\n", path.get(path.length() - 1).getG());
-
-            for (int[] fieldRow : field.getField()) {
-                for (int vertex : fieldRow) {
-                    switch (vertex) {
-                        case 0:
-                            System.out.print("_");
-                            break;
-                        case -1:
-                            System.out.print("*");
-                            break;
-                        default:
-                            System.out.print("#");
-                    }
-                }
-                System.out.println();
-            }
-        }
     }
 }

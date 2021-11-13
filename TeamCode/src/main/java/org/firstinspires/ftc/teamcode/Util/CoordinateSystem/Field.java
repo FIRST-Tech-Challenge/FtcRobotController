@@ -5,13 +5,13 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Field implements Iterable<int[]>{
+public class Field implements Iterable<int[]> {
     public final int length = 100;
     public final int width = 100;
+    ArrayList<Object> Objects = new ArrayList<Object>();
     private int[][] field = new int[length][width];
     private int x;
     private int y;
-    ArrayList<Object> Objects = new ArrayList<Object>();
 
     public Field() {
         for (x = 0; x < length; x++) {
@@ -29,8 +29,8 @@ public class Field implements Iterable<int[]>{
             }
         }
         this.Objects = Objects;
-        for (Object object:Objects) {
-            for (Coordinate coordinate:object.getOccupies()) {
+        for (Object object : Objects) {
+            for (Coordinate coordinate : object.getOccupies()) {
                 this.field[coordinate.getX()][coordinate.getY()] = 1;
             }
         }
@@ -44,7 +44,7 @@ public class Field implements Iterable<int[]>{
     }
 
     public void addObject(Object object) {
-        for (Coordinate coordinate:object.getOccupies()) {
+        for (Coordinate coordinate : object.getOccupies()) {
             this.field[coordinate.getX()][coordinate.getY()] = 1;
         }
         Objects.add(object);

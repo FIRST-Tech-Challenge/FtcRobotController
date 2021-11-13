@@ -16,7 +16,7 @@ buildscript {
 }
 
 plugins {
-    id 'idea' // optional (to generate IntelliJ IDEA project files)
+    id('idea') // optional (to generate IntelliJ IDEA project files)
 }
 
 configurations {

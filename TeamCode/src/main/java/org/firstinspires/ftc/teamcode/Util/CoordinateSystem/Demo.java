@@ -4,6 +4,10 @@ import org.firstinspires.ftc.teamcode.Util.CoordinateSystem.PathFinder.SimplePat
 
 import java.util.ArrayList;
 
+/**
+ * A pathfinder demo
+ * Uses the Freight Frenzy board
+ */
 public class Demo {
     public Demo() {
         Field field = new Field();
@@ -18,7 +22,7 @@ public class Demo {
         Object allianceHub = new Object(allianceHubCoordinates);
         field.addObject(allianceHub);
 
-        Coordinate start = new Coordinate(0,0);
+        Coordinate start = new Coordinate(0, 0);
         path.add(start);
         SimplePathFinder pF = new SimplePathFinder();
         path.goTo(allianceHub, pF);

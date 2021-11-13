@@ -2,12 +2,10 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 
 /**
  * Superclass to all subsystems, it does some bootstrapping for them (Vision, Control, and Drive)
- *
  */
 public abstract class Subsystem {
     // protected because of inheritance
@@ -15,11 +13,12 @@ public abstract class Subsystem {
     protected ElapsedTime timer;
     protected HardwareMap hardwareMap;
 
-    public Subsystem(QuickTelemetry telemetry, HardwareMap hardwareMap, ElapsedTime timer){
+    public Subsystem(QuickTelemetry telemetry, HardwareMap hardwareMap, ElapsedTime timer) {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
         this.timer = timer;
     }
 
-    public void init() {}
+    public void init() {
+    }
 }
