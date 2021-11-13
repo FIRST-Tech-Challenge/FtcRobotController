@@ -256,9 +256,13 @@ public class C1ChassisDrive extends DriveMethods {
 
             //Major Excavator Arm Control is in 3 levels, denoted by the dpad (in order): up, right, bottom
             if (gamepad2.dpad_up) {
+                difference = level0 - currentPosition;
                 motorMajorArm.setPower(0);
                 movingToLevel0 = true;
                 currentPosition = -motorMajorArm.getCurrentPosition();
+                if (difference == ?) {
+                    motorMajorArm.setPower();
+                }
                 servoStable.setPosition(0.52);
             }
 
