@@ -17,7 +17,7 @@ public class BarcodeDetectionPipeline extends OpenCvPipeline {
     double centerArea;
     double rightArea;
     int maximumAreaContour;
-    String position;
+    static String position;
 
     public double contourArea(Mat input) {
         Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2GRAY);
