@@ -80,24 +80,26 @@ public class Blue2WaitParkWH extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
+        initializeArm();
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-        driveForDistance(.05,.3,Direction.RIGHT);
-        driveForDistance(.3,.3,Direction.BACKWARD);
+        driveForDistance(.075,.3,Direction.RIGHT);
+        driveForDistance(.25,.3,Direction.BACKWARD);
         servoCarousel.setPosition(.4);
         driveDirection(.05,Direction.BACKWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
         StopMotors();
         driveForDistance(.1,.3,Direction.RIGHT);
+        sleep(9000);
         driveForDistance(.5,.3,Direction.FORWARD);
-        driveForDistance(.2,.3,Direction.LEFT);
-        sleep(15000);
+        driveForDistance(.25,.4,Direction.LEFT);
         driveForDistance(1.1,.3, Direction.FORWARD);
-        driveForDistance(.1,.3,Direction.LEFT);
-        driveForDistance(.55,.3,Direction.FORWARD);
+        driveForDistance(.25,.4,Direction.LEFT);
+        driveForDistance(.65,.3,Direction.FORWARD);
     }
 }

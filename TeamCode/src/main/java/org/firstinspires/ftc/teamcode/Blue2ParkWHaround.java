@@ -79,6 +79,8 @@ public class Blue2ParkWHaround extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
+        initializeArm();
+
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -88,19 +90,21 @@ public class Blue2ParkWHaround extends DriveMethods {
         /**
          * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
          */
-        driveForDistance(.05,.3,Direction.RIGHT);
-        driveForDistance(.3,.3,Direction.BACKWARD);
+        driveForDistance(.075,.3,Direction.RIGHT);
+        driveForDistance(.25,.3,Direction.BACKWARD);
         servoCarousel.setPosition(.4);
         driveDirection(.05,Direction.BACKWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
         StopMotors();
         driveForDistance(.1,.3,Direction.RIGHT);
+        rotateToPosition(.35,0);
         driveForDistance(.5,.3,Direction.FORWARD);
-        driveForDistance(.5,.3,Direction.RIGHT);
+        driveForDistance(.15,.3,Direction.RIGHT);
+        rotateToPosition(.35,0);
         driveForDistance(1.1,.3, Direction.FORWARD);
-        driveForDistance(.1,.3,Direction.LEFT);
-        driveForDistance(.55,.3,Direction.FORWARD);
+        driveForDistance(.9,.4,Direction.LEFT);
+        driveForDistance(.6,.3,Direction.FORWARD);
 
         // start near the carousel, do the duck, go around the dead robot and park in the warehouse (blue side)
 

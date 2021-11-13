@@ -80,27 +80,30 @@ public class Red2ParkWH extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
+        initializeArm();
+
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-        driveForDistance(.3,.3,Direction.BACKWARD);
-        driveForDistance(.3,.3, Direction.RIGHT);
-        driveForDistance(.1, .3,Direction.FORWARD);
+        driveForDistance(.3,.3,Direction.FORWARD);
+        driveForDistance(.3,.35, Direction.LEFT);
+        driveForDistance(.2, .3,Direction.BACKWARD_LEFT);
         servoCarousel.setPosition(.6);
-        driveDirection(.05,Direction.FORWARD);
+        driveDirection(.05,Direction.BACKWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
         StopMotors();
-        driveForDistance(.05,.3, Direction.BACKWARD);
-        driveForDistance(.2,.3,Direction.LEFT);
+        driveForDistance(.05,.3, Direction.FORWARD);
+        driveForDistance(.25,.3,Direction.RIGHT);
         rotateToPosition(.3,90);
-        driveForDistance(.7,.3,Direction.FORWARD);
-        driveForDistance(.5,.3,Direction.RIGHT);
-        driveForDistance(1,.3,Direction.FORWARD);
-        driveForDistance(.1,.3,Direction.RIGHT);
-        driveForDistance(.6,.3,Direction.FORWARD);
+        driveForDistance(.7,.3,Direction.BACKWARD);
+        driveForDistance(.5,.45,Direction.LEFT);
+        driveForDistance(1,.3,Direction.BACKWARD);
+        driveForDistance(.1,.45,Direction.LEFT);
+        driveForDistance(.75,.3,Direction.BACKWARD);
 
 
 
