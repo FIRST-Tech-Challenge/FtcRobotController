@@ -177,6 +177,14 @@ public class FrenzyBot extends FrenzyBaseBot {
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
     }
 
+    public boolean isLiftBusy(){
+        return this.lift.isBusy();
+    }
+
+    private void stopLift(){
+        this.lift.setPower(0);
+    }
+
     public int getLiftLocation(){
         return liftLocation;
     }

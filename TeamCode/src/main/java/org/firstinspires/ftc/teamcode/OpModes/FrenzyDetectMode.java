@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.skills.FrenzyDetector;
 
 @TeleOp(name = "Frenzy Rec Thread", group = "Robot15173")
-//@Disabled
+@Disabled
 public class FrenzyDetectMode extends LinearOpMode {
 
     private FrenzyDetector frenzyDetector = null;
