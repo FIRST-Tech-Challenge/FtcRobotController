@@ -69,7 +69,7 @@ public class Vision extends Subsystem {
      * @param timer       how much time elapsed
      * @throws InterruptedException It might happen because the thread is interrupted.
      */
-    public Vision(QuickTelemetry telemetry, HardwareMap hardwareMap, ElapsedTime timer) throws InterruptedException {
+    public Vision(QuickTelemetry telemetry, HardwareMap hardwareMap, ElapsedTime timer) {
         super(telemetry, hardwareMap, timer);
 
         telemetry.telemetry(3, "Vision Status", "Vision initializing started");

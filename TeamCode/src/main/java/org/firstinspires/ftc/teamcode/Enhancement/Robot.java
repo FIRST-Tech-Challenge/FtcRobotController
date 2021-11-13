@@ -193,11 +193,7 @@ public class Robot {
 
         if (MainConfig.getInitSubsystemVision() || auto) {
             telemetry.telemetry(3, "Mode", " Vision init started");
-            try {
-                vision = new Vision(this.getQuickTelemetry("Vision"), hardwareMap, timer);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            vision = new Vision(this.getQuickTelemetry("Vision"), hardwareMap, timer);
             telemetry.telemetry(2, "Mode", " Vision init finished");
         }
 
