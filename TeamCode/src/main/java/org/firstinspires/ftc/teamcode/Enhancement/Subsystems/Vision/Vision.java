@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems.Vision;
+package org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,11 +8,11 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.teamcode.Config.VisionConfig;
-import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarker;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.DetectMarkerPipeline;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
+import org.firstinspires.ftc.teamcode.Enhancement.Config.VisionConfig;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker.DetectMarker;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker.DetectMarkerPipeline;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker.MarkerLocation;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;

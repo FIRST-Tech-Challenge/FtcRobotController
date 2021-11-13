@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Config;
+package org.firstinspires.ftc.teamcode.Enhancement.Config;
 
 import java.util.Hashtable;
 

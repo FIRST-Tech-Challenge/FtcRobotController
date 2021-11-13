@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
+package org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.Config.VisionConfig;
+import org.firstinspires.ftc.teamcode.Enhancement.Config.VisionConfig;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;

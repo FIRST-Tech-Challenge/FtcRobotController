@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
+package org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.DetectMarker;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Enhancement.Robot;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 public class DetectMarkerThread implements Runnable {

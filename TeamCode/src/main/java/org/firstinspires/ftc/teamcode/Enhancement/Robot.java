@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Enhancement;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
-import org.firstinspires.ftc.teamcode.Config.MainConfig;
-import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
-import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
+import org.firstinspires.ftc.teamcode.Enhancement.Config.GamePadConfig;
+import org.firstinspires.ftc.teamcode.Enhancement.Config.MainConfig;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Control.Control;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Drive.Drive;
+import org.firstinspires.ftc.teamcode.Enhancement.Subsystems.Vision.Vision;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 
 import java.util.ArrayList;
