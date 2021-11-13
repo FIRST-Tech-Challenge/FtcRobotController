@@ -79,7 +79,6 @@ public class Blue2ParkWHaround extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
-        initializeArm();
 
 
 
@@ -90,6 +89,8 @@ public class Blue2ParkWHaround extends DriveMethods {
         /**
          * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
          */
+        initializeArm();
+
         driveForDistance(.075,.3,Direction.RIGHT);
         driveForDistance(.25,.3,Direction.BACKWARD);
         servoCarousel.setPosition(.4);

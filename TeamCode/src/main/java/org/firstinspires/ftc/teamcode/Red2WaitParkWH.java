@@ -80,12 +80,12 @@ public class Red2WaitParkWH extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
-        initializeArm();
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        initializeArm();
 
         driveForDistance(.3,.3,Direction.FORWARD);
         driveForDistance(.3,.35, Direction.LEFT);

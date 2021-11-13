@@ -79,7 +79,6 @@ public class Red2ParkSU extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
-        initializeArm();
 
 
 
@@ -90,6 +89,8 @@ public class Red2ParkSU extends DriveMethods {
         /**
          * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
          */
+        initializeArm();
+
         driveForDistance(.35,.3,Direction.FORWARD);
         driveForDistance(.3,.5, Direction.LEFT);
         driveForDistance(.2, .25,Direction.BACKWARD_LEFT);

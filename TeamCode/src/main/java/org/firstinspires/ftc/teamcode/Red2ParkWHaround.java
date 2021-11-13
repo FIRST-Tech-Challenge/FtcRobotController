@@ -79,7 +79,6 @@ public class Red2ParkWHaround extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
-        initializeArm();
 
 
 
@@ -90,6 +89,8 @@ public class Red2ParkWHaround extends DriveMethods {
         /**
          * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
          */
+        initializeArm();
+
         driveForDistance(.3,.3,Direction.FORWARD);
         driveForDistance(.3,.35, Direction.LEFT);
         driveForDistance(.2, .3,Direction.BACKWARD_LEFT);

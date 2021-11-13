@@ -74,12 +74,13 @@ public class Blue1ParkWH extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
-        initializeArm();
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        initializeArm();
+
         driveForDistance(.8,.3,Direction.FORWARD);
         driveForDistance(.5,.3,Direction.RIGHT);
         driveForDistance(.4,.3,Direction.FORWARD);

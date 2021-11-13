@@ -80,13 +80,12 @@ public class Blue2WaitParkWH extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
-        initializeArm();
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-
+        initializeArm();
         driveForDistance(.075,.3,Direction.RIGHT);
         driveForDistance(.25,.3,Direction.BACKWARD);
         servoCarousel.setPosition(.4);

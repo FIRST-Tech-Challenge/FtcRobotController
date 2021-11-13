@@ -80,7 +80,6 @@ public class Blue2ParkSU extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
-        initializeArm();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -89,6 +88,8 @@ public class Blue2ParkSU extends DriveMethods {
         /**
          * Any autonomous code goes here. If you are running autonomous, delete the below while loop.
          */
+        initializeArm();
+
         driveForDistance(.075,.3,Direction.RIGHT);
         driveForDistance(.3,.3,Direction.BACKWARD);
         servoCarousel.setPosition(.4);
