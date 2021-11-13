@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 // adb.exe connect 192.168.43.1:5555
 
 @TeleOp(name = "CV Frenzy Rec", group = "Robot15173")
-@Disabled
+//@Disabled
 public class CVFrenzyRecTest extends LinearOpMode {
 
     CVDetector detector;
