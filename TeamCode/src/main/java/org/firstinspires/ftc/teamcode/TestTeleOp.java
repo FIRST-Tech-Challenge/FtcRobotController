@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "TestTeleOp", group = "Iterative Opmode")
+@TeleOp(name = "MantaRayTeleOp", group = "Iterative Opmode")
 
 public class TestTeleOp extends OpMode {
 //Naythan is very bad hehe >:)
@@ -31,6 +31,7 @@ public class TestTeleOp extends OpMode {
 
     ElapsedTime runtime = new ElapsedTime();
     DcMotor lmotor = null;
+    DcMotor rmotor = null;
 
 
     @Override
@@ -38,7 +39,9 @@ public class TestTeleOp extends OpMode {
 //initializes variable
         telemetry.addData("Status", "sad :(");
         lmotor = hardwareMap.get(DcMotor.class, "lmotor");
-        lmotor.setDirection(DcMotor.Direction.REVERSE);
+        rmotor = hardwareMap.get(DcMotor.class, "rmotor");
+        lmotor.setDirection(DcMotor.Direction.FORWARD);
+        rmotor.setDirection(DcMotor.Direction.REVERSE);
         telemetry.addData("Status", "lmotorized");
     }
 
@@ -57,13 +60,9 @@ public class TestTeleOp extends OpMode {
     public void loop() {
 //runs all code to phone?
         double lpower = gamepad1.left_stick_y;
-        if(gamepad1.a){
-            lmotor.setPower(1);
-        }
-        else{
-            lmotor.setPower(0);
-        }
+        double rpower = gamepad1.right_stick_y;
         lmotor.setPower(lpower);
+        rmotor.setPower(rpower);
         telemetry.addData("status", "lfinished");
     }
 
