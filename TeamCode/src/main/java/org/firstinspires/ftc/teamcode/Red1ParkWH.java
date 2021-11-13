@@ -74,6 +74,7 @@ public class Red1ParkWH extends DriveMethods {
         initializeDevices();
 
         setMotorDirections();
+        initializeArm();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();

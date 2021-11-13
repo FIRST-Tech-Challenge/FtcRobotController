@@ -69,6 +69,7 @@ public class C1ChassisDrive extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime timer = new ElapsedTime();
     double leftY1;
     double leftX1;
     double rightX1;
@@ -78,10 +79,10 @@ public class C1ChassisDrive extends DriveMethods {
     boolean xButton;
     double leftY2;
     double rightTrigger2;
-    double level0 = 0;
+    double level0 = 100;
     double level1 = 315;
-    double level2 = 550;
-    double level3 = 775;
+    double level2 = 575;
+    double level3 = 850;
     double currentPosition;
     double difference;
     boolean movingToLevel0 = false;
@@ -92,6 +93,7 @@ public class C1ChassisDrive extends DriveMethods {
     boolean movingToLevel3Up = false;
     boolean movingToLevel3Down = false;
     boolean fast = true;
+    boolean clamped = false;
 
 
 
@@ -118,9 +120,14 @@ public class C1ChassisDrive extends DriveMethods {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        timer.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            String stringStateRuntime = timer.toString();
+            String processed = stringStateRuntime.replace(target,replacement);
+            Double doubleStateRuntime = Double.parseDouble(processed);
+
             currentPosition = -motorMajorArm.getCurrentPosition();
 
             leftY1 = -gamepad1.left_stick_y;
@@ -190,13 +197,13 @@ public class C1ChassisDrive extends DriveMethods {
             }
 
             if (movingToLevel2Down && currentPosition < level2) {
-                motorMajorArm.setPower(-0.15);
+                motorMajorArm.setPower(-0.175);
                 movingToLevel2Down = false;
 
             }
 
             if (movingToLevel3Down && currentPosition < level3) {
-                motorMajorArm.setPower(-0.15);
+                motorMajorArm.setPower(-0.2);
                 movingToLevel3Down = false;
 
             }
@@ -248,22 +255,20 @@ public class C1ChassisDrive extends DriveMethods {
 
 
             //Major Excavator Arm Control is in 3 levels, denoted by the dpad (in order): up, right, bottom
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_down && movingToLevel1Down == false && movingToLevel1Up == false && movingToLevel2Down == false && movingToLevel2Up == false && movingToLevel3Down == false && movingToLevel3Up == false) {
+                currentPosition = -motorMajorArm.getCurrentPosition();
                 difference = level0 - currentPosition;
                 motorMajorArm.setPower(0);
                 movingToLevel0 = true;
-                currentPosition = -motorMajorArm.getCurrentPosition();
                 if (difference < 120 && difference > 10) {
-                    motorMajorArm.setPower(-.0015);
-                    while (difference == 20) {
-                        motorMajorArm.setPower(-.075);
-                    }
+                    motorMajorArm.setPower(-.1);
+                    currentPosition = -motorMajorArm.getCurrentPosition();
                 }
                 motorMajorArm.setPower(0);
                 servoStable.setPosition(0.52);
             }
 
-            if (gamepad2.dpad_right) {
+            if (gamepad2.dpad_left && movingToLevel0 == false && movingToLevel2Down == false && movingToLevel2Up == false && movingToLevel3Down == false && movingToLevel3Up == false) {
                 currentPosition = -motorMajorArm.getCurrentPosition();
                 difference = level1 - currentPosition;
                 if (difference > 0) {
@@ -282,7 +287,7 @@ public class C1ChassisDrive extends DriveMethods {
                 servoStable.setPosition(0.58);
             }
 
-            if (gamepad2.dpad_down) {
+            if (gamepad2.dpad_right && movingToLevel0 == false && movingToLevel1Down == false && movingToLevel1Up == false && movingToLevel3Down == false && movingToLevel3Up == false) {
                 currentPosition = -motorMajorArm.getCurrentPosition();
                 difference = level2 - currentPosition;
                 if (difference > 0) {
@@ -298,7 +303,7 @@ public class C1ChassisDrive extends DriveMethods {
                 servoStable.setPosition(0.68);
             }
 
-            if (gamepad2.dpad_left) {
+            if (gamepad2.dpad_up && movingToLevel0 == false && movingToLevel1Down == false && movingToLevel1Up == false && movingToLevel2Down == false && movingToLevel2Up == false) {
                 currentPosition = -motorMajorArm.getCurrentPosition();
                 difference = level3 - currentPosition;
                 if (difference > 0) {
@@ -330,19 +335,25 @@ public class C1ChassisDrive extends DriveMethods {
                 servoStable.setPosition(0.77);
             }
 
-            if(gamepad2.right_bumper){
-                servoClamp.setPosition(0.45);
+            if(gamepad2.right_trigger > 0  && doubleStateRuntime > 0.5){
+                if(clamped == false) {
+                    timer.reset();
+                    servoClamp.setPosition(0.5);
+                    clamped = true;
+                }else if(clamped == true){
+                    clamped = false;
+                    timer.reset();
+                    servoClamp.setPosition(0);
+                }
             }
-            if(gamepad2.left_bumper){
-                servoClamp.setPosition(0);
-            }
+
             /**
              * Safety precaution potentially
              */
-            if (currentPosition > 1200) {
-                motorMajorArm.setPower(0.1);
+            if (currentPosition > 1000) {
+                motorMajorArm.setPower(0.2);
                 sleep(300);
-                motorMajorArm.setPower(-0.0025);
+                motorMajorArm.setPower(-0.003);
                 sleep(500);
 
 

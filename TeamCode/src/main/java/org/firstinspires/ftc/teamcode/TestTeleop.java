@@ -72,7 +72,7 @@ public class TestTeleop extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        servoCarousel = hardwareMap.get(Servo.class,"carousel");
+        motorConveyer = hardwareMap.get(DcMotor.class,"conveyer");
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -90,7 +90,8 @@ public class TestTeleop extends DriveMethods {
             leftTrigger1 = gamepad1.left_trigger;
 
 
-            servoCarousel.setPosition(rightTrigger1);
+            motorConveyer.setPower(rightTrigger1 - leftTrigger1);
+
 
 
             // Show the elapsed game time and wheel power.
