@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -17,6 +18,10 @@ import static org.firstinspires.ftc.teamcode.Variables.motorBackLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorBackRight;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontLeft;
 import static org.firstinspires.ftc.teamcode.Variables.motorFrontRight;
+import static org.firstinspires.ftc.teamcode.Variables.motorMajorArm;
+import static org.firstinspires.ftc.teamcode.Variables.servoCarousel;
+import static org.firstinspires.ftc.teamcode.Variables.servoClamp;
+import static org.firstinspires.ftc.teamcode.Variables.servoStable;
 
 public class DriveMethods extends LinearOpMode {
     boolean calibrated = false;
@@ -563,6 +568,21 @@ public class DriveMethods extends LinearOpMode {
 
 
     }
-
+    public void initializeArm() {
+        motorMajorArm.setPower(-0.1);
+        sleep(400);
+        servoStable.setPosition(0.52);
+        motorMajorArm.setPower(0);
+    }
+    public void initializeDevices() {
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontleft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "frontright");
+        motorBackRight = hardwareMap.get(DcMotor.class, "backright");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "backleft");
+        servoCarousel = hardwareMap.get(Servo.class, "carousel");
+        motorMajorArm = hardwareMap.get(DcMotor.class, "majorarm");
+        servoClamp = hardwareMap.get(Servo.class, "clamp");
+        servoStable = hardwareMap.get(Servo.class, "stabilizer");
+    }
 
 }
