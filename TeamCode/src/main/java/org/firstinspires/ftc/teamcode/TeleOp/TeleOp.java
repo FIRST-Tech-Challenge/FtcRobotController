@@ -22,16 +22,24 @@ import org.firstinspires.ftc.teamcode.drive.MecanumDrive6340;
 public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-     /*   MecanumDrive6340 drive = new MecanumDrive6340(hardwareMap);
-        PIDFCoefficients SHOOTER_PID = new PIDFCoefficients(30, 0, 0, 13);
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-*/
+
         waitForStart();
+
         MecanumDrive6340 drive = new MecanumDrive6340(hardwareMap);
         PIDFCoefficients SHOOTER_PID = new PIDFCoefficients(30, 0, 0, 13);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int startPosition=0;
+        int poistionOfArm =0;
+
+        startPosition = drive.ArmMotor.getCurrentPosition();
+        int endPosition = startPosition;
+        int level1endPosition = startPosition + 76;
+        int level2endPosition = startPosition + 104;
+        int level3endPosition = startPosition + 176;
+
+       // drive.ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (opModeIsActive()) {
             drive.setWeightedDrivePower(
@@ -44,16 +52,68 @@ public class TeleOp extends LinearOpMode {
             //TODO create button map
 
             drive.update();
+            if (gamepad2.dpad_right) // X is intake system
+                drive.spinwheelright();
+            if (gamepad2.dpad_left) // X is intake system
+                drive.spinwheelleft();
+            if (gamepad2.dpad_down) // X is intake system
+                drive.spinwheelstop();
+            if (gamepad2.y) // X is intake system
+            {
+                poistionOfArm = 1;
+                endPosition = level3endPosition;
 
+                drive.ArmMotor.setTargetPosition(startPosition);
+                drive.ArmMotor.setPower(-1.0);
+                while (drive.ArmMotor.getCurrentPosition() > startPosition) {
+                    drive.ArmMotor.setPower(-1);
+                }
+                drive.ArmMotor.setPower(0);
+            }
+            if (gamepad2.b) // X is intake system
+            {
+                poistionOfArm = 1;
+                endPosition = level2endPosition;
+
+                drive.ArmMotor.setPower(-1);
+                while (drive.ArmMotor.getCurrentPosition() > startPosition) {
+                    drive.ArmMotor.setPower(-1);
+                }
+                drive.ArmMotor.setPower(0);
+            }
+            if (gamepad2.a) // X is intake system
+            {
+                poistionOfArm = 1;
+                endPosition = level1endPosition;
+
+                drive.ArmMotor.setPower(-1);
+                while (drive.ArmMotor.getCurrentPosition() > startPosition) {
+                    drive.ArmMotor.setPower(-1);
+                }
+                drive.ArmMotor.setPower(0);
+            }
             if (gamepad2.x) // X is intake system
-                drive.intakeRings();
-            if(gamepad2.y)
-                drive.outakeRings();
+            {
+                poistionOfArm = 1;
+                endPosition = startPosition;
+                drive.ArmMotor.setTargetPosition(startPosition);
+                drive.ArmMotor.setPower(-1);
+                while (drive.ArmMotor.getCurrentPosition() > startPosition) {
+                    drive.ArmMotor.setPower(-1);
+                }
+                drive.ArmMotor.setPower(0);
+            }
+            if(drive.ArmMotor.getCurrentPosition()< endPosition) {
+                drive.ArmMotor.setTargetPosition(endPosition);
+                drive.ArmMotor.setPower(0.3);
+                while (drive.ArmMotor.getCurrentPosition() < endPosition) {
+                    drive.ArmMotor.setPower(0.3);
+                }
+                drive.ArmMotor.setPower(0.0);
+            }
             drive.update();
             if (gamepad2.b) {// B is stopping intake
-                drive.intake.setPower(0);
-                drive.indexer.setPower(0);
-                drive.update();
+
             }
             /*
             shooterServo positions
@@ -61,37 +121,21 @@ public class TeleOp extends LinearOpMode {
             1 = FIRE
              */
             if (gamepad2.right_trigger > 0.5) {// Right trigger starts shooter, releasing trigger stops it
-                drive.shooter.setVelocity(1625);
-            if (drive.shooter.getVelocity()>1575) {
-                drive.shooterServo.setPosition(1);
-                sleep(1000);
-                drive.shooterServo.setPosition(0);
-                sleep(1000);
-                drive.update();
+                }
 
-            }}
-            else if (gamepad2.right_trigger < 0.5)
-                drive.shooter.setVelocity(0);
-            drive.shooterServo.setPosition(0);
 
             if (gamepad2.left_trigger > 0.5) {// Right trigger starts shooter, releasing trigger stops it
-                drive.shooter.setVelocity(1500);
-                if (drive.shooter.getVelocity()>1450) {
-                    drive.shooterServo.setPosition(1);
-                    sleep(1000);
-                    drive.shooterServo.setPosition(0);
-                    sleep(1000);
-                }}
+                }
 
                     drive.update();
 
 
             //drive.Arm(gamepad2.right_stick_y/2); // Right stick down pulls arm up, and vice versa
 
-            if (gamepad2.right_bumper) //Right bumper grabs with arm servo
-                drive.grabGoal();
-            if (gamepad2.left_bumper) // Left bumper releases arm servo
-                drive.releaseGoal();
+            if (gamepad2.right_bumper) {}//Right bumper grabs with arm servo
+
+            if (gamepad2.left_bumper){} // Left bumper releases arm servo
+
 
             /*
             Arm Controller
@@ -99,23 +143,22 @@ public class TeleOp extends LinearOpMode {
             drive.arm.setPower(-gamepad2.left_stick_y*.4);
 
             if (gamepad2.dpad_up) {
-                drive.grabGoal();
-                drive.deliverGoal();
-                drive.update();
-            }
-            if (gamepad2.dpad_down) {
-                drive.arm.setPower(-.02);
-                sleep(500);
-                drive.releaseGoal();
-                drive.update();
 
             }
+       //     if (gamepad2.dpad_down) {
+
+
+        //    }
 
 
 
 
 // Show the potentiometer’s voltage in telemetry
-            telemetry.addData("Potentiometer voltage", drive.armPOT.getVoltage());
+            telemetry.addData(("PostionLevel:"),poistionOfArm);
+            telemetry.addData(("startPosition:"),startPosition);
+            telemetry.addData(("endPosition:"),endPosition);
+
+            telemetry.addData("Position", drive.ArmMotor.getCurrentPosition());
             telemetry.update();
             telemetry.update();
 

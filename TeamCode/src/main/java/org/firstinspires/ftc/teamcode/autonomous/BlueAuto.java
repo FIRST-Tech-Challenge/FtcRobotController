@@ -54,13 +54,13 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Red Auto", group = "Autonomous")
+@Autonomous(name = "Blue Auto", group = "Autonomous")
 //@Disabled
 
-public class RedAuto extends Auto {
+public class BlueAuto extends Auto {
 
-    public RedAuto()
+    public BlueAuto()
     {
-        super(1);
+        super(-1);
     }
 }

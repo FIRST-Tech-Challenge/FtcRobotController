@@ -33,6 +33,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -57,7 +58,7 @@ import java.util.List;
  * is explained below.
  */
 @Autonomous(name = "Red Auto backup", group = "Autonomous")
- //@Disabled
+ @Disabled
 
 public class RedAutobackup extends LinearOpMode {
 
@@ -243,7 +244,7 @@ drive.shooterServo.setPosition(0); //Hold
 
         if (targetZone.equals("C")) {
 
-            drive.grabGoal();//grab goal,
+           // drive.grabGoal();//grab goal,
             sleep(500);
             drive.shooter.setVelocity(1550);
             drive.followTrajectory(shooterLine);
@@ -262,16 +263,16 @@ drive.shooterServo.setPosition(0); //Hold
             drive.shooterServo.setPosition(0);
             sleep(1000);
             drive.followTrajectory(targetZoneC); //Drive to target zone C
-            drive.releaseGoal();// release goal,
+          //  drive.releaseGoal();// release goal,
             sleep(1000);// wait 1 sec,
             drive.deployArm();// deploy arm,
             drive.shooter.setPower(0);
             drive.armServo.setPosition(.7);
             drive.followTrajectory(cToGoal);// drive to second goal,
-            drive.grabGoal();// grab goal,
+           // drive.grabGoal();// grab goal,
             sleep(1000);
             drive.followTrajectory(goalToC);// Drive back to C
-            drive.releaseGoal();// release goal
+           // drive.releaseGoal();// release goal
             sleep(100);
             drive.followTrajectory(cToLine);// drive to line + pick up arm
             drive.retractArm();
@@ -279,7 +280,7 @@ drive.shooterServo.setPosition(0); //Hold
 
              } else if (targetZone.equals("B")) {
 
-            drive.grabGoal();
+         //   drive.grabGoal();
             sleep(500);
             drive.shooter.setVelocity(1600);
             drive.followTrajectory(shooterLine);
@@ -298,15 +299,15 @@ drive.shooterServo.setPosition(0); //Hold
             sleep(1000);
             drive.followTrajectory(startToB);
             drive.followTrajectory(left);
-            drive.releaseGoal();
+         //   drive.releaseGoal();
             sleep(1000);
             drive.deployArm();
             drive.shooter.setPower(0);
             drive.armServo.setPosition(.7);
             drive.followTrajectory(bToGoal);//Go back for second wobble goal
-            drive.grabGoal(); //grab wobble goal
+          //  drive.grabGoal(); //grab wobble goal
             drive.followTrajectory(goalToB);
-            drive.releaseGoal();
+           // drive.releaseGoal();
             sleep(1000);
             drive.followTrajectory(bLine2);
             drive.retractArm();
@@ -316,7 +317,7 @@ drive.shooterServo.setPosition(0); //Hold
 
         }else if (targetZone.equals("A")) {
 
-            drive.grabGoal();
+          //  drive.grabGoal();
             sleep(500);
             drive.shooter.setVelocity(1600);
             drive.followTrajectory(shooterLine);
@@ -334,16 +335,16 @@ drive.shooterServo.setPosition(0); //Hold
             drive.shooterServo.setPosition(0);
             sleep(1000);
             drive.followTrajectory(lineToA);
-            drive.releaseGoal();// release goal,
+          //  drive.releaseGoal();// release goal,
             drive.deployArm();
             sleep(1000);
             drive.shooter.setPower(0);
             drive.armServo.setPosition(.7);
                 drive.followTrajectory(aToGoal);           //Go back for second wobble goal
-                drive.grabGoal(); //grab wobble goal
+              //  drive.grabGoal(); //grab wobble goal
             sleep(1000);
             drive.followTrajectory(goalToA);
-                drive.releaseGoal();
+               // drive.releaseGoal();
                 sleep(1000);
                 drive.followTrajectory(aLine);
             drive.retractArm();

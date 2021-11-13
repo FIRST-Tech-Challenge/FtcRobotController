@@ -36,10 +36,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.AdrianControls.VuforiaStuff;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
@@ -104,7 +106,9 @@ public class MecanumDrive6340 extends MecanumDrive {
     protected DcMotorEx leftFront, leftRear, rightRear, rightFront;
     protected List<DcMotorEx> motors;
     public DcMotorEx intake;
+    public DcMotorEx duckMotor;
     public DcMotorEx shooter;
+    public DcMotorEx ArmMotor;
     public DcMotorEx arm;
     public DcMotorEx indexer;
 
@@ -115,6 +119,8 @@ public class MecanumDrive6340 extends MecanumDrive {
     Instantiate servos
      */
     public Servo leftServo, rightServo, armServo, shooterServo;
+    public Servo handServo, elbowServo, boxServo;
+    public CRServo duckServo;
     public AnalogInput armPOT;
 
 
@@ -170,8 +176,9 @@ public class MecanumDrive6340 extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
         arm = hardwareMap.get(DcMotorEx.class, "frontEncoder");
-        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
-        intake = hardwareMap.get(DcMotorEx.class, "rightEncoder");
+        shooter = hardwareMap.get(DcMotorEx.class, "ArmMotor");
+        ArmMotor = hardwareMap.get(DcMotorEx.class, "ArmMotor");
+        duckMotor = hardwareMap.get(DcMotorEx.class, "rightEncoder");
         indexer = hardwareMap.get(DcMotorEx.class, "leftEncoder");
 
 
@@ -189,6 +196,7 @@ public class MecanumDrive6340 extends MecanumDrive {
 
         //Turn on RUN_USING_ENCODER
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       // ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Set PIDF Coefficients with voltage compensated feedforward value
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(
@@ -209,10 +217,15 @@ public class MecanumDrive6340 extends MecanumDrive {
         leftRear.setDirection(DcMotor.Direction.REVERSE);
 
         //define and initialize all installed servos
-        rightServo = hardwareMap.get(Servo.class, "rightServo");
-        //leftServo = hardwareMap.get(Servo.class, "leftServo");
-        shooterServo = hardwareMap.get(Servo.class, "shooterServo");
-        armServo = hardwareMap.get(Servo.class, "armServo");
+      //  rightServo = hardwareMap.get(Servo.class, "rightServo");
+   //     leftServo = hardwareMap.get(Servo.class, "leftServo");
+    //   shooterServo = hardwareMap.get(Servo.class, "shooterServo");
+    //    duckServo = hardwareMap.get(CRServo.class, "duckServo");
+    //   armServo = hardwareMap.get(Servo.class, "armServo");
+        handServo = hardwareMap.get(Servo.class, "handServo");
+        elbowServo = hardwareMap.get(Servo.class, "elbowServo");
+        boxServo = hardwareMap.get(Servo.class, "boxServo");
+
         armPOT = hardwareMap.get(AnalogInput.class, "armPOT");
         double currentVoltage = armPOT.getVoltage();
 
@@ -461,8 +474,19 @@ public class MecanumDrive6340 extends MecanumDrive {
         intake.setPower(-1);
         indexer.setPower(1);
     }
+
+    public void armFirstLevel () {
+        int startingPosition = ArmMotor.getCurrentPosition();
+        ArmMotor.setPower(0.3);
+        ArmMotor.setTargetPosition(176);
+        while(ArmMotor.isBusy()){
+
+        }
+        ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    }
     //Shooter
-    public void shootRings () {
+   public void shootRings () {
         shooter.setVelocity(1600);
         if (shooter.getVelocity() > 1550) {
             shooterServo.setPosition(0);//LOAD
@@ -471,7 +495,7 @@ public class MecanumDrive6340 extends MecanumDrive {
         }
     }
 
-    public void shootPowerShots () {
+   public void shootPowerShots () {
         shooter.setVelocity(1300);
         if (shooter.getVelocity() > 1250) {
             shooterServo.setPosition(0);//LOAD
@@ -500,19 +524,89 @@ public class MecanumDrive6340 extends MecanumDrive {
 
     //Grab goal
     public void grabGoal (){
-       // leftServo.setPosition(0.9);
+        leftServo.setPosition(0.9);
         rightServo.setPosition(0);
         armServo.setPosition(0);
 
     }
     //Release goal
     public void releaseGoal () {
-        //leftServo.setPosition(0);
+        leftServo.setPosition(0);
         rightServo.setPosition(1);
         armServo.setPosition(1);
+
     }
 
+    public void spinwheelright () {
+        duckMotor.setPower(1.0);
+    }
+    public void spinwheelleft () {
+        duckMotor.setPower(-1.0);
+
+    }
+    public void spinwheel (int Teamcolor) {
+        if (Teamcolor == 1.0){
+            spinwheelright();
+        }
+        else{
+            spinwheelleft();
+        }
+    }
+    public void spinwheelstop () {
+        duckMotor.setPower(0.0);
+
+    }
+
+    private void LiftArmLow()
+    {
+        ArmMotor.setTargetPosition(ArmMotor.getCurrentPosition() - 170);
+        ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmMotor.setPower(1);
+        while (ArmMotor.isBusy()){
+
+        }
 
 
+    }
+    private void LiftArmMiddle()
+    {
+        ArmMotor.setTargetPosition(ArmMotor.getCurrentPosition() - 255);
+        ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmMotor.setPower(1);
+        while (ArmMotor.isBusy()){
+
+        }
+
+
+    }
+    private void LiftArmHigh()
+    {
+        ArmMotor.setTargetPosition(ArmMotor.getCurrentPosition() - 340);
+        ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmMotor.setPower(1);
+        while (ArmMotor.isBusy()){
+
+        }
+
+
+    }
+
+    public void LiftArm(VuforiaStuff.capElementPos pos)
+    {
+        if(pos == VuforiaStuff.capElementPos.CENTER){
+          LiftArmMiddle();
+        }
+        else if(pos == VuforiaStuff.capElementPos.LEFT){
+            LiftArmLow();
+        }
+        else{
+            LiftArmHigh();
+        }
+
+
+
+
+
+    }
 
 }

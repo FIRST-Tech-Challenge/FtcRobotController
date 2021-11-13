@@ -30,12 +30,14 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.AdrianControls.VuforiaStuff;
 import org.firstinspires.ftc.teamcode.AdrianControls.AdrianMecanumControls;
+import org.firstinspires.ftc.teamcode.drive.MecanumDrive6340;
 
 
 /**
@@ -80,8 +82,38 @@ public class AdrianTestVuforia extends AdrianMecanumControls {
         vuforiaStuff = new VuforiaStuff(vuforia);
         // Wait for the game to start (driver presses PLAY)
 
+        MecanumDrive6340 drive = new MecanumDrive6340(hardwareMap);
+        drive.elbowServo.setPosition(1.0);
+        sleep(1000);
+        //drive.boxServo.setPosition(0.2);
+        //sleep(1000);
+        drive.handServo.setPosition(0.3);
+
         waitForStart();
         runtime.reset();
+
+
+        drive.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.ArmMotor.setTargetPosition(drive.ArmMotor.getCurrentPosition() - 400);
+        drive.ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        drive.ArmMotor.setPower(1);
+        while (drive.ArmMotor.isBusy()){
+
+        }
+
+         sleep(500);
+        drive.elbowServo.setPosition(0.0);
+        sleep(1500);
+
+        drive.handServo.setPosition(0.0);
+        sleep(500);
+        drive.boxServo.setPosition(1.0);
+        sleep(1500);
+        drive.boxServo.setPosition(0.3);
+
+
+
+
         VuforiaStuff.capElementPositionData posData = null;
         posData = vuforiaStuff.vuforiascan(true, true);
         double distanceToDropOffSkystone = 0;
@@ -99,11 +131,11 @@ public class AdrianTestVuforia extends AdrianMecanumControls {
             telemetry.addData("CenterYellowCount", posData.yellowCountCenter);
             telemetry.addData("RightYellowCount", posData.yellowCountRight);
 
-            //telemetry.addData("FilePath", path);
 
 
             telemetry.update();
 
+            //telemetry.addData("FilePath", path);
 
             //finding encoder values
 /*            RightEncoderValue = GetRightEncoderValue();
