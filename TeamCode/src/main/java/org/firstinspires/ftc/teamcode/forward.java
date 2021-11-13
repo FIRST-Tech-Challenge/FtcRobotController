@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+//import com.qualcomm.robotcore.hardware.;
 
 @TeleOp(name="forward", group="Teleop")
 //@Disabled
@@ -15,10 +16,12 @@ public class forward extends LinearOpMode {
     private DcMotor rf = null;  //right front wheel
     private DcMotor lb = null;  //left back wheel
     private DcMotor rb = null;  //right back wheel
-    private DcMotor tower = null; //arm
+    private DcMotor tower1 = null; //arm motor 1
+    private DcMotor tower2 = null; //arm motor 2
     private Servo clawservo = null; //clawservo
 
     @Override
+
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -27,38 +30,47 @@ public class forward extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-        //tower = hardwareMap.get(DcMotor.class, "tower");
+        tower1 = hardwareMap.get(DcMotor.class, "tower1");
+        tower2 = hardwareMap.get(DcMotor.class, "tower2");
         clawservo = hardwareMap.get(Servo.class,"clawservo");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        tower.setDirection(DcMotor.Direction.FORWARD);
+        tower1.setDirection(DcMotor.Direction.FORWARD);
+        tower2.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
+
 
         while (opModeIsActive()) {
 
             double lPower;
             double rPower;
             double towerPower;
+            double deadzone;
 
             lPower = 0.0f;
             rPower = 0.0f;
             towerPower = 0.0f;
+            deadzone = 0.0f;
 
             lPower = gamepad1.left_stick_y;
             rPower = gamepad1.right_stick_y;
-            towerPower = gamepad1.right_trigger;
+            towerPower = gamepad2.right_trigger;
+            towerPower = gamepad2.left_trigger;
 
-            if (gamepad1.a) {
+
+            if (gamepad2.a) {
                 clawservo.setPosition(0.0);
-
             }
-            if (gamepad1.b) {
-                clawservo.setPosition(1.0);
+            if (gamepad2.b) {
+                clawservo.setPosition(.75);
+            }
 
+            if (towerPower <= deadzone){
+                towerPower = 0.0f;
             }
 
 
@@ -66,7 +78,8 @@ public class forward extends LinearOpMode {
             rf.setPower(rPower);
             lb.setPower(lPower);
             rb.setPower(rPower);
-            tower.setPower(towerPower);
+            tower1.setPower(towerPower);
+            tower2.setPower(towerPower);
 
         }
     }
