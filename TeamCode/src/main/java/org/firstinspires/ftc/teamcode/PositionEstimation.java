@@ -21,9 +21,9 @@ public class PositionEstimation {
     private static final double     WHEEL_DIAMETER_M   = 0.1;//0.096;     // From gobilda mecanum drawingm should be 0.096
     private static final double     COUNTS_PER_M         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /(WHEEL_DIAMETER_M * Math.PI);
     //same define in positioncontrol.java, may move to some where
-    private static final double DIS_2WHEELS = 0.415;          // for 4 mecanum wheels, actually test value is 0.415 distance between 2 wheels, for encoder turning
+    private static final double DIS_2WHEELS = 0.3;          // for 4 mecanum wheels, actually test value is 0.415 distance between 2 wheels, for encoder turning
     private static final double DIS_L1 = DIS_2WHEELS /2;      // left-right wheels to center distance
-    private static final double DIS_L2 = 0.168;                //for gobila, 7*24mm, 7 big hole distance,front-rear wheels to center distance
+    private static final double DIS_L2 = 0.12;                //for gobila, 7*24mm, 7 big hole distance,front-rear wheels to center distance
 
     private static final double WHEEL_ANGLE = 42.5/ 180 * Math.PI;        //Math.PI /4;     //mecanum wheel roller angle, may need calibrate
 

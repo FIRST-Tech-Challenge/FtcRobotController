@@ -19,10 +19,11 @@ import java.util.Locale;
 @TeleOp(name="teleOperation")
 //@Disabled
 public class teleop extends LinearOpMode {
-    MecanumChassis robot = new MecanumChassis();
+    MecanumChassis robot;
 
     @Override
     public void runOpMode() {
+        robot = new MecanumChassis();
         robot.init(hardwareMap);
 
         // Send telemetry message to indicate successful Encoder reset
@@ -68,13 +69,20 @@ public class teleop extends LinearOpMode {
             robot.rightRearDrive.setPower(leftStickYPos + leftStickXPos - rightStickXPos);
 
             if(gamepad1.left_bumper){
-                //robot.intake.setPower(1f);
-            }
-            else if(gamepad1.left_trigger >0.5){
-                //robot.intake.setPower(-1f);
+                robot.intakeUp.setPower(1f);
             }
             else{
-                //robot.intake.setPower(0f);
+                robot.intakeUp.setPower(0f);
+            }
+
+
+            if(gamepad1.right_bumper){
+                robot.lift.setPower(0.5f);
+            }else if(gamepad1.right_trigger > 0.5f){
+                robot.lift.setPower(-0.5f);
+            }
+            else{
+                robot.lift.setPower(0f);
             }
 
 

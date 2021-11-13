@@ -50,7 +50,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-@Disabled
+
 public class ConceptTensorFlowObjectDetection extends LinearOpMode {
   /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
    * the following 4 detectable objects
@@ -84,10 +84,10 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "ASOYVAj/////AAABmeLWppvv2E3aulir9L58q2c9jnovtgBUKGOLf6fQRRl2Gmimfb6klxUTuUN4LrMvt1f67Z30a8JuLdxFRlq0VUETIh1E4MUANlTcBWjIT5fg8XYN5C/zIenRIy70ABp5uZ1XlbaWQ9jz38leD/fPbed0WjSN+D6Nmkv9FkcInu8tbv16uB8uWXMUEBcYAnejcYvys1ohlAdc6s1+sWI0QXSawYUOHQoV1hsmY6WpysBbGYv3lQFprY9AyBT69A9ju78WZAm4KAXGugGnD9n1wWMtIJfxo4BYfFtTFJNFI7nnv0EyRB6eZPkq0ScbcYP/z3MoKcFixKvrT9Q47TEI9VZeyLK9GujKZxTIM5PtELbt";
 
     /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * {@li nk #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
     private VuforiaLocalizer vuforia;
@@ -118,7 +118,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(2.5, 16.0/9.0);
+            tfod.setZoom(2, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
@@ -131,6 +131,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
+
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                       telemetry.addData("# Object Detected", updatedRecognitions.size());
