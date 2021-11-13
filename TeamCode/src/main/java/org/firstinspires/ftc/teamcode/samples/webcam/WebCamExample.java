@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.samples.webcam;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -90,6 +91,7 @@ public class WebCamExample extends LinearOpMode
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         /*
          * Wait for the user to press start on the Driver Station
