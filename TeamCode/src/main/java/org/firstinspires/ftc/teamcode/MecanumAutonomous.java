@@ -153,6 +153,7 @@ public class MecanumAutonomous extends LinearOpMode {
         double drive  = (robot.REV_ENCODER_CLICKS/ robot.REV_WHEEL_CIRC);
         return (int)Math.floor(drive * distance);
     }
+    //Turn right using the IMU.
     public void turnRight() {
         Yaw_Angle = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
         //MOVE RIGHT
@@ -175,28 +176,7 @@ public class MecanumAutonomous extends LinearOpMode {
         // Pause so final telemetry is displayed.
         sleep(1000);
     }
-    public void turnRight() {
-        Yaw_Angle = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
-        //MOVE RIGHT
-        robot.motorFrontLeft.setPower(0.2);
-        robot.motorBackLeft.setPower(0.2);
-        robot.motorFrontRight.setPower(-0.2);
-        robot.motorBackRight.setPower(-0.2);
-        // Continue until robot yaws right by 90 degrees or stop is pressed on Driver Station.
-        sleep(1000);
-        //turns to the right; 90, 180, negative, -90, 0
-        while ( !(Yaw_Angle >= 85 || isStopRequested()) ) {
-            // Update Yaw-Angle variable with current yaw.
-            Yaw_Angle = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
-            // Report yaw orientation to Driver Station.
-            telemetry.addData("Yaw value", Yaw_Angle);
-            telemetry.update();
-        }
-        // We're done. Turn off motors
-        robot.setPowers(0);
-        // Pause so final telemetry is displayed.
-        sleep(1000);
-    }
+    //Turn left using the IMU.
     public void turnLeft() {
         Yaw_Angle = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
         //MOVE LEFT
