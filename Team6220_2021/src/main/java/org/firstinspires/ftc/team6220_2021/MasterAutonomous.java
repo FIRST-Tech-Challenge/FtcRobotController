@@ -8,11 +8,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.PIDFilter;
 
 public abstract class MasterAutonomous extends MasterOpMode {
-    // This method drives mecanum when given an angle drive power and turning power
+    // This method drives tank when given an angle drive power and turning power
     public void driveTank(double leftSidePower, double rightSidePower) {
         motorFrontLeft.setPower(leftSidePower);
-        motorBackLeft.setPower(-leftSidePower);
-        motorFrontRight.setPower(-rightSidePower);
+        motorBackLeft.setPower(leftSidePower);
+        motorFrontRight.setPower(rightSidePower);
         motorBackRight.setPower(rightSidePower);
     }
 
@@ -45,7 +45,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             distanceLeft = targetDistance - position;
             translationPID.roll(distanceLeft);
 
-            // We drive the mecanum wheels with the PID value
+            // We drive the wheels with the PID value
             driveTank(Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed),
                     Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed));
 
@@ -54,7 +54,8 @@ public abstract class MasterAutonomous extends MasterOpMode {
             }
 
             // Update positions using last distance measured by encoders
-            position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() - motorBackLeft.getCurrentPosition() - motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4.0;
+            position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() - motorBackLeft.getCurrentPosition() -
+                    motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4.0;
 
             if (position > targetDistance) {
                 driveTank(0.0, 0.0);
@@ -92,7 +93,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             angleLeft = targetAngle - angleTraveled;
             translationPID.roll(angleLeft);
 
-            // We drive the mecanum wheels with the PID value
+            // We drive the wheels with the PID value
             if (targetAngle > 0) {
                 driveTank(Math.max((translationPID.getFilteredValue() / 2) * -1, Constants.MINIMUM_TURNING_POWER),
                         Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER));
