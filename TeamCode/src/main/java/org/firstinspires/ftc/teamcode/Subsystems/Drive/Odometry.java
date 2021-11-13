@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
  * The Odometry class has two TrcPoses, one for position and another for velocity
  *
  * <p>The TrcPose2D's are edited with get and set methods</p>
+ *
  * @see TrcPose2D
  */
 public class Odometry {
@@ -16,6 +17,7 @@ public class Odometry {
      * Constructor: Create an instance of the object.
      *
      * <p>Defaults to a default TrcPose2D, position 0 and velocity 0.</p>
+     *
      * @see TrcPose2D#TrcPose2D()
      */
     Odometry() {
@@ -57,7 +59,6 @@ public class Odometry {
 
 
     /**
-     *
      * @return the position TrcPose2D.
      */
     public TrcPose2D getPosition() {
@@ -75,6 +76,7 @@ public class Odometry {
 
     /**
      * This method gets the velocity info of the odometry.
+     *
      * @return The velocity pose
      */
     public TrcPose2D getVelocity() {

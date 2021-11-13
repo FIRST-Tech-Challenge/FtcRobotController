@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.teamcode.Config.VisionConfig;
-import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -26,7 +24,6 @@ public class DetectMarker {
      * location. It waits until the marker is found, then it returns the marker location.
      *
      * @return Where the marker is
-     *
      * @see DetectMarkerPipeline#getMarkerLocation()
      */
     public MarkerLocation DetectMarkerRun() {

@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -19,20 +17,26 @@ import java.io.IOException;
 /**
  * OmniDirectional Drive allows the robot to be operated in third person rather than first person.
  */
-@TeleOp(name="OmniDirectionalDrive", group="Assisted Driving")
+@TeleOp(name = "OmniDirectionalDrive", group = "Assisted Driving")
 public class OmniDirectionalDrive extends LinearOpMode {
-    private Robot robot;
     private final QuickTelemetry quickTelemetry = new QuickTelemetry(telemetry);
     Orientation lastAngles = new Orientation();
     double globalAngle;
     double power = .30;
+    private Robot robot;
 
     private void initOpMode() throws IOException {
         ElapsedTime timer = new ElapsedTime();
         robot = new Robot(this, timer, false);
     }
 
-    // called when init button is pressed.
+    /**
+     * Called when init button is pressed.
+     * Please do not swallow the InterruptedException, as it is used in cases
+     * where the op mode needs to be terminated early.
+     *
+     * @throws InterruptedException because it might need to throw this when the op mode needs to be terminated early.
+     */
     @Override
     public void runOpMode() throws InterruptedException {
         try {
@@ -70,16 +74,16 @@ public class OmniDirectionalDrive extends LinearOpMode {
             double controllerAngle360 = to360(controllerAngle);
 
             // Find angle between controller and robot
-            double angleBetween = smallestAngleBetween(robotAngle360,controllerAngle360)*findRotationDirection(robotAngle360,controllerAngle360);
+            double angleBetween = smallestAngleBetween(robotAngle360, controllerAngle360) * findRotationDirection(robotAngle360, controllerAngle360);
             double angleBetween360 = to360(angleBetween);
 
             // Convert angle to X and Y
-            double correctedX = Math.cos(angleBetween360 + Math.PI/2);
-            double correctedY = Math.sin(angleBetween360 + Math.PI/2);
+            double correctedX = Math.cos(angleBetween360 + Math.PI / 2);
+            double correctedY = Math.sin(angleBetween360 + Math.PI / 2);
 
             // Drive the motors
             Drive drive = robot.drive;
-            double[] powers = calcMotorPowers(rightStickX, correctedY, 0);
+            double[] powers = drive.calcMotorPowers(rightStickX, correctedY, 0);
             drive.rearLeft.setPower(powers[0]);
             drive.frontLeft.setPower(powers[1]);
             drive.rearRight.setPower(powers[2]);
@@ -107,10 +111,11 @@ public class OmniDirectionalDrive extends LinearOpMode {
         globalAngle = 0;
     }
 
-    /** Stops the motors
-     * 
+    /**
+     * Stops the motors
+     * <p>
      * uses {@link com.qualcomm.robotcore.hardware.DcMotorEx#setPower(double)}
-     * 
+     *
      * @see Drive
      * @see com.qualcomm.robotcore.hardware.DcMotorEx#setPower(double)
      */
@@ -121,10 +126,11 @@ public class OmniDirectionalDrive extends LinearOpMode {
         robot.drive.rearRight.setPower(0);
     }
 
-    /** Converts from euler units to 360 degrees
+    /**
+     * Converts from euler units to 360 degrees
      * Goes from 0 to 360 in a clockwise fashion
      * Accepts numbers between -180 and 180
-    */
+     */
     private double to360(double angle) {
         if (angle >= 0) {
             return angle;
@@ -133,9 +139,10 @@ public class OmniDirectionalDrive extends LinearOpMode {
         }
     }
 
-    /** Returns the smallest angle between angle1 and angle 2
+    /**
+     * Returns the smallest angle between angle1 and angle 2
      * Accepts the range 0 - 360 for both angles.
-     *
+     * <p>
      * It checks whether 360 - (angle2 - angle 1) or angle 2 - angle 1 is the smallest.
      *
      * @param angle1 first angle
@@ -150,15 +157,16 @@ public class OmniDirectionalDrive extends LinearOpMode {
     /**
      * Determines the shortest way to rotate to the goal angle
      * Accepts angles from 0 - 360 for both inputs
+     *
      * @param robot The robot
-     * @param goal The goal
+     * @param goal  The goal
      * @return the shortest way to rotate to the goal angle
      */
     private double findRotationDirection(double robot, double goal) {
         double i;
         if (robot <= 180) {
             if (goal < robot || goal > robot + 180) {
-                i= -1;
+                i = -1;
             } else {
                 i = 1;
             }
@@ -172,15 +180,4 @@ public class OmniDirectionalDrive extends LinearOpMode {
 
         return i;
     }
-
-    private double[] calcMotorPowers(double leftStickX, double leftStickY, double rightStickX) {
-        double r = Math.hypot(leftStickX, leftStickY);
-        double robotAngle = Math.atan2(leftStickY, leftStickX) - Math.PI / 4;
-        double lrPower = r * Math.sin(robotAngle) + rightStickX;
-        double lfPower = r * Math.cos(robotAngle) + rightStickX;
-        double rrPower = r * Math.cos(robotAngle) - rightStickX;
-        double rfPower = r * Math.sin(robotAngle) - rightStickX;
-        return new double[]{lrPower, lfPower, rrPower, rfPower};
-    }
-
 }

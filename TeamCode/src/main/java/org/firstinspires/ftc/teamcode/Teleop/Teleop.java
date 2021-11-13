@@ -3,22 +3,18 @@ package org.firstinspires.ftc.teamcode.Teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Robot;
 
-/** Normal Teleop, not omnidirectional drive.
+/**
+ * Normal Teleop, not omnidirectional drive.
  */
 @TeleOp(name = "Teleop")
 public class Teleop extends LinearOpMode {
-    private Robot robot;
-
     double deltaT;
     double timeCurrent;
     double timePre;
-
     ElapsedTime timer;
-
+    private Robot robot;
     private double robotAngle;
     private boolean isIntakeOn = false;
 
@@ -34,13 +30,13 @@ public class Teleop extends LinearOpMode {
         telemetry.update();
     }
 
-    /** Override of runOpMode()
+    /**
+     * Override of runOpMode()
      *
      * <p>Please do not swallow the InterruptedException, as it is used in cases
      * where the op mode needs to be terminated early.</p>
      *
      * @throws InterruptedException
-     *
      * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
      */
     @Override
@@ -74,24 +70,22 @@ public class Teleop extends LinearOpMode {
             robot.drive.setDrivePowers(motorPowers);
 
             //Toggle intake regular
-            if (robot.gamePadConfig.aButton && !robot.gamePadConfig.isaButtonPressedPrev){
-                if(isIntakeOn){
+            if (robot.gamePadConfig.aButton && !robot.gamePadConfig.isaButtonPressedPrev) {
+                if (isIntakeOn) {
                     robot.control.setIntakeDirection(true);
                     isIntakeOn = false;
-                }
-                else {
+                } else {
                     robot.control.setIntakeDirection(true);
                     isIntakeOn = true;
                 }
             }
 
             //Toggle intake reverse
-            if (robot.gamePadConfig.bButton && !robot.gamePadConfig.isbButtonPressedPrev){
-                if(isIntakeOn){
+            if (robot.gamePadConfig.bButton && !robot.gamePadConfig.isbButtonPressedPrev) {
+                if (isIntakeOn) {
                     robot.control.setIntakeDirection(false);
                     isIntakeOn = false;
-                }
-                else {
+                } else {
                     robot.control.setIntakeDirection(false);
                     isIntakeOn = true;
                 }

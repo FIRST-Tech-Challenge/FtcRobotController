@@ -29,28 +29,28 @@ public class Move {
         return distance;
     }
 
-    public double getAngle() {
-        return angle;
-    }
-
-    public double getTurn() {
-        return turn;
-    }
-
-    public double getPower() {
-        return power;
-    }
-
     public void setDistance(double distance) {
         this.distance = distance;
+    }
+
+    public double getAngle() {
+        return angle;
     }
 
     public void setAngle(double angle) {
         this.angle = angle;
     }
 
+    public double getTurn() {
+        return turn;
+    }
+
     public void setTurn(double turn) {
         this.turn = turn;
+    }
+
+    public double getPower() {
+        return power;
     }
 
     public void setPower(double power) {

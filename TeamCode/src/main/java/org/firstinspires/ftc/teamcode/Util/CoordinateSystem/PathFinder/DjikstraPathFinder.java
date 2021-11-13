@@ -3,18 +3,19 @@ package org.firstinspires.ftc.teamcode.Util.CoordinateSystem.PathFinder;
 // Using Priority Queue
 
 // Importing utility classes
+
 import java.util.*;
 
 // Main class DPQ
 public class DjikstraPathFinder {
 
+    List<List<NodeDjikstra>> adj;
     // Member variables of this class
     private int dist[];
     private Set<Integer> settled;
     private PriorityQueue<NodeDjikstra> pq;
     // Number of vertices
     private int V;
-    List<List<NodeDjikstra>> adj;
 
     // Constructor of this class
     public DjikstraPathFinder(int V) {
@@ -101,8 +102,8 @@ public class DjikstraPathFinder {
         // Adjacency list representation of the
         // connected edges by declaring List class object
         // Declaring object of type List<Node>
-        List<List<NodeDjikstra> > adj
-                = new ArrayList<List<NodeDjikstra> >();
+        List<List<NodeDjikstra>> adj
+                = new ArrayList<List<NodeDjikstra>>();
 
         // Initialize list for every node
         for (int i = 0; i < V; i++) {
@@ -156,7 +157,8 @@ class NodeDjikstra implements Comparator<NodeDjikstra> {
         this.cost = cost;
     }
 
-    @Override public int compare(NodeDjikstra node1, NodeDjikstra node2) {
+    @Override
+    public int compare(NodeDjikstra node1, NodeDjikstra node2) {
 
         if (node1.cost < node2.cost)
             return -1;

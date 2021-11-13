@@ -4,8 +4,7 @@ public class Test {
     private static boolean assertCase(Object first, Object second) {
         try {
             return first.equals(second);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return first.toString().equals(second.toString());
         }
     }

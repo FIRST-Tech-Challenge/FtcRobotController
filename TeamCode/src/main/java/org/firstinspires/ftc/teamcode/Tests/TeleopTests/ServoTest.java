@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-/** TODO: servo test/operation code here
+/**
+ * TODO: servo test/operation code here
  */
 @TeleOp(name = "Servo Test")
 public class ServoTest extends LinearOpMode {
@@ -28,8 +29,7 @@ public class ServoTest extends LinearOpMode {
                     servoPos += speed;
                     sleep(10);
                 }
-            }
-            else if (bBtn) {
+            } else if (bBtn) {
                 if ((servoPos < servoMax) && (servoPos > servoMin)) {
                     servoPos -= speed;
                     sleep(10);

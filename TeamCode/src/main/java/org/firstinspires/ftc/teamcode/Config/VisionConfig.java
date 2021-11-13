@@ -2,7 +2,8 @@ package org.firstinspires.ftc.teamcode.Config;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.DetectMarker.MarkerLocation;
 
-/** Vision Config
+/**
+ * Vision Config
  * WARNING: YOU SHOULD NOT NORMALLY HAVE TO EDIT THIS FILE.
  */
 public class VisionConfig extends Config {

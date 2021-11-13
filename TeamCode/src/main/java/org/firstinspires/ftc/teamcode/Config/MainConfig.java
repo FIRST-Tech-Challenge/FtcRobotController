@@ -2,14 +2,13 @@ package org.firstinspires.ftc.teamcode.Config;
 
 import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 
-/** Important configuration
- *
+/**
+ * Important configuration
  */
 public class MainConfig extends Config {
     private static final String name = "UwU the Potato";
 
     private static final String version = "2021.10.30.0-alpha";
-    private static AllianceColor allianceColor = AllianceColor.BLUE;
     private static final boolean debug = false;
     /* "none" means no target
     enter a file path to debug a file
@@ -19,16 +18,14 @@ public class MainConfig extends Config {
     private static final String debugTarget = "none";
     /* Scale from 0-5*/
     private static final int logLevel = 3;
-
-
     private static final boolean initSubsystems = true;
     private static final boolean initSubsystemControl = (true && initSubsystems);
     private static final boolean initSubsystemDrive = (true && initSubsystems);
     private static final boolean initSubsystemVision = (true && initSubsystems);
-
     private static final boolean initMechanical = true;
     private static final boolean initGetGamePadInputs = true;
     private static final boolean initHardwareMap = true;
+    private static AllianceColor allianceColor = AllianceColor.BLUE;
 
     public static String getName() {
         return name;
@@ -40,6 +37,10 @@ public class MainConfig extends Config {
 
     public static AllianceColor getAllianceColor() {
         return allianceColor;
+    }
+
+    public static void setAllianceColor(AllianceColor color) {
+        allianceColor = color;
     }
 
     public static boolean getDebug() {
@@ -61,9 +62,11 @@ public class MainConfig extends Config {
     public static boolean getInitSubsystemControl() {
         return initSubsystemControl;
     }
+
     public static boolean getInitSubsystemDrive() {
         return initSubsystemDrive;
     }
+
     public static boolean getInitSubsystemVision() {
         return initSubsystemVision;
     }
@@ -78,10 +81,6 @@ public class MainConfig extends Config {
 
     public static boolean getInitHardwareMap() {
         return initHardwareMap;
-    }
-    
-    public static void setAllianceColor(AllianceColor color) {
-        allianceColor = color;
     }
 
     @Override

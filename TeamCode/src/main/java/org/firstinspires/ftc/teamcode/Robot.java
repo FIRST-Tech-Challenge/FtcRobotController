@@ -4,20 +4,14 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Config.GamePadConfig;
 import org.firstinspires.ftc.teamcode.Config.MainConfig;
 import org.firstinspires.ftc.teamcode.Subsystems.Control.Control;
 import org.firstinspires.ftc.teamcode.Subsystems.Drive.Drive;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Vision;
-import org.firstinspires.ftc.teamcode.Util.AllianceColor;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 
 import java.util.ArrayList;
@@ -29,11 +23,11 @@ import java.util.List;
  * <p>This class starts with variable initializations, then it has initialization functions, has some get and set functions.</p>
  */
 public class Robot {
+    public final GamePadConfig gamePadConfig = new GamePadConfig();
     private final HardwareMap hardwareMap;
     private final LinearOpMode opMode;
     private final Telemetry oldTelemetry;
     private final QuickTelemetry telemetry;
-    private ElapsedTime timer;
     private final boolean auto;
 
     // DC Motors
@@ -58,22 +52,18 @@ public class Robot {
 
     //Sensors
     public BNO055IMU imu;
-
-    public final GamePadConfig gamePadConfig = new GamePadConfig();
-
-    private double joystickDeadZone = 0.1;
-
     // Subsystems
     public Drive drive;
     public Control control;
     public Vision vision;
+    private ElapsedTime timer;
+    private double joystickDeadZone = 0.1;
 
     /**
      * Note that this method only changes some variables the real work is done in {@link #init()}
      *
      * @param opMode the operational mode, the telemetry and hardware map is gotten from this
-     * @param timer an timer
-     *
+     * @param timer  an timer
      * @see LinearOpMode
      * @see ElapsedTime
      */
@@ -87,7 +77,7 @@ public class Robot {
 
         this.telemetry.telemetry(1, MainConfig.getName(), "v" + MainConfig.getVersion());
 
-        this.telemetry.telemetry(4,  "Config", "Main Config Variables:");
+        this.telemetry.telemetry(4, "Config", "Main Config Variables:");
         this.telemetry.telemetry(4, "name", "name = " + MainConfig.getName());
         this.telemetry.telemetry(4, "version", "version = " + MainConfig.getVersion());
         this.telemetry.telemetry(4, "allianceColor", "allianceColor = " + MainConfig.getAllianceColor());
@@ -119,8 +109,7 @@ public class Robot {
             this.telemetry.telemetry(3, "Get gamePad inputs", "gamePad init started");
             getGamePadInputs();
             this.telemetry.telemetry(2, "Get gamePad inputs", "gamePad init finished");
-        }
-        else {
+        } else {
             telemetry.telemetry(1, "Get gamePad inputs", " gamePad init skipped");
         }
 
@@ -128,8 +117,7 @@ public class Robot {
             telemetry.telemetry(3, "Hardware init", " Hardware init started");
             initMechanical(); // mechanical stuff
             telemetry.telemetry(2, "Hardware init", " Hardware init finished");
-        }
-        else {
+        } else {
             telemetry.telemetry(1, "Hardware init", " Hardware init skipped");
         }
 
@@ -137,8 +125,7 @@ public class Robot {
             telemetry.telemetry(2, "Subsystems init", " Subsystems init started");
             initSubsystems();
             telemetry.telemetry(1, "Subsystems init", " Subsystems init finished");
-        }
-        else {
+        } else {
             telemetry.telemetry(1, "Subsystems init", " Subsystems init skipped");
         }
 
@@ -221,7 +208,8 @@ public class Robot {
         }
     }
 
-    /** <p>Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port on a Core
+    /**
+     * <p>Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port on a Core
      * Device Interface Module, configured to be a sensor of type "AdaFruit IMU", and named "imu".</p>
      */
     private void initIMU() {
@@ -252,10 +240,10 @@ public class Robot {
 
     /**
      * Gets the telemetry.
-     *
+     * <p>
      * Try to use {@link #getQuickTelemetry()} instead
-     * @return The telemetry
      *
+     * @return The telemetry
      * @see Telemetry
      * @see #getQuickTelemetry()
      */
@@ -264,7 +252,6 @@ public class Robot {
     }
 
     /**
-     *
      * @return Quick Telemetry
      * @see QuickTelemetry
      */
@@ -288,11 +275,9 @@ public class Robot {
         double joystickOutput;
         if (joystickInput > joystickDeadZone) {
             joystickOutput = (joystickInput - joystickDeadZone) / (1.0 - joystickDeadZone);
-        }
-        else if (joystickInput > -joystickDeadZone) {
+        } else if (joystickInput > -joystickDeadZone) {
             joystickOutput = 0.0;
-        }
-        else {
+        } else {
             joystickOutput = (joystickInput + joystickDeadZone) / (1.0 - joystickDeadZone);
         }
         return joystickOutput;

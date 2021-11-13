@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Subsystems.Control;
 
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
@@ -19,7 +18,7 @@ public class Control extends Subsystem {
 
     public void setIntakeDirection(boolean status) {      // simplified so only one method is needed for intake.
         boolean isIntakeOn = intake.isMotorEnabled();     // parameter true is for regular motion, false is for reverse.
-        if (status = true) {                              // toggles on/off when invoked while in opposite state, e.g.
+        if (status) {                              // toggles on/off when invoked while in opposite state, e.g.
             if (!isIntakeOn) {                            // turns off when previously on, turns on when previously off.
                 intake.setPower(1.0);
                 isIntakeOn = true;
@@ -27,8 +26,7 @@ public class Control extends Subsystem {
                 intake.setPower(0.0);
                 isIntakeOn = false;
             }
-        }
-        if (status = false) {
+        } else if (!status) {
             if (!isIntakeOn) {
                 intake.setPower(-0.8);
                 isIntakeOn = true;

@@ -19,16 +19,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Util.QuickTelemetry;
 
-@Autonomous(name="Drive PID")
+@Autonomous(name = "Drive PID")
 @Disabled
 public class DrivePID extends LinearOpMode {
+    private final QuickTelemetry quickTelemetry = new QuickTelemetry(telemetry);
     DcMotorEx frontLeftDriveMotor, frontRightDriveMotor, rearRightDriveMotor, rearLeftDriveMotor;
     TouchSensor touch;
     BNO055IMU imu;
@@ -36,8 +36,6 @@ public class DrivePID extends LinearOpMode {
     double globalAngle, power = .30, correction, rotation;
     boolean aButton, bButton, touched;
     PIDController pidRotate, pidDrive;
-
-    private final QuickTelemetry quickTelemetry = new QuickTelemetry(telemetry);
 
     // called when init button is  pressed.
     @Override
@@ -57,10 +55,10 @@ public class DrivePID extends LinearOpMode {
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
@@ -78,8 +76,7 @@ public class DrivePID extends LinearOpMode {
         quickTelemetry.telemetry("Mode", "calibrating...");
 
         // make sure the imu gyro is calibrated before continuing.
-        while (!isStopRequested() && !imu.isGyroCalibrated())
-        {
+        while (!isStopRequested() && !imu.isGyroCalibrated()) {
             sleep(50);
             idle();
         }
@@ -110,8 +107,7 @@ public class DrivePID extends LinearOpMode {
     /**
      * Resets the cumulative angle tracking to zero.
      */
-    private void resetAngle()
-    {
+    private void resetAngle() {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         globalAngle = 0;
@@ -129,10 +125,10 @@ public class DrivePID extends LinearOpMode {
 
     /**
      * Get current cumulative angle rotation from last reset.
+     *
      * @return Angle in degrees. + = left, - = right from zero point.
      */
-    private double getAngle()
-    {
+    private double getAngle() {
         // We experimentally determined the Z axis is the axis we want to use for heading angle.
         // We have to process the angle because the imu works in euler angles so the Z axis is
         // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
@@ -160,12 +156,13 @@ public class DrivePID extends LinearOpMode {
 
     /**
      * Rotate left or right the number of degrees. Does not support turning more than 359 degrees.
+     *
      * @param degrees Degrees to turn, + is left - is right
      */
     private void rotate(int degrees, double power) {
         // restart imu angle tracking.
         resetAngle();
-        
+
         // if degrees > 359 we cap at 359 with same sign as original degrees.
         if (Math.abs(degrees) > 359) degrees = (int) Math.copySign(359, degrees);
 
@@ -190,11 +187,9 @@ public class DrivePID extends LinearOpMode {
 
         // rotate until turn is completed.
 
-        if (degrees < 0)
-        {
+        if (degrees < 0) {
             // On right turn we have to get off zero first.
-            while (opModeIsActive() && getAngle() == 0)
-            {
+            while (opModeIsActive() && getAngle() == 0) {
                 frontLeftDriveMotor.setPower(power);
                 rearLeftDriveMotor.setPower(power);
                 frontRightDriveMotor.setPower(-power);
@@ -202,18 +197,15 @@ public class DrivePID extends LinearOpMode {
                 sleep(100);
             }
 
-            do
-            {
+            do {
                 power = pidRotate.performPID(getAngle()); // power will be - on right turn.
                 frontLeftDriveMotor.setPower(-power);
                 rearLeftDriveMotor.setPower(-power);
                 frontRightDriveMotor.setPower(power);
                 rearRightDriveMotor.setPower(power);
             } while (opModeIsActive() && pidRotate.onTarget());
-        }
-        else    // left turn.
-            do
-            {
+        } else    // left turn.
+            do {
                 power = pidRotate.performPID(getAngle()); // power will be + on left turn.
                 frontLeftDriveMotor.setPower(-power);
                 rearLeftDriveMotor.setPower(-power);
@@ -228,7 +220,7 @@ public class DrivePID extends LinearOpMode {
         rearRightDriveMotor.setPower(0);
 
         rotation = getAngle();
-        
+
         // wait for rotation to stop.
         sleep(500);
 
@@ -249,8 +241,7 @@ public class DrivePID extends LinearOpMode {
         pidDrive.enable();
 
         if (distance < 0) // backward
-            do
-            {
+            do {
                 power = pidDrive.performPID(getDistance()); // power will be - on backward.
                 frontLeftDriveMotor.setPower(-power);
                 rearLeftDriveMotor.setPower(-power);
@@ -258,8 +249,7 @@ public class DrivePID extends LinearOpMode {
                 rearRightDriveMotor.setPower(-power);
             } while (opModeIsActive() && pidDrive.onTarget());
         else    // forward
-            do
-            {
+            do {
                 power = pidDrive.performPID(getDistance()); // power will be + on forward.
                 frontLeftDriveMotor.setPower(power);
                 rearLeftDriveMotor.setPower(power);
