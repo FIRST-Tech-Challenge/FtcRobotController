@@ -23,6 +23,12 @@ public class TeleopAttachments extends OpMode {
     public void loop() {
         double y = gamepad1.left_stick_y, x = -1*gamepad1.left_stick_x, turn = gamepad1.right_stick_x;
 
+        // Deadzone
+        y = (Math.abs(y)>0.05 ? y : 0);
+        x = (Math.abs(x)>0.05 ? x : 0);
+        turn = (Math.abs(turn)>0.05 ? turn : 0);
+
+        // Power adjust
         y *= (gamepad1.right_bumper?0.4:1);
         x *= (gamepad1.right_bumper?0.4:1);
         turn *= (gamepad1.right_bumper?0.4:1);

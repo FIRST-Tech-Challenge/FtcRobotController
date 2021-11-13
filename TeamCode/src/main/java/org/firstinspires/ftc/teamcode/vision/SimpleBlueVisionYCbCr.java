@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -14,6 +15,9 @@ public class SimpleBlueVisionYCbCr extends OpenCvPipeline {
     Telemetry telemetry = null;
 
     volatile boolean[] positions = {false,false,false};
+
+    private Mat capturedFrame;
+    private boolean capture = false;
 
     public SimpleBlueVisionYCbCr(Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -124,10 +128,21 @@ public class SimpleBlueVisionYCbCr extends OpenCvPipeline {
         if(telemetry != null) {
             telemetry.update();
         }
+        if(capture) {
+            capturedFrame = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
+            input.copyTo(capturedFrame);
+            capture = false;
+        }
         return input;
     }
 
     public boolean[] getPositions() {
         return positions;
+    }
+
+    public void captureFrame() {
+        capture = true;
+        while(capture) {}
+        
     }
 }

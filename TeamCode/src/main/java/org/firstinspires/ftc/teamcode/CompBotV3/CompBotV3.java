@@ -116,6 +116,10 @@ public class CompBotV3 {
             }
             pastError = error; // Move error into pastError for next loop
         }
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
         useEncoders(); // Switch back to normal RUN_USING_ENCODERS velocity control mode
     }
 
@@ -128,6 +132,19 @@ public class CompBotV3 {
         m.setPower(0);
         m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    public static void nEncDrive(DcMotor m, int ticksToDrive, double speed, Telemetry telemetry) {
+        m.setTargetPosition(m.getCurrentPosition() + ticksToDrive);
+        m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(m.isBusy()) {
+            m.setPower(speed);
+            telemetry.addData("Target", m.getTargetPosition());
+            telemetry.addData("Expected", m.getCurrentPosition());
+            telemetry.update();
+        }
+        m.setPower(0);
+        m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
 
     public void driveRobotCentric(double x, double y, double turn) {
         fl.setPower(MathUtils.clamp(-(y - x) + turn,-1,1));
@@ -141,6 +158,22 @@ public class CompBotV3 {
         do {
             error = imu.getHeading() - expectedHeading;
             driveRobotCentric(0,0, (error > 20) ? (Math.signum(error) * sTurn) : ((error / 20) * sTurn));
+        } while (Math.abs(error) > 0.01);
+    }
+    public void gyroTurn(double turn, double sTurn, Telemetry telemetry) {
+        useEncoders();
+        imu.reset();
+        double expectedHeading = imu.getHeading() + turn, error;
+        do {
+            error = -1*(imu.getHeading() - expectedHeading);
+            telemetry.addData("Error",error);
+            double power = (Math.abs(error) > 20) ? (Math.signum(error) * sTurn) : ((error / 20) * sTurn);
+            fl.setPower(power);
+            bl.setPower(power);
+            fr.setPower(power);
+            br.setPower(power);
+            telemetry.addData("power",power);
+            telemetry.update();
         } while (Math.abs(error) > 0.01);
     }
 
