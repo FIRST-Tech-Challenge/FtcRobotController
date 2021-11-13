@@ -88,9 +88,9 @@ public class blue_Warehouse extends LinearOpMode {
 
         if(!opModeIsActive()) return;
 
-        mecanumStrafe(12,0,0.7);
+        mecanumStrafe(11,0,0.7);
         mecanumRotate(80,0.5);
-        mecanumStrafe(25,0,0.7);
+        mecanumStrafe(30,0,0.7);
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();

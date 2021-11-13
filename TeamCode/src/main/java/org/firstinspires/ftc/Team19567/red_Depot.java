@@ -111,7 +111,7 @@ public class red_Depot extends LinearOpMode {
         mecanumStrafe(7,90,0.8);
         sleep(500);
         changeDirection();
-        carouselMove(-0.6);
+        carouselMove(-0.5);
         sleep(3000);
         carouselMove(0.0);
         mecanumStrafe(17,75,0.6);
