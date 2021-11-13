@@ -55,11 +55,7 @@ public class FrenzyBaseBot implements IOdoBot {
     public static final double MAX_VELOCITY_REV = 2140;
 
 
-//    protected static double P = 1.17;
-//    protected static double I = 0.12;
-//    protected static double D = 0;
-//    protected static double F = 11.7;
-    protected static double positionPIDF = 10;
+    protected static double positionPIDF = 20;
 
 
     static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP. was 2 in the sample
@@ -148,8 +144,9 @@ public class FrenzyBaseBot implements IOdoBot {
 
         motor.setVelocityPIDFCoefficients(P, I, D, F);
         motor.setPositionPIDFCoefficients(positionPIDF);
-    }
+        motor.setTargetPositionTolerance(10);
 
+    }
     public Telemetry getTelemetry() {
         return this.telemetry;
     }
