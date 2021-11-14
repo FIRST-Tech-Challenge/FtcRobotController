@@ -50,7 +50,7 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorLift = hardwareMap.dcMotor.get("motorLift");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setTargetPosition(motorLift.getCurrentPosition());
-        motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //init servos
         servoGrabber = hardwareMap.get(Servo.class, "servoGrabber");

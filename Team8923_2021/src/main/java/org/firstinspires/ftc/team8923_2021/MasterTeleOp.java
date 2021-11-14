@@ -8,6 +8,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
     private Toggle driveSpeedToggle = new Toggle();
 
     double driveSpeed = 1.0;
+    boolean startScoring = false;
 
     // one joystick moves forwards and backwards, the other controls left and right.
     public void splitArcadeDrive() {
@@ -32,9 +33,9 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     public void runIntake() {
         if (gamepad2.b) {
-            motorIntake.setPower(0.8);
+            motorIntake.setPower(1.2);
         } else if (gamepad2.x) {
-            motorIntake.setPower(-0.8);
+            motorIntake.setPower(-1.2);
         } else {
             motorIntake.setPower(0.0);
         }
@@ -52,19 +53,28 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     public void runGrabber() {
         if(gamepad2.a) {
-            servoGrabber.setPosition(0.5);
+            servoGrabber.setPosition(1.0);
         } else {
             servoGrabber.setPosition(0.0);
         }
     }
 
     public void runLift() {
-        if(gamepad2.dpad_up) {
-            motorLift.setPower(0.3);
-        } else if (gamepad2.dpad_down) {
-            motorLift.setPower(-0.3);
+        if(gamepad2.left_bumper) {
+            motorLift.setPower(0.1);
+        } else if (gamepad2.right_bumper){
+            motorLift.setPower(-0.1);
         } else {
             motorLift.setPower(0.0);
         }
+        /*if(gamepad2.left_bumper && !startScoring) {
+            motorLift.setTargetPosition(1);
+            //motorLift.setPower(0.2);
+        } else if (gamepad2.right_bumper && !startScoring) {
+            motorLift.setTargetPosition(0);
+            //motorLift.setPower(-0.2);
+        } */
+        //motorLift.setPower(Math.max((motorLift.getTargetPosition() - motorLift.getCurrentPosition()) * (1 / 75.0), 1.0));
+
     }
 }
