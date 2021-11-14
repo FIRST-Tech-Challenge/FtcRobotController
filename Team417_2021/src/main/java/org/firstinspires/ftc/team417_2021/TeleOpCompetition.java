@@ -15,11 +15,12 @@ public class TeleOpCompetition extends MasterTeleOp {
 
         while (opModeIsActive()) {
             driveRobotUsingController();
+            controlArmPower();
             robot.updatePosition();
-            telemetry.addData("Current X", robot.currentX);
+            /*telemetry.addData("Current X", robot.currentX);
             telemetry.addData("Current Y", robot.currentY);
             telemetry.addData("Current heading", robot.curAngle);
-            telemetry.update();
+            telemetry.update();*/
             idle();
         }
 

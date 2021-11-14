@@ -112,7 +112,7 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
 
         index = findBarcodeIndex2(x);
 
-        return mask;
+        return input;
     }
 
     public double tempMethodName(Mat input) {
@@ -167,11 +167,11 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
     public int findBarcodeIndex2(int x) {
         // 213, 426
         int index = 0;
-        if (x < 213) {
+        if (x < 163) {
             index = 0;
-        } else if (x > 213 && x < 426) {
+        } else if (x > 163 && x < 376) {
             index = 1;
-        } else if (x > 426) {
+        } else if (x > 376) {
             index = 2;
         }
         return index;

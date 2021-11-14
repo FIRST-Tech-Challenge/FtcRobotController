@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.team417_2021.Resources.FIRFilter;
 import org.firstinspires.ftc.team417_2021.Resources.PIDFilter;
 import org.firstinspires.ftc.team417_2021.Resources.Polynomial;
+import com.qualcomm.robotcore.hardware.Servo;
 
 abstract public class MasterOpMode extends LinearOpMode {
 
@@ -14,6 +15,12 @@ abstract public class MasterOpMode extends LinearOpMode {
     DcMotor motorFR = null;
     DcMotor motorBL = null;
     DcMotor motorBR = null;
+
+    DcMotor shoulderMotor = null;
+    DcMotor elbowMotor = null;
+    Servo wristServo = null;
+    Servo grabberServo = null;
+    DcMotor carouselMotor = null;
 
     public Robot robot = new Robot(this);
 
@@ -29,6 +36,9 @@ abstract public class MasterOpMode extends LinearOpMode {
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
+
+    final double GRABBER_IN = 0.9;
+    final double GRABBER_OUT = 0.5;
 
     protected void initializeHardware() {
 
@@ -46,31 +56,56 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
 
+        shoulderMotor = hardwareMap.dcMotor.get("shoulderMotor");
+        elbowMotor = hardwareMap.dcMotor.get("elbowMotor");
+        carouselMotor = hardwareMap.dcMotor.get("carouselMotor");
+
+        wristServo = hardwareMap.servo.get("wristServo");
+        grabberServo = hardwareMap.servo.get("grabberServo");
+
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        shoulderMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorFR.setDirection(DcMotor.Direction.REVERSE);
-        motorBR.setDirection(DcMotor.Direction.REVERSE);
-        motorFL.setDirection(DcMotor.Direction.FORWARD);
-        motorBL.setDirection(DcMotor.Direction.FORWARD); // todo reverse back
+        shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        elbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        motorFL.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        motorBR.setDirection(DcMotor.Direction.FORWARD); // todo reverse back
 
         // set motor power to 0
         motorFL.setPower(0);
         motorFR.setPower(0);
         motorBL.setPower(0);
         motorBR.setPower(0);
+
+        shoulderMotor.setPower(0);
+        elbowMotor.setPower(0);
+        wristServo.setPosition(0.0);
+        carouselMotor.setPower(0.0);
+        grabberServo.setPosition(GRABBER_IN);
 
         // set up IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
