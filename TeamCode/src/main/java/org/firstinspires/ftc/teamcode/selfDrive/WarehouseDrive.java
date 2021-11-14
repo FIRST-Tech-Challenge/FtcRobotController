@@ -47,12 +47,12 @@ public class WarehouseDrive extends BaseOpMode {
         //reset Runtime
         runtime.reset();
 
-        while (opModeIsActive()) { //TODO: add the time.
-            encoderDrive(this, 1.0, 5,5,5);
-            logData(this, "Encoder Counts", String.format("Current Position is %7d :%7d",
-                    robot.getLeftDrive().getCurrentPosition(),
-                    robot.getRightDrive().getCurrentPosition()));
-        }
+        //while (opModeIsActive()) { //TODO: add the time.
+        encoderDrive(this, 1.0, 12,12,5);
+        logData(this, "Encoder Counts", String.format("Current Position is %7d :%7d",
+                robot.getLeftDrive().getCurrentPosition(),
+                robot.getRightDrive().getCurrentPosition()));
+        //}
     }
 }
 
