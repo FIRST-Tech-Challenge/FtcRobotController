@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@TeleOp(name="freightFrenzy")
 public class InitialMecanumTeleOp extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -56,7 +58,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        runtime.reset();
+        //runtime.reset();
 
         boolean carouselOn = false; //Outside of loop()
 
@@ -105,7 +107,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
 
             if(gamepad1.a && !carouselOn) {
                 if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
-                else carouselMotor.setPower(.4);
+                else carouselMotor.setPower(.95);
                 carouselOn = true;
             } else if(!gamepad1.a) carouselOn = false;
         }
