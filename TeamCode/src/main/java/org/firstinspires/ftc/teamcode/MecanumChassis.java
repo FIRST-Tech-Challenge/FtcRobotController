@@ -28,7 +28,6 @@ public class MecanumChassis {
     public DcMotorEx arm = null;
     public DcMotorEx duck = null;
     public CRServo intakeUp = null;
-    public CRServo intakeDown = null;
     public Rev2mDistanceSensor csensor = null;
 
 
@@ -115,7 +114,6 @@ public class MecanumChassis {
 
 
         intakeUp = hwMap.get(CRServo.class, "s1");
-        intakeDown = hwMap.get(CRServo.class, "s2");
 
         csensor = hwMap.get(Rev2mDistanceSensor.class, "ds");
 
