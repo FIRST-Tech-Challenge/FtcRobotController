@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Autonomous extends LinearOpMode {
+@Autonomous(name = "yxorauto")
+public class Autono extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 
     private ElapsedTime runtime = new ElapsedTime();
