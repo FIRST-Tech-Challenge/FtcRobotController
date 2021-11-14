@@ -72,11 +72,8 @@ public class MecanumChassis {
         lift = hwMap.get(DcMotorEx.class,"lift");
         arm = hwMap.get(DcMotorEx.class,"arm");
 
-
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if
-        leftRearDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if
-        rightRearDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
+        rightRearDrive.setDirection(DcMotorEx.Direction.REVERSE);
 
         // Set all motors to zero power
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
