@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.core.robot.vision.robot;
 
+import android.util.Pair;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -34,7 +36,12 @@ public class TsePipeline extends OpenCvPipeline {
     private double bottomRectWidthPercentage = 0.75;
     private double bottomRectHeightPercentage = 0.50;
     private int different = 1;
-    private long framecount = 0;
+    private final int lastFrameValue = 0;
+    private boolean isComplete = false;
+    private int checks = 0;
+    private Pair<Integer, Integer> greatestConfidence = new Pair<>(0, 0);
+    private boolean firstValue = true;
+
     /**
      * @param input input frame matrix
      */
@@ -120,26 +127,46 @@ public class TsePipeline extends OpenCvPipeline {
 
 
         //return the mat to be shown onto the screen
-        framecount++;
+        if (different == lastFrameValue || firstValue) {
+            firstValue = false;
+            checks++;
+        } else {
+            if (greatestConfidence.second < checks) {
+                greatestConfidence = new Pair<>(different, checks);
+            }
+            checks = 0;
+            firstValue = true;
+        }
+
+        if (checks >= 5) {
+            isComplete = true;
+        }
         return input;
+    }
+
+    public Pair<Boolean, Integer> differentSpot() {
+        return new Pair<>(isComplete, different);
+    }
+
+    public Pair<Boolean, Integer> differentSpotNow() {
+        return new Pair<>(isComplete, greatestConfidence.first);
     }
 
     /**
      * Gets the most different value from 3 doubles.
+     *
      * @param val1 double
      * @param val2 double
      * @param val3 double
      * @return Most different, 1-3
      */
     public static int mostDifferent(double val1, double val2, double val3) {
-        double valMean = (val1+val2+val3)/3;
+        double valMean = (val1 + val2 + val3) / 3;
         double[] array = {Math.abs(valMean - val1),Math.abs(valMean - val2),Math.abs(valMean - val3)};
         int max = array[0] > array[1] ? 1 : 2;
         return array[2] > array[max-1] ? 3 : max;
     }
 
-    public int getDifferent() { return different; }
-    public long getFramecount() { return framecount; }
     /**
      * Draw the rectangle onto the desired mat
      * @param mat   The mat that the rectangle should be drawn on
@@ -153,7 +180,7 @@ public class TsePipeline extends OpenCvPipeline {
     /**
      * percentages of all rectangles. it goes top width, top height, middle width, etc.
      */
-    public void setRectangles(double topRectWidthPercentage, double topRectHeightPercentage,double middleRectWidthPercentage,double middleRectHeightPercentage,double bottomRectWidthPercentage,double bottomRectHeightPercentage) {
+    void setRectangles(double topRectWidthPercentage, double topRectHeightPercentage, double middleRectWidthPercentage, double middleRectHeightPercentage, double bottomRectWidthPercentage, double bottomRectHeightPercentage) {
         this.topRectWidthPercentage = topRectWidthPercentage;
         this.topRectHeightPercentage = topRectHeightPercentage;
         this.middleRectWidthPercentage = middleRectWidthPercentage;
