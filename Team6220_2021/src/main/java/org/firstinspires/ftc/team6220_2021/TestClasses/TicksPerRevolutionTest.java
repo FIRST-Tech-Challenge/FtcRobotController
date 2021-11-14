@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_2021;
+package org.firstinspires.ftc.team6220_2021.TestClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

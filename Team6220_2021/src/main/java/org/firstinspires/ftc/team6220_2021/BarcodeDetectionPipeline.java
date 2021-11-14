@@ -3,7 +3,8 @@ package org.firstinspires.ftc.team6220_2021;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Rect;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -11,32 +12,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BarcodeDetectionPipeline extends OpenCvPipeline {
+    @Override
+    public Mat processFrame(Mat input) {
+        double maximumArea;
+        int maximumAreaContour;
 
-    double maximumArea;
-    double leftArea;
-    double centerArea;
-    double rightArea;
-    int maximumAreaContour;
-    static String position;
+        Imgproc.rectangle(input, new Point(0, 0), new Point(input.cols(), input.rows()), new Scalar(0, 0, 0), 25);
 
-    public double contourArea(Mat input) {
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.rectangle(input, new Point(0, 0), new Point(input.cols(), 0), new Scalar(0, 0, 0), 0);
 
-        Imgproc.medianBlur(input, input, 5);
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2HSV);
 
-        List<Mat> split = new ArrayList<>();
+        Imgproc.medianBlur(input, input, 10);
 
-        Core.split(input, split);
+        List<Mat> hsv = new ArrayList<>();
 
-        Mat x = split.get(1);
+        Core.split(input, hsv);
 
-        Imgproc.threshold(x, x, 200, 255, Imgproc.THRESH_BINARY);
+        Mat v = hsv.get(2);
+
+        Imgproc.threshold(v,v, 200, 255, Imgproc.THRESH_BINARY);
 
         List<MatOfPoint> contours = new ArrayList<>();
 
         Mat hierarchy = new Mat();
 
-        Imgproc.findContours(x, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(v, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         if (contours.size() > 0) {
             maximumArea = 0.0;
@@ -48,37 +49,21 @@ public class BarcodeDetectionPipeline extends OpenCvPipeline {
                     maximumAreaContour = i;
                 }
             }
+
+            Imgproc.rectangle(input, Imgproc.boundingRect(contours.get(maximumAreaContour)), new Scalar(255, 0, 0));
+
+            if (maxArea > 2200/*Max size*/){
+                ringStackHeight = 0;
+            } else if(maxArea > 1200/*Middle size*/){
+                ringStackHeight = 4;
+            } else if(maxArea > 300){
+                ringStackHeight = 1;
+            } else{
+                ringStackHeight = 0;
+            }
         }
 
-        return maximumArea;
-    }
-
-    public Mat processFrame(Mat input) {
-        Rect leftBarcode = new Rect(0, 0, 200, 500);
-        Rect centerBarcode = new Rect(200, 0, 200, 500);
-        Rect rightBarcode = new Rect(400, 0, 200, 500);
-
-        Mat left = new Mat(input, leftBarcode);
-        Mat center = new Mat(input, centerBarcode);
-        Mat right = new Mat(input, rightBarcode);
-
-        leftArea = contourArea(left);
-        centerArea = contourArea(center);
-        rightArea = contourArea(right);
-
-        if (leftArea > centerArea && leftArea > rightArea) {
-            position = "left";
-        }
-        else if (centerArea > leftArea && centerArea > rightArea){
-            position = "center";
-        }
-        else if (rightArea > leftArea && rightArea > centerArea){
-            position = "right";
-        }
-        else {
-            position = "none";
-        }
-
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_HSV2BGR);
         return input;
     }
 }

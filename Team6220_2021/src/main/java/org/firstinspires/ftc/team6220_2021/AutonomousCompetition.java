@@ -28,28 +28,37 @@ public class AutonomousCompetition extends MasterAutonomous {
 
         waitForStart();
 
-        String position = BarcodeDetectionPipeline.position;
+        int position = BarcodeDetectionPipeline.position;
 
         pauseMillis(500);
 
-        if (!BarcodeDetectionPipeline.position.equals(position)) {
+        if (BarcodeDetectionPipeline.position != position) {
             position = BarcodeDetectionPipeline.position;
         }
+
+        telemetry.addData("hi", position);
+        telemetry.update();
+
+        pauseMillis(15000);
 
         webcam.stopStreaming();
         webcam.closeCameraDevice();
 
         switch (position) {
-            case "left":
+            case 4:
                 // stuff here
                 break;
 
-            case "center":
+            case 6:
                 // different stuff here
                 break;
 
-            case "right":
+            case 5:
                 // more different stuff here
+                break;
+
+            case 0:
+                // even more different stuff here
                 break;
         }
     }

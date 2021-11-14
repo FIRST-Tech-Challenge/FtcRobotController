@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_2021;
+package org.firstinspires.ftc.team6220_2021.TestClasses;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.team6220_2021.ResourceClasses.PIDFilter;
 
 @TeleOp(name = "Turn Test", group = "TeleOp")
 public class TurnTest extends LinearOpMode {
