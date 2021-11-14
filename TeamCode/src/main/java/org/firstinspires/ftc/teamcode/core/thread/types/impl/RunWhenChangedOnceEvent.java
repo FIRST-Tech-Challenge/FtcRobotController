@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.core.thread.types.impl;
 
+import androidx.annotation.NonNull;
+
 import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerOnceEvent;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -11,7 +13,7 @@ public class RunWhenChangedOnceEvent<T> extends RunListenerOnceEvent {
     /**
      * @param listener The listener to be run.
      */
-    public RunWhenChangedOnceEvent(Runnable listener, AtomicReference<T> atomicReference) {
+    public RunWhenChangedOnceEvent(Runnable listener, @NonNull AtomicReference<T> atomicReference) {
         super(listener);
         this.atomicReference = atomicReference;
         oldHash = atomicReference.get().hashCode();

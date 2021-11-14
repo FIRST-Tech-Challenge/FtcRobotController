@@ -2,10 +2,13 @@ package org.firstinspires.ftc.teamcode.core.robot.vision.robot;
 
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.core.thread.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenChangedOnceEvent;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -25,11 +28,13 @@ public class TseDetector {
     private final int checks = 0;
     private final Pair<Integer, Integer> greatestConfidence = new Pair<>(0, 0);
     private final int lastFrameValue = 0;
+    public int different = 0;
 
-    public TseDetector(EventThread eventThread, HardwareMap hMap, String webcamName) {
+    public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName) {
         this.eventThread = eventThread;
         hardwareMap = hMap;
         this.webcamName = webcamName;
+        eventThread.addEvent(new RunWhenChangedOnceEvent(different = 1));
     }
 
     public void init() {
