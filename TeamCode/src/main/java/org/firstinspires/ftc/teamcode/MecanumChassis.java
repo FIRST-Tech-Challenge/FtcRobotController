@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,7 +28,8 @@ public class MecanumChassis {
     public DcMotorEx arm = null;
     public DcMotorEx duck = null;
     public CRServo intakeUp = null;
-
+    public CRServo intakeDown = null;
+    public Rev2mDistanceSensor csensor = null;
 
 
     public BNO055IMU imu;
@@ -112,11 +114,10 @@ public class MecanumChassis {
         arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
-
-
         intakeUp = hwMap.get(CRServo.class, "s1");
+        intakeDown = hwMap.get(CRServo.class, "s2");
 
-        colorSensor = hwMap.get(ColorSensor.class,"color");
+        csensor = hwMap.get(Rev2mDistanceSensor.class, "ds");
 
     }
 
