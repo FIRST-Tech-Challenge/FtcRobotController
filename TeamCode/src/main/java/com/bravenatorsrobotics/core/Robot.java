@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Robot<DriveType extends AbstractDrive> {
@@ -17,14 +18,17 @@ public class Robot<DriveType extends AbstractDrive> {
     public final DriveType drive; // Drive System
     public final RobotSpecifications specifications; // Specifications
 
-    protected final DcMotorEx[] motors; // All the selected motors
+    protected final DcMotorEx[] driveMotors; // All the selected motors
+
+    protected ArrayList<DcMotorEx> externalMotors; // Any motors that are not part of the drive system
 
     // Constructor
     public Robot(LinearOpMode opMode, RobotSpecifications specifications) {
         this.opMode = opMode;
         this.specifications = specifications;
 
-        this.motors = new DcMotorEx[specifications.robotMotors.length];
+        this.driveMotors = new DcMotorEx[specifications.robotMotors.length];
+        this.externalMotors = new ArrayList<>();
 
         // Get the motors from the hardware map with correct direction
         for(int i = 0; i < specifications.robotMotors.length; i++) {
@@ -35,9 +39,9 @@ public class Robot<DriveType extends AbstractDrive> {
                 specifications.robotMotors[i] = specifications.robotMotors[i].substring(1);
             }
 
-            this.motors[i] = opMode.hardwareMap.get(DcMotorEx.class, specifications.robotMotors[i]);
+            this.driveMotors[i] = opMode.hardwareMap.get(DcMotorEx.class, specifications.robotMotors[i]);
             if(shouldReverse)
-                this.motors[i].setDirection(DcMotorSimple.Direction.REVERSE);
+                this.driveMotors[i].setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
         // Create Instance of Drive
@@ -63,12 +67,12 @@ public class Robot<DriveType extends AbstractDrive> {
     // ==========================================================================================
 
     public void SetRunMode(DcMotorEx.RunMode runMode) {
-        for(DcMotorEx motor : motors)
+        for(DcMotorEx motor : driveMotors)
             motor.setMode(runMode);
     }
 
     public void SetZeroBehavior(DcMotor.ZeroPowerBehavior behavior) {
-        for(DcMotorEx motor : motors)
+        for(DcMotorEx motor : driveMotors)
             motor.setZeroPowerBehavior(behavior);
     }
 
@@ -77,9 +81,30 @@ public class Robot<DriveType extends AbstractDrive> {
         SetRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public DcMotorEx GetMotor(String motorName, boolean isReversed) {
+        DcMotorEx motor = opMode.hardwareMap.get(DcMotorEx.class, motorName);
+        motor.setDirection(isReversed ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+
+        externalMotors.add(motor);
+
+        return motor;
+    }
+
+    public void Stop() {
+        for(DcMotorEx motor : driveMotors) {
+            motor.setPower(0);
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        for(DcMotorEx externalMotor : externalMotors) {
+            externalMotor.setPower(0);
+            externalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
+
     // ==========================================================================================
     // Getters and Setters
     // ==========================================================================================
 
-    public DcMotorEx[] GetAllMotors() { return motors; }
+    public DcMotorEx[] GetDriveMotors() { return driveMotors; }
 }

@@ -30,11 +30,11 @@ public abstract class AbstractDrive {
 
     protected void SetAllPower(double power) {
         if(robot.specifications.useVelocity) {
-            for(DcMotorEx motor : robot.GetAllMotors())
+            for(DcMotorEx motor : robot.GetDriveMotors())
                 motor.setVelocity(power * robot.specifications.maxVelocity);
         }
         else {
-            for(DcMotorEx motor : robot.GetAllMotors())
+            for(DcMotorEx motor : robot.GetDriveMotors())
                 motor.setPower(power);
         }
     }

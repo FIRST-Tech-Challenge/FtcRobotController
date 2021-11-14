@@ -17,6 +17,7 @@ public abstract class TeleopMode<T extends AbstractDrive> extends OperationMode<
     }
 
     public abstract void OnInitialize();
+    public abstract void OnStart();
     public abstract void OnUpdate();
     public abstract void OnStop();
 
@@ -43,6 +44,8 @@ public abstract class TeleopMode<T extends AbstractDrive> extends OperationMode<
 
         telemetry.addData("Status", "Running...");
         telemetry.update();
+
+        OnStart();
 
         while(opModeIsActive()) {
             driverGamePad.update();

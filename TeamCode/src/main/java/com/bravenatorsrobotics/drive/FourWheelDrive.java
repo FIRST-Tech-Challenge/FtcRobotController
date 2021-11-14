@@ -39,10 +39,10 @@ public class FourWheelDrive extends AbstractDrive {
     public FourWheelDrive(Robot<? extends FourWheelDrive> robot) {
         super(robot);
 
-        this.frontLeft = robot.GetAllMotors()[0];
-        this.frontRight = robot.GetAllMotors()[1];
-        this.backLeft = robot.GetAllMotors()[2];
-        this.backRight = robot.GetAllMotors()[3];
+        this.frontLeft = robot.GetDriveMotors()[0];
+        this.frontRight = robot.GetDriveMotors()[1];
+        this.backLeft = robot.GetDriveMotors()[2];
+        this.backRight = robot.GetDriveMotors()[3];
     }
 
     public static String[] GenerateMotors(String frontLeftName, boolean frontLeftReversed,

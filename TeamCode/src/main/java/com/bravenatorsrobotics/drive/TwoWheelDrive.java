@@ -13,8 +13,8 @@ public class TwoWheelDrive extends AbstractDrive {
     public TwoWheelDrive(Robot<? extends TwoWheelDrive> robot) {
         super(robot);
 
-        this.left = robot.GetAllMotors()[0];
-        this.right = robot.GetAllMotors()[1];
+        this.left = robot.GetDriveMotors()[0];
+        this.right = robot.GetDriveMotors()[1];
     }
 
     public static String[] GenerateMotors(String left, boolean leftReversed, String right, boolean rightReversed) {
