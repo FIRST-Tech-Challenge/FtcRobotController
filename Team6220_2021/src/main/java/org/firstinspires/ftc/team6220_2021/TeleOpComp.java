@@ -22,7 +22,11 @@ public class TeleOpComp extends LinearOpMode{
     DcMotor motorArm;
     Servo servoGrabber;
     Servo servoArm;
+    int tickvalue = -70;
     double x = 0.7;
+
+    //for run to position or manual control
+    boolean toposition = true;
 
     //Other Devices
     BNO055IMU imu;
@@ -81,41 +85,42 @@ public class TeleOpComp extends LinearOpMode{
             //Use switch to declare values for each arm position
             switch (position) {
                 case 0:
-                    motorArm.setTargetPosition(-55);
-                    servoArm.setPosition(0.3);
+                    servoArm.setPosition(0.5);
                     motorArm.setPower(motorPower);
+                    tickvalue = -85;
                     break;
                 case 1:
-                    motorArm.setTargetPosition(-195);
-                    servoArm.setPosition(0.4);
+                    servoArm.setPosition(0.6);
                     motorArm.setPower(motorPower);
+                    tickvalue = -220;
                     break;
                 case 2:
-                    motorArm.setTargetPosition(-430);
-                    servoArm.setPosition(0.6);
-                    motorArm.setPower(motorPower);
-                    break;
-                case 3:
-                    motorArm.setTargetPosition(-690);
                     servoArm.setPosition(0.8);
                     motorArm.setPower(motorPower);
+                    tickvalue = -470;
+                    break;
+                case 3:
+                    servoArm.setPosition(1);
+                    motorArm.setPower(motorPower);
+                    tickvalue = -720;
                     break;
                 case 4:
-                    motorArm.setTargetPosition(-1260);
-                    servoArm.setPosition(0.4);
-                    motorArm.setPower(motorPower);
-                    break;
-                case 5:
-                    motorArm.setTargetPosition(-1540);
-                    servoArm.setPosition(0.7);
-                    motorArm.setPower(motorPower);
-                    break;
-                case 6:
-                    motorArm.setTargetPosition(-1620);
                     servoArm.setPosition(0.6);
                     motorArm.setPower(motorPower);
+                    tickvalue = -1270;
+                    break;
+                case 5:
+                    servoArm.setPosition(0.8);
+                    motorArm.setPower(motorPower);
+                    tickvalue = -1510;
+                    break;
+                case 6:
+                    servoArm.setPosition(0.8);
+                    motorArm.setPower(motorPower);
+                    tickvalue = -1620;
                     break;
             }
+
             if (gamepad1.left_trigger>0){
                 speed = 0.3;
 
@@ -131,6 +136,7 @@ public class TeleOpComp extends LinearOpMode{
                 if (!isPressed) {
                     position += increase;
                 }
+                toposition = true;
                 isPressed = true;
             }
 
@@ -142,6 +148,7 @@ public class TeleOpComp extends LinearOpMode{
                 if (!isPressed) {
                     position -= increase;
                 }
+                toposition = true;
                 isPressed = true;
             }
 
@@ -149,12 +156,16 @@ public class TeleOpComp extends LinearOpMode{
                 motorPower = 0.5;
             }
 
-            while (gamepad2.left_trigger >= 0.5) {
-                motorArm.setTargetPosition(motorArm.getCurrentPosition()+2);
+            if (gamepad2.left_bumper) {
+                tickvalue += 10;
             }
-            while (gamepad2.right_trigger >= 0.5) {
-                motorArm.setTargetPosition(motorArm.getCurrentPosition()-2);
+            else if (gamepad2.right_bumper) {
+                tickvalue -= 10;
             }
+            motorArm.setTargetPosition(tickvalue);
+            motorArm.setPower(0.9);
+
+
 
 
             if (position < 0){
@@ -168,7 +179,7 @@ public class TeleOpComp extends LinearOpMode{
                 servoGrabber.setPosition(0.34);
             }
             else if (gamepad2.a) {
-                servoGrabber.setPosition(1);
+                servoGrabber.setPosition(0.7);
             }
 
             if (gamepad1.right_bumper) {
