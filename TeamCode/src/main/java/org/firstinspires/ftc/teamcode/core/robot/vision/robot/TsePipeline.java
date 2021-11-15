@@ -36,19 +36,18 @@ public class TsePipeline extends OpenCvPipeline {
     private double bottomRectWidthPercentage = 0.75;
     private double bottomRectHeightPercentage = 0.50;
     private int different = 1;
-    private final int lastFrameValue = 0;
+    private int lastFrameValue = 0;
     private boolean isComplete = false;
     private int checks = 0;
     private Pair<Integer, Integer> greatestConfidence = new Pair<>(0, 0);
     private boolean firstValue = true;
-
+    private int frameCount = 0;
     /**
      * @param input input frame matrix
      */
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, matYCrCb, Imgproc.COLOR_RGB2YCrCb);
-
         //The points needed for the rectangles are calculated here
         int rectangleHeight = 10;
         //The width and height of the rectangles in terms of pixels
@@ -124,32 +123,35 @@ public class TsePipeline extends OpenCvPipeline {
         topAverage = topMean.val[0] + 0.5 * (topMean1.val[0] + topMean2.val[0]);
         middleAverage = middleMean.val[0] + 0.5 * (middleMean1.val[0] + middleMean2.val[0]);
         bottomAverage = bottomMean.val[0] + 0.5 * (bottomMean1.val[0] + bottomMean2.val[0]);
-
-
-        //return the mat to be shown onto the screen
-        if (different == lastFrameValue || firstValue) {
-            firstValue = false;
-            checks++;
-        } else {
-            if (greatestConfidence.second < checks) {
-                greatestConfidence = new Pair<>(different, checks);
+        if (!isComplete) {
+            frameCount++;
+            if (different == lastFrameValue || firstValue) {
+                firstValue = false;
+                checks++;
+            } else {
+                if (greatestConfidence.second < checks) {
+                    greatestConfidence = new Pair<>(different, checks);
+                }
+                checks = 0;
+                firstValue = true;
             }
-            checks = 0;
-            firstValue = true;
-        }
 
-        if (checks >= 5) {
-            isComplete = true;
+            if (checks >= 5) {
+                isComplete = true;
+            }
+
+            if (frameCount >= 20) {
+                different = greatestConfidence.first;
+                isComplete = true;
+            }
+
+            lastFrameValue = different;
         }
         return input;
     }
 
     public Pair<Boolean, Integer> differentSpot() {
         return new Pair<>(isComplete, different);
-    }
-
-    public Pair<Boolean, Integer> differentSpotNow() {
-        return new Pair<>(isComplete, greatestConfidence.first);
     }
 
     /**
@@ -180,6 +182,7 @@ public class TsePipeline extends OpenCvPipeline {
     /**
      * percentages of all rectangles. it goes top width, top height, middle width, etc.
      */
+    @SuppressWarnings("unused")
     void setRectangles(double topRectWidthPercentage, double topRectHeightPercentage, double middleRectWidthPercentage, double middleRectHeightPercentage, double bottomRectWidthPercentage, double bottomRectHeightPercentage) {
         this.topRectWidthPercentage = topRectWidthPercentage;
         this.topRectHeightPercentage = topRectHeightPercentage;

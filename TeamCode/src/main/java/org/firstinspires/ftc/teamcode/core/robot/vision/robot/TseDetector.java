@@ -13,28 +13,31 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class TseDetector {
 
     private OpenCvCamera camera;
     private final String webcamName;
     private final HardwareMap hardwareMap;
     private TsePipeline pipeline;
-    private final EventThread eventThread;
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
-
-    private final boolean firstValue = true;
-    private final long lastFrameCount = 0;
-    private final int checks = 0;
-    private final Pair<Integer, Integer> greatestConfidence = new Pair<>(0, 0);
-    private final int lastFrameValue = 0;
-    public int different = 0;
+    private final boolean complete = false;
 
     public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName) {
-        this.eventThread = eventThread;
         hardwareMap = hMap;
         this.webcamName = webcamName;
-        eventThread.addEvent(new RunWhenChangedOnceEvent(different = 1));
+        eventThread.addEvent(new RunWhenChangedOnceEvent<>(this::notifyAll, new AtomicReference<>(pipeline.differentSpot().first)));
+    }
+
+    public synchronized int run() {
+        try {
+            wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return pipeline.differentSpot().second;
     }
 
     public void init() {
@@ -52,9 +55,13 @@ public class TseDetector {
             }
 
             @Override
-            public void onError(int errorCode) {}
+            public void onError(int errorCode) {
+            }
         });
     }
 
-    
+    public Pair<Boolean, Integer> getDifference() {
+        return pipeline.differentSpot();
+    }
+
 }
