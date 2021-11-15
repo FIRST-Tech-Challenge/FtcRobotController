@@ -10,16 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 @Autonomous(name="Autonomous")
 public class Auto extends AutonomousMode<MecanumDrive> {
 
-    public static final int DUCK_LEFT_THRESHOLD = 200;
-    public static final int DUCK_RIGHT_THRESHOLD = 550;
-
     private Config config;
-
-    private enum DuckPosition {
-        LEFT, RIGHT, CENTER, UNKNOWN
-    }
-
-    private DuckPosition duckPosition = DuckPosition.UNKNOWN;
 
     public Auto() { super(new Specifications()); }
 
@@ -27,7 +18,6 @@ public class Auto extends AutonomousMode<MecanumDrive> {
     public void OnInitialize() {
         config = new Config(hardwareMap.appContext); // Get the saved configuration for later
 
-        ScanBarcode(); // Scan for the duck's position
     }
 
     @Override
@@ -46,45 +36,6 @@ public class Auto extends AutonomousMode<MecanumDrive> {
         }
     }
 
-    private void ScanBarcode() {
-        telemetry.addData("Status", "Updating Recognitions");
-        telemetry.update();
-
-        TensorFlowObjectDetector objectDetector = new TensorFlowObjectDetector(this, "Webcam 1");
-
-        // Detect for the duck
-        objectDetector.Initialize(); // Initialize the object detector
-        while(!isStarted()) { // Loop until the start button is pressed
-            objectDetector.UpdateRecognitions(); // Scan for all game objects
-
-            // Get the duck's position and determine which spot it's in using the threshold values.
-            Recognition duckRecognition = objectDetector.GetFirstRecognitionByType(TensorFlowObjectDetector.ObjectType.DUCK);
-            if (duckRecognition != null) {
-                if (duckRecognition.getLeft() < DUCK_LEFT_THRESHOLD)
-                    duckPosition = DuckPosition.LEFT;
-                else if (duckRecognition.getLeft() > DUCK_RIGHT_THRESHOLD)
-                    duckPosition = DuckPosition.RIGHT;
-                else
-                    duckPosition = DuckPosition.CENTER;
-            }
-
-            // Push the duck's estimated position to the drivers.
-            telemetry.addData("Duck Position", duckPosition.toString());
-            telemetry.update();
-
-            sleep(5); // Allow the CPU to ramp-down
-        }
-
-        // If the duck wasn't found, assume it's in the left position and print a warning.
-        if(duckPosition == DuckPosition.UNKNOWN) {
-            if(specifications.debugModeEnabled) {
-                telemetry.addLine("WARNING: Could not detect the duck!!!");
-                telemetry.update();
-            }
-
-            duckPosition = DuckPosition.LEFT;
-        }
-    }
 
     // Warehouse Code (compatible for both sides with the 'movementModifier')
     private void RunWarehouse(int movementModifier) {
