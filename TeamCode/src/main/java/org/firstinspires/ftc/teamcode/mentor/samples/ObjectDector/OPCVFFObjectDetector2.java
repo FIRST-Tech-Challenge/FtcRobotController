@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.samples.ObjectDector;
+package org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;

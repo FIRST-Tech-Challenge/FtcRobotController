@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.samples.webcam;
+package org.firstinspires.ftc.teamcode.mentor.samples.webcam;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.samples.ObjectDector;
+package org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector;
 
 import org.opencv.core.Point;
 

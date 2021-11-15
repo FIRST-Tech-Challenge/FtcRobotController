@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.samples.FaceDetector;
+package org.firstinspires.ftc.teamcode.mentor.samples.FaceDetector;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.samples.FaceDetector.FaceDetector;
-import org.firstinspires.ftc.teamcode.samples.HardwareMaps.InternalCameraHardwareMap;
+import org.firstinspires.ftc.teamcode.mentor.samples.HardwareMaps.InternalCameraHardwareMap;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Point;

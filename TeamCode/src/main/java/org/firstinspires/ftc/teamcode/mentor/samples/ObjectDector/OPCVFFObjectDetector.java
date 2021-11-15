@@ -1,15 +1,12 @@
-package org.firstinspires.ftc.teamcode.samples.ObjectDector;
+package org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector;
 
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.dnn.Dnn;
 import org.opencv.dnn.Net;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.Objdetect;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 

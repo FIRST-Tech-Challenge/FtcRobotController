@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.samples.ObjectDector;
+package org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.samples.HardwareMaps.InternalCameraHardwareMap;
+import org.firstinspires.ftc.teamcode.mentor.samples.HardwareMaps.InternalCameraHardwareMap;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
