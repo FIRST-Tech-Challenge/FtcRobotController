@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import java.util.Locale;
 
 @TeleOp(name="teleOperation")
-//@Disabled
+@Disabled
 public class teleop extends LinearOpMode {
     MecanumChassis robot;
 

@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import java.util.Locale;
 
 @TeleOp(name="ColorSensorTest")
-//@Disabled
+@Disabled
 public class ColorSensorTest extends LinearOpMode {
     MecanumChassis robot;
 

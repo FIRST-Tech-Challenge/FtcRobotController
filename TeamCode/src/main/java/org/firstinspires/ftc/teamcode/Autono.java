@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -113,8 +114,9 @@ public class Autono extends LinearOpMode {
 
     }
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
-        targetPos[0] = y;//1.5;  //x
-        targetPos[1] = x;//-0.6;   //y
+        targetPos[0] = y;
+
+        targetPos[1] = x;
         targetPos[2] = angle * Math.PI / 180; // Math.PI /2;   //heading, radian
         this.positionControl.goToTargetPosition(targetPos, vel,vw * Math.PI / 180, disRes,angleRes);
         while(!this.positionControl.checkTaskDone()){
