@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 
 @Autonomous(name = "yxorauto")
+@Disabled
 public class Autono extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 
@@ -110,12 +111,11 @@ public class Autono extends LinearOpMode {
             }
         }
 
-        goToWayPoint(0,1,0,0.7,0,0,0);
+        goToWayPoint(0,1,0,0.7,0,0.01,2);
 
     }
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
-        targetPos[0] = y;
-
+        targetPos[0] = -y;
         targetPos[1] = x;
         targetPos[2] = angle * Math.PI / 180; // Math.PI /2;   //heading, radian
         this.positionControl.goToTargetPosition(targetPos, vel,vw * Math.PI / 180, disRes,angleRes);

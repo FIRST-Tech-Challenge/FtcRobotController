@@ -72,24 +72,26 @@ public class MecanumChassis {
         rightRearDrive = hwMap.get(DcMotorEx.class, "rr");
         lift = hwMap.get(DcMotorEx.class,"lift");
         arm = hwMap.get(DcMotorEx.class,"arm");
+        intakeUp = hwMap.get(CRServo.class, "s1");
 
         rightFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
         rightRearDrive.setDirection(DcMotorEx.Direction.REVERSE);
 
-        // Set all motors to zero power
+
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRearDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRearDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        arm.setPower(0);
+        lift.setPower(0);
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
         leftRearDrive.setPower(0);
         rightRearDrive.setPower(0);
-        arm.setPower(0);
-        lift.setPower(0);
 
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -99,24 +101,13 @@ public class MecanumChassis {
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-
-        intakeUp = hwMap.get(CRServo.class, "s1");
-
-        csensor = hwMap.get(Rev2mDistanceSensor.class, "ds");
-
     }
 
 

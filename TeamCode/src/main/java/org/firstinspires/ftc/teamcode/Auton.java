@@ -16,8 +16,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.nio.ReadOnlyBufferException;
 import java.util.List;
 
-@Autonomous(name="test")
-@Disabled
+@Autonomous(name="jefftest")
 public class Auton extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 
