@@ -1,6 +1,6 @@
-package com.bravenatorsrobotics.drive;
+package com.bravenatorsrobotics.common.drive;
 
-import com.bravenatorsrobotics.core.Robot;
+import com.bravenatorsrobotics.common.core.Robot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;

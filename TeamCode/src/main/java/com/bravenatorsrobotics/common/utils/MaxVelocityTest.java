@@ -1,6 +1,5 @@
-package com.bravenatorsrobotics.utils;
+package com.bravenatorsrobotics.common.utils;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;

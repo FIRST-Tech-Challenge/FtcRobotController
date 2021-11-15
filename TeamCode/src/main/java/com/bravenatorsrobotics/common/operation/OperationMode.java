@@ -1,9 +1,9 @@
-package com.bravenatorsrobotics.operation;
+package com.bravenatorsrobotics.common.operation;
 
-import com.bravenatorsrobotics.core.BravenatorRuntimeException;
-import com.bravenatorsrobotics.core.Robot;
-import com.bravenatorsrobotics.core.RobotSpecifications;
-import com.bravenatorsrobotics.drive.AbstractDrive;
+import com.bravenatorsrobotics.common.core.BravenatorRuntimeException;
+import com.bravenatorsrobotics.common.core.Robot;
+import com.bravenatorsrobotics.common.core.RobotSpecifications;
+import com.bravenatorsrobotics.common.drive.AbstractDrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public abstract class OperationMode<T extends AbstractDrive> extends LinearOpMode {

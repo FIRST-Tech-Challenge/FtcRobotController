@@ -1,8 +1,8 @@
-package com.bravenatorsrobotics.operation;
+package com.bravenatorsrobotics.common.operation;
 
-import com.bravenatorsrobotics.core.FtcGamePad;
-import com.bravenatorsrobotics.core.RobotSpecifications;
-import com.bravenatorsrobotics.drive.AbstractDrive;
+import com.bravenatorsrobotics.common.core.FtcGamePad;
+import com.bravenatorsrobotics.common.core.RobotSpecifications;
+import com.bravenatorsrobotics.common.drive.AbstractDrive;
 
 public abstract class TeleopMode<T extends AbstractDrive> extends OperationMode<T> {
 

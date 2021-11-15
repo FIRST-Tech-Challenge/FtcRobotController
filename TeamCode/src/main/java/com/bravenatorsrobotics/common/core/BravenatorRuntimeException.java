@@ -1,4 +1,4 @@
-package com.bravenatorsrobotics.core;
+package com.bravenatorsrobotics.common.core;
 
 public class BravenatorRuntimeException extends RuntimeException {
 

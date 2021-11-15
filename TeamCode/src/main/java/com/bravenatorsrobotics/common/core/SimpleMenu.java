@@ -1,4 +1,4 @@
-package com.bravenatorsrobotics.core;
+package com.bravenatorsrobotics.common.core;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 

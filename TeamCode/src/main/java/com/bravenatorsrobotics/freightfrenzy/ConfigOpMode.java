@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package com.bravenatorsrobotics.freightfrenzy;
 
-import com.bravenatorsrobotics.core.SimpleMenu;
+import com.bravenatorsrobotics.common.core.SimpleMenu;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Configuration", group="Config")
 public class ConfigOpMode extends LinearOpMode {

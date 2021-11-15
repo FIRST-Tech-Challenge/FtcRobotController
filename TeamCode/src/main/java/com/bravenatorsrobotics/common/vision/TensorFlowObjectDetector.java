@@ -1,8 +1,7 @@
-package com.bravenatorsrobotics.vision;
+package com.bravenatorsrobotics.common.vision;
 
-import com.bravenatorsrobotics.core.BravenatorRuntimeException;
-import com.bravenatorsrobotics.operation.OperationMode;
-import com.vuforia.Vuforia;
+import com.bravenatorsrobotics.common.core.BravenatorRuntimeException;
+import com.bravenatorsrobotics.common.operation.OperationMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;

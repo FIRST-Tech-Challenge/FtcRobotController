@@ -1,6 +1,6 @@
-package com.bravenatorsrobotics.drive;
+package com.bravenatorsrobotics.common.drive;
 
-import com.bravenatorsrobotics.core.Robot;
+import com.bravenatorsrobotics.common.core.Robot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public abstract class AbstractDrive {

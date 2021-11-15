@@ -1,9 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package com.bravenatorsrobotics.freightfrenzy;
 
-import com.bravenatorsrobotics.core.RobotSpecifications;
-import com.bravenatorsrobotics.drive.FourWheelDrive;
-import com.bravenatorsrobotics.drive.MecanumDrive;
-import com.bravenatorsrobotics.drive.TwoWheelDrive;
+import com.bravenatorsrobotics.common.core.RobotSpecifications;
+import com.bravenatorsrobotics.common.drive.MecanumDrive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Specifications extends RobotSpecifications {

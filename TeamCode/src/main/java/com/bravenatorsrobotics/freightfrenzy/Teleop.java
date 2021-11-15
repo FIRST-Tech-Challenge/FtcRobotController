@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package com.bravenatorsrobotics.freightfrenzy;
 
-import com.bravenatorsrobotics.core.FtcGamePad;
-import com.bravenatorsrobotics.drive.MecanumDrive;
-import com.bravenatorsrobotics.operation.TeleopMode;
+import com.bravenatorsrobotics.common.core.FtcGamePad;
+import com.bravenatorsrobotics.common.drive.MecanumDrive;
+import com.bravenatorsrobotics.common.operation.TeleopMode;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;

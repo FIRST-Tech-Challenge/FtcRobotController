@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package com.bravenatorsrobotics.freightfrenzy;
 
-import com.bravenatorsrobotics.drive.MecanumDrive;
-import com.bravenatorsrobotics.operation.AutonomousMode;
-import com.bravenatorsrobotics.vision.TensorFlowObjectDetector;
+import com.bravenatorsrobotics.common.drive.MecanumDrive;
+import com.bravenatorsrobotics.common.operation.AutonomousMode;
+import com.bravenatorsrobotics.common.vision.TensorFlowObjectDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;

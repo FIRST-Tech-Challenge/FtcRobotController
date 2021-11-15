@@ -1,6 +1,6 @@
-package com.bravenatorsrobotics.core;
+package com.bravenatorsrobotics.common.core;
 
-import com.bravenatorsrobotics.drive.AbstractDrive;
+import com.bravenatorsrobotics.common.drive.AbstractDrive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
