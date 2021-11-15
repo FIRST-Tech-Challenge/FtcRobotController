@@ -265,7 +265,7 @@ public class BotMoveProfile {
         Log.d(TAG, String.format("targetVectorLocal: %.2f", targetVectorLocal));
 
         if (distanceY == 0){
-            if (distanceX < 0){
+            if (distanceX > 0){
                 targetVector = 270;
             }
             else{
@@ -741,6 +741,9 @@ public class BotMoveProfile {
             distanceTicks = - distanceTicks;
         }
         distanceTicks = distanceTicks * bot.getEncoderDirection();
+
+        distanceTicks = distanceTicks / 0.66; // Math.sin(Math.toRadians(45));
+
         profile.setLeftTarget(distanceTicks);
         profile.setRightTarget(distanceTicks);
         profile.setLeftTargetBack(distanceTicks);
