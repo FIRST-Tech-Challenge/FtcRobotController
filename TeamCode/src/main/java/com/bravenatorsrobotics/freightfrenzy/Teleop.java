@@ -20,7 +20,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     private static final int LIFT_STAGE_2 = 200;
     private static final int LIFT_STAGE_3 = 300;
 
-    private static final double LIFT_POWER = 0.75;
+    private static final double LIFT_POWER = 0.50;
 
     private static final double CUP_OBJECT_THRESHOLD_CM = 6.0; // CM
     private static final double REDUCE_SPEED_MULTIPLIER = 0.25;
@@ -37,7 +37,6 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     private RevColorSensorV3 cupDistanceSensor;
 
     private boolean shouldOverrideSpeedReduction = false;
-    private boolean shouldFreeLiftWhenDone = false;
 
     private double turnTablePower = 1;
 
@@ -55,7 +54,10 @@ public class Teleop extends TeleopMode<MecanumDrive> {
             turnTablePower = -turnTablePower;
 
         lift = robot.GetMotor("lift", false);
-        intake = robot.GetMotor("intake", false);
+        lift.setTargetPositionTolerance(1);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        intake = robot.GetMotor("intake", true);
         turnTableSpinner = robot.GetMotor("turnTable", false);
 
         cupServo = hardwareMap.servo.get("cupServo");
@@ -76,12 +78,9 @@ public class Teleop extends TeleopMode<MecanumDrive> {
 
         // Check to see if object is in cup. If so tilt it back.
 
-        // Free Lift
-        if(shouldFreeLiftWhenDone) {
-            if(!lift.isBusy()) {
-                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-        }
+        telemetry.addData("Lift Height", lift.getCurrentPosition());
+        telemetry.update();
+
     }
 
     @Override
@@ -91,9 +90,9 @@ public class Teleop extends TeleopMode<MecanumDrive> {
 
     private void HandleGamePadDrive() {
         double v = Math.pow(gamepad1.left_stick_y, 3);
-        double h = Math.pow(gamepad1.left_stick_x, 3) + Math.pow(driverGamePad.getLeftTrigger(), 3)
-                - Math.pow(driverGamePad.getRightTrigger(), 3);
-        double r = Math.pow(gamepad1.right_stick_x, 3);
+        double h = Math.pow(gamepad1.left_stick_x, 3) - Math.pow(driverGamePad.getLeftTrigger(), 3)
+                + Math.pow(driverGamePad.getRightTrigger(), 3);
+        double r = -Math.pow(gamepad1.right_stick_x, 3);
 
         if(!liftTouchSensor.isPressed() && !shouldOverrideSpeedReduction) {
             v *= REDUCE_SPEED_MULTIPLIER;
@@ -157,7 +156,6 @@ public class Teleop extends TeleopMode<MecanumDrive> {
                     lift.setTargetPosition(0);
                     lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     lift.setPower(LIFT_POWER);
-                    shouldFreeLiftWhenDone = true;
 
                     // TODO: Check for manual safety switch
                 }
@@ -170,7 +168,6 @@ public class Teleop extends TeleopMode<MecanumDrive> {
                     lift.setTargetPosition(LIFT_STAGE_1);
                     lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     lift.setPower(LIFT_POWER);
-                    shouldFreeLiftWhenDone = true;
                 }
 
                 break;
@@ -181,7 +178,6 @@ public class Teleop extends TeleopMode<MecanumDrive> {
                     lift.setTargetPosition(LIFT_STAGE_2);
                     lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     lift.setPower(LIFT_POWER);
-                    shouldFreeLiftWhenDone = true;
                 }
 
                 break;
@@ -192,7 +188,6 @@ public class Teleop extends TeleopMode<MecanumDrive> {
                     lift.setTargetPosition(LIFT_STAGE_3);
                     lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     lift.setPower(LIFT_POWER);
-                    shouldFreeLiftWhenDone = true;
                 }
 
                 break;

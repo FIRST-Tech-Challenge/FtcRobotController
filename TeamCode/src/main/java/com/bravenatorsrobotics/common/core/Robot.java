@@ -85,6 +85,9 @@ public class Robot<DriveType extends AbstractDrive> {
         DcMotorEx motor = opMode.hardwareMap.get(DcMotorEx.class, motorName);
         motor.setDirection(isReversed ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
 
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         externalMotors.add(motor);
 
         return motor;
