@@ -122,9 +122,3 @@ android {
     ndkVersion '21.3.6528147'
 }
 
-repositories {
-    flatDir {
-        dirs rootProject.file('libs')
-    }
-}
-
