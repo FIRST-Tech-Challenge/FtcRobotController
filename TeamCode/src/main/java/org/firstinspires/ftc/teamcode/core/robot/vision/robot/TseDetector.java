@@ -54,6 +54,7 @@ public class TseDetector {
 
             @Override
             public void onError(int errorCode) {
+                System.out.println("OpenCv Pipeline error with error code " + errorCode);
             }
         });
     }
