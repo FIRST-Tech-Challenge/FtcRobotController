@@ -55,11 +55,11 @@ public class OperatingMode extends LinearOpMode {
     DcMotor DcMotorBackLeft;
     DcMotor DcMotorBackRight;
 
-    double   leftFrontPower, rightFrontPower, leftBackPower, rightBackPower, rxValue, ryValue, lxValue, lyValue, deadZone, xValueArm, yValueArm, forArmPower, servoPos, powerFactor, minPowerFactor;
-    double  potVal, angVelocity, velAxes, leftTrigger, rightTrigger;
-    // @Override
+    double leftFrontPower, rightFrontPower, leftBackPower, rightBackPower, rxValue, ryValue, lxValue, lyValue, minPowerFactor;
+    double leftTrigger, rightTrigger;
+
     public void runOpMode() {
-        //2 - initialize variables
+        //2 - initialize component objects from hardware map
         DcMotorBackLeft = hardwareMap.dcMotor.get("DcMotorBackLeft");
         DcMotorBackRight = hardwareMap.dcMotor.get("DcMotorBackRight");
         DcMotorFrontLeft = hardwareMap.dcMotor.get("DcMotorFrontLeft");
