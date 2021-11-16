@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -16,8 +14,6 @@ public class SimpleBlueVisionYCbCr extends OpenCvPipeline {
 
     volatile boolean[] positions = {false,false,false};
 
-    private Mat capturedFrame;
-    private boolean capture = false;
 
     public SimpleBlueVisionYCbCr(Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -45,14 +41,14 @@ public class SimpleBlueVisionYCbCr extends OpenCvPipeline {
             ymax = (capstone.get(0).y+capstone.get(0).ysize*2)/input.height();
         } else {
             // In case the capstone wasn't found
-            ymin = 0;
+            ymin = 0.4;
             ymax = 1;
         }
         ArrayList<VisionObject> tapePotential = DetectionMethods.detectYCrCb(input, low, high, 0,
-                1,ymin, ymax,0.03,0.8,"tape"); // Detect the tape
+                1,ymin, ymax,0.03,0.08,"tape"); // Detect the tape
         ArrayList<VisionObject> tape = new ArrayList<>();
         for(VisionObject v : tapePotential) {
-            if(capstone.size() < 1 || !(Math.abs(v.x-capstone.get(0).x)/input.width() < 0.2)) {
+            if(capstone.size() < 1 || !(Math.abs(v.x-capstone.get(0).x)/input.width() < 0.1)) {
                 tape.add(v);
                 Imgproc.circle(input,new Point(v.x,v.y), (int) v.magSize(),new Scalar(255,0,0,0),5);
                 if(telemetry != null) {
@@ -128,21 +124,10 @@ public class SimpleBlueVisionYCbCr extends OpenCvPipeline {
         if(telemetry != null) {
             telemetry.update();
         }
-        if(capture) {
-            capturedFrame = new Mat(input.rows(), input.cols(), CvType.CV_8UC1);
-            input.copyTo(capturedFrame);
-            capture = false;
-        }
         return input;
     }
 
     public boolean[] getPositions() {
         return positions;
-    }
-
-    public void captureFrame() {
-        capture = true;
-        while(capture) {}
-        
     }
 }

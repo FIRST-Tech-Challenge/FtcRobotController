@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3;
 import org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3Attachments;
 
-@TeleOp
-public class TeleopAttachments extends OpMode {
+@TeleOp(name="Viridian Competition Teleop 2 Player")
+public class Teleop2p extends OpMode {
     CompBotV3Attachments r = new CompBotV3Attachments();
-    double initialHeading;
+    double initialHeading, error;
     boolean headingReset = false;
 
     @Override
@@ -21,7 +21,7 @@ public class TeleopAttachments extends OpMode {
 
     @Override
     public void loop() {
-        double y = gamepad1.left_stick_y, x = -1*gamepad1.left_stick_x, turn = gamepad1.right_stick_x;
+        double y = gamepad1.left_stick_y, x = -1*gamepad1.left_stick_x, turn = -1*gamepad1.right_stick_x;
 
         // Deadzone
         y = (Math.abs(y)>0.05 ? y : 0);
@@ -43,23 +43,30 @@ public class TeleopAttachments extends OpMode {
                 initialHeading = r.imu.getHeading();
                 headingReset = true;
             } else {
-                double error = r.imu.getHeading() - initialHeading;
-                r.fl.setPower(MathUtils.clamp(y + x - CompBotV3.corrCoeff*error,-1,1));
-                r.fr.setPower(MathUtils.clamp(-(y - x + CompBotV3.corrCoeff*error),-1,1));
-                r.bl.setPower(MathUtils.clamp(y - x - CompBotV3.corrCoeff*error,-1,1));
-                r.br.setPower(MathUtils.clamp(-(y + x + CompBotV3.corrCoeff*error),-1,1));
+                error = r.imu.getHeading() - initialHeading;
+                turn = CompBotV3.corrCoeff*error;
             }
         } else {
-            r.fl.setPower(MathUtils.clamp(y+x+turn ,-1,1));
-            r.fr.setPower(MathUtils.clamp(-(y-x-turn),-1,1));
-            r.bl.setPower(MathUtils.clamp(y-x+turn,-1,1));
-            r.br.setPower(MathUtils.clamp(-(y+x-turn),-1,1));
+            headingReset = false;
         }
+        r.fl.setPower(MathUtils.clamp(y+x+turn ,-1,1));
+        r.fr.setPower(MathUtils.clamp(-(y-x-turn),-1,1));
+        r.bl.setPower(MathUtils.clamp(y-x+turn,-1,1));
+        r.br.setPower(MathUtils.clamp(-(y+x-turn),-1,1));
 
-        r.intake.setPower((gamepad1.a?1:0) - (gamepad1.b?1:0));
-        r.lift.setPower((gamepad1.dpad_up?1:0) - (gamepad1.dpad_down?1:0));
-        r.spin.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
-        r.bucket.setPower(gamepad1.left_bumper?-1:1);
+        r.intake.setPower((gamepad2.a?1:0) - (gamepad2.b?1:0));
+        r.lift.setPower((gamepad2.dpad_up?1:0) - (gamepad2.dpad_down?1:0));
+        r.spin.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
+        r.bucket.setPower(gamepad2.left_bumper?-1:1);
+
+        int a = r.lift.getCurrentPosition();
+        telemetry.addData("liftposition", a);
+        telemetry.addData("error", error);
+        telemetry.update();
+
+        if(gamepad2.right_stick_button) {
+            r.imu.reset();
+        }
 
     }
 

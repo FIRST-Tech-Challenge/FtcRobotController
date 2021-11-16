@@ -10,17 +10,18 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SimpleRedVisionYCbCr extends OpenCvPipeline {
+public class SimpleExtraVisionYCbCr extends OpenCvPipeline {
     Telemetry telemetry = null;
 
     volatile boolean[] positions = {false,false,false};
 
-    public SimpleRedVisionYCbCr(Telemetry telemetry) {
+
+    public SimpleExtraVisionYCbCr(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
-    public SimpleRedVisionYCbCr() {}
+    public SimpleExtraVisionYCbCr() {}
 
-    public Scalar x = new Scalar(0,0,0,0), low = new Scalar(0, 150, 100, 0), high = new Scalar(255, 195, 130, 255), low2 = new Scalar(0,100,100,0), high2 = new Scalar(255,120,120,255);
+    public Scalar x = new Scalar(0,0,0,0), low = new Scalar(0, 83.6, 150.3, 0), high = new Scalar(255, 117.5, 160.1, 255), low2 = new Scalar(0,100,100,0), high2 = new Scalar(255,120,120,255);
     @Override
     public Mat processFrame(Mat input) {
         // YCbCr scalars

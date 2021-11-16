@@ -27,6 +27,12 @@ public class CompBotV3Attachments extends CompBotV3 {
         }
         thisInit(hardwareMap);
     }
+    public void init(HardwareMap hardwareMap, boolean cameraInit, Telemetry telemetry, String color) {
+        if(cameraInit) {
+            super.init(hardwareMap, cameraInit, telemetry, color);
+        }
+        thisInit(hardwareMap);
+    }
     public void thisInit(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotor.class, "intake");
         spin = hardwareMap.get(DcMotor.class, "spin");
