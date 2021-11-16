@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.thread.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -105,7 +107,9 @@ public class Lift {
         if (curPos >= (double) 960) { // completely away from intake interference
             if (rBumpReader.wasJustReleased()) {
                 dumping.set(!dumping.get());
-                event.cancel();
+                if (Objects.nonNull(event)) {
+                    event.cancel();
+                }
             }
             if (dumping.get()) {
                 if (!dumpingEventRunning.get()) {

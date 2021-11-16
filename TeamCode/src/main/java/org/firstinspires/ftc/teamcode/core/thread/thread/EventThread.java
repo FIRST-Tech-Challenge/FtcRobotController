@@ -6,13 +6,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Thread to handle {@link Event events} as requests. Watch out, if it is overloaded with requests
  * and its not able to fulfill them faster than they are sent, it will not finish the queue.
  */
 public class EventThread extends Thread {
-    private final List<Event> queue = Collections.synchronizedList(new LinkedList<>());
+    private final ConcurrentLinkedQueue<Event> queue = new ConcurrentLinkedQueue<>();
 
     public EventThread() {
         this.setPriority(3);
