@@ -47,4 +47,64 @@ public abstract class TeleOpManager {
         return FUNCTION2;
     }
 
+    public Gamepad getGamepadWithFunction1() {
+        if(getGamepad1Functions().hasF1()) {
+            return getGamepad1();
+        }else if(getGamepad2Functions().hasF1()) {
+            return getGamepad2();
+        }else{
+            return null;
+        }
+    }
+
+    public Gamepad getGamepadWithFunction2() {
+        if(getGamepad1Functions().hasF2()) {
+            return getGamepad1();
+        }else if(getGamepad2Functions().hasF2()) {
+            return getGamepad2();
+        }else{
+            return null;
+        }
+    }
+
+    public Gamepad getGamepadWithFunction3() {
+        if(getGamepad1Functions().hasF3()) {
+            return getGamepad1();
+        }else if(getGamepad2Functions().hasF3()) {
+            return getGamepad2();
+        }else{
+            return null;
+        }
+    }
+
+    public Gamepad getGamepadWithFunction4() {
+        if(getGamepad1Functions().hasF4()) {
+            return getGamepad1();
+        }else if(getGamepad2Functions().hasF4()) {
+            return getGamepad2();
+        }else{
+            return null;
+        }
+    }
+
+    public Gamepad getGamepadWithFunction5() {
+        if(getGamepad1Functions().hasF5()) {
+            return getGamepad1();
+        }else if(getGamepad2Functions().hasF5()) {
+            return getGamepad2();
+        }else{
+            return null;
+        }
+    }
+
+    public Gamepad getGamepadWithFunction6() {
+        if(getGamepad1Functions().hasF6()) {
+            return getGamepad1();
+        }else if(getGamepad2Functions().hasF6()) {
+            return getGamepad2();
+        }else{
+            return null;
+        }
+    }
+
 }

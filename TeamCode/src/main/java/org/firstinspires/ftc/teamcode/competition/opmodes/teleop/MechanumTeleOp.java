@@ -13,9 +13,9 @@ public class MechanumTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        GamepadFunctions function1 = new GamepadFunctions(gamepad1, true, false, false, false, false, false);
+        GamepadFunctions function1 = new GamepadFunctions(gamepad1, true, true, true, true, true, true);
         GamepadFunctions function2 = new GamepadFunctions(gamepad2, false, false, false, false, false, false);
-        TeleOpHWDevices devices = new TeleOpHWDevices(false, false, false, false, false, false);
+        TeleOpHWDevices devices = new TeleOpHWDevices(true, true, true, true, true, true, true);
         MechanumTeleOpManager manager = new MechanumTeleOpManager(telemetry, hardwareMap, gamepad1, gamepad2, function1, function2, devices);
         waitForStart();
         resetStartTime();

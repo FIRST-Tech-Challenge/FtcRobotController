@@ -9,8 +9,13 @@
     <string name="DRIVETRAIN_RIGHT_DRIVE_1">rd1</string>
     <string name="DRIVETRAIN_RIGHT_DRIVE_2">rd2</string>
     <string name="HW_SPINNER">spin</string>
-    <string name="HW_LIFT">lift</string>
+    <string name="HW_LIFT">liftOne</string>
+    <string name="HW_LIFT_TWO">liftTwo</string>
     <string name="HW_GRABBER">grabber</string>
     <string name="HW_TRAPPER">trapper</string>
     <string name="HW_TRAPPER_TRIGGER">distance</string>
+    <string name="HW_DUCK">duck</string>
+    <string name="HW_SPINNER_SERVO">spinnerServo</string>
+    <string name="HW_LIFT_SERVO">liftServo</string>
+    <string name="HW_LIFT_DROPPER_SERVO">liftDropper</string>
 </resources>
