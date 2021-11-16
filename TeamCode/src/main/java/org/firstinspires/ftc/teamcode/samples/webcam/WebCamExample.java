@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @TeleOp
 public class WebCamExample extends LinearOpMode
 {
+
     OpenCvWebcam webcam;
 
     @Override
