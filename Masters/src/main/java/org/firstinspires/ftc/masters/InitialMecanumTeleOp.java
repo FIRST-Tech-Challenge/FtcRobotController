@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@TeleOp
 public class InitialMecanumTeleOp extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -12,6 +15,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
+    DcMotor intakeMotor = null;
 
     DcMotor carouselMotor = null;
     // declare motor speed variables
@@ -31,11 +35,12 @@ public class InitialMecanumTeleOp extends LinearOpMode {
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone).
          */
-        leftFrontMotor = hardwareMap.dcMotor.get("motorFrontLeft");
-        rightFrontMotor = hardwareMap.dcMotor.get("motorFrontRight");
-        leftRearMotor = hardwareMap.dcMotor.get("motorBackLeft");
-        rightRearMotor = hardwareMap.dcMotor.get("motorBackRight");
+        leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
+        rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
+        leftRearMotor = hardwareMap.dcMotor.get("backLeft");
+        rightRearMotor = hardwareMap.dcMotor.get("backRight");
         carouselMotor = hardwareMap.dcMotor.get("carouselMotor");
+        intakeMotor = hardwareMap.dcMotor.get("intake");
 
         // Set the drive motor direction:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -44,6 +49,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
         rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set the drive motor run modes:
         // "RUN_USING_ENCODER" causes the motor to try to run at the specified fraction of full velocity
@@ -59,7 +65,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         runtime.reset();
 
         boolean carouselOn = false; //Outside of loop()
-
+        boolean intakeOn = false;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -108,6 +114,12 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 else carouselMotor.setPower(.4);
                 carouselOn = true;
             } else if(!gamepad1.a) carouselOn = false;
+
+            if(gamepad1.b && !intakeOn) {
+                if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
+                else intakeMotor.setPower(.8);
+                intakeOn = true;
+            } else if(!gamepad1.b) intakeOn = false;
         }
     }
 }
