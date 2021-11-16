@@ -24,23 +24,24 @@ public class ToolTestCode extends LinearOpMode {
         hardwareMap.get(Blinker.class, "Expansion Hub 2");
         final GamepadEx moveGamepad = new GamepadEx(gamepad1);
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
-        final Lift lift = new Lift(eventThread, hardwareMap, toolGamepad, telemetry);
-        final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
-        new Carousel(eventThread, hardwareMap,toolGamepad);
-        new Intake(eventThread, hardwareMap,toolGamepad);
+        new Carousel(eventThread, hardwareMap, toolGamepad);
         HardwareMapListGenerator.gen(hardwareMap, telemetry);
         Thread thread = new Thread(() -> {
+            final Lift lift = new Lift(eventThread, hardwareMap, toolGamepad, telemetry);
             while (opModeIsActive()) {
                 lift.update();
             }
         });
         Thread thread2 = new Thread(() -> {
+            final Intake intake = new Intake(hardwareMap, toolGamepad);
+            final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
             while (opModeIsActive()) {
                 move.update();
+                intake.run();
             }
         });
         thread.setPriority(3);
-        thread2.setPriority(3);
+        thread2.setPriority(4);
         waitForStart();
         telemetry.clearAll();
         telemetry.update();

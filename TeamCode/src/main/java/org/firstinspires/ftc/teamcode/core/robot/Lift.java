@@ -31,7 +31,6 @@ public class Lift {
         try { Thread.sleep(100); } catch (InterruptedException ignored) {}
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armServo = map.get(Servo.class,"armServo");
-        encoderOffset = liftMotor.getCurrentPosition() * -1;
         // bottomSensor = map.get(DigitalChannel.class,"bottomSensor");
         // bottomSensor.setMode(DigitalChannel.Mode.INPUT);
         topSensor = map.get(DigitalChannel.class,"topSensor");
@@ -50,7 +49,6 @@ public class Lift {
     private final GamepadEx gamepad;
     private final ButtonReader rBumpReader;
     private final ButtonReader aReader;
-    private final double encoderOffset;
     private double curPos = 0;
     private boolean running = false; // currently moving down
     private boolean first = true; // first time its reached bottom
@@ -59,6 +57,7 @@ public class Lift {
     private final EventThread eventThread;
     private TimedEvent event;
     public void update() {
+        curPos = liftMotor.getCurrentPosition();
         final double stickValue = gamepad.getLeftY();
         telemetry.addData("left stick",stickValue);
         telemetry.addData("lift motor power", liftMotor.getPower());
@@ -99,7 +98,6 @@ public class Lift {
                 }
             }
         }
-        curPos = liftMotor.getCurrentPosition() + encoderOffset;
         arm();
     }
     private void arm() {

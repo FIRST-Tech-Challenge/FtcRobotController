@@ -18,17 +18,16 @@ public class Intake{
     private final ButtonReader reader;
     private final DcMotor motor;
     private final DistanceSensor distanceSensor;
-    private boolean toggle = false;
-    public Intake(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad) {
+    public Intake(@NonNull HardwareMap map, GamepadEx toolGamepad) {
         this.motor = map.get(DcMotor.class, "intake");
         this.reader = new ButtonReader(toolGamepad, GamepadKeys.Button.X);
         this.distanceSensor = map.get(DistanceSensor.class, "intakeSensor");
         this.toolGamepad = toolGamepad;
     }
-    protected void run() {
+    public void run() {
         if (distanceSensor.getDistance(DistanceUnit.MM) >= 210) {
-            toggle = !toggle;
-            if (toggle) {
+            reader.readValue();
+            if (reader.wasJustReleased()) {
                 if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
                     motor.setPower(1);
                 } else {
