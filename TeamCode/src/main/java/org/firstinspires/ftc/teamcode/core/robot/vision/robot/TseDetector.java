@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.core.thread.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenChangedOnceEvent;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedOnceEvent;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenVariableChangedOnceEvent;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -28,7 +29,7 @@ public class TseDetector {
     public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName) {
         hardwareMap = hMap;
         this.webcamName = webcamName;
-        eventThread.addEvent(new RunWhenChangedOnceEvent<>(this::notifyAll, new AtomicReference<>(pipeline.differentSpot().first)));
+        eventThread.addEvent(new RunWhenOutputChangedOnceEvent(this::notifyAll, () -> pipeline.differentSpot().first));
     }
 
     public synchronized int run() {
