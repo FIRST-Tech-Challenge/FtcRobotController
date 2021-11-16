@@ -3,7 +3,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.core.thread.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import androidx.annotation.NonNull;
 /**
  * carousel spinner, extension of ToggleableTool

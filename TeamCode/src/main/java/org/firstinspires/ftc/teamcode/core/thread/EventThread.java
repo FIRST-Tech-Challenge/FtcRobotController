@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.core.thread.thread;
+package org.firstinspires.ftc.teamcode.core.thread;
 
 import org.firstinspires.ftc.teamcode.core.thread.types.api.Event;
 
