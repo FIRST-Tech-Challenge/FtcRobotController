@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 /**
@@ -23,8 +24,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "madnessAutonomous", group = "Concept")
-public class AutonomousCode extends LinearOpMode {
+@TeleOp
+        (name = "madnessAutonomous", group = "Concept")
+public class AutonomousCode                                extends LinearOpMode {
     /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
      * the following 4 detectable objects
      *  0: Ball,
@@ -71,11 +73,15 @@ public class AutonomousCode extends LinearOpMode {
      */
     private TFObjectDetector tfod;
 
-    DcMotor motoryay;
+//    DcMotor motoryay;
     DcMotor topLeftMotor;
     DcMotor topRightMotor;
     DcMotor bottomLeftMotor;
     DcMotor bottomRightMotor;
+    Boolean recognized;
+    TouchSensor touchsensor1;
+    TouchSensor touchsensor2;
+    int numOfMarker;
 
     @Override
     public void runOpMode() {
@@ -83,11 +89,14 @@ public class AutonomousCode extends LinearOpMode {
         // first.
         initVuforia();
         initTfod();
-        motoryay = hardwareMap.get(DcMotor.class, "motor1");
+//        motoryay = hardwareMap.get(DcMotor.class, "motor1");
         topLeftMotor = hardwareMap.get(DcMotor.class, "tLMotor");
         topRightMotor = hardwareMap.get(DcMotor.class, "tRMotor");
         bottomLeftMotor = hardwareMap.get(DcMotor.class, "bLMotor");
         bottomRightMotor = hardwareMap.get(DcMotor.class, "bRMotor");
+        touchsensor1 = hardwareMap.get(TouchSensor.class, "touchSensor1");
+        touchsensor2 = hardwareMap.get(TouchSensor.class, "touchSensor2");
+
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -102,7 +111,7 @@ public class AutonomousCode extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(2.5, 16.0/9.0);
+            tfod.setZoom(2.5, 16.0 / 9.0);
         }
 
         /** Wait for the game to begin */
@@ -112,79 +121,221 @@ public class AutonomousCode extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-                        // step through the list of recognitions and display boundary info.
-                        int i = 0;
-                        if (updatedRecognitions.size() == 0){
-                            motoryay.setPower(0.0);
+                recognized = false;
+                while (recognized == false) {
+                    while (tfod == null){
+                        bottomLeftMotor.setPower(0.1);
+                        bottomRightMotor.setPower(0.1);
+                        topLeftMotor.setPower(0.1);
+                        topRightMotor.setPower(0.1);
+                    }
+                    if (tfod != null) {
+                        bottomLeftMotor.setPower(0.0);
+                        bottomRightMotor.setPower(0.0);
+                        topLeftMotor.setPower(0.0);
+                        topRightMotor.setPower(0.0);
+                        // getUpdatedRecognitions() will return null if no new information is available since
+                        // the last time that call was made.
+                        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                        if (updatedRecognitions != null) {
+                            telemetry.addData("# Object Detected", updatedRecognitions.size());
+                            // step through the list of recognitions and display boundary info.
+                            int i = 0;
+                            if (updatedRecognitions.size() == 0) {
+//                                motoryay.setPower(0.0);
+                            }
+                            for (Recognition recognition : updatedRecognitions) {
+                                telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                                telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                        recognition.getLeft(), recognition.getTop());
+                                telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                        recognition.getRight(), recognition.getBottom());
+                                i++;
+                                if (recognition.getLabel().equals("Duck")  /** && marker position is number relative to the right**/) {
+//                                    motoryay.setPower(1.0);
+//                                    telemetry.addData("Motor power: ", motoryay.getPower());
+                                    autonomousDuck(recognition);
+                                    recognized = true;
+                                } else if (recognition.getLabel().equals("teamMarker")){ //Will copy Greg's teamMarker code
+//                                    motoryay.setPower(0.0);
+//                                    telemetry.addData("Motor power: ", motoryay.getPower());
+                                    autonomousTeamMarker(recognition);
+                                    recognized = true;
+                                }
+                            }
+                            telemetry.update();
                         }
-                        for (Recognition recognition : updatedRecognitions) {
-                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                    recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                    recognition.getRight(), recognition.getBottom());
-                            i++;
-
-                            if (recognition.getLabel().equals("Ball")){
-                                motoryay.setPower(1.0);
-                                telemetry.addData("Motor power: ", motoryay.getPower());
-//                                telemetry.update();
-                                autonomousBall();
-                            }
-                            else if  (recognition.getLabel().equals("Cube")){
-                                motoryay.setPower(1.0);
-                                telemetry.addData("Motor power: ", motoryay.getPower());
-//                                telemetry.update();
-                                autonomousBlock();
-                            }
-                            else if (recognition.getLabel().equals("Duck")){
-                                motoryay.setPower(1.0);
-                                telemetry.addData("Motor power: ", motoryay.getPower());
-//                                telemetry.update();
-                                autonomousDuck();
-                            }
-                            else{
-                                motoryay.setPower(0.0);
-                                telemetry.addData("Motor power: ", motoryay.getPower());
-//                                telemetry.update();
-                            }
-                        }
-                        telemetry.update();
                     }
                 }
             }
         }
     }
-
     /**
      * If it recognizes block, start this function
+     * @param recognition
      */
-    public void autonomousBlock(){
-        topLeftMotor.setPower(10);
-        topRightMotor.setPower(10);
+    public void autonomousDuck(Recognition recognition){
+        /**
+         *    if (recognition.getRight > 0){
+         *             Move up a bit rotate 90 degrees to the right, then drive stragitforward towards the middle, then rotate again 90 degrees to the right and drive right before the goal
+         *             releaseHigh();
+         *             cargo();
+         *             parking();
+         *
+         *         }
+         *         else if (recogntion.getLeft() < 0){
+         *             Move up a bit rotate 90 degrees to the right, then drive stragitforward towards the middle, then rotate again 90 degrees to the right and drive right before the goal
+         *             releaseLow();
+         *             cargo();
+         *             parking();
+         *         }
+         *         else if (recognition.getMiddle() == 0){
+         *             Move up a bit rotate 90 degrees to the right, then drive stragitforward towards the middle, then rotate again 90 degrees to the right and drive right before the goal
+         *             releaseMiddle();
+         *             cargo();
+         *             parking();
+         *         }
+         */
+    }
+        /**
+         *
+         * If it recognizes team marker, start this function
+         */
+    public void autonomousTeamMarker(Recognition recognition) {
+/**
+        if (recognition.getRight > 0){
+            Move up a bit rotate 90 degrees to the right, then drive stragitforward towards the middle, then rotate again 90 degrees to the right and drive right before the goal
+            releaseHigh();
+            cargo();
+            parking();
+
+        }
+        else if (recogntion.getLeft() < 0){
+            Move up a bit rotate 90 degrees to the right, then drive stragitforward towards the middle, then rotate again 90 degrees to the right and drive right before the goal
+            releaseLow();
+            cargo();
+            parking();
+        }
+        else if (recognition.getMiddle() == 0){
+            Move up a bit rotate 90 degrees to the right, then drive stragitforward towards the middle, then rotate again 90 degrees to the right and drive right before the goal
+            releaseMiddle();
+            cargo();
+            parking();
+        }
+**/
+
     }
 
-    public void autonomousBall(){
-        topLeftMotor.setPower(10);
-        topRightMotor.setPower(10);
+    /**Functions for top, middle, and bottom goal**/
+    public void releaseLow() throws InterruptedException {
+        wait(200);
+        int timer = 0;
+        while(timer < 150){
+            //outtakeMotorLift.setPower(1);
+            if (timer < 150){
+                timer += 1;
+            }
+            //wait(100);
+        }
+
+        //set power 1
+        //wait 100 ms
+        //set power 0
+        wait(200);
+        //outtakeMotor.setPower(0);
+        wait(1000);
+        release(300);
     }
 
-    public void autonomousDuck(){
-        topLeftMotor.setPower(10);
-        topRightMotor.setPower(10);
+    public void releaseHigh() throws InterruptedException{
+        wait(200);
+        int timer = 0;
+        while(timer < 500){
+            //outtakeMotor.setPower(1);
+            if (timer < 500){
+                timer += 1;
+            }
+        }
+        wait(200);
+        if (timer == 500){
+            //outtakeMotor.setPower(0);
+        }
+        wait(1000);
+        release(500);
     }
 
-    public void autonomousTeamMarker(){
-        topLeftMotor.setPower(10);
-        topRightMotor.setPower(10);
+    public void releaseMiddle() throws InterruptedException {
+        wait(200);
+        int timer = 0;
+        while(timer < 350){
+            //outtakeMotor.setPower(1);
+            if (timer < 350){
+                timer += 1;
+            }
+
+        }
+        wait(200);
+        //outtakeMotor.setPower(0);
+
+        wait(1000);
+        release(500);
+    }
+
+
+    public void release(int counter) throws InterruptedException {
+        wait(200);
+        int timer = 0;
+        while(timer < counter){
+            //outtakeMotor.setPower(1);
+            if (timer < counter){
+                timer += 1;
+            }
+        }
+        wait(200);
+        //outtakeMotor.setPower(0);
+        wait(1000);
+    }
+    public void cargo() {
+         /**Make sure that the robot turns 180 degrees so it is facing down
+          * Drive down until the edge, then rotate 90 degrees to the left.
+          * Drive towards the beams and collect the cargo block
+          * Turn 180 degrees again, drive until it is out of the beams, and drop the off
+          **/
+    }
+    public void parking() throws InterruptedException {
+        int counter = 0;
+        while(touchsensor1.isPressed() == false && touchsensor2.isPressed() == false){
+            bottomLeftMotor.setPower(1);
+            bottomRightMotor.setPower(1);
+            topLeftMotor.setPower(1);
+            topRightMotor.setPower(1);
+        }
+        wait(200);
+
+        bottomLeftMotor.setPower(0);
+        bottomRightMotor.setPower(0);
+        topLeftMotor.setPower(0);
+        topRightMotor.setPower(0);
+        wait(1000);
+        carousel();
+        wait(1000);
+        //rotate 90 degrees to the right and drive towards the parking lot
 
     }
+    public void carousel() throws InterruptedException{
+        int counter = 0;
+        while (counter < 500){
+               //carouselMotor.setPower(1);
+                if (counter < 500){
+                    counter += 1;
+                }
+            }
+            wait(200);
+            //carouselMotor.setPower(0);
+            wait(1000);
+
+        }
+
 
     /**
      * Initialize the Vuforia localization engine.
@@ -211,7 +362,7 @@ public class AutonomousCode extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.minResultConfidence = 0.65f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);

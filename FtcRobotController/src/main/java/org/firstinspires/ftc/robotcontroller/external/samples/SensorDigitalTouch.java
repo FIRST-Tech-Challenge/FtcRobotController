@@ -46,6 +46,8 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 @TeleOp(name = "Sensor: Digital touch", group = "Sensor")
 @Disabled
 public class SensorDigitalTouch extends LinearOpMode {
+
+    // get a reference to our digitalTouch object.
     /**
      * The REV Robotics Touch Sensor
      * is treated as a digital channel.  It is HIGH if the button is unpressed.
@@ -56,13 +58,10 @@ public class SensorDigitalTouch extends LinearOpMode {
      * The lower (first) pin stays unconnected.*
      */
 
-    DigitalChannel digitalTouch;  // Hardware Device Object
+    DigitalChannel digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");  // Hardware Device Object
 
     @Override
     public void runOpMode() {
-
-        // get a reference to our digitalTouch object.
-        digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
 
         // set the digital channel to input.
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
