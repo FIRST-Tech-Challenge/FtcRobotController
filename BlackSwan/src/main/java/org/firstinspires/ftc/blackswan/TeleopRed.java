@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackSwan;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,7 +15,7 @@ public class TeleopRed extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor frontLeft, backLeft, frontRight,backRight;
+        DcMotor frontLeft, backLeft, frontRight, backRight, arm;
         CRServo carousel;
 
         frontLeft = hardwareMap.get(DcMotor.class,"frontLeft");
@@ -24,6 +24,8 @@ public class TeleopRed extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class,"backRight");
 
         carousel = hardwareMap.get(CRServo.class, "carousel");
+
+        arm = hardwareMap.get(DcMotor.class, "arm");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -114,6 +116,14 @@ public class TeleopRed extends LinearOpMode {
                 backLeft.setPower(0);
                 backRight.setPower(0);
                 detection = "None";
+            }
+
+            if (gamepad2.dpad_up){
+                arm.setPower(-0.3);
+            } else if (gamepad2.dpad_down){
+                arm.setPower(0.3);
+            } else {
+                arm.setPower(0);
             }
 
 

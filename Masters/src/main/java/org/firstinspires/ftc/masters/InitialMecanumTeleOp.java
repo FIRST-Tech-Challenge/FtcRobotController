@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp
+@TeleOp(name="freightFrenzy")
 public class InitialMecanumTeleOp extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -111,7 +111,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
 
             if(gamepad1.a && !carouselOn) {
                 if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
-                else carouselMotor.setPower(.4);
+                else carouselMotor.setPower(.95);
                 carouselOn = true;
             } else if(!gamepad1.a) carouselOn = false;
 
