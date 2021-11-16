@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.core.robot;
 
 import androidx.annotation.NonNull;
 
+import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
@@ -17,7 +18,8 @@ import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerIndefinit
 public abstract class ToggleableTool<T extends DcMotorSimple>{
     protected final T motor;
     protected final double power;
-    protected final ToggleButtonReader reader;
+    protected final ButtonReader reader;
+    protected boolean toggle = false;
 
     /**
      * @param eventThread local instance of eventThread
@@ -30,22 +32,19 @@ public abstract class ToggleableTool<T extends DcMotorSimple>{
      */
     public ToggleableTool(@NonNull EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, Class<T> tClass, String name, GamepadKeys.Button button, double power) {
         this.motor = map.get(tClass, name);
-        this.reader = new ToggleButtonReader(toolGamepad, button);
+        this.reader = new ButtonReader(toolGamepad, button);
         this.power = power;
         eventThread.addEvent(new RunListenerIndefinitelyEvent(this::run) {
             @Override
             public boolean shouldRun() {
                 reader.readValue();
-                return reader.wasJustPressed();
+                return reader.wasJustReleased();
             }
         });
     }
 
     protected void run() {
-        if (reader.getState()) {
-            motor.setPower(power);
-        } else {
-            motor.setPower(0);
-        }
+        toggle = !toggle;
+        motor.setPower(toggle ? power : 0);
     }
 }

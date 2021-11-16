@@ -22,11 +22,14 @@ public class Intake extends ToggleableTool<DcMotor> {
     }
     @Override
     protected void run() {
-        if (distanceSensor.getDistance(DistanceUnit.MM) >= 20) {
-            if (reader.getState()) {
-                motor.setPower(power);
-            } else if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
-                motor.setPower(-power);
+        if (distanceSensor.getDistance(DistanceUnit.MM) >= 210) {
+            toggle = !toggle;
+            if (toggle) {
+                if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
+                    motor.setPower(-power);
+                } else {
+                    motor.setPower(power);
+                }
             } else {
                 motor.setPower(0);
             }
