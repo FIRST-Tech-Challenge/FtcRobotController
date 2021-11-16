@@ -43,6 +43,7 @@ public class ToolTestCode extends LinearOpMode {
         thread2.setPriority(3);
         waitForStart();
         telemetry.clearAll();
+        telemetry.update();
         eventThread.start();
         thread.start();
         thread2.start();
