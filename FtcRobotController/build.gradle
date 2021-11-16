@@ -22,4 +22,8 @@ android {
     }
 }
 
+dependencies {
+    implementation 'org.testng:testng:6.9.6'
+}
+
 apply from: '../build.dependencies.gradle'
