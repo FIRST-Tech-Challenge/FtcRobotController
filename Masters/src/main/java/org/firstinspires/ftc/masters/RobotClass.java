@@ -3,6 +3,8 @@ package org.firstinspires.ftc.masters;//package org.firstinspires.ftc.teamcode;
 import static java.lang.Math.abs;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -42,8 +44,9 @@ public class RobotClass {
     BNO055IMU imu;
 
     public Telemetry telemetry;
-    ColorSensor colorSensor1;
-    ColorSensor colorSensor2;
+    RevColorSensorV3 colorSensorLeft;
+    RevColorSensorV3 colorSensorRight;
+    RevColorSensorV3 colorSensorMiddle;
 
     LinearOpMode opmode;
     HardwareMap hardwareMap;
@@ -55,9 +58,9 @@ public class RobotClass {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
-        colorSensor1 = hardwareMap.colorSensor.get("colorSensor1");
-        colorSensor2 = hardwareMap.colorSensor.get("colorSensor2");
-
+        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
+        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
+        colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
 
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -67,7 +70,7 @@ public class RobotClass {
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
         this.telemetry = telemetry;
-
+        this.opmode = opmode;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -96,6 +99,10 @@ public class RobotClass {
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
+        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
+        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
+        colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
+
         this.telemetry = telemetry;
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -109,6 +116,7 @@ public class RobotClass {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu1");
         imu.initialize(parameters);
+        this.opmode = opmode;
 
 
     }
@@ -211,6 +219,52 @@ public class RobotClass {
 //        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
 //        telemetry.update();
     }
+
+    public void wayneStrafeBlue (double speed) {
+
+        frontLeft.setPower(speed);
+        frontRight.setPower(-speed);
+        backLeft.setPower(-speed);
+        backRight.setPower(speed);
+
+        while (colorSensorRight.blue()< 120 && colorSensorLeft.blue()<120) {
+            telemetry.addData("Right blue ", colorSensorRight.blue());
+            telemetry.addData("Left blue ", colorSensorLeft.blue());
+            telemetry.update();
+        }
+
+        stopMotors();
+    }
+
+    public void wayneStrafeRed (double speed) {
+
+        frontLeft.setPower(-speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(-speed);
+
+        while (colorSensorRight.red()< 120 && colorSensorLeft.red()<120) {
+            telemetry.addData("Right red ", colorSensorRight.red());
+            telemetry.addData("Left red ", colorSensorLeft.red());
+            telemetry.update();
+        }
+
+        stopMotors();
+    }
+
+    public void parkRed () {
+
+        wayneStrafeRed(0.2);
+        if (colorSensorLeft.red()>120) {
+            strafeLeft(0.2, 0.35);
+        }
+        if (colorSensorRight.red()>120) {
+            strafeRight(0.2,0.35);
+        }
+        forward(0.2,-1);
+
+    }
+
         public void setSpeedForTurnRight (double speed) {
             frontLeft.setPower(speed);
             frontRight.setPower(-speed);
