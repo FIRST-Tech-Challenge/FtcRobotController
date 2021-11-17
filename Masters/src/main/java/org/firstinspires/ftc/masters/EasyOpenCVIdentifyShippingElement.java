@@ -76,7 +76,7 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
-                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -132,15 +132,15 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(85, 176);
-        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(50, 176);
-        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(120, 176);
+        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(45, 230);
+        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(285, 250);
+        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(603, 280);
 
 
         static final int REGION_WIDTH = 30;
         static final int REGION_HEIGHT = 42;
 
-        final int FREIGHT_PRESENT_THRESHOLD = 150;
+        final int FREIGHT_PRESENT_THRESHOLD = 110;
 
         Point region1_pointA = new Point(
                 REGION1_TOP_LEFT_ANCHOR_POINT.x,
@@ -231,9 +231,9 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
                     2); // Thickness of the rectangle lines
 
 
-            if (avg1 > FREIGHT_PRESENT_THRESHOLD) {
+            if (avg1 < FREIGHT_PRESENT_THRESHOLD) {
                 position = RingPosition.LEFT;
-            } else if (avg2 > FREIGHT_PRESENT_THRESHOLD) {
+            } else if (avg2 < FREIGHT_PRESENT_THRESHOLD) {
                 position = RingPosition.MIDDLE;
             } else {
                 position = RingPosition.RIGHT;
