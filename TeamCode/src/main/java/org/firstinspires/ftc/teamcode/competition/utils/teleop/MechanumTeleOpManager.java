@@ -74,8 +74,8 @@ public class MechanumTeleOpManager extends TeleOpManager {
     public void main() {
         // someone could probably do this math better than me. if you can, please do. i spent 3 weeks on this and i still dont understand it. please
         double rx = -getGamepadWithFunction1().right_stick_x;
-        double x = getGamepadWithFunction1().left_stick_x;
-        double y = getGamepadWithFunction1().left_stick_y;
+        double x = getGamepadWithFunction1().left_stick_y;
+        double y = getGamepadWithFunction1().left_stick_x;
         double rightTopPower = (y + x) - rx;
         double rightBottomPower = (y - x) - rx;
         double leftTopPower = (-(y - x)) - rx;
@@ -88,7 +88,7 @@ public class MechanumTeleOpManager extends TeleOpManager {
             if(getGamepadWithFunction2().dpad_up && !getGamepadWithFunction2().dpad_down) {
                 LIFT_ONE.driveWithEncoder(50);
                 LIFT_TWO.driveWithEncoder(50);
-            }else if(!getGamepadWithFunction2().dpad_down && getGamepadWithFunction2().dpad_up) {
+            }else if(!getGamepadWithFunction2().dpad_up && getGamepadWithFunction2().dpad_down) {
                 LIFT_ONE.driveWithEncoder(-50);
                 LIFT_TWO.driveWithEncoder(-50);
             }else{
