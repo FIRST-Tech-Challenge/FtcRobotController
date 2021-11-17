@@ -120,6 +120,13 @@ public class MechanumTeleOpManager extends TeleOpManager {
                 LIFT_DROPPER.setPosition(0);
             }
         }
+        if(DEVICES.isLiftServoAllowed()) {
+            if(getGamepadWithFunction6().x) {
+                LIFT_SERVO.setPosition(0);
+            }else if(getGamepadWithFunction6().y) {
+                LIFT_SERVO.setPosition(100);
+            }
+        }
 //        if(DEVICES.isLiftDropperAllowed()) {
 //            if(getGamepadWithFunction5().a && !droppingInProgress) {
 //                droppingInProgress = true;
