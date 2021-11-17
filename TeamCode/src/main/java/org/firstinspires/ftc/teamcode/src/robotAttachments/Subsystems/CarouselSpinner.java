@@ -31,6 +31,12 @@ public class CarouselSpinner {
 
     }
 
+    public void setPowerBlueDirection(){
+        spinnerServo.setPower(servoPower);
+    }
+    public void setPowerRedDirection(){
+        spinnerServo.setPower(-servoPower);
+    }
     public void spinForward(){
         spinnerServo.setPower(servoPower);
     }

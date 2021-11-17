@@ -15,6 +15,10 @@ public class LinearSlide {
     private static final int linearSlideAngle = 68;
     private static final double stopPower = 0.13;
 
+    public static final double level_one_height = 0;
+
+    // TODO Use run to position with values for zero power break behavior
+
     public LinearSlide(HardwareMap hardwareMap, String dcMotorName) {
         linearSlide = hardwareMap.dcMotor.get(dcMotorName);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -22,31 +26,14 @@ public class LinearSlide {
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    private double getRevolutions() {
-        return linearSlide.getCurrentPosition() / ticksPerRevolution;
+    public int getEncoderCount(){
+        return linearSlide.getCurrentPosition();
     }
 
     public void setMotorPower(double power) {
         linearSlide.setPower(power);
     }
 
-    public void goToHeight(int height) {
-        if (getHeight() < height) {
-            while (getHeight() < height) {
-                this.goDown();
-            }
-        } else {
-            while (getHeight() > height) {
-                this.goUp();
-            }
-        }
-        this.stop();
-
-    }
-
-    public double getHeight() {
-        return this.getRevolutions() * Math.sin(Math.toRadians(linearSlideAngle));
-    }
 
     public void goUp() {
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

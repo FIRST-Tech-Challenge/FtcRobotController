@@ -44,16 +44,14 @@ public class JavaDriveProgram extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        double angle = 0;
         while (opModeIsActive() && !isStopRequested()) {
             driveTrain.setPowerFromGamepad(gamepad1);
-            angle = angle + 4;
 
             //Handles Linear Slide Control
             slide.setMotorPower(0.75 * gamepad2.left_stick_y);
             intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
 
-
+            /*
             //Gamepad 2 B Red Duck
             {
                 if (!gamepad2.x) {
@@ -61,7 +59,7 @@ public class JavaDriveProgram extends LinearOpMode {
                 }
                 if (gamepad2.x && bDepressed) {
                     driveTrain.stopAll();
-                    spinner.spinOffRedDuck();
+                    spinner.spinOffBlueDuck();
                     bDepressed = false;
                 }
             }
@@ -73,9 +71,20 @@ public class JavaDriveProgram extends LinearOpMode {
                 }
                 if (gamepad2.b && bDepressed) {
                     driveTrain.stopAll();
-                    spinner.spinOffBlueDuck();
+                    spinner.spinOffRedDuck();
                     bDepressed = false;
                 }
+            }8/
+
+             */
+
+
+            if (gamepad2.x){
+                spinner.setPowerBlueDirection();
+            }else if (gamepad2.b){
+                spinner.setPowerRedDirection();
+            }else{
+                spinner.stop();
             }
 
             if (gamepad1.b) {
