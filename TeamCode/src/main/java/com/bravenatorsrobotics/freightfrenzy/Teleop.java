@@ -78,9 +78,6 @@ public class Teleop extends TeleopMode<MecanumDrive> {
 
         // Check to see if object is in cup. If so tilt it back.
 
-        telemetry.addData("Lift Height", lift.getCurrentPosition());
-        telemetry.update();
-
     }
 
     @Override
@@ -94,7 +91,8 @@ public class Teleop extends TeleopMode<MecanumDrive> {
                 + Math.pow(driverGamePad.getRightTrigger(), 3);
         double r = -Math.pow(gamepad1.right_stick_x, 3);
 
-        if(!liftTouchSensor.isPressed() && !shouldOverrideSpeedReduction) {
+        // TODO: Check Physical Switch
+        if(lift.getCurrentPosition() > 0 && !shouldOverrideSpeedReduction) {
             v *= REDUCE_SPEED_MULTIPLIER;
             h *= REDUCE_SPEED_MULTIPLIER;
             r *= REDUCE_SPEED_MULTIPLIER;
