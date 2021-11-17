@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
@@ -175,6 +176,14 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void liftToLower(){
         //reset dropper before retracting the lift all the way
         resetDropper();
+        if (liftLocation == LIFT_LEVEL_ONE){
+            ElapsedTime time = new ElapsedTime();
+            time.reset();
+            //give some time for the dropper to close
+            while (time.milliseconds() < 500){
+
+            }
+        }
         liftLocation = LIFT_NO_EXTENSION;
         this.lift.setTargetPosition(LIFT_NO_EXTENSION);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
