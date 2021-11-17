@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.core.robot.vision.robot;
 
-import android.util.Pair;
-
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,7 +19,6 @@ public class TseDetector {
     private TsePipeline pipeline;
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
-    private final boolean complete = false;
 
     public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName) {
         hardwareMap = hMap;
@@ -58,9 +55,4 @@ public class TseDetector {
             }
         });
     }
-
-    public Pair<Boolean, Integer> getDifference() {
-        return pipeline.differentSpot();
-    }
-
 }

@@ -40,7 +40,6 @@ public class TsePipeline extends OpenCvPipeline {
     private boolean isComplete = false;
     private int checks = 0;
     private Pair<Integer, Integer> greatestConfidence = new Pair<>(0, 0);
-    private boolean firstValue = true;
     private int frameCount = 0;
     /**
      * @param input input frame matrix
@@ -125,15 +124,13 @@ public class TsePipeline extends OpenCvPipeline {
         bottomAverage = bottomMean.val[0] + 0.5 * (bottomMean1.val[0] + bottomMean2.val[0]);
         if (!isComplete) {
             frameCount++;
-            if (different == lastFrameValue || firstValue) {
-                firstValue = false;
+            if (different == lastFrameValue || checks == 0) {
                 checks++;
             } else {
                 if (greatestConfidence.second < checks) {
                     greatestConfidence = new Pair<>(different, checks);
                 }
                 checks = 0;
-                firstValue = true;
             }
 
             if (checks >= 5) {
