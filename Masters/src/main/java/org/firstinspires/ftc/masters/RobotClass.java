@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -62,6 +63,8 @@ public class RobotClass {
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
         colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
 
+        this.opmode= opmode;
+
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -70,7 +73,7 @@ public class RobotClass {
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
         this.telemetry = telemetry;
-        this.opmode = opmode;
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -80,7 +83,7 @@ public class RobotClass {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu1");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
     }
@@ -114,7 +117,7 @@ public class RobotClass {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu1");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         this.opmode = opmode;
 
@@ -287,10 +290,10 @@ public class RobotClass {
         }
 
         protected void motorTelemetry(){
-            telemetry.addData("Target Front Left Motor Position", frontLeft.getCurrentPosition());
-            telemetry.addData("Target Front Right Motor Position", frontRight.getCurrentPosition());
-            telemetry.addData("Target Back Left Motor Position", backLeft.getCurrentPosition());
-            telemetry.addData("Target Back Right Motor Position", backRight.getCurrentPosition());
+            telemetry.addData("Current Front Left Motor Position", frontLeft.getCurrentPosition());
+            telemetry.addData("Current Front Right Motor Position", frontRight.getCurrentPosition());
+            telemetry.addData("Current Back Left Motor Position", backLeft.getCurrentPosition());
+            telemetry.addData("Current Back Right Motor Position", backRight.getCurrentPosition());
             telemetry.update();
         }
 
@@ -461,7 +464,7 @@ public class RobotClass {
      * This code was taken and modified from https://ftcforum.usfirst.org/forum/ftc-technology/53477-rev-imu-questions?p=53481#post53481.
      * @return The integrated heading on the interval (-inf, inf).
      */
-    private double getIntegratedHeading() {
+    public double getIntegratedHeading() {
         double currentHeading = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
         double deltaHeading = currentHeading - previousHeading;
 
@@ -479,10 +482,14 @@ public class RobotClass {
 
 
     public void turnToHeading (double speed, double targetHeading, int tolerance) {
+        motorSetMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double currentHeading = getIntegratedHeading();
 
-        while (currentHeading > targetHeading + tolerance && currentHeading < targetHeading - tolerance) {
+        while (currentHeading > targetHeading + tolerance || currentHeading < targetHeading - tolerance) {
             currentHeading = getIntegratedHeading();
+            telemetry.addData("Turning to: ", 90);
+            telemetry.addData("Current Heading: ", imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle);
+            telemetry.addData("Integrated Heading: ", getIntegratedHeading());
             if (currentHeading > targetHeading) {
                 if (abs(currentHeading - targetHeading) > (tolerance+1)*2) {
                     setSpeedForTurnLeft(speed);
@@ -491,16 +498,44 @@ public class RobotClass {
                 }
             } else if (currentHeading < targetHeading) {
                 if (abs(currentHeading - targetHeading) > tolerance*2) {
-                    setSpeedForTurnLeft(speed);
+                    setSpeedForTurnRight(speed);
                 } else if (abs(currentHeading - targetHeading) <= (tolerance+1)*2) {
-                    setSpeedForTurnLeft(speed/2);
+                    setSpeedForTurnRight(speed/2);
                 }
             }
         }
         stopMotors();
     }
 
+    public void turnToHeadingSloppy (double speed, double targetHeading, double slowAt) { // -175 175
+        motorSetMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (targetHeading > 0) {
+            setSpeedForTurnLeft(speed);
+            while (getAngleFromGyro() < targetHeading) {
+                telemetry.addData("Current Angle: ",getAngleFromGyro());
+                telemetry.addData("Target Heading: ",targetHeading);
+                telemetry.update();
+                if (getAngleFromGyro() > targetHeading-slowAt) {
+                    setSpeedForTurnLeft(.1);
+                }
+            }
+        } else if (targetHeading < 0) {
+            setSpeedForTurnRight(speed);
+            while (getAngleFromGyro() > targetHeading) {
+                telemetry.addData("Current Angle: ",getAngleFromGyro());
+                telemetry.addData("Target Heading: ",targetHeading);
+                telemetry.update();
+                if (getAngleFromGyro() < targetHeading+slowAt) {
+                    setSpeedForTurnRight(.1);
+                }
+            }
+        }
+        stopMotors();
+    }
+/*
+if 360-abs(currentHeading)-abs(targetHeading) > 180
 
+ */
 
     protected void motorSetMode(DcMotor.RunMode runMode){
         frontLeft.setMode(runMode);
