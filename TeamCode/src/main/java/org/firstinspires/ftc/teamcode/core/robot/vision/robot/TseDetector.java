@@ -25,7 +25,6 @@ public class TseDetector {
         this.eventThread = eventThread;
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
-    
     }
 
     /**
