@@ -1,4 +1,6 @@
-//
+/*
+This code is simply testing the robot to make sure it works. We will make a final program later. In addition to this we will also be updating and changing this program.
+ */
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -28,7 +30,7 @@ public class chassisTest extends LinearOpMode {
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         crane = hardwareMap.get(DcMotor.class, "crane");
         arm = hardwareMap.get(Servo.class, "arm");
-
+        //setting motor direction since some motors were backwards
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -60,7 +62,7 @@ public class chassisTest extends LinearOpMode {
             armIn = gamepad1.dpad_left;
             armOut = gamepad1.dpad_right;
 
-            //making motors run.
+        //making motors run.
             //strafing
             if (strafeValue > 0.1) {
                 frontLeft.setPower(-strafeValue);
@@ -107,6 +109,7 @@ public class chassisTest extends LinearOpMode {
             backLeft.setPower(-turn);
             backRight.setPower(turn);
             }
+        //telemetry for debugging
 //            telemetry.addData("Throttle", throttle);
 //            telemetry.addData("Strafing", strafeValue);
 //            telemetry.addData("Turning", turn);
