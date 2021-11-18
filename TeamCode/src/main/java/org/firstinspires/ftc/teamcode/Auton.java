@@ -17,6 +17,7 @@ import java.nio.ReadOnlyBufferException;
 import java.util.List;
 
 @Autonomous(name="jefftest")
+@Disabled
 public class Auton extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 

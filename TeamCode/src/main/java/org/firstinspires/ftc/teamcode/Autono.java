@@ -134,6 +134,22 @@ public class Autono extends LinearOpMode {
         Thread.sleep(200);
 
     }
+
+    private void setPower(double frontLeft, double frontRight, double backLeft, double backRight){
+        robot.leftFrontDrive.setPower(frontLeft);
+        robot.rightFrontDrive.setPower(frontRight);
+        robot.leftRearDrive.setPower(backLeft);
+        robot.rightRearDrive.setPower(backRight);
+    }
+
+    private void arm(double power, int target, int margin){
+        robot.arm.setTargetPosition(target);
+        if(Math.abs(robot.arm.getCurrentPosition()-target) < margin){
+            robot.arm.setPower(power);
+        }
+        robot.arm.setPower(0);
+    }
+
     private void initVuforia() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
