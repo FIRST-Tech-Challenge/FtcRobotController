@@ -22,6 +22,5 @@ Refractor Robot4100Common_Template to Robot4100Common, and fill in the following
 package org.firstinspires.ftc.teamcode.robot_common;
 
 public class Robot4100Common_Template {
-    public static final String VUFORIA_LICENSE = ""; //Paste your Vuforia License Here
-
-} 
+    public static final String VUFORIA_LICENSE = "";
+}
