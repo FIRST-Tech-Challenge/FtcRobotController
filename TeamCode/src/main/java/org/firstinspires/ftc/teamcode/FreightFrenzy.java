@@ -33,16 +33,6 @@ public class FreightFrenzy extends LinearOpMode {
             idle();
         }
 
-        telemetry.addData("Arm Mode", "Arm calibrating....");
-        telemetry.update();
-        while(robot.csensor.getDistance(DistanceUnit.MM) > 85){
-            robot.arm.setPower(-0.3);
-        }
-        robot.arm.setPower(0);
-        robot.arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
         telemetry.update();
         telemetry.addData("Working Mode", "waiting for start");
         telemetry.update();
