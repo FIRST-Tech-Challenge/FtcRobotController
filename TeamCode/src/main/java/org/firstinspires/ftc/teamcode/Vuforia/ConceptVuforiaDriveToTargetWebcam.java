@@ -73,6 +73,7 @@ public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
                     }
                 }
             }
+            telemetry.update();
         }
     }
 }

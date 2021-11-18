@@ -39,8 +39,8 @@ public class BlueFarAuton extends LinearOpMode {
 
         // Turn
         r.AEncDrive(6,0,dPower,0);
-        r.gyroTurn(-180,dPower);
-        r.AEncDrive(6,0,dPower,0);
+        r.gyroTurn(90,dPower);
+//        r.AEncDrive(6,0,dPower,0);
 
         // Strafe over
         r.AEncDrive(0,-24,0,-dPower);
@@ -55,34 +55,34 @@ public class BlueFarAuton extends LinearOpMode {
         r.AEncDrive(-6,0,0.15,0,1500);
 
         // lift and drop
-        if (Arrays.equals(pos, new boolean[]{true, false, false})) {// left
-            r.AEncDrive(20,0,dPower,0);
-            nEncDrive(r.lift,1300,1);
-            runMotorTime(r.bucket,-1,1000);
-            sleep(2000);
-            r.bucket.setPower(1);
-            driveUntilMechStop(r.lift,-1, 1000);
-            r.AEncDrive(-14,0,-dPower,0);
-        } else if (Arrays.equals(pos, new boolean[]{false, true, false})) {// middle
-            r.AEncDrive(16,0,dPower,0);
-            nEncDrive(r.lift,3000,1);
-            runMotorTime(r.bucket,-1,1000);
-            sleep(2000);
-            r.bucket.setPower(1);
-            driveUntilMechStop(r.lift,-1, 1000);
-            r.AEncDrive(-10,0,-dPower,0);
-        } else {// right
-            r.AEncDrive(10,0,dPower,0);
-            driveUntilMechStop(r.lift,1, 1000);
-            runMotorTime(r.bucket,-1,1000);
-            sleep(2000);
-            r.bucket.setPower(1);
-            driveUntilMechStop(r.lift,-1, 1000);
-            r.AEncDrive(-4,0,-dPower,0);
-        }
-        telemetry.addLine("finished with lift");
-        telemetry.update();
-        r.bucket.setPower(0);
+//        if (Arrays.equals(pos, new boolean[]{true, false, false})) {// left
+//            r.AEncDrive(20,0,dPower,0);
+//            nEncDrive(r.lift,1300,1);
+//            runMotorTime(r.bucket,-1,1000);
+//            sleep(2000);
+//            r.bucket.setPower(1);
+//            driveUntilMechStop(r.lift,-1, 1000);
+//            r.AEncDrive(-14,0,-dPower,0);
+//        } else if (Arrays.equals(pos, new boolean[]{false, true, false})) {// middle
+//            r.AEncDrive(16,0,dPower,0);
+//            nEncDrive(r.lift,3000,1);
+//            runMotorTime(r.bucket,-1,1000);
+//            sleep(2000);
+//            r.bucket.setPower(1);
+//            driveUntilMechStop(r.lift,-1, 1000);
+//            r.AEncDrive(-10,0,-dPower,0);
+//        } else {// right
+//            r.AEncDrive(10,0,dPower,0);
+//            driveUntilMechStop(r.lift,1, 1000);
+//            runMotorTime(r.bucket,-1,1000);
+//            sleep(2000);
+//            r.bucket.setPower(1);
+//            driveUntilMechStop(r.lift,-1, 1000);
+//            r.AEncDrive(-4,0,-dPower,0);
+//        }
+//        telemetry.addLine("finished with lift");
+//        telemetry.update();
+//        r.bucket.setPower(0);
 
         // Drive to depot
         r.AEncDrive(12,56,dPower,dPower);
