@@ -74,8 +74,8 @@ public class MecanumChassis {
         arm = hwMap.get(DcMotorEx.class,"arm");
         intakeUp = hwMap.get(CRServo.class, "s1");
 
-        rightFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
-        rightRearDrive.setDirection(DcMotorEx.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
+        leftRearDrive.setDirection(DcMotorEx.Direction.REVERSE);
 
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

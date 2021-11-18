@@ -91,7 +91,6 @@ public class Autono extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-
         int DuckPos = 3;
         // TensorFlow find duck
         if (tfod != null) {
@@ -111,21 +110,24 @@ public class Autono extends LinearOpMode {
             }
         }
 
-        goToWayPoint(-0.09, 0.1, 0, 0.5, 0, 0.01, 1);
-        arm(0.7, 2200, 30);
-        goToWayPoint(-0.09,0.6,0,0.7,0,0.01,10);
+        goToWayPoint(-0.15, 0.45, 0, 0.7, 30, 0.01, 1);
+        setPower(0,0,0,0);
+        arm(0.7, 2230, 30);
+        goToWayPoint(-0.15,0.65,0,0.5,30,0.01,1);
         setPower(0,0,0,0);
         robot.intakeUp.setPower(-1);
-        sleep(1000);
+        sleep(1500);
         robot.intakeUp.setPower(0);
-        goToWayPoint(-1.4,0.095,-90,-0.7,30,0.02,1);
+        goToWayPoint(-0.15,0.3,-90,0.7,30,0.01,1);
         setPower(0,0,0,0);
-        arm(-0.7, 0, 30);
+        arm(-0.7, 0, 15);
+        goToWayPoint(-1.48,0.1,-90,0.7,30,0.01,1);
+        setPower(0,0,0,0);
 
     }
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
-        targetPos[0] = -y;
-        targetPos[1] = x;
+        targetPos[0] = y;
+        targetPos[1] = -x;
         targetPos[2] = angle * Math.PI / 180; // Math.PI /2;   //heading, radian
         this.positionControl.goToTargetPosition(targetPos, vel,vw * Math.PI / 180, disRes,angleRes);
         while(!this.positionControl.checkTaskDone()){
@@ -152,8 +154,8 @@ public class Autono extends LinearOpMode {
     }
 
     private void arm(double power, int target, int margin){
-        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setTargetPosition(target);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if(Math.abs(robot.arm.getCurrentPosition()-target) > margin) {
             robot.arm.setPower(power);
         }
