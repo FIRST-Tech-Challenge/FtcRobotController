@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Lift {
     /**
+     * @param eventThread local eventThread instance
      * @param map local hardwareMap instance
      * @param telemetry local telemetry instance
      * @param toolGamepad instance of FtcLib GamepadEx
@@ -41,6 +42,7 @@ public class Lift {
         aReader = new ButtonReader(toolGamepad, GamepadKeys.Button.A);
         this.eventThread = eventThread;
     }
+
     private final Telemetry telemetry;
     private final DcMotor liftMotor;
     private final Servo armServo;
@@ -56,6 +58,7 @@ public class Lift {
     private final AtomicBoolean dumpingEventRunning = new AtomicBoolean(false);
     private final EventThread eventThread;
     private TimedEvent event;
+
     public void update() {
         curPos = liftMotor.getCurrentPosition();
         final double stickValue = gamepad.getLeftY();
@@ -100,6 +103,7 @@ public class Lift {
         }
         arm();
     }
+    
     private void arm() {
         rBumpReader.readValue();
         if (curPos >= (double) 960) { // completely away from intake interference
@@ -122,7 +126,7 @@ public class Lift {
             } else {
                 armServo.setPosition(0.7);
             }
-        } else if (curPos >= (double) 50) { // if it is away from load zone but still interfering
+        } else if (curPos >= 50D) { // if it is away from load zone but still interfering
             armServo.setPosition(0.847); // in between load and lift pos
         } else { // in load zone
             armServo.setPosition(0.88); // load pos

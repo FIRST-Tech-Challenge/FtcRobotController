@@ -41,6 +41,15 @@ public class TsePipeline extends OpenCvPipeline {
     private int checks = 0;
     private Pair<Integer, Integer> greatestConfidence = new Pair<>(0, 0);
     private int frameCount = 0;
+
+    public void resetPipeline() {
+        different = 1;
+        lastFrameValue = 0;
+        isComplete = false;
+        checks = 0;
+        frameCount = 0;
+    }
+
     /**
      * @param input input frame matrix
      */

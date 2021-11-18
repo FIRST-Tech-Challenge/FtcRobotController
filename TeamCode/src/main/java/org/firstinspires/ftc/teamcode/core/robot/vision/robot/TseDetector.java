@@ -16,17 +16,25 @@ public class TseDetector {
     private OpenCvCamera camera;
     private final String webcamName;
     private final HardwareMap hardwareMap;
+    private final EventThread eventThread;
     private TsePipeline pipeline;
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
 
     public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName) {
-        hardwareMap = hMap;
+        this.eventThread = eventThread;
+        this.hardwareMap = hMap;
         this.webcamName = webcamName;
-        eventThread.addEvent(new RunWhenOutputChangedOnceEvent(this::notifyAll, () -> pipeline.differentSpot().first));
+    
     }
 
+    /**
+     * Resets pipeline on call
+     * Stalls code until pipeline is done with figuring out (max time of around 0.33 seconds)
+     * @return integer 1 - 3, corresponds to barcode slots left to right
+     */
     public synchronized int run() {
+        pipeline.resetPipeline();
         try {
             wait();
         } catch (InterruptedException e) {
@@ -54,5 +62,6 @@ public class TseDetector {
                 System.out.println("OpenCv Pipeline error with error code " + errorCode);
             }
         });
+        eventThread.addEvent(new RunWhenOutputChangedOnceEvent(this::notifyAll, () -> pipeline.differentSpot().first));
     }
 }
