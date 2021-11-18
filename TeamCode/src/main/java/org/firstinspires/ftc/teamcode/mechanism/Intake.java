@@ -16,7 +16,7 @@ public class Intake implements Mechanism {
         if (gamepad.right_trigger > 0.5) {
             intakeMotor.setPower(gamepad.right_trigger);
         } else if (gamepad.left_trigger > 0.5) {
-            intakeMotor.setPower(-gamepad.right_trigger);
+            intakeMotor.setPower(-gamepad.left_trigger);
         } else {
             intakeMotor.setPower(0);
         }

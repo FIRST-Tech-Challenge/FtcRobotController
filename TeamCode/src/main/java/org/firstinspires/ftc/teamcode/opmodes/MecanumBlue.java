@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
 import org.firstinspires.ftc.teamcode.mechanism.Color;
+import org.firstinspires.ftc.teamcode.mechanism.Hopper;
 import org.firstinspires.ftc.teamcode.mechanism.Intake;
 import org.firstinspires.ftc.teamcode.mechanism.Lift;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
@@ -16,6 +17,7 @@ public class MecanumBlue extends OpMode {
     Carousel carousel = new Carousel(Color.BLUE);
     Lift lift = new Lift();
     Intake intake = new Intake();
+    Hopper hopper = new Hopper();
 
     public void init() {
         // Initialize each mechanism
@@ -23,6 +25,7 @@ public class MecanumBlue extends OpMode {
         carousel.init(hardwareMap);
         lift.init(hardwareMap);
         intake.init(hardwareMap);
+        hopper.init(hardwareMap);
 
 
     }
@@ -34,6 +37,6 @@ public class MecanumBlue extends OpMode {
         carousel.run(gamepad1);
         lift.run(gamepad2);
         intake.run(gamepad1);
-
+        hopper.run(gamepad2);
     }
 }

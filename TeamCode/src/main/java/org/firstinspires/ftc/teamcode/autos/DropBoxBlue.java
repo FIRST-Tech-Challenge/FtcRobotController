@@ -22,6 +22,7 @@ public class DropBoxBlue extends LinearOpMode {
         waitForStart();
         // Start button is pressed
 
+        /* old code
         // Drive to the the shipping hub
         chassis.strafeRightWithEncoders(0.6,1350);
 
@@ -45,6 +46,27 @@ public class DropBoxBlue extends LinearOpMode {
         chassis.moveForwardWithEncoders(0.6,450);
         chassis.turnLeftWithEncoders(0.6,650);
         chassis.moveForwardWithEncoders(1,4800);
+         */
+
+        // Drive to the the shipping hub
+        chassis.strafeRightWithEncoders(0.6,1300);
+
+        // Drive away, (hopefully) depositing the preloaded box in the process
+        chassis.strafeLeftWithEncoders(0.8,800);
+
+        // Move to the carousel and spin it
+        chassis.moveBackwardWithEncoders(0.6, 2300);
+        chassis.strafeLeftWithEncoders(0.6,400);
+        carousel.turnCarousel();
+        delay(2500);
+        carousel.carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        carousel.carouselMotor.setPower(0);
+
+        // Drive into the warehouse
+        chassis.strafeRightWithEncoders(0.6,50);
+        chassis.moveForwardWithEncoders(1, 3000);
+        chassis.turnLeftWithEncoders(0.6,25);
+        chassis.moveForwardWithEncoders(1, 2500);
     }
 
     public void delay(int time) {
