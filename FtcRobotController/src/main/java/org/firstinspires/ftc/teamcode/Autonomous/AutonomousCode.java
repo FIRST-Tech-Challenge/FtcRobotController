@@ -89,7 +89,7 @@ public class AutonomousCode                                extends LinearOpMode 
         // first.
         initVuforia();
         initTfod();
-//        motoryay = hardwareMap.get(DcMotor.class, "motor1");
+        //motoryay = hardwareMap.get(DcMotor.class, "motor1");
         topLeftMotor = hardwareMap.get(DcMotor.class, "tLMotor");
         topRightMotor = hardwareMap.get(DcMotor.class, "tRMotor");
         bottomLeftMotor = hardwareMap.get(DcMotor.class, "bLMotor");
@@ -210,7 +210,7 @@ public class AutonomousCode                                extends LinearOpMode 
             parking();
 
         }
-        else if (recogntion.getLeft() < 0){
+        else if (recognition.getLeft() < 0){
             Move up a bit rotate 90 degrees to the right, then drive stragitforward towards the middle, then rotate again 90 degrees to the right and drive right before the goal
             releaseLow();
             cargo();
