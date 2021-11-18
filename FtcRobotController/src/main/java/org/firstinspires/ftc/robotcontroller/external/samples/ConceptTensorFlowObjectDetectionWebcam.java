@@ -123,10 +123,13 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
+        DcMotor motor1;
         waitForStart();
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
+            while (opModeIsActive())
+
+
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -144,6 +147,26 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         i++;
                       }
                       telemetry.update();
+
+                        if (recognition.getLabel().equals("Ball")){
+                            motoryay.setPower(1.0);
+                            telemetry.addData("Motor power: ", motoryay.getPower());
+//                                telemetry.update();
+                              else if  (recognition.getLabel().equals("Cube")){
+                                motoryay.setPower(1.0);
+                                telemetry.addData("Motor power: ", motoryay.getPower());
+//                                telemetry.update();
+                            }
+                            else if (recognition.getLabel().equals("Duck")){
+                                motoryay.setPower(1.0);
+                                telemetry.addData("Motor power: ", motoryay.getPower());
+//                                telemetry.update();
+                            }
+                            else{
+                                motoryay.setPower(0.0);
+                                telemetry.addData("Motor power: ", motoryay.getPower());
+//                                telemetry.update();
+                        }
                     }
                 }
             }

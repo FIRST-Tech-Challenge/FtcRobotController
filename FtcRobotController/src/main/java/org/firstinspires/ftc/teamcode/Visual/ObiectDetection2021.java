@@ -105,6 +105,7 @@ public class ObiectDetection2021 extends LinearOpMode {
     DcMotor topRightMotor;
     DcMotor bottomLeftMotor;
     DcMotor bottomRightMotor;
+    DcMotor motor1;
 
      @Override
 
@@ -120,6 +121,7 @@ public class ObiectDetection2021 extends LinearOpMode {
         topRightMotor = hardwareMap.get(DcMotor.class, "tRMotor");
         bottomLeftMotor = hardwareMap.get(DcMotor.class, "bLMotor");
         bottomRightMotor = hardwareMap.get(DcMotor.class, "bRMotor");
+        motor1 = hardwareMap.get(DcMotor.class, "motor1");
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -164,22 +166,22 @@ public class ObiectDetection2021 extends LinearOpMode {
                             i++;
 
                             if (recognition.getLabel().equals("Ball")){
-                                motoryay.setPower(1.0);
+                                motor1.setPower(1.0);
                                 telemetry.addData("Motor power: ", motoryay.getPower());
 //                                telemetry.update();
                             }
                             else if  (recognition.getLabel().equals("Cube")){
-                                motoryay.setPower(1.0);
+                                motor1.setPower(1.0);
                                 telemetry.addData("Motor power: ", motoryay.getPower());
 //                                telemetry.update();
                             }
                             else if (recognition.getLabel().equals("Duck")){
-                                motoryay.setPower(1.0);
+                                motor1.setPower(1.0);
                                 telemetry.addData("Motor power: ", motoryay.getPower());
 //                                telemetry.update();
                             }
                             else{
-                                motoryay.setPower(0.0);
+                                motor1.setPower(0.0);
                                 telemetry.addData("Motor power: ", motoryay.getPower());
 //                                telemetry.update();
                             }
