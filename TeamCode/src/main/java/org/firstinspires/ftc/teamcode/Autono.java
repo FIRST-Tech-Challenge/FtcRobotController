@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -14,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 
 @Autonomous(name = "yxorauto")
-@Disabled
 public class Autono extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 
@@ -111,7 +111,16 @@ public class Autono extends LinearOpMode {
             }
         }
 
-        goToWayPoint(0,1,0,0.7,0,0.01,2);
+        goToWayPoint(-0.09, 0.1, 0, 0.5, 0, 0.01, 1);
+        arm(0.7, 2200, 30);
+        goToWayPoint(-0.09,0.6,0,0.7,0,0.01,10);
+        setPower(0,0,0,0);
+        robot.intakeUp.setPower(-1);
+        sleep(1000);
+        robot.intakeUp.setPower(0);
+        goToWayPoint(-1.4,0.095,-90,-0.7,30,0.02,1);
+        setPower(0,0,0,0);
+        arm(-0.7, 0, 30);
 
     }
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
@@ -143,10 +152,12 @@ public class Autono extends LinearOpMode {
     }
 
     private void arm(double power, int target, int margin){
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setTargetPosition(target);
-        if(Math.abs(robot.arm.getCurrentPosition()-target) < margin){
+        if(Math.abs(robot.arm.getCurrentPosition()-target) > margin) {
             robot.arm.setPower(power);
         }
+        while(robot.arm.isBusy()){}
         robot.arm.setPower(0);
     }
 

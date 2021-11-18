@@ -106,6 +106,17 @@ public class FreightFrenzy extends LinearOpMode {
             robot.leftRearDrive.setPower(modifier*bl);
             robot.rightRearDrive.setPower(modifier*br);
 
+            telemetry.addData("Front Left", robot.leftFrontDrive.getCurrentPosition());
+            telemetry.addData("Front Right", robot.rightFrontDrive.getCurrentPosition());
+            telemetry.addData("Back Left", robot.leftRearDrive.getCurrentPosition());
+            telemetry.addData("Back Right", robot.rightRearDrive.getCurrentPosition());
+
+            telemetry.addData("Arm", robot.arm.getCurrentPosition()); // 0 - 2235
+
+            telemetry.addData("Extend", robot.lift.getCurrentPosition());
+
+            telemetry.update();
+
         }
     }
 }
