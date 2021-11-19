@@ -48,15 +48,15 @@ public class Auto extends AutonomousMode<MecanumDrive> {
 
     // Storage Unit Code (compatible for both sides with the 'movementModifier')
     private void RunStorageUnit(int movementModifier) {
-        // Drive to the alliance shipping hub
+        // Drive to the turn table
 
-        // Deliver the preloaded block (make sure the robot has this)
+        // Spin the turn table
 
-        // Drive to the turn-table
+        // Drive Forward
 
-        // Spin the turn-table
+        // Drive along side the barcode until the team block is detected
 
-        // Park fully in the Storage Unit
+        // Drop the preload box into the wobble goal
     }
 
     @Override
