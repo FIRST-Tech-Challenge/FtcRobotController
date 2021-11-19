@@ -26,6 +26,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -34,6 +35,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.driveMethod;
+import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.fieldConstant;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
@@ -43,6 +46,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.Math.toRadians;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
@@ -79,7 +83,7 @@ import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "TEST BLUE DUCK", group = "Competition")
+@TeleOp(name = "TEST", group = "Competition")
 public class Test extends LinearOpMode {
 
     private DcMotor Intake = null;
@@ -104,43 +108,110 @@ public class Test extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
+    private DcMotor LF = null;
+    private DcMotor RF = null;
+    private DcMotor LB = null;
+    private DcMotor RB = null;
+
     @Override
     public void runOpMode() throws InterruptedException{
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
 
         //Traj
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = fieldConstant.BLUE_DUCK_STARTING_POSE;
+        drive.setPoseEstimate(startPose);
 
+        LF  = hardwareMap.get(DcMotor.class, "LF");
+        RF = hardwareMap.get(DcMotor.class, "RF");
+        LB  = hardwareMap.get(DcMotor.class, "LB");
+        RB = hardwareMap.get(DcMotor.class, "RB");
+
+        LF.setDirection(DcMotor.Direction.REVERSE);
+        RF.setDirection(DcMotor.Direction.FORWARD);
+        LB.setDirection(DcMotor.Direction.REVERSE);
+        RB.setDirection(DcMotor.Direction.FORWARD);
+        double speed = 0.5;
 
 
         waitForStart();
-        if (isStopRequested()) return;
 
-        Pose2d startPose = new Pose2d(-41, 62.125, Math.toRadians(90));
+        boolean releasedX1 = true;
+        boolean releasedY1 = true;
+        boolean releasedA1 = true;
 
-//        drive.setPoseEstimate(startPose);
-//        Trajectory traj = drive.trajectoryBuilder(startPose,true)
-//                .forward(-10)
-//                .build();
-        //        Pose2d startPose = new Pose2d(-41, 62.125, Math.toRadians(90.0));
-        drive.setPoseEstimate(startPose);
-        Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
-                .splineToConstantHeading(new Vector2d(-11.875, 40), Math.toRadians(-90))
-                .build();
+        double LFPower;
+        double RFPower;
+        double LBPower;
+        double RBPower;
 
-        drive.followTrajectory(myTrajectory1);
-        sleep(500);
-        Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory1.end())
-                .splineToConstantHeading(new Vector2d(-64.75, 52.5), Math.toRadians(90))
-                .build();
 
-        drive.followTrajectory(myTrajectory2);
-        sleep(500);
-        Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end(),true)
-                .forward(-19)
-                .build();
 
-        drive.followTrajectory(myTrajectory3);
+        while (opModeIsActive()) {
+
+            drive.update();
+
+            // Retrieve your pose
+            Pose2d myPose = drive.getPoseEstimate();
+
+            telemetry.addData("x", myPose.getX());
+            telemetry.addData("y", myPose.getY());
+            telemetry.addData("heading", myPose.getHeading());
+
+            double straight = -gamepad1.left_stick_y;
+            double strafe  = -gamepad1.left_stick_x;
+            double rotate = gamepad1.right_stick_x;
+
+            if(gamepad1.x){
+                if(releasedX1) {
+                    Pose2d target = driveMethod.targetPlatePose(myPose, fieldConstant.BLUE_PLATE, 9 + 8.75 + 2);
+                    telemetry.addData("target: ", target);
+                    telemetry.update();
+                    Trajectory myTrajectory1 = drive.trajectoryBuilder(myPose,true)
+                            .splineTo(new Vector2d(target.getX(), target.getY()), Math.PI+driveMethod.targetAngle(true, drive.getPoseEstimate(), fieldConstant.BLUE_PLATE))
+                            .build();
+                    drive.followTrajectory(myTrajectory1);
+                }
+            } else if(!releasedX1){
+                releasedX1 = true;
+            }
+
+            if(gamepad1.y){
+                if(releasedY1) {
+                    double turnAngle = driveMethod.targetAngle(true, myPose, fieldConstant.BLUE_PLATE)+Math.PI-drive.getExternalHeading();
+                    telemetry.addData("angle: ", turnAngle);
+                    telemetry.update();
+                    drive.turn(turnAngle);
+                }
+            } else if(!releasedY1){
+                releasedY1 = true;
+            }
+
+            if(gamepad1.a){
+                if(releasedA1) {
+                    Pose2d enter = fieldConstant.SHARED_BLUE_ENTER_POSE;
+                    Trajectory toShared = drive.trajectoryBuilder(myPose,true)
+                            .splineTo(new Vector2d(enter.getX(), enter.getY()), enter.getHeading())
+                            .build();
+                    drive.followTrajectory(toShared);
+                }
+            } else if(!releasedA1){
+                releasedA1 = true;
+            }
+
+            LFPower  = Range.clip(gamepad1.left_trigger + speed*(straight + rotate - strafe), -1.0, 1.0) ;
+            LBPower  = Range.clip(gamepad1.left_trigger + speed*(straight + rotate + strafe), -1.0, 1.0) ;
+            RFPower  = Range.clip(gamepad1.right_trigger + speed*(straight - rotate + strafe), -1.0, 1.0) ;
+            RBPower  = Range.clip(gamepad1.right_trigger + speed*(straight - rotate - strafe), -1.0, 1.0) ;
+
+            LF.setPower(LFPower);
+            RF.setPower(RFPower);
+            LB.setPower(LBPower);
+            RB.setPower(RBPower);
+
+
+
+            }
         }
 
     }

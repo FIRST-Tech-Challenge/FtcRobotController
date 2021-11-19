@@ -64,7 +64,7 @@ public class TeleOp_wheels extends LinearOpMode {
 
             double dRL = -gamepad1.left_stick_y;
             double drive = -gamepad1.left_stick_x;
-            double turn = gamepad1.right_stick_x;
+            double turn = -gamepad1.right_stick_x;
 
             lF_P = Range.clip(speed * (drive + turn - dRL), -1.0, 1.0);
             rF_P = Range.clip(speed * (drive + turn + dRL), -1.0, 1.0);

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.arthur;
 
 import android.content.res.Resources;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 @TeleOp(name = "FT Object Detection: BeeLine", group = "Linear OpMode")
+@Disabled
 public class FTOD_BeeLine extends LinearOpMode {
     private static final String VUFORIA_KEY = "AbbXw07/////AAABmb3Btlsgk0kds/dIfBHuXJpPmJG5blwxr150leKi1IwYvrDK9zsrm72lOhm7a6szhUJLWov316p/3cDMerJne7Ah7GicPOIq5pgAEpOEnFZwtKwwF3xnAZ4Spy9J0TYgeDR6qkcnAQJUdOKfICqCumWMIPJS/LP2F8NS083qqTJQ68bD1D7wxuCCtYfVdtEPNuj1M4rGb3uhWTRHjSO5yjVrkjV+iBnnQoaDLSXHNH0pp5VY5PbBj734yCf1TF6YmBuaC9tbFNEZUmCmTjgsLBXqIGD6LTQmiZa/pay1+NIv0kv/GfWjk9Q6MwhEMg9oDXuEv6jMJmNHEECJga/iiUKepl7OFj5PpvyrlrBsfTtD";
 

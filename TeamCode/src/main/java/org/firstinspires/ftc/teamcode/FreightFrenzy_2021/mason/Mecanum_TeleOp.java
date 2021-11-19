@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.mason;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.ArrayList;
 
 @TeleOp(name = "Mecanum TeleOp Test", group = "Linear OpMode")
+@Disabled
 public class Mecanum_TeleOp extends LinearOpMode {
 
     private DcMotor LF = null;

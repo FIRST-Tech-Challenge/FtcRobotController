@@ -23,13 +23,12 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "RED BARRIER", group = "Competition")
-public class Mecanum_Auto_RedBarrier extends LinearOpMode {
+@Autonomous(name = "BLUE DUCK DELAYED", group = "Competition")
+public class Mecanum_Auto_BlueDuck_Delayed extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -40,7 +39,6 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
     private DcMotor Slide = null;
     private Servo Rotate = null;
     private Servo Push = null;
-    private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
     private ElapsedTime runtime = new ElapsedTime();
 
     BNO055IMU imu;
@@ -56,10 +54,6 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             Robot4100Common.VUFORIA_LICENSE;
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-
-    double rotate = 0;
-    double speed = 0.5;
-    boolean reverse = false;
 
     @Override
     public void runOpMode() {
@@ -102,7 +96,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         //initialize position
         Push.setPosition(0.4);
         Slide.setPower(0.15);
-        sleep(200);
+        sleep(100);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Rotate.setPosition(0.03);
@@ -124,10 +118,10 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
 
         //Traj
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(6.5, -62.125, toRadians(-90));
+        Pose2d startPose = new Pose2d(-41, 62.125, toRadians(90));
         drive.setPoseEstimate(startPose);
         Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
-                .splineToConstantHeading(new Vector2d(-11.875, -43), toRadians(90))
+                .splineToConstantHeading(new Vector2d(-11.875, 43), toRadians(-90))
                 .build();
 
         waitForStart();
@@ -139,7 +133,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
                 recogTime.reset();
             }
 
-            while (recogTime.milliseconds() <= 2000.0) {
+            while (recogTime.milliseconds() <= 10000.0) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
@@ -157,18 +151,18 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
                 }
             }
             if (center < 0) {
-                visionResult = "RIGHT";
-            } else if (center < 420.725) {
                 visionResult = "LEFT";
-            } else {
+            } else if (center < 321.85) {
                 visionResult = "MIDDLE";
+            } else {
+                visionResult = "RIGHT";
             }
             telemetry.addLine(visionResult);
             telemetry.update();
 
             //MOTION TO PLATE
             drive.followTrajectory(myTrajectory1);
-            sleep(600);
+            sleep(500);
 
             //ROTATE
             Rotate.setPosition(1.0);
@@ -209,18 +203,46 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
 
             //BACK TO WALL
             Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end())
-                    .splineToLinearHeading(new Pose2d(6.5, -65), toRadians(-180))
+                    .splineToConstantHeading(new Vector2d(-65, 53), toRadians(90))
                     .build();
             drive.followTrajectory(myTrajectory3);
-            sleep(300);
+            sleep(500);
 
-            Trajectory myTrajectory4 = drive.trajectoryBuilder(myTrajectory3.end())
-                    .forward(35)
+            Pose2d wall = new Pose2d(-63.88, 53.25, Math.toRadians(90));
+            drive.setPoseEstimate(wall);
+
+            //ROTATE DUCK
+            Spin.setPower(0.5);
+            sleep(3500);
+            Spin.setPower(0.0);
+
+            //PARK
+            Trajectory myTrajectory4 = drive.trajectoryBuilder(wall,true)
+                    .forward(-18.5)
                     .build();
+
             drive.followTrajectory(myTrajectory4);
+
         }
 
     }
+
+    void twoPhaseSpin(boolean isReversed,double startingSpeed, double endSpeed) {
+        double reverseFactor = 1;
+        if(isReversed){
+            reverseFactor = -1;
+        }
+        ElapsedTime tSpin = new ElapsedTime();
+        double spinPower = startingSpeed * reverseFactor;
+        while (tSpin.milliseconds() < 1000){
+            Spin.setPower(spinPower);
+        }
+        while (tSpin.milliseconds() < 2500){
+            spinPower = Range.clip(spinPower * tSpin.milliseconds()/1000.0, startingSpeed, endSpeed);
+            Spin.setPower(spinPower);
+        }
+    }
+
     void stopMotion() {
         LF.setPower(0);
         RF.setPower(0);
@@ -320,9 +342,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         stopMotion();
     }
 
-//    void encoderDrive(double LF_D, double RF_D, double LB_D, double RB_D){
-//        LF_D/
-//    }
+
 
     void drivePerpendicularly(boolean isLeft, double margin, double power, double timeInterval) {
         ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -443,6 +463,44 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         }
         stopMotion();
     }
+    void driveStrafeLeft(boolean isForward, double margin, double power, double timeInterval) {
+        ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        final double currentAngle = aquireHeading();
+        int straightFactor = -1;
+        if (isForward) {
+            straightFactor = 1;
+        }
+        double targetAngle = currentAngle;
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        while (driveTime.milliseconds() < timeInterval) {
+
+            LF_power = straightFactor * power;
+            LB_power = straightFactor * power;
+            RF_power = straightFactor * power;
+            RB_power = straightFactor * power;
+
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(0);
+            RF.setPower(RF_power);
+            LB.setPower(-LB_power);
+            RB.setPower(0);
+            telemetry.addData("RF_power", RF_power);
+            telemetry.addData("RB_power", RB_power);
+            telemetry.addData("LF_power", -LF_power);
+            telemetry.addData("LB_power", -LB_power);
+
+            telemetry.update();
+            displayEncoderValue();
+        }
+        stopMotion();
+    }
+
     //make a turn that based on the current heading in a certain direction and angle
     void rotateAtAngle(boolean isClockwise, double degree, double margin, double power) {
         int angleFactor = -1;

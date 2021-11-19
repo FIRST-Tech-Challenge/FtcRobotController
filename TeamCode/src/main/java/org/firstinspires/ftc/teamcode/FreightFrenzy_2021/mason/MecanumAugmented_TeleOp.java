@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.mason;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.ArrayList;
 
 @TeleOp(name = "Mecanum Augmented TeleOp Test", group = "Linear Opmode")
+@Disabled
 public class MecanumAugmented_TeleOp extends LinearOpMode{
     private DcMotor LF = null;
     private DcMotor RF = null;
