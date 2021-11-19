@@ -97,13 +97,13 @@ public class VSlamOdometry implements IBaseOdometry {
 
         // This is the transformation between the center of the camera and the center of the robot
         // Set these three values to match the location/orientation of the camera with respect to the robot
-//        double offsetXInches = -5.5;
-//        double offsetYInches = -2;
-//        double offsetHDegrees = 90;
+        double offsetXInches = -6;
+        double offsetYInches = -3;
+        double offsetHDegrees = 0;
 
-//        Translation2d offsetTranslation = new Translation2d(offsetXInches * INCH_2_METER, offsetYInches * INCH_2_METER);
-//        Rotation2d offsetRotation = Rotation2d.fromDegrees(offsetHDegrees);
-        final Transform2d cameraToRobot = new Transform2d();
+        Translation2d offsetTranslation = new Translation2d(offsetXInches * INCH_2_METER, offsetYInches * INCH_2_METER);
+        Rotation2d offsetRotation = Rotation2d.fromDegrees(offsetHDegrees);
+        final Transform2d cameraToRobot = new Transform2d(offsetTranslation, offsetRotation);
         this.slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, this.hwMap.appContext);
         slamra.start();
     }
