@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.SerialNumber;
 import com.sun.tools.javac.tree.DocTreeMaker;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -69,8 +70,19 @@ public class servotest extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+
     private Servo servo0;
     private DcMotor arm;
+
+    private final double SERVO_FULLY_CLOSED = 0;
+    private final double SERVO_FULLY_OPENED = 0;
+    private final double ARM_MAX_SPEED = 0;
+    private final double HIGH_SPINNER_POWER = 0;
+    private final double OPTIMAL_SPINNER_POWER = 0;
+    private final double MOTOR_STOP = 0;
+
+
+    private DcMotor spinner;
 
     private BNO055IMU imu;
 
@@ -86,15 +98,7 @@ public class servotest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        telemetry.addAction(new Runnable() { @Override public void run()
-        {
-            // Acquiring the angles is relatively expensive; we don't want
-            // to do that in each of the three items that need that info, as that's
-            // three times the necessary expense.
-
-
-        }
-        });
+        // internal IMU setup
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -108,14 +112,14 @@ public class servotest extends LinearOpMode {
         imu.initialize(parameters);
         angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
 
+        // Meccanum Motors Definition and setting prefs
 
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
+        // Reverse the left side motors and set behaviors to stop instead of coast
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -124,30 +128,39 @@ public class servotest extends LinearOpMode {
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //define arm and servo objects and also spinner
         servo0 = hardwareMap.get(Servo.class, "servo-0");
-        arm = hardwareMap.get(DcMotor.class, "motorFrontRight");
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        spinner = hardwareMap.get(DcMotor.class, "spinner");
+
+        //set prefs for arm and servo
+        servo0.setDirection(Servo.Direction.FORWARD);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        spinner = hardwareMap.get(DcMotor.class, "spinner");
+        telemetry.addData("Motor Names & Numbers: ", hardwareMap.allDeviceMappings);
+
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        servo0.setDirection(Servo.Direction.FORWARD);
-        telemetry.addData("thing", servo0.getController());
-        telemetry.update();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
 
             telemetry.addData("rotation", angles.axesReference);
+
+            // MECCANUM MATH
+
             double y = pow(-gamepad1.left_stick_y,3); // Remember, this is reversed!
             double x = pow(gamepad1.left_stick_x * 1.1,3); // Counteract imperfect strafing
             double rx = pow(gamepad1.right_stick_x,3);
 
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio, but only when
-            // at least one is out of the range [-1, 1]
+
+            //denominator is the largest motor power (absolute value) or 1
+            //this ensures all the powers maintain the same ratio, but only when
+            //at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double frontLeftPower = (y + x + rx) / denominator;
             double backLeftPower = (y - x + rx) / denominator;
@@ -155,31 +168,54 @@ public class servotest extends LinearOpMode {
             double backRightPower = (y + x - rx) / denominator;
 
 
-
+            //setting motor speeds
             motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
 
 
-            double arm_power = gamepad2.left_stick_y;
-            double servo_angle = gamepad2.right_stick_y/0.5;
+            // BUTTON MAPPINGS
 
-            // Tank Mode uses one stick
-            // to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
+            //servo position button maps
+            if (gamepad1.left_bumper){
+                servo0.setPosition(SERVO_FULLY_CLOSED);
+            }
+            if (gamepad1.right_bumper){
+                servo0.setPosition(SERVO_FULLY_OPENED);
+            }
+
+            // arm position button maps (for later)
+            if (gamepad1.x){
+                // arm set angle up
+            }
+            if (gamepad1.b){
+                // arm set angle down
+            }
+
+            //spinner  button maps
+            if (gamepad1.y){
+                spinner.setPower(HIGH_SPINNER_POWER);
+            }else if (gamepad1.a){
+                spinner.setPower(OPTIMAL_SPINNER_POWER);
+            }else {
+                spinner.setPower(MOTOR_STOP);
+            }
+
+            //claw arm button map (test adaptive triggers)
+            if (gamepad1.left_trigger > 0) {
+                arm.setPower(-ARM_MAX_SPEED);
+            }
+            if (gamepad1.right_trigger > 0){
+                arm.setPower(ARM_MAX_SPEED);
+            }
 
 
-            arm.setPower(arm_power);
-
-            servo0.setPosition(servo_angle);
-
-
+            // telemetry debugging from here down
             telemetry.addData("angle", angles.firstAngle);
+            double pos = motorBackLeft.getCurrentPosition();
+            telemetry.addData("Motor Get Position Return: ", pos);
 
-            // Show the elapsed game time and wheel power.
             telemetry.update();
         }
     }

@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.sun.tools.javac.comp.Todo;
 
@@ -25,13 +27,32 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @Autonomous
 public class AutoNav5 extends LinearOpMode {
 
-    BNO055IMU imu;
-    DcMotor motorFrontLeft = null;
-    DcMotor motorBackLeft = null;
-    DcMotor motorFrontRight = null;
-    DcMotor motorBackRight = null;
+
     private ElapsedTime runtime = new ElapsedTime();
-    private double seconds = runtime.seconds();
+
+    private Servo servo0;
+    private DcMotor arm;
+
+
+    private final double SERVO_FULLY_CLOSED = 0;
+    private final double SERVO_FULLY_OPENED = 0;
+    private final double ARM_MAX_SPEED = 0;
+    private final double HIGH_SPINNER_POWER = 0;
+    private final double OPTIMAL_SPINNER_POWER = 0;
+    private final double MOTOR_STOP = 0;
+
+    private final double NORMAL_SPEED = 0.5;
+
+
+
+    private DcMotor spinner;
+
+    private BNO055IMU imu;
+
+    private DcMotor motorFrontRight;
+    private DcMotor motorBackRight;
+    private DcMotor motorFrontLeft;
+    private DcMotor motorBackLeft;
 
     private Orientation angles;
 
@@ -40,6 +61,11 @@ public class AutoNav5 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        // internal IMU setup
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -51,15 +77,16 @@ public class AutoNav5 extends LinearOpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
 
+        // Meccanum Motors Definition and setting prefs
 
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-
+        // Reverse the left side motors and set behaviors to stop instead of coast
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -67,14 +94,22 @@ public class AutoNav5 extends LinearOpMode {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        angles = getAngles();
 
+        //define arm and servo objects and also spinner
+        servo0 = hardwareMap.get(Servo.class, "servo-0");
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        spinner = hardwareMap.get(DcMotor.class, "spinner");
+
+        //set prefs for arm and servo
+        servo0.setDirection(Servo.Direction.FORWARD);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        spinner = hardwareMap.get(DcMotor.class, "spinner");
+        telemetry.addData("Motor Names & Numbers: ", hardwareMap.allDeviceMappings);
 
         waitForStart();
-        turnRadians(Math.PI/2, 1);
-        while (runtime.seconds()<15) { // turn 90 then go straight
-            motorDriveForward(1.0);
-        }
+
+
+
         runtime.reset();
         while(opModeIsActive()){
             angles   = getAngles();
@@ -83,11 +118,26 @@ public class AutoNav5 extends LinearOpMode {
             // 685mm  0.5power 1sec
 
             telemetry.update();
+            executeAutomaticSequence2();
 
 
         }
     }
+    private void executeAutomaticSequence2(){
+        // auto for near carousel
 
+        motorDriveBack(NORMAL_SPEED);
+        driveEncodedDistance();
+
+        spinnySpinForward(OPTIMAL_SPINNER_POWER);
+
+        spinnySpinForward();
+
+
+
+
+
+    }
     private void motorDrive(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower){
         motorBackLeft.setPower(motorBackLeftPower);
         motorFrontLeft.setPower(motorFrontLeftPower);
@@ -118,6 +168,15 @@ public class AutoNav5 extends LinearOpMode {
     private void motorSpinRight(double speed){
         motorDrive(speed, speed, -speed, -speed);
     }
+    private void spinnySpin(double speed){
+        arm.setPower(speed);
+    }
+    private void spinnySpinForward(double speed){
+        spinnySpin(speed);
+    }
+    private void spinnySpinBackward(double speed){
+        spinnySpin(-speed);
+    }
     private void turnRadians(double radians, double speed) {
         turnRadians(radians, speed, angles.firstAngle);
     }
@@ -145,6 +204,24 @@ public class AutoNav5 extends LinearOpMode {
     }
     private Orientation getAngles() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+    }
+    private void spinRotations(double rotation){
+        double encodedSpins = 0;
+        while (opModeIsActive() && encodedSpins < rotation){
+            double encodedSpins = 0;
+        }
+        motorStop();
+    }
+    private void driveEncodedDistance(double distance){
+        double encodedDistance = 0;
+        while (opModeIsActive() && encodedDistance < distance){
+
+
+        }
+        motorStop();
+        double pos = motorBackLeft.getCurrentPosition();
+        telemetry.addData("Motor Get Position Return: ", pos);
+        telemetry.update();
     }
 
 }
