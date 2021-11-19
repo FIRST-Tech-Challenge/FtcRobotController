@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 import android.os.Build;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,7 +17,8 @@ import androidx.annotation.RequiresApi;
 
 @TeleOp
 public class ToolTestCode extends LinearOpMode {
-    public EventThread eventThread = new EventThread();
+    public EventThread eventThread = new EventThread(this::opModeIsActive);
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void runOpMode() {
@@ -50,6 +52,5 @@ public class ToolTestCode extends LinearOpMode {
         thread2.start();
         //noinspection StatementWithEmptyBody
         while (opModeIsActive()) {}
-        eventThread.interrupt();
     }
 }
