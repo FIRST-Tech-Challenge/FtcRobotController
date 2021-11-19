@@ -80,17 +80,17 @@ public class MechanumTeleOpManager extends TeleOpManager {
         double rightBottomPower = (y - x) - rx;
         double leftTopPower = (-(y - x)) - rx;
         double leftBottomPower = (-(y + x)) - rx;
-        MECHANUM.driveWithEncoder((int) Range.clip(rightTopPower * 50, -50, 50), (int) Range.clip(rightBottomPower * 50, -50, 50), (int) Range.clip(leftTopPower * 50, -50, 50), (int) Range.clip(leftBottomPower * 50, -50, 50));
+        MECHANUM.driveWithEncoder((int) Range.clip(rightTopPower * 80, -80, 80), (int) Range.clip(rightBottomPower * 80, -80, 80), (int) Range.clip(leftTopPower * 80, -80, 80), (int) Range.clip(leftBottomPower * 80, -80, 80));
         if(DEVICES.isSpinnerMotorAllowed()) {
             SPINNER.driveWithEncoder((int) Range.clip((getGamepadWithFunction1().left_trigger - getGamepadWithFunction1().right_trigger) * 100, -100, 100));
         }
         if(DEVICES.isLiftMotorsAllowed()) {
             if(getGamepadWithFunction2().dpad_up && !getGamepadWithFunction2().dpad_down) {
-                LIFT_ONE.driveWithEncoder(50);
-                LIFT_TWO.driveWithEncoder(50);
+                LIFT_ONE.driveWithEncoder(-20);
+                LIFT_TWO.driveWithEncoder(20);
             }else if(!getGamepadWithFunction2().dpad_up && getGamepadWithFunction2().dpad_down) {
-                LIFT_ONE.driveWithEncoder(-50);
-                LIFT_TWO.driveWithEncoder(-50);
+                LIFT_ONE.driveWithEncoder(20);
+                LIFT_TWO.driveWithEncoder(-20);
             }else{
                 LIFT_ONE.driveWithEncoder(0);
                 LIFT_TWO.driveWithEncoder(0);
