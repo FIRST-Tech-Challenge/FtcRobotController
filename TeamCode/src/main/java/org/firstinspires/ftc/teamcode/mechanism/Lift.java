@@ -17,10 +17,10 @@ public class Lift implements Mechanism {
 
     @Override
     public void run(Gamepad gamepad) {
-        targetPosition += gamepad.left_stick_y;
-        targetPosition = Range.clip(targetPosition,0,5000);
+        targetPosition -= gamepad.left_stick_y*15;
+        targetPosition = Range.clip(targetPosition,0,1550);
         liftMotor.setTargetPosition((int)targetPosition);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setPower(.5);
+        liftMotor.setPower(0.8);
     }
 }

@@ -22,6 +22,7 @@ public class SpinCarouselRed extends LinearOpMode {
         waitForStart();
         // Start button is pressed
 
+        /* old code
         // Move to the carousel
         chassis.strafeLeftWithEncoders(0.6,700);
         chassis.moveBackwardWithEncoders(0.6, 2000);
@@ -35,7 +36,23 @@ public class SpinCarouselRed extends LinearOpMode {
 
         // Move into the warehouse
         chassis.strafeLeftWithEncoders(0.6,50);
-        chassis.moveForwardWithEncoders(1,5500);
+        chassis.moveForwardWithEncoders(1,5500);*/
+
+        // Move to the carousel
+        chassis.moveForwardWithEncoders(0.6,100);
+        chassis.strafeLeftWithEncoders(0.6, 950);
+
+        // Spin the carousel
+        carousel.turnCarousel();
+        delay(2500);
+        carousel.carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        carousel.carouselMotor.setPower(0);
+
+        // Move into the warehouse
+        chassis.strafeRightWithEncoders(0.6,50);
+        chassis.moveForwardWithEncoders(0.6,250);
+        chassis.turnRightWithEncoders(0.6,550);
+        chassis.moveForwardWithEncoders(1,4800);
     }
 
     public void delay(int time) {
