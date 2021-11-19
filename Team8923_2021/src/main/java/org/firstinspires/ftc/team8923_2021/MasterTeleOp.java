@@ -61,18 +61,14 @@ abstract public class MasterTeleOp extends MasterOpMode {
         }
     }
 
-    public void runGrabber() {
-        if(gamepad2.a) {
-            servoGrabber.setPosition(1.0);
-        } else {
-            servoGrabber.setPosition(0.0);
-        }
-    }
-
-    public void runLift() {
+    public void deliver() throws InterruptedException {
         if(gamepad2.left_bumper) {
             motorLift.setPower(0.1);
+            wait(2000);
+            servoGrabber.setPosition(1.0);
         } else if (gamepad2.right_bumper){
+            servoGrabber.setPosition(0.0);
+            wait(500);
             motorLift.setPower(-0.1);
         } else {
             motorLift.setPower(0.0);

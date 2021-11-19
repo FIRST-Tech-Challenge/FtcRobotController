@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class TeleOpCompetition extends MasterTeleOp
 {
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() throws InterruptedException {
         initHardware();
         waitForStart();
 
@@ -18,8 +17,7 @@ public class TeleOpCompetition extends MasterTeleOp
             runDriveSpeed();
             runIntake();
             runCarousel();
-            runLift();
-            runGrabber();
+            deliver();
             idle();
         }
     }
