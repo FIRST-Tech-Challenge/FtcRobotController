@@ -21,9 +21,6 @@ public class pipeline1Robot extends OpenCvPipeline {
     private double topAverage;
     private double bottomAverage;
 
-    //The max difference allowed inside the rectangles
-    private int threshold = 15;
-
     //The position related to the screen
     private double topRectWidthPercentage = 0.25;
     private double topRectHeightPercentage = 0.25;
@@ -35,14 +32,6 @@ public class pipeline1Robot extends OpenCvPipeline {
     private int rectangleHeight = 10;
     @Override
     public Mat processFrame(Mat input) {
-
-        /**
-         *input which is in RGB is the frame the camera gives
-         *We convert the input frame to the color space matYCrCb
-         *Then we store this converted color space in the mat matYCrCb
-         *For all the color spaces go to
-         *https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html
-         */
         Imgproc.cvtColor(input, matYCrCb, Imgproc.COLOR_RGB2YCrCb);
         telemetry.addData("Telemetry","Telemetry");
         telemetry.update();
@@ -98,14 +87,6 @@ public class pipeline1Robot extends OpenCvPipeline {
 
     public double getBottomAverage() {
         return bottomAverage;
-    }
-
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
-    }
-
-    public int getThreshold() {
-        return threshold;
     }
 
     public void setTopRectWidthPercentage(double topRectWidthPercentage) {
