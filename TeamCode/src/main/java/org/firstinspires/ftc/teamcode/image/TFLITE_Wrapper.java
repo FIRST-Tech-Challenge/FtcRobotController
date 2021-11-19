@@ -9,21 +9,24 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TFLITE_Wrapper {
     private final String VUFORIA_KEY;
     private final String CAMERA_NAME;
+    private ArrayList<Detection> Detections;
     public VuforiaLocalizer vuforia;
     public TFObjectDetector tfod;
     public String TFOD_MODEL_ASSET;
     public String[] LABELS;
     public HardwareMap hardwareMap;
+    public float confidence = 0.5f;
 
     public TFLITE_Wrapper(HardwareMap hardwareMap) {
         this(   "AcQbfNb/////AAABmUoZxvy9bUCeksf5rYATLidV6rQS+xwgakOfD4C+LPj4FmsvqtRDFihtnTBZUUxxFbyM7CJMfiYTUEwcDMJERl938oY8iVD43E/SxeO64bOSBfLC0prrE1H4E5SS/IzsVcQCa9GsNaWrTEushMhdoXA3VSaW6R9KrrwvKYdNN/SbaN4TPslQkTqSUr63K60pkE5GqpeadAQuIm8V6LK63JD1TlF665EgpfsDZeVUBeAiJE86iGlT1/vNJ9kisAqKpBHsRyokaVClRnjlp28lmodjVRqeSk8cjCuYryn74tClfxfHQpkDDIsJO+7IYwJQCZQZZ+U9KJaMUeben4HOj0JTnQaEE6MZLaLQzY+C/6MS",
-                "FreightFrenzy_BCDM.tflite",
-                new String[]{"Ball", "Cube", "Duck", "Marker"},
+                "FreightFrenzy_BC.tflite",
+                new String[]{"Ball", "Cube"},
                 hardwareMap,
                 hardwareMap.appContext.getString(R.string.Webcam1)
         );
@@ -73,10 +76,50 @@ public class TFLITE_Wrapper {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.5f;
+        tfodParameters.minResultConfidence = confidence;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+    }
+
+    public ArrayList<Detection> getDetections() {
+        return Detections;
+    }
+
+    public void clearDetections() {
+        Detections.clear();
+    }
+
+    public void registerDetection(Detection detection) {
+        Detections.add(detection);
+    }
+
+    public ArrayList<Detection> searchDetections(String name) {
+        ArrayList<Detection> returnList = new ArrayList();
+        for (Detection detection : Detections) {
+            if (detection.friendlyName.equals(name)) {
+                returnList.add(detection);
+            }
+        }
+        return returnList;
+    }
+
+    public class Detection {
+        public Detection(float x, float y, float imageHeight, float imageWidth, String friendlyName, float angle) {
+            this.x = x;
+            this.y = y;
+            this.imageHeight = imageHeight;
+            this.imageWidth = imageWidth;
+            this.friendlyName = friendlyName;
+            this.angle = angle;
+        }
+
+        public float x;
+        public float y;
+        public float imageHeight;
+        public float imageWidth;
+        public String friendlyName;
+        public float angle;
     }
 }
