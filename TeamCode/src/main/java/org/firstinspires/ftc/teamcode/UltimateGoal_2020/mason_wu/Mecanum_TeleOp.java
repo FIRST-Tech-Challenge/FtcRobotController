@@ -11,6 +11,7 @@ package org.firstinspires.ftc.teamcode.UltimateGoal_2020.mason_wu;
 
 
 @TeleOp(name = "Mecanum TeleOp2", group = "Linear Opmode")
+@Disabled
 public class Mecanum_TeleOp extends LinearOpMode {
 
     private DcMotor LF = null;

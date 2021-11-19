@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 
-@TeleOp(name = "Mecanum TeleOp Final", group = "Competition")
+@TeleOp(name = "TELEOP FINAL", group = "Competition")
 public class Mecanum_TeleOp_Final extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -80,13 +80,17 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean releasedLB2 = true;
         boolean releasedLT2 = true;
         boolean releasedRT2 = true;
+        boolean releasedA1 = true;
         boolean releasedA2 = true;
+        boolean releasedB1 = true;
         boolean releasedB2 = true;
         boolean releasedY2 = true;
         boolean releasedDD1 = true;
         boolean releasedDD2 = true;
+        boolean releasedDL2 = true;
         boolean releasedDU1 = true;
         boolean releasedDU2 = true;
+        boolean releasedDR2 = true;
 
         boolean toggleX1 = true;
         boolean toggleRB2 = true;
@@ -116,6 +120,22 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 }
             } else if (!releasedDD1){
                 releasedDD1 = true;
+            }
+
+            if(gamepad1.a){
+                if(releasedA1) {
+                    speed = 0.3;
+                }
+            } else if(!releasedA1){
+                releasedA1 = true;
+            }
+
+            if(gamepad1.b){
+                if(releasedB1) {
+                    speed = 0.8;
+                }
+            } else if(!releasedB1){
+                releasedB1 = true;
             }
 
             if(gamepad2.a){
@@ -198,6 +218,27 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 releasedDD2 = true;
             }
 
+            if (gamepad2.dpad_left) {
+                if (releasedDL2){
+                    if(spinPower != 0) {
+                        spinPower -= 0.05;
+                    }
+                    releasedDL2 = false;
+                }
+            } else if (!releasedDL2){
+                releasedDL2 = true;
+            }
+            if (gamepad2.dpad_right) {
+                if (releasedDR2){
+                    if(spinPower != 0) {
+                        spinPower += 0.05;
+                    }
+                    releasedDR2 = false;
+                }
+            } else if (!releasedDR2){
+                releasedDR2 = true;
+            }
+
             if (gamepad1.left_bumper) {
                 if (releasedLB1 && Slide.getCurrentPosition() < initialHeight + 30){
                     intakePower = 1.0;
@@ -224,7 +265,8 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             if (gamepad2.right_bumper) {
                 if (releasedRB2){
                     if (toggleRB2) {
-                        spinPower = 0.8;
+                        spinPower = 0.70;
+                        //twoPhaseSpin(false, 0.7);
                         telemetry.addLine("SPIN STARTS");
                         toggleRB2 = false;
                     } else {
@@ -241,7 +283,8 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             if (gamepad2.left_bumper) {
                 if (releasedLB2){
                     if (toggleLB2) {
-                        spinPower = -0.8;
+                        spinPower = -0.70;
+                        //twoPhaseSpin(true, 0.7);
                         telemetry.addLine("SPIN STARTS REVERSE");
                         toggleLB2 = false;
                     } else {
@@ -309,6 +352,22 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         }
     }
 
+    void twoPhaseSpin(boolean isReversed,double startingSpeed) {
+        double reverseFactor = 1;
+        if(isReversed){
+            reverseFactor = -1;
+        }
+        ElapsedTime tSpin = new ElapsedTime();
+        double spinPower = startingSpeed * reverseFactor;
+        while (tSpin.milliseconds() < 800){
+            Spin.setPower(spinPower);
+        }
+        while (tSpin.milliseconds() < 1500){
+            spinPower = Range.clip(spinPower * tSpin.milliseconds()/800.0, -1.0, 1.0);
+            Spin.setPower(spinPower);
+        }
+    }
+
     private void decreaseSpeed(double s) {
         double decreased = speed - s;
         if (decreased < 0) {
@@ -326,6 +385,5 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         }
         speed = increased;
     }
-
 
 }

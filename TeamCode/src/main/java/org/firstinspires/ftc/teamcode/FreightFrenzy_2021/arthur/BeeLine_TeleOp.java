@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.arthur;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Basic: BeeLine", group="Linear OpMode")
+@Disabled
 public class BeeLine_TeleOp extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 

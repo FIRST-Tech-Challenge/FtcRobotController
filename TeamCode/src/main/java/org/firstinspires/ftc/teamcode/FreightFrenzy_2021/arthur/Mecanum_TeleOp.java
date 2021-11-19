@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.arthur;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Basic: Mecanum", group="Linear OpMode")
+@Disabled
 public class Mecanum_TeleOp extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private final int TICKS_PER_ROTATION = 537;

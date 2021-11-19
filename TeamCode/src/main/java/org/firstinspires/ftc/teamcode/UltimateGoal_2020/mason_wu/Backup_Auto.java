@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.UltimateGoal_2020.mason_wu;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Autonomous(name="Backup Autonomous", group="4100")
+@Disabled
 public class Backup_Auto extends LinearOpMode {
     // Declare OpMode members.
     private DcMotor Arm = null;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.mason;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 
 
 @TeleOp(name = "Beeline TeleOp Test", group = "Linear Opmode")
+@Disabled
 public class Beeline_TeleOp extends LinearOpMode {
 
     private DcMotor left = null;

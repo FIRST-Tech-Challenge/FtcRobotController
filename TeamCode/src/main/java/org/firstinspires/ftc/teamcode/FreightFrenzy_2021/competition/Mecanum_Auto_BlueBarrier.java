@@ -130,7 +130,7 @@ public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
         Pose2d startPose = new Pose2d(6.5, 62.125, toRadians(90));
         drive.setPoseEstimate(startPose);
         Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
-                .splineToConstantHeading(new Vector2d(-11.875, 42), toRadians(-90))
+                .splineToConstantHeading(new Vector2d(-11.875, 43), toRadians(-90))
                 .build();
 
         waitForStart();
@@ -195,7 +195,7 @@ public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
 
             //CLOSER TO PLATE
             Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory1.end())
-                    .back(1)
+                    .back(2)
                     .build();
             drive.followTrajectory(myTrajectory2);
 

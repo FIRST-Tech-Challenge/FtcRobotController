@@ -28,8 +28,8 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "RED BARRIER", group = "Competition")
-public class Mecanum_Auto_RedBarrier extends LinearOpMode {
+@Autonomous(name = "RED BARRIER DELAYED", group = "Competition")
+public class Mecanum_Auto_RedBarrier_Delayed extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -52,6 +52,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             "Duck",
             "Marker"
     };
+
     private static final String VUFORIA_KEY =
             Robot4100Common.VUFORIA_LICENSE;
     private VuforiaLocalizer vuforia;
@@ -139,7 +140,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
                 recogTime.reset();
             }
 
-            while (recogTime.milliseconds() <= 2000.0) {
+            while (recogTime.milliseconds() <= 12000.0) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.*;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 @Autonomous(name = "Trajectory Test", group = "4100")
+@Disabled
 public class Trajectory_Test extends LinearOpMode {
     // Declare OpMode members.
     private DcMotor Arm = null;
