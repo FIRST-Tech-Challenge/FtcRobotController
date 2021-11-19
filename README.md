@@ -20,7 +20,7 @@ Both *FIRST* and our team have documentation and support.
 
 ### Javadoc Reference Material
 * [FTC Javadoc](https://javadoc.io/doc/org.firstinspires.ftc)
-* [Internal Team Javadoc](https://xaverianteamrobotics.github.io/FtcRobotController/javadoc/index.html)
+* [Internal Team Javadoc](https://xaverianteamrobotics.github.io/FtcRobotController/javadocs)
 
 ### Getting Help
 If no one on the team can help, get answers to technical questions regarding FTC from the following resources:
