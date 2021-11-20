@@ -7,6 +7,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.degrees;
@@ -126,7 +127,9 @@ public class Robot_2022FF {
     public void setupRobot() throws InterruptedException{
         //reverse the needed motors?
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+//        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+//        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -134,7 +137,7 @@ public class Robot_2022FF {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         resetEncoders();//???////////////////////////////////////////////////////////////
-
+        resetAngle();
         setIMUParameters();
 
         while (!imu.isGyroCalibrated()) {
@@ -166,7 +169,9 @@ public class Robot_2022FF {
      * Reset angle measurement
      * */
     public void resetAngle() {
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         startAngles = lastAngles;
         globalAngle = 0;
     }
@@ -178,7 +183,7 @@ public class Robot_2022FF {
      */
     private double getAngle(){
         //Get a new angle measurement
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         //Get the difference between current angle measurement and last angle measurement
         double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
 
@@ -317,7 +322,7 @@ public class Robot_2022FF {
         timer.reset();
 
         //tolerance can be adjusted
-        double tolerance = 0;
+        double tolerance = 10;
 
         while(opMode.opModeIsActive() && Math.abs(error) > tolerance){
             composeAngleTelemetry();
@@ -631,21 +636,22 @@ public class Robot_2022FF {
         double power;
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
-
-        while(opMode.opModeIsActive() && Math.abs(error) > 0) {
-            telemetry.addData("current position",dist);
-            telemetry.update();
+        double tolerance = 20;
+        while(opMode.opModeIsActive() && Math.abs(error) > tolerance) {
             dist = getDistanceTraveled();
             error = cm-dist;
-
             derivative = (error-lastError) / timer.seconds();
             correction = getCorrection();
             double abspow = Math.abs(kp*error+kd*derivative);
             power = abspow <= 1? kp*error+kd*derivative : abspow/(kp*error+kd*derivative);
             leftPower = Math.cos(newDirection) * power;
             rightPower = Math.sin(newDirection) * power;
-            correctedTankStrafe(leftPower, rightPower, correction);
-
+            tankDrive(power, power);
+            telemetry.addData("p",power);
+            telemetry.addData("correction",correction);
+            telemetry.addData("current position",dist);
+            telemetry.addData("error",Math.abs(error));
+            telemetry.update();
             lastError = error;
             timer.reset();
         }
@@ -654,6 +660,9 @@ public class Robot_2022FF {
         Thread.sleep(500);
         resetAngle();
         resetEncoders();
+        dist = getDistanceTraveled();
+        telemetry.addData("current position",dist);
+        telemetry.update();
     }
     /**
      * Strafe in any direction using encoders.

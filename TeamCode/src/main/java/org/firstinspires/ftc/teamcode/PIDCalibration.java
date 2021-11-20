@@ -28,15 +28,21 @@ public class PIDCalibration extends LinearOpMode {
 
         robot = new Robot_2022FF(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft,imu,this);
         robot.setupRobot();
-        kp = 1;
+        kp = 0.5;
         kd = 0;//Todo make note of the numbers you use!!! Copy over to Robot_2022FF when finished!
         waitForStart();
         boolean auto = false;//note: code starts as driver controlled
-        int switchInt = 1;
-        double cms = 200;//todo adjust cm as needed, longer distance allows for more accuracy if you have room
+        boolean goRun = false;
+        int switchInt = -1;
+        double cms = 50;//todo adjust cm as needed, longer distance allows for more accuracy if you have room
+        robot.resetAngle();
         while(opModeIsActive()){
             if(auto){
-                robot.pidTunerStrafe(0,switchInt*cms);
+                if(goRun) {
+                    robot.pidTunerStrafe(0, switchInt * cms);
+                    goRun = false;
+                    Thread.sleep(5000);
+                }
             }
             else {
                 double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + (Math.PI / 4);
@@ -52,18 +58,31 @@ public class PIDCalibration extends LinearOpMode {
                 motorBackRight.setPower((powerOne + (rotation)));
 
             }
-            if(gamepad1.left_bumper)//left bumper to switch modes
-                auto=!auto;
-            if(gamepad1.right_bumper)//right bumper to change directions. In theory, after reaching destination it should stop... todo if it shakes/doesn't stop let me know!
-                switchInt = -1*switchInt;
-            if(gamepad1.a)//increase kp
+            if(gamepad1.left_bumper) {//left bumper to switch modes
+                auto = !auto;
+                Thread.sleep(100);
+            }
+            if(gamepad1.right_bumper) {//right bumper to change directions. In theory, after reaching destination it should stop... todo if it shakes/doesn't stop let me know!
+                switchInt = -1 * switchInt;
+                goRun = true;
+                Thread.sleep(100);
+            }
+            if(gamepad1.a) {//increase kp
                 kp++;
-            if(gamepad1.b)//decrease kp
+                Thread.sleep(100);
+            }
+            if(gamepad1.b) {//decrease kp
                 kp--;
-            if(gamepad1.x)//increase kd
+                Thread.sleep(100);
+            }
+            if(gamepad1.x) {//increase kd
                 kd++;
-            if(gamepad1.y)//decrease kd
+                Thread.sleep(100);
+            }
+            if(gamepad1.y) {//decrease kd
                 kd--;
+                Thread.sleep(100);
+            }
             //we don't have access to FTC dashboard, so tuning is done here
             //after each run, change kp and kd accordingly(instructions in discord)
             //press right bumper to resume run
@@ -72,6 +91,8 @@ public class PIDCalibration extends LinearOpMode {
             //if about to hit something, please HIT STOP don't try left bumper!!!!!!!!
             telemetry.addData("kp", kp);
             telemetry.addData("kd", kd);
+            telemetry.addData("run?", goRun);
+            telemetry.addData("in auto mode?", auto);
             telemetry.update();
         }
     }
