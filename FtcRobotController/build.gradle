@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat
 //
 apply plugin: 'com.android.library'
 
+//timmy is coming. he will steal your first born child. there is no escape from him. the end is upon us.
+
 android {
 
     defaultConfig {
