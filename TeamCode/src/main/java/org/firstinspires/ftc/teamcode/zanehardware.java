@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,6 +25,9 @@ public class zanehardware {
         Back_Right = hwMap.get(DcMotor.class,"Back_Right");
         Spinner = hwMap.get(DcMotor.class,"Spinner");
 
+        //reverse motors
+        Front_Right.setDirection(DcMotorSimple.Direction.REVERSE);
+        Front_Right.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     public void allMotorPower(double power){
         Front_Left.setPower(power);
@@ -41,4 +45,5 @@ public class zanehardware {
         Front_Right.setPower(power);
         Back_Right.setPower(power);
     }
+
 }
