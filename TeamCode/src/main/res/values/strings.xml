@@ -1,21 +1,21 @@
 <resources>
     <string name="title_activity_imgproc">imgproc</string>
     <string name="VUFORIA_KEY">AcQbfNb/////AAABmUoZxvy9bUCeksf5rYATLidV6rQS+xwgakOfD4C+LPj4FmsvqtRDFihtnTBZUUxxFbyM7CJMfiYTUEwcDMJERl938oY8iVD43E/SxeO64bOSBfLC0prrE1H4E5SS/IzsVcQCa9GsNaWrTEushMhdoXA3VSaW6R9KrrwvKYdNN/SbaN4TPslQkTqSUr63K60pkE5GqpeadAQuIm8V6LK63JD1TlF665EgpfsDZeVUBeAiJE86iGlT1/vNJ9kisAqKpBHsRyokaVClRnjlp28lmodjVRqeSk8cjCuYryn74tClfxfHQpkDDIsJO+7IYwJQCZQZZ+U9KJaMUeben4HOj0JTnQaEE6MZLaLQzY+C/6MS</string>
-    <string name="webcam">Webcam</string>
+    <string name="CV_WEBCAM_ONE">c1V</string>
     <!---->
-    <string name="DRIVETRAIN_LEFT_DRIVE_1">ld1</string>
-    <string name="DRIVETRAIN_LEFT_DRIVE_2">ld2</string>
-    <string name="DRIVETRAIN_CNTR_DRIVE_1">cd1</string>
-    <string name="DRIVETRAIN_RIGHT_DRIVE_1">rd1</string>
-    <string name="DRIVETRAIN_RIGHT_DRIVE_2">rd2</string>
-    <string name="HW_SPINNER">spin</string>
-    <string name="HW_LIFT">liftOne</string>
-    <string name="HW_LIFT_TWO">liftTwo</string>
-    <string name="HW_GRABBER">grabber</string>
-    <string name="HW_TRAPPER">trapper</string>
-    <string name="HW_TRAPPER_TRIGGER">distance</string>
-    <string name="HW_DUCK">duck</string>
-    <string name="HW_SPINNER_SERVO">spinnerServo</string>
-    <string name="HW_LIFT_SERVO">liftServo</string>
-    <string name="HW_LIFT_DROPPER_SERVO">liftDropper</string>
+    <string name="DRIVETRAIN_LEFT_DRIVE_1">ltM</string>
+    <string name="DRIVETRAIN_LEFT_DRIVE_2">lbM</string>
+    <string name="DRIVETRAIN_CENTER_DRIVE_1">cdM</string>
+    <string name="DRIVETRAIN_RIGHT_DRIVE_1">rtM</string>
+    <string name="DRIVETRAIN_RIGHT_DRIVE_2">rbM</string>
+    <string name="HARDWARE_INTAKE">iM</string>
+    <string name="HARDWARE_LIFT_ONE">l1M</string>
+    <string name="HARDWARE_LIFT_TWO">l2M</string>
+    <string name="HARDWARE_DISTANCE_SENSOR">diD</string>
+    <string name="HARDWARE_DUCK_MOTOR">dM</string>
+    <string name="HARDWARE_INTAKE_SERVO_LOWER">ilS</string>
+    <string name="HARDWARE_INTAKE_SERVO_UPPER">iuS</string>
+    <string name="HARDWARE_HAND_TURNER_SERVO">htS</string>
+    <string name="HARDWARE_HAND_FLIPPER_SERVO">hfS</string>
+    <string name="HARDWARE_HAND_GRABBER_SERVO">hgS</string>
 </resources>

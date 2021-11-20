@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.competition.utils.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.competition.utils.Mechanum;
 import org.firstinspires.ftc.teamcode.competition.utils.Motor;
@@ -14,60 +16,57 @@ import org.firstinspires.ftc.teamcode.competition.utils.StandardServo;
 
 public class MechanumTeleOpManager extends TeleOpManager {
 
-    private final Mechanum MECHANUM;
-    private final Motor SPINNER, LIFT_ONE, LIFT_TWO, DUCK;
-    private final StandardServo SPINNER_SERVO, LIFT_SERVO, LIFT_DROPPER;
-    private final DistanceSensor LIFT_SENSOR;
-    private final TeleOpHWDevices DEVICES;
+    private final Mechanum MECHANUM_DRIVETRAIN;
+    private final Motor INTAKE_MOTOR, LIFT_MOTOR_ONE, LIFT_MOTOR_TWO, DUCK_MOTOR;
+    private final StandardServo INTAKE_SERVO_LOWER, INTAKE_SERVO_UPPER, HAND_TURNER_SERVO, HAND_FLIPPER_SERVO, HAND_GRABBER_SERVO;
+    private final DistanceSensor HAND_DISTANCE_SENSOR;
+    private final TeleOpSubsystems SUBSYSTEMS;
 
-    public MechanumTeleOpManager(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, GamepadFunctions function1, GamepadFunctions function2, TeleOpHWDevices devices) {
+    private boolean intakeIsDown, handIsOpen;
+    private int timeout, handTimeout;
+    private final LinearOpMode OP_MODE;
+
+    public MechanumTeleOpManager(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, GamepadFunctions function1, GamepadFunctions function2, TeleOpSubsystems subsystems, LinearOpMode opMode) {
         super(gamepad1, function1, gamepad2, function2);
         Motor rt = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_1), DcMotorSimple.Direction.FORWARD);
         Motor rb = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_2), DcMotorSimple.Direction.FORWARD);
         Motor lt = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_1), DcMotorSimple.Direction.FORWARD);
         Motor lb = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_2), DcMotorSimple.Direction.FORWARD);
-        MECHANUM = new Mechanum(telemetry, rt, rb, lt, lb);
-        if(devices.isSpinnerMotorAllowed()) {
-            SPINNER = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HW_SPINNER), DcMotorSimple.Direction.FORWARD);
+        MECHANUM_DRIVETRAIN = new Mechanum(telemetry, rt, rb, lt, lb);
+        OP_MODE = opMode;
+        SUBSYSTEMS = subsystems;
+        if(SUBSYSTEMS.isIntakeActive()) {
+            INTAKE_MOTOR = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE), DcMotorSimple.Direction.FORWARD);
+            INTAKE_SERVO_LOWER = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE_SERVO_LOWER));
+            INTAKE_SERVO_UPPER = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE_SERVO_UPPER));
         }else{
-            SPINNER = null;
+            INTAKE_MOTOR = null;
+            INTAKE_SERVO_LOWER = null;
+            INTAKE_SERVO_UPPER = null;
         }
-        if(devices.isLiftMotorsAllowed()) {
-            LIFT_ONE = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HW_LIFT), DcMotorSimple.Direction.FORWARD);
+        if(SUBSYSTEMS.isLiftActive()) {
+            LIFT_MOTOR_ONE = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_LIFT_ONE), DcMotorSimple.Direction.FORWARD);
+            LIFT_MOTOR_TWO = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_LIFT_TWO), DcMotorSimple.Direction.FORWARD);
         }else{
-            LIFT_ONE = null;
+            LIFT_MOTOR_ONE = null;
+            LIFT_MOTOR_TWO = null;
         }
-        if(devices.isLiftMotorsAllowed()) {
-            LIFT_TWO = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HW_LIFT_TWO), DcMotorSimple.Direction.FORWARD);
+        if(SUBSYSTEMS.isHandActive()) {
+            HAND_GRABBER_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_HAND_GRABBER_SERVO));
+            HAND_FLIPPER_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_HAND_FLIPPER_SERVO));
+            HAND_TURNER_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_HAND_TURNER_SERVO));
+            HAND_DISTANCE_SENSOR = hardwareMap.get(DistanceSensor.class, hardwareMap.appContext.getString(R.string.HARDWARE_DISTANCE_SENSOR));
         }else{
-            LIFT_TWO = null;
+            HAND_GRABBER_SERVO = null;
+            HAND_FLIPPER_SERVO = null;
+            HAND_TURNER_SERVO = null;
+            HAND_DISTANCE_SENSOR = null;
         }
-        if(devices.isDuckMotorAllowed()) {
-            DUCK = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HW_DUCK), DcMotorSimple.Direction.FORWARD);
+        if(SUBSYSTEMS.isDuckActive()) {
+            DUCK_MOTOR = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_DUCK_MOTOR), DcMotorSimple.Direction.FORWARD);
         }else{
-            DUCK = null;
+            DUCK_MOTOR = null;
         }
-        if(devices.isSpinnerServoAllowed()) {
-            SPINNER_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HW_SPINNER_SERVO));
-        }else{
-            SPINNER_SERVO = null;
-        }
-        if(devices.isLiftServoAllowed()) {
-            LIFT_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HW_LIFT_SERVO));
-        }else{
-            LIFT_SERVO = null;
-        }
-        if(devices.isLiftDropperAllowed()) {
-            LIFT_DROPPER = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HW_LIFT_DROPPER_SERVO));
-        }else{
-            LIFT_DROPPER = null;
-        }
-        if(devices.isLiftSensorAllowed()) {
-            LIFT_SENSOR = hardwareMap.get(DistanceSensor.class, hardwareMap.appContext.getString(R.string.HW_TRAPPER_TRIGGER));
-        }else{
-            LIFT_SENSOR = null;
-        }
-        DEVICES = devices;
     }
 
     @Override
@@ -80,53 +79,75 @@ public class MechanumTeleOpManager extends TeleOpManager {
         double rightBottomPower = (y - x) - rx;
         double leftTopPower = (-(y - x)) - rx;
         double leftBottomPower = (-(y + x)) - rx;
-        MECHANUM.driveWithEncoder((int) Range.clip(rightTopPower * 80, -80, 80), (int) Range.clip(rightBottomPower * 80, -80, 80), (int) Range.clip(leftTopPower * 80, -80, 80), (int) Range.clip(leftBottomPower * 80, -80, 80));
-        if(DEVICES.isSpinnerMotorAllowed()) {
-            SPINNER.driveWithEncoder((int) Range.clip((getGamepadWithFunction1().left_trigger - getGamepadWithFunction1().right_trigger) * 100, -100, 100));
+        MECHANUM_DRIVETRAIN.driveWithEncoder((int) Range.clip(rightTopPower * 80, -80, 80), (int) Range.clip(rightBottomPower * 80, -80, 80), (int) Range.clip(leftTopPower * 80, -80, 80), (int) Range.clip(leftBottomPower * 80, -80, 80));
+        if(SUBSYSTEMS.isIntakeActive()) {
+            if(intakeIsDown) {
+                INTAKE_MOTOR.driveWithEncoder((int) Range.clip((getGamepadWithFunction2().left_trigger - getGamepadWithFunction2().right_trigger) * 9001, -100, 100));
+            }
+            if(getGamepadWithFunction2().a) {
+                if(OP_MODE.getRuntime() <= timeout) {
+                    timeout += OP_MODE.getRuntime();
+                    intakeIsDown = !intakeIsDown;
+                    if(intakeIsDown) {
+                        INTAKE_SERVO_UPPER.setPosition(100);
+                        INTAKE_SERVO_LOWER.setPosition(100);
+                    }else{
+                        INTAKE_SERVO_UPPER.setPosition(0);
+                        INTAKE_SERVO_LOWER.setPosition(0);
+                    }
+                }
+            }
         }
-        if(DEVICES.isLiftMotorsAllowed()) {
-            if(getGamepadWithFunction2().dpad_up && !getGamepadWithFunction2().dpad_down) {
-                LIFT_ONE.driveWithEncoder(-20);
-                LIFT_TWO.driveWithEncoder(20);
-            }else if(!getGamepadWithFunction2().dpad_up && getGamepadWithFunction2().dpad_down) {
-                LIFT_ONE.driveWithEncoder(20);
-                LIFT_TWO.driveWithEncoder(-20);
+        if(SUBSYSTEMS.isLiftActive()) {
+            if(getGamepadWithFunction3().left_bumper && !getGamepadWithFunction3().right_bumper) {
+                LIFT_MOTOR_ONE.driveWithEncoder(20);
+                LIFT_MOTOR_TWO.driveWithEncoder(-20);
+            }else if(!getGamepadWithFunction3().left_bumper && getGamepadWithFunction3().right_bumper) {
+                LIFT_MOTOR_ONE.driveWithEncoder(-20);
+                LIFT_MOTOR_TWO.driveWithEncoder(20);
             }else{
-                LIFT_ONE.driveWithEncoder(0);
-                LIFT_TWO.driveWithEncoder(0);
+                LIFT_MOTOR_ONE.driveWithEncoder(0);
+                LIFT_MOTOR_TWO.driveWithEncoder(0);
             }
         }
-        if(DEVICES.isDuckMotorAllowed()) {
-            if(getGamepadWithFunction3().dpad_left && !getGamepadWithFunction3().dpad_right) {
-                DUCK.driveWithEncoder(-20);
-            }else if(!getGamepadWithFunction3().dpad_left && getGamepadWithFunction3().dpad_right) {
-                DUCK.driveWithEncoder(20);
+        if(SUBSYSTEMS.isHandActive()) {
+            if(getGamepadWithFunction4().dpad_up) {
+                HAND_FLIPPER_SERVO.setPosition(100);
+            }
+            if(getGamepadWithFunction4().dpad_down) {
+                HAND_FLIPPER_SERVO.setPosition(0);
+            }
+            if(getGamepadWithFunction4().dpad_right) {
+                HAND_TURNER_SERVO.setPosition(0);
+            }
+            if(getGamepadWithFunction4().dpad_left) {
+                HAND_TURNER_SERVO.setPosition(100);
+            }
+            if((int) HAND_DISTANCE_SENSOR.getDistance(DistanceUnit.INCH) <= 1) {
+                HAND_GRABBER_SERVO.setPosition(0);
+            }
+            if(getGamepadWithFunction4().b) {
+                if(OP_MODE.getRuntime() <= handTimeout) {
+                    handTimeout += OP_MODE.getRuntime();
+                    handIsOpen = !handIsOpen;
+                    if(handIsOpen) {
+                        HAND_GRABBER_SERVO.setPosition(100);
+                    }else{
+                        HAND_GRABBER_SERVO.setPosition(0);
+                    }
+                }
+            }
+        }
+        if(SUBSYSTEMS.isDuckActive()) {
+            if(getGamepadWithFunction5().dpad_left && !getGamepadWithFunction5().dpad_right) {
+                DUCK_MOTOR.driveWithEncoder(-20);
+            }else if(!getGamepadWithFunction5().dpad_left && getGamepadWithFunction5().dpad_right) {
+                DUCK_MOTOR.driveWithEncoder(20);
             }else{
-                DUCK.driveWithEncoder(0);
+                DUCK_MOTOR.driveWithEncoder(0);
             }
         }
-        if(DEVICES.isSpinnerServoAllowed()) {
-            if(getGamepadWithFunction4().left_bumper && !getGamepadWithFunction4().right_bumper) {
-                SPINNER_SERVO.setPosition(0);
-            }else if(!getGamepadWithFunction4().left_bumper && getGamepadWithFunction4().right_bumper) {
-                SPINNER_SERVO.setPosition(50);
-            }
-        }
-        // TODO: add lift distance sensor and grabber, also get a sensor to detect when this has gone to a specific position, remove this code which is just a demo of what we need at the end of the day
-        if(DEVICES.isLiftDropperAllowed()) {
-            if(getGamepadWithFunction5().a) {
-                LIFT_DROPPER.setPosition(100);
-            }else if(getGamepadWithFunction5().b) {
-                LIFT_DROPPER.setPosition(0);
-            }
-        }
-        if(DEVICES.isLiftServoAllowed()) {
-            if(getGamepadWithFunction6().x) {
-                LIFT_SERVO.setPosition(0);
-            }else if(getGamepadWithFunction6().y) {
-                LIFT_SERVO.setPosition(100);
-            }
-        }
+        // TODO: servo limit sensor and servo routines
 //        if(DEVICES.isLiftDropperAllowed()) {
 //            if(getGamepadWithFunction5().a && !droppingInProgress) {
 //                droppingInProgress = true;
@@ -138,30 +159,36 @@ public class MechanumTeleOpManager extends TeleOpManager {
 
     @Override
     public void stop() {
-        MECHANUM.stop();
+        MECHANUM_DRIVETRAIN.stop();
         try {
-            SPINNER.stop();
+            INTAKE_MOTOR.stop();
         } catch(NullPointerException ignored) {}
         try {
-            LIFT_ONE.stop();
+            LIFT_MOTOR_ONE.stop();
         } catch(NullPointerException ignored) {}
         try {
-            LIFT_TWO.stop();
+            LIFT_MOTOR_TWO.stop();
         } catch(NullPointerException ignored) {}
         try {
-            DUCK.stop();
+            DUCK_MOTOR.stop();
         } catch(NullPointerException ignored) {}
         try {
-            SPINNER_SERVO.getController().close();
+            INTAKE_SERVO_UPPER.getController().close();
         } catch(NullPointerException ignored) {}
         try {
-            LIFT_SERVO.getController().close();
+            INTAKE_SERVO_LOWER.getController().close();
         } catch(NullPointerException ignored) {}
         try {
-            LIFT_DROPPER.getController().close();
+            HAND_TURNER_SERVO.getController().close();
         } catch(NullPointerException ignored) {}
         try {
-            LIFT_SENSOR.close();
+            HAND_GRABBER_SERVO.getController().close();
+        } catch(NullPointerException ignored) {}
+        try {
+            HAND_FLIPPER_SERVO.getController().close();
+        } catch(NullPointerException ignored) {}
+        try {
+            HAND_DISTANCE_SENSOR.close();
         } catch(NullPointerException ignored) {}
     }
 

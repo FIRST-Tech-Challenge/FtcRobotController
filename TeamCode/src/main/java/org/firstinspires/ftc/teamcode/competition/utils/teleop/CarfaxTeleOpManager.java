@@ -24,42 +24,42 @@ public class CarfaxTeleOpManager extends TeleOpManager {
         super(gamepad1, function1, gamepad2, function2);
         CARFAX = new Carfax(telemetry, new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_1), DcMotorSimple.Direction.FORWARD), new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_1), DcMotorSimple.Direction.REVERSE));
         if(devices.isSpinnerMotorAllowed()) {
-            SPINNER = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HW_SPINNER), DcMotorSimple.Direction.FORWARD);
+            SPINNER = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE), DcMotorSimple.Direction.FORWARD);
         }else{
             SPINNER = null;
         }
         if(devices.isLiftMotorsAllowed()) {
-            LIFT_ONE = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HW_LIFT), DcMotorSimple.Direction.FORWARD);
+            LIFT_ONE = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_LIFT_ONE), DcMotorSimple.Direction.FORWARD);
         }else{
             LIFT_ONE = null;
         }
         if(devices.isLiftMotorsAllowed()) {
-            LIFT_TWO = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HW_LIFT_TWO), DcMotorSimple.Direction.FORWARD);
+            LIFT_TWO = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_LIFT_TWO), DcMotorSimple.Direction.FORWARD);
         }else{
             LIFT_TWO = null;
         }
         if(devices.isDuckMotorAllowed()) {
-            DUCK = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HW_DUCK), DcMotorSimple.Direction.FORWARD);
+            DUCK = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_DUCK_MOTOR), DcMotorSimple.Direction.FORWARD);
         }else{
             DUCK = null;
         }
-        if(devices.isSpinnerServoAllowed()) {
-            SPINNER_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HW_SPINNER_SERVO));
+        if(devices.isSpinnerServosAllowed()) {
+            SPINNER_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE_SERVO_LOWER));
         }else{
             SPINNER_SERVO = null;
         }
         if(devices.isLiftServoAllowed()) {
-            LIFT_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HW_LIFT_SERVO));
+            LIFT_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_HAND_TURNER_SERVO));
         }else{
             LIFT_SERVO = null;
         }
         if(devices.isLiftDropperAllowed()) {
-            LIFT_DROPPER = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HW_LIFT_DROPPER_SERVO));
+            LIFT_DROPPER = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_HAND_GRABBER_SERVO));
         }else{
             LIFT_DROPPER = null;
         }
         if(devices.isLiftSensorAllowed()) {
-            LIFT_SENSOR = hardwareMap.get(DistanceSensor.class, hardwareMap.appContext.getString(R.string.HW_TRAPPER_TRIGGER));
+            LIFT_SENSOR = hardwareMap.get(DistanceSensor.class, hardwareMap.appContext.getString(R.string.HARDWARE_DISTANCE_SENSOR));
         }else{
             LIFT_SENSOR = null;
         }
@@ -96,7 +96,7 @@ public class CarfaxTeleOpManager extends TeleOpManager {
                 DUCK.driveWithEncoder(0);
             }
         }
-        if(DEVICES.isSpinnerServoAllowed()) {
+        if(DEVICES.isSpinnerServosAllowed()) {
             if(getGamepadWithFunction4().left_bumper && !getGamepadWithFunction4().right_bumper) {
                 SPINNER_SERVO.setPosition(0);
             }else if(!getGamepadWithFunction4().left_bumper && getGamepadWithFunction4().right_bumper) {
