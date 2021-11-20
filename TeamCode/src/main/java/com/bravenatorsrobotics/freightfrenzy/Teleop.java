@@ -71,9 +71,26 @@ public class Teleop extends TeleopMode<MecanumDrive> {
         cupDistanceSensor = hardwareMap.get(RevColorSensorV3.class, "cupDistanceSensor");
     }
 
+    private void InitializeServos() {
+        cupServo.setPosition(1);
+    }
+
+    private void ZeroLift() {
+        if(!liftTouchSensor.isPressed())
+            lift.setPower(-0.1);
+
+        while(!liftTouchSensor.isPressed()) {
+            if(!opModeIsActive()) break;
+        }
+
+        lift.setPower(0);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     @Override
     public void OnStart() {
-        cupServo.setPosition(1);
+        ZeroLift();
     }
 
     @Override
@@ -88,7 +105,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
 
         HandleGamePadDrive();
 
-//        telemetry.addData("Lift Position", lift.getCurrentPosition());
+//        telemetry.addData("Is Pressed", liftTouchSensor.isPressed());
 //        telemetry.update();
 
         // Check to see if object is in cup. If so tilt it back.

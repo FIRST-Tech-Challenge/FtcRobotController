@@ -49,10 +49,12 @@ public class Auto extends AutonomousMode<MecanumDrive> {
     // Storage Unit Code (compatible for both sides with the 'movementModifier')
     private void RunStorageUnit(int movementModifier) {
         // Drive to the turn table
+        robot.drive.DriveByInches(0.5, 24);
 
         // Spin the turn table
 
-        // Drive Forward
+
+        // Strafe Left
 
         // Drive along side the barcode until the team block is detected
 
