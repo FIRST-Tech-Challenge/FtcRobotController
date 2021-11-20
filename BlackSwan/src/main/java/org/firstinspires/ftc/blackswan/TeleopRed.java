@@ -117,9 +117,9 @@ public class TeleopRed extends LinearOpMode {
                 detection = "None";
             }
 
-            if (gamepad2.dpad_up){
+            if (gamepad2.left_stick_y < -0.1){
                 arm.setPower(-0.3);
-            } else if (gamepad2.dpad_down){
+            } else if (gamepad2.left_stick_y > 0.1){
                 arm.setPower(0.3);
             } else {
                 arm.setPower(0);
