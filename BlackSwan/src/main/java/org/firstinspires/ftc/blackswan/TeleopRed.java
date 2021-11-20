@@ -15,7 +15,7 @@ public class TeleopRed extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor frontLeft, backLeft, frontRight, backRight, arm, carousel;
+        DcMotor frontLeft, backLeft, frontRight, backRight, arm, carousel, intake;
 
         frontLeft = hardwareMap.get(DcMotor.class,"frontLeft");
         backLeft = hardwareMap.get(DcMotor.class,"backLeft");
@@ -25,6 +25,7 @@ public class TeleopRed extends LinearOpMode {
         carousel = hardwareMap.get(DcMotor.class, "carousel");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -110,19 +111,28 @@ public class TeleopRed extends LinearOpMode {
                 backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
                 detection = "Left";
             }else {
+                // turns motors off when nothing is being pressed
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
                 detection = "None";
             }
-
+// moves the metal are that the intake is attached to up and down
             if (gamepad2.dpad_up){
                 arm.setPower(-0.3);
             } else if (gamepad2.dpad_down){
                 arm.setPower(0.3);
             } else {
                 arm.setPower(0);
+            }
+// lets the intake take elements and spit them out
+            if (gamepad2.dpad_left){
+                intake.setPower(0.3);
+            } else if (gamepad2.dpad_right) {
+                intake.setPower(-0.3);
+            } else {
+                intake.setPower(0);
             }
 
 
@@ -132,7 +142,7 @@ public class TeleopRed extends LinearOpMode {
         }
 
     }
-
+// spins the motor that turns the carousel
     protected void turnDuck(DcMotor carousel){
         if(gamepad2.right_bumper){
             carousel.setPower(-1);
