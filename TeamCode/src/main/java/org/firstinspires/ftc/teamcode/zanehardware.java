@@ -27,7 +27,7 @@ public class zanehardware {
 
         //reverse motors
         Front_Right.setDirection(DcMotorSimple.Direction.REVERSE);
-        Front_Right.setDirection(DcMotorSimple.Direction.REVERSE);
+        Front_Left.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     public void allMotorPower(double power){
         Front_Left.setPower(power);
