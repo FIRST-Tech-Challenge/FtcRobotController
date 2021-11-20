@@ -23,8 +23,8 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     // declare joystick position variables
     double X1; double Y1; double X2; double Y2;
     // operational constants
-    double joyScale = 0.5;
-    double motorMax = 0.3; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
+    double joyScale = 1;
+    double motorMax = 0.99; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
 
     @Override
     public void runOpMode() {
@@ -75,14 +75,12 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             LF = 0; RF = 0; LR = 0; RR = 0;
 
             // Get joystick values
-            //Everyone sitting behind me is an idiot
-            Y1 = -gamepad1.right_stick_y * joyScale; // invert so up is positive
-            X1 = gamepad1.right_stick_x * joyScale;
-            Y2 = -gamepad1.left_stick_y * joyScale; // Y2 is not used at present
-            X2 = gamepad1.left_stick_x * joyScale;
+            Y1 = -gamepad1.left_stick_y * joyScale; // invert so up is positive
+            X1 = gamepad1.left_stick_x * joyScale;
+            Y2 = -gamepad1.right_stick_y * joyScale; // Y2 is not used at present
+            X2 = gamepad1.right_stick_x * joyScale;
 
             // Forward/back movement
-            // The people behind me don't value my input
             LF += Y1; RF += Y1; LR += Y1; RR += Y1;
 
             // Side to Side movement
@@ -92,7 +90,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             LF += X2; RF -= X2; LR += X2; RR -= X2;
 
             // Clip motor power values to +-motorMax
-            LF = Math.max(-motorMax, Math.min(LF, motorMax)); //Not entirely sure what this does
+            LF = Math.max(-motorMax, Math.min(LF, motorMax));
             RF = Math.max(-motorMax, Math.min(RF, motorMax));
             LR = Math.max(-motorMax, Math.min(LR, motorMax));
             RR = Math.max(-motorMax, Math.min(RR, motorMax));
@@ -111,7 +109,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
 
             if(gamepad1.a && !carouselOn) {
                 if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
-                else carouselMotor.setPower(.95);
+                else carouselMotor.setPower(.6);
                 carouselOn = true;
             } else if(!gamepad1.a) carouselOn = false;
 
@@ -120,6 +118,10 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 else intakeMotor.setPower(.8);
                 intakeOn = true;
             } else if(!gamepad1.b) intakeOn = false;
+
+            if (gamepad2.dpad_up) {
+
+            }
         }
     }
 }

@@ -13,9 +13,7 @@ public class TestMovement extends LinearOpMode {
 
         waitForStart();
 
-        robot.forward(.05,1);
-        robot.turnToHeadingSloppy(.5,90,20);
-        robot.backwards(.5,1);
+        robot.forward(1,-4);
 
     }
 }
