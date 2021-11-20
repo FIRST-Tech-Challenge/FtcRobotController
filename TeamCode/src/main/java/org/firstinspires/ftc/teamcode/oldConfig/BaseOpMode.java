@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.oldConfig;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -9,7 +9,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public abstract class BaseOpMode extends LinearOpMode {
     /**
      * Returns the underlying robot.
+     *
      * @return The underlying robot.
      */
-    public abstract Hardware2 getRobot();
+    public Hardware2 getRobot() {
+        return null;
+    }
+
 }

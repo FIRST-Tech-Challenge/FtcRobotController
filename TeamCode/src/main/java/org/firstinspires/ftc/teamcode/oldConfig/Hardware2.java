@@ -3,18 +3,23 @@ Made by Aryan Sinha,
 FTC Team 202101101
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.oldConfig;
 //----------------------------------------------------------------------------
-import static org.firstinspires.ftc.teamcode.utils.FTCConstants.CAROUSEL_SERVO;
-import static org.firstinspires.ftc.teamcode.utils.FTCConstants.CLAW_NAME;
-import static org.firstinspires.ftc.teamcode.utils.FTCConstants.CLAW_SERVO;
-import static org.firstinspires.ftc.teamcode.utils.FTCConstants.LEFT_MOTOR_NAME;
-import static org.firstinspires.ftc.teamcode.utils.FTCConstants.RIGHT_MOTOR_NAME;
+import static org.firstinspires.ftc.teamcode.oldConfig.utils.FTCConstants.CAROUSEL_SERVO;
+import static org.firstinspires.ftc.teamcode.oldConfig.utils.FTCConstants.CLAW_NAME;
+import static org.firstinspires.ftc.teamcode.oldConfig.utils.FTCConstants.CLAW_SERVO;
+import static org.firstinspires.ftc.teamcode.oldConfig.utils.FTCConstants.LEFT_MOTOR_NAME;
+import static org.firstinspires.ftc.teamcode.oldConfig.utils.FTCConstants.RIGHT_MOTOR_NAME;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
  * This class defines the hardware components.
@@ -27,6 +32,7 @@ public final class Hardware2
     private DcMotor claw;
     private Servo carousel;
     private Servo clawServo;
+    private BNO055IMU imu;
     private final boolean runWithEncoders;
     /* local OpMode members. */
     private HardwareMap hwMap;
@@ -72,6 +78,14 @@ public final class Hardware2
         leftDrive.setPower(0);
         rightDrive.setPower(0);
 
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES; //unit for turning
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = true;
+        imu.initialize(parameters);
+
         if (runWithEncoders) {
             leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -81,6 +95,40 @@ public final class Hardware2
             rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
+    }
+
+    public void turnRight(double degrees, double power){
+        degrees *= -1;
+        //Angle before you turn
+        double startingAngle = getHeading();
+        //Setting motors to turn right
+        leftDrive.setPower(power);
+        rightDrive.setPower(-power);
+        //Waiting until the change in degrees is greater than desired change in degrees
+
+        while ((getHeading()-startingAngle)>=degrees){
+        }
+        //stop all motors
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+    }
+    public void turnLeft(double degrees, double power){
+        //Angle before you turn
+        double startingAngle = getHeading();
+        //Setting motors to turn right
+        leftDrive.setPower(-power);
+        rightDrive.setPower(power);
+        //Waiting until the change in degrees is greater than desired change in degrees
+        while ((getHeading()-startingAngle)<=degrees){
+        }
+        //stop all motors
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+    }
+    public double getHeading() {
+        Orientation angles = getImu().getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double heading = angles.firstAngle;
+        return heading;
     }
 
     /**
@@ -122,6 +170,8 @@ public final class Hardware2
     public Servo getClawServo() {
         return clawServo;
     }
+
+    public BNO055IMU getImu() {return imu;}
 
     /**
      * Whether or not the code should run with encoders.

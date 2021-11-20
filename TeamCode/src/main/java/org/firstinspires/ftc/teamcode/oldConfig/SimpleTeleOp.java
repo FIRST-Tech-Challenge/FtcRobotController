@@ -3,10 +3,10 @@ Made by Aryan Sinha,
 FTC team 202101101
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.oldConfig;
 
-import static org.firstinspires.ftc.teamcode.selfDrive.AutoDriveUtils.logData;
-import static org.firstinspires.ftc.teamcode.selfDrive.AutoDriveUtils.logLine;
+import static org.firstinspires.ftc.teamcode.oldConfig.selfDrive.AutoDriveUtils.logData;
+import static org.firstinspires.ftc.teamcode.oldConfig.selfDrive.AutoDriveUtils.logLine;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -50,8 +50,8 @@ public class SimpleTeleOp extends BaseOpMode {
             so for the left wheel we'd get a power of 1,
             for the right wheel we'd get 0 power, So we'd be turning right.
             */
-            double drive = gamepad1.left_stick_y;
-            double turn  = -gamepad1.right_stick_x;
+            double drive = -gamepad1.left_stick_y;
+            double turn  = gamepad1.right_stick_x;
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
