@@ -22,7 +22,7 @@ public class TeleopRed extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class,"frontRight");
         backRight = hardwareMap.get(DcMotor.class,"backRight");
 
-        carousel = hardwareMap.get(DcMotor.class, "carousel");
+        //carousel = hardwareMap.get(DcMotor.class, "carousel");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
 
@@ -128,16 +128,16 @@ public class TeleopRed extends LinearOpMode {
 
             telemetry.update();
 
-            turnDuck(carousel);
+            //turnDuck(carousel);
         }
 
     }
 
-    protected void turnDuck(DcMotor carousel){
-        if(gamepad2.right_bumper){
-            carousel.setPower(-1);
-        } else {
-            carousel.setPower(0);
-        }
-    }
+//    protected void turnDuck(DcMotor carousel){
+//        if(gamepad2.right_bumper){
+//            carousel.setPower(-1);
+//        } else {
+//            carousel.setPower(0);
+//        }
+//    }
 }
