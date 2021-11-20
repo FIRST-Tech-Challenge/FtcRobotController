@@ -104,10 +104,10 @@ public class blue_Depot extends LinearOpMode {
         mecanumStrafe(32,90,0.7);
         sleep(500);
         changeDirection();
-        mecanumRotate(152,0.2);
+        mecanumRotate(153,0.2);
         sleep(500);
         changeDirection();
-        mecanumStrafe(4.75,0,0.5);
+        mecanumStrafe(5.5,0,0.4);
         sleep(500);
         changeDirection();
         carouselMove(0.5);
