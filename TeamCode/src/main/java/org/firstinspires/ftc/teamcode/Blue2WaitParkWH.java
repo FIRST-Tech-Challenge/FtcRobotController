@@ -92,7 +92,7 @@ public class Blue2WaitParkWH extends DriveMethods {
         driveDirection(.05,Direction.BACKWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
-        StopMotors();
+        stopMotors();
         driveForDistance(.1,.3,Direction.RIGHT);
         sleep(9000);
         driveForDistance(.5,.3,Direction.FORWARD);

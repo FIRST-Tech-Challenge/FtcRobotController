@@ -98,7 +98,7 @@ public class Red2ParkWHaround extends DriveMethods {
         driveDirection(.05,Direction.BACKWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
-        StopMotors();
+        stopMotors();
         driveForDistance(.05,.3, Direction.FORWARD);
         driveForDistance(.2,.3,Direction.RIGHT);
         rotateToPosition(.35,90);

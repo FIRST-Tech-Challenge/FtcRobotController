@@ -98,7 +98,7 @@ public class Red2ParkSU extends DriveMethods {
         driveDirection(.05,Direction.BACKWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
-        StopMotors();
+        stopMotors();
         driveForDistance(.1,.3, Direction.FORWARD);
         driveForDistance(.2,.4,Direction.LEFT);
         driveForDistance(.3,.3, Direction.FORWARD);

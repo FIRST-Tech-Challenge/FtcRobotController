@@ -186,7 +186,7 @@ public class DriveMethods extends LinearOpMode {
 //            }
         }
 
-        StopMotors();
+        stopMotors();
 
     }
     public void driveForTime (double power, long milliseconds, Direction direction) {
@@ -233,7 +233,7 @@ public class DriveMethods extends LinearOpMode {
 
     }
 
-    public void StopMotors() {
+    public void stopMotors() {
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
@@ -340,7 +340,7 @@ public class DriveMethods extends LinearOpMode {
                     }
                 }
             }
-            StopMotors();
+            stopMotors();
 
         }
 

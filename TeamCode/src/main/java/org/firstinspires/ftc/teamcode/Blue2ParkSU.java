@@ -96,7 +96,7 @@ public class Blue2ParkSU extends DriveMethods {
         driveDirection(.05,Direction.BACKWARD);
         sleep(3500);
         servoCarousel.setPosition(.5);
-        StopMotors();
+        stopMotors();
         driveForDistance(.4,.3,Direction.RIGHT);
         rotateToPosition(.3,0);
         driveForDistance(.3,.3,Direction.RIGHT);
