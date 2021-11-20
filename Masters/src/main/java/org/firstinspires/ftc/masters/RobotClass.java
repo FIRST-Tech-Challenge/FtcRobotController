@@ -558,4 +558,7 @@ if 360-abs(currentHeading)-abs(targetHeading) > 180
             time = new Date().getTime() - startTime;
         }
     }
+    public void openCVInnitShenanigans() {
+
     }
+}
