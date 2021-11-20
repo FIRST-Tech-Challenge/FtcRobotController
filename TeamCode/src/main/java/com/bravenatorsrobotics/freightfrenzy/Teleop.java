@@ -16,9 +16,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Teleop extends TeleopMode<MecanumDrive> {
 
     // TODO: Replace with tested values
-    private static final int LIFT_STAGE_1 = 100;
-    private static final int LIFT_STAGE_2 = 200;
-    private static final int LIFT_STAGE_3 = 300;
+    private static final int LIFT_STAGE_1 = 45;
+    private static final int LIFT_STAGE_2 = 185;
+    private static final int LIFT_STAGE_3 = 357;
 
     private static final double LIFT_POWER = 0.50;
 
@@ -37,6 +37,10 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     private RevColorSensorV3 cupDistanceSensor;
 
     private boolean shouldOverrideSpeedReduction = false;
+    private boolean shouldReduceSpeed = false;
+    private boolean shouldReverse = false;
+
+    private boolean objectInCupToggle = false;
 
     private double turnTablePower = 1;
 
@@ -69,12 +73,23 @@ public class Teleop extends TeleopMode<MecanumDrive> {
 
     @Override
     public void OnStart() {
-
+        cupServo.setPosition(1);
     }
 
     @Override
     public void OnUpdate() {
+
+        if(IsObjectInCup() && !objectInCupToggle) {
+            objectInCupToggle = true;
+            cupServo.setPosition(0.50);
+        } else if(objectInCupToggle && !IsObjectInCup()) {
+            objectInCupToggle = false;
+        }
+
         HandleGamePadDrive();
+
+//        telemetry.addData("Lift Position", lift.getCurrentPosition());
+//        telemetry.update();
 
         // Check to see if object is in cup. If so tilt it back.
 
@@ -91,8 +106,13 @@ public class Teleop extends TeleopMode<MecanumDrive> {
                 + Math.pow(driverGamePad.getRightTrigger(), 3);
         double r = -Math.pow(gamepad1.right_stick_x, 3);
 
+        if(shouldReverse) {
+            v = -v;
+            h = -h;
+        }
+
         // TODO: Check Physical Switch
-        if(lift.getCurrentPosition() > 0 && !shouldOverrideSpeedReduction) {
+        if((lift.getCurrentPosition() > 0 || shouldReduceSpeed) && !shouldOverrideSpeedReduction) {
             v *= REDUCE_SPEED_MULTIPLIER;
             h *= REDUCE_SPEED_MULTIPLIER;
             r *= REDUCE_SPEED_MULTIPLIER;
@@ -106,6 +126,16 @@ public class Teleop extends TeleopMode<MecanumDrive> {
         switch (button) {
             case FtcGamePad.GAMEPAD_BACK:
                 if(pressed) shouldOverrideSpeedReduction = !shouldOverrideSpeedReduction;
+                break;
+
+            case FtcGamePad.GAMEPAD_LBUMPER: // Slow Down
+                if(pressed)
+                    shouldReduceSpeed = !shouldReduceSpeed;
+                break;
+
+            case FtcGamePad.GAMEPAD_RBUMPER: // Reverse
+                if(pressed)
+                    shouldReverse = !shouldReverse;
                 break;
         }
     }
@@ -145,7 +175,13 @@ public class Teleop extends TeleopMode<MecanumDrive> {
 
             // Toggle Cup
             case FtcGamePad.GAMEPAD_B:
-                // TODO: Toggle the cup dumped or not
+
+                if(pressed) {
+                    cupServo.setPosition(0);
+                } else {
+                    cupServo.setPosition(1);
+                }
+
                 break;
 
             // Automatic Lift Down
