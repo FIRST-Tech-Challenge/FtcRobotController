@@ -2,7 +2,7 @@ package org.firstinspires.ftc.blackswan;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public class RedCarousel extends LinearOpMode {
+public class AutonomousRedCarousel extends LinearOpMode {
     Robot robot;
     @Override
     public void runOpMode() throws InterruptedException {
