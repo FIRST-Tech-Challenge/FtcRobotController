@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 public class TeleopBlue extends TeleopRed {
 
+    // spins the motor that turns the carousel
     protected void turnDuck(CRServo carousel){
         if(gamepad2.right_bumper){
             carousel.setPower(-0.9);
