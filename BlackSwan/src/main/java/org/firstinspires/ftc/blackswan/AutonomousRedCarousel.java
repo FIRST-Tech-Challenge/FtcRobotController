@@ -1,4 +1,13 @@
 package org.firstinspires.ftc.blackswan;
 
-public class AutonomousRedCarousel {
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+public class AutonomousRedCarousel extends LinearOpMode {
+    Robot robot;
+    @Override
+    public void runOpMode() throws InterruptedException {
+        robot = new Robot(hardwareMap,telemetry,this);
+        waitForStart();
+        robot.forward(.1,.5);
+    }
 }

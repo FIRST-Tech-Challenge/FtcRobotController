@@ -117,7 +117,7 @@ public class Robot {
 
         int frontLeftPosition= frontLeft.getCurrentPosition();
 
-        int frontLeftTarget= frontLeftPosition+ (int)distanceInTicks; //
+        int frontLeftTarget= frontLeftPosition- (int)distanceInTicks; //
 
         int frontRightPosition= frontRight.getCurrentPosition();
 
@@ -130,15 +130,8 @@ public class Robot {
         int backRightTarget= backRightPosition- (int)distanceInTicks; //
 
         int frontRightTarget= frontRightPosition+ (int)distanceInTicks;
-        telemetry.addData("frontLeftPosition", frontLeftPosition);
-        telemetry.addData("frontLeftTarget", frontLeftTarget);
-        telemetry.addData("frontRightPosition",frontRightPosition);
-        telemetry.addData("frontRightTarget",frontRightTarget);
-        telemetry.addData("backLeftPosition",backLeftPosition);
-        telemetry.addData("backLeftTarget",backLeftTarget);
-        telemetry.addData("backRightPosition", backRightPosition);
-        telemetry.addData("backRightTarget", backRightTarget  );
-        telemetry.update();
+
+
         frontLeft.setTargetPosition((int)frontLeftTarget);
         frontRight.setTargetPosition((int)frontRightTarget);
         backLeft.setTargetPosition((int)backLeftTarget);
@@ -153,7 +146,15 @@ public class Robot {
 
         while (this.opMode.opModeIsActive() &&
                 (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
-
+                telemetry.addData("frontLeftPosition", frontLeftPosition);
+                telemetry.addData("frontLeftTarget", frontLeftTarget);
+                telemetry.addData("frontRightPosition",frontRightPosition);
+                telemetry.addData("frontRightTarget",frontRightTarget);
+                telemetry.addData("backLeftPosition",backLeftPosition);
+                telemetry.addData("backLeftTarget",backLeftTarget);
+                telemetry.addData("backRightPosition", backRightPosition);
+                telemetry.addData("backRightTarget", backRightTarget  );
+                telemetry.update();
             // Display it for the driver.
 
         }
@@ -170,7 +171,7 @@ public class Robot {
         return angles.secondAngle;
     }
     public void right(double distance, double speed){
-        left(distance, -speed);
+        left(-distance, speed);
     }
     public void turnLeft(double angle, double speed){
 
