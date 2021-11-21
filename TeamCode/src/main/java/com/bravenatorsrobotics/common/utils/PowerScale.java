@@ -16,15 +16,32 @@ public class PowerScale {
 
     public double GetPower(double targetPowerLevel, double currentPowerLevel) {
 
-        boolean isTargetNegative = targetPowerLevel < 0;
-
-        if((!isTargetNegative && currentPowerLevel >= targetPowerLevel)
-          || isTargetNegative && currentPowerLevel <= targetPowerLevel) {
+        if(currentPowerLevel == targetPowerLevel) {
             return targetPowerLevel;
         }
 
-        return currentPowerLevel + (powerScale * teleopMode.GetDeltaTime())
-                                                        * (isTargetNegative ? -1 : 1);
+        if(currentPowerLevel < targetPowerLevel) {
+            currentPowerLevel += powerScale * teleopMode.GetDeltaTime();
+        } else {
+            currentPowerLevel -= powerScale * teleopMode.GetDeltaTime();
+        }
+
+        if((targetPowerLevel > 0 && currentPowerLevel > targetPowerLevel) ||
+           (targetPowerLevel < 0 && currentPowerLevel < targetPowerLevel)) {
+            return targetPowerLevel;
+        }
+
+        return currentPowerLevel;
+
+//        boolean isTargetNegative = targetPowerLevel < 0;
+//
+//        if((!isTargetNegative && currentPowerLevel >= targetPowerLevel)
+//          || isTargetNegative && currentPowerLevel <= targetPowerLevel) {
+//            return targetPowerLevel;
+//        }
+//
+//        return currentPowerLevel + (powerScale * teleopMode.GetDeltaTime())
+//                                                        * (isTargetNegative ? -1 : 1);
     }
 
 }

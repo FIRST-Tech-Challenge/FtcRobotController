@@ -30,6 +30,8 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     private static final double CUP_TILTED_POSITION = 0.6;
     private static final double CUP_DOWN_POSITION = 1;
 
+    private static final double INTAKE_SPEED = 0.5;
+
     private Config config;
 
     private DcMotorEx lift;
@@ -44,7 +46,9 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     private boolean shouldReduceSpeed = false;
     private boolean shouldReverse = false;
 
-    private final PowerScale drivePowerScale = new PowerScale(this, 1.20);
+    private boolean shouldZeroLiftEncoder = false;
+
+    private final PowerScale drivePowerScale = new PowerScale(this, 1.0 / 0.25);
     private double currentV = 0.0;
     private double currentH = 0.0;
     private double currentR = 0.0;
@@ -107,6 +111,13 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     @Override
     public void OnUpdate() {
 
+        if(shouldZeroLiftEncoder && liftTouchSensor.isPressed()) {
+            lift.setPower(0);
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shouldZeroLiftEncoder = false;
+        }
+
         // Detect Cup
         if(IsObjectInCup() && !objectInCupToggle) {
             objectInCupToggle = true;
@@ -118,6 +129,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
         HandleGamePadDrive();
 
         // Log Important Information
+        telemetry.addData("Is Lift Button Pressed", liftTouchSensor.isPressed());
         telemetry.addData("Is Reversed", shouldReverse);
         telemetry.addData("Should Reduce Mode", shouldReduceSpeed);
         telemetry.update();
@@ -139,17 +151,17 @@ public class Teleop extends TeleopMode<MecanumDrive> {
             h = -h;
         }
 
-        if((liftTouchSensor.isPressed() || shouldReduceSpeed) && !shouldOverrideSpeedReduction) {
+        if(shouldReduceSpeed && !shouldOverrideSpeedReduction) {
             v *= REDUCE_SPEED_MULTIPLIER;
             h *= REDUCE_SPEED_MULTIPLIER;
             r *= REDUCE_SPEED_MULTIPLIER;
         }
+//
+//        this.currentV = this.drivePowerScale.GetPower(v, this.currentV);
+//        this.currentH = this.drivePowerScale.GetPower(h, this.currentH);
+//        this.currentR = this.drivePowerScale.GetPower(r, this.currentR);
 
-        this.currentV = this.drivePowerScale.GetPower(v, this.currentV);
-        this.currentH = this.drivePowerScale.GetPower(h, this.currentH);
-        this.currentR = this.drivePowerScale.GetPower(r, this.currentR);
-
-        super.robot.drive.Drive(this.currentV, this.currentH, this.currentR);
+        super.robot.drive.Drive(v, h, r);
     }
 
     @Override
@@ -197,7 +209,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
             // Intake
             case FtcGamePad.GAMEPAD_A:
                 if(pressed) {
-                    intake.setPower(1);
+                    intake.setPower(INTAKE_SPEED);
                 } else {
                     intake.setPower(0);
                 }
@@ -209,7 +221,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
             case FtcGamePad.GAMEPAD_Y:
 
                 if(pressed) {
-                    intake.setPower(-1);
+                    intake.setPower(-INTAKE_SPEED);
                 } else {
                     intake.setPower(0);
                 }
@@ -220,7 +232,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
             case FtcGamePad.GAMEPAD_B:
 
                 if(pressed) {
-                    cupServo.setPosition(CUP_TILTED_POSITION);
+                    cupServo.setPosition(CUP_DUMPED_POSITION);
                 } else {
                     cupServo.setPosition(CUP_DOWN_POSITION);
                 }
@@ -230,11 +242,9 @@ public class Teleop extends TeleopMode<MecanumDrive> {
             // Automatic Lift Down
             case FtcGamePad.GAMEPAD_DPAD_DOWN:
                 if(pressed) {
-                    lift.setTargetPosition(0);
-                    lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    lift.setPower(LIFT_POWER);
-
-                    // TODO: Check for manual safety switch
+                    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    lift.setPower(-LIFT_POWER);
+                    shouldZeroLiftEncoder = true;
                 }
 
                 break;
