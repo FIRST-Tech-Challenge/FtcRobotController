@@ -26,6 +26,10 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     private static final double CUP_OBJECT_THRESHOLD_CM = 6.0; // CM
     private static final double REDUCE_SPEED_MULTIPLIER = 0.25;
 
+    private static final double CUP_DUMPED_POSITION = 0;
+    private static final double CUP_TILTED_POSITION = 0.6;
+    private static final double CUP_DOWN_POSITION = 1;
+
     private Config config;
 
     private DcMotorEx lift;
@@ -95,26 +99,28 @@ public class Teleop extends TeleopMode<MecanumDrive> {
 
     @Override
     public void OnStart() {
+        telemetry.clearAll();
+
         ZeroLift();
     }
 
     @Override
     public void OnUpdate() {
 
+        // Detect Cup
         if(IsObjectInCup() && !objectInCupToggle) {
             objectInCupToggle = true;
-            cupServo.setPosition(0.50);
+            cupServo.setPosition(CUP_TILTED_POSITION);
         } else if(objectInCupToggle && !IsObjectInCup()) {
             objectInCupToggle = false;
         }
 
         HandleGamePadDrive();
 
-//        telemetry.addData("Is Pressed", liftTouchSensor.isPressed());
-//        telemetry.update();
-
-        // Check to see if object is in cup. If so tilt it back.
-
+        // Log Important Information
+        telemetry.addData("Is Reversed", shouldReverse);
+        telemetry.addData("Should Reduce Mode", shouldReduceSpeed);
+        telemetry.update();
     }
 
     @Override
@@ -214,9 +220,9 @@ public class Teleop extends TeleopMode<MecanumDrive> {
             case FtcGamePad.GAMEPAD_B:
 
                 if(pressed) {
-                    cupServo.setPosition(0);
+                    cupServo.setPosition(CUP_TILTED_POSITION);
                 } else {
-                    cupServo.setPosition(1);
+                    cupServo.setPosition(CUP_DOWN_POSITION);
                 }
 
                 break;
