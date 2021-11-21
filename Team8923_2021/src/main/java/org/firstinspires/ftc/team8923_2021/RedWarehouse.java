@@ -3,7 +3,7 @@ package org.firstinspires.ftc.team8923_2021;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="RedWarehouseNoIntake")
-public class RedWarehouseNoIntake extends MasterAutonomous{
+public class RedWarehouse extends MasterAutonomous{
     public void runOpMode() throws InterruptedException {
         initAuto();
         waitForStart();

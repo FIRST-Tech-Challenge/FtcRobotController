@@ -206,6 +206,15 @@ public abstract class MasterAutonomous extends MasterOpMode {
         sleep(4500);
     }
 
+    public void autoDeliver() throws InterruptedException {
+        //move up slides
+        motorLift.setPower(0.1);
+        wait(2000);
+        servoGrabber.setPosition(1.0);
+        servoGrabber.setPosition(0.0);
+        motorLift.setPower(-0.1);
+    }
+
     public void sendTelemetry() {
         //Informs drivers of robot location
         telemetry.addData("X", robotX);

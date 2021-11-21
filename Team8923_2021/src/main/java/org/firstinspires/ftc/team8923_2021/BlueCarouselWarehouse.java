@@ -3,18 +3,18 @@ package org.firstinspires.ftc.team8923_2021;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="BlueCarouselNoIntake")
-public class BlueCarouselNoIntake extends MasterAutonomous{
+public class BlueCarouselWarehouse extends MasterAutonomous{
     public void runOpMode() throws InterruptedException {
         initAuto();
         waitForStart();
 
         while (opModeIsActive()){
             double referenceAngle =  imu.getAngularOrientation().firstAngle;
-            moveForward(-2.5, 10, 10);
+            moveForward(-2.8, 10, 10);
             spinCarouselBlue();
             moveForward(13, 50, 10);
             imuPivot(referenceAngle, -90, 30, 0.015, 3.0);
-            moveForward(10, 50, 10); //check distance on this
+            moveForward(15, 50, 10); //check distance on this
             imuPivot(referenceAngle, referenceAngle, 30, 0.015, 3.0);
             moveForward(80, 50, 10);
             break;
