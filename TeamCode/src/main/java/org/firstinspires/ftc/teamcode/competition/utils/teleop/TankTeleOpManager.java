@@ -45,7 +45,7 @@ public class TankTeleOpManager extends TeleOpManager {
             DUCK = null;
         }
         if(devices.isSpinnerServosAllowed()) {
-            SPINNER_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE_SERVO_LOWER));
+            SPINNER_SERVO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE_SERVO_LOWER_ONE));
         }else{
             SPINNER_SERVO = null;
         }

@@ -18,30 +18,31 @@ public class MechanumTeleOpManager extends TeleOpManager {
 
     private final Mechanum MECHANUM_DRIVETRAIN;
     private final Motor INTAKE_MOTOR, LIFT_MOTOR_ONE, LIFT_MOTOR_TWO, DUCK_MOTOR;
-    private final StandardServo INTAKE_SERVO_LOWER, INTAKE_SERVO_UPPER, HAND_TURNER_SERVO, HAND_FLIPPER_SERVO, HAND_GRABBER_SERVO;
+    private final StandardServo INTAKE_SERVO_LOWER_ONE, INTAKE_SERVO_LOWER_TWO, INTAKE_SERVO_UPPER, HAND_TURNER_SERVO, HAND_FLIPPER_SERVO, HAND_GRABBER_SERVO;
     private final DistanceSensor HAND_DISTANCE_SENSOR;
     private final TeleOpSubsystems SUBSYSTEMS;
 
     private boolean intakeIsDown, handIsOpen;
-    private int timeout, handTimeout;
-    private final LinearOpMode OP_MODE;
 
     public MechanumTeleOpManager(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, GamepadFunctions function1, GamepadFunctions function2, TeleOpSubsystems subsystems, LinearOpMode opMode) {
         super(gamepad1, function1, gamepad2, function2);
+        SUBSYSTEMS = subsystems;
+        // configure drivetrain
         Motor rt = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_1), DcMotorSimple.Direction.FORWARD);
         Motor rb = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_RIGHT_DRIVE_2), DcMotorSimple.Direction.FORWARD);
         Motor lt = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_1), DcMotorSimple.Direction.FORWARD);
         Motor lb = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.DRIVETRAIN_LEFT_DRIVE_2), DcMotorSimple.Direction.FORWARD);
         MECHANUM_DRIVETRAIN = new Mechanum(telemetry, rt, rb, lt, lb);
-        OP_MODE = opMode;
-        SUBSYSTEMS = subsystems;
+        // configure subsystems
         if(SUBSYSTEMS.isIntakeActive()) {
             INTAKE_MOTOR = new Motor(telemetry, hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE), DcMotorSimple.Direction.FORWARD);
-            INTAKE_SERVO_LOWER = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE_SERVO_LOWER));
+            INTAKE_SERVO_LOWER_ONE = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE_SERVO_LOWER_ONE));
+            INTAKE_SERVO_LOWER_TWO = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE_SERVO_LOWER_TWO));
             INTAKE_SERVO_UPPER = new StandardServo(hardwareMap, hardwareMap.appContext.getString(R.string.HARDWARE_INTAKE_SERVO_UPPER));
         }else{
             INTAKE_MOTOR = null;
-            INTAKE_SERVO_LOWER = null;
+            INTAKE_SERVO_LOWER_ONE = null;
+            INTAKE_SERVO_LOWER_TWO = null;
             INTAKE_SERVO_UPPER = null;
         }
         if(SUBSYSTEMS.isLiftActive()) {
@@ -67,6 +68,13 @@ public class MechanumTeleOpManager extends TeleOpManager {
         }else{
             DUCK_MOTOR = null;
         }
+        // set servos to default position
+        INTAKE_SERVO_LOWER_ONE.setPosition(75);
+        INTAKE_SERVO_LOWER_TWO.setPosition(75);
+        INTAKE_SERVO_UPPER.setPosition(0);
+        HAND_TURNER_SERVO.setPosition(0);
+        HAND_FLIPPER_SERVO.setPosition(0);
+        HAND_GRABBER_SERVO.setPosition(0);
     }
 
     @Override
@@ -82,20 +90,16 @@ public class MechanumTeleOpManager extends TeleOpManager {
         MECHANUM_DRIVETRAIN.driveWithEncoder((int) Range.clip(rightTopPower * 80, -80, 80), (int) Range.clip(rightBottomPower * 80, -80, 80), (int) Range.clip(leftTopPower * 80, -80, 80), (int) Range.clip(leftBottomPower * 80, -80, 80));
         if(SUBSYSTEMS.isIntakeActive()) {
             if(intakeIsDown) {
-                INTAKE_MOTOR.driveWithEncoder((int) Range.clip((getGamepadWithFunction2().left_trigger - getGamepadWithFunction2().right_trigger) * 9001, -100, 100));
+                INTAKE_MOTOR.driveWithEncoder((int) Range.clip((getGamepadWithFunction2().left_trigger - getGamepadWithFunction2().right_trigger) * 1000, -100, 100));
             }
             if(getGamepadWithFunction2().a) {
-                if(OP_MODE.getRuntime() <= timeout) {
-                    timeout += OP_MODE.getRuntime();
-                    intakeIsDown = !intakeIsDown;
-                    if(intakeIsDown) {
-                        INTAKE_SERVO_UPPER.setPosition(100);
-                        INTAKE_SERVO_LOWER.setPosition(100);
-                    }else{
-                        INTAKE_SERVO_UPPER.setPosition(0);
-                        INTAKE_SERVO_LOWER.setPosition(0);
-                    }
-                }
+                INTAKE_SERVO_UPPER.setPosition(100);
+                INTAKE_SERVO_LOWER_ONE.setPosition(75);
+                INTAKE_SERVO_LOWER_TWO.setPosition(75);
+            }else if(getGamepadWithFunction2().b) {
+                INTAKE_SERVO_UPPER.setPosition(0);
+                INTAKE_SERVO_LOWER_ONE.setPosition(5);
+                INTAKE_SERVO_LOWER_TWO.setPosition(5);
             }
         }
         if(SUBSYSTEMS.isLiftActive()) {
@@ -116,32 +120,24 @@ public class MechanumTeleOpManager extends TeleOpManager {
             }
             if(getGamepadWithFunction4().dpad_down) {
                 HAND_FLIPPER_SERVO.setPosition(0);
-            }
-            if(getGamepadWithFunction4().dpad_right) {
+            }else if(getGamepadWithFunction4().dpad_right) {
                 HAND_TURNER_SERVO.setPosition(0);
-            }
-            if(getGamepadWithFunction4().dpad_left) {
+            }else if(getGamepadWithFunction4().dpad_left) {
                 HAND_TURNER_SERVO.setPosition(100);
             }
             if((int) HAND_DISTANCE_SENSOR.getDistance(DistanceUnit.INCH) <= 1) {
                 HAND_GRABBER_SERVO.setPosition(0);
             }
-            if(getGamepadWithFunction4().b) {
-                if(OP_MODE.getRuntime() <= handTimeout) {
-                    handTimeout += OP_MODE.getRuntime();
-                    handIsOpen = !handIsOpen;
-                    if(handIsOpen) {
-                        HAND_GRABBER_SERVO.setPosition(100);
-                    }else{
-                        HAND_GRABBER_SERVO.setPosition(0);
-                    }
-                }
+            if(getGamepadWithFunction4().x) {
+                HAND_GRABBER_SERVO.setPosition(100);
+            }else if(getGamepadWithFunction4().y) {
+                HAND_GRABBER_SERVO.setPosition(0);
             }
         }
         if(SUBSYSTEMS.isDuckActive()) {
-            if(getGamepadWithFunction5().dpad_left && !getGamepadWithFunction5().dpad_right) {
+            if(getGamepadWithFunction5().back && !getGamepadWithFunction5().start) {
                 DUCK_MOTOR.driveWithEncoder(-20);
-            }else if(!getGamepadWithFunction5().dpad_left && getGamepadWithFunction5().dpad_right) {
+            }else if(!getGamepadWithFunction5().back && getGamepadWithFunction5().start) {
                 DUCK_MOTOR.driveWithEncoder(20);
             }else{
                 DUCK_MOTOR.driveWithEncoder(0);
@@ -176,7 +172,7 @@ public class MechanumTeleOpManager extends TeleOpManager {
             INTAKE_SERVO_UPPER.getController().close();
         } catch(NullPointerException ignored) {}
         try {
-            INTAKE_SERVO_LOWER.getController().close();
+            INTAKE_SERVO_LOWER_ONE.getController().close();
         } catch(NullPointerException ignored) {}
         try {
             HAND_TURNER_SERVO.getController().close();
