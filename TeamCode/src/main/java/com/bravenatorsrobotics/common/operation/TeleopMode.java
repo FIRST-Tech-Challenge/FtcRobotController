@@ -9,6 +9,9 @@ public abstract class TeleopMode<T extends AbstractDrive> extends OperationMode<
     protected final FtcGamePad driverGamePad;
     protected final FtcGamePad operatorGamePad;
 
+    private double startTime = 0.0, endTime = 0.0;
+    private double deltaTime = 0.0;
+
     public TeleopMode(RobotSpecifications specifications) {
         super(specifications);
 
@@ -23,6 +26,8 @@ public abstract class TeleopMode<T extends AbstractDrive> extends OperationMode<
 
     protected abstract void OnDriverGamePadChange(FtcGamePad gamePad, int button, boolean pressed);
     protected abstract void OnOperatorGamePadChange(FtcGamePad gamePad, int button, boolean pressed);
+
+    public double GetDeltaTime() { return deltaTime; }
 
     @Override
     public void runOpMode() {
@@ -51,7 +56,12 @@ public abstract class TeleopMode<T extends AbstractDrive> extends OperationMode<
             driverGamePad.update();
             operatorGamePad.update();
 
+            deltaTime = (endTime - startTime) / 1000000000.0; // Convert to accurate millis
+            startTime = System.nanoTime();
+
             OnUpdate();
+
+            endTime = System.nanoTime();
         }
 
         telemetry.addData("Status", "Stopping...");
