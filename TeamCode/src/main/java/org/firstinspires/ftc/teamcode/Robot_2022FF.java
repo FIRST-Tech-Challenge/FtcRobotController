@@ -33,7 +33,7 @@ public class Robot_2022FF {
 
     //other variables
     private double gain = 0.1;
-    double ticksperrev;
+    double ticksperrev = ((((1+(46/17))) * (1+(46/11))) * 28);
 
     //Declare an opmode and a telemetry object
     private LinearOpMode opMode;
@@ -71,7 +71,7 @@ public class Robot_2022FF {
         this.imu = imu;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
-        ticksperrev = motorBackLeft.getMotorType().getTicksPerRev();
+//        ticksperrev = motorFrontLeft.getMotorType().getTicksPerRev();//((((1+(46/17))) * (1+(46/11))) * 28)
     }
 
     /**
@@ -92,7 +92,7 @@ public class Robot_2022FF {
         this.imu = imu;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
-        ticksperrev = motorBackLeft.getMotorType().getTicksPerRev();
+//        ticksperrev = motorFrontLeft.getMotorType().getTicksPerRev();
     }
 
     /**
@@ -142,6 +142,8 @@ public class Robot_2022FF {
 
         while (!imu.isGyroCalibrated()) {
             telemetry.addData("IMU", "calibrating...");
+            telemetry.addData("ticksperrrev",((((1+(46/17))) * (1+(46/11))) * 28));
+            telemetry.addData("actual:", motorFrontLeft.getMotorType().getTicksPerRev());
             telemetry.update();
             Thread.sleep(50);
         }
@@ -169,9 +171,9 @@ public class Robot_2022FF {
      * Reset angle measurement
      * */
     public void resetAngle() {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         startAngles = lastAngles;
         globalAngle = 0;
     }
@@ -183,7 +185,7 @@ public class Robot_2022FF {
      */
     private double getAngle(){
         //Get a new angle measurement
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         //Get the difference between current angle measurement and last angle measurement
         double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
 
@@ -624,33 +626,44 @@ public class Robot_2022FF {
         //calculate powers needed using direction
         double leftPower;
         double rightPower;
+        int targetticks = distanceToTicks(cm);
+        motorBackLeft.setTargetPosition(targetticks);
+        motorFrontLeft.setTargetPosition(targetticks);
+        motorBackRight.setTargetPosition(targetticks);
+        motorFrontRight.setTargetPosition(targetticks);
 
         double kp = PIDCalibration.getKp();//Todo
         double kd = PIDCalibration.getKd();//todo
 
-        double dist = getDistanceTraveled();
-        double error = cm-dist;
+
+        double dist = motorFrontLeft.getCurrentPosition();
+        double error = (targetticks-dist)/Math.abs(targetticks);
         double lastError = 0;
-        double derivative = 0;
-        double correction = getCorrection();
+        double derivative;
+        double correction;
         double power;
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
-        double tolerance = 20;
+        double tolerance = 0.20;
         while(opMode.opModeIsActive() && Math.abs(error) > tolerance) {
-            dist = getDistanceTraveled();
-            error = cm-dist;
-            derivative = (error-lastError) / timer.seconds();
+            dist = motorFrontLeft.getCurrentPosition();
+            error = (targetticks-dist)/Math.abs(targetticks);
+            derivative = (lastError-error) / timer.seconds()/Math.abs(error);
             correction = getCorrection();
             double abspow = Math.abs(kp*error+kd*derivative);
-            power = abspow <= 1? kp*error+kd*derivative : abspow/(kp*error+kd*derivative);
+            power = kp*error+kd*derivative;// abspow <= 1? kp*error+kd*derivative : abspow/(kp*error+kd*derivative);
             leftPower = Math.cos(newDirection) * power;
             rightPower = Math.sin(newDirection) * power;
-            tankDrive(power, power);
-            telemetry.addData("p",power);
-            telemetry.addData("correction",correction);
-            telemetry.addData("current position",dist);
-            telemetry.addData("error",Math.abs(error));
+            tankDrive(power+correction, power-correction);
+            telemetry.addData("distance traveled==current position",dist);
+//            telemetry.addData("ticks per rev",((((1+(46/17))) * (1+(46/11))) * 28));
+            telemetry.addData("target ticks",targetticks);
+//            telemetry.addData("p",power);
+//            telemetry.addData("correction",correction);
+//            telemetry.addData("current position",dist);
+            telemetry.addData("error", error);
+            telemetry.addData("last error", lastError);
+//            telemetry.addData("circumference", DRIVE_WHEEL_CIRCUMFERENCE);
             telemetry.update();
             lastError = error;
             timer.reset();
@@ -710,10 +723,13 @@ public class Robot_2022FF {
      * @return Absolute value of Current position of front left motor, in ticks
      */
     public double getDistanceTraveled() {
-        return motorFrontLeft.getCurrentPosition() / ticksperrev * DRIVE_WHEEL_CIRCUMFERENCE;
+        return (motorFrontLeft.getCurrentPosition() / ticksperrev) * DRIVE_WHEEL_CIRCUMFERENCE * 6;
     }
     //make more?/////////////////////////////////////////////////////////////////////////////////////////
     //may need to change this...
+    public int distanceToTicks(double cm){
+        return (int)((cm/DRIVE_WHEEL_CIRCUMFERENCE)*ticksperrev);
+    }
 
     //robot components
     /**

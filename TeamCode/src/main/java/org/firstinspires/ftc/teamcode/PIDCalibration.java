@@ -28,20 +28,20 @@ public class PIDCalibration extends LinearOpMode {
 
         robot = new Robot_2022FF(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft,imu,this);
         robot.setupRobot();
-        kp = 0.5;
+        kp = 1.8;
         kd = 0;//Todo make note of the numbers you use!!! Copy over to Robot_2022FF when finished!
         waitForStart();
         boolean auto = false;//note: code starts as driver controlled
         boolean goRun = false;
         int switchInt = -1;
-        double cms = 50;//todo adjust cm as needed, longer distance allows for more accuracy if you have room
+        double cms = 200;//todo adjust cm as needed, longer distance allows for more accuracy if you have room
         robot.resetAngle();
         while(opModeIsActive()){
             if(auto){
                 if(goRun) {
                     robot.pidTunerStrafe(0, switchInt * cms);
                     goRun = false;
-                    Thread.sleep(5000);
+//                    Thread.sleep(5000);
                 }
             }
             else {
@@ -60,28 +60,28 @@ public class PIDCalibration extends LinearOpMode {
             }
             if(gamepad1.left_bumper) {//left bumper to switch modes
                 auto = !auto;
-                Thread.sleep(100);
+                Thread.sleep(250);
             }
             if(gamepad1.right_bumper) {//right bumper to change directions. In theory, after reaching destination it should stop... todo if it shakes/doesn't stop let me know!
                 switchInt = -1 * switchInt;
                 goRun = true;
-                Thread.sleep(100);
+                Thread.sleep(250);
             }
             if(gamepad1.a) {//increase kp
-                kp++;
-                Thread.sleep(100);
+                kp+=0.1;
+                Thread.sleep(250);
             }
             if(gamepad1.b) {//decrease kp
-                kp--;
-                Thread.sleep(100);
+                kp-=0.1;
+                Thread.sleep(250);
             }
             if(gamepad1.x) {//increase kd
-                kd++;
-                Thread.sleep(100);
+                kd+=0.1;
+                Thread.sleep(250);
             }
             if(gamepad1.y) {//decrease kd
-                kd--;
-                Thread.sleep(100);
+                kd-=0.1;
+                Thread.sleep(250);
             }
             //we don't have access to FTC dashboard, so tuning is done here
             //after each run, change kp and kd accordingly(instructions in discord)
@@ -94,6 +94,7 @@ public class PIDCalibration extends LinearOpMode {
             telemetry.addData("run?", goRun);
             telemetry.addData("in auto mode?", auto);
             telemetry.update();
+            //2657
         }
     }
 }
