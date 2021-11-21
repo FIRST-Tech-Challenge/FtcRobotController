@@ -273,7 +273,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     private void PrintControls() {
         telemetry.log().add("DRIVER CONTROLS");
         telemetry.log().add("(BACK) Emergency Movement Override");
-        telemetry.addLine();
+        telemetry.log().add("");
 
         telemetry.log().add("OPERATOR CONTROLS");
         telemetry.log().add("(BACK) Reverse Turn-Table Direction");
@@ -285,6 +285,8 @@ public class Teleop extends TeleopMode<MecanumDrive> {
         telemetry.log().add("(D-Pad Left) Lift First Position");
         telemetry.log().add("(D-Pad Up) Lift Second Position");
         telemetry.log().add("(D-Pad Right) Lift Third Position");
+
+        telemetry.update();
     }
 
 }
