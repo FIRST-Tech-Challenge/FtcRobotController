@@ -53,11 +53,12 @@ public abstract class TeleopMode<T extends AbstractDrive> extends OperationMode<
         OnStart();
 
         while(opModeIsActive()) {
-            driverGamePad.update();
-            operatorGamePad.update();
-
             deltaTime = (endTime - startTime) / 1000000000.0; // Convert to accurate millis
             startTime = System.nanoTime();
+
+            // Update
+            driverGamePad.update();
+            operatorGamePad.update();
 
             OnUpdate();
 
