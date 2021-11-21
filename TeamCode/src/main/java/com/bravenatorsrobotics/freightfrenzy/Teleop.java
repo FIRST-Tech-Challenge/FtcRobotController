@@ -3,6 +3,7 @@ package com.bravenatorsrobotics.freightfrenzy;
 import com.bravenatorsrobotics.common.core.FtcGamePad;
 import com.bravenatorsrobotics.common.drive.MecanumDrive;
 import com.bravenatorsrobotics.common.operation.TeleopMode;
+import com.bravenatorsrobotics.common.utils.PowerScale;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,7 +32,6 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     private DcMotorEx intake;
     private DcMotorEx turnTableSpinner;
 
-    // TODO: Check to see what servo is on bot and put it into the configuration
     private Servo cupServo;
     private TouchSensor liftTouchSensor;
     private RevColorSensorV3 cupDistanceSensor;
@@ -39,6 +39,11 @@ public class Teleop extends TeleopMode<MecanumDrive> {
     private boolean shouldOverrideSpeedReduction = false;
     private boolean shouldReduceSpeed = false;
     private boolean shouldReverse = false;
+
+    private final PowerScale drivePowerScale = new PowerScale(this, 1.20);
+    private double currentV = 0.0;
+    private double currentH = 0.0;
+    private double currentR = 0.0;
 
     private boolean objectInCupToggle = false;
 
@@ -114,7 +119,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
 
     @Override
     public void OnStop() {
-        robot.drive.Stop();
+        robot.Stop();
     }
 
     private void HandleGamePadDrive() {
@@ -128,14 +133,17 @@ public class Teleop extends TeleopMode<MecanumDrive> {
             h = -h;
         }
 
-        // TODO: Check Physical Switch
-        if((lift.getCurrentPosition() > 0 || shouldReduceSpeed) && !shouldOverrideSpeedReduction) {
+        if((liftTouchSensor.isPressed() || shouldReduceSpeed) && !shouldOverrideSpeedReduction) {
             v *= REDUCE_SPEED_MULTIPLIER;
             h *= REDUCE_SPEED_MULTIPLIER;
             r *= REDUCE_SPEED_MULTIPLIER;
         }
 
-        super.robot.drive.Drive(v, h, r);
+        this.currentV = this.drivePowerScale.GetPower(v, this.currentV);
+        this.currentH = this.drivePowerScale.GetPower(h, this.currentH);
+        this.currentR = this.drivePowerScale.GetPower(r, this.currentR);
+
+        super.robot.drive.Drive(this.currentV, this.currentH, this.currentR);
     }
 
     @Override
