@@ -59,7 +59,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
         config = new Config(hardwareMap.appContext);
 
         // Reverse the turn table power if on red alliance
-        if(config.allianceColor == Config.AllianceColor.RED)
+        if(config.allianceColor == Config.AllianceColor.BLUE)
             turnTablePower = -turnTablePower;
 
         lift = robot.GetMotor("lift", false);
@@ -178,7 +178,7 @@ public class Teleop extends TeleopMode<MecanumDrive> {
                 break;
 
             // Turntable Spinner
-            case FtcGamePad.GAMEPAD_Y:
+            case FtcGamePad.GAMEPAD_X:
 
                 if(pressed) {
                     turnTableSpinner.setPower(turnTablePower);
@@ -192,6 +192,18 @@ public class Teleop extends TeleopMode<MecanumDrive> {
             case FtcGamePad.GAMEPAD_A:
                 if(pressed) {
                     intake.setPower(1);
+                } else {
+                    intake.setPower(0);
+                }
+
+                break;
+
+            // TODO: Make sure this doesn't fight with GAMEPAD_A
+            // Reverse Intake
+            case FtcGamePad.GAMEPAD_Y:
+
+                if(pressed) {
+                    intake.setPower(-1);
                 } else {
                     intake.setPower(0);
                 }
@@ -265,8 +277,9 @@ public class Teleop extends TeleopMode<MecanumDrive> {
 
         telemetry.log().add("OPERATOR CONTROLS");
         telemetry.log().add("(BACK) Reverse Turn-Table Direction");
-        telemetry.log().add("(Y) Turn-Table");
+        telemetry.log().add("(X) Turn-Table");
         telemetry.log().add("(A) Intake");
+        telemetry.log().add("(Y) Reverse Intake");
         telemetry.log().add("(B) Toggle Cup Position");
         telemetry.log().add("(D-Pad Down) Lift Down");
         telemetry.log().add("(D-Pad Left) Lift First Position");
