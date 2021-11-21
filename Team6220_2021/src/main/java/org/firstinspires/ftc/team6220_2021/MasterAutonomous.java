@@ -54,7 +54,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             }
 
             // Update positions using last distance measured by encoders
-            position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() - motorBackLeft.getCurrentPosition() -
+            position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() +
                     motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4.0;
 
             if (position > targetDistance) {
@@ -95,12 +95,11 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
             // We drive the wheels with the PID value
             if (targetAngle > 0) {
-                driveTank(Math.max((translationPID.getFilteredValue() / 2) * -1, Constants.MINIMUM_TURNING_POWER),
-                        Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER));
-            }
-            else {
-                driveTank(Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER),
-                        Math.max((translationPID.getFilteredValue() / 5) * -1, Constants.MINIMUM_TURNING_POWER));
+                driveTank(Math.min((translationPID.getFilteredValue() / 2) * -1, Constants.MINIMUM_DRIVE_POWER * -1),
+                        Math.max((translationPID.getFilteredValue() / 2), Constants.MINIMUM_DRIVE_POWER));
+            } else {
+                driveTank(Math.max((translationPID.getFilteredValue() / 2), Constants.MINIMUM_DRIVE_POWER),
+                        Math.min((translationPID.getFilteredValue() / 2) * -1, Constants.MINIMUM_DRIVE_POWER * -1));
             }
 
             if (Math.abs(targetAngle - angleTraveled) < 1) {
@@ -109,41 +108,4 @@ public abstract class MasterAutonomous extends MasterOpMode {
             }
         }
     }
-
-    /*//todo - fix method
-    public void turnToAngle(double targetAngle) {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-        pauseMillis(1000);
-
-        while(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle  <= targetAngle - 1){
-
-            //todo - add proprotional turning.
-            driveMecanum(0,0,-0.2);
-            telemetry.addData("IMU", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            telemetry.update();
-
-        }
-
-        driveMecanum(0,0,0);
-
-        //double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        //
-        //if(targetAngle < startAngle){
-        //    while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
-        //        driveMecanum(0,0,-0.2);
-        //    }
-        //} else{
-        //    while (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - targetAngle <= 1 && opModeIsActive()){
-        //        driveMecanum(0,0,0.2);
-        //    }
-        //}
-    }*/
 }
