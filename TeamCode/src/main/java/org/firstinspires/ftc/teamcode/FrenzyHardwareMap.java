@@ -29,18 +29,24 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class FrenzyHardwareMap {
-    //Motor in Port 0
+    //Motor in Port 0, Rev Hub 1.
     public DcMotor motorFrontLeft = null;
-    //Motor in Port 1
+    //Motor in Port 1, Rev Hub 1.
     public DcMotor motorFrontRight = null;
-    //Motor in Port 2.
+    //Motor in Port 2, Rev Hub 1.
     public DcMotor motorBackRight = null;
-    //Motor in Port 3.
+    //Motor in Port 3, Rev Hub 1.
     public DcMotor motorBackLeft = null;
+    //Motor in Port 0, Rev Hub 2.
+    public DcMotor motorIntake = null;
+    //Motor in Port 1, Rev Hub 2
+    public DcMotorEx motorArm = null;
     //IMU from RevHub.
     public BNO055IMU imu = null;
     //Setup Wheel measurements for REV motors.
@@ -66,6 +72,9 @@ public class FrenzyHardwareMap {
         motorBackLeft = frenzyMap.get(DcMotor.class, "backLeft");
         motorFrontRight = frenzyMap.get(DcMotor.class, "frontRight");
         motorBackRight = frenzyMap.get(DcMotor.class, "backRight");
+        //Define and initialize arm/intake motors.
+        motorArm = frenzyMap.get(DcMotorEx.class, "arm");
+        motorIntake = frenzyMap.get(DcMotor.class, "intake");
         //Define the imu
         imu = frenzyMap.get(BNO055IMU.class, "imu");
         // Set all motor directions.
@@ -73,18 +82,27 @@ public class FrenzyHardwareMap {
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
+        // Set motor directions arm/intake.
+        motorIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorArm.setDirection(DcMotorSimple.Direction.REVERSE);
         // Set all motors to zero power.
         motorFrontRight.setPower(0.0);
         motorFrontLeft.setPower(0.0);
         motorBackLeft.setPower(0.0);
         motorBackRight.setPower(0.0);
+        // Set arm/intake motors to zero power.
+        motorArm.setPower(0.0);
+        motorIntake.setPower(0.0);
         // Set all motors to run with encoders.
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // Set arm/intake motor modes
+        motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
-    //Stops and resets the encoders before setting them to run again.
+    //Stops and resets the encoders before setting them to run again. drive train specific
     public void restartEncoders(){
             motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
