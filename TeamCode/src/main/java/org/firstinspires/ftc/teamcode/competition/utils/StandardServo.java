@@ -20,15 +20,15 @@ public class StandardServo {
     }
 
     /**
-     * Sets the position of the servo, between -180 and 180
+     * Sets the position of the servo, between 0 and 100
      * @param position The position to set
      * @throws ArithmeticException The exception thrown when the position is not between -100 and 100
      */
     public void setPosition(int position) throws ArithmeticException {
-        if(position >= -100 && position <= 100) {
+        if(position >= 0 && position <= 100) {
             SERVO.setPosition(position / 100.0);
         }else{
-            throw new ArithmeticException("Position must be between -100 and 100!");
+            throw new ArithmeticException("Position must be between - and 100!");
         }
     }
 

@@ -69,20 +69,24 @@ public class MechanumTeleOpManager extends TeleOpManager {
             DUCK_MOTOR = null;
         }
         // set servos to default position
-        INTAKE_SERVO_LOWER_ONE.setPosition(75);
-        INTAKE_SERVO_LOWER_TWO.setPosition(75);
-        INTAKE_SERVO_UPPER.setPosition(0);
-        HAND_TURNER_SERVO.setPosition(0);
-        HAND_FLIPPER_SERVO.setPosition(0);
-        HAND_GRABBER_SERVO.setPosition(0);
+        if(SUBSYSTEMS.isIntakeActive()) {
+            INTAKE_SERVO_LOWER_ONE.setPosition(0);
+            INTAKE_SERVO_LOWER_TWO.setPosition(95);
+            INTAKE_SERVO_UPPER.setPosition(0);
+        }
+        if(SUBSYSTEMS.isHandActive()) {
+//            HAND_TURNER_SERVO.setPosition(0);
+//            HAND_FLIPPER_SERVO.setPosition(100);
+//            HAND_GRABBER_SERVO.setPosition(0);
+        }
     }
 
     @Override
     public void main() {
         // someone could probably do this math better than me. if you can, please do. i spent 3 weeks on this and i still dont understand it. please
         double rx = -getGamepadWithFunction1().right_stick_x;
-        double x = getGamepadWithFunction1().left_stick_y;
-        double y = getGamepadWithFunction1().left_stick_x;
+        double x = getGamepadWithFunction1().left_stick_x;
+        double y = getGamepadWithFunction1().left_stick_y;
         double rightTopPower = (y + x) - rx;
         double rightBottomPower = (y - x) - rx;
         double leftTopPower = (-(y - x)) - rx;
@@ -93,13 +97,13 @@ public class MechanumTeleOpManager extends TeleOpManager {
                 INTAKE_MOTOR.driveWithEncoder((int) Range.clip((getGamepadWithFunction2().left_trigger - getGamepadWithFunction2().right_trigger) * 1000, -100, 100));
             }
             if(getGamepadWithFunction2().a) {
-                INTAKE_SERVO_UPPER.setPosition(100);
-                INTAKE_SERVO_LOWER_ONE.setPosition(75);
-                INTAKE_SERVO_LOWER_TWO.setPosition(75);
+                INTAKE_SERVO_UPPER.setPosition(25);
+                INTAKE_SERVO_LOWER_ONE.setPosition(95);
+                INTAKE_SERVO_LOWER_TWO.setPosition(0);
             }else if(getGamepadWithFunction2().b) {
                 INTAKE_SERVO_UPPER.setPosition(0);
-                INTAKE_SERVO_LOWER_ONE.setPosition(5);
-                INTAKE_SERVO_LOWER_TWO.setPosition(5);
+                INTAKE_SERVO_LOWER_ONE.setPosition(0);
+                INTAKE_SERVO_LOWER_TWO.setPosition(95);
             }
         }
         if(SUBSYSTEMS.isLiftActive()) {
