@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.cv;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.samples.ObjectDector.DNNObject;
+import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.DNNObject;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
