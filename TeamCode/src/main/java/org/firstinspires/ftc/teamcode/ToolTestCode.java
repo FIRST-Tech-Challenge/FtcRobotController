@@ -30,26 +30,20 @@ public class ToolTestCode extends LinearOpMode {
         HardwareMapListGenerator.gen(hardwareMap, telemetry);
         Thread thread = new Thread(() -> {
             final Lift lift = new Lift(eventThread, hardwareMap, toolGamepad, telemetry);
-            while (opModeIsActive()) {
-                lift.update();
-            }
-        });
-        Thread thread2 = new Thread(() -> {
             final Intake intake = new Intake(hardwareMap, toolGamepad);
             final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
             while (opModeIsActive()) {
                 move.update();
-                intake.run();
+                intake.update();
+                lift.update();
             }
         });
-        thread.setPriority(3);
-        thread2.setPriority(4);
+        thread.setPriority(4);
         waitForStart();
         telemetry.clearAll();
         telemetry.update();
         eventThread.start();
         thread.start();
-        thread2.start();
         //noinspection StatementWithEmptyBody
         while (opModeIsActive()) {}
     }

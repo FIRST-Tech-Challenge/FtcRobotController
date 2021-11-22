@@ -18,7 +18,7 @@ public class HardwareMapListGenerator {
                 list.add(entry.getKey());
             }
         }
-        telemetry.addData("list", String.join("," ,list));
+        telemetry.addData("list", String.join(", ", list));
         telemetry.update();
     }
 }
