@@ -132,7 +132,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new UltrasonicLocalizer(new MB1242[] {sensor1, sensor2, sensor3, sensor4}, this));
+//        setLocalizer(new UltrasonicLocalizer(new MB1242[] {sensor1, sensor2, sensor3, sensor4}, this));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
