@@ -15,15 +15,11 @@ public class chassisTest extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor backRight;
 
-    private DcMotor elevator;
-
     public void runOpMode(){
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-
-        elevator = hardwareMap.get(DcMotor.class, "elevator");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -38,12 +34,10 @@ public class chassisTest extends LinearOpMode {
             double throttle;
             double turn;
             double strafeValue;
-            double elevatorPower;
 
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
             strafeValue = gamepad1.left_stick_x;
-            elevatorPower = gamepad2.left_stick_y;
 
             //making motors run.
                 //strafing
@@ -70,8 +64,6 @@ public class chassisTest extends LinearOpMode {
             backLeft.setPower(-turn);
             backRight.setPower(turn);
             }
-
-//            elevator.
 //            telemetry.addData("Throttle", throttle);
 //            telemetry.addData("Strafing", strafeValue);
 //            telemetry.addData("Turning", turn);
