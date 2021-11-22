@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.harware.Servo;
 
 @TeleOp
 public class chassisTest extends LinearOpMode {
@@ -14,13 +15,22 @@ public class chassisTest extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
+    
+    private DcMotor carousel;
+    private DcMotor crane;
+    private Servo arm;
 
     public void runOpMode(){
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-
+      
+        carousel = hardwareMap.get(DcMotor.class, "carousel");
+        crane = hardwareMap.get(DcMotor.class, "crane");
+        arm = hardwareMap.get(Servo.class, "arm");
+  
+        //setting motor direction since some motors were backwards
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -34,10 +44,12 @@ public class chassisTest extends LinearOpMode {
             double throttle;
             double turn;
             double strafeValue;
+            double elevatorPower;
 
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
             strafeValue = gamepad1.left_stick_x;
+            elevatorPower = gamepad2.left_stick_y;
 
             //making motors run.
                 //strafing
@@ -63,10 +75,10 @@ public class chassisTest extends LinearOpMode {
             frontRight.setPower(turn);
             backLeft.setPower(-turn);
             backRight.setPower(turn);
-            }
-//            telemetry.addData("Throttle", throttle);
-//            telemetry.addData("Strafing", strafeValue);
-//            telemetry.addData("Turning", turn);
-//            telemetry.update();
+        }
+        //telemetry for debugging
+        System.out.println("Throttle " + throttle);
+        System.out.println("Crane up " + craneUp);
+        System.out.println("Crane down " + craneDown);
     }
 }
