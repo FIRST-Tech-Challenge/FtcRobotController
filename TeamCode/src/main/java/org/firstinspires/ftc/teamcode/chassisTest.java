@@ -21,7 +21,7 @@ public class chassisTest extends LinearOpMode {
     private DcMotor crane;
     private Servo arm;
 
-    public void runOpMode(){
+    public void runOpMode() {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
@@ -38,31 +38,30 @@ public class chassisTest extends LinearOpMode {
 
         waitForStart();
 
+        double throttle = 0;
+        boolean craneUp = false;
+        boolean craneDown = false;
         while (opModeIsActive()) {
 
             //defining driving variables.
-            double throttle;
             double turn;
             double strafeValue;
 
             boolean buttonB;
-            boolean craneUp;
-            boolean craneDown;
             boolean armIn;
             boolean armOut;
-
 
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
             strafeValue = gamepad1.left_stick_x;
 
-            buttonB = gamepad1.b;
-            craneUp = gamepad1.right_bumper;
-            craneDown = gamepad1.left_bumper;
-            armIn = gamepad1.dpad_left;
-            armOut = gamepad1.dpad_right;
+            buttonB = gamepad2.b;
+            craneUp = gamepad2.right_bumper;
+            craneDown = gamepad2.left_bumper;
+            armIn = gamepad2.dpad_left;
+            armOut = gamepad2.dpad_right;
 
-        //making motors run.
+            //making motors run.
             //strafing
             if (strafeValue > 0.1) {
                 frontLeft.setPower(-strafeValue);
@@ -93,7 +92,7 @@ public class chassisTest extends LinearOpMode {
             //arm open/close
             if (armIn) {
                 arm.setPosition(0.65);
-            } else if (armOut){
+            } else if (armOut) {
                 arm.setPosition(0.302);
             }
 
@@ -108,11 +107,10 @@ public class chassisTest extends LinearOpMode {
             frontRight.setPower(turn);
             backLeft.setPower(-turn);
             backRight.setPower(turn);
-            }
+        }
         //telemetry for debugging
-//            telemetry.addData("Throttle", throttle);
-//            telemetry.addData("Strafing", strafeValue);
-//            telemetry.addData("Turning", turn);
-//            telemetry.update();
+        System.out.println("Throttle " + throttle);
+        System.out.println("Crane up " + craneUp);
+        System.out.println("Crane down " + craneDown);
     }
 }
