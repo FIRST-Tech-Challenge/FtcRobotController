@@ -30,6 +30,7 @@ public class chassisTest extends LinearOpMode {
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         crane = hardwareMap.get(DcMotor.class, "crane");
         arm = hardwareMap.get(Servo.class, "arm");
+  
         //setting motor direction since some motors were backwards
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -46,6 +47,7 @@ public class chassisTest extends LinearOpMode {
             //defining driving variables.
             double turn;
             double strafeValue;
+            double elevatorPower;
 
             boolean buttonB;
             boolean armIn;
@@ -54,6 +56,7 @@ public class chassisTest extends LinearOpMode {
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
             strafeValue = gamepad1.left_stick_x;
+            elevatorPower = gamepad2.left_stick_y;
 
             buttonB = gamepad2.b;
             craneUp = gamepad2.right_bumper;
@@ -112,5 +115,6 @@ public class chassisTest extends LinearOpMode {
         System.out.println("Throttle " + throttle);
         System.out.println("Crane up " + craneUp);
         System.out.println("Crane down " + craneDown);
+            }
     }
 }
