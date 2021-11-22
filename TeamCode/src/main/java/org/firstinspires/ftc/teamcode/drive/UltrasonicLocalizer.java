@@ -106,6 +106,7 @@ public class UltrasonicLocalizer implements Localizer {
     public void setPoseEstimate(@NonNull Pose2d pose2d) {
         previousPose = pose2d;
         poseEstimate = pose2d;
+        lastWheelPositions = new ArrayList<>();
     }
 
     @Nullable
@@ -164,7 +165,7 @@ public class UltrasonicLocalizer implements Localizer {
 
                 Pose2d newPose = new Pose2d(realX, realY, theta);
                 double poseDifference = newPose.vec().distTo(previousPose.vec());
-                // If the pose difference is too big, we don't use it, since it's probably wrong
+                // If the pose difference is too big, we don't use it, since again, it's probably wrong
                 if (poseDifference < 1) {
                     averagablePoses.add(newPose);
                 }
@@ -183,13 +184,15 @@ public class UltrasonicLocalizer implements Localizer {
                 yAverage /= averagablePoses.size();
                 thetaAverage /= averagablePoses.size();
                 poseEstimate = new Pose2d(xAverage, yAverage, thetaAverage);
-                previousPose = poseEstimate;
             } else {
+                // If we didn't find any poses, we use the enocoder values instead
                 poseEstimate = calculatePoseEncoders();
             }
         } else {
+            // If we haven't waited long enough, we use the encoder values instead
             poseEstimate = calculatePoseEncoders();
         }
+        previousPose = poseEstimate;
     }
     public Pose2d calculatePoseEncoders() {
         // If we haven't waited long enough, we calculate the pose based on the drive encoders
