@@ -43,7 +43,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         this.telemetry = telemetry;
 
         cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/opencv/models/freight_frenzy_optimized_graph.pb");
+        net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_emma_optimized_graph.pb");
         for(int i=0; i<classNames.length; i++)
             colors.add(randomColor());
 

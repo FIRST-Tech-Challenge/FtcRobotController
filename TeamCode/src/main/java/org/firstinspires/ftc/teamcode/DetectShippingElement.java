@@ -28,7 +28,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.HardwareMaps.ExternalCameraHardwareMap;
-import org.firstinspires.ftc.teamcode.samples.ObjectDector.OPCVFFObjectDetector3;
+import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
@@ -54,7 +54,7 @@ public class DetectShippingElement extends LinearOpMode
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         // store as variable here so we can access the location
-        OPCVFFObjectDetector3 detector = new OPCVFFObjectDetector3(width, height, telemetry);
+        OpenCvShippingElementDetector detector = new OpenCvShippingElementDetector( width, height, telemetry);
 
         robot.init(hardwareMap);
         robot.webCam.setPipeline(detector);
