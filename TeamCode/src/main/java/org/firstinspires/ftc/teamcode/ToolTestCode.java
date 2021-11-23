@@ -39,7 +39,7 @@ public class ToolTestCode extends LinearOpMode {
             final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
             while (opModeIsActive()) {
                 move.update();
-                intake.run();
+                intake.update();
             }
         });
         thread.setPriority(3);

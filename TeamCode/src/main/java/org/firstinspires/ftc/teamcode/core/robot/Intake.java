@@ -25,7 +25,7 @@ public class Intake{
         this.distanceSensor = map.get(DistanceSensor.class, "intakeSensor");
         this.toolGamepad = toolGamepad;
     }
-    public void run() {
+    public void update() {
         reader.readValue();
         if (distanceSensor.getDistance(DistanceUnit.MM) >= 210) {
             if (reader.getState()) {
