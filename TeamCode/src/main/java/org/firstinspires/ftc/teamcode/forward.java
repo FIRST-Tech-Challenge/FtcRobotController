@@ -50,16 +50,18 @@ public class forward extends LinearOpMode {
             double rPower;
             double towerPower;
             double deadzone;
+            double towerPower2;
 
             lPower = 0.0f;
             rPower = 0.0f;
             towerPower = 0.0f;
-            deadzone = 0.0f;
+            deadzone = 0.2f;
+            towerPower2 = 0.0f;
 
             lPower = gamepad1.left_stick_y;
             rPower = gamepad1.right_stick_y;
             towerPower = gamepad2.right_trigger;
-            towerPower = gamepad2.left_trigger;
+            towerPower2 = gamepad2.left_trigger;
 
 
             if (gamepad2.a) {
@@ -69,17 +71,20 @@ public class forward extends LinearOpMode {
                 clawservo.setPosition(.75);
             }
 
-            if (towerPower <= deadzone){
+            if (towerPower <= deadzone) {
                 towerPower = 0.0f;
             }
-
+            if (towerPower2 <= deadzone) {
+                towerPower2 = 0.0f;
+            }
 
             lf.setPower(lPower);
             rf.setPower(rPower);
             lb.setPower(lPower);
             rb.setPower(rPower);
-            tower1.setPower(towerPower);
-            tower2.setPower(towerPower);
+            tower1.setPower(towerPower - towerPower2);
+            tower2.setPower(towerPower - towerPower2);
+
 
         }
     }
