@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @Autonomous(name="MecanumAutonomous", group="FreightFrenzy")
 public class MecanumAutonomous extends LinearOpMode {
     //Add an ElapsedTime for function runtime calculations.
@@ -14,6 +17,11 @@ public class MecanumAutonomous extends LinearOpMode {
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
     // Declare IMU
     BNO055IMU.Parameters IMU_Parameters;
+    double globalAngle;
+    double rotation;
+    //PIDController pidRotate;
+    Orientation lastAngles = new Orientation();
+    double correction;
     float Yaw_Angle = 0;
     boolean startPositionDuck = false;
     //yellow button (y) sets to true
@@ -49,6 +57,10 @@ public class MecanumAutonomous extends LinearOpMode {
             telemetry.update();
             sleep(500);
             }
+        // Set PID proportional value to start reducing power at about 50 degrees of rotation.
+        // P by itself may stall before turn completed so we add a bit of I (integral) which
+        // causes the PID controller to gently increase power if the turn is not completed.
+        //pidRotate = new PIDController(.003, .00003, 0);
         telemetry.addData("y=startPositionDuck", "");
         telemetry.addData("Settings", "\n%s, %s, %s",
                 startPositionDuck ? "startDuck" : "startWarehouse",
@@ -191,6 +203,89 @@ public class MecanumAutonomous extends LinearOpMode {
     public double driveDistance(double distance) {
         double drive  = (robot.REV_ENCODER_CLICKS/ robot.REV_WHEEL_CIRC);
         return (int)Math.floor(drive * distance);
+    }
+    private void resetAngle()
+    {
+        lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        globalAngle = 0;
+    }
+    private double getAngle()
+    {
+        // We experimentally determined the Z axis is the axis we want to use for heading angle.
+        // We have to process the angle because the imu works in euler angles so the Z axis is
+        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+        Orientation angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+        globalAngle += deltaAngle;
+        lastAngles = angles;
+        return globalAngle;
+    }
+    private void rotate(int degrees, double power)
+    {
+        // restart imu angle tracking.
+        resetAngle();
+        // if degrees > 359 we cap at 359 with same sign as original degrees.
+        if (Math.abs(degrees) > 359) degrees = (int) Math.copySign(359, degrees);
+        // start pid controller. PID controller will monitor the turn angle with respect to the
+        // target angle and reduce power as we approach the target angle. This is to prevent the
+        // robots momentum from overshooting the turn after we turn off the power. The PID controller
+        // reports onTarget() = true when the difference between turn angle and target angle is within
+        // 1% of target (tolerance) which is about 1 degree. This helps prevent overshoot. Overshoot is
+        // dependant on the motor and gearing configuration, starting power, weight of the robot and the
+        // on target tolerance. If the controller overshoots, it will reverse the sign of the output
+        // turning the robot back toward the setpoint value.
+        /*pidRotate.reset();
+        pidRotate.setSetpoint(degrees);
+        pidRotate.setInputRange(0, degrees);
+        pidRotate.setOutputRange(0, power);
+        pidRotate.setTolerance(1);
+        pidRotate.enable();
+         */
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+        // rotate until turn is completed.
+        if (degrees < 0)
+        {
+            // On right turn we have to get off zero first.
+            while (opModeIsActive() && getAngle() == 0)
+            {
+                robot.motorBackLeft.setPower(power);
+                robot.motorFrontLeft.setPower(power);
+                robot.motorBackRight.setPower(-power);
+                robot.motorFrontRight.setPower(-power);
+                sleep(100);
+            }
+
+            do
+            {
+                //power = pidRotate.performPID(getAngle()); // power will be - on right turn.
+                robot.motorBackLeft.setPower(-power);
+                robot.motorFrontLeft.setPower(-power);
+                robot.motorBackRight.setPower(power);
+                robot.motorFrontRight.setPower(power);
+            } while (opModeIsActive());// && !pidRotate.onTarget());
+        }
+        else    // left turn.
+            do
+            {
+                //power = pidRotate.performPID(getAngle()); // power will be + on left turn.
+                robot.motorBackLeft.setPower(-power);
+                robot.motorFrontLeft.setPower(-power);
+                robot.motorBackRight.setPower(power);
+                robot.motorFrontRight.setPower(power);
+            } while (opModeIsActive());// && !pidRotate.onTarget());
+        // turn the motors off.
+        robot.setPowers(0);
+        rotation = getAngle();
+        // wait for rotation to stop.
+        sleep(500);
+        // reset angle tracking on new heading.
+        resetAngle();
     }
     //Turn using the IMU.
     public void turn() {
