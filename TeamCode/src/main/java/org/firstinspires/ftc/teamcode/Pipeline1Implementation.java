@@ -11,8 +11,8 @@ public class Pipeline1Implementation extends LinearOpMode {
         pipeline1Detector.init();
         waitForStart();
         while (!isStopRequested() && opModeIsActive()) {
-            pipeline1Detector.Stack stack = pipeline1Detector.getStack();
-            telemetry.addData("Rings", stack);
+            // pipeline1Detector.Stack stack = pipeline1Detector.getStack();
+            // telemetry.addData("Rings", stack);
             telemetry.update();
         }
     }

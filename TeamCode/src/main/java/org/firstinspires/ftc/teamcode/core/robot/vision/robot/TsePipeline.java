@@ -35,7 +35,7 @@ public class TsePipeline extends OpenCvPipeline {
     private double middleRectHeightPercentage = 0.50;
     private double bottomRectWidthPercentage = 0.75;
     private double bottomRectHeightPercentage = 0.50;
-    private int different = 1;
+    private int different = 0;
     private int lastFrameValue = 0;
     private boolean isComplete = false;
     private int checks = 0;
@@ -43,7 +43,7 @@ public class TsePipeline extends OpenCvPipeline {
     private int frameCount = 0;
 
     public void resetPipeline() {
-        different = 1;
+        different = 0;
         lastFrameValue = 0;
         isComplete = false;
         checks = 0;
@@ -97,6 +97,11 @@ public class TsePipeline extends OpenCvPipeline {
                     drawRectOnToMat(input, topRect, red);
                     drawRectOnToMat(input, middleRect, red);
                     drawRectOnToMat(input, bottomRect, yellow);
+                    break;
+                default:
+                    drawRectOnToMat(input, topRect, red);
+                    drawRectOnToMat(input, middleRect, red);
+                    drawRectOnToMat(input, bottomRect, red);
                     break;
             }
         } catch (Exception e) {
@@ -170,7 +175,7 @@ public class TsePipeline extends OpenCvPipeline {
      */
     public static int mostDifferent(double val1, double val2, double val3) {
         double valMean = (val1 + val2 + val3) / 3;
-        double[] array = {Math.abs(valMean - val1),Math.abs(valMean - val2),Math.abs(valMean - val3)};
+        double[] array = {Math.abs(valMean - val1),Math.abs(valMean - val2), Math.abs(valMean - val3)};
         int max = array[0] > array[1] ? 1 : 2;
         return array[2] > array[max-1] ? 3 : max;
     }
@@ -189,7 +194,9 @@ public class TsePipeline extends OpenCvPipeline {
      * percentages of all rectangles. it goes top width, top height, middle width, etc.
      */
     @SuppressWarnings("unused")
-    void setRectangles(double topRectWidthPercentage, double topRectHeightPercentage, double middleRectWidthPercentage, double middleRectHeightPercentage, double bottomRectWidthPercentage, double bottomRectHeightPercentage) {
+    void setRectangles(double topRectWidthPercentage, double topRectHeightPercentage,
+                       double middleRectWidthPercentage, double middleRectHeightPercentage,
+                       double bottomRectWidthPercentage, double bottomRectHeightPercentage) {
         this.topRectWidthPercentage = topRectWidthPercentage;
         this.topRectHeightPercentage = topRectHeightPercentage;
         this.middleRectWidthPercentage = middleRectWidthPercentage;

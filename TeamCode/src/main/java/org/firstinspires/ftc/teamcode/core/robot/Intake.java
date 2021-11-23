@@ -14,17 +14,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 /**
  * intake, extension of ToggleableTool
  */
-public class Intake{
+public class Intake {
     private final GamepadEx toolGamepad;
     private final ToggleButtonReader reader;
     private final DcMotor motor;
     private final DistanceSensor distanceSensor;
+
     public Intake(@NonNull HardwareMap map, GamepadEx toolGamepad) {
         this.motor = map.get(DcMotor.class, "intake");
         this.reader = new ToggleButtonReader(toolGamepad, GamepadKeys.Button.X);
         this.distanceSensor = map.get(DistanceSensor.class, "intakeSensor");
         this.toolGamepad = toolGamepad;
     }
+
     public void update() {
         reader.readValue();
         if (distanceSensor.getDistance(DistanceUnit.MM) >= 210) {
@@ -38,7 +40,11 @@ public class Intake{
                 motor.setPower(0);
             }
         } else {
-            motor.setPower(0);
+            if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
+                motor.setPower(1);
+            } else {
+                motor.setPower(0);
+            }
         }
     }
 }

@@ -72,7 +72,7 @@ public class pipeline1Detector {
         ftclibPipeline.setRectangleHeight(rectangleHeight);
         ftclibPipeline.setRectangleWidth(rectangleWidth);
     }
-
+    /*
     public pipeline1Detector.Stack getStack() {
         if (Math.abs(ftclibPipeline.getTopAverage() - ftclibPipeline.getBottomAverage()) < ftclibPipeline.getThreshold()
                 && (ftclibPipeline.getTopAverage() <= 100 && ftclibPipeline.getBottomAverage() <= 100)) {
@@ -84,10 +84,8 @@ public class pipeline1Detector {
             return pipeline1Detector.Stack.ONE;
         }
     }
+    */
 
-    public void setThreshold(int threshold) {
-        ftclibPipeline.setThreshold(threshold);
-    }
 
     public double getTopAverage() {
         return ftclibPipeline.getTopAverage();
