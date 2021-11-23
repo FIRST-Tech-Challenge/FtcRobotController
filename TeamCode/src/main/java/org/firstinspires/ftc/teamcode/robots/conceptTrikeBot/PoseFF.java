@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
 
@@ -47,10 +48,11 @@ import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_P;
  */
 
 @Config
-public class PoseUG {
+public class PoseFF {
 
     // setup
     HardwareMap hwMap;
+    Telemetry telemetry;
     PIDController turnPID = new PIDController(0, 0, 0);
     PIDController distPID = new PIDController(0, 0, 0);
     PIDController alignPID = new PIDController(ALIGN_P, ALIGN_I, ALIGN_D);
@@ -187,51 +189,7 @@ public class PoseUG {
     //////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Create a Pose instance that stores all real world position/orientation
-     * elements: <var>x</var>, <var>y</var>, <var>heading</var>, and
-     * <var>speed</var>.
-     *
-     * @param x       The position relative to the x axis of the field
-     * @param y       The position relative to the y axis of the field
-     * @param heading The heading of the robot
-     * @param speed   The speed of the robot
-     */
-    public PoseUG(double x, double y, double heading, double speed) {
-
-        poseX = x;
-        poseY = y;
-        poseHeading = heading;
-        poseSpeed = speed;
-        posePitch = 0;
-        poseRoll = 0;
-    }
-
-    /**
-     * Creates a Pose instance with _0 speed, to prevent muscle fatigue by excess
-     * typing demand on the software team members.
-     *
-     * @param x     The position relative to the x axis of the field
-     * @param y     The position relative to the y axis of the field
-     * @param angle The vuAngle of the robot
-     */
-    public PoseUG(double x, double y, double angle) {
-
-        poseX = x;
-        poseY = y;
-        poseHeading = angle;
-        poseSpeed = 0;
-
-    }
-
-    /**
-     * Creates a base Pose instance at the origin, (_0,_0), with _0 speed and _0
-     * vuAngle. Useful for determining the Pose of the robot relative to the origin.
-     */
-
-
-
-    public PoseUG(RobotType name) {
+    public PoseFF(RobotType name, Telemetry telemetry) {
 
         poseX = Constants.startingXOffset;
         poseY = Constants.startingYOffset;
@@ -241,7 +199,6 @@ public class PoseUG {
         poseRoll = 0;
 
         currentBot = name;
-
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -479,7 +436,7 @@ public class PoseUG {
     double autoLaunchTimer = 0.0;
     boolean ringChambered = false;
 
-    public void update(BNO055IMU imu, long ticksLeft, long ticksRight, boolean isActive) {
+    public void update() {
         long currentTime = System.nanoTime();
 
         imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
@@ -497,50 +454,8 @@ public class PoseUG {
         posePitch = wrapAngle(imuAngles.thirdAngle, offsetPitch);
         poseRoll = wrapAngle(imuAngles.secondAngle, offsetRoll);
 
-
-        /*
-         * double jerkX = (cachedXAcceleration - lastXAcceleration) / loopTime; boolean
-         * correct = false;
-         * 
-         * if (Math.abs(jerkX) > 0.1) { driveMixerTank(1, 0); correct = true; } int
-         * correctionswitch = 0; double correctionTime = 0; if(correct){ switch
-         * (correctionswitch){ case 0: correctionTime = futureTime(2);
-         * correctionswitch++; break; case 1: driveMixerTank(1,0);
-         * if(System.nanoTime()>correctionTime){ correctionswitch++; } break; default:
-         * correctionswitch = 0; correct= false;
-         * 
-         * } }
-         */
-        /*
-         * if(posePitch<300 && posePitch >10 imu.getAcceleration().xAccel > ){
-         * driveMixerTank(-1,0); }
-         */
-
         articulate(articulation); // call the most recently requested articulation
 
-        // we haven't worked out the trig of calculating displacement from any
-        // driveMixer combination, so
-        // for now we are just restricting ourselves to cardinal relative directions of
-        // pure forward, backward, left and right
-        // so no diagonals or rotations - if we do those then our absolute positioning
-        // fails
-//
-//        switch (moveMode) {
-//            case forward:
-//                displacement = (getAverageTicks() - displacementPrev) * forwardTPM;
-//                odometer += Math.abs(displacement);
-//                poseHeadingRad = Math.toRadians(poseHeading);
-//                break;
-//            case backward:
-//                displacement = (getAverageTicks() - displacementPrev) * forwardTPM;
-//                odometer += Math.abs(displacement);
-//                poseHeadingRad = Math.toRadians(poseHeading);
-//                break;
-//            default:
-//                displacement = 0; // when rotating or in an undefined moveMode, ignore/reset displacement
-//                displacementPrev = 0;
-//                break;
-//        }
         displacement = (getAverageTicks() - displacementPrev) / forwardTPM;
         odometer += Math.abs(displacement);
         poseHeadingRad = Math.toRadians(poseHeading);
@@ -560,11 +475,6 @@ public class PoseUG {
         poseX += displacement * Math.sin(poseHeadingRad);
         poseY += displacement * Math.cos(poseHeadingRad);
 
-//        if((bottomColorSensor.red() + bottomColorSensor.green() + bottomColorSensor.blue() > 900 * Constants.LINE_DETECTION_THRESHHOLD)
-//                &&  bottomColorSensor.green() > bottomColorSensor.red()
-//                && bottomColorSensor.green() > bottomColorSensor.blue())
-//            poseY = Constants.MIDFIELD_COLOR_RESET_POSITION;
-
         lastXAcceleration = cachedXAcceleration;
         cachedXAcceleration = imu.getLinearAcceleration().xAccel;
 
@@ -582,23 +492,13 @@ public class PoseUG {
         motorMiddle.setPower(clampMotor(powerMiddle));
         motorMiddleSwivel.setPower(clampMotor(powerMiddleSwivel));//watermelon
 
+        telemetry.update();
+
         sendTelemetry();
     }
 
-    int duckSpinnerState = 0;
-    public void toggleDuckSpinner(){
-        if(duckSpinnerState == 0){
-            duckSpinnerState++;
-            duckSpinner.setPower(Constants.ALLIANCE_INT_MOD * 1);
-        }
-        else if(duckSpinnerState == 1){
-            duckSpinnerState = 0;
-            duckSpinner.setPower(0);
-        }
-    }
-
-    public void updateSensors(boolean isActive) {
-        update(imu, 0, 0, isActive);
+    public void setupDriverTelemetry(){
+        telemetry.addLine().addData("pitch", () -> getPitch());
     }
 
 
@@ -978,8 +878,8 @@ public class PoseUG {
      *                       active after reset
      */
     public void resetMotors(boolean enableEncoders) {
-         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorMiddle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorMiddleSwivel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         if (enableEncoders) {

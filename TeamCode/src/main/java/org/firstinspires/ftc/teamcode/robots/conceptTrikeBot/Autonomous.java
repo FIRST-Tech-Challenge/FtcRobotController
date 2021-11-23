@@ -17,14 +17,8 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
  */
 public class Autonomous {
 
-    private PoseUG robot;
+    private PoseFF robot;
     private Telemetry telemetry;
-    private Gamepad gamepad1;
-
-    public static int sampleExtendMiddle = 2210;
-    public static int sampleExtendLeft = 2200;
-    public static int sampleExtendRight = 2200;
-    public static boolean sampleContinue = false;
 
     // vision-related configuration
     public VisionProvider vp;
@@ -40,17 +34,11 @@ public class Autonomous {
     // staging and timer variables
     public float autoDelay = 0;
     public Stage autoStage = new Stage();
-    public Stage autoSetupStage = new Stage();
 
-    // auto constants
-    private static final double DRIVE_POWER = .65;
-    private static final float TURN_TIME = 2;
-    private static final float DUCKY_TIME = 1.0f;
 
-    public Autonomous(PoseUG robot, Telemetry telemetry, Gamepad gamepad1) {
+    public Autonomous(PoseFF robot, Telemetry telemetry) {
         this.robot = robot;
         this.telemetry = telemetry;
-        this.gamepad1 = gamepad1;
     }
 
     public boolean sample() {

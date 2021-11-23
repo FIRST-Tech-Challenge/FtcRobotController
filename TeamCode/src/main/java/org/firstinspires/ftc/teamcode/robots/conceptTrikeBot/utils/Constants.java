@@ -6,14 +6,15 @@ import com.acmerobotics.dashboard.config.Config;
 public class Constants {
     //misc
 
-    public static int visionView = 0;
-    public static final int ENCODER_TICKS_PER_REVOLUTION = 560;
     public static final double INCHES_PER_METER = 39.3700787;
     public static Alliance ALLIANCE = Alliance.RED;
     public static int ALLIANCE_INT_MOD = 1;
-    public static boolean isInner = false;
 
-    // Vision
+    public static double startingXOffset = 0;
+    public static double startingYOffset = 0;
+
+    //vision
+    public static int visionView = 0;
     public static int TOP_LEFT_X_RED = 70;
     public static int TOP_LEFT_Y_RED = 160;
     public static int BOTTOM_RIGHT_X_RED = 180;
@@ -44,10 +45,6 @@ public class Constants {
     public static int WEBCAM_WIDTH = 320;
     public static int WEBCAM_HEIGHT = 240;
 
-    public static double startingXOffset = 0;
-    public static double startingYOffset = 0;
-
-    public static int gripperClosedPos = 900;
 
     public enum Alliance {
         RED,
