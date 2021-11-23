@@ -1,0 +1,54 @@
+Meccanum Explained
+
+
+Here are vectors for each wheel, it's all relative, so the ones mean at max power.
+The average of all the wheels is the direction the robot goes if the diags are the same.
+
+if the wheels vectors add up to 0, this causes stationary spinning to occur
+
+otherwise, using disconnected value for the wheel groups of bl fr and br fl then you can engineer circular motion causing the robot to travel around a curve
+
+
+vectors in format x, y
+
+back left:
+    forwards: -1, 1
+    backwards: 1, -1
+
+back right:
+    forwards: 1, 1
+    backwards: -1, -1
+
+front left:
+    forwards: -1, 1
+    backwards: 1, -1
+
+front right:
+    forwards: 1, 1
+    backwards: -1, -1
+
+
+-1 to 1 and -1 to 1
+-1 to 1 and 1 to -1
+
+
+group 1 = br & fl
+group 2 = bl & fr
+
+
+y  =  g2/2  +  g1/2
+g2 = 2y - g1
+g1 = 2y - g2
+
+
+x  =  -g2/2  +  g1/2
+g2 = g1 - 2x
+g1 = 2x + g2
+
+turn x degrees
+
+
+
+
+
+
