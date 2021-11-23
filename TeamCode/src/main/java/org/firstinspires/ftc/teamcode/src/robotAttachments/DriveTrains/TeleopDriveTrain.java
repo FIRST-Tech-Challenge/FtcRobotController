@@ -4,18 +4,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class TeleopDriveTrain extends BasicDrivetrain {
-
-
     private double DrivePowerMult;
 
     public TeleopDriveTrain(HardwareMap hardwareMap, String frontRight, String frontLeft, String backRight, String backLeft) {
         super(hardwareMap, frontRight, frontLeft, backRight, backLeft);
-
         this.DrivePowerMult = 1;
-
-
     }
-
 
     public void setPowerFromGamepad(Gamepad gamepad) {
 
@@ -33,7 +27,5 @@ public class TeleopDriveTrain extends BasicDrivetrain {
     public void setDrivePowerMult(double drivePowerMult) {
         this.DrivePowerMult = drivePowerMult;
     }
-
-
 
 }
