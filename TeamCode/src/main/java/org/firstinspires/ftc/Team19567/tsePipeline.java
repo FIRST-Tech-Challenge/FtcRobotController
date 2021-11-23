@@ -11,7 +11,6 @@ class tsePipeline extends OpenCvPipeline
     @Override
     public Mat processFrame(Mat input)
     {
-
         Imgproc.cvtColor(input,greyFrame,Imgproc.COLOR_RGBA2GRAY);
         return greyFrame;
     }

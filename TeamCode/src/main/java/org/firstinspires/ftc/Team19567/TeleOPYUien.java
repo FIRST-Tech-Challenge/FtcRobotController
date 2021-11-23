@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="TeleOP", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
-class TeleOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
+public class TeleOPYUien extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
     private final ElapsedTime linearSlidePressDelay = new ElapsedTime();
@@ -29,9 +29,14 @@ class TeleOP extends OpMode {           //Declares the class TestOPIterative, wh
     private double linearSlidePos = 0.0;
     private double releaseServoPos = 0.0;
     private double intakeServoPos = 0.0;
-    private boolean preset3 = false;
+    private boolean alliance3 = false;
+    private boolean alliance2 = false;
+    private boolean sharedHub = false;
     private boolean isSlowmode = false;
     private double acc = 1.0;
+    private int delay = 0;
+    private int delay1 = 0;
+    private int delay2 = 0;
 
     @Override
     public void init() {
@@ -95,31 +100,92 @@ class TeleOP extends OpMode {           //Declares the class TestOPIterative, wh
         which wheels drive th x leg and which drive the y leg (base), we must take a look at the configuration of the wheels. In most robots, which have the wheels
         pointed outwards in an X shape (maximum efficiency), we see that the front left and rear right wheels point in the y direction, while the rear left
         and front right wheels point in the x direction. Thus, we use cosine for the first group and sine for the second group. */
-//SERVOS
-        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos+0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
-        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos-0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
-        //if(gamepad1.dpad_left || gamepad2.dpad_left) intakeServoPos = intakeServo.MIN_POSITION;
-        //else if(gamepad1.dpad_right || gamepad2.dpad_right) intakeServoPos = Range.clip(intakeServoPos + 0.01,intakeServo.MIN_POSITION,intakeServo.MAX_POSITION);
-        if(gamepad1.b || gamepad2.b) preset3 = !preset3;
-        if(preset3) {
-            linearSlidePos = 600;
-            releaseServoPos = releaseServo.MIN_POSITION;
+//DRIVETRAIN
+        if (gamepad1.y) isSlowmode = !isSlowmode;
+        if (isSlowmode) acc = 0.3;
+        else acc = 1.0;
+        final double leftFrontSpeed = (r * Math.sin(angleDC) - gamepad1.right_stick_x) * acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
+        final double rightFrontSpeed = (r * Math.cos(angleDC) + gamepad1.right_stick_x) * acc;
+        final double leftBackSpeed = (r * Math.cos(angleDC) - gamepad1.right_stick_x) * acc;
+        final double rightBackSpeed = (r * Math.sin(angleDC) + gamepad1.right_stick_x) * acc;
+        //INTAKE
+        double intakePower = 0.0;
+        if (gamepad2.right_trigger > 0) intakePower = gamepad2.right_trigger;
+        if (gamepad1.right_trigger > 0) intakePower = gamepad1.right_trigger;
+        if (gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
+        //CAROUSEL
+        if (gamepad1.x || gamepad2.x) carouselPower = -0.5;
+        else if (gamepad1.a || gamepad2.a) carouselPower = 0.5;
+        else carouselPower = 0.0;
+        //LINEAR SLIDE
+        if (gamepad1.left_trigger > 0) linearSlidePos += gamepad1.left_trigger * 5;
+        else if (gamepad2.left_trigger > 0) linearSlidePos += gamepad2.left_trigger * 5;
+        if (gamepad1.left_bumper || gamepad2.left_bumper) {
+            if (linearSlidePressDelay.milliseconds() <= 10) linearSlidePos = 0.0;
+            else linearSlidePos = Range.clip(linearSlidePos - 10, 0.0, linearSlidePos - 5);
+            linearSlidePressDelay.reset();
         }
 
+//SERVOS
+        if (gamepad1.dpad_down || gamepad2.dpad_down)
+            releaseServoPos = Range.clip(releaseServoPos + 0.006, releaseServo.MIN_POSITION, releaseServo.MAX_POSITION);
+        else if (gamepad1.dpad_up || gamepad2.dpad_up)
+            releaseServoPos = Range.clip(releaseServoPos - 0.006, releaseServo.MIN_POSITION, releaseServo.MAX_POSITION);
+
+        if (gamepad2.y) alliance2 = true;
+        if (alliance2) {
+            linearSlidePos = 1000;
+            if (delay >= 40) {
+                releaseServoPos = releaseServo.MIN_POSITION;
+                delay = 0;
+                alliance2 = false;
+            }
+            delay++;
+            if (gamepad2.dpad_right) {
+                linearSlidePos = 0;
+                releaseServoPos = releaseServo.MAX_POSITION;
+            }
+            if (gamepad2.dpad_left) sharedHub = true;
+            if (sharedHub) {
+                linearSlidePos = 1600;
+                if (delay1 >= 40) {
+                    releaseServoPos = releaseServo.MIN_POSITION;
+                    delay1 = 0;
+                    sharedHub = false;
+                }
+                delay1++;
+            }
+            if (gamepad2.y) alliance3 = true;
+            if (alliance3) {
+                linearSlidePos = 1600;
+                if (delay2 >= 40) {
+                    releaseServoPos = releaseServo.MIN_POSITION;
+                    delay2 = 0;
+                    alliance3 = false;
+                }
+                delay2++;
+            }
+
 //MOTOR SET POWER
-        carouselDC.setPower(carouselPower);
-        linearSlideDC.setTargetPosition((int) linearSlidePos);
-        linearSlideDC.setPower(linearSlidePower);
-        linearSlideDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        releaseServo.setPosition(releaseServoPos);
-        intakeServo.setPosition(intakeServoPos);
+            leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
+            rightDCFront.setPower(rightFrontSpeed);
+            leftDCBack.setPower(leftBackSpeed);
+            rightDCBack.setPower(rightBackSpeed);
+            carouselDC.setPower(carouselPower);
+            intakeDC.setPower(intakePower);
+            linearSlideDC.setTargetPosition((int) linearSlidePos);
+            linearSlideDC.setPower(linearSlidePower);
+            linearSlideDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            releaseServo.setPosition(releaseServoPos);
+            intakeServo.setPosition(intakeServoPos);
 //TELEMETRY
-        telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
-        telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
-        telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), carouselDC(%.2f), intakeDC(%.2f), linearSlideDC(%.2f), releaseServo(%.2f)",
-                 carouselPower, linearSlidePos, releaseServoPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
-        //(%.2f) is used here so that the displayed motor speeds aren't excessively long and don't cldfasdfasdtter(andy's one contribution) the screen.
-        telemetry.update(); //Updates the telemetry
+            telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
+            telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
+            telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), carouselDC(%.2f), intakeDC(%.2f), linearSlideDC(%.2f), releaseServo(%.2f)",
+                    leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed, carouselPower, intakePower, linearSlidePos, releaseServoPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
+            //(%.2f) is used here so that the displayed motor speeds aren't excessively long and don't cldfasdfasdtter(andy's one contribution) the screen.
+            telemetry.update(); //Updates the telemetry
+        }
     }
 
     @Override

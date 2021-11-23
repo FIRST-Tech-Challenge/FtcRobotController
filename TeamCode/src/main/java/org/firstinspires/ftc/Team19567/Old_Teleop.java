@@ -59,6 +59,7 @@ public class Old_Teleop extends OpMode {           //Declares the class TestOPIt
         releaseServoPos = releaseServo.MAX_POSITION;
         intakeServoPos = intakeServo.MIN_POSITION;
 
+        telemetry.addData("Status","Initialized");
         telemetry.update();
     }
 
@@ -106,7 +107,7 @@ public class Old_Teleop extends OpMode {           //Declares the class TestOPIt
         //INTAKE
         double intakePower = 0.0;
         if(gamepad2.right_trigger > 0) intakePower = gamepad2.right_trigger;
-        if(gamepad1.right_trigger >0) intakePower = gamepad1.right_trigger;
+        if(gamepad1.right_trigger > 0) intakePower = gamepad1.right_trigger;
         if(gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
         //CAROUSEL
         if(gamepad1.x || gamepad2.x) carouselPower = -0.5;
