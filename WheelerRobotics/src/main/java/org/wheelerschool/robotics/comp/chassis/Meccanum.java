@@ -116,17 +116,32 @@ public class Meccanum {
     }
     private void motorDriveForwardTime(double speed, double time){
         motorDrive(speed, speed, speed, speed);
+        delay(time);
+        motorStop();
     }
     private void motorDriveLeftTime(double speed, double time){
         motorDrive(speed, -speed, speed, -speed);
+        delay(time);
+        motorStop();
     }
     private void motorDriveRightTime(double speed, double time){
         motorDrive(-speed, speed, -speed, speed);
+        delay(time);
+        motorStop();
     }
     private void motorDriveBackTime(double speed, double time){
         motorDrive(-speed, -speed, -speed, -speed);
+        delay(time);
+        motorStop();
     }
 
+    private void delay(double time){
+        ElapsedTime e = new ElapsedTime();
+        e.reset();
+        while(e.getMilliseonds() < time){
+
+        }
+    }
 
     private void motorSpinLeft(double speed){
         motorDrive(-speed, -speed, speed, speed);
@@ -173,12 +188,10 @@ public class Meccanum {
         motorStop();
     }
 
-    private void spinnySpinEncoded(double speed, double spins){
-        double encodedSpins = 0;
-        while (opModeIsActive() && encodedSpins < spins){
-            spins--;
-        }
-        motorStop();
+    private void spinnySpinTime(double speed, double time){
+        spinnySpin(speed);
+        delay(time)
+        spinnySpin(0);
     }
 
 
@@ -207,6 +220,7 @@ public class Meccanum {
         return target-startRadians;
 
     }
+
 
 
     private Orientation getAngles() {
