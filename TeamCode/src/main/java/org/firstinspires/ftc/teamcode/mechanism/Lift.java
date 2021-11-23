@@ -30,6 +30,7 @@ public class Lift implements Mechanism {
                 // Resetting the encoder value
                 liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 targetPosition = 0;
+                onEncoders = true;
             }
             targetPosition -= gamepad.left_stick_y * 10;
             targetPosition = Range.clip(targetPosition, 0, 1500);

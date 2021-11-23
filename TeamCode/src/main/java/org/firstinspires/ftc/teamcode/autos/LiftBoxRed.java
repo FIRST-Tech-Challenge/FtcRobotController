@@ -30,8 +30,8 @@ public class LiftBoxRed extends LinearOpMode {
 
         // Drive to the the shipping hub
         chassis.moveBackwardWithEncoders(0.6,300);
-        chassis.turnRightWithEncoders(0.6,225);
-        chassis.moveBackwardWithEncoders(0.6,550);
+        chassis.turnRightWithEncoders(0.6,205);
+        chassis.moveBackwardWithEncoders(0.6,650);
 
         // Deposit the box on the top level (change once camera is on)
         lift.goTo(1400,0.8);
@@ -43,9 +43,10 @@ public class LiftBoxRed extends LinearOpMode {
 
         // Move to the carousel and spin it
         chassis.moveForwardWithEncoders(0.6,550);
-        chassis.turnRightWithEncoders(0.6,1350);
-        chassis.moveBackwardWithEncoders(0.6,400);
-        chassis.strafeLeftWithEncoders(0.6,1100);
+        chassis.turnRightWithEncoders(0.6,1150);
+        chassis.moveBackwardWithEncoders(0.6,800);
+        chassis.moveForwardWithEncoders(0.6,100);
+        chassis.strafeLeftWithEncoders(0.6,1000);
         carousel.turnCarousel();
         delay(2500);
         carousel.carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -53,8 +54,8 @@ public class LiftBoxRed extends LinearOpMode {
 
         // Drive into the warehouse
         chassis.strafeRightWithEncoders(0.6,50);
-        chassis.moveForwardWithEncoders(1, 350);
-        chassis.turnRightWithEncoders(0.6,650);
+        chassis.moveForwardWithEncoders(1, 250);
+        chassis.turnRightWithEncoders(0.6,600);
         chassis.moveForwardWithEncoders(1, 5000);
     }
 
