@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.samples.SkystoneDetector;
+package org.firstinspires.ftc.teamcode.mentor.samples.SkystoneDetector;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

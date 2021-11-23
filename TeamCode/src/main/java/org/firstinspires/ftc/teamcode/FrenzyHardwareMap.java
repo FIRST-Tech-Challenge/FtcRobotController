@@ -76,7 +76,7 @@ public class FrenzyHardwareMap {
         motorArm = frenzyMap.get(DcMotorEx.class, "arm");
         motorIntake = frenzyMap.get(DcMotor.class, "intake");
         //Define the imu
-        imu = imu = frenzyMap.get(BNO055IMU.class, "imu");
+        imu = frenzyMap.get(BNO055IMU.class, "imu");
         // Set all motor directions.
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);

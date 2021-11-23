@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.samples.webcam;
+package org.firstinspires.ftc.teamcode.mentor.samples.webcam;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @TeleOp
 public class WebCamExample extends LinearOpMode
 {
+
     OpenCvWebcam webcam;
 
     @Override
