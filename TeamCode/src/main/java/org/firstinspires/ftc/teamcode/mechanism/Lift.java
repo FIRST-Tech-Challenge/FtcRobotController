@@ -21,6 +21,6 @@ public class Lift implements Mechanism {
         targetPosition = Range.clip(targetPosition,0,1550);
         liftMotor.setTargetPosition((int)targetPosition);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setPower(1);
+        liftMotor.setPower(.8);
     }
 }
