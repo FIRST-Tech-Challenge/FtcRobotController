@@ -1,7 +1,13 @@
 package org.wheelerschool.robotics.comp.chassis;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.tan;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,12 +24,13 @@ public class Meccanum {
     private Servo servo0;
     private DcMotor arm;
 
-    private final double SERVO_FULLY_CLOSED = 0;
-    private final double SERVO_FULLY_OPENED = 0;
-    private final double ARM_MAX_SPEED = 0;
-    private final double HIGH_SPINNER_POWER = 0;
-    private final double OPTIMAL_SPINNER_POWER = 0;
-    private final double MOTOR_STOP = 0;
+    public final double SERVO_FULLY_CLOSED = 0;
+    public final double SERVO_FULLY_OPENED = 0;
+    public final double ARM_MAX_SPEED = 0;
+    public final double HIGH_SPINNER_POWER = 0;
+    public final double NORMAL_SPEED = 0;
+    public final double OPTIMAL_SPINNER_POWER = 0;
+    public final double MOTOR_STOP = 0;
 
     private DcMotor spinner;
 
@@ -38,34 +45,75 @@ public class Meccanum {
 
     public void init(HardwareMap hardwareMap){
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+        // Meccanum Motors Definition and setting prefs
+
+        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+
+        // Reverse the left side motors and set behaviors to stop instead of coast
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //define arm and servo objects and also spinner
+        servo0 = hardwareMap.get(Servo.class, "servo-0");
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        spinner = hardwareMap.get(DcMotor.class, "spinner");
+
+        //set prefs for arm and servo
+        servo0.setDirection(Servo.Direction.FORWARD);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        spinner = hardwareMap.get(DcMotor.class, "spinner");
+
+
+        runtime.reset();
+
     }
 
 
-    private void motorDrive(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower){
+    public void motorDrive(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower){
         motorBackLeft.setPower(motorBackLeftPower);
         motorFrontLeft.setPower(motorFrontLeftPower);
         motorBackRight.setPower(motorBackRightPower);
         motorFrontRight.setPower(motorFrontRightPower);
     }
 
-    private void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double distance){
+    public void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double distance){
         motorBackLeft.setPower(motorBackLeftPower);
         motorFrontLeft.setPower(motorFrontLeftPower);
         motorBackRight.setPower(motorBackRightPower);
         motorFrontRight.setPower(motorFrontRightPower);
     }
 
-    private void motorDriveTime(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double time){
+    public void motorDriveTime(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double time){
         motorBackLeft.setPower(motorBackLeftPower);
         motorFrontLeft.setPower(motorFrontLeftPower);
         motorBackRight.setPower(motorBackRightPower);
         motorFrontRight.setPower(motorFrontRightPower);
     }
 
-    private void motorDriveRelativeAngle(double radians, double speed){
+    public void motorDriveRelativeAngle(double radians, double speed){
         double spinvec = 0;
-        double yvec = tan(radians)/sqrt((tan(radians)^2)+1)*tan(radians)
-        double xvec = tan(radians)/sqrt((tan(radians)^2)+1)
+        double yvec = tan(radians)/sqrt((pow(tan(radians),2))+1)*tan(radians);
+        double xvec = tan(radians)/sqrt((pow(tan(radians),2))+1);
 
         double y = pow(-yvec,3); // Remember, this is reversed!
         double x = pow(xvec * 1.1,3); // Counteract imperfect strafing
@@ -82,126 +130,126 @@ public class Meccanum {
         double backRightPower = (y + x - rx) / denominator;
     }
 
-    private void motorStop(){
+
+
+    public void motorStop(){
         motorBackLeft.setPower(0);
         motorFrontLeft.setPower(0);
         motorBackRight.setPower(0);
         motorFrontRight.setPower(0);
     }
 
-    private void motorDriveForward(double speed){
+    public void motorDriveForward(double speed){
         motorDrive(speed, speed, speed, speed);
     }
-    private void motorDriveLeft(double speed){
+    public void motorDriveLeft(double speed){
         motorDrive(speed, -speed, speed, -speed);
     }
-    private void motorDriveRight(double speed){
+    public void motorDriveRight(double speed){
         motorDrive(-speed, speed, -speed, speed);
     }
-    private void motorDriveBack(double speed){
+    public void motorDriveBack(double speed){
         motorDrive(-speed, -speed, -speed, -speed);
     }
 
-    private void motorDriveForwardEncoded(double speed, double distance){
+    public void motorDriveForwardEncoded(double speed, double distance){
         motorDrive(speed, speed, speed, speed);
     }
-    private void motorDriveLeftEncoded(double speed, double distance){
+    public void motorDriveLeftEncoded(double speed, double distance){
         motorDrive(speed, -speed, speed, -speed);
     }
-    private void motorDriveRightEncoded(double speed, double distance){
+    public void motorDriveRightEncoded(double speed, double distance){
         motorDrive(-speed, speed, -speed, speed);
     }
-    private void motorDriveBackEncoded(double speed, double distance){
+    public void motorDriveBackEncoded(double speed, double distance){
         motorDrive(-speed, -speed, -speed, -speed);
     }
-    private void motorDriveForwardTime(double speed, double time){
+    public void motorDriveForwardTime(double speed, double time){
         motorDrive(speed, speed, speed, speed);
         delay(time);
         motorStop();
     }
-    private void motorDriveLeftTime(double speed, double time){
+    public void motorDriveLeftTime(double speed, double time){
         motorDrive(speed, -speed, speed, -speed);
         delay(time);
         motorStop();
     }
-    private void motorDriveRightTime(double speed, double time){
+    public void motorDriveRightTime(double speed, double time){
         motorDrive(-speed, speed, -speed, speed);
         delay(time);
         motorStop();
     }
-    private void motorDriveBackTime(double speed, double time){
+    public void motorDriveBackTime(double speed, double time){
         motorDrive(-speed, -speed, -speed, -speed);
         delay(time);
         motorStop();
     }
 
-    private void delay(double time){
+    public void delay(double time){
         ElapsedTime e = new ElapsedTime();
         e.reset();
-        while(e.getMilliseonds() < time){
+        while(e.milliseconds() < time){
 
         }
     }
 
-    private void motorSpinLeft(double speed){
+    public void motorSpinLeft(double speed){
         motorDrive(-speed, -speed, speed, speed);
     }
-    private void motorSpinRight(double speed){
+    public void motorSpinRight(double speed){
         motorDrive(speed, speed, -speed, -speed);
     }
 
-    private void motorSpinLeftEncoded(double speed){
+    public void motorSpinLeftEncoded(double speed){
         motorDrive(-speed, -speed, speed, speed);
     }
-    private void motorSpinRightEncoded(double speed){
+    public void motorSpinRightEncoded(double speed){
         motorDrive(speed, speed, -speed, -speed);
     }
 
-    private void motorSpinLeftTime(double speed, double time){
+    public void motorSpinLeftTime(double speed, double time){
         motorDrive(-speed, -speed, speed, speed);
         delay(time);
         motorStop();
     }
-    private void motorSpinRightTime(double speed, double time){
+    public void motorSpinRightTime(double speed, double time){
         motorDrive(speed, speed, -speed, -speed);
         delay(time);
         motorStop();
     }
 
 
-    private void spinnySpin(double speed){
+    public void spinnySpin(double speed){
         arm.setPower(speed);
     }
 
-    private void spinnySpinForward(double speed){
+    public void spinnySpinForward(double speed){
         spinnySpin(speed);
     }
-    private void spinnySpinBackward(double speed){
+    public void spinnySpinBackward(double speed){
         spinnySpin(-speed);
     }
 
-    private void spinnySpinEncoded(double speed, double target){
+    public void spinnySpinEncoded(double speed, double target){
         double encodedSpins = 0;
-        while (opModeIsActive() && encodedSpins < rotation){
-            encodedSpins = 0;
-        }
+
         motorStop();
     }
 
-    private void spinnySpinTime(double speed, double time){
+    public void spinnySpinTime(double speed, double time){
         spinnySpin(speed);
-        delay(time)
+        delay(time);
         spinnySpin(0);
     }
 
 
-    private void turnRadians(double radians, double speed) {
+    public void turnRadians(double radians, double speed) {
         turnRadians(radians, speed, angles.firstAngle);
     }
-    private double turnRadians(double radians, double speed, double startRadians) {
+    public double turnRadians(double radians, double speed, double startRadians) {
         double target = startRadians + radians;
         double minSpeed = 0.1;
-        while(angles.firstAngle < target && opModeIsActive()){
+        while(angles.firstAngle < target){
 
             if(target-angles.firstAngle>minSpeed) {
                 motorSpinRight(target - angles.firstAngle);
@@ -209,10 +257,10 @@ public class Meccanum {
                 motorSpinRight(minSpeed);
             }
 
-            telemetry.addData("Angles: ", angles.firstAngle);
-            telemetry.addData("Not Angles: ", angles.firstAngle - target);
+            //telemetry.addData("Angles: ", angles.firstAngle);
+            //telemetry.addData("Not Angles: ", angles.firstAngle - target);
             angles = getAngles();
-            telemetry.update();
+            //telemetry.update();
         }
 
 
@@ -223,7 +271,7 @@ public class Meccanum {
 
 
 
-    private Orientation getAngles() {
+    public Orientation getAngles() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
     }
 }
