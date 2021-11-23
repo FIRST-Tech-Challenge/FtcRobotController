@@ -14,6 +14,7 @@ public class BlueAutonomousNearWarehouse extends AutonomousTemplate {
         telemetry.addData("Initialization Status: ", "Complete");
         telemetry.update();
         waitForStart();
+
         driveSystem.moveToPosition(106, 65, 2, true);
         podServos.raise();
         driveSystem.strafeAtAngle(180, 1);

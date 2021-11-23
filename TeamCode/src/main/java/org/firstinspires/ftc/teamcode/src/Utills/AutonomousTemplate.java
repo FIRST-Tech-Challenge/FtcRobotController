@@ -50,7 +50,7 @@ public class AutonomousTemplate extends LinearOpMode {
         back_right.setDirection(DcMotorSimple.Direction.REVERSE);
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
+        // DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder
         //front_left, front_right, back_right
         odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_right, 25);
         IMU imu = new IMU(hardwareMap, "imu");

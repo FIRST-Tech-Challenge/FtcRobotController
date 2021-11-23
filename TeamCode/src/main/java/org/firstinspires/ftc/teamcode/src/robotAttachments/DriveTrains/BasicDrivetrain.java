@@ -112,7 +112,7 @@ public class BasicDrivetrain {
 
     }
 
-    private static double boundNumber(double num) {
+    protected static double boundNumber(double num) {
         if (num > 1) {
             num = 1;
         }

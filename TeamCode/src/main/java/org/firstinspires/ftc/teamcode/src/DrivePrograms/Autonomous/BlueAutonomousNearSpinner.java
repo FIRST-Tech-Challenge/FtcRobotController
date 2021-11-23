@@ -14,6 +14,7 @@ public class BlueAutonomousNearSpinner extends AutonomousTemplate {
         telemetry.addData("Initialization Status: ", "Complete");
         telemetry.update();
         waitForStart();
+
         driveSystem.moveToPosition(126, 112, 1, true);
         driveSystem.moveToPosition(126, 132, 1.5, true);
         driveSystem.strafeAtAngle(180 + 35, .5);

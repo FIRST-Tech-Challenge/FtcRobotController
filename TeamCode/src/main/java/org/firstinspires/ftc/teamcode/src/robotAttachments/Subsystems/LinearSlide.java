@@ -26,7 +26,18 @@ public class LinearSlide {
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public int getEncoderCount(){
+    public void finalize() {
+
+    }
+
+    public void moveToHeight(int height) {
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setTargetPosition(height);
+
+
+    }
+
+    public int getEncoderCount() {
         return linearSlide.getCurrentPosition();
     }
 

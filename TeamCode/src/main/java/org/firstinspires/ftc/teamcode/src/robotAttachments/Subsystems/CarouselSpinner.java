@@ -13,7 +13,7 @@ public class CarouselSpinner {
         spinnerServo = hardwareMap.crservo.get(deviceName);
     }
 
-    public void spinOffRedDuck() throws InterruptedException {
+    public void spinOffRedDuck() {
         spinnerServo.setPower(-servoPower);
         ElapsedTime t = new ElapsedTime();
         while (t.milliseconds() < duckSleepTime) {
@@ -21,9 +21,9 @@ public class CarouselSpinner {
         spinnerServo.setPower(0);
 
     }
-    public void spinOffBlueDuck() throws InterruptedException {
+
+    public void spinOffBlueDuck() {
         spinnerServo.setPower(servoPower);
-        //Thread.sleep(duckSleepTime);
         ElapsedTime t = new ElapsedTime();
         while (t.milliseconds() < duckSleepTime) {
         }
@@ -31,10 +31,11 @@ public class CarouselSpinner {
 
     }
 
-    public void setPowerBlueDirection(){
+    public void setPowerBlueDirection() {
         spinnerServo.setPower(servoPower);
     }
-    public void setPowerRedDirection(){
+
+    public void setPowerRedDirection() {
         spinnerServo.setPower(-servoPower);
     }
     public void spinForward(){
