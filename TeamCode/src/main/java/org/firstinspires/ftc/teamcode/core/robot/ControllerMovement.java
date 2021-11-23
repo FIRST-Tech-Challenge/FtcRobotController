@@ -8,11 +8,13 @@ import androidx.annotation.NonNull;
 public class ControllerMovement {
     private final GamepadEx gamepad;
     private final StrafingMovement move;
-    public void update() {
-        move.driveDRS(gamepad.getLeftY(), 0, gamepad.getLeftX());
-    }
+
     public ControllerMovement(@NonNull HardwareMap map, GamepadEx gamepad) {
         this.move = new StrafedMovementImpl(map);
         this.gamepad = gamepad;
+    }
+
+    public void update() {
+        move.driveDRS(gamepad.getLeftY(), 0, gamepad.getLeftX());
     }
 }
