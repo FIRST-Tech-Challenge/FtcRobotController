@@ -49,6 +49,8 @@ public class RobotClass {
     RevColorSensorV3 colorSensorRight;
     RevColorSensorV3 colorSensorMiddle;
 
+    public DcMotor carousel;
+
     LinearOpMode opmode;
     HardwareMap hardwareMap;
     String color;
@@ -62,6 +64,7 @@ public class RobotClass {
         colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
         colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
+        carousel = hardwareMap.get(DcMotor.class, "carousel");
 
         this.opmode= opmode;
 
@@ -266,6 +269,17 @@ public class RobotClass {
         }
         forward(0.2,-1);
 
+    }
+
+    public void parkBlue () {
+        wayneStrafeBlue(0.2);
+        if (colorSensorRight.blue()>120) {
+            strafeRight(0.2, 0.35);
+        }
+        if (colorSensorLeft.blue()>120) {
+            strafeLeft(0.2,0.35);
+        }
+        forward(0.2,-1);
     }
 
         public void setSpeedForTurnRight (double speed) {

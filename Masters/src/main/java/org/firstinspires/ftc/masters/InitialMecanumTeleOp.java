@@ -18,6 +18,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     DcMotor intakeMotor = null;
 
     DcMotor carouselMotor = null;
+    DcMotor linearSlideMotor = null;
     // declare motor speed variables
     double RF; double LF; double RR; double LR;
     // declare joystick position variables
@@ -41,6 +42,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
         carouselMotor = hardwareMap.dcMotor.get("carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
+        linearSlideMotor = hardwareMap.dcMotor.get("");
 
         // Set the drive motor direction:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -60,12 +62,15 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
         boolean carouselOn = false; //Outside of loop()
         boolean intakeOn = false;
+        int linearSlideOn = 0;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -119,9 +124,19 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 intakeOn = true;
             } else if(!gamepad1.b) intakeOn = false;
 
-            if (gamepad2.dpad_up) {
+            if(gamepad1.x && !(linearSlideOn == 1)) {
+                if(linearSlideMotor.getPower() != 0) linearSlideMotor.setPower(0);
+                else linearSlideMotor.setPower(.2);
+                linearSlideOn = 1;
+            } else if(!gamepad1.x) linearSlideOn = 0;
 
-            }
+            if(gamepad1.y && !(linearSlideOn == -1)) {
+                if(linearSlideMotor.getPower() != 0) linearSlideMotor.setPower(0);
+                else linearSlideMotor.setPower(-.2);
+                linearSlideOn = -1;
+            } else if(!gamepad1.y) linearSlideOn = 0;
+
+            telemetry.addData("Linear Slide Encoder Position: ", linearSlideMotor.getCurrentPosition());
         }
     }
 }
