@@ -1,4 +1,22 @@
 package org.firstinspires.ftc.team8923_2021;
 
-public class RedCarouselStorageUnit {
-}
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+@Autonomous(name = "RedCarouselStorageUnit")
+public class RedCarouselStorageUnit extends MasterAutonomous {
+        public void runOpMode() throws InterruptedException {
+            initAuto();
+            waitForStart();
+
+            while (opModeIsActive()) {
+                double referenceAngle = imu.getAngularOrientation().firstAngle;
+
+                imuPivot(referenceAngle, 30, 35, 0.015, 3.0);
+                moveForward(-3.9, 10, 10);
+                spinCarouselRed();
+                imuPivot(referenceAngle, 90, 35, 0.015, 3.9);
+                moveForward(17, 10, 10);
+                break;
+            }
+        }
+    }
