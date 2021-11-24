@@ -24,7 +24,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     private boolean isActive = false;
 
     //Thead run condition
-    private boolean isRunning = true;
+    private volatile boolean isRunning = true;
 
     //Position variables used for storage and calculations
     double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
@@ -280,5 +280,6 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
                 e.printStackTrace();
             }
         }
+        return;
     }
 }

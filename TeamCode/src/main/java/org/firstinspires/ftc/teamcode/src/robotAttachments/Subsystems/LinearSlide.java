@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class LinearSlide {
+import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
+
+public class LinearSlide implements Runnable {
 
     private final DcMotor linearSlide;
 
@@ -14,10 +17,12 @@ public class LinearSlide {
     private static final double inchesPerRevolution = ticksPerRevolution * 2 * Math.PI * spoolRadius;
     private static final int linearSlideAngle = 68;
     private static final double stopPower = 0.13;
+    public volatile boolean threadActive = true;
+    public RobotVoltageSensor voltageSensor;
+    public volatile int chosenPosition;
+
 
     public static final double level_one_height = 0;
-
-    // TODO Use run to position with values for zero power break behavior
 
     public LinearSlide(HardwareMap hardwareMap, String dcMotorName) {
         linearSlide = hardwareMap.dcMotor.get(dcMotorName);
@@ -26,40 +31,73 @@ public class LinearSlide {
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void finalize() {
+    // TODO Use run to position with values for zero power break behavior
 
+    public LinearSlide(HardwareMap hardwareMap, String dcMotorName, RobotVoltageSensor voltSensor) {
+        linearSlide = hardwareMap.dcMotor.get(dcMotorName);
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.voltageSensor = voltSensor;
     }
 
-    public void moveToHeight(int height) {
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setTargetPosition(height);
+    public void finalize() {
+        this.stop();
+    }
 
+    private void setTargetHeight(int height) {
+        chosenPosition = height;
+    }
 
+    public void setTargetLevel(LinearSlide.HeightLevels level) {
+        switch (level) {
+            case BottomLevel:
+                setTargetHeight(0);
+                return;
+            case TopLevel:
+                setTargetHeight(1);
+                return;
+            case MiddleLevel:
+                setTargetHeight(2);
+                return;
+            case GetOverObstacles:
+                setTargetHeight(3);
+                return;
+        }
+    }
+
+    public void stop() {
+        threadActive = false;
     }
 
     public int getEncoderCount() {
         return linearSlide.getCurrentPosition();
     }
 
-    public void setMotorPower(double power) {
-        linearSlide.setPower(power);
+    @Override
+    public void run() {
+        while (threadActive) {
+            double power;// power = -(distance* C1 )^3 + (voltage * C2)
+            {
+                double volts = voltageSensor.getVoltage();
+                int encoderTicks = linearSlide.getCurrentPosition();
+                int distanceFromPos = chosenPosition - encoderTicks;
+                final double C1 = 0.01; //Scales the sensitivity of the function, smaller value is lower sensativity
+                final double C2 = 0.017; //The approximate power required to hold itself at the current height
+
+                power = -(Math.pow(((distanceFromPos * C1)), 3));
+                power = power + volts * C2;
+                power = MiscUtills.boundNumber(power);
+            }
+            linearSlide.setPower(power);
+        }
     }
 
 
-    public void goUp() {
-        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlide.setPower(motorPower);
-
-    }
-
-    public void goDown() {
-        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlide.setPower(-motorPower);
-    }
-
-    public void stop() {
-        linearSlide.setPower(stopPower);
-        linearSlide.setTargetPosition(0);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public static enum HeightLevels {
+        BottomLevel,
+        MiddleLevel,
+        TopLevel,
+        GetOverObstacles
     }
 }
