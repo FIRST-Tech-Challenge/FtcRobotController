@@ -20,7 +20,7 @@ public class TeleopTemplate extends LinearOpMode {
     public ContinuousIntake intake;
 
     public void initAll() {
-        driveTrain = new TeleopDriveTrain(hardwareMap, "front_right", "front_left", "back_right", "back_left");
+        driveTrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
 
         spinner = new CarouselSpinner(hardwareMap, "duck_spinner");
 

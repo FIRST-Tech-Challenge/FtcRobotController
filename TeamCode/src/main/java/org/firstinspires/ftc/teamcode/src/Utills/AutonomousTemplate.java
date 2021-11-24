@@ -25,10 +25,10 @@ public class AutonomousTemplate extends LinearOpMode {
         podServos.lower();
 
 
-        DcMotor front_right = hardwareMap.dcMotor.get("front_right");
-        DcMotor front_left = hardwareMap.dcMotor.get("front_left");
+        DcMotor front_right = hardwareMap.dcMotor.get("front_right/vr");
+        DcMotor front_left = hardwareMap.dcMotor.get("front_left/vl");
         DcMotor back_left = hardwareMap.dcMotor.get("back_left");
-        DcMotor back_right = hardwareMap.dcMotor.get("back_right");
+        DcMotor back_right = hardwareMap.dcMotor.get("back_right/h");
 
         front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -51,7 +51,7 @@ public class AutonomousTemplate extends LinearOpMode {
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder
-        //front_left, front_right, back_right
+        //verticalEncoderLeft, verticalEncoderRight, horizontalEncoder
         odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_right, 25);
         IMU imu = new IMU(hardwareMap, "imu");
         odometry.setImu(imu.getImu());

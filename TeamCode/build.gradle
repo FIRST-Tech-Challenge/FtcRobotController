@@ -15,6 +15,16 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+android {
+    sourceSets {
+        main {
+            assets {
+                srcDirs 'src\\main\\assets'
+            }
+        }
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')

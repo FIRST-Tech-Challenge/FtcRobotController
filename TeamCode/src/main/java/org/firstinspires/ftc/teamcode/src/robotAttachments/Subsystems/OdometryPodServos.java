@@ -6,20 +6,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class OdometryPodServos {
 
-    private static final double rightServoRaisePosition = 0.45;
-    private static final double rightServoLowerPosition = .76;
+    private static final double rightServoRaisePosition = 0.43;
+    private static final double rightServoLowerPosition = .74;
 
     private static final double leftServoRaisePosition = 0.8;
-    private static final double leftServoLowerPosition = 0.52;
+    private static final double leftServoLowerPosition = 0.53;
 
-    private static final double horizontalServoRaisePosition = 0.46;
-    private static final double horizontalServoLowerPosition = 0.76;
+    private static final double horizontalServoRaisePosition = 0.4;
+    private static final double horizontalServoLowerPosition = 0.68;
 
     Servo horizontalServo;
     Servo leftServo;
     Servo rightServo;
 
-    public OdometryPodServos(HardwareMap hardwareMap, String rightServoName, String leftServoName, String horizontalServoName){
+    public OdometryPodServos(HardwareMap hardwareMap, String rightServoName, String leftServoName, String horizontalServoName) {
         this.horizontalServo = hardwareMap.servo.get(horizontalServoName);
         this.rightServo = hardwareMap.servo.get(rightServoName);
         this.leftServo = hardwareMap.servo.get(leftServoName);
