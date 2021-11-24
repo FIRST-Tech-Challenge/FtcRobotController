@@ -27,6 +27,8 @@ public class TeleOp_Intake_Spin extends LinearOpMode {
         double IntakeDirection = gamepad1.left_stick_y;
         double SpinDirection = gamepad1.right_stick_y;
 
+        boolean Spin1 = true;
+        boolean Intake1 = true;
 
 
 
@@ -36,7 +38,63 @@ public class TeleOp_Intake_Spin extends LinearOpMode {
             double intakePower; //setting initial power
             double spinPower; //setting initial power
 
-            if(gamepad1.left_bumper == true){
+            //Spin
+            if(gamepad1.a){
+                if(Spin1){
+                    spinPower = B_P;
+                    telemetry.addLine("SPIN STARTS");
+                    Spin1 = false;
+                }
+            }else if(!Spin1){
+                Spin1 = true;
+            }
+
+            if(gamepad1.b){
+                if(Spin1){
+                    spinPower = -B_P;
+                    telemetry.addLine("SPIN STARTS");
+                    Spin1 = false;
+                }
+            }else if(!Spin1){
+                Spin1 = true;
+            }
+
+            //intake
+            if(gamepad1.x){
+                if(Intake1){
+                    intakePower = B_P;
+                    telemetry.addLine("INTAKE STARTS");
+                    Intake1 = false;
+                }
+            }else if(!Intake1){
+                Intake1 = true;
+            }
+
+            if(gamepad1.y){
+                if(Intake1){
+                    intakePower = -B_P;
+                    telemetry.addLine("INTAKE STARTS");
+                    Intake1 = false;
+                }
+            }else if(!Intake1){
+                Intake1 = true;
+            }
+
+
+
+            telemetry.addData("The power: ", B_P);
+            telemetry.update();
+
+
+
+
+        }
+
+    }
+}
+
+/*
+if(gamepad1.left_bumper == true){
                 while(gamepad1.left_bumper){
                 }
                 B_P = B_P+0.1;
@@ -53,21 +111,11 @@ public class TeleOp_Intake_Spin extends LinearOpMode {
             }
 
 
+
+
             intakePower = Range.clip(B_P * (IntakeDirection), -1.0, 1.0);
             spinPower = Range.clip(B_P * (SpinDirection), -1.0, 1.0);
-
-            Intake.setPower(intakePower);
+                       Intake.setPower(intakePower);
             Spin.setPower(spinPower);
 
-            telemetry.addData("The power: ", B_P);
-            telemetry.update();
-
-
-
-
-
-
-        }
-
-    }
-}
+ */
