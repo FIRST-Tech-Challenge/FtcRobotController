@@ -1,11 +1,13 @@
-package org.firstinspires.ftc.team6220_2021;
+package org.firstinspires.ftc.team6220_2021.TestClasses;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "Ticks Per Revolution", group = "TeleOp")
+@Disabled
 public class TicksPerRevolutionTest extends LinearOpMode {
     DcMotor motorBackLeft;
     DcMotor motorBackRight;

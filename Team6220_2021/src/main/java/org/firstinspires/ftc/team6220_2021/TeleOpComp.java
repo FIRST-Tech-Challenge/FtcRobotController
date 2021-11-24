@@ -56,6 +56,7 @@ public class TeleOpComp extends LinearOpMode{
 
         //Declare variables
         int position = 0;
+        int addingticks = 0;
         boolean isPressed = false;
         double motorPower = 0.9;
         double increase = 1;
@@ -87,7 +88,7 @@ public class TeleOpComp extends LinearOpMode{
                 case 0:
                     servoArm.setPosition(0.5);
                     motorArm.setPower(motorPower);
-                    tickvalue = -85;
+                    tickvalue = -65;
                     break;
                 case 1:
                     servoArm.setPosition(0.6);
@@ -136,6 +137,7 @@ public class TeleOpComp extends LinearOpMode{
                 if (!isPressed) {
                     position += increase;
                 }
+                addingticks = 0;
                 toposition = true;
                 isPressed = true;
             }
@@ -148,6 +150,7 @@ public class TeleOpComp extends LinearOpMode{
                 if (!isPressed) {
                     position -= increase;
                 }
+                addingticks = 0;
                 toposition = true;
                 isPressed = true;
             }
@@ -157,12 +160,12 @@ public class TeleOpComp extends LinearOpMode{
             }
 
             if (gamepad2.left_bumper) {
-                tickvalue += 10;
+                addingticks -= 1;
             }
-            else if (gamepad2.right_bumper) {
-                tickvalue -= 10;
+            if (gamepad2.right_bumper) {
+                addingticks += 1;
             }
-            motorArm.setTargetPosition(tickvalue);
+            motorArm.setTargetPosition(tickvalue + addingticks);
             motorArm.setPower(0.9);
 
 
