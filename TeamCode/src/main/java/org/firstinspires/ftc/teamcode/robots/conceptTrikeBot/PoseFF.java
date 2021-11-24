@@ -25,10 +25,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_D;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_I;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_P;
@@ -497,8 +497,8 @@ public class PoseFF {
         sendTelemetry();
     }
 
+    //Pose version of sending telem to the phone. use this for sensors
     public void setupDriverTelemetry(){
-        telemetry.addLine().addData("pitch", () -> getPitch());
     }
 
 

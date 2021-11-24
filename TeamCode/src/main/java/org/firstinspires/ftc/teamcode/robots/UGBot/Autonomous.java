@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robots.UGBot;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -11,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.MineralStateProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
-import org.firstinspires.ftc.teamcode.util.Conversions;
+import org.firstinspires.ftc.teamcode.util.utilMethods;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 /**
@@ -144,7 +143,7 @@ public class Autonomous {
                     () -> robot.enterWobbleGoalMode()
             )
 
-            .addState(()-> robot.rotateIMU(Conversions.wrap360(robot.getBearingTo(Constants.Position.WOBBLE_TWO.x,Constants.Position.WOBBLE_TWO.y)-180),1))
+            .addState(()-> robot.rotateIMU(utilMethods.wrap360(robot.getBearingTo(Constants.Position.WOBBLE_TWO.x,Constants.Position.WOBBLE_TWO.y)-180),1))
 
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 

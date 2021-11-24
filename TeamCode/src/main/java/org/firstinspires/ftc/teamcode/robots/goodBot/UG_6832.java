@@ -50,8 +50,8 @@ import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.ALLIANCE_INT_MOD;
 import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.isInner;
-import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
-import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.nearZero;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.notdeadzone;
 
 /**
  * This file contains the code for Iron Reign's main OpMode, used for both

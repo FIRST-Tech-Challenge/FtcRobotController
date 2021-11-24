@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.servoNormalize;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
 
 /**
  * Created by 2938061 on 11/10/2017.

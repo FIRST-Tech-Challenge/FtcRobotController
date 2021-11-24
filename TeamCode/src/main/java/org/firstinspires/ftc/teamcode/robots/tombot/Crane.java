@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.util.SharpDistanceSensor;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
-import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.servoNormalize;
 import static org.firstinspires.ftc.teamcode.vision.Config.SERVO_MAX;
 
 /**

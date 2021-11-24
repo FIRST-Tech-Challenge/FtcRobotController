@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import android.util.Log;
-import android.util.Range;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.between;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.between;
 
 /**
  * Created on 6/28/2015.

@@ -2,14 +2,14 @@ package org.firstinspires.ftc.teamcode.util;
 
 import org.firstinspires.ftc.teamcode.RC;
 
-public class Conversions {
+public class utilMethods {
 
     private static double deadzone = 0.4;
     private static double smalldeadzone = 0.1;
 
     private static double nearzero = .0000001;
 
-    public Conversions(){}
+    public utilMethods(){}
 
 
     public static double servoNormalize(int pulse){
@@ -77,6 +77,22 @@ public class Conversions {
         angle = wrap360(angle, shift);
 
         return (between(angle, angle1, angle2));
+    }
+
+    public static int boundInt(int value, int min, int max){
+        int newVal = value;
+        newVal = (value > max) ? max : value;
+        newVal = (value < min) ? min : value;
+
+        return value;
+    }
+
+    public static double boundDouble(double value, double min, double max){
+        double newVal = value;
+        newVal = (value > max) ? max : value;
+        newVal = (value < min) ? min : value;
+
+        return value;
     }
 
     //is the supplied angle between angle1 proceeding to angle2 counter clockwise

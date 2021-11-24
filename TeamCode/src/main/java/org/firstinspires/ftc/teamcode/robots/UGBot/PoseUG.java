@@ -47,11 +47,11 @@ import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_ROLLING_RING_TOO_FAR;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ANGLE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_TO_TURRET_XFER_ELEVATION;
-import static org.firstinspires.ftc.teamcode.util.Conversions.between;
-import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.between;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_D;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_I;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_P;

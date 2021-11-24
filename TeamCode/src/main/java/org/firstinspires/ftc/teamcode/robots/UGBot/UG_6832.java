@@ -40,10 +40,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.OpenCVIntegration;
@@ -52,11 +50,10 @@ import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.ALLIANCE_INT_MOD;
-import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.TURRET_SPEED;
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.isInner;
-import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
-import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
-import static org.firstinspires.ftc.teamcode.util.Conversions.notsmalldeadzone;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.nearZero;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.notdeadzone;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.notsmalldeadzone;
 
 /**
  * This file contains the code for Iron Reign's main OpMode, used for both

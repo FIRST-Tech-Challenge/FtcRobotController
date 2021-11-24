@@ -41,9 +41,10 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
+import org.firstinspires.ftc.teamcode.util.utilMethods;
 
 import static org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants.*;
-import static org.firstinspires.ftc.teamcode.util.Conversions.*;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.*;
 
 /**
  * This file contains the code for Iron Reign's main OpMode, used for both
@@ -101,8 +102,28 @@ public class FF_6832 extends OpMode {
     private int a_2 = 22;
     private int x_2 = 23;
 
+    enum gamepadButtons{
+        a,
+        b,
+        x,
+        y,
+        dpad_down,
+        dpad_up,
+        dpad_left,
+        dpad_right,
+        left_bumper,
+        right_bumper,
+        startBtn,
+        left_trigger,
+        right_trigger,
+        back_button,
+        left_stick_button,
+        right_stick_button;
+    }
+
     // values associated with the buttons in the toggleAllowedGP2 method
     private boolean[] buttonSavedStates2 = new boolean[24];
+
 
     Telemetry dummyT = new Telemetry() {
         @Override
@@ -237,7 +258,7 @@ public class FF_6832 extends OpMode {
     @Override
     public void init() {
         //important instantiation
-        robot = new PoseFF(currentBot, telemetry);
+        robot = new PoseFF(currentBot, dummyT);
         auto = new Autonomous(robot, dummyT);
         logger = new CsvLogKeeper("test",3,"tps, armTicks, targetDistance");
 
@@ -248,38 +269,39 @@ public class FF_6832 extends OpMode {
         configureDriverTelemetry();
         telemetry.update();
     }
-        /*
-         * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-         */
-        @Override
-        public void init_loop() {
-            stateSwitch();
 
-            if (active) {
-                joystickDrivePregameMode();
-            }
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
+    @Override
+    public void init_loop() {
+        stateSwitch();
 
-            telemetry.update();
-
-            robot.update();
-            robot.sendTelemetry();
+        if (active) {
+            joystickDrivePregameMode();
         }
 
-        /*
-         * Code to run ONCE when the driver hits PLAY
-         */
-        @Override
-        public void start() {
-            runtime.reset();
+        telemetry.update();
 
-            if (auto.vp == null) {
-                auto.initDummyVisionProvider(); // this is blocking
-            }
+        robot.update();
+        robot.sendTelemetry();
+    }
 
-            auto.vp.reset();
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
+        runtime.reset();
 
-            lastLoopClockTime = System.nanoTime();
+        if (auto.vp == null) {
+            auto.initDummyVisionProvider(); // this is blocking
         }
+
+        auto.vp.reset();
+
+        lastLoopClockTime = System.nanoTime();
+    }
 
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
@@ -333,30 +355,16 @@ public class FF_6832 extends OpMode {
             lastLoopClockTime = loopClockTime;
 
             telemetry.update();
-        }
+    }
 
     // the method that controls the main state of the robot; must be called in the
     // main loop outside of the main switch
     private void stateSwitch() {
         if (!active) {
-            if (toggleAllowed(gamepad1.left_bumper, left_bumper, 1)) {
-
-                state--;
-                if (state < 0) {
-                    state = 10;
-                }
-                active = false;
-            }
-
-            if (toggleAllowed(gamepad1.right_bumper, right_bumper, 1)) {
-
-                state++;
-                if (state > 10) {
-                    state = 0;
-                }
-                active = false;
-            }
-
+            if (toggleAllowed(gamepad1.left_bumper, left_bumper, 1))
+                state = utilMethods.boundInt(state-1,0, Constants.numGameStates);
+            if (toggleAllowed(gamepad1.right_bumper, right_bumper, 1))
+                state = utilMethods.boundInt(state+1,0, Constants.numGameStates);
         }
 
         if (toggleAllowed(gamepad1.start, startBtn, 1)) {

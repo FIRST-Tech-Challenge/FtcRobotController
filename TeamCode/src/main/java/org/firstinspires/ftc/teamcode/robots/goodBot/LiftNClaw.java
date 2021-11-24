@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.util.Conversions;
+import org.firstinspires.ftc.teamcode.util.utilMethods;
 
 public class LiftNClaw {
 
@@ -43,13 +43,13 @@ public class LiftNClaw {
     int targetLiftPos = 0;
     public void update(){
         if(gripperOpen){
-            gripperActuator.setPosition(Conversions.servoNormalize(Constants.gripperOpenPos));
+            gripperActuator.setPosition(utilMethods.servoNormalize(Constants.gripperOpenPos));
         }
         else{
-            gripperActuator.setPosition(Conversions.servoNormalize(Constants.gripperClosedPos));
+            gripperActuator.setPosition(utilMethods.servoNormalize(Constants.gripperClosedPos));
         }
 
-        gripperPitchServo.setPosition(Conversions.servoNormalize(gripperPitchPos));
+        gripperPitchServo.setPosition(utilMethods.servoNormalize(gripperPitchPos));
 
         lift.setTargetPosition(Math.min(Math.max(liftHeight, liftMin), liftMax));
         targetLiftPos = Math.min(Math.max(liftHeight, liftMin), liftMax);

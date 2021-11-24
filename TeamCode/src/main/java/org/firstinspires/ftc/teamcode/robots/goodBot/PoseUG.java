@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.robots.goodBot.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.robots.goodBot.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.goodBot.vision.StackHeight;
-import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
@@ -26,11 +25,10 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import java.util.Arrays;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
-import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_D;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_I;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_P;

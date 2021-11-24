@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.robots.goodBot.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.MineralStateProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
-import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 /**

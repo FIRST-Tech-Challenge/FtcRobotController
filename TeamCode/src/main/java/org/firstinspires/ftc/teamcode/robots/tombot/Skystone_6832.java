@@ -45,10 +45,10 @@ import org.firstinspires.ftc.teamcode.vision.SkystoneTargetInfo;
 import org.firstinspires.ftc.teamcode.vision.StonePos;
 import org.opencv.core.Mat;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
-import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
-import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
-import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.nearZero;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.nextCardinal;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.notdeadzone;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.servoNormalize;
 
 /**
  * This file contains the code for Iron Reign's main OpMode, used for both

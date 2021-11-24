@@ -23,10 +23,10 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
-import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.nextCardinal;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 import static org.firstinspires.ftc.teamcode.vision.Config.*;
 
 /**

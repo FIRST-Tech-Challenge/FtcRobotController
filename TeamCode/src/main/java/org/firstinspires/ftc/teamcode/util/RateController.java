@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import android.util.Log;
-
-import static org.firstinspires.ftc.teamcode.util.Conversions.between;
-
 public class RateController {
 
     private double m_rate;                 // factor for rate control

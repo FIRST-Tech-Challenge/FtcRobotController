@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.StackHeight;

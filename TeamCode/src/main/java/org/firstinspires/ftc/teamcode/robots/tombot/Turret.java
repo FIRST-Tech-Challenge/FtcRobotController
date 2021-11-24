@@ -6,18 +6,16 @@ package org.firstinspires.ftc.teamcode.robots.tombot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
-import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
-import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.nextCardinal;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 
 @Config
 public class Turret{

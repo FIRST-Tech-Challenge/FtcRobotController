@@ -44,7 +44,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.vision.GoldPos;
-import org.firstinspires.ftc.teamcode.util.Conversions;
+import org.firstinspires.ftc.teamcode.util.utilMethods;
 
 
 /**
@@ -865,7 +865,7 @@ public class Skystone_6832 extends LinearOpMode {
     private int servoTest = 1005;
 
     private void servoTest() {
-        robot.ledSystem.movement.setPosition(Conversions.servoNormalize(servoTest));
+        robot.ledSystem.movement.setPosition(utilMethods.servoNormalize(servoTest));
         if (toggleAllowed(gamepad1.a, a))
             servoTest -= 10;
         else if (toggleAllowed(gamepad1.y, y))

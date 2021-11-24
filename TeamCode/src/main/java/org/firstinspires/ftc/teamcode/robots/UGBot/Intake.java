@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.util.Conversions;
+import org.firstinspires.ftc.teamcode.util.utilMethods;
 
 import static org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants.INTAKE_MINIJOG_NOW;
 
@@ -158,8 +158,8 @@ public class Intake {
 
 
 
-        tiltServo.setPosition(Conversions.servoNormalize(tiltTargetPosition));
-        outServo.setPosition(Conversions.servoNormalize(outTargetPos));
+        tiltServo.setPosition(utilMethods.servoNormalize(tiltTargetPosition));
+        outServo.setPosition(utilMethods.servoNormalize(outTargetPos));
     }
 
     private Double oldValue;

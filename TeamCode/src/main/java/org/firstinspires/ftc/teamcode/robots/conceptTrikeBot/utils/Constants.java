@@ -9,6 +9,7 @@ public class Constants {
     public static final double INCHES_PER_METER = 39.3700787;
     public static Alliance ALLIANCE = Alliance.RED;
     public static int ALLIANCE_INT_MOD = 1;
+    public static int numGameStates = 10;
 
     public static double startingXOffset = 0;
     public static double startingYOffset = 0;
