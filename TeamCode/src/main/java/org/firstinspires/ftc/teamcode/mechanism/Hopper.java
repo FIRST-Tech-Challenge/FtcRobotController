@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Hopper implements Mechanism {
-    Servo hopper;
+    public Servo hopper;
     int state = 1;
     @Override
     public void init(HardwareMap hardwareMap) {
@@ -15,10 +15,10 @@ public class Hopper implements Mechanism {
 
     @Override
     public void run(Gamepad gamepad) {
-        if (gamepad.right_trigger > 0.5) {
+        if (gamepad.a) {
             //Make sure it doesn't set the position constantly
             if(state != 1) {
-                hopper.setPosition(0.3);
+                hopper.setPosition(0.33);
                 state = 1;
             }
         } else {

@@ -35,7 +35,8 @@ public class MecanumRed extends OpMode {
         chassis.run(gamepad1);
         carousel.run(gamepad1);
         lift.run(gamepad2);
-        intake.run(gamepad1);
+        intake.run(gamepad2);
         hopper.run(gamepad2);
+        telemetry.addData("lift level", lift.liftMotor.getCurrentPosition());
     }
 }

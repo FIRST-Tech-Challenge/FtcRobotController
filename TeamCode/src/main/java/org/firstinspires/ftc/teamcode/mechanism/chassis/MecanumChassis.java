@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Constants.sensitivity;
 import static org.firstinspires.ftc.teamcode.Constants.slowModeSensitivity;
 import static org.firstinspires.ftc.teamcode.Constants.triggerThreshold;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,6 +18,25 @@ public class MecanumChassis extends Chassis {
         super.init(hardwareMap);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Set all motors to 0 power for initialization
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -41,7 +61,7 @@ public class MecanumChassis extends Chassis {
 
         //Actually set them
 
-        if (gamepad.left_bumper) {
+        if (gamepad.left_trigger > triggerThreshold) {
             frontLeft.setPower(flPower*slowModeSensitivity);
             frontRight.setPower(frPower*slowModeSensitivity);
             backLeft.setPower(blPower*slowModeSensitivity);

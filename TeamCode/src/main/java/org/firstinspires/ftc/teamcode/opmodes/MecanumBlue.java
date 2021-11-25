@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -36,7 +35,7 @@ public class MecanumBlue extends OpMode {
         chassis.run(gamepad1);
         carousel.run(gamepad1);
         lift.run(gamepad2);
-        intake.run(gamepad1);
+        intake.run(gamepad2);
         hopper.run(gamepad2);
     }
 }

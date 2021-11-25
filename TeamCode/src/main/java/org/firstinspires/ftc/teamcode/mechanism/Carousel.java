@@ -27,14 +27,14 @@ public class Carousel implements Mechanism {
         if (gamepad.a) {
             if (!aWasDown) {
                 // turnCarousel();
-                carouselMotor.setPower(colorMultiplier * 0.55);
+                carouselMotor.setPower(colorMultiplier * 0.35);
                 aWasDown = true;
                 bWasDown = false;
             }
         } else if (gamepad.b) {
             if (!bWasDown) {
                 // turnCarousel();
-                carouselMotor.setPower(-colorMultiplier * 0.55);
+                carouselMotor.setPower(-colorMultiplier * 0.35);
                 aWasDown = false;
                 bWasDown = true;
             }
