@@ -37,13 +37,89 @@ public class TeleOp_slide_Rotate_Push extends LinearOpMode{
         Push.setPosition(0);
         Rotate.setPosition(0.03);
 
+        boolean Fposition1 = true;
+        boolean Sposition1 = true;
+        boolean Tposition1 = true;
+        boolean Push1 = true;
+        boolean Rotate1 = true;
+
+
 
 
         waitForStart();
 
         while(opModeIsActive()){
 
-            //Slide
+            if(gamepad1.a){
+                if(Fposition1) {
+                    Slide.setTargetPosition(Fposition);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.5);
+                }
+                Fposition1 = false;
+            }else if(!Fposition1){
+                Fposition1 = true;
+            }
+
+            if(gamepad1.b){
+                if(Sposition1) {
+                    Slide.setTargetPosition(Sposition);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.5);
+                }
+                Sposition1 = false;
+            }else if(!Sposition1){
+                Sposition1 = true;
+            }
+
+            if(gamepad1.y){
+                if(Tposition1) {
+                    Slide.setTargetPosition(Tposition);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.5);
+                }
+                Tposition1 = false;
+            }else if(!Tposition1){
+                Tposition1 = true;
+            }
+
+
+            if(gamepad2.left_trigger == 1){
+                if(Rotate1 && Rotate.getPosition() > 0.5) {
+                    Rotate.setPosition(0.03);
+                    telemetry.addLine("Inital");
+                }else if(Rotate1 && Rotate.getPosition() < 0.5){
+                    Rotate.setPosition(1);
+                    telemetry.addLine("Face outside");
+                }
+
+                Rotate1 = false;
+            }else if(!Rotate1){
+                Rotate1 = true;
+            }
+
+            if(gamepad2.right_trigger == 1){
+                if (Push1){
+                    Push.setPosition(0);
+                    Push1 = false;
+                }
+            } else if (!Push1){
+                Push.setPosition(0.4);
+                Push1 = true;
+            }
+
+
+
+            telemetry.addLine("Slide Current: " + Slide.getCurrentPosition());
+            telemetry.update();
+
+
+        }
+
+    }
+}
+/*
+
             if(gamepad1.a == true){
                 Slide.setTargetPosition(Fposition);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -58,7 +134,7 @@ public class TeleOp_slide_Rotate_Push extends LinearOpMode{
                 Slide.setPower(0.5);
             }
 
-            //Push
+
             if(gamepad1.left_bumper == true){
                 Push.setPosition(0.4);
             }else if(gamepad1.right_bumper == true && Push.getPosition() > 0.2){
@@ -70,12 +146,4 @@ public class TeleOp_slide_Rotate_Push extends LinearOpMode{
             } else if(gamepad1.left_trigger ==1){
                 Rotate.setPosition(0.03);
             }
-
-            telemetry.addLine("Slide Current: " + Slide.getCurrentPosition());
-            telemetry.update();
-
-
-        }
-
-    }
-}
+ */
