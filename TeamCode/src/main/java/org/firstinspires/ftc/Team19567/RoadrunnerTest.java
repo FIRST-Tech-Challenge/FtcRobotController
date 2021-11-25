@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -18,6 +19,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
 
+@Autonomous(name="Roadrunner Test", group="Linear Opmode")
+
 public class RoadrunnerTest extends LinearOpMode {
 
     private tsePipeline pipeline = new tsePipeline(telemetry); //Team shipping element OpenCV Pipeline
@@ -29,7 +32,6 @@ public class RoadrunnerTest extends LinearOpMode {
     private DcMotor linearSlideDC = null;
     private DcMotor carouselDC = null;
     private boolean slowMode = false;
-    private double acc = 1.0;
     private Servo releaseServo = null;
     private BNO055IMU imu = null;
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
@@ -57,15 +59,22 @@ public class RoadrunnerTest extends LinearOpMode {
                 telemetry.addData("OpenCV","OpenCV actually connected wow");
                 telemetry.update();
 
+                waitForStart();
                 switch(pipeline.getLocation()) {
                     case ALLIANCE_FIRST: {
                         location = LOCATION.ALLIANCE_FIRST;
+                        telemetry.addData("OpenCV","First Level Detected");
+                        telemetry.update();
                     }
                     case ALLIANCE_SECOND: {
                         location = LOCATION.ALLIANCE_SECOND;
+                        telemetry.addData("OpenCV","Second Level Detected");
+                        telemetry.update();
                     }
                     case ALLIANCE_THIRD: {
                         location = LOCATION.ALLIANCE_THIRD;
+                        telemetry.addData("OpenCV","Third Level Detected");
+                        telemetry.update();
                     }
                     default: {
                         location = LOCATION.ALLIANCE_THIRD;

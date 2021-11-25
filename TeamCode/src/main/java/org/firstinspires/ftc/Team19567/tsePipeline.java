@@ -26,7 +26,6 @@ class tsePipeline extends OpenCvPipeline {
 
     private static double THRESHOLD = 0.4;
 
-
     Telemetry telemetry;
 
     public tsePipeline(Telemetry t) {
@@ -44,6 +43,7 @@ class tsePipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input,output,Imgproc.COLOR_RGB2HSV);
+        input.release();
 
         Scalar lowHSV = new Scalar(120, 25, 62);
         Scalar highHSV = new Scalar(120,100,54);
