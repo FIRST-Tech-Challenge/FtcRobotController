@@ -27,15 +27,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.HardwareMaps;
+package org.firstinspires.ftc.teamcode.hardwaremaps;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.openftc.easyopencv.OpenCvCamera;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 /**
  * This is NOT an opmode.
@@ -53,7 +53,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera2;
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
-public class InternalCameraHardwareMap
+public class ExternalCameraHardwareMap
 {
 
     /* Public OpMode members. */
@@ -66,14 +66,14 @@ public class InternalCameraHardwareMap
     public DcMotor motorBackRight = null;
     //Motor in Port 2
 
-    public OpenCvCamera phoneCam;
+    public OpenCvWebcam webCam;
 
     /* local OpMode members. */
     HardwareMap hwMap =  null;
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public InternalCameraHardwareMap(){
+    public ExternalCameraHardwareMap(){
 
     }
 
@@ -83,9 +83,8 @@ public class InternalCameraHardwareMap
         hwMap = hardwareMap;
 
         //Define and Initialize Motors
-        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
  }
 

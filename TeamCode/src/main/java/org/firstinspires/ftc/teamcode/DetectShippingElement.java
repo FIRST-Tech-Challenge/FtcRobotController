@@ -27,7 +27,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.HardwareMaps.ExternalCameraHardwareMap;
+import org.firstinspires.ftc.teamcode.hardwaremaps.ExternalCameraHardwareMap;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
