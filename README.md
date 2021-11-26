@@ -1,3 +1,8 @@
+## Eight To Automate #8642 Notes
+
+This repository is a fork of the original SDK for the Freight Frenzy Season. Our changes to make our programs can be found in TeamCode/src/main/java/org/firstinspires/ftc/teamcode.
+If you wish to look at the official releases from FTC, look on the repo this project was forked from. Below is the rest of the readme file maintained by FTC.
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.

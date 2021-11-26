@@ -1,3 +1,8 @@
+## Eight To Automate #8642 Notes
+
+This is where all of our programs for the robot are stored. Our main robot class, which holds key methods for all our programs is the Robot class.
+Below is the rest of the readme file maintained by FTC.
+
 ## TeamCode Module
 
 Welcome!
