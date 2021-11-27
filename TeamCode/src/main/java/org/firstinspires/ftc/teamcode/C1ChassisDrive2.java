@@ -75,10 +75,10 @@ public class C1ChassisDrive2 extends DriveMethods {
     double rightTrigger2;
 
     // arm
-    double level0 = 100;
-    double level1 = 315;
-    double level2 = 575;
-    double level3 = 850;
+    double level0 = 75;
+    double level1 = 325;
+    double level2 = 600;
+    double level3 = 900;
     double currentPosition;
     double difference;
     double level;
@@ -90,6 +90,7 @@ public class C1ChassisDrive2 extends DriveMethods {
     double carouselPosition;
     boolean fast = true;
     boolean clamped = false;
+    double speed = 0.7;
 
 
 
@@ -135,10 +136,10 @@ public class C1ChassisDrive2 extends DriveMethods {
 
 
 
-            motorFrontLeft.setPower(leftY1 + leftX1 + rightX1);
-            motorBackLeft.setPower(leftY1 - leftX1 + rightX1);
-            motorFrontRight.setPower(leftY1 - leftX1 - rightX1);
-            motorBackRight.setPower(leftY1 + leftX1 - rightX1);
+            motorFrontLeft.setPower((leftY1 + leftX1 + rightX1) * speed);
+            motorBackLeft.setPower((leftY1 - leftX1 + rightX1) * speed);
+            motorFrontRight.setPower((leftY1 - leftX1 - rightX1) * speed);
+            motorBackRight.setPower((leftY1 + leftX1 - rightX1) * speed);
 
             //gently pushes robot backward whilst rightTrigger1 engaged
             if (rightTrigger1 > 0) {
@@ -214,7 +215,7 @@ public class C1ChassisDrive2 extends DriveMethods {
             /**
              * Safety precaution potentially
              */
-            if (currentPosition > 1000) {
+            if (currentPosition > 1200) {
                 motorMajorArm.setPower(0.2);
                 sleep(300);
                 motorMajorArm.setPower(-0.003);
