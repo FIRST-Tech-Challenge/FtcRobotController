@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
 
 @Autonomous(name="MecanumAutonomous", group="FreightFrenzy")
-public class MecanumAutonomous extends LinearOpMode {
+public class MentorMecanumAutonomous extends LinearOpMode {
     //Add an ElapsedTime for function runtime calculations.
     private ElapsedTime runtime = new ElapsedTime();
     //Import the robot's hardware map.
