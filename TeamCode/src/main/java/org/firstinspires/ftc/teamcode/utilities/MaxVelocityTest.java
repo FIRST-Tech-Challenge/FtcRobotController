@@ -1,7 +1,7 @@
 /*
 Max Velocity Test for PIDF Tuning
 https://docs.google.com/document/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/edit
-Get maxVelocity by running this opMode
+Get maxVelocity by running this OpMode
 
 F = 32767 / maxVelocity
 P = 0.1 * F
@@ -10,13 +10,13 @@ D = 0
 positionP = 5.0
 
  */
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.utilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@TeleOp
+@TeleOp(name="Max Velocity Test", group="Utilities")
 public class MaxVelocityTest extends LinearOpMode {
     DcMotorEx motor;
     double currentVelocity;

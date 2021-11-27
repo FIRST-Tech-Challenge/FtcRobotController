@@ -1,27 +1,28 @@
-package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+package org.firstinspires.ftc.teamcode.mentor.samples;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
-@TeleOp(name = "Mentor Basic Arm", group = "Learning")
+@TeleOp(name = "Mentor Arm PID", group = "Learning")
 
-public class MentorArm extends LinearOpMode {
+public class MentorArmPIDF extends LinearOpMode {
 
     DcMotorEx motorArm;
 
     @Override
     public void runOpMode(){
 
-        // init motors
+        // init motors for Mentor Test - these are defined in the HardwareMap
         motorArm = hardwareMap.get(DcMotorEx.class, "arm");
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setDirection(DcMotor.Direction.REVERSE);
 
+        // Setup Arm Variables
         int armCurrentPos = 0;
         int armSetPos = 0;
         int armMaxPos = 700;
@@ -29,12 +30,15 @@ public class MentorArm extends LinearOpMode {
         int armLevel1 = 100; // (x)
         int armLevel2 = 400; // (y)
         int armLevel3 = 700; // (b)
+
+        // Setup the gamepad 2 buttons - Rename the variables to indicate gamepad 2
         boolean aPressed = false;
         boolean xPressed = false;
         boolean yPressed = false;
         boolean bPressed = false;
 
-        double armMaxVelocity = 3340.0;
+        // Define arm PID and Velocity
+        double armMaxVelocity = 3340;
         double F = 8; // Adjust until no more oscillations
         double P = 0; // 0.1 * F
         double I = 0; // 0.1 * P
@@ -47,11 +51,7 @@ public class MentorArm extends LinearOpMode {
         motorArm.setTargetPositionTolerance(10);
         motorArm.setTargetPosition(armSetPos);
         motorArm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motorArm.setVelocity(3340 / 4);
-
-        telemetry.addData("Arm Test", "Init" );
-        telemetry.addData("Arm Test", motorArm.getCurrentPosition() );
-        telemetry.update();
+        motorArm.setVelocity(armMaxVelocity / 4); // This sets max velocity to 25%
 
         // Init Loop
         while( !isStarted() ){
@@ -62,26 +62,21 @@ public class MentorArm extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            // Arm levels by Button : a = 0, x = 1, y = 2, b = 3
-            if (gamepad2.a & !aPressed) {
+            /* Arm levels by Button
+             * a = 0    Resting position
+             * x = 1    Level 1
+             * y = 2    Level 2
+             * b = 3    Level 3
+             */
+            if (gamepad2.a) {
                 armSetPos = armLevel0;
-            }
-            aPressed = gamepad2.a;
-
-            if (gamepad2.x & !xPressed) {
+            }else if (gamepad2.x) {
                 armSetPos = armLevel1;
-            }
-            xPressed = gamepad2.x;
-
-            if (gamepad2.y & !yPressed) {
+            }else if (gamepad2.y) {
                 armSetPos = armLevel2;
-            }
-            yPressed = gamepad2.y;
-
-            if (gamepad2.b & !bPressed) {
+            }else if (gamepad2.b) {
                 armSetPos = armLevel3;
             }
-            bPressed = gamepad2.b;
 
             // Nudge arm Up and Arm Down in small increments
             if (gamepad2.right_stick_x != 0.0 && ( armSetPos >= 0 && armSetPos <= armMaxPos) ) {
@@ -91,23 +86,20 @@ public class MentorArm extends LinearOpMode {
                     armSetPos = Math.max(--armSetPos, 0);
                 }
             }
-
             motorArm.setTargetPosition(armSetPos);
 
 
-            //intake in
+            /* Intake In & Out
+             * Gamepad 2
+             * Left Trigger pulls in quickly
+             * Right Trigger pushes out slowly
+             */
             // motorIntake.setPower(gamepad2.left_trigger * 0.75);
-
-            //intake out
             // motorIntake.setPower(-gamepad2.right_trigger * 0.3);
 
 
             telemetry.addData("Arm Test", "Teleop Loop" );
             telemetry.addData("Arm Test", motorArm.getCurrentPosition() );
-            telemetry.addData("Right Stick X", gamepad2.right_stick_x );
-            telemetry.addData("Right Stick Y", gamepad2.right_stick_y );
-            telemetry.addData("DPad Up", gamepad2.dpad_up );
-            telemetry.addData("DPad Down", gamepad2.dpad_down );
             telemetry.addData("Arm pos", armCurrentPos);
             telemetry.addData("Arm Set pos", armSetPos);
             telemetry.update();
