@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-@TeleOp(name="servo tester", group="Testing" )
+@TeleOp(name="T: ServoTester", group="Testing" )
 @Disabled //this line disables the teleop from appearing on the driver station, remove it for your code
-public class servoTestTeleOp extends LinearOpMode {
+public class ServoTester extends LinearOpMode {
     /*declare OpMode members, initialize some classes*/
     Hardware robot  = new Hardware();
     ElapsedTime runtime     = new ElapsedTime();
@@ -66,7 +66,7 @@ public class servoTestTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             //code goes here
 
-            //left and right bumpers shift through the servos
+            //left and right bumpers cycle through the servos
             leftBCurr=gamepad1.left_bumper;
             rightBCurr=gamepad1.right_bumper;
             if (leftBCurr && !leftBPrev)

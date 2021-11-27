@@ -14,6 +14,7 @@ public class MecanumDemoTele extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // declare some variables if needed
+        double[] leftStickPolar;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -28,7 +29,7 @@ public class MecanumDemoTele extends LinearOpMode {
         while (opModeIsActive()) {
 
             //left joystick strafes, right joystick rotates
-            double[] leftStickPolar = Hardware.convertRectangularToPolar(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            leftStickPolar = Hardware.convertRectangularToPolar(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 
             telemetry.addData("left stick x: ", gamepad1.left_stick_x);
             telemetry.addData("left stick y: ", gamepad1.left_stick_y);
