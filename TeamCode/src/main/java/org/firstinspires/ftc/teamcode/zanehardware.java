@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,7 +13,8 @@ public class zanehardware {
     public DcMotor Back_Left;
     public DcMotor Back_Right;
     public DcMotor Spinner;
-
+    public DistanceSensor LeftDistance;
+    public DistanceSensor RightDistance;
     HardwareMap hwMap = null;
     private ElapsedTime period = new ElapsedTime();
 
@@ -24,6 +26,7 @@ public class zanehardware {
         Back_Left = hwMap.get(DcMotor.class,"Back_Left");
         Back_Right = hwMap.get(DcMotor.class,"Back_Right");
         Spinner = hwMap.get(DcMotor.class,"Spinner");
+        LeftDistance = hwMap.get(DistanceSensor.class,"fDistance");
 
         //reverse motors
         Front_Right.setDirection(DcMotorSimple.Direction.REVERSE);
