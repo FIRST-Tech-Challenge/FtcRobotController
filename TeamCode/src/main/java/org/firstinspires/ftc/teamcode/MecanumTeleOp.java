@@ -126,9 +126,9 @@ public class MecanumTeleOp extends LinearOpMode {
 
     //Method for arm level set position
     //change arm positions to fit max position set at top of code
-    /*
+
     public int armGoToPos (int armLevel, int armSetPos){
-        if (armLevel == 0){
+        /*if (armLevel == 0){
             armSetPos = 0;
         } else if (armLevel == 1) {
             armSetPos = 200;
@@ -138,8 +138,7 @@ public class MecanumTeleOp extends LinearOpMode {
             armSetPos = 600;
         } else if (armLevel == 4) {
             armSetPos = 800;
-        }
+        }*/
         return armSetPos;
-     */
     }
 }
