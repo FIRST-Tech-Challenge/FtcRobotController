@@ -16,9 +16,9 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
     DcMotor intakeMotor = null;
+    DcMotor linearSlideMotor = null;
 
     DcMotor carouselMotor = null;
-    DcMotor linearSlideMotor = null;
     // declare motor speed variables
     double RF; double LF; double RR; double LR;
     // declare joystick position variables
@@ -112,31 +112,35 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             telemetry.addData("LR", "%.3f", LR);
             telemetry.addData("RR", "%.3f", RR);
 
-            if(gamepad1.a && !carouselOn) {
+            if(gamepad2.y && !carouselOn) {
                 if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
                 else carouselMotor.setPower(.6);
                 carouselOn = true;
-            } else if(!gamepad1.a) carouselOn = false;
+            } else if(!gamepad2.y) carouselOn = false;
 
-            if(gamepad1.b && !intakeOn) {
+            if(gamepad2.a && !intakeOn) {
                 if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
                 else intakeMotor.setPower(.8);
                 intakeOn = true;
-            } else if(!gamepad1.b) intakeOn = false;
+            } else if(!gamepad2.a) intakeOn = false;
 
-            if(gamepad1.x && !(linearSlideOn == 1)) {
-                if(linearSlideMotor.getPower() != 0) linearSlideMotor.setPower(0);
-                else linearSlideMotor.setPower(.2);
-                linearSlideOn = 1;
-            } else if(!gamepad1.x) linearSlideOn = 0;
+            if (gamepad2.b) {
+                intakeMotor.setPower(-.8);
+                intakeOn = false;
+            }
 
-            if(gamepad1.y && !(linearSlideOn == -1)) {
-                if(linearSlideMotor.getPower() != 0) linearSlideMotor.setPower(0);
-                else linearSlideMotor.setPower(-.2);
-                linearSlideOn = -1;
-            } else if(!gamepad1.y) linearSlideOn = 0;
+            if (gamepad2.dpad_up) {
+//                Top scoring
+            }
 
-            telemetry.addData("Linear Slide Encoder Position: ", linearSlideMotor.getCurrentPosition());
+            if (gamepad2.dpad_left) {
+//                Middle scoring
+            }
+
+            if (gamepad2.dpad_down) {
+//                Low scoring
+            }
+
         }
     }
 }
