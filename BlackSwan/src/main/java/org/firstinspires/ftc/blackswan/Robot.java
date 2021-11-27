@@ -21,7 +21,7 @@ import java.util.Date;
 public class Robot {
     Telemetry telemetry;
     DcMotor frontLeft, backLeft, frontRight,backRight;
-    CRServo carousel;
+    DcMotor carousel;
     BNO055IMU imu;
     LinearOpMode opMode;
 
@@ -45,7 +45,7 @@ public class Robot {
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
 
-        carousel = hardwareMap.get(CRServo.class, "carousel");
+        carousel = hardwareMap.get(DcMotor.class, "carousel");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -107,7 +107,7 @@ public class Robot {
 
 
     }
-    public void backward(double distance, double speed){
+    public void back(double distance, double speed){
 
         forward(-distance, speed);
     }
@@ -204,6 +204,7 @@ public class Robot {
         stopMotors();
     }
 
+
     protected void motorSetMode(DcMotor.RunMode runMode){
         frontLeft.setMode(runMode);
         frontRight.setMode(runMode);
@@ -217,5 +218,15 @@ public class Robot {
         while (time<millis && opMode.opModeIsActive()){
             time = new Date().getTime() - startTime;
         }
+    }
+    public void blueCarousel(int millis){
+        carousel.setPower(0.35);
+        pause(millis);
+        carousel.setPower(0);
+    }
+    public void redCarousel(int millis){
+        carousel.setPower(-0.35);
+        pause(millis);
+        carousel.setPower(0);
     }
 }

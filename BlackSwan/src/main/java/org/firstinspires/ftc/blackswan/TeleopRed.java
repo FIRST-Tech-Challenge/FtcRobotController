@@ -145,7 +145,7 @@ public class TeleopRed extends LinearOpMode {
 // spins the motor that turns the carousel
     protected void turnDuck(DcMotor carousel){
         if(gamepad2.right_bumper){
-            carousel.setPower(-1);
+            carousel.setPower(-0.7 );
         } else {
             carousel.setPower(0);
         }
