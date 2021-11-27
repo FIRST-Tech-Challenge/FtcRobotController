@@ -16,6 +16,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
     DcMotor intakeMotor = null;
+    DcMotor linearSlideMotor = null;
 
     DcMotor carouselMotor = null;
     // declare motor speed variables
@@ -41,6 +42,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
         carouselMotor = hardwareMap.dcMotor.get("carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
+        linearSlideMotor = hardwareMap.dcMotor.get("");
 
         // Set the drive motor direction:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -60,12 +62,14 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        boolean carouselOn = false; //Outside of loop()
+        boolean intakeOn = false;
+        int linearSlideOn = 0;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-        boolean carouselOn = false; //Outside of loop()
-        boolean intakeOn = false;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -107,21 +111,35 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             telemetry.addData("LR", "%.3f", LR);
             telemetry.addData("RR", "%.3f", RR);
 
-            if(gamepad1.a && !carouselOn) {
+            if(gamepad2.y && !carouselOn) {
                 if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
                 else carouselMotor.setPower(.6);
                 carouselOn = true;
-            } else if(!gamepad1.a) carouselOn = false;
+            } else if(!gamepad2.y) carouselOn = false;
 
-            if(gamepad1.b && !intakeOn) {
+            if(gamepad2.a && !intakeOn) {
                 if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
                 else intakeMotor.setPower(.8);
                 intakeOn = true;
-            } else if(!gamepad1.b) intakeOn = false;
+            } else if(!gamepad2.a) intakeOn = false;
+
+            if (gamepad2.b) {
+                intakeMotor.setPower(-.8);
+                intakeOn = false;
+            }
 
             if (gamepad2.dpad_up) {
-
+//                Top scoring
             }
+
+            if (gamepad2.dpad_left) {
+//                Middle scoring
+            }
+
+            if (gamepad2.dpad_down) {
+//                Low scoring
+            }
+
         }
     }
 }
