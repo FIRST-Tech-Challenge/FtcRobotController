@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@TeleOp(name="MecanumTeleOp", group="test")
+@TeleOp(name="MecanumTeleOp", group="FreightFrenzy")
 public class MecanumTeleOp extends LinearOpMode {
 
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
@@ -54,7 +54,13 @@ public class MecanumTeleOp extends LinearOpMode {
                 }
             }
 
-            // Dpad initiates Arm Up and Resting positions
+            /* Arm Up and Resting positions
+             * RUN_TO_POSITION needs to be moved to the HardwareMap and out of the loop!
+             * Only use setPower() once, outside of any if statements - only call once in a loop
+             *
+             * Remove the dpad and use the gamepad buttons
+             * Setup levels by button, look at mentor.samples.MentorArm
+             */
             if (gamepad2.dpad_up) {
 
                 robot.motorArm.setTargetPosition(armSetPos);
@@ -69,9 +75,10 @@ public class MecanumTeleOp extends LinearOpMode {
 
             }
 
-            //intake code start
-
-            //intake in
+            /* Intake, Gamepad 2 Left Trigger and Right Triggers
+             * Look at lines 103 and 104 of mentor.samples.MentorArm
+             * We can set power directly from the value of the trigger to the motor
+            */
             if (gamepad2.left_trigger > 0){
 
                 robot.motorIntake.setPower(0.75);
@@ -81,7 +88,7 @@ public class MecanumTeleOp extends LinearOpMode {
                  robot.motorIntake.setPower(0);
             }
 
-            //intake out
+            // intake out
             if (gamepad2.right_trigger > 0){
 
                 robot.motorIntake.setPower(-0.3);
@@ -141,4 +148,5 @@ public class MecanumTeleOp extends LinearOpMode {
         }*/
         return armSetPos;
     }
+
 }
