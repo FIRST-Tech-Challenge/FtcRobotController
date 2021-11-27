@@ -53,7 +53,7 @@ public class FrenzyHardwareMap {
     //Encoder clicks are originally 28 per rotation, but multiply by 20:1.
     public final int REV_ENCODER_CLICKS = 560;
     final double REV_WHEEL_DIAM = 7.5;
-    final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
+    public final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
     final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
     //Setup local opmode members.
     HardwareMap frenzyMap = null;
