@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.mentor.samples.mecanum;
 
-import org.firstinspires.ftc.teamcode.mentor.samples.external.libs.PIDController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,9 +10,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
+import org.firstinspires.ftc.teamcode.mentor.samples.external.libs.PIDController;
 
-@Autonomous(name="MecanumAutonomous", group="FreightFrenzy")
-public class MentorMecanumAutonomous extends LinearOpMode {
+@Autonomous(name="MentorMecanumAutonomous", group="FreightFrenzy")
+public class MecanumAutonomous extends LinearOpMode {
     //Add an ElapsedTime for function runtime calculations.
     private ElapsedTime runtime = new ElapsedTime();
     //Import the robot's hardware map.
