@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "Mecanum Demo TeleOp")
-public class DemoTele extends LinearOpMode {
+@TeleOp(name = "Mecanum Demo TeleOp", group = "Demos")
+public class MecanumDemoTele extends LinearOpMode {
     /*declare OpMode members, initialize some classes*/
     Hardware robot          = new Hardware();
     ElapsedTime runtime     = new ElapsedTime();
