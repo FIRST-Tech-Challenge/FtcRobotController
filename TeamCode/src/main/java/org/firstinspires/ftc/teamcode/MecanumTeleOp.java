@@ -24,6 +24,16 @@ public class MecanumTeleOp extends LinearOpMode {
         int armSetPos = 0;
         int armMaxPos = 500;
 
+
+        //set arm levels
+        int armLevel0 = 0;   // (a)
+        int armLevel1 = 100; // (x)
+        int armLevel2 = 400; // (y)
+        int armLevel3 = 700; // (b)
+
+        //set arm power
+        robot.motorArm.setPower(0.3);
+
         //init loop
          while (! isStarted()) {
 
@@ -54,49 +64,23 @@ public class MecanumTeleOp extends LinearOpMode {
                 }
             }
 
-            /* Arm Up and Resting positions
-             * RUN_TO_POSITION needs to be moved to the HardwareMap and out of the loop!
-             * Only use setPower() once, outside of any if statements - only call once in a loop
-             *
-             * Remove the dpad and use the gamepad buttons
-             * Setup levels by button, look at mentor.samples.MentorArm
-             */
-            if (gamepad2.dpad_up) {
 
-                robot.motorArm.setTargetPosition(armSetPos);
-                robot.motorArm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                robot.motorArm.setPower(0.3);
 
-            } else if (gamepad2.dpad_down) {
-
-                robot.motorArm.setTargetPosition(0);
-                robot.motorArm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                robot.motorArm.setPower(0.3);
-
+            //set arm positions to gamepad.2 buttons
+            if (gamepad2.a) {
+                armSetPos = armLevel0;
+            }else if (gamepad2.x) {
+                armSetPos = armLevel1;
+            }else if (gamepad2.y) {
+                armSetPos = armLevel2;
+            }else if (gamepad2.b) {
+                armSetPos = armLevel3;
             }
 
-            /* Intake, Gamepad 2 Left Trigger and Right Triggers
-             * Look at lines 103 and 104 of mentor.samples.MentorArm
-             * We can set power directly from the value of the trigger to the motor
-            */
-            if (gamepad2.left_trigger > 0){
 
-                robot.motorIntake.setPower(0.75);
-            }
-             else if (gamepad2.left_trigger == 0){
-
-                 robot.motorIntake.setPower(0);
-            }
-
-            // intake out
-            if (gamepad2.right_trigger > 0){
-
-                robot.motorIntake.setPower(-0.3);
-            }
-            else if (gamepad2.right_trigger == 0){
-
-                robot.motorIntake.setPower(0);
-            }
+            //set power for intake
+            robot.motorIntake.setPower(gamepad2.left_trigger * 0.75);
+            robot.motorIntake.setPower(-gamepad2.right_trigger * 0.3);
 
 
 
@@ -130,23 +114,4 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.update();
         }
     }
-
-    //Method for arm level set position
-    //change arm positions to fit max position set at top of code
-
-    public int armGoToPos (int armLevel, int armSetPos){
-        /*if (armLevel == 0){
-            armSetPos = 0;
-        } else if (armLevel == 1) {
-            armSetPos = 200;
-        } else if (armLevel == 2) {
-            armSetPos = 400;
-        } else if (armLevel == 3) {
-            armSetPos = 600;
-        } else if (armLevel == 4) {
-            armSetPos = 800;
-        }*/
-        return armSetPos;
-    }
-
 }

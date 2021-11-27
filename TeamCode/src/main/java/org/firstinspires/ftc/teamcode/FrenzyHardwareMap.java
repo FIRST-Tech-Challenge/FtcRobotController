@@ -138,6 +138,7 @@ public class FrenzyHardwareMap {
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
 
