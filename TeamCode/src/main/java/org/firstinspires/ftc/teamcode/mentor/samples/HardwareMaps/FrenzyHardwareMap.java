@@ -26,14 +26,17 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.mentor.samples.HardwareMaps;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class FrenzyHardwareMap {
     //Motor in Port 0, Rev Hub 1.
     public DcMotor motorFrontLeft = null;
@@ -51,9 +54,9 @@ public class FrenzyHardwareMap {
     public BNO055IMU imu = null;
     //Setup Wheel measurements for REV motors.
     //Encoder clicks are originally 28 per rotation, but multiply by 20:1.
-    public final int REV_ENCODER_CLICKS = 560;
+    final int REV_ENCODER_CLICKS = 560;
     final double REV_WHEEL_DIAM = 7.5;
-    public final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
+    final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
     final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
     //Setup local opmode members.
     HardwareMap frenzyMap = null;
@@ -138,7 +141,6 @@ public class FrenzyHardwareMap {
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
 
