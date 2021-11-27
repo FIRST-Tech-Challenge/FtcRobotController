@@ -86,7 +86,8 @@ public class MecanumAutonomous extends LinearOpMode {
         //move(135, 40, 0.8, 5.0);
         //move(315, 40, 0.8, 5.0);
         rotate(90,0.3);
-        //rotate(-90,0.3);
+        rotate(-90,0.3);
+        rotate(45,0.3);
     }
     //Drive forward/backward. Travel distance in CM.
     public void forward(double distanceInCM, double power, double timeoutS) {
@@ -256,10 +257,10 @@ public class MecanumAutonomous extends LinearOpMode {
             }
             do {
                 power = pidRotate.performPID(getAngle()); //power will be - on right turn.
-                robot.motorBackLeft.setPower(-power);
-                robot.motorFrontLeft.setPower(-power);
-                robot.motorBackRight.setPower(power);
-                robot.motorFrontRight.setPower(power);
+                robot.motorBackLeft.setPower(power);
+                robot.motorFrontLeft.setPower(power);
+                robot.motorBackRight.setPower(-power);
+                robot.motorFrontRight.setPower(-power);
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);
                 telemetry.addData("2 global heading", globalAngle);
                 telemetry.addData("3 correction", correction);
