@@ -116,7 +116,7 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         /*
          * An enum to define the skystone position
          */
-        public enum RingPosition {
+        public enum FreightPosition {
             LEFT,
             MIDDLE,
             RIGHT
@@ -176,7 +176,7 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         int avg3 = 0;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile RingPosition position = RingPosition.LEFT;
+        public volatile FreightPosition position = FreightPosition.LEFT;
 
         /*
          * This function takes the RGB frame, converts to LAB,
@@ -232,11 +232,11 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
 
 
             if (avg1 < FREIGHT_PRESENT_THRESHOLD) {
-                position = RingPosition.LEFT;
+                position = FreightPosition.LEFT;
             } else if (avg2 < FREIGHT_PRESENT_THRESHOLD) {
-                position = RingPosition.MIDDLE;
+                position = FreightPosition.MIDDLE;
             } else {
-                position = RingPosition.RIGHT;
+                position = FreightPosition.RIGHT;
             }
             telemetry.addData("Analysis", avg1);
             telemetry.addData("Analysis2", avg2);
