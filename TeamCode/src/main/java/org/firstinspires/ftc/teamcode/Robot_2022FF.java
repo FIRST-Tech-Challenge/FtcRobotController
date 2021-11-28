@@ -96,6 +96,28 @@ public class Robot_2022FF {
     }
 
     /**
+     * Base only
+     * @param motorFrontRight
+     * @param motorFrontLeft
+     * @param motorBackRight
+     * @param motorBackLeft
+     * @param imu
+     * @param opMode
+     * */
+    public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                        CRServo duck, BNO055IMU imu, LinearOpMode opMode){
+        this.motorFrontRight = motorFrontRight;
+        this.motorFrontLeft = motorFrontLeft;
+        this.motorBackRight = motorBackRight;
+        this.motorBackLeft = motorBackLeft;
+        this.duck = duck;
+        this.imu = imu;
+        this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
+//        ticksperrev = motorFrontLeft.getMotorType().getTicksPerRev();
+    }
+
+    /**
      * Get IMU parameters
      * @return IMU parameters
      * */
@@ -126,9 +148,9 @@ public class Robot_2022FF {
      * */
     public void setupRobot() throws InterruptedException{
         //reverse the needed motors?
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+//        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 //        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+//        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 //        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

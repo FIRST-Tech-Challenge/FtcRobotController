@@ -18,7 +18,6 @@ public class Auto_2022_noPID extends LinearOpMode {
 
     //robot parts
     private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft;
-    private DcMotor intake;
     private CRServo duck;
     private BNO055IMU imu;
 
@@ -42,7 +41,6 @@ public class Auto_2022_noPID extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
-        intake = hardwareMap.dcMotor.get("intake");
         duck = hardwareMap.crservo.get("duck");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -50,7 +48,7 @@ public class Auto_2022_noPID extends LinearOpMode {
         distsense = hardwareMap.get(DistanceSensor.class,"distsense");
 
         //create robot object
-        robot = new Robot_2022FF(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, intake, duck, imu, this);
+        robot = new Robot_2022FF(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, duck, imu, this);
 
         //setup robot
         robot.setupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
@@ -75,8 +73,6 @@ public class Auto_2022_noPID extends LinearOpMode {
         });
 
         waitForStart();//if there is a camera error... and it crashes the program... then we need to find a way to "pause stream"
-        telemetry.addData("distance reading:", distsense.getDistance(DistanceUnit.CM));
-        telemetry.update();
 
         int code = mainPipeline.getCode();//get the code before we move
         telemetry.addData("barcode value", code);
@@ -85,15 +81,17 @@ public class Auto_2022_noPID extends LinearOpMode {
         }
         telemetry.update();
         //caroseul
-        robot.gyroStrafeCm(0.5,90,62);//2 feet+a bit more(error) to right. todo change the cm
         robot.duck(1);//turn on duck
+        robot.gyroStrafeCm(0.5,-90,50);//2 feet+a bit more(error) to right. todo change the cm, direction
         Thread.sleep(3000);
         robot.duck(0);
 
         //to hub
         //todo: adjust these values to make it work! You only need to change cm really, and maybe flip the angle for the second strafe if it's going in the wrong direction
-        robot.gyroStrafeCm(0.5,Math.atan2(4.0,3.0),152);//todo may need to make it 2 sides of rectangle instead of hypotenuse?
-        robot.gyroStrafeCm(0.5, -90, 20);
+//        robot.gyroStrafeCm(0.5,Math.atan2(4.0,3.0),152);//todo may need to make it 2 sides of rectangle instead of hypotenuse?
+        robot.gyroStrafeCm(0.5, 90, 20);
+        robot.gyroStrafeCm(0.5,90,36);
+        robot.gyroStrafeCm(0.5,0,36);
 
         switch (code) {//shell for later, do not delete!!!
             case 2:
@@ -112,32 +110,35 @@ public class Auto_2022_noPID extends LinearOpMode {
                 break;
         }
 
+        Thread.sleep(4000);//imitating dumping
+
         //go to warehouse
         robot.gyroTurn(90,0.5);
-        robot.gyroDriveSec(1, 3);//todo change the seconds! we don't have a sensor yet, so go with this for now
-
-        //might add sensor here, but need to make sure we have!
-        //also bruhhhh they put the picture not in the warehouse! it might have been helpful if the picture was int eh warehouse bc we might be able to use openCV to detect the wall...
+        while(distsense.getDistance(DistanceUnit.CM) > 10) {
+            robot.tankDrive(0.5, 0.5);
+            telemetry.addData("distance reading:", distsense.getDistance(DistanceUnit.CM));
+            telemetry.update();
+        }
 
         //pick up element
         //todo make this a method later, NOT NOW finish testing first
-        robot.intake(1);
-        robot.gyroDriveSec(0.2, 1);
-        robot.gyroDriveSec(-0.2, 1);
-        robot.intake(0);
-
-        //drive back to hub
-        robot.gyroDriveSec(-1, 3);//todo change the seconds
-
-        //drop in bottom of hub
-        robot.pidGyroTurn(-90);
-
-        //park in warehouse, else park in box
-        //warehouse
-        robot.pidGyroTurn(90);
-        robot.gyroDriveSec(1, 3);//warehouse. todo also change seconds here
-        //box
-        robot.pidGyroStrafeCm(90, 60);//todo change cm
+//        robot.intake(1);
+//        robot.gyroDriveSec(0.2, 1);
+//        robot.gyroDriveSec(-0.2, 1);
+//        robot.intake(0);
+//
+//        //drive back to hub
+//        robot.gyroDriveSec(-1, 3);//todo change the seconds
+//
+//        //drop in bottom of hub
+//        robot.pidGyroTurn(-90);
+//
+//        //park in warehouse, else park in box
+//        //warehouse
+//        robot.pidGyroTurn(90);
+//        robot.gyroDriveSec(1, 3);//warehouse. todo also change seconds here
+//        //box
+//        robot.pidGyroStrafeCm(90, 60);//todo change cm
 
 
     }

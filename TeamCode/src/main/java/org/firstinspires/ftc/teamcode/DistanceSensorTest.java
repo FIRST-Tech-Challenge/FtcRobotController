@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name = "Blue Caroseul Side Test")
+@TeleOp(name = "distance test")
 public class DistanceSensorTest extends LinearOpMode {
 
     private DistanceSensor distsense;
@@ -17,6 +17,11 @@ public class DistanceSensorTest extends LinearOpMode {
         distsense = hardwareMap.get(DistanceSensor.class,"distsense");
         waitForStart();
         while(opModeIsActive()) {
+            telemetry.addData("deviceName",distsense.getDeviceName() );
+            telemetry.addData("range", String.format("%.01f mm", distsense.getDistance(DistanceUnit.MM)));
+            telemetry.addData("range", String.format("%.01f cm", distsense.getDistance(DistanceUnit.CM)));
+            telemetry.addData("range", String.format("%.01f m", distsense.getDistance(DistanceUnit.METER)));
+            telemetry.addData("range", String.format("%.01f in", distsense.getDistance(DistanceUnit.INCH)));
             telemetry.addData("distance reading:", distsense.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
