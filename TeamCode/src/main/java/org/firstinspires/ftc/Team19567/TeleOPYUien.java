@@ -141,29 +141,29 @@ public class TeleOPYUien extends OpMode {           //Declares the class TestOPI
                 alliance2 = false;
             }
             delay++;
-            if (gamepad2.dpad_right) {
-                linearSlidePos = 0;
-                releaseServoPos = releaseServo.MAX_POSITION;
+        if (gamepad2.dpad_right) {
+            linearSlidePos = 0;
+            releaseServoPos = releaseServo.MAX_POSITION;
             }
-            if (gamepad2.dpad_left) sharedHub = true;
-            if (sharedHub) {
-                linearSlidePos = 1600;
-                if (delay1 >= 40) {
-                    releaseServoPos = releaseServo.MIN_POSITION;
-                    delay1 = 0;
-                    sharedHub = false;
+        if (gamepad2.dpad_left) sharedHub = true;
+        if (sharedHub) {
+            linearSlidePos = 1600;
+            if (delay1 >= 40) {
+                releaseServoPos = releaseServo.MIN_POSITION;
+                delay1 = 0;
+                sharedHub = false;
                 }
-                delay1++;
+            delay1++;
             }
-            if (gamepad2.y) alliance3 = true;
-            if (alliance3) {
-                linearSlidePos = 1600;
-                if (delay2 >= 40) {
-                    releaseServoPos = releaseServo.MIN_POSITION;
-                    delay2 = 0;
-                    alliance3 = false;
+        if (gamepad2.y) alliance3 = true;
+        if (alliance3) {
+            linearSlidePos = 1600;
+            if (delay2 >= 40) {
+                releaseServoPos = releaseServo.MIN_POSITION;
+                delay2 = 0;
+                alliance3 = false;
                 }
-                delay2++;
+            delay2++;
             }
 
 //MOTOR SET POWER
