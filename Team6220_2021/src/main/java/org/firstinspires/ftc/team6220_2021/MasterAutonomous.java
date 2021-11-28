@@ -16,8 +16,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorFrontRight.setPower(rightSidePower);
         motorBackRight.setPower(rightSidePower);
     }
-
-
     public void turnDegrees(double targetAngle) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

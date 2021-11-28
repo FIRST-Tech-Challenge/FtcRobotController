@@ -53,13 +53,11 @@ public class BlueFullAuto extends MasterOpMode{
             ArmPosition = -220;
             ServoPosition = 0.6;
             DriveAdjust = 23;
-        }
-        else if (Detection == 2){
+        } else if (Detection == 2){
             ArmPosition = -470;
             ServoPosition = 0.8;
             DriveAdjust = 21;
-        }
-        else if (Detection == 3){
+        } else if (Detection == 3){
             ArmPosition = -720;
             ServoPosition = 1;
             DriveAdjust = 25;

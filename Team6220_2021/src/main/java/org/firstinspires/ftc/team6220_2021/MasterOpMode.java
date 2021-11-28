@@ -169,7 +169,6 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorFrontRight.setPower(0.7);
         motorBackRight.setPower(0.6);
     }
-
     // Pauses for time milliseconds
     public void pauseMillis(double time) {
         double startTime = System.currentTimeMillis();
