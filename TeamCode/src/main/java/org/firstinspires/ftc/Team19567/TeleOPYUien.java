@@ -29,14 +29,18 @@ public class TeleOPYUien extends OpMode {           //Declares the class TestOPI
     private double linearSlidePos = 0.0;
     private double releaseServoPos = 0.0;
     private double intakeServoPos = 0.0;
-    private boolean alliance3 = false;
-    private boolean alliance2 = false;
-    private boolean sharedHub = false;
     private boolean isSlowmode = false;
     private double acc = 1.0;
-    private int delay = 0;
-    private int delay1 = 0;
-    private int delay2 = 0;
+    private int presetDelay = 0;
+
+    public enum TELEOPLOCATIONS {
+        SHARED_HUB,
+        ALLIANCE_FIRST,
+        ALLIANCE_SECOND,
+        ALLIANCE_THIRD
+    }
+
+    private TELEOPLOCATIONS location = TELEOPLOCATIONS.ALLIANCE_THIRD;
 
     @Override
     public void init() {
@@ -132,39 +136,29 @@ public class TeleOPYUien extends OpMode {           //Declares the class TestOPI
         else if (gamepad1.dpad_up || gamepad2.dpad_up)
             releaseServoPos = Range.clip(releaseServoPos - 0.006, releaseServo.MIN_POSITION, releaseServo.MAX_POSITION);
 
-        if (gamepad2.y) alliance2 = true;
-        if (alliance2) {
-            linearSlidePos = 1000;
-            if (delay >= 40) {
-                releaseServoPos = releaseServo.MIN_POSITION;
-                delay = 0;
-                alliance2 = false;
-            }
-            delay++;
         if (gamepad2.b) {
             linearSlidePos = 0;
             releaseServoPos = releaseServo.MAX_POSITION;
+        }
+
+        if (gamepad2.y) location = TELEOPLOCATIONS.ALLIANCE_SECOND;
+        if (gamepad2.x) location = TELEOPLOCATIONS.SHARED_HUB;
+        if (gamepad2.y) location = TELEOPLOCATIONS.ALLIANCE_THIRD;
+
+        switch(location) {
+            case SHARED_HUB: {
+                //.....
             }
-        if (gamepad2.x) sharedHub = true;
-        if (sharedHub) {
-            linearSlidePos = 1600;
-            if (delay1 >= 40) {
-                releaseServoPos = releaseServo.MIN_POSITION;
-                delay1 = 0;
-                sharedHub = false;
-                }
-            delay1++;
+            case ALLIANCE_SECOND: {
+                //.....
             }
-        if (gamepad2.y) alliance3 = true;
-        if (alliance3) {
-            linearSlidePos = 1600;
-            if (delay2 >= 40) {
-                releaseServoPos = releaseServo.MIN_POSITION;
-                delay2 = 0;
-                alliance3 = false;
-                }
-            delay2++;
+            case ALLIANCE_THIRD: {
+                //.....
             }
+            default: {
+                break;
+            }
+        }
 
 //MOTOR SET POWER
             leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
@@ -185,7 +179,6 @@ public class TeleOPYUien extends OpMode {           //Declares the class TestOPI
                     leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed, carouselPower, intakePower, linearSlidePos, releaseServoPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
             //(%.2f) is used here so that the displayed motor speeds aren't excessively long and don't cldfasdfasdtter(andy's one contribution) the screen.
             telemetry.update(); //Updates the telemetry
-        }
     }
 
     @Override
