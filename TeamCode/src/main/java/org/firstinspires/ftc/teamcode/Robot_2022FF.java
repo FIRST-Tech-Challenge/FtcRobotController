@@ -40,7 +40,7 @@ public class Robot_2022FF {
     private Telemetry telemetry;
 
     private final double DRIVE_WHEEL_CIRCUMFERENCE = 9.6 * Math.PI;
-    private final double MOTOR_RPM = 435;//CHANGE!!! maybe not change?
+    private final double MOTOR_RPM = 312;
     private final double MOTOR_SPR = 60/MOTOR_RPM;//CHANGE
     private final double SECONDS_PER_CM = MOTOR_SPR/DRIVE_WHEEL_CIRCUMFERENCE;
     private final double TICKS_PER_CM =34.225;//CHANGE!!!!!!
@@ -559,6 +559,9 @@ public class Robot_2022FF {
 
         //strafe using gyro to keep robot facing straight for
         while(timer.seconds() < seconds && opMode.opModeIsActive()){
+            telemetry.addData("moving in direction",angle);
+            telemetry.addData("moving for ",seconds);
+            telemetry.addData("current time:",timer.seconds());
             //Get a correction
             double correction = getCorrection();
             //Use the correction to adjust robot power so robot faces straight

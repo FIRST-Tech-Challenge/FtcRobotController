@@ -80,8 +80,9 @@ public class Auto_2022_noPID extends LinearOpMode {
             telemetry.addData("assuming", "1");
         }
         telemetry.update();
+
         //caroseul
-        robot.duck(1);//turn on duck
+        robot.duck(-1);//turn on duck
         robot.gyroStrafeCm(0.5,-90,50);//2 feet+a bit more(error) to right. todo change the cm, direction
         Thread.sleep(3000);
         robot.duck(0);
