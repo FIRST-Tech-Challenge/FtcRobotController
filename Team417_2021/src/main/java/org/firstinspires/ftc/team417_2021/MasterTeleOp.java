@@ -11,11 +11,6 @@ abstract public class MasterTeleOp extends MasterOpMode {
     double wristPos = 0.0;
     Toggler grabberToggle = new Toggler();
     boolean grabberState = false;
-    boolean armRunning = false;
-    final int SHOULDER_PICK_UP = -1340;
-    final int ELBOW_PICK_UP = 1900;
-    final int SHOULDER_LEVEL_1 = -1340;
-    final int ELBOW_LEVEL_1 = 1900;
 
     public void driveRobotUsingController() {
         double drivePower = - gamepad1.right_stick_y;
@@ -24,16 +19,12 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
         drivePower *= 1 - (0.8 * gamepad1.right_trigger);
         rotationalPower *= 1 - (0.8 * gamepad1.right_trigger);
-        /*telemetry.addData("FL", motorFL.getCurrentPosition());
-        telemetry.addData("FR", motorFR.getCurrentPosition());
-        telemetry.addData("BL", motorBL.getCurrentPosition());
-        telemetry.addData("BR", motorBR.getCurrentPosition());
-        telemetry.update();
-*/
+
         drive(drivePower, rotationalPower);
     }
 
-    public void simpleControlArm() {
+    // joysticks change target position of arm joints
+    public void encoderControlArm() {
         shoulderPos += gamepad2.left_stick_y * 6;
         elbowPos += gamepad2.right_stick_y * 6;
         telemetry.addData("Shoulder", shoulderPos);
@@ -43,9 +34,12 @@ abstract public class MasterTeleOp extends MasterOpMode {
         runMotorToPosition(elbowMotor, elbowPos, .1);
     }
 
-    public void controlArmPower() {
+    public void controlMechanisms() {
+        // joysticks change power of arm joints
         shoulderMotor.setPower(gamepad2.left_stick_y);
         elbowMotor.setPower(gamepad2.right_stick_y);
+
+        // if wrist servo position needs to be changed
         if (gamepad2.dpad_up) {
             wristPos += 0.1;
             wristServo.setPosition(wristPos);
@@ -53,6 +47,8 @@ abstract public class MasterTeleOp extends MasterOpMode {
             wristPos -= 0.1;
             wristServo.setPosition(wristPos);
         }
+
+        // control grabber
         grabberState = grabberToggle.toggle(gamepad2.a);
         if (grabberState) {
             grabberServo.setPosition(GRABBER_OUT);
@@ -60,72 +56,14 @@ abstract public class MasterTeleOp extends MasterOpMode {
             grabberServo.setPosition(GRABBER_IN);
         }
 
+        // carousel
         if (gamepad2.right_trigger != 0) {
-            carouselMotor.setPower(0.5);
+            carouselMotor.setPower(0.8);
         } else if (gamepad2.left_trigger != 0) {
-            carouselMotor.setPower(-0.5);
+            carouselMotor.setPower(-0.8);
         } else {
             carouselMotor.setPower(0);
         }
-/*
-        if (gamepad2.x && !shoulderMotor.isBusy() && !elbowMotor.isBusy()) {
-            shoulderPos = SHOULDER_PICK_UP;
-            elbowPos = ELBOW_PICK_UP;
-
-            shoulderMotor.setTargetPosition(SHOULDER_PICK_UP);
-            shoulderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            shoulderMotor.setPower(0.5);
-
-            elbowMotor.setTargetPosition(ELBOW_PICK_UP);
-            elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elbowMotor.setPower(0.5);
-
-            armRunning = true;
-        }*/
-/*
-        if (armRunning) {
-            if (Math.abs(shoulderPos - shoulderMotor.getCurrentPosition()) > 10) {
-                shoulderMotor.setPower(Math.signum(shoulderPos - shoulderMotor.getCurrentPosition()) * 0.7);
-            }
-            if (Math.abs(elbowPos - elbowMotor.getCurrentPosition()) > 10) {
-                elbowMotor.setPower(Math.signum(elbowPos - elbowMotor.getCurrentPosition()) * 0.7);
-            }
-            if (!(Math.abs(elbowPos - elbowMotor.getCurrentPosition()) > 10)) {
-                elbowMotor.setPower(0);
-            }
-            if (!(Math.abs(shoulderPos - shoulderMotor.getCurrentPosition()) > 10)) {
-                shoulderMotor.setPower(0);
-            }
-            // if both have little error stop
-            if (!(Math.abs(elbowPos - elbowMotor.getCurrentPosition()) > 10) &&
-                    !(Math.abs(shoulderPos - shoulderMotor.getCurrentPosition()) > 10)) {
-                armRunning = false;
-            }
-        }*/
-        // if x and motor is not busy then run to position
-/*
-        if (armRunning) {
-            if (Math.abs(shoulderPos - shoulderMotor.getCurrentPosition()) > 10) {
-                shoulderMotor.setTargetPosition(SHOULDER_PICK_UP);
-                shoulderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                shoulderMotor.setPower(0.5);
-            }
-            if (Math.abs(elbowPos - elbowMotor.getCurrentPosition()) > 10) {
-                elbowMotor.setTargetPosition(ELBOW_PICK_UP);
-                elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elbowMotor.setPower(0.5);            }
-            if (!(Math.abs(elbowPos - elbowMotor.getCurrentPosition()) > 10)) {
-                elbowMotor.setPower(0);
-            }
-            if (!(Math.abs(shoulderPos - shoulderMotor.getCurrentPosition()) > 10)) {
-                shoulderMotor.setPower(0);
-            }
-            // if both have little error stop
-            if (!(Math.abs(elbowPos - elbowMotor.getCurrentPosition()) > 10) &&
-                    !(Math.abs(shoulderPos - shoulderMotor.getCurrentPosition()) > 10)) {
-                armRunning = false;
-            }
-        }*/
 
         telemetry.addData("toggle", grabberState);
         telemetry.addData("shoulder target", shoulderPos);
@@ -140,13 +78,5 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     }
 
-    public void runMotorToPosition(DcMotor motor, int targetPosition, double power) {
-
-        motor.setTargetPosition(targetPosition);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPower(power);
-
-
-    }
 
 }

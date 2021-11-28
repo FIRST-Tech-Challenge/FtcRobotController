@@ -38,7 +38,7 @@ abstract public class MasterAutonomous extends MasterOpMode {
         motorFR.setPower(0);
     }
 
-    public void move3(double inches, double maxSpeed) throws InterruptedException {
+    public void moveInches(double inches, double maxSpeed) throws InterruptedException {
 
         double movingPower;
         double turningPower;
@@ -53,7 +53,6 @@ abstract public class MasterAutonomous extends MasterOpMode {
         moveFilter.reset();
         do {
 
-            //robot.updatePosition();
             currentInches = robotInches() - initialInches;
             errorDistance = inches - currentInches;
             errorAngle = robot.getCorrectedHeading() - targetAngle;
@@ -61,11 +60,11 @@ abstract public class MasterAutonomous extends MasterOpMode {
             moveFilter.roll(errorDistance);
             turnFilter.roll(errorAngle);
 
-            movingPower = Range.clip(moveFilter.getFilteredValue(), -maxSpeed, maxSpeed) ;
+            movingPower = Range.clip(moveFilter.getFilteredValue(), -maxSpeed, maxSpeed);
             turningPower = turnFilter.getFilteredValue();
             drive(movingPower, turningPower);
             telemetry.addData("dist", errorDistance);
-            telemetry.update(); // error getting bigger, moving backwards when supposed to move forward
+            telemetry.update();
 
         } while ((Math.abs(errorAngle) > angleTolerance || Math.abs(errorDistance) > distanceTolerance) && opModeIsActive() );
         motorFR.setPower(0);
@@ -75,72 +74,10 @@ abstract public class MasterAutonomous extends MasterOpMode {
         telemetry.clear();
     }
 
+    // returns average value of all drive encoders, converted to inches
     public double robotInches() {
-        return ((float) motorFL.getCurrentPosition() + motorBL.getCurrentPosition() + motorFR.getCurrentPosition() + motorBR.getCurrentPosition() ) / ( 4 * COUNTS_PER_INCH );
-    }
-
-    public void move2(double targetX, double targetY, double maxSpeed) throws InterruptedException {
-        double movingPower;
-        double turningPower;
-        double errorX;
-        double errorY;
-        double targetAngle = robot.curAngle;
-        double angleToTarget;
-        double errorAngle;
-        double initialDistanceToTarget = Math.hypot(targetX - robot.currentX, targetY - robot.currentY);
-        double distanceToTarget;
-        double distanceTolerance = 0.5;
-
-        //This clears any residual vales in our PID loop
-        turnFilter.reset();
-        moveFilter.reset();
-
-        errorX = robot.currentX - targetX;
-        errorY = robot.currentY - targetY;
-        angleToTarget = - Math.toDegrees(Math.atan2(errorX, errorY));
-
-        do {
-            robot.updatePosition();
-            errorX = robot.currentX - targetX;
-            errorY = robot.currentY - targetY;
-
-            angleToTarget = - Math.toDegrees(Math.atan2(errorX, errorY));
-
-
-            errorAngle = robot.getCorrectedHeading() - angleToTarget;
-            distanceToTarget = Math.hypot(errorX, errorY);
-
-            moveFilter.roll(distanceToTarget);
-            turnFilter.roll(errorAngle);
-
-            movingPower = Range.clip(moveFilter.getFilteredValue(), -maxSpeed, maxSpeed);
-            turningPower = turnFilter.getFilteredValue();
-
-            drive(movingPower, turningPower);
-
-            telemetry.addData("Angle to target", angleToTarget);
-            telemetry.addData("distance", distanceToTarget);
-            //telemetry.addData("Error angle", errorAngle);
-            telemetry.addData("ErX", errorX);
-            telemetry.addData("ErY", errorY);
-            telemetry.addData("Current X", robot.currentX);
-            telemetry.addData("Current Y", robot.currentY);
-
-            telemetry.addData("Moving Power", movingPower);
-            telemetry.addData("Turning Power", turningPower);
-            telemetry.addData("Current Heading", robot.curAngle);
-            telemetry.update();
-
-            //telemetry.addData("angle to target", angleToTarget);
-            telemetry.update();
-
-        } while ((Math.abs(errorAngle) > angleTolerance || distanceToTarget > distanceTolerance) && opModeIsActive());
-
-        motorFR.setPower(0);
-        motorFL.setPower(0);
-        motorBR.setPower(0);
-        motorBL.setPower(0);
-        telemetry.clear();
+        return ((float) motorFL.getCurrentPosition() + motorBL.getCurrentPosition() +
+                motorFR.getCurrentPosition() + motorBR.getCurrentPosition() ) / ( 4 * COUNTS_PER_INCH );
     }
 
     public void move(double targetX, double targetY, double maxSpeed) throws InterruptedException {
@@ -197,8 +134,6 @@ abstract public class MasterAutonomous extends MasterOpMode {
             telemetry.addData("Turning Power", turningPower);
             telemetry.addData("Current Heading", robot.curAngle);
             telemetry.update();
-
-
 
             idle();
         } while ((Math.abs(errorAngle) > angleTolerance || distanceToTarget > distanceTolerance) && opModeIsActive());

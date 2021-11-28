@@ -37,8 +37,17 @@ abstract public class MasterOpMode extends LinearOpMode {
     static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
-    final double GRABBER_IN = 0.9;
-    final double GRABBER_OUT = 0.5;
+    // arm and grabber constants
+    static final double GRABBER_IN = 0.9;
+    static final double GRABBER_OUT = 0.5;
+    static final int ELBOW_LEVEL_1 = 0;
+    static final int ELBOW_LEVEL_2 = 0;
+    static final int ELBOW_LEVEL_3 = -1300;
+    static final int ELBOW_CAP = 0;
+    static final int SHOULDER_LEVEL_1 = -1500;
+    static final int SHOULDER_LEVEL_2 = -1600;
+    static final int SHOULDER_LEVEL_3 = 0;
+    static final int SHOULDER_CAP = 0; // todo get correct values
 
     protected void initializeHardware() {
 
@@ -133,6 +142,15 @@ abstract public class MasterOpMode extends LinearOpMode {
         motorFR.setPower(frontRight);
         motorBL.setPower(backLeft);
         motorBR.setPower(backRight);
+    }
+
+    public void runMotorToPosition(DcMotor motor, int targetPosition, double power) {
+
+        motor.setTargetPosition(targetPosition);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(power);
+
+
     }
 
 }
