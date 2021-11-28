@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_2021;
+package org.firstinspires.ftc.team6220_2021.ResourceClasses;
 
 /**
  Proportional-Integral-Derivative Filter
@@ -13,31 +13,27 @@ package org.firstinspires.ftc.team6220_2021;
  -First derivative control. (e.g. a motor power)
  */
 
-public class PIDFilter implements Filter
-{
+public class PIDFilter implements Filter {
     // Proportional coefficient
-    private double P;
+    private final double P;
     // Integral coefficient
-    private double I;
+    private final double I;
     // Derivative coefficient
-    private double D;
+    private final double D;
 
     // Construct filter with the coefficients
-    public PIDFilter(double P, double I, double D)
-    {
+    public PIDFilter(double P, double I, double D) {
         this.P = P;
         this.I = I;
         this.D = D;
     }
-
 
     public double[] values = new double[2];
     public double sum = 0;
     public double dV  = 0;
 
     // Update with new value
-    public void roll(double newValue)
-    {
+    public void roll(double newValue) {
         // Update calculated values
         sum += values[0];
         dV = values[0] - values[1];
@@ -47,8 +43,7 @@ public class PIDFilter implements Filter
         values[0] = newValue;
     }
 
-    public double getFilteredValue()
-    {
+    public double getFilteredValue() {
         return (P * values[0] ) + ( I * sum) + ( D * dV );
     }
 }
