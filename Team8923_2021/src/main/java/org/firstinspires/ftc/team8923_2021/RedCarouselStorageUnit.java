@@ -14,6 +14,7 @@ public class RedCarouselStorageUnit extends MasterAutonomous {
                 imuPivot(referenceAngle, 30, 35, 0.015, 3.0);
                 moveForward(-3.9, 10, 10);
                 spinCarouselRed();
+                moveForward(2.5, 10, 10);
                 imuPivot(referenceAngle, 90, 35, 0.015, 3.9);
                 moveForward(17, 10, 10);
                 break;

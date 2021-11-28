@@ -14,8 +14,7 @@ public class BlueCarouselStorageUnit extends MasterAutonomous {
             spinCarouselBlue();
 
             imuPivot(referenceAngle, -90, 35, 0.015, 3.9);
-            moveForward(30, 10, 10);
-            moveForward(10, 10, 10);
+            moveForward(20, 10, 10);
             break;
         }
     }
