@@ -3,57 +3,100 @@ package org.firstinspires.ftc.Team19567;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
+
+import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
+
+@Autonomous(name="Roadrunner Test", group="Linear Opmode")
 
 public class RoadrunnerTest extends LinearOpMode {
 
-    private tsePipeline pipeline = new tsePipeline();
+    private tsePipeline pipeline = new tsePipeline(telemetry); //Team shipping element OpenCV Pipeline
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor leftDCFront = null;
+    private DcMotor rightDCFront = null;
+    private DcMotor leftDCBack = null;
+    private DcMotor rightDCBack = null;
+    private DcMotor linearSlideDC = null;
+    private DcMotor carouselDC = null;
+    private boolean slowMode = false;
+    private Servo releaseServo = null;
+    private BNO055IMU imu = null;
+    private LOCATION location = LOCATION.ALLIANCE_THIRD;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        leftDCFront = hardwareMap.get(DcMotor.class, "leftFront");
+        rightDCFront = hardwareMap.get(DcMotor.class, "rightFront");
+        leftDCBack = hardwareMap.get(DcMotor.class, "leftBack");
+        rightDCBack = hardwareMap.get(DcMotor.class, "rightBack");
+        linearSlideDC = hardwareMap.get(DcMotor.class, "linearSlideDC");
+        carouselDC = hardwareMap.get(DcMotor.class, "carouselDC");
+        releaseServo = hardwareMap.get(Servo.class, "releaseServo");
+
         SampleMecanumDrive chassis = new SampleMecanumDrive(hardwareMap);
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
 
-        waitForStart();
-
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 camera.setPipeline(pipeline);
                 camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+                telemetry.addData("OpenCV","OpenCV actually connected wow");
+                telemetry.update();
+
+                waitForStart();
+                switch(pipeline.getLocation()) {
+                    case ALLIANCE_FIRST: {
+                        location = LOCATION.ALLIANCE_FIRST;
+                        telemetry.addData("OpenCV","First Level Detected");
+                        telemetry.update();
+                    }
+                    case ALLIANCE_SECOND: {
+                        location = LOCATION.ALLIANCE_SECOND;
+                        telemetry.addData("OpenCV","Second Level Detected");
+                        telemetry.update();
+                    }
+                    case ALLIANCE_THIRD: {
+                        location = LOCATION.ALLIANCE_THIRD;
+                        telemetry.addData("OpenCV","Third Level Detected");
+                        telemetry.update();
+                    }
+                    default: {
+                        location = LOCATION.ALLIANCE_THIRD;
+                    }
+                }
             }
             @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
+            public void onError(int errorCode) {
+                telemetry.addData("OpenCV","OpenCV failed to load :( Error Code: " + errorCode);
+                telemetry.update();
             }
         });
+        waitForStart();
 
-        Trajectory woggywou = chassis.trajectoryBuilder(new Pose2d(0,0,0)).forward(10).build();
-        chassis.followTrajectory(woggywou);
+        if(!opModeIsActive()) return;
 
-        Trajectory goihou = chassis.trajectoryBuilder(new Pose2d(10,10,0)).lineTo(new Vector2d(0,0)).build();
-        chassis.followTrajectory(goihou);
-
-        Trajectory faiyoi = chassis.trajectoryBuilder(new Pose2d(0,0,0)).strafeLeft(15).build();
-        chassis.followTrajectory(faiyoi);
-
-        Trajectory fazhedyoi = chassis.trajectoryBuilder(new Pose2d(0,0,0)).strafeTo(new Vector2d(0,15)).build();
-        chassis.followTrajectory(fazhedyoi);
-
-        Trajectory byozilious = chassis.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(90))).splineTo(new Vector2d(15,15),Math.toRadians(90)).build();
-        chassis.followTrajectory(byozilious);
+        chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(90))).waitSeconds(5)
+                .lineToSplineHeading(new Pose2d(7,-24,0))
+                .waitSeconds(3)
+                .lineTo(new Vector2d(12,-64)).strafeTo(new Vector2d(47,-64)).waitSeconds(3)
+                .strafeTo(new Vector2d(15,-64)).lineToSplineHeading(new Pose2d(-11.5,-41,Math.toRadians(-90)))
+                .waitSeconds(3).lineToSplineHeading(new Pose2d(12,-64,0)).strafeTo(new Vector2d(45,-64)).waitSeconds(3)
+                .build().start();
     }
 }

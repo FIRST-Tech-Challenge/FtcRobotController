@@ -1,0 +1,17 @@
+apply plugin: "java";
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+    google() // Needed for androidx
+    maven { url 'https://jitpack.io' }
+    jcenter();
+}
+
+dependencies {
+    implementation 'com.github.NoahBres:MeepMeep:1.0.6'
+}
