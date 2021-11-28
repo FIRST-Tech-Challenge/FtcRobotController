@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TeleOp Comp", group = "TeleOp")
-public class TeleOpComp extends LinearOpMode{
+public class TeleOpComp extends MasterOpMode{
     // Declaring motors and servos
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
@@ -26,7 +26,7 @@ public class TeleOpComp extends LinearOpMode{
     double x = 0.7;
 
     //for run to position or manual control
-    boolean toposition = true;
+    boolean toPosition = true;
 
     //Other Devices
     BNO055IMU imu;
@@ -124,7 +124,6 @@ public class TeleOpComp extends LinearOpMode{
 
             if (gamepad1.left_trigger>0){
                 speed = 0.3;
-
             }
             else {
                 speed = 1;
@@ -138,7 +137,7 @@ public class TeleOpComp extends LinearOpMode{
                     position += increase;
                 }
                 addingticks = 0;
-                toposition = true;
+                toPosition = true;
                 isPressed = true;
             }
 
@@ -151,10 +150,9 @@ public class TeleOpComp extends LinearOpMode{
                     position -= increase;
                 }
                 addingticks = 0;
-                toposition = true;
+                toPosition = true;
                 isPressed = true;
             }
-
             else {
                 motorPower = 0.5;
             }
@@ -162,14 +160,12 @@ public class TeleOpComp extends LinearOpMode{
             if (gamepad2.left_bumper) {
                 addingticks -= 1;
             }
-            if (gamepad2.right_bumper) {
+            else if (gamepad2.right_bumper) {
                 addingticks += 1;
             }
+
             motorArm.setTargetPosition(tickvalue + addingticks);
             motorArm.setPower(0.9);
-
-
-
 
             if (position < 0){
                 position = 0;
@@ -221,12 +217,6 @@ public class TeleOpComp extends LinearOpMode{
                     }
                 }
             }
-        }
-    }
-    public void pauseMillis(double time) {
-        double startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime < time && opModeIsActive()) {
-            idle();
         }
     }
 }
