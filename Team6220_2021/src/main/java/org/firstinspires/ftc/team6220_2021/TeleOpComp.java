@@ -124,8 +124,7 @@ public class TeleOpComp extends MasterOpMode{
 
             if (gamepad1.left_trigger>0){
                 speed = 0.3;
-            }
-            else {
+            } else {
                 speed = 1;
             }
             telemetry.addData("Motor Ticks: ", motorArm.getCurrentPosition());
@@ -144,23 +143,20 @@ public class TeleOpComp extends MasterOpMode{
             // checks old arm position, when it goes over the top of the robot from back to front, it reduces speed
             if (!gamepad2.dpad_up && !gamepad2.dpad_down){
                 isPressed = false;
-            }
-            else if (gamepad2.dpad_down){
+            } else if (gamepad2.dpad_down){
                 if (!isPressed) {
                     position -= increase;
                 }
                 addingticks = 0;
                 toPosition = true;
                 isPressed = true;
-            }
-            else {
+            } else {
                 motorPower = 0.5;
             }
 
             if (gamepad2.left_bumper) {
                 addingticks -= 1;
-            }
-            else if (gamepad2.right_bumper) {
+            } else if (gamepad2.right_bumper) {
                 addingticks += 1;
             }
 
@@ -169,15 +165,13 @@ public class TeleOpComp extends MasterOpMode{
 
             if (position < 0){
                 position = 0;
-            }
-            else if (position > 6){
+            } else if (position > 6){
                 position = 6;
             }
 
             if(gamepad2.x) {
                 servoGrabber.setPosition(0.34);
-            }
-            else if (gamepad2.a) {
+            } else if (gamepad2.a) {
                 servoGrabber.setPosition(0.7);
             }
 
@@ -198,8 +192,7 @@ public class TeleOpComp extends MasterOpMode{
                         break;
                     }
                 }
-            }
-            else if (gamepad1.left_bumper) {
+            } else if (gamepad1.left_bumper) {
                 x = -0.7;
                 while (true) {
                     motorDuck.setPower(x);

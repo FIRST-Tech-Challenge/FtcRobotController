@@ -15,7 +15,7 @@ import org.firstinspires.ftc.team6220_2021.MasterOpMode;
 
 @TeleOp(name = "Speed Test", group = "TeleOp")
 @Disabled
-public class speedtest extends MasterOpMode {
+public class SpeedTest extends MasterOpMode {
     // Declaring motors and servos
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
