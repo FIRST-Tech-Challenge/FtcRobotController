@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
-@Autonomous(name = "RedBlockPlace", group = "Autonomous")
-public class RedParkBlockPLace extends MasterOpMode{
+@Disabled
+@TeleOp(name = "TickTest", group = "TeleOp")
+public class TickTest extends MasterOpMode{
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
@@ -25,10 +27,6 @@ public class RedParkBlockPLace extends MasterOpMode{
         motorDuck = hardwareMap.dcMotor.get("motorDuck");
         servoGrabber = hardwareMap.servo.get("servoGrabber");
         servoArm = hardwareMap.servo.get("servoArm");
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -45,29 +43,13 @@ public class RedParkBlockPLace extends MasterOpMode{
         pauseMillis(500);
         servoArm.setPosition(0.01);
         waitForStart();
-        servoArm.setPosition(1);
-        motorArm.setTargetPosition(-720);
-        motorArm.setPower(0.9);
-        pauseMillis(500);
-        Forward(24,0.6);
-        pauseMillis(1000);
-        TurnAngle(-50);
-        pauseMillis(1000);
-        Forward(10, 0.5);
-        pauseMillis(1000);
-        servoGrabber.setPosition(0.7);
-        pauseMillis(700);
-        Forward(-10 , 0.3);
-        pauseMillis(500);
-        TurnAngle(143);
-        pauseMillis(1500);
-       Forward(40,0.8);
-       pauseMillis(1500);
-        servoGrabber.setPosition(0.34);
-        pauseMillis(100);
-        servoArm.setPosition(0.1);
-        motorArm.setTargetPosition(10);
-        motorArm.setPower(0.9);
-        pauseMillis(700);
+        while (opModeIsActive()) {
+            if (gamepad1.dpad_up) {
+                Forward(72, 0.5);
+            }
+            else if (gamepad1.dpad_down) {
+                TurnAngle(90);
+            }
+        }
     }
 }

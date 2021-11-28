@@ -11,9 +11,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.team6220_2021.MasterOpMode;
+
 @TeleOp(name = "Speed Test", group = "TeleOp")
 @Disabled
-public class speedtest extends LinearOpMode{
+public class speedtest extends MasterOpMode {
     // Declaring motors and servos
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
@@ -56,22 +58,13 @@ public class speedtest extends LinearOpMode{
         while (opModeIsActive()) {
             if (gamepad1.b) {
                 motorFrontRight.setPower(gamepad1.left_stick_y);
-            }
-            else if (gamepad1.x) {
+            } else if (gamepad1.x) {
                 motorFrontLeft.setPower(gamepad1.left_stick_y);
-            }
-            else if (gamepad1.a) {
+            } else if (gamepad1.a) {
                 motorBackRight.setPower(gamepad1.left_stick_y);
-            }
-            else if (gamepad1.y) {
+            } else if (gamepad1.y) {
                 motorBackLeft.setPower(gamepad1.left_stick_y);
             }
-        }
-    }
-    public void pauseMillis(double time) {
-        double startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime < time && opModeIsActive()) {
-            idle();
         }
     }
 }
