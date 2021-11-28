@@ -205,7 +205,7 @@ public class Robot_2022FF {
      * Get change in angle since last reset
      * @return angle in degrees (+ CCW, - CW)
      */
-    private double getAngle(){
+    public double getAngle(){
         //Get a new angle measurement
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         //Get the difference between current angle measurement and last angle measurement

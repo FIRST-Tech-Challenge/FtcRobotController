@@ -31,6 +31,10 @@ public class Pushbot extends LinearOpMode {
             double error = 50-dist;
             telemetry.addData("current position", dist);
             telemetry.addData("error", Math.abs(error));
+
+            double angle = robot.getAngle();
+            telemetry.addData("angle", angle);
+
             telemetry.update();
         }
 

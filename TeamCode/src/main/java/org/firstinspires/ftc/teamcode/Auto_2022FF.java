@@ -74,7 +74,7 @@ public class Auto_2022FF extends LinearOpMode {
         Thread.sleep(1234);
         System.exit(1);
 
-        int code = mainPipeline.getCode();//get the code before we move
+        int code = mainPipeline.getCode();//get the code (duck position) before we move
         telemetry.addData("barcode value", code);
         if (code == 0) {
             telemetry.addData("assuming", "1");
