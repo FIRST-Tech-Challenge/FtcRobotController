@@ -114,8 +114,8 @@ public class TeleOPYUien extends OpMode {           //Declares the class TestOPI
         if (gamepad1.right_trigger > 0) intakePower = gamepad1.right_trigger;
         if (gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
         //CAROUSEL
-        if (gamepad1.x || gamepad2.x) carouselPower = -0.5;
-        else if (gamepad1.a || gamepad2.a) carouselPower = 0.5;
+        if (gamepad1.dpad_left || gamepad1.dpad_left) carouselPower = -0.5;
+        else if (gamepad1.dpad_right || gamepad1.dpad_right) carouselPower = 0.5;
         else carouselPower = 0.0;
         //LINEAR SLIDE
         if (gamepad1.left_trigger > 0) linearSlidePos += gamepad1.left_trigger * 5;
@@ -141,11 +141,11 @@ public class TeleOPYUien extends OpMode {           //Declares the class TestOPI
                 alliance2 = false;
             }
             delay++;
-        if (gamepad2.dpad_right) {
+        if (gamepad2.b) {
             linearSlidePos = 0;
             releaseServoPos = releaseServo.MAX_POSITION;
             }
-        if (gamepad2.dpad_left) sharedHub = true;
+        if (gamepad2.x) sharedHub = true;
         if (sharedHub) {
             linearSlidePos = 1600;
             if (delay1 >= 40) {
