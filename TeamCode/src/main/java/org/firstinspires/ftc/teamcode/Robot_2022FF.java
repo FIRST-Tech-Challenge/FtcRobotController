@@ -148,9 +148,9 @@ public class Robot_2022FF {
      * */
     public void setupRobot() throws InterruptedException{
         //reverse the needed motors?
-//        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 //        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-//        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 //        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -565,7 +565,7 @@ public class Robot_2022FF {
             //Get a correction
             double correction = getCorrection();
             //Use the correction to adjust robot power so robot faces straight
-            correctedTankStrafe(leftPower, rightPower, correction);
+            tankDrive(leftPower, rightPower);
         }
         completeStop();
         //Wait .5 seconds to ensure robot is stopped before continuing
