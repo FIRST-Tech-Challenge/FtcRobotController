@@ -13,15 +13,15 @@ class tsePipeline extends OpenCvPipeline {
     private Mat output = new Mat();
 
     private static final Rect LEFT_SQUARE = new Rect( //Placeholder, TBD
-        new Point(), new Point()
+        new Point(50,100), new Point(350,250)
     );
 
     private static final Rect RIGHT_SQUARE = new Rect( //Same here
-            new Point(), new Point()
+            new Point(400,100), new Point(700,250)
     );
 
     private static final Rect FAIYOI_SQUARE = new Rect(
-      new Point(), new Point()
+      new Point(25,25), new Point(125,50)
     );
 
     private static double THRESHOLD = 0.4;
@@ -42,6 +42,9 @@ class tsePipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        if(input.empty()) {
+            return input;
+        }
         Imgproc.cvtColor(input,output,Imgproc.COLOR_RGB2HSV);
         input.release();
 
