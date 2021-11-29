@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-
 @Autonomous
 public class CVAuto extends LinearOpMode {
     public EventThread eventThread = new EventThread();
@@ -13,7 +12,7 @@ public class CVAuto extends LinearOpMode {
     public void runOpMode(){
         telemetry.addLine("Starting");
         telemetry.update();
-        TseDetector webcam = new TseDetector(eventThread, hardwareMap, "webcam");
+        TseDetector webcam = new TseDetector(eventThread, hardwareMap, "webcam", true);
         waitForStart();
         telemetry.addLine("Running");
         telemetry.update();

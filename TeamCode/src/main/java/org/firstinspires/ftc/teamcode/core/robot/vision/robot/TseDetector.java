@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.core.robot.vision.robot;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -21,7 +22,7 @@ public class TseDetector {
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
 
-    public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName) {
+    public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName, boolean debug) {
         this.eventThread = eventThread;
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
@@ -36,6 +37,9 @@ public class TseDetector {
             @Override
             public void onOpened() {
                 camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, ORIENTATION);
+                if (debug) {
+                    FtcDashboard.getInstance().startCameraStream(camera, 10);
+                }
             }
 
             @Override

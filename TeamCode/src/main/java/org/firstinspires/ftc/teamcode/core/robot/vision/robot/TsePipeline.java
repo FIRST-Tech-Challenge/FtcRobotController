@@ -44,15 +44,15 @@ public class TsePipeline extends OpenCvPipeline {
     private boolean running = false;
 
     public void startPipeline() {
-        running = true;
-    }
-    public void stopPipeline() {
-        running = false;
         different = 0;
         lastFrameValue = 0;
         isComplete = false;
         checks = 0;
         frameCount = 0;
+        running = true;
+    }
+    public void stopPipeline() {
+        running = false;
     }
     /**
      * @param input input frame matrix
