@@ -24,12 +24,12 @@ public class Meccanum {
     private Servo servo0;
     private DcMotor arm;
 
-    private final double SERVO_FULLY_CLOSED = 0;
-    private final double SERVO_FULLY_OPENED = 0;
-    private final double ARM_MAX_SPEED = 0;
-    private final double HIGH_SPINNER_POWER = 0;
-    private final double OPTIMAL_SPINNER_POWER = 0;
-    private final double MOTOR_STOP = 0;
+    private final double SERVO_FULLY_CLOSED = 0; // need arm+hub to test this
+    private final double SERVO_FULLY_OPENED = 0; // need arm+hub to test this
+    private final double ARM_MAX_SPEED = 0; // preference? or maybe to be precise
+    private final double HIGH_SPINNER_POWER = 1; // probably max, may need to adjust later
+    private final double OPTIMAL_SPINNER_POWER = 0; // need spinner+hub to test this
+    private final double MOTOR_STOP = 0; // its just 0 cuz full stop
 
     private DcMotor spinner;
 
