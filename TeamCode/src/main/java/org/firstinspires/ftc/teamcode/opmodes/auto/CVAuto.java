@@ -8,19 +8,20 @@ import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 
 @Autonomous
 public class CVAuto extends LinearOpMode {
-    public EventThread eventThread = new EventThread(this::opModeIsActive);
+    public EventThread eventThread = new EventThread();
     @Override
     public void runOpMode(){
+        telemetry.addLine("Starting");
+        telemetry.update();
         TseDetector webcam = new TseDetector(eventThread, hardwareMap, "webcam");
-        Thread thread = new Thread(() -> {
+        waitForStart();
+        telemetry.addLine("Running");
+        telemetry.update();
+        while (opModeIsActive()) {
             telemetry.addData("webcamOutput", webcam.run());
             telemetry.update();
-        });
-        thread.setPriority(4);
-        waitForStart();
-        thread.start();
-        //noinspection StatementWithEmptyBody
-        while (opModeIsActive()) { }
+        }
+        eventThread.interrupt();
         requestOpModeStop();
     }
 }

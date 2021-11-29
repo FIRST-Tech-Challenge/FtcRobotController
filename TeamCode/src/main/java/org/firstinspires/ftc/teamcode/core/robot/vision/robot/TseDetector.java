@@ -52,12 +52,11 @@ public class TseDetector {
      */
     public synchronized int run() {
         pipeline.startPipeline();
-        eventThread.addEvent(new RunWhenOutputChangedOnceEvent(this::notifyAll, () -> pipeline.differentSpot().first));
-        try {
-            wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        boolean first = pipeline.differentSpot().first;
+        while (!first) {
+            first = pipeline.differentSpot().first;
         }
+        pipeline.stopPipeline();
         return pipeline.differentSpot().second;
     }
 }
