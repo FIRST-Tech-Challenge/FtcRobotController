@@ -45,7 +45,7 @@ public class Autono extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
-
+        /*
         initVuforia();
         initTfod();
 
@@ -60,7 +60,7 @@ public class Autono extends LinearOpMode {
             // (typically 16/9).
             tfod.setZoom(2.5, 16.0/9.0);
         }
-
+        */
         this.positionEstimation = new PositionEstimation(robot);
         this.positionControl = new PositionControl(robot, this.positionEstimation);
         this.positionControl.stopRobot();
@@ -108,10 +108,11 @@ public class Autono extends LinearOpMode {
                 telemetry.update();
             }
         }
-
+        /*
+        lift(-0.7, -100, 30);
         goToWayPoint(-0.15, 0.45, 0, 0.7, 30, 0.01, 1);
         setPower(0,0,0,0);
-        lift(0.7, 2230, 30);
+        lift(-0.7, -2000, 30);
         goToWayPoint(-0.15,0.65,0,0.5,30,0.01,1);
         setPower(0,0,0,0);
         robot.intakeUp.setPower(-1);
@@ -119,14 +120,21 @@ public class Autono extends LinearOpMode {
         robot.intakeUp.setPower(0);
         goToWayPoint(-0.15,0.3,-90,0.7,30,0.01,1);
         setPower(0,0,0,0);
-        lift(-0.7, 0, 15);
-        goToWayPoint(-1.48,0.1,-90,0.7,30,0.01,1);
+        lift(0.7, 0, 15);
+
+         */
+        goToWayPoint(-1.9,0.38,-90,2,80,0.01,1);
+        goToWayPoint(-1.9,0.3,-90,0.5,30,0.005,1);
         setPower(0,0,0,0);
+        this.robot.duck.setPower(-0.2);
+        sleep(3000);
+        this.robot.duck.setPower(0);
+        goToWayPoint(2,0.1,-90,2,30,0.005,1);
 
     }
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
-        targetPos[0] = y;
-        targetPos[1] = -x;
+        targetPos[0] = (y*((double)(100/39)));
+        targetPos[1] = (-x*((double)(100/39)));
         targetPos[2] = angle * Math.PI / 180; // Math.PI /2;   //heading, radian
         this.positionControl.goToTargetPosition(targetPos, vel,vw * Math.PI / 180, disRes,angleRes);
         while(!this.positionControl.checkTaskDone()){

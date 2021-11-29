@@ -79,23 +79,23 @@ public class FreightFrenzy extends LinearOpMode {
             }
 
             if(gamepad1.left_trigger > 0.5){
-                robot.lift.setPower(-0.7);
-            } else if(gamepad1.left_bumper){
                 robot.lift.setPower(0.7);
+            } else if(gamepad1.left_bumper){
+                robot.lift.setPower(-0.7);
             } else{
                 robot.lift.setPower(0);
             }
 
             if(gamepad1.dpad_up){
-                robot.lift.setPower(0.7);
+                robot.exten.setPower(0.7);
             } else if(gamepad1.dpad_down){
-                robot.lift.setPower(-0.7);
+                robot.exten.setPower(-0.7);
             } else{
-                robot.lift.setPower(0);
+                robot.exten.setPower(0);
             }
 
             if(gamepad1.b){
-                robot.duck.setPower(0.1);
+                robot.duck.setPower(0.3);
             } else{
                 robot.duck.setPower(0);
             }

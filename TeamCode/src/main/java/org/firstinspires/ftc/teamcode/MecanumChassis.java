@@ -64,7 +64,7 @@ public class MecanumChassis {
 
 
         // Define and Initialize Motors
-        duck = hwMap.get(DcMotorEx.class, "duck");
+        duck = hwMap.get(DcMotorEx.class, "spinner");
         leftFrontDrive  = hwMap.get(DcMotorEx.class, "lf");
         rightFrontDrive = hwMap.get(DcMotorEx.class, "rf");
         leftRearDrive  = hwMap.get(DcMotorEx.class, "lr");
