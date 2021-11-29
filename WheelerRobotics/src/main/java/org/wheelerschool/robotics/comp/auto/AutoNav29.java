@@ -26,8 +26,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
 
 @Autonomous
-public class AutoNav5 extends LinearOpMode {
-    // for next to carousel
+public class AutoNav29 extends LinearOpMode {
+    // for non next to caurousel
     Meccanum meccanum = new Meccanum();
 
     @Override
@@ -35,22 +35,9 @@ public class AutoNav5 extends LinearOpMode {
         meccanum.init(hardwareMap);
         waitForStart();
         while(opModeIsActive()){
-            executeAutomaticSequence2();
+            executeAutomaticSequence1();
         }
     }
-    private void executeAutomaticSequence2(){
-
-        // auto for near carousel
-        // gotta replace 0 with tested vals
-        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 0);
-
-        meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 0);
-
-        meccanum.motorDriveRelativeAngleTime(0, 0, 0);
-
-
-    }
-
     private void executeAutomaticSequence1(){
 
         // auto for near carousel
@@ -61,7 +48,9 @@ public class AutoNav5 extends LinearOpMode {
 
         meccanum.motorDriveRelativeAngleTime(0, 0, 0);
 
+
     }
+
 
 
 }

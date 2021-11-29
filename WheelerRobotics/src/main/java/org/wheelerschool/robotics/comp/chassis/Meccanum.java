@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 public class Meccanum {
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime(); // getting a warning to make it final
 
     private Servo servo0;
     private DcMotor arm;
@@ -32,7 +32,7 @@ public class Meccanum {
     public final double NORMAL_SPEED = 0.5; // preference and feel for best
     public final double SERVO_FULLY_CLOSED = 0; // need arm+hub to test this
     public final double SERVO_FULLY_OPENED = 0; // need arm+hub to test this
-    public final double HALF_SERVO_ANGLE = 0;
+    public final double HALF_SERVO_ANGLE = 0; // need arm+hub to test for this, can probably just average full open/close
     public final double ARM_MAX_SPEED = 0; // preference? or maybe to be precise
     public final double HIGH_SPINNER_POWER = 1; // probably max, may need to adjust later
     public final double OPTIMAL_SPINNER_POWER = 0; // need spinner+hub to test this
@@ -53,7 +53,7 @@ public class Meccanum {
     private volatile HardwareMap hw; // no idea if volatile means anything (impactful) in this context, but it makes me seem like I know what im doing
 
     public void init(HardwareMap hardwareMap){
-        // internal IMU setup
+        // internal IMU setup (copied and pasted, idk what it really does, but it works)
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -92,6 +92,7 @@ public class Meccanum {
         servo0.setDirection(Servo.Direction.FORWARD);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        // define hw as the hardware map for possible access later in this class
         hw = hardwareMap;
 
         runtime.reset();
@@ -109,6 +110,7 @@ public class Meccanum {
         motorDriveEncoded(motorFrontLeftPower, motorBackLeftPower, motorFrontRightPower, motorBackRightPower, ticks, motorBackLeft.getCurrentPosition(), motorFrontLeft.getCurrentPosition(), motorBackRight.getCurrentPosition(), motorFrontRight.getCurrentPosition());
     }
     private void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double ticks, int blp, int flp, int brp, int frp){ // private I think bcuz only ever accessed inside the class
+        // motors need to use encoder
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -120,13 +122,11 @@ public class Meccanum {
         final int frp = motorFrontRight.getCurrentPosition();
         final int flp = motorFrontLeft.getCurrentPosition();
         */
+        // only checking one motor for ticks rotated rn, should probably check all of them
 
-        int blip = blp; // back left initial position
-        int flip = flp;
-        int brip = brp;
-        int frip = frp;
-
-        while(abs(motorBackLeft.getCurrentPosition() - blip) < ticks) { // hopefully checks that it is within the positive or negative threshold of target ticks
+        // NOTE: not using DcMotor.setTarget() method despite it's built in pid functionality, maybe implement in future, but I dont know if it will stall the program or not like the while loop
+        // idk if the blp type vars will be static or change :/
+        while(abs(motorBackLeft.getCurrentPosition() - blp) < ticks) { // hopefully checks that it is within the positive or negative threshold of target ticks
             motorDrive(motorFrontLeftPower, motorBackLeftPower, motorFrontRightPower, motorBackRightPower);
         }
         motorStop();
