@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name="freightFrenzy")
 public class InitialMecanumTeleOp extends LinearOpMode {
 
+
+    RobotClass robot;
+
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontMotor = null;
@@ -23,14 +26,38 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     double RF; double LF; double RR; double LR;
     // declare joystick position variables
     double X1; double Y1; double X2; double Y2;
+    final int TOP_ENCODER_VALUE = 111111;
+    final int MIDDLE_ENCODER_VALUE = 1111;
+    final int BOTTOM_ENCODE_VALUE = 11;
     // operational constants
     double joyScale = 1;
     double motorMax = 0.99; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
+
+
+
+    private enum linearSlideTargets {
+        TOP,
+        MIDDLE,
+        BOTTOM,
+        BASE
+    }
+
+    public enum linearSlidePositions {
+        TOP,
+        MIDDLE,
+        BOTTOM,
+        BASE
+    }
+
+    linearSlideTargets linearSlideTarget = linearSlideTargets.BASE;
+    linearSlidePositions linearSlidePos = linearSlidePositions.BASE;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        robot = new RobotClass(hardwareMap, telemetry, this);
 
         /* Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
@@ -62,9 +89,10 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         boolean carouselOn = false; //Outside of loop()
         boolean intakeOn = false;
-        int linearSlideOn = 0;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -130,14 +158,65 @@ public class InitialMecanumTeleOp extends LinearOpMode {
 
             if (gamepad2.dpad_up) {
 //                Top scoring
+                linearSlideTarget = linearSlideTargets.TOP;
+                intakeMotor.setPower(0);
+                intakeOn = false;
+                linearSlideMotor.setPower(.4);
             }
 
             if (gamepad2.dpad_left) {
 //                Middle scoring
+                linearSlideTarget = linearSlideTargets.MIDDLE;
+                intakeMotor.setPower(0);
+                intakeOn = false;
+                linearSlideMotor.setPower(.4);
             }
 
             if (gamepad2.dpad_down) {
 //                Low scoring
+                linearSlideTarget = linearSlideTargets.BOTTOM;
+                intakeMotor.setPower(0);
+                intakeOn = false;
+                linearSlideMotor.setPower(.4);
+            }
+
+            if (gamepad2.left_trigger >= 35) {
+//                Dump
+                if (linearSlidePos != linearSlidePositions.BASE) {
+//                    dump
+                    linearSlideTarget = linearSlideTargets.BASE;
+                    linearSlideMotor.setPower(-.4);
+                }
+            }
+
+            if (linearSlideTarget == linearSlideTargets.TOP) {
+                if (linearSlideMotor.getCurrentPosition() >= TOP_ENCODER_VALUE) {
+                    linearSlideMotor.setPower(0);
+                    linearSlidePos = linearSlidePositions.TOP;
+                }
+            } else if (linearSlideTarget == linearSlideTargets.MIDDLE) {
+                if (linearSlidePos == linearSlidePositions.TOP) {
+                    linearSlideMotor.setPower(-.4);
+                }
+                if (linearSlideMotor.getCurrentPosition() == MIDDLE_ENCODER_VALUE) {
+                    linearSlideMotor.setPower(0);
+                    linearSlidePos = linearSlidePositions.MIDDLE;
+                }
+            } else if (linearSlideTarget == linearSlideTargets.BOTTOM) {
+                if (linearSlidePos == linearSlidePositions.TOP || linearSlidePos == linearSlidePositions.MIDDLE) {
+                    linearSlideMotor.setPower(-.4);
+                }
+                if (linearSlideMotor.getCurrentPosition() == BOTTOM_ENCODE_VALUE) {
+                    linearSlideMotor.setPower(0);
+                    linearSlidePos = linearSlidePositions.BOTTOM;
+                }
+            } else if (linearSlideTarget == linearSlideTargets.BASE) {
+                if (linearSlideMotor.getCurrentPosition() == 0) {
+                    linearSlideMotor.setPower(0);
+                    linearSlidePos = linearSlidePositions.BASE;
+                    intakeOn = true;
+                    intakeMotor.setPower(.8);
+                }
             }
 
         }
