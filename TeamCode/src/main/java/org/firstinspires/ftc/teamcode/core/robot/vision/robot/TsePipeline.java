@@ -52,62 +52,30 @@ public class TsePipeline extends OpenCvPipeline {
      */
     @Override
     public Mat processFrame(Mat input) {
+        Imgproc.cvtColor(input, matYCrCb, Imgproc.COLOR_RGB2YCrCb);
+        //The points needed for the rectangles are calculated here
+        int rectangleHeight = 10;
+        //The width and height of the rectangles in terms of pixels
+        int rectangleWidth = 10;
+        Rect topRect = new Rect(
+                (int) (matYCrCb.width() * topRectWidthPercentage),
+                (int) (matYCrCb.height() * topRectHeightPercentage),
+                rectangleWidth,
+                rectangleHeight
+        );
+        Rect middleRect = new Rect(
+                (int) (matYCrCb.width() * middleRectWidthPercentage),
+                (int) (matYCrCb.height() * middleRectHeightPercentage),
+                rectangleWidth,
+                rectangleHeight
+        );
+        Rect bottomRect = new Rect(
+                (int) (matYCrCb.width() * bottomRectWidthPercentage),
+                (int) (matYCrCb.height() * bottomRectHeightPercentage),
+                rectangleWidth,
+                rectangleHeight
+        );
         if (running) {
-            Imgproc.cvtColor(input, matYCrCb, Imgproc.COLOR_RGB2YCrCb);
-            //The points needed for the rectangles are calculated here
-            int rectangleHeight = 10;
-            //The width and height of the rectangles in terms of pixels
-            int rectangleWidth = 10;
-            Rect topRect = new Rect(
-                    (int) (matYCrCb.width() * topRectWidthPercentage),
-                    (int) (matYCrCb.height() * topRectHeightPercentage),
-                    rectangleWidth,
-                    rectangleHeight
-            );
-            Rect middleRect = new Rect(
-                    (int) (matYCrCb.width() * middleRectWidthPercentage),
-                    (int) (matYCrCb.height() * middleRectHeightPercentage),
-                    rectangleWidth,
-                    rectangleHeight
-            );
-            Rect bottomRect = new Rect(
-                    (int) (matYCrCb.width() * bottomRectWidthPercentage),
-                    (int) (matYCrCb.height() * bottomRectHeightPercentage),
-                    rectangleWidth,
-                    rectangleHeight
-            );
-
-            //The rectangle is drawn into the mat
-            different = mostDifferent(topAverage, middleAverage, bottomAverage);
-            try {
-                switch (different) {
-                    case 1:
-                        drawRectOnToMat(input, topRect, yellow);
-                        drawRectOnToMat(input, middleRect, red);
-                        drawRectOnToMat(input, bottomRect, red);
-                        break;
-                    case 2:
-                        drawRectOnToMat(input, topRect, red);
-                        drawRectOnToMat(input, middleRect, yellow);
-                        drawRectOnToMat(input, bottomRect, red);
-                        break;
-                    case 3:
-                        drawRectOnToMat(input, topRect, red);
-                        drawRectOnToMat(input, middleRect, red);
-                        drawRectOnToMat(input, bottomRect, yellow);
-                        break;
-                    default:
-                        drawRectOnToMat(input, topRect, red);
-                        drawRectOnToMat(input, middleRect, red);
-                        drawRectOnToMat(input, bottomRect, red);
-                        break;
-                }
-            } catch (Exception e) {
-                drawRectOnToMat(input, topRect, red);
-                drawRectOnToMat(input, middleRect, red);
-                drawRectOnToMat(input, bottomRect, red);
-            }
-            //We crop the image so it is only everything inside the rectangles and find the cb value inside of them
             Mat topBlock = matYCrCb.submat(topRect);
             Mat middleBlock = matYCrCb.submat(middleRect);
             Mat bottomBlock = matYCrCb.submat(bottomRect);
@@ -134,6 +102,24 @@ public class TsePipeline extends OpenCvPipeline {
             topAverage = topMean.val[0] + 0.5 * (topMean1.val[0] + topMean2.val[0]);
             middleAverage = middleMean.val[0] + 0.5 * (middleMean1.val[0] + middleMean2.val[0]);
             bottomAverage = bottomMean.val[0] + 0.5 * (bottomMean1.val[0] + bottomMean2.val[0]);
+            different = mostDifferent(topAverage, middleAverage, bottomAverage);
+            switch (different) {
+                case 1:
+                    drawRectOnToMat(input, topRect, yellow);
+                    drawRectOnToMat(input, middleRect, red);
+                    drawRectOnToMat(input, bottomRect, red);
+                    break;
+                case 2:
+                    drawRectOnToMat(input, topRect, red);
+                    drawRectOnToMat(input, middleRect, yellow);
+                    drawRectOnToMat(input, bottomRect, red);
+                    break;
+                case 3:
+                    drawRectOnToMat(input, topRect, red);
+                    drawRectOnToMat(input, middleRect, red);
+                    drawRectOnToMat(input, bottomRect, yellow);
+                    break;
+            }
             if (!isComplete) {
                 frameCount++;
                 if (different == lastFrameValue || checks == 0) {
@@ -156,6 +142,10 @@ public class TsePipeline extends OpenCvPipeline {
 
                 lastFrameValue = different;
             }
+        } else {
+            drawRectOnToMat(input, topRect, red);
+            drawRectOnToMat(input, middleRect, red);
+            drawRectOnToMat(input, bottomRect, red);
         }
         return input;
     }
