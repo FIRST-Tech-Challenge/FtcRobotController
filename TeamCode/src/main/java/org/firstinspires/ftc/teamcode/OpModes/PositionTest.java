@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 //@Disabled
-@TeleOp(name = "Color Test", group = "Robot15173")
+@TeleOp(name = "Position To", group = "Robot15173")
 public class PositionTest extends LinearOpMode {
 
     // Declare OpMode Members
@@ -30,7 +30,10 @@ public class PositionTest extends LinearOpMode {
             try {
                 robot.init(this, this.hardwareMap, telemetry);
                 robot.initCalibData();
-
+                locator =  VSlamOdometry.getInstance(this.hardwareMap, 20);
+                locator.setInitPosition(50, 15, 180); // TODO: Remove this
+                Thread odometryThread = new Thread(locator);
+                odometryThread.start();
 
             } catch (Exception ex) {
                 telemetry.addData("Init", ex.getMessage());
@@ -40,12 +43,29 @@ public class PositionTest extends LinearOpMode {
 
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
+            runtime.reset();
 
+            Point target = new Point(65, 30);
+
+            BotMoveProfile profile = BotMoveProfile.bestRoute(robot, (int)locator.getCurrentX(), (int)locator.getCurrentY(), target,
+                    RobotDirection.Optimal, 0.5, MoveStrategy.Diag, -1, locator);
+
+
+            robot.diagTo(profile);
 
 
             while (opModeIsActive()) {
 
-              robot.detectColor(telemetry, 0) ;
+                telemetry.addData("LeftTarget", profile.getLeftTarget());
+                telemetry.addData("RightTarget", profile.getRightTarget());
+                telemetry.addData("LeftTargetBack", profile.getLeftTargetBack());
+                telemetry.addData("RightTargetBack", profile.getRightTargetBack());
+
+                telemetry.addData("Left front", robot.getLeftOdometer());
+                telemetry.addData("Right front", robot.getRightOdometer());
+                telemetry.addData("Left Back", robot.getLeftBackOdometer());
+                telemetry.addData("Right Back", robot.getRightBackOdometer());
+                telemetry.update();
             }
         } catch (Exception ex) {
             telemetry.addData("Issues with the OpMode", ex.getMessage());

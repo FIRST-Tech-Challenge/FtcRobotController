@@ -4,20 +4,30 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
-import org.firstinspires.ftc.teamcode.skills.FrenzyDetector;
+import org.firstinspires.ftc.teamcode.skills.GenericDetector;
+import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
-@TeleOp(name = "Frenzy Rec Thread", group = "Robot15173")
+// Control Hub ADB Terminal Command for Reference
+// adb.exe connect 192.168.43.1:5555
+
+@TeleOp(name = "Rec test Thread", group = "Robot15173")
 @Disabled
-public class FrenzyDetectMode extends LinearOpMode {
+public class GenericRecognitionTest extends LinearOpMode {
 
-    private FrenzyDetector frenzyDetector = null;
+    // Declare OpMode members.
+    private GenericDetector rf = null;
+    private String result = "";
+
     @Override
     public void runOpMode() {
         try {
             try {
-                frenzyDetector = new FrenzyDetector(this.hardwareMap, AutoRoute.NAME_RED, this, telemetry);
-                Thread detectThread = new Thread(frenzyDetector);
+//                Led lights = new Led();
+//                lights.init(this.hardwareMap, telemetry);
+                rf = new GenericDetector(this.hardwareMap,  this,  telemetry);
+                Thread detectThread = new Thread(rf);
                 detectThread.start();
                 telemetry.update();
             } catch (Exception ex) {
@@ -31,20 +41,21 @@ public class FrenzyDetectMode extends LinearOpMode {
             telemetry.update();
             waitForStart();
 
-            String zone = null;
+            rf.stopDetection();
+
+            result = rf.getResult();
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
-                zone = frenzyDetector.returnZone();
-                telemetry.addData("Detected Zone", zone);
+                telemetry.addData("Result", result);
+                telemetry.update();
             }
-            frenzyDetector.stopDetection();
         } catch (Exception ex) {
             telemetry.addData("Init Error", ex.getMessage());
             telemetry.update();
         } finally {
-            if (frenzyDetector != null) {
-                frenzyDetector.stopDetection();
+            if (rf != null) {
+                rf.stopDetection();
             }
         }
     }

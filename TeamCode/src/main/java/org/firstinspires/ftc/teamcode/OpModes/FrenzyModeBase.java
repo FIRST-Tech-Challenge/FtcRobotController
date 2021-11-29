@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -28,6 +30,8 @@ public class FrenzyModeBase extends LinearOpMode {
     // Rotator related variable
     boolean changedRotator1 = false;
     boolean changedRotator2 = false;
+
+    private static String TAG = "FrenzyModeBase";
 
     @Override
     public void runOpMode() {
@@ -116,9 +120,8 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleSpecialActions() {
-//        handleLift(); //todo: uncomment once ready to use set position
-        handleLiftManual(); //todo: comment out once the positions for all levels are determined.
-        handleLiftIntermediate();
+        handleLift();
+//        handleLiftManual();
         handleDropper();
         handleIntake();
         handleOuttake();
@@ -185,18 +188,6 @@ public class FrenzyModeBase extends LinearOpMode {
         }
     }
 
-    protected void handleLift() {
-        if (isButtonPressable()) {
-            double liftVal = gamepad2.right_stick_y;
-            if (liftVal > 0.5) {
-                startGamepadLockout();
-                robot.liftToLower();
-            } else if (liftVal < -0.5) {
-                startGamepadLockout();
-                robot.liftToLevel3();
-            }
-        }
-    }
 
     protected void handleLiftManual() {
         if (isButtonPressable()) {
@@ -206,22 +197,25 @@ public class FrenzyModeBase extends LinearOpMode {
         }
     }
 
-    protected void handleLiftIntermediate() {
-        if (isButtonPressable()) {
+    protected void handleLift() {
+        if (isButtonPressable() && !robot.isLiftBusy()) {
+            //lower level
             double liftVal = gamepad2.left_stick_y;
             if (liftVal > 0.5) {
                 startGamepadLockout();
                 robot.liftToLower();
             } else if (liftVal < -0.5) {
                 startGamepadLockout();
-                int location = robot.getLiftLocation();
-                if (location == FrenzyBot.LIFT_LEVEL_ONE){
-                    robot.liftToLevel2();
-                }
-                else{
-                    robot.liftToLevel1();
-                }
-
+                robot.liftToLevel1();
+            }
+            //upper level
+            double liftValUpper = gamepad2.right_stick_y;
+            if (liftValUpper > 0.5) {
+                startGamepadLockout();
+                robot.liftToLower();
+            } else if (liftValUpper < -0.5) {
+                startGamepadLockout();
+                robot.liftToLevel3();
             }
         }
     }

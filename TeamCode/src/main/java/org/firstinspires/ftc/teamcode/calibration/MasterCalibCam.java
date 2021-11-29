@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.calibration;
 
 import android.graphics.Point;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 
 @TeleOp(name="MasterCalib Cam", group="Robot15173")
+//@Disabled
 public class MasterCalibCam extends MasterCalib {
 
     protected void initBot(){

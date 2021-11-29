@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.calibration;
 import android.graphics.Point;
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @TeleOp(name="MasterCalib", group="Robot15173")
+@Disabled
 public class MasterCalib extends LinearOpMode {
 
     protected IOdoBot bot = null;

@@ -13,6 +13,7 @@ public class AutoReplayBaseCam extends AutoBase {
             loadRoute(routeName);
             if (this.selectedRoute != null){
                 this.setOpModeSide(this.selectedRoute.getName());
+                bot.initDetectorThread(this.getOpModeSide(), this);
             }
         }
     }
@@ -28,7 +29,6 @@ public class AutoReplayBaseCam extends AutoBase {
     @Override
     protected void initBot() {
         this.bot = new FrenzyBot(this.getOpModeSide());
-        bot.initDetectorThread(this.getOpModeSide(), this);
     }
 
     @Override

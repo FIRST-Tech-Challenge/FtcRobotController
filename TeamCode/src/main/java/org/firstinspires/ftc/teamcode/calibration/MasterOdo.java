@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.calibration;
 import android.graphics.Point;
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -33,6 +34,7 @@ import static org.firstinspires.ftc.teamcode.autonomous.AutoRoute.NAME_RED;
 import static org.firstinspires.ftc.teamcode.autonomous.AutoStep.NO_ACTION;
 
 @TeleOp(name="Master Odo", group="Robot15173")
+@Disabled
 public class MasterOdo extends OdoBase {
 
     public static String COORDINATE = "Coordinate";
