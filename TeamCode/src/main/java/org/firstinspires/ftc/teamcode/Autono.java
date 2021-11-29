@@ -129,11 +129,11 @@ public class Autono extends LinearOpMode {
         this.robot.duck.setPower(-0.2);
         sleep(3000);
         this.robot.duck.setPower(0);
-        goToWayPoint(2,0.1,-90,2,30,0.005,1);
+        goToWayPoint(0.7,0.05,-90,2,30,0.005,1);
 
     }
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
-        targetPos[0] = (y*((double)(100/39)));
+        targetPos[0] = (y*((double)(100/39))); // why.
         targetPos[1] = (-x*((double)(100/39)));
         targetPos[2] = angle * Math.PI / 180; // Math.PI /2;   //heading, radian
         this.positionControl.goToTargetPosition(targetPos, vel,vw * Math.PI / 180, disRes,angleRes);
