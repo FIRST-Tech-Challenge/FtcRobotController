@@ -269,12 +269,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         activateRotatorRight(0.0);
         activateRotatorLeft(0.0);
     }
-    private void toggleLight(boolean on){
-        if (colorSensor instanceof SwitchableLight) {
+    public void toggleLight(boolean on){
+        if (colorSensor != null && colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) colorSensor).enableLight(on);
         }
     }
     public DetectedColor detectColor(Telemetry telemetry, float timeout) {
+        ElapsedTime runtime = new ElapsedTime();
         toggleLight(true);
         // values is a reference to the hsvValues array.
         DetectedColor dc = DetectedColor.NONE;
