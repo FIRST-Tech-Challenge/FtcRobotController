@@ -25,24 +25,6 @@ public class TseDetector {
         this.eventThread = eventThread;
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
-    }
-
-    /**
-     * Resets pipeline on call
-     * Stalls code until pipeline is done with figuring out (max time of around 0.33 seconds)
-     * @return integer 1 - 3, corresponds to barcode slots left to right
-     */
-    public synchronized int run() {
-        pipeline.resetPipeline();
-        try {
-            wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return pipeline.differentSpot().second;
-    }
-
-    public void init() {
         int cameraMonitorViewId = hardwareMap
                 .appContext.getResources()
                 .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -61,6 +43,21 @@ public class TseDetector {
                 System.out.println("OpenCv Pipeline error with error code " + errorCode);
             }
         });
+    }
+
+    /**
+     * Resets pipeline on call
+     * Stalls code until pipeline is done with figuring out (max time of around 0.33 seconds)
+     * @return integer 1 - 3, corresponds to barcode slots left to right
+     */
+    public synchronized int run() {
+        pipeline.startPipeline();
         eventThread.addEvent(new RunWhenOutputChangedOnceEvent(this::notifyAll, () -> pipeline.differentSpot().first));
+        try {
+            wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return pipeline.differentSpot().second;
     }
 }
