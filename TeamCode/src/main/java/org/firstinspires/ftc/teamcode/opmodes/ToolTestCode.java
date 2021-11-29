@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import android.os.Build;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
