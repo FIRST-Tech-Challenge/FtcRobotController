@@ -32,10 +32,12 @@ public class Meccanum {
     public final double NORMAL_SPEED = 0.5; // preference and feel for best
     public final double SERVO_FULLY_CLOSED = 0; // need arm+hub to test this
     public final double SERVO_FULLY_OPENED = 0; // need arm+hub to test this
+    public final double HALF_SERVO_ANGLE = 0;
     public final double ARM_MAX_SPEED = 0; // preference? or maybe to be precise
     public final double HIGH_SPINNER_POWER = 1; // probably max, may need to adjust later
     public final double OPTIMAL_SPINNER_POWER = 0; // need spinner+hub to test this
     public final double MOTOR_STOP = 0; // its just 0 cuz full stop
+
 
     private DcMotor spinner;
 
@@ -302,7 +304,21 @@ public class Meccanum {
 
     }
 
+    public void setServo(double angle){
+        servo0.setPosition(angle);
+    }
 
+    public void openServoHalf(){
+        servo0.setPosition(HALF_SERVO_ANGLE);
+    }
+
+    public void openServoFull(){
+        servo0.setPosition(SERVO_FULLY_OPENED);
+    }
+
+    public void closeServoFull(){
+        servo0.setPosition(SERVO_FULLY_CLOSED);
+    }
 
     public Orientation getAngles() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);

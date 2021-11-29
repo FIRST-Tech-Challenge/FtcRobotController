@@ -43,14 +43,25 @@ public class AutoNav5 extends LinearOpMode {
     private void executeAutomaticSequence2(){
 
         // auto for near carousel
-
+        // gotta replace 0 with tested vals
         meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 0);
 
         meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 0);
 
-        meccanum.motorDriveRightEncoded(meccanum.NORMAL_SPEED, 0);
+        meccanum.motorDriveRelativeAngleTime(0, 0, 0);
 
+
+    }
+
+    private void executeAutomaticSequence1(){
+
+        // auto for near carousel
+        // gotta replace 0 with tested vals
         meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 0);
+
+        meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 0);
+
+        meccanum.motorDriveRelativeAngleTime(0, 0, 0);
 
     }
 
