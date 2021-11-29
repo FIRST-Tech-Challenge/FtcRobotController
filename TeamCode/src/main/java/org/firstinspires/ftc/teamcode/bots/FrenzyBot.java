@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
@@ -23,27 +24,29 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx rotatorLeft = null;
     private Servo dropperServo = null;
     private static final String TAG = "FrenzyBot";
-    public static int LIFT_LEVEL_THREE = -3450; // TODO: 11/7/21 Change values based on the empirical observations 
-    public static int LIFT_LEVEL_TWO = -1840;
-    public static int LIFT_LEVEL_ONE = -740;
+    public static int LIFT_LEVEL_THREE = -1930;
+    public static int LIFT_LEVEL_TWO = -1190;
+    public static int LIFT_LEVEL_ONE = -650;
     public static int LIFT_NO_EXTENSION = 0;
 
     private int liftLocation = LIFT_NO_EXTENSION;
-    private static double LIFT_SPEED = 0.8;
+    private static double LIFT_SPEED = 0.95;
+    private static double LIFT_SPEED_LOW = 0.7;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_READY = 0.5;
+    private static double DROPPER_SERVO_POS_READY = 0.75;
+    private static double DROPPER_SERVO_POS_MOVE = 0.6;
     private static double DROPPER_SERVO_POS_DROP = 0.0;
 
     // Detection
     CVDetector detector;
     String opModeSide = AutoRoute.NAME_RED;
-
     private GameElement detectedElement;
+
 
     /* Constructor */
     public FrenzyBot() {
-        opModeSide = AutoRoute.NAME_RED; // defult
+        opModeSide = AutoRoute.NAME_RED; // default
     }
 
     public FrenzyBot(String fieldSide) {
@@ -109,7 +112,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @Override
     public AutoDot getDetectionResult() {
         AutoDot level = detector.getLevel();
-        Log.d(TAG, String.format("Detection result: Level $s", level.getDotName()));
+        Log.d(TAG, String.format("Detection result: Level %s", level.getDotName()));
         telemetry.addData("Level: ", level);
         telemetry.update();
         detector.stopDetection();
@@ -146,6 +149,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift level 3", defaultReturn = "")
     public void liftToLevel3(){
         liftLocation = LIFT_LEVEL_THREE;
+        prepDropperToMove();
         this.lift.setTargetPosition(LIFT_LEVEL_THREE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
@@ -162,6 +166,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift level 1", defaultReturn = "")
     public void liftToLevel1(){
         liftLocation = LIFT_LEVEL_ONE;
+        prepDropperToMove();
         this.lift.setTargetPosition(LIFT_LEVEL_ONE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
@@ -171,10 +176,31 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void liftToLower(){
         //reset dropper before retracting the lift all the way
         resetDropper();
+        if (liftLocation == LIFT_LEVEL_ONE){
+            ElapsedTime time = new ElapsedTime();
+            time.reset();
+            //give some time for the dropper to close
+            while (time.milliseconds() < 500){
+
+            }
+        }
         liftLocation = LIFT_NO_EXTENSION;
         this.lift.setTargetPosition(LIFT_NO_EXTENSION);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+        if (getLiftPosition() == LIFT_LEVEL_ONE){
+            this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED_LOW);
+        }
+        else {
+            this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED);
+        }
+    }
+
+    public boolean isLiftBusy(){
+        return this.lift.isBusy();
+    }
+
+    private void stopLift(){
+        this.lift.setPower(0);
     }
 
     public int getLiftLocation(){
@@ -192,6 +218,12 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void resetDropper(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_READY);
+        }
+    }
+
+    private void prepDropperToMove(){
+        if (dropperServo != null) {
+            dropperServo.setPosition(DROPPER_SERVO_POS_MOVE);
         }
     }
 
