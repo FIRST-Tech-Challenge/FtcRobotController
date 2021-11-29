@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.mentor.samples.HardwareMaps.InternalCameraHardwareMap;
+import org.firstinspires.ftc.teamcode.mentor.samples.cv.OpenCvShippingElementDetector;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -13,7 +14,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@Autonomous(name="Auto: FF Object Detector", group="Mentor")
+@Autonomous(name="Mentor - Auto: FF Object Detector", group="Mentor")
 public class OPCVFFObjectDetectorAutoMode extends LinearOpMode {
     // Handle hardware stuff...
 
@@ -27,9 +28,11 @@ public class OPCVFFObjectDetectorAutoMode extends LinearOpMode {
 
         InternalCameraHardwareMap robot = new InternalCameraHardwareMap();
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = dashboard.getTelemetry();
+        //telemetry = dashboard.getTelemetry();
         // store as variable here so we can access the location
         OPCVFFObjectDetector3 detector = new OPCVFFObjectDetector3(width, height, telemetry);
+        OPCVFFObjectDetector4 detector4 = new OPCVFFObjectDetector4(width, height, telemetry);
+        OpenCvShippingElementDetector ocvSED = new OpenCvShippingElementDetector(width, height,telemetry);
 
         SamplePipeline sp = new SamplePipeline();
         robot.init(hardwareMap);
@@ -52,6 +55,8 @@ public class OPCVFFObjectDetectorAutoMode extends LinearOpMode {
                  * away from the user.
                  */
                 robot.phoneCam.startStreaming(width, height, OpenCvCameraRotation.UPRIGHT);
+                //dashboard.startCameraStream(robot.phoneCam, 10);
+                telemetry.addLine("Streaming started");
 
 
             }
@@ -67,8 +72,7 @@ public class OPCVFFObjectDetectorAutoMode extends LinearOpMode {
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
-        dashboard.startCameraStream(robot.phoneCam, 10);
-        telemetry.addLine("Streaming started");
+
         telemetry.update();
         /*
          * Wait for the user to press start on the Driver Station
