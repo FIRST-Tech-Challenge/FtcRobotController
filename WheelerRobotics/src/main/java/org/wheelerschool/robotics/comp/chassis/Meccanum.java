@@ -1,5 +1,11 @@
 package org.wheelerschool.robotics.comp.chassis;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static java.lang.Math.abs;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.tan;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -48,11 +54,31 @@ public class Meccanum {
         motorFrontRight.setPower(motorFrontRightPower);
     }
 
-    private void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double distance){
-        motorBackLeft.setPower(motorBackLeftPower);
-        motorFrontLeft.setPower(motorFrontLeftPower);
-        motorBackRight.setPower(motorBackRightPower);
-        motorFrontRight.setPower(motorFrontRightPower);
+    private void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double ticks){
+        motorDriveEncoded(motorFrontLeftPower, motorBackLeftPower, motorFrontRightPower, motorBackRightPower, ticks, motorBackLeft.getCurrentPosition(), motorFrontLeft.getCurrentPosition(), motorBackRight.getCurrentPosition(), motorFrontRight.getCurrentPosition());
+    }
+    private void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double ticks, int blp, int flp, int brp, int frp){
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        /*
+        final int blp = motorBackLeft.getCurrentPosition(); // idk if this will stay a static value or if it will change with the motor pos, hmm...
+        final int brp = motorBackRight.getCurrentPosition();
+        final int frp = motorFrontRight.getCurrentPosition();
+        final int flp = motorFrontLeft.getCurrentPosition();
+        */
+
+        int blip = blp; // back left initial position
+        int flip = flp;
+        int brip = brp;
+        int frip = frp;
+
+        while(abs(motorBackLeft.getCurrentPosition() - blip) < ticks) { // hopefully checks that it is within the positive or negative threshold of target ticks
+            motorDrive(motorFrontLeftPower, motorBackLeftPower, motorFrontRightPower, motorBackRightPower);
+        }
+        motorStop();
     }
 
     private void motorDriveTime(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double time){
@@ -60,12 +86,18 @@ public class Meccanum {
         motorFrontLeft.setPower(motorFrontLeftPower);
         motorBackRight.setPower(motorBackRightPower);
         motorFrontRight.setPower(motorFrontRightPower);
+        delay(time);
+        motorStop();
     }
 
-    private void motorDriveRelativeAngle(double radians, double speed){
+    private void motorDriveRelativeAngle(double radians, double speed){ //test on monday 11/29/2021
+        //NOTE
+        // im not sure how to acurately do this using encoders, because some wheels are going to spin at different powers (I think)
+        // this will cause the ticks to be difficult to calculate, and I dont really want to deal with that rn
+
         double spinvec = 0;
-        double yvec = tan(radians)/sqrt((tan(radians)^2)+1)*tan(radians)
-        double xvec = tan(radians)/sqrt((tan(radians)^2)+1)
+        double yvec = tan(radians)/sqrt(pow(tan(radians),2)+1)*tan(radians);
+        double xvec = tan(radians)/sqrt(pow(tan(radians),2))+1;
 
         double y = pow(-yvec,3); // Remember, this is reversed!
         double x = pow(xvec * 1.1,3); // Counteract imperfect strafing
@@ -75,12 +107,22 @@ public class Meccanum {
         //denominator is the largest motor power (absolute value) or 1
         //this ensures all the powers maintain the same ratio, but only when
         //at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double denominator = Math.max(abs(y) + abs(x) + abs(rx), 1);
         double frontLeftPower = (y + x + rx) / denominator;
         double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
+
+        motorDrive(frontLeftPower,backLeftPower, frontRightPower, backRightPower);
+
     }
+
+    private void motorDriveRelativeAngleTime(double radians, double speed, double time){
+        motorDriveRelativeAngle(radians, speed);
+        delay(time);
+        motorStop();
+    }
+
 
     private void motorStop(){
         motorBackLeft.setPower(0);
@@ -103,42 +145,34 @@ public class Meccanum {
     }
 
     private void motorDriveForwardEncoded(double speed, double distance){
-        motorDrive(speed, speed, speed, speed);
+        motorDriveEncoded(speed, speed, speed, speed, distance);
     }
     private void motorDriveLeftEncoded(double speed, double distance){
-        motorDrive(speed, -speed, speed, -speed);
+        motorDriveEncoded(speed, -speed, speed, -speed, distance);
     }
     private void motorDriveRightEncoded(double speed, double distance){
-        motorDrive(-speed, speed, -speed, speed);
+        motorDriveEncoded(-speed, speed, -speed, speed, distance);
     }
     private void motorDriveBackEncoded(double speed, double distance){
-        motorDrive(-speed, -speed, -speed, -speed);
+        motorDriveEncoded(-speed, -speed, -speed, -speed, distance);
     }
     private void motorDriveForwardTime(double speed, double time){
-        motorDrive(speed, speed, speed, speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(speed, speed, speed, speed, time);
     }
     private void motorDriveLeftTime(double speed, double time){
-        motorDrive(speed, -speed, speed, -speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(speed, -speed, speed, -speed, time);
     }
     private void motorDriveRightTime(double speed, double time){
-        motorDrive(-speed, speed, -speed, speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(-speed, speed, -speed, speed, time);
     }
     private void motorDriveBackTime(double speed, double time){
-        motorDrive(-speed, -speed, -speed, -speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(-speed, -speed, -speed, -speed, time);
     }
 
     private void delay(double time){
         ElapsedTime e = new ElapsedTime();
         e.reset();
-        while(e.getMilliseonds() < time){
+        while(e.milliseconds() < time){
 
         }
     }
@@ -150,22 +184,18 @@ public class Meccanum {
         motorDrive(speed, speed, -speed, -speed);
     }
 
-    private void motorSpinLeftEncoded(double speed){
-        motorDrive(-speed, -speed, speed, speed);
+    private void motorSpinLeftEncoded(double speed, double distance){
+        motorDriveEncoded(-speed, -speed, speed, speed, distance);
     }
-    private void motorSpinRightEncoded(double speed){
-        motorDrive(speed, speed, -speed, -speed);
+    private void motorSpinRightEncoded(double speed, double distance){
+        motorDriveEncoded(speed, speed, -speed, -speed, distance);
     }
 
     private void motorSpinLeftTime(double speed, double time){
-        motorDrive(-speed, -speed, speed, speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(-speed, -speed, speed, speed, time);
     }
     private void motorSpinRightTime(double speed, double time){
-        motorDrive(speed, speed, -speed, -speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(speed, speed, -speed, -speed, time);
     }
 
 
@@ -173,35 +203,36 @@ public class Meccanum {
         arm.setPower(speed);
     }
 
-    private void spinnySpinForward(double speed){
-        spinnySpin(speed);
+    private void spinnySpinEncoded(double speed, double target){
+        spinnySpinEncoded(speed, target, spinner.getCurrentPosition());
     }
-    private void spinnySpinBackward(double speed){
-        spinnySpin(-speed);
+    private void spinnySpinEncoded(double speed, double target, int start){
+
+        while (abs(spinner.getCurrentPosition()-start) < target){
+            spinnySpin(speed);
+        }
+        spinnyStop();
     }
 
-    private void spinnySpinEncoded(double speed, double target){
-        double encodedSpins = 0;
-        while (opModeIsActive() && encodedSpins < rotation){
-            encodedSpins = 0;
-        }
-        motorStop();
+    private void spinnyStop() {
+        spinner.setPower(0);
     }
 
     private void spinnySpinTime(double speed, double time){
         spinnySpin(speed);
-        delay(time)
-        spinnySpin(0);
+        delay(time);
+        spinnyStop();
     }
 
 
     private void turnRadians(double radians, double speed) {
         turnRadians(radians, speed, angles.firstAngle);
     }
-    private double turnRadians(double radians, double speed, double startRadians) {
+
+    private double turnRadians(double radians, double speed, double startRadians) { // idrk about this rn, but it seems useful in a scenario without my drive radians function
         double target = startRadians + radians;
         double minSpeed = 0.1;
-        while(angles.firstAngle < target && opModeIsActive()){
+        while(angles.firstAngle < target){
 
             if(target-angles.firstAngle>minSpeed) {
                 motorSpinRight(target - angles.firstAngle);
@@ -218,6 +249,7 @@ public class Meccanum {
 
         motorStop();
         return target-startRadians;
+
 
     }
 
