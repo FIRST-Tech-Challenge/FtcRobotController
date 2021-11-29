@@ -34,9 +34,8 @@ public class AutoNav5 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         meccanum.init(hardwareMap);
         waitForStart();
-        while(opModeIsActive()){
-            executeAutomaticSequence2();
-        }
+        executeAutomaticSequence2();
+
     }
     private void executeAutomaticSequence2(){
 
@@ -48,20 +47,6 @@ public class AutoNav5 extends LinearOpMode {
 
         meccanum.motorDriveRelativeAngleTime(0, 0, 0);
 
-
     }
-
-    private void executeAutomaticSequence1(){
-
-        // auto for near carousel
-        // gotta replace 0 with tested vals
-        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 0);
-
-        meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 0);
-
-        meccanum.motorDriveRelativeAngleTime(0, 0, 0);
-
-    }
-
 
 }

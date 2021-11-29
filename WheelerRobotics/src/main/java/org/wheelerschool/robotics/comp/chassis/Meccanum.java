@@ -7,6 +7,8 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -52,7 +54,7 @@ public class Meccanum {
 
     private volatile HardwareMap hw; // no idea if volatile means anything (impactful) in this context, but it makes me seem like I know what im doing
 
-    public void init(HardwareMap hardwareMap){
+    public void init(@NonNull HardwareMap hardwareMap){
         // internal IMU setup (copied and pasted, idk what it really does, but it works)
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
