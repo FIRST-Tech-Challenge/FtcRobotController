@@ -21,6 +21,8 @@ public class DuckDistanceDetectionTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+     waitForStart();
+     int location = barcodeDetect();
 
     }
 
