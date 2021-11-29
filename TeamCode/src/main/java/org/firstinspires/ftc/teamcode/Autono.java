@@ -40,7 +40,6 @@ public class Autono extends LinearOpMode {
     private TFObjectDetector tfod;
 
 
-
     int[] armPos = {1,2,3};
 
     @Override
@@ -112,7 +111,7 @@ public class Autono extends LinearOpMode {
 
         goToWayPoint(-0.15, 0.45, 0, 0.7, 30, 0.01, 1);
         setPower(0,0,0,0);
-        arm(0.7, 2230, 30);
+        lift(0.7, 2230, 30);
         goToWayPoint(-0.15,0.65,0,0.5,30,0.01,1);
         setPower(0,0,0,0);
         robot.intakeUp.setPower(-1);
@@ -120,7 +119,7 @@ public class Autono extends LinearOpMode {
         robot.intakeUp.setPower(0);
         goToWayPoint(-0.15,0.3,-90,0.7,30,0.01,1);
         setPower(0,0,0,0);
-        arm(-0.7, 0, 15);
+        lift(-0.7, 0, 15);
         goToWayPoint(-1.48,0.1,-90,0.7,30,0.01,1);
         setPower(0,0,0,0);
 
@@ -153,14 +152,14 @@ public class Autono extends LinearOpMode {
         robot.rightRearDrive.setPower(backRight);
     }
 
-    private void arm(double power, int target, int margin){
-        robot.arm.setTargetPosition(target);
-        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if(Math.abs(robot.arm.getCurrentPosition()-target) > margin) {
-            robot.arm.setPower(power);
+    private void lift(double power, int target, int margin){
+        robot.lift.setTargetPosition(target);
+        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if(Math.abs(robot.lift.getCurrentPosition()-target) > margin) {
+            robot.lift.setPower(power);
         }
-        while(robot.arm.isBusy()){}
-        robot.arm.setPower(0);
+        while(robot.lift.isBusy()){}
+        robot.lift.setPower(0);
     }
 
     private void initVuforia() {

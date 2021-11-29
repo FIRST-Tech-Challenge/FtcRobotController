@@ -25,10 +25,9 @@ public class MecanumChassis {
     public DcMotorEx  leftRearDrive   = null;
     public DcMotorEx  rightRearDrive  = null;
     public DcMotorEx lift = null;
-    public DcMotorEx arm = null;
+    public DcMotorEx exten = null;
     public DcMotorEx duck = null;
     public CRServo intakeUp = null;
-    public Rev2mDistanceSensor csensor = null;
 
 
     public BNO055IMU imu;
@@ -71,22 +70,22 @@ public class MecanumChassis {
         leftRearDrive  = hwMap.get(DcMotorEx.class, "lr");
         rightRearDrive = hwMap.get(DcMotorEx.class, "rr");
         lift = hwMap.get(DcMotorEx.class,"lift");
-        arm = hwMap.get(DcMotorEx.class,"arm");
-        intakeUp = hwMap.get(CRServo.class, "s1");
+        exten = hwMap.get(DcMotorEx.class,"extension");
+        intakeUp = hwMap.get(CRServo.class, "topIntake");
 
         leftFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
         leftRearDrive.setDirection(DcMotorEx.Direction.REVERSE);
 
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        exten.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRearDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRearDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        arm.setPower(0);
+        exten.setPower(0);
         lift.setPower(0);
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
@@ -94,7 +93,7 @@ public class MecanumChassis {
         rightRearDrive.setPower(0);
 
 
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        exten.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRearDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRearDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -102,7 +101,7 @@ public class MecanumChassis {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        exten.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

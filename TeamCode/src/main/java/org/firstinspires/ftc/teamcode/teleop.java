@@ -87,13 +87,13 @@ public class teleop extends LinearOpMode {
 
 
             if(gamepad1.dpad_up){
-                robot.arm.setPower(0.5f);
+                robot.lift.setPower(0.5f);
             }
             else if(gamepad1.dpad_down){
-                robot.arm.setPower(-0.5f);
+                robot.lift.setPower(-0.5f);
             }
             else{
-                robot.arm.setPower(0f);
+                robot.lift.setPower(0f);
             }
 
         }
