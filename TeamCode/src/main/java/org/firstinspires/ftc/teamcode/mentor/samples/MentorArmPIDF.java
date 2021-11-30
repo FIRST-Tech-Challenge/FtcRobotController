@@ -45,13 +45,13 @@ public class MentorArmPIDF extends LinearOpMode {
         double D = 0;
         double positionP = 5.0;
 
+
+        motorArm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
         motorArm.setVelocityPIDFCoefficients(P, I, D, F);
         motorArm.setPositionPIDFCoefficients(positionP);
 
         motorArm.setTargetPositionTolerance(10);
-        motorArm.setTargetPosition(armSetPos);
-        motorArm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motorArm.setVelocity(armMaxVelocity / 4); // This sets max velocity to 25%
 
         // Init Loop
         while( !isStarted() ){
@@ -87,6 +87,7 @@ public class MentorArmPIDF extends LinearOpMode {
                 }
             }
             motorArm.setTargetPosition(armSetPos);
+            motorArm.setVelocity(armMaxVelocity / 4); // This sets max velocity to 25%
 
 
             /* Intake In & Out
