@@ -15,7 +15,7 @@ public class EventThread extends Thread {
     private final BooleanSupplier continueRunning;
 
     public EventThread() {
-        this(() -> false);
+        this(() -> true);
     }
 
     public EventThread(BooleanSupplier continueRunning) {

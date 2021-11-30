@@ -41,15 +41,19 @@ public class TsePipeline extends OpenCvPipeline {
     private int checks = 0;
     private Pair<Integer, Integer> greatestConfidence = new Pair<>(0, 0);
     private int frameCount = 0;
+    private boolean running = false;
 
-    public void resetPipeline() {
+    public void startPipeline() {
         different = 0;
         lastFrameValue = 0;
         isComplete = false;
         checks = 0;
         frameCount = 0;
+        running = true;
     }
-
+    public void stopPipeline() {
+        running = false;
+    }
     /**
      * @param input input frame matrix
      */
@@ -78,10 +82,34 @@ public class TsePipeline extends OpenCvPipeline {
                 rectangleWidth,
                 rectangleHeight
         );
+        if (running) {
+            Mat topBlock = matYCrCb.submat(topRect);
+            Mat middleBlock = matYCrCb.submat(middleRect);
+            Mat bottomBlock = matYCrCb.submat(bottomRect);
+            Core.extractChannel(topBlock, matCbTop, 0);
+            Core.extractChannel(middleBlock, matCbMiddle, 0);
+            Core.extractChannel(bottomBlock, matCbBottom, 0);
+            Core.extractChannel(topBlock, matCbTop1, 1);
+            Core.extractChannel(middleBlock, matCbMiddle1, 1);
+            Core.extractChannel(bottomBlock, matCbBottom1, 1);
+            Core.extractChannel(topBlock, matCbTop2, 2);
+            Core.extractChannel(middleBlock, matCbMiddle2, 2);
+            Core.extractChannel(bottomBlock, matCbBottom2, 2);
 
-        //The rectangle is drawn into the mat
-        different = mostDifferent(topAverage,middleAverage,bottomAverage);
-        try {
+            Scalar topMean = Core.mean(matCbTop);
+            Scalar topMean1 = Core.mean(matCbTop1);
+            Scalar topMean2 = Core.mean(matCbTop2);
+            Scalar middleMean = Core.mean(matCbMiddle);
+            Scalar middleMean1 = Core.mean(matCbMiddle1);
+            Scalar middleMean2 = Core.mean(matCbMiddle2);
+            Scalar bottomMean = Core.mean(matCbBottom);
+            Scalar bottomMean1 = Core.mean(matCbBottom1);
+            Scalar bottomMean2 = Core.mean(matCbBottom2);
+
+            topAverage = topMean.val[0] + 0.5 * (topMean1.val[0] + topMean2.val[0]);
+            middleAverage = middleMean.val[0] + 0.5 * (middleMean1.val[0] + middleMean2.val[0]);
+            bottomAverage = bottomMean.val[0] + 0.5 * (bottomMean1.val[0] + bottomMean2.val[0]);
+            different = mostDifferent(topAverage, middleAverage, bottomAverage);
             switch (different) {
                 case 1:
                     drawRectOnToMat(input, topRect, yellow);
@@ -98,65 +126,33 @@ public class TsePipeline extends OpenCvPipeline {
                     drawRectOnToMat(input, middleRect, red);
                     drawRectOnToMat(input, bottomRect, yellow);
                     break;
-                default:
-                    drawRectOnToMat(input, topRect, red);
-                    drawRectOnToMat(input, middleRect, red);
-                    drawRectOnToMat(input, bottomRect, red);
-                    break;
             }
-        } catch (Exception e) {
+            if (!isComplete) {
+                frameCount++;
+                if (different == lastFrameValue || checks == 0) {
+                    checks++;
+                } else {
+                    if (greatestConfidence.second < checks) {
+                        greatestConfidence = new Pair<>(different, checks);
+                    }
+                    checks = 0;
+                }
+
+                if (checks >= 5) {
+                    isComplete = true;
+                }
+
+                if (frameCount >= 20) {
+                    different = greatestConfidence.first;
+                    isComplete = true;
+                }
+
+                lastFrameValue = different;
+            }
+        } else {
             drawRectOnToMat(input, topRect, red);
             drawRectOnToMat(input, middleRect, red);
             drawRectOnToMat(input, bottomRect, red);
-        }
-        //We crop the image so it is only everything inside the rectangles and find the cb value inside of them
-        Mat topBlock = matYCrCb.submat(topRect);
-        Mat middleBlock = matYCrCb.submat(middleRect);
-        Mat bottomBlock = matYCrCb.submat(bottomRect);
-        Core.extractChannel(topBlock, matCbTop, 0);
-        Core.extractChannel(middleBlock,matCbMiddle,0);
-        Core.extractChannel(bottomBlock, matCbBottom, 0);
-        Core.extractChannel(topBlock, matCbTop1, 1);
-        Core.extractChannel(middleBlock,matCbMiddle1,1);
-        Core.extractChannel(bottomBlock, matCbBottom1, 1);
-        Core.extractChannel(topBlock, matCbTop2, 2);
-        Core.extractChannel(middleBlock,matCbMiddle2,2);
-        Core.extractChannel(bottomBlock, matCbBottom2, 2);
-
-        Scalar topMean = Core.mean(matCbTop);
-        Scalar topMean1 = Core.mean(matCbTop1);
-        Scalar topMean2 = Core.mean(matCbTop2);
-        Scalar middleMean = Core.mean(matCbMiddle);
-        Scalar middleMean1 = Core.mean(matCbMiddle1);
-        Scalar middleMean2 = Core.mean(matCbMiddle2);
-        Scalar bottomMean = Core.mean(matCbBottom);
-        Scalar bottomMean1 = Core.mean(matCbBottom1);
-        Scalar bottomMean2 = Core.mean(matCbBottom2);
-
-        topAverage = topMean.val[0] + 0.5 * (topMean1.val[0] + topMean2.val[0]);
-        middleAverage = middleMean.val[0] + 0.5 * (middleMean1.val[0] + middleMean2.val[0]);
-        bottomAverage = bottomMean.val[0] + 0.5 * (bottomMean1.val[0] + bottomMean2.val[0]);
-        if (!isComplete) {
-            frameCount++;
-            if (different == lastFrameValue || checks == 0) {
-                checks++;
-            } else {
-                if (greatestConfidence.second < checks) {
-                    greatestConfidence = new Pair<>(different, checks);
-                }
-                checks = 0;
-            }
-
-            if (checks >= 5) {
-                isComplete = true;
-            }
-
-            if (frameCount >= 20) {
-                different = greatestConfidence.first;
-                isComplete = true;
-            }
-
-            lastFrameValue = different;
         }
         return input;
     }

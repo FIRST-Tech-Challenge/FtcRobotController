@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.core.robot.vision.robot;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -21,28 +22,10 @@ public class TseDetector {
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
 
-    public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName) {
+    public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName, boolean debug) {
         this.eventThread = eventThread;
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
-    }
-
-    /**
-     * Resets pipeline on call
-     * Stalls code until pipeline is done with figuring out (max time of around 0.33 seconds)
-     * @return integer 1 - 3, corresponds to barcode slots left to right
-     */
-    public synchronized int run() {
-        pipeline.resetPipeline();
-        try {
-            wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return pipeline.differentSpot().second;
-    }
-
-    public void init() {
         int cameraMonitorViewId = hardwareMap
                 .appContext.getResources()
                 .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -54,6 +37,9 @@ public class TseDetector {
             @Override
             public void onOpened() {
                 camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, ORIENTATION);
+                if (debug) {
+                    FtcDashboard.getInstance().startCameraStream(camera, 10);
+                }
             }
 
             @Override
@@ -61,6 +47,20 @@ public class TseDetector {
                 System.out.println("OpenCv Pipeline error with error code " + errorCode);
             }
         });
-        eventThread.addEvent(new RunWhenOutputChangedOnceEvent(this::notifyAll, () -> pipeline.differentSpot().first));
+    }
+
+    /**
+     * Resets pipeline on call
+     * Stalls code until pipeline is done with figuring out (max time of around 0.33 seconds)
+     * @return integer 1 - 3, corresponds to barcode slots left to right
+     */
+    public synchronized int run() {
+        pipeline.startPipeline();
+        boolean first = pipeline.differentSpot().first;
+        while (!first) {
+            first = pipeline.differentSpot().first;
+        }
+        pipeline.stopPipeline();
+        return pipeline.differentSpot().second;
     }
 }
