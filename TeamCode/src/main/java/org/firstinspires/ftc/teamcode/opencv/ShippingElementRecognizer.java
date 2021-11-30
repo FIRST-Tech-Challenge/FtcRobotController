@@ -32,9 +32,10 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Mat mat = new Mat();
-        Scalar lowRGB = new Scalar(220, 220, 220); // duck lower
-        Scalar highRGB = new Scalar(255, 255, 255); // duck upper
-        Core.inRange(input, lowRGB, highRGB, mat);
+        Scalar lowHSV = new Scalar(130, 51, 0); // duck lower
+        Scalar highHSV = new Scalar(160, 255, 255); // duck upper
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
+        Core.inRange(input, lowHSV, highHSV, mat);
         Mat left = mat.submat(LEFTBOX);
         Mat center = mat.submat(CENTERBOX);
         Mat right = mat.submat(RIGHTBOX);
