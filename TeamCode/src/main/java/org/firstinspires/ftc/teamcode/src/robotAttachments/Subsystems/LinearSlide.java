@@ -93,6 +93,9 @@ public class LinearSlide implements Runnable {
         }
     }
 
+    public void setMotorPower(double power) {
+        linearSlide.setPower(power);
+    }
 
     public static enum HeightLevels {
         BottomLevel,
