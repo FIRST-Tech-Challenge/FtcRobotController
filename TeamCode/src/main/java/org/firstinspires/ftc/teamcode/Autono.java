@@ -68,7 +68,7 @@ public class Autono extends LinearOpMode {
         telemetry.update();
         // Send telemetry message to indicate successful Encoder reset
 
-        lift(-180, -0.3);
+        lift(-200, -0.3);
 
         telemetry.addData("Path0", "Starting at %7d :%7d:%7d:%7d",
                 robot.leftFrontDrive.getCurrentPosition(),
@@ -139,12 +139,19 @@ public class Autono extends LinearOpMode {
         goToWayPoint(0.7,0.03,-90,2,30,0.005,1);
         goToWayPoint(1.4,0.03,-90,2,30,0.005,1);
         */
-        goToWayPoint(-1.48, 0.19, -90, 2, 80, 0.005, 1);
+        goToWayPoint(-0.15, 0.15, 0, 2, 30, 0.005, 1);
+        setPower(0, 0, 0, 0);
+        lift(-900, -0.3);
+        goToWayPoint(-0.15, 0.55, 0, 2, 30, 0.005, 1);
+        this.robot.intakeUp.setPower(0.7);
+        sleep(3000);
+        this.robot.intakeUp.setPower(0);
+        goToWayPoint(-1.48, 0.175, -90, 2, 80, 0.005, 1);
         this.robot.duck.setPower(-0.2);
         sleep(3000);
         this.robot.duck.setPower(0);
-        goToWayPoint(0.3, 0, -90, 2, 80, 0.005, 1);
-        goToWayPoint(1.2, 0, -90, 2, 80, 0.01, 1);
+        goToWayPoint(0.3, -0.01, -90, 2, 80, 0.005, 1);
+        goToWayPoint(1.2, -0.01, -90, 2, 80, 0.01, 1);
 
 
 
