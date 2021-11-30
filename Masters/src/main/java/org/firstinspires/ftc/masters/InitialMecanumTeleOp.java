@@ -84,10 +84,10 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         // "RUN_USING_ENCODER" causes the motor to try to run at the specified fraction of full velocity
         // Note: We were not able to make this run mode work until we switched Channel A and B encoder wiring into
         // the motor controllers. (Neverest Channel A connects to MR Channel B input, and vice versa.)
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -103,41 +103,68 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
 
-            // Reset speed variables
-            LF = 0; RF = 0; LR = 0; RR = 0;
+            double y = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x;
+            double rx = gamepad1.right_stick_x;
 
-            // Get joystick values
-            Y1 = -gamepad1.left_stick_y * joyScale; // invert so up is positive
-            X1 = gamepad1.left_stick_x * joyScale;
-            Y2 = -gamepad1.right_stick_y * joyScale; // Y2 is not used at present
-            X2 = gamepad1.right_stick_x * joyScale;
+            double leftFrontPower = y + x - rx;
+            double leftRearPower = y - x - rx;
+            double rightFrontPower = y - x + rx;
+            double rightRearPower = y + x + rx;
 
-            // Forward/back movement
-            LF += Y1; RF += Y1; LR += Y1; RR += Y1;
+            if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
-            // Side to Side movement
-            LF += X1; RF -= X1; LR -= X1; RR += X1;
+                double max;
+                max = Math.max(leftFrontPower, leftRearPower);
+                max = Math.max(max, rightFrontPower);
+                max = Math.max(max, rightRearPower);
 
-            // Rotation movement
-            LF += X2; RF -= X2; LR += X2; RR -= X2;
+                leftFrontPower /= max;
+                leftRearPower /= max;
+                rightFrontPower /= max;
+                rightRearPower /= max;
+            }
 
-            // Clip motor power values to +-motorMax
-            LF = Math.max(-motorMax, Math.min(LF, motorMax));
-            RF = Math.max(-motorMax, Math.min(RF, motorMax));
-            LR = Math.max(-motorMax, Math.min(LR, motorMax));
-            RR = Math.max(-motorMax, Math.min(RR, motorMax));
+            leftFrontMotor.setPower(leftFrontPower);
+            leftRearMotor.setPower(leftRearPower);
+            rightFrontMotor.setPower(rightFrontPower);
+            rightRearMotor.setPower(rightRearPower);
 
-            // Send values to the motors
-            leftFrontMotor.setPower(LF);
-            rightFrontMotor.setPower(RF);
-            leftRearMotor.setPower(LR);
-            rightRearMotor.setPower(RR);
-
-            // Send some useful parameters to the driver station
-            telemetry.addData("LF", "%.3f", LF);
-            telemetry.addData("RF", "%.3f", RF);
-            telemetry.addData("LR", "%.3f", LR);
-            telemetry.addData("RR", "%.3f", RR);
+//            // Reset speed variables
+//            LF = 0; RF = 0; LR = 0; RR = 0;
+//
+//            // Get joystick values
+//            Y1 = -gamepad1.left_stick_y * joyScale; // invert so up is positive
+//            X1 = gamepad1.left_stick_x * joyScale;
+//            Y2 = -gamepad1.right_stick_y * joyScale; // Y2 is not used at present
+//            X2 = gamepad1.right_stick_x * joyScale;
+//
+//            // Forward/back movement
+//            LF += Y1; RF += Y1; LR += Y1; RR += Y1;
+//
+//            // Side to Side movement
+//            LF += X1; RF -= X1; LR -= X1; RR += X1;
+//
+//            // Rotation movement
+//            LF += X2; RF -= X2; LR += X2; RR -= X2;
+//
+//            // Clip motor power values to +-motorMax
+//            LF = Math.max(-motorMax, Math.min(LF, motorMax));
+//            RF = Math.max(-motorMax, Math.min(RF, motorMax));
+//            LR = Math.max(-motorMax, Math.min(LR, motorMax));
+//            RR = Math.max(-motorMax, Math.min(RR, motorMax));
+//
+//            // Send values to the motors
+//            leftFrontMotor.setPower(LF);
+//            rightFrontMotor.setPower(RF);
+//            leftRearMotor.setPower(LR);
+//            rightRearMotor.setPower(RR);
+//
+//            // Send some useful parameters to the driver station
+//            telemetry.addData("LF", "%.3f", LF);
+//            telemetry.addData("RF", "%.3f", RF);
+//            telemetry.addData("LR", "%.3f", LR);
+//            telemetry.addData("RR", "%.3f", RR);
 
             if(gamepad2.y && !carouselOn) {
                 if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
