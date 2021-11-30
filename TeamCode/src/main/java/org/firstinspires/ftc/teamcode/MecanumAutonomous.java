@@ -12,32 +12,61 @@ import org.firstinspires.ftc.teamcode.external.libs.PIDController;
 public class MecanumAutonomous extends LinearOpMode {
     //Add an ElapsedTime for function runtime calculations.
     private ElapsedTime runtime = new ElapsedTime();
+
     //Import the robot's hardware map.
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
+
     // Declare IMU
     BNO055IMU.Parameters IMU_Parameters;
     double globalAngle;
     double rotation;
+
+    //Declare the PIDController and other variables for it.
     PIDController pidRotate;
     Orientation lastAngles = new Orientation();
     double correction;
     float Yaw_Angle = 0;
+
+    //True if Y is pressed
     boolean startPositionDuck = false;
-    //yellow button (y) sets to true
+    //True if X is pressed
     boolean redAlliance = false;
-    //blue button (x) sets to true
+    //True if A is pressed
     boolean endPositionDuck = false;
-    //green button (a) sets to true
     private boolean aPressed;
     private boolean yPressed;
     private boolean xPressed;
+
     @Override
     public void runOpMode() {
+        //Import the robot's hardware map
+        robot.init(hardwareMap, telemetry);
+
+        // Initialize IMU
+        IMU_Parameters = new BNO055IMU.Parameters();
+        IMU_Parameters.mode = BNO055IMU.SensorMode.IMU;
+        robot.imu.initialize(IMU_Parameters);
+        IMU_Calibrated();
+
+        /* Set PID proportional value to start reducing power at about 50 degrees of rotation.
+        P by itself may stall before turn completed so we add a bit of I (integral) which
+        causes the PID controller to gently increase power if the turn is not completed.
+        */
+        pidRotate = new PIDController(.003, .00003, 0);
+
+        /*
+        Selection code for starting position and alliance settings.
+        Booleans descriptions are True / False
+        startPositionDuck is for selecting Duck Side / Warehouse Side.
+        redAlliance is for Red Alliance / Blue Alliance
+        endPositionDuck is for selecting Duck Side / Warehouse Side.
+        */
         while(! isStarted()) {
             if (gamepad1.y & !yPressed) {
                 startPositionDuck = !startPositionDuck;
-                telemetry.addData("ypressed", "pressed");
+                telemetry.addData("Y Pressed", "pressed");
             }
+            //Set pressed variable so when the loop runs next frame an input only registers if it is new.
             yPressed = gamepad1.y;
             if (gamepad1.x & !xPressed) {
                 redAlliance = !redAlliance;
@@ -45,51 +74,44 @@ public class MecanumAutonomous extends LinearOpMode {
             xPressed = gamepad1.x;
             if (gamepad1.a & !aPressed) {
                 endPositionDuck = !endPositionDuck;
-                telemetry.addData("apressed", "pressed");
+                telemetry.addData("A Pressed", "pressed");
             }
             aPressed = gamepad1.a;
-            telemetry.addData("Start Position", "y=startPositionDuck / x=redAlliance / a=endPositionDuck");
+
+            //Print input telemetry.
+            telemetry.addData("Start Position", "Y = Start Position \n X = Alliance \n A = End Position");
             telemetry.addData("Settings", "\n%s, %s, %s",
-                    startPositionDuck ? "startDuck" : "startWarehouse",
-                    redAlliance ? "Blue" : "Red",
-                    endPositionDuck ? "endDuck" : "endWarehouse");
+                    startPositionDuck ? "startDuck": "startWarehouse",
+                    redAlliance ? "Red" : "Blue",
+                    endPositionDuck ?  "endDuck" : "endWarehouse");
             telemetry.update();
-            sleep(500);
-            }
-        telemetry.addData("y=startPositionDuck", "");
-        telemetry.addData("Settings", "\n%s, %s, %s",
-                startPositionDuck ? "startDuck" : "startWarehouse",
-                redAlliance ? "Blue" : "Red",
-                endPositionDuck ? "endDuck" : "endWarehouse");
-        telemetry.update();
-        sleep(10000);
-        //Import the hardware map
-        robot.init(hardwareMap, telemetry);
-        telemetry.addData("Say", "Hello Driver");
-        // Initialize IMU
-        IMU_Parameters = new BNO055IMU.Parameters();
-        IMU_Parameters.mode = BNO055IMU.SensorMode.IMU;
-        robot.imu.initialize(IMU_Parameters);
-        IMU_Calibrated();
-        //Run during program's init (anything before waitForStart()).
-        // Set PID proportional value to start reducing power at about 50 degrees of rotation.
-        // P by itself may stall before turn completed so we add a bit of I (integral) which
-        // causes the PID controller to gently increase power if the turn is not completed.
-        pidRotate = new PIDController(.003, .00003, 0);
-        //Begin after program's start.
+        }
+
+        //Wait for the input's start.
         waitForStart();
-        //Start of actual code for movement.
-        //forward(20, 0.8, 5.0);
-        //forward(-20, 0.8, 5.0);
-        //move(45, 40, 0.8, 5.0);
-        //move(225, 40, 0.8, 5.0);
-        //move(135, 40, 0.8, 5.0);
-        //move(315, 40, 0.8, 5.0);
-        rotate(90,0.3);
-        //rotate(-90,0.3);
+
+        //Run code while the opMode is active.
+        if(opModeIsActive()) {
+            //Start of actual code for movement.
+            driveStraight(20, 0.8, 5.0);
+            driveStraight(-20, 0.8, 5.0);
+            drive(45, 40, 0.8, 5.0);
+            drive(225, 40, 0.8, 5.0);
+            drive(135, 40, 0.8, 5.0);
+            drive(315, 40, 0.8, 5.0);
+            rotate(90, 0.3);
+            rotate(-90, 0.3);
+            rotate(45, 0.3);
+        }
     }
-    //Drive forward/backward. Travel distance in CM.
-    public void forward(double distanceInCM, double power, double timeoutS) {
+
+    /*
+    Drive forward/backward. Travel distance in CM.
+    @param distanceInCM Distance to be driven (In centimeters)
+    @param power Motor power (From 0.0 to 1.0)
+    @param timeoutS Motor movement timeout (Adjust accordingly, or just put 5)
+    */
+    public void driveStraight(double distanceInCM, double power, double timeoutS) {
         telemetry.addData("status","encoder reset");
         telemetry.update();
         robot.restartEncoders();
@@ -124,8 +146,15 @@ public class MecanumAutonomous extends LinearOpMode {
             robot.restartEncoders();
         }
     }
-    //Method which allows the robot to move in any direction (based on degrees). Distance is in CM.
-    public void move(double degrees, double distance, double power, double timeout) {
+
+    /*
+    Drive in any direction.
+    @param degrees Direction to be driven (In degrees) (From 0 to 360)
+    @param distance Distance to be driven (In centimeters)
+    @param power Motor power (From 0.0 to 1.0)
+    @param timeout Motor movement timeout (In Seconds) (Adjust accordingly, or just put 5)
+    */
+    public void drive(double degrees, double distance, double power, double timeout) {
         //Math to convert input(degrees) into x and y.
         double degreesToR = Math.toRadians(degrees);
         double x = Math.cos(degreesToR);
@@ -198,16 +227,23 @@ public class MecanumAutonomous extends LinearOpMode {
         robot.setPowers(0.0);
         robot.restartEncoders();
     }
-    //Calculate DriveDistance for DriveBot method.
+
+    /*
+    Calculate drive distance to be used in driving methods by converting centimeters into encoder clicks.
+    @param distance Distance to be driven (In centimeters)
+    */
     public double driveDistance(double distance) {
         double drive  = (robot.REV_ENCODER_CLICKS/ robot.REV_WHEEL_CIRC);
         return (int)Math.floor(drive * distance);
     }
-    //Reset IMU angle calculations.
+
+    //Reset IMU angle calculations
     private void resetAngle() {
         lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         globalAngle = 0;
     }
+
+    //Get the IMU's global angle.
     private double getAngle() {
         // We experimentally determined the Z axis is the axis we want to use for heading angle.
         // We have to process the angle because the imu works in euler angles so the Z axis is
@@ -223,8 +259,12 @@ public class MecanumAutonomous extends LinearOpMode {
         lastAngles = angles;
         return globalAngle;
     }
-    private void rotate(int degrees, double power)
-    {
+
+    /*
+    Turn the robot (Counterclockwise).
+    @param degrees Amount of degrees to be turned (0 to 360)
+    */
+    private void rotate(int degrees, double power) {
         //Reset IMU's angle tracking.
         resetAngle();
         // if degrees > 359 we cap at 359 with same sign as original degrees.
@@ -256,10 +296,10 @@ public class MecanumAutonomous extends LinearOpMode {
             }
             do {
                 power = pidRotate.performPID(getAngle()); //power will be - on right turn.
-                robot.motorBackLeft.setPower(-power);
-                robot.motorFrontLeft.setPower(-power);
-                robot.motorBackRight.setPower(power);
-                robot.motorFrontRight.setPower(power);
+                robot.motorBackLeft.setPower(power);
+                robot.motorFrontLeft.setPower(power);
+                robot.motorBackRight.setPower(-power);
+                robot.motorFrontRight.setPower(-power);
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);
                 telemetry.addData("2 global heading", globalAngle);
                 telemetry.addData("3 correction", correction);
@@ -289,6 +329,7 @@ public class MecanumAutonomous extends LinearOpMode {
         //Reset IMU's angle tracking.
         resetAngle();
     }
+
     //Returns telemetry for IMU Calibration.
     public void IMU_Calibrated() {
         telemetry.addData("IMU Calibration Status", robot.imu.getCalibrationStatus());
