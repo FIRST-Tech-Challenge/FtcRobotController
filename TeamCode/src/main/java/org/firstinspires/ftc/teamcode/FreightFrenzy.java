@@ -113,7 +113,7 @@ public class FreightFrenzy extends LinearOpMode {
 
             telemetry.addData("Arm", robot.lift.getCurrentPosition()); // 0 - 2235
 
-            telemetry.addData("Extend", robot.lift.getCurrentPosition());
+            telemetry.addData("Extend", robot.exten.getCurrentPosition());
 
             telemetry.update();
 

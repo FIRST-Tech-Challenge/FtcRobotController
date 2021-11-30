@@ -39,9 +39,6 @@ public class Autono extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-
-    int[] armPos = {1,2,3};
-
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
@@ -70,6 +67,9 @@ public class Autono extends LinearOpMode {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
         // Send telemetry message to indicate successful Encoder reset
+
+        lift(-180, -0.3);
+
         telemetry.addData("Path0", "Starting at %7d :%7d:%7d:%7d",
                 robot.leftFrontDrive.getCurrentPosition(),
                 robot.leftRearDrive.getCurrentPosition(),
@@ -123,18 +123,35 @@ public class Autono extends LinearOpMode {
         lift(0.7, 0, 15);
 
          */
+        /*
+        goToWayPoint(-0.28, 0.7, 0, 2, 30, 0.01, 1);
+        setPower(0,0,0,0);
+        lift(-900, -0.3);
+        this.robot.intakeUp.setPower(0.7);
+        sleep(2500);
+        this.robot.intakeUp.setPower(0);
         goToWayPoint(-1.9,0.38,-90,2,80,0.01,1);
-        goToWayPoint(-1.9,0.3,-90,0.5,30,0.005,1);
+        goToWayPoint(-1.9,0.285,-90,0.5,30,0.002,1);
         setPower(0,0,0,0);
         this.robot.duck.setPower(-0.2);
         sleep(3000);
         this.robot.duck.setPower(0);
-        goToWayPoint(0.7,0.05,-90,2,30,0.005,1);
+        goToWayPoint(0.7,0.03,-90,2,30,0.005,1);
+        goToWayPoint(1.4,0.03,-90,2,30,0.005,1);
+        */
+        goToWayPoint(-1.48, 0.19, -90, 2, 80, 0.005, 1);
+        this.robot.duck.setPower(-0.2);
+        sleep(3000);
+        this.robot.duck.setPower(0);
+        goToWayPoint(0.3, 0, -90, 2, 80, 0.005, 1);
+        goToWayPoint(1.2, 0, -90, 2, 80, 0.01, 1);
+
+
 
     }
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
-        targetPos[0] = (y*((double)(100/39))); // why.
-        targetPos[1] = (-x*((double)(100/39)));
+        targetPos[0] = (y); // why.
+        targetPos[1] = (-x);
         targetPos[2] = angle * Math.PI / 180; // Math.PI /2;   //heading, radian
         this.positionControl.goToTargetPosition(targetPos, vel,vw * Math.PI / 180, disRes,angleRes);
         while(!this.positionControl.checkTaskDone()){
@@ -154,20 +171,22 @@ public class Autono extends LinearOpMode {
     }
 
     private void setPower(double frontLeft, double frontRight, double backLeft, double backRight){
-        robot.leftFrontDrive.setPower(frontLeft);
-        robot.rightFrontDrive.setPower(frontRight);
-        robot.leftRearDrive.setPower(backLeft);
-        robot.rightRearDrive.setPower(backRight);
+        this.robot.leftFrontDrive.setPower(frontLeft);
+        this.robot.rightFrontDrive.setPower(frontRight);
+        this.robot.leftRearDrive.setPower(backLeft);
+        this.robot.rightRearDrive.setPower(backRight);
     }
 
-    private void lift(double power, int target, int margin){
-        robot.lift.setTargetPosition(target);
-        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if(Math.abs(robot.lift.getCurrentPosition()-target) > margin) {
-            robot.lift.setPower(power);
-        }
-        while(robot.lift.isBusy()){}
-        robot.lift.setPower(0);
+    private void lift(int target, double power){
+        this.robot.lift.setTargetPosition(target);
+        this.robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.robot.lift.setPower(power);
+    }
+
+    private void exten(int target, double power){
+        this.robot.exten.setTargetPosition(target);
+        this.robot.exten.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.robot.exten.setPower(power);
     }
 
     private void initVuforia() {
