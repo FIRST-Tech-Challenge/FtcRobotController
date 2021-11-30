@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 
-//@Disabled
 @TeleOp(name = "LS Test")
 public class LinearSlideTest extends TeleopTemplate {
     DcMotor linearSlide;

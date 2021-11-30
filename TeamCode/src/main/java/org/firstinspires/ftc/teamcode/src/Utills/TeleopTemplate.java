@@ -29,7 +29,8 @@ public class TeleopTemplate extends LinearOpMode {
 
         slide = new LinearSlide(hardwareMap, "slide_motor");
 
-        intake = new ContinuousIntake(hardwareMap, "intake_motor");
+        intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo");
+        intake.setServoDown();
 
 
         telemetry.addData("Initialization Status", "Initialized");

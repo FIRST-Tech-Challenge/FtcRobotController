@@ -3,17 +3,25 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class ContinuousIntake {
     final static double forwardPower = 1;
     DcMotor intakeMotor;
 
-    public ContinuousIntake(HardwareMap hardwareMap, String motorName) {
+    private static final double BucketUpPosition = .92;
+    private static final double BucketDownPosition = .5;
+    Servo slantServo;
+
+    public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName) {
         intakeMotor = hardwareMap.dcMotor.get(motorName);
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        slantServo = hardwareMap.servo.get(servoName);
+
     }
 
     public void intakeOn() {
@@ -30,5 +38,13 @@ public class ContinuousIntake {
 
     public void setMotorPower(double power) {
         intakeMotor.setPower(power);
+    }
+
+    public void setServoUp() {
+        slantServo.setPosition(BucketUpPosition);
+    }
+
+    public void setServoDown() {
+        slantServo.setPosition(BucketDownPosition);
     }
 }
