@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -19,6 +18,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         // init motor and add intake for arm
         robot.motorArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorIntake.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         int armCurrentPos = 0;
         int armSetPos = 0;
@@ -30,6 +30,9 @@ public class MecanumTeleOp extends LinearOpMode {
         int armLevel1 = 100; // (x)
         int armLevel2 = 400; // (y)
         int armLevel3 = 700; // (b)
+
+        //intake power
+        double intakePower = 0;
 
         //set arm power
         robot.motorArm.setPower(0.3);
@@ -78,10 +81,22 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
 
-            //set power for intake
-            robot.motorIntake.setPower(gamepad2.left_trigger * 0.75);
-            robot.motorIntake.setPower(-gamepad2.right_trigger * 0.3);
-
+            //intake in
+            if (gamepad2.left_trigger > 0){
+                intakePower = 0.75;
+            }
+            else if (gamepad2.left_trigger == 0){
+                intakePower = 0;
+            }
+            //intake out
+            if (gamepad2.right_trigger > 0){
+                intakePower = -0.3;
+            }
+            else if (gamepad2.right_trigger == 0){
+                intakePower = 0;
+            }
+            //set power
+            robot.motorIntake.setPower(intakePower);
 
 
             //drivetrain mecanum

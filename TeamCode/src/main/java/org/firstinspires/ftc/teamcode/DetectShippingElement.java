@@ -59,6 +59,7 @@ public class DetectShippingElement extends LinearOpMode
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         // store as variable here so we can access the location
+        telemetry.addLine("here 1");
         OpenCvShippingElementDetector detector = new OpenCvShippingElementDetector( width, height, telemetry);
 
         robot.init(hardwareMap);
