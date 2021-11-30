@@ -1,5 +1,6 @@
 package org.wheelerschool.robotics.comp.chassis;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
@@ -22,14 +23,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import java.util.ArrayList;
-
 public class Meccanum {
 
     private final ElapsedTime runtime = new ElapsedTime(); // getting a warning to make it final
 
     private Servo servo0;
     private DcMotor arm;
+
+    public final String SINGLEPLAYER_CONTROL = "SINGLEPLAYER";
+    public final String MULTIPLAYER_CONTROL = "MULTIPLAYER";
 
     public final double NORMAL_SPEED = 0.5; // preference and feel for best
     public final double SERVO_FULLY_CLOSED = 0; // need arm+hub to test this
@@ -170,12 +172,35 @@ public class Meccanum {
 
     }
 
+    public void motorDriveXYVectors(double xvec, double yvec, double spinvec){ // used for teleop mode
+        //NOTE
+        // im not sure how to acurately do this using encoders, because some wheels are going to spin at different powers (I think)
+        // this will cause the ticks to be difficult to calculate, and I dont really want to deal with that
+
+
+        double y = pow(-yvec,3); // Remember, this is reversed!
+        double x = pow(xvec * 1.1,3); // Counteract imperfect strafing
+        double rx = pow(spinvec,3);
+
+
+        //denominator is the largest motor power (absolute value) or 1
+        //this ensures all the powers maintain the same ratio, but only when
+        //at least one is out of the range [-1, 1]
+        double denominator = Math.max(abs(y) + abs(x) + abs(rx), 1);
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+
+        motorDrive(frontLeftPower,backLeftPower, frontRightPower, backRightPower);
+
+    }
+
     public void motorDriveRelativeAngleTime(double radians, double speed, double time){
         motorDriveRelativeAngle(radians, speed);
         delay(time);
         motorStop();
     }
-
 
     public void motorStop(){
         motorBackLeft.setPower(0);
@@ -226,7 +251,7 @@ public class Meccanum {
         ElapsedTime e = new ElapsedTime();
         e.reset();
         while(e.milliseconds() < time){
-
+            // stal program
         }
     }
 
@@ -277,6 +302,9 @@ public class Meccanum {
         spinnyStop();
     }
 
+    public void moveArm(double power){
+        arm.setPower(power);
+    }
 
     public void turnRadians(double radians, double speed) {
         turnRadians(radians, speed, angles.firstAngle);
