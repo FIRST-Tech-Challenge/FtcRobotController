@@ -274,11 +274,12 @@ public class FrenzyBot extends FrenzyBaseBot {
             ((SwitchableLight) colorSensor).enableLight(on);
         }
     }
-    public DetectedColor detectColor(Telemetry telemetry, float timeout) {
+    public float detectColor(Telemetry telemetry, float timeout) {
         ElapsedTime runtime = new ElapsedTime();
+
         toggleLight(true);
         // values is a reference to the hsvValues array.
-        DetectedColor dc = DetectedColor.NONE;
+        DetectedColor H = DetectedColor.NONE;
         float[] hsvValues = new float[3];
         final float values[] = hsvValues;
 
@@ -336,16 +337,16 @@ public class FrenzyBot extends FrenzyBaseBot {
                     .addData("g", "%02x", Color.green(color))
                     .addData("b", "%02x", Color.blue(color));
             telemetry.update();
-            if(colors.red > 0.2 && colors.green > 0.2 && colors.blue < 0.2){
-                dc = DetectedColor.Yellow;
-            }
-            else if (colors.red > 0.2 && colors.green > 0.2 && colors.blue > 0.2){
-                dc = DetectedColor.White;
-            }
+
             stop = timeout == 0 || (timeout > 0 && runtime.seconds() >= timeout);
         }
 
         toggleLight(false);
-        return dc;
+        //returning H value
+        return hsvValues[0];
+    }
+    public boolean isIntakeBoxEmpty(){
+        float HValue = detectColor(telemetry, 0);
+        return HValue < 5;
     }
 }
