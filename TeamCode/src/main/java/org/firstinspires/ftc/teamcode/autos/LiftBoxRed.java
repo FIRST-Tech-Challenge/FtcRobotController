@@ -29,24 +29,27 @@ public class LiftBoxRed extends LinearOpMode {
         // Start button is pressed
 
         // Drive to the the shipping hub
-        chassis.moveBackwardWithEncoders(0.6,300);
-        chassis.turnRightWithEncoders(0.6,205);
-        chassis.moveBackwardWithEncoders(0.6,650);
+        chassis.moveBackwardWithEncoders(0.6,100);
+        chassis.strafeLeftWithEncoders(0.6,1100);
+        chassis.moveBackwardWithEncoders(0.6,800);
 
         // Deposit the box on the top level (change once camera is on)
-        lift.goTo(1400,0.8);
-        delay(500);
+        lift.goTo(1450,0.8);
+        delay(750);
         hopper.hopper.setPosition(0.33);
         delay(700);
         hopper.hopper.setPosition(0);
         lift.goTo(0,0.8);
 
         // Move to the carousel and spin it
-        chassis.moveForwardWithEncoders(0.6,550);
-        chassis.turnRightWithEncoders(0.6,1150);
-        chassis.moveBackwardWithEncoders(0.6,800);
+        chassis.moveForwardWithEncoders(0.6,600);
+        chassis.turnRightWithEncoders(0.6,1550);
+        chassis.moveBackwardWithEncoders(0.4,600);
         chassis.moveForwardWithEncoders(0.6,100);
-        chassis.strafeLeftWithEncoders(0.6,1000);
+        chassis.strafeLeftWithEncoders(0.6,2000);
+        chassis.moveBackwardWithEncoders(0.4,800);
+        chassis.moveForwardWithEncoders(0.6,100);
+        chassis.strafeLeftWithEncoders(0.3,300);
         carousel.turnCarousel();
         delay(2500);
         carousel.carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -54,9 +57,10 @@ public class LiftBoxRed extends LinearOpMode {
 
         // Drive into the warehouse
         chassis.strafeRightWithEncoders(0.6,50);
-        chassis.moveForwardWithEncoders(1, 250);
-        chassis.turnRightWithEncoders(0.6,600);
-        chassis.moveForwardWithEncoders(1, 5000);
+        chassis.moveForwardWithEncoders(0.6, 200);
+        chassis.turnRightWithEncoders(0.6,650);
+        chassis.moveBackwardWithEncoders(0.4,850);
+        chassis.moveForwardWithEncoders(1, 5200);
     }
 
     public void delay(int time) {

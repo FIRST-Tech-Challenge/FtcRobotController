@@ -29,12 +29,12 @@ public class LiftBoxBlue extends LinearOpMode {
         // Start button is pressed
 
         // Drive to the the shipping hub
-        chassis.moveBackwardWithEncoders(0.6,300);
-        chassis.turnLeftWithEncoders(0.6,175);
-        chassis.moveBackwardWithEncoders(0.6,800);
+        chassis.moveBackwardWithEncoders(0.6,100);
+        chassis.strafeRightWithEncoders(0.6,1100);
+        chassis.moveBackwardWithEncoders(0.6,850);
 
         // Deposit the box on the top level (change once camera is on)
-        lift.goTo(1400,0.8);
+        lift.goTo(1450,0.8);
         delay(500);
         hopper.hopper.setPosition(0.33);
         delay(700);
@@ -42,9 +42,9 @@ public class LiftBoxBlue extends LinearOpMode {
         lift.goTo(0,0.8);
 
         // Move to the carousel and spin it
-        chassis.moveForwardWithEncoders(0.6,550);
-        chassis.turnRightWithEncoders(0.5,1100);
-        chassis.moveBackwardWithEncoders(0.6,1250);
+        chassis.moveForwardWithEncoders(0.6,600);
+        chassis.turnLeftWithEncoders(0.5,650);
+        chassis.moveBackwardWithEncoders(0.6,1300);
         chassis.moveBackwardWithEncoders(0.3,200);
         chassis.moveForwardWithEncoders(0.5,25);
         chassis.strafeLeftWithEncoders(0.3,450);
