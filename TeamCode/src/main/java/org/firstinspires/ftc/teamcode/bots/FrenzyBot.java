@@ -264,6 +264,50 @@ public class FrenzyBot extends FrenzyBaseBot {
         activateRotatorRight(-0.75);
         activateRotatorLeft(-0.75);
     }
+
+    protected void delayWait(long ms) {
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+        while (time.milliseconds() < ms){
+            // do nothing
+        }
+    }
+
+    @BotAction(displayName = "Start turntable blue gradual", defaultReturn = "")
+    public void startTurntableBlueGradual() {
+        double startSpeed = 0.5;
+        double speedIncrement = 0.037;
+        int maxLoops = 20;
+        int loopDelayMs = 100;
+        double currSpeed = startSpeed;
+        for(int i = 0; i < maxLoops; i++){
+            activateRotatorRight(currSpeed);
+            activateRotatorLeft(currSpeed);
+            currSpeed += speedIncrement;
+            this.delayWait(loopDelayMs);
+
+        }
+        activateRotatorRight(0.0);
+        activateRotatorLeft(0.0);
+    }
+    @BotAction(displayName = "Start turntable red gradual", defaultReturn = "")
+    public void startTurntableRedGradual() {
+        double startSpeed = -0.7;
+        double speedIncrement = -0.037;
+        int maxLoops = 20;
+        int loopDelayMs = 100;
+        double currSpeed = startSpeed;
+        for(int i = 0; i < maxLoops; i++){
+            activateRotatorRight(currSpeed);
+            activateRotatorLeft(currSpeed);
+            currSpeed += speedIncrement;
+            this.delayWait(loopDelayMs);
+
+        }
+        activateRotatorRight(0.0);
+        activateRotatorLeft(0.0);
+    }
+
     @BotAction(displayName = "Stop turntable", defaultReturn = "")
     public void stopTurntable() {
         activateRotatorRight(0.0);
