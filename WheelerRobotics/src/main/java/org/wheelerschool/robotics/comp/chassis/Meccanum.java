@@ -1,8 +1,14 @@
 package org.wheelerschool.robotics.comp.chassis;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
+
+import androidx.annotation.NonNull;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -19,18 +25,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Meccanum {
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime(); // getting a warning to make it final
 
     private Servo servo0;
     private DcMotor arm;
 
-    public final double SERVO_FULLY_CLOSED = 0;
-    public final double SERVO_FULLY_OPENED = 0;
-    public final double ARM_MAX_SPEED = 0;
-    public final double HIGH_SPINNER_POWER = 0;
-    public final double NORMAL_SPEED = 0;
-    public final double OPTIMAL_SPINNER_POWER = 0;
-    public final double MOTOR_STOP = 0;
+    public final String SINGLEPLAYER_CONTROL = "SINGLEPLAYER";
+    public final String MULTIPLAYER_CONTROL = "MULTIPLAYER";
+
+    public final double NORMAL_SPEED = 0.5; // preference and feel for best
+    public final double SERVO_FULLY_CLOSED = 0; // need arm+hub to test this
+    public final double SERVO_FULLY_OPENED = 0; // need arm+hub to test this
+    public final double HALF_SERVO_ANGLE = 0; // need arm+hub to test for this, can probably just average full open/close
+    public final double ARM_MAX_SPEED = 0; // preference? or maybe to be precise
+    public final double HIGH_SPINNER_POWER = 1; // probably max, may need to adjust later
+    public final double OPTIMAL_SPINNER_POWER = 0; // need spinner+hub to test this
+    public final double MOTOR_STOP = 0; // its just 0 cuz full stop
+
 
     private DcMotor spinner;
 
@@ -43,7 +54,10 @@ public class Meccanum {
 
     private Orientation angles;
 
-    public void init(HardwareMap hardwareMap){
+    private volatile HardwareMap hw; // no idea if volatile means anything (impactful) in this context, but it makes me seem like I know what im doing
+
+    public void init(@NonNull HardwareMap hardwareMap){
+        // internal IMU setup (copied and pasted, idk what it really does, but it works)
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -81,11 +95,11 @@ public class Meccanum {
         //set prefs for arm and servo
         servo0.setDirection(Servo.Direction.FORWARD);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        spinner = hardwareMap.get(DcMotor.class, "spinner");
 
+        // define hw as the hardware map for possible access later in this class
+        hw = hardwareMap;
 
         runtime.reset();
-
     }
 
 
@@ -96,11 +110,30 @@ public class Meccanum {
         motorFrontRight.setPower(motorFrontRightPower);
     }
 
-    public void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double distance){
-        motorBackLeft.setPower(motorBackLeftPower);
-        motorFrontLeft.setPower(motorFrontLeftPower);
-        motorBackRight.setPower(motorBackRightPower);
-        motorFrontRight.setPower(motorFrontRightPower);
+    public void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double ticks){
+        motorDriveEncoded(motorFrontLeftPower, motorBackLeftPower, motorFrontRightPower, motorBackRightPower, ticks, motorBackLeft.getCurrentPosition(), motorFrontLeft.getCurrentPosition(), motorBackRight.getCurrentPosition(), motorFrontRight.getCurrentPosition());
+    }
+    private void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double ticks, int blp, int flp, int brp, int frp){ // private I think bcuz only ever accessed inside the class
+        // motors need to use encoder
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        /*
+        final int blp = motorBackLeft.getCurrentPosition(); // idk if this will stay a static value or if it will change with the motor pos, hmm...
+        final int brp = motorBackRight.getCurrentPosition();
+        final int frp = motorFrontRight.getCurrentPosition();
+        final int flp = motorFrontLeft.getCurrentPosition();
+        */
+        // only checking one motor for ticks rotated rn, should probably check all of them
+
+        // NOTE: not using DcMotor.setTarget() method despite it's built in pid functionality, maybe implement in future, but I dont know if it will stall the program or not like the while loop
+        // idk if the blp type vars will be static or change :/
+        while(abs(motorBackLeft.getCurrentPosition() - blp) < ticks) { // hopefully checks that it is within the positive or negative threshold of target ticks
+            motorDrive(motorFrontLeftPower, motorBackLeftPower, motorFrontRightPower, motorBackRightPower);
+        }
+        motorStop();
     }
 
     public void motorDriveTime(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double time){
@@ -108,12 +141,18 @@ public class Meccanum {
         motorFrontLeft.setPower(motorFrontLeftPower);
         motorBackRight.setPower(motorBackRightPower);
         motorFrontRight.setPower(motorFrontRightPower);
+        delay(time);
+        motorStop();
     }
 
-    public void motorDriveRelativeAngle(double radians, double speed){
-        double spinvec = 0;
-        double yvec = tan(radians)/sqrt((pow(tan(radians),2))+1)*tan(radians);
-        double xvec = tan(radians)/sqrt((pow(tan(radians),2))+1);
+    public void motorDriveRelativeAngle(double radians, double speed){ //test on monday 11/29/2021
+        //NOTE
+        // im not sure how to acurately do this using encoders, because some wheels are going to spin at different powers (I think)
+        // this will cause the ticks to be difficult to calculate, and I dont really want to deal with that rn
+
+        double spinvec = 0; // not spinning
+        double yvec = min(speed, 1.0) * tan(radians)/sqrt(pow(tan(radians),2)+1)*tan(radians); // ima be honest, i did this math for a js project 6 months ago and am just hopin it actually works in this context
+        double xvec = min(speed, 1.0) * tan(radians)/sqrt(pow(tan(radians),2))+1;
 
         double y = pow(-yvec,3); // Remember, this is reversed!
         double x = pow(xvec * 1.1,3); // Counteract imperfect strafing
@@ -123,14 +162,45 @@ public class Meccanum {
         //denominator is the largest motor power (absolute value) or 1
         //this ensures all the powers maintain the same ratio, but only when
         //at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double denominator = Math.max(abs(y) + abs(x) + abs(rx), 1);
         double frontLeftPower = (y + x + rx) / denominator;
         double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
+
+        motorDrive(frontLeftPower,backLeftPower, frontRightPower, backRightPower);
+
     }
 
+    public void motorDriveXYVectors(double xvec, double yvec, double spinvec){ // used for teleop mode
+        //NOTE
+        // im not sure how to acurately do this using encoders, because some wheels are going to spin at different powers (I think)
+        // this will cause the ticks to be difficult to calculate, and I dont really want to deal with that
 
+
+        double y = pow(-yvec,3); // Remember, this is reversed!
+        double x = pow(xvec * 1.1,3); // Counteract imperfect strafing
+        double rx = pow(spinvec,3);
+
+
+        //denominator is the largest motor power (absolute value) or 1
+        //this ensures all the powers maintain the same ratio, but only when
+        //at least one is out of the range [-1, 1]
+        double denominator = Math.max(abs(y) + abs(x) + abs(rx), 1);
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+
+        motorDrive(frontLeftPower,backLeftPower, frontRightPower, backRightPower);
+
+    }
+
+    public void motorDriveRelativeAngleTime(double radians, double speed, double time){
+        motorDriveRelativeAngle(radians, speed);
+        delay(time);
+        motorStop();
+    }
 
     public void motorStop(){
         motorBackLeft.setPower(0);
@@ -153,43 +223,35 @@ public class Meccanum {
     }
 
     public void motorDriveForwardEncoded(double speed, double distance){
-        motorDrive(speed, speed, speed, speed);
+        motorDriveEncoded(speed, speed, speed, speed, distance);
     }
     public void motorDriveLeftEncoded(double speed, double distance){
-        motorDrive(speed, -speed, speed, -speed);
+        motorDriveEncoded(speed, -speed, speed, -speed, distance);
     }
     public void motorDriveRightEncoded(double speed, double distance){
-        motorDrive(-speed, speed, -speed, speed);
+        motorDriveEncoded(-speed, speed, -speed, speed, distance);
     }
     public void motorDriveBackEncoded(double speed, double distance){
-        motorDrive(-speed, -speed, -speed, -speed);
+        motorDriveEncoded(-speed, -speed, -speed, -speed, distance);
     }
     public void motorDriveForwardTime(double speed, double time){
-        motorDrive(speed, speed, speed, speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(speed, speed, speed, speed, time);
     }
     public void motorDriveLeftTime(double speed, double time){
-        motorDrive(speed, -speed, speed, -speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(speed, -speed, speed, -speed, time);
     }
     public void motorDriveRightTime(double speed, double time){
-        motorDrive(-speed, speed, -speed, speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(-speed, speed, -speed, speed, time);
     }
     public void motorDriveBackTime(double speed, double time){
-        motorDrive(-speed, -speed, -speed, -speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(-speed, -speed, -speed, -speed, time);
     }
 
     public void delay(double time){
         ElapsedTime e = new ElapsedTime();
         e.reset();
         while(e.milliseconds() < time){
-
+            // stal program
         }
     }
 
@@ -200,22 +262,18 @@ public class Meccanum {
         motorDrive(speed, speed, -speed, -speed);
     }
 
-    public void motorSpinLeftEncoded(double speed){
-        motorDrive(-speed, -speed, speed, speed);
+    public void motorSpinLeftEncoded(double speed, double distance){
+        motorDriveEncoded(-speed, -speed, speed, speed, distance);
     }
-    public void motorSpinRightEncoded(double speed){
-        motorDrive(speed, speed, -speed, -speed);
+    public void motorSpinRightEncoded(double speed, double distance){
+        motorDriveEncoded(speed, speed, -speed, -speed, distance);
     }
 
     public void motorSpinLeftTime(double speed, double time){
-        motorDrive(-speed, -speed, speed, speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(-speed, -speed, speed, speed, time);
     }
     public void motorSpinRightTime(double speed, double time){
-        motorDrive(speed, speed, -speed, -speed);
-        delay(time);
-        motorStop();
+        motorDriveTime(speed, speed, -speed, -speed, time);
     }
 
 
@@ -223,30 +281,36 @@ public class Meccanum {
         arm.setPower(speed);
     }
 
-    public void spinnySpinForward(double speed){
-        spinnySpin(speed);
-    }
-    public void spinnySpinBackward(double speed){
-        spinnySpin(-speed);
-    }
-
     public void spinnySpinEncoded(double speed, double target){
-        double encodedSpins = 0;
+        spinnySpinEncoded(speed, target, spinner.getCurrentPosition());
+    }
+    public void spinnySpinEncoded(double speed, double target, int start){
 
-        motorStop();
+        while (abs(spinner.getCurrentPosition()-start) < target){
+            spinnySpin(speed);
+        }
+        spinnyStop();
+    }
+
+    public void spinnyStop() {
+        spinner.setPower(0);
     }
 
     public void spinnySpinTime(double speed, double time){
         spinnySpin(speed);
         delay(time);
-        spinnySpin(0);
+        spinnyStop();
     }
 
+    public void moveArm(double power){
+        arm.setPower(power);
+    }
 
     public void turnRadians(double radians, double speed) {
         turnRadians(radians, speed, angles.firstAngle);
     }
-    public double turnRadians(double radians, double speed, double startRadians) {
+
+    private double turnRadians(double radians, double speed, double startRadians) { // private I think bcuz only ever accessed inside the class
         double target = startRadians + radians;
         double minSpeed = 0.1;
         while(angles.firstAngle < target){
@@ -257,19 +321,34 @@ public class Meccanum {
                 motorSpinRight(minSpeed);
             }
 
-            //telemetry.addData("Angles: ", angles.firstAngle);
-            //telemetry.addData("Not Angles: ", angles.firstAngle - target);
+            telemetry.addData("Angles: ", angles.firstAngle);
+            telemetry.addData("Not Angles: ", angles.firstAngle - target);
             angles = getAngles();
-            //telemetry.update();
+            telemetry.update();
         }
 
 
         motorStop();
         return target-startRadians;
 
+
     }
 
+    public void setServo(double angle){
+        servo0.setPosition(angle);
+    }
 
+    public void openServoHalf(){
+        servo0.setPosition(HALF_SERVO_ANGLE);
+    }
+
+    public void openServoFull(){
+        servo0.setPosition(SERVO_FULLY_OPENED);
+    }
+
+    public void closeServoFull(){
+        servo0.setPosition(SERVO_FULLY_CLOSED);
+    }
 
     public Orientation getAngles() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
