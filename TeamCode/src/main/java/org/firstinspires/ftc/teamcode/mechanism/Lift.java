@@ -33,7 +33,7 @@ public class Lift implements Mechanism {
                 onEncoders = true;
             }
             targetPosition -= gamepad.left_stick_y * 10;
-            targetPosition = Range.clip(targetPosition, 0, 1500);
+            targetPosition = Range.clip(targetPosition, 0, 1475);
             goTo((int) targetPosition, 0.8);
         }
     }
