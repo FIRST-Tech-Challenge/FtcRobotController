@@ -165,8 +165,24 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             telemetry.update();
 
             //MOTION TO PLATE
-            drive.followTrajectory(myTrajectory1);
-            sleep(500);
+            Trajectory plateTraj = null;
+            if(visionResult == "LEFT"){
+                plateTraj = drive.trajectoryBuilder(startPose,true)
+                        .back(32.125)
+                        .splineToSplineHeading(new Pose2d(-31.185, 27.894, toRadians(167.888)), toRadians(0))
+                        .build();
+            }
+            else if(visionResult == "MIDDLE"){
+                plateTraj = drive.trajectoryBuilder(startPose,true)
+                        .lineToLinearHeading(new Pose2d(-22.387, 40.470, toRadians(122.156)))
+                        .build();
+            }
+            else if(visionResult == "RIGHT"){
+                plateTraj = drive.trajectoryBuilder(startPose,true)
+                        .lineToLinearHeading(new Pose2d(-23.815, 39.482, toRadians(127.197)))
+                        .build();
+            }
+            drive.followTrajectory(plateTraj);
 
             //ROTATE
             Rotate.setPosition(1.0);
@@ -189,10 +205,10 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             sleep(600);
 
             //CLOSER TO PLATE
-            Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory1.end())
+            Trajectory closeTraj = drive.trajectoryBuilder(plateTraj.end())
                     .back(2)
                     .build();
-            drive.followTrajectory(myTrajectory2);
+            drive.followTrajectory(closeTraj);
 
             //DUMP AND SLIDE DOWN
             Push.setPosition(0.0);
@@ -206,10 +222,24 @@ public class Mecanum_Auto_BlueDuck extends LinearOpMode {
             Slide.setPower(0.8);
 
             //BACK TO WALL
-            Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end())
-                    .splineToConstantHeading(new Vector2d(-65, 53), toRadians(90))
-                    .build();
-            drive.followTrajectory(myTrajectory3);
+            Trajectory wallTraj = null;
+            if(visionResult == "LEFT"){
+                wallTraj = drive.trajectoryBuilder(closeTraj.end(),false)
+                        .forward(10)
+                        .splineTo(new Vector2d(-65, 55), toRadians(90))
+                        .build();
+            }
+            else if(visionResult == "MIDDLE"){
+                wallTraj = drive.trajectoryBuilder(closeTraj.end(),false)
+                        .splineToSplineHeading(new Pose2d(-65, 55, toRadians(90)), toRadians(180))
+                        .build();
+            }
+            else if(visionResult == "RIGHT"){
+                wallTraj = drive.trajectoryBuilder(closeTraj.end(),false)
+                        .splineToSplineHeading(new Pose2d(-65, 55, toRadians(90)), toRadians(180))
+                        .build();
+            }
+            drive.followTrajectory(wallTraj);
             sleep(500);
 
             Pose2d wall = new Pose2d(-63.88, 53.25, Math.toRadians(90));
