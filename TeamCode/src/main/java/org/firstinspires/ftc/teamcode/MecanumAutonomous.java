@@ -64,7 +64,7 @@ public class MecanumAutonomous extends LinearOpMode {
         while(! isStarted()) {
             if (gamepad1.y & !yPressed) {
                 startPositionDuck = !startPositionDuck;
-                telemetry.addData("ypressed", "pressed");
+                telemetry.addData("Y Pressed", "pressed");
             }
             //Set pressed variable so when the loop runs next frame an input only registers if it is new.
             yPressed = gamepad1.y;
@@ -74,16 +74,16 @@ public class MecanumAutonomous extends LinearOpMode {
             xPressed = gamepad1.x;
             if (gamepad1.a & !aPressed) {
                 endPositionDuck = !endPositionDuck;
-                telemetry.addData("apressed", "pressed");
+                telemetry.addData("A Pressed", "pressed");
             }
             aPressed = gamepad1.a;
 
             //Print input telemetry.
-            telemetry.addData("Start Position", "y=startPositionDuck / x=redAlliance / a=endPositionDuck");
+            telemetry.addData("Start Position", "Y = Start Position \n X = Alliance \n A = End Position");
             telemetry.addData("Settings", "\n%s, %s, %s",
-                    startPositionDuck ? "startDuck" : "startWarehouse",
-                    redAlliance ? "Blue" : "Red",
-                    endPositionDuck ? "endDuck" : "endWarehouse");
+                    startPositionDuck ? "startDuck": "startWarehouse",
+                    redAlliance ? "Red" : "Blue",
+                    endPositionDuck ?  "endDuck" : "endWarehouse");
             telemetry.update();
         }
 
