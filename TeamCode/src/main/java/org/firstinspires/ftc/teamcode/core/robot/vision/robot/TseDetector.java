@@ -26,11 +26,16 @@ public class TseDetector {
         this.eventThread = eventThread;
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
-        int cameraMonitorViewId = hardwareMap
-                .appContext.getResources()
-                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance()
-                .createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
+        if (debug) {
+            int cameraMonitorViewId = hardwareMap
+                    .appContext.getResources()
+                    .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            camera = OpenCvCameraFactory.getInstance()
+                    .createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
+        } else {
+            camera = OpenCvCameraFactory.getInstance()
+                    .createWebcam(hardwareMap.get(WebcamName.class, webcamName));
+        }
 
         camera.setPipeline(pipeline = new TsePipeline());
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
