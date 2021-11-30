@@ -138,54 +138,87 @@ public class UltrasonicLocalizer implements Localizer {
             double[][] sets = {set1, set2, set3, set4, set5, set6};
             // For each set, calculate the position of the robot that you could get from those
             for (double[] set : sets) {
+                /* If either of the distances is less than 7.874 or greater than 144 inches, then
+                we can't calculate the position of the robot using these measurements,
+                so we skip this set */
+                if (set[0] < 7.874 || set[0] > 144 || set[1] < 7.874 || set[1] > 144) {
+                    continue;
+                }
+
+                // Let me know if you need help understanding this part,
+                // It's pretty basic trig though
+
                 double x1 = set[0] * Math.cos(theta);
                 double y1 = set[0] * Math.sin(theta);
                 double x2 = set[1] * Math.cos(theta);
                 double y2 = set[1] * Math.sin(theta);
-                // If the x or y values are very similar, the two sensors are probably facing the same wall
-                // And the pose they calculate is probably wrong, so we don't use it
-                if (Math.abs(x1 - x2) < 3) {
-                    continue;
+
+                double correctedX1;
+                double correctedY1;
+                double correctedX2;
+                double correctedY2;
+
+                // If any of them are negative, then subtract them from 144 (the size of the field)
+                // to get the real position
+                // We still need the originals to figure which reading to use.
+                if (x1 < 0) {
+                    correctedX1 = 144 + x1;
+                } else {
+                    correctedX1 = x1;
                 }
-                if (Math.abs(y1 - y2) < 3) {
-                    continue;
+                if (y1 < 0) {
+                    correctedY1 = 144 + y1;
+                } else {
+                    correctedY1 = y1;
                 }
+                if (x2 < 0) {
+                    correctedX2 = 144 + x2;
+                } else {
+                    correctedX2 = x2;
+                }
+                if (y2 < 0) {
+                    correctedY2 = 144 + y2;
+                } else {
+                    correctedY2 = y2;
+                }
+
                 // We assume that the larger distance is the one that is more likely to be the wall
                 // Rather than an object in the way
-                double realX = Math.abs(x1) > Math.abs(x2) ? x1 : x2;
-                double realY = Math.abs(y1) > Math.abs(y2) ? y1 : y2;
-                // If the distance is negative, it means that the robot is that distance from the opposite wall
-                // So we add 144 (the length/width of the field) to the distance to get the real distance
-                if (realX > 0) {
-                    realX = 144 + realX;
+                double realX = Math.abs(x1) > Math.abs(x2) ? correctedX1 : correctedX2;
+                double realY = Math.abs(y1) > Math.abs(y2) ? correctedY1 : correctedY2;
+
+                // If the x or y values are very similar, the two sensors are probably facing the same wall
+                // And the pose they calculate is probably wrong, so we don't use it
+                if (Math.abs(x1 - x2) < 5) {
+                    continue;
                 }
-                if (realY > 0) {
-                    realY = 144 + realY;
+                if (Math.abs(y1 - y2) < 5) {
+                    continue;
                 }
+
 
                 Pose2d newPose = new Pose2d(realX, realY, theta);
                 double poseDifference = newPose.vec().distTo(previousPose.vec());
                 // If the pose difference is too big, we don't use it, since again, it's probably wrong
-                if (poseDifference < 1) {
+                // This is the main filter that makes sure no measurements too insane get used
+                // It is a bit jank though, a Kalman filter would be a better way to do this
+                if (poseDifference < 2) {
                     averagablePoses.add(newPose);
                 }
             }
-            // At the end, we average all the poses we found
+            // At the end, we average all the realistic poses we found
             if (averagablePoses.size() > 0) {
                 double xAverage = 0;
                 double yAverage = 0;
-                double thetaAverage = 0;
                 for (Pose2d pose : averagablePoses) {
                     xAverage += pose.getX();
                     yAverage += pose.getY();
-                    thetaAverage += pose.getHeading();
                 }
                 xAverage /= averagablePoses.size();
                 yAverage /= averagablePoses.size();
-                thetaAverage /= averagablePoses.size();
-                poseEstimate = new Pose2d(xAverage, yAverage, thetaAverage);
+                poseEstimate = new Pose2d(xAverage, yAverage, theta);
             } else {
-                // If we didn't find any poses, we use the enocoder values instead
+                // If we didn't find any poses, we use the encoder values instead
                 poseEstimate = calculatePoseEncoders();
             }
         } else {
@@ -194,8 +227,11 @@ public class UltrasonicLocalizer implements Localizer {
         }
         previousPose = poseEstimate;
     }
+    /**
+     * @see com.acmerobotics.roadrunner.drive.MecanumDrive.MecanumLocalizer
+     * Basically just that math added to this class because some of it is private
+     */
     public Pose2d calculatePoseEncoders() {
-        // If we haven't waited long enough, we calculate the pose based on the drive encoders
         List<Double> wheelPositions = drive.getWheelPositions();
         List<Double> wheelDeltas = new ArrayList<>();
         if (lastWheelPositions.size() != 0) {
