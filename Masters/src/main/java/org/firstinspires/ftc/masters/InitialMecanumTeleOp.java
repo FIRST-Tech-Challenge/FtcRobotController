@@ -89,7 +89,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         boolean carouselOn = false; //Outside of loop()
         boolean intakeOn = false;
