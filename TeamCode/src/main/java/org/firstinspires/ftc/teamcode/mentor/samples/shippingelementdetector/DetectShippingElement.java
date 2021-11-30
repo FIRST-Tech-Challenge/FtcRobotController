@@ -1,38 +1,77 @@
-package org.firstinspires.ftc.teamcode.mentor.samples.FaceDetector;
 
+/*
+ * Copyright (c) 2020 OpenFTC Team
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package org.firstinspires.ftc.teamcode.mentor.samples.shippingelementdetector;
+
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.mentor.samples.HardwareMaps.InternalCameraHardwareMap;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.HardwareMaps.ExternalCameraHardwareMap;
+import org.firstinspires.ftc.teamcode.mentor.samples.cv.OpenCvShippingElementDetector;
 import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+/*
+ * This version of the internal camera example uses EasyOpenCV's interface to the
+ * Android Camera2 API
+ */
+@Autonomous(name="Mentor - Auto: FF Shipping Element Detector", group="Mentor")
+public class DetectShippingElement extends LinearOpMode
 
-@Autonomous(name="Mentor - Auto: Face Detector", group="Mentor")
-public class FaceDetectorAutoMode extends LinearOpMode {
-    // Handle hardware stuff...
+{
+    int width = 640;
+    int height = 480;
 
-    int width = 320;
-    int height = 240;
-    // store as variable here so we can access the location
-    FaceDetector detector = new FaceDetector(width);
-    //OpenCvCamera phoneCam;
 
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
     @Override
-    public void runOpMode() {
+    public void runOpMode()
+    {
+        ExternalCameraHardwareMap robot = new ExternalCameraHardwareMap();
 
-        InternalCameraHardwareMap robot = new InternalCameraHardwareMap();
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = dashboard.getTelemetry();
+
+        // store as variable here so we can access the location
+        OpenCvShippingElementDetector detector = new OpenCvShippingElementDetector( width, height, telemetry);
+        SamplePipeline sp = new SamplePipeline();
+        telemetry.addLine("detector created");
+
         robot.init(hardwareMap);
-        robot.phoneCam.setPipeline(detector);
+        telemetry.addLine("hw created");
 
-        robot.phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+
+
+
+        robot.webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
@@ -48,7 +87,15 @@ public class FaceDetectorAutoMode extends LinearOpMode {
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
-                robot.phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+
+                telemetry.addLine("about to start streaming");
+                robot.webCam.startStreaming(width, height, OpenCvCameraRotation.UPRIGHT);
+                dashboard.startCameraStream(robot.webCam, 10);
+                telemetry.addLine("Dashboard start streaming");
+
+                //robot.webCam.setPipeline(detector);
+                telemetry.addLine("pipeline set for webCam");
 
 
             }
@@ -61,11 +108,12 @@ public class FaceDetectorAutoMode extends LinearOpMode {
                  */
             }
         });
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = dashboard.getTelemetry();
+
         telemetry.addLine("Waiting for start");
         telemetry.update();
-        dashboard.startCameraStream(robot.phoneCam, 10);
+
+
+
         /*
          * Wait for the user to press start on the Driver Station
          */
@@ -76,12 +124,13 @@ public class FaceDetectorAutoMode extends LinearOpMode {
             /*
              * Send some stats to the telemetry
              */
-            telemetry.addData("Frame Count", robot.phoneCam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", robot.phoneCam.getFps()));
-            telemetry.addData("Total frame time ms", robot.phoneCam.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", robot.phoneCam.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", robot.phoneCam.getOverheadTimeMs());
-            telemetry.addData("Theoretical max FPS", robot.phoneCam.getCurrentPipelineMaxFps());
+            telemetry.addLine("Inside opModeIsActive");
+            telemetry.addData("Frame Count", robot.webCam.getFrameCount());
+            telemetry.addData("FPS", String.format("%.2f", robot.webCam.getFps()));
+            telemetry.addData("Total frame time ms", robot.webCam.getTotalFrameTimeMs());
+            telemetry.addData("Pipeline time ms", robot.webCam.getPipelineTimeMs());
+            telemetry.addData("Overhead time ms", robot.webCam.getOverheadTimeMs());
+            telemetry.addData("Theoretical max FPS", robot.webCam.getCurrentPipelineMaxFps());
             telemetry.update();
 
 
@@ -92,6 +141,7 @@ public class FaceDetectorAutoMode extends LinearOpMode {
              */
             sleep(100);
         }
+
 
 
     }
@@ -137,7 +187,12 @@ public class FaceDetectorAutoMode extends LinearOpMode {
              * tapped, please see {@link PipelineStageSwitchingExample}
              */
 
+
             return input;
         }
     }
+
+
+
+
 }

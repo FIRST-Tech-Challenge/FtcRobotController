@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector;
+package org.firstinspires.ftc.teamcode.mentor.samples.cv;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.DNNObject;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class OPCVFFObjectDetector3 extends OpenCvPipeline {
+public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     private int width; // width of the image
     private int height = 240;
@@ -28,7 +29,7 @@ public class OPCVFFObjectDetector3 extends OpenCvPipeline {
     private Telemetry telemetry = null;
 
     private final String[] classNames = {"Background",
-            "Plane", "Ship", "Side Truck", "Front Truck"};
+            "Cube", "Duck"};
 
     private static List<Scalar> colors=new ArrayList<>();
 
@@ -36,15 +37,19 @@ public class OPCVFFObjectDetector3 extends OpenCvPipeline {
      *
      * @param width The width of the image (check your camera)
      */
-    public OPCVFFObjectDetector3(int width, int height, Telemetry telemetry) {
+    public OpenCvShippingElementDetector(int width, int height, Telemetry telemetry) {
         this.width = width;
         this.height = height;
         this.telemetry = telemetry;
 
         cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_optimized_graph.pb");
+        net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_emma_optimized_graph.pb");
+        telemetry.addLine("DNN created");
+
         for(int i=0; i<classNames.length; i++)
             colors.add(randomColor());
+
+        telemetry.addLine("OpenCvShippingElementDetector Done");
 
     }
 
@@ -52,7 +57,7 @@ public class OPCVFFObjectDetector3 extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat inputFrame) {
 
-        //telemetry.addLine("Inside ProcessFrame");
+        telemetry.addLine("Inside ProcessFrame");
         //telemetry.update();
 
         Mat blob = null;
