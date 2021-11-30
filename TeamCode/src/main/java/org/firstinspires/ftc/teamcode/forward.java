@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.;
 
+
 @TeleOp(name="forward", group="Teleop")
 //@Disabled
 public class forward extends LinearOpMode {
@@ -19,10 +20,10 @@ public class forward extends LinearOpMode {
     private DcMotor tower1 = null; //arm motor 1
     private DcMotor tower2 = null; //arm motor 2
     private Servo clawservo = null; //clawservo
-
     @Override
 
     public void runOpMode() {
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -34,6 +35,11 @@ public class forward extends LinearOpMode {
         tower2 = hardwareMap.get(DcMotor.class, "tower2");
         clawservo = hardwareMap.get(Servo.class,"clawservo");
 
+        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
@@ -42,8 +48,8 @@ public class forward extends LinearOpMode {
         tower2.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
-
-
+        gamepad1.rumble(1000);
+        gamepad2.rumble(1000);
         while (opModeIsActive()) {
 
             double lPower;
