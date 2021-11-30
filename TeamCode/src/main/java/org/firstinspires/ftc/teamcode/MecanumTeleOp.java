@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name="MecanumTeleOp", group="FreightFrenzy")
@@ -19,26 +19,32 @@ public class MecanumTeleOp extends LinearOpMode {
 
         // init motor and add intake for arm
         robot.motorArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorIntake.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         int armCurrentPos = 0;
         int armSetPos = 0;
-        int armMaxPos = 500;
+        int armMaxPos = 1200;
 
 
         //set arm levels
         int armLevel0 = 0;   // (a)
-        int armLevel1 = 100; // (x)
-        int armLevel2 = 400; // (y)
-        int armLevel3 = 700; // (b)
+        int armLevel1 = 400; // (x)
+        int armLevel2 = 800; // (y)
+        int armLevel3 = 1200; // (b)
+
+        //intake power
+        double intakePower = 0;
 
         //set arm power
-        robot.motorArm.setPower(0.3);
+        robot.motorArm.setPower(0.5);
 
         //init loop
          while (! isStarted()) {
 
              telemetry.addData("Arm Encoder", robot.motorArm.getCurrentPosition());
-             telemetry.addData("Say", "Hello Driver");
+             telemetry.addData("Say GEX GEX GEx", "Hello Driver");
              telemetry.update();
          }
 
@@ -48,13 +54,8 @@ public class MecanumTeleOp extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-
-
-
             // Track Arm Current Pos
             armCurrentPos = robot.motorArm.getCurrentPosition();
-
-
             // Arm Up and Arm Down in small increments
             if (gamepad2.right_stick_y != 0.0 && ( armSetPos >= 0 && armSetPos <= armMaxPos) ) {
                 if (gamepad2.right_stick_y == -1 ){
@@ -63,9 +64,6 @@ public class MecanumTeleOp extends LinearOpMode {
                     armSetPos = Math.max(--armSetPos, 0);
                 }
             }
-
-
-
             //set arm positions to gamepad.2 buttons
             if (gamepad2.a) {
                 armSetPos = armLevel0;
@@ -78,18 +76,28 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
 
-            //set power for intake
-            robot.motorIntake.setPower(gamepad2.left_trigger * 0.75);
-            robot.motorIntake.setPower(-gamepad2.right_trigger * 0.3);
-
+            //intake in
+            if (gamepad2.left_trigger > 0){
+                intakePower = 0.75;
+            }
+            else if (gamepad2.left_trigger == 0){
+                intakePower = 0;
+            }
+            //intake out
+            if (gamepad2.right_trigger > 0){
+                intakePower = -0.3;
+            }
+            else if (gamepad2.right_trigger == 0){
+                intakePower = 0;
+            }
+            //set power
+            robot.motorIntake.setPower(intakePower);
 
 
             //drivetrain mecanum
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
-
-
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
@@ -103,7 +111,9 @@ public class MecanumTeleOp extends LinearOpMode {
             robot.motorBackLeft.setPower(backLeftPower);
             robot.motorFrontRight.setPower(frontRightPower);
             robot.motorBackRight.setPower(backRightPower);
-
+            //set arm power
+            robot.motorArm.setTargetPosition(armSetPos);
+            robot.motorArm.setPower(0.5);
 
             telemetry.addData("Left Stick X", gamepad1.left_stick_y );
             telemetry.addData("Left Stick Y", gamepad1.left_stick_y );

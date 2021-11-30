@@ -12,7 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
 import org.firstinspires.ftc.teamcode.mentor.samples.external.libs.PIDController;
 
-@Autonomous(name="MentorMecanumAutonomous", group="FreightFrenzy")
+
+@Autonomous(name="Mentor - MecanumAutonomous", group="FreightFrenzy")
 public class MecanumAutonomous extends LinearOpMode {
     //Add an ElapsedTime for function runtime calculations.
     private ElapsedTime runtime = new ElapsedTime();

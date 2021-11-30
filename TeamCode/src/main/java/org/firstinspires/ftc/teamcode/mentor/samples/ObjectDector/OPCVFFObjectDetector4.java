@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class OPCVFFObjectDetector3 extends OpenCvPipeline {
+public class OPCVFFObjectDetector4 extends OpenCvPipeline {
 
     private int width; // width of the image
     private int height = 240;
@@ -36,13 +36,13 @@ public class OPCVFFObjectDetector3 extends OpenCvPipeline {
      *
      * @param width The width of the image (check your camera)
      */
-    public OPCVFFObjectDetector3(int width, int height, Telemetry telemetry) {
+    public OPCVFFObjectDetector4(int width, int height, Telemetry telemetry) {
         this.width = width;
         this.height = height;
         this.telemetry = telemetry;
 
         cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_optimized_graph.pb");
+        net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_emma_optimized_graph.pb");
         for(int i=0; i<classNames.length; i++)
             colors.add(randomColor());
 
@@ -52,7 +52,7 @@ public class OPCVFFObjectDetector3 extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat inputFrame) {
 
-        //telemetry.addLine("Inside ProcessFrame");
+        telemetry.addLine("Inside ProcessFrame");
         //telemetry.update();
 
         Mat blob = null;

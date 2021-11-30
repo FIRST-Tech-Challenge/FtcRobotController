@@ -85,6 +85,7 @@ public class ExternalCameraHardwareMap
         //Define and Initialize Motors
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webCam.setMillisecondsPermissionTimeout(2500);
     }
  }
 
