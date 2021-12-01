@@ -7,17 +7,13 @@ public class RedDeliverWarehouse extends MasterAutonomous {
     public void runOpMode() throws InterruptedException {
         initAuto();
         waitForStart();
-
-        while (opModeIsActive()) {
-            double referenceAngle = imu.getAngularOrientation().firstAngle;
-            moveForward(5.0, 10, 10);
-            imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
-            imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
-            moveForward(-2.0, 10, 10);
-            autoDeliver();
-            moveForward(2.0, 10, 10);
-            imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
-            moveForward(10.0, 10, 10);
-        }
+        double referenceAngle = imu.getAngularOrientation().firstAngle;
+        moveForward(5.0, 10, 10);
+        imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
+        moveForward(-2.0, 10, 10);
+        autoDeliver();
+        moveForward(2.0, 10, 10);
+        imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
+        moveForward(10.0, 10, 10);
     }
 }

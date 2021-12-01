@@ -7,17 +7,12 @@ public class RedCarouselStorageUnit extends MasterAutonomous {
         public void runOpMode() throws InterruptedException {
             initAuto();
             waitForStart();
-
-            while (opModeIsActive()) {
-                double referenceAngle = imu.getAngularOrientation().firstAngle;
-
-                imuPivot(referenceAngle, 30, 35, 0.015, 3.0);
-                moveForward(-3.9, 10, 10);
-                spinCarouselRed();
-                moveForward(2.5, 10, 10);
-                imuPivot(referenceAngle, 90, 35, 0.015, 3.9);
-                moveForward(17, 10, 10);
-                break;
-            }
+            double referenceAngle = imu.getAngularOrientation().firstAngle;
+            imuPivot(referenceAngle, 30, 35, 0.015, 3.0);
+            moveForward(-3.9, 10, 10);
+            spinCarouselRed();
+            moveForward(2.5, 10, 10);
+            imuPivot(referenceAngle, 90, 35, 0.015, 3.9);
+            moveForward(17, 10, 10);
         }
     }

@@ -7,18 +7,14 @@ public class BlueCarouselWarehouse extends MasterAutonomous{
     public void runOpMode() throws InterruptedException {
         initAuto();
         waitForStart();
-
-        while (opModeIsActive()){
-            double referenceAngle =  imu.getAngularOrientation().firstAngle;
-            moveForward(-2.8, 10, 10);
-            spinCarouselBlue();
-            moveForward(13, 50, 10);
-            imuPivot(referenceAngle, -90, 30, 0.015, 3.0);
-            moveForward(15, 50, 10); //check distance on this
-            imuPivot(referenceAngle, referenceAngle, 30, 0.015, 3.0);
-            moveForward(80, 50, 10);
-            break;
-        }
+        double referenceAngle =  imu.getAngularOrientation().firstAngle;
+        moveForward(-2.8, 10, 10);
+        spinCarouselBlue();
+        moveForward(13, 50, 10);
+        imuPivot(referenceAngle, -90, 30, 0.015, 3.0);
+        moveForward(15, 50, 10); //check distance on this
+        imuPivot(referenceAngle, referenceAngle, 30, 0.015, 3.0);
+        moveForward(80, 50, 10);
     }
 }
 
