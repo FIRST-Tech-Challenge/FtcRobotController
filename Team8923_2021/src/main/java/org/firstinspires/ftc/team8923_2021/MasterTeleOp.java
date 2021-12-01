@@ -55,7 +55,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
         if(gamepad2.left_bumper) {
             //motorLift.setTargetPosition(10);
             motorLift.setPower(0.1);
-            servoGrabber.setPosition(0.5);
+            servoGrabber.setPosition(0.8);
         } else if (gamepad2.right_bumper){
             servoGrabber.setPosition(0.0);
             motorLift.setPower(-0.1);
