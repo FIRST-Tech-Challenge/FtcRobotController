@@ -3,14 +3,21 @@ package org.wheelerschool.robotics.comp.controller;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
+
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
 
 public class ControllerMap {
 
     private Meccanum meccanum;
+    private Gamepad gamepad1;
+    private Gamepad gamepad2;
 
-    public void init(Meccanum mec){
+    public void init(Meccanum mec, Gamepad gp1, Gamepad gp2){
         meccanum = mec;
+        gamepad1 = gp1;
+        gamepad2 = gp2;
+
     }
 
     private void leftBumper(){
@@ -131,10 +138,10 @@ public class ControllerMap {
         if (gamepad1.a){
             buttonA();
         }
-        if (gamepad1.left_trigger > 0) {
+        if (gamepad1.left_trigger >= 0) {
             leftTrigger();
         }
-        if (gamepad1.right_trigger > 0){
+        if (gamepad1.right_trigger >= 0){
             rightTrigger();
         }
     }
@@ -170,10 +177,10 @@ public class ControllerMap {
         if (gamepad2.a){
             buttonA2();
         }
-        if (gamepad2.left_trigger > 0) {
+        if (gamepad2.left_trigger >= 0) {
             leftTrigger2();
         }
-        if (gamepad2.right_trigger > 0){
+        if (gamepad2.right_trigger >= 0){
             rightTrigger2();
         }
     }

@@ -34,19 +34,20 @@ public class AutoNavBlue extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         meccanum.init(hardwareMap);
         waitForStart();
-        while(opModeIsActive()){
-            executeAutomaticSequence1();
-        }
+        executeAutomaticSequence1();
+
     }
     private void executeAutomaticSequence1(){
 
         // auto for near carousel
         // gotta replace 0 with tested vals
-        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 0);
 
-        meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 0);
+            meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 100);
 
-        meccanum.motorDriveRelativeAngleTime(0, 0, 0);
+            meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 100);
+
+            meccanum.motorDriveRelativeAngleTime(33, 0.5, 100);
+
 
 
     }

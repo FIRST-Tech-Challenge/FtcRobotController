@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -44,6 +46,7 @@ public class Meccanum {
     public final double OPTIMAL_SPINNER_POWER = 0; // need spinner+hub to test this
     public final double MOTOR_STOP = 0; // its just 0 cuz full stop
 
+    public boolean opModeActive = false;
 
     private DcMotor spinner;
 
@@ -60,7 +63,7 @@ public class Meccanum {
 
     public void init(@NonNull HardwareMap hardwareMap){
         // internal IMU setup (copied and pasted, idk what it really does, but it works)
-
+        opModeActive = true;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -103,7 +106,9 @@ public class Meccanum {
 
         runtime.reset();
     }
-
+    public Servo getServo(){
+        return servo0;
+    }
 
     public void motorDrive(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower){
         motorBackLeft.setPower(motorBackLeftPower);
@@ -181,7 +186,7 @@ public class Meccanum {
         // this will cause the ticks to be difficult to calculate, and I dont really want to deal with that
 
 
-        double y = pow(-yvec,3); // Remember, this is reversed!
+        double y = pow(yvec,3); // Remember, this is reversed!
         double x = pow(xvec * 1.1,3); // Counteract imperfect strafing
         double rx = pow(spinvec,3);
 
@@ -253,8 +258,10 @@ public class Meccanum {
     public void delay(double time){
         ElapsedTime e = new ElapsedTime();
         e.reset();
-        while(e.milliseconds() < time){
+        while(e.milliseconds() < time && opModeActive){
             // stal program
+            opModeActive = ;
+
         }
     }
 
@@ -281,7 +288,7 @@ public class Meccanum {
 
 
     public void spinnySpin(double speed){
-        arm.setPower(speed);
+        spinner.setPower(speed);
     }
 
     public void spinnySpinEncoded(double speed, double target){

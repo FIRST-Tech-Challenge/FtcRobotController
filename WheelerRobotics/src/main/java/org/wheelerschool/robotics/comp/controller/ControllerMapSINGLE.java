@@ -1,15 +1,18 @@
 package org.wheelerschool.robotics.comp.controller;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
 
 public class ControllerMapSINGLE {
 
     private Meccanum meccanum;
+    private Gamepad gamepad1;
 
-    public void init(Meccanum mec){
+
+    public void init(Meccanum mec, Gamepad gamepad){
         meccanum = mec;
+        gamepad1 = gamepad;
     }
 
     private void leftBumper(){
@@ -52,7 +55,7 @@ public class ControllerMapSINGLE {
         gamepad1.rumble(time);
     }
     private void joystickDriver(){
-        meccanum.motorDriveXYVectors(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        meccanum.motorDriveXYVectors(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
     }
 
     public void checkControls(){
@@ -99,10 +102,12 @@ public class ControllerMapSINGLE {
         }
 
         //claw arm button map (test adaptive triggers)
-        if (gamepad1.left_trigger > 0) {
+
+
+        if (gamepad1.left_trigger >= gamepad1.right_trigger) {
             leftTrigger();
         }
-        if (gamepad1.right_trigger > 0){
+        else{
             rightTrigger();
         }
     }

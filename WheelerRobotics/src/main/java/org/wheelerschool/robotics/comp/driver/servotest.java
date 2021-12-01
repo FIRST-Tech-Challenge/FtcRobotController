@@ -82,8 +82,8 @@ public class servotest extends LinearOpMode {
         // internal IMU setup
         meccanum.init(hardwareMap);
 
-        cm.init(meccanum);
-        cms.init(meccanum);
+        cm.init(meccanum, gamepad1, gamepad2);
+        cms.init(meccanum, gamepad1);
 
         controlModes mode = controlModes.SINGLE;
 
@@ -106,7 +106,8 @@ public class servotest extends LinearOpMode {
                 cm.checkControls2();
             }
 
-            telemetry.addData("rotation", angles.axesReference);
+            telemetry.addData("servo ", meccanum.getServo().getPosition());
+            telemetry.addData("rotation ", angles.axesReference);
 
             // MECCANUM MATH
 
