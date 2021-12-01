@@ -5,6 +5,7 @@ import numpy as np
 from keras.models import load_model
 
 #path of the directory where you want to save your model
+
 frozen_out_path = 'C:/development/BC4HStem/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_tse/converted_freight_frenzy_tse_frozen'
 
 # name of the .pb file
