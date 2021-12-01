@@ -213,12 +213,9 @@ public abstract class MasterAutonomous extends MasterOpMode {
     public void autoDeliver() throws InterruptedException {
         //move up slides
         //motorLift.setPower(0.1);
-        motorLift.getCurrentPosition();
         motorLift.setTargetPosition(10);
-        wait(2000);
         servoGrabber.setPosition(1.0);
         servoGrabber.setPosition(0.0);
-        wait(2000);
         motorLift.setTargetPosition(0);
     }
 
