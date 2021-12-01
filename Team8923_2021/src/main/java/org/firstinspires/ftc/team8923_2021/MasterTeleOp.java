@@ -43,18 +43,8 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     public void runCarousel() throws InterruptedException {
         if (gamepad2.left_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
-            wait(1000);
-            motorCarousel.setPower(-0.5);
-            wait(1000);
-            motorCarousel.setPower(-0.7);
-            wait(1000);
             motorCarousel.setPower(-1.0);
         } else if (gamepad2.right_trigger > Constants.MINIMUM_TRIGGER_VALUE){
-            wait(1000);
-            motorCarousel.setPower(0.5);
-            wait(1000);
-            motorCarousel.setPower(0.7);
-            wait(1000);
             motorCarousel.setPower(1.0);
         } else {
             motorCarousel.setPower(0.0);
@@ -64,12 +54,10 @@ abstract public class MasterTeleOp extends MasterOpMode {
     public void deliver() throws InterruptedException {
         if(gamepad2.left_bumper) {
             motorLift.setPower(0.1);
-            wait(2000);
             servoGrabber.setPosition(1.0);
         } else if (gamepad2.right_bumper){
-            servoGrabber.setPosition(0.0);
-            wait(500);
             motorLift.setPower(-0.1);
+            servoGrabber.setPosition(0.0);
         } else {
             motorLift.setPower(0.0);
         }

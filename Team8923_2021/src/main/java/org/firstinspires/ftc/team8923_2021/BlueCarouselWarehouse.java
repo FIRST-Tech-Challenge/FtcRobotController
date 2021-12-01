@@ -2,7 +2,7 @@ package org.firstinspires.ftc.team8923_2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name="BlueCarouselNoIntake")
+@Autonomous(name="BlueCarouselWarehouse")
 public class BlueCarouselWarehouse extends MasterAutonomous{
     public void runOpMode() throws InterruptedException {
         initAuto();
