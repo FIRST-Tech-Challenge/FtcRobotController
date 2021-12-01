@@ -2,6 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
+      <module name="AtomicTheory21-22.FtcRobotController" target="11" />
+      <module name="AtomicTheory21-22.TeamCode" target="11" />
       <module name="FtcRobotController.FtcRobotController" target="11" />
       <module name="FtcRobotController.TeamCode" target="11" />
     </bytecodeTargetLevel>

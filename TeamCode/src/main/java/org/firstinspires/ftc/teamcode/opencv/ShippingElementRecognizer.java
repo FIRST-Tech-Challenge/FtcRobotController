@@ -48,10 +48,10 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
         Imgproc.rectangle(mat, LEFTBOX, new Scalar(255, 0, 0), 2);
         Imgproc.rectangle(mat, RIGHTBOX, new Scalar(255, 0, 0), 2);
         if (leftValue > 15 || rightValue > 15){
-            if (leftValue <= rightValue){
+            if (leftValue >= rightValue){
                 shippingHubLevel = 1;
                 Imgproc.rectangle(mat, LEFTBOX, new Scalar(0, 0, 255), 2);
-            } else if (leftValue > rightValue) {
+            } else if (leftValue < rightValue) {
                 shippingHubLevel = 2;
                 Imgproc.rectangle(mat, RIGHTBOX, new Scalar(0, 0, 255), 2);
             }
