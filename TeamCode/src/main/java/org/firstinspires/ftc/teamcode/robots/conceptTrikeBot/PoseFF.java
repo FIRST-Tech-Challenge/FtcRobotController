@@ -7,14 +7,17 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.TrikeChassisMovementCalc;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.util.PIDController;
@@ -25,13 +28,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
 
+import static org.firstinspires.ftc.teamcode.util.utilMethods.diffAngle2;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
-import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_D;
-import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_I;
-import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_P;
 
 /**
  * The Pose class stores the current real world position/orientation:
@@ -55,17 +56,25 @@ public class PoseFF {
     Telemetry telemetry;
     PIDController turnPID = new PIDController(0, 0, 0);
     PIDController distPID = new PIDController(0, 0, 0);
-    PIDController alignPID = new PIDController(ALIGN_P, ALIGN_I, ALIGN_D);
+    PIDController swervePID = new PIDController(0,0,0);
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
-    public static double turnP = 0.0055; // proportional constant applied to error in degrees /.0055 seems very low
     public static double driveP = .01;
+    public static double turnP = 0.0055; // proportional constant applied to error in degrees /.0055 seems very low
     public static double turnI = 0.0; // integral constant
     public static double turnD = .13; // derivative constant
+
     public static double distP = 0.5; // proportional constant applied to error in meters
     public static double distI = 0.0; // integral constant
     public static double distD = .19; // derivative constant
+
+    public static double swerveP = .1;
+    public static double swerveI = 0;
+    public static double swerveD = 0;
+
     public static double cutout = 1.0;
+
+
 
     public double headingP = 0.007;
     public double headingD = 0;
@@ -76,10 +85,10 @@ public class PoseFF {
     public long[] visionTimes = new long[] {};
 
     // All Actuators
-    private DcMotor motorFrontRight = null;
-    private DcMotor motorFrontLeft = null;
-    private DcMotor motorMiddle = null;
-    private DcMotor motorMiddleSwivel = null;
+    private DcMotorEx motorFrontRight = null;
+    private DcMotorEx motorFrontLeft = null;
+    private DcMotorEx motorMiddle = null;
+    private DcMotorEx motorMiddleSwivel = null;
     private DcMotor duckSpinner = null;
     RevBlinkinLedDriver blinkin = null;
 
@@ -136,8 +145,6 @@ public class PoseFF {
 
     private double poseSavedHeading = 0.0;
 
-    public boolean isBlue = false;
-
     public int servoTesterPos = 1600;
     public double autonomousIMUOffset = 0;
 
@@ -178,9 +185,6 @@ public class PoseFF {
     // roll is in x, pitch is in y, yaw is in z
 
 
-    public void setIsBlue(boolean blue) {
-        isBlue = blue;
-    }
     //////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////
     //// ////
@@ -227,10 +231,10 @@ public class PoseFF {
         // this.driveRight = this.hwMap.dcMotor.get("driveRight");
 
         this.blinkin = hwMap.get(RevBlinkinLedDriver.class, "blinkin");
-        motorFrontLeft = hwMap.get(DcMotor.class, "motorFrontLeft");
-        motorFrontRight = hwMap.get(DcMotor.class, "motorFrontRight");
-        motorMiddle= hwMap.get(DcMotor.class, "motorMiddle");
-        motorMiddleSwivel = hwMap.get(DcMotor.class, "motorMiddleSwivel");
+        motorFrontLeft = hwMap.get(DcMotorEx.class, "motorFrontLeft");
+        motorFrontRight = hwMap.get(DcMotorEx.class, "motorFrontRight");
+        motorMiddle= hwMap.get(DcMotorEx.class, "motorMiddle");
+        motorMiddleSwivel = hwMap.get(DcMotorEx.class, "motorMiddleSwivel");
         duckSpinner = hwMap.get(DcMotor.class, "duckSpinner");
 
         // elbow.setDirection(DcMotor.Direction.REVERSE);
@@ -240,11 +244,12 @@ public class PoseFF {
         motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
         duckSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+
        //set coasting/braking preference
          motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
          motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorMiddle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorMiddleSwivel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+         motorMiddle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+         motorMiddleSwivel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         // turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // magSensor.setMode(DigitalChannel.Mode.INPUT);
 
@@ -486,11 +491,6 @@ public class PoseFF {
         numLoops++;
 
         lastUpdateTimestamp = System.nanoTime();
-
-        motorFrontLeft.setPower(clampMotor(powerFrontLeft));
-        motorFrontRight.setPower(clampMotor(powerFrontRight));
-        motorMiddle.setPower(clampMotor(powerMiddle));
-        motorMiddleSwivel.setPower(clampMotor(powerMiddleSwivel));//watermelon
 
         telemetry.update();
 
@@ -797,61 +797,56 @@ public class PoseFF {
     //////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    double distToFrontWheels = .2; //todo-unarbitrary, move to constants
-    double distToBackWheel = .6; //todo-unarbitrary, move to constants
-    double maxForwardSpeed = .1; //todo-unarbitrary, move to constants
-    double maxRotateSpeed = .1; //todo-unarbitrary, move to constants
-    //I use "vector" here, but its acually an abomination between a polar coordinate and a vector
-    double[] vectorCenterPoint = {0,0};
-    double[] vectorLeftWheel = {0,0};
-    double[] vectorRightWheel = {0,0};
-    double[] vectorMiddleWheel = {0,0};
-    double[] leftWheelPoint = {distToFrontWheels, 180};
-    double[] resultantLeftWheelPoint = {0,0};
-    double[] resultantRightWheelPoint = {0,0};
-    double[] resultantMiddleWheelPoint = {0,0};
+
+    double lengthOfRobot = 1.4; //todo- needs to be updated on every loop
+
+    double newCalcDistForward = 0; // normalized input values to pass into the calculator
+    double newRotateAmount = 0;
+
+    TrikeChassisMovementCalc chassisCalc = new TrikeChassisMovementCalc(0,0, 0); //todo- change the input length to the starting length
 
     public void driveMixerTrike(double forward, double rotate){
-        powerFrontLeft = 0;
-        powerFrontRight = 0;
-        powerMiddle = 0;
+        //normalize inputs
+        newCalcDistForward = forward * Constants.maxForwardSpeed * loopTime;
+        newRotateAmount = rotate * Constants.maxRotateSpeed * loopTime;
 
-        //normalize the stuff to be not rates
-        forward = forward * maxForwardSpeed * (loopTime * 1E9);
-        rotate = rotate * maxRotateSpeed * (loopTime * 1E9);
+        //updates the calc, triggers re-do of calcs
+        chassisCalc.updateVals(newCalcDistForward, newRotateAmount, lengthOfRobot);
 
-        //calc main vector, put it into component form
-        vectorCenterPoint[0] = (forward) * Math.cos(rotate);
-        vectorCenterPoint[1] = (forward) * Math.sin(rotate);
+        //set the motor speed to the calc's returned speed
+        motorFrontLeft.setVelocity(chassisCalc.getRelMotorVels(loopTime)[0], AngleUnit.RADIANS);
+        motorFrontRight.setVelocity(chassisCalc.getRelMotorVels(loopTime)[1], AngleUnit.RADIANS);
+        motorMiddle.setVelocity(chassisCalc.getRelMotorVels(loopTime)[2], AngleUnit.RADIANS);
 
-        //calc new points
-        resultantLeftWheelPoint[0] = vectorCenterPoint[0] + (-distToFrontWheels * Math.cos(rotate * loopTime));
-        resultantLeftWheelPoint[1] = vectorCenterPoint[1] + (Math.sin(rotate * loopTime));
-
-        resultantRightWheelPoint[0] = vectorCenterPoint[0] + (distToFrontWheels * Math.cos(rotate * loopTime));
-        resultantRightWheelPoint[1] = vectorCenterPoint[1] + (Math.sin(rotate * loopTime));
-
-        resultantMiddleWheelPoint[0] = vectorCenterPoint[0] + (Math.cos(rotate * loopTime));
-        resultantMiddleWheelPoint[1] = vectorCenterPoint[1] + (-distToBackWheel * Math.sin(rotate * loopTime));
-
-        //calculate final vectors
-        vectorLeftWheel[0] = -distToFrontWheels + resultantLeftWheelPoint[0];
-        vectorLeftWheel[1] = resultantLeftWheelPoint[1];
-
-        vectorRightWheel[0] = distToFrontWheels + resultantRightWheelPoint[0];
-        vectorRightWheel[1] = resultantRightWheelPoint[1];
-
-        vectorMiddleWheel[0] =  resultantMiddleWheelPoint[0];
-        vectorMiddleWheel[1] = -distToBackWheel + resultantMiddleWheelPoint[1];
-
-        powerFrontRight = (vectorRightWheel[1] / maxForwardSpeed) / loopTime;
-        powerFrontLeft = (vectorLeftWheel[1] / maxForwardSpeed) / loopTime;
-        powerMiddle = vectorCenterPoint[1] ;
-        turnBackWheelPID(wrap360(-Math.toDegrees(rotate)));
+        turnSwervePID(swerveP, swerveI, swerveD, angleOfBackWheel(), chassisCalc.getNewSwerveAngle());
     }
 
-    public void turnBackWheelPID(double angle){
 
+
+    public double angleOfBackWheel(){
+        return motorMiddleSwivel.getCurrentPosition() / Constants.swerveAngleTicksPerDegree;
+    }
+
+    public void turnSwervePID(double Kp, double Ki, double Kd, double currentAngle, double targetAngle){
+
+        //initialization of the PID calculator's output range, target value and multipliers
+        swervePID.setOutputRange(-.69, .69); //this is funny
+        swervePID.setPID(Kp, Ki, Kd);
+        swervePID.setSetpoint(targetAngle);
+        swervePID.enable();
+
+        //initialization of the PID calculator's input range and current value
+        swervePID.setInputRange(0, 360);
+        swervePID.setContinuous();
+        swervePID.setInput(currentAngle);
+
+        turnError = diffAngle2(targetAngle, currentAngle);
+
+        //calculates the angular correction to apply
+        double correction = swervePID.performPID();
+
+        //performs the turn with the correction applied
+        motorMiddleSwivel.setPower(correction);
     }
 
     public static void normalize(double[] motorspeeds) {

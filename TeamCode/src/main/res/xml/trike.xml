@@ -4,19 +4,18 @@
         <LynxModule name="Control Hub" port="1">
             <LynxEmbeddedIMU name="imuTest" port="1" bus="1" />
             <LynxEmbeddedIMU name="turretIMU" port="0" bus="0" />
-            <RevRobotics40HDHexMotor name="motorFrontRight" port="0" />
-            <RevRobotics40HDHexMotor name="motorFrontLeft" port="1" />
+            <RevRobotics40HDHexMotor name="motorMiddleSwivel" port="0" />
+            <RevRobotics40HDHexMotor name="motorFrontRight" port="1" />
+            <RevRobotics40HDHexMotor name="motorFrontLeft" port="2" />
+            <RevRobotics40HDHexMotor name="motorMiddle" port="3" />
             <Servo name="gripperActuator" port="0" />
             <Servo name="gripperPitchServo" port="1" />
             <RevBlinkinLedDriver name="blinkin" port="5" />
         </LynxModule>
-
+        <Webcam name="Webcam 1" serialNumber="2E7FB3AF" />
         <LynxModule name="Expansion Hub 1" port="2">
-            <RevRobotics40HDHexMotor name="motorMiddle" port="0" />
-            <RevRobotics40HDHexMotor name="motorMiddleSwivel" port="1" />
             <RevRobotics40HDHexMotor name="duckSpinner" port="2" />
             <LynxEmbeddedIMU name="baseIMU" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
-    <Webcam name="Webcam 1" serialNumber="2E7FB3AF" />
 </Robot>

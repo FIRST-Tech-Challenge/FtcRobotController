@@ -394,7 +394,7 @@ public class FF_6832 extends OpMode {
         if (nearZero(pwrFwd) && nearZero(pwrRot)) {
             robot.driveMixerTrike(0,0);
         } else {
-            robot.driveMixerTrike(pwrFwd, pwrRot);
+            robot.driveMixerTrike(pwrFwd,pwrRot);
         }
 
 

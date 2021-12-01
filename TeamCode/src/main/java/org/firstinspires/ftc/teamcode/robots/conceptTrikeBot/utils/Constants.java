@@ -11,6 +11,15 @@ public class Constants {
     public static int ALLIANCE_INT_MOD = 1;
     public static int numGameStates = 10;
 
+    //robot constants
+    public static double swerveAngleTicksPerDegree = 0;
+    public static double maxForwardSpeed = 1.2;
+    public static double maxRotateSpeed = 1.2;
+    public static double radiusOfDiff = .9; //todo- move to constants
+    public static double wheelRadius = .9; //todo- make this a const. needs to be in meters
+    public static double maxRotaryVelOfBackWheel = .9; //todo- calc this based on gear ratio
+    public static double maxRotaryVelOfDiffWheels = .9; //todo- calc this based on gear ratio
+
     public static double startingXOffset = 0;
     public static double startingYOffset = 0;
 
