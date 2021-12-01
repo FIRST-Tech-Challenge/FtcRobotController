@@ -7,6 +7,8 @@ import java.util.ArrayList
 
 class FreightFinder : OpenCvPipeline() {
     var freightArray = ArrayList<Point>()
+    val whiteContours: List<MatOfPoint> = ArrayList()
+    val yellowContours: List<MatOfPoint> = ArrayList()
 
     override fun processFrame(input: Mat): Mat {
         val white = Mat()
@@ -27,8 +29,7 @@ class FreightFinder : OpenCvPipeline() {
         Imgproc.GaussianBlur(white, white, Size(5.0, 5.0), 0.0, 0.0)
         Imgproc.GaussianBlur(orange, orange, Size(5.0, 5.0), 0.0, 0.0)
 
-        val whiteContours: List<MatOfPoint> = ArrayList()
-        val yellowContours: List<MatOfPoint> = ArrayList()
+
 
         val hierarchy1 = Mat()
         val hierarchy2 = Mat()
@@ -38,6 +39,8 @@ class FreightFinder : OpenCvPipeline() {
 
         Imgproc.drawContours(input, whiteContours, -1, Scalar(0.0, 255.0, 0.0), 3)
         Imgproc.drawContours(input, yellowContours, -1, Scalar(0.0, 0.0, 255.0), 3)
+
+
 
         return input
     }
