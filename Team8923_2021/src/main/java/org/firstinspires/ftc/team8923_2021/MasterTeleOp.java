@@ -72,4 +72,14 @@ abstract public class MasterTeleOp extends MasterOpMode {
         //motorLift.setPower(Math.max((motorLift.getTargetPosition() - motorLift.getCurrentPosition()) * (1 / 75.0), 1.0));
 
     }
+
+    public void grab() {
+        if(gamepad2.dpad_up){
+            servoGrabber.setPosition(0.8);
+        } else if(gamepad2.dpad_down){
+            servoGrabber.setPosition(0.0);
+        } else {
+            servoGrabber.setPosition(0.0);
+        }
+    }
 }
