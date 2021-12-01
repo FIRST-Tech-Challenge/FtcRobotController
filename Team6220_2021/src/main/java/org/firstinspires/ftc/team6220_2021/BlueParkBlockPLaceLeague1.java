@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "BlueBlockPlace", group = "Autonomous")
+@Autonomous(name = "BlueBlockPlacel", group = "Autonomous")
 public class BlueParkBlockPLaceLeague1 extends MasterOpMode{
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
