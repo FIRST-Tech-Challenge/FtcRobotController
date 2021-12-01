@@ -16,49 +16,25 @@ public class ControllerMap {
     private void leftBumper(){
         meccanum.closeServoFull();
     }
-    private void leftBumper2(){
-        meccanum.closeServoFull();
-    }
     private void rightBumper(){
-        meccanum.openServoFull();
-    }
-    private void rightBumper2(){
         meccanum.openServoFull();
     }
     private void buttonB(){
 
     }
-    private void buttonB2(){
-
-    }
     private void buttonY(){
-        meccanum.spinnySpin(meccanum.HIGH_SPINNER_POWER);
-    }
-    private void buttonY2(){
         meccanum.spinnySpin(meccanum.HIGH_SPINNER_POWER);
     }
     private void buttonX(){
 
     }
-    private void buttonX2(){
-
-    }
     private void buttonA(){
-        meccanum.spinnySpin(meccanum.OPTIMAL_SPINNER_POWER);
-    }
-    private void buttonA2(){
         meccanum.spinnySpin(meccanum.OPTIMAL_SPINNER_POWER);
     }
     private void leftTrigger(){
         meccanum.moveArm(-gamepad1.left_trigger);
     }
-    private void leftTrigger2(){
-        meccanum.moveArm(-gamepad1.left_trigger);
-    }
     private void rightTrigger(){
-        meccanum.moveArm(gamepad2.right_trigger);
-    }
-    private void rightTrigger2(){
         meccanum.moveArm(gamepad2.right_trigger);
     }
     private void dpadLeft(){
@@ -73,6 +49,13 @@ public class ControllerMap {
     private void dpadDown(){
 
     }
+    private void rumble(int time){
+        gamepad1.rumble(time);
+    }
+    private void joystickDriver(){
+        meccanum.motorDriveXYVectors(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+    }
+
     private void dpadLeft2(){
 
     }
@@ -85,14 +68,32 @@ public class ControllerMap {
     private void dpadDown2(){
 
     }
-    private void rumble(int time){
-        gamepad1.rumble(time);
+    private void buttonB2(){
+
+    }
+    private void leftBumper2(){
+        meccanum.closeServoFull();
+    }
+    private void rightBumper2(){
+        meccanum.openServoFull();
+    }
+    private void buttonY2(){
+        meccanum.spinnySpin(meccanum.HIGH_SPINNER_POWER);
+    }
+    private void leftTrigger2(){
+        meccanum.moveArm(-gamepad1.left_trigger);
+    }
+    private void rightTrigger2(){
+        meccanum.moveArm(gamepad2.right_trigger);
+    }
+    private void buttonX2(){
+
+    }
+    private void buttonA2(){
+        meccanum.spinnySpin(meccanum.OPTIMAL_SPINNER_POWER);
     }
     private void rumble2(int time){
         gamepad2.rumble(time);
-    }
-    private void joystickDriver(){
-        meccanum.motorDriveXYVectors(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
     }
     private void joystickDriver2(){
         // do some other joystick stuff

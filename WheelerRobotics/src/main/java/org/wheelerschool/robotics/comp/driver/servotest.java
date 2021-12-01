@@ -29,6 +29,9 @@
 
 package org.wheelerschool.robotics.comp.driver;
 
+import android.content.Context;
+
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -36,6 +39,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.wheelerschool.robotics.comp.controller.ControllerMap;
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
 import org.wheelerschool.robotics.comp.controller.ControllerMapSINGLE;
+
+import java.io.File;
 
 
 /**
@@ -60,6 +65,8 @@ public class servotest extends LinearOpMode {
     ControllerMap cm = new ControllerMap();
     ControllerMapSINGLE cms = new ControllerMapSINGLE();
 
+    private int startupID;
+    private Context appContext;
 
 
 
@@ -74,12 +81,19 @@ public class servotest extends LinearOpMode {
 
         // internal IMU setup
         meccanum.init(hardwareMap);
+
         cm.init(meccanum);
         cms.init(meccanum);
+
         controlModes mode = controlModes.SINGLE;
 
+        startupID = hardwareMap.appContext.getResources().getIdentifier("startup", "raw", hardwareMap.appContext.getPackageName());
+        appContext = hardwareMap.appContext;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        SoundPlayer.getInstance().startPlaying(appContext, startupID);
+
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -91,6 +105,7 @@ public class servotest extends LinearOpMode {
                 cm.checkControls();
                 cm.checkControls2();
             }
+
             telemetry.addData("rotation", angles.axesReference);
 
             // MECCANUM MATH

@@ -3,8 +3,10 @@ package org.wheelerschool.robotics.comp.chassis;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
+import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
@@ -145,14 +147,15 @@ public class Meccanum {
         motorStop();
     }
 
-    public void motorDriveRelativeAngle(double radians, double speed){ //test on monday 11/29/2021
+    public void motorDriveRelativeAngle(double radians, double speed){
+        //test on monday 11/29/2021
         //NOTE
         // im not sure how to acurately do this using encoders, because some wheels are going to spin at different powers (I think)
         // this will cause the ticks to be difficult to calculate, and I dont really want to deal with that rn
 
         double spinvec = 0; // not spinning
-        double yvec = min(speed, 1.0) * tan(radians)/sqrt(pow(tan(radians),2)+1)*tan(radians); // ima be honest, i did this math for a js project 6 months ago and am just hopin it actually works in this context
-        double xvec = min(speed, 1.0) * tan(radians)/sqrt(pow(tan(radians),2))+1;
+        double yvec = min(speed, 1.0) * sin(radians); // ima be honest, i did this math for a js project 6 months ago and am just hopin it actually works in this context
+        double xvec = min(speed, 1.0) * cos(radians)+1;
 
         double y = pow(-yvec,3); // Remember, this is reversed!
         double x = pow(xvec * 1.1,3); // Counteract imperfect strafing
