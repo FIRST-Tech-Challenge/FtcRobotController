@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
-@Autonomous(name = "BlueBlockPlace", group = "Autonomous")
+@Disabled
+@Autonomous(name = "BlueBlockPlace1", group = "Autonomous")
 public class BlueParkBlockPLaceLeague1 extends MasterOpMode{
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
