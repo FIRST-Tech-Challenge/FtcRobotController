@@ -13,8 +13,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "yxauto2")
-public class Autooo extends LinearOpMode {
+@Autonomous(name = "yxaoruto2")
+public class Autonotwo extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -107,51 +107,41 @@ public class Autooo extends LinearOpMode {
                 telemetry.update();
             }
         }
-        /*
-        lift(-0.7, -100, 30);
-        goToWayPoint(-0.15, 0.45, 0, 0.7, 30, 0.01, 1);
-        setPower(0,0,0,0);
-        lift(-0.7, -2000, 30);
-        goToWayPoint(-0.15,0.65,0,0.5,30,0.01,1);
-        setPower(0,0,0,0);
-        robot.intakeUp.setPower(-1);
-        sleep(1500);
-        robot.intakeUp.setPower(0);
-        goToWayPoint(-0.15,0.3,-90,0.7,30,0.01,1);
-        setPower(0,0,0,0);
-        lift(0.7, 0, 15);
 
-         */
-        /*
-        goToWayPoint(-0.28, 0.7, 0, 2, 30, 0.01, 1);
-        setPower(0,0,0,0);
+        goToWayPoint(0, 0.15, 0, 2.2, 30, 0.1, 1);
         lift(-900, -0.3);
-        this.robot.intakeUp.setPower(0.7);
-        sleep(2500);
-        this.robot.intakeUp.setPower(0);
-        goToWayPoint(-1.9,0.38,-90,2,80,0.01,1);
-        goToWayPoint(-1.9,0.285,-90,0.5,30,0.002,1);
-        setPower(0,0,0,0);
-        this.robot.duck.setPower(-0.2);
-        sleep(3000);
-        this.robot.duck.setPower(0);
-        goToWayPoint(0.7,0.03,-90,2,30,0.005,1);
-        goToWayPoint(1.4,0.03,-90,2,30,0.005,1);
-        */
-        goToWayPoint(-0.15, 0.15, 0, 2, 30, 0.005, 1);
-        setPower(0, 0, 0, 0);
-        lift(-900, -0.3);
-        goToWayPoint(-0.15, 0.55, 0, 2, 30, 0.005, 1);
+        goToWayPoint(-0.15, 0.55, 0, 2.2, 30, 0.01, 1);
         this.robot.intakeUp.setPower(0.7);
         sleep(3000);
         this.robot.intakeUp.setPower(0);
-        goToWayPoint(-1.48, 0.175, -90, 2, 80, 0.005, 1);
+        // score pre-loaded cube
+
+        lift(-150, 0.3);
+        goToWayPoint(-1.48, 0.175, -90, 2.2, 200, 0.005, 1);
         this.robot.duck.setPower(-0.2);
         sleep(3000);
         this.robot.duck.setPower(0);
-        goToWayPoint(0.3, -0.01, -90, 2, 80, 0.005, 1);
-        goToWayPoint(1.2, -0.01, -90, 2, 80, 0.01, 1);
+        // score duck
 
+        goToWayPoint(-0.5, 0, -90, 2.2, 30, 0.01, 1);
+        goToWayPoint(1.2, 0, -90, 2.2, 30, 0.01, 1);
+        this.robot.intakeUp.setPower(-1);
+        goToWayPoint(1.4, 0, -90, 2.2, 30, 0.01, 1);
+        this.robot.intakeUp.setPower(0);
+        // grab freight
+
+        goToWayPoint(0.3, 0, -90, 2.2, 30, 0.01, 1);
+        lift(-900, -0.3);
+        goToWayPoint(-0.15, 0.55, 0, 2.2, 90, 0.01, 1);
+        this.robot.intakeUp.setPower(0.7);
+        sleep(3000);
+        this.robot.intakeUp.setPower(0);
+        // score freight
+
+        goToWayPoint(0.3, -0.01, -90, 2.2, 90, 0.01, 1);
+        goToWayPoint(1.2, -0.01, -90, 2.2, 30, 0.01, 1);
+        lift(0, 0.5);
+        // park in warehouse
 
 
     }

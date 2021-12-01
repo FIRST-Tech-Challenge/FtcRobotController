@@ -152,7 +152,7 @@ public class Autono extends LinearOpMode {
         this.robot.duck.setPower(0);
         goToWayPoint(0.3, -0.01, -90, 2, 80, 0.005, 1);
         goToWayPoint(1.2, -0.01, -90, 2, 80, 0.01, 1);
-
+        lift(0, 0.5);
 
 
     }
