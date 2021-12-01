@@ -58,6 +58,8 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
         } else {
             shippingHubLevel = 3;
         }
+        left.release();
+        right.release();
         return mat;
     }
 }

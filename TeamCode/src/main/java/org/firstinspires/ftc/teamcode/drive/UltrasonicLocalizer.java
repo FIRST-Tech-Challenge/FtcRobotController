@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -15,6 +17,7 @@ import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -56,6 +59,7 @@ public class UltrasonicLocalizer implements Localizer {
     Pose2d previousPose = new Pose2d(0, 0, 0);
     Pose2d poseEstimate = new Pose2d(0, 0, 0);
     List<Double> lastWheelPositions = new ArrayList<>();
+    Pose2d poseVelocity;
 
 
     public void init(HardwareMap hardwareMap) {
@@ -248,5 +252,23 @@ public class UltrasonicLocalizer implements Localizer {
         double finalHeadingDelta = Angle.normDelta(robotPoseDelta.getHeading() - previousPose.getHeading());
         lastWheelPositions = wheelPositions;
         return Kinematics.relativeOdometryUpdate(poseEstimate, new Pose2d(robotPoseDelta.vec(), finalHeadingDelta));
+    }
+    public Pose2d calculatePoseDeltaEncoders() {
+        Pose2d poseVelocity;
+        List<Double> wheelVelocities = drive.getWheelVelocities();
+        if (wheelVelocities != null) {
+            poseVelocity = MecanumKinematics.wheelToRobotVelocities(
+                    wheelVelocities,
+                    DriveConstants.TRACK_WIDTH,
+                    DriveConstants.TRACK_WIDTH,
+                    1
+            );
+            return poseVelocity;
+        }
+        return null;
+    }
+
+    public List<Double> getWheelVelocities() {
+        return drive.getWheelVelocities();
     }
 }
