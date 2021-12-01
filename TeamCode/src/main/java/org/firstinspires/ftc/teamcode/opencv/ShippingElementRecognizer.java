@@ -26,12 +26,12 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
 
     //Recognizes the shipping hub level based on where the team shipping element is located
     static final Rect LEFTBOX = new Rect(
-            new Point(0, 200),
-            new Point(120, 280)
+            new Point(0, 240),
+            new Point(120, 320)
     );
     static final Rect RIGHTBOX = new Rect(
-            new Point(121, 200),
-            new Point(240, 280)
+            new Point(121, 240),
+            new Point(240, 320)
     );
 
     @Override
@@ -47,7 +47,7 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
         rightValue = Core.sumElems(right).val[0] / RIGHTBOX.area();
         Imgproc.rectangle(mat, LEFTBOX, new Scalar(255, 0, 0), 2);
         Imgproc.rectangle(mat, RIGHTBOX, new Scalar(255, 0, 0), 2);
-        if (leftValue > 15 || rightValue > 15){
+        if (leftValue > 20 || rightValue > 20){
             if (leftValue >= rightValue){
                 shippingHubLevel = 1;
                 Imgproc.rectangle(mat, LEFTBOX, new Scalar(0, 0, 255), 2);
