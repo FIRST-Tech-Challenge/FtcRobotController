@@ -26,7 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
 
 @Autonomous
-public class AutoNav29 extends LinearOpMode {
+public class AutoNavBlue extends LinearOpMode {
     // for non next to caurousel
     Meccanum meccanum = new Meccanum();
 
