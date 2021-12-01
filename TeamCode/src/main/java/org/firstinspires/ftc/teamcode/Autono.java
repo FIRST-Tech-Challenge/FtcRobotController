@@ -139,19 +139,18 @@ public class Autono extends LinearOpMode {
         goToWayPoint(0.7,0.03,-90,2,30,0.005,1);
         goToWayPoint(1.4,0.03,-90,2,30,0.005,1);
         */
-        goToWayPoint(-0.15, 0.15, 0, 2, 30, 0.005, 1);
-        setPower(0, 0, 0, 0);
+        goToWayPoint(-0.15, 0.15, 0, 10, 30, 0.005, 1);
         lift(-900, -0.3);
-        goToWayPoint(-0.15, 0.55, 0, 2, 30, 0.005, 1);
+        goToWayPoint(-0.15, 0.55, 0, 10, 30, 0.005, 1);
         this.robot.intakeUp.setPower(0.7);
-        sleep(3000);
+        sleep(2500);
         this.robot.intakeUp.setPower(0);
-        goToWayPoint(-1.48, 0.175, -90, 2, 80, 0.005, 1);
+        goToWayPoint(-1.48, 0.17, -90, 10, 69, 0.005, 1);
         this.robot.duck.setPower(-0.2);
-        sleep(3000);
+        sleep(5000);
         this.robot.duck.setPower(0);
-        goToWayPoint(0.3, -0.01, -90, 2, 80, 0.005, 1);
-        goToWayPoint(1.2, -0.01, -90, 2, 80, 0.01, 1);
+        goToWayPoint(0.3, -0.01, -90, 10, 80, 0.005, 1);
+        goToWayPoint(1.1, -0.01, -90, 10, 80, 0.01, 1);
         lift(0, 0.5);
 
 

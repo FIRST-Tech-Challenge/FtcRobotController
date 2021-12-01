@@ -108,16 +108,16 @@ public class Autonotwo extends LinearOpMode {
             }
         }
 
-        goToWayPoint(0, 0.15, 0, 2.2, 30, 0.1, 1);
+        goToWayPoint(0, 0.15, 0, 2.5, 30, 0.1, 1);
         lift(-900, -0.3);
-        goToWayPoint(-0.15, 0.55, 0, 2.2, 30, 0.01, 1);
+        goToWayPoint(-0.15, 0.55, 0, 2.5, 30, 0.01, 1);
         this.robot.intakeUp.setPower(0.7);
         sleep(3000);
         this.robot.intakeUp.setPower(0);
         // score pre-loaded cube
 
         lift(-150, 0.3);
-        goToWayPoint(-1.48, 0.175, -90, 2.2, 200, 0.005, 1);
+        goToWayPoint(-1.48, 0.175, -90, 2.5, 200, 0.005, 1);
         this.robot.duck.setPower(-0.2);
         sleep(3000);
         this.robot.duck.setPower(0);
@@ -125,6 +125,7 @@ public class Autonotwo extends LinearOpMode {
 
         goToWayPoint(-0.5, 0, -90, 2.2, 30, 0.01, 1);
         goToWayPoint(1.2, 0, -90, 2.2, 30, 0.01, 1);
+        /*
         this.robot.intakeUp.setPower(-1);
         goToWayPoint(1.4, 0, -90, 2.2, 30, 0.01, 1);
         this.robot.intakeUp.setPower(0);
@@ -142,7 +143,7 @@ public class Autonotwo extends LinearOpMode {
         goToWayPoint(1.2, -0.01, -90, 2.2, 30, 0.01, 1);
         lift(0, 0.5);
         // park in warehouse
-
+        */
 
     }
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
