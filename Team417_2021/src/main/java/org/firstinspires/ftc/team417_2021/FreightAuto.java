@@ -8,7 +8,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "Auto Freight")
-public class AutonomousCompetition extends MasterAutonomous {
+public class FreightAuto extends MasterAutonomous {
     int allianceSide = 1;
     int barcodeIndex = 0;
     boolean farSide = false;
@@ -54,11 +54,9 @@ public class AutonomousCompetition extends MasterAutonomous {
         if (barcodeIndex == 0) {
             // highest level
             runMotorToPosition(elbowMotor, ELBOW_LEVEL_3, 0.5);
-
         } else if (barcodeIndex == 1) {
             // middle level
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_2, 0.5);
-
         } else {
             // lowest level
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_1, 0.5);
@@ -78,7 +76,6 @@ public class AutonomousCompetition extends MasterAutonomous {
             moveInches(19, 0.4);
             // drop element here
             dropElement();
-            //sleep(5000);
             moveInches(-10, 0.7);
             pivot(90 * allianceSide, 0.7);
             // back up into parking zone here
@@ -94,10 +91,7 @@ public class AutonomousCompetition extends MasterAutonomous {
             moveInches(-5, 0.7);
             pivot(90 * allianceSide, 0.7);
             // back up into parking zone
-
         }
-
-
     }
 
     public void dropElement() {

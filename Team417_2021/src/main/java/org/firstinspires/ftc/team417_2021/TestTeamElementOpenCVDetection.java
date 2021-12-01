@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team417_2021;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,7 +10,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp(name = "Test Detection ")
 public class TestTeamElementOpenCVDetection extends LinearOpMode {
-
     OpenCvCamera webcam;
     BarcodeDetectionOpenCV barcodeDetector = new BarcodeDetectionOpenCV();
 
@@ -34,15 +32,14 @@ public class TestTeamElementOpenCVDetection extends LinearOpMode {
 
         while (opModeIsActive()) {
             String side = "";
-            if (barcodeDetector.barcodeIndex == 0){
+            if (barcodeDetector.barcodeIndex == 0) {
                 side = "left";
-            }
-            else if (barcodeDetector.barcodeIndex == 1){
+            } else if (barcodeDetector.barcodeIndex == 1) {
                 side = "middle";
-            }
-            else if (barcodeDetector.barcodeIndex == 2){
+            } else if (barcodeDetector.barcodeIndex == 2) {
                 side = "right";
             }
+
             telemetry.addData("contours length", barcodeDetector.contours.size());
             telemetry.addData("index", barcodeDetector.index);
             telemetry.addData("area", barcodeDetector.maxArea); // switches between zero and number

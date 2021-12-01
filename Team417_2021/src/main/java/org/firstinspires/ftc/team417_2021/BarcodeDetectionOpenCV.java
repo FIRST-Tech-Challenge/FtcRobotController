@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BarcodeDetectionOpenCV extends OpenCvPipeline {
-
     Mat frame = new Mat();
     Mat yuv = new Mat();
     Mat mask = new Mat();
@@ -29,6 +28,9 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
     Scalar lower = new Scalar (0, 62, 0);
     Scalar higher = new Scalar (255, 117, 116);
 
+    static final int LEFT_BARCODE_POS = 163;
+    static final int RIGHT_BARCODE_POS = 376;
+
     Rect rect = new Rect();
     Rect maxRect = new Rect();
 
@@ -37,7 +39,6 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-
         input.copyTo(frame);
 
         Imgproc.cvtColor(input, yuv, Imgproc.COLOR_RGB2YUV);
@@ -68,14 +69,13 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
     public int findBarcodeIndex(int x) {
         // 213, 426
         int index = 0;
-        if (x < 163) {
+        if (x < LEFT_BARCODE_POS) {
             index = 0;
-        } else if (x > 163 && x < 376) {
+        } else if (x > LEFT_BARCODE_POS && x < RIGHT_BARCODE_POS) {
             index = 1;
-        } else if (x > 376) {
+        } else if (x > RIGHT_BARCODE_POS) {
             index = 2;
         }
         return index;
     }
-
 }

@@ -10,7 +10,6 @@ import org.firstinspires.ftc.team417_2021.Resources.Polynomial;
 import com.qualcomm.robotcore.hardware.Servo;
 
 abstract public class MasterOpMode extends LinearOpMode {
-
     DcMotor motorFL = null;
     DcMotor motorFR = null;
     DcMotor motorBL = null;
@@ -50,7 +49,6 @@ abstract public class MasterOpMode extends LinearOpMode {
     static final int SHOULDER_CAP = 0; // todo get correct values
 
     protected void initializeHardware() {
-
         // initialize move filters
         turnFilter = new PIDFilter(0.008, 0, 0.0001);
         moveFilter = new PIDFilter(0.04, 0, 0);
