@@ -174,7 +174,9 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorLeft.setPower(speed);
         motorRight.setPower(speed);
 
-        // loop until both motors are not busy, then stop.
+        // loop until one of the motors stop because they're drive motors and they should be working together.
+        // Drive motors should stop when one of them reaches their target position.
+        //This avoids the issue of if one of the motors is not working and the robot never stops.
         while (motorLeft.isBusy() && motorRight.isBusy()) {
             telemetry.addData("Path1",  "Running to %7d :%7d", newTargetLeft,  newTargetRight);
             telemetry.addData("Path2",  "Running at %7d :%7d",
