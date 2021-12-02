@@ -52,5 +52,8 @@ It usually takes 3-5 seconds for the tflite engine to “warm up”. The idea is
 
 [EasyOpenCV](https://github.com/OpenFTC/EasyOpenCV) is based on color analysis in the camera stream.
 You define one or more viewport areas, typically described as rectangles, and let EasyOpenCV analyze the input and manipulate color channels. The analysis boils down to comparing the observed values with expected values that are specific to color(s) of the objects that you need to detect.
-The detection logic is implemented in a pipeline class. In the 2021-22 season we are using [CVFrenzyPipeline](https://github.com/MHSRoboticEagles/FtcRobotController/blob/1ad8e47f8932f2b5aa500d87c877d4dcd73968a8/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CVRec/CVFrenzyPipeline.java)
-[CVRingSearchPipeline](https://github.com/MHSRoboticEagles/FtcRobotController/blob/1ad8e47f8932f2b5aa500d87c877d4dcd73968a8/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CVRec/CVRingSearchPipeline.java)provides a more complex use case, where we split the viewport in multiple rectangles to detect the location of the object relative to the camera on the robot.
+The detection logic is implemented in a pipeline class. 
+
+In the 2021-22 season we are using [CVFrenzyPipeline](https://github.com/MHSRoboticEagles/FtcRobotController/blob/1ad8e47f8932f2b5aa500d87c877d4dcd73968a8/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CVRec/CVFrenzyPipeline.java)
+
+[CVRingSearchPipeline](https://github.com/MHSRoboticEagles/FtcRobotController/blob/1ad8e47f8932f2b5aa500d87c877d4dcd73968a8/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CVRec/CVRingSearchPipeline.java) provides a more complex use case, where we split the viewport in multiple rectangles to detect the location of the object relative to the camera on the robot.
