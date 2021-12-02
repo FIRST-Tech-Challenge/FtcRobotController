@@ -22,6 +22,7 @@ public class AutonomousTemplate extends LinearOpMode {
     public ContinuousIntake intake;
     public LinearSlide slide;
 
+
     public void initAll() {
         podServos = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
         podServos.lower();

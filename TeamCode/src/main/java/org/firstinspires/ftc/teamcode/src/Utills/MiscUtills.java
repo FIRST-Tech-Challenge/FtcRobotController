@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.src.Utills;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class MiscUtills {
     public static double boundNumber(double num) {
         if (num > 1.0) {
@@ -19,6 +22,13 @@ public class MiscUtills {
             return -1.0F;
         }
         return num;
+    }
+
+    public static String getStackTraceAsString(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 
 
