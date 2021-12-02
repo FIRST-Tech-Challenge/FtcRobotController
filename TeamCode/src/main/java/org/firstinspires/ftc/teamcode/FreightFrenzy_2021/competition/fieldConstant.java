@@ -29,7 +29,7 @@ public class fieldConstant {
     public static final Pose2d SHARED_RED_ENTER_POSE = new Pose2d(64.75, -36.125, toRadians(-90)); //-18 back(18.125)
     public static final Pose2d SHARED_BLUE_ENTER_POSE = new Pose2d(64.75, 36.125, toRadians(90)); //18 back(18.125)
 
-    public static final Pose2d SHARED_RED_END_POSE = new Pose2d(61.165, -14.259, toRadians(313.78));
-    public static final Pose2d SHARED_BLUE_END_POSE = new Pose2d(61.165, 14.259, toRadians(46.219));
+    public static final Pose2d SHARED_RED_END_POSE = new Pose2d(60.473, -13.537, toRadians(313.781));
+    public static final Pose2d SHARED_BLUE_END_POSE = new Pose2d(60.473, 13.537, toRadians(46.219));
 
 }

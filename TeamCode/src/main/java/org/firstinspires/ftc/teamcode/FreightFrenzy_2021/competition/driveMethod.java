@@ -19,15 +19,21 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import static java.lang.Thread.sleep;
 
 public class driveMethod {
-    enum poseState{
+    enum poseState {
         RED_WAREHOUSE,
         RED_STORAGEUNIT,
         BLUE_WAREHOUSE,
         BLUE_STORAGEUNIT,
+        RED,
+        BLUE,
         RED_OTHERS,
         BLUE_OTHERS,
-        SHARED_HUB,
+        BLUE_SHARED_HUB,
+        RED_SHARED_HUB,
         UNKNOWN
+    }
+    enum alliance {
+
     }
 
     private DcMotor LF = null;
@@ -64,8 +70,12 @@ public class driveMethod {
         else if(x > 27.375 && y > 27.375){
             return poseState.BLUE_WAREHOUSE;
         }
-        else if(x < 23.375 && x > -23.375 && y > 27.375){
-            return poseState.SHARED_HUB;
+        else if(y < 23.375 && y > -23.375 && x > 27.375){
+            if(y > 0){
+                return poseState.BLUE_SHARED_HUB;
+            } else {
+                return poseState.RED_SHARED_HUB;
+            }
         }
         else if(x < -47.875 && y < 47.125 && y > 24.125){
             return poseState.BLUE_STORAGEUNIT;

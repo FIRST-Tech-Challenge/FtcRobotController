@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition;
+package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.delayed;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -31,8 +29,9 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "RED DUCK", group = "Competition")
-public class Mecanum_Auto_RedDuck extends LinearOpMode {
+@Autonomous(name = "RED BARRIER DELAYED", group = "Competition")
+@Disabled
+public class Mecanum_Auto_RedBarrier_Delayed extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -43,6 +42,7 @@ public class Mecanum_Auto_RedDuck extends LinearOpMode {
     private DcMotor Slide = null;
     private Servo Rotate = null;
     private Servo Push = null;
+    private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
     private ElapsedTime runtime = new ElapsedTime();
 
     BNO055IMU imu;
@@ -54,11 +54,15 @@ public class Mecanum_Auto_RedDuck extends LinearOpMode {
             "Duck",
             "Marker"
     };
+
     private static final String VUFORIA_KEY =
             Robot4100Common.VUFORIA_LICENSE;
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
+    double rotate = 0;
+    double speed = 0.5;
+    boolean reverse = false;
 
     @Override
     public void runOpMode() {
@@ -101,7 +105,7 @@ public class Mecanum_Auto_RedDuck extends LinearOpMode {
         //initialize position
         Push.setPosition(0.4);
         Slide.setPower(0.15);
-        sleep(100);
+        sleep(200);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Rotate.setPosition(0.03);
@@ -123,7 +127,7 @@ public class Mecanum_Auto_RedDuck extends LinearOpMode {
 
         //Traj
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-41, -62.125, toRadians(-90));
+        Pose2d startPose = new Pose2d(6.5, -62.125, toRadians(-90));
         drive.setPoseEstimate(startPose);
         Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
                 .splineToConstantHeading(new Vector2d(-11.875, -43), toRadians(90))
@@ -138,7 +142,7 @@ public class Mecanum_Auto_RedDuck extends LinearOpMode {
                 recogTime.reset();
             }
 
-            while (recogTime.milliseconds() <= 2000.0) {
+            while (recogTime.milliseconds() <= 12000.0) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
@@ -167,7 +171,7 @@ public class Mecanum_Auto_RedDuck extends LinearOpMode {
 
             //MOTION TO PLATE
             drive.followTrajectory(myTrajectory1);
-            sleep(500);
+            sleep(600);
 
             //ROTATE
             Rotate.setPosition(1.0);
@@ -208,25 +212,15 @@ public class Mecanum_Auto_RedDuck extends LinearOpMode {
 
             //BACK TO WALL
             Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end())
-                    .splineTo(new Vector2d(-63, -56), toRadians(-180))
+                    .splineToLinearHeading(new Pose2d(6.5, -65), toRadians(-180))
                     .build();
             drive.followTrajectory(myTrajectory3);
-            sleep(500);
+            sleep(300);
 
-//            Pose2d wall = new Pose2d(-63.88, -56, Math.toRadians(90));
-//            drive.setPoseEstimate(wall);
-
-            //ROTATE DUCK
-            Spin.setPower(-0.5);
-            sleep(3500);
-            Spin.setPower(0.0);
-
-            //PARK
             Trajectory myTrajectory4 = drive.trajectoryBuilder(myTrajectory3.end())
-                    .strafeRight(20)
+                    .forward(35)
                     .build();
             drive.followTrajectory(myTrajectory4);
-
         }
 
     }
