@@ -5,8 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.PIDFilter;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
+
+import java.util.List;
 
 public abstract class MasterAutonomous extends MasterOpMode {
     // This method drives tank when given an angle drive power and turning power

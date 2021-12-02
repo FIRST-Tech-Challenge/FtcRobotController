@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "Autonomous Competition", group = "Autonomous")
+@Autonomous(name = "Autonomous Competition", group = "Concept")
 public class AutonomousCompetition extends MasterAutonomous {
     private static final String TFOD_MODEL_ASSET = "model_20211128_184150.tflite";
     private static final String[] LABELS = {"TSE"};
@@ -36,6 +36,13 @@ public class AutonomousCompetition extends MasterAutonomous {
         if (tfod != null) {
             tfod.activate();
             tfod.setZoom(2.0, 16.0/9.0);
+        }
+
+        waitForStart();
+
+        if (tfod != null) {
+            tfod.activate();
+            tfod.setZoom(2.0, 16.0/9.0);
 
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
 
@@ -52,11 +59,11 @@ public class AutonomousCompetition extends MasterAutonomous {
                     if (recognition.getLabel().equals("TSE")) {
                         double TSELocation = (recognition.getLeft() + recognition.getRight()) / 2.0;
 
-                        if (TSELocation <= 333.0) {
+                        if (TSELocation > 200.0 && TSELocation <= 333.0) {
                             barcode = 0;
                         } else if (TSELocation > 333.0 && TSELocation <= 467.0) {
                             barcode = 1;
-                        } else if (TSELocation > 467.0) {
+                        } else if (TSELocation > 467.0 && TSELocation <= 600.0) {
                             barcode = 2;
                         }
                     }
@@ -65,44 +72,63 @@ public class AutonomousCompetition extends MasterAutonomous {
             }
         }
 
-        Initialize();
-        waitForStart();
-
-        switch (barcode) {
-            case 0:
-                telemetry.addData("barcode0: ", barcode);
-                telemetry.update();
-                break;
-
-            case 1:
-                telemetry.addData("barcode1: ", barcode);
-                telemetry.update();
-                break;
-
-            case 2:
-                telemetry.addData("barcode2: ", barcode);
-                telemetry.update();
-                break;
-        }
-
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-//                if (tfod != null) {
-//                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-//
-//                    if (updatedRecognitions != null) {
-//                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-//
-//                        int i = 0;
-//                        for (Recognition recognition : updatedRecognitions) {
-//                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-//                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
-//                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
-//                            i++;
-//                        }
-//                        telemetry.update();
-//                    }
-//                }
+                switch (barcode) {
+                    case 0:
+                        // left barcode code
+                        telemetry.addData("barcode: ", barcode);
+                        telemetry.update();
+                        break;
+
+                    case 1:
+                        // center barcode code
+                        telemetry.addData("barcode: ", barcode);
+                        telemetry.update();
+                        break;
+
+                    case 2:
+                        // right barcode code
+                        telemetry.addData("barcode: ", barcode);
+                        telemetry.update();
+                        break;
+                }
+
+                // This goes inside of the switch and is used just like above, but with cubes/ducks/spheres instead of the TSE
+                /*if (tfod != null) {
+                    tfod.activate();
+                    tfod.setZoom(2.0, 16.0/9.0);
+
+                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+
+                    if (updatedRecognitions != null) {
+                        telemetry.addData("# Object Detected", updatedRecognitions.size());
+
+                        int i = 0;
+                        for (Recognition recognition : updatedRecognitions) {
+                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
+                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
+                            i++;
+
+                            if (recognition.getLabel().equals("TSE")) {
+                                double TSELocation = (recognition.getLeft() + recognition.getRight()) / 2.0;
+
+                                if (TSELocation > 200.0 && TSELocation <= 333.0) {
+                                    barcode = 0;
+                                    telemetry.addData("barcode: ", barcode);
+                                } else if (TSELocation > 333.0 && TSELocation <= 467.0) {
+                                    barcode = 1;
+                                    telemetry.addData("barcode: ", barcode);
+                                } else if (TSELocation > 467.0 && TSELocation <= 600.0) {
+                                    barcode = 2;
+                                    telemetry.addData("barcode: ", barcode);
+                                }
+                            }
+                        }
+                        telemetry.update();
+                    }
+                }*/
             }
         }
 

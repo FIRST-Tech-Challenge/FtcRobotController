@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.DriverInput;
-import org.openftc.easyopencv.OpenCvCamera;
 
 public abstract class MasterOpMode extends LinearOpMode {
     // Motors
@@ -20,7 +19,6 @@ public abstract class MasterOpMode extends LinearOpMode {
 
 
     // Other Devices
-    // servos go here
     public static Servo servoGrabber;
     public static Servo servoArm;
 
@@ -30,9 +28,6 @@ public abstract class MasterOpMode extends LinearOpMode {
 
     // IMUs
     public BNO055IMU imu;
-
-    // Webcam
-    OpenCvCamera webcam;
 
     // Initializes the motors, servos, IMUs, and drivers
     public void Initialize() {
