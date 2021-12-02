@@ -105,6 +105,9 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean releasedDU2 = true;
         boolean releasedDR2 = true;
 
+        boolean releasedBack =true;
+        double rotateSpeed = 0.02;
+
         boolean toggleX1 = true;
         boolean toggleRB2 = true;
         boolean toggleLB2 = true;
@@ -276,29 +279,6 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                         speed = 0.3;
                         chassis.updatePoseEstimate();
                         PoseStorage.state = driveMethod.fieldState(chassis.getPoseEstimate());
-                    } else {
-                        if (PoseStorage.state == driveMethod.poseState.BLUE_SHARED_HUB) {
-                            Trajectory leaveTraj1 = chassis.trajectoryBuilder(chassis.getPoseEstimate())
-                                    .lineToLinearHeading(new Pose2d(64.75, chassis.getPoseEstimate().getY() + 1, toRadians(90)))
-                                    .build();
-                            chassis.followTrajectory(leaveTraj1);
-                            Trajectory leaveTraj2 = chassis.trajectoryBuilder(leaveTraj1.end())
-                                    .forward(24)
-                                    .build();
-                            chassis.followTrajectory(leaveTraj2);
-                        } else if (PoseStorage.state == driveMethod.poseState.RED_SHARED_HUB) {
-                            Trajectory leaveTraj1 = chassis.trajectoryBuilder(chassis.getPoseEstimate())
-                                    .lineToLinearHeading(new Pose2d(64.75, chassis.getPoseEstimate().getY() - 1, toRadians(-90)))
-                                    .build();
-                            chassis.followTrajectory(leaveTraj1);
-                            Trajectory leaveTraj2 = chassis.trajectoryBuilder(leaveTraj1.end())
-                                    .forward(24)
-                                    .build();
-                            chassis.followTrajectory(leaveTraj2);
-                        }
-                        speed = 0.7;
-                        chassis.updatePoseEstimate();
-                        PoseStorage.state = driveMethod.fieldState(chassis.getPoseEstimate());
                     }
                 } else if (!releasedY1) {
                     releasedY1 = true;
@@ -328,7 +308,16 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 Slide.setPower(0);
                 releasedDD2 = true;
             }
-
+            if(gamepad2.back){
+                if(releasedBack){
+                    if(rotateSpeed==0.02)
+                        rotateSpeed =0.05;
+                    else if (rotateSpeed==0.05)
+                        rotateSpeed =0.02;
+                }else if (!releasedBack){
+                    releasedBack = true;
+                }
+            }
             if (gamepad2.dpad_left) {
                 if (releasedDL2){
 //                    if(spinPower != 0) {
