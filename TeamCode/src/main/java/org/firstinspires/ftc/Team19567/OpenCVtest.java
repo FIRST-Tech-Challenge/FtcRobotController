@@ -14,8 +14,12 @@ public class OpenCVtest extends LinearOpMode {
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     @Override
     public void runOpMode() {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId", "id", hardwareMap
+                        .appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
-        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance()
+                .createWebcam(webcamName,cameraMonitorViewId);
 
         tsePipeline pipeline = new tsePipeline(telemetry);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -25,28 +29,6 @@ public class OpenCVtest extends LinearOpMode {
                 camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("OpenCV","OpenCV actually connected wow");
                 telemetry.update();
-
-                waitForStart();
-                switch(pipeline.getLocation()) {
-                    case ALLIANCE_FIRST: {
-                        location = tsePipeline.LOCATION.ALLIANCE_FIRST;
-                        telemetry.addData("OpenCV","First Level Detected");
-                        telemetry.update();
-                    }
-                    case ALLIANCE_SECOND: {
-                        location = tsePipeline.LOCATION.ALLIANCE_SECOND;
-                        telemetry.addData("OpenCV","Second Level Detected");
-                        telemetry.update();
-                    }
-                    case ALLIANCE_THIRD: {
-                        location = tsePipeline.LOCATION.ALLIANCE_THIRD;
-                        telemetry.addData("OpenCV","Third Level Detected");
-                        telemetry.update();
-                    }
-                    default: {
-                        location = tsePipeline.LOCATION.ALLIANCE_THIRD;
-                    }
-                }
             }
             @Override
             public void onError(int errorCode) {
@@ -54,6 +36,7 @@ public class OpenCVtest extends LinearOpMode {
                 telemetry.update();
             }
         });
-
+        waitForStart();
+        if(!opModeIsActive()) return;
     }
 }
