@@ -53,18 +53,36 @@ public class DuckAutoRed extends LinearOpMode {
                 .strafeRight(2)
                 .forward(90)
                 .build();
+        delay(500);
+        // Get the placement of the shipping element 100 times and pick the most frequent position
+        int level;
+        int[] counts = {0,0,0};
+        for(int i=0;i<150;i++) {
+            delay(10);
+            if(webcam.getShippingHubLevel() == 0) {
+                i = 0;
+                continue;
+            }
+            counts[webcam.getShippingHubLevel() - 1] += 1;
+        }
 
-        int shippingHubLevel = webcam.getShippingHubLevel();
+        if(counts[0] > counts[1] && counts[0] > counts[2]) {
+            level = 1;
+        } else if(counts[1] > counts[0] && counts[1] > counts[2]) {
+            level = 2;
+        } else {
+            level = 3;
+        }
         waitForStart();
         drive.followTrajectorySequence(trajectory1);
-        if (shippingHubLevel == 1) {
+        if (level == 1) {
             lift.goTo(level1, 0.8);
-        } else if (shippingHubLevel == 2) {
+        } else if (level == 2) {
             lift.goTo(level2, 0.8);
-        } else if (shippingHubLevel == 3) {
+        } else if (level == 3) {
             lift.goTo(level3, 0.8);
         } else {
-            throw new IllegalStateException("Invalid shipping hub level: " + shippingHubLevel);
+            throw new IllegalStateException("Invalid shipping hub level: " + level);
         }
         delay(750);
         hopper.hopper.setPosition(0.33);
