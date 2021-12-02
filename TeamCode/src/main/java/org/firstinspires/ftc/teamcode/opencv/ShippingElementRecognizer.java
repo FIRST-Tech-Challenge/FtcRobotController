@@ -24,7 +24,8 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
         return rightValue;
     }
 
-    //Recognizes the shipping hub level based on where the team shipping element is located
+    // Recognizes the shipping hub level based on where the team shipping element is located
+    // Create two possible boxes it can be in
     static final Rect LEFTBOX = new Rect(
             new Point(0, 240),
             new Point(120, 320)
@@ -37,16 +38,17 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Mat mat = new Mat();
-        Scalar lowHSV = new Scalar(120, 100, 35); // duck lower
-        Scalar highHSV = new Scalar(140, 255, 255); // duck upper
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
-        Core.inRange(input, lowHSV, highHSV, mat);
+        Scalar lowHSV = new Scalar(120, 100, 35); // purple lower in hsv
+        Scalar highHSV = new Scalar(140, 255, 255); // purple upper in hsv
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV); // convert to hsv
+        Core.inRange(input, lowHSV, highHSV, mat); // make purple white, everything else black
         Mat left = mat.submat(LEFTBOX);
         Mat right = mat.submat(RIGHTBOX);
-        leftValue = Core.sumElems(left).val[0] / LEFTBOX.area();
-        rightValue = Core.sumElems(right).val[0] / RIGHTBOX.area();
-        Imgproc.rectangle(mat, LEFTBOX, new Scalar(255, 0, 0), 2);
+        leftValue = Core.sumElems(left).val[0] / LEFTBOX.area(); // Get white pixel / total pixel count
+        rightValue = Core.sumElems(right).val[0] / RIGHTBOX.area(); // Get white pixel / total pixel count
+        Imgproc.rectangle(mat, LEFTBOX, new Scalar(255, 0, 0), 2); // draw rectangles around the boxes
         Imgproc.rectangle(mat, RIGHTBOX, new Scalar(255, 0, 0), 2);
+        // If neither value is high enough , then the shipping hub level is 3, otherwise we continue
         if (leftValue > 20 || rightValue > 20){
             if (leftValue >= rightValue){
                 shippingHubLevel = 1;
@@ -58,6 +60,8 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
         } else {
             shippingHubLevel = 3;
         }
+
+        // I think this stops a memory leak?
         left.release();
         right.release();
         return mat;
