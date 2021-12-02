@@ -116,7 +116,7 @@ public class UltrasonicLocalizer implements Localizer {
     @Nullable
     @Override
     public Pose2d getPoseVelocity() {
-        return null;
+        return poseVelocity;
     }
 
     @Override
@@ -224,10 +224,12 @@ public class UltrasonicLocalizer implements Localizer {
             } else {
                 // If we didn't find any poses, we use the encoder values instead
                 poseEstimate = calculatePoseEncoders();
+                poseVelocity = calculatePoseDeltaEncoders();
             }
         } else {
             // If we haven't waited long enough, we use the encoder values instead
             poseEstimate = calculatePoseEncoders();
+            poseVelocity = calculatePoseDeltaEncoders();
         }
         previousPose = poseEstimate;
     }
@@ -263,6 +265,8 @@ public class UltrasonicLocalizer implements Localizer {
                     DriveConstants.TRACK_WIDTH,
                     1
             );
+            poseVelocity = new Pose2d(poseVelocity.vec(), drive.getExternalHeadingVelocity()!=null?drive.getExternalHeadingVelocity():0);
+
             return poseVelocity;
         }
         return null;
