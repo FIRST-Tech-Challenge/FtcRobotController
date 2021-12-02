@@ -17,11 +17,11 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "Auto (Blue)", group = "Sensor")
-public class FullAutoBlue extends LinearOpMode {
+@Autonomous(name = "Auto (Red)", group = "Sensor")
+public class FullAutoRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();
-    private Carousel carousel = new Carousel(Color.BLUE);
+    private Carousel carousel = new Carousel(Color.RED);
     private Lift lift = new Lift();
     private Hopper hopper = new Hopper();
     OpenCvWebcam webcam;
@@ -77,9 +77,9 @@ public class FullAutoBlue extends LinearOpMode {
         // Drive to the the shipping hub
         chassis.moveBackwardWithEncoders(0.6,100);
         delay(250);
-        chassis.strafeRightWithEncoders(0.6,1050);
+        chassis.strafeLeftWithEncoders(0.6,1050);
         delay(250);
-        chassis.moveBackwardWithEncoders(0.6,675);
+        chassis.moveBackwardWithEncoders(0.6,650);
 
         // Deposit the box on the correct level
         if(level == 1) {
@@ -100,20 +100,24 @@ public class FullAutoBlue extends LinearOpMode {
 
         // Move to the carousel and spin it
         chassis.moveForwardWithEncoders(0.6,600);
-        chassis.turnRightWithEncoders(0.6,750);
+        chassis.turnRightWithEncoders(0.6,1500);
         delay(250);
-        chassis.moveBackwardWithEncoders(0.6,2200);
+        chassis.moveBackwardWithEncoders(0.6,700);
         chassis.moveBackwardWithEncoders(0.3,200);
-        chassis.moveForwardWithEncoders(0.5,25);
-        chassis.strafeLeftWithEncoders(0.3,500);
+        chassis.moveForwardWithEncoders(0.5,100);
+        chassis.strafeLeftWithEncoders(0.6,1650);
+        chassis.moveBackwardWithEncoders(0.3,400);
+        chassis.moveForwardWithEncoders(0.6,100);
+        chassis.strafeLeftWithEncoders(0.3,300);
         carousel.turnCarousel();
         delay(3000);
         carousel.carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carousel.carouselMotor.setPower(0);
 
         // Drive into the warehouse
-        chassis.strafeRightWithEncoders(0.6,200);
-        chassis.moveBackwardWithEncoders(0.3,200);
+        chassis.moveForwardWithEncoders(0.6,250);
+        chassis.turnRightWithEncoders(0.6,750);
+        chassis.moveBackwardWithEncoders(0.3,500);
         chassis.moveForwardWithEncoders(1, 5500);
     }
 
