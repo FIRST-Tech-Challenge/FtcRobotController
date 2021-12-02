@@ -19,7 +19,9 @@ public class MecanumTeleOp extends LinearOpMode {
 
         // init motor and add intake for arm
         robot.motorArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        robot.motorIntake.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        // robot.motorIntake.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        robot.motorArm.setTargetPosition(0);
         robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
@@ -38,7 +40,7 @@ public class MecanumTeleOp extends LinearOpMode {
         double intakePower = 0;
 
         //set arm power
-        robot.motorArm.setPower(0.5);
+        //robot.motorArm.setPower(0.5);
 
         //init loop
          while (! isStarted()) {
@@ -76,6 +78,7 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
 
+
             //intake in
             if (gamepad2.left_trigger > 0){
                 intakePower = 0.75;
@@ -111,6 +114,7 @@ public class MecanumTeleOp extends LinearOpMode {
             robot.motorBackLeft.setPower(backLeftPower);
             robot.motorFrontRight.setPower(frontRightPower);
             robot.motorBackRight.setPower(backRightPower);
+
             //set arm power
             robot.motorArm.setTargetPosition(armSetPos);
             robot.motorArm.setPower(0.5);
