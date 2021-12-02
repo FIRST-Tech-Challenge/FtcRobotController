@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.oldConfig.selfDrive;
+package org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive;
 
-import static org.firstinspires.ftc.teamcode.oldConfig.selfDrive.AutoDriveUtils.encoderDrive;
-import static org.firstinspires.ftc.teamcode.oldConfig.selfDrive.AutoDriveUtils.logData;
-import static org.firstinspires.ftc.teamcode.oldConfig.selfDrive.AutoDriveUtils.logLine;
+import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.encoderDrive;
+import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.logData;
+import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.logLine;
 
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.oldConfig.BaseOpMode;
-import org.firstinspires.ftc.teamcode.oldConfig.Hardware2;
+import org.firstinspires.ftc.teamcode.Configs.oldConfig.BaseOpMode;
+import org.firstinspires.ftc.teamcode.Configs.oldConfig.Hardware2;
 
 /**
  * This class defines the warehouse driving.

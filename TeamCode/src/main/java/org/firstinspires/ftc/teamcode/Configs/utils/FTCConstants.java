@@ -1,23 +1,27 @@
-package org.firstinspires.ftc.teamcode.oldConfig.utils;
+package org.firstinspires.ftc.teamcode.Configs.utils;
 
 /**
  * This class has all constant definitions.
+ * @author aryansinha
+ * and also less significantly
+ * @author karthikperi
  */
+
 public class FTCConstants {
     /**
      * Ticks every revolution
      */
-    public static final double COUNTS_PER_MOTOR_REV = 288;
+    public static final double COUNTS_PER_MOTOR_REV = 28;
 
     /**
      * Drive gear (Ratios, we don't need to worry about this as we're using a hex core)
      */
-    public static final double DRIVE_GEAR_REDUCTION = 1.0;
+    public static final double DRIVE_GEAR_REDUCTION = 5.55555555556;
 
     /**
      * For figuring circumference
      */
-    public static final double WHEEL_DIAMETER_INCHES = 3.54331;
+    public static final double WHEEL_DIAMETER_INCHES = 2.8346457;
 
     /**
      * Counts per inch.
@@ -40,12 +44,19 @@ public class FTCConstants {
     /**
      * The identifier of the left motor from the robot.
      */
-    public static final String LEFT_MOTOR_NAME = "motorLeft";
+    public static final String LEFT_MOTOR_NAME = "leftFrontMotor";
 
     /**
      * The identifier of the right motor from the robot.
      */
-    public static final String RIGHT_MOTOR_NAME = "motorRight";
+    public static final String RIGHT_MOTOR_NAME = "rightFrontMotor";
+
+    public static final String BLEFT_MOTOR_NAME = "leftBackMotor";
+
+    /**
+     * The identifier of the right motor from the robot.
+     */
+    public static final String BRIGHT_MOTOR_NAME = "rightBackMotor";
 
     /**
      * The identifier of the claw.

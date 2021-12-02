@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.oldConfig;
+package org.firstinspires.ftc.teamcode.Configs.oldConfig;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;

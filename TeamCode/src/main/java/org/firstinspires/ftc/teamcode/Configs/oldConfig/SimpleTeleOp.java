@@ -3,10 +3,10 @@ Made by Aryan Sinha,
 FTC team 202101101
  */
 
-package org.firstinspires.ftc.teamcode.oldConfig;
+package org.firstinspires.ftc.teamcode.Configs.oldConfig;
 
-import static org.firstinspires.ftc.teamcode.oldConfig.selfDrive.AutoDriveUtils.logData;
-import static org.firstinspires.ftc.teamcode.oldConfig.selfDrive.AutoDriveUtils.logLine;
+import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.logData;
+import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.logLine;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
