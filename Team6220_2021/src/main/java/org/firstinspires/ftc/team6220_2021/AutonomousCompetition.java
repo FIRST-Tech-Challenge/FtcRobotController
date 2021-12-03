@@ -35,14 +35,14 @@ public class AutonomousCompetition extends MasterAutonomous {
 
         if (tfod != null) {
             tfod.activate();
-            tfod.setZoom(2.0, 16.0/9.0);
+            tfod.setZoom(1.0, 16.0/9.0);
         }
 
         waitForStart();
 
         if (tfod != null) {
             tfod.activate();
-            tfod.setZoom(2.0, 16.0/9.0);
+            tfod.setZoom(1.0, 16.0/9.0);
 
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
 
@@ -59,11 +59,11 @@ public class AutonomousCompetition extends MasterAutonomous {
                     if (recognition.getLabel().equals("TSE")) {
                         double TSELocation = (recognition.getLeft() + recognition.getRight()) / 2.0;
 
-                        if (TSELocation > 200.0 && TSELocation <= 333.0) {
+                        if (TSELocation > 0.0 && TSELocation <= 267.0) {
                             barcode = 0;
-                        } else if (TSELocation > 333.0 && TSELocation <= 467.0) {
+                        } else if (TSELocation > 267.0 && TSELocation <= 533.0) {
                             barcode = 1;
-                        } else if (TSELocation > 467.0 && TSELocation <= 600.0) {
+                        } else if (TSELocation > 533.0 && TSELocation <= 800.0) {
                             barcode = 2;
                         }
                     }
@@ -149,7 +149,7 @@ public class AutonomousCompetition extends MasterAutonomous {
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.85f;
+        tfodParameters.minResultConfidence = 0.8f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
