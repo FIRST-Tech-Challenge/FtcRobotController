@@ -30,4 +30,8 @@ public class BetterMotor {
     public void setPower(double power) {
         this.power = power;
     }
+
+    public double getCurrentPosition() {
+        return motor.getCurrentPosition();
+    }
 }
