@@ -54,24 +54,10 @@ public class DuckAutoRed extends LinearOpMode {
                 .forward(90)
                 .build();
         delay(500);
-        // Get the placement of the shipping element 100 times and pick the most frequent position
-        int level;
-        int[] counts = {0,0,0};
-        for(int i=0;i<150;i++) {
-            delay(10);
-            if(webcam.getShippingHubLevel() == 0) {
-                i = 0;
-                continue;
-            }
-            counts[webcam.getShippingHubLevel() - 1] += 1;
-        }
 
-        if(counts[0] > counts[1] && counts[0] > counts[2]) {
-            level = 1;
-        } else if(counts[1] > counts[0] && counts[1] > counts[2]) {
-            level = 2;
-        } else {
-            level = 3;
+        int level = 3;
+        while (!isStarted() && !isStopRequested()) {
+            level = webcam.getShippingHubLevel();
         }
         waitForStart();
         drive.followTrajectorySequence(trajectory1);
@@ -86,7 +72,7 @@ public class DuckAutoRed extends LinearOpMode {
         }
         delay(750);
         hopper.hopper.setPosition(0.33);
-        delay(700);
+        delay(1200);
         hopper.hopper.setPosition(0);
         lift.goTo(0,0.8);
         drive.followTrajectorySequence(trajectory2);
