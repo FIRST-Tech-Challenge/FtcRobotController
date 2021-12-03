@@ -29,8 +29,10 @@
 
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -38,7 +40,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.AdrianControls.VuforiaStuff;
 import org.firstinspires.ftc.teamcode.AdrianControls.AdrianMecanumControls;
 import org.firstinspires.ftc.teamcode.drive.MecanumDrive6340;
-
+//import com.arcrobotics.ftclib.controller;
+//import com.acrobotics.
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -83,16 +86,17 @@ public class AdrianTestVuforia extends AdrianMecanumControls {
         // Wait for the game to start (driver presses PLAY)
 
         MecanumDrive6340 drive = new MecanumDrive6340(hardwareMap);
-        drive.elbowServo.setPosition(1.0);
-        sleep(1000);
+        //drive.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //drive.elbowServo.setPosition(1.0);
+        //sleep(1000);
         //drive.boxServo.setPosition(0.2);
         //sleep(1000);
-        drive.handServo.setPosition(0.3);
+        //drive.handServo.setPosition(0.3);
 
         waitForStart();
         runtime.reset();
 
-
+        /*
         drive.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.ArmMotor.setTargetPosition(drive.ArmMotor.getCurrentPosition() - 400);
         drive.ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -101,15 +105,17 @@ public class AdrianTestVuforia extends AdrianMecanumControls {
 
         }
 
-         sleep(500);
-        drive.elbowServo.setPosition(0.0);
-        sleep(1500);
+         */
 
-        drive.handServo.setPosition(0.0);
-        sleep(500);
-        drive.boxServo.setPosition(1.0);
-        sleep(1500);
-        drive.boxServo.setPosition(0.3);
+        //  sleep(500);
+        //drive.elbowServo.setPosition(0.0);
+      //  sleep(1500);
+
+        //drive.handServo.setPosition(0.0);
+        //sleep(500);
+        //drive.boxServo.setPosition(1.0);
+        //sleep(1500);
+        //drive.boxServo.setPosition(0.3);
 
 
 
@@ -122,14 +128,70 @@ public class AdrianTestVuforia extends AdrianMecanumControls {
         boolean turnOnlyOneAtIntake = false;
         VuforiaStuff.capElementPos pos = null;
         pos = posData.capElementPosition;
+      drive.ArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        drive.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+  /*     //   drive.ArmMotor.setPower(0.176);
+         double kSVolts = 1;
+        double kCosVolts = 1;
+        double kVVoltSecondPerRad = 0.5;
+        double kAVoltSecondSquaredPerRad = 0.1;
+        ArmFeedforward feedForward = new ArmFeedforward (kSVolts,kCosVolts,kVVoltSecondPerRad,kAVoltSecondSquaredPerRad);
+        ElapsedTime timerForPid = new ElapsedTime();
+        drive.ArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        int initialPosition = drive.ArmMotor.getCurrentPosition();
+        drive.ArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        timerForPid.reset();
+        while(Math.abs(drive.ArmMotor.getCurrentPosition() - 180)> 20 && timerForPid.seconds()<2)
+        {
+            double powerToApply = Math.abs(drive.ArmMotor.getCurrentPosition() - 180) * 0.8/Math.abs(initialPosition-180);
+            drive.ArmMotor.setVelocity(feedForward.calculate(1,0.5,0.35));
+
+        }
+
+*/
+
+        if(pos == VuforiaStuff.capElementPos.RIGHT){
+            drive.ArmLifter(3,4);
+            drive.ArmMotor.setPower(0.176);
+            telemetry.addData("FinalPosition", drive.ArmMotor.getCurrentPosition());
+            telemetry.addData("powervaluefinal ", drive.ArmMotor.getPower());
+            telemetry.update();
+            sleep(2000);
+
+        }
+        if(pos == VuforiaStuff.capElementPos.CENTER){
+            drive.ArmLifter(2,4);
+            drive.ArmMotor.setPower(0.176);
+            telemetry.addData("FinalPosition", drive.ArmMotor.getCurrentPosition());
+            telemetry.addData("powervaluefinal ", drive.ArmMotor.getPower());
+            telemetry.update();
+            sleep(2000);
+
+        }
+       if(pos == VuforiaStuff.capElementPos.LEFT){
+            drive.ArmLifter(1,4);
+            drive.ArmMotor.setPower(0.176);
+            telemetry.addData("FinalPosition", drive.ArmMotor.getCurrentPosition());
+            telemetry.addData("powervaluefinal ", drive.ArmMotor.getPower());
+            telemetry.update();
+            sleep(2000);
+
+
+        }
+
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
 
 
             telemetry.addData("Position", pos);
             telemetry.addData("LeftYellowCount", posData.yellowCountLeft);
             telemetry.addData("CenterYellowCount", posData.yellowCountCenter);
             telemetry.addData("RightYellowCount", posData.yellowCountRight);
+            telemetry.addData("ArmCurrentPosition", drive.ArmMotor.getCurrentPosition());
+  //          telemetry.addData("powervaluefinal ", drive.ArmMotor.getPower());
+//            telemetry.addData("powervaluefinal ", feedForward.calculate(-1,0.25));
 
 
 

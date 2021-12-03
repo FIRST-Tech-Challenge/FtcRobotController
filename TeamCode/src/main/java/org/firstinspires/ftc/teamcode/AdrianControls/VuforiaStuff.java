@@ -48,9 +48,13 @@ public class VuforiaStuff {
         double yellowCountC = 1;
         double yellowCountR = 1;
         //ForYellowDectection Thresholds
-        int redThreshold = 90;
-        int greenThreshold = 90;
-        int blueThreshold = 50;
+        //int redThreshold = 90;
+        //int greenThreshold = 90;
+        //int blueThreshold = 50;
+        //ForBlueDectection Thresholds
+        int redThreshold = 150;
+        int greenThreshold = 150;
+        int blueThreshold = 150;
 
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
         VuforiaLocalizer.CloseableFrame closeableFrame = null;
@@ -128,7 +132,7 @@ public class VuforiaStuff {
                  cropStartX = (int) ((0.0/ 640.0) * bitmap.getWidth()); ;
 
 //                cropStartY = (int) ((100.0 / 480.0) * bitmap.getHeight());
-                cropStartY = (int) ((280.0 / 480.0) * bitmap.getHeight());
+                cropStartY = (int) ((250.0 / 480.0) * bitmap.getHeight());
 
                 cropWidth = (int) ((640.0 / 640.0) * bitmap.getWidth());
                 cropHeight = (int) ((63.0 / 480.0) * bitmap.getHeight());
@@ -200,25 +204,38 @@ public class VuforiaStuff {
             for (height = 0; height < bitmapHeight; ++height) {
                 for (width = colorLStartCol; width < colorLStartCol + colWidth; ++width) {
                     pixel = bitmap.getPixel(width, height);
+                /*
                     if (Color.red(pixel) > redThreshold && Color.green(pixel) > greenThreshold && Color.blue(pixel) < blueThreshold) {
                         yellowCountL += Color.red(pixel);
+                    }
+                 */
+                    if (Color.red(pixel) < redThreshold && Color.green(pixel) < greenThreshold && Color.blue(pixel) > blueThreshold) {
+                        yellowCountL += Color.blue(pixel);
                     }
 
                 }
                 for (width = colorCStartCol; width < colorCStartCol + colWidth; ++width) {
                     pixel = bitmap.getPixel(width, height);
-
+/*
                     if (Color.red(pixel) > redThreshold && Color.green(pixel) > greenThreshold && Color.blue(pixel) < blueThreshold) {
                         yellowCountC += Color.red(pixel);
                     }
+  */                 if (Color.red(pixel) < redThreshold && Color.green(pixel) < greenThreshold && Color.blue(pixel) > blueThreshold) {
+                        yellowCountC += Color.blue(pixel);
+                    }
+
 
                 }
 
                 for (width = colorRStartCol; width < colorRStartCol + colWidth; ++width) {
                     pixel = bitmap.getPixel(width, height);
 
-                    if (Color.red(pixel) > redThreshold && Color.green(pixel) > greenThreshold && Color.blue(pixel) < blueThreshold) {
+              /*      if (Color.red(pixel) > redThreshold && Color.green(pixel) > greenThreshold && Color.blue(pixel) < blueThreshold) {
                         yellowCountR += Color.red(pixel);
+                    }
+                */
+                    if (Color.red(pixel) < redThreshold && Color.green(pixel) < greenThreshold && Color.blue(pixel) > blueThreshold) {
+                        yellowCountR += Color.blue(pixel);
                     }
 
                 }

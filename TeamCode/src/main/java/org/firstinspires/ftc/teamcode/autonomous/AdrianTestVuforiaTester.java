@@ -30,16 +30,15 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.AdrianControls.AdrianMecanumControls;
+import org.firstinspires.ftc.teamcode.AdrianControls.VuforiaStuff;
 import org.firstinspires.ftc.teamcode.drive.MecanumDrive6340;
 
 
@@ -56,9 +55,9 @@ import org.firstinspires.ftc.teamcode.drive.MecanumDrive6340;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AdrianTest", group="Linear Opmode")
+@Autonomous(name="AdrianTestVuforiaTester", group="Linear Opmode")
 //@Disabled
-public class AdrianTest extends AdrianMecanumControls {
+public class AdrianTestVuforiaTester extends AdrianMecanumControls {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -66,6 +65,8 @@ public class AdrianTest extends AdrianMecanumControls {
     private int RightEncoderValue;
     private int LeftEncoderValue;
     private int SideEncoderValue;
+    private VuforiaLocalizer vuforia;
+    public VuforiaStuff vuforiaStuff;
 
 
     @Override
@@ -74,55 +75,99 @@ public class AdrianTest extends AdrianMecanumControls {
         telemetry.update();
         //Initialize Hardware( see AdrianMecanumControls)
         initializeHardware();
-        MecanumDrive6340 drive = new MecanumDrive6340(hardwareMap);
-        drive.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        vuforiaStuff = new VuforiaStuff(vuforia);
         // Wait for the game to start (driver presses PLAY)
+
+        MecanumDrive6340 drive = new MecanumDrive6340(hardwareMap);
+        drive.elbowServo.setPosition(1.0);
+        sleep(1000);
+        //drive.boxServo.setPosition(0.2);
+        //sleep(1000);
+        drive.handServo.setPosition(0.3);
+
         waitForStart();
         runtime.reset();
-        drive.ArmLifter(1,4);
-        sleep(2000);
-        drive.ArmLifter(2,4);
-        sleep(2000);
-        drive.ArmLifter(3,4);
-        sleep(2000);
-        drive.ArmLifter(2,4);
-        sleep(2000);
-        drive.ArmLifter(1,4);
+
+
+        drive.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.ArmMotor.setTargetPosition(drive.ArmMotor.getCurrentPosition() - 400);
+       /*
+        drive.ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        drive.ArmMotor.setPower(0.3);
+        while (drive.ArmMotor.isBusy()){
+
+        }
+*/
+        ElapsedTime timerForPid = new ElapsedTime();
+        drive.ArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        int initialPosition = drive.ArmMotor.getCurrentPosition();
+        drive.ArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        timerForPid.reset();
+        while(Math.abs(drive.ArmMotor.getCurrentPosition() - 500)> 20 && timerForPid.seconds()<2)
+        {
+            double powerToApply = Math.abs(drive.ArmMotor.getCurrentPosition() - 400) * 1.0/Math.abs(initialPosition-400);
+            drive.ArmMotor.setPower(powerToApply);
+        }
+        //drive.ArmMotor.setPower(0);
+         sleep(500);
+        drive.elbowServo.setPosition(0.0);
+        sleep(1500);
+
+        drive.handServo.setPosition(0.0);
+        sleep(500);
+        drive.boxServo.setPosition(1.0);
+        sleep(1500);
+        drive.boxServo.setPosition(0.3);
 
 
 
 
-        //drive.ArmLifterWithPIDControllerCopy(1,4);
-        //drive.ArmLifterWithPIDController();
-
-
+        VuforiaStuff.capElementPositionData posData = null;
+        posData = vuforiaStuff.vuforiascan(true, true);
+        double distanceToDropOffSkystone = 0;
+        double distanceBackToCenterLine = 0;
+        double distanceBackToSecondStone = 0;
+        boolean turnOnlyOneAtIntake = false;
+        VuforiaStuff.capElementPos pos = null;
+        pos = posData.capElementPosition;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-        //finding encoder values
-            RightEncoderValue = GetRightEncoderValue();
+
+            telemetry.addData("Position", pos);
+            telemetry.addData("LeftYellowCount", posData.yellowCountLeft);
+            telemetry.addData("CenterYellowCount", posData.yellowCountCenter);
+            telemetry.addData("RightYellowCount", posData.yellowCountRight);
+
+
+
+            telemetry.update();
+
+            //telemetry.addData("FilePath", path);
+
+            //finding encoder values
+/*            RightEncoderValue = GetRightEncoderValue();
             LeftEncoderValue = GetLeftEncoderValue();
             SideEncoderValue = GetSideEncoderValue();
 
-       //     telemetry.addData("Right Encoder Value", RightEncoderValue);
-         //   telemetry.addData("LeftEncoderValue", LeftEncoderValue);
-           // telemetry.addData("SideEncoderValue", SideEncoderValue);
-            telemetry.addData("GetArmPos", drive.ArmMotor.getCurrentPosition());
-            telemetry.update();
-            telemetry.update();
-            // grid mecanum movment function( see Adrian Mecanum Controls)
-           // GridMecanumMovement(-1,1,0.2);
+  // grid mecanum movment function( see Adrian Mecanum Controls)
+            GridMecanumMovement(-1,1,0.2);
 
 
-/*
+
             telemetry.addData("Right Encoder Value", RightEncoderValue);
             telemetry.addData("LeftEncoderValue", LeftEncoderValue);
             telemetry.addData("SideEncoderValue", SideEncoderValue);
             telemetry.update();
-            telemetry.update();
-
- */
-                 }
+         telemetry.update();
+    */                }
         }
 
     }

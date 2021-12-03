@@ -56,10 +56,10 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Auto", group = "Autonomous")
+@Autonomous(name = "AutoWithParkingInWearhouse", group = "Autonomous")
 @Disabled
 
-public class Auto extends LinearOpMode {
+public class AutoWithParkingInWearhouse extends LinearOpMode {
     private int teamColor;//1=Red -1= Blue
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -73,7 +73,7 @@ public class Auto extends LinearOpMode {
     public VuforiaStuff vuforiaStuff;
     private TFObjectDetector tfod;
 
-    public Auto(int TeamColor) {
+    public AutoWithParkingInWearhouse(int TeamColor) {
         super();
         teamColor = TeamColor;
     }
@@ -92,7 +92,7 @@ public class Auto extends LinearOpMode {
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
         vuforiaStuff = new VuforiaStuff(vuforia);
 
-        Pose2d startPose = new Pose2d(-36, -72 * teamColor, Math.toRadians(90 * teamColor));
+        Pose2d startPose = new Pose2d(12, -72 * teamColor, Math.toRadians(90 * teamColor));
 
         drive.setPoseEstimate(startPose);
 /*
@@ -105,30 +105,47 @@ public class Auto extends LinearOpMode {
                 .build();
 */
         Trajectory goToBasketTowerStrafe = drive.trajectoryBuilder(startPose)
-                .strafeTo(new Vector2d(-2, -72 * teamColor))
+                .strafeTo(new Vector2d(-12, -72 * teamColor))
                 .build();
 
-        Trajectory goToBasketTower = drive.trajectoryBuilder(goToBasketTowerStrafe.end())
-                .lineTo(new Vector2d(-2, -55 * teamColor))
+//Level Middle
+        Trajectory goToBasketTowerLevelMiddle = drive.trajectoryBuilder(goToBasketTowerStrafe.end())
+                .lineTo(new Vector2d(-12, -53 * teamColor))
                 .build();
 
-        Trajectory gobackfromBasketTower = drive.trajectoryBuilder(goToBasketTower.end())
-                .lineTo(new Vector2d(-2, -65 * teamColor))
+        Trajectory gobackfromBasketTowerLevelMiddle = drive.trajectoryBuilder(goToBasketTowerLevelMiddle.end())
+                .lineTo(new Vector2d(-12, -72 * teamColor))
                 .build();
 
-        Trajectory goToDuck = drive.trajectoryBuilder(gobackfromBasketTower.end())
+        Trajectory strafeToWearhouseLevelMiddle = drive.trajectoryBuilder(gobackfromBasketTowerLevelMiddle.end())
                 //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
-                .strafeTo(new Vector2d(-75, -65 * teamColor))
+                .strafeTo(new Vector2d(40, -72 * teamColor))
+                .build();
+//Level High
+        Trajectory goToBasketTowerLevelHigh = drive.trajectoryBuilder(goToBasketTowerStrafe.end())
+                .lineTo(new Vector2d(-12, -48.5 * teamColor))
                 .build();
 
-        Trajectory goToStorage = drive.trajectoryBuilder(goToDuck.end())
-                //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
-                .lineTo(new Vector2d(-75, -44 * teamColor))
+        Trajectory gobackfromBasketTowerLevelHigh = drive.trajectoryBuilder(goToBasketTowerLevelHigh.end())
+                .lineTo(new Vector2d(-12, -72 * teamColor))
                 .build();
 
-        Trajectory strafeToStorage = drive.trajectoryBuilder(goToStorage.end())
+        Trajectory strafeToWearhouseLevelHigh = drive.trajectoryBuilder(gobackfromBasketTowerLevelHigh.end())
                 //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
-                .strafeTo(new Vector2d(-80, -44 * teamColor))
+                .strafeTo(new Vector2d(40, -72 * teamColor))
+                .build();
+//Level Low
+        Trajectory goToBasketTowerLevelLow = drive.trajectoryBuilder(goToBasketTowerStrafe.end())
+                .lineTo(new Vector2d(-12, -54.5 * teamColor))
+                .build();
+
+        Trajectory gobackfromBasketTowerLevelLow = drive.trajectoryBuilder(goToBasketTowerLevelLow.end())
+                .lineTo(new Vector2d(-12, -72 * teamColor))
+                .build();
+
+        Trajectory strafeToWearhouseLevelLow = drive.trajectoryBuilder(gobackfromBasketTowerLevelLow.end())
+                //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
+                .strafeTo(new Vector2d(40, -72 * teamColor))
                 .build();
 
 
@@ -188,77 +205,64 @@ public class Auto extends LinearOpMode {
        if(pos == VuforiaStuff.capElementPos.CENTER)
         {
             LiftArmMiddle();
-            //sleep(1000);
-            //drive.elbowServo.setPosition(0.0);
-            //sleep(1500);
 
-            drive.followTrajectory(goToBasketTower);
+            drive.followTrajectory(goToBasketTowerLevelMiddle);
             drive.outTakeblocks();
             sleep(2000);
             drive.stopIntakeBlocks();
-
-            //drive.handServo.setPosition(0.0);
-            //sleep(500);
-            //drive.boxServo.setPosition(1.0);
-            //sleep(1500);
-            //drive.boxServo.setPosition(0.0);
+            drive.followTrajectory(gobackfromBasketTowerLevelMiddle);
+            sleep(1000);
+            LiftArmLow();
+            sleep(1000);
+            // LiftArmBottom();
+            sleep(500);
+            drive.followTrajectory(strafeToWearhouseLevelMiddle);
 
         }
         if(pos == VuforiaStuff.capElementPos.RIGHT)
         {
             LiftArmHigh();
-//            sleep(1000);
-  //          drive.elbowServo.setPosition(0.0);
-    //        sleep(1500);
 
-            drive.followTrajectory(goToBasketTower);
+
+            drive.followTrajectory(goToBasketTowerLevelHigh);
             drive.outTakeblocks();
             sleep(2000);
             drive.stopIntakeBlocks();
-
-      //      drive.handServo.setPosition(0.0);
-       //     sleep(500);
-       //     drive.boxServo.setPosition(1.0);
-       //     sleep(1500);
-       //     drive.boxServo.setPosition(0.0);
+            drive.followTrajectory(gobackfromBasketTowerLevelHigh);
+            sleep(1000);
+            LiftArmLow();
+            sleep(1000);
+            // LiftArmBottom();
+            sleep(500);
+            drive.followTrajectory(strafeToWearhouseLevelHigh);
 
         }
         if(pos == VuforiaStuff.capElementPos.LEFT)
         {
             LiftArmLow();
-//            sleep(1000);
-//            drive.elbowServo.setPosition(0.0);
-//            sleep(1500);
 
-            drive.followTrajectory(goToBasketTower);
+
+            drive.followTrajectory(goToBasketTowerLevelLow);
             drive.outTakeblocks();
             sleep(2000);
             drive.stopIntakeBlocks();
-//            drive.handServo.setPosition(0.0);
-//            sleep(500);
-//            drive.boxServo.setPosition(1.0);
- //           sleep(1500);
-  //          drive.boxServo.setPosition(0.0);
+            drive.followTrajectory(gobackfromBasketTowerLevelLow);
+            sleep(1000);
+            LiftArmLow();
+            sleep(1000);
+            // LiftArmBottom();
+            sleep(500);
+            drive.followTrajectory(strafeToWearhouseLevelLow);
 
         }
 
 //        LiftArm(pos);
-        sleep(1000);
-        drive.followTrajectory(gobackfromBasketTower);
-        LiftArmBottom();
-        sleep(500);
-        drive.followTrajectory(goToDuck);
-        drive.elbowServo.setPosition(1.0);
-        sleep(1000);
-        drive.handServo.setPosition(0.3);
-        drive.spinwheel(teamColor);
-        sleep(5000);
-        drive.spinwheelstop();
+
+
 
         //      drive.followTrajectory(turnToZeroDegree);
 
-        drive.followTrajectory(goToStorage);
-        drive.followTrajectory(strafeToStorage);
+
         PoseStorage.currentPose = drive.getPoseEstimate();
 
     }
@@ -305,6 +309,7 @@ public class Auto extends LinearOpMode {
 
     private void
     LiftArmMiddle() {
+
         drive.ArmLifter(2,4);
     }
 

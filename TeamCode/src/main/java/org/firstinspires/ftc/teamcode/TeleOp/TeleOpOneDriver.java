@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
 
 import org.firstinspires.ftc.teamcode.drive.MecanumDrive6340;
 
@@ -20,7 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.MecanumDrive6340;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(group = "drive")
-public class TeleOp extends LinearOpMode {
+public class TeleOpOneDriver extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -59,6 +57,10 @@ public class TeleOp extends LinearOpMode {
                 drive.ArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
                 drive.ArmMotor.setPower(gamepad1.right_trigger*0.35);
             }
+            if (gamepad1.left_trigger>0){
+                drive.ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+                drive.ArmMotor.setPower(gamepad1.left_trigger*0.2);
+            }
             if (drive.digitalTouch.getState() == true) {
                 telemetry.addData("Digital Touch", "Is Not Pressed");
             }
@@ -66,14 +68,14 @@ public class TeleOp extends LinearOpMode {
                 drive.stopIntakeBlocks();
             }
 
-            if (gamepad2.dpad_right) // X is intake system
+            if (gamepad1.dpad_right) // X is intake system
                 drive.spinwheelright();
-            if (gamepad2.dpad_left) // X is intake system
+            if (gamepad1.dpad_left) // X is intake system
                 drive.spinwheelleft();
-            if (gamepad2.dpad_up) {
+            if (gamepad1.dpad_up) {
                 drive.stopIntakeBlocks();
             }
-            if (gamepad2.dpad_down) // X is intake system
+            if (gamepad1.dpad_down) // X is intake system
                 drive.spinwheelstop();
             if (gamepad1.y) // X is intake system
             {
@@ -91,20 +93,18 @@ public class TeleOp extends LinearOpMode {
             {
                 drive.ArmLifter(-1, 4);
             }
-            if (gamepad2.right_bumper) // X is intake system
+            if (gamepad1.right_bumper) // X is intake system
             {
                 drive.inTakeblocks();
             }
 
-            if (gamepad2.left_bumper) // X is intake system
+            if (gamepad1.left_bumper) // X is intake system
             {
                 drive.outTakeblocks();
 
             }
             drive.update();
-            if (gamepad2.b) {// B is stopping intake
 
-            }
             /*
             shooterServo positions
             0 = LOAD

@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.drive;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -31,6 +29,7 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -38,7 +37,6 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -48,13 +46,13 @@ import org.firstinspires.ftc.teamcode.AdrianControls.VuforiaStuff;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import androidx.annotation.NonNull;
+
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
@@ -71,7 +69,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class MecanumDrive6340 extends MecanumDrive {
+public class MecanumDrive6340WITHPIDEXPERIMENTS extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
    public static PIDFCoefficients SHOOTER_PID = new PIDFCoefficients(35, 0, 7, 14);
@@ -133,15 +131,14 @@ public class MecanumDrive6340 extends MecanumDrive {
     protected VoltageSensor batteryVoltageSensor;
 
     private Pose2d lastPoseOnTurn;
-    int targetEncoderCountLevelMinus1 = 0;
     int targetEncoderCountLevel0 = 200;
-    int targetEncoderCountLevel1 = 300;
-    int targetEncoderCountLevel2 = 540;
-    int targetEncoderCountLevel3 = 740;
+    int targetEncoderCountLevel1 = 340;
+    int targetEncoderCountLevel2 = 650;
+    int targetEncoderCountLevel3 = 850;
     double armMinPowerDuringMove = 0.35;
     double armMinPowerDuringHold = 0.176;
 
-    public MecanumDrive6340(HardwareMap hardwareMap) {        super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+    public MecanumDrive6340WITHPIDEXPERIMENTS(HardwareMap hardwareMap) {        super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         Context context = AppUtil.getInstance().getApplication();
 
@@ -602,9 +599,6 @@ public class MecanumDrive6340 extends MecanumDrive {
         if(level ==  0){
             targetEnconderCountLevel = targetEncoderCountLevel0;
         }
-        if(level ==  -1){
-            targetEnconderCountLevel = targetEncoderCountLevelMinus1;
-        }
 
         ElapsedTime timerForPid = new ElapsedTime();
         ArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -612,14 +606,11 @@ public class MecanumDrive6340 extends MecanumDrive {
         timerForPid.reset();
         double powerToApply = 0.0;
         if(ArmMotor.getCurrentPosition()-targetEnconderCountLevel<0){
-            ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            ArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             powerToApply=armMinPowerDuringMove;
         }
         else{
-            ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-            powerToApply=0.0;
-        }
-        if(targetEnconderCountLevel==0){
+            ArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             powerToApply=0.0;
         }
 
@@ -637,16 +628,152 @@ public class MecanumDrive6340 extends MecanumDrive {
             Log.d("ArmLifter powerToApply: ", String.valueOf(powerToApply));
 
         }
-        if(targetEnconderCountLevel==0){
-            powerToApply=0.0;
-        }
-        else
-        {
-            ArmMotor.setPower(armMinPowerDuringHold);
-        }
+        ArmMotor.setPower(armMinPowerDuringHold);
         //ArmMotor.ZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+    public void ArmLifterWithPIDControllerCopy (int level,int pidTimerInSeconds){
+        int targetEnconderCountLevel=targetEncoderCountLevel3;
+        if(level ==  3){
+            targetEnconderCountLevel = targetEncoderCountLevel3;
+        }
+        if(level ==  2){
+            targetEnconderCountLevel = targetEncoderCountLevel2;
+        }
+        if(level ==  1){
+            targetEnconderCountLevel = targetEncoderCountLevel1;
+        }
+        ElapsedTime timerForPid = new ElapsedTime();
+        ArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        int initialPosition = ArmMotor.getCurrentPosition();
+        ArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        timerForPid.reset();
+        double powerToApply = 0.0;
+        PIDFController pfc = new PIDFController(new PIDCoefficients(1,0,1));
+        pfc.setOutputBounds(armMinPowerDuringMove,1.0);
+        pfc.setTargetPosition(targetEnconderCountLevel);
 
+        while(Math.abs(ArmMotor.getCurrentPosition() - targetEnconderCountLevel)> 20 && timerForPid.seconds()<pidTimerInSeconds)
+        {
+            powerToApply = pfc.update(ArmMotor.getCurrentPosition());
+            if (powerToApply<armMinPowerDuringMove){
+                powerToApply = armMinPowerDuringMove;
+            }
+            ArmMotor.setPower(powerToApply);
+            Log.d("ArmLifter powerToApply: ", String.valueOf(powerToApply));
+
+        }
+        ArmMotor.setPower(armMinPowerDuringHold);
+        //ArmMotor.ZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void ArmLifterWithPIDController()
+    {
+        ArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        int initialPosition = ArmMotor.getCurrentPosition();
+        PIDFController pfc = new PIDFController(new PIDCoefficients(1,0,1));
+        pfc.setOutputBounds(armMinPowerDuringMove,1.0);
+        pfc.setTargetPosition(targetEncoderCountLevel3);
+        double powerToApply;
+        while(Math.abs(ArmMotor.getCurrentPosition() - targetEncoderCountLevel3)> 20)
+        {
+            powerToApply = pfc.update(ArmMotor.getCurrentPosition())*1.0 ;
+            ArmMotor.setPower(powerToApply);
+
+        }
+
+    }
+    public void ArmLifterWithPID()
+    {
+
+        while(Math.abs(ArmMotor.getCurrentPosition() - targetEncoderCountLevel3)> 20)
+        {
+            double powerToApply = PIDForArmLifter(targetEncoderCountLevel3,ArmMotor.getCurrentPosition());
+            ArmMotor.setPower(powerToApply);
+        }
+    }
+
+    double ArmLifterintegralSum = 0;
+    double ArmLifterKp = 0.1;
+    double ArmLifterKi = 0.1;
+    double ArmLifetrKd = 0.1;
+    ElapsedTime ArmLifterTimer = new ElapsedTime();
+    private double ArmLifterLastError = 0;
+
+    private void PIDForArmLifterReset()
+    {
+        ArmLifterintegralSum = 0;
+        //ArmLifterKp = 0;
+        //ArmLifterKi = 0;
+        //ArmLifetrKd = 0;
+        double ArmLifterLastError = 0;
+    }
+    private double PIDForArmLifter(double reference, double state)
+    {
+        double error = reference-state;
+        ArmLifterintegralSum += error;
+        double deravative = (error - ArmLifterLastError);
+        ArmLifterTimer.reset();
+        ArmLifterLastError = error;
+        double powerToReturn = ArmLifterKp*error + ArmLifterKi*ArmLifterintegralSum + ArmLifetrKd*deravative;
+        powerToReturn = powerToReturn/reference;
+        return powerToReturn;
+    }
+    
+    private void LiftArmLow()
+    {
+        ArmMotor.setTargetPosition(ArmMotor.getCurrentPosition() - 170);
+        ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmMotor.setPower(0.5);
+        while (ArmMotor.isBusy()){
+
+        }
+
+
+    }
+    private void LiftArmMiddle()
+    {
+        ArmMotor.setTargetPosition(ArmMotor.getCurrentPosition() - 255);
+        ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmMotor.setPower(0.5);
+        while (ArmMotor.isBusy()){
+
+        }
+        
+        
+
+
+    }
+    private void LiftArmHigh()
+    {
+        ArmMotor.setTargetPosition(ArmMotor.getCurrentPosition() - 340);
+        ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmMotor.setPower(0.5);
+        while (ArmMotor.isBusy()){
+
+        }
+
+
+    }
+
+    public void LiftArm(VuforiaStuff.capElementPos pos)
+    {
+        if(pos == VuforiaStuff.capElementPos.CENTER){
+          LiftArmMiddle();
+        }
+        else if(pos == VuforiaStuff.capElementPos.LEFT){
+            LiftArmLow();
+        }
+        else{
+            LiftArmHigh();
+        }
+
+
+
+
+
+    }
 
 }
