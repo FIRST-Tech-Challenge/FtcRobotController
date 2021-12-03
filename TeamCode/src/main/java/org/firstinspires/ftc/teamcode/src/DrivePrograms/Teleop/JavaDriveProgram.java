@@ -17,7 +17,7 @@ public class JavaDriveProgram extends TeleopTemplate {
             driveTrain.setPowerFromGamepad(gamepad1);
 
             //Handles Linear Slide Control
-            slide.setMotorPower(0.75 * gamepad2.left_stick_y);
+            slide.setMotorPower(1 * gamepad2.left_stick_y);
             intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
 
             if (gamepad2.x){

@@ -10,7 +10,7 @@ public class ContinuousIntake {
     DcMotor intakeMotor;
 
     private static final double BucketUpPosition = .92;
-    private static final double BucketDownPosition = .5;
+    private static final double BucketDownPosition = .46;
     Servo slantServo;
 
     public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName) {

@@ -78,15 +78,15 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null && (updatedRecognitions.size() > 0)) {
-                if (updatedRecognitions.get(0).getTop() > 500) {
+                if (updatedRecognitions.get(0).getTop() > 615) {
                     return MarkerPosition.Right;
                 }
-                if (updatedRecognitions.get(0).getTop() <= 500) {
-                    return MarkerPosition.Center;
+                if (updatedRecognitions.get(0).getTop() <= 615) {
+                    return MarkerPosition.Left;
                 }
             }
         }
-        return MarkerPosition.Left;
+        return MarkerPosition.NotSeen;
     }
 
     public MarkerPosition getAverageOfMarker(int arraySize, int sleepTime) throws InterruptedException {
@@ -101,13 +101,13 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
         int sum = 0;
         for (int i = 0; i < arraySize; i++) {
             switch (markerPositions[i]) {
-                case Left:
+                case NotSeen:
                     sum = sum;
                     break;
                 case Right:
                     sum++;
                     break;
-                case Center:
+                case Left:
                     sum = sum + 2;
                     break;
             }
@@ -118,19 +118,19 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         switch (result) {
             case 0:
-                return MarkerPosition.Left;
+                return MarkerPosition.NotSeen;
             case 1:
                 return MarkerPosition.Right;
             case 2:
-                return MarkerPosition.Center;
+                return MarkerPosition.Left;
         }
         return MarkerPosition.Left; //It never reaches this line
     }
 
-    enum MarkerPosition {
+    public enum MarkerPosition {
         Right,
-        Center,
-        Left
+        Left,
+        NotSeen
     }
 }
 

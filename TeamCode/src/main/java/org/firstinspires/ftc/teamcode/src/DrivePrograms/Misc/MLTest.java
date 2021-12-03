@@ -37,7 +37,7 @@ public class MLTest extends AutoObjDetectionTemplate {
 
 
         switch (Pos) {
-            case Left:
+            case NotSeen:
                 telemetry.addData("position", " is left");
                 // write movements underneath this
                 break;
@@ -46,7 +46,7 @@ public class MLTest extends AutoObjDetectionTemplate {
 
                 // write movements underneath this
                 break;
-            case Center:
+            case Left:
                 telemetry.addData("position", "is center");
 
                 // write movements underneath this

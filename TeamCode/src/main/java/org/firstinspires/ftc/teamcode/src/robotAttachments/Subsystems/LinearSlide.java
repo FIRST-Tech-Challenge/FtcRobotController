@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
@@ -29,9 +30,9 @@ public class LinearSlide implements Runnable {
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    // TODO Use run to position with values for zero power break behavior
 
     public LinearSlide(HardwareMap hardwareMap, String dcMotorName, RobotVoltageSensor voltSensor) {
         linearSlide = hardwareMap.dcMotor.get(dcMotorName);
@@ -52,16 +53,16 @@ public class LinearSlide implements Runnable {
     public void setTargetLevel(LinearSlide.HeightLevels level) {
         switch (level) {
             case BottomLevel:
-                setTargetHeight(0);
+                setTargetHeight(-981);
                 return;
             case TopLevel:
-                setTargetHeight(1);
+                setTargetHeight(-3900);
                 return;
             case MiddleLevel:
-                setTargetHeight(2);
+                setTargetHeight(-2500);
                 return;
             case GetOverObstacles:
-                setTargetHeight(3);
+                setTargetHeight(-1000);
                 return;
         }
     }
