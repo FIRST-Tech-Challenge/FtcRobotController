@@ -16,6 +16,7 @@ public class BlueCarouselDeliverStorageUnit extends MasterAutonomous {
         imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
         moveForward(-2.0, 10, 10);
         autoDeliver();
-        //moving to the storage unit
+        imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
+        moveForward(30, 10, 10);
     }
 }
