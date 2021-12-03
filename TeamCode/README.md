@@ -64,15 +64,27 @@ We use two different methods of [odometry](https://en.wikipedia.org/wiki/Odometr
 1. Based on dead-wheel encoders
 2. Based on a VSLAM Camera module
 
-### Encoder wheels based odometry
+### Dead-Wheel encoders based odometry
+
+<p>
+    <img src="https://d2t1xqejof9utc.cloudfront.net/screenshots/pics/8ea4c81c560b3f2f6fdb75d43c890e09/small.JPG"/>
+</p>
+
 This method is very effective and relies on three free-spinning encoder wheels dragging along on the ground. 
 Two of the wheels are aligned front-to-back and the third is aligned left-to-right with respect to the robot frame.
 Each wheel precisely tells us how much it has moved. 
-Using some geometric calculations, we can accurately deduce how much the robot has moved from its start position and hence the exact location of the robot on the playing field.
 
-See [Mecanum Wheel Odometry](https://chsftcrobotics.weebly.com/uploads/1/2/3/6/123696510/odometry.pdf) by FTC 9866 Virus for an excellent primer on how the calculations work.
+Here is a good writeup on [Dead Wheels](https://gm0.org/en/latest/docs/robot-design/dead-wheels.html) on gm-zero website.
+
+Using some high-school level math, we can accurately deduce how much the robot has moved from its start position and hence the exact location of the robot on the playing field.
+(See [Mecanum Wheel Odometry](https://chsftcrobotics.weebly.com/uploads/1/2/3/6/123696510/odometry.pdf) by FTC 9866 Virus for an excellent primer on how the calculations work.)
+
 
 ### VLSM Camera based odometry
+
+<p>
+    <img src="https://www.intelrealsense.com/wp-content/uploads/2019/02/intel_realsense_tracking_camera_photo_angle_1_675x450.png" width="300px"/>
+</p>
 
 Intel's [RealSense Tracking Camera T265](https://www.intelrealsense.com/tracking-camera-t265/) is a simple USB camera that uses on-board vision to precisely determine its own position.
 The technology is called VSLAM (Visual SLAM). See [Simultaneous localization and mapping](https://en.wikipedia.org/wiki/Simultaneous_localization_and_mapping)
@@ -80,5 +92,5 @@ The technology is called VSLAM (Visual SLAM). See [Simultaneous localization and
 GitHub user `pietroglyph` has wrapped the odometry library for use with FTC. 
 The library and instructions can be found on GitHub at [pietroglyph/ftc265](https://github.com/pietroglyph/ftc265) 
 
-
+In our codebase, the [VSLAMOdometry](https://github.com/MHSRoboticEagles/FtcRobotController/blob/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/odometry/VSlamOdometry.java) class encapsulates the implementation. Upon startup, this class initializes the camera and starts a background thread that continually polls the Tracking Camera for updated location. Public methods are exposed to make this information available to other classes.
 
