@@ -80,7 +80,7 @@ public class FullAutoBlue extends LinearOpMode {
         delay(250);
         chassis.strafeRightWithEncoders(0.6,1050);
         delay(250);
-        chassis.moveBackwardWithEncoders(0.6,675);
+        chassis.moveBackwardWithEncoders(0.6,650);
 
         // Deposit the box on the correct level
         if(level == 1) {
@@ -100,7 +100,7 @@ public class FullAutoBlue extends LinearOpMode {
         lift.goTo(0,0.8);
 
         // Move to the carousel and spin it
-        chassis.moveForwardWithEncoders(0.6,600);
+        chassis.moveForwardWithEncoders(0.6,400);
         chassis.rotate(-90,0.6);
         chassis.moveBackwardWithEncoders(0.6,2200);
         chassis.moveBackwardWithEncoders(0.3,200);
@@ -112,7 +112,7 @@ public class FullAutoBlue extends LinearOpMode {
         carousel.carouselMotor.setPower(0);
 
         // Drive into the warehouse
-        chassis.strafeRightWithEncoders(0.6,200);
+        chassis.strafeRightWithEncoders(0.6,250);
         chassis.moveBackwardWithEncoders(0.3,200);
         chassis.moveForwardWithEncoders(1, 5500);
     }

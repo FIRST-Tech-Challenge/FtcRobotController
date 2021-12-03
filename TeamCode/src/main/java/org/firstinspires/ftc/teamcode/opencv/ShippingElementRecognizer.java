@@ -38,8 +38,8 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Mat mat = new Mat();
-        Scalar lowHSV = new Scalar(120, 100, 35); // purple lower in hsv
-        Scalar highHSV = new Scalar(140, 255, 255); // purple upper in hsv
+        Scalar lowHSV = new Scalar(110, 100, 35); // purple lower in hsv
+        Scalar highHSV = new Scalar(150, 255, 255); // purple upper in hsv
         Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV); // convert to hsv
         Core.inRange(input, lowHSV, highHSV, mat); // make purple white, everything else black
         Mat left = mat.submat(LEFTBOX);
@@ -52,10 +52,10 @@ public class ShippingElementRecognizer extends OpenCvPipeline {
         if (leftValue > 1 || rightValue > 1){
             if (leftValue >= rightValue){
                 shippingHubLevel = 1;
-                Imgproc.rectangle(mat, LEFTBOX, new Scalar(0, 0, 255), 2);
+                Imgproc.rectangle(mat, LEFTBOX, new Scalar(0, 255, 0), 2);
             } else if (leftValue < rightValue) {
                 shippingHubLevel = 2;
-                Imgproc.rectangle(mat, RIGHTBOX, new Scalar(0, 0, 255), 2);
+                Imgproc.rectangle(mat, RIGHTBOX, new Scalar(0, 255, 0), 2);
             }
         } else {
             shippingHubLevel = 3;

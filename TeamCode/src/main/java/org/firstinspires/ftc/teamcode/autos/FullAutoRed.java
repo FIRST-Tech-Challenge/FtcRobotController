@@ -90,7 +90,7 @@ public class FullAutoRed extends LinearOpMode {
             delay(400);
         } else {
             lift.goTo(1450, 0.8);
-            delay(500);
+            delay(600);
         }
         hopper.hopper.setPosition(0.33);
         delay(1200);
@@ -99,13 +99,10 @@ public class FullAutoRed extends LinearOpMode {
         lift.goTo(0,0.8);
 
         // Move to the carousel and spin it
-        chassis.moveForwardWithEncoders(0.6,300);
+        chassis.moveForwardWithEncoders(0.6,700);
         chassis.rotate(180,0.6);
-        chassis.strafeLeftWithEncoders(0.6,2700);
-        delay(150);
-        chassis.strafeRightWithEncoders(0.3,100);
-        delay(150);
-        chassis.moveBackwardWithEncoders(0.3,350);
+        chassis.strafeLeftWithEncoders(0.6,2000);
+        chassis.strafeLeftWithEncoders(0.3,250);
         delay(150);
         carousel.turnCarousel();
         delay(3000);
@@ -113,10 +110,10 @@ public class FullAutoRed extends LinearOpMode {
         carousel.carouselMotor.setPower(0);
 
         // Drive into the warehouse
-        chassis.moveForwardWithEncoders(0.6,150);
         chassis.strafeRightWithEncoders(0.6,50);
-        chassis.rotate(-90,0.6);
-        chassis.moveBackwardWithEncoders(0.3,200);
+        chassis.moveForwardWithEncoders(0.6,250);
+        chassis.rotate(-90,0.5);
+        chassis.moveBackwardWithEncoders(0.3,600);
         chassis.moveForwardWithEncoders(1, 5400);
     }
 

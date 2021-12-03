@@ -224,16 +224,8 @@ public class MecanumChassis extends Chassis {
         frontRight.setPower(-power);
         backLeft.setPower(-power);
         backRight.setPower(-power);
-        int pos = start;
-        int num = 0;
-        int interval = (int)(1000.0 / power);
         while(frontLeft.getCurrentPosition() > start - count) {
             // Wait until movement is done
-            num++;
-            if(num % interval == 0) {
-                if(pos == frontLeft.getCurrentPosition()) break;
-                pos = frontLeft.getCurrentPosition();
-            }
         }
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -374,10 +366,10 @@ public class MecanumChassis extends Chassis {
         } else return;
 
         // set power to rotate.
-        frontLeft.setPower(power);
-        backLeft.setPower(power);
-        frontRight.setPower(-power);
-        backRight.setPower(-power);
+        frontRight.setPower(power);
+        backRight.setPower(power);
+        frontLeft.setPower(-power);
+        backLeft.setPower(-power);
 
         // rotate until turn is completed.
         if (degrees < 0) {
