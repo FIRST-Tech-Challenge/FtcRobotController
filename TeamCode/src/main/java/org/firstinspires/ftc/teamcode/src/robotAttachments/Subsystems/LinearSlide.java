@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 
@@ -22,6 +23,9 @@ public class LinearSlide implements Runnable {
     public RobotVoltageSensor voltageSensor;
     public volatile int chosenPosition;
 
+    private Executable<Boolean> isStopRequested;
+    private Executable<Boolean> opModeIsActive;
+
 
     public static final double level_one_height = 0;
 
@@ -33,20 +37,33 @@ public class LinearSlide implements Runnable {
         linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-
-    public LinearSlide(HardwareMap hardwareMap, String dcMotorName, RobotVoltageSensor voltSensor) {
+    public LinearSlide(HardwareMap hardwareMap, String dcMotorName, RobotVoltageSensor voltSensor,
+                       Executable<Boolean> _isOpmodeActive, Executable<Boolean> _isStopRequested) {
         linearSlide = hardwareMap.dcMotor.get(dcMotorName);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.voltageSensor = voltSensor;
+        this.isStopRequested = _isStopRequested;
+        this.opModeIsActive = _isOpmodeActive;
+    }
+
+    public boolean isAtPosition() {
+        return this.isAtPosition(80);
+    }
+
+    public boolean isAtPosition(int tolerence) {
+        int currentPos = this.getEncoderCount();
+        int target = this.linearSlide.getTargetPosition();
+        int dist = Math.abs(currentPos - target);
+        return dist < tolerence;
     }
 
     public void finalize() {
         this.stop();
     }
 
-    private void setTargetHeight(int height) {
+    public void setTargetHeight(int height) {
         chosenPosition = height;
     }
 
@@ -64,6 +81,10 @@ public class LinearSlide implements Runnable {
             case GetOverObstacles:
                 setTargetHeight(-1000);
                 return;
+
+            case Down:
+                setTargetHeight(0);
+                return;
         }
     }
 
@@ -79,27 +100,36 @@ public class LinearSlide implements Runnable {
         return linearSlide.getCurrentPosition();
     }
 
+    public void updatePower() {
+        double power;// power = -(distance* C1 )^3 + (voltage * C2)
+        {
+            double volts = voltageSensor.getVoltage();
+            int encoderTicks = linearSlide.getCurrentPosition();
+            int distanceFromPos = chosenPosition - encoderTicks;
+            final double C1 = 0.01; //Scales the sensitivity of the function, smaller value is lower sensativity
+            final double C2 = 0.017; //The approximate power required to hold itself at the current height
+
+            power = (Math.pow(((distanceFromPos * C1)), 3));
+            power = power + (volts * C2);
+            power = MiscUtills.boundNumber(power);
+        }
+        linearSlide.setPower(power);
+    }
+
     @Override
     public void run() {
-        while (threadActive) {
-            double power;// power = -(distance* C1 )^3 + (voltage * C2)
-            {
-                double volts = voltageSensor.getVoltage();
-                int encoderTicks = linearSlide.getCurrentPosition();
-                int distanceFromPos = chosenPosition - encoderTicks;
-                final double C1 = 0.01; //Scales the sensitivity of the function, smaller value is lower sensativity
-                final double C2 = 0.017; //The approximate power required to hold itself at the current height
-
-                power = -(Math.pow(((distanceFromPos * C1)), 3));
-                power = power + volts * C2;
-                power = MiscUtills.boundNumber(power);
+        try {
+            while (threadActive && opModeIsActive.call() && !isStopRequested.call()) {
+                updatePower();
             }
-            linearSlide.setPower(power);
+        } catch (NullPointerException e) {
+            throw new NullPointerException("To Use The threaded functionality of the Linear Slide, One must use constructor that takes two Exception<Boolean>");
         }
     }
 
 
     public enum HeightLevels {
+        Down,
         BottomLevel,
         MiddleLevel,
         TopLevel,
