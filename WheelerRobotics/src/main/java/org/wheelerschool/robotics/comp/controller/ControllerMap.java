@@ -3,6 +3,12 @@ package org.wheelerschool.robotics.comp.controller;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
 
+import static java.lang.Double.max;
+
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
@@ -87,11 +93,13 @@ public class ControllerMap {
     private void buttonY2(){
         meccanum.spinnySpin(meccanum.HIGH_SPINNER_POWER);
     }
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void leftTrigger2(){
-        meccanum.moveArm(-gamepad1.left_trigger);
+        meccanum.moveArm(max(-gamepad1.left_trigger, 0.1));
     }
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void rightTrigger2(){
-        meccanum.moveArm(gamepad2.right_trigger);
+        meccanum.moveArm(max(gamepad2.right_trigger, 0.1));
     }
     private void buttonX2(){
 

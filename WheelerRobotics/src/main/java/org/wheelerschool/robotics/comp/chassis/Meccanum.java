@@ -1,6 +1,7 @@
 package org.wheelerschool.robotics.comp.chassis;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -39,11 +40,11 @@ public class Meccanum {
 
     public final double NORMAL_SPEED = 0.5; // preference and feel for best
     public final double SERVO_FULLY_CLOSED = 0; // need arm+hub to test this
-    public final double SERVO_FULLY_OPENED = 0; // need arm+hub to test this
+    public final double SERVO_FULLY_OPENED = 30; // need arm+hub to test this
     public final double HALF_SERVO_ANGLE = 0; // need arm+hub to test for this, can probably just average full open/close
     public final double ARM_MAX_SPEED = 0; // preference? or maybe to be precise
     public final double HIGH_SPINNER_POWER = 1; // probably max, may need to adjust later
-    public final double OPTIMAL_SPINNER_POWER = 0; // need spinner+hub to test this
+    public final double OPTIMAL_SPINNER_POWER = 0.5; // need spinner+hub to test this
     public final double MOTOR_STOP = 0; // its just 0 cuz full stop
 
     public boolean opModeActive = false;
@@ -59,7 +60,7 @@ public class Meccanum {
 
     private Orientation angles;
 
-    private volatile HardwareMap hw; // no idea if volatile means anything (impactful) in this context, but it makes me seem like I know what im doing
+    public HardwareMap hw; // no idea if volatile means anything (impactful) in this context, but it makes me seem like I know what im doing
 
     public void init(@NonNull HardwareMap hardwareMap){
         // internal IMU setup (copied and pasted, idk what it really does, but it works)
@@ -186,9 +187,9 @@ public class Meccanum {
         // this will cause the ticks to be difficult to calculate, and I dont really want to deal with that
 
 
-        double y = pow(yvec,3); // Remember, this is reversed!
-        double x = pow(xvec * 1.1,3); // Counteract imperfect strafing
-        double rx = pow(spinvec,3);
+        double y = pow(yvec,1); // Remember, this is reversed!
+        double x = pow(xvec * 1.1,1); // Counteract imperfect strafing
+        double rx = pow(spinvec,1);
 
 
         //denominator is the largest motor power (absolute value) or 1
@@ -260,9 +261,13 @@ public class Meccanum {
         e.reset();
         while(e.milliseconds() < time && opModeActive){
             // stal program
-            opModeActive = ;
+            opModeActive = linearOpMode.opModeIsActive();
 
         }
+    }
+
+    public void opModeOn(boolean b){
+        opModeActive = b;
     }
 
     public void motorSpinLeft(double speed){
@@ -314,6 +319,13 @@ public class Meccanum {
 
     public void moveArm(double power){
         arm.setPower(power);
+    }
+
+    public void moveArmTime(double power, double time){
+        moveArm(power);
+        delay(time);
+        moveArm(0);
+
     }
 
     public void turnRadians(double radians, double speed) {

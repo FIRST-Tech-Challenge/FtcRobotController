@@ -42,11 +42,11 @@ public class AutoNavRedC extends LinearOpMode {
 
         // auto for near carousel
         // gotta replace 0 with tested vals
-        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 0);
+        meccanum.motorDriveLeftEncoded(meccanum.NORMAL_SPEED, 0);
 
         meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 0);
 
-        meccanum.motorDriveRelativeAngleTime(0, 0, 0);
+        meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 100);
 
 
     }

@@ -42,11 +42,19 @@ public class AutoNavRed extends LinearOpMode {
 
         // auto for near carousel
         // gotta replace 0 with tested vals
-        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 0);
+        meccanum.closeServoFull();
 
-        meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 0);
+        meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 100);
 
-        meccanum.motorDriveRelativeAngleTime(0, 0, 0);
+        meccanum.motorSpinLeftEncoded(meccanum.NORMAL_SPEED, 0);
+
+        meccanum.moveArmTime(meccanum.ARM_MAX_SPEED, 100);
+
+        meccanum.openServoHalf();
+
+        meccanum.motorSpinRightEncoded(meccanum.NORMAL_SPEED, 90); // first spin + 90
+
+        meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 100);
 
 
     }

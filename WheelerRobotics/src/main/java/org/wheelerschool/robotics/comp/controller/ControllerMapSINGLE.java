@@ -1,5 +1,16 @@
 package org.wheelerschool.robotics.comp.controller;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
+import static java.lang.Double.max;
+import static java.lang.Double.min;
+
+import android.content.Context;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
@@ -22,7 +33,11 @@ public class ControllerMapSINGLE {
         meccanum.openServoFull();
     }
     private void buttonB(){
-
+        int startupID;
+        Context appContext;
+        startupID = hardwareMap.appContext.getResources().getIdentifier("startup", "raw", hardwareMap.appContext.getPackageName());
+        appContext = hardwareMap.appContext;
+        SoundPlayer.getInstance().startPlaying(appContext, startupID);
     }
     private void buttonY(){
         meccanum.spinnySpin(meccanum.HIGH_SPINNER_POWER);
@@ -33,11 +48,11 @@ public class ControllerMapSINGLE {
     private void buttonA(){
         meccanum.spinnySpin(meccanum.OPTIMAL_SPINNER_POWER);
     }
-    private void leftTrigger(){
-        meccanum.moveArm(-gamepad1.left_trigger);
+    private void leftTrigger(double scale){
+        meccanum.moveArm(-gamepad1.left_trigger * scale);
     }
-    private void rightTrigger(){
-        meccanum.moveArm(gamepad1.right_trigger);
+    private void rightTrigger(double scale){
+        meccanum.moveArm(gamepad1.right_trigger * scale);
     }
     private void dpadLeft(){
 
@@ -54,12 +69,12 @@ public class ControllerMapSINGLE {
     private void rumble(int time){
         gamepad1.rumble(time);
     }
-    private void joystickDriver(){
-        meccanum.motorDriveXYVectors(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+    private void joystickDriver(double scale){
+        meccanum.motorDriveXYVectors(gamepad1.left_stick_x * scale, gamepad1.left_stick_y * scale, gamepad1.right_stick_x * 0.6);
     }
 
     public void checkControls(){
-        joystickDriver();
+        joystickDriver(0.8);
         if (gamepad1.left_bumper){
             leftBumper();
         }
@@ -105,10 +120,10 @@ public class ControllerMapSINGLE {
 
 
         if (gamepad1.left_trigger >= gamepad1.right_trigger) {
-            leftTrigger();
+            leftTrigger(0.5);
         }
         else{
-            rightTrigger();
+            rightTrigger(0.5);
         }
     }
 
