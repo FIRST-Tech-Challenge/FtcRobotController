@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedOnceEvent;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -17,13 +16,11 @@ public class TseDetector {
     private OpenCvCamera camera;
     private final String webcamName;
     private final HardwareMap hardwareMap;
-    private final EventThread eventThread;
     private TsePipeline pipeline;
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
 
     public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName, boolean debug) {
-        this.eventThread = eventThread;
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
         if (debug) {
@@ -59,12 +56,10 @@ public class TseDetector {
      * Stalls code until pipeline is done with figuring out (max time of around 0.33 seconds)
      * @return integer 1 - 3, corresponds to barcode slots left to right
      */
-    public synchronized int run() {
+    public int run() {
         pipeline.startPipeline();
-        boolean first = pipeline.differentSpot().first;
-        while (!first) {
-            first = pipeline.differentSpot().first;
-        }
+        //noinspection StatementWithEmptyBody
+        while (!pipeline.differentSpot().first) {}
         pipeline.stopPipeline();
         return pipeline.differentSpot().second;
     }

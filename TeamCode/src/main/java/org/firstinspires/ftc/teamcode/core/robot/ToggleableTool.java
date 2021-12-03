@@ -46,4 +46,14 @@ public abstract class ToggleableTool<T extends DcMotorSimple>{
         toggle = !toggle;
         motor.setPower(toggle ? power : 0);
     }
+
+    protected void makeEvent(@NonNull EventThread eventThread, ButtonReader reader) {
+        eventThread.addEvent(new RunListenerIndefinitelyEvent(this::run) {
+            @Override
+            public boolean shouldRun() {
+                reader.readValue();
+                return reader.wasJustReleased();
+            }
+        });
+    }
 }
