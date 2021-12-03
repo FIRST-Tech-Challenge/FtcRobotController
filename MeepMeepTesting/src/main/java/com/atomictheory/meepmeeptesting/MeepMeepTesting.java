@@ -11,10 +11,11 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep mm = new MeepMeep(800);
+        Constraints constraints = new Constraints(40, 30, Math.toRadians(180), Math.toRadians(180), 13);
         RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
                 .setDimensions(11.95, 13.8)
                 .setColorScheme(new ColorSchemeRedDark())
-                .setConstraints(new Constraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15))
+                .setConstraints(constraints)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(12, 64, Math.toRadians(90)))
                         .strafeLeft(1.5)
                         .back(15)
@@ -43,7 +44,7 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity bot2 = new DefaultBotBuilder(mm)
                 .setDimensions(11.95, 13.8)
                 .setColorScheme(new ColorSchemeRedDark())
-                .setConstraints(new Constraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15))
+                .setConstraints(constraints)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-36, 64, Math.toRadians(90)))
                         .strafeRight(1.5)
                         .back(12)
@@ -69,7 +70,7 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity bot3 = new DefaultBotBuilder(mm)
                 .setDimensions(11.95, 13.8)
                 .setColorScheme(new ColorSchemeRedDark())
-                .setConstraints(new Constraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15))
+                .setConstraints(constraints)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(12, -64, Math.toRadians(-90)))
                         .strafeRight(1.5)
                         .back(15)
@@ -97,7 +98,7 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity bot4 = new DefaultBotBuilder(mm)
                 .setDimensions(11.95, 13.8)
                 .setColorScheme(new ColorSchemeRedDark())
-                .setConstraints(new Constraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15))
+                .setConstraints(constraints)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-36, -64, Math.toRadians(-90)))
                         .strafeLeft(1.5)
                         .back(12)

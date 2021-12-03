@@ -223,8 +223,8 @@ public class WebcamExample extends LinearOpMode
             Imgproc.rectangle(
                     input,
                     new Point(
-                            input.cols()/4,
-                            input.rows()/4),
+                            input.cols()/4f,
+                            input.rows()/4f),
                     new Point(
                             input.cols()*(3f/4f),
                             input.rows()*(3f/4f)),

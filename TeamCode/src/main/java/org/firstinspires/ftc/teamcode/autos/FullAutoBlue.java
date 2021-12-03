@@ -62,8 +62,9 @@ public class FullAutoBlue extends LinearOpMode {
                 i = 0;
                 continue;
             }
-            counts[pipeline.getShippingHubLevel() - 1]++;
+            counts[pipeline.getShippingHubLevel() - 1] ++;
         }
+
         if(counts[0] > counts[1] && counts[0] > counts[2]) {
             level = 1;
         } else if(counts[1] > counts[0] && counts[1] > counts[2]) {
