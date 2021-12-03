@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Controller;
-
 public class DuckSpinner extends System {
 
     private DcMotor spinner;
@@ -18,14 +16,14 @@ public class DuckSpinner extends System {
     public void init() {
         // get motor
         spinner = hw.dcMotor.get("duckSpinner");
-        spinner.setDirection(DcMotorSimple.Direction.FORWARD);
+        spinner.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
     public void update() {
         // if a is pressed on gp 1, spin
         if (controller.gamepad1.a){
-            spinner.setPower(2);
+            spinner.setPower(0.5);
             controller.telemetry.addData("Spinning", "YES!");
         }else{
             spinner.setPower(0);

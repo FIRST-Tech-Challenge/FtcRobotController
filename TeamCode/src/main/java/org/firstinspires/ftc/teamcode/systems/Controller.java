@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,6 +20,7 @@ public class Controller extends LinearOpMode {
         systems.add(new Driving(hardwareMap, this));
         // systems.add(new DuckSpinner(hardwareMap, this));
         // systems.add(new Arm(hardwareMap, this));
+        // systems.add(new Input(hardwareMap, this));
 
         for (System s : systems)
             s.init();

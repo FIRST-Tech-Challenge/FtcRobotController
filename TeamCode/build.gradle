@@ -15,6 +15,10 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+android {
+    buildToolsVersion '29.0.2'
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')

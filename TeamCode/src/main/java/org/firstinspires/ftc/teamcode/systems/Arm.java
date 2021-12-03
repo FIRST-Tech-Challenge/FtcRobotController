@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.systems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Controller;
-
 public class Arm extends System{
 
     private double casting = 0.0, increase = 1.0;
