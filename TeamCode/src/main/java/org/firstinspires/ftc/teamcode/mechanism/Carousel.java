@@ -49,6 +49,6 @@ public class Carousel implements Mechanism {
         carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselMotor.setTargetPosition(colorMultiplier * 2500);
         carouselMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        carouselMotor.setPower(0.55);
+        carouselMotor.setPower(0.45);
     }
 }
