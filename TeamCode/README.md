@@ -57,3 +57,28 @@ The detection logic is implemented in a pipeline class.
 In the 2021-22 season we are using [CVFrenzyPipeline](https://github.com/MHSRoboticEagles/FtcRobotController/blob/1ad8e47f8932f2b5aa500d87c877d4dcd73968a8/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CVRec/CVFrenzyPipeline.java)
 
 [CVRingSearchPipeline](https://github.com/MHSRoboticEagles/FtcRobotController/blob/1ad8e47f8932f2b5aa500d87c877d4dcd73968a8/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CVRec/CVRingSearchPipeline.java) provides a more complex use case, where we split the viewport in multiple rectangles to detect the location of the object relative to the camera on the robot.
+
+## Odometry
+
+We use two different methods of [odometry](https://en.wikipedia.org/wiki/Odometry)
+1. Based on dead-wheel encoders
+2. Based on a VSLAM Camera module
+
+### Encoder wheels based odometry
+This method is very effective and relies on three free-spinning encoder wheels dragging along on the ground. 
+Two of the wheels are aligned front-to-back and the third is aligned left-to-right with respect to the robot frame.
+Each wheel precisely tells us how much it has moved. 
+Using some geometric calculations, we can accurately deduce how much the robot has moved from its start position and hence the exact location of the robot on the playing field.
+
+See [Mecanum Wheel Odometry](https://chsftcrobotics.weebly.com/uploads/1/2/3/6/123696510/odometry.pdf) by FTC 9866 Virus for an excellent primer on how the calculations work.
+
+### VLSM Camera based odometry
+
+Intel's [RealSense Tracking Camera T265](https://www.intelrealsense.com/tracking-camera-t265/) is a simple USB camera that uses on-board vision to precisely determine its own position.
+The technology is called VSLAM (Visual SLAM). See [Simultaneous localization and mapping](https://en.wikipedia.org/wiki/Simultaneous_localization_and_mapping)
+
+GitHub user `pietroglyph` has wrapped the odometry library for use with FTC. 
+The library and instructions can be found on GitHub at [pietroglyph/ftc265](https://github.com/pietroglyph/ftc265) 
+
+
+
