@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.android.dx.cf.attrib.AttEnclosingMethod;
 import org.wheelerschool.robotics.comp.controller.ControllerMap;
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
 import org.wheelerschool.robotics.comp.controller.ControllerMapSINGLE;
@@ -85,7 +86,7 @@ public class servotest extends LinearOpMode {
         cm.init(meccanum, gamepad1, gamepad2);
         cms.init(meccanum, gamepad1);
 
-        controlModes mode = controlModes.SINGLE;
+        controlModes mode = controlModes.MULTI;
 
         startupID = hardwareMap.appContext.getResources().getIdentifier("startup", "raw", hardwareMap.appContext.getPackageName());
         appContext = hardwareMap.appContext;
@@ -105,7 +106,7 @@ public class servotest extends LinearOpMode {
                 cm.checkControls();
                 cm.checkControls2();
             }
-
+            telemetry.addData("test", "test!");
             telemetry.addData("servo ", meccanum.getServo().getPosition());
             telemetry.addData("rotation ", angles.axesReference);
 
