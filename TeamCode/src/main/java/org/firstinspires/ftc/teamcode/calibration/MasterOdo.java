@@ -708,6 +708,7 @@ public class MasterOdo extends OdoBase {
         if (gamepad1.start){
             Log.d(TAG, String.format("Start pressed. Goto mode is %b", goToMode ));
             if (goToMode){
+                initLocator(); // in case it was not initialized
                 goTo(this.goToInstructions, true, NAME_RED);
             }
             else if (routeSavingMode){

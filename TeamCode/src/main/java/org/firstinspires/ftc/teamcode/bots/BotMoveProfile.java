@@ -82,8 +82,16 @@ public class BotMoveProfile {
             actualX = actual.x;
             actualY = actual.y;
         }
-        destination = this.getTarget().getTarget();
-        return String.format("Long Target: %.2f Direction: %s \nL:%.2f  R:%.2f\n Slowdowns: %.2f %.2f\nHead: %.2f Target: %.2f Change: %.2f\nFrom: %d %d\nTo: %d %d\nActual: %d %d\nSpeedR: %.2f Dist R: %.2f", longTarget, direction.name(), realSpeedLeft, realSpeedRight, slowdownMarkLong,slowdownMarkShort, currentHead, targetVector, angleChange, start.x, start.y, destination.x, destination.y, actualX, actualY, speedRatio, distanceRatio);
+        int destX = -1;
+        int destY = -1;
+        if (this.getTarget() != null) {
+            destination = this.getTarget().getTarget();
+        }
+        if (destination != null){
+            destX = destination.x;
+            destY = destination.y;
+        }
+        return String.format("Long Target: %.2f Direction: %s \nL:%.2f  R:%.2f\n Slowdowns: %.2f %.2f\nHead: %.2f Target: %.2f Change: %.2f\nFrom: %d %d\nTo: %d %d\nActual: %d %d\nSpeedR: %.2f Dist R: %.2f", longTarget, direction.name(), realSpeedLeft, realSpeedRight, slowdownMarkLong,slowdownMarkShort, currentHead, targetVector, angleChange, start.x, start.y, destX, destY, actualX, actualY, speedRatio, distanceRatio);
     }
 
     public double getRealSpeedLeft() {
