@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackSwan;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
