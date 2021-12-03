@@ -47,6 +47,8 @@ public class FrenzyHardwareMap {
     public DcMotor motorIntake = null;
     //Motor in Port 1, Rev Hub 2
     public DcMotorEx motorArm = null;
+    //Motor in Port 2, Rev Hub 2
+    public DcMotorEx motorCarousel = null;
     //IMU from RevHub.
     public BNO055IMU imu = null;
     //Setup Wheel measurements for REV motors.
@@ -72,9 +74,10 @@ public class FrenzyHardwareMap {
         motorBackLeft = frenzyMap.get(DcMotor.class, "backLeft");
         motorFrontRight = frenzyMap.get(DcMotor.class, "frontRight");
         motorBackRight = frenzyMap.get(DcMotor.class, "backRight");
-        //Define and initialize arm/intake motors.
+        //Define and initialize arm/intake/carousel motors.
         motorArm = frenzyMap.get(DcMotorEx.class, "arm");
         motorIntake = frenzyMap.get(DcMotor.class, "intake");
+        motorCarousel = frenzyMap.get(DcMotorEx.class, "carousel");
         //Define the imu
         imu = frenzyMap.get(BNO055IMU.class, "imu");
         // Set all motor directions.
@@ -82,24 +85,25 @@ public class FrenzyHardwareMap {
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
-        // Set motor directions arm/intake.
+        // Set motor directions arm/intake/carousel.
         motorIntake.setDirection(DcMotorSimple.Direction.REVERSE);
         motorArm.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorCarousel.setDirection(DcMotorSimple.Direction.REVERSE);
         // Set all motors to zero power.
         motorFrontRight.setPower(0.0);
         motorFrontLeft.setPower(0.0);
         motorBackLeft.setPower(0.0);
         motorBackRight.setPower(0.0);
-        // Set arm/intake motors to zero power.
+        // Set arm/intake/carousel motors to zero power.
         motorArm.setPower(0.0);
         motorIntake.setPower(0.0);
+        motorCarousel.setPower(0.0);
         // Set all motors to run with encoders.
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // Set arm/intake motor modes
-        motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // Set arm motor modes
         motorArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
     //Stops and resets the encoders before setting them to run again. drive train specific
