@@ -183,4 +183,7 @@ public abstract class MasterOpMode extends LinearOpMode {
             idle();
         }
     }
+    public void gyroBarrier(){
+
+    }
 }
