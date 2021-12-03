@@ -46,7 +46,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
     public void runCarousel() throws InterruptedException {
         if (gamepad2.left_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
             motorCarousel.setPower(-1.0);
-        } else if (gamepad2.right_trigger > Constants.MINIMUM_TRIGGER_VALUE){
+        } else if (gamepad2.right_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
             motorCarousel.setPower(1.0);
         } else {
             motorCarousel.setPower(0.0);
@@ -54,14 +54,12 @@ abstract public class MasterTeleOp extends MasterOpMode {
     }
 
     public void deliver() throws InterruptedException {
-        if(gamepad2.left_bumper) {
+        if (gamepad2.left_bumper) {
             //motorLift.setTargetPosition(10);
             motorLift.setPower(0.1);
-            servoGrabber.setPosition(Range.clip(servoGrabber.getPosition() - 0.02, 0.1, 0.9));
-            sleep(100);
-        } else if (gamepad2.right_bumper){
-            servoGrabber.setPosition(Range.clip(servoGrabber.getPosition() - 0.02, 0.1, 0.9));
-            //sleep(100);
+            servoGrabber.setPosition(1.0);
+        } else if (gamepad2.right_bumper) {
+            servoGrabber.setPosition(-0.8);
             motorLift.setPower(-0.1);
         } else {
             motorLift.setPower(0.0);
@@ -78,10 +76,10 @@ abstract public class MasterTeleOp extends MasterOpMode {
     }
 
     public void grab() {
-        if(gamepad2.dpad_up){
-            servoGrabber.setPosition(0.8);
+        if (gamepad2.dpad_up) {
+            servoGrabber.setPosition(1.0);
             sleep(100);
-        } else if(gamepad2.dpad_down){
+        } else if (gamepad2.dpad_down) {
             servoGrabber.setPosition(0.0);
         } else {
             servoGrabber.setPosition(0.0);
