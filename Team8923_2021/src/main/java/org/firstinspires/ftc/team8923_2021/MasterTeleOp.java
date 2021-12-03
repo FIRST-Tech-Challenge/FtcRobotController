@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team8923_2021;
 
+import com.qualcomm.robotcore.util.Range;
+
 abstract public class MasterTeleOp extends MasterOpMode {
 
     private boolean isReverseMode = false;
@@ -55,9 +57,9 @@ abstract public class MasterTeleOp extends MasterOpMode {
         if(gamepad2.left_bumper) {
             //motorLift.setTargetPosition(10);
             motorLift.setPower(0.1);
-            servoGrabber.setPosition(0.8);
+            servoGrabber.setPosition(Range.clip(servoGrabber.getPosition() + 0.02, 0.1, 0.9));
         } else if (gamepad2.right_bumper){
-            servoGrabber.setPosition(0.0);
+            servoGrabber.setPosition(Range.clip(servoGrabber.setPosition() - 0.02, 0.1, 0.9));
             motorLift.setPower(-0.1);
         } else {
             motorLift.setPower(0.0);
