@@ -26,7 +26,7 @@ public class FullAutoRed extends LinearOpMode {
     private Hopper hopper = new Hopper();
     OpenCvWebcam webcam;
 
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         chassis.init(hardwareMap);
         carousel.init(hardwareMap);
         lift.init(hardwareMap);
@@ -99,26 +99,25 @@ public class FullAutoRed extends LinearOpMode {
         lift.goTo(0,0.8);
 
         // Move to the carousel and spin it
-        chassis.moveForwardWithEncoders(0.6,600);
-        chassis.turnRightWithEncoders(0.6,1500);
-        delay(250);
-        chassis.moveBackwardWithEncoders(0.6,700);
-        chassis.moveBackwardWithEncoders(0.3,200);
-        chassis.moveForwardWithEncoders(0.5,100);
-        chassis.strafeLeftWithEncoders(0.6,1650);
-        chassis.moveBackwardWithEncoders(0.3,400);
-        chassis.moveForwardWithEncoders(0.6,100);
-        chassis.strafeLeftWithEncoders(0.3,300);
+        chassis.moveForwardWithEncoders(0.6,300);
+        chassis.rotate(180,0.6);
+        chassis.strafeLeftWithEncoders(0.6,2700);
+        delay(150);
+        chassis.strafeRightWithEncoders(0.3,100);
+        delay(150);
+        chassis.moveBackwardWithEncoders(0.3,350);
+        delay(150);
         carousel.turnCarousel();
         delay(3000);
         carousel.carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carousel.carouselMotor.setPower(0);
 
         // Drive into the warehouse
-        chassis.moveForwardWithEncoders(0.6,250);
-        chassis.turnRightWithEncoders(0.6,750);
-        chassis.moveBackwardWithEncoders(0.3,500);
-        chassis.moveForwardWithEncoders(1, 5500);
+        chassis.moveForwardWithEncoders(0.6,150);
+        chassis.strafeRightWithEncoders(0.6,50);
+        chassis.rotate(-90,0.6);
+        chassis.moveBackwardWithEncoders(0.3,200);
+        chassis.moveForwardWithEncoders(1, 5400);
     }
 
     public void delay(int time) {

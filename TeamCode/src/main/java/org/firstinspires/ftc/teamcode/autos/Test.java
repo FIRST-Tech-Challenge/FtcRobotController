@@ -14,7 +14,7 @@ public class Test extends LinearOpMode {
     private MecanumChassis chassis = new MecanumChassis();
     private Carousel carousel = new Carousel(Color.BLUE);
 
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         chassis.init(hardwareMap);
         carousel.init(hardwareMap);
 
@@ -25,8 +25,8 @@ public class Test extends LinearOpMode {
         chassis.moveBackwardByTime(0.5,1000);
         chassis.strafeLeftByTime(0.5,1000);
         chassis.strafeRightByTime(0.5,1000);
-        chassis.turnLeftByTime(0.5,1000);
-        chassis.turnRightByTime(0.5,1000);
+        chassis.rotate(-90,0.5);
+        chassis.rotate(90,0.5);
     }
 
 }

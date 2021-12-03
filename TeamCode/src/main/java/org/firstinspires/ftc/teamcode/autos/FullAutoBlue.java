@@ -26,7 +26,7 @@ public class FullAutoBlue extends LinearOpMode {
     private Hopper hopper = new Hopper();
     OpenCvWebcam webcam;
 
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         chassis.init(hardwareMap);
         carousel.init(hardwareMap);
         lift.init(hardwareMap);
@@ -101,8 +101,7 @@ public class FullAutoBlue extends LinearOpMode {
 
         // Move to the carousel and spin it
         chassis.moveForwardWithEncoders(0.6,600);
-        chassis.turnRightWithEncoders(0.6,750);
-        delay(250);
+        chassis.rotate(-90,0.6);
         chassis.moveBackwardWithEncoders(0.6,2200);
         chassis.moveBackwardWithEncoders(0.3,200);
         chassis.moveForwardWithEncoders(0.5,25);

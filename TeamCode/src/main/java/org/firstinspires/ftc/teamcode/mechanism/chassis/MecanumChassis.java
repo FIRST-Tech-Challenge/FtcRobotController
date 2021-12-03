@@ -1,18 +1,35 @@
 package org.firstinspires.ftc.teamcode.mechanism.chassis;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Constants.driveStickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.sensitivity;
 import static org.firstinspires.ftc.teamcode.Constants.slowModeSensitivity;
 import static org.firstinspires.ftc.teamcode.Constants.triggerThreshold;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 public class MecanumChassis extends Chassis {
     ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+
+    //imu:
+    public BNO055IMU imu;
+
+    Orientation angles;
+    Orientation lastAngles = new Orientation();
+    public double globalAngle;
+
     @Override
     public void init(HardwareMap hardwareMap) {
         super.init(hardwareMap);
@@ -37,6 +54,22 @@ public class MecanumChassis extends Chassis {
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //IMU Setup:
+        // Set up the parameters with which we will use our IMU. Note that integration
+        // algorithm here just reports accelerations to the logcat log; it doesn't actually
+        // provide positional information.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        //parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        //Define and Initialize BNO055IMU
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
     }
 
     @Override
@@ -191,8 +224,16 @@ public class MecanumChassis extends Chassis {
         frontRight.setPower(-power);
         backLeft.setPower(-power);
         backRight.setPower(-power);
+        int pos = start;
+        int num = 0;
+        int interval = (int)(1000.0 / power);
         while(frontLeft.getCurrentPosition() > start - count) {
             // Wait until movement is done
+            num++;
+            if(num % interval == 0) {
+                if(pos == frontLeft.getCurrentPosition()) break;
+                pos = frontLeft.getCurrentPosition();
+            }
         }
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -243,5 +284,170 @@ public class MecanumChassis extends Chassis {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+    }
+
+    //IMU Functions:
+
+    /**
+     * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
+     *
+     * @param degrees Degrees to turn, + is left - is right
+     * @param power   Motor power during turn (should not be negative)
+     */
+    public void rotate(double degrees, double power) throws InterruptedException {
+
+        // restart imu movement tracking.
+        resetAngle();
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        if (degrees < 0) {   // turn right.
+            power = -power;
+
+        } else if (degrees > 0) {   // turn left.
+            //return; //power = power; dont need to change anything because assuming the power is already positive, that should make the robot turn right when put into the turn function
+        } else return;
+
+        // set power to rotate.
+        frontRight.setPower(power);
+        backRight.setPower(power);
+        frontLeft.setPower(-power);
+        backLeft.setPower(-power);
+
+        double tempPower;
+        // rotate until turn is completed.
+        if (degrees < 0) {
+            // On right turn we have to get off zero first.
+            while (getAngle() == 0) {
+            }
+
+            while (getAngle() > degrees) {
+                tempPower = power * (getAngle() - degrees) / degrees * -1 - 0.1;
+                frontRight.setPower(tempPower);
+                backRight.setPower(tempPower);
+                frontLeft.setPower(-tempPower);
+                backLeft.setPower(-tempPower);
+            }
+        } else {  // left turn.
+            while (getAngle() < degrees) {
+                tempPower = power * (degrees - getAngle()) / degrees + 0.1;
+                frontRight.setPower(tempPower);
+                backRight.setPower(tempPower);
+                frontLeft.setPower(-tempPower);
+                backLeft.setPower(-tempPower);
+            }
+        }
+        // turn the motors off.
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        // wait for rotation to stop.
+        Thread.sleep(100);
+
+        // reset angle tracking on new heading.
+        resetAngle();
+    }
+
+    /**
+     * Rotates to a global heading using IMU
+     *
+     * @param degrees
+     * @param power
+     * @throws InterruptedException
+     */
+    public void rotateToGlobalAngle(int degrees, double power) throws InterruptedException {
+
+        // restart imu movement tracking.
+        globalAngle = getGlobalAngle();
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        if (degrees < 0) {   // turn right.
+            power = -power;
+
+        } else if (degrees > 0) {   // turn left.
+            return;//power = power; dont need to change anything because assuming the power is already positive, that should make the robot turn right when put into the turn function
+        } else return;
+
+        // set power to rotate.
+        frontLeft.setPower(power);
+        backLeft.setPower(power);
+        frontRight.setPower(-power);
+        backRight.setPower(-power);
+
+        // rotate until turn is completed.
+        if (degrees < 0) {
+            // On right turn we have to get off zero first.
+            while (getAngle() == 0) {
+            }
+
+            while (getAngle() > degrees) {
+            }
+        } else    // left turn.
+            while (getAngle() < degrees) {
+            }
+
+        // turn the motors off.
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        // wait for rotation to stop.
+        Thread.sleep(100);
+
+        // reset angle tracking on new heading.
+        resetAngle();
+
+    }
+
+    /**
+     * Resets the cumulative angle tracking to zero.
+     */
+    private void resetAngle() {
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        globalAngle = 0;
+    }
+
+    /**
+     * Get current cumulative angle rotation from last reset.
+     *
+     * @return Angle in degrees. + = left, - = right.
+     */
+    public double getAngle() {
+        // We have to process the angle because the imu works in euler angles so the Z axis is
+        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return globalAngle;
+    }
+
+    /**
+     * Get current heading relative to intialization angle (i think)
+     *
+     * @return Current heading / angle from -180 to 180
+     */
+    public double getGlobalAngle() {
+
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
     }
 }
