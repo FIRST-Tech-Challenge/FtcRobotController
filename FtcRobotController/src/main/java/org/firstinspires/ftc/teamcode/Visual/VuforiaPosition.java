@@ -114,7 +114,7 @@ public class VuforiaPosition extends Visual {
         int blackBounds[] = {-1, -1};
 
         // (DEBUG) show the skystone and black pixels a special color
-        for (int x = 0; x < currentFrame.getWidth(); x++) {
+        for (int x = currentFrame.getWidth()/4; x < (currentFrame.getWidth() * 3/4); x++) {
             PhoneManager.colorToHSV(currentFrame.getPixel(x, 0), hsv);
             if (30 < hsv[0] && hsv[0] < 50 && hsv[1] > 0.7) {
                 if (lastYellow == -1 || x - lastYellow < 20) {
