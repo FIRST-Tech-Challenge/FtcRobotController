@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.degrees;
@@ -15,12 +17,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Robot_2022FF {
     private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft;
-    private DcMotor intake;
+    private DcMotor intake, outtake;
 
+    private DistanceSensor distanceSensor;
+
+    private Servo bucket;
     private CRServo duck;
 
     //imu stuff
@@ -51,6 +57,36 @@ public class Robot_2022FF {
     //setup
     /**
      * Full Constructor
+     * @param motorFrontRight
+     * @param motorFrontLeft
+     * @param motorBackRight
+     * @param motorBackLeft
+     * @param intake
+     * @param outtake
+     * @param bucket
+     * @param duck
+     * @param distanceSensor
+     * @param imu
+     * @param opMode
+     * */
+    public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                        DcMotor intake, DcMotor outtake, Servo bucket, CRServo duck, DistanceSensor distanceSensor, BNO055IMU imu, LinearOpMode opMode){
+        this.motorFrontRight = motorFrontRight;
+        this.motorFrontLeft = motorFrontLeft;
+        this.motorBackRight = motorBackRight;
+        this.motorBackLeft = motorBackLeft;
+        this.intake = intake;
+        this.outtake = outtake;
+        this.bucket = bucket;
+        this.duck = duck;
+        this.distanceSensor = distanceSensor;
+        this.imu = imu;
+        this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
+    }
+
+    /**
+     * Constructor without outtake
      * @param motorFrontRight
      * @param motorFrontLeft
      * @param motorBackRight
@@ -96,11 +132,12 @@ public class Robot_2022FF {
     }
 
     /**
-     * Base only
+     * Base only + duck
      * @param motorFrontRight
      * @param motorFrontLeft
      * @param motorBackRight
      * @param motorBackLeft
+     * @param duck
      * @param imu
      * @param opMode
      * */
@@ -158,14 +195,12 @@ public class Robot_2022FF {
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        resetEncoders();//???////////////////////////////////////////////////////////////
+        resetEncoders();
         resetAngle();
         setIMUParameters();
 
         while (!imu.isGyroCalibrated()) {
             telemetry.addData("IMU", "calibrating...");
-            telemetry.addData("ticksperrrev",((((1+(46/17))) * (1+(46/11))) * 28));
-            telemetry.addData("actual:", motorFrontLeft.getMotorType().getTicksPerRev());
             telemetry.update();
             Thread.sleep(50);
         }
@@ -177,7 +212,7 @@ public class Robot_2022FF {
 
     /**
      * Reset motor encoders
-     * */
+     */
     public void resetEncoders(){
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -194,7 +229,6 @@ public class Robot_2022FF {
      * */
     public void resetAngle() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         startAngles = lastAngles;
         globalAngle = 0;
@@ -274,10 +308,10 @@ public class Robot_2022FF {
      * @param power power for motors, + is CW, - is CCW
      */
     public void turn(double power){
-        motorFrontLeft.setPower(-power);
-        motorBackLeft.setPower(-power);
-        motorFrontRight.setPower(power);
-        motorBackRight.setPower(power);
+        motorFrontLeft.setPower(power);
+        motorBackLeft.setPower(power);
+        motorFrontRight.setPower(-power);
+        motorBackRight.setPower(-power);
     }
 
     /**
@@ -573,6 +607,21 @@ public class Robot_2022FF {
         resetAngle();
     }
 
+    /** Drive to wall, straight
+     *
+     */
+    public void driveToWall(double power) throws InterruptedException{
+        resetAngle();
+        while(distanceSensor.getDistance(DistanceUnit.CM) > 30){
+            double correction = getCorrection();
+            tankDrive(power + correction,power - correction);
+            telemetry.addData("distance reading:", distanceSensor.getDistance(DistanceUnit.CM));
+            telemetry.update();
+        }
+        completeStop();
+        Thread.sleep(500);
+        resetAngle();
+    }
     /**
      * Strafe in any direction using gyro to keep robot facing forward. Strafes a certain distance
      * */
@@ -750,9 +799,8 @@ public class Robot_2022FF {
     public double getDistanceTraveled() {
         return (motorFrontLeft.getCurrentPosition() / ticksperrev) * DRIVE_WHEEL_CIRCUMFERENCE * 6;
     }
-    //make more?/////////////////////////////////////////////////////////////////////////////////////////
-    //may need to change this...
-    public int distanceToTicks(double cm){
+
+    public int distanceToTicks(double cm){//CHANGE!!!!
         return (int)((cm/DRIVE_WHEEL_CIRCUMFERENCE)*ticksperrev);
     }
 
@@ -773,5 +821,11 @@ public class Robot_2022FF {
         duck.setPower(power);
     }
 
-
+    /**
+     * Move arm to position...?
+     *
+     */
+    public void moveArm(double degrees, double power){
+        //do later!!!todo
+    }
 }

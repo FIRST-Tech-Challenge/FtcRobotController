@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -17,8 +18,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class Auto_2022_noPID extends LinearOpMode {
 
     //robot parts
-    private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft;
+    private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorOuttake;
     private CRServo duck;
+    private Servo bucket;
     private BNO055IMU imu;
 
     //for robot motion
@@ -41,7 +43,10 @@ public class Auto_2022_noPID extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
+        motorOuttake = hardwareMap.dcMotor.get("outtake");
+
         duck = hardwareMap.crservo.get("duck");
+        bucket = hardwareMap.servo.get("bucket");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -83,43 +88,57 @@ public class Auto_2022_noPID extends LinearOpMode {
 
         //caroseul
         robot.duck(-1);//turn on duck
-        robot.gyroStrafeCm(0.5,-90,100);//2 feet+a bit more(error) to right. todo change the cm, direction
+        robot.gyroStrafeCm(0.5,-90,80);//2 feet+a bit more(error) to right. todo change the cm, direction
         Thread.sleep(3000);
         robot.duck(0);
 
         //to hub
         //todo: adjust these values to make it work! You only need to change cm really, and maybe flip the angle for the second strafe if it's going in the wrong direction
 //        robot.gyroStrafeCm(0.5,Math.atan2(4.0,3.0),152);//todo may need to make it 2 sides of rectangle instead of hypotenuse?
-        robot.gyroStrafeCm(0.5, 90, 40);
-        robot.gyroStrafeCm(0.5,90,72);
-        robot.gyroStrafeCm(0.5,0,72);
+        robot.gyroStrafeCm(0.5,90,130);
+        robot.gyroStrafeCm(0.5,0,85);
 
         switch (code) {//shell for later, do not delete!!!
             case 2:
                 //center, middle
-                //dump bucket
+                motorOuttake.setPower(-0.25);//todo change!
+                Thread.sleep(2);
+                motorOuttake.setPower(0);
+                bucket.setPosition(1);
+                bucket.setPosition(0);
+                motorOuttake.setPower(0.25);//todo change!
+                Thread.sleep(2);
+                motorOuttake.setPower(0);
                 break;
             case 3:
                 //right, top
-                //dump bucket
+                motorOuttake.setPower(-0.25);//todo change!
+                Thread.sleep(1);
+                motorOuttake.setPower(0);
+                bucket.setPosition(1);
+                bucket.setPosition(0);
+                motorOuttake.setPower(0.25);//todo change!
+                Thread.sleep(1);
+                motorOuttake.setPower(0);
                 break;
             case 1:
             default:
                 //left, bottom
                 //error, put on bottom, do case1
-                //dump bucket
+                motorOuttake.setPower(-0.25);//todo change!
+                Thread.sleep(4);
+                motorOuttake.setPower(0);
+                bucket.setPosition(1);
+                bucket.setPosition(0);
+                motorOuttake.setPower(0.25);//todo change!
+                Thread.sleep(4);
+                motorOuttake.setPower(0);
                 break;
         }
 
-        Thread.sleep(4000);//imitating dumping
-
         //go to warehouse
         robot.gyroTurn(90,0.5);
-        while(distsense.getDistance(DistanceUnit.CM) > 10) {
-            robot.tankDrive(0.5, 0.5);
-            telemetry.addData("distance reading:", distsense.getDistance(DistanceUnit.CM));
-            telemetry.update();
-        }
+        robot.driveToWall(0.5);
 
         //pick up element
         //todo make this a method later, NOT NOW finish testing first
