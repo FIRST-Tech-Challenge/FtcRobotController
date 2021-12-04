@@ -5,12 +5,12 @@ import numpy as np
 from keras.models import load_model
 
 #path of the directory where you want to save your model
-frozen_out_path = '../tf_models/freight_frenzy_emma/converted_freight_frenzy_emma_frozen'
+frozen_out_path = 'C:/development/BC4HStem/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_tse/converted_freight_frenzy_tse_frozen'
 
 # name of the .pb file
-frozen_graph_filename = 'freight_frenzy_emma_graph'
+frozen_graph_filename = 'freight_frenzy_tse_graph'
 
-model = load_model('../tf_models/freight_frenzy_emma/Emma-Model_keras/keras_model.h5')
+model = load_model('C:/development/BC4HStem/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_tse/converted_freight_frenzy_tse_keras/keras_model.h5')
 #model = tf.saved_model.load('my_savedmodel')
 
 # Convert Keras model to ConcreteFunction

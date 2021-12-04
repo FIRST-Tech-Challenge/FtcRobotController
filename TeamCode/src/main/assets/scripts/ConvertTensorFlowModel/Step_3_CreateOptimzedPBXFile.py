@@ -1,6 +1,6 @@
 import tensorflow as tf
-optimized_graph_path = "../tf_models/freight_frenzy_emma/converted_freight_frenzy_emma_optimized/freight_frenzy_emma_optimized_graph.pb"
-output_pbtxt = "../tf_models/freight_frenzy_emma/converted_freight_frenzy_emma_optimized/freight_frenzy_emma_optimized_graph.pbtxt"
+optimized_graph_path = "C:/development/BC4HStem/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_tse/converted_freight_frenzy_tse_optimized/freight_frenzy_tse_optimized_graph.pb"
+output_pbtxt = "C:/development/BC4HStem/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_tse/converted_freight_frenzy_tse_optimized/freight_frenzy_tse_optimized_graph.pbtxt"
 # Read the graph.
 with tf.gfile.FastGFile(optimized_graph_path, "rb") as f:
     graph_def = tf.GraphDef()
