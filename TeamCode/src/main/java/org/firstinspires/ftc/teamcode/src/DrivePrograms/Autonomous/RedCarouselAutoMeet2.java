@@ -22,74 +22,166 @@ public class RedCarouselAutoMeet2 extends AutoObjDetectionTemplate {
         this.initTfod();
         this.activate();
 
-        while (!isStarted()) {
+        odometry.setPosition(7, 101, 90);
+
+        while (!isStarted() && !isStopRequested()) {
             Pos = this.getAverageOfMarker(10, 100);
             telemetry.addData("Position", Pos);
             telemetry.update();
         }
-        odometry.setPosition(7, 101, 90);
 
         waitForStart();
-        tfod.shutdown();
-        vuforia.close();
-        System.gc();
-        t.start();
+
+        if (opModeIsActive() && !isStopRequested()) {
+            tfod.shutdown();
+            vuforia.close();
+            System.gc();
+            t.start();
 
 
-        switch (Pos) {
-            case NotSeen:
-                telemetry.addData("position", " is far left");
-                telemetry.update();
-                slide.setTargetLevel(LinearSlide.HeightLevels.TopLevel);
-                driveSystem.moveToPosition(20, 84, 1);
+            switch (Pos) {
+                case Right:
+                    telemetry.addData("position", " is right");
+                    telemetry.update();
+                    driveSystem.moveToPosition(20, 84, 1);
+                    slide.setTargetLevel(LinearSlide.HeightLevels.TopLevel);
 
-                //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
-                Thread.sleep(500);
-                slide.setTargetLevel(LinearSlide.HeightLevels.Down);
-                driveSystem.moveToPosition(20, 130, 1);
-
-                //strafe at angle into the wall and then the carousel
-                driveSystem.strafeAtAngle(270, .5);
-                Thread.sleep(500);
-                driveSystem.strafeAtAngle(180, .5);
-                Thread.sleep(700);
-                driveSystem.stopAll();
-
-                //spin off the duck
-                spinner.spinOffRedDuck();
-
-                // park
-                driveSystem.moveToPosition(33, 130, 1);
-                driveSystem.strafeAtAngle(270, .5);
-                Thread.sleep(300);
-                driveSystem.stopAll();
-
-                break;
-            case Right:
-                telemetry.addData("position", " is right");
-                telemetry.update();
-                driveSystem.moveToPosition(20, 85, 1);
-
-                slide.setTargetLevel(LinearSlide.HeightLevels.MiddleLevel);
-                //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
+                    //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
+                    Thread.sleep(1500);
 
 
-                break;
-            case Left:
-                telemetry.addData("position", "is center");
-                telemetry.update();
-                driveSystem.moveToPosition(20, 85, 1);
+                    //this position will vary for different heights on the goal
+                    driveSystem.moveToPosition(25, 81, 1);
 
-                slide.setTargetLevel(LinearSlide.HeightLevels.BottomLevel);
-                //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
+                    intake.setServoDown();
+                    Thread.sleep(500);
+
+                    intake.intakeOn();
+                    Thread.sleep(1000);
+                    intake.intakeOff();
+                    driveSystem.moveToPosition(23, 84, 1);
+                    intake.setServoUp();
+                    Thread.sleep(500);
+                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    Thread.sleep(500);
+                    //following this is unique to carousel and warehouse
+
+                    driveSystem.moveToPosition(20, 130, 1);
+
+                    //strafe at angle into the wall and then the carousel
+                    driveSystem.strafeAtAngle(270, .5);
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(180, .5);
+                    Thread.sleep(650);
+                    driveSystem.stopAll();
+
+                    //spin off the duck
+                    spinner.spinOffRedDuck();
+
+                    // park
+                    driveSystem.moveToPosition(33, 130, 1);
+                    driveSystem.strafeAtAngle(270, .5);
+                    Thread.sleep(300);
+                    driveSystem.stopAll();
+
+                    break;
+                case NotSeen:
+                    telemetry.addData("position", " far left");
+                    telemetry.update();
+                    driveSystem.moveToPosition(20, 85, 1);
+
+                    slide.setTargetLevel(LinearSlide.HeightLevels.BottomLevel);
+
+                    //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
+
+                    Thread.sleep(1500);
+
+                    intake.setServoDown();
+                    Thread.sleep(500);
+
+                    //this position will vary for different heights on the goal
+                    driveSystem.moveToPosition(25, 84, 1);
 
 
-                break;
+                    intake.intakeOn();
+                    Thread.sleep(1000);
+                    intake.intakeOff();
+                    driveSystem.moveToPosition(23, 84, 1);
+                    intake.setServoUp();
+                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    Thread.sleep(500);
+                    //following this is unique to carousel and warehouse
+                    driveSystem.moveToPosition(20, 130, 1);
+
+                    //strafe at angle into the wall and then the carousel
+                    driveSystem.strafeAtAngle(270, .5);
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(180, .5);
+                    Thread.sleep(650);
+                    driveSystem.stopAll();
+
+                    //spin off the duck
+                    spinner.spinOffRedDuck();
+
+                    // park
+                    driveSystem.moveToPosition(33, 130, 1);
+                    driveSystem.strafeAtAngle(270, .5);
+                    Thread.sleep(300);
+                    driveSystem.stopAll();
 
 
+                    break;
+                case Left:
+                    telemetry.addData("position", "is center");
+                    telemetry.update();
+                    driveSystem.moveToPosition(20, 85, 1);
+
+                    slide.setTargetLevel(LinearSlide.HeightLevels.MiddleLevel);
+                    //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
+
+                    Thread.sleep(1500);
+
+                    intake.setServoDown();
+                    Thread.sleep(500);
+
+                    //this position will vary for different heights on the goal
+                    driveSystem.moveToPosition(25, 84, 1);
+
+
+                    intake.intakeOn();
+                    Thread.sleep(1000);
+                    intake.intakeOff();
+                    driveSystem.moveToPosition(23, 84, 1);
+                    intake.setServoUp();
+                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    Thread.sleep(500);
+                    //following this is unique to carousel and warehouse
+
+                    driveSystem.moveToPosition(20, 130, 1);
+
+                    //strafe at angle into the wall and then the carousel
+                    driveSystem.strafeAtAngle(270, .5);
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(180, .5);
+                    Thread.sleep(650);
+                    driveSystem.stopAll();
+
+                    //spin off the duck
+                    spinner.spinOffRedDuck();
+
+                    // park
+                    driveSystem.moveToPosition(33, 130, 1);
+                    driveSystem.strafeAtAngle(270, .5);
+                    Thread.sleep(300);
+                    driveSystem.stopAll();
+
+
+                    break;
+
+
+            }
         }
-        telemetry.update();
-        while (opModeIsActive() && !isStopRequested()) ;
-
+        slide.stop();
+        odometry.stop();
     }
 }

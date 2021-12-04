@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 
-
+@Disabled
 @Autonomous(name = "MLTest")
 public class MLTest extends AutoObjDetectionTemplate {
     @Override

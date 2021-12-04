@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
+@Disabled
 @TeleOp(name = "LS Test")
 public class LinearSlideTest extends TeleopTemplate {
     LinearSlide linearSlide;

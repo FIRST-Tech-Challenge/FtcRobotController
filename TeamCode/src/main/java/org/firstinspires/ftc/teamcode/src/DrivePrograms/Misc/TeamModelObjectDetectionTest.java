@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 
 import java.util.List;
 
+@Disabled
 @Autonomous(name = "TeamModelObjectDetectionTest")
 public class TeamModelObjectDetectionTest extends AutonomousTemplate {
 

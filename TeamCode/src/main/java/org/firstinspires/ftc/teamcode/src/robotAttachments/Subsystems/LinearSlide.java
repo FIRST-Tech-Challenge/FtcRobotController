@@ -70,13 +70,13 @@ public class LinearSlide implements Runnable {
     public void setTargetLevel(LinearSlide.HeightLevels level) {
         switch (level) {
             case BottomLevel:
-                setTargetHeight(-981);
+                setTargetHeight(-1081);
                 return;
             case TopLevel:
                 setTargetHeight(-3900);
                 return;
             case MiddleLevel:
-                setTargetHeight(-2500);
+                setTargetHeight(-2560);
                 return;
             case GetOverObstacles:
                 setTargetHeight(-1000);
@@ -127,6 +127,10 @@ public class LinearSlide implements Runnable {
         }
     }
 
+    public void resetEncoder() {
+        this.resetEncoder();
+
+    }
 
     public enum HeightLevels {
         Down,
