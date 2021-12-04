@@ -4,5 +4,5 @@ import org.firstinspires.ftc.robotcore.internal.hardware.DcMotor;
 
 
 
-public class IntakeMethods {
+public class Intake {
 }
