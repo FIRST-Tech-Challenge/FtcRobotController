@@ -218,10 +218,12 @@ public class Robot_2022FF {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**
@@ -825,7 +827,27 @@ public class Robot_2022FF {
      * Move arm to position...?
      *
      */
-    public void moveArm(double degrees, double power){
+    public void moveArm(double degrees, double power) throws InterruptedException{
         //do later!!!todo
+        resetEncoders();
+        //????
+
+    }
+
+    public void dropTop(double power){
+
+    }
+    public void dropMiddle(double power) throws InterruptedException{
+        outtake.setPower(-0.25);//todo change!
+        Thread.sleep(2);
+        outtake.setPower(0);
+        bucket.setPosition(1);
+        bucket.setPosition(0);
+        outtake.setPower(0.25);//todo change!
+        Thread.sleep(2);
+        outtake.setPower(0);
+    }
+    public void dropBottom(double power){
+
     }
 }

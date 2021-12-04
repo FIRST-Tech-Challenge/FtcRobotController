@@ -113,12 +113,12 @@ public class Auto_2022_noPID extends LinearOpMode {
             case 3:
                 //right, top
                 motorOuttake.setPower(-0.25);//todo change!
-                Thread.sleep(1);
+                Thread.sleep(4);
                 motorOuttake.setPower(0);
                 bucket.setPosition(1);
                 bucket.setPosition(0);
                 motorOuttake.setPower(0.25);//todo change!
-                Thread.sleep(1);
+                Thread.sleep(4);
                 motorOuttake.setPower(0);
                 break;
             case 1:
@@ -126,12 +126,12 @@ public class Auto_2022_noPID extends LinearOpMode {
                 //left, bottom
                 //error, put on bottom, do case1
                 motorOuttake.setPower(-0.25);//todo change!
-                Thread.sleep(4);
+                Thread.sleep(1);
                 motorOuttake.setPower(0);
                 bucket.setPosition(1);
                 bucket.setPosition(0);
                 motorOuttake.setPower(0.25);//todo change!
-                Thread.sleep(4);
+                Thread.sleep(1);
                 motorOuttake.setPower(0);
                 break;
         }
