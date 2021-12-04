@@ -6,9 +6,8 @@ import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
-
-@Autonomous(name = "BlueWarehouseAutonomous")
-public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
+@Autonomous(name = "RedCarouselMeet2")
+public class RedCarouselAutoMeet2 extends AutoObjDetectionTemplate {
     LinearSlide slide;
 
     @Override
@@ -28,9 +27,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             telemetry.addData("Position", Pos);
             telemetry.update();
         }
-
-
-        odometry.setPosition(133, 63, 270);
+        odometry.setPosition(7, 101, 90);
 
         waitForStart();
         tfod.shutdown();
@@ -43,43 +40,48 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             case NotSeen:
                 telemetry.addData("position", " is far left");
                 telemetry.update();
-
-                driveSystem.moveToPosition(120, 84, 1);
-
                 slide.setTargetLevel(LinearSlide.HeightLevels.TopLevel);
-                intake.setServoDown();
+                driveSystem.moveToPosition(20, 84, 1);
 
+                //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
                 Thread.sleep(500);
-                driveSystem.moveToPosition(111, 84, 1);
+                slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                driveSystem.moveToPosition(20, 130, 1);
+
+                //strafe at angle into the wall and then the carousel
+                driveSystem.strafeAtAngle(270, .5);
                 Thread.sleep(500);
-                intake.intakeOn();
-                Thread.sleep(1000);
-                intake.intakeOff();
-                driveSystem.moveToPosition(120, 84, 1);
-                intake.setServoUp();
-                driveSystem.turnTo(190, .5);
-                //Thread.sleep(500);
-                driveSystem.moveToPosition(131, 63, 2);
+                driveSystem.strafeAtAngle(180, .5);
+                Thread.sleep(700);
+                driveSystem.stopAll();
 
-                driveSystem.moveToPosition(132, 24, 1);
+                //spin off the duck
+                spinner.spinOffRedDuck();
 
+                // park
+                driveSystem.moveToPosition(33, 130, 1);
+                driveSystem.strafeAtAngle(270, .5);
+                Thread.sleep(300);
+                driveSystem.stopAll();
 
                 break;
             case Right:
                 telemetry.addData("position", " is right");
                 telemetry.update();
-                driveSystem.moveToPosition(120, 84, 1);
+                driveSystem.moveToPosition(20, 85, 1);
 
-                slide.setTargetLevel(LinearSlide.HeightLevels.BottomLevel);
+                slide.setTargetLevel(LinearSlide.HeightLevels.MiddleLevel);
+                //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
 
 
                 break;
             case Left:
                 telemetry.addData("position", "is center");
                 telemetry.update();
-                driveSystem.moveToPosition(120, 84, 1);
+                driveSystem.moveToPosition(20, 85, 1);
 
-                slide.setTargetLevel(LinearSlide.HeightLevels.MiddleLevel);
+                slide.setTargetLevel(LinearSlide.HeightLevels.BottomLevel);
+                //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
 
 
                 break;
@@ -91,5 +93,3 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
     }
 }
-
-

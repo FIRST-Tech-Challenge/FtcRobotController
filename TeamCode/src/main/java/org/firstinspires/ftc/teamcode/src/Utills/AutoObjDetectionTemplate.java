@@ -1,18 +1,19 @@
-package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
+package org.firstinspires.ftc.teamcode.src.Utills;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 
 import java.util.List;
 
-
+@Disabled
 public class AutoObjDetectionTemplate extends AutonomousTemplate {
 
 
-    private static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder.tflite";
+    private static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
     private static final String[] LABELS = {"Pink Team Marker"};
 
 
@@ -21,6 +22,7 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
 
     public VuforiaLocalizer vuforia;
     public TFObjectDetector tfod;
+
 
 
     public void initVuforia() {
@@ -77,17 +79,19 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+
             if (updatedRecognitions != null && (updatedRecognitions.size() > 0)) {
-                if (updatedRecognitions.get(0).getTop() > 615) {
+                if (updatedRecognitions.get(0).getLeft() > 615) {
                     return MarkerPosition.Right;
                 }
-                if (updatedRecognitions.get(0).getTop() <= 615) {
+                if (updatedRecognitions.get(0).getLeft() <= 615) {
                     return MarkerPosition.Left;
                 }
             }
         }
         return MarkerPosition.NotSeen;
     }
+
 
     public MarkerPosition getAverageOfMarker(int arraySize, int sleepTime) throws InterruptedException {
 

@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 
 import java.util.List;
 
 @Autonomous(name = "TeamModelObjectDetectionTest")
-public class TeamModelObjectDetectionTest extends LinearOpMode {
+public class TeamModelObjectDetectionTest extends AutonomousTemplate {
 
 
     /**
@@ -24,18 +24,7 @@ public class TeamModelObjectDetectionTest extends LinearOpMode {
      * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
      * is explained below.
      */
-    /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
-     * the following 4 detectable objects
-     *  0: Ball,
-     *  1: Cube,
-     *  2: Duck,
-     *  3: Marker (duck location tape marker)
-     *
-     *  Two additional model assets are available which only contain a subset of the objects:
-     *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
-     *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
-     */
-    private static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder.tflite";
+    private static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
     private static final String[] LABELS = {
             "Pink Team Marker",
 
@@ -94,7 +83,7 @@ public class TeamModelObjectDetectionTest extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
-        waitForStart();
+
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -117,10 +106,21 @@ public class TeamModelObjectDetectionTest extends LinearOpMode {
                         }
                         telemetry.update();
                     }
+
+
                 }
             }
         }
+        waitForStart();
+
     }
+
+    private enum MarkerPosition {
+        Right,
+        Left,
+        NotSeen
+    }
+
 
     /**
      * Initialize the Vuforia localization engine.

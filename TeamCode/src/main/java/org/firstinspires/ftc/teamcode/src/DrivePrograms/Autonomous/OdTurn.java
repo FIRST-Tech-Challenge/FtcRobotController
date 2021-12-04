@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 
 
 @Autonomous(name = "OdTurn")
+@Disabled
 public class OdTurn extends AutonomousTemplate {
     @Override
     public void runOpMode() throws InterruptedException {

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
 public class LinearSlideTest extends TeleopTemplate {
     LinearSlide linearSlide;
 
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         this.initAll();
         RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
         linearSlide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
@@ -27,11 +27,16 @@ public class LinearSlideTest extends TeleopTemplate {
             driveTrain.setPowerFromGamepad(gamepad1);
 
             linearSlide.setTargetLevel(LinearSlide.HeightLevels.BottomLevel);
-            //linearSlide.updatePower();
 
             //intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
             telemetry.addData("LS Height: ", linearSlide.getEncoderCount());
             telemetry.update();
+
+            Thread.sleep(5000);
+            linearSlide.setTargetLevel(LinearSlide.HeightLevels.TopLevel);
+
+            Thread.sleep(5000);
+            linearSlide.setTargetLevel(LinearSlide.HeightLevels.Down);
 
         }
     }

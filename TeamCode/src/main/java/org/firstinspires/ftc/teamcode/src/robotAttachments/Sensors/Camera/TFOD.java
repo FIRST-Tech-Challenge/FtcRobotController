@@ -11,10 +11,10 @@ public class TFOD extends TFObjectDetectorImpl {
 
     // This class will access the file and label for the model made with the FTC ML tool
 
-    // Trained Pink Team Marker Finder.tflite is the file for the model of our team marker for the Freight Frenzy season meet 2
+    // Trained Pink Team Marker Finder Mk2.tflite is the file for the model of our team marker for the Freight Frenzy season meet 2
     // "Pink Team Marker" is the label for our team marker model as of meet 2 of Freight Frenzy
 
-    protected static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder.tflite";
+    protected static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
     protected static final String[] LABELS = {"Pink Team Marker"};
     HardwareMap hardwareMap;
     VuforiaLocalizer vuforia;

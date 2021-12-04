@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 
 
 @Autonomous(name = "MLTest")
@@ -15,19 +15,13 @@ public class MLTest extends AutoObjDetectionTemplate {
         this.initTfod();
 
         this.activate();
-        MarkerPosition Pos = MarkerPosition.Left;
+        MarkerPosition Pos = MarkerPosition.Right;
 
-        try {
+        while (!isStarted()) {
             Pos = this.getAverageOfMarker(10, 100);
-        } catch (Exception e) {
-
-            telemetry.addData("Error", MiscUtills.getStackTraceAsString(e));
+            telemetry.addData("Position", Pos);
             telemetry.update();
-            while (opModeIsActive() && !isStopRequested()) {
-            }
-
         }
-
         waitForStart();
 
         tfod.shutdown();

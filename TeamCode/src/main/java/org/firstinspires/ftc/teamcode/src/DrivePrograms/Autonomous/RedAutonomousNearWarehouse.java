@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 
 @Autonomous(name = "RedAutonomousNearWarehouse")
+@Disabled
 public class RedAutonomousNearWarehouse extends AutonomousTemplate {
 
     @Override
