@@ -161,16 +161,17 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
                     .build();
             drive.followTrajectory(duckTraj);
             sleep(500);
-            Pose2d wall = new Pose2d(-63.88, 53.25, Math.toRadians(90));
-            drive.setPoseEstimate(wall);
 
             //ROTATE DUCK
             drive.setMotorPowers(0.1, 0.1,0.1,0.1);
-            sleep(500);
+            sleep(340);
             drive.setMotorPowers(0, 0,0,0);
             Spin.setPower(0.5);
             sleep(3500);
             Spin.setPower(0.0);
+
+            Pose2d wall = new Pose2d(-63.88, 53.25, drive.getExternalHeading()); //Math.toRadians(90)
+            drive.setPoseEstimate(wall);
 
             //MOTION TO PLATE
             Trajectory plateTraj1 = drive.trajectoryBuilder(duckTraj.end(),true)
@@ -183,6 +184,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
             drive.followTrajectory(plateTraj2);
 
             //ROTATE
+            rotateWithSpeed(1.0, 0.5);
             Rotate.setPosition(1.0);
             sleep(800);
 
@@ -221,7 +223,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
 
             //BACK TO STORAGE UNIT & PARK
             Trajectory parkTraj1 = drive.trajectoryBuilder(closeTraj.end())
-                    .forward(29)
+                    .forward(31)
                     .build();
             drive.followTrajectory(parkTraj1);
             Trajectory parkTraj2 = drive.trajectoryBuilder(parkTraj1.end())
@@ -265,6 +267,20 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
     }
 
-
-
+    private void rotateWithSpeed(double targetPos, double factor){
+        //1 -> 10 0.5 -> 5
+        if(factor == 1.0){
+            Rotate.setPosition(targetPos);
+        }
+        double currentPos = Rotate.getPosition();
+        double interval = 0.05 * factor;
+        while (targetPos > Rotate.getPosition()){
+            Rotate.setPosition(Rotate.getPosition() + interval);
+            sleep(30);
+        }
+        while (targetPos < Rotate.getPosition()){
+            Rotate.setPosition(Rotate.getPosition() - interval);
+            sleep(30);
+        }
+    }
 }

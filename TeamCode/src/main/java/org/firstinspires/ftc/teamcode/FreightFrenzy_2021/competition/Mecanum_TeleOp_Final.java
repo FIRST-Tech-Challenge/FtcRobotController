@@ -105,8 +105,9 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean releasedDU2 = true;
         boolean releasedDR2 = true;
 
-        boolean releasedBack =true;
-        double rotateSpeed = 0.02;
+        boolean releasedBack2 =true;
+        boolean releasedStart2 =true;
+        double rotateSpeed = 1;
 
         boolean toggleX1 = true;
         boolean toggleRB2 = true;
@@ -182,51 +183,6 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 releasedB1 = true;
             }
 
-            if(gamepad2.a){
-                if(releasedA2) {
-                    Slide.setTargetPosition(initialHeight);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
-                }
-
-            } else if(!releasedA2){
-                releasedA2 = true;
-            }
-            if(gamepad2.b){
-                if(releasedB2) {
-                    Rotate.setPosition(1.0);
-                    sleep(500);
-                    Slide.setTargetPosition(initialHeight + 750);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
-                }
-            } else if(!releasedB2){
-                releasedB2 = true;
-            }
-
-            if(gamepad2.y){
-                if(releasedY2) {
-                    Rotate.setPosition(1.0);
-                    sleep(500);
-                    Slide.setTargetPosition(initialHeight + 1400);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
-                }
-            } else if(!releasedY2){
-                releasedY2 = true;
-            }
-
-            if(gamepad2.x){
-                if(releasedX2) {
-                    Rotate.setPosition(0.03);
-                    sleep(300);
-                    Slide.setTargetPosition(initialHeight);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
-                }
-            } else if(!releasedX2){
-                releasedX2 = true;
-            }
 
             if (gamepad1.x) {
                 if (releasedX1){
@@ -254,38 +210,81 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             //SHARED HUB
             if(gamepad1.y) {
                 if (releasedY1) {
-                    if (PoseStorage.state != driveMethod.poseState.BLUE_SHARED_HUB && PoseStorage.state != driveMethod.poseState.RED_SHARED_HUB) {
-                        if (PoseStorage.state == driveMethod.poseState.BLUE || PoseStorage.state == driveMethod.poseState.BLUE_WAREHOUSE) {
-                            chassis.setPoseEstimate(fieldConstant.SHARED_BLUE_ENTER_POSE);
-                            Trajectory sharedTraj1 = chassis.trajectoryBuilder(chassis.getPoseEstimate(), true)
-                                    .lineTo(new Vector2d(64.75, 18))
-                                    .build();
-                            chassis.followTrajectory(sharedTraj1);
-                            Trajectory sharedTraj2 = chassis.trajectoryBuilder(sharedTraj1.end(), true)
-                                    .lineToLinearHeading(fieldConstant.SHARED_BLUE_END_POSE)
-                                    .build();
-                            chassis.followTrajectory(sharedTraj2);
-                        } else if (PoseStorage.state == driveMethod.poseState.RED || PoseStorage.state == driveMethod.poseState.RED_WAREHOUSE) {
-                            chassis.setPoseEstimate(fieldConstant.SHARED_RED_ENTER_POSE);
-                            Trajectory sharedTraj1 = chassis.trajectoryBuilder(chassis.getPoseEstimate(), true)
-                                    .lineTo(new Vector2d(64.75, 18))
-                                    .build();
-                            chassis.followTrajectory(sharedTraj1);
-                            Trajectory sharedTraj2 = chassis.trajectoryBuilder(sharedTraj1.end(), true)
-                                    .lineToLinearHeading(fieldConstant.SHARED_RED_END_POSE)
-                                    .build();
-                            chassis.followTrajectory(sharedTraj2);
-                        }
-                        speed = 0.3;
-                        chassis.updatePoseEstimate();
-                        PoseStorage.state = driveMethod.fieldState(chassis.getPoseEstimate());
+                    if (PoseStorage.state == driveMethod.poseState.BLUE || PoseStorage.state == driveMethod.poseState.BLUE_WAREHOUSE || PoseStorage.state == driveMethod.poseState.BLUE_OTHERS) {
+                        chassis.setPoseEstimate(fieldConstant.SHARED_BLUE_ENTER_POSE);
+                        Trajectory sharedTraj1 = chassis.trajectoryBuilder(chassis.getPoseEstimate(), true)
+                                .lineTo(new Vector2d(64.75, 18))
+                                .build();
+                        chassis.followTrajectory(sharedTraj1);
+                        Trajectory sharedTraj2 = chassis.trajectoryBuilder(sharedTraj1.end(), true)
+                                .lineToLinearHeading(fieldConstant.SHARED_BLUE_END_POSE)
+                                .build();
+                        chassis.followTrajectory(sharedTraj2);
+                    } else if (PoseStorage.state == driveMethod.poseState.RED || PoseStorage.state == driveMethod.poseState.RED_WAREHOUSE || PoseStorage.state == driveMethod.poseState.RED_OTHERS) {
+                        chassis.setPoseEstimate(fieldConstant.SHARED_RED_ENTER_POSE);
+                        Trajectory sharedTraj1 = chassis.trajectoryBuilder(chassis.getPoseEstimate(), true)
+                                .lineTo(new Vector2d(64.75, -18))
+                                .build();
+                        chassis.followTrajectory(sharedTraj1);
+                        Trajectory sharedTraj2 = chassis.trajectoryBuilder(sharedTraj1.end(), true)
+                                .lineToLinearHeading(fieldConstant.SHARED_RED_END_POSE)
+                                .build();
+                        chassis.followTrajectory(sharedTraj2);
                     }
+                    speed = 0.3;
+                    chassis.updatePoseEstimate();
+                    PoseStorage.state = driveMethod.fieldState(chassis.getPoseEstimate());
                 } else if (!releasedY1) {
                     releasedY1 = true;
                 }
             }
 
             //////////////GAMEPAD 2//////////////
+            if(gamepad2.a){
+                if(releasedA2) {
+                    Slide.setTargetPosition(initialHeight);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                }
+
+            } else if(!releasedA2){
+                releasedA2 = true;
+            }
+            if(gamepad2.b){
+                if(releasedB2) {
+                    rotateWithSpeed(1.0, rotateSpeed);
+                    sleep(500);
+                    Slide.setTargetPosition(initialHeight + 750);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                }
+            } else if(!releasedB2){
+                releasedB2 = true;
+            }
+
+            if(gamepad2.y){
+                if(releasedY2) {
+                    rotateWithSpeed(1.0, rotateSpeed);
+                    sleep(500);
+                    Slide.setTargetPosition(initialHeight + 1400);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                }
+            } else if(!releasedY2){
+                releasedY2 = true;
+            }
+
+            if(gamepad2.x){
+                if(releasedX2) {
+                    rotateWithSpeed(0.03, rotateSpeed);
+                    sleep(300);
+                    Slide.setTargetPosition(initialHeight);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                }
+            } else if(!releasedX2){
+                releasedX2 = true;
+            }
             if (gamepad2.dpad_up) {
                 if (releasedDU2){
                     Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -308,24 +307,13 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 Slide.setPower(0);
                 releasedDD2 = true;
             }
-            if(gamepad2.back){
-                if(releasedBack){
-                    if(rotateSpeed==0.02)
-                        rotateSpeed =0.05;
-                    else if (rotateSpeed==0.05)
-                        rotateSpeed =0.02;
-                }else if (!releasedBack){
-                    releasedBack = true;
-                }
-            }
             if (gamepad2.dpad_left) {
                 if (releasedDL2){
 //                    if(spinPower != 0) {
 //                        spinPower -= 0.05;
 //                    }
                     while(Rotate.getPosition() <= 1.0 && gamepad2.dpad_left) {
-                        Rotate.setPosition(Rotate.getPosition()+0.02);
-                        sleep(40);
+                        rotateWithSpeed(Rotate.getPosition()+0.05, rotateSpeed);
                     }
                     releasedDL2 = false;
                 }
@@ -338,13 +326,29 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 //                        spinPower += 0.05;
 //                    }
                     while(Rotate.getPosition() >= 0.03 && gamepad2.dpad_right) {
-                        Rotate.setPosition(Rotate.getPosition()-0.02);
-                        sleep(40);
+                        rotateWithSpeed(Rotate.getPosition()-0.05, rotateSpeed);
                     }
                     releasedDR2 = false;
                 }
             } else if (!releasedDR2){
                 releasedDR2 = true;
+            }
+
+            if(gamepad2.back){
+                if(releasedBack2){
+                    rotateSpeed = 0.5;
+                    releasedBack2 = false;
+                }else if (!releasedBack2){
+                    releasedBack2 = true;
+                }
+            }
+            if(gamepad2.start){
+                if(releasedStart2){
+                    rotateSpeed = 1.0;
+                    releasedStart2 = false;
+                }else if (!releasedStart2){
+                    releasedStart2 = true;
+                }
             }
 
             if (gamepad2.right_bumper) {
@@ -396,11 +400,11 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             if(gamepad2.left_trigger == 1){
                 if (releasedLT2){
                     if (toggleLT2 && !Slide.isBusy()) {
-                        Rotate.setPosition(0.03);
+                        rotateWithSpeed(0.03,rotateSpeed);
                         telemetry.addLine("ROTATE STARTS");
                         toggleLT2 = false;
                     } else {
-                        Rotate.setPosition(1.0);
+                        rotateWithSpeed(1.0,rotateSpeed);
                         telemetry.addLine("ROTATE STOPS");
                         toggleLT2 = true;
                     }
@@ -469,6 +473,23 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             return;
         }
         speed = increased;
+    }
+
+    private void rotateWithSpeed(double targetPos, double factor){
+        //1 -> 10 0.5 -> 5
+        if(factor == 1.0){
+            Rotate.setPosition(targetPos);
+        }
+        double currentPos = Rotate.getPosition();
+        double interval = 0.05 * factor;
+        while (targetPos > Rotate.getPosition()){
+            Rotate.setPosition(Rotate.getPosition() + interval);
+            sleep(30);
+        }
+        while (targetPos < Rotate.getPosition()){
+            Rotate.setPosition(Rotate.getPosition() - interval);
+            sleep(30);
+        }
     }
 
 }
