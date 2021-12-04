@@ -19,11 +19,6 @@ public class MecanumTeleOp extends LinearOpMode {
 
         // init motor and add intake for arm
         robot.motorArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        // robot.motorIntake.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        robot.motorArm.setTargetPosition(0);
-        robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
 
         int armCurrentPos = 0;
         int armSetPos = 0;
@@ -38,6 +33,9 @@ public class MecanumTeleOp extends LinearOpMode {
 
         //intake power
         double intakePower = 0;
+
+        //carousel power
+        //double carouselPower = 0;
 
         //set arm power
         //robot.motorArm.setPower(0.5);
@@ -54,6 +52,9 @@ public class MecanumTeleOp extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
+
+        robot.motorArm.setTargetPosition(0);
+        robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (opModeIsActive()) {
             // Track Arm Current Pos
@@ -79,22 +80,34 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
 
-            //intake in
-            if (gamepad2.left_trigger > 0){
+            //intake
+            if (gamepad2.left_trigger > 0.5){
                 intakePower = 0.75;
             }
-            else if (gamepad2.left_trigger == 0){
-                intakePower = 0;
-            }
-            //intake out
-            if (gamepad2.right_trigger > 0){
+            else if (gamepad2.right_trigger > 0.5){
                 intakePower = -0.3;
             }
-            else if (gamepad2.right_trigger == 0){
+            else if (gamepad2.left_trigger <= 0.5 && gamepad2.right_trigger <= 0.5){
                 intakePower = 0;
             }
-            //set power
+            //set power intake
             robot.motorIntake.setPower(intakePower);
+
+            /*carousel code
+
+            if (g pad 2. right bumper == pressed) {
+                carouselPower = 0.5;
+                }
+            else if (g pad 2. left bumper == pressed) {
+                carouselPower = -0.5;
+                }
+            else if (gpad 2. right bumper !== pressed && gpad 2. left bumper !== pressed) {
+                carouselPower = 0;
+                }
+             */
+
+            //set power carousel
+            //robot.motorCarousel.setPower(carouselPower);
 
 
             //drivetrain mecanum
