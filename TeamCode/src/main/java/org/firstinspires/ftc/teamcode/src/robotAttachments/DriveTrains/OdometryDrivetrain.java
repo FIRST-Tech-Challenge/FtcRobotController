@@ -54,18 +54,26 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
 
-    public void turnTo(double turnAngle, double power) {
+    public void turnTo(double turnAngle, double power) throws InterruptedException {
         double position = odometry.returnOrientation();
 
         // the following calculation determines the value of the angle between the current position and the desired position in a counterclockwise rotation/left turn
         if (((360 - turnAngle) + position) % 360 > 180) {
             while (((360 - turnAngle) + odometry.returnOrientation()) % 360 > 180) {
-                this.turnLeft(power);
+                if (!isStopRequested() && opModeIsActive()) {
+                    this.turnLeft(power);
+                } else {
+                    break;
+                }
             }
         } else {
             // while the left turn angle value is less than or equal to 180, turn left
             while (((360 - turnAngle) + odometry.returnOrientation()) % 360 <= 180) {
-                this.turnRight(power);
+                if (!isStopRequested() && opModeIsActive()) {
+                    this.turnRight(power);
+                } else {
+                    break;
+                }
             }
         }
         stopAll();

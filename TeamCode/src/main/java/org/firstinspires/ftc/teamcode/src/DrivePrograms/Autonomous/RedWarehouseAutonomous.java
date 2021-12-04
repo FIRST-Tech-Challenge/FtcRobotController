@@ -42,8 +42,8 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
 
             switch (Pos) {
-                case Left:
-                    telemetry.addData("position", " is left");
+                case NotSeen:
+                    telemetry.addData("position", " is far right ");
                     telemetry.update();
 
                     driveSystem.moveToPosition(20, 84, 1);
@@ -112,8 +112,8 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(9, 24, 1);
 
                     break;
-                case NotSeen:
-                    telemetry.addData("position", "is far right");
+                case Left:
+                    telemetry.addData("position", "is left");
                     telemetry.update();
                     driveSystem.moveToPosition(20, 85, 1);
 

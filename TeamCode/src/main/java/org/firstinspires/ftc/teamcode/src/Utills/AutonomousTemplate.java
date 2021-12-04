@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
+import java.util.ArrayList;
+
 @Disabled
 public class AutonomousTemplate extends LinearOpMode {
     public OdometryPodServos podServos;
@@ -90,6 +92,17 @@ public class AutonomousTemplate extends LinearOpMode {
 
     }
 
+    public void stopCheck() throws InitHalted {
+        if (isStopRequested()) {
+            throw new InitHalted();
+        }
+    }
+
+    public void opModeCheck() throws InitHalted {
+        if (!opModeIsActive()) {
+            throw new InitHalted();
+        }
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {

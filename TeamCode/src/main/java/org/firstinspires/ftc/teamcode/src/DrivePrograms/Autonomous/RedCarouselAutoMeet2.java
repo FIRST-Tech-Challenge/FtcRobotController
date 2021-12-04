@@ -79,7 +79,7 @@ public class RedCarouselAutoMeet2 extends AutoObjDetectionTemplate {
                     spinner.spinOffRedDuck();
 
                     // park
-                    driveSystem.moveToPosition(33, 130, 1);
+                    driveSystem.moveToPosition(31.5, 130, 1);
                     driveSystem.strafeAtAngle(270, .5);
                     Thread.sleep(300);
                     driveSystem.stopAll();
@@ -124,7 +124,7 @@ public class RedCarouselAutoMeet2 extends AutoObjDetectionTemplate {
                     spinner.spinOffRedDuck();
 
                     // park
-                    driveSystem.moveToPosition(33, 130, 1);
+                    driveSystem.moveToPosition(31.5, 130, 1);
                     driveSystem.strafeAtAngle(270, .5);
                     Thread.sleep(300);
                     driveSystem.stopAll();
@@ -170,7 +170,7 @@ public class RedCarouselAutoMeet2 extends AutoObjDetectionTemplate {
                     spinner.spinOffRedDuck();
 
                     // park
-                    driveSystem.moveToPosition(33, 130, 1);
+                    driveSystem.moveToPosition(31.2, 130, 1);
                     driveSystem.strafeAtAngle(270, .5);
                     Thread.sleep(300);
                     driveSystem.stopAll();
