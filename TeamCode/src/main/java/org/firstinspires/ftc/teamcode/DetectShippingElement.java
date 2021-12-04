@@ -29,6 +29,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardwaremaps.ExternalCameraHardwareMap;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
+import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.OPCVFFObjectDetector3;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -118,6 +119,33 @@ public class DetectShippingElement extends LinearOpMode
             telemetry.addData("Theoretical max FPS", robot.webCam.getCurrentPipelineMaxFps());
             telemetry.update();
 
+            OpenCvShippingElementDetector.TSELocation location = detector.getLocation();
+            if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_LEFT) {
+                // Do something with the plane
+                telemetry.addData("We have a", location);
+            }
+            else if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_RIGHT) {
+                // Do something with the plane
+                telemetry.addData("We have a", location);
+            }
+            else if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_MIDDLE) {
+                // Do something with the plane
+                telemetry.addData("We have a", location);
+            }
+            else if (location == OpenCvShippingElementDetector.TSELocation.P2_BLUE_RIGHT) {
+                // Do something with the plane
+                telemetry.addData("We have a", location);
+            }
+            else if (location == OpenCvShippingElementDetector.TSELocation.P2_BLUE_LEFT) {
+                // Do something with the plane
+                telemetry.addData("We have a", location);
+            }
+            else if (location == OpenCvShippingElementDetector.TSELocation.P2_BLUE_MIDDLE) {
+                // Do something with the plane
+                telemetry.addData("We have a", location);
+            }
+
+            
 
             /*
              * For the purposes of this sample, throttle ourselves to 10Hz loop to avoid burning

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.cv;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.DNNObject;
+import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.OPCVFFObjectDetector3;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -19,6 +20,26 @@ import java.util.Random;
 
 public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
+
+
+    public enum TSELocation {
+        P1_RED_LEFT,
+        P1_RED_MIDDLE,
+        P1_RED_RIGHT,
+        P2_RED_LEFT,
+        P2_RED_MIDDLE,
+        P2_RED_RIGHT,
+        P1_BLUE_LEFT,
+        P1_BLUE_MIDDLE,
+        P1_BLUE_RIGHT,
+        P2_BLUE_LEFT,
+        P2_BLUE_MIDDLE,
+        P2_BLUE_RIGHT,
+        NONE
+    }
+
+    TSELocation location;
+
     private int width; // width of the image
     private int height = 240;
     private double inScaleFactor = 0.007843;
@@ -28,8 +49,11 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     private Net net = null;
     private Telemetry telemetry = null;
 
-    private final String[] classNames = {"Background",
-            "Cube", "Duck"};
+    private final String[] classNames = {"background",
+            "p1_blue_right", "p1_blue_left", "p1_blue_middle", "p2_blue_right", "p2_blue_left", "p2_blue_middle" };
+
+
+
 
     private static List<Scalar> colors=new ArrayList<>();
 
@@ -110,6 +134,38 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 telemetry.addData("This is a ", label);
                 telemetry.update();
 
+                switch (label)
+                {
+                    case "p1_blue_left":
+                        location = TSELocation.P1_BLUE_LEFT;
+                        break;
+
+                    case "p1_blue_right":
+                        location = TSELocation.P1_BLUE_RIGHT;
+                        break;
+
+                    case "p1_blue_middle":
+                        location = TSELocation.P1_BLUE_MIDDLE;
+                        break;
+
+                    case "p2_blue_left":
+                        location = TSELocation.P2_BLUE_LEFT;
+                        break;
+
+                    case "p2_blue_right":
+                        location = TSELocation.P2_BLUE_RIGHT;
+                        break;
+
+                    case "p2_blue_middle":
+                        location = TSELocation.P2_BLUE_MIDDLE;
+                        break;
+
+
+
+                    default:
+                        location = TSELocation.NONE;
+                }
+
                 Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);
                 Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 0), 4);
                 Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 255, 255), 2);
@@ -130,6 +186,9 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         int g = random.nextInt(255);
         int b = random.nextInt(255);
         return new Scalar(r,g,b);
-    }
 
+    }
+    public TSELocation getLocation() {
+        return this.location;
+    }
 }
