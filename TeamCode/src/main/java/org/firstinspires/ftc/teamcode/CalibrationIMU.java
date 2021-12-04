@@ -99,7 +99,7 @@ import java.util.Locale;
  * @see <a href="https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST_BNO055_DS000_14.pdf">BNO055 specification</a>
  */
 @TeleOp(name = "IMU Calibration", group = "Calibrate")
-//@Disabled                            // Comment this to add to the opmode list
+@Disabled                            // Comment this to add to the opmode list
 public class CalibrationIMU extends LinearOpMode
     {
     //----------------------------------------------------------------------------------------------

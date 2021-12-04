@@ -73,14 +73,19 @@ public class HardwareBothHubs
     public int          cappingMotorPos  = 0;          // current encoder count
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
 
-    public int          CAPPING_ARM_POS_START       = 0;     // also used for STORE
-    public int          CAPPING_ARM_POS_GRAB        = 2462;
+    public int          CAPPING_ARM_POS_START = 0;     // also used for STORE
+    public int          CAPPING_ARM_POS_GRAB  = 2475;
+    public int          CAPPING_ARM_POS_CAP   = 1600;
+    public int          CAPPING_ARM_POS_STORE = 349;
 
     public int          cappingArmPos = CAPPING_ARM_POS_START;
 
     // CAPPING ARM WRIST SERVO
     public Servo   wristServo = null;
-    public double  WRIST_SERVO_INIT   = 0.95;
+    public double  WRIST_SERVO_INIT   = 0.950;
+    public double  WRIST_SERVO_GRAB   = 0.424;
+    public double  WRIST_SERVO_STORE  = 0.269;
+    public double  WRIST_SERVO_CAP    = 0.133;
 
     public Servo   clawServo = null;
     public double  CLAW_SERVO_INIT   = -0.10;
@@ -97,20 +102,20 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_SPIN       = 50;    // Raised enough for box to spin clearly
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 400;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_TRANSPORT2 = 1350;  // Vertical transport position
-    public int          FREIGHT_ARM_POS_HUB_TOP    = 2100;  // For dumping into hub top level
-    public int          FREIGHT_ARM_POS_HUB_MIDDLE = 2350;  // For dumping into hub middle level
-    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2600;  // For dumping into hub bottom level
+    public int          FREIGHT_ARM_POS_HUB_TOP    = 2000;  // For dumping into hub top level
+    public int          FREIGHT_ARM_POS_HUB_MIDDLE = 2275;  // For dumping into hub middle level
+    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2400;  // For dumping into hub bottom level
     public int          freightArmPos = FREIGHT_ARM_POS_COLLECT;
 
     public Servo        boxServo                   = null;
-    public double       BOX_SERVO_INIT             = 0.50;
-    public double       BOX_SERVO_COLLECT          = 0.50;  // same as init
-    public double       BOX_SERVO_TRANSPORT        = 0.70;
-    public double       BOX_SERVO_DUMP_TOP         = 0.50;
-    public double       BOX_SERVO_DUMP_MIDDLE      = 0.50;
-    public double       BOX_SERVO_DUMP_BOTTOM      = 0.50;
+    public double       BOX_SERVO_INIT             = 0.48;
+    public double       BOX_SERVO_COLLECT          = 0.48;  // same as init
+    public double       BOX_SERVO_TRANSPORT        = 0.28;
+    public double       BOX_SERVO_DUMP_TOP         = 0.48;
+    public double       BOX_SERVO_DUMP_MIDDLE      = 0.48;
+    public double       BOX_SERVO_DUMP_BOTTOM      = 0.48;
 
-    public CRServo      sweepServo                 = null;
+    public CRServo      sweepServo                 = null;  // CONTINUOUS, so no need for fixed positions
 
     //====== NAVIGATION DISTANCE SENSORS =====
 //  private MaxSonarI2CXL sonar_left  = null;
@@ -350,7 +355,8 @@ public class HardwareBothHubs
     /*--------------------------------------------------------------------------------------------*/
     /* cappingArmPosition()                                                                       */
     /* - newPos = desired new arm position                                                        */
-    public void cappingArmPosition( int newPos )
+    /* - motorPower = desired motor power level to get there                                      */
+    public void cappingArmPosition( int newPos, double motorPower )
     {
         // Are we ALREADY  at the specific position?
         if( cappingMotorTgt == newPos )
@@ -370,7 +376,7 @@ public class HardwareBothHubs
         cappingMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
 
         // Initiate motor movement to the new position
-        cappingMotor.setPower( 0.10 );     // 10% power (until we get this code debugged!)
+        cappingMotor.setPower( motorPower );
 
     } // cappingArmPosition
     

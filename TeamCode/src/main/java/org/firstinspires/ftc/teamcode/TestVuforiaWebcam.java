@@ -76,7 +76,7 @@ import java.util.List;
  */
 
 @TeleOp(name="Vuforia Nav (webcam)", group ="Test")
-//@Disabled
+@Disabled
 public class TestVuforiaWebcam extends LinearOpMode {
 
     /*

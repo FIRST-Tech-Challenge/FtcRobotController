@@ -23,6 +23,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -32,7 +35,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
+import org.openftc.easyopencv.OpenCvWebcam;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
@@ -43,10 +46,11 @@ import java.util.List;
  * callback to switch which stage of a pipeline is rendered to the viewport for debugging
  * purposes. We also show how to get data from the pipeline to your OpMode.
  */
-//@TeleOp
+@TeleOp(name="OpenCV Pipeline (webcam)", group ="Test")
+@Disabled
 public class PipelineStageSwitchingExample extends LinearOpMode
 {
-    OpenCvCamera phoneCam;
+    OpenCvWebcam webcam;
     StageSwitchingPipeline stageSwitchingPipeline;
 
     @Override
@@ -60,11 +64,26 @@ public class PipelineStageSwitchingExample extends LinearOpMode
          */
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        phoneCam.openCameraDevice();
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
         stageSwitchingPipeline = new StageSwitchingPipeline();
-        phoneCam.setPipeline(stageSwitchingPipeline);
-        phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.setPipeline(stageSwitchingPipeline);
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
 
         waitForStart();
 
@@ -132,7 +151,8 @@ public class PipelineStageSwitchingExample extends LinearOpMode
              */
             Imgproc.cvtColor(input, yCbCrChan2Mat, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(yCbCrChan2Mat, yCbCrChan2Mat, 2);
-            Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
+//          Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
+            Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 200, 255, Imgproc.THRESH_BINARY_INV);
             Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             numContoursFound = contoursList.size();
             input.copyTo(contoursOnFrameMat);
