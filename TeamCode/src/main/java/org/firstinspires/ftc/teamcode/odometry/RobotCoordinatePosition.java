@@ -28,6 +28,10 @@ public class RobotCoordinatePosition implements IBaseOdometry {
     private double slowdownMarkShort = 0;
     private boolean leftLong;
 
+    private double prevX;    // in Inches
+    private double prevY;    // in Inches
+    private double prevAdjOrientation; // in Degrees 0-360
+
     private String fieldSide = AutoRoute.NAME_RED;
 
     private double robotEncoderWheelDistance;
@@ -184,6 +188,36 @@ public class RobotCoordinatePosition implements IBaseOdometry {
     @Override
     public double getCurrentY() {
         return getY();
+    }
+
+    @Override
+    public double getPreviousX() {
+        return prevX;
+    }
+
+    @Override
+    public double getPreviousY() {
+        return prevY;
+    }
+
+    @Override
+    public double getPreviousAdjHeading() {
+        return prevAdjOrientation;
+    }
+
+    @Override
+    public void setPreviousX(double x) {
+        prevX = x;
+    }
+
+    @Override
+    public void setPreviousY(double y) {
+        prevY = y;
+    }
+
+    @Override
+    public void setPreviousAdjHeading(double heading) {
+        prevAdjOrientation = heading;
     }
 
 

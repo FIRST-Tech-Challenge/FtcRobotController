@@ -301,7 +301,7 @@ public class OdoBase extends LinearOpMode {
         try {
             if (profile != null) {
                 Log.d(TAG, String.format("Diag: %s", profile.toString()));
-                bot.diagTo(profile);
+                bot.diagTo(profile, locator);
             }
         }catch (Exception ex){
             Log.e(TAG, String.format("Diag error: %s", ex.getMessage()));
@@ -319,7 +319,7 @@ public class OdoBase extends LinearOpMode {
         Log.d(TAG, String.format("strafe: %s", profile.toString()));
         double distance = profile.getDistance();
         double angleChange = profile.getAngleChange();
-        bot.strafeToCalib(profile.getTopSpeed(), distance, angleChange > 0, profile.getMotorReduction());
+        bot.strafeToCalib(profile.getTopSpeed(), distance, angleChange > 0, profile.getMotorReduction(), locator);
     }
 
     protected void loadRoute(String routeName){

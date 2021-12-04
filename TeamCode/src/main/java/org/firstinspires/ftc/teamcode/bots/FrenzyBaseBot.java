@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
 import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.skills.Gyroscope;
+import org.opencv.core.Mat;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -293,13 +294,47 @@ public class FrenzyBaseBot implements IOdoBot {
         this.backLeft.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
         this.backRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
 
+
         while (motorsBusy()){
             //wait for at least one motor to stop
             if (!owner.opModeIsActive()){
                 break;
             }
+            //check for obstacles
+            if (hitObstacle(locator)){
+                break;
+            }
         }
         stop();
+    }
+
+    protected boolean hitObstacle(IBaseOdometry locator){
+        if (locator != null){
+            if (runtime == null){
+                runtime  = new ElapsedTime();
+            }
+            if (runtime.milliseconds() > 250) {
+                double curX = locator.getCurrentX();
+                double curY = locator.getCurrentY();
+                double curHead = locator.getAdjustedCurrentHeading();
+                if (Math.abs(locator.getPreviousX() - curX) < 1 &&
+                        Math.abs(locator.getPreviousY() - curY) < 1 &&
+                        Math.abs(locator.getPreviousAdjHeading() - curHead) < 1){
+                    Log.d(TAG, String.format("Obstacle hit. X old: %.2f  X new: %.2f", locator.getPreviousX(), curX));
+                    Log.d(TAG, String.format("Obstacle hit. Y old: %.2f  Y new: %.2f", locator.getPreviousY(), curY));
+                    Log.d(TAG, String.format("Obstacle hit. Heading old: %.2f  new: %.2f", locator.getPreviousAdjHeading(), curHead));
+                    return true;
+                }
+                Log.d(TAG, String.format("Obstacle check. X old: %.2f  X new: %.2f", locator.getPreviousX(), curX));
+                Log.d(TAG, String.format("Obstacle check. Y old: %.2f  Y new: %.2f", locator.getPreviousY(), curY));
+                Log.d(TAG, String.format("Obstacle check. Heading old: %.2f  new: %.2f", locator.getPreviousAdjHeading(), curHead));
+                locator.setPreviousX(curX);
+                locator.setPreviousY(curY);
+                locator.setPreviousAdjHeading(curHead);
+                runtime.reset();
+            }
+        }
+        return false;
     }
 
 
@@ -411,7 +446,7 @@ public class FrenzyBaseBot implements IOdoBot {
     }
 
     @Override
-    public void diagTo(BotMoveProfile profile) {
+    public void diagTo(BotMoveProfile profile, IBaseOdometry locator) {
         if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
             resetEncoders();
 
@@ -440,7 +475,13 @@ public class FrenzyBaseBot implements IOdoBot {
                 this.frontRight.setPower(0);
 
                 while (this.frontLeft.isBusy() && this.backRight.isBusy()){
-
+                    if (!owner.opModeIsActive()){
+                        break;
+                    }
+                    //check for obstacles
+                    if (hitObstacle(locator)){
+                        break;
+                    }
                 }
             } else {
                 this.backLeft.setTargetPosition((int)profile.getLeftTargetBack());
@@ -454,7 +495,13 @@ public class FrenzyBaseBot implements IOdoBot {
                 this.backRight.setPower(0);
 
                 while (this.backLeft.isBusy() && this.frontRight.isBusy()){
-
+                    if (!owner.opModeIsActive()){
+                        break;
+                    }
+                    //check for obstacles
+                    if (hitObstacle(locator)){
+                        break;
+                    }
                 }
             }
             Log.d(TAG, String.format("Moved diag at power %.2f. Left axis: %b.  left pos %d : right pos %d", power, leftAxis, frontLeft.getCurrentPosition(), backRight.getCurrentPosition()));
@@ -476,7 +523,7 @@ public class FrenzyBaseBot implements IOdoBot {
     }
 
     @Override
-    public double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib) {
+    public double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib, IBaseOdometry locator) {
         resetEncoders();
 
         int target = (int)(inches * this.getEncoderCountsPerInch()*this.getEncoderDirection());
@@ -505,6 +552,10 @@ public class FrenzyBaseBot implements IOdoBot {
         this.frontRight.setVelocity(MAX_VELOCITY_GB*speed);
         while (motorsBusy()){
             if (!owner.opModeIsActive()){
+                break;
+            }
+            //check for obstacles
+            if (hitObstacle(locator)){
                 break;
             }
         }
@@ -536,12 +587,12 @@ public class FrenzyBaseBot implements IOdoBot {
 
     public void spin(BotMoveProfile profile, IBaseOdometry locator) {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
-            spinToPos(profile);
+            spinToPos(profile, locator);
         }
     }
 
-    public void spinToPos(BotMoveProfile profile){
-        moveToPos(profile, null);
+    public void spinToPos(BotMoveProfile profile, IBaseOdometry locator){
+        moveToPos(profile, locator);
     }
 
 

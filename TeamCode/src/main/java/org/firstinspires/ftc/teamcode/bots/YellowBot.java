@@ -1207,7 +1207,7 @@ public class YellowBot implements IOdoBot {
     }
 
 
-    public double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib) {
+    public double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib, IBaseOdometry locator) {
         double currentPos = this.getHorizontalOdometer();
         double distance = inches * COUNTS_PER_INCH_REV;
 
@@ -1399,7 +1399,7 @@ public class YellowBot implements IOdoBot {
     }
 
 
-    public void diagTo(BotMoveProfile profile) {
+    public void diagTo(BotMoveProfile profile, IBaseOdometry locator) {
         if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
 
             MotorReductionBot calib = profile.getMotorReduction();

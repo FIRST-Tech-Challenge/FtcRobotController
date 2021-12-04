@@ -1207,7 +1207,7 @@ public class MasterCalib extends LinearOpMode {
 
         double leftOdo = bot.getLeftOdometer();
         double rightOdo = bot.getRightOdometer();
-        bot.strafeToCalib(desiredSpeed, desiredX, true, mrLeft);
+        bot.strafeToCalib(desiredSpeed, desiredX, true, mrLeft, locator);
 
         timer.reset();
         while(timer.milliseconds() < 1000 && opModeIsActive()){
@@ -1233,7 +1233,7 @@ public class MasterCalib extends LinearOpMode {
         leftOdo = bot.getLeftOdometer();
         rightOdo = bot.getRightOdometer();
 
-        bot.strafeToCalib(desiredSpeed, desiredX, false, mrRight);
+        bot.strafeToCalib(desiredSpeed, desiredX, false, mrRight,  locator);
 
         timer.reset();
         while(timer.milliseconds() < 1000 && opModeIsActive()){

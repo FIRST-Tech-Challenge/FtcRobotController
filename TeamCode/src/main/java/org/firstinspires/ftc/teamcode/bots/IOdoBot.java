@@ -34,10 +34,10 @@ public interface IOdoBot {
     void strafeLeft(double speed);
     void move(double drive, double turn);
     void moveTo(BotMoveProfile profile);
-    void diagTo(BotMoveProfile profile);
+    void diagTo(BotMoveProfile profile, IBaseOdometry locator);
     void initDetectorThread(String side, LinearOpMode caller);
     void stopDetection();
-    double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib);
+    double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib, IBaseOdometry locator);
     void addNamedCoordinate(AutoDot dot);
     double getGyroHeading();
     RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint, IBaseOdometry locator);

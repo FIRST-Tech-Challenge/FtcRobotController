@@ -50,6 +50,11 @@ public class VSlamOdometry implements IBaseOdometry {
     private double currentOrientation; // in Degrees
     private double initialOrientation; // in Degrees
 
+
+    private double prevX;    // in Inches
+    private double prevY;    // in Inches
+    private double prevAdjOrientation; // in Degrees 0-360
+
     private double originalX;    // in Inches
     private double originalY;    // in Inches
 
@@ -140,6 +145,36 @@ public class VSlamOdometry implements IBaseOdometry {
     @Override
     public double getCurrentY() {
         return currentY;
+    }
+
+    @Override
+    public double getPreviousX() {
+        return prevX;
+    }
+
+    @Override
+    public double getPreviousY() {
+        return prevY;
+    }
+
+    @Override
+    public double getPreviousAdjHeading() {
+        return prevAdjOrientation;
+    }
+
+    @Override
+    public void setPreviousX(double x) {
+        prevX = x;
+    }
+
+    @Override
+    public void setPreviousY(double y) {
+        prevY = y;
+    }
+
+    @Override
+    public void setPreviousAdjHeading(double heading) {
+        prevAdjOrientation = heading;
     }
 
 //    protected double adjustXCoordinate(double rawX){

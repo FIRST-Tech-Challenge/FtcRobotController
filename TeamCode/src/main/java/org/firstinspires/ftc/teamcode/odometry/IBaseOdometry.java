@@ -33,7 +33,38 @@ public interface IBaseOdometry extends Runnable {
      */
     double getCurrentY();
 
-     void reverseHorEncoder();
+    /**
+    Retrieve an earlier X coordinate value
+     **/
+    double getPreviousX();
+
+    /**
+     Retrieve an earlier Y coordinate value
+     **/
+    double getPreviousY();
+
+    /**
+     Retrieve an earlier heading value
+     **/
+    double getPreviousAdjHeading();
+
+    /**
+     Placeholder to record an earlier X coordinate value
+     **/
+    void setPreviousX(double x);
+
+    /**
+     Placeholder to record an earlier Y coordinate value
+     **/
+    void setPreviousY(double y);
+
+    /**
+     Placeholder to record an earlier heading value
+     **/
+    void setPreviousAdjHeading(double heading);
+
+
+    void reverseHorEncoder();
 
     void setPersistPosition(boolean persistPosition);
 
