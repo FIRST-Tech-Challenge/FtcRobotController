@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.Test;
+package org.firstinspires.ftc.teamcode.Carousel;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class CarouselPseudocode {
+public class Carousel {
     private DcMotor carouselTurningMotor;
     private DigitalChannel touchSensor;
 
     // Constructor
-    public CarouselPseudocode(HardwareMap hardwareMap) {
+    public Carousel(HardwareMap hardwareMap) {
         carouselTurningMotor = hardwareMap.dcMotor.get("carouselTurningMotor");
         touchSensor = hardwareMap.digitalChannel.get("carouselTouchSensor");
 

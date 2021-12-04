@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  */
 @TeleOp
         (name = "madnessAutonomous", group = "Concept")
-public class AutonomousCode                                extends LinearOpMode {
+public class AutonomousCodeRed extends LinearOpMode {
     /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
      * the following 4 detectable objects
      *  0: Ball,
