@@ -2,21 +2,28 @@ package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils;
 
 public class TrikeChassisMovementCalc {
 
-    private double inputForwardDist = 0;
-    private double inputRotateAmount = 0;
-    private double inputLengthOfBot = 0;
+    private double startingAngle = 0.0;
+    private double inputForwardDist = 0.0;
+    private double inputRotateAmount = 0.0;
+    private double currentLengthOfBot = 0.0;
+    private double requestedLengthOfBot = 0.0;
 
-    public TrikeChassisMovementCalc(double inputForwardDist, double inputRotateAmount, double inputLengthOfBot){
+
+    public TrikeChassisMovementCalc(double startingAngle, double inputForwardDist, double inputRotateAmount, double currentLengthOfBot, double requestedLengthOfBot){
+        this.startingAngle = toRad(startingAngle);
         this.inputForwardDist = inputForwardDist;
         this.inputRotateAmount = inputRotateAmount;
-        this.inputLengthOfBot = -inputLengthOfBot; //this needs to be negative to be compatible with the calculations
+        this.currentLengthOfBot = -abs(currentLengthOfBot); //this needs to be negative to be compatible with the calculations
+        this.requestedLengthOfBot = -abs(requestedLengthOfBot); //this needs to be negative to be compatible with the calculations
         redoCalcs();
     }
 
-    public void updateVals(double inputForwardDist, double inputRotateAmount, double inputLengthOfBot){
+    public void updateVals(double startingAngle, double inputForwardDist, double inputRotateAmount, double currentLengthOfBot, double requestedLengthOfBot){
+        this.startingAngle = toRad(startingAngle);
         this.inputForwardDist = inputForwardDist;
         this.inputRotateAmount = inputRotateAmount;
-        this.inputLengthOfBot = -inputLengthOfBot; //this needs to be negative to be compatible with the calculations
+        this.currentLengthOfBot = -abs(currentLengthOfBot); //this needs to be negative to be compatible with the calculations
+        this.requestedLengthOfBot = -abs(requestedLengthOfBot); //this needs to be negative to be compatible with the calculations
         redoCalcs();
     }
 
@@ -42,17 +49,19 @@ public class TrikeChassisMovementCalc {
         newRightWheelPoint[0] = -Constants.radiusOfDiff * cos(requestedAngle + r90) + inputForwardDist * cos(requestedAngle);
         newRightWheelPoint[1] = -Constants.radiusOfDiff * sin(requestedAngle + r90) + inputForwardDist * sin(requestedAngle);
 
-        newSwerveWheelPoint[0] = .5 * (newRightWheelPoint[0] + newLeftWheelPoint[0]) + inputLengthOfBot * cos(requestedAngle);
-        newSwerveWheelPoint[1] = .5 * (newRightWheelPoint[1] + newLeftWheelPoint[1]) + inputLengthOfBot * sin(requestedAngle);
+        newSwerveWheelPoint[0] = .5 * (newRightWheelPoint[0] + newLeftWheelPoint[0]) + requestedLengthOfBot * cos(requestedAngle);
+        newSwerveWheelPoint[1] = .5 * (newRightWheelPoint[1] + newLeftWheelPoint[1]) + requestedLengthOfBot * sin(requestedAngle);
 
         oldSwerveWheelPoint[0] = 0.0;
-        oldSwerveWheelPoint[1] = inputLengthOfBot;
+        oldSwerveWheelPoint[1] = currentLengthOfBot;
 
         calcdLeftDist = sqrt(sqr(newLeftWheelPoint[0] + Constants.radiusOfDiff) + sqr(newLeftWheelPoint[1]));
         calcdRightDist = sqrt(sqr(newRightWheelPoint[0] - Constants.radiusOfDiff) + sqr(newRightWheelPoint[1]));
         calcdSwerveDist = sqrt(sqr(newSwerveWheelPoint[0] - oldSwerveWheelPoint[0]) + sqr(newSwerveWheelPoint[1] - oldSwerveWheelPoint[1]));
         calcdSwerveAngle = asin(newSwerveWheelPoint[0] / calcdSwerveDist);
     }
+
+    public double[] getCalcdDistance(){double[] dists = {calcdLeftDist, calcdRightDist, calcdSwerveDist};return dists;}
 
 
 
@@ -93,4 +102,5 @@ public class TrikeChassisMovementCalc {
     private double sqrt(double a){return Math.sqrt(a);}
     private double sqr(double a){return Math.pow(a,2);}
     private double asin(double a){return Math.asin(a);}
+    private double abs(double a){return  Math.abs(a);}
 }

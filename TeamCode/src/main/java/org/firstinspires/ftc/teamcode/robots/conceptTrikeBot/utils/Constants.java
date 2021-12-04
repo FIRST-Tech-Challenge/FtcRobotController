@@ -11,6 +11,12 @@ public class Constants {
     public static int ALLIANCE_INT_MOD = 1;
     public static int numGameStates = 10;
 
+    public static double startingAngle = 0.0;
+    public static double inputForwardDist = 0.0;
+    public static double inputRotateAmount = 0.0;
+    public static double currentLengthOfBot = 0.0;
+    public static double requestedLengthOfBot = 0.0;
+
     //robot constants
     public static double swerveAngleTicksPerDegree = 0;
     public static double maxForwardSpeed = 1.2;

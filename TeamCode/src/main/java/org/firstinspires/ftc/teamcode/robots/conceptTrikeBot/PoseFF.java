@@ -28,6 +28,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
 
+import static org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.diffAngle2;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
@@ -201,7 +202,7 @@ public class PoseFF {
         poseSpeed = 0;
         posePitch = 0;
         poseRoll = 0;
-
+        setupDriverTelemetry();
         currentBot = name;
     }
 
@@ -497,8 +498,15 @@ public class PoseFF {
         sendTelemetry();
     }
 
+    TrikeChassisMovementCalc telemTest = new TrikeChassisMovementCalc(0,0,0,0,0);
+
     //Pose version of sending telem to the phone. use this for sensors
     public void setupDriverTelemetry(){
+        telemTest.updateVals(Constants.startingAngle, Constants.inputForwardDist, Constants.inputRotateAmount, Constants.currentLengthOfBot, Constants.requestedLengthOfBot);
+        telemetry.addLine().addData("leftVectorDist", () -> telemTest.getCalcdDistance()[0]);
+        telemetry.addLine().addData("rightVectorDist", () -> telemTest.getCalcdDistance()[1]);
+        telemetry.addLine().addData("leftVectorDist", () -> telemTest.getCalcdDistance()[2]);
+        telemetry.addLine().addData("swerveAngle", () -> telemTest.getNewSwerveAngle());
     }
 
 
@@ -803,7 +811,7 @@ public class PoseFF {
     double newCalcDistForward = 0; // normalized input values to pass into the calculator
     double newRotateAmount = 0;
 
-    TrikeChassisMovementCalc chassisCalc = new TrikeChassisMovementCalc(0,0, 0); //todo- change the input length to the starting length
+    TrikeChassisMovementCalc chassisCalc = new TrikeChassisMovementCalc(0,0,0, 0,0); //todo- change the input length to the starting length
 
     public void driveMixerTrike(double forward, double rotate){
         //normalize inputs
@@ -811,7 +819,7 @@ public class PoseFF {
         newRotateAmount = rotate * Constants.maxRotateSpeed * loopTime;
 
         //updates the calc, triggers re-do of calcs
-        chassisCalc.updateVals(newCalcDistForward, newRotateAmount, lengthOfRobot);
+        chassisCalc.updateVals(0,newCalcDistForward, newRotateAmount, lengthOfRobot, lengthOfRobot); //todo- change the last variable to something else
 
         //set the motor speed to the calc's returned speed
         motorFrontLeft.setVelocity(chassisCalc.getRelMotorVels(loopTime)[0], AngleUnit.RADIANS);
