@@ -252,10 +252,10 @@ public class Robot_2022FF {
      * @param power power for motors
      * */
     public void turnClockwise(double power){
-        motorFrontLeft.setPower(-power);//??? may need to flip?////////////////////////////////////////////
-        motorBackLeft.setPower(-power);
-        motorFrontRight.setPower(power);
-        motorBackRight.setPower(power);
+        motorFrontLeft.setPower(power);
+        motorBackLeft.setPower(power);
+        motorFrontRight.setPower(-power);
+        motorBackRight.setPower(-power);
     }
 
     /**
@@ -263,10 +263,10 @@ public class Robot_2022FF {
      * @param power power for motors
      */
     public void turnCounterClockwise(double power){
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-        motorFrontRight.setPower(-power);
-        motorBackRight.setPower(-power);
+        motorFrontLeft.setPower(-power);
+        motorBackLeft.setPower(-power);
+        motorFrontRight.setPower(power);
+        motorBackRight.setPower(power);
     }
 
     /**
@@ -298,14 +298,14 @@ public class Robot_2022FF {
 
         //Rotate until current angle is equal to the target angle
         if (degrees < 0){
-            while (opMode.opModeIsActive() && getAngle() > degrees){
+            while (opMode.opModeIsActive() && getAngle() > degrees+10){
                 composeAngleTelemetry();
                 //display the target angle
                 telemetry.addData("Target angle", degrees);
                 telemetry.update();
             }
         }else{
-            while (opMode.opModeIsActive() && getAngle() < degrees) {
+            while (opMode.opModeIsActive() && getAngle() < degrees-10) {
                 composeAngleTelemetry();
                 //display the target angle
                 telemetry.addData("Target angle", degrees);

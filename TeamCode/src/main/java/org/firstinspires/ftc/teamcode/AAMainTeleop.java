@@ -4,11 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "skinny robot")
-public class skinnyrobot extends LinearOpMode {
-    private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight, motorIntake;
+import org.firstinspires.ftc.robotcore.internal.ftdi.eeprom.FT_EEPROM_232H;
+
+@TeleOp(name = "Main Teleop")
+public class AAMainTeleop extends LinearOpMode {
+    private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight, motorIntake, motorOuttake;
     private CRServo servoDuck;
+    private Servo bucket;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -17,7 +21,9 @@ public class skinnyrobot extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
         motorIntake = hardwareMap.dcMotor.get("intake");
+        motorOuttake = hardwareMap.dcMotor.get("outtake");
         servoDuck = hardwareMap.crservo.get("duck");
+        bucket = hardwareMap.servo.get("bucket");
 
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -28,7 +34,7 @@ public class skinnyrobot extends LinearOpMode {
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        double powerMod = 1.0;
+        double powerMod;
 
         waitForStart();
 
@@ -39,16 +45,21 @@ public class skinnyrobot extends LinearOpMode {
             }else{
                 powerMod = 1.0;
             }
+            //gamepad 2 does duck, bucket, and outtake. trigger for duck, bucket dpad, outtake joystick
 
             motorIntake.setPower(gamepad1.left_trigger);
             motorIntake.setPower(-gamepad1.right_trigger);
 
-            if (gamepad1.left_bumper) {
-                servoDuck.setPower(powerMod);
+            servoDuck.setPower(gamepad2.left_trigger);
+
+            if(gamepad2.dpad_up){
+                bucket.setPosition(bucket.getPosition()+0.01);
             }
-            else {
-                servoDuck.setPower(0);
+            if(gamepad2.dpad_down){
+                bucket.setPosition(bucket.getPosition()-0.01);
             }
+
+            motorOuttake.setPower(gamepad2.right_stick_y);
 
             double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + (Math.PI/4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
