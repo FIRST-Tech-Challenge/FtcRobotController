@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.mentor.samples.SkystoneDetector.SkystoneDetector;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -17,6 +18,31 @@ import java.util.List;
 import java.util.Random;
 
 public class OPCVFFObjectDetector3 extends OpenCvPipeline {
+
+    enum TSELocation {
+        PLANE,
+        SHIP,
+        SIDE_TRUCK,
+        FRONT_TRUCK,
+        NONE
+    }
+    /*enum TSELocation {
+        RED_P1_LEFT,
+        RED_P1_MIDDLE,
+        RED_P1_RIGHT,
+        RED_P2_LEFT,
+        RED_P2_MIDDLE,
+        RED_P2_RIGHT,
+        BLUE_P1_LEFT,
+        BLUE_P1_MIDDLE,
+        BLUE_P1_RIGHT,
+        BLUE_P2_LEFT,
+        BLUE_P2_MIDDLE,
+        BLUE_P2_RIGHT,
+        NONE
+    }*/
+
+    TSELocation location;
 
     private int width; // width of the image
     private int height = 240;
@@ -109,6 +135,28 @@ public class OPCVFFObjectDetector3 extends OpenCvPipeline {
                 telemetry.addData("This is a ", label);
                 telemetry.update();
 
+                switch (label)
+                {
+                    case "Plane":
+                        location = TSELocation.PLANE;
+                        break;
+
+                    case "Ship":
+                        location = TSELocation.SHIP;
+                        break;
+
+                    case "Front_Truck":
+                        location = TSELocation.FRONT_TRUCK;
+                        break;
+
+                    case "Side_Truck":
+                        location = TSELocation.SIDE_TRUCK;
+                        break;
+
+                    default:
+                        location = TSELocation.NONE;
+                }
+
                 Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);
                 Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 0), 4);
                 Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 255, 255), 2);
@@ -129,6 +177,10 @@ public class OPCVFFObjectDetector3 extends OpenCvPipeline {
         int g = random.nextInt(255);
         int b = random.nextInt(255);
         return new Scalar(r,g,b);
+    }
+
+    public TSELocation getLocation() {
+        return this.location;
     }
 
 }
