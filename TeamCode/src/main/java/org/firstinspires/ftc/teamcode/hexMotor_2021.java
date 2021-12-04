@@ -41,10 +41,11 @@ public class hexMotor_2021 extends LinearOpMode {
         } else {
             MotEncoderPosition = 0;
         }
+
         motor.setTargetPosition(MotEncoderPosition);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Switch to RUN_TO_POSITION mode
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Start the motor moving by setting the max velocity to 200 ticks per second
         motor.setPower(.5);
