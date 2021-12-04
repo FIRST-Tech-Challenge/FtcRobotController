@@ -1,0 +1,45 @@
+
+//If team element and shipping element can be detected
+    Autonomous CodeRed:
+        1. Detect Team Element and put into the wobble goal
+        2. Rotate 90 degrees clockwise(facing shipping depot), and drive through the bar until it detects shipping element
+        3. Put shipping element into the team wobble goal
+        4. Rotate 180 degrees and drive until the 2 touch sensors are touching the walls and the distance between the robot and carousel is (XXX)
+        5. Spin Duck out of Carousel
+        6. Rotate 90 degrees clockwise
+        7. Drive into parking.
+
+//If team eleemnt cannot be detected, but shipping elements can
+    AutonomousCodeBlue:
+        1. Rotate 90 degrees clockwise(facing shipping depot), and drive through the bar until it detects shipping element
+        2. Put shipping element into the team wobble goal
+        3. Rotate 180 degrees and drive until the 2 touch sensors are touching the walls and the distance between the robot and carousel is (XXX)
+        4. Spin Duck out of Carousel
+        5. Rotate 90 degrees clockwise
+        6. Drive into parking.
+
+//If neither team or shipping element can be detected
+    AutonomousCodeGreen
+        1. Rotate 90 degrees counterclockwise
+        2. Drive until the 2 touch sensors are touching the walls and the distance between the robot and carousel is (XXX)
+        3. Spin Duck out of Carousel
+        4. Rotate 90 degrees clockwise
+        5. Drive into parking.
+
+//If you want to switch the order
+    //If team element and shipping element can be detected
+    AutonomousCodeRedVariant2
+        1. Detect Team Element and put into the wobble goal
+        2. Rotate 125 degrees counterclockwise(facing carousel), and drive until the 2 touch sensors are touching the walls and the distance between the robot and carousel is (XXX)
+        5. Spin Duck out of Carousel
+        6. Rotate 90 degrees clockwise
+        7. Drive into parking.
+
+    AutonomousCodeRedVariant3
+        1. Detect Team Element and put into the wobble goal
+        2. Rotate 125 degrees counterclockwise(facing carousel), and drive until the 2 touch sensors are touching the walls and the distance between the robot and carousel is (XXX)
+        5. Spin Duck out of Carousel
+        6. Rotate 120 degrees clockwise
+        7. Drive into shipping depot.
+        8. Put shipping element into the team wobble goal
+
