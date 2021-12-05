@@ -115,7 +115,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             if (targetAngle > 0) {
                 driveTank(Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER),
                         Math.min((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER * -1));
-            } else {
+            } else if (targetAngle < 0) {
                 driveTank(Math.min((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER * -1),
                         Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER));
             }

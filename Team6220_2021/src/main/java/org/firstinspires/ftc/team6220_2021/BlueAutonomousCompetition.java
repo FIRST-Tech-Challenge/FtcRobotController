@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "BlueAutonomous Competition", group = "Concept")
+@Autonomous(name = "Blue Autonomous Competition", group = "Competition")
 public class BlueAutonomousCompetition extends MasterAutonomous {
     private static final String TFOD_MODEL_ASSET = "model_20211128_184150.tflite";
     private static final String[] LABELS = {"TSE"};
