@@ -25,8 +25,8 @@ public class OpenCVtest extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.setPipeline(pipeline);
                 camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+                camera.setPipeline(pipeline);
                 telemetry.addData("OpenCV","OpenCV actually connected wow");
                 telemetry.update();
             }

@@ -11,17 +11,16 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 class tsePipeline extends OpenCvPipeline {
     private Mat output = new Mat();
-
-    private static final Rect LEFT_SQUARE = new Rect( //Placeholder, TBD
-        new Point(50,100), new Point(250,250)
+    private static final Rect LEFT_SQUARE = new Rect(
+        new Point(60,60), new Point(180,420)
     );
 
-    private static final Rect RIGHT_SQUARE = new Rect( //Same here
-            new Point(400,100), new Point(200,250)
+    private static final Rect RIGHT_SQUARE = new Rect(
+            new Point(240,60), new Point(360,420)
     );
 
     private static final Rect RIGHTEST_SQUARE = new Rect(
-      new Point(25,25), new Point(125,50)
+      new Point(420,60), new Point( 540,420)
     );
 
     private static double THRESHOLD = 0.4;
@@ -38,18 +37,24 @@ class tsePipeline extends OpenCvPipeline {
         ALLIANCE_THIRD
     }
 
+    private Scalar lowHSV = new Scalar(120, 25, 62);
+    private Scalar highHSV = new Scalar(120,100,54);
+    private double firstConf = 0.0;
+    private double secondConf = 0.0;
+    private boolean tseFirst = false;
+    private boolean tseSecond = false;
+    Scalar detectedColor = new Scalar(0,255,0);
+    Scalar none = new Scalar(255,0,0);
+
     private LOCATION location;
 
     @Override
     public Mat processFrame(Mat input) {
-        output.release();
         Imgproc.cvtColor(input,output,Imgproc.COLOR_RGB2HSV);
-        input.release();
         telemetry.addData("Pipeline Status","Setup Complete");
         telemetry.update();
 
-        Scalar lowHSV = new Scalar(120, 25, 62);
-        Scalar highHSV = new Scalar(120,100,54);
+
 
         Core.inRange(output,lowHSV,highHSV,output);
         telemetry.addData("Pipeline Status","InRange Conv. Completed");
@@ -60,8 +65,8 @@ class tsePipeline extends OpenCvPipeline {
         telemetry.addData("Pipeline Status","Submats Computed");
         telemetry.update();
 
-        double firstConf = Core.sumElems(first).val[0] / LEFT_SQUARE.area()/255;
-        double secondConf = Core.sumElems(second).val[0] / RIGHT_SQUARE.area()/255;
+        firstConf = Core.sumElems(first).val[0] / LEFT_SQUARE.area()/255;
+        secondConf = Core.sumElems(second).val[0] / RIGHT_SQUARE.area()/255;
 
         telemetry.addData("Pipeline Status","Confidences Ascertained");
         telemetry.update();
@@ -73,11 +78,15 @@ class tsePipeline extends OpenCvPipeline {
         telemetry.addData("Right",(int) Core.sumElems(second).val[0]);
         telemetry.addData("LeftP(%.2f)",firstConf*100);
         telemetry.addData("RightP(%.2f)",secondConf*100);
-        telemetry.addData("OpenCV Status","Values Broadcasted via Telemetry");
+        telemetry.addData("Telemetry Status","Values Broadcasted via Telemetry");
         telemetry.update();
 
-        boolean tseFirst = firstConf > THRESHOLD;
-        boolean tseSecond = secondConf > THRESHOLD;
+        tseFirst = firstConf > THRESHOLD;
+        tseSecond = secondConf > THRESHOLD;
+
+        telemetry.addData("Yop?",tseFirst);
+        telemetry.addData("Yop2?",tseSecond);
+        telemetry.update();
 
         if(tseFirst) {
             location = LOCATION.ALLIANCE_FIRST;
@@ -96,8 +105,7 @@ class tsePipeline extends OpenCvPipeline {
 
         Imgproc.cvtColor(output, output, Imgproc.COLOR_GRAY2RGB);
 
-        Scalar detectedColor = new Scalar(0,255,0);
-        Scalar none = new Scalar(255,0,0);
+
         telemetry.addData("OpenCV Status","Final Conversion + Color Complete");
         telemetry.update();
 
@@ -107,6 +115,9 @@ class tsePipeline extends OpenCvPipeline {
         telemetry.addData("OpenCV Status","Rectangles Drawn");
         telemetry.update();
         System.gc();
+        telemetry.addData("Input Frame Size",input.rows()+" x "+input.cols());
+        telemetry.addData("Output Frame Size", output.rows()+" x "+output.cols());
+        telemetry.update();
 
         return output;
     }
