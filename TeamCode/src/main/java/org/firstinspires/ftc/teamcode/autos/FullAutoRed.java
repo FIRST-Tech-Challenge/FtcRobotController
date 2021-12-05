@@ -76,9 +76,9 @@ public class FullAutoRed extends LinearOpMode {
 
         // Drive to the the shipping hub
         chassis.moveBackwardWithEncoders(0.6,100);
-        delay(250);
+        delay(300);
         chassis.strafeLeftWithEncoders(0.6,1050);
-        delay(250);
+        delay(300);
         chassis.moveBackwardWithEncoders(0.6,650);
 
         // Deposit the box on the correct level
@@ -114,7 +114,7 @@ public class FullAutoRed extends LinearOpMode {
         chassis.moveForwardWithEncoders(0.6,250);
         chassis.rotate(-90,0.5);
         chassis.moveBackwardWithEncoders(0.3,600);
-        chassis.moveForwardWithEncoders(1, 5400);
+        chassis.moveForwardWithEncoders(0.6, 5500);
     }
 
     public void delay(int time) {
