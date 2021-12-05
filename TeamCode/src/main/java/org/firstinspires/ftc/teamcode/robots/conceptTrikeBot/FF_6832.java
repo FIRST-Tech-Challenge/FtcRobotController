@@ -258,15 +258,15 @@ public class FF_6832 extends OpMode {
     @Override
     public void init() {
         //important instantiation
-        robot = new PoseFF(currentBot, dummyT);
+        robot = new PoseFF(currentBot);
         auto = new Autonomous(robot, dummyT);
         logger = new CsvLogKeeper("test",3,"tps, armTicks, targetDistance");
 
         //initializaion method calls
-        robot.init(this.hardwareMap);
+        robot.init(this.hardwareMap, telemetry);
         robot.resetMotors(true);
         auto.visionProviderFinalized = false;
-        configureDriverTelemetry();
+        robot.setupDriverTelemetry(active, state, ALLIANCE, loopAvg);
         telemetry.update();
     }
 
@@ -452,15 +452,5 @@ public class FF_6832 extends OpMode {
         else
             buttonSavedStates2[buttonIndex] = false;
         return false; // not pressed
-    }
-
-    //This is here because the variables sent can't be accessed by PoseFF
-    private void configureDriverTelemetry() {
-        //THERE SHOULD BE NOTHING ADDED HERE. IF YOU NEED TO ADD OTHER TELEMETRY,
-        //DO IT IN THE POSE VERSION OF THIS METHOD.
-        telemetry.addLine().addData("active", () -> active);
-        telemetry.addLine().addData("state", () -> state);
-        telemetry.addLine().addData("Alliance", () -> ALLIANCE);
-        telemetry.addLine().addData("Loop time", "%.0fms", () -> loopAvg / 1000000);
     }
 }

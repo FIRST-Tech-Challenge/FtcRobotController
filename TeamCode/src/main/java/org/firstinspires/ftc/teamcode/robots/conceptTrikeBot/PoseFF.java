@@ -28,7 +28,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
 
-import static org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants.ALLIANCE;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.diffAngle2;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
@@ -194,15 +193,13 @@ public class PoseFF {
     //////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    public PoseFF(RobotType name, Telemetry telemetry) {
-
+    public PoseFF(RobotType name) {
         poseX = Constants.startingXOffset;
         poseY = Constants.startingYOffset;
         poseHeading = 0;
         poseSpeed = 0;
         posePitch = 0;
         poseRoll = 0;
-        setupDriverTelemetry();
         currentBot = name;
     }
 
@@ -219,8 +216,9 @@ public class PoseFF {
      *
      * @param ahwMap Given hardware map
      */
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap, Telemetry telemetry) {
         hwMap = ahwMap;
+        this.telemetry = telemetry;
         /*
          * eg: Initialize the hardware variables. Note that the strings used here as
          * parameters to 'get' must correspond to the names assigned during the robot
@@ -363,6 +361,25 @@ public class PoseFF {
 
         Point posePoint = new Point(getPoseX(), getPoseY());
 
+        telemTest.updateVals(Constants._t, Constants._q, Constants._n, Constants._e, Constants._m);
+        Point leftWheelOld = new Point(telemTest.A[0], telemTest.A[1]);
+        Point rightWheelOld = new Point(telemTest.B[0], telemTest.B[1]);
+        Point swerveWheelOld = new Point(telemTest.C[0], telemTest.C[1]);
+
+        Point leftWheelNew = new Point(telemTest.W[0], telemTest.W[1]);
+        Point rightWheelNew = new Point(telemTest.Z[0], telemTest.Z[1]);
+        Point swerveWheelNew = new Point(telemTest.T[0], telemTest.T[1]);
+
+        fieldOverlay.setStroke("#000000");
+        fieldOverlay.strokeLine(leftWheelOld.getX(), leftWheelOld.getY(), rightWheelOld.getX(), rightWheelOld.getY());
+        fieldOverlay.strokeLine(rightWheelOld.getX(), rightWheelOld.getY(), swerveWheelOld.getX(), swerveWheelOld.getY());
+        fieldOverlay.strokeLine(swerveWheelOld.getX(), swerveWheelOld.getY(), leftWheelOld.getX(), leftWheelOld.getY());
+
+        fieldOverlay.setStroke("#4D934D");
+        fieldOverlay.strokeLine(leftWheelNew.getX(), leftWheelNew.getY(), rightWheelNew.getX(), rightWheelNew.getY());
+        fieldOverlay.strokeLine(rightWheelNew.getX(), rightWheelNew.getY(), swerveWheelNew.getX(), swerveWheelNew.getY());
+        fieldOverlay.strokeLine(swerveWheelNew.getX(), swerveWheelNew.getY(), leftWheelNew.getX(), leftWheelNew.getY());
+
         // goal location
         // robot location
         Point robotCanvasPoint = CanvasUtils.toCanvasPoint(posePoint);
@@ -494,15 +511,20 @@ public class PoseFF {
         lastUpdateTimestamp = System.nanoTime();
 
         telemetry.update();
-
         sendTelemetry();
     }
 
     TrikeChassisMovementCalc telemTest = new TrikeChassisMovementCalc(0,0,0,0,0);
 
     //Pose version of sending telem to the phone. use this for sensors
-    public void setupDriverTelemetry(){
-        telemTest.updateVals(Constants.startingAngle, Constants.inputForwardDist, Constants.inputRotateAmount, Constants.currentLengthOfBot, Constants.requestedLengthOfBot);
+    public void setupDriverTelemetry(boolean active, int state, Constants.Alliance ALLIANCE, double loopAvg){
+        //game variables
+        telemetry.addLine().addData("active", () -> active);
+        telemetry.addLine().addData("state", () -> state);
+        telemetry.addLine().addData("Alliance", () -> ALLIANCE);
+        telemetry.addLine().addData("Loop time", "%.0fms", () -> loopAvg / 1000000);
+
+        //robot variables
         telemetry.addLine().addData("leftVectorDist", () -> telemTest.getCalcdDistance()[0]);
         telemetry.addLine().addData("rightVectorDist", () -> telemTest.getCalcdDistance()[1]);
         telemetry.addLine().addData("leftVectorDist", () -> telemTest.getCalcdDistance()[2]);

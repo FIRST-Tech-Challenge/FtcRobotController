@@ -46,8 +46,8 @@ public class JankTrikeOpMode extends OpMode
         swerve  = hardwareMap.get(DcMotor.class, "swerve");
         swerveAngle = hardwareMap.get(DcMotor.class, "swerveAngle");
 
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         swerve.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         swerveAngle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -124,6 +124,8 @@ public class JankTrikeOpMode extends OpMode
 
         // Show the elapsed game time and wheel power.\q
         telemetry.addData("Motors", leftPower);
+        telemetry.addData("ticksLeft", leftDrive.getCurrentPosition());
+        telemetry.addData("ticksLeft", rightDrive.getCurrentPosition());
     }
 
     /*
