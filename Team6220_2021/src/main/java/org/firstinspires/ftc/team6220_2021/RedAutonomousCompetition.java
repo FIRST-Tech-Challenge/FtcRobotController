@@ -12,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "Autonomous Competition", group = "Concept")
-public class AutonomousCompetition extends MasterAutonomous {
+@Autonomous(name = "RedAutonomous Competition", group = "Concept")
+public class RedAutonomousCompetition extends MasterAutonomous {
     private static final String TFOD_MODEL_ASSET = "model_20211128_184150.tflite";
     private static final String[] LABELS = {"TSE"};
     private static final String VUFORIA_KEY = "AXDNhID/////AAABmTzx9+zSP0cgsSvEBLeS2Y9I1y9lY1nEbJ" +
@@ -30,6 +30,7 @@ public class AutonomousCompetition extends MasterAutonomous {
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() {
+        Initialize();
         initVuforia();
         initTfod();
 
@@ -74,27 +75,77 @@ public class AutonomousCompetition extends MasterAutonomous {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+                // close grabber to fully closed
+
                 switch (barcode) {
                     case 0:
-                        // left barcode code
                         telemetry.addData("barcode: ", barcode);
                         telemetry.update();
+
+                        // lift arm to 1st level
+                        driveInches(6, 0.5, true);
+                        turnDegrees(60);
+                        driveInches(48 / Math.sqrt(3), 0.75, true);
+                        turnDegrees(-60);
+                        // move forward if necessary
+                        // open grabber
+                        driveInches(-40, 1.0, false);
+                        // raise arm to max position
+                        driveInches(4, 0.5, true);
+                        turnDegrees(-90);
+                        driveInches(50, 1.0, true);
+                        // spin carousel
+                        driveInches(4, 0.5, false);
+                        turnDegrees(180);
+                        driveInches(96, 1, true);
                         break;
 
                     case 1:
-                        // center barcode code
                         telemetry.addData("barcode: ", barcode);
                         telemetry.update();
+
+                        // lift arm to 2nd level
+                        driveInches(6, 0.5, true);
+                        turnDegrees(60);
+                        driveInches(48 / Math.sqrt(3), 0.75, true);
+                        turnDegrees(-60);
+                        // move forward if necessary
+                        // open grabber
+                        driveInches(-40, 1.0, false);
+                        // raise arm to max position
+                        driveInches(4, 0.5, true);
+                        turnDegrees(-90);
+                        driveInches(50, 1.0, true);
+                        // spin carousel
+                        driveInches(4, 0.5, false);
+                        turnDegrees(180);
+                        driveInches(96, 1, true);
                         break;
 
                     case 2:
-                        // right barcode code
                         telemetry.addData("barcode: ", barcode);
                         telemetry.update();
+
+                        // lift arm to 3rd level
+                        driveInches(6, 0.5, true);
+                        turnDegrees(60);
+                        driveInches(48 / Math.sqrt(3), 0.75, true);
+                        turnDegrees(-60);
+                        // move forward if necessary
+                        // open grabber
+                        driveInches(-40, 1.0, false);
+                        driveInches(4, 0.5, true);
+                        turnDegrees(-90);
+                        driveInches(50, 1.0, true);
+                        // spin carousel
+                        driveInches(4, 0.5, false);
+                        turnDegrees(180);
+                        driveInches(96, 1, true);
                         break;
                 }
 
                 // This goes inside of the switch and is used just like above, but with cubes/ducks/spheres instead of the TSE
+                // Used for cycling freight in autonomous
                 /*if (tfod != null) {
                     tfod.activate();
                     tfod.setZoom(2.0, 16.0/9.0);
