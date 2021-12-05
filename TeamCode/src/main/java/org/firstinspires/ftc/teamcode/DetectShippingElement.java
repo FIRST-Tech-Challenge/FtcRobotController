@@ -117,34 +117,45 @@ public class DetectShippingElement extends LinearOpMode
             telemetry.addData("Pipeline time ms", robot.webCam.getPipelineTimeMs());
             telemetry.addData("Overhead time ms", robot.webCam.getOverheadTimeMs());
             telemetry.addData("Theoretical max FPS", robot.webCam.getCurrentPipelineMaxFps());
-            telemetry.update();
+            //telemetry.update();
 
             OpenCvShippingElementDetector.TSELocation location = detector.getLocation();
+            telemetry.addData("We have a", location);
+
+
             if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_LEFT) {
                 // Do something with the plane
-                telemetry.addData("We have a", location);
+                telemetry.addData("We have a 2", location);
+                //telemetry.update();
             }
             else if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_RIGHT) {
                 // Do something with the plane
-                telemetry.addData("We have a", location);
+                telemetry.addData("We have a 2", location);
+                //telemetry.update();
             }
             else if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_MIDDLE) {
                 // Do something with the plane
-                telemetry.addData("We have a", location);
+                telemetry.addData("We have a 2", location);
+                //telemetry.update();
             }
             else if (location == OpenCvShippingElementDetector.TSELocation.P2_BLUE_RIGHT) {
                 // Do something with the plane
-                telemetry.addData("We have a", location);
+                telemetry.addData("We have a 2", location);
+                //telemetry.update();
             }
             else if (location == OpenCvShippingElementDetector.TSELocation.P2_BLUE_LEFT) {
                 // Do something with the plane
-                telemetry.addData("We have a", location);
+                telemetry.addData("We have a 2", location);
+                //telemetry.update();
             }
             else if (location == OpenCvShippingElementDetector.TSELocation.P2_BLUE_MIDDLE) {
                 // Do something with the plane
-                telemetry.addData("We have a", location);
+                telemetry.addData("We have a 2", location);
+                //telemetry.update();
             }
 
+
+            telemetry.update();
             
 
             /*
@@ -152,7 +163,7 @@ public class DetectShippingElement extends LinearOpMode
              * excess CPU cycles for no reason. (By default, telemetry is only sent to the DS at 4Hz
              * anyway). Of course in a real OpMode you will likely not want to do this.
              */
-            sleep(100);
+            //sleep(100);
         }
 
 

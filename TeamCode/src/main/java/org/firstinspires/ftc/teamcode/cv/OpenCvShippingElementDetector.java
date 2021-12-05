@@ -48,6 +48,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     private Dnn cvDNN = null;
     private Net net = null;
     private Telemetry telemetry = null;
+    private Mat imageRGB = new Mat();
 
     private final String[] classNames = {"background",
             "p1_blue_right", "p1_blue_left", "p1_blue_middle", "p2_blue_right", "p2_blue_left", "p2_blue_middle" };
@@ -66,6 +67,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         this.height = height;
         this.telemetry = telemetry;
 
+
+
         cvDNN = new Dnn();
         net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_tse_optimized_graph.pb");
         for(int i=0; i<classNames.length; i++)
@@ -79,15 +82,10 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
         //telemetry.addLine("Inside ProcessFrame");
         //telemetry.update();
-
+        //Mat imageRGB = new Mat();
         Mat blob = null;
         Mat detections = null;
-        List<DNNObject> objectList = new ArrayList<>();
 
-        int cols = inputFrame.cols();
-        int rows = inputFrame.rows();
-
-        Mat imageRGB = new Mat();
         Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_RGBA2RGB);
 
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
@@ -106,7 +104,6 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
             //Core.MinMaxLocResult mm = Core.minMaxLoc(scores);
             float confidence = (float) mm.maxVal;
             Point classIdPoint = mm.maxLoc;
-
 
 
             if (confidence > confThreshold) {
@@ -128,19 +125,22 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 DecimalFormat df = new DecimalFormat("#.##");
 
                 int class_id = (int) classIdPoint.x;
-                String label = classNames[class_id].toString() + ": " + df.format(confidence);
+                String className = classNames[class_id].toString();
+                String label =  className + ": " + df.format(confidence);
                 Scalar color = colors.get(class_id);
 
-                telemetry.addData("This is a ", label);
-                telemetry.update();
+                //telemetry.addData("This is a real new", className);
+                //telemetry.update();
 
-                switch (label)
+                switch (className)
                 {
                     case "p1_blue_left":
                         location = TSELocation.P1_BLUE_LEFT;
                         break;
 
                     case "p1_blue_right":
+                        telemetry.addData("This is a new p1br", className);
+                        telemetry.update();
                         location = TSELocation.P1_BLUE_RIGHT;
                         break;
 
@@ -160,8 +160,6 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                         location = TSELocation.P2_BLUE_MIDDLE;
                         break;
 
-
-
                     default:
                         location = TSELocation.NONE;
                 }
@@ -172,10 +170,6 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
             }
 
         }
-
-
-
-
 
         return imageRGB;
     }
