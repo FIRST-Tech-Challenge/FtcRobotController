@@ -211,13 +211,14 @@ public abstract class MasterAutonomous extends MasterOpMode {
     }
 
     public void autoDeliver() throws InterruptedException {
-        //move up slides
-        //motorLift.setPower(0.1);
-        motorLift.setTargetPosition(10);
-        servoGrabber.setPosition(1.0);
-        servoGrabber.setPosition(0.0);
-        motorLift.setTargetPosition(0);
-    }
+            //motorLift.setTargetPosition(10);
+            motorLift.setPower(0.1);
+            sleep(2000);
+            servoGrabber.setPosition(1.0);
+            servoGrabber.setPosition(-0.8);
+            motorLift.setPower(-0.1);
+            motorLift.setPower(0.0);
+        }
 
     public void sendTelemetry() {
         //Informs drivers of robot location
