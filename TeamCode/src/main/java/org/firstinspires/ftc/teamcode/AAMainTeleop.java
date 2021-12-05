@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.internal.ftdi.eeprom.FT_EEPROM_232H;
 
-@TeleOp(name = "Main Teleop")
+@TeleOp(name = "AA Main Teleop")
 public class AAMainTeleop extends LinearOpMode {
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight, motorIntake, motorOuttake;
     private CRServo servoDuck;
@@ -34,12 +34,14 @@ public class AAMainTeleop extends LinearOpMode {
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        motorOuttake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorOuttake.setTargetPosition(0);
+        motorOuttake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         double powerMod;
 
         waitForStart();
 
         while(opModeIsActive()){
-
             if(gamepad1.right_bumper){
                 powerMod = 0.5;
             }else{
@@ -51,6 +53,7 @@ public class AAMainTeleop extends LinearOpMode {
             motorIntake.setPower(-gamepad1.right_trigger);
 
             servoDuck.setPower(gamepad2.left_trigger);
+            servoDuck.setPower(-gamepad2.right_trigger);
 
             if(gamepad2.dpad_up){
                 bucket.setPosition(bucket.getPosition()+0.01);
@@ -59,7 +62,21 @@ public class AAMainTeleop extends LinearOpMode {
                 bucket.setPosition(bucket.getPosition()-0.01);
             }
 
-            motorOuttake.setPower(gamepad2.right_stick_y);
+            //motorOuttake.setPower(gamepad2.right_stick_y);
+
+            //trying to keep the arm in position and not swinging around
+            if (gamepad2.x) {
+                motorOuttake.setTargetPosition(5);
+            }
+            else if (gamepad2.a) {
+                motorOuttake.setTargetPosition(10);
+            }
+            else if (gamepad2.b) {
+                motorOuttake.setTargetPosition(15);
+            }
+            else {
+                motorOuttake.setTargetPosition(0);
+            }
 
             double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + (Math.PI/4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
