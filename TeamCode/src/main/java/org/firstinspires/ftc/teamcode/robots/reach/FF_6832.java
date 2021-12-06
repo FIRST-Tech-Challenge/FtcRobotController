@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot;
+package org.firstinspires.ftc.teamcode.robots.reach;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -39,12 +39,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reach.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 import org.firstinspires.ftc.teamcode.util.utilMethods;
 
-import static org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants.*;
+import static org.firstinspires.ftc.teamcode.robots.reach.utils.Constants.*;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.*;
 
 /**
@@ -52,13 +51,13 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.*;
  * TeleOp and Autonomous.
  */
 
-@TeleOp(name = "AAAConceptTrikeBot_6832", group = "Challenge")
+@TeleOp(name = "_Reach_6832", group = "Challenge")
 
 public class FF_6832 extends OpMode {
     //Important Variables
     private ElapsedTime runtime = new ElapsedTime();
-    private PoseFF.RobotType currentBot = PoseFF.RobotType.conceptTrikeBot;
-    private PoseFF robot;
+    private ReachPose.RobotType currentBot = ReachPose.RobotType.Reach;
+    private ReachPose robot;
     private Autonomous auto;
     public CsvLogKeeper logger;
 
@@ -259,7 +258,7 @@ public class FF_6832 extends OpMode {
     @Override
     public void init() {
         //important instantiation
-        robot = new PoseFF(currentBot);
+        robot = new ReachPose(currentBot);
         auto = new Autonomous(robot, dummyT);
         logger = new CsvLogKeeper("test",3,"tps, armTicks, targetDistance");
 

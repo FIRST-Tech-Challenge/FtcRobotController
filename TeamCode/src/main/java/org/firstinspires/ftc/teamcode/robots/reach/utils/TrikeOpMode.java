@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils;
+package org.firstinspires.ftc.teamcode.robots.reach.utils;
 
 import static org.firstinspires.ftc.teamcode.util.utilMethods.diffAngle2;
 
@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
