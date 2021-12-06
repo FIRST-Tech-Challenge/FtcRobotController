@@ -1,9 +1,12 @@
 package com.mrcod.meepmeep;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Pose2dKt;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.noahbres.meepmeep.MeepMeep;
+import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 import com.noahbres.meepmeep.roadrunner.Constraints;
 import com.noahbres.meepmeep.roadrunner.DriveTrainType;
@@ -17,34 +20,70 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        final Pose2d startPose =  new Pose2d(-40.00,65.00, 0);
-
         System.setProperty("sun.java2d.opengl", "true");
-        System.out.println(System.getProperty("sun.java2d.opengl"));
+
         MeepMeep meep = new MeepMeep(810);
         meep.setAxesInterval(10);
         meep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK);
-        ColorSchemeRedDark scheme = new ColorSchemeRedDark();
+        ColorScheme scheme = new ColorSchemeBlueDark();
         meep.setTheme(scheme);
         meep.setBackgroundAlpha(1);
+
+        RoadRunnerBotEntity storageUnitBot = storageBot(meep);
+        RoadRunnerBotEntity warehouseBot = warehouseBot(meep);
+        meep.addEntity(storageUnitBot);
+        //meep.addEntity(warehouseBot);
+
+        storageUnitBot.start();
+        warehouseBot.start();
+
+        meep.start();
+    }
+
+    public static RoadRunnerBotEntity storageBot(MeepMeep meep) {
+        final Pose2d startPose = new Pose2d(-40, 70 - MeepMeepHelper.inchesToCoordinate(9D),
+                Math.toRadians(-90));
+
         RoadRunnerBotEntity bot = new RoadRunnerBotEntity(meep,
                 new Constraints(DriveConstants.MAX_VEL, DriveConstants.MAX_ACCEL,
                         DriveConstants.MAX_ANG_VEL, DriveConstants.MAX_ANG_ACCEL,
                         DriveConstants.TRACK_WIDTH),
-                10D, 14.1D, startPose, scheme, 1D,
-                DriveTrainType.MECANUM, true
+                MeepMeepHelper.inchesToCoordinate(12D), MeepMeepHelper.inchesToCoordinate(18D),
+                startPose, new ColorSchemeBlueDark(), 1D, DriveTrainType.MECANUM,
+                true
         );
-        meep.addEntity(bot);
 
         TrajectorySequenceBuilder builder = new TrajectorySequenceBuilder(startPose,
                 new MecanumVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.TRACK_WIDTH),
                 new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL),
                 DriveConstants.MAX_ANG_VEL, DriveConstants.MAX_ANG_ACCEL);
 
-        builder.lineToSplineHeading(new Pose2d(-60, 60));
+        builder.lineToLinearHeading(new Pose2d(-20, 40, Math.toRadians(155)));
+
 
         bot.followTrajectorySequence(builder.build());
 
-        meep.start();
+        return bot;
+    }
+
+
+    public static RoadRunnerBotEntity warehouseBot(MeepMeep meep) {
+        final Pose2d startPose = new Pose2d(0, 70 - MeepMeepHelper.inchesToCoordinate(9D),
+                Math.toRadians(-90));
+        RoadRunnerBotEntity bot = new RoadRunnerBotEntity(meep,
+                new Constraints(DriveConstants.MAX_VEL, DriveConstants.MAX_ACCEL,
+                        DriveConstants.MAX_ANG_VEL, DriveConstants.MAX_ANG_ACCEL,
+                        DriveConstants.TRACK_WIDTH),
+                MeepMeepHelper.inchesToCoordinate(12D), MeepMeepHelper.inchesToCoordinate(18D),
+                startPose, new ColorSchemeBlueDark(), 1D, DriveTrainType.MECANUM,
+                false
+        );
+
+        TrajectorySequenceBuilder builder = new TrajectorySequenceBuilder(startPose,
+                new MecanumVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.TRACK_WIDTH),
+                new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL),
+                DriveConstants.MAX_ANG_VEL, DriveConstants.MAX_ANG_ACCEL);
+
+        return bot;
     }
 }
