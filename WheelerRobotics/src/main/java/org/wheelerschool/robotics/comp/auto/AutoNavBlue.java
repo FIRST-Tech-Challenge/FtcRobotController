@@ -1,11 +1,6 @@
 package org.wheelerschool.robotics.comp.auto;
 
-import static com.sun.tools.doclint.Entity.and;
-import static com.sun.tools.doclint.Entity.ge;
-import static com.sun.tools.doclint.Entity.pi;
-import static com.sun.tools.doclint.Entity.tau;
-import static java.lang.Math.floor;
-import static java.lang.Math.round;
+
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -30,31 +25,37 @@ public class AutoNavBlue extends LinearOpMode {
     // for non next to caurousel
     Meccanum meccanum = new Meccanum();
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         meccanum.init(hardwareMap);
         waitForStart();
         executeAutomaticSequence1();
 
     }
     private void executeAutomaticSequence1(){
+        // should get 26
 
         // auto for near carousel
         // gotta replace 0 with tested vals
             meccanum.closeServoFull();
-
-            meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 100);
-
-            meccanum.motorSpinRightEncoded(meccanum.NORMAL_SPEED, 0);
-
-            meccanum.moveArmTime(meccanum.ARM_MAX_SPEED, 100);
-
+            // ()
+            meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 775);
+            // /\
+            meccanum.motorSpinRightEncoded(meccanum.NORMAL_SPEED, 110);
+            // ~>
+            meccanum.moveArmTime(meccanum.ARM_MAX_SPEED, 10);
+            // |\
+            meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 300);
+            // /\
             meccanum.openServoHalf();
-
-            meccanum.motorSpinLeftEncoded(meccanum.NORMAL_SPEED, 90); // first spin + 90
-
-            meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 100);
-
+            // (_
+            meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 300);
+            // \/
+            meccanum.motorSpinLeftEncoded(meccanum.NORMAL_SPEED, 110 + 90); // first spin + 90
+            // <~
+            meccanum.motorDriveLeftEncoded(meccanum.NORMAL_SPEED, 300);
+            // <-
+            meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 1000);
+            // /\
 
     }
 

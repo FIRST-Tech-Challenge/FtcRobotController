@@ -39,9 +39,13 @@ public class AutoNavRedC extends LinearOpMode {
         }
     }
     private void executeAutomaticSequence1(){
+        // should get 22
+
 
         // auto for near carousel
         // gotta replace 0 with tested vals
+        meccanum.closeServoFull();
+        // ()
         meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 10);
         // /\
         meccanum.motorDriveLeftEncoded(meccanum.NORMAL_SPEED, 0);

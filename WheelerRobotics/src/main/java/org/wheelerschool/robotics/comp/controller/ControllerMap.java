@@ -65,8 +65,19 @@ public class ControllerMap {
     private void rumble(int time){
         gamepad2.rumble(time);
     }
-    private void joystickDriver(){
-        meccanum.motorDriveXYVectors(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+    private void joystickDriver(double scale){
+        if(gamepad1.right_stick_button || gamepad1.left_stick_button){
+            meccanum.motorDriveXYVectors(gamepad1.left_stick_x * scale, gamepad1.left_stick_y * scale, gamepad1.right_stick_x * scale);
+        }/*else if (gamepad1.right_stick_button){
+            meccanum.motorDriveXYVectors(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x * scale);
+        }else if (gamepad1.left_stick_button){
+            meccanum.motorDriveXYVectors(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        }*/else{
+
+            meccanum.motorDriveXYVectors(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+
+        }
+
     }
 
     private void dpadLeft2(){
@@ -95,10 +106,10 @@ public class ControllerMap {
     }
 
     private void leftTrigger2(double scale){
-        meccanum.moveArm(-gamepad1.left_trigger * scale);
+        meccanum.moveArm(gamepad2.left_trigger * scale);
     }
     private void rightTrigger2(double scale){
-        meccanum.moveArm(gamepad2.right_trigger * scale);
+        meccanum.moveArm(-gamepad2.right_trigger * scale);
     }
 
     private void buttonX2(){
@@ -118,7 +129,7 @@ public class ControllerMap {
     }
 
     public void checkControls(){
-        joystickDriver();
+        joystickDriver(0.4);
         if (gamepad1.left_bumper){
             leftBumper();
         }
@@ -150,11 +161,11 @@ public class ControllerMap {
         if (gamepad1.a){
             buttonA();
         }
-        if (gamepad1.left_trigger > gamepad1.right_trigger) {
-            leftTrigger();
+        /*if (gamepad1.left_trigger > gamepad1.right_trigger) {
+
         }else{
-            rightTrigger();
-        }
+
+        }*/
     }
     public void checkControls2(){
         //joystickDriver2();
@@ -184,14 +195,14 @@ public class ControllerMap {
         }
         if (gamepad2.y){
             buttonY2();
-        }
-        if (gamepad2.a){
+        }else if (gamepad2.a){
             buttonA2();
+        }else{
+            meccanum.spinnyStop();
         }
         if (gamepad2.left_trigger >= gamepad2.right_trigger) {
             leftTrigger2(0.8);
-        }
-        else {
+        } else {
             rightTrigger2(0.8);
         }
     }

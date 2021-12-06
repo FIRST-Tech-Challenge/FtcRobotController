@@ -42,7 +42,7 @@ public class Meccanum {
     public final double SERVO_FULLY_CLOSED = 0; // need arm+hub to test this
     public final double SERVO_FULLY_OPENED = 30; // need arm+hub to test this
     public final double HALF_SERVO_ANGLE = 0; // need arm+hub to test for this, can probably just average full open/close
-    public final double ARM_MAX_SPEED = 0; // preference? or maybe to be precise
+    public final double ARM_MAX_SPEED = 0.5; // preference? or maybe to be precise
     public final double HIGH_SPINNER_POWER = 1; // probably max, may need to adjust later
     public final double OPTIMAL_SPINNER_POWER = 0.5; // need spinner+hub to test this
     public final double MOTOR_STOP = 0; // its just 0 cuz full stop
@@ -138,7 +138,7 @@ public class Meccanum {
 
         // NOTE: not using DcMotor.setTarget() method despite it's built in pid functionality, maybe implement in future, but I dont know if it will stall the program or not like the while loop
         // idk if the blp type vars will be static or change :/
-        while(abs(motorBackLeft.getCurrentPosition() - blp) < ticks) { // hopefully checks that it is within the positive or negative threshold of target ticks
+        while(abs(motorBackLeft.getCurrentPosition() - blp) < ticks || abs(motorFrontRight.getCurrentPosition() - blp) < ticks || abs(motorFrontLeft.getCurrentPosition() - blp) < ticks || abs(motorBackRight.getCurrentPosition() - blp) < ticks) { // hopefully checks that it is within the positive or negative threshold of target ticks
             motorDrive(motorFrontLeftPower, motorBackLeftPower, motorFrontRightPower, motorBackRightPower);
         }
         motorStop();
@@ -232,7 +232,7 @@ public class Meccanum {
     }
 
     public void motorDriveForwardEncoded(double speed, double distance){
-        motorDriveEncoded(speed, speed, speed, speed, distance);
+        motorDriveEncoded(-speed, -speed, -speed, -speed, distance);
     }
     public void motorDriveLeftEncoded(double speed, double distance){
         motorDriveEncoded(speed, -speed, speed, -speed, distance);
@@ -241,7 +241,7 @@ public class Meccanum {
         motorDriveEncoded(-speed, speed, -speed, speed, distance);
     }
     public void motorDriveBackEncoded(double speed, double distance){
-        motorDriveEncoded(-speed, -speed, -speed, -speed, distance);
+        motorDriveEncoded(speed, speed, speed, speed, distance);
     }
     public void motorDriveForwardTime(double speed, double time){
         motorDriveTime(speed, speed, speed, speed, time);
@@ -259,9 +259,9 @@ public class Meccanum {
     public void delay(double time){
         ElapsedTime e = new ElapsedTime();
         e.reset();
-        while(e.milliseconds() < time && opModeActive){
+        while(e.milliseconds() < time){
             // stal program
-            opModeActive = linearOpMode.opModeIsActive();
+
 
         }
     }
@@ -320,12 +320,14 @@ public class Meccanum {
     public void moveArm(double power){
         arm.setPower(power);
     }
-
     public void moveArmTime(double power, double time){
         moveArm(power);
         delay(time);
         moveArm(0);
 
+    }
+    public void regulateArm(double scale){
+        arm.setTargetPosition(arm.getCurrentPosition());
     }
 
     public void turnRadians(double radians, double speed) {
