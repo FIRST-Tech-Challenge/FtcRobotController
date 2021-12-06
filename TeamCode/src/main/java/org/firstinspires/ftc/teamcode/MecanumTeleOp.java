@@ -26,9 +26,9 @@ public class MecanumTeleOp extends LinearOpMode {
 
         //set arm levels
         int armLevel0 = 0;   // (a)
-        int armLevel1 = 400; // (x)
-        int armLevel2 = 800; // (y)
-        int armLevel3 = 1200; // (b)
+        int armLevel1 = 200; // (x)
+        int armLevel2 = 550; // (y)
+        int armLevel3 = 850; // (b)
 
         //intake power
         double intakePower = 0;
@@ -104,14 +104,13 @@ public class MecanumTeleOp extends LinearOpMode {
             // Track Arm Current Pos
             armCurrentPos = robot.motorArm.getCurrentPosition();
             // Arm Up and Arm Down in small increments
-            if (gamepad2.right_stick_y != 0.0) {
-                armSetPos += gamepad2.right_stick_y*10;
-                /*if (gamepad2.right_stick_y == -1 ){
-                    armSetPos = ++armSetPos;
+            if (gamepad2.right_stick_y != 0.25) {
+                //armSetPos += gamepad2.right_stick_y*10;
+                if (gamepad2.right_stick_y == -1 ){
+                    armSetPos = armSetPos + 5;
                 } else if (gamepad2.right_stick_y == 1 ) {
-                    armSetPos = --armSetPos;
+                    armSetPos = armSetPos - 5;
                 }
-                */
             }
             //set arm positions to gamepad.2 buttons
             if (gamepad2.a) {
@@ -140,7 +139,6 @@ public class MecanumTeleOp extends LinearOpMode {
             robot.motorIntake.setPower(intakePower);
 
             //carousel code
-            carouselPower = 0;
             if (gamepad2.right_bumper == true && !gamepad2.left_bumper) {
                 carouselPower = 0.5;
             }
