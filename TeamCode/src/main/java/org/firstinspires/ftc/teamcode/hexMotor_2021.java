@@ -22,10 +22,9 @@ public class hexMotor_2021 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        motor  = hardwareMap.get(DcMotor.class, "leftWheel");
-        boolean click_a =  gamepad1.a;
-        boolean click_b =  gamepad1.b;
-        int MotEncoderPosition ;
+        motor  = hardwareMap.get(DcMotor.class, "swing");
+        int MotEncoderPosition = 0;
+        double swing;
 
         // Reset the encoder during initialization
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -33,25 +32,23 @@ public class hexMotor_2021 extends LinearOpMode {
 
         waitForStart();
 
-        // Set the motor's target position to 300 ticks
-        if (click_a) {
-            MotEncoderPosition =+ 500;
-        } else if (click_b) {
-            MotEncoderPosition =- 500;
-        } else {
-            MotEncoderPosition =+ 0;
-        }
-
         motor.setTargetPosition(MotEncoderPosition);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Switch to RUN_TO_POSITION mode
 
         // Start the motor moving by setting the max velocity to 200 ticks per second
-        motor.setPower(.5);
+        motor.setPower(1);
 
         // While the Op Mode is running, show the motor's status via telemetry
         while (opModeIsActive()) {
+            // Set the motor's target position to 300 ticks
+
+            swing = -gamepad1.left_stick_y;
+            MotEncoderPosition = (int) (MotEncoderPosition + (5 * swing));
+
+            motor.setTargetPosition(MotEncoderPosition);
+
             //telemetry.addData("velocity", motor.getVelocity());
             telemetry.addData("Encoder position", MotEncoderPosition);
             telemetry.addData("position", motor.getCurrentPosition());
