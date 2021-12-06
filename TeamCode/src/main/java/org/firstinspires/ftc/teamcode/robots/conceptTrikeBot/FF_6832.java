@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 import org.firstinspires.ftc.teamcode.util.utilMethods;
@@ -392,9 +393,9 @@ public class FF_6832 extends OpMode {
             pwrRot = gamepad1.right_stick_x;
 
         if (nearZero(pwrFwd) && nearZero(pwrRot)) {
-            robot.driveMixerTrike(0,0);
+            robot.driveMixerTrike2(0,0);
         } else {
-            robot.driveMixerTrike(pwrFwd,pwrRot);
+            robot.driveMixerTrike2(pwrFwd,pwrRot);
         }
 
 
@@ -406,7 +407,7 @@ public class FF_6832 extends OpMode {
     }
 
     private void joystickDrivePregameMode() {
-        robot.driveMixerTrike(pwrFwd, pwrRot);
+//        robot.driveMixerTrike(pwrFwd, pwrRot);
 
         //this is all code to set positions
         if(toggleAllowed(gamepad1.x,x,1)) {

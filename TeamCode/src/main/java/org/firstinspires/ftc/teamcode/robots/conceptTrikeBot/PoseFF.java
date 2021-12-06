@@ -8,12 +8,14 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
@@ -94,6 +96,8 @@ public class PoseFF {
 
     // All sensors
     BNO055IMU imu; // Inertial Measurement Unit: Accelerometer and Gyroscope combination sensor
+    private DistanceSensor chassisLengthSensor;
+
     // DigitalChannel magSensor;
 
     // drive train power values
@@ -279,6 +283,9 @@ public class PoseFF {
 
         Constants.ALLIANCE_INT_MOD = Math.abs(Constants.ALLIANCE_INT_MOD);
 
+        // sensors
+        chassisLengthSensor = this.hwMap.get(DistanceSensor.class, "distLength");
+
         // initialize vision
 
 //        VuforiaLocalizer vuforia;
@@ -415,6 +422,7 @@ public class PoseFF {
         packet.put("base integrated error", turnPID.getTotalError());
         packet.put("base derivative error", turnPID.getDeltaError());
         packet.put("loop time", loopTime);
+        packet.put("chassis length (m)", getChassisLength());
         dashboard.sendTelemetryPacket(packet);
     }
 
@@ -529,6 +537,7 @@ public class PoseFF {
         telemetry.addLine().addData("rightVectorDist", () -> telemTest.getCalcdDistance()[1]);
         telemetry.addLine().addData("leftVectorDist", () -> telemTest.getCalcdDistance()[2]);
         telemetry.addLine().addData("swerveAngle", () -> telemTest.getNewSwerveAngle());
+//        telemetry.addLine().addData("chassis length (m)", () -> getChassisLength());
     }
 
 
@@ -849,6 +858,30 @@ public class PoseFF {
         motorMiddle.setVelocity(chassisCalc.getRelMotorVels(loopTime)[2], AngleUnit.RADIANS);
 
         turnSwervePID(swerveP, swerveI, swerveD, angleOfBackWheel(), chassisCalc.getNewSwerveAngle());
+    }
+
+    public void driveMixerTrike2(double forward, double rotate) {
+        double length = Constants.CHASSIS_LENGTH, radius = 0, angle = 0;
+        if(rotate == 0)
+            angle = 0;
+        else {
+            radius = forward / rotate;
+            angle = Math.atan2(length, radius);
+        }
+
+        double vl = forward - rotate * (rotate == 0 ? 0 : radius - Constants.TRACK_WIDTH / 2);
+        double vr = forward + rotate * (rotate == 0 ? 0 : radius + Constants.TRACK_WIDTH / 2);
+        double v_swerve = forward + rotate * (rotate == 0 ? 0 : Math.hypot(radius, getChassisLength()));
+
+        motorFrontLeft.setVelocity(vl);
+        motorFrontRight.setVelocity(vr);
+        motorMiddle.setVelocity(v_swerve);
+
+        turnSwervePID(swerveP, swerveI, swerveD, angleOfBackWheel(), angle);
+    }
+
+    public double getChassisLength() {
+        return chassisLengthSensor.getDistance(DistanceUnit.METER);
     }
 
 

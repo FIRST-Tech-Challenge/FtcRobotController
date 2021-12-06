@@ -25,6 +25,8 @@ public class Constants {
     public static double wheelRadius = .9; //todo- make this a const. needs to be in meters
     public static double maxRotaryVelOfBackWheel = .9; //todo- calc this based on gear ratio
     public static double maxRotaryVelOfDiffWheels = .9; //todo- calc this based on gear ratio
+    public static double TRACK_WIDTH = 0.308162;
+    public static double CHASSIS_LENGTH = 1.0;
 
     public static double startingXOffset = 0;
     public static double startingYOffset = 0;
