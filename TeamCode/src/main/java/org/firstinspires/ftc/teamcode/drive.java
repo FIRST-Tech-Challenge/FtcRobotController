@@ -30,10 +30,14 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import android.text.method.Touch;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -59,7 +63,8 @@ public class drive extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
-    Servo   servo;
+    TouchSensor touch;
+    Servo servo;
 
     @Override
     public void runOpMode() {
@@ -68,16 +73,18 @@ public class drive extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "motorTest");
-        //rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        // step (using the FTC Robot Controller app on the phone)
+        // Adding touch sensor as hardware program.
+        touch = hardwareMap.get(TouchSensor.class, "Touch");
+        leftDrive = hardwareMap.get(DcMotor.class, "motorTest");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         servo = hardwareMap.get(Servo.class, "servoTest");
 
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        //rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -97,27 +104,35 @@ public class drive extends LinearOpMode {
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
             double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+            double turn = gamepad1.right_stick_x;
+            leftPower = Range.clip(drive + turn, -1.0, 1.0);
+            rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            leftPower  = -gamepad1.left_stick_y ;
-            rightPower = -gamepad1.right_stick_y ;
-            servoposition = Range.clip(gamepad1.left_trigger, 0,1) ;
+            leftPower = -gamepad1.left_stick_y;
+            rightPower = -gamepad1.right_stick_y;
+            servoposition = Range.clip(gamepad1.left_trigger, 0, 1);
 
             // Send calculated power to wheels
-            leftDrive.setPower(leftPower);
-            //rightDrive.setPower(rightPower);
+            // rightDrive.setPower(rightPower);
             servo.setPosition(servoposition);
-
 
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
+
+            // When buttons are pressed
+            if (gamepad1.b) {
+                servo.setPosition(40);
+            }
+            // If touch sensor hits the ground, set servo power to 0
+            //if (touch.isPressed()) {
+                //null;
+            //}
         }
     }
+
 }
