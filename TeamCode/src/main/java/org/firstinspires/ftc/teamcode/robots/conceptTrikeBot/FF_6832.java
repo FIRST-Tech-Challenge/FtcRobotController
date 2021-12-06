@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 import org.firstinspires.ftc.teamcode.util.utilMethods;
@@ -258,15 +259,15 @@ public class FF_6832 extends OpMode {
     @Override
     public void init() {
         //important instantiation
-        robot = new PoseFF(currentBot, dummyT);
+        robot = new PoseFF(currentBot);
         auto = new Autonomous(robot, dummyT);
         logger = new CsvLogKeeper("test",3,"tps, armTicks, targetDistance");
 
         //initializaion method calls
-        robot.init(this.hardwareMap);
+        robot.init(this.hardwareMap, telemetry);
         robot.resetMotors(true);
         auto.visionProviderFinalized = false;
-        configureDriverTelemetry();
+        robot.setupDriverTelemetry(active, state, ALLIANCE, loopAvg);
         telemetry.update();
     }
 
@@ -392,9 +393,9 @@ public class FF_6832 extends OpMode {
             pwrRot = gamepad1.right_stick_x;
 
         if (nearZero(pwrFwd) && nearZero(pwrRot)) {
-            robot.driveMixerTrike(0,0);
+            robot.driveMixerTrike2(0,0);
         } else {
-            robot.driveMixerTrike(pwrFwd, pwrRot);
+            robot.driveMixerTrike2(pwrFwd,pwrRot);
         }
 
 
@@ -406,7 +407,7 @@ public class FF_6832 extends OpMode {
     }
 
     private void joystickDrivePregameMode() {
-        robot.driveMixerTrike(pwrFwd, pwrRot);
+//        robot.driveMixerTrike(pwrFwd, pwrRot);
 
         //this is all code to set positions
         if(toggleAllowed(gamepad1.x,x,1)) {
@@ -452,15 +453,5 @@ public class FF_6832 extends OpMode {
         else
             buttonSavedStates2[buttonIndex] = false;
         return false; // not pressed
-    }
-
-    //This is here because the variables sent can't be accessed by PoseFF
-    private void configureDriverTelemetry() {
-        //THERE SHOULD BE NOTHING ADDED HERE. IF YOU NEED TO ADD OTHER TELEMETRY,
-        //DO IT IN THE POSE VERSION OF THIS METHOD.
-        telemetry.addLine().addData("active", () -> active);
-        telemetry.addLine().addData("state", () -> state);
-        telemetry.addLine().addData("Alliance", () -> ALLIANCE);
-        telemetry.addLine().addData("Loop time", "%.0fms", () -> loopAvg / 1000000);
     }
 }

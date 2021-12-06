@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.UGBot.utils;
 
 import com.acmerobotics.dashboard.config.Config;
 
-@Config
+//@Config
 public class Constants {
     //misc
 
