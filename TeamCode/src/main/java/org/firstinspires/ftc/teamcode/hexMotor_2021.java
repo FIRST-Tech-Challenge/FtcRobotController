@@ -34,12 +34,12 @@ public class hexMotor_2021 extends LinearOpMode {
         waitForStart();
 
         // Set the motor's target position to 300 ticks
-        if (click_a==true) {
-            MotEncoderPosition = 2000;
-        } else if (click_b==true) {
-            MotEncoderPosition = 5000;
+        if (click_a) {
+            MotEncoderPosition =+ 500;
+        } else if (click_b) {
+            MotEncoderPosition =- 500;
         } else {
-            MotEncoderPosition = 0;
+            MotEncoderPosition =+ 0;
         }
 
         motor.setTargetPosition(MotEncoderPosition);
@@ -53,6 +53,7 @@ public class hexMotor_2021 extends LinearOpMode {
         // While the Op Mode is running, show the motor's status via telemetry
         while (opModeIsActive()) {
             //telemetry.addData("velocity", motor.getVelocity());
+            telemetry.addData("Encoder position", MotEncoderPosition);
             telemetry.addData("position", motor.getCurrentPosition());
             telemetry.addData("is at target", !motor.isBusy());
             telemetry.update();
