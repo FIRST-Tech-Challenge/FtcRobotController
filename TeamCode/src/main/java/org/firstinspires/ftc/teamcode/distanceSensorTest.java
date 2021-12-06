@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-@TeleOp(name = "distanceSensor", group = "Sensor")
+@TeleOp(name = "distanceSensorGiven", group = "Sensor")
 
 public class distanceSensorTest extends OpMode {
     DistanceSensor dsensor;
