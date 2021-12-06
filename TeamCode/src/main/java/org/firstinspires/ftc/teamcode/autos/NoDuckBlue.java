@@ -17,18 +17,16 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "Auto (Blue)", group = "Sensor")
-public class FullAutoBlue extends LinearOpMode {
+@Autonomous(name = "Auto Minus Duck (Blue)", group = "Sensor")
+public class NoDuckBlue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();
-    private Carousel carousel = new Carousel(Color.BLUE);
     private Lift lift = new Lift();
     private Hopper hopper = new Hopper();
     OpenCvWebcam webcam;
 
     public void runOpMode() throws InterruptedException {
         chassis.init(hardwareMap);
-        carousel.init(hardwareMap);
         lift.init(hardwareMap);
         hopper.init(hardwareMap);
 
@@ -62,9 +60,8 @@ public class FullAutoBlue extends LinearOpMode {
                 i = 0;
                 continue;
             }
-            counts[pipeline.getShippingHubLevel() - 1] ++;
+            counts[pipeline.getShippingHubLevel() - 1]++;
         }
-
         if(counts[0] > counts[1] && counts[0] > counts[2]) {
             level = 1;
         } else if(counts[1] > counts[0] && counts[1] > counts[2]) {
@@ -76,11 +73,11 @@ public class FullAutoBlue extends LinearOpMode {
         telemetry.update();
 
         // Drive to the the shipping hub
-        chassis.moveBackwardWithEncoders(0.6,100);
+        chassis.moveBackwardWithEncoders(0.6,400);
         delay(250);
-        chassis.strafeRightWithEncoders(0.6,1050);
+        chassis.rotate(-30,0.5);
+        chassis.moveBackwardWithEncoders(0.6,300);
         delay(250);
-        chassis.moveBackwardWithEncoders(0.6,650);
 
         // Deposit the box on the correct level
         if(level == 1) {
@@ -91,7 +88,7 @@ public class FullAutoBlue extends LinearOpMode {
             delay(400);
         } else {
             lift.goTo(1450, 0.8);
-            delay(500);
+            delay(600);
         }
         hopper.hopper.setPosition(0.33);
         delay(1200);
@@ -99,22 +96,10 @@ public class FullAutoBlue extends LinearOpMode {
         delay(200);
         lift.goTo(0,0.8);
 
-        // Move to the carousel and spin it
-        chassis.moveForwardWithEncoders(0.6,400);
-        chassis.rotate(-90,0.6);
-        chassis.moveBackwardWithEncoders(0.6,2200);
-        chassis.moveBackwardWithEncoders(0.3,200);
-        chassis.moveForwardWithEncoders(0.5,25);
-        chassis.strafeLeftWithEncoders(0.3,500);
-        carousel.turnCarousel();
-        delay(3000);
-        carousel.carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        carousel.carouselMotor.setPower(0);
-
         // Drive into the warehouse
-        chassis.strafeRightWithEncoders(0.6,250);
-        chassis.moveBackwardWithEncoders(0.3,200);
-        chassis.moveForwardWithEncoders(0.6, 5500);
+        chassis.moveForwardWithEncoders(0.6,300);
+        chassis.rotate(-60,0.5);
+        chassis.moveForwardWithEncoders(1, 1500);
     }
 
     public void delay(int time) {
