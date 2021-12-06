@@ -1,17 +1,18 @@
 package ca.webber.ftc.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import ca.webber.ftc.helpers.DriveController;
+import ca.webber.ftc.helpers.TeleDriveController;
 
 @TeleOp(name="TeleOp Mode 01", group="Linear Opmode")
 public class TeleOp_01 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DriveController driveController;
+    private TeleDriveController teleDriveController;
 
     @Override
     public void runOpMode() {
@@ -23,7 +24,7 @@ public class TeleOp_01 extends LinearOpMode {
         runtime.reset();
 
         // instantiates the driveController
-        driveController = new DriveController(
+        teleDriveController = new TeleDriveController(
                 hardwareMap.get(DcMotor.class, "leftFront"),
                 hardwareMap.get(DcMotor.class, "rightFront"),
                 hardwareMap.get(DcMotor.class, "leftBack"),
@@ -34,7 +35,7 @@ public class TeleOp_01 extends LinearOpMode {
         while (opModeIsActive()) {
 
             // operates the driveController
-            driveController.update(gamepad1.left_stick_x, -1 * gamepad1.left_stick_y, Math.cbrt(gamepad1.right_stick_x));
+            teleDriveController.update(gamepad1.left_stick_x, -1 * gamepad1.left_stick_y, Math.cbrt(gamepad1.right_stick_x / 2));
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
