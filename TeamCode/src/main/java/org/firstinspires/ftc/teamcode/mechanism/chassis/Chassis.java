@@ -18,6 +18,4 @@ public abstract class Chassis implements Mechanism {
         backLeft = hardwareMap.get(DcMotor.class, "bl");
     }
     public abstract void run(Gamepad gamepad);
-
-
 }
