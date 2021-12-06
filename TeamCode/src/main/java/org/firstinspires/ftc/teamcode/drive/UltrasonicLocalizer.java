@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.kinematics.Kinematics;
 import com.acmerobotics.roadrunner.kinematics.MecanumKinematics;
 import com.acmerobotics.roadrunner.localization.Localizer;
@@ -21,6 +22,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -29,9 +31,12 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.mechanism.MB1242;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class UltrasonicLocalizer implements Localizer {
+    public static final double DIST_TOLERANCE = 2.0;
+
     ElapsedTime pingTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     MB1242 sensor1;
     MB1242 sensor2;
@@ -130,91 +135,75 @@ public class UltrasonicLocalizer implements Localizer {
             pingTimer.reset();
             pingSensors();
             double[] distances = getSensorDistances();
-            ArrayList<Pose2d> averagablePoses = new ArrayList<>();
+
+            ArrayList<Vector2d> averagablePoses = new ArrayList<>();
+            ArrayList<Vector2d> positions = new ArrayList<>();
+
             // All the different pairs of distances we can use to calculate the position of the robot
-            double[] set1 = {distances[0], distances[1]};
-            double[] set2 = {distances[1], distances[2]};
-            double[] set3 = {distances[2], distances[3]};
-            double[] set4 = {distances[3], distances[0]};
-            double[] set5 = {distances[0], distances[2]};
-            double[] set6 = {distances[1], distances[3]};
+
             // Make a list of them
-            double[][] sets = {set1, set2, set3, set4, set5, set6};
             // For each set, calculate the position of the robot that you could get from those
-            for (double[] set : sets) {
-                /* If either of the distances is less than 7.874 or greater than 144 inches, then
-                we can't calculate the position of the robot using these measurements,
-                so we skip this set */
-                if (set[0] < 7.874 || set[0] > 144 || set[1] < 7.874 || set[1] > 144) {
-                    continue;
+            double theta = 0;
+            for (int i = 0; i < 4; i++) {
+                double currentTheta = theta + (Math.PI/2 * i);
+                double distance = distances[i];
+                double x = distance * Math.sin(currentTheta);
+                double y = distance * Math.cos(currentTheta);
+                if (x < -0.01) {
+                    x += 144;
                 }
-
-                // Let me know if you need help understanding this part,
-                // It's pretty basic trig though
-
-                double x1 = set[0] * Math.cos(theta);
-                double y1 = set[0] * Math.sin(theta);
-                double x2 = set[1] * Math.cos(theta);
-                double y2 = set[1] * Math.sin(theta);
-
-                double correctedX1;
-                double correctedY1;
-                double correctedX2;
-                double correctedY2;
-
-                // If any of them are negative, then subtract them from 144 (the size of the field)
-                // to get the real position
-                // We still need the originals to figure which reading to use.
-                if (x1 < 0) {
-                    correctedX1 = 144 + x1;
-                } else {
-                    correctedX1 = x1;
+                if (y < -0.01) {
+                    y += 144;
                 }
-                if (y1 < 0) {
-                    correctedY1 = 144 + y1;
-                } else {
-                    correctedY1 = y1;
-                }
-                if (x2 < 0) {
-                    correctedX2 = 144 + x2;
-                } else {
-                    correctedX2 = x2;
-                }
-                if (y2 < 0) {
-                    correctedY2 = 144 + y2;
-                } else {
-                    correctedY2 = y2;
-                }
+                positions.add(new Vector2d(x, y)) ;
+            }
 
-                // We assume that the larger distance is the one that is more likely to be the wall
-                // Rather than an object in the way
-                double realX = Math.abs(x1) > Math.abs(x2) ? correctedX1 : correctedX2;
-                double realY = Math.abs(y1) > Math.abs(y2) ? correctedY1 : correctedY2;
+            // Get all the possible combinations of the positions
+            Iterator<int[]> iterator = CombinatoricsUtils.combinationsIterator(positions.size(), 2);
+            List<Vector2d[]> sets = new ArrayList<>(2);
+            while (iterator.hasNext()) {
+                int[] combination = iterator.next();
+                Vector2d first = positions.get(combination[0]);
+                Vector2d second = positions.get(combination[1]);
+                sets.add(new Vector2d[]{first, second});
+            }
 
-                // If the x or y values are very similar, the two sensors are probably facing the same wall
-                // And the pose they calculate is probably wrong, so we don't use it
-                if (Math.abs(x1 - x2) < 5) {
-                    continue;
-                }
-                if (Math.abs(y1 - y2) < 5) {
-                    continue;
-                }
+            Pose2d previousPose = new Pose2d(72, 72, theta);
+            for (Vector2d[] set : sets) {
+                // For each combination, take the one which is closest to the previous pose in both x and y
+                Vector2d first = set[0];
+                Vector2d second = set[1];
 
+                double firstX = first.getX();
+                double firstY = first.getY();
+                double secondX = second.getX();
+                double secondY = second.getY();
 
-                Pose2d newPose = new Pose2d(realX, realY, theta);
-                double poseDifference = newPose.vec().distTo(previousPose.vec());
+                double firstXDistanceFromPrevious = Math.abs(firstX - previousPose.getX());
+                double firstYDistanceFromPrevious = Math.abs(firstY - previousPose.getY());
+                double secondXDistanceFromPrevious = Math.abs(secondX - previousPose.getX());
+                double secondYDistanceFromPrevious = Math.abs(secondY - previousPose.getY());
+
+                Vector2d newVector = new Vector2d(
+                        firstXDistanceFromPrevious < secondXDistanceFromPrevious ? firstX : secondX,
+                        firstYDistanceFromPrevious < secondYDistanceFromPrevious ? firstY : secondY
+                );
+                double poseDifference = newVector.distTo(previousPose.vec());
                 // If the pose difference is too big, we don't use it, since again, it's probably wrong
                 // This is the main filter that makes sure no measurements too insane get used
-                // It is a bit jank though, a Kalman filter would be a better way to do this
-                if (poseDifference < 2) {
-                    averagablePoses.add(newPose);
+                // It is a bit jank though, a Kalman filter would probably be a better way to do this
+                // Also, if the x or y measurements for both are the same, we don't use it
+                double xDifference = Math.abs(set[0].getX() - set[1].getX());
+                double yDifference = Math.abs(set[0].getY() - set[1].getY());
+                if (poseDifference < DIST_TOLERANCE && xDifference > DIST_TOLERANCE * 2 && yDifference > DIST_TOLERANCE * 2) {
+                    averagablePoses.add(newVector);
                 }
             }
             // At the end, we average all the realistic poses we found
             if (averagablePoses.size() > 0) {
                 double xAverage = 0;
                 double yAverage = 0;
-                for (Pose2d pose : averagablePoses) {
+                for (Vector2d pose : averagablePoses) {
                     xAverage += pose.getX();
                     yAverage += pose.getY();
                 }
