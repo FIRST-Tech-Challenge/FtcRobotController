@@ -8,8 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 @TeleOp(name = "trike mixer test")
@@ -20,15 +23,19 @@ public class TrikeOpMode extends LinearOpMode {
     private DcMotorEx rightDrive = null;
     private DcMotorEx swerve = null;
     private DcMotorEx swerveAngle = null;
-    PIDController swervePID = null;
+    private DistanceSensor distanceSensor = null;
 
     double turnError = 0;
 
+    PIDController swervePID = null;
     public static double swerveP = .1;
     public static double swerveI = 0;
     public static double swerveD = 0;
+    public double correction = 0;
 
-    double vl = 0, vr = 0, v_swerve = 0;
+    PIDController distancePID = null;
+
+    double vl = 0, vr = 0, vSwerve = 0, angleSwerve = 0;
 
     FtcDashboard dashboard;
 
@@ -39,18 +46,27 @@ public class TrikeOpMode extends LinearOpMode {
         rightDrive = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
         swerve  = hardwareMap.get(DcMotorEx.class, "motorMiddle");
         swerveAngle = hardwareMap.get(DcMotorEx.class, "motorMiddleSwivel");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distLength");
+
+        leftDrive.setDirection(DcMotorEx.Direction.REVERSE);
 
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         swerve.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         swerveAngle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
+        leftDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        swerve.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        swerveAngle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         swerve.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        swerveAngle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        swerveAngle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         swervePID = new PIDController(0,0,0);
+        distancePID = new PIDController(Constants.distanceP, Constants.distanceI, Constants.distanceD);
 
         dashboard = FtcDashboard.getInstance();
 
@@ -61,28 +77,35 @@ public class TrikeOpMode extends LinearOpMode {
             double forward = -gamepad1.right_stick_y;
             double rotate = gamepad1.left_stick_x;
 
-            double length = Constants.CHASSIS_LENGTH, radius = 0, angle = 0;
+            double length = Constants.CHASSIS_LENGTH, radius = 0;
             if (rotate == 0)
-                angle = 0;
+                angleSwerve = 0;
             else {
                 radius = forward / rotate;
-                angle = Math.atan2(length, radius);
+                angleSwerve = Math.atan2(length, radius);
             }
 
             vl = forward - rotate * (rotate == 0 ? 0 : radius - Constants.TRACK_WIDTH / 2);
             vr = forward + rotate * (rotate == 0 ? 0 : radius + Constants.TRACK_WIDTH / 2);
-            v_swerve = forward + rotate * (rotate == 0 ? 0 : Math.hypot(radius, Constants.CHASSIS_LENGTH));
+            vSwerve = forward + rotate * (rotate == 0 ? 0 : Math.hypot(radius, Constants.CHASSIS_LENGTH));
+            vl *= Constants.MOVEMENT_MULTIPLIER;
+            vr *= Constants.MOVEMENT_MULTIPLIER;
+            vSwerve *= Constants.MOVEMENT_MULTIPLIER;
 
-            double max = Math.max(Math.max(vl, vr), v_swerve);
-            vl /= max;
-            vr /= max;
-            v_swerve /= max;
+            double max = Math.max(Math.max(vl, vr), vSwerve);
+
+            if(max > 1.0) {
+                vl /= max;
+                vr /= max;
+                vSwerve /= max;
+            }
 
             leftDrive.setPower(vl);
             rightDrive.setPower(vr);
-            swerve.setPower(v_swerve);
+            swerve.setPower(vSwerve);
 
-//            turnSwervePID(swerveP, swerveI, swerveD, angleOfBackWheel(), angle);
+            turnSwervePID(swerveP, swerveI, swerveD, angleOfBackWheel(), angleSwerve);
+//            maintainDistance();
 
             sendTelemetry();
         }
@@ -97,7 +120,9 @@ public class TrikeOpMode extends LinearOpMode {
         telemetry.addData("forward", -gamepad1.right_stick_y);
         telemetry.addData("left wheel velocity", vl);
         telemetry.addData("right wheel velocity", vr);
-        telemetry.addData("swerve wheel velocity", v_swerve);
+        telemetry.addData("swerve wheel velocity", vSwerve);
+        telemetry.addData("swerve wheel angle", angleSwerve);
+        telemetry.addData("swerve wheel correction", correction);
         telemetry.update();
 
         TelemetryPacket packet = new TelemetryPacket();
@@ -105,7 +130,9 @@ public class TrikeOpMode extends LinearOpMode {
         packet.put("forward", -gamepad1.right_stick_y);
         packet.put("left wheel velocity", vl);
         packet.put("right wheel velocity", vr);
-        packet.put("swerve wheel velocity", v_swerve);
+        packet.put("swerve wheel velocity", vSwerve);
+        packet.put("swerve wheel angle", angleSwerve);
+        packet.put("swerve wheel correction", correction);
         dashboard.sendTelemetryPacket(packet);
     }
 
@@ -115,7 +142,7 @@ public class TrikeOpMode extends LinearOpMode {
         //initialization of the PID calculator's output range, target value and multipliers
         swervePID.setOutputRange(-.69, .69); //this is funny
         swervePID.setPID(Kp, Ki, Kd);
-        swervePID.setSetpoint(targetAngle);
+        swervePID.setSetpoint(Math.toRadians(targetAngle));
         swervePID.enable();
 
         //initialization of the PID calculator's input range and current value
@@ -126,10 +153,30 @@ public class TrikeOpMode extends LinearOpMode {
         turnError = diffAngle2(targetAngle, currentAngle);
 
         //calculates the angular correction to apply
-        double correction = swervePID.performPID();
+        correction = swervePID.performPID();
 
         //performs the turn with the correction applied
-//        swerveAngle.setPower(correction);
+        swerveAngle.setPower(correction);
+    }
+
+    public void maintainDistance() {
+        distancePID.setOutputRange(-0.5, 0.5);
+        distancePID.setPID(Constants.distanceP, Constants.distanceI, Constants.distanceD);
+        distancePID.setSetpoint(Constants.TARGET_DISTANCE);
+        distancePID.enable();
+
+        distancePID.setInputRange(0, 0.6);
+        distancePID.setInput(getChassisLength());
+
+        correction = distancePID.performPID();
+
+        leftDrive.setPower(correction);
+        rightDrive.setPower(correction);
+        swerve.setPower(-correction);
+    }
+
+    public double getChassisLength() {
+        return distanceSensor.getDistance(DistanceUnit.METER);
     }
 
     public double angleOfBackWheel(){

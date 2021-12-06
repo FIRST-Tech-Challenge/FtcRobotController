@@ -27,6 +27,13 @@ public class Constants {
     public static double maxRotaryVelOfDiffWheels = .9; //todo- calc this based on gear ratio
     public static double TRACK_WIDTH = 0.308162;
     public static double CHASSIS_LENGTH = 1.0;
+    public static double MOVEMENT_MULTIPLIER = 0.25;
+
+    public static double distanceP = 0.01;
+    public static double distanceI = 0;
+    public static double distanceD = 0;
+
+    public static double TARGET_DISTANCE = 0.57;
 
     public static double startingXOffset = 0;
     public static double startingYOffset = 0;
