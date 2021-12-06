@@ -51,6 +51,12 @@ public class FrenzyBot extends FrenzyBaseBot {
     private GameElement detectedElement;
 
 
+    //Intake
+    private static double INTAKE_ELEMENT_MOVE_SPEED = 0.2;
+    private static double INTAKE_SPEED = 0.95;
+    private static double INTAKE_SPEED_REVERSE = -0.75;
+
+
     /* Constructor */
     public FrenzyBot() {
         opModeSide = AutoRoute.NAME_RED; // default
@@ -241,12 +247,12 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Start intake", defaultReturn = "")
     public void startIntake() {
-        activateIntake(0.95);
+        activateIntake(INTAKE_SPEED);
     }
 
     @BotAction(displayName = "Reverse intake", defaultReturn = "")
     public void reverseIntake() {
-        activateIntake(-0.75);
+        activateIntake(INTAKE_SPEED_REVERSE);
     }
 
     @BotAction(displayName = "Stop intake", defaultReturn = "")
@@ -318,70 +324,17 @@ public class FrenzyBot extends FrenzyBaseBot {
             ((SwitchableLight) colorSensor).enableLight(on);
         }
     }
+
     public float detectColor(Telemetry telemetry, float timeout) {
         ElapsedTime runtime = new ElapsedTime();
-
         toggleLight(true);
-        // values is a reference to the hsvValues array.
-        DetectedColor H = DetectedColor.NONE;
-        float[] hsvValues = new float[3];
-        final float values[] = hsvValues;
 
-        runtime.reset();
-        NormalizedRGBA colors = null;
+        float[] hsvValues = new float[3];
+
         boolean stop = false;
         while(!stop) {
-            // Read the sensor
-            colors = colorSensor.getNormalizedColors();
-
-            /** Use telemetry to display feedback on the driver station. We show the conversion
-             * of the colors to hue, saturation and value, and display the the normalized values
-             * as returned from the sensor.
-             * @see <a href="http://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html">HSV</a>*/
-
+            NormalizedRGBA colors = colorSensor.getNormalizedColors();
             Color.colorToHSV(colors.toColor(), hsvValues);
-            telemetry.addLine()
-                    .addData("H", "%.3f", hsvValues[0])
-                    .addData("S", "%.3f", hsvValues[1])
-                    .addData("V", "%.3f", hsvValues[2]);
-            telemetry.addLine()
-                    .addData("a", "%.3f", colors.alpha)
-                    .addData("r", "%.3f", colors.red)
-                    .addData("g", "%.3f", colors.green)
-                    .addData("b", "%.3f", colors.blue);
-
-            /** We also display a conversion of the colors to an equivalent Android color integer.
-             * @see Color */
-            int color = colors.toColor();
-            telemetry.addLine("raw Android color: ")
-                    .addData("a", "%02x", Color.alpha(color))
-                    .addData("r", "%02x", Color.red(color))
-                    .addData("g", "%02x", Color.green(color))
-                    .addData("b", "%02x", Color.blue(color));
-
-            // Balance the colors. The values returned by getColors() are normalized relative to the
-            // maximum possible values that the sensor can measure. For example, a sensor might in a
-            // particular configuration be able to internally measure color intensity in a range of
-            // [0, 10240]. In such a case, the values returned by getColors() will be divided by 10240
-            // so as to return a value it the range [0,1]. However, and this is the point, even so, the
-            // values we see here may not get close to 1.0 in, e.g., low light conditions where the
-            // sensor measurements don't approach their maximum limit. In such situations, the *relative*
-            // intensities of the colors are likely what is most interesting. Here, for example, we boost
-            // the signal on the colors while maintaining their relative balance so as to give more
-            // vibrant visual feedback on the robot controller visual display.
-            float max = Math.max(Math.max(Math.max(colors.red, colors.green), colors.blue), colors.alpha);
-            colors.red /= max;
-            colors.green /= max;
-            colors.blue /= max;
-            color = colors.toColor();
-
-            telemetry.addLine("normalized color:  ")
-                    .addData("a", "%02x", Color.alpha(color))
-                    .addData("r", "%02x", Color.red(color))
-                    .addData("g", "%02x", Color.green(color))
-                    .addData("b", "%02x", Color.blue(color));
-            telemetry.update();
-
             stop = timeout == 0 || (timeout > 0 && runtime.seconds() >= timeout);
         }
 
@@ -389,8 +342,38 @@ public class FrenzyBot extends FrenzyBaseBot {
         //returning H value
         return hsvValues[0];
     }
+
     public boolean isIntakeBoxEmpty(){
         float HValue = detectColor(telemetry, 0);
         return HValue < 5;
+    }
+
+    @BotAction(displayName = "Grab Element", defaultReturn = "")
+    public Boolean grabElement(){
+        Boolean gotIt = false;
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+        startIntake();
+        //move straight until an element is detected in the intake box
+        move(INTAKE_ELEMENT_MOVE_SPEED, 0);
+        while (owner.opModeIsActive() && motorsBusy()){
+            if (!isIntakeBoxEmpty()){
+                Log.d(TAG, "Element is in the intake");
+                gotIt = true;
+                break;
+            }
+            if (runtime.milliseconds() > 3000){
+                Log.d(TAG, "Ran out of time");
+                break;
+            }
+        }
+        reverseIntake();
+        stop();
+        runtime.reset();
+        while (runtime.milliseconds() < 500){
+            //wait for intake to spit out anything extra
+        }
+        stopIntake();
+        return gotIt;
     }
 }

@@ -41,6 +41,7 @@ public class OdoBase extends LinearOpMode {
     protected IOdoBot bot = null;
     protected AutoRoute selectedRoute = new AutoRoute();
     protected HashMap<String, AutoDot> coordinateFunctions = new HashMap<>();
+    protected HashMap<String, Boolean> booleanFunctions = new HashMap<>();
     protected List<Method> botActions = new ArrayList<Method>();
     ElapsedTime timer = new ElapsedTime();
 
@@ -132,7 +133,6 @@ public class OdoBase extends LinearOpMode {
 
 
         try {
-
             if (dryRun && selectedRoute.getSteps().size() == 0) {
                 selectedRoute.setStartX((int) locator.getCurrentX());
                 selectedRoute.setStartY((int) locator.getCurrentY());
@@ -144,14 +144,28 @@ public class OdoBase extends LinearOpMode {
             if (action != null) {
                 try {
                     Object result;
-                    if (isMethodOpModeSpecific(action)) {
-                        result = (AutoDot) action.invoke(this.bot, opMode);
-                    } else {
-                        result = (AutoDot) action.invoke(this.bot);
+                    if (AutoDot.class.isAssignableFrom(action.getReturnType())) {
+                        if (isMethodOpModeSpecific(action)) {
+                            result = (AutoDot) action.invoke(this.bot, opMode);
+                        } else {
+                            result = (AutoDot) action.invoke(this.bot);
+                        }
+                        if (coordinateFunctions.containsKey(action.getName())) {
+                            if (result instanceof AutoDot) {
+                                coordinateFunctions.put(action.getName(), (AutoDot) result);
+                            }
+                        }
                     }
-                    if (coordinateFunctions.containsKey(action.getName())) {
-                        if (result instanceof AutoDot) {
-                            coordinateFunctions.put(action.getName(), (AutoDot) result);
+                    if (Boolean.class.isAssignableFrom(action.getReturnType())){
+                        if (isMethodOpModeSpecific(action)) {
+                            result = (Boolean) action.invoke(this.bot, opMode);
+                        } else {
+                            result = (Boolean) action.invoke(this.bot);
+                        }
+                        if (booleanFunctions.containsKey(action.getName())) {
+                            if (result instanceof Boolean) {
+                                booleanFunctions.put(action.getName(), (Boolean) result);
+                            }
                         }
                     }
                 } catch (Exception ex) {
@@ -179,6 +193,11 @@ public class OdoBase extends LinearOpMode {
                 }
                 Log.d(TAG, String.format("Checking condition. Dot name: %s. Condition value: %s", dotName,  step.getConditionFunction()));
                 return dot != null && dot.equals(step.getConditionValue());
+            }
+            if (booleanFunctions.containsKey(step.getConditionFunction())){
+                Boolean result = booleanFunctions.get(step.getConditionFunction());
+                Log.d(TAG, String.format("Checking boolean condition. Result: %b. Condition value: %s", result,  step.getConditionValue()));
+                return result != null && result.equals(Boolean.parseBoolean(step.getConditionValue()));
             }
         }
         return true;
@@ -377,6 +396,13 @@ public class OdoBase extends LinearOpMode {
                         String namedDot = annotation.defaultReturn();
                         if (!namedDot.isEmpty()){
                             obj.setReturnRef(namedDot);
+                        }
+                    }
+                    if (Boolean.class.isAssignableFrom(method.getReturnType())){
+                        booleanFunctions.put(method.getName(), null);
+                        String val = annotation.defaultReturn();
+                        if(!val.isEmpty()){
+                            obj.setReturnRef(val);
                         }
                     }
                     botActionList.add(obj);
