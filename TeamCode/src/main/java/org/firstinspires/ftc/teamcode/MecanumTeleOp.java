@@ -14,7 +14,6 @@ public class MecanumTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //import the hardware map
-
         robot.init(hardwareMap, telemetry);
 
         // init motor and add intake for arm
@@ -27,18 +26,15 @@ public class MecanumTeleOp extends LinearOpMode {
 
         //set arm levels
         int armLevel0 = 0;   // (a)
-        int armLevel1 = 400; // (x)
-        int armLevel2 = 800; // (y)
-        int armLevel3 = 1200; // (b)
+        int armLevel1 = 200; // (x)
+        int armLevel2 = 550; // (y)
+        int armLevel3 = 850; // (b)
 
         //intake power
         double intakePower = 0;
 
         //carousel power
-        //double carouselPower = 0;
-
-        //set arm power
-        //robot.motorArm.setPower(0.5);
+        double carouselPower = 0;
 
         //init loop
          while (! isStarted()) {
@@ -53,6 +49,54 @@ public class MecanumTeleOp extends LinearOpMode {
 
         if (isStopRequested()) return;
 
+        //Code to test if the motors are functioning as intended. Leave commented out if not testing.
+        /*
+
+       robot.motorFrontLeft.setPower(0.5);
+       telemetry.addData("motor", "front left");
+       telemetry.addData("encoder", robot.motorFrontLeft.getCurrentPosition());
+       telemetry.update();
+       sleep(5000);
+       robot.motorFrontLeft.setPower(0);
+
+       robot.motorFrontRight.setPower(0.5);
+       telemetry.addData("motor", "front right");
+       telemetry.addData("encoder", robot.motorFrontRight.getCurrentPosition());
+       telemetry.update();
+       sleep(5000);
+        robot.motorFrontRight.setPower(0);
+
+        robot.motorBackRight.setPower(0.5);
+        telemetry.addData("motor","back right");
+        telemetry.addData("encoder", robot.motorBackRight.getCurrentPosition());
+        telemetry.update();
+        sleep(5000);
+        robot.motorBackRight.setPower(0);
+
+        robot.motorBackLeft.setPower(0.5);
+        telemetry.addData("motor","back left");
+        telemetry.addData("encoder", robot.motorBackLeft.getCurrentPosition());
+        telemetry.update();
+        sleep(5000);
+        robot.motorBackLeft.setPower(0);
+
+        robot.motorFrontLeft.setPower(0.5);
+        robot.motorFrontRight.setPower(0.5);
+        telemetry.addData("motor","front Right and Left");
+        telemetry.update();
+        sleep(5000);
+        robot.motorFrontLeft.setPower(0);
+        robot.motorFrontRight.setPower(0);
+
+        robot.motorBackLeft.setPower(0.5);
+        robot.motorBackRight.setPower(0.5);
+        telemetry.addData("motor","back Right and Left");
+        telemetry.update();
+        sleep(5000);
+        robot.motorBackLeft.setPower(0);
+        robot.motorBackRight.setPower(0);
+        */
+
         robot.motorArm.setTargetPosition(0);
         robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -60,11 +104,12 @@ public class MecanumTeleOp extends LinearOpMode {
             // Track Arm Current Pos
             armCurrentPos = robot.motorArm.getCurrentPosition();
             // Arm Up and Arm Down in small increments
-            if (gamepad2.right_stick_y != 0.0 && ( armSetPos >= 0 && armSetPos <= armMaxPos) ) {
+            if (gamepad2.right_stick_y != 0.25) {
+                //armSetPos += gamepad2.right_stick_y*10;
                 if (gamepad2.right_stick_y == -1 ){
-                    armSetPos = Math.min(++armSetPos, armMaxPos);
+                    armSetPos = armSetPos + 5;
                 } else if (gamepad2.right_stick_y == 1 ) {
-                    armSetPos = Math.max(--armSetPos, 0);
+                    armSetPos = armSetPos - 5;
                 }
             }
             //set arm positions to gamepad.2 buttons
@@ -81,11 +126,11 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
             //intake
-            if (gamepad2.left_trigger > 0.5){
-                intakePower = 0.75;
+            if (gamepad2.right_trigger > 0.5){
+                intakePower = -0.75;
             }
-            else if (gamepad2.right_trigger > 0.5){
-                intakePower = -0.3;
+            else if (gamepad2.left_trigger > 0.5){
+                intakePower = 0.6;
             }
             else if (gamepad2.left_trigger <= 0.5 && gamepad2.right_trigger <= 0.5){
                 intakePower = 0;
@@ -93,27 +138,24 @@ public class MecanumTeleOp extends LinearOpMode {
             //set power intake
             robot.motorIntake.setPower(intakePower);
 
-            /*carousel code
-
-            if (g pad 2. right bumper == pressed) {
+            //carousel code
+            if (gamepad2.right_bumper == true && !gamepad2.left_bumper) {
                 carouselPower = 0.5;
-                }
-            else if (g pad 2. left bumper == pressed) {
+            }
+            else if (gamepad2.left_bumper == true && !gamepad2.right_bumper) {
                 carouselPower = -0.5;
-                }
-            else if (gpad 2. right bumper !== pressed && gpad 2. left bumper !== pressed) {
+            }
+            else{
                 carouselPower = 0;
-                }
-             */
+            }
 
             //set power carousel
-            //robot.motorCarousel.setPower(carouselPower);
-
+            robot.motorCarousel.setPower(carouselPower);
 
             //drivetrain mecanum
-            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
+            double y = gamepad1.left_stick_y;
+            double x = -gamepad1.left_stick_x * 1.1; // * 1.1 Counteract imperfect strafing
+            double rx = -gamepad1.right_stick_x;
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
