@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 
 public class CarouselEntity implements ThemedEntity {
     private final MeepMeep meepMeep;
@@ -54,7 +55,11 @@ public class CarouselEntity implements ThemedEntity {
 
         graphics2D.transform(transform);
         graphics2D.drawOval(0, 0, 1, 1);
-        graphics2D.
+        try {
+            graphics2D.transform(transform.createInverse());
+        } catch (NoninvertibleTransformException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
