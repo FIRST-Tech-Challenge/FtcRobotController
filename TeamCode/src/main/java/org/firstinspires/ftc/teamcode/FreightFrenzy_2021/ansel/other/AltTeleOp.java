@@ -1,25 +1,18 @@
-package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition;
+package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.ansel.other;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-
 import java.util.ArrayList;
 
-import static java.lang.Math.toRadians;
-
-@TeleOp(name = "TELEOP FINAL", group = "Competition")
-public class Mecanum_TeleOp_Final extends LinearOpMode {
+@Disabled
+@TeleOp(name = "AltTeleOp", group = "Linear OpMode")
+public class AltTeleOp extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -34,12 +27,11 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     double rotate = 0;
-    double speed = 0.7;
+    double speed = 0.8;
     boolean reverse = false;
 
     @Override
     public void runOpMode() {
-
 
         LF  = hardwareMap.get(DcMotor.class, "LF");
         RF = hardwareMap.get(DcMotor.class, "RF");
@@ -75,10 +67,6 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         double spinPower = 0;
         int initialHeight = Slide.getCurrentPosition();
 
-        //Read Position From Auto
-        SampleMecanumDrive chassis = new SampleMecanumDrive(hardwareMap);
-        chassis.setPoseEstimate(PoseStorage.currentPose);
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -95,19 +83,13 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
         boolean releasedA2 = true;
         boolean releasedB1 = true;
         boolean releasedB2 = true;
-        boolean releasedY1 = true;
         boolean releasedY2 = true;
-        boolean releasedX2 = true;
         boolean releasedDD1 = true;
         boolean releasedDD2 = true;
         boolean releasedDL2 = true;
         boolean releasedDU1 = true;
         boolean releasedDU2 = true;
         boolean releasedDR2 = true;
-
-        boolean releasedBack2 =true;
-        boolean releasedStart2 =true;
-        double rotateSpeed = 1;
 
         boolean toggleX1 = true;
         boolean toggleRB2 = true;
@@ -116,17 +98,11 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
         while (opModeIsActive()) {
             runtime.reset();
-            chassis.update();
-
-            // Retrieve your pose
-            Pose2d myPose = chassis.getPoseEstimate();
-            telemetry.addLine(driveMethod.fieldState(myPose).toString());
 
             double drive = -gamepad1.left_stick_y;
             double strafe  = -gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
 
-            //////////////GAMEPAD 1//////////////
             if(gamepad1.dpad_up) {
                 if(releasedDU1) {
                     increaseSpeed(0.05);
@@ -144,28 +120,6 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             } else if (!releasedDD1){
                 releasedDD1 = true;
             }
-            if (gamepad1.left_bumper) {
-                if (releasedLB1 && Slide.getCurrentPosition() < initialHeight + 30){
-                    intakePower = 1.0;
-                    telemetry.addLine("INTAKE STARTS");
-                    releasedLB1 = false;
-                }
-            } else if (!releasedLB1){
-                intakePower = 0;
-                telemetry.addLine("INTAKE STOPS");
-                releasedLB1 = true;
-            }
-            if (gamepad1.right_bumper) {
-                if (releasedRB1 && Slide.getCurrentPosition() < initialHeight + 30){
-                    intakePower = -1.0;
-                    telemetry.addLine("INTAKE REVERSE STARTS");
-                    releasedRB1 = false;
-                }
-            } else if (!releasedRB1){
-                telemetry.addLine("INTAKE STOPS");
-                intakePower = 0;
-                releasedRB1 = true;
-            }
 
             if(gamepad1.a){
                 if(releasedA1) {
@@ -177,12 +131,50 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
             if(gamepad1.b){
                 if(releasedB1) {
-                    speed = 0.7;
+                    speed = 0.8;
                 }
             } else if(!releasedB1){
                 releasedB1 = true;
             }
 
+            if(gamepad2.a){
+                if(releasedA2) {
+                    Slide.setTargetPosition(initialHeight);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                    Rotate.setPosition(0.03);
+                }
+
+            } else if(!releasedA2){
+                releasedA2 = true;
+            }
+            if(gamepad2.b){
+                if(releasedB2) {
+                    Rotate.setPosition(1.0);
+                    sleep(800);
+                    Slide.setTargetPosition(initialHeight + 750);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                }
+            } else if(!releasedB2){
+                releasedB2 = true;
+            }
+
+            if(gamepad2.y){
+                if(gamepad2.y && Rotate.getPosition() < 0.4) {
+                    Rotate.setPosition(1.0);
+                    sleep(1200);
+                    Slide.setTargetPosition(initialHeight + 1400);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                } else if(gamepad2.y && Rotate.getPosition() > 0.4){
+                    Slide.setTargetPosition(initialHeight + 1400);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                }
+            } else if(!releasedY2){
+                releasedY2 = true;
+            }
 
             if (gamepad1.x) {
                 if (releasedX1){
@@ -207,84 +199,6 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 releasedX1 = true;
             }
 
-            //SHARED HUB
-            if(gamepad1.y) {
-                if (releasedY1) {
-                    if (PoseStorage.state == driveMethod.poseState.BLUE || PoseStorage.state == driveMethod.poseState.BLUE_WAREHOUSE || PoseStorage.state == driveMethod.poseState.BLUE_OTHERS) {
-                        chassis.setPoseEstimate(fieldConstant.SHARED_BLUE_ENTER_POSE);
-                        Trajectory sharedTraj1 = chassis.trajectoryBuilder(chassis.getPoseEstimate(), true)
-                                .lineTo(new Vector2d(64.75, 18))
-                                .build();
-                        chassis.followTrajectory(sharedTraj1);
-                        Trajectory sharedTraj2 = chassis.trajectoryBuilder(sharedTraj1.end(), true)
-                                .lineToLinearHeading(fieldConstant.SHARED_BLUE_END_POSE)
-                                .build();
-                        chassis.followTrajectory(sharedTraj2);
-                    } else if (PoseStorage.state == driveMethod.poseState.RED || PoseStorage.state == driveMethod.poseState.RED_WAREHOUSE || PoseStorage.state == driveMethod.poseState.RED_OTHERS) {
-                        chassis.setPoseEstimate(fieldConstant.SHARED_RED_ENTER_POSE);
-                        Trajectory sharedTraj1 = chassis.trajectoryBuilder(chassis.getPoseEstimate(), true)
-                                .lineTo(new Vector2d(64.75, -18))
-                                .build();
-                        chassis.followTrajectory(sharedTraj1);
-                        Trajectory sharedTraj2 = chassis.trajectoryBuilder(sharedTraj1.end(), true)
-                                .lineToLinearHeading(fieldConstant.SHARED_RED_END_POSE)
-                                .build();
-                        chassis.followTrajectory(sharedTraj2);
-                    }
-                    speed = 0.3;
-                    chassis.updatePoseEstimate();
-                    PoseStorage.state = driveMethod.fieldState(chassis.getPoseEstimate());
-                } else if (!releasedY1) {
-                    releasedY1 = true;
-                }
-            }
-
-            //////////////GAMEPAD 2//////////////
-            if(gamepad2.a){
-                if(releasedA2) {
-                    Slide.setTargetPosition(initialHeight);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
-                }
-
-            } else if(!releasedA2){
-                releasedA2 = true;
-            }
-            if(gamepad2.b){
-                if(releasedB2) {
-                    rotateWithSpeed(1.0, rotateSpeed);
-                    sleep(500);
-                    Slide.setTargetPosition(initialHeight + 750);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
-                }
-            } else if(!releasedB2){
-                releasedB2 = true;
-            }
-
-            if(gamepad2.y){
-                if(releasedY2) {
-                    rotateWithSpeed(1.0, rotateSpeed);
-                    sleep(500);
-                    Slide.setTargetPosition(initialHeight + 1400);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
-                }
-            } else if(!releasedY2){
-                releasedY2 = true;
-            }
-
-            if(gamepad2.x){
-                if(releasedX2) {
-                    rotateWithSpeed(0.03, rotateSpeed);
-                    sleep(300);
-                    Slide.setTargetPosition(initialHeight);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
-                }
-            } else if(!releasedX2){
-                releasedX2 = true;
-            }
             if (gamepad2.dpad_up) {
                 if (releasedDU2){
                     Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -307,13 +221,11 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 Slide.setPower(0);
                 releasedDD2 = true;
             }
+
             if (gamepad2.dpad_left) {
                 if (releasedDL2){
-//                    if(spinPower != 0) {
-//                        spinPower -= 0.05;
-//                    }
-                    while(Rotate.getPosition() <= 1.0 && gamepad2.dpad_left) {
-                        rotateWithSpeed(Rotate.getPosition()+0.05, rotateSpeed);
+                    if(spinPower != 0) {
+                        spinPower -= 0.05;
                     }
                     releasedDL2 = false;
                 }
@@ -322,11 +234,8 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             }
             if (gamepad2.dpad_right) {
                 if (releasedDR2){
-//                    if(spinPower != 0) {
-//                        spinPower += 0.05;
-//                    }
-                    while(Rotate.getPosition() >= 0.03 && gamepad2.dpad_right) {
-                        rotateWithSpeed(Rotate.getPosition()-0.05, rotateSpeed);
+                    if(spinPower != 0) {
+                        spinPower += 0.05;
                     }
                     releasedDR2 = false;
                 }
@@ -334,21 +243,27 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 releasedDR2 = true;
             }
 
-            if(gamepad2.back){
-                if(releasedBack2){
-                    rotateSpeed = 0.5;
-                    releasedBack2 = false;
-                }else if (!releasedBack2){
-                    releasedBack2 = true;
+            if (gamepad1.left_bumper) {
+                if (releasedLB1 && Slide.getCurrentPosition() < initialHeight + 30){
+                    intakePower = 1.0;
+                    telemetry.addLine("INTAKE STARTS");
+                    releasedLB1 = false;
                 }
+            } else if (!releasedLB1){
+                intakePower = 0;
+                telemetry.addLine("INTAKE STOPS");
+                releasedLB1 = true;
             }
-            if(gamepad2.start){
-                if(releasedStart2){
-                    rotateSpeed = 1.0;
-                    releasedStart2 = false;
-                }else if (!releasedStart2){
-                    releasedStart2 = true;
+            if (gamepad1.right_bumper) {
+                if (releasedRB1 && Slide.getCurrentPosition() < initialHeight + 30){
+                    intakePower = -1.0;
+                    telemetry.addLine("INTAKE REVERSE STARTS");
+                    releasedRB1 = false;
                 }
+            } else if (!releasedRB1){
+                telemetry.addLine("INTAKE STOPS");
+                intakePower = 0;
+                releasedRB1 = true;
             }
 
             if (gamepad2.right_bumper) {
@@ -387,7 +302,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 releasedLB2 = true;
             }
 
-            if(gamepad2.right_trigger == 1 && Rotate.getPosition() > 0.4){
+            if(gamepad2.right_trigger == 1 && Rotate.getPosition() >= 0.4){
                 if (releasedRT2){
                     Push.setPosition(0);
                     releasedRT2 = false;
@@ -400,12 +315,12 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             if(gamepad2.left_trigger == 1){
                 if (releasedLT2){
                     if (toggleLT2 && !Slide.isBusy()) {
-                        rotateWithSpeed(0.03,rotateSpeed);
+                        Rotate.setPosition(0.03);
                         telemetry.addLine("ROTATE STARTS");
                         toggleLT2 = false;
                     } else {
-                        rotateWithSpeed(1.0,rotateSpeed);
-                        telemetry.addLine("ROTATE STOPS");
+                        Rotate.setPosition(1.0);
+                        telemetry.addLine("ROTATE ShTOPS");
                         toggleLT2 = true;
                     }
                     releasedLT2 = false;
@@ -473,23 +388,6 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             return;
         }
         speed = increased;
-    }
-
-    private void rotateWithSpeed(double targetPos, double factor){
-        //1 -> 10 0.5 -> 5
-        if(factor == 1.0){
-            Rotate.setPosition(targetPos);
-        }
-        double currentPos = Rotate.getPosition();
-        double interval = 0.05 * factor;
-        while (targetPos > Rotate.getPosition()){
-            Rotate.setPosition(Rotate.getPosition() + interval);
-            sleep(30);
-        }
-        while (targetPos < Rotate.getPosition()){
-            Rotate.setPosition(Rotate.getPosition() - interval);
-            sleep(30);
-        }
     }
 
 }
