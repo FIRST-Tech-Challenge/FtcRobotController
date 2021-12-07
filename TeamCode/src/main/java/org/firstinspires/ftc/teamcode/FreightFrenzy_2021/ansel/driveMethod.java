@@ -41,6 +41,7 @@ public class driveMethod {
     private DcMotor Slide = null;
     private Servo Rotate = null;
     private Servo Push = null;
+    private Servo Bucket = null;
     private ElapsedTime runtime = new ElapsedTime();
     BNO055IMU imu;
 
@@ -123,12 +124,14 @@ public class driveMethod {
 
         double a = 1 + Math.pow((q-n)/(p-m), 2.0);
         double b = 2*(((q-n)*(n*p-m*q)/Math.pow((p-m), 2.0))+(q*n-q*q)/(p-m)-p);
-        double c = p*p+Math.pow((p*n-m*q)/(p-m), 2.0)-2.0*(p*n*q-m*q*q)/(p-m)+q*q-r*r;
+        final double v = (p * n - m * q) / (p - m);
+        double c = p*p+Math.pow(v, 2.0)-2.0*(p*n*q-m*q*q)/(p-m)+q*q-r*r;
 
-        double x_1 = (-b + Math.sqrt(b*b-4.0*a*c))/2.0/a;
-        double y_1 = (q-n)/(p-m)*x_1+(p*n-m*q)/(p-m);
-        double x_2 = (-b - Math.sqrt(b*b-4.0*a*c))/2.0/a;
-        double y_2 = (q-n)/(p-m)*x_2+(p*n-m*q)/(p-m);
+        final double sqrt = Math.sqrt(b * b - 4.0 * a * c);
+        double x_1 = (-b + sqrt)/2.0/a;
+        double y_1 = (q-n)/(p-m)*x_1+ v;
+        double x_2 = (-b - sqrt)/2.0/a;
+        double y_2 = (q-n)/(p-m)*x_2+ v;
 
         Pose2d targetPose_1 = new Pose2d(x_1, y_1);
         Pose2d targetPose_2 = new Pose2d(x_2, y_2);

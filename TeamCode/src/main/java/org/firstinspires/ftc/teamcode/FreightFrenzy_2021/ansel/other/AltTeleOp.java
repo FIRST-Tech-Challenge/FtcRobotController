@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.ansel;
+package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.ansel.other;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

@@ -1,6 +1,6 @@
 // without spin, intake, slide - no ext. hub
 
-package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.ansel;
+package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.ansel.other;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,8 +21,8 @@ public class Prototype extends LinearOpMode {
     private DcMotor LB;
     private DcMotor RB;
     private Servo Bucket;
-    private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ArrayList<Double[]> speedList = new ArrayList<Double[]>();
+    private final ElapsedTime runtime = new ElapsedTime();
 
     double rotate = 0;
     double speed = 0.8;
