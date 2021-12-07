@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.mentor.samples.HardwareMaps.InternalCameraHardwareMap;
+import org.firstinspires.ftc.teamcode.mentor.samples.SkystoneDetector.SkystoneDetector;
 import org.firstinspires.ftc.teamcode.mentor.samples.cv.OpenCvShippingElementDetector;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -92,6 +93,23 @@ public class OPCVFFObjectDetectorAutoMode extends LinearOpMode {
             telemetry.addData("Theoretical max FPS", robot.phoneCam.getCurrentPipelineMaxFps());
             telemetry.update();
 
+            OPCVFFObjectDetector3.TSELocation location = detector.getLocation();
+            if (location == OPCVFFObjectDetector3.TSELocation.PLANE) {
+                // Do something with the plane
+                telemetry.addData("We have a", location);
+            }
+            else if(location == OPCVFFObjectDetector3.TSELocation.SHIP){
+                // Do something with the ship
+                telemetry.addData("We have a", location);
+            }
+            else if(location == OPCVFFObjectDetector3.TSELocation.FRONT_TRUCK){
+                telemetry.addData("We have a", location);
+
+            }
+            else if(location == OPCVFFObjectDetector3.TSELocation.SIDE_TRUCK){
+                telemetry.addData("We have a", location);
+
+            }
 
             /*
              * For the purposes of this sample, throttle ourselves to 10Hz loop to avoid burning
