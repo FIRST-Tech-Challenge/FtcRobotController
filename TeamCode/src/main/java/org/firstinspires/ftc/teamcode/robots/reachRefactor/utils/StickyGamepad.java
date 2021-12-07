@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.robots.refactorTrikeBot.utils;
+package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 
-import static org.firstinspires.ftc.teamcode.robots.refactorTrikeBot.utils.Constants.*;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.FFConstants.*;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -13,12 +13,14 @@ public class StickyGamepad {
     public boolean left_bumper, right_bumper;
     public boolean left_trigger, right_trigger;
     public boolean left_stick_button, right_stick_button;
+    public boolean start;
 
     private boolean dpad_up_down, dpad_down_down, dpad_left_down, dpad_right_down;
     private boolean a_down, b_down, x_down, y_down;
     private boolean left_bumper_down, right_bumper_down;
     private boolean left_trigger_down, right_trigger_down;
     private boolean left_stick_button_down, right_stick_button_down;
+    private boolean start_down;
 
     public StickyGamepad(Gamepad gamepad) {
         this.gamepad = gamepad;
@@ -191,6 +193,18 @@ public class StickyGamepad {
         } else {
             right_stick_button = false;
             right_stick_button_down = false;
+        }
+
+        if (gamepad.start) {
+            if (start_down) {
+                start = false;
+            } else {
+                start_down = true;
+                start = true;
+            }
+        } else {
+            start = false;
+            start_down = false;
         }
     }
 }

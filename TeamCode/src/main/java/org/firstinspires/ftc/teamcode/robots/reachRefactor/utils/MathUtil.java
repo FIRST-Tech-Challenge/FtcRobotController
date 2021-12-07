@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.robots.refactorTrikeBot.utils;
+package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 
-import static org.firstinspires.ftc.teamcode.robots.refactorTrikeBot.utils.Constants.*;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.FFConstants.*;
 
 public class MathUtil {
     public static int metersToTicks(double meters) {

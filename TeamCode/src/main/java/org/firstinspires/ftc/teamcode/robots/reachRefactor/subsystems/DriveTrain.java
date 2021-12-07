@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.refactorTrikeBot.subsystems;
+package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
@@ -6,22 +6,23 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-import static org.firstinspires.ftc.teamcode.robots.refactorTrikeBot.utils.Constants.*;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.FFConstants.*;
 
-import static org.firstinspires.ftc.teamcode.robots.refactorTrikeBot.utils.MathUtil.*;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtil.*;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-;
+
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.refactorTrikeBot.utils.MathUtil;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtil;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import java.util.HashMap;
@@ -50,10 +51,16 @@ public class DriveTrain implements Subsystem {
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
     private double swivelAngle;
     private double chassisDistance;
-    boolean imuInitialized;
+    private boolean imuInitialized;
+    private boolean smoothingEnabled;
 
     // PID
     private PIDController turnPID, drivePID, swivelPID;
+
+    // Smoothers
+    private ExponentialSmoother frontLeftSmoother;
+    private ExponentialSmoother frontRightSmoother;
+    private ExponentialSmoother middleSmoother;
 
     // Constants
     public static final String TELEMETRY_NAME = "Drive Train";
@@ -77,14 +84,8 @@ public class DriveTrain implements Subsystem {
         }
 
         // Sensors
-        BNO055IMU.Parameters parametersIMU = new BNO055IMU.Parameters();
-        parametersIMU.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parametersIMU.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parametersIMU.loggingEnabled = true;
-        parametersIMU.loggingTag = "baseIMU";
-
-        imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
-        imu.initialize(parametersIMU);
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        initializeIMU(hardwareMap);
 
         sensorChassisDistance = hardwareMap.get(DistanceSensor.class, "distLength");
 
@@ -93,15 +94,18 @@ public class DriveTrain implements Subsystem {
         drivePID = new PIDController(DRIVE_PID_COEFFICIENTS);
         swivelPID = new PIDController(SWIVEL_PID_COEFFICIENTS);
 
-        imuInitialized = false;
+        // Smoother
+        frontLeftSmoother = new ExponentialSmoother(FRONT_LEFT_SMOOTHING_FACTOR);
+        frontRightSmoother = new ExponentialSmoother(FRONT_RIGHT_SMOOTHING_FACTOR);
+        middleSmoother = new ExponentialSmoother(MIDDLE_SMOOTHING_FACTOR);
     }
 
-    private void resetIMU() {
+    private void initializeIMU(HardwareMap hardwareMap) {
         BNO055IMU.Parameters parametersIMU = new BNO055IMU.Parameters();
-        parametersIMU.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parametersIMU.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parametersIMU.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parametersIMU.loggingEnabled = true;
-        parametersIMU.loggingTag = "IMU";
+        parametersIMU.loggingTag = "baseIMU";
 
         imu.initialize(parametersIMU);
     }
@@ -169,15 +173,25 @@ public class DriveTrain implements Subsystem {
         targetMiddleVelocity = linearVelocity + angularVelocity * Math.hypot(radius, chassisDistance);
 
         targetSwivelAngle = Math.atan2(chassisDistance, radius);
+
+        if(smoothingEnabled) {
+            targetFrontLeftVelocity = frontLeftSmoother.update(targetFrontLeftVelocity);
+            targetFrontRightVelocity = frontRightSmoother.update(targetFrontLeftVelocity);
+            targetMiddleVelocity = middleSmoother.update(targetMiddleVelocity);
+        }
     }
 
 
     @Override
     public Map<String, Object> getTelemetry() {
         Map<String, Object> telemetryMap = new HashMap<String, Object>();
-        telemetryMap.put("fl speed", MathUtil.ticksToMeters(motorFrontLeft.getVelocity()));
-        telemetryMap.put("fr speed", MathUtil.ticksToMeters(motorFrontRight.getVelocity()));
-        telemetryMap.put("middle speed", MathUtil.ticksToMeters(motorMiddle.getVelocity()));
+        telemetryMap.put("fl velocity", MathUtil.ticksToMeters(motorFrontLeft.getVelocity()));
+        telemetryMap.put("fr velocity", MathUtil.ticksToMeters(motorFrontRight.getVelocity()));
+        telemetryMap.put("middle velocity", MathUtil.ticksToMeters(motorMiddle.getVelocity()));
+
+        telemetryMap.put("fl target velocity", targetFrontLeftVelocity);
+        telemetryMap.put("fr target velocity", targetFrontRightVelocity);
+        telemetryMap.put("middle target velocity", targetMiddleVelocity);
 
         telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
         telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
@@ -194,7 +208,7 @@ public class DriveTrain implements Subsystem {
     @Override
     public void update() {
         motorFrontLeft.setVelocity(MathUtil.metersToTicks(targetFrontLeftVelocity));
-        motorFrontRight.setVelocity(MathUtil.metersToTicks(targetFrontLeftVelocity));
+        motorFrontRight.setVelocity(MathUtil.metersToTicks(targetFrontRightVelocity));
         motorMiddle.setVelocity(MathUtil.metersToTicks(targetFrontLeftVelocity));
 
         chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) * 1000;
@@ -215,6 +229,7 @@ public class DriveTrain implements Subsystem {
     //----------------------------------------------------------------------------------------------
     // Getters And Setters
     //----------------------------------------------------------------------------------------------
+
     private double getSwivelAngle() {
         return motorMiddleSwivel.getCurrentPosition() / DRIVETRAIN_TICKS_PER_REVOLUTION * 2 * Math.PI;
     }
@@ -225,5 +240,9 @@ public class DriveTrain implements Subsystem {
 
     public SimpleMatrix getPose() {
         return pose;
+    }
+
+    public void toggleSmoothingEnabled() {
+        smoothingEnabled = !smoothingEnabled;
     }
 }
