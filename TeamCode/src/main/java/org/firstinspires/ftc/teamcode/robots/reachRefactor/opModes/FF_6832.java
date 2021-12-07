@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.robots.reachRefactor;
+package org.firstinspires.ftc.teamcode.robots.reachRefactor.opModes;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.FFConstants.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.StickyGamepad;
 
@@ -28,7 +29,6 @@ public class FF_6832 extends OpMode {
     private Robot robot;
 
     // state
-    private boolean initializing;
     private boolean active;
     private int state;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
@@ -41,12 +41,11 @@ public class FF_6832 extends OpMode {
     // Code to run ONCE when the driver hits INIT
     @Override
     public void init() {
-        initializing = true;
         active = true;
         state = 0;
 
         lastLoopClockTime = System.nanoTime();
-        loopTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_SMOOTHING_FACTOR);
+        loopTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
 
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
@@ -95,7 +94,6 @@ public class FF_6832 extends OpMode {
 
     @Override
     public void start() {
-        initializing = false;
         lastLoopClockTime = System.nanoTime();
     }
 

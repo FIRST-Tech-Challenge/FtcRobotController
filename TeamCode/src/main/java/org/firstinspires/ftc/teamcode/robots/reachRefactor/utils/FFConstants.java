@@ -51,7 +51,7 @@ public class FFConstants {
         RED, BLUE
     }
     public static String DEFAULT_TELEMETRY_LINE = "Master";
-    public static double AVERAGE_LOOP_SMOOTHING_FACTOR = 0.1;
+    public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DASHBOARD_ENABLED = true;
 
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.reachRefactor;
+package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -11,8 +11,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.CanvasUtils;
 
 import java.util.HashMap;
@@ -69,8 +67,8 @@ public class Robot implements Subsystem {
                 {Math.sin(heading), Math.cos(heading)}
         });
         leftWheel = position.plus(rotationMatrix.mult(leftWheel)).scale(INCHES_PER_METER);
-        rightWheel = position.plus(rotationMatrix.mult(rightWheel)).scale(INCHES_PER_METER);;
-        swerveWheel = position.plus(rotationMatrix.mult(swerveWheel)).scale(INCHES_PER_METER);;
+        rightWheel = position.plus(rotationMatrix.mult(rightWheel)).scale(INCHES_PER_METER);
+        swerveWheel = position.plus(rotationMatrix.mult(swerveWheel)).scale(INCHES_PER_METER);
 
         CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, STROKE_COLOR);
         CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, STROKE_COLOR);
