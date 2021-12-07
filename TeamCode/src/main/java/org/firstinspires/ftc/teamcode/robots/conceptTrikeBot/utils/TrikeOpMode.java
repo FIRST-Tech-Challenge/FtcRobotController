@@ -85,12 +85,17 @@ public class TrikeOpMode extends LinearOpMode {
                 angleSwerve = Math.atan2(length, radius);
             }
 
-            vl = forward - rotate * (rotate == 0 ? 0 : radius - Constants.TRACK_WIDTH / 2);
+            vl = forward + rotate * (rotate == 0 ? 0 : radius - Constants.TRACK_WIDTH / 2);
             vr = forward + rotate * (rotate == 0 ? 0 : radius + Constants.TRACK_WIDTH / 2);
             vSwerve = forward + rotate * (rotate == 0 ? 0 : Math.hypot(radius, Constants.CHASSIS_LENGTH));
             vl *= Constants.MOVEMENT_MULTIPLIER;
             vr *= Constants.MOVEMENT_MULTIPLIER;
             vSwerve *= Constants.MOVEMENT_MULTIPLIER;
+
+            // converting from tangential m/s to angular ticks/s
+            vl = vl / (2 * Math.PI * Constants.wheelRadius) * Constants.DRIVETRAIN_TICKS_PER_REVOLUTION;
+            vr = vr / (2 * Math.PI * Constants.wheelRadius) * Constants.DRIVETRAIN_TICKS_PER_REVOLUTION;
+            vSwerve = vSwerve / (2 * Math.PI * Constants.wheelRadius) * Constants.DRIVETRAIN_TICKS_PER_REVOLUTION;
 
             double max = Math.max(Math.max(vl, vr), vSwerve);
 
@@ -100,12 +105,13 @@ public class TrikeOpMode extends LinearOpMode {
                 vSwerve /= max;
             }
 
-            leftDrive.setPower(vl);
-            rightDrive.setPower(vr);
-            swerve.setPower(vSwerve);
+            double correction = getMaintainDistanceCorrection();
+
+            leftDrive.setVelocity(vl - correction);
+            rightDrive.setVelocity(vr - correction);
+            swerve.setVelocity(vSwerve);
 
             turnSwervePID(swerveP, swerveI, swerveD, angleOfBackWheel(), angleSwerve);
-//            maintainDistance();
 
             sendTelemetry();
         }
@@ -159,7 +165,7 @@ public class TrikeOpMode extends LinearOpMode {
         swerveAngle.setPower(correction);
     }
 
-    public void maintainDistance() {
+    public double getMaintainDistanceCorrection() {
         distancePID.setOutputRange(-0.5, 0.5);
         distancePID.setPID(Constants.distanceP, Constants.distanceI, Constants.distanceD);
         distancePID.setSetpoint(Constants.TARGET_DISTANCE);
@@ -169,10 +175,7 @@ public class TrikeOpMode extends LinearOpMode {
         distancePID.setInput(getChassisLength());
 
         correction = distancePID.performPID();
-
-        leftDrive.setPower(correction);
-        rightDrive.setPower(correction);
-        swerve.setPower(-correction);
+        return correction;
     }
 
     public double getChassisLength() {

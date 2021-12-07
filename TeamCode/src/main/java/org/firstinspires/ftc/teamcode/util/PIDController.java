@@ -4,6 +4,9 @@ import android.util.Log;
 
 import static org.firstinspires.ftc.teamcode.util.utilMethods.between;
 
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
 /**
  * Created on 6/28/2015.
  */
@@ -79,6 +82,13 @@ public class PIDController {
         m_P = Kp;
         m_I = Ki;
         m_D = Kd;
+        m_prevTime=System.nanoTime();
+    }
+
+    public PIDController(PIDCoefficients coefficients) {
+        m_P = coefficients.p;
+        m_I = coefficients.i;
+        m_D = coefficients.d;
         m_prevTime=System.nanoTime();
     }
 
@@ -177,6 +187,12 @@ public class PIDController {
         m_P = p;
         m_I = i;
         m_D = d;
+    }
+
+    public void setPID(PIDCoefficients pidCoefficients) {
+        m_P = pidCoefficients.p;
+        m_I = pidCoefficients.i;
+        m_D = pidCoefficients.d;
     }
 
     /**

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 @Config
 public class Constants {
@@ -28,6 +30,7 @@ public class Constants {
     public static double TRACK_WIDTH = 0.308162;
     public static double CHASSIS_LENGTH = 1.0;
     public static double MOVEMENT_MULTIPLIER = 0.25;
+    public static double DRIVETRAIN_TICKS_PER_REVOLUTION = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class).getTicksPerRev();
 
     public static double distanceP = 0.01;
     public static double distanceI = 0;
