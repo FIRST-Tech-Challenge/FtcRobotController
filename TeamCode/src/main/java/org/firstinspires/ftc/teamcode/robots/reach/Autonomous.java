@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot;
+package org.firstinspires.ftc.teamcode.robots.reach;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.StackHeight;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.VisionProvider;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.robots.reach.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.VisionProvider;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.MineralStateProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
  */
 public class Autonomous {
 
-    private PoseFF robot;
+    private ReachPose robot;
     private Telemetry telemetry;
 
     // vision-related configuration
@@ -34,7 +34,7 @@ public class Autonomous {
     public Stage autoStage = new Stage();
 
 
-    public Autonomous(PoseFF robot, Telemetry telemetry) {
+    public Autonomous(ReachPose robot, Telemetry telemetry) {
         this.robot = robot;
         this.telemetry = telemetry;
     }

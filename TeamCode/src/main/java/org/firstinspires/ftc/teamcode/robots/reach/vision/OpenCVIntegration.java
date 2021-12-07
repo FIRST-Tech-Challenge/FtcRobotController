@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision;
+package org.firstinspires.ftc.teamcode.robots.reach.vision;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reach.utils.Constants;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;

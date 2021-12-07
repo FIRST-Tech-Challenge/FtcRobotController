@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.dummy;
+package org.firstinspires.ftc.teamcode.robots.reach.vision.dummy;
 
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.StackHeight;
 
 public class ZeroDummyVisionIntegration extends AbstractDummyVisionIntegration {
 

@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision;
+package org.firstinspires.ftc.teamcode.robots.reach.vision;
 
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.dummy.FourDummyVisionIntegration;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.dummy.OneDummyVisionIntegration;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.dummy.ZeroDummyVisionIntegration;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.dummy.FourDummyVisionIntegration;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.dummy.OneDummyVisionIntegration;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.dummy.ZeroDummyVisionIntegration;
 
 public class VisionProviders {
     private VisionProviders() { throw new RuntimeException("Utility Class"); }

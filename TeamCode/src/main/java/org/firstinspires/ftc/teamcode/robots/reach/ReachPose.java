@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot;
+package org.firstinspires.ftc.teamcode.robots.reach;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -17,11 +17,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.CanvasUtils;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.TrikeChassisMovementCalc;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.StackHeight;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.utils.CanvasUtils.Point;
+import org.firstinspires.ftc.teamcode.robots.reach.utils.CanvasUtils;
+import org.firstinspires.ftc.teamcode.robots.reach.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reach.utils.TrikeChassisMovementCalc;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.reach.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
@@ -51,7 +51,7 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
  */
 
 @Config
-public class PoseFF {
+public class ReachPose {
 
     // setup
     HardwareMap hwMap;
@@ -173,7 +173,7 @@ public class PoseFF {
     }
 
     public enum RobotType {
-        BigWheel, Icarus, Minimech, TomBot, UGBot, conceptTrikeBot;
+        BigWheel, Icarus, Minimech, TomBot, UGBot, Reach;
     }
 
     public RobotType currentBot;
@@ -197,7 +197,7 @@ public class PoseFF {
     //////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////
 
-    public PoseFF(RobotType name) {
+    public ReachPose(RobotType name) {
         poseX = Constants.startingXOffset;
         poseY = Constants.startingYOffset;
         poseHeading = 0;

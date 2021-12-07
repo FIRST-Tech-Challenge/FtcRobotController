@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.dummy;
+package org.firstinspires.ftc.teamcode.robots.reach.vision.dummy;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.StackHeight;
-import org.firstinspires.ftc.teamcode.robots.conceptTrikeBot.vision.VisionProvider;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.reach.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 public abstract class AbstractDummyVisionIntegration implements VisionProvider {
