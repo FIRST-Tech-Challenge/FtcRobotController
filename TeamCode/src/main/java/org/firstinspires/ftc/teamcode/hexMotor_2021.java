@@ -22,7 +22,7 @@ public class hexMotor_2021 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        motor  = hardwareMap.get(DcMotor.class, "swing");
+        motor  = hardwareMap.get(DcMotor.class, "spinner_intake");
         int MotEncoderPosition = 0;
         double swing;
 

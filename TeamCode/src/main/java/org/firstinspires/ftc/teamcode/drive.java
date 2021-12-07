@@ -91,6 +91,7 @@ public class drive extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
+    private DcMotor spinnerIntake = null;
     TouchSensor touch;
     Servo servo;
 
@@ -104,8 +105,9 @@ public class drive extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone)
         // Adding touch sensor as hardware program.
         touch = hardwareMap.get(TouchSensor.class, "Touch");
-        leftDrive = hardwareMap.get(DcMotor.class, "motorTest");
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        spinnerIntake = hardwareMap.get(DcMotor.class, "spinner_intake");
         servo = hardwareMap.get(Servo.class, "servoTest");
 
 
@@ -138,12 +140,13 @@ public class drive extends LinearOpMode {
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            leftPower = -gamepad1.left_stick_y;
-            rightPower = -gamepad1.right_stick_y;
+            //leftPower = -gamepad1.left_stick_y;
+            //rightPower = -gamepad1.right_stick_y;
             servoposition = Range.clip(gamepad1.left_trigger, 0, 1);
 
             // Send calculated power to wheels
-            // rightDrive.setPower(rightPower);
+            rightDrive.setPower(leftPower);
+            leftDrive.setPower(leftPower);
             servo.setPosition(servoposition);
 
 
