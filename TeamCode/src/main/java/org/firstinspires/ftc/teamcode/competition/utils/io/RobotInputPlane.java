@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.competition.utils.io;
 
-import org.firstinspires.ftc.teamcode.competition.utils.locations.Location;
+import org.firstinspires.ftc.teamcode.competition.utils.locations.InputLocation;
 
 import java.util.ArrayList;
 
@@ -9,33 +9,32 @@ import java.util.ArrayList;
  */
 public class RobotInputPlane {
 
-    enum Drivetrain {
-        CARFAX,
-        MECHANUM,
-        TANK
+    private final ArrayList<InputLocation> LOCATIONS;
+
+    public RobotInputPlane(ArrayList<InputLocation> locations) {
+        LOCATIONS = locations;
     }
 
-    enum Subsystem {
-        DUCK,
-        INTAKE,
-        ELEVATOR,
-        HAND
+    public void sendInputToLocation(InputLocation location) {
+        // TODO: this and other input methods
     }
 
-    private final Drivetrain TYPE;
-    private final ArrayList<Subsystem> SUBSYSTEMS;
-
-    public RobotInputPlane(Drivetrain type, ArrayList<Subsystem> subsystems) {
-        TYPE = type;
-        SUBSYSTEMS = subsystems;
+    public void killLocation(InputLocation location) {
+        location.kill();
     }
 
-    public void sendInputToLocation(Location location) {
-
+    public void killAllLocations() {
+        for(InputLocation location : LOCATIONS) {
+            location.kill();
+        }
     }
 
-    public void kill() {
+    public void getLocation() {
+        // TODO: this and other location getters. should be able to get a location based on id or index
+    }
 
+    public ArrayList<InputLocation> getLocations() {
+        return LOCATIONS;
     }
 
 }

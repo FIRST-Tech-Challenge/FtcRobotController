@@ -1,23 +1,20 @@
 package org.firstinspires.ftc.teamcode.competition.utils.control.groups;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.competition.utils.control.Control;
 import org.firstinspires.ftc.teamcode.competition.utils.control.items.Motor;
 
-public class Carfax {
+public class Carfax extends Control {
 
-    private final Telemetry TELEMETRY;
     private final Motor RIGHT, LEFT;
 
     /**
      * Creates a new carfax drivetrain.
-     * @param telemetry The telemetry to log to
      * @param right The right top motor of the carfax
      */
-    public Carfax(Telemetry telemetry, Motor right, Motor left) {
+    public Carfax(Motor right, Motor left) {
         RIGHT = right;
         LEFT = left;
-        TELEMETRY = telemetry;
-        TELEMETRY.addData("Carfax Ready", "Motors added and carfax ready to drive.");
     }
 
     /**
@@ -101,10 +98,6 @@ public class Carfax {
     public void reset() {
         RIGHT.reset();
         LEFT.reset();
-    }
-
-    public Telemetry getTelemetry() {
-        return TELEMETRY;
     }
 
     public Motor getRight() {

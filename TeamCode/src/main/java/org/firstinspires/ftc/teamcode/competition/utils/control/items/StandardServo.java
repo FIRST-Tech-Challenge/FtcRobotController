@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class StandardServo {
+import org.firstinspires.ftc.teamcode.competition.utils.control.Control;
+
+public class StandardServo extends Control {
 
     private final Servo SERVO;
 

@@ -1,28 +1,25 @@
 package org.firstinspires.ftc.teamcode.competition.utils.control.groups;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.competition.utils.control.Control;
 import org.firstinspires.ftc.teamcode.competition.utils.control.items.Motor;
 
-public class Tank {
+public class Tank extends Control {
 
-    private final Telemetry TELEMETRY;
     private final Motor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
 
     /**
      * Creates a new tank drivetrain.
-     * @param telemetry The telemetry to log to
      * @param rightTop The right top motor of the tank
      * @param rightBottom The right bottom motor of the tank
      * @param leftTop The left top motor of the tank
      * @param leftBottom The left bottom motor of the tank
      */
-    public Tank(Telemetry telemetry, Motor rightTop, Motor rightBottom, Motor leftTop, Motor leftBottom) {
+    public Tank(Motor rightTop, Motor rightBottom, Motor leftTop, Motor leftBottom) {
         RIGHT_TOP = rightTop;
         RIGHT_BOTTOM = rightBottom;
         LEFT_TOP = leftTop;
         LEFT_BOTTOM = leftBottom;
-        TELEMETRY = telemetry;
-        TELEMETRY.addData("Tank Ready", "Motors added and tank ready to drive.");
     }
 
     /**
@@ -122,10 +119,6 @@ public class Tank {
         RIGHT_BOTTOM.reset();
         LEFT_TOP.reset();
         LEFT_BOTTOM.reset();
-    }
-
-    public Telemetry getTelemetry() {
-        return TELEMETRY;
     }
 
     public Motor getRightTop() {
