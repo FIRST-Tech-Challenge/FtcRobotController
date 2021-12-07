@@ -21,7 +21,7 @@ import java.util.Date;
 public class Robot {
     Telemetry telemetry;
     DcMotor frontLeft, backLeft, frontRight,backRight;
-    DcMotor carousel;
+    DcMotor carousel, arm, intake;
     BNO055IMU imu;
     LinearOpMode opMode;
 
@@ -228,5 +228,13 @@ public class Robot {
         carousel.setPower(-0.35);
         pause(millis);
         carousel.setPower(0);
+    }
+    public void armThing(int level){
+        arm.setPower(.5);
+        pause(//some random number test and change later
+                1000 );
+        arm.setPower(0);
+        intake.setPower(1);
+        pause(1000);
     }
 }

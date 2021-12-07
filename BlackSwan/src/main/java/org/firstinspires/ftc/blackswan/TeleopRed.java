@@ -27,6 +27,8 @@ public class TeleopRed extends LinearOpMode {
         arm = hardwareMap.get(DcMotor.class, "arm");
         intake = hardwareMap.get(DcMotor.class, "intake");
 
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -132,6 +134,14 @@ public class TeleopRed extends LinearOpMode {
             } else if (gamepad2.dpad_right) {
                 intake.setPower(-0.3);
             } else {
+                intake.setPower(0);
+            }
+
+            if(gamepad2.right_trigger > 0.1){
+                intake.setPower(-.5);
+            } else if(gamepad2.left_trigger > 0.1){
+                intake.setPower(.5);
+            } else{
                 intake.setPower(0);
             }
 
