@@ -20,8 +20,8 @@ public class forward extends LinearOpMode {
     private DcMotor tower1 = null; //arm motor 1
     private DcMotor tower2 = null; //arm motor 2
     private Servo clawservo = null; //clawservo
-    @Override
 
+    @Override
     public void runOpMode() {
 
         telemetry.addData("Status", "Initialized");
