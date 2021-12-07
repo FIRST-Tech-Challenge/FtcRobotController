@@ -144,18 +144,6 @@ public class OdoBase extends LinearOpMode {
             if (action != null) {
                 try {
                     Object result;
-                    if (AutoDot.class.isAssignableFrom(action.getReturnType())) {
-                        if (isMethodOpModeSpecific(action)) {
-                            result = (AutoDot) action.invoke(this.bot, opMode);
-                        } else {
-                            result = (AutoDot) action.invoke(this.bot);
-                        }
-                        if (coordinateFunctions.containsKey(action.getName())) {
-                            if (result instanceof AutoDot) {
-                                coordinateFunctions.put(action.getName(), (AutoDot) result);
-                            }
-                        }
-                    }
                     if (Boolean.class.isAssignableFrom(action.getReturnType())){
                         if (isMethodOpModeSpecific(action)) {
                             result = (Boolean) action.invoke(this.bot, opMode);
@@ -165,6 +153,18 @@ public class OdoBase extends LinearOpMode {
                         if (booleanFunctions.containsKey(action.getName())) {
                             if (result instanceof Boolean) {
                                 booleanFunctions.put(action.getName(), (Boolean) result);
+                            }
+                        }
+                    }
+                    else{
+                        if (isMethodOpModeSpecific(action)) {
+                            result = (AutoDot) action.invoke(this.bot, opMode);
+                        } else {
+                            result = (AutoDot) action.invoke(this.bot);
+                        }
+                        if (coordinateFunctions.containsKey(action.getName())) {
+                            if (result instanceof AutoDot) {
+                                coordinateFunctions.put(action.getName(), (AutoDot) result);
                             }
                         }
                     }
