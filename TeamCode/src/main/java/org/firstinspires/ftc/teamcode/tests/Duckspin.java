@@ -16,7 +16,8 @@ public class Duckspin extends LinearOpMode {
         while (opModeIsActive()){
 
             spin.setDirection(DcMotorSimple.Direction.FORWARD);
-            spin.setPower(-0.4);
+            spin.setPower(-2);
+
         }
 
 

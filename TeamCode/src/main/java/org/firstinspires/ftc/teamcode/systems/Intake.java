@@ -4,11 +4,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Input extends System {
+public class Intake extends System {
 
     private DcMotor inputSpinner;
 
-    public Input(HardwareMap hw, Controller controller){
+    public Intake(HardwareMap hw, Controller controller){
         super(hw, controller);
     }
 

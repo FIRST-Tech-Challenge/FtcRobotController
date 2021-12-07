@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,11 +13,11 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@TeleOp(name="CustomVisionTest")
+@Autonomous(name="CustomVisionTest")
 public class DuckSighitng extends LinearOpMode {
     public static final String VUFORIA_KEY = "ASfLYBz/////AAABmYk1LysDykd/qmEkhSO3jwVr8HclkZRs2cZqASWoHjt8lPL/jacpgorb3/7EyIeUWBQ1HOj3v83gLZzf8BrbOXMWyD6nxsvkhDuopNeMn29OlHHByT4JV48X2+OMTz6UEp4ZaQW9vlDSE27cdUgIh1r8v2TxjZiwzd15B8gbihS1U7n5IjmyjXQ4i/7m+/hTZiS8Z+hD4sxLgqI0cVrrwH+IVVwV/ztSY2Am+47dvOgEPuQdUagVOuMf5n+Em99kc+ckzkJCoYDfGkwnvIOYLC1evm50I+dMubzhajimPFCaqWQOne0P8hMX0a8lmEKBKtuhg+Ihge8ozziU8Oc1/89u0LnOx29pWqS/bKNka8Rr";
 
-    private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/tflitemodels/data.tflite";
+    private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/visiondata/cubeandduck.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
     public static final String[] LABELS = {
