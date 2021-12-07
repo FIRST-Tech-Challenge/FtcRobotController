@@ -29,9 +29,9 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     double RF; double LF; double RR; double LR;
     // declare joystick position variables
     double X1; double Y1; double X2; double Y2;
-    final int TOP_ENCODER_VALUE = 1096;
-    final int MIDDLE_ENCODER_VALUE = 512;
-    final int BOTTOM_ENCODE_VALUE = 300;
+    final int TOP_ENCODER_VALUE = 1600;
+    final int MIDDLE_ENCODER_VALUE = 800;
+    final int BOTTOM_ENCODE_VALUE = 512;
     // operational constants
     double joyScale = 1;
     double motorMax = 0.99; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
@@ -91,12 +91,13 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         // "RUN_USING_ENCODER" causes the motor to try to run at the specified fraction of full velocity
         // Note: We were not able to make this run mode work until we switched Channel A and B encoder wiring into
         // the motor controllers. (Neverest Channel A connects to MR Channel B input, and vice versa.)
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         boolean carouselOn = false; //Outside of loop()
         boolean intakeOn = false;
@@ -110,7 +111,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
 
-            intakeMotor.setPower(0);
+            //intakeMotor.setPower(0);
 
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
@@ -181,16 +182,23 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 carouselOn = true;
             } else if(!gamepad2.y) carouselOn = false;
 
-            if(gamepad2.a && !intakeOn) {
-                if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
-                else intakeMotor.setPower(.8);
+            if(gamepad2.a) {
+//                if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
+//                else
+                    intakeMotor.setPower(-.8);
                 intakeOn = true;
-            } else if(!gamepad2.a) intakeOn = false;
-
-            if (gamepad2.b) {
-                intakeMotor.setPower(-.8);
+            } else if (gamepad2.b) {
+                intakeMotor.setPower(.8);
                 intakeOn = false;
+            } else if (gamepad2.x){
+                intakeOn = false;
+                intakeMotor.setPower(0);
             }
+
+//            if (gamepad2.x){
+//                intakeOn=false;
+//                intakeMotor.setPower(0);
+//            }
 
             if (gamepad2.dpad_up) {
 //                Top scoring
@@ -216,19 +224,22 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 linearSlideMotor.setPower(.4);
             }
 
-            if (gamepad2.left_trigger >= 35) {
+            if (gamepad2.left_trigger >= .35) {
                 if (linearSlidePos != linearSlidePositions.BASE) {
 //                    dump
+                    dumpServo.setPosition(1.5);
+                    sleep(1200);
                     linearSlideTarget = linearSlideTargets.BASE;
                     linearSlideMotor.setPower(-.4);
+                    dumpServo.setPosition(0.75);
                 }
             }
 
             linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             if (linearSlideTarget == linearSlideTargets.TOP) {
-                if (linearSlideMotor.getCurrentPosition() >= TOP_ENCODER_VALUE-5 && linearSlideMotor.getCurrentPosition() <= TOP_ENCODER_VALUE+5) {
-                    linearSlideMotor.setPower(1);
+                if (linearSlideMotor.getCurrentPosition() >= TOP_ENCODER_VALUE-5) {
+                    linearSlideMotor.setPower(0);
                     linearSlidePos = linearSlidePositions.TOP;
                 }
             } else if (linearSlideTarget == linearSlideTargets.MIDDLE) {
@@ -252,7 +263,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                     linearSlideMotor.setPower(0);
                     linearSlidePos = linearSlidePositions.BASE;
                     intakeOn = true;
-                    intakeMotor.setPower(.8);
+                   // intakeMotor.setPower(.8);
                 }
             }
 
