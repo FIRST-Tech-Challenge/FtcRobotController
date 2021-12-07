@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.competition.utils.Carfax;
-import org.firstinspires.ftc.teamcode.competition.utils.Motor;
-import org.firstinspires.ftc.teamcode.competition.utils.StandardServo;
+import org.firstinspires.ftc.teamcode.competition.utils.control.groups.Carfax;
+import org.firstinspires.ftc.teamcode.competition.utils.control.items.Motor;
+import org.firstinspires.ftc.teamcode.competition.utils.control.items.StandardServo;
 
 public class CarfaxTeleOpManager extends TeleOpManager {
 
