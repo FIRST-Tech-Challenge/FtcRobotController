@@ -33,9 +33,7 @@ public class AutonomousRedCarousel extends LinearOpMode {
         robot.back(.5,.5);
         robot.turnRight(45,.5);
         robot.forward(.75,.5);
-        robot.pause(8000);
-        //robot.armThing(3,.5);
-        //robot.drop();
+        robot.armThing(3);
         robot.back(.75,.5);
         robot.turnLeft(45,.5);
         robot.left(2.5,.75);

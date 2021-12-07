@@ -15,8 +15,7 @@ public class AutonomousRedWarehouse extends LinearOpMode {
         waitForStart();
         robot.forward(1.5,.5);
         robot.left(2,.5);
-        //robot.armThing(3,.5);
-        //robot.drop();
+        robot.armThing(3);
         robot.back(.2,.5);
         robot.turnRight(70,.5);
         robot.forward(5,1);
