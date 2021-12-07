@@ -230,10 +230,24 @@ public class Robot {
         carousel.setPower(0);
     }
     public void armThing(int level){
-        arm.setPower(.5);
-        pause(//some random number test and change later
-                1000 );
-        arm.setPower(0);
+        if(level == 1) {
+            arm.setPower(.5);
+            pause(//some random number test and change later
+                    1000);
+            arm.setPower(0);
+        }
+        if(level == 2) {
+            arm.setPower(.5);
+            pause(//some random number test and change later
+                    1000);
+            arm.setPower(0);
+        }
+        if(level == 3) {
+            arm.setPower(.5);
+            pause(//some random number test and change later
+                    1000);
+            arm.setPower(0);
+        }
         intake.setPower(1);
         pause(1000);
     }
