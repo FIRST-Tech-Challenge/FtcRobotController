@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -9,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.external.libs.PIDController;
-@Disabled
 @Autonomous(name="MecanumAutonomous", group="FreightFrenzy")
 public class MecanumAutonomous extends LinearOpMode {
     //Add an ElapsedTime for function runtime calculations.
@@ -94,10 +92,11 @@ public class MecanumAutonomous extends LinearOpMode {
 
         //Run code while the opMode is active.
         if(opModeIsActive()) {
+            driveStraight(10,0.8,5.0);
             drive(0,10, 0.8, 5.0);
-            drive(180,10, 0.8, 5.0);
-            rotate(45,0.75);
-            rotate(-90,0.75);
+            drive(0,10,-0.8,5.0);
+            rotate(90, 0.8);
+            rotate(-90, 0.8);
         }
     }
 
@@ -162,27 +161,27 @@ public class MecanumAutonomous extends LinearOpMode {
         double slowdown = 1;
         //Set motor targets based on direction.
         if(degrees >= 0 && degrees <= 90) {
-            //Both wheels go forward, no change needed.
+            //Both wheels go backwards.
+            target = -target;
             robot.motorFrontLeft.setTargetPosition(target);
             robot.motorBackRight.setTargetPosition(target);
             direction = 1;
         }
         if(degrees >90 && degrees < 180) {
-            //Both wheels go backwards.
-            target = -target;
+            //Both wheels go forward, no change needed.
             robot.motorFrontRight.setTargetPosition(target);
             robot.motorBackLeft.setTargetPosition(target);
             direction = 2;
         }
         if(degrees >= 180 && degrees <= 270) {
-            //Both wheels go backwards.
-            target = -target;
+            //Both wheels go forward, no change needed.
             robot.motorFrontLeft.setTargetPosition(target);
             robot.motorBackRight.setTargetPosition(target);
             direction = 3;
         }
         if(degrees > 270 && degrees < 360) {
-            //Both wheels go forward, no change needed.
+            //Both wheels go backwards.
+            target = -target;
             robot.motorFrontRight.setTargetPosition(target);
             robot.motorBackLeft.setTargetPosition(target);
             direction = 4;
