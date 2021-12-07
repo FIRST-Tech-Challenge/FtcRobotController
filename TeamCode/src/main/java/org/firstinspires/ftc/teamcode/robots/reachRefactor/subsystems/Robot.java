@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.CanvasUtils;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +28,6 @@ public class Robot implements Subsystem {
     private Subsystem[] subsystems;
 
     // State
-    public enum Articulation {
-        MANUAL
-    }
-    private Articulation articulation;
     private Alliance alliance;
     private boolean dashboardEnabled;
     private Map<String, Object> telemetryMap;
@@ -58,17 +56,17 @@ public class Robot implements Subsystem {
         SimpleMatrix position = pose.cols(0, 1);
         double heading = pose.get(2);
 
-        SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -TRACK_WIDTH / 2 }, { 0 }});
-        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ TRACK_WIDTH / 2 }, { 0 }});
-        SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0 }, { -driveTrain.getChassisDistance() }});
+        SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -TRACK_WIDTH / 2 , 0 }});
+        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ TRACK_WIDTH / 2, 0 }});
+        SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0, -driveTrain.getChassisDistance() }});
 
         SimpleMatrix rotationMatrix = new SimpleMatrix(new double[][] {
                 {Math.cos(heading), -Math.sin(heading)},
                 {Math.sin(heading), Math.cos(heading)}
         });
-        leftWheel = position.plus(rotationMatrix.mult(leftWheel)).scale(INCHES_PER_METER);
-        rightWheel = position.plus(rotationMatrix.mult(rightWheel)).scale(INCHES_PER_METER);
-        swerveWheel = position.plus(rotationMatrix.mult(swerveWheel)).scale(INCHES_PER_METER);
+        leftWheel = position.plus(rotationMatrix.mult(leftWheel.transpose())).scale(INCHES_PER_METER);
+        rightWheel = position.plus(rotationMatrix.mult(rightWheel.transpose())).scale(INCHES_PER_METER);
+        swerveWheel = position.plus(rotationMatrix.mult(swerveWheel.transpose())).scale(INCHES_PER_METER);
 
         CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, STROKE_COLOR);
         CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, STROKE_COLOR);
@@ -156,13 +154,56 @@ public class Robot implements Subsystem {
     }
 
     //----------------------------------------------------------------------------------------------
-    // Autonomous
+    // Articulations
     //----------------------------------------------------------------------------------------------
 
-    public boolean executeAutonomous() {
-        // TODO: code autonomous
-        return true;
+    public enum Articulation {
+        MANUAL,
+
+        // tele-op articulations
+
+        // autonomous articulations
+        AUTONOMOUS_RED,
+        AUTONOMOUS_BLUE;
     }
+    private Articulation articulation;
+
+    public boolean articulate(Articulation articulation) {
+        this.articulation = articulation;
+
+        switch(articulation) {
+            case MANUAL:
+                return true;
+            case AUTONOMOUS_BLUE:
+                if(autonomousBlue.execute())
+                    return true;
+            case AUTONOMOUS_RED:
+                if(autonomousRed.execute())
+                    return true;
+        }
+        return false;
+    }
+
+    private StateMachine.Builder getStateMachine(Stage stage) {
+        return StateMachine.builder()
+                .stateSwitchAction(() -> {})
+                .stateEndAction(() -> { articulation = Robot.Articulation.MANUAL; })
+                .stage(stage);
+    }
+
+    // Tele-Op articulations
+
+
+    // Autonomous articulations
+    private Stage autonomousRedStage = new Stage();
+    public StateMachine autonomousRed = getStateMachine(autonomousRedStage)
+            // TODO: insert autonomous red states here
+            .build();
+
+    private Stage autonomousBlueStage = new Stage();
+    public StateMachine autonomousBlue = getStateMachine(autonomousBlueStage)
+            // TODO: insert autonomous blue states here
+            .build();
 
     //----------------------------------------------------------------------------------------------
     // Getters And Setters

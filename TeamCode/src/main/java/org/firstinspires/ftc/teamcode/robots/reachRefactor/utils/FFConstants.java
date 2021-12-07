@@ -35,6 +35,7 @@ public class FFConstants {
     public static double DRIVETRAIN_TICKS_PER_REVOLUTION = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class).getTicksPerRev();
     public static double DRIVETRAIN_MAX_TICKS_PER_SECOND = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class).getAchieveableMaxTicksPerSecond();
     public static double INCHES_PER_METER = 39.3701;
+    public static double DRIVETRAIN_METERS_PER_TICK = 2 * Math.PI * WHEEL_RADIUS / DRIVETRAIN_TICKS_PER_REVOLUTION;
 
     //----------------------------------------------------------------------------------------------
     // Dashboard Constants

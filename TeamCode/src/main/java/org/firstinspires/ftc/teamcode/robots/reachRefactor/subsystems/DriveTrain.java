@@ -46,6 +46,7 @@ public class DriveTrain implements Subsystem {
     private SimpleMatrix velocity; // [vx, vy, w]
     private SimpleMatrix angles; // [heading, roll, pitch]
     private SimpleMatrix offsetAngles; // [heading, roll, pitch]
+    private SimpleMatrix previousWheelTicks; // [left, right, middle]
 
     // PIVs
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
@@ -89,6 +90,14 @@ public class DriveTrain implements Subsystem {
 
         sensorChassisDistance = hardwareMap.get(DistanceSensor.class, "distLength");
 
+        // Kinematics
+        pose = new SimpleMatrix(3, 1);
+        velocity = new SimpleMatrix(3, 1);
+        angles = new SimpleMatrix(3, 1);
+        offsetAngles = new SimpleMatrix(3, 1);
+        previousWheelTicks = new SimpleMatrix(3, 2);
+
+
         // PID
         turnPID = new PIDController(ROTATE_PID_COEFFICIENTS);
         drivePID = new PIDController(DRIVE_PID_COEFFICIENTS);
@@ -98,6 +107,9 @@ public class DriveTrain implements Subsystem {
         frontLeftSmoother = new ExponentialSmoother(FRONT_LEFT_SMOOTHING_FACTOR);
         frontRightSmoother = new ExponentialSmoother(FRONT_RIGHT_SMOOTHING_FACTOR);
         middleSmoother = new ExponentialSmoother(MIDDLE_SMOOTHING_FACTOR);
+
+        // Miscellaneous
+        previousWheelTicks = getWheelTicks();
     }
 
     private void initializeIMU(HardwareMap hardwareMap) {
@@ -132,9 +144,7 @@ public class DriveTrain implements Subsystem {
     private void updatePose() {
         Orientation imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         if (!imuInitialized) {
-            // first time in - we assume that the robot has not started moving and that
-            // orientation values are set to the current absolute orientation
-            // so first set of imu readings are effectively offsets
+            // storing first absolute orientation values as offsets
 
             offsetAngles = new SimpleMatrix(new double[][] {
                     { (360 - imuAngles.firstAngle) % 360 },
@@ -150,19 +160,39 @@ public class DriveTrain implements Subsystem {
                 {wrapAngle(imuAngles.secondAngle, offsetAngles.get(2))}
         });
 
-        velocity = new SimpleMatrix(new double[][] {
-                { imu.getVelocity().xVeloc },
-                { imu.getVelocity().yVeloc },
-                { imu.getAngularVelocity().xRotationRate }
+        // calculating wheel displacements
+        SimpleMatrix wheelTicks = getWheelTicks();
+        SimpleMatrix wheelDisplacementMeters = wheelTicks.minus(previousWheelTicks).scale(DRIVETRAIN_METERS_PER_TICK);
+
+        // rotating swivel wheel by swivel angle
+        double swivelAngle = getSwivelAngle();
+        SimpleMatrix swivelRotationMatrix = new SimpleMatrix(new double[][] {
+                {Math.cos(swivelAngle), -Math.sin(swivelAngle)},
+                {Math.sin(swivelAngle), Math.cos(swivelAngle)}
         });
+        SimpleMatrix swivelWheel = swivelRotationMatrix.mult(
+                new SimpleMatrix(new double[][] {{ wheelDisplacementMeters.get(2, 0), 0 }})
+        );
+        wheelDisplacementMeters.setRow(2, 0, swivelWheel.get(0), swivelWheel.get(1));
 
-        pose = new SimpleMatrix(new double[][] {
-                { imu.getPosition().x },
-                { imu.getPosition().y },
-                { angles.get(0) }
+        // calculating average average wheel displacement
+        SimpleMatrix ones = new SimpleMatrix(new double[][] {{1, 1, 1}});
+        SimpleMatrix averageDisplacementMeters = ones.mult(wheelDisplacementMeters).divide(3);
+
+        // rotating displacement by heading
+        double heading = angles.get(0);
+        SimpleMatrix rotationMatrix = new SimpleMatrix(new double[][] {
+                {Math.cos(heading), -Math.sin(heading)},
+                {Math.sin(heading), Math.cos(heading)}
         });
+        averageDisplacementMeters = rotationMatrix.mult(averageDisplacementMeters.transpose());
 
+        // updating pose [x, y, heading]
+        pose.set(0, 0, averageDisplacementMeters.get(0, 0));
+        pose.set(1, 0, averageDisplacementMeters.get(1, 0));
+        pose.set(2, 0, angles.get(0));
 
+        previousWheelTicks = wheelTicks.copy();
     }
 
     public void drive(double linearVelocity, double angularVelocity) {
@@ -244,5 +274,13 @@ public class DriveTrain implements Subsystem {
 
     public void toggleSmoothingEnabled() {
         smoothingEnabled = !smoothingEnabled;
+    }
+
+    private SimpleMatrix getWheelTicks() {
+        return new SimpleMatrix(new double[][] {
+                { motorFrontLeft.getCurrentPosition(), 0 },
+                { motorFrontRight.getCurrentPosition(), 0 },
+                { motorMiddle.getCurrentPosition(), 0 }
+        });
     }
 }

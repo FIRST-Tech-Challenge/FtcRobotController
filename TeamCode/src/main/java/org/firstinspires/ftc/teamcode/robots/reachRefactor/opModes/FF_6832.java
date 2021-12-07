@@ -120,7 +120,12 @@ public class FF_6832 extends OpMode {
                     handleTeleOp();
                     break;
                 case 1:
-                    if (robot.executeAutonomous()) {
+                    if (robot.getAlliance().equals(Alliance.RED)
+                            && robot.articulate(Robot.Articulation.AUTONOMOUS_RED)) {
+                        active = false;
+                        state = 0;
+                    } else if (robot.getAlliance().equals(Alliance.BLUE)
+                            && robot.articulate(Robot.Articulation.AUTONOMOUS_BLUE)) {
                         active = false;
                         state = 0;
                     }
