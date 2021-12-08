@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 public class LEDSubsystem extends SubsystemBase {
 
     private final RevBlinkinLedDriver blinkinLedDriver;
-    private DisplayKind displayKind;
-    private RevBlinkinLedDriver.BlinkinPattern pattern;
+    private DisplayKind displayKind = DisplayKind.AUTO;
+    private RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_SLOW;
 
 
     /*
