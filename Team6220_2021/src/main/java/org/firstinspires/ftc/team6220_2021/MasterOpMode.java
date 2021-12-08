@@ -106,9 +106,10 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorBackLeft.setPower(power);
         motorFrontRight.setPower(power);
         motorBackRight.setPower(power);
-        while(motorBackRight.isBusy() && motorBackLeft.isBusy() && motorFrontLeft.isBusy() && motorFrontRight.isBusy()) {
+        while(motorBackRight.isBusy() || motorBackLeft.isBusy() || motorFrontLeft.isBusy() || motorFrontRight.isBusy()) {
             telemetry.addData("Currently Running",motorFrontLeft.getCurrentPosition());
         }
+        pauseMillis(100);
     }
     public void stopbase(){
         motorFrontLeft.setPower(0);
@@ -171,9 +172,10 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorBackLeft.setPower(0.8);
         motorFrontRight.setPower(0.7);
         motorBackRight.setPower(0.6);
-        while(motorBackRight.isBusy() && motorBackLeft.isBusy() && motorFrontLeft.isBusy() && motorFrontRight.isBusy()) {
+        while(motorBackRight.isBusy() || motorBackLeft.isBusy() || motorFrontLeft.isBusy() || motorFrontRight.isBusy()) {
             telemetry.addData("Currently Running",motorFrontLeft.getCurrentPosition());
         }
+        pauseMillis(100);
 
     }
     // Pauses for time milliseconds

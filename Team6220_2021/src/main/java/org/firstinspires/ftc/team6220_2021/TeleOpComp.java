@@ -19,10 +19,12 @@ public class TeleOpComp extends MasterOpMode{
     DcMotor motorFrontLeft;
     DcMotor motorFrontRight;
     DcMotor motorDuck;
+    DcMotor motorLeftDuck;
     DcMotor motorArm;
+    DcMotor motorBelt;
     Servo servoGrabber;
     Servo servoArm;
-    int tickvalue = -70;
+    int tickvalue = 97;
     double x = 0.7;
 
     //for run to position or manual control
@@ -39,7 +41,9 @@ public class TeleOpComp extends MasterOpMode{
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorArm = hardwareMap.dcMotor.get("motorArm");
+        motorBelt = hardwareMap.dcMotor.get("motorBelt");
         motorDuck = hardwareMap.dcMotor.get("motorDuck");
+        motorLeftDuck = hardwareMap.dcMotor.get("motorLeftDuck");
         servoGrabber = hardwareMap.servo.get("servoGrabber");
         servoArm = hardwareMap.servo.get("servoArm");
 
@@ -49,10 +53,12 @@ public class TeleOpComp extends MasterOpMode{
         motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorDuck.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLeftDuck.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBelt.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Set position of servos
         servoGrabber.setPosition(0.34);
-        servoArm.setPosition(0.3);
+        //servoArm.setPosition(0.3);
 
         //Declare variables
         int position = 0;
@@ -61,14 +67,16 @@ public class TeleOpComp extends MasterOpMode{
         double motorPower = 0.9;
         double increase = 1;
         double speed =1;
+        int motorBeltTargetPosition = 0;
 
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBelt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //Set run mode of arm motor (encoders --> run to position)
         motorArm.setTargetPosition(0);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -85,55 +93,65 @@ public class TeleOpComp extends MasterOpMode{
 
             //Use switch to declare values for each arm position
             switch (position) {
-                case 0:
-                    servoArm.setPosition(0.5);
+                case -1:
+                    servoArm.setPosition(0.05);
                     motorArm.setPower(motorPower);
-                    tickvalue = -65;
+                    tickvalue = 555;
+                    break;
+                case 0:
+                    servoArm.setPosition(0.45);
+                    motorArm.setPower(motorPower);
+                    tickvalue = 145;
                     break;
                 case 1:
-                    servoArm.setPosition(0.6);
+                    servoArm.setPosition(0.4);
                     motorArm.setPower(motorPower);
-                    tickvalue = -220;
+                    tickvalue = 300;
                     break;
                 case 2:
-                    servoArm.setPosition(0.8);
+                    servoArm.setPosition(0.3);
                     motorArm.setPower(motorPower);
-                    tickvalue = -470;
+                    tickvalue = 555;
                     break;
                 case 3:
-                    servoArm.setPosition(1);
+                    servoArm.setPosition(0.15);
                     motorArm.setPower(motorPower);
-                    tickvalue = -720;
+                    tickvalue = 900;
                     break;
                 case 4:
-                    servoArm.setPosition(0.6);
+                    servoArm.setPosition(0.4);
                     motorArm.setPower(motorPower);
-                    tickvalue = -1270;
+                    tickvalue = 1980;
                     break;
                 case 5:
-                    servoArm.setPosition(0.8);
+                    servoArm.setPosition(0.25);
                     motorArm.setPower(motorPower);
-                    tickvalue = -1510;
+                    tickvalue = 2310;
                     break;
                 case 6:
-                    servoArm.setPosition(0.8);
+                    servoArm.setPosition(0.4);
                     motorArm.setPower(motorPower);
-                    tickvalue = -1620;
+                    tickvalue = 2330;
                     break;
             }
 
+            motorBelt.setPower(gamepad2.left_stick_y);
             if (gamepad1.left_trigger>0){
                 speed = 0.3;
             } else {
                 speed = 1;
             }
             telemetry.addData("Motor Ticks: ", motorArm.getCurrentPosition());
+            telemetry.addData("ServoArmPosition",servoArm.getPosition());
             telemetry.update();
 
             // checks old position of arm, right when it goes over top of robot from front to back, it reduces speed
             if (gamepad2.dpad_up){
                 if (!isPressed) {
                     position += increase;
+                    if (position > 6){
+                        position = 6;
+                    }
                 }
                 addingticks = 0;
                 toPosition = true;
@@ -146,6 +164,9 @@ public class TeleOpComp extends MasterOpMode{
             } else if (gamepad2.dpad_down){
                 if (!isPressed) {
                     position -= increase;
+                    if (position < 0){
+                        position = 0;
+                    }
                 }
                 addingticks = 0;
                 toPosition = true;
@@ -155,30 +176,33 @@ public class TeleOpComp extends MasterOpMode{
             }
 
             if (gamepad2.left_bumper) {
-                addingticks -= 1;
-            } else if (gamepad2.right_bumper) {
                 addingticks += 1;
+            } else if (gamepad2.right_bumper) {
+                addingticks -= 1;
             }
 
             motorArm.setTargetPosition(tickvalue + addingticks);
             motorArm.setPower(0.9);
 
-            if (position < 0){
-                position = 0;
-            } else if (position > 6){
-                position = 6;
+            if (gamepad2.x) {
+                if (position == 0){
+                    servoGrabber.setPosition(0.45);
+                } else {
+                    servoGrabber.setPosition(0.34);
+                }
+            } else if (gamepad2.a) {
+                servoGrabber.setPosition(0.0);
             }
 
-            if(gamepad2.x) {
-                servoGrabber.setPosition(0.34);
-            } else if (gamepad2.a) {
-                servoGrabber.setPosition(0.7);
+            if (gamepad2.y){
+                position = -1;
             }
 
             if (gamepad1.right_bumper) {
                 x = 0.7;
                 while (true) {
                     motorDuck.setPower(x);
+                    motorLeftDuck.setPower(x);
                     pauseMillis(150);
                     x += 0.05;
                     telemetry.addData("duckPower", motorDuck.getPower());
@@ -186,8 +210,10 @@ public class TeleOpComp extends MasterOpMode{
                     if (x >= 0.85){
                         pauseMillis(1500);
                         motorDuck.setPower(-.1);
+                        motorLeftDuck.setPower(-.1);
                         pauseMillis(30);
                         motorDuck.setPower(0);
+                        motorLeftDuck.setPower(0);
                         x=0.7;
                         break;
                     }
@@ -196,6 +222,7 @@ public class TeleOpComp extends MasterOpMode{
                 x = -0.7;
                 while (true) {
                     motorDuck.setPower(x);
+                    motorLeftDuck.setPower(x);
                     pauseMillis(150);
                     x -= 0.05;
                     telemetry.addData("duckPower", motorDuck.getPower());
@@ -203,8 +230,10 @@ public class TeleOpComp extends MasterOpMode{
                     if (x <= -0.85){
                         pauseMillis(1500);
                         motorDuck.setPower(.1);
+                        motorLeftDuck.setPower(.1);
                         pauseMillis(30);
                         motorDuck.setPower(0);
+                        motorLeftDuck.setPower(0);
                         x=0.7;
                         break;
                     }

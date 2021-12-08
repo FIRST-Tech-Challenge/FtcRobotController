@@ -48,11 +48,11 @@ public class Park extends MasterOpMode{
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        servoGrabber.setPosition(0.34);
+        servoGrabber.setPosition(0.0);
         pauseMillis(500);
-        servoArm.setPosition(0.01);
+        servoArm.setPosition(0.81);
         waitForStart();
-        motorArm.setTargetPosition(-220);
+        motorArm.setTargetPosition(550);
         motorArm.setPower(0.9);
         pauseMillis(500);
         motorBackLeft.setPower(0.8);

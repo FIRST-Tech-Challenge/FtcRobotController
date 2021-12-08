@@ -3,7 +3,6 @@ package org.firstinspires.ftc.team6220_2021.ResourceClasses;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.team6220_2021.Constants;
 
 import java.util.Arrays;
 

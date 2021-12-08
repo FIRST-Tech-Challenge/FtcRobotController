@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "RedBlockPlace", group = "Autonomous")
-public class RedParkBlockPLace extends MasterOpMode{
+public class RedParkBlockPlace extends MasterOpMode{
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
@@ -41,32 +41,26 @@ public class RedParkBlockPLace extends MasterOpMode{
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        servoGrabber.setPosition(0.34);
+        servoGrabber.setPosition(0.0);
         pauseMillis(500);
-        servoArm.setPosition(0.01);
+        servoArm.setPosition(0.81);
         waitForStart();
-        servoArm.setPosition(1);
-        motorArm.setTargetPosition(-720);
+        servoArm.setPosition(0.15);
+        motorArm.setTargetPosition(900);
         motorArm.setPower(0.9);
         pauseMillis(500);
         Forward(24,0.6);
-        pauseMillis(1000);
-        TurnAngle(-50);
-        pauseMillis(1000);
-        Forward(10, 0.5);
-        pauseMillis(1000);
+        TurnAngle(-60);
+        Forward(8, 0.5);
         servoGrabber.setPosition(0.7);
         pauseMillis(700);
-        Forward(-10 , 0.3);
-        pauseMillis(500);
-        TurnAngle(143);
-        pauseMillis(1500);
-       Forward(40,0.8);
-       pauseMillis(1500);
-        servoGrabber.setPosition(0.34);
+        Forward(-8, 0.3);
+        TurnAngle(170);
+        Forward(60,0.8);
+        servoGrabber.setPosition(0.0);
         pauseMillis(100);
-        servoArm.setPosition(0.1);
-        motorArm.setTargetPosition(10);
+        servoArm.setPosition(0.7);
+        motorArm.setTargetPosition(-10);
         motorArm.setPower(0.9);
         pauseMillis(700);
     }

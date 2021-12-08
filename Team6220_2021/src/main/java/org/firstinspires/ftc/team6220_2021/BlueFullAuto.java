@@ -45,9 +45,9 @@ public class BlueFullAuto extends MasterOpMode{
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        servoGrabber.setPosition(0.34);
+        servoGrabber.setPosition(0.0);
         pauseMillis(500);
-        servoArm.setPosition(0.01);
+        servoArm.setPosition(0.81);
         waitForStart();
         if (Detection == 1){
             ArmPosition = -220;
@@ -63,31 +63,23 @@ public class BlueFullAuto extends MasterOpMode{
             DriveAdjust = 25;
         }
         Forward(10,0.3);
-        pauseMillis(1000);
         TurnAngle(90);
-        pauseMillis(750);
         Forward(15,0.5);
-        pauseMillis(1250);
         stopbase();
         BlueDuck();
         pauseMillis(2000);
         Forward(-5,0.5);
-        pauseMillis(750);
         TurnAngle(-125);
-        pauseMillis(1000);
         servoArm.setPosition(ServoPosition);
         motorArm.setTargetPosition(ArmPosition);
         motorArm.setPower(0.9);
         pauseMillis(500);
         Forward(DriveAdjust,0.5);
-        pauseMillis(2000);
         stopbase();
         servoGrabber.setPosition(0.7);
         pauseMillis(750);
         Forward(-20,0.5);
-        pauseMillis(1500);
         TurnAngle(130);
-        pauseMillis(2000);
         stopbase();
         servoGrabber.setPosition(0.34);
         pauseMillis(500);
@@ -96,7 +88,6 @@ public class BlueFullAuto extends MasterOpMode{
         motorArm.setPower(0.9);
         pauseMillis(500);
         Forward(-84, 0.8);
-        pauseMillis(2000);
         motorArm.setTargetPosition(10);
         motorArm.setPower(0.9);
         pauseMillis(500);

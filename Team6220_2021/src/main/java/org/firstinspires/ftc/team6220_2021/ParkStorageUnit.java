@@ -41,9 +41,9 @@ public class ParkStorageUnit extends MasterOpMode{
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        servoGrabber.setPosition(0.34);
+        servoGrabber.setPosition(0.0);
         pauseMillis(500);
-        servoArm.setPosition(0.01);
+        servoArm.setPosition(0.81);
         waitForStart();
         motorBackLeft.setPower(0.6);
         motorBackRight.setPower(0.6);
