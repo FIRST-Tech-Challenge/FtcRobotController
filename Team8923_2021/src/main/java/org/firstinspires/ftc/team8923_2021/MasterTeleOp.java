@@ -65,7 +65,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     public void grab() {
         if (gamepad2.dpad_up) {
-            servoGrabber.setPosition(0.5);
+            servoGrabber.setPosition(1.0);
         } else if (gamepad2.dpad_down) {
             servoGrabber.setPosition(0.0);
         }
