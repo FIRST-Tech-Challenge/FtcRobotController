@@ -29,9 +29,9 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     double RF; double LF; double RR; double LR;
     // declare joystick position variables
     double X1; double Y1; double X2; double Y2;
-    final int TOP_ENCODER_VALUE = 1600;
-    final int MIDDLE_ENCODER_VALUE = 800;
-    final int BOTTOM_ENCODE_VALUE = 512;
+    final int TOP_ENCODER_VALUE = 1700;
+    final int MIDDLE_ENCODER_VALUE = 1300;
+    final int BOTTOM_ENCODE_VALUE = 800;
     // operational constants
     double joyScale = 1;
     double motorMax = 0.99; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
@@ -232,42 +232,21 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             }
 
             if (gamepad2.left_trigger >= .35) {
-                if (linearSlidePos != linearSlidePositions.BASE) {
+                if (linearSlideMotor.getCurrentPosition() >= 500) {
 //                    dump
                     dumpServo.setPosition(1.5);
-                    sleep(1200);
-                    linearSlideTarget = linearSlideTargets.BASE;
-                    linearSlideMotor.setTargetPosition(0);
-                    linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    linearSlideMotor.setPower(-.4);
+                    sleep(1800);
+//                    linearSlideTarget = linearSlideTargets.BASE;
+//                    linearSlideMotor.setTargetPosition(0);
+//                    linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                    linearSlideMotor.setPower(-.4);
                     dumpServo.setPosition(0.75);
                 }
             }
 
             linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            if (linearSlideTarget == linearSlideTargets.TOP) {
-                if (linearSlideMotor.getCurrentPosition() >= TOP_ENCODER_VALUE-linearSlideTolerance && linearSlideMotor.getCurrentPosition() <= TOP_ENCODER_VALUE+linearSlideTolerance) {
-                    linearSlideMotor.setPower(1);
-                    linearSlidePos = linearSlidePositions.TOP;
-                }
-            } else if (linearSlideTarget == linearSlideTargets.MIDDLE) {
-                if (linearSlidePos == linearSlidePositions.TOP) {
-                    linearSlideMotor.setPower(-.4);
-                }
-                if (linearSlideMotor.getCurrentPosition() >= MIDDLE_ENCODER_VALUE-linearSlideTolerance && linearSlideMotor.getCurrentPosition() <= MIDDLE_ENCODER_VALUE+linearSlideTolerance) {
-                    linearSlideMotor.setPower(0);
-                    linearSlidePos = linearSlidePositions.MIDDLE;
-                }
-            } else if (linearSlideTarget == linearSlideTargets.BOTTOM) {
-                if (linearSlidePos == linearSlidePositions.TOP || linearSlidePos == linearSlidePositions.MIDDLE) {
-                    linearSlideMotor.setPower(-.4);
-                }
-                if (linearSlideMotor.getCurrentPosition() >= BOTTOM_ENCODE_VALUE-linearSlideTolerance && linearSlideMotor.getCurrentPosition() <= BOTTOM_ENCODE_VALUE+linearSlideTolerance) {
-                    linearSlideMotor.setPower(0);
-                    linearSlidePos = linearSlidePositions.BOTTOM;
-                }
-            } else if (linearSlideTarget == linearSlideTargets.BASE) {
+            if (linearSlideTarget == linearSlideTargets.BASE) {
                 if (linearSlideMotor.getCurrentPosition() <= 10) {
                     linearSlideMotor.setPower(0);
                     linearSlidePos = linearSlidePositions.BASE;
