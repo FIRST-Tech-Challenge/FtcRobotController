@@ -13,8 +13,7 @@ import java.io.CharArrayWriter;
 import java.util.List;
 
 @TeleOp(name="T: Encoder Tester", group = "Testing")
-@Disabled
-//this line disables the teleop from appearing on the driver station, remove it for your code
+//@Disabled //this line disables the teleop from appearing on the driver station, remove it when needed
 public class EncoderTester extends LinearOpMode {
     /*declare OpMode members, initialize some classes*/
     Hardware robot          = new Hardware();
@@ -47,7 +46,7 @@ public class EncoderTester extends LinearOpMode {
 
         ////////////after driver presses play////////////
         //maybe some other set up stuff depending on how we want to do this
-        if (listSize < 0) // if no servos were loaded, notify the user and end the program
+        if (listSize <= 0) // if no servos were loaded, notify the user and end the program
         {
             telemetry.addLine("ERROR:");
             telemetry.addLine(" - no motors connected/configured, or other issue loading motors");
@@ -70,13 +69,26 @@ public class EncoderTester extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            /*
+            controlls
 
-            //left and right bumpers shift through the servos
+            d-pad
+            up/down: increase/lower speed
+            left/right: move backward/forward
+
+            a: toggle motor direction
+            b: toggle zero-power-behavior
+
+            left/right bumpers: shift through attached motors
+             */
+
+
+            //left and right bumpers shift through the motors
             leftBCurr=gamepad1.left_bumper;
             rightBCurr=gamepad1.right_bumper;
             if (leftBCurr && !leftBPrev)
             {
-                // set currentServo to the previous index in servo list
+                // set currentMotor to the previous index in motor list
                 currIndex--;
                 if (currIndex <= 0) //lower bound
                     currIndex = listSize;
@@ -85,7 +97,7 @@ public class EncoderTester extends LinearOpMode {
             }
             else if (rightBCurr && !rightBPrev)
             {
-                // set currentServo to the next index in servo list
+                // set currentMotor to the next index in motor list
                 currIndex++;
                 if (currIndex >= listSize)
                     currIndex = 0;
@@ -98,8 +110,8 @@ public class EncoderTester extends LinearOpMode {
             //up down d-pad buttons change the speed up/down
             upCurr=gamepad1.dpad_up;
             downCurr=gamepad1.dpad_down;
-            if (upCurr&&!upPrev && power>1) power--;
-            else if (downCurr&&!downPrev && power<=10) power++;
+            if (downCurr&&!downPrev && power>1) power--;
+            else if (upCurr&&!upPrev && power<=10) power++;
             upPrev=upCurr;
             downPrev=downCurr;
 
@@ -131,7 +143,8 @@ public class EncoderTester extends LinearOpMode {
             bPrev=bCurr;
 
             //telemetry
-            telemetry.addData("Current Motor: Port ", 1);
+            telemetry.addData("Current Motor: Port ", currentMotor.getPortNumber());
+            telemetry.addData("manufacturer: ", currentMotor.getManufacturer());
             telemetry.addLine();
             telemetry.addData("direction: ", currentMotor.getDirection());
             telemetry.addData("zero power behavior", currentMotor.getZeroPowerBehavior().toString());

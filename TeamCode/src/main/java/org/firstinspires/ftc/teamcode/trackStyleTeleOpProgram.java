@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="trackStyleTeleOpProgram")
 public class trackStyleTeleOpProgram extends LinearOpMode {
@@ -81,13 +78,13 @@ public class trackStyleTeleOpProgram extends LinearOpMode {
             //A
             aCurr = gamepad1.a;
             if (aCurr && !aPrev) {
-                robot.cascadeIntakeServo.setPosition((-1*((robot.cascadeIntakeServo.getPosition()-0.4) -0.1) + 0.1) + 0.4); //toggle between 0.6 and 0.4
+                robot.cascadeOutputServo.setPosition((-1*((robot.cascadeOutputServo.getPosition()-0.4) -0.1) + 0.1) + 0.4); //toggle between 0.6 and 0.4
             }
             aPrev = aCurr;
             //Y
             yCurr = gamepad1.y;
             if (yCurr && !yPrev) {
-                robot.frontTurntableCRServo.setPower(-1*(robot.frontTurntableCRServo.getPower() - 0.5) + 0.5); //toggle between 0 and 1
+                robot.turntableMotor.setPower(-1*(robot.turntableMotor.getPower() - 0.5) + 0.5); //toggle between 0 and 1
             }
             yPrev = yCurr;
 

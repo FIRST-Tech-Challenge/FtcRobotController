@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 
 @TeleOp(name="T: ServoTester", group="Testing" )
-@Disabled //this line disables the teleop from appearing on the driver station, remove it for your code
+//@Disabled //this line disables the teleop from appearing on the driver station, remove it when needed
 public class ServoTester extends LinearOpMode {
     /*declare OpMode members, initialize some classes*/
     Hardware robot  = new Hardware();

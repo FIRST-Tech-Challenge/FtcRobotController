@@ -1,21 +1,27 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Bitmap;
+import android.os.Handler;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraCaptureSession;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraManager;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.collections.EvictingBlockingQueue;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
@@ -41,6 +47,8 @@ import java.io.File;
     * x- =
     * y+ =
     * y- =
+
+    front of robot is always the side with the main: intake, output, webcam (go in that order (i.e. if robot has no input, the front is the side w/ the output, if robot has no input or output, front is side with the main encoder)
  */
 
 /*
@@ -86,11 +94,10 @@ public class Hardware {
     /* --Public OpMode members.-- */
     //**Motors**//
     public DcMotor driveFrontRight,driveFrontLeft,driveBackLeft,driveBackRight; //drive motors
-    public DcMotor cascadeLiftMotor; //other motors
+    public DcMotor cascadeLiftMotor,turntableMotor; //other motors
 
     //**Servos**//
-    public Servo cascadeIntakeServo;
-    public CRServo frontTurntableCRServo;
+    public Servo cascadeOutputServo, cascadeFlipperServo, frontInputFlipperServo, frontInputServo;
 
     //**Sensors**//
 
@@ -99,6 +106,8 @@ public class Hardware {
     public BNO055IMU imu;
     private double globalAngle;
     private Orientation lastAngles = new Orientation();
+    //Webcam
+    private WebcamName vuforiaWebcam;
 
     /* --local OpMode members.-- */
     HardwareMap hwMap           =  null;
@@ -140,7 +149,7 @@ public class Hardware {
         initMotors();
 
         /* Servos */
-        //initServos();
+        initServos();
 
         /* Sensors */
         initSensors();
@@ -148,6 +157,8 @@ public class Hardware {
         /* Other */
         //IMU (Inertial Motion Unit)
         initIMU();
+        //webcam and vuforia
+        initWebcamAndVuforia();
         //PID's
         initPIDs();
     }
@@ -158,14 +169,14 @@ public class Hardware {
         initDriveMotors();
 
         //other motors
-        //initOtherMotors();
+        initOtherMotors();
     }
     private void initDriveMotors() {
         // Define and initialize all Motors
-        driveFrontRight = hwMap.get(DcMotor.class, "front_right_drive"); //main hub port 0
-        driveFrontLeft  = hwMap.get(DcMotor.class, "front_left_drive");  //main hub port 2
-        driveBackLeft   = hwMap.get(DcMotor.class, "back_left_drive");   //main hub port 1
-        driveBackRight  = hwMap.get(DcMotor.class, "back_right_drive");  //main hub port 3
+        driveFrontLeft  = hwMap.get(DcMotor.class, "front_left_drive");  //main hub port 0
+        driveFrontRight = hwMap.get(DcMotor.class, "front_right_drive"); //main hub port 1
+        driveBackRight  = hwMap.get(DcMotor.class, "back_right_drive");  //main hub port 2
+        driveBackLeft   = hwMap.get(DcMotor.class, "back_left_drive");   //main hub port 3
 
         // Set all motors to zero power
         driveFrontRight.setPower(0);
@@ -202,34 +213,42 @@ public class Hardware {
     private void initOtherMotors()
     {
         //define and initialize
-        cascadeLiftMotor = hwMap.get(DcMotor.class, "cascade_lift_motor");
+        cascadeLiftMotor = hwMap.get(DcMotor.class, "cascade_lift_motor");        //expansion hub port 1 //max extension = 2150 counts
+        turntableMotor = hwMap.get(DcMotor.class,  "front_left_turntable_motor"); //expansion hub port 2
 
         // Set power to zero
         cascadeLiftMotor.setPower(0);
+        turntableMotor.setPower(0);
 
         // Set run modes
         cascadeLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         cascadeLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        turntableMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Set zero power behavior
         cascadeLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turntableMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         // assign motor directions
-        cascadeLiftMotor.setDirection(DcMotor.Direction.REVERSE);
+        cascadeLiftMotor.setDirection(DcMotor.Direction.FORWARD);
+        turntableMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
     //servos
     private void initServos() {
         // Define and initialize ALL installed servos.
-        cascadeIntakeServo = hwMap.get(Servo.class, "cascade_intake_servo");
-        frontTurntableCRServo = hwMap.get(CRServo.class, "front_turntable_crservo");
+        cascadeOutputServo = hwMap.get(Servo.class, "cascade_output_servo"); //unknown
+        cascadeFlipperServo = hwMap.get(Servo.class, "cascade_output_flipper_servo"); //unknown
+        frontInputFlipperServo = hwMap.get(Servo.class, "front_input_flipper_servo"); //NEEDS TO BE ROTATED
+        frontInputServo = hwMap.get(Servo.class, "front_input_servo");//full open 0.2; half open 0.55; closed 0.72
 
         // Set start positions for ALL installed servos
-        cascadeIntakeServo.setPosition(0.6); // 0.6 == closed || 0.4 == open
-        frontTurntableCRServo.setPower(0);
+        cascadeOutputServo.setPosition(0);
+        cascadeFlipperServo.setPosition(0);
+        frontInputFlipperServo.setPosition(0);
+        frontInputServo.setPosition(0);
 
-        // assign CRServo directions
-        frontTurntableCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
     //sensors
     private void initSensors() {
@@ -237,6 +256,7 @@ public class Hardware {
 
     }
     //other
+    //imu
     private void initIMU() {
         //Initialize IMU hardware map value. PLEASE UPDATE THIS VALUE TO MATCH YOUR CONFIGURATION
         imu = hwMap.get(BNO055IMU.class, "imu");
@@ -249,6 +269,13 @@ public class Hardware {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
+    }
+    //webcam
+    private void initWebcamAndVuforia() {
+        //webcam
+        vuforiaWebcam = hwMap.get(WebcamName.class, "vuforia_webcam");
+
+        //TODO: add vuforia configs adeel
     }
     //PIDS
     /*
