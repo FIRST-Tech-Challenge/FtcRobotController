@@ -139,8 +139,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                         break;
 
                     case "p1_blue_right":
-                        telemetry.addData("This is a new p1br", className);
-                        telemetry.update();
+                        //telemetry.addData("This is a new p1br", className);
+                        //telemetry.update();
                         location = TSELocation.P1_BLUE_RIGHT;
                         break;
 
