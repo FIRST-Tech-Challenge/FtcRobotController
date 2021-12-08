@@ -12,7 +12,7 @@ public class ShowTeamColors extends CommandBase {
     public ShowTeamColors(LEDSubsystem subsystem){
         m_ledSubsytem = subsystem;
 
-        addRequirements(m_ledSubsytem);
+        addRequirements(subsystem);
     }
 
     @Override
