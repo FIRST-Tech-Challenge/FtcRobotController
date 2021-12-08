@@ -36,7 +36,7 @@ public class AutoNavBlue extends LinearOpMode {
 
         // auto for near carousel
         // gotta replace 0 with tested vals
-            meccanum.closeServoFull();
+            /*meccanum.closeServoFull();
             // ()
             meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 775);
             // /\
@@ -57,6 +57,8 @@ public class AutoNavBlue extends LinearOpMode {
             meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 1000);
             // /\
 
+             */
+            meccanum.motorDriveRelativeFieldAngleEncoded(0, meccanum.NORMAL_SPEED, 700);
     }
 
 

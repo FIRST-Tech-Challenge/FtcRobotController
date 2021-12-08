@@ -3,7 +3,7 @@ package org.wheelerschool.robotics.comp.test;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.wheelerschool.robotics.comp.CompBot;
+import org.wheelerschool.robotics.old.lib.CompBot;
 
 @Autonomous
 public class DeadSimple extends OpMode {

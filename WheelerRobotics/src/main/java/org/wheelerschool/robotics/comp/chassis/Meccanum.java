@@ -15,12 +15,15 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.EventLoopManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -62,6 +65,9 @@ public class Meccanum {
 
     public HardwareMap hw; // no idea if volatile means anything (impactful) in this context, but it makes me seem like I know what im doing
 
+    private float INITIAL_ANGLE;
+
+
     public void init(@NonNull HardwareMap hardwareMap){
         // internal IMU setup (copied and pasted, idk what it really does, but it works)
         opModeActive = true;
@@ -76,6 +82,8 @@ public class Meccanum {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+        INITIAL_ANGLE = getAngles().firstAngle;
 
         // Meccanum Motors Definition and setting prefs
 
@@ -118,10 +126,8 @@ public class Meccanum {
         motorFrontRight.setPower(motorFrontRightPower);
     }
 
-    public void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double ticks){
-        motorDriveEncoded(motorFrontLeftPower, motorBackLeftPower, motorFrontRightPower, motorBackRightPower, ticks, motorBackLeft.getCurrentPosition(), motorFrontLeft.getCurrentPosition(), motorBackRight.getCurrentPosition(), motorFrontRight.getCurrentPosition());
-    }
-    private void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double ticks, int blp, int flp, int brp, int frp){ // private I think bcuz only ever accessed inside the class
+    private void motorDriveEncoded(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double ticks){
+        // private I think bcuz only ever accessed inside the class
         // motors need to use encoder
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -138,11 +144,18 @@ public class Meccanum {
 
         // NOTE: not using DcMotor.setTarget() method despite it's built in pid functionality, maybe implement in future, but I dont know if it will stall the program or not like the while loop
         // idk if the blp type vars will be static or change :/
+
+        int blp = motorBackLeft.getCurrentPosition(); // back left initial position :)
+        int brp = motorBackRight.getCurrentPosition();
+        int flp = motorFrontLeft.getCurrentPosition();
+        int frp = motorFrontRight.getCurrentPosition();
+
         while(abs(motorBackLeft.getCurrentPosition() - blp) < ticks || abs(motorFrontRight.getCurrentPosition() - blp) < ticks || abs(motorFrontLeft.getCurrentPosition() - blp) < ticks || abs(motorBackRight.getCurrentPosition() - blp) < ticks) { // hopefully checks that it is within the positive or negative threshold of target ticks
             motorDrive(motorFrontLeftPower, motorBackLeftPower, motorFrontRightPower, motorBackRightPower);
         }
         motorStop();
     }
+
 
     public void motorDriveTime(double motorFrontLeftPower, double motorBackLeftPower, double motorFrontRightPower, double motorBackRightPower, double time){
         motorBackLeft.setPower(motorBackLeftPower);
@@ -153,35 +166,62 @@ public class Meccanum {
         motorStop();
     }
 
-    public void motorDriveRelativeAngle(double radians, double speed){
+    public void motorDriveRelativeFieldAngleEncoded(double radians, double speed, double ticks){
         //test on monday 11/29/2021
         //NOTE
         // im not sure how to acurately do this using encoders, because some wheels are going to spin at different powers (I think)
         // this will cause the ticks to be difficult to calculate, and I dont really want to deal with that rn
 
+        float startAngle = getAngles().firstAngle;
+        double maxSpeed = 0.9;
         double spinvec = 0; // not spinning
-        double yvec = min(speed, 1.0) * sin(radians); // ima be honest, i did this math for a js project 6 months ago and am just hopin it actually works in this context
-        double xvec = min(speed, 1.0) * cos(radians)+1;
+        double yvec = min(speed, maxSpeed) * sin(radians); // ima be honest, i did this math for a js project 6 months ago and am just hopin it actually works in this context
+        double xvec = min(speed, maxSpeed) * cos(radians)+1;
 
         double y = pow(-yvec,3); // Remember, this is reversed!
         double x = pow(xvec * 1.1,3); // Counteract imperfect strafing
         double rx = pow(spinvec,3);
 
+        double CORRECTION_FACTOR = 0.1;
 
         //denominator is the largest motor power (absolute value) or 1
         //this ensures all the powers maintain the same ratio, but only when
         //at least one is out of the range [-1, 1]
-        double denominator = Math.max(abs(y) + abs(x) + abs(rx), 1);
+
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int blip = motorBackLeft.getCurrentPosition(); // back left initial position :)
+        int brip = motorBackRight.getCurrentPosition();
+        int flip = motorFrontLeft.getCurrentPosition();
+        int frip = motorFrontRight.getCurrentPosition();
+
+        double denominator = Math.max(abs(y) + abs(x) + abs(rx), maxSpeed);
         double frontLeftPower = (y + x + rx) / denominator;
         double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
-        motorDrive(frontLeftPower,backLeftPower, frontRightPower, backRightPower);
 
+        while (abs(motorBackLeft.getCurrentPosition() - blip) < ticks ||
+                abs(motorFrontRight.getCurrentPosition() - frip) < ticks ||
+                abs(motorFrontLeft.getCurrentPosition() - flip) < ticks ||
+                abs(motorBackRight.getCurrentPosition() - brip) < ticks) {
+
+            rx = (INITIAL_ANGLE-getAngles().firstAngle * CORRECTION_FACTOR);
+            frontLeftPower = (y + x + rx) / denominator;
+            backLeftPower = (y - x + rx) / denominator;
+            frontRightPower = (y - x - rx) / denominator;
+            backRightPower = (y + x - rx) / denominator;
+            motorDrive(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+
+        }
     }
 
-    public void motorDriveXYVectors(double xvec, double yvec, double spinvec){ // used for teleop mode
+    public void motorDriveXYVectors(double xvec, double yvec, double spinvec){
+        // used for teleop mode
         //NOTE
         // im not sure how to acurately do this using encoders, because some wheels are going to spin at different powers (I think)
         // this will cause the ticks to be difficult to calculate, and I dont really want to deal with that
@@ -206,7 +246,7 @@ public class Meccanum {
     }
 
     public void motorDriveRelativeAngleTime(double radians, double speed, double time){
-        motorDriveRelativeAngle(radians, speed);
+        motorDriveRelativeFieldAngleEncoded(radians, speed, 1); //t his is so no error, NEED CHANGE NOT RIGHT
         delay(time);
         motorStop();
     }
@@ -330,33 +370,33 @@ public class Meccanum {
         arm.setTargetPosition(arm.getCurrentPosition());
     }
 
-    public void turnRadians(double radians, double speed) {
-        turnRadians(radians, speed, angles.firstAngle);
-    }
-
-    private double turnRadians(double radians, double speed, double startRadians) { // private I think bcuz only ever accessed inside the class
+    private double turnRadians(double radians, double speed) { // private I think bcuz only ever accessed inside the class
+        float startRadians = angles.firstAngle;
         double target = startRadians + radians;
         double minSpeed = 0.1;
         while(angles.firstAngle < target){
-
-            if(target-angles.firstAngle>minSpeed) {
-                motorSpinRight(target - angles.firstAngle);
-            }else{
-                motorSpinRight(minSpeed);
-            }
-
-            telemetry.addData("Angles: ", angles.firstAngle);
-            telemetry.addData("Not Angles: ", angles.firstAngle - target);
+            motorSpinRight(Math.max(target - angles.firstAngle, minSpeed));
             angles = getAngles();
-            telemetry.update();
         }
-
-
         motorStop();
         return target-startRadians;
 
 
     }
+    private double turnDeg(double degrees, double speed) { // private I think bcuz only ever accessed inside the class
+        float startDegrees = angles.firstAngle;
+        double target = startDegrees + degrees;
+        double minSpeed = 0.1;
+        while(angles.firstAngle < target){
+            motorSpinRight(Math.max((target - angles.firstAngle)*speed, minSpeed));
+            angles = getAngles();
+        }
+        motorStop();
+        return target-startDegrees;
+
+
+    }
+
 
     public void setServo(double angle){
         servo0.setPosition(angle);

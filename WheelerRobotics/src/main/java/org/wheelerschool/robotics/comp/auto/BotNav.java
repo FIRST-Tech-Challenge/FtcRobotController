@@ -8,8 +8,8 @@ import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.wheelerschool.robotics.comp.BotVision;
-import org.wheelerschool.robotics.comp.CompBot;
+import org.wheelerschool.robotics.old.lib.BotVision;
+import org.wheelerschool.robotics.old.lib.CompBot;
 
 
 public class BotNav {
