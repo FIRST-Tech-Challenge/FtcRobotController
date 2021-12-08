@@ -331,7 +331,7 @@ public class DriveTrain implements Subsystem {
     //----------------------------------------------------------------------------------------------
 
     private double getSwivelAngle() {
-        return motorMiddleSwivel.getCurrentPosition() / Constants.DRIVETRAIN_TICKS_PER_REVOLUTION * 2 * Math.PI + Math.PI / 2;
+        return (motorMiddleSwivel.getCurrentPosition() / Constants.DRIVETRAIN_TICKS_PER_REVOLUTION * 2 * Math.PI + Math.PI / 2) % (2 * Math.PI);
     }
 
     public double getChassisDistance() {
