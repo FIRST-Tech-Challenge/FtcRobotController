@@ -33,7 +33,7 @@ public class DriveTrain implements Subsystem {
     private DcMotor.ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new DcMotor.ZeroPowerBehavior[] {ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT};
 
     // Sensors
-    BNO055IMU imu;
+    private BNO055IMU imu;
     private DistanceSensor sensorChassisDistance;
 
     // Kinematics
@@ -45,11 +45,10 @@ public class DriveTrain implements Subsystem {
 
     // PIVs
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
-    private double targetLinearVelocity, targetAngularVelocity;
+    private double targetLinearVelocity, targetAngularVelocity, targetTurnRadius;
 
     private double swivelAngle;
     private double chassisDistance, targetChassisDistance;
-    private boolean imuInitialized;
     private boolean smoothingEnabled;
 
     // PID
@@ -82,7 +81,7 @@ public class DriveTrain implements Subsystem {
 
         // Sensors
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        initializeIMU(hardwareMap);
+        initializeIMU();
 
         sensorChassisDistance = hardwareMap.get(DistanceSensor.class, "distLength");
 
@@ -109,7 +108,7 @@ public class DriveTrain implements Subsystem {
         previousWheelTicks = getWheelTicks();
     }
 
-    private void initializeIMU(HardwareMap hardwareMap) {
+    private void initializeIMU() {
         BNO055IMU.Parameters parametersIMU = new BNO055IMU.Parameters();
         parametersIMU.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parametersIMU.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -117,6 +116,14 @@ public class DriveTrain implements Subsystem {
         parametersIMU.loggingTag = "baseIMU";
 
         imu.initialize(parametersIMU);
+
+        // storing first absolute orientation values as offsets
+        Orientation imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        offsetAngles = new SimpleMatrix(new double[][] {
+                { (360 - imuAngles.firstAngle) % 360 },
+                { imuAngles.secondAngle % 360 },
+                { imuAngles.thirdAngle % 360 }
+        });
     }
 
     private double getMaintainSwivelAngleCorrection() {
@@ -166,17 +173,6 @@ public class DriveTrain implements Subsystem {
      */
     private void updatePose() {
         Orientation imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-        if (!imuInitialized) {
-            // storing first absolute orientation values as offsets
-
-            offsetAngles = new SimpleMatrix(new double[][] {
-                    { (360 - imuAngles.firstAngle) % 360 },
-                    { imuAngles.secondAngle % 360 },
-                    { imuAngles.thirdAngle % 360 }
-            });
-
-            imuInitialized = true;
-        }
         angles = new SimpleMatrix(new double[][] {
                 {MathUtils.wrapAngle(360 - imuAngles.firstAngle, offsetAngles.get(0))},
                 {MathUtils.wrapAngle(imuAngles.thirdAngle, offsetAngles.get(1))},
@@ -248,13 +244,13 @@ public class DriveTrain implements Subsystem {
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
 
-        double turnRadius = angularVelocity == 0 ? 0 : linearVelocity / angularVelocity;
+        targetTurnRadius = angularVelocity == 0 ? 0 : linearVelocity / angularVelocity;
 
-        targetFrontLeftVelocity = linearVelocity + angularVelocity * (turnRadius - Constants.TRACK_WIDTH / 2);
-        targetFrontRightVelocity = linearVelocity + angularVelocity * (turnRadius + Constants.TRACK_WIDTH / 2);
-        targetMiddleVelocity = linearVelocity + angularVelocity * Math.hypot(turnRadius, chassisDistance);
+        targetFrontLeftVelocity = linearVelocity + angularVelocity * (targetTurnRadius - Constants.TRACK_WIDTH / 2);
+        targetFrontRightVelocity = linearVelocity + angularVelocity * (targetTurnRadius + Constants.TRACK_WIDTH / 2);
+        targetMiddleVelocity = linearVelocity + angularVelocity * Math.hypot(targetTurnRadius, chassisDistance);
 
-        targetSwivelAngle = linearVelocity == 0 ? Math.PI / 2 : Math.atan2(chassisDistance, turnRadius);
+        targetSwivelAngle = linearVelocity == 0 ? Math.PI / 2 : Math.atan2(chassisDistance, targetTurnRadius);
 
         if(smoothingEnabled) {
             targetFrontLeftVelocity = frontLeftSmoother.update(targetFrontLeftVelocity);
@@ -293,6 +289,23 @@ public class DriveTrain implements Subsystem {
     @Override
     public String getTelemetryName() {
         return TELEMETRY_NAME;
+    }
+
+    @Override
+    public void reset() {
+        // reset IMU
+        initializeIMU();
+
+        // reset motors
+        for (int i = 0; i < MOTOR_NAMES.length; i++) {
+            motors[i].setMode(RunMode.STOP_AND_RESET_ENCODER);
+            motors[i].setMode(RunMode.RUN_USING_ENCODER);
+        }
+
+        // reset smoothers
+        frontLeftSmoother = new ExponentialSmoother(Constants.FRONT_LEFT_SMOOTHING_FACTOR);
+        frontRightSmoother = new ExponentialSmoother(Constants.FRONT_RIGHT_SMOOTHING_FACTOR);
+        middleSmoother = new ExponentialSmoother(Constants.MIDDLE_SMOOTHING_FACTOR);
     }
 
     @Override
@@ -337,5 +350,9 @@ public class DriveTrain implements Subsystem {
                 { motorFrontRight.getCurrentPosition(), 0 },
                 { motorMiddle.getCurrentPosition(), 0 }
         });
+    }
+
+    public double getTurnRadius() {
+
     }
 }

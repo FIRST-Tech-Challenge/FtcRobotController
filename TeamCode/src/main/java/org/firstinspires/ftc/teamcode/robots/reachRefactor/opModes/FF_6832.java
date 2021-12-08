@@ -29,9 +29,10 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.StickyGamepad;
 public class FF_6832 extends OpMode {
     private Robot robot;
 
-    // state
+    // global state
     private boolean active;
-    private int state;
+    private Constants.GameState gameState;
+    private int gameStateIndex;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
 
     // TPM Calibration state
@@ -50,7 +51,7 @@ public class FF_6832 extends OpMode {
     public void init() {
         // global state
         active = true;
-        state = 0;
+        gameState = Constants.GameState.TELE_OP;
 
         // TPM calibration state
         TPMCalibrationInitialized = false;
@@ -70,11 +71,11 @@ public class FF_6832 extends OpMode {
     private void handleStateSwitch() {
         if (!active) {
             if (stickyGamepad1.left_bumper)
-                state -= 1;
+                gameStateIndex -= 1;
             if (stickyGamepad1.right_bumper)
-                state += 1;
+                gameStateIndex += 1;
 
-            state %= Constants.GAME_STATES.length;
+            gameStateIndex %= Constants.GameState.getNumGameStates();
         }
 
         if (stickyGamepad1.start)
@@ -147,22 +148,24 @@ public class FF_6832 extends OpMode {
         handleStateSwitch();
 
         if (active)
-            switch(state) {
-                case 0: // Tele-Op
+            switch(gameState) {
+                case TELE_OP:
                     handleTeleOp();
                     break;
-                case 1: // Autonomous
+                case AUTONOMOUS:
                     if (robot.getAlliance().equals(Constants.Alliance.RED)
                             && robot.articulate(Robot.Articulation.AUTONOMOUS_RED)) {
                         active = false;
-                        state = 0;
+                        gameState = Constants.GameState.TELE_OP;
+                        gameStateIndex = Constants.GameState.indexOf(Constants.GameState.TELE_OP);
                     } else if (robot.getAlliance().equals(Constants.Alliance.BLUE)
                             && robot.articulate(Robot.Articulation.AUTONOMOUS_BLUE)) {
                         active = false;
-                        state = 0;
+                        gameState = Constants.GameState.TELE_OP;
+                        gameStateIndex = Constants.GameState.indexOf(Constants.GameState.TELE_OP);
                     }
                     break;
-                case 2: // TPM Calibration
+                case TPM_CALIBRATION:
                     handleTPMCalibration();
                     break;
             }
@@ -188,16 +191,16 @@ public class FF_6832 extends OpMode {
             robot.addTelemetryData("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
         }
         robot.addTelemetryData("Active", active);
-        robot.addTelemetryData("State", String.format("(%d): %s", state, Constants.GAME_STATES[state]));
+        robot.addTelemetryData("State", String.format("(%d): %s", gameStateIndex, gameState));
         robot.addTelemetryData("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
         robot.addTelemetryData("Dashboard Enabled", robot.isDashboardEnabled());
 
-        switch(state) {
-            case 0: // Tele-Op
+        switch(gameState) {
+            case TELE_OP:
                 break;
-            case 1: // Autonomous
+            case AUTONOMOUS:
                 break;
-            case 2: // TPM Calibration
+            case TPM_CALIBRATION:
                 robot.addTelemetryData("Average Ticks Traveled", averageTPMCalibrationTicksTraveled);
                 break;
         }

@@ -6,5 +6,6 @@ public interface Subsystem {
     Map<String, Object> getTelemetry(boolean debug);
     String getTelemetryName();
     void update();
+    void reset();
     void stop();
 }

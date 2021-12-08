@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.CanvasUtils;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtils;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
@@ -56,6 +57,7 @@ public class Robot implements Subsystem {
         SimpleMatrix position = pose.rows(0, 2);
         double heading = pose.get(2);
 
+        // drawing wheel positions and axles
         SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
         SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
         SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0, -driveTrain.getChassisDistance() }});
@@ -70,6 +72,15 @@ public class Robot implements Subsystem {
 
         CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, Constants.STROKE_COLOR);
         CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, Constants.STROKE_COLOR);
+
+        // calculating the instantaneous center of rotation
+        double turnRadius = driveTrain.getTurnRadius();
+        SimpleMatrix ICC = new SimpleMatrix(new double[][] {{ -turnRadius, 0 }});
+        ICC = MathUtils.rotateVector(ICC, heading);
+
+        // drawing ICC and turn radiusg
+        CanvasUtils.drawLine(fieldOverlay, ICC, pose, Constants.TURN_RADIUS_STROKE_COLOR);
+        fieldOverlay.strokeCircle(ICC.get(0), ICC.get(1), turnRadius);
     }
 
     public void sendTelemetry() {
@@ -145,6 +156,12 @@ public class Robot implements Subsystem {
             subsystem.update();
 
         sendTelemetry();
+    }
+
+    @Override
+    public void reset() {
+        for(Subsystem subsystem: subsystems)
+            subsystem.reset();
     }
 
     @Override
