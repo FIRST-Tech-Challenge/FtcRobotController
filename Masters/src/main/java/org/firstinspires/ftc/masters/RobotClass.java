@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -35,6 +36,9 @@ public class RobotClass {
     public DcMotor frontRight;
     public DcMotor backLeft;
     public DcMotor backRight;
+    public DcMotor intakeMotor;
+    public DcMotor linearSlideMotor;
+    public Servo linearSlideServo;
     private double ticks = 537;//537
     private double ticksTheSequel = 2786;
     BNO055IMU imu;
@@ -64,6 +68,9 @@ public class RobotClass {
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
         colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
+        intakeMotor = hardwareMap.dcMotor.get("intake");
+        linearSlideMotor = hardwareMap.dcMotor.get("linearSlideMotor");
+        linearSlideServo = hardwareMap.servo.get("linearSlideServo");
 
         this.opmode= opmode;
 
@@ -190,6 +197,7 @@ public class RobotClass {
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+
     public void backwards (double speed, double rotations) {
         int leftCurrent = frontLeft.getCurrentPosition();
         int rightCurrent = frontRight.getCurrentPosition();
@@ -218,6 +226,12 @@ public class RobotClass {
 //        telemetry.addData("Target Back Left Motor Position", toPositionBackLeft);
 //        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
 //        telemetry.update();
+    }
+
+    public void jevilTurnCarousel (double speed, double seconds) {
+        carousel.setPower(speed);
+        pauseButInSecondsForThePlebeians(seconds);
+        carousel.setPower(0);
     }
 
     public void wayneStrafeBlue (double speed) {
@@ -276,34 +290,34 @@ public class RobotClass {
         forward(0.2,-1);
     }
 
-        public void setSpeedForTurnRight (double speed) {
-            frontLeft.setPower(speed);
-            frontRight.setPower(-speed);
-            backLeft.setPower(speed);
-            backRight.setPower(-speed);
-        }
+    public void setSpeedForTurnRight (double speed) {
+        frontLeft.setPower(speed);
+        frontRight.setPower(-speed);
+        backLeft.setPower(speed);
+        backRight.setPower(-speed);
+    }
 
-        public void setSpeedForTurnLeft (double speed) {
-            frontLeft.setPower(-speed);
-            frontRight.setPower(speed);
-            backLeft.setPower(-speed);
-            backRight.setPower(speed);
-        }
+    public void setSpeedForTurnLeft (double speed) {
+        frontLeft.setPower(-speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(-speed);
+        backRight.setPower(speed);
+    }
 
-        public void stopMotors () {
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-        }
+    public void stopMotors () {
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+    }
 
-        protected void motorTelemetry(){
-            telemetry.addData("Current Front Left Motor Position: ", frontLeft.getCurrentPosition());
-            telemetry.addData("Current Front Right Motor Position: ", frontRight.getCurrentPosition());
-            telemetry.addData("Current Back Left Motor Position: ", backLeft.getCurrentPosition());
-            telemetry.addData("Current Back Right Motor Position: ", backRight.getCurrentPosition());
-            telemetry.update();
-        }
+    protected void motorTelemetry(){
+        telemetry.addData("Current Front Left Motor Position: ", frontLeft.getCurrentPosition());
+        telemetry.addData("Current Front Right Motor Position: ", frontRight.getCurrentPosition());
+        telemetry.addData("Current Back Left Motor Position: ", backLeft.getCurrentPosition());
+        telemetry.addData("Current Back Right Motor Position: ", backRight.getCurrentPosition());
+        telemetry.update();
+    }
 
 
     public void pivotRightSloppy (double speed, double angle) {
@@ -407,6 +421,7 @@ public class RobotClass {
 
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
     public void strafeLeft (double speed, double rotations) {
 
         int leftCurrent = frontLeft.getCurrentPosition();
@@ -534,7 +549,7 @@ public class RobotClass {
         motorSetMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if (targetHeading > 0) {
             setSpeedForTurnLeft(speed);
-            while (getAngleFromGyro() < targetHeading) {
+            while (getAngleFromGyro() < targetHeading && this.opmode.opModeIsActive()) {
                 telemetry.addData("Current Angle: ",getAngleFromGyro());
                 telemetry.addData("Target Heading: ",targetHeading);
                 telemetry.update();
@@ -544,7 +559,7 @@ public class RobotClass {
             }
         } else if (targetHeading < 0) {
             setSpeedForTurnRight(speed);
-            while (getAngleFromGyro() > targetHeading) {
+            while (getAngleFromGyro() > targetHeading && this.opmode.opModeIsActive()) {
                 telemetry.addData("Current Angle: ",getAngleFromGyro());
                 telemetry.addData("Target Heading: ",targetHeading);
                 telemetry.update();

@@ -16,7 +16,6 @@ public class JevilsRedCarousel extends LinearOpMode {
         robot.openCVInnitShenanigans();
         EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
 
-        // Here Wayne will do stuff eventually
         waitForStart();
 
         long startTime = new Date().getTime();
@@ -29,15 +28,26 @@ public class JevilsRedCarousel extends LinearOpMode {
             telemetry.addData("Position", freightLocation);
             telemetry.update();
         }
-        robot.forward(0.4, .8);
-        robot.turnToHeadingSloppy(.25,-45,-45);
+        robot.forward(0.6, 1.5);
+        robot.turnToHeadingSloppy(.6,-45,-20);
+        robot.forward(.3,.8);
+        robot.pauseButInSecondsForThePlebeians(.5);
+
         //deposit shipping element
-        robot.mecanumWitchcraftBackLeft(.4,1.3);
+
 //        robot.backwards(0.3,0.2);
 //        robot.strafeLeft(0.3,0.2);
 //        robot.turnToHeading(0.3,-125, 3);
 //        robot.forward(0.3,0.2);
-//        //Jovil turns carousel
+        robot.forward(.3,-2.6);
+
+//        //Jevil turns carousel
+        robot.jevilTurnCarousel(.5,2);
+
+        robot.turnToHeadingSloppy(.3,-90,-75);
+        robot.strafeRight(.3,.8);
+        robot.forward(.3,-0.8);
+
 //        robot.turnToHeading(0.3, -90, 3);
 //        robot.strafeRight(0.3,0.2);
 //        robot.forward(0.3,0.2);
