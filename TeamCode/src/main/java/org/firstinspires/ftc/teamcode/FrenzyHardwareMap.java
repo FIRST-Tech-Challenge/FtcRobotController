@@ -74,35 +74,42 @@ public class FrenzyHardwareMap {
         motorBackLeft = frenzyMap.get(DcMotor.class, "backLeft");
         motorFrontRight = frenzyMap.get(DcMotor.class, "frontRight");
         motorBackRight = frenzyMap.get(DcMotor.class, "backRight");
+
         //Define and initialize arm/intake/carousel motors.
         motorArm = frenzyMap.get(DcMotorEx.class, "arm");
         motorIntake = frenzyMap.get(DcMotor.class, "intake");
         motorCarousel = frenzyMap.get(DcMotorEx.class, "carousel");
         //Define the imu
         imu = frenzyMap.get(BNO055IMU.class, "imu");
+
         // Set all motor directions.
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
+
         // Set motor directions arm/intake/carousel.
         motorIntake.setDirection(DcMotorSimple.Direction.REVERSE);
         motorArm.setDirection(DcMotorSimple.Direction.REVERSE);
         motorCarousel.setDirection(DcMotorSimple.Direction.REVERSE);
+
         // Set all motors to zero power.
         motorFrontRight.setPower(0.0);
         motorFrontLeft.setPower(0.0);
         motorBackLeft.setPower(0.0);
         motorBackRight.setPower(0.0);
+
         // Set arm/intake/carousel motors to zero power.
         motorArm.setPower(0.0);
         motorIntake.setPower(0.0);
         motorCarousel.setPower(0.0);
+
         // Set all motors to run with encoders.
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         // Set arm motor modes
         motorArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
@@ -112,6 +119,7 @@ public class FrenzyHardwareMap {
             motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
             motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -142,7 +150,6 @@ public class FrenzyHardwareMap {
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
 
