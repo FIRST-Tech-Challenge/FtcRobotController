@@ -14,5 +14,6 @@ public class BlueDeliverWarehouse extends MasterAutonomous {
         moveForward(-2.0, 10, 10);
         autoDeliver();
         imuPivot(referenceAngle, -90, 35, 0.015, 3.0);
+        moveForward(40.0, 10, 10);
     }
 }

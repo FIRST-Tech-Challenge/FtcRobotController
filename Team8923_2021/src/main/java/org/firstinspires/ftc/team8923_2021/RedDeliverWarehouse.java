@@ -15,5 +15,6 @@ public class RedDeliverWarehouse extends MasterAutonomous {
         moveForward(2.0, 10, 10);
         imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
         moveForward(10.0, 10, 10);
+        imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
     }
 }
