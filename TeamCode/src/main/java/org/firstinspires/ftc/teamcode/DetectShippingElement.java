@@ -211,7 +211,6 @@ public class DetectShippingElement extends LinearOpMode
              * tapped, please see {@link PipelineStageSwitchingExample}
              */
 
-
             return input;
         }
     }
