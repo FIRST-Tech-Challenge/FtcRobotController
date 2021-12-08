@@ -17,8 +17,10 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorBackRight.setPower(rightSidePower);
     }
 
-    // This method drives a specified number of inches when given a target distance and max speed
-    public void driveInches(double targetDistance, double maxSpeed) {
+    // This method drives a specified number of inches in a straight line when given a target distance and max speed
+    // Set direction to true when going forward and false when going backwards
+    // todo - test this method
+    public void driveInches(double targetDistance, double maxSpeed, boolean direction) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -48,24 +50,38 @@ public abstract class MasterAutonomous extends MasterOpMode {
             translationPID.roll(distanceLeft);
 
             // We drive the wheels with the PID value
-            driveTank(Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed),
-                    Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed));
+            if (direction) {
+                driveTank(Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed),
+                        Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed));
+            } else {
+                driveTank(Math.min(Math.max(translationPID.getFilteredValue() * -1, Constants.MINIMUM_DRIVE_POWER), maxSpeed) * -1,
+                        Math.min(Math.max(translationPID.getFilteredValue() * -1, Constants.MINIMUM_DRIVE_POWER), maxSpeed) * -1);
+            }
 
-            if (Math.abs(angleDeviation) > 1) {
-                turnDegrees(startAngle);
+            if (Math.abs(angleDeviation) >= 1) {
+                turnDegrees(angleDeviation * -1);
             }
 
             // Update positions using last distance measured by encoders
             position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() +
                     motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4.0;
-            if (Math.abs(position - targetDistance) < 1) {
-                driveTank(0.0, 0.0);
-                distanceReached = true;
+
+            if (direction) {
+                if (Math.abs(position - targetDistance) <= 1) {
+                    driveTank(0.0, 0.0);
+                    distanceReached = true;
+                }
+            } else {
+                if (Math.abs(position + targetDistance) <= 1) {
+                    driveTank(0.0, 0.0);
+                    distanceReached = true;
+                }
             }
         }
     }
 
     // This method turns a specified number of degrees when given a target angle to turn
+    // todo - test this method
     public void turnDegrees(double targetAngle) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -98,13 +114,13 @@ public abstract class MasterAutonomous extends MasterOpMode {
             // We drive the wheels with the PID value
             if (targetAngle > 0) {
                 driveTank(Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER),
-                        Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER) * -1);
-            } else {
-                driveTank(Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER) * -1,
+                        Math.min((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER * -1));
+            } else if (targetAngle < 0) {
+                driveTank(Math.min((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER * -1),
                         Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER));
             }
 
-            if (Math.abs(targetAngle - angleTraveled) < 1) {
+            if (Math.abs(targetAngle - angleTraveled) <= 1) {
                 driveTank(0.0, 0.0);
                 angleReached = true;
             }
