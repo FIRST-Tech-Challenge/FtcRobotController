@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition;
+package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.Chassis1;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -9,27 +9,23 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.DriveMethod;
+import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.PoseStorage;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis1;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "RED BARRIER", group = "Competition")
-public class Mecanum_Auto_RedBarrier extends LinearOpMode {
+@Autonomous(name = "RED DUCK - STORAGE", group = "Competition")
+public class Mecanum_Auto_RedDuck_Storage extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -40,7 +36,6 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
     private DcMotor Slide = null;
     private Servo Rotate = null;
     private Servo Push = null;
-    private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
     private ElapsedTime runtime = new ElapsedTime();
 
     BNO055IMU imu;
@@ -57,9 +52,6 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    double rotate = 0;
-    double speed = 0.5;
-    boolean reverse = false;
 
     @Override
     public void runOpMode() {
@@ -102,7 +94,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         //initialize position
         Push.setPosition(0.4);
         Slide.setPower(0.15);
-        sleep(200);
+        sleep(100);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Rotate.setPosition(0.03);
@@ -123,7 +115,12 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         telemetry.update();
 
         //Traj
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive_Chassis1 drive = new SampleMecanumDrive_Chassis1(hardwareMap);
+        Pose2d startPose = new Pose2d(-41, -62.125, toRadians(-90));
+        drive.setPoseEstimate(startPose);
+        Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
+                .splineToConstantHeading(new Vector2d(-11.875, -43), toRadians(90))
+                .build();
 
         waitForStart();
         if(opModeIsActive()) {
@@ -151,46 +148,52 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
                     }
                 }
             }
-            Pose2d startPose = fieldConstant.RED_BARRIER_STARTING_POSE;
-            drive.setPoseEstimate(startPose);
             if (center < 0) {
                 visionResult = "RIGHT";
             } else if (center < 420.725) {
                 visionResult = "LEFT";
-                Trajectory plateTraj0 = drive.trajectoryBuilder(startPose,true)
-                        .strafeLeft(5)
-                        .build();
-                drive.followTrajectory(plateTraj0);
-                startPose = plateTraj0.end();
             } else {
                 visionResult = "MIDDLE";
-                Trajectory plateTraj0 = drive.trajectoryBuilder(startPose,true)
-                        .strafeLeft(5)
-                        .build();
-                drive.followTrajectory(plateTraj0);
-                startPose = plateTraj0.end();
             }
             telemetry.addLine(visionResult);
             telemetry.update();
 
-            //MOVE MARKER OUT
-            Trajectory plateTraj1 = drive.trajectoryBuilder(startPose,true)
-                    .back(45)
+            //MOTION TO DUCK
+            Trajectory duckTraj = drive.trajectoryBuilder(startPose,true)
+                    .splineToLinearHeading(new Pose2d(-63, -56, toRadians(-180)), toRadians(0))
+                    .build();
+            drive.followTrajectory(duckTraj);
+            sleep(500);
+
+            //ROTATE DUCK
+//            drive.setMotorPowers(0.2, -0.2,-0.2,0.2);
+//            sleep(340);
+//            drive.setMotorPowers(0, 0,0,0);
+            Trajectory closeDuckTraj = drive.trajectoryBuilder(duckTraj.end(),true)
+                    .strafeLeft(2)
+                    .build();
+            drive.followTrajectory(closeDuckTraj);
+
+            Spin.setPower(-0.5);
+            sleep(3500);
+            Spin.setPower(0.0);
+
+            Pose2d wall = new Pose2d(-62, -55.25, drive.getExternalHeading());// Math.toRadians(-180)
+            drive.setPoseEstimate(wall);
+
+            //MOTION TO PLATE
+            Trajectory plateTraj1 = drive.trajectoryBuilder(wall, true)
+                    .splineToLinearHeading(new Pose2d(-59, -23.75, toRadians(180)), toRadians(-90))
                     .build();
             drive.followTrajectory(plateTraj1);
+
             Trajectory plateTraj2 = drive.trajectoryBuilder(plateTraj1.end())
-                    .forward(2)
+                    .back(25.5)
                     .build();
             drive.followTrajectory(plateTraj2);
 
-            //MOTION TO PLATE
-            Trajectory plateTraj3 = drive.trajectoryBuilder(plateTraj2.end())
-                    .lineToLinearHeading(new Pose2d(7.875, -23.75, toRadians(0)))
-                    .build();
-            drive.followTrajectory(plateTraj3);
-
             //ROTATE
-            Rotate.setPosition(1.0);
+            rotateWithSpeed(1.0, 0.5);
             sleep(800);
 
             //SLIDE UP
@@ -210,11 +213,10 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             sleep(600);
 
             //CLOSER TO PLATE
-            Trajectory closerTraj = drive.trajectoryBuilder(plateTraj3.end())
-                    .back(1.5)
+            Trajectory closeTraj = drive.trajectoryBuilder(plateTraj2.end())
+                    .back(1)
                     .build();
-            drive.followTrajectory(closerTraj);
-            drive.setPoseEstimate(closerTraj.end());
+            drive.followTrajectory(closeTraj);
 
             //DUMP AND SLIDE DOWN
             Push.setPosition(0.0);
@@ -227,32 +229,20 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Slide.setPower(0.8);
 
-            //BACK TO WALL
-            if(visionResult == "LEFT"){
-                Trajectory wallTrajR1 = drive.trajectoryBuilder(closerTraj.end())
-                        .lineToLinearHeading(new Pose2d(14.8, -23.75, toRadians(-90)))
-                        .build();
-                drive.followTrajectory(wallTrajR1);
-                Trajectory wallTrajR2 = drive.trajectoryBuilder(wallTrajR1.end())
-                        .forward(20)
-                        .build();
-                drive.followTrajectory(wallTrajR2);
-                drive.setPoseEstimate(wallTrajR2.end());
-            }
-            Trajectory wallTraj1 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(6.5, -65, toRadians(0)))
+            //BACK TO STORAGE UNIT & PARK
+            Trajectory parkTraj1 = drive.trajectoryBuilder(closeTraj.end())
+                    .forward(31)
                     .build();
-            drive.followTrajectory(wallTraj1);
-            sleep(300);
-
-            Trajectory wallTraj2 = drive.trajectoryBuilder(wallTraj1.end())
-                    .forward(36)
+            drive.followTrajectory(parkTraj1);
+            Trajectory parkTraj2 = drive.trajectoryBuilder(parkTraj1.end())
+                    .strafeLeft(13)
                     .build();
-            drive.followTrajectory(wallTraj2);
+            drive.followTrajectory(parkTraj2);
+            sleep(500);
 
+            PoseStorage.currentPose = drive.getPoseEstimate();
+            PoseStorage.state = DriveMethod.poseState.RED;
 
-            PoseStorage.currentPose = wallTraj1.end();
-            PoseStorage.state = driveMethod.poseState.RED;
         }
 
     }
@@ -285,5 +275,22 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+    }
+
+    private void rotateWithSpeed(double targetPos, double factor){
+        //1 -> 10 0.5 -> 5
+        if(factor == 1.0){
+            Rotate.setPosition(targetPos);
+        }
+        double currentPos = Rotate.getPosition();
+        double interval = 0.05 * factor;
+        while (targetPos > Rotate.getPosition()){
+            Rotate.setPosition(Rotate.getPosition() + interval);
+            sleep(30);
+        }
+        while (targetPos < Rotate.getPosition()){
+            Rotate.setPosition(Rotate.getPosition() - interval);
+            sleep(30);
+        }
     }
 }

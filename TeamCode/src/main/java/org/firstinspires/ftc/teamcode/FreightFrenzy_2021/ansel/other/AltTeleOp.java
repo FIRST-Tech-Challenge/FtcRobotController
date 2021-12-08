@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition;
+package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.ansel.other;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,14 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-
 import java.util.ArrayList;
 
-import static java.lang.Math.toRadians;
-
-@TeleOp(name = "Mecanum TeleOp Candidate", group = "Linear OpMode")
-public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
+@Disabled
+@TeleOp(name = "AltTeleOp Other", group = "Linear OpMode")
+public class AltTeleOp extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -31,7 +27,7 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     double rotate = 0;
-    double speed = 0.5;
+    double speed = 0.8;
     boolean reverse = false;
 
     @Override
@@ -74,11 +70,6 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-41, -62.125, Math.toRadians(90));
-        drive.setPoseEstimate(startPose);
-
-
         waitForStart();
 
         boolean releasedRB1 = true;
@@ -88,58 +79,70 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
         boolean releasedLB2 = true;
         boolean releasedLT2 = true;
         boolean releasedRT2 = true;
+        boolean releasedA1 = true;
         boolean releasedA2 = true;
+        boolean releasedB1 = true;
         boolean releasedB2 = true;
         boolean releasedY2 = true;
-
+        boolean releasedDD1 = true;
         boolean releasedDD2 = true;
+        boolean releasedDL2 = true;
+        boolean releasedDU1 = true;
         boolean releasedDU2 = true;
+        boolean releasedDR2 = true;
+
         boolean toggleX1 = true;
         boolean toggleRB2 = true;
         boolean toggleLB2 = true;
         boolean toggleLT2 = true;
 
         while (opModeIsActive()) {
-            // Make sure to call drive.update() on *every* loop
-            // Increasing loop time by utilizing bulk reads and minimizing writes will increase your odometry accuracy
-            drive.update();
-
-            // Retrieve your pose
-            Pose2d myPose = drive.getPoseEstimate();
-
-            telemetry.addData("x", myPose.getX());
-            telemetry.addData("y", myPose.getY());
-            telemetry.addData("heading", myPose.getHeading());
-
             runtime.reset();
 
-            double straight = -gamepad1.left_stick_y;
+            double drive = -gamepad1.left_stick_y;
             double strafe  = -gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
 
-//            if(gamepad1.dpad_up) {
-//                if(releasedRB1) {
-//                    increaseSpeed(0.05);
-//                    releasedRB1 = false;
-//                }
-//            } else if(!releasedRB1){
-//                releasedRB1 = true;
-//            }
-//
-//            if(gamepad1.dpad_down){
-//                if(releasedLB1) {
-//                    decreaseSpeed(0.05);
-//                    releasedLB1 = false;
-//                }
-//            } else if (!releasedLB1){
-//                releasedLB1 = true;
-//            }
+            if(gamepad1.dpad_up) {
+                if(releasedDU1) {
+                    increaseSpeed(0.05);
+                    releasedDU1 = false;
+                }
+            } else if(!releasedDU1){
+                releasedDU1 = true;
+            }
+
+            if(gamepad1.dpad_down){
+                if(releasedDD1) {
+                    decreaseSpeed(0.05);
+                    releasedDD1 = false;
+                }
+            } else if (!releasedDD1){
+                releasedDD1 = true;
+            }
+
+            if(gamepad1.a){
+                if(releasedA1) {
+                    speed = 0.3;
+                }
+            } else if(!releasedA1){
+                releasedA1 = true;
+            }
+
+            if(gamepad1.b){
+                if(releasedB1) {
+                    speed = 0.8;
+                }
+            } else if(!releasedB1){
+                releasedB1 = true;
+            }
 
             if(gamepad2.a){
                 if(releasedA2) {
                     Slide.setTargetPosition(initialHeight);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Slide.setPower(0.8);
+                    Rotate.setPosition(0.03);
                 }
 
             } else if(!releasedA2){
@@ -148,7 +151,7 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
             if(gamepad2.b){
                 if(releasedB2) {
                     Rotate.setPosition(1.0);
-                    sleep(500);
+                    sleep(800);
                     Slide.setTargetPosition(initialHeight + 750);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Slide.setPower(0.8);
@@ -158,9 +161,13 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
             }
 
             if(gamepad2.y){
-                if(releasedY2) {
+                if(gamepad2.y && Rotate.getPosition() < 0.4) {
                     Rotate.setPosition(1.0);
-                    sleep(500);
+                    sleep(1200);
+                    Slide.setTargetPosition(initialHeight + 1400);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                } else if(gamepad2.y && Rotate.getPosition() > 0.4){
                     Slide.setTargetPosition(initialHeight + 1400);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Slide.setPower(0.8);
@@ -215,6 +222,27 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
                 releasedDD2 = true;
             }
 
+            if (gamepad2.dpad_left) {
+                if (releasedDL2){
+                    if(spinPower != 0) {
+                        spinPower -= 0.05;
+                    }
+                    releasedDL2 = false;
+                }
+            } else if (!releasedDL2){
+                releasedDL2 = true;
+            }
+            if (gamepad2.dpad_right) {
+                if (releasedDR2){
+                    if(spinPower != 0) {
+                        spinPower += 0.05;
+                    }
+                    releasedDR2 = false;
+                }
+            } else if (!releasedDR2){
+                releasedDR2 = true;
+            }
+
             if (gamepad1.left_bumper) {
                 if (releasedLB1 && Slide.getCurrentPosition() < initialHeight + 30){
                     intakePower = 1.0;
@@ -241,7 +269,8 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
             if (gamepad2.right_bumper) {
                 if (releasedRB2){
                     if (toggleRB2) {
-                        spinPower = 0.6;
+                        spinPower = 0.70;
+                        //twoPhaseSpin(false, 0.7);
                         telemetry.addLine("SPIN STARTS");
                         toggleRB2 = false;
                     } else {
@@ -258,7 +287,8 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
             if (gamepad2.left_bumper) {
                 if (releasedLB2){
                     if (toggleLB2) {
-                        spinPower = -0.6;
+                        spinPower = -0.70;
+                        //twoPhaseSpin(true, 0.7);
                         telemetry.addLine("SPIN STARTS REVERSE");
                         toggleLB2 = false;
                     } else {
@@ -272,7 +302,7 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
                 releasedLB2 = true;
             }
 
-            if(gamepad2.right_trigger == 1 && Rotate.getPosition() > 0.4){
+            if(gamepad2.right_trigger == 1 && Rotate.getPosition() >= 0.4){
                 if (releasedRT2){
                     Push.setPosition(0);
                     releasedRT2 = false;
@@ -290,7 +320,7 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
                         toggleLT2 = false;
                     } else {
                         Rotate.setPosition(1.0);
-                        telemetry.addLine("ROTATE STOPS");
+                        telemetry.addLine("ROTATE ShTOPS");
                         toggleLT2 = true;
                     }
                     releasedLT2 = false;
@@ -299,10 +329,10 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
                 releasedLT2 = true;
             }
 
-            LFPower  = Range.clip(gamepad1.left_trigger + speed*(straight + rotate - strafe), -1.0, 1.0) ;
-            LBPower  = Range.clip(gamepad1.left_trigger + speed*(straight + rotate + strafe), -1.0, 1.0) ;
-            RFPower  = Range.clip(gamepad1.right_trigger + speed*(straight - rotate + strafe), -1.0, 1.0) ;
-            RBPower  = Range.clip(gamepad1.right_trigger + speed*(straight - rotate - strafe), -1.0, 1.0) ;
+            LFPower  = Range.clip(gamepad1.left_trigger + speed*(drive + rotate - strafe), -1.0, 1.0) ;
+            LBPower  = Range.clip(gamepad1.left_trigger + speed*(drive + rotate + strafe), -1.0, 1.0) ;
+            RFPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate + strafe), -1.0, 1.0) ;
+            RBPower  = Range.clip(gamepad1.right_trigger + speed*(drive - rotate - strafe), -1.0, 1.0) ;
 
             LF.setPower(LFPower);
             RF.setPower(RFPower);
@@ -318,11 +348,27 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
             telemetry.addLine("Slide Target: " + Slide.getTargetPosition());
             telemetry.addData("Front Motors", "LF (%.2f), RF (%.2f)", LFPower, RFPower);
             telemetry.addData("Back Motors", "LB (%.2f), RB (%.2f)", LBPower, RBPower);
-            telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, straight);
+            telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, drive);
             telemetry.addData("Speed:", speed);
 
             telemetry.update();
 
+        }
+    }
+
+    void twoPhaseSpin(boolean isReversed,double startingSpeed) {
+        double reverseFactor = 1;
+        if(isReversed){
+            reverseFactor = -1;
+        }
+        ElapsedTime tSpin = new ElapsedTime();
+        double spinPower = startingSpeed * reverseFactor;
+        while (tSpin.milliseconds() < 800){
+            Spin.setPower(spinPower);
+        }
+        while (tSpin.milliseconds() < 1500){
+            spinPower = Range.clip(spinPower * tSpin.milliseconds()/800.0, -1.0, 1.0);
+            Spin.setPower(spinPower);
         }
     }
 
@@ -343,4 +389,5 @@ public class Mecanum_TeleOp_Final_Candidate extends LinearOpMode {
         }
         speed = increased;
     }
+
 }

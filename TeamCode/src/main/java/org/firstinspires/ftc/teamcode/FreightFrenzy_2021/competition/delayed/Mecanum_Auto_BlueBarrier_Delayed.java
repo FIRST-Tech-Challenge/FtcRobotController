@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis1;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public class Mecanum_Auto_BlueBarrier_Delayed extends LinearOpMode {
         telemetry.update();
 
         //Traj
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive_Chassis1 drive = new SampleMecanumDrive_Chassis1(hardwareMap);
         Pose2d startPose = new Pose2d(6.5, 62.125, toRadians(90));
         drive.setPoseEstimate(startPose);
         Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)

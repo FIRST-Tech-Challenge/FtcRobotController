@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.UltimateGoal_2020.mason_wu.roadrunner;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -42,7 +41,7 @@ public class Trajectory_Test extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //Initialize chassis
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive_Chassis1 drive = new SampleMecanumDrive_Chassis1(hardwareMap);
 
         // Initialize the hardware variables.
         Hand = hardwareMap.get(Servo.class, "hand");

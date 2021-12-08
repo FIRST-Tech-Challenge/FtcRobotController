@@ -18,8 +18,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import static java.lang.Thread.sleep;
 
-public class driveMethod {
-    enum poseState {
+public class DriveMethod {
+    public enum poseState {
         RED_WAREHOUSE,
         RED_STORAGEUNIT,
         BLUE_WAREHOUSE,
@@ -32,8 +32,13 @@ public class driveMethod {
         RED_SHARED_HUB,
         UNKNOWN
     }
-    enum alliance {
-
+    public enum alliance {
+        RED,
+        BLUE
+    }
+    public enum chassis {
+        ONE,
+        TWO
     }
 
     private DcMotor LF = null;
@@ -48,7 +53,7 @@ public class driveMethod {
     private ElapsedTime runtime = new ElapsedTime();
     BNO055IMU imu;
 
-    public driveMethod(DcMotor LF, DcMotor RF, DcMotor LB, DcMotor RB, DcMotor Intake, DcMotor Spin, DcMotor Slide, Servo Rotate, Servo Push, BNO055IMU imu){
+    public DriveMethod(DcMotor LF, DcMotor RF, DcMotor LB, DcMotor RB, DcMotor Intake, DcMotor Spin, DcMotor Slide, Servo Rotate, Servo Push, BNO055IMU imu){
         this.LF = LF;
         this.RF = RF;
         this.LB = LB;
@@ -61,7 +66,7 @@ public class driveMethod {
         this.imu = imu;
     }
 
-    public static poseState fieldState(Pose2d currentPose){
+    public static poseState poseToState(Pose2d currentPose){
         double x = currentPose.getX();
         double y = currentPose.getY();
         if(x > 27.375 && y < -27.375){
