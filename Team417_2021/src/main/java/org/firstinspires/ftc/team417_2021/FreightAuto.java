@@ -49,9 +49,11 @@ public class FreightAuto extends MasterAutonomous {
         }
 
         waitForStart();
+        robot.setInitialAngle();
+
 
         // raise arm to position depending on barcode
-        if (barcodeIndex == 0) {
+        /*if (barcodeIndex == 0) {
             // highest level
             runMotorToPosition(elbowMotor, ELBOW_LEVEL_3, 0.5);
         } else if (barcodeIndex == 1) {
@@ -60,38 +62,54 @@ public class FreightAuto extends MasterAutonomous {
         } else {
             // lowest level
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_1, 0.5);
-        }
+        }*/
 
-        // ----------------- MOVING -----------------
-        if (!farSide) {
-            moveInches(2, 0.7);
-            pivot(-10 * allianceSide, 0.7);
-            moveInches(4, 0.7);
-            pivot(-90 * allianceSide, 0.7);
-            moveInches(22, 0.4);
-            pivot(0, 0.7);
+        // ----------------- RIGHT SIDE AUTO -----------------
+        moveInches(10, 0.7);
+        pivot(-90, 0.5);
+        moveInches(21,0.7);
+        pivot(-180, 0.5);
+        moveInches(13, 0.5);
+        carouselMotor.setPower(1);
+        sleep(3200);
+        carouselMotor.setPower(0);
+        moveInches(-6,0.7);
+        pivot(90,0.7);
+        moveInches(48,0.7);
+        pivot(0,0.7);
+
+
+            wristServo.setPosition(0.0);
             if (barcodeIndex == 0) {
-                moveInches(4, 0.7);
+                runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_1, 0.5);
+                runMotorToPosition(elbowMotor, ELBOW_LEVEL_1, 0.3);
+                // 15 for level 3
+                moveInches(12, 0.7);
+                while(shoulderMotor.isBusy() || elbowMotor.isBusy()) {
+                    telemetry.addLine("pathli");
+                }
+            } else if (barcodeIndex == 1) {
+                runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_2, 0.5);
+                runMotorToPosition(elbowMotor, ELBOW_LEVEL_2, 0.3);
+                // 15 for level 3
+                moveInches(12, 0.7);
+                while(shoulderMotor.isBusy() || elbowMotor.isBusy()) {
+                    telemetry.addLine("pathli");
+                }
+            } else {
+                runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_3, 0.5);
+                runMotorToPosition(elbowMotor, ELBOW_LEVEL_3, 0.3);
+                // 15 for level 3
+                moveInches(15, 0.7);
+                while(shoulderMotor.isBusy() || elbowMotor.isBusy()) {
+                    telemetry.addLine("pathli");
+                }
             }
-            moveInches(19, 0.4);
-            // drop element here
-            dropElement();
-            moveInches(-10, 0.7);
-            pivot(90 * allianceSide, 0.7);
-            // back up into parking zone here
-            moveInches(70, 1.0);
-        } else {
-            moveInches(6, 0.7);
-            pivot(90 * allianceSide, 0.7);
-            moveInches(20, 0.4);
-            pivot(0, 0.7);
-            moveInches(2, 0.4);
-            // drop element
-            dropElement();
-            moveInches(-5, 0.7);
-            pivot(90 * allianceSide, 0.7);
-            // back up into parking zone
-        }
+
+        grabberServo.setPosition(0);
+        pivot(95, 0.9);
+       // moveInches(72, 1.0);
+
     }
 
     public void dropElement() {

@@ -9,9 +9,12 @@ public class TeleOpCompetition extends MasterTeleOp {
     public void runOpMode() throws InterruptedException {
         initializeHardware();
         telemetry.addLine("Ready for start");
+        telemetry.addData("initial heading", imu.getAngularOrientation().firstAngle);
         telemetry.update();
 
         waitForStart();
+        robot.setInitialAngle();
+
 
         while (opModeIsActive()) {
             driveRobotUsingController();

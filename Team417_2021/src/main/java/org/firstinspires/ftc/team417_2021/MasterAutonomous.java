@@ -3,10 +3,12 @@ package org.firstinspires.ftc.team417_2021;
 import com.qualcomm.robotcore.util.Range;
 
 abstract public class MasterAutonomous extends MasterOpMode {
-    double angleTolerance = 3;
+    double angleTolerance = 1;
+    double targetAngle = 0;
     public void pivot (double targetAngle, double maxSpeed) {
         double pivotSpeed;
         double errorAngle;
+        this.targetAngle = targetAngle;
 
         do {
             robot.updatePosition();
@@ -41,7 +43,7 @@ abstract public class MasterAutonomous extends MasterOpMode {
     public void moveInches(double inches, double maxSpeed) throws InterruptedException {
         double movingPower;
         double turningPower;
-        double targetAngle = robot.curAngle;
+        double targetAngle = this.targetAngle;
         double errorAngle;
         double initialInches = robotInches();
         double errorDistance;
@@ -61,6 +63,8 @@ abstract public class MasterAutonomous extends MasterOpMode {
             movingPower = Range.clip(moveFilter.getFilteredValue(), -maxSpeed, maxSpeed);
             turningPower = turnFilter.getFilteredValue();
             drive(movingPower, turningPower);
+            telemetry.addData("error", errorAngle);
+            telemetry.addData("heading", robot.getCorrectedHeading());
             telemetry.addData("dist", errorDistance);
             telemetry.update();
         }

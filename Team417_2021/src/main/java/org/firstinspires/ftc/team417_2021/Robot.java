@@ -14,10 +14,17 @@ public class Robot {
     public Robot(MasterOpMode masterOpMode){
         master = masterOpMode;
     }
+    public void setInitialAngle() {
+        initialHeading = master.imu.getAngularOrientation().firstAngle;
+
+    }
+    public double getInitialHeading() {
+        return initialHeading;
+    }
 
     // correct our initial angle depending on where we are starting by the field
     public double getCorrectedHeading(){
-        return initialHeading + master.imu.getAngularOrientation().firstAngle;
+        return master.imu.getAngularOrientation().firstAngle - initialHeading;
     }
     public void setCorrectedHeading(double initialHeading) {
         this.initialHeading = initialHeading;

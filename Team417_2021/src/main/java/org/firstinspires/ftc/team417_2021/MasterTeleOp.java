@@ -12,6 +12,8 @@ abstract public class MasterTeleOp extends MasterOpMode {
     Toggler grabberToggle = new Toggler();
     boolean grabberState = false;
 
+    double inches = 0;
+
     public void driveRobotUsingController() {
         double drivePower = - gamepad1.right_stick_y;
 
@@ -20,8 +22,22 @@ abstract public class MasterTeleOp extends MasterOpMode {
         drivePower *= 1 - (0.8 * gamepad1.right_trigger);
         rotationalPower *= 1 - (0.8 * gamepad1.right_trigger);
 
+        /*telemetry.addData("Inches", robotInches() - inches);
+        telemetry.addData("heading", robot.getCorrectedHeading());
+        telemetry.update();*/
+        if (gamepad1.a) {
+            inches = robotInches();
+        }
+
         drive(drivePower, rotationalPower);
     }
+
+    // returns average value of all drive encoders, converted to inches
+    public double robotInches() {
+        return ((float) motorFL.getCurrentPosition() + motorBL.getCurrentPosition() +
+                motorFR.getCurrentPosition() + motorBR.getCurrentPosition() ) / ( 4 * COUNTS_PER_INCH );
+    }
+
 
     // joysticks change target position of arm joints
     public void encoderControlArm() {
@@ -64,7 +80,12 @@ abstract public class MasterTeleOp extends MasterOpMode {
         } else {
             carouselMotor.setPower(0);
         }
-
+        telemetry.addData("Shoulder", shoulderMotor.getCurrentPosition());
+        telemetry.addData("Elbow", elbowMotor.getCurrentPosition());
+        telemetry.addData("Wrist", wristServo.getPosition());
+        telemetry.addData("grabber", grabberServo.getPosition());
+        telemetry.update();
+/*
         telemetry.addData("toggle", grabberState);
         telemetry.addData("shoulder target", shoulderPos);
         telemetry.addData("elbow target", elbowPos);
@@ -74,7 +95,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
         telemetry.addData("Wrist", wristServo.getPosition());
         telemetry.addData("shoulder", gamepad2.left_stick_y);
         telemetry.addData("elbow", gamepad2.right_stick_y);
-        telemetry.update();
+        telemetry.update();*/
 
     }
 

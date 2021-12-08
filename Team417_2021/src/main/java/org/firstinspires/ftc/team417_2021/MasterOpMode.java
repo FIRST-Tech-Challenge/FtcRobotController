@@ -38,19 +38,20 @@ abstract public class MasterOpMode extends LinearOpMode {
 
     // arm and grabber constants
     static final double GRABBER_IN = 0.9;
-    static final double GRABBER_OUT = 0.5;
-    static final int ELBOW_LEVEL_1 = 0;
-    static final int ELBOW_LEVEL_2 = 0;
-    static final int ELBOW_LEVEL_3 = -1300;
+    static final double GRABBER_OUT = 0.0;
+    static final int ELBOW_LEVEL_1 = 1460;
+    static final int ELBOW_LEVEL_2 = 1430;
+    static final int ELBOW_LEVEL_3 = 300;
     static final int ELBOW_CAP = 0;
-    static final int SHOULDER_LEVEL_1 = -1500;
-    static final int SHOULDER_LEVEL_2 = -1600;
-    static final int SHOULDER_LEVEL_3 = 0;
+    static final int SHOULDER_LEVEL_1 = -1770;
+    static final int SHOULDER_LEVEL_2 = -1650;
+    static final int SHOULDER_LEVEL_3 = -1500;
     static final int SHOULDER_CAP = 0; // todo get correct values
+    static final double WRIST_POS = 0.4;
 
     protected void initializeHardware() {
         // initialize move filters
-        turnFilter = new PIDFilter(0.008, 0, 0.0001);
+        turnFilter = new PIDFilter(0.008, 0, 0.0005);
         moveFilter = new PIDFilter(0.04, 0, 0);
         // weights for weighted average
         double[] filterCoefficients = {1};
@@ -110,7 +111,7 @@ abstract public class MasterOpMode extends LinearOpMode {
 
         shoulderMotor.setPower(0);
         elbowMotor.setPower(0);
-        wristServo.setPosition(0.0);
+        wristServo.setPosition(WRIST_POS);
         carouselMotor.setPower(0.0);
         grabberServo.setPosition(GRABBER_IN);
 
