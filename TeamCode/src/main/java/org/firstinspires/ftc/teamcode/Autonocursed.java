@@ -14,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "yxorauto3")
-public class Autonothree extends LinearOpMode {
+@Autonomous(name = "yxorautocursed")
+public class Autonocursed extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -90,6 +90,7 @@ public class Autonothree extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+        /*
         int DuckPos = 3;
         // TensorFlow find duck
         if (tfod != null) {
@@ -108,22 +109,8 @@ public class Autonothree extends LinearOpMode {
                 telemetry.update();
             }
         }
-
-        lift(-1200, -0.5);
-        goToWayPoint(-0.15, 0.56, 0, 10, 30, 0.02, 1);
-        this.robot.intakeUp.setPower(0.7);
-        sleep(2500);
-        this.robot.intakeUp.setPower(0);
-        lift(-375, 0.3);
-        goToWayPoint(-0.15, 0.4, 0, 10, 30, 0.01, 1);
-        goToWayPoint(-1.48, 0.17, -90, 10 , 69, 0.005, 1);
-        this.robot.duck.setPower(-0.2);
-        lift(0, 0.3);
-        sleep(5000);
-        this.robot.duck.setPower(0);
-        goToWayPoint(0.3, -0.01, -90,   10, 80, 0.005, 1);
-        goToWayPoint(1.1, -0.01, -90, 10, 80, 0.01, 1);
-        lift(0, 0.5);
+        */
+        goToWayPoint(-0.41, 0.05, -90, 10, 100, 0.005, 1);
 
 
     }
