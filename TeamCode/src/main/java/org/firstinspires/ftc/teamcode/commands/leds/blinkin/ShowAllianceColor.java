@@ -11,7 +11,7 @@ public class ShowAllianceColor extends CommandBase {
 
     private AllianceColor allianceColor;
 
-    protected enum AllianceColor {
+    public enum AllianceColor {
         RED,
         BLUE
     }
@@ -19,7 +19,7 @@ public class ShowAllianceColor extends CommandBase {
     public ShowAllianceColor(LEDSubsystem subsystem,AllianceColor ac){
         m_ledSubsytem = subsystem;
         allianceColor = ac;
-        addRequirements(m_ledSubsytem);
+        addRequirements(subsystem);
     }
 
     @Override
@@ -38,6 +38,6 @@ public class ShowAllianceColor extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }
