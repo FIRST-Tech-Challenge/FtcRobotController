@@ -15,7 +15,7 @@ public class TeleopRed extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor frontLeft, backLeft, frontRight, backRight, arm, carousel;
+        DcMotor frontLeft, backLeft, frontRight, backRight, arm, carousel, intake;
 
         frontLeft = hardwareMap.get(DcMotor.class,"frontLeft");
         backLeft = hardwareMap.get(DcMotor.class,"backLeft");
@@ -25,6 +25,8 @@ public class TeleopRed extends LinearOpMode {
         carousel = hardwareMap.get(DcMotor.class, "carousel");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
+
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -125,6 +127,14 @@ public class TeleopRed extends LinearOpMode {
                 arm.setPower(0);
             }
 
+            if(gamepad2.right_trigger > 0.1){
+                intake.setPower(-.5);
+            } else if(gamepad2.left_trigger > 0.1){
+                intake.setPower(.5);
+            } else{
+                intake.setPower(0);
+            }
+
 
             telemetry.update();
 
@@ -135,7 +145,7 @@ public class TeleopRed extends LinearOpMode {
 
     protected void turnDuck(DcMotor carousel){
         if(gamepad2.right_bumper){
-            carousel.setPower(-1);
+            carousel.setPower(-0.7 );
         } else {
             carousel.setPower(0);
         }

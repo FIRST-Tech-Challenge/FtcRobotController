@@ -644,7 +644,7 @@ if 360-abs(currentHeading)-abs(targetHeading) > 180
         });
     }
 
-    public enum RingPosition {
+    public enum FreightPosition {
         LEFT,
         MIDDLE,
         RIGHT
