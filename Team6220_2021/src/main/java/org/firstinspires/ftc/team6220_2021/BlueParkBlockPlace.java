@@ -51,11 +51,11 @@ public class BlueParkBlockPlace extends MasterOpMode{
         pauseMillis(500);
         Forward(24,0.6);
         TurnAngle(60);
-        Forward(8, 0.5);
+        Forward(10, 0.5);
         servoGrabber.setPosition(0.7);
         pauseMillis(700);
-        Forward(-8, 0.3);
-        TurnAngle(-170);
+        Forward(-10, 0.3);
+        TurnAngle(-175);
         Forward(60,0.8);
         servoGrabber.setPosition(0.0);
         pauseMillis(100);
