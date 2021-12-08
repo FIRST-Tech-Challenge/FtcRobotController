@@ -75,7 +75,7 @@ public class RedAutonomousCompetition extends MasterAutonomous {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                // close grabber to fully closed
+                // close grabber
 
                 switch (barcode) {
                     case 0:
@@ -83,21 +83,6 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                         telemetry.update();
 
                         // lift arm to 1st level
-                        driveInches(6, 0.5, true);
-                        turnDegrees(60);
-                        driveInches(48 / Math.sqrt(3), 0.75, true);
-                        turnDegrees(-60);
-                        // move forward if necessary
-                        // open grabber
-                        driveInches(-40, 1.0, false);
-                        // raise arm to max position
-                        driveInches(4, 0.5, true);
-                        turnDegrees(-90);
-                        driveInches(50, 1.0, true);
-                        // spin carousel
-                        driveInches(4, 0.5, false);
-                        turnDegrees(180);
-                        driveInches(96, 1, true);
                         break;
 
                     case 1:
@@ -105,21 +90,6 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                         telemetry.update();
 
                         // lift arm to 2nd level
-                        driveInches(6, 0.5, true);
-                        turnDegrees(60);
-                        driveInches(48 / Math.sqrt(3), 0.75, true);
-                        turnDegrees(-60);
-                        // move forward if necessary
-                        // open grabber
-                        driveInches(-40, 1.0, false);
-                        // raise arm to max position
-                        driveInches(4, 0.5, true);
-                        turnDegrees(-90);
-                        driveInches(50, 1.0, true);
-                        // spin carousel
-                        driveInches(4, 0.5, false);
-                        turnDegrees(180);
-                        driveInches(96, 1, true);
                         break;
 
                     case 2:
@@ -127,22 +97,24 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                         telemetry.update();
 
                         // lift arm to 3rd level
-                        driveInches(6, 0.5, true);
-                        turnDegrees(60);
-                        driveInches(48 / Math.sqrt(3), 0.75, true);
-                        turnDegrees(-60);
-                        // move forward if necessary
-                        // open grabber
-                        driveInches(-40, 1.0, false);
-                        driveInches(4, 0.5, true);
-                        turnDegrees(-90);
-                        driveInches(50, 1.0, true);
-                        // spin carousel
-                        driveInches(4, 0.5, false);
-                        turnDegrees(180);
-                        driveInches(96, 1, true);
                         break;
                 }
+
+                driveInches(6, 0.5, true);
+                turnDegrees(60);
+                driveInches(48 / Math.sqrt(3), 0.75, true);
+                turnDegrees(-60);
+                // move forward if necessary
+                // open grabber
+                driveInches(-40, 1.0, false);
+                // raise arm to max position
+                driveInches(4, 0.5, true);
+                turnDegrees(-90);
+                driveInches(50, 1.0, true);
+                // spin carousel
+                driveInches(4, 0.5, false);
+                turnDegrees(180);
+                driveInches(96, 1, true);
 
                 // This goes inside of the switch and is used just like above, but with cubes/ducks/spheres instead of the TSE
                 // Used for cycling freight in autonomous
@@ -180,6 +152,8 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                         telemetry.update();
                     }
                 }*/
+
+                break;
             }
         }
 
