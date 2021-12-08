@@ -57,7 +57,7 @@ public class Robot implements Subsystem {
         SimpleMatrix position = pose.rows(0, 2);
         double heading = pose.get(2);
 
-        // drawing wheel positions and axles
+        // calculating wheel positions
         SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
         SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
         SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0, -driveTrain.getChassisDistance() }});
@@ -70,17 +70,21 @@ public class Robot implements Subsystem {
         rightWheel = position.plus(rotationMatrix.mult(rightWheel.transpose())).scale(Constants.INCHES_PER_METER);
         swerveWheel = position.plus(rotationMatrix.mult(swerveWheel.transpose())).scale(Constants.INCHES_PER_METER);
 
-        CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, Constants.STROKE_COLOR);
-        CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, Constants.STROKE_COLOR);
+        // drawing axles
+        CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, Constants.AXLE_STROKE_COLOR);
+        CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, Constants.AXLE_STROKE_COLOR);
+
+        // drawing wheel vectors
+        CanvasUtils.drawVector(fieldOverlay, leftWheel, Constants.WHEEL_RADIUS * 2 * Constants.INCHES_PER_METER, Math.PI / 2, Constants.WHEEL_STROKE_COLOR);
 
         // calculating the instantaneous center of rotation
         double turnRadius = driveTrain.getTurnRadius();
         SimpleMatrix ICC = new SimpleMatrix(new double[][] {{ -turnRadius, 0 }});
-        ICC = MathUtils.rotateVector(ICC, heading);
+        ICC = MathUtils.rotateVector(ICC, heading).scale(Constants.INCHES_PER_METER);
 
-        // drawing ICC and turn radiusg
-        CanvasUtils.drawLine(fieldOverlay, ICC, pose, Constants.TURN_RADIUS_STROKE_COLOR);
-        fieldOverlay.strokeCircle(ICC.get(0), ICC.get(1), turnRadius);
+        // drawing ICC and turn radius
+        CanvasUtils.drawDottedLine(fieldOverlay, ICC, pose.scale(Constants.INCHES_PER_METER), Constants.TURN_RADIUS_STROKE_COLOR, Constants.DOTTED_LINE_DASH_LENGTH);
+        fieldOverlay.strokeCircle(ICC.get(0), ICC.get(1), turnRadius * Constants.INCHES_PER_METER);
     }
 
     public void sendTelemetry() {

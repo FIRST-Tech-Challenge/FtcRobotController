@@ -146,10 +146,21 @@ public class DriveTrain implements Subsystem {
      * updates the target chassis distance to maintain rotation without slipping
      */
     private void updateTargetChassisDistance() {
-        double turnRadius = targetLinearVelocity / targetAngularVelocity;
-        targetChassisDistance = targetAngularVelocity == 0 ? Constants.MAX_CHASSIS_LENGTH : Math.sqrt(
-                Math.pow(Constants.DRIVETRAIN_COEFFICIENT_OF_FRICTION * Constants.ACCELERATION_OF_GRAVITY / Math.pow(targetAngularVelocity, 2), 2)
-              - Math.pow(turnRadius, 2)
+        double turnRadius = targetAngularVelocity == 0 ? 0 : targetLinearVelocity / targetAngularVelocity;
+        targetChassisDistance = targetAngularVelocity == 0 ?
+            // if not rotating, set target chassis distance to max length - threshold
+            Constants.MAX_CHASSIS_LENGTH - Constants.CHASSIS_LENGTH_THRESHOLD :
+            // when rotating, if calculated distance is smaller than minimum length, set to minimum length
+            Math.max(
+                Constants.MIN_CHASSIS_LENGTH + Constants.CHASSIS_LENGTH_THRESHOLD,
+                // when rotating, if calculated distance is greater than maximum length, set to maximum length
+                Math.min(
+                    Constants.MAX_CHASSIS_LENGTH - Constants.CHASSIS_LENGTH_THRESHOLD,
+                    Math.sqrt(
+                        Math.pow(Constants.DRIVETRAIN_COEFFICIENT_OF_FRICTION * Constants.ACCELERATION_OF_GRAVITY / Math.pow(targetAngularVelocity, 2), 2)
+                      - Math.pow(turnRadius, 2)
+                )
+            )
         );
     }
 
@@ -320,7 +331,7 @@ public class DriveTrain implements Subsystem {
     //----------------------------------------------------------------------------------------------
 
     private double getSwivelAngle() {
-        return motorMiddleSwivel.getCurrentPosition() / Constants.DRIVETRAIN_TICKS_PER_REVOLUTION * 2 * Math.PI;
+        return motorMiddleSwivel.getCurrentPosition() / Constants.DRIVETRAIN_TICKS_PER_REVOLUTION * 2 * Math.PI + Math.PI / 2;
     }
 
     public double getChassisDistance() {
@@ -353,6 +364,6 @@ public class DriveTrain implements Subsystem {
     }
 
     public double getTurnRadius() {
-
+        return targetTurnRadius;
     }
 }
