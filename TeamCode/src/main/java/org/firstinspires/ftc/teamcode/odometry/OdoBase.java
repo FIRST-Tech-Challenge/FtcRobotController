@@ -263,6 +263,7 @@ public class OdoBase extends LinearOpMode {
                 finalSpin = false;
                 break;
             case Strafe:
+            case StrafeLine:
                 strafe(profile);
                 break;
             case Straight:
@@ -270,6 +271,7 @@ public class OdoBase extends LinearOpMode {
                 moveStraight(profile);
                 break;
             case Diag:
+            case DiagLine:
                 diag(profile);
                 break;
             default: break;

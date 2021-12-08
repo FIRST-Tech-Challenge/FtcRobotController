@@ -268,6 +268,19 @@ public class FrenzyBaseBot implements IOdoBot {
         }
     }
 
+    public void moveAuto(double power) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
+            double rightPower = Range.clip(power, -1.0, 1.0);
+            double leftPower = Range.clip(power, -1.0, 1.0);
+
+
+            this.frontLeft.setVelocity(MAX_VELOCITY_GB*leftPower);
+            this.frontRight.setVelocity(MAX_VELOCITY_GB*rightPower);
+            this.backLeft.setVelocity(MAX_VELOCITY_GB*leftPower);
+            this.backRight.setVelocity(MAX_VELOCITY_GB*rightPower);
+        }
+    }
+
     protected boolean motorsBusy(){
         boolean busy = this.frontLeft.isBusy() && this.frontRight.isBusy() && this.backLeft.isBusy() && this.backRight.isBusy();
         return busy;

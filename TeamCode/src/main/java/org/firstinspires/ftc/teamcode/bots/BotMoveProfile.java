@@ -393,8 +393,16 @@ public class BotMoveProfile {
             return buildStrafeProfile(bot.getCalibConfig(), realAngleChange, topSpeed, distance, direction, target, currentHead, targetVector, locator, MoveStrategy.Straight);
         }
 
+        if (preferredStrategy == MoveStrategy.StrafeLine){
+            return buildStrafeProfile(bot.getCalibConfig(), realAngleChange, topSpeed, distance, direction, target, currentHead, targetVector, locator, null);
+        }
+
         if (preferredStrategy == MoveStrategy.Diag){
             return  buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, currentPos, target, direction, MoveStrategy.Straight);
+        }
+
+        if (preferredStrategy == MoveStrategy.DiagLine){
+            return  buildDiagProfile(bot, bot.getCalibConfig(), realAngleChange, topSpeed, distance, currentPos, target, direction, null);
         }
 
         if (preferredStrategy == MoveStrategy.Curve && angleChange >= 42 && angleChange <= 48){

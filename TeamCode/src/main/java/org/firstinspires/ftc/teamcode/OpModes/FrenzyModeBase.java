@@ -63,6 +63,10 @@ public class FrenzyModeBase extends LinearOpMode {
             while (opModeIsActive()) {
                 handleDriveTrain();
                 handleSpecialActions();
+                if (robot.isIntakeRunning() && !robot.isIntakeBoxEmpty()){
+                    robot.stopIntake();
+                    changedIntake = !changedIntake;
+                }
 
                 sendTelemetry();
             }
@@ -129,13 +133,13 @@ public class FrenzyModeBase extends LinearOpMode {
         handleTurntable2();
     }
 
-    protected void handleOuttake() {
+    protected void handleIntake() {
         if (isButtonPressable()) {
             if (gamepad2.right_bumper){
                 startGamepadLockout();
-                intakeReverse = !intakeReverse;
+                changedIntake = !changedIntake;
 
-                if (intakeReverse){
+                if (changedIntake){
                     robot.startIntake();
                 } else {
                     robot.stopIntake();
@@ -144,13 +148,14 @@ public class FrenzyModeBase extends LinearOpMode {
         }
     }
 
-    protected void handleIntake() {
+    protected void handleOuttake() {
         if (isButtonPressable()) {
             if (gamepad2.left_bumper) {
                 startGamepadLockout();
-                changedIntake = !changedIntake;
 
-                if (changedIntake) {
+                intakeReverse = !intakeReverse;
+
+                if (intakeReverse) {
                     robot.reverseIntake();
                 } else {
                     robot.stopIntake();

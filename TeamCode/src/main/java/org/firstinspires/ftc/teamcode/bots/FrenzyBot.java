@@ -52,9 +52,11 @@ public class FrenzyBot extends FrenzyBaseBot {
 
 
     //Intake
-    private static double INTAKE_ELEMENT_MOVE_SPEED = 0.2;
-    private static double INTAKE_SPEED = 0.95;
+    private static double INTAKE_ELEMENT_MOVE_SPEED = -0.2;
+    private static double INTAKE_SPEED = 0.8;
     private static double INTAKE_SPEED_REVERSE = -0.75;
+
+    private boolean intakeRunning = false;
 
 
     /* Constructor */
@@ -167,7 +169,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift level 3", defaultReturn = "")
     public void liftToLevel3(){
         liftLocation = LIFT_LEVEL_THREE;
-        prepDropperToMove();
+//        prepDropperToMove();
         this.lift.setTargetPosition(LIFT_LEVEL_THREE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
@@ -184,7 +186,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift level 1", defaultReturn = "")
     public void liftToLevel1(){
         liftLocation = LIFT_LEVEL_ONE;
-        prepDropperToMove();
+//        prepDropperToMove();
         this.lift.setTargetPosition(LIFT_LEVEL_ONE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
@@ -194,7 +196,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void liftToLower(){
         //reset dropper before retracting the lift all the way
         resetDropper();
-        if (liftLocation == LIFT_LEVEL_ONE){
+        if (liftLocation == LIFT_LEVEL_ONE || liftLocation == LIFT_LEVEL_TWO){
             ElapsedTime time = new ElapsedTime();
             time.reset();
             //give some time for the dropper to close
@@ -248,6 +250,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Start intake", defaultReturn = "")
     public void startIntake() {
         activateIntake(INTAKE_SPEED);
+        intakeRunning = true;
     }
 
     @BotAction(displayName = "Reverse intake", defaultReturn = "")
@@ -258,6 +261,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Stop intake", defaultReturn = "")
     public void stopIntake() {
         activateIntake(0);
+        intakeRunning = false;
     }
 
     @BotAction(displayName = "Start turntable blue", defaultReturn = "")
@@ -355,8 +359,8 @@ public class FrenzyBot extends FrenzyBaseBot {
         runtime.reset();
         startIntake();
         //move straight until an element is detected in the intake box
-        move(INTAKE_ELEMENT_MOVE_SPEED, 0);
-        while (owner.opModeIsActive() && motorsBusy()){
+        moveAuto(INTAKE_ELEMENT_MOVE_SPEED);
+        while (owner.opModeIsActive()){
             if (!isIntakeBoxEmpty()){
                 Log.d(TAG, "Element is in the intake");
                 gotIt = true;
@@ -367,13 +371,14 @@ public class FrenzyBot extends FrenzyBaseBot {
                 break;
             }
         }
-        reverseIntake();
-        stop();
-        runtime.reset();
-        while (runtime.milliseconds() < 500){
-            //wait for intake to spit out anything extra
-        }
+
         stopIntake();
+        stop();
+
         return gotIt;
+    }
+
+    public boolean isIntakeRunning() {
+        return intakeRunning;
     }
 }
