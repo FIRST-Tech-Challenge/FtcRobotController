@@ -132,9 +132,9 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(45, 230);
-        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(285, 250);
-        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(603, 280);
+        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(10, 200);
+        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(312, 210);
+        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(607, 210);
 
 
         static final int REGION_WIDTH = 30;
