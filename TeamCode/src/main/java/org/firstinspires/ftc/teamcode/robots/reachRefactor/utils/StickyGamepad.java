@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.FFConstants.*;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.*;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 

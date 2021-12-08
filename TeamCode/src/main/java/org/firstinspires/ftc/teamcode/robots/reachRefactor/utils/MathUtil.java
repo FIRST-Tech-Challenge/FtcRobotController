@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.FFConstants.*;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.*;
+
+import org.ejml.simple.SimpleMatrix;
 
 public class MathUtil {
     public static int metersToTicks(double meters) {
@@ -37,5 +39,13 @@ public class MathUtil {
             if(value > max)
                 max = value;
         return max;
+    }
+
+    public static SimpleMatrix rotateVector(SimpleMatrix vector, double theta) {
+        SimpleMatrix rotationMatrix = new SimpleMatrix(new double[][] {
+                {Math.cos(theta), -Math.sin(theta)},
+                {Math.sin(theta), Math.cos(theta)}
+        });
+        return rotationMatrix.mult(vector.transpose());
     }
 }

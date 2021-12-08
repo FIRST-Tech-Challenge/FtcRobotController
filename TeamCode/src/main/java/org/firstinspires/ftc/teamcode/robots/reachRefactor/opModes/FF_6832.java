@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.opModes;
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.FFConstants.*;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -45,12 +45,12 @@ public class FF_6832 extends OpMode {
         state = 0;
 
         lastLoopClockTime = System.nanoTime();
-        loopTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
+        loopTimeSmoother = new ExponentialSmoother(Constants.AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
 
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, telemetry, DEFAULT_DASHBOARD_ENABLED);
+        robot = new Robot(hardwareMap, telemetry, Constants.DEFAULT_DASHBOARD_ENABLED);
     }
 
     private void handleStateSwitch() {
@@ -60,7 +60,7 @@ public class FF_6832 extends OpMode {
             if (stickyGamepad1.right_bumper)
                 state += 1;
 
-            state %= GAME_STATES.length;
+            state %= Constants.GAME_STATES.length;
         }
 
         if (stickyGamepad1.start)
@@ -69,9 +69,9 @@ public class FF_6832 extends OpMode {
 
     private void handlePregameControls() {
         if(stickyGamepad1.x)
-            robot.setAlliance(Alliance.BLUE);
+            robot.setAlliance(Constants.Alliance.BLUE);
         if(stickyGamepad1.b)
-            robot.setAlliance(Alliance.RED);
+            robot.setAlliance(Constants.Alliance.RED);
 
         if(stickyGamepad1.a)
             robot.toggleIsDashboardEnabled();
@@ -87,9 +87,7 @@ public class FF_6832 extends OpMode {
         if (active)
             handlePregameControls();
 
-        telemetry.update();
-
-        robot.update();
+        update();
     }
 
     @Override
@@ -98,8 +96,8 @@ public class FF_6832 extends OpMode {
     }
 
     private void handleTeleOp() {
-        double forward = Math.pow(-gamepad1.right_stick_y, 3) * FORWARD_SCALING_FACTOR;
-        double rotate = Math.pow(gamepad1.left_stick_x, 3) * ROTATE_SCALING_FACTOR;
+        double forward = Math.pow(-gamepad1.right_stick_y, 3) * Constants.FORWARD_SCALING_FACTOR;
+        double rotate = Math.pow(gamepad1.left_stick_x, 3) * Constants.ROTATE_SCALING_FACTOR;
 
         robot.driveTrain.drive(forward, rotate);
 
@@ -120,11 +118,11 @@ public class FF_6832 extends OpMode {
                     handleTeleOp();
                     break;
                 case 1:
-                    if (robot.getAlliance().equals(Alliance.RED)
+                    if (robot.getAlliance().equals(Constants.Alliance.RED)
                             && robot.articulate(Robot.Articulation.AUTONOMOUS_RED)) {
                         active = false;
                         state = 0;
-                    } else if (robot.getAlliance().equals(Alliance.BLUE)
+                    } else if (robot.getAlliance().equals(Constants.Alliance.BLUE)
                             && robot.articulate(Robot.Articulation.AUTONOMOUS_BLUE)) {
                         active = false;
                         state = 0;
@@ -148,7 +146,9 @@ public class FF_6832 extends OpMode {
         handleTiming();
 
         robot.addTelemetryData("Active", active);
-        robot.addTelemetryData("State", String.format("(%d): %s", state, GAME_STATES[state]));
+        robot.addTelemetryData("State", String.format("(%d): %s", state, Constants.GAME_STATES[state]));
+        robot.addTelemetryData("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
+        robot.addTelemetryData("Dashboard Enabled", robot.isDashboardEnabled());
         robot.addTelemetryData("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
         robot.addTelemetryData("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
 

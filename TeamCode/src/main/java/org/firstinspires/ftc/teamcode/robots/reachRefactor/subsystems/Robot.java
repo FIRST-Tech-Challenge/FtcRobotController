@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.FFConstants.*;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -28,7 +28,7 @@ public class Robot implements Subsystem {
     private Subsystem[] subsystems;
 
     // State
-    private Alliance alliance;
+    private Constants.Alliance alliance;
     private boolean dashboardEnabled;
     private Map<String, Object> telemetryMap;
 
@@ -47,40 +47,39 @@ public class Robot implements Subsystem {
             dashboard = FtcDashboard.getInstance();
     }
 
-    private void drawFieldOverlay() {
-        TelemetryPacket packet = new TelemetryPacket();
+    private void drawFieldOverlay(TelemetryPacket packet) {
         Canvas fieldOverlay = packet.fieldOverlay();
 
         SimpleMatrix pose = driveTrain.getPose();
 
-        SimpleMatrix position = pose.cols(0, 1);
+        SimpleMatrix position = pose.rows(0, 2);
         double heading = pose.get(2);
 
-        SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -TRACK_WIDTH / 2 , 0 }});
-        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ TRACK_WIDTH / 2, 0 }});
+        SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
+        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
         SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0, -driveTrain.getChassisDistance() }});
 
         SimpleMatrix rotationMatrix = new SimpleMatrix(new double[][] {
                 {Math.cos(heading), -Math.sin(heading)},
                 {Math.sin(heading), Math.cos(heading)}
         });
-        leftWheel = position.plus(rotationMatrix.mult(leftWheel.transpose())).scale(INCHES_PER_METER);
-        rightWheel = position.plus(rotationMatrix.mult(rightWheel.transpose())).scale(INCHES_PER_METER);
-        swerveWheel = position.plus(rotationMatrix.mult(swerveWheel.transpose())).scale(INCHES_PER_METER);
+        leftWheel = position.plus(rotationMatrix.mult(leftWheel.transpose())).scale(Constants.INCHES_PER_METER);
+        rightWheel = position.plus(rotationMatrix.mult(rightWheel.transpose())).scale(Constants.INCHES_PER_METER);
+        swerveWheel = position.plus(rotationMatrix.mult(swerveWheel.transpose())).scale(Constants.INCHES_PER_METER);
 
-        CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, STROKE_COLOR);
-        CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, STROKE_COLOR);
+        CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, Constants.STROKE_COLOR);
+        CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, Constants.STROKE_COLOR);
     }
 
     public void sendTelemetry() {
         TelemetryPacket packet = new TelemetryPacket();
 
         // sending additional (opmode) telemetry
-        packet.addLine(DEFAULT_TELEMETRY_LINE);
+        packet.addLine(Constants.DEFAULT_TELEMETRY_LINE);
         packet.putAll(telemetryMap);
         packet.addLine("");
 
-        telemetry.addLine(DEFAULT_TELEMETRY_LINE);
+        telemetry.addLine(Constants.DEFAULT_TELEMETRY_LINE);
         for(Map.Entry<String, Object> entry: telemetryMap.entrySet()) {
             telemetry.addData(entry.getKey(), entry.getValue());
         }
@@ -118,8 +117,8 @@ public class Robot implements Subsystem {
 
         // dashboard telemetry
         if(dashboardEnabled) {
+            drawFieldOverlay(packet);
             dashboard.sendTelemetryPacket(packet);
-            drawFieldOverlay();
         }
 
         telemetry.update();
@@ -209,11 +208,11 @@ public class Robot implements Subsystem {
     // Getters And Setters
     //----------------------------------------------------------------------------------------------
 
-    public Alliance getAlliance() {
+    public Constants.Alliance getAlliance() {
         return alliance;
     }
 
-    public void setAlliance(Alliance alliance) {
+    public void setAlliance(Constants.Alliance alliance) {
         this.alliance = alliance;
     }
 
@@ -225,5 +224,9 @@ public class Robot implements Subsystem {
 
     public void addTelemetryData(String name, Object value) {
         telemetryMap.put(name, value);
+    }
+
+    public boolean isDashboardEnabled() {
+        return dashboardEnabled;
     }
 }
