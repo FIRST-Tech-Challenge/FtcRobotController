@@ -12,18 +12,18 @@ import org.openftc.easyopencv.OpenCvPipeline;
 class tsePipeline extends OpenCvPipeline {
     private Mat output = new Mat();
     private static final Rect LEFT_SQUARE = new Rect(
-        new Point(60,60), new Point(180,420)
+        new Point(12.5,30), new Point(102.5,210)
     );
 
     private static final Rect RIGHT_SQUARE = new Rect(
-            new Point(240,60), new Point(360,420)
+            new Point(115,30), new Point(205,210)
     );
 
     private static final Rect RIGHTEST_SQUARE = new Rect(
-      new Point(420,60), new Point( 540,420)
+      new Point(217.5,30), new Point( 307.5,210)
     );
 
-    private static double THRESHOLD = 0.4;
+    private static double THRESHOLD = 0.05;
 
     Telemetry telemetry;
 
@@ -37,8 +37,8 @@ class tsePipeline extends OpenCvPipeline {
         ALLIANCE_THIRD
     }
 
-    private Scalar lowHSV = new Scalar(120, 25, 62);
-    private Scalar highHSV = new Scalar(120,100,54);
+    private Scalar lowHSV = new Scalar(36, 50, 70);
+    private Scalar highHSV = new Scalar(89, 255, 255);
     private double firstConf = 0.0;
     private double secondConf = 0.0;
     private boolean tseFirst = false;
@@ -109,9 +109,9 @@ class tsePipeline extends OpenCvPipeline {
         telemetry.addData("OpenCV Status","Final Conversion + Color Complete");
         telemetry.update();
 
-        Imgproc.rectangle(output,LEFT_SQUARE,tseFirst? detectedColor:none);
-        Imgproc.rectangle(output,RIGHT_SQUARE,tseSecond? detectedColor:none);
-        Imgproc.rectangle(output,RIGHTEST_SQUARE,(!tseFirst && !tseSecond)? detectedColor:none);
+        Imgproc.rectangle(output,LEFT_SQUARE,location==LOCATION.ALLIANCE_FIRST? detectedColor:none);
+        Imgproc.rectangle(output,RIGHT_SQUARE,location==LOCATION.ALLIANCE_SECOND? detectedColor:none);
+        Imgproc.rectangle(output,RIGHTEST_SQUARE,(location==LOCATION.ALLIANCE_THIRD)? detectedColor:none);
         telemetry.addData("OpenCV Status","Rectangles Drawn");
         telemetry.update();
         System.gc();
