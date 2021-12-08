@@ -35,6 +35,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     // operational constants
     double joyScale = 1;
     double motorMax = 0.99; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
+    int linearSlideTolerance = 5;
 
 
 
@@ -96,7 +97,6 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         boolean carouselOn = false; //Outside of loop()
         boolean intakeOn = false;
@@ -197,6 +197,8 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 linearSlideTarget = linearSlideTargets.TOP;
                 intakeMotor.setPower(0);
                 intakeOn = false;
+                linearSlideMotor.setTargetPosition(TOP_ENCODER_VALUE);
+                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.4);
             }
 
@@ -205,6 +207,8 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 linearSlideTarget = linearSlideTargets.MIDDLE;
                 intakeMotor.setPower(0);
                 intakeOn = false;
+                linearSlideMotor.setTargetPosition(MIDDLE_ENCODER_VALUE);
+                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.4);
             }
 
@@ -213,6 +217,8 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 linearSlideTarget = linearSlideTargets.BOTTOM;
                 intakeMotor.setPower(0);
                 intakeOn = false;
+                linearSlideMotor.setTargetPosition(BOTTOM_ENCODE_VALUE);
+                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.4);
             }
 
@@ -220,6 +226,8 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 if (linearSlidePos != linearSlidePositions.BASE) {
 //                    dump
                     linearSlideTarget = linearSlideTargets.BASE;
+                    linearSlideMotor.setTargetPosition(0);
+                    linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     linearSlideMotor.setPower(-.4);
                 }
             }
@@ -227,7 +235,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             if (linearSlideTarget == linearSlideTargets.TOP) {
-                if (linearSlideMotor.getCurrentPosition() >= TOP_ENCODER_VALUE-5 && linearSlideMotor.getCurrentPosition() <= TOP_ENCODER_VALUE+5) {
+                if (linearSlideMotor.getCurrentPosition() >= TOP_ENCODER_VALUE-linearSlideTolerance && linearSlideMotor.getCurrentPosition() <= TOP_ENCODER_VALUE+linearSlideTolerance) {
                     linearSlideMotor.setPower(1);
                     linearSlidePos = linearSlidePositions.TOP;
                 }
@@ -235,7 +243,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 if (linearSlidePos == linearSlidePositions.TOP) {
                     linearSlideMotor.setPower(-.4);
                 }
-                if (linearSlideMotor.getCurrentPosition() >= MIDDLE_ENCODER_VALUE-5 && linearSlideMotor.getCurrentPosition() <= MIDDLE_ENCODER_VALUE+5) {
+                if (linearSlideMotor.getCurrentPosition() >= MIDDLE_ENCODER_VALUE-linearSlideTolerance && linearSlideMotor.getCurrentPosition() <= MIDDLE_ENCODER_VALUE+linearSlideTolerance) {
                     linearSlideMotor.setPower(0);
                     linearSlidePos = linearSlidePositions.MIDDLE;
                 }
@@ -243,7 +251,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 if (linearSlidePos == linearSlidePositions.TOP || linearSlidePos == linearSlidePositions.MIDDLE) {
                     linearSlideMotor.setPower(-.4);
                 }
-                if (linearSlideMotor.getCurrentPosition() >= BOTTOM_ENCODE_VALUE-5 && linearSlideMotor.getCurrentPosition() <= BOTTOM_ENCODE_VALUE+5) {
+                if (linearSlideMotor.getCurrentPosition() >= BOTTOM_ENCODE_VALUE-linearSlideTolerance && linearSlideMotor.getCurrentPosition() <= BOTTOM_ENCODE_VALUE+linearSlideTolerance) {
                     linearSlideMotor.setPower(0);
                     linearSlidePos = linearSlidePositions.BOTTOM;
                 }
