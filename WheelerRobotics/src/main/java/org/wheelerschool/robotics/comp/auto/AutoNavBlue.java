@@ -58,7 +58,7 @@ public class AutoNavBlue extends LinearOpMode {
             // /\
 
              */
-            meccanum.motorDriveRelativeFieldAngleEncoded(0, meccanum.NORMAL_SPEED, 700);
+            meccanum.motorDriveRelativeFieldAngleEncoded(90, meccanum.NORMAL_SPEED, 700);
     }
 
 
