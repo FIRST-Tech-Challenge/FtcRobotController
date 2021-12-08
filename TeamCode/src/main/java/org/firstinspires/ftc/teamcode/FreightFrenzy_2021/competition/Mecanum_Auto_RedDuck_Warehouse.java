@@ -31,7 +31,7 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "RED DUCK - WAREHOUSE", group = "Competition")
+@Autonomous(name = "RED DUCK WAREHOUSE", group = "Competition")
 public class Mecanum_Auto_RedDuck_Warehouse extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -173,35 +173,26 @@ public class Mecanum_Auto_RedDuck_Warehouse extends LinearOpMode {
             sleep(500);
 
             //ROTATE DUCK
-//            drive.setMotorPowers(0.1, 0.1,0.1,0.1);
-//            sleep(340);
-//            drive.setMotorPowers(0, 0,0,0);
-            Trajectory closeDuckTraj = drive.trajectoryBuilder(duckTraj.end(),true)
-                    .strafeLeft(2)
-                    .build();
-            drive.followTrajectory(closeDuckTraj);
-
+            drive.setMotorPowers(0.1, 0.1,0.1,0.1);
             sleep(500);
+            drive.setMotorPowers(0, 0,0,0);
             Spin.setPower(-0.5);
             sleep(3500);
             Spin.setPower(0.0);
 
-            Pose2d wall = new Pose2d(-62, -55.25, drive.getExternalHeading()); //Math.toRadians(-180)
-            drive.setPoseEstimate(wall);
-
             //MOTION TO PLATE
-            Trajectory wallTraj = drive.trajectoryBuilder(wall, true)
+            Trajectory wallTraj = drive.trajectoryBuilder(duckTraj.end(), true)
                     .splineToLinearHeading(new Pose2d(-59, -23.75, toRadians(180)), toRadians(-90))
                     .build();
             drive.followTrajectory(wallTraj);
 
             Trajectory plateTraj = drive.trajectoryBuilder(wallTraj.end())
-                    .back(25.5)
+                    .back(26.375)
                     .build();
             drive.followTrajectory(plateTraj);
 
             //ROTATE
-            rotateWithSpeed(1.0,0.5);
+            Rotate.setPosition(1.0);
             sleep(800);
 
             //SLIDE UP
@@ -247,7 +238,7 @@ public class Mecanum_Auto_RedDuck_Warehouse extends LinearOpMode {
                     .build();
             drive.followTrajectory(parkTraj2);
             Trajectory parkTraj3 = drive.trajectoryBuilder(parkTraj2.end())
-                    .lineToLinearHeading(new Pose2d(-31.625, -43.75, toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(-31.625, -45.75, toRadians(0)))
                     .build();
             drive.followTrajectory(parkTraj3);
             Trajectory parkTraj4 = drive.trajectoryBuilder(parkTraj3.end())
@@ -260,6 +251,331 @@ public class Mecanum_Auto_RedDuck_Warehouse extends LinearOpMode {
             PoseStorage.state = driveMethod.poseState.RED;
         }
 
+    }
+    void stopMotion() {
+        LF.setPower(0);
+        RF.setPower(0);
+        LB.setPower(0);
+        RB.setPower(0);
+    }
+
+    void stopMotion(long timeInterval) {
+        stopMotion();
+        sleep(timeInterval);
+    }
+
+    double normalizeAngle(double angle) {
+        double tempDeg = angle % 360;
+        if (tempDeg >= 180) {
+            tempDeg -= 360;
+        } else if (tempDeg < -180) {
+            tempDeg += 360;
+        }
+        return tempDeg;
+    }
+
+    double aquireHeading() {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double heading = angles.firstAngle;
+        double tempHead = normalizeAngle(heading);
+        telemetry.addData("Heading", tempHead);
+        telemetry.update();
+        sleep(20);
+        return tempHead;
+    }
+
+    void displayEncoderValue() {
+        try {
+            double LFDis = LF.getCurrentPosition() / 537.7 * 1.89 * 2 * 3.1415926;
+            double RFDis = RF.getCurrentPosition() / 537.7 * 1.89 * 2 * 3.1415926;
+            double LBDis = LB.getCurrentPosition() / 537.7 * 1.89 * 2 * 3.1415926;
+            double RBDis = RB.getCurrentPosition() / 537.7 * 1.89 * 2 * 3.1415926;
+            telemetry.addData("LF Encoder Value: ", LFDis);
+            telemetry.addData("RF Encoder Value: ", RFDis);
+            telemetry.addData("LB Encoder Value: ", LBDis);
+            telemetry.addData("RB Encoder Value: ", RBDis);
+            telemetry.addData("X Value: ", (LFDis / Math.sqrt(2.0) + RBDis / Math.sqrt(2.0) - LBDis / Math.sqrt(2.0) - RFDis / Math.sqrt(2.0)));
+            telemetry.addData("Y Value: ", (LFDis / Math.sqrt(2.0) + RFDis / Math.sqrt(2.0) + LBDis / Math.sqrt(2.0) + RBDis / Math.sqrt(2.0)));
+            telemetry.addData("Average Encoder Value: ", (LFDis + LBDis + RFDis + RBDis) / 4.0);
+            telemetry.update();
+        } catch (Exception e) {
+            telemetry.addLine("Unable to find encoder value");
+            telemetry.update();
+        }
+    }
+
+    void driveStraight(boolean isForward, double margin, double power, double timeInterval) {
+        ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        final double currentAngle = aquireHeading();
+        int straightFactor = -1;
+        if (isForward) {
+            straightFactor = 1;
+        }
+        double targetAngle = currentAngle;
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        while (driveTime.milliseconds() < timeInterval) {
+            double tempAngle = aquireHeading();
+            LF_power = straightFactor * power;
+            LB_power = straightFactor * power;
+            RF_power = straightFactor * power;
+            RB_power = straightFactor * power;
+            if (tempAngle < normalizeAngle(targetAngle - 1 * margin)) {
+                RF_power += 0.1;
+                RB_power += 0.1;
+                LF_power -= 0.1;
+                LB_power -= 0.1;
+            } else if (tempAngle > normalizeAngle(targetAngle + (margin))) {
+                RF_power -= 0.1;
+                RB_power -= 0.1;
+                LF_power += 0.1;
+                LB_power += 0.1;
+            }
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(LF_power);
+            RF.setPower(RF_power);
+            LB.setPower(LB_power);
+            RB.setPower(RB_power);
+            telemetry.addData("RF_power", RF_power);
+            telemetry.addData("RB_power", RB_power);
+            telemetry.addData("LF_power", LF_power);
+            telemetry.addData("LB_power", LB_power);
+            telemetry.update();
+            displayEncoderValue();
+        }
+        stopMotion();
+    }
+
+//    void encoderDrive(double LF_D, double RF_D, double LB_D, double RB_D){
+//        LF_D/
+//    }
+
+    void drivePerpendicularly(boolean isLeft, double margin, double power, double timeInterval) {
+        ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        final double currentAngle = aquireHeading();
+        int perpendicularFactor = -1;
+        if (isLeft) {
+            perpendicularFactor = 1;
+        }
+        double targetAngle = normalizeAngle(currentAngle + 90 * perpendicularFactor);
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        while (driveTime.milliseconds() < timeInterval) {
+            double tempAngle = aquireHeading();
+            LF_power = -1 * perpendicularFactor * power;
+            LB_power = perpendicularFactor * power;
+            RF_power = perpendicularFactor * power;
+            RB_power = -1 * perpendicularFactor * power;
+            if (tempAngle < normalizeAngle(targetAngle - 1 * margin)) {
+                RF_power += perpendicularFactor * 0.1;
+                RB_power -= perpendicularFactor * 0.1;
+                LF_power += perpendicularFactor * 0.1;
+                LB_power -= perpendicularFactor * 0.1;
+            } else if (tempAngle > normalizeAngle(targetAngle + (margin))) {
+                RF_power -= perpendicularFactor * 0.1;
+                RB_power += perpendicularFactor * 0.1;
+                LF_power -= perpendicularFactor * 0.1;
+                LB_power += perpendicularFactor * 0.1;
+            }
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(LF_power);
+            RF.setPower(RF_power);
+            LB.setPower(LB_power);
+            RB.setPower(RB_power);
+            telemetry.addData("RF_power", RF_power);
+            telemetry.addData("RB_power", RB_power);
+            telemetry.addData("LF_power", LF_power);
+            telemetry.addData("LB_power", LB_power);
+            telemetry.update();
+        }
+        stopMotion();
+    }
+
+    void driveLeftTurn(boolean isForward, double margin, double power, double timeInterval) {
+        ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        final double currentAngle = aquireHeading();
+        int straightFactor = -1;
+        if (isForward) {
+            straightFactor = 1;
+        }
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        while (driveTime.milliseconds() < timeInterval) {
+            double tempAngle = aquireHeading();
+            LF_power = straightFactor * power;
+            LB_power = straightFactor * power;
+            RF_power = straightFactor * power;
+            RB_power = straightFactor * power;
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(LF_power);
+            RF.setPower(-RF_power);
+            LB.setPower(LB_power);
+            RB.setPower(-RB_power);
+            telemetry.addData("RF_power", -RF_power);
+            telemetry.addData("RB_power", -RB_power);
+            telemetry.addData("LF_power", LF_power);
+            telemetry.addData("LB_power", LB_power);
+
+            telemetry.update();
+            displayEncoderValue();
+        }
+        stopMotion();
+    }
+
+    void driveRightTurn(boolean isForward, double margin, double power, double timeInterval) {
+        ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        final double currentAngle = aquireHeading();
+        int straightFactor = -1;
+        if (isForward) {
+            straightFactor = 1;
+        }
+        double targetAngle = currentAngle;
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        while (driveTime.milliseconds() < timeInterval) {
+
+            LF_power = straightFactor * power;
+            LB_power = straightFactor * power;
+            RF_power = straightFactor * power;
+            RB_power = straightFactor * power;
+
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(-LF_power);
+            RF.setPower(RF_power);
+            LB.setPower(-LB_power);
+            RB.setPower(RB_power);
+            telemetry.addData("RF_power", RF_power);
+            telemetry.addData("RB_power", RB_power);
+            telemetry.addData("LF_power", -LF_power);
+            telemetry.addData("LB_power", -LB_power);
+
+            telemetry.update();
+            displayEncoderValue();
+        }
+        stopMotion();
+    }
+    //make a turn that based on the current heading in a certain direction and angle
+    void rotateAtAngle(boolean isClockwise, double degree, double margin, double power) {
+        int angleFactor = -1;
+        if (!isClockwise) {
+            angleFactor = 1;
+        }
+        final double currentAngle = aquireHeading();
+        double targetAngle = normalizeAngle(currentAngle + degree * angleFactor);
+        rotateToAngle(targetAngle, margin, power);
+        stopMotion();
+    }
+
+    //make a turn TO a certain angle
+    void rotateToAngle(double targetAngle, double margin, double power) {
+        int angleFactor = 0;
+        final double currentAngle = aquireHeading();
+        if (currentAngle - targetAngle > 0) {
+            if (currentAngle - targetAngle < 180) {
+                //cw
+                angleFactor = -1;
+            } else {
+                //ccw
+                angleFactor = 1;
+            }
+        } else {
+            if (targetAngle - currentAngle < 180) {
+                //ccw
+                angleFactor = 1;
+            } else {
+                //cw
+                angleFactor = -1;
+            }
+        }
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        double tempAngle = currentAngle;
+        while (!((tempAngle < targetAngle + margin) && (tempAngle > targetAngle - margin))) {
+            tempAngle = aquireHeading();
+            RF_power = angleFactor * power;
+            RB_power = angleFactor * power;
+            LF_power = -1 * angleFactor * power;
+            LB_power = -1 * angleFactor * power;
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(LF_power);
+            RF.setPower(RF_power);
+            LB.setPower(LB_power);
+            RB.setPower(RB_power);
+            telemetry.addData("RF_power", RF_power);
+            telemetry.addData("RB_power", RB_power);
+            telemetry.addData("LF_power", LF_power);
+            telemetry.addData("LB_power", LB_power);
+            telemetry.update();
+        }
+        stopMotion();
+    }
+
+    boolean slideMotion(int targetPosition, double power) {
+        Slide.setTargetPosition(targetPosition);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(power);
+        telemetry.addLine("Slide Current: " + Slide.getCurrentPosition());
+        telemetry.addLine("Slide Target: " + Slide.getTargetPosition());
+        telemetry.update();
+        return Slide.isBusy();
+    }
+
+    boolean rotateMotion(boolean moveOut) {
+        if(moveOut)
+            Rotate.setPosition(1.0);
+        else
+            Rotate.setPosition(0.03);
+        telemetry.addLine("Rotate: " + Rotate.getPosition());
+        telemetry.update();
+        sleep(300);
+        return (Rotate.getPosition() == 1.0 || Rotate.getPosition() == 0.03);
+    }
+
+    boolean pushMotion(boolean moveOut) {
+        if(moveOut)
+            Push.setPosition(0.4);
+        else
+            Push.setPosition(0.0);
+        telemetry.addLine("Push: " + Push.getPosition());
+        telemetry.update();
+        sleep(300);
+        return (Push.getPosition() == 0.0 || Push.getPosition() == 0.4);
+    }
+
+
+
+    boolean spinMotion(double power, double timeInterval) {
+        ElapsedTime spinTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (spinTime.milliseconds() <= timeInterval) {
+            Spin.setPower(power);
+        }
+        Spin.setPower(0);
+        return Spin.isBusy();
     }
 
     //Vision
@@ -291,21 +607,4 @@ public class Mecanum_Auto_RedDuck_Warehouse extends LinearOpMode {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
     }
-    private void rotateWithSpeed(double targetPos, double factor){
-        //1 -> 10 0.5 -> 5
-        if(factor == 1.0){
-            Rotate.setPosition(targetPos);
-        }
-        double currentPos = Rotate.getPosition();
-        double interval = 0.05 * factor;
-        while (targetPos > Rotate.getPosition()){
-            Rotate.setPosition(Rotate.getPosition() + interval);
-            sleep(30);
-        }
-        while (targetPos < Rotate.getPosition()){
-            Rotate.setPosition(Rotate.getPosition() - interval);
-            sleep(30);
-        }
-    }
-
 }

@@ -1,9 +1,5 @@
-/*
-this is untested
-*/
 package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.ansel;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,13 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-
 import java.util.ArrayList;
 
 @Disabled
-@TeleOp(name = "PrototypeWE", group = "Linear OpMode")
-public class PrototypeWE extends LinearOpMode {
+@TeleOp(name = "AltTeleOp", group = "Linear OpMode")
+public class AltTeleOp extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -27,17 +21,17 @@ public class PrototypeWE extends LinearOpMode {
     private DcMotor Intake = null;
     private DcMotor Spin = null;
     private DcMotor Slide = null;
-    private Servo Bucket = null;
+    private Servo Rotate = null;
+    private Servo Push = null;
     private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
     private ElapsedTime runtime = new ElapsedTime();
 
     double rotate = 0;
-    double speed = 0.7;
+    double speed = 0.8;
     boolean reverse = false;
 
     @Override
     public void runOpMode() {
-        //get hardware
 
         LF  = hardwareMap.get(DcMotor.class, "LF");
         RF = hardwareMap.get(DcMotor.class, "RF");
@@ -46,9 +40,6 @@ public class PrototypeWE extends LinearOpMode {
         Slide  = hardwareMap.get(DcMotor.class, "Slide");
         Intake  = hardwareMap.get(DcMotor.class, "Intake");
         Spin = hardwareMap.get(DcMotor.class, "Spin");
-        Bucket = hardwareMap.get(Servo.class, "Bucket");
-
-        //set direction of hardware
 
         LF.setDirection(DcMotor.Direction.REVERSE);
         RF.setDirection(DcMotor.Direction.FORWARD);
@@ -62,9 +53,10 @@ public class PrototypeWE extends LinearOpMode {
         Spin.setDirection(DcMotor.Direction.FORWARD);
         Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        Bucket.setDirection(Servo.Direction.FORWARD);
+        Rotate = hardwareMap.get(Servo.class, "Rotate");
+        Rotate.setDirection(Servo.Direction.FORWARD);
+        Push = hardwareMap.get(Servo.class, "Push");
 
-        //set power var
 
         double LFPower;
         double RFPower;
@@ -73,15 +65,7 @@ public class PrototypeWE extends LinearOpMode {
 
         double intakePower = 0;
         double spinPower = 0;
-        double slidePower = 0.8;
-        double poseSpeed = 0.3;
-        double initialSpeed = 0.7;
-
         int initialHeight = Slide.getCurrentPosition();
-
-        //Read Position From Auto
-        SampleMecanumDrive chassis = new SampleMecanumDrive(hardwareMap);
-        chassis.setPoseEstimate(PoseStorage.currentPose);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -99,22 +83,13 @@ public class PrototypeWE extends LinearOpMode {
         boolean releasedA2 = true;
         boolean releasedB1 = true;
         boolean releasedB2 = true;
-        boolean releasedY1 = true;
         boolean releasedY2 = true;
-        boolean releasedX2 = true;
         boolean releasedDD1 = true;
         boolean releasedDD2 = true;
         boolean releasedDL2 = true;
         boolean releasedDU1 = true;
         boolean releasedDU2 = true;
         boolean releasedDR2 = true;
-        boolean releasedBack2 = true;
-        boolean releasedStart2 = true;
-        boolean releasedStart1 = true;
-        boolean releasedBack1 = true;
-
-        //change if needed
-        double bucketSpeed = 1.0;
 
         boolean toggleX1 = true;
         boolean toggleRB2 = true;
@@ -123,21 +98,13 @@ public class PrototypeWE extends LinearOpMode {
 
         while (opModeIsActive()) {
             runtime.reset();
-            chassis.update();
-
-            // Retrieve current pose state
-            Pose2d myPose = chassis.getPoseEstimate();
-            telemetry.addLine(driveMethod.fieldState(myPose).toString());
 
             double drive = -gamepad1.left_stick_y;
             double strafe  = -gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
 
-            // Gamepad 1
-
             if(gamepad1.dpad_up) {
                 if(releasedDU1) {
-                    //speed = increasePower(speed, 0.05);
                     increaseSpeed(0.05);
                     releasedDU1 = false;
                 }
@@ -147,74 +114,66 @@ public class PrototypeWE extends LinearOpMode {
 
             if(gamepad1.dpad_down){
                 if(releasedDD1) {
-                    //speed = decreasePower(speed, 0.05);
                     decreaseSpeed(0.05);
                     releasedDD1 = false;
                 }
             } else if (!releasedDD1){
                 releasedDD1 = true;
             }
-            if (gamepad1.left_bumper) {
-                if (releasedLB1 && Slide.getCurrentPosition() < initialHeight + 30){
-                    intakePower = 1.0;
-                    telemetry.addLine("INTAKE STARTS");
-                    releasedLB1 = false;
-                }
-            } else if (!releasedLB1){
-                intakePower = 0;
-                telemetry.addLine("INTAKE STOPS");
-                releasedLB1 = true;
-            }
-            if (gamepad1.right_bumper) {
-                if (releasedRB1 && Slide.getCurrentPosition() < initialHeight + 30){
-                    intakePower = -1.0;
-                    telemetry.addLine("INTAKE REVERSE STARTS");
-                    releasedRB1 = false;
-                }
-            } else if (!releasedRB1){
-                telemetry.addLine("INTAKE STOPS");
-                intakePower = 0;
-                releasedRB1 = true;
-            }
 
-            if(gamepad1.back){
-                if(releasedBack1){
-                    if (poseSpeed == 0.3) {
-                        poseSpeed = 0.7;
-                        releasedBack1 = false;
-                    }
-                    else if (poseSpeed == 0.7) {
-                        poseSpeed = 0.3;
-                        releasedBack1 = false;
-                    }
-                } else if (!releasedBack1){
-                    releasedBack1 = true;
+            if(gamepad1.a){
+                if(releasedA1) {
+                    speed = 0.3;
                 }
-            }
-
-            if(gamepad1.start){
-                if(releasedStart1) {
-                    if (speed < 0.5) {
-                        speed = 0.7;
-                    } else if (speed > 0.5){
-                        speed = 0.3;
-                    }
-                    releasedStart1 = false;
-                }
-            } else if(!releasedStart1){
-                releasedStart1 = true;
+            } else if(!releasedA1){
+                releasedA1 = true;
             }
 
             if(gamepad1.b){
                 if(releasedB1) {
-                    initialSpeed = speed;
-                    drawTrajectory.gotoPlate();
-                    speed = poseSpeed;
-                    drawTrajectory.updatePose();
+                    speed = 0.8;
                 }
             } else if(!releasedB1){
-                speed = initialSpeed;
                 releasedB1 = true;
+            }
+
+            if(gamepad2.a){
+                if(releasedA2) {
+                    Slide.setTargetPosition(initialHeight);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                    Rotate.setPosition(0.03);
+                }
+
+            } else if(!releasedA2){
+                releasedA2 = true;
+            }
+            if(gamepad2.b){
+                if(releasedB2) {
+                    Rotate.setPosition(1.0);
+                    sleep(800);
+                    Slide.setTargetPosition(initialHeight + 750);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                }
+            } else if(!releasedB2){
+                releasedB2 = true;
+            }
+
+            if(gamepad2.y){
+                if(gamepad2.y && Rotate.getPosition() < 0.4) {
+                    Rotate.setPosition(1.0);
+                    sleep(1200);
+                    Slide.setTargetPosition(initialHeight + 1400);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                } else if(gamepad2.y && Rotate.getPosition() > 0.4){
+                    Slide.setTargetPosition(initialHeight + 1400);
+                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Slide.setPower(0.8);
+                }
+            } else if(!releasedY2){
+                releasedY2 = true;
             }
 
             if (gamepad1.x) {
@@ -240,67 +199,6 @@ public class PrototypeWE extends LinearOpMode {
                 releasedX1 = true;
             }
 
-            //goto shared hub
-            if(gamepad1.y) {
-                if (releasedY1) {
-                    initialSpeed = speed;
-                    drawTrajectory.gotoSharedHub();
-                    speed = poseSpeed;
-                    drawTrajectory.updatePose();
-                    releasedY1 = false;
-                } else if (!releasedY1) {
-                    speed = initialSpeed;
-                    releasedY1 = true;
-                }
-            }
-
-            //Gamepad 2
-
-            if(gamepad2.a){
-                if(releasedA2) {
-                    bucketWithSpeed(0, bucketSpeed);
-                    Slide.setTargetPosition(initialHeight);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(slidePower);
-                    releasedA2 = false;
-                }
-            } else if(!releasedA2){
-                releasedA2 = true;
-            }
-            if(gamepad2.b){
-                if(releasedB2) {
-                    Slide.setTargetPosition(initialHeight + 750);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(slidePower);
-                    releasedB2 = false;
-                }
-            } else if(!releasedB2){
-                releasedB2 = true;
-            }
-
-            if(gamepad2.y){
-                if(releasedY2) {
-                    Slide.setTargetPosition(initialHeight + 1400);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(slidePower);
-                    releasedY2 = false;
-                }
-            } else if(!releasedY2){
-                releasedY2 = true;
-            }
-
-            if(gamepad2.x){
-                if(releasedX2) {
-                    bucketWithSpeed(0, bucketSpeed);
-                    Slide.setTargetPosition(initialHeight);
-                    Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(slidePower);
-                    releasedX2 = false;
-                }
-            } else if(!releasedX2){
-                releasedX2 = true;
-            }
-
             if (gamepad2.dpad_up) {
                 if (releasedDU2){
                     Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -324,36 +222,6 @@ public class PrototypeWE extends LinearOpMode {
                 releasedDD2 = true;
             }
 
-            if(gamepad2.back){
-                if(releasedBack2){
-                    if (bucketSpeed == 0.50) {
-                        bucketSpeed = 1.00;
-                        releasedBack2 = false;
-                    }
-                    else if (bucketSpeed == 1.00) {
-                        bucketSpeed = 0.50;
-                        releasedBack2 = false;
-                    }
-                } else if (!releasedBack2){
-                    releasedBack2 = true;
-                }
-            }
-
-            if(gamepad2.start){
-                if(releasedStart2){
-                    if (slidePower == 0.8) {
-                        slidePower = 1.0;
-                        releasedStart2 = false;
-                    }
-                    else if (slidePower == 1.0) {
-                        slidePower = 0.8;
-                        releasedStart2 = false;
-                    }
-                } else if (!releasedStart2){
-                    releasedStart2 = true;
-                }
-            }
-
             if (gamepad2.dpad_left) {
                 if (releasedDL2){
                     if(spinPower != 0) {
@@ -366,7 +234,7 @@ public class PrototypeWE extends LinearOpMode {
             }
             if (gamepad2.dpad_right) {
                 if (releasedDR2){
-                   if(spinPower != 0) {
+                    if(spinPower != 0) {
                         spinPower += 0.05;
                     }
                     releasedDR2 = false;
@@ -375,16 +243,39 @@ public class PrototypeWE extends LinearOpMode {
                 releasedDR2 = true;
             }
 
+            if (gamepad1.left_bumper) {
+                if (releasedLB1 && Slide.getCurrentPosition() < initialHeight + 30){
+                    intakePower = 1.0;
+                    telemetry.addLine("INTAKE STARTS");
+                    releasedLB1 = false;
+                }
+            } else if (!releasedLB1){
+                intakePower = 0;
+                telemetry.addLine("INTAKE STOPS");
+                releasedLB1 = true;
+            }
+            if (gamepad1.right_bumper) {
+                if (releasedRB1 && Slide.getCurrentPosition() < initialHeight + 30){
+                    intakePower = -1.0;
+                    telemetry.addLine("INTAKE REVERSE STARTS");
+                    releasedRB1 = false;
+                }
+            } else if (!releasedRB1){
+                telemetry.addLine("INTAKE STOPS");
+                intakePower = 0;
+                releasedRB1 = true;
+            }
+
             if (gamepad2.right_bumper) {
                 if (releasedRB2){
                     if (toggleRB2) {
                         spinPower = 0.70;
                         //twoPhaseSpin(false, 0.7);
-                        telemetry.addLine("Spin Starts - Blue");
+                        telemetry.addLine("SPIN STARTS");
                         toggleRB2 = false;
                     } else {
                         spinPower = 0;
-                        telemetry.addLine("Spin Stops");
+                        telemetry.addLine("SPIN STOPS");
                         toggleRB2 = true;
                     }
                     releasedRB2 = false;
@@ -398,11 +289,11 @@ public class PrototypeWE extends LinearOpMode {
                     if (toggleLB2) {
                         spinPower = -0.70;
                         //twoPhaseSpin(true, 0.7);
-                        telemetry.addLine("Spin Starts - Red");
+                        telemetry.addLine("SPIN STARTS REVERSE");
                         toggleLB2 = false;
                     } else {
                         spinPower = 0;
-                        telemetry.addLine("Spin Stops");
+                        telemetry.addLine("SPIN STOPS");
                         toggleLB2 = true;
                     }
                     releasedLB2 = false;
@@ -411,7 +302,7 @@ public class PrototypeWE extends LinearOpMode {
                 releasedLB2 = true;
             }
 
-            /* if(gamepad2.right_trigger == 1 && Rotate.getPosition() > 0.4){
+            if(gamepad2.right_trigger == 1 && Rotate.getPosition() >= 0.4){
                 if (releasedRT2){
                     Push.setPosition(0);
                     releasedRT2 = false;
@@ -419,17 +310,17 @@ public class PrototypeWE extends LinearOpMode {
             } else if (!releasedRT2){
                 Push.setPosition(0.4);
                 releasedRT2 = true;
-            } */
+            }
 
             if(gamepad2.left_trigger == 1){
                 if (releasedLT2){
                     if (toggleLT2 && !Slide.isBusy()) {
-                        Bucket.setPosition(0.03);
-                        telemetry.addLine("Bucket - Initial Position");
+                        Rotate.setPosition(0.03);
+                        telemetry.addLine("ROTATE STARTS");
                         toggleLT2 = false;
                     } else {
-                        Bucket.setPosition(1.0);
-                        telemetry.addLine("Bucket - Final Position");
+                        Rotate.setPosition(1.0);
+                        telemetry.addLine("ROTATE ShTOPS");
                         toggleLT2 = true;
                     }
                     releasedLT2 = false;
@@ -450,11 +341,11 @@ public class PrototypeWE extends LinearOpMode {
             Intake.setPower(intakePower);
             Spin.setPower(spinPower);
 
-            telemetry.addData("Servo","Bucket Position (%.2f), Direction (%.2f), Speed (%.2f)", Bucket.getPosition(), Bucket.getDirection(), bucketSpeed);
+            telemetry.addData("Servo","Rotate (%.2f), Push (%.2f)", Rotate.getPosition(), Push.getPosition());
             telemetry.addLine("Intake: " + intakePower);
-            telemetry.addData("Slide", "Current (%.2f), Target (%.2f), Power (%.2f)", Slide.getCurrentPosition(), Slide.getTargetPosition(), slidePower);
-            telemetry.addData("Spin", "Power", spinPower);
-            telemetry.addData("Pose", "Speed", poseSpeed);
+            telemetry.addLine("Spin: " + spinPower);
+            telemetry.addLine("Slide Current: " + Slide.getCurrentPosition());
+            telemetry.addLine("Slide Target: " + Slide.getTargetPosition());
             telemetry.addData("Front Motors", "LF (%.2f), RF (%.2f)", LFPower, RFPower);
             telemetry.addData("Back Motors", "LB (%.2f), RB (%.2f)", LBPower, RBPower);
             telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, drive);
@@ -465,7 +356,7 @@ public class PrototypeWE extends LinearOpMode {
         }
     }
 
-    void twoPhaseSpin(boolean isReversed, double startingSpeed) {
+    void twoPhaseSpin(boolean isReversed,double startingSpeed) {
         double reverseFactor = 1;
         if(isReversed){
             reverseFactor = -1;
@@ -497,43 +388,6 @@ public class PrototypeWE extends LinearOpMode {
             return;
         }
         speed = increased;
-    }
-
-    private double decreasePower(double p, double r) {
-        double decreased = p - r;
-        if (decreased < 0) {
-            p = 0;
-            return p;
-        }
-        p = decreased;
-        return p;
-    }
-
-    private double increasePower(double p, double r) {
-        double increased = p + r;
-        if (1 < increased) {
-            p = 1;
-            return p;
-        }
-        p = increased;
-        return p;
-    }
-
-    private void bucketWithSpeed(double targetPos, double factor){
-        //1 -> 10 0.5 -> 5
-        if(factor == 1.0){
-            Bucket.setPosition(targetPos);
-        }
-        double currentPos = Bucket.getPosition();
-        double interval = 0.05 * factor;
-        while (targetPos > Bucket.getPosition()){
-            Bucket.setPosition(Bucket.getPosition() + interval);
-            sleep(30);
-        }
-        while (targetPos < Bucket.getPosition()){
-            Bucket.setPosition(Bucket.getPosition() - interval);
-            sleep(30);
-        }
     }
 
 }

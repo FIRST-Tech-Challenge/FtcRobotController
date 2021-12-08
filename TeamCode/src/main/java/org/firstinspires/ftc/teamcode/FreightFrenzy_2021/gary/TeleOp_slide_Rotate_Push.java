@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.gary;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +14,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 import java.util.ArrayList;
 @TeleOp(name = "TeleOp_slide_Rotate_Push", group = "Linear OpMode")
-@Disabled
 public class TeleOp_slide_Rotate_Push extends LinearOpMode{
     private DcMotor Slide = null;
     private Servo Rotate = null;

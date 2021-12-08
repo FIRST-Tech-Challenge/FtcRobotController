@@ -169,18 +169,18 @@ public class Mecanum_Auto_BlueDuck_Warehouse extends LinearOpMode {
                     .splineToLinearHeading(new Pose2d(-64, 54, toRadians(90)), toRadians(0))
                     .build();
             drive.followTrajectory(duckTraj);
-            sleep(500);
+            sleep(300);
+
+            Pose2d wall = new Pose2d(-63.88, 53.25, Math.toRadians(90));
+            drive.setPoseEstimate(wall);
 
             //ROTATE DUCK
             drive.setMotorPowers(0.1, 0.1,0.1,0.1);
-            sleep(340);
+            sleep(500);
             drive.setMotorPowers(0, 0,0,0);
             Spin.setPower(0.5);
             sleep(3500);
             Spin.setPower(0.0);
-
-            Pose2d wall = new Pose2d(-63.88, 53.25, drive.getExternalHeading()); //Math.toRadians(90
-            drive.setPoseEstimate(wall);
 
             //MOTION TO PLATE
             Trajectory wallTraj = drive.trajectoryBuilder(duckTraj.end(), true)
@@ -194,7 +194,7 @@ public class Mecanum_Auto_BlueDuck_Warehouse extends LinearOpMode {
             drive.followTrajectory(plateTraj);
 
             //ROTATE
-            rotateWithSpeed(1.0, 0.5);
+            Rotate.setPosition(1.0);
             sleep(800);
 
             //SLIDE UP
@@ -240,7 +240,7 @@ public class Mecanum_Auto_BlueDuck_Warehouse extends LinearOpMode {
                     .build();
             drive.followTrajectory(parkTraj2);
             Trajectory parkTraj3 = drive.trajectoryBuilder(parkTraj2.end())
-                    .lineToLinearHeading(new Pose2d(-31.625, 43.75, toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(-31.625, 45.75, toRadians(0)))
                     .build();
             drive.followTrajectory(parkTraj3);
             Trajectory parkTraj4 = drive.trajectoryBuilder(parkTraj3.end())
@@ -283,21 +283,7 @@ public class Mecanum_Auto_BlueDuck_Warehouse extends LinearOpMode {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
     }
-    private void rotateWithSpeed(double targetPos, double factor){
-        //1 -> 10 0.5 -> 5
-        if(factor == 1.0){
-            Rotate.setPosition(targetPos);
-        }
-        double currentPos = Rotate.getPosition();
-        double interval = 0.05 * factor;
-        while (targetPos > Rotate.getPosition()){
-            Rotate.setPosition(Rotate.getPosition() + interval);
-            sleep(30);
-        }
-        while (targetPos < Rotate.getPosition()){
-            Rotate.setPosition(Rotate.getPosition() - interval);
-            sleep(30);
-        }
-    }
+
+
 
 }
