@@ -16,7 +16,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 
 public class PositionEstimation {
-    private static final double     COUNTS_PER_MOTOR_REV    = 383.6    ;// 435RPM-383.6, 1150RPM--145.6
+    private static final double     COUNTS_PER_MOTOR_REV    = 145.6    ;// 435RPM-383.6, 1150RPM--145.6
     private static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // the new one is 1:1, mecanum drive chassis
     private static final double     WHEEL_DIAMETER_M   = 0.1;//0.096;     // From gobilda mecanum drawingm should be 0.096
     private static final double     COUNTS_PER_M         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /(WHEEL_DIAMETER_M * Math.PI);
