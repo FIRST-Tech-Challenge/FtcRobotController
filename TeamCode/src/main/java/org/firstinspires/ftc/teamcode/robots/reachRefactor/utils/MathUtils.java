@@ -4,7 +4,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constant
 
 import org.ejml.simple.SimpleMatrix;
 
-public class MathUtil {
+public class MathUtils {
     public static int metersToTicks(double meters) {
         double circumference = 2 * Math.PI * WHEEL_RADIUS;
         double revolutions = meters / circumference;

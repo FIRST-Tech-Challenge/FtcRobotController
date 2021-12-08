@@ -29,7 +29,7 @@ public class Robot implements Subsystem {
 
     // State
     private Constants.Alliance alliance;
-    private boolean dashboardEnabled;
+    private boolean dashboardEnabled, telemetryDebugEnabled;
     private Map<String, Object> telemetryMap;
 
     public static final String TELEMETRY_NAME = "Robot";
@@ -41,8 +41,9 @@ public class Robot implements Subsystem {
         driveTrain = new DriveTrain(hardwareMap);
         subsystems = new Subsystem[] {driveTrain};
 
-        telemetryMap = new HashMap<String, Object>();
+        telemetryMap = new HashMap<>();
 
+        this.dashboardEnabled = dashboardEnabled;
         if(dashboardEnabled)
             dashboard = FtcDashboard.getInstance();
     }
@@ -87,7 +88,7 @@ public class Robot implements Subsystem {
 
         // sending telemetry for subsystems
         for(Subsystem subsystem: subsystems) {
-            Map<String, Object> telemetryMap = subsystem.getTelemetry();
+            Map<String, Object> telemetryMap = subsystem.getTelemetry(telemetryDebugEnabled);
             String telemetryName = subsystem.getTelemetryName();
 
             packet.addLine(telemetryName);
@@ -102,7 +103,7 @@ public class Robot implements Subsystem {
         }
 
         // sending telemetry for robot
-        Map<String, Object> robotTelemetry = getTelemetry();
+        Map<String, Object> robotTelemetry = getTelemetry(telemetryDebugEnabled);
         String telemetryName = getTelemetryName();
 
         packet.addLine(telemetryName);
@@ -125,8 +126,8 @@ public class Robot implements Subsystem {
     }
 
     @Override
-    public Map<String, Object> getTelemetry() {
-        Map<String, Object> telemetryMap = new HashMap<String, Object>();
+    public Map<String, Object> getTelemetry(boolean debug) {
+        Map<String, Object> telemetryMap = new HashMap<>();
         telemetryMap.put("articulation", articulation);
 
         return telemetryMap;
@@ -222,6 +223,10 @@ public class Robot implements Subsystem {
             dashboard = FtcDashboard.getInstance();
     }
 
+    public void toggleIsTelemetryDebugEnabled() {
+        telemetryDebugEnabled = !telemetryDebugEnabled;
+    }
+
     public void addTelemetryData(String name, Object value) {
         telemetryMap.put(name, value);
     }
@@ -229,4 +234,6 @@ public class Robot implements Subsystem {
     public boolean isDashboardEnabled() {
         return dashboardEnabled;
     }
+
+    public boolean isTelemetryDebugEnabled() { return telemetryDebugEnabled; }
 }

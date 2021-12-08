@@ -13,14 +13,14 @@ public class StickyGamepad {
     public boolean left_bumper, right_bumper;
     public boolean left_trigger, right_trigger;
     public boolean left_stick_button, right_stick_button;
-    public boolean start;
+    public boolean start, guide;
 
     private boolean dpad_up_down, dpad_down_down, dpad_left_down, dpad_right_down;
     private boolean a_down, b_down, x_down, y_down;
     private boolean left_bumper_down, right_bumper_down;
     private boolean left_trigger_down, right_trigger_down;
     private boolean left_stick_button_down, right_stick_button_down;
-    private boolean start_down;
+    private boolean start_down, guide_down;
 
     public StickyGamepad(Gamepad gamepad) {
         this.gamepad = gamepad;
@@ -147,7 +147,7 @@ public class StickyGamepad {
             right_bumper_down = false;
         }
 
-        if (MathUtil.deadZone(gamepad.left_trigger, TRIGGER_DEADZONE) > 0) {
+        if (MathUtils.deadZone(gamepad.left_trigger, TRIGGER_DEADZONE) > 0) {
             if (left_trigger_down) {
                 left_trigger = false;
             } else {
@@ -159,7 +159,7 @@ public class StickyGamepad {
             left_trigger_down = false;
         }
 
-        if (MathUtil.deadZone(gamepad.right_trigger, TRIGGER_DEADZONE) > 0) {
+        if (MathUtils.deadZone(gamepad.right_trigger, TRIGGER_DEADZONE) > 0) {
             if (right_trigger_down) {
                 right_trigger = false;
             } else {
@@ -205,6 +205,18 @@ public class StickyGamepad {
         } else {
             start = false;
             start_down = false;
+        }
+
+        if (gamepad.guide) {
+            if (guide_down) {
+                guide = false;
+            } else {
+                guide_down = true;
+                guide = true;
+            }
+        } else {
+            guide = false;
+            guide_down = false;
         }
     }
 }

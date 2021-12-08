@@ -31,7 +31,7 @@ public class Constants {
     // Physical Constants
     //----------------------------------------------------------------------------------------------
 
-    public static double WHEEL_RADIUS = 0.9;
+    public static double WHEEL_RADIUS = 0.1016;
     public static double TRACK_WIDTH = 0.308162;
     public static double DRIVETRAIN_TICKS_PER_REVOLUTION = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class).getTicksPerRev();
     public static double DRIVETRAIN_MAX_TICKS_PER_SECOND = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class).getAchieveableMaxTicksPerSecond();
@@ -54,7 +54,7 @@ public class Constants {
     // Miscellaneous
     //----------------------------------------------------------------------------------------------
 
-    public static String[] GAME_STATES = new String[] {"Tele-Op", "Autonomous"};
+    public static String[] GAME_STATES = new String[] {"Tele-Op", "Autonomous", "TPM Calibration"};
     public enum Alliance {
         RED, BLUE
     }

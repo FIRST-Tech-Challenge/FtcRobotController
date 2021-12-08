@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.opModes;
 
+import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -15,14 +16,14 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.StickyGamepad;
  * b - set alliance to red
  * a - toggle FTC dashboard
  * y - toggle drivetrain smoothing
+ * dpad_up - toggle debug telemetry
  * left bumper - decrement state
  * right bumper - increment state
  *
  * Tele-Op
- * y - toggle drivetrain smoothing
  * right stick y - forward
  * left stick x - rotate
- *
+ * guide - emergency stop
  */
 @TeleOp(name = "refactored FF_6832")
 public class FF_6832 extends OpMode {
@@ -33,6 +34,12 @@ public class FF_6832 extends OpMode {
     private int state;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
 
+    // TPM Calibration state
+    private boolean TPMCalibrationInitialized;
+    private SimpleMatrix TPMCalibrationStartingTicks;
+    private double averageTPMCalibrationTicksTraveled;
+    private double calculatedTPM;
+
     // timing
     private long lastLoopClockTime, loopTime;
     private double averageLoopTime;
@@ -41,12 +48,19 @@ public class FF_6832 extends OpMode {
     // Code to run ONCE when the driver hits INIT
     @Override
     public void init() {
+        // global state
         active = true;
         state = 0;
 
+        // TPM calibration state
+        TPMCalibrationInitialized = false;
+        TPMCalibrationStartingTicks = new SimpleMatrix(1, 3);
+
+        // timing
         lastLoopClockTime = System.nanoTime();
         loopTimeSmoother = new ExponentialSmoother(Constants.AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
 
+        // gamepads
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
@@ -95,17 +109,37 @@ public class FF_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
     }
 
-    private void handleTeleOp() {
+    private void handleTeleOpDrive() {
         double forward = Math.pow(-gamepad1.right_stick_y, 3) * Constants.FORWARD_SCALING_FACTOR;
         double rotate = Math.pow(gamepad1.left_stick_x, 3) * Constants.ROTATE_SCALING_FACTOR;
 
         robot.driveTrain.drive(forward, rotate);
+    }
 
-        if(stickyGamepad1.y)
-            robot.driveTrain.toggleSmoothingEnabled();
-
-        if(gamepad1.a && gamepad1.b && gamepad1.x && gamepad1.y)
+    private void handleEmergencyStop() {
+        if(stickyGamepad1.guide || stickyGamepad2.guide)
             robot.stop();
+    }
+
+    private void handleTeleOp() {
+        handleTeleOpDrive();
+        handleEmergencyStop();
+    }
+
+    private void handleTPMCalibration() {
+        handleTeleOpDrive();
+        handleEmergencyStop();
+
+        // initializing TPM calibration state
+        if(!TPMCalibrationInitialized) {
+            TPMCalibrationStartingTicks = robot.driveTrain.getWheelTicks().cols(0, 1);
+            TPMCalibrationInitialized = true;
+        }
+
+        // calculating average wheel ticks traveled
+        SimpleMatrix ticks = robot.driveTrain.getWheelTicks().cols(0, 1);
+        SimpleMatrix ones = new SimpleMatrix(new double[][] {{1, 1, 1}});
+        averageTPMCalibrationTicksTraveled = ones.mult(ticks.minus(TPMCalibrationStartingTicks)).divide(3).get(0);
     }
 
     @Override
@@ -114,10 +148,10 @@ public class FF_6832 extends OpMode {
 
         if (active)
             switch(state) {
-                case 0:
+                case 0: // Tele-Op
                     handleTeleOp();
                     break;
-                case 1:
+                case 1: // Autonomous
                     if (robot.getAlliance().equals(Constants.Alliance.RED)
                             && robot.articulate(Robot.Articulation.AUTONOMOUS_RED)) {
                         active = false;
@@ -127,12 +161,16 @@ public class FF_6832 extends OpMode {
                         active = false;
                         state = 0;
                     }
+                    break;
+                case 2: // TPM Calibration
+                    handleTPMCalibration();
+                    break;
             }
 
         update();
     }
 
-    private void handleTiming() {
+    private void updateTiming() {
         long loopClockTime = System.nanoTime();
         loopTime = loopClockTime - lastLoopClockTime;
         averageLoopTime = loopTimeSmoother.update(loopTime);
@@ -143,14 +181,26 @@ public class FF_6832 extends OpMode {
         stickyGamepad1.update();
         stickyGamepad2.update();
 
-        handleTiming();
+        updateTiming();
 
+        if(robot.isTelemetryDebugEnabled()) {
+            robot.addTelemetryData("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
+            robot.addTelemetryData("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+        }
         robot.addTelemetryData("Active", active);
         robot.addTelemetryData("State", String.format("(%d): %s", state, Constants.GAME_STATES[state]));
         robot.addTelemetryData("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
         robot.addTelemetryData("Dashboard Enabled", robot.isDashboardEnabled());
-        robot.addTelemetryData("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
-        robot.addTelemetryData("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+
+        switch(state) {
+            case 0: // Tele-Op
+                break;
+            case 1: // Autonomous
+                break;
+            case 2: // TPM Calibration
+                robot.addTelemetryData("Average Ticks Traveled", averageTPMCalibrationTicksTraveled);
+                break;
+        }
 
         robot.update();
     }

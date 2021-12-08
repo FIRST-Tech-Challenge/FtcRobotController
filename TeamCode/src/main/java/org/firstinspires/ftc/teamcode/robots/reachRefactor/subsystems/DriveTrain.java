@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtil;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtils;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import java.util.HashMap;
@@ -178,9 +178,9 @@ public class DriveTrain implements Subsystem {
             imuInitialized = true;
         }
         angles = new SimpleMatrix(new double[][] {
-                {MathUtil.wrapAngle(360 - imuAngles.firstAngle, offsetAngles.get(0))},
-                {MathUtil.wrapAngle(imuAngles.thirdAngle, offsetAngles.get(1))},
-                {MathUtil.wrapAngle(imuAngles.secondAngle, offsetAngles.get(2))}
+                {MathUtils.wrapAngle(360 - imuAngles.firstAngle, offsetAngles.get(0))},
+                {MathUtils.wrapAngle(imuAngles.thirdAngle, offsetAngles.get(1))},
+                {MathUtils.wrapAngle(imuAngles.secondAngle, offsetAngles.get(2))}
         });
 
         // calculating wheel displacements
@@ -203,7 +203,7 @@ public class DriveTrain implements Subsystem {
 
         // rotating displacement by heading
         double heading = angles.get(0);
-        averageDisplacementMeters = MathUtil.rotateVector(averageDisplacementMeters, heading);
+        averageDisplacementMeters = MathUtils.rotateVector(averageDisplacementMeters, heading);
 
         // updating pose [x, y, heading]
         pose = pose.plus(new SimpleMatrix(new double[][] {{
@@ -265,24 +265,26 @@ public class DriveTrain implements Subsystem {
 
 
     @Override
-    public Map<String, Object> getTelemetry() {
-        Map<String, Object> telemetryMap = new HashMap<String, Object>();
-        telemetryMap.put("fl velocity", MathUtil.ticksToMeters(motorFrontLeft.getVelocity()));
-        telemetryMap.put("fr velocity", MathUtil.ticksToMeters(motorFrontRight.getVelocity()));
-        telemetryMap.put("middle velocity", MathUtil.ticksToMeters(motorMiddle.getVelocity()));
+    public Map<String, Object> getTelemetry(boolean debug) {
+        Map<String, Object> telemetryMap = new HashMap<>();
+        if(debug) {
+            telemetryMap.put("fl velocity", MathUtils.ticksToMeters(motorFrontLeft.getVelocity()));
+            telemetryMap.put("fr velocity", MathUtils.ticksToMeters(motorFrontRight.getVelocity()));
+            telemetryMap.put("middle velocity", MathUtils.ticksToMeters(motorMiddle.getVelocity()));
 
-        telemetryMap.put("fl target velocity", targetFrontLeftVelocity);
-        telemetryMap.put("fr target velocity", targetFrontRightVelocity);
-        telemetryMap.put("middle target velocity", targetMiddleVelocity);
+            telemetryMap.put("fl target velocity", targetFrontLeftVelocity);
+            telemetryMap.put("fr target velocity", targetFrontRightVelocity);
+            telemetryMap.put("middle target velocity", targetMiddleVelocity);
 
-        telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
-        telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
+            telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
+            telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
 
-        telemetryMap.put("chassis distance (m)", chassisDistance);
+            telemetryMap.put("chassis distance (m)", chassisDistance);
 
-        telemetryMap.put("pose (x)", pose.get(0));
-        telemetryMap.put("pose (y)", pose.get(1));
-        telemetryMap.put("pose (heading)", Math.toDegrees(pose.get(2)));
+            telemetryMap.put("pose (x)", pose.get(0));
+            telemetryMap.put("pose (y)", pose.get(1));
+            telemetryMap.put("pose (heading)", Math.toDegrees(pose.get(2)));
+        }
 
         return telemetryMap;
     }
@@ -329,7 +331,7 @@ public class DriveTrain implements Subsystem {
      * [left, right, middle]
      * @return
      */
-    private SimpleMatrix getWheelTicks() {
+    public SimpleMatrix getWheelTicks() {
         return new SimpleMatrix(new double[][] {
                 { motorFrontLeft.getCurrentPosition(), 0 },
                 { motorFrontRight.getCurrentPosition(), 0 },
