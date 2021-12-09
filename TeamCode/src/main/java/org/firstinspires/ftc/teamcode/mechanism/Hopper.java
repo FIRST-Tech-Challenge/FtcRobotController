@@ -24,7 +24,7 @@ public class Hopper implements Mechanism {
         } else {
             //Make sure it doesn't set the position constantly
             if(state != 0) {
-                hopper.setPosition(0);
+                hopper.setPosition(0.05);
                 state = 0;
             }
         }

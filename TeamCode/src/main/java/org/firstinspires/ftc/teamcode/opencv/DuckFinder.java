@@ -33,8 +33,9 @@ public class DuckFinder extends OpenCvPipeline {
             Point point = new Point(duckContours.get(i).toArray()[0].x, duckContours.get(i).toArray()[0].y);
             duckCenters.add(point);
             Imgproc.drawContours(input, duckContours, i, new Scalar(255, 0, 0), 3);
-            Imgproc.putText(input, "Duck", point, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2);
+            Imgproc.putText(input, "Duck " + duckContours.get(i).toArray()[0].x, point, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2);
         }
+        mat.release();
         return input;
     }
 }

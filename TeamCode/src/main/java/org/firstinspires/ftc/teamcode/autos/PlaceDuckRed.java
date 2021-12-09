@@ -43,10 +43,10 @@ public class PlaceDuckRed extends LinearOpMode {
                 .splitLayoutForMultipleViewports(
                         cameraMonitorViewId, //The container we're splitting
                         2, //The number of sub-containers to create
-                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY);
+                        OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY); //Whether to split the container vertically or horizontally
 
         // Setup first camera
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), viewportContainerIds[0]);
         ShippingElementRecognizer pipeline = new ShippingElementRecognizer();
         webcam.setPipeline(pipeline);
         webcam.setMillisecondsPermissionTimeout(2500);
@@ -63,7 +63,7 @@ public class PlaceDuckRed extends LinearOpMode {
         });
 
         // Second camera
-        frontWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+        frontWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Front Webcam"), viewportContainerIds[1]);
         DuckFinder pipeline2 = new DuckFinder();
         frontWebcam.setPipeline(pipeline2);
         frontWebcam.setMillisecondsPermissionTimeout(2500);
@@ -124,7 +124,7 @@ public class PlaceDuckRed extends LinearOpMode {
         }
         hopper.hopper.setPosition(0.33);
         delay(1200);
-        hopper.hopper.setPosition(0);
+        hopper.hopper.setPosition(0.05);
         delay(200);
         lift.goTo(0,0.8);
 
@@ -134,30 +134,59 @@ public class PlaceDuckRed extends LinearOpMode {
         chassis.moveBackwardWithEncoders(0.4,625);
         chassis.moveForwardWithEncoders(0.6,110);
         delay(200);
-        chassis.strafeLeftWithEncoders(0.6,1950);
-        chassis.strafeLeftWithEncoders(0.3,150);
+        chassis.strafeLeftWithEncoders(0.6,2000);
+        chassis.strafeLeftWithEncoders(0.3,250);
         delay(150);
         carousel.turnCarousel();
         delay(3000);
         carousel.carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carousel.carouselMotor.setPower(0);
 
-        // Locate the duck
-
-
-        // Pick up the duck
+        // Locate and move towards the duck
         chassis.strafeRightWithEncoders(0.6,50);
         chassis.moveForwardWithEncoders(0.6,200);
         chassis.rotate(180,0.5);
+        delay(100);
+        int startPos = chassis.frontLeft.getCurrentPosition();
+        if(pipeline2.getDuckCenters().size() == 0 || pipeline2.getDuckCenters().get(0).x < 80) {
+            chassis.frontLeft.setPower(-0.3);
+            chassis.frontRight.setPower(0.3);
+            chassis.backLeft.setPower(0.3);
+            chassis.backRight.setPower(-0.3);
+            while(pipeline2.getDuckCenters().size() == 0 || pipeline2.getDuckCenters().get(0).x < 80) {
+                // Wait until the duck is even with the intake
+                if(chassis.frontLeft.getCurrentPosition() - startPos < 800) {
+                    break;
+                }
+            }
+            chassis.frontLeft.setPower(0);
+            chassis.frontRight.setPower(0);
+            chassis.backLeft.setPower(0);
+            chassis.backRight.setPower(0);
+        } else if(pipeline2.getDuckCenters().get(0).x > 140) {
+            chassis.frontLeft.setPower(0.3);
+            chassis.frontRight.setPower(-0.3);
+            chassis.backLeft.setPower(-0.3);
+            chassis.backRight.setPower(0.3);
+            while(pipeline2.getDuckCenters().get(0).x > 140) {
+                // Wait until the duck is even with the intake
+            }
+            chassis.frontLeft.setPower(0);
+            chassis.frontRight.setPower(0);
+            chassis.backLeft.setPower(0);
+            chassis.backRight.setPower(0);
+        }
+        int deltaPos = chassis.frontLeft.getCurrentPosition() - startPos;
+
+        // Pick up the duck
         intake.intakeMotor.setPower(0.8);
-        chassis.strafeRightWithEncoders(0.6,25);
         chassis.moveForwardWithEncoders(0.2,400);
         delay(400);
 
         // Place the duck
         chassis.moveBackwardWithEncoders(0.6,100);
         delay(200);
-        chassis.strafeLeftWithEncoders(0.6,1950);
+        chassis.strafeLeftWithEncoders(0.6,1950 + deltaPos);
         delay(200);
         chassis.moveBackwardWithEncoders(0.6,625);
         intake.intakeMotor.setPower(0);
@@ -165,7 +194,7 @@ public class PlaceDuckRed extends LinearOpMode {
         delay(700);
         hopper.hopper.setPosition(0.33);
         delay(1200);
-        hopper.hopper.setPosition(0);
+        hopper.hopper.setPosition(0.05);
         delay(200);
         lift.goTo(0,0.8);
 
