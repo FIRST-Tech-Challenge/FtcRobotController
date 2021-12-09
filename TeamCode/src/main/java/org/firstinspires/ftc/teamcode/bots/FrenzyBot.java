@@ -196,14 +196,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift to lower", defaultReturn = "")
     public void liftToLower(){
         //reset dropper before retracting the lift all the way
-        resetDropper();
-        if (liftLocation == LIFT_LEVEL_ONE || liftLocation == LIFT_LEVEL_TWO){
-            ElapsedTime time = new ElapsedTime();
-            time.reset();
-            //give some time for the dropper to close
-            while (time.milliseconds() < 500){
-
-            }
+        if (dropperServo.getPosition() < 0.5) {
+            resetDropper();
+            delayWait(999);
+        }else {
+            resetDropper();
         }
         liftLocation = LIFT_UNDER_EXTENTION;
         this.lift.setTargetPosition(LIFT_UNDER_EXTENTION);
