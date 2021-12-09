@@ -44,6 +44,9 @@ public class BlueParkBlockPlace extends MasterOpMode{
         servoGrabber.setPosition(0.0);
         pauseMillis(500);
         servoArm.setPosition(0.81);
+
+
+
         waitForStart();
         servoArm.setPosition(0.15);
         motorArm.setTargetPosition(900);

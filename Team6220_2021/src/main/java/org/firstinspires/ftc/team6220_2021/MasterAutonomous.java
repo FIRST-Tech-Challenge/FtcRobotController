@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -11,10 +12,30 @@ import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 public abstract class MasterAutonomous extends MasterOpMode {
     // This method drives tank when given an angle drive power and turning power
     public void driveTank(double leftSidePower, double rightSidePower) {
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         motorFrontLeft.setPower(leftSidePower);
         motorBackLeft.setPower(leftSidePower);
         motorFrontRight.setPower(rightSidePower);
         motorBackRight.setPower(rightSidePower);
+
+//        pauseMillis(time);
+//
+//        motorFrontLeft.setPower(0);
+//        motorBackLeft.setPower(0);
+//        motorFrontRight.setPower(0);
+//        motorBackRight.setPower(0);
     }
 
     // This method drives a specified number of inches in a straight line when given a target distance and max speed
@@ -58,9 +79,9 @@ public abstract class MasterAutonomous extends MasterOpMode {
                         Math.min(Math.max(translationPID.getFilteredValue() * -1, Constants.MINIMUM_DRIVE_POWER), maxSpeed) * -1);
             }
 
-            if (Math.abs(angleDeviation) >= 1) {
-                turnDegrees(angleDeviation * -1);
-            }
+//            if (Math.abs(angleDeviation) >= 1) {
+//                turnDegrees(angleDeviation * -1);
+//            }
 
             // Update positions using last distance measured by encoders
             position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() +
@@ -87,6 +108,9 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
