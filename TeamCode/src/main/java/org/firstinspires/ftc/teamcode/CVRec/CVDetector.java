@@ -172,7 +172,7 @@ public class CVDetector {
         if (level != null) {
             Log.d(TAG, String.format("level is %s", level.getDotName()));
         } else {
-            Log.d(TAG, "Levl is null :(");
+            Log.d(TAG, "Level is null :(");
         }
         return level;
     }

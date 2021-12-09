@@ -994,6 +994,11 @@ public class FrenzyBaseBot implements IOdoBot {
         return null;
       }
 
+    @Override
+    public AutoDot getCurrentDetectionResult() {
+        return null;
+    }
+
 
     public void reverseEncoderDirection() {
         if (this.encoderDirection == 1){

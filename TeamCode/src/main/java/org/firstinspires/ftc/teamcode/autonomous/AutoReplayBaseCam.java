@@ -36,4 +36,15 @@ public class AutoReplayBaseCam extends AutoBase {
         this.locator = VSlamOdometry.getInstance(hardwareMap, VSlamOdometry.THREAD_INTERVAL, this.selectedRoute.getStartX(), this.selectedRoute.getStartY(), (int) this.selectedRoute.getInitRotation());
         startLocator(locator);
     }
+
+    @Override
+    protected void displayStatus(){
+        telemetry.addData("Locator", String.format("X: %.2f, Y: %.2f", locator.getCurrentX(), locator.getCurrentY()));
+        telemetry.addData("Orientation", locator.getAdjustedCurrentHeading());
+        AutoDot result = bot.getCurrentDetectionResult();
+        if (result!= null) {
+            telemetry.addData("Detection result", result.getDotName());
+        }
+        telemetry.update();
+    }
 }

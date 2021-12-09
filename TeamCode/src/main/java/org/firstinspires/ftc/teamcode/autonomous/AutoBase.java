@@ -15,6 +15,7 @@ public abstract class AutoBase extends OdoBase {
             super.runOpMode();
             preStart();
             initLocator();
+            displayStatus();
             waitForStart();
             act();
         }
@@ -28,6 +29,10 @@ public abstract class AutoBase extends OdoBase {
     }
 
     protected void preStart(){
+
+    }
+
+    protected void displayStatus(){
 
     }
 

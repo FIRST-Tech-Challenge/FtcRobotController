@@ -51,4 +51,6 @@ public interface IOdoBot {
     void reverseEncoderDirection();
     int getEncoderDirection();
     AutoDot getDetectionResult();
+    AutoDot getCurrentDetectionResult();
+
 }

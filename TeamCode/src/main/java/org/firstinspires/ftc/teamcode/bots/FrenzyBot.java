@@ -141,6 +141,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         return level;
     }
 
+    ///For status only
+    @Override
+    public AutoDot getCurrentDetectionResult() {
+        AutoDot level = detector.getLevel();
+        return level;
+    }
+
     public void activateIntake(double velocity) {
         if (intake != null) {
             intake.setVelocity(MAX_VELOCITY_REV*velocity);

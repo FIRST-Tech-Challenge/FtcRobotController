@@ -1549,4 +1549,9 @@ public class YellowBot implements IOdoBot {
         return null;
     }
 
+    @Override
+    public AutoDot getCurrentDetectionResult() {
+        return null;
+    }
+
 }
