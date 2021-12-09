@@ -18,7 +18,9 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider
  * b - set alliance to red
  * a - toggle FTC dashboard
  * y - toggle drivetrain smoothing
- * dpad_up - toggle debug telemetry
+ * dpad up - initialize / shutdown vision provider
+ * dpad left - increment vision provider index
+ * dpad down - toggle debug telemetry
  * left bumper - decrement state
  * right bumper - increment state
  *
@@ -85,6 +87,7 @@ public class FF_6832 extends OpMode {
                 gameStateIndex += 1;
 
             gameStateIndex %= Constants.GameState.getNumGameStates();
+            gameState = Constants.GameState.getGameState(gameStateIndex);
         }
 
         if (stickyGamepad1.start)
@@ -119,6 +122,9 @@ public class FF_6832 extends OpMode {
             robot.toggleIsDashboardEnabled();
         if(stickyGamepad1.y)
             robot.driveTrain.toggleSmoothingEnabled();
+        if(stickyGamepad1.dpad_down) {
+            robot.toggleIsDebugTelemetryEnabled();
+        }
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -175,7 +181,7 @@ public class FF_6832 extends OpMode {
     public void loop() {
         handleStateSwitch();
 
-        if (active)
+        if (active) {
             switch(gameState) {
                 case TELE_OP:
                     handleTeleOp();
@@ -197,6 +203,10 @@ public class FF_6832 extends OpMode {
                     handleTPMCalibration();
                     break;
             }
+        } else {
+            handleStateSwitch();
+            handlePregameControls();
+        }
 
         update();
     }
@@ -213,7 +223,7 @@ public class FF_6832 extends OpMode {
             robot.addTelemetryData("Detected Position", robot.visionProvider.getPosition());
         }
 
-        if(robot.isTelemetryDebugEnabled()) {
+        if(robot.isDebugTelemetryEnabled()) {
             robot.addTelemetryData("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
             robot.addTelemetryData("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
         }
@@ -221,6 +231,7 @@ public class FF_6832 extends OpMode {
         robot.addTelemetryData("State", String.format("(%d): %s", gameStateIndex, gameState));
         robot.addTelemetryData("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
         robot.addTelemetryData("Dashboard Enabled", robot.isDashboardEnabled());
+        robot.addTelemetryData("Debug Telemetry Enabled", robot.isDebugTelemetryEnabled());
 
         switch(gameState) {
             case TELE_OP:

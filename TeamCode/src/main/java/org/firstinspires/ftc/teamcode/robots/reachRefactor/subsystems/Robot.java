@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtils;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.providers.OpenCVProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.opencv.android.Utils;
@@ -26,8 +25,6 @@ import org.opencv.core.Mat;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import android.graphics.Bitmap;
 
 public class Robot implements Subsystem {
     // Telemetry
@@ -44,7 +41,7 @@ public class Robot implements Subsystem {
 
     // State
     private Constants.Alliance alliance;
-    private boolean dashboardEnabled, telemetryDebugEnabled;
+    private boolean dashboardEnabled, debugTelemetryEnabled;
     private Map<String, Object> telemetryMap;
 
     private static final String TELEMETRY_NAME = "Robot";
@@ -73,10 +70,12 @@ public class Robot implements Subsystem {
     }
 
     private void sendVisionImage() {
-        Mat mat =  visionProvider.getDashboardImage();
-        Bitmap bm = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.RGB_565);
-        Utils.matToBitmap(mat, bm);
-        dashboard.sendImage(bm);
+        Mat mat = visionProvider.getDashboardImage();
+        if(mat != null) {
+            Bitmap bm = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(mat, bm);
+            dashboard.sendImage(bm);
+        }
     }
 
     private void drawFieldOverlay(TelemetryPacket packet) {
@@ -113,8 +112,8 @@ public class Robot implements Subsystem {
         ICC = MathUtils.rotateVector(ICC, heading).scale(Constants.INCHES_PER_METER);
 
         // drawing ICC and turn radius
-        CanvasUtils.drawDottedLine(fieldOverlay, ICC, pose.scale(Constants.INCHES_PER_METER), Constants.TURN_RADIUS_STROKE_COLOR, Constants.DOTTED_LINE_DASH_LENGTH);
-        fieldOverlay.strokeCircle(ICC.get(0), ICC.get(1), turnRadius * Constants.INCHES_PER_METER);
+        CanvasUtils.drawDottedLine(fieldOverlay, ICC, position.scale(Constants.INCHES_PER_METER), Constants.TURN_RADIUS_STROKE_COLOR, Constants.DOTTED_LINE_DASH_LENGTH);
+        fieldOverlay.strokeCircle(ICC.get(0), ICC.get(1), Math.abs(turnRadius * Constants.INCHES_PER_METER));
     }
 
     public void sendTelemetry() {
@@ -133,7 +132,7 @@ public class Robot implements Subsystem {
 
         // sending telemetry for telemetry providers
         for(TelemetryProvider telemetryProvider: telemetryProviders) {
-            Map<String, Object> telemetryMap = telemetryProvider.getTelemetry(telemetryDebugEnabled);
+            Map<String, Object> telemetryMap = telemetryProvider.getTelemetry(debugTelemetryEnabled);
             String telemetryName = telemetryProvider.getTelemetryName();
 
             packet.addLine(telemetryName);
@@ -148,7 +147,7 @@ public class Robot implements Subsystem {
         }
 
         // sending telemetry for robot
-        Map<String, Object> robotTelemetry = getTelemetry(telemetryDebugEnabled);
+        Map<String, Object> robotTelemetry = getTelemetry(debugTelemetryEnabled);
         String telemetryName = getTelemetryName();
 
         packet.addLine(telemetryName);
@@ -276,8 +275,8 @@ public class Robot implements Subsystem {
             dashboard = FtcDashboard.getInstance();
     }
 
-    public void toggleIsTelemetryDebugEnabled() {
-        telemetryDebugEnabled = !telemetryDebugEnabled;
+    public void toggleIsDebugTelemetryEnabled() {
+        debugTelemetryEnabled = !debugTelemetryEnabled;
     }
 
     public void addTelemetryData(String name, Object value) {
@@ -288,5 +287,5 @@ public class Robot implements Subsystem {
         return dashboardEnabled;
     }
 
-    public boolean isTelemetryDebugEnabled() { return telemetryDebugEnabled; }
+    public boolean isDebugTelemetryEnabled() { return debugTelemetryEnabled; }
 }

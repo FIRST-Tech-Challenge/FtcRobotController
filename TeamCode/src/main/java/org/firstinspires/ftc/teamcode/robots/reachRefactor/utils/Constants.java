@@ -5,6 +5,8 @@ import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.ejml.simple.SimpleMatrix;
+
 import java.util.Arrays;
 
 @Config(value = "FFConstants")
@@ -44,9 +46,11 @@ public class Constants {
     // threshold to buffer from max chassis length when attempting to fully extend chassis
     // (to not put excessive strain on linear slide)
     public static double CHASSIS_LENGTH_THRESHOLD = 0.1;
+    public static double SWERVE_GEAR_RATIO = 72 / 40;
 
     // conversion factors
     public static double DRIVETRAIN_TICKS_PER_REVOLUTION = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class).getTicksPerRev();
+
     public static double DRIVETRAIN_TICKS_PER_METER = DRIVETRAIN_TICKS_PER_REVOLUTION / (2 * Math.PI * WHEEL_RADIUS); // TODO: use TPM_CALIBRATION game state to calibrate TPM
     public static double INCHES_PER_METER = 39.3701;
 
@@ -106,5 +110,19 @@ public class Constants {
     }
     public enum Alliance {
         RED, BLUE
+    }
+    public enum Positions {
+        START_RED(new SimpleMatrix(new double[][] {{0, 0, 0}})),
+        START_BLUE(new SimpleMatrix(new double[][] {{0, 0, 0}}));
+
+        private SimpleMatrix pose;
+
+        Positions(SimpleMatrix pose) {
+            this.pose = pose;
+        }
+
+        public SimpleMatrix getPose() {
+            return pose;
+        }
     }
 }

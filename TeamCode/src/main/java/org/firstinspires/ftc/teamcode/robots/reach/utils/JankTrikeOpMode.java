@@ -49,10 +49,14 @@ public class JankTrikeOpMode extends OpMode
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         swerve.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        swerve.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         swerveAngle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         swerveAngle.setTargetPosition(swerveAngle.getCurrentPosition());
         swerveAngle.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        swerveAngle.setPower(1);
+        swerveAngle.setPower(0);
         swerveAngle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
@@ -125,6 +129,8 @@ public class JankTrikeOpMode extends OpMode
         telemetry.addData("Motors", leftPower);
         telemetry.addData("ticksLeft", leftDrive.getCurrentPosition());
         telemetry.addData("ticksLeft", rightDrive.getCurrentPosition());
+        telemetry.addData("ticksSwerve", swerve.getCurrentPosition());
+        telemetry.addData("ticksSwivel", swerveAngle.getCurrentPosition());
     }
 
     /*

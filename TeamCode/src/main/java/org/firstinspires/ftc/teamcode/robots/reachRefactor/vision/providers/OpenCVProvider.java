@@ -24,6 +24,7 @@ public class OpenCVProvider implements VisionProvider {
     public void initializeVision(HardwareMap hardwareMap) {
         pipeline = new OpenCVPipeline();
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
+
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(() -> {
             camera.startStreaming(Constants.WEBCAM_WIDTH, Constants.WEBCAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
@@ -63,7 +64,7 @@ public class OpenCVProvider implements VisionProvider {
 
     @Override
     public Mat getDashboardImage() {
-        return new Mat();
+        return pipeline.getDashboardOutput();
     }
 
     @Override

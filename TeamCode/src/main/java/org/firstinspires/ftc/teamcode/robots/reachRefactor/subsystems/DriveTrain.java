@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -91,7 +92,6 @@ public class DriveTrain implements Subsystem {
         angles = new SimpleMatrix(3, 1);
         offsetAngles = new SimpleMatrix(3, 1);
         previousWheelTicks = new SimpleMatrix(3, 2);
-
 
         // PID
         turnPID = new PIDController(Constants.ROTATE_PID_COEFFICIENTS);
@@ -192,7 +192,7 @@ public class DriveTrain implements Subsystem {
 
         // calculating wheel displacements
         SimpleMatrix wheelTicks = getWheelTicks().rows(0, 2);
-        SimpleMatrix wheelDisplacementMeters = wheelTicks.minus(previousWheelTicks).divide(Constants.DRIVETRAIN_TICKS_PER_METER);
+        SimpleMatrix wheelDisplacementMeters = wheelTicks.minus(previousWheelTicks.rows(0, 2)).divide(Constants.DRIVETRAIN_TICKS_PER_METER);
 
 //        // rotating swivel wheel by swivel angle
 //        double swivelAngle = getSwivelAngle();
@@ -231,7 +231,7 @@ public class DriveTrain implements Subsystem {
 
         // PID corrections
         double maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
-//        motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
+        motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
 
         updateTargetChassisDistance();
         double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
@@ -241,7 +241,7 @@ public class DriveTrain implements Subsystem {
         // Motor controls
         motorFrontLeft.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
         motorFrontRight.setVelocity(targetFrontRightVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
-//        motorMiddle.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
+        motorMiddle.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
 
         updatePose();
     }
@@ -261,7 +261,7 @@ public class DriveTrain implements Subsystem {
         targetFrontRightVelocity = linearVelocity + angularVelocity * (targetTurnRadius + Constants.TRACK_WIDTH / 2);
         targetMiddleVelocity = linearVelocity + angularVelocity * Math.hypot(targetTurnRadius, chassisDistance);
 
-        targetSwivelAngle = linearVelocity == 0 ? Math.PI / 2 : Math.atan2(chassisDistance, targetTurnRadius);
+        targetSwivelAngle = angularVelocity == 0 ? Math.PI / 2 : linearVelocity == 0 ? 0 : Math.atan2(chassisDistance, targetTurnRadius);
 
         if(smoothingEnabled) {
             targetFrontLeftVelocity = frontLeftSmoother.update(targetFrontLeftVelocity);
@@ -331,7 +331,7 @@ public class DriveTrain implements Subsystem {
     //----------------------------------------------------------------------------------------------
 
     private double getSwivelAngle() {
-        return (motorMiddleSwivel.getCurrentPosition() / Constants.DRIVETRAIN_TICKS_PER_REVOLUTION * 2 * Math.PI + Math.PI / 2) % (2 * Math.PI);
+        return (motorMiddleSwivel.getCurrentPosition() / (Constants.DRIVETRAIN_TICKS_PER_REVOLUTION * Constants.SWERVE_GEAR_RATIO) * 2 * Math.PI + Math.PI / 2) % (2 * Math.PI);
     }
 
     public double getChassisDistance() {
