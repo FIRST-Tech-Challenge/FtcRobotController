@@ -13,14 +13,13 @@ public abstract class MasterAutonomous extends MasterOpMode {
     public void driveTank(double leftSidePower, double rightSidePower) {
         motorFrontLeft.setPower(leftSidePower);
         motorBackLeft.setPower(leftSidePower);
-        motorFrontRight.setPower(rightSidePower);
-        motorBackRight.setPower(rightSidePower);
+        motorFrontRight.setPower(-rightSidePower);
+        motorBackRight.setPower(-rightSidePower);
     }
 
     // This method drives a specified number of inches in a straight line when given a target distance and max speed
     // Set direction to true when going forward and false when going backwards
-    // todo - test this method
-    public void driveInches(double targetDistance, double maxSpeed, boolean direction) {
+    public void driveInches(double targetDistance, boolean direction) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -51,20 +50,21 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
             // We drive the wheels with the PID value
             if (direction) {
-                driveTank(Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed),
-                        Math.min(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER), maxSpeed));
+                driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER),
+                        Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER));
             } else {
-                driveTank(Math.min(Math.max(translationPID.getFilteredValue() * -1, Constants.MINIMUM_DRIVE_POWER), maxSpeed) * -1,
-                        Math.min(Math.max(translationPID.getFilteredValue() * -1, Constants.MINIMUM_DRIVE_POWER), maxSpeed) * -1);
+                driveTank(Math.max(translationPID.getFilteredValue() * -1, Constants.MINIMUM_DRIVE_POWER) * -1,
+                        Math.max(translationPID.getFilteredValue() * -1, Constants.MINIMUM_DRIVE_POWER) * -1);
             }
 
-            if (Math.abs(angleDeviation) >= 1) {
+            // todo - find a way to regulate the angle without the robot stopping half way through (maybe a way to concurrently turn and drive?)
+            /*if (Math.abs(angleDeviation) >= 1) {
                 turnDegrees(angleDeviation * -1);
-            }
+            }*/
 
             // Update positions using last distance measured by encoders
-            position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() +
-                    motorFrontRight.getCurrentPosition() + motorBackRight.getCurrentPosition()) / 4.0;
+            position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() -
+                    motorFrontRight.getCurrentPosition() - motorBackRight.getCurrentPosition()) / 4.0;
 
             if (direction) {
                 if (Math.abs(position - targetDistance) <= 1) {
@@ -81,13 +81,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
     }
 
     // This method turns a specified number of degrees when given a target angle to turn
-    // todo - test this method
     public void turnDegrees(double targetAngle) {
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -113,11 +107,11 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
             // We drive the wheels with the PID value
             if (targetAngle > 0) {
-                driveTank(Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER),
-                        Math.min((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER * -1));
+                driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER),
+                        Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER) * -1);
             } else if (targetAngle < 0) {
-                driveTank(Math.min((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER * -1),
-                        Math.max((translationPID.getFilteredValue() / 5), Constants.MINIMUM_TURNING_POWER));
+                driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER) * -1,
+                        Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER));
             }
 
             if (Math.abs(targetAngle - angleTraveled) <= 1) {
