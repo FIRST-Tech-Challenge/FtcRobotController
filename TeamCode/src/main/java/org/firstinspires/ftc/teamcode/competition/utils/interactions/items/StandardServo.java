@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.competition.utils.control.items;
+package org.firstinspires.ftc.teamcode.competition.utils.interactions.items;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.competition.utils.control.Control;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 
-public class StandardServo extends Control {
+public class StandardServo extends InteractionSurface {
 
     private final Servo SERVO;
 
@@ -54,4 +54,13 @@ public class StandardServo extends Control {
         return SERVO.getController();
     }
 
+    @Override
+    public boolean isInputDevice() {
+        return true;
+    }
+
+    @Override
+    public boolean isOutputDevice() {
+        return false;
+    }
 }

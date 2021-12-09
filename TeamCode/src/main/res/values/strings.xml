@@ -1,24 +1,33 @@
 <resources>
     <string name="title_activity_imgproc">imgproc</string>
     <string name="VUFORIA_KEY">AcQbfNb/////AAABmUoZxvy9bUCeksf5rYATLidV6rQS+xwgakOfD4C+LPj4FmsvqtRDFihtnTBZUUxxFbyM7CJMfiYTUEwcDMJERl938oY8iVD43E/SxeO64bOSBfLC0prrE1H4E5SS/IzsVcQCa9GsNaWrTEushMhdoXA3VSaW6R9KrrwvKYdNN/SbaN4TPslQkTqSUr63K60pkE5GqpeadAQuIm8V6LK63JD1TlF665EgpfsDZeVUBeAiJE86iGlT1/vNJ9kisAqKpBHsRyokaVClRnjlp28lmodjVRqeSk8cjCuYryn74tClfxfHQpkDDIsJO+7IYwJQCZQZZ+U9KJaMUeben4HOj0JTnQaEE6MZLaLQzY+C/6MS</string>
-    <string name="CV_WEBCAM_ONE">c1V</string>
-    <string name="CV_WEBCAM_TWO">c2V</string>
-    <string name="CV_WEBCAM_THREE">c3V</string>
-    <!---->
-    <string name="DRIVETRAIN_LEFT_DRIVE_1">ltM</string>
-    <string name="DRIVETRAIN_LEFT_DRIVE_2">lbM</string>
-    <string name="DRIVETRAIN_CENTER_DRIVE_1">cdM</string>
-    <string name="DRIVETRAIN_RIGHT_DRIVE_1">rtM</string>
-    <string name="DRIVETRAIN_RIGHT_DRIVE_2">rbM</string>
-    <string name="HARDWARE_INTAKE">iM</string>
-    <string name="HARDWARE_LIFT_ONE">l1M</string>
-    <string name="HARDWARE_LIFT_TWO">l2M</string>
-    <string name="HARDWARE_DISTANCE_SENSOR">diD</string>
-    <string name="HARDWARE_DUCK_MOTOR">duM</string>
-    <string name="HARDWARE_INTAKE_SERVO_LOWER_ONE">il1S</string>
-    <string name="HARDWARE_INTAKE_SERVO_LOWER_TWO">il2S</string>
-    <string name="HARDWARE_INTAKE_SERVO_UPPER">iuS</string>
-    <string name="HARDWARE_HAND_TURNER_SERVO">htS</string>
-    <string name="HARDWARE_HAND_FLIPPER_SERVO">hfS</string>
-    <string name="HARDWARE_HAND_GRABBER_SERVO">hgS</string>
+    <string name="WEBCAM">webcam</string>
+    <!--
+        NAMING CONVENTION:
+        String names are standardized as such.
+
+        ...SUBSYSTEM_...LOCATION_...JOB_...TYPE_...?AXIS
+
+        For example, a motor placed at the right top of a spinning device which controls movement on the y axis would be named:
+
+        SPINNING_DEVICE_RIGHT_TOP_MOVING_MOTOR_Y
+
+        The same motor without a specified axis (axes are optional as shown by the question mark in the syntax) would be:
+
+        SPINNING_DEVICE_RIGHT_TOP_MOVING_MOTOR
+
+    -->
+    <string name="DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR">ltM</string>
+    <string name="DRIVETRAIN_LEFT_BOTTOM_DRIVING_MOTOR">lbM</string>
+    <string name="DRIVETRAIN_CENTER_DRIVING_MOTOR">cdM</string>
+    <string name="DRIVETRAIN_RIGHT_TOP_DRIVING_MOTOR">rtM</string>
+    <string name="DRIVETRAIN_RIGHT_BOTTOM_DRIVING_MOTOR">rbM</string>
+    <string name="INTAKE_SPINNING_MOTOR">iM</string>
+    <string name="LIFT_RIGHT_ELEVATOR_MOTOR">l1M</string>
+    <string name="LIFT_LEFT_ELEVATOR_MOTOR">l2M</string>
+    <string name="HAND_DISTANCE_SENSOR">diD</string>
+    <string name="DUCK_SPINNING_MOTOR">duM</string>
+    <string name="INTAKE_LIFTING_SERVO">iuS</string>
+    <string name="HAND_SPINNING_MOTOR_X">htS</string>
+    <string name="HAND_SPINNING_MOTOR_Y">hfS</string>
 </resources>

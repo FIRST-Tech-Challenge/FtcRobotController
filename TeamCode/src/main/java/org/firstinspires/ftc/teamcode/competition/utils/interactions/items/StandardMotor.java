@@ -1,17 +1,16 @@
-package org.firstinspires.ftc.teamcode.competition.utils.control.items;
+package org.firstinspires.ftc.teamcode.competition.utils.interactions.items;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.competition.utils.control.Control;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 
 /**
  * Represents a motor attached to the robot.
  * @author Thomas Ricci, Mickael Lachut
  * */
-public class Motor extends Control {
+public class StandardMotor extends InteractionSurface {
 
     private final String NAME;
     private final HardwareMap HARDWARE;
@@ -23,11 +22,20 @@ public class Motor extends Control {
     private final double COUNTS_PER_INCH;
     private final MotorType TYPE;
 
+    @Override
+    public boolean isInputDevice() {
+        return true;
+    }
+
+    @Override
+    public boolean isOutputDevice() {
+        return false;
+    }
+
     private enum MotorType {
         SIMPLE, 
         COMPLEX
     }
-
 
     /**
      * Creates a reference to a complex motor on the robot. This motor can drive to a position, unlike the simple variant.
@@ -38,7 +46,7 @@ public class Motor extends Control {
      * @param gearReduction The reduction ratio of the motor's gearing.
      * @param radius The radius of the motor's attachment.
      */
-    public Motor(HardwareMap hardware, String name, DcMotorSimple.Direction offset, double countsPerRev, double gearReduction, double radius) {
+    public StandardMotor(HardwareMap hardware, String name, DcMotorSimple.Direction offset, double countsPerRev, double gearReduction, double radius) {
         NAME = name;
         HARDWARE = hardware;
         MOTOR = HARDWARE.get(DcMotor.class, name);
@@ -60,7 +68,7 @@ public class Motor extends Control {
      * @param name The name of the motor as listed on the FtcRobotController device.
      * @param offset The directional offset of the motor. This can be useful if a motor is mounted the opposite way it should be, for example upside down.
      */
-    public Motor(HardwareMap hardware, String name, DcMotorSimple.Direction offset) {
+    public StandardMotor(HardwareMap hardware, String name, DcMotorSimple.Direction offset) {
         NAME = name;
         HARDWARE = hardware;
         MOTOR = hardware.get(DcMotor.class, name);

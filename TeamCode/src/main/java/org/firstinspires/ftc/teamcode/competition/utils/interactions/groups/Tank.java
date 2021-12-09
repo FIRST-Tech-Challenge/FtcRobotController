@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.competition.utils.control.groups;
+package org.firstinspires.ftc.teamcode.competition.utils.interactions.groups;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.competition.utils.control.Control;
-import org.firstinspires.ftc.teamcode.competition.utils.control.items.Motor;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
-public class Tank extends Control {
+public class Tank extends InteractionSurface {
 
-    private final Motor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
+    private final StandardMotor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
 
     /**
      * Creates a new tank drivetrain.
@@ -15,7 +14,7 @@ public class Tank extends Control {
      * @param leftTop The left top motor of the tank
      * @param leftBottom The left bottom motor of the tank
      */
-    public Tank(Motor rightTop, Motor rightBottom, Motor leftTop, Motor leftBottom) {
+    public Tank(StandardMotor rightTop, StandardMotor rightBottom, StandardMotor leftTop, StandardMotor leftBottom) {
         RIGHT_TOP = rightTop;
         RIGHT_BOTTOM = rightBottom;
         LEFT_TOP = leftTop;
@@ -121,20 +120,29 @@ public class Tank extends Control {
         LEFT_BOTTOM.reset();
     }
 
-    public Motor getRightTop() {
+    public StandardMotor getRightTop() {
         return RIGHT_TOP;
     }
 
-    public Motor getRightBottom() {
+    public StandardMotor getRightBottom() {
         return RIGHT_BOTTOM;
     }
 
-    public Motor getLeftTop() {
+    public StandardMotor getLeftTop() {
         return LEFT_TOP;
     }
 
-    public Motor getLeftBottom() {
+    public StandardMotor getLeftBottom() {
         return LEFT_BOTTOM;
     }
 
+    @Override
+    public boolean isInputDevice() {
+        return true;
+    }
+
+    @Override
+    public boolean isOutputDevice() {
+        return false;
+    }
 }

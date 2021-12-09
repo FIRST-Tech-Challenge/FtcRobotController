@@ -1,18 +1,17 @@
-package org.firstinspires.ftc.teamcode.competition.utils.control.groups;
+package org.firstinspires.ftc.teamcode.competition.utils.interactions.groups;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.competition.utils.control.Control;
-import org.firstinspires.ftc.teamcode.competition.utils.control.items.Motor;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
-public class Carfax extends Control {
+public class Carfax extends InteractionSurface {
 
-    private final Motor RIGHT, LEFT;
+    private final StandardMotor RIGHT, LEFT;
 
     /**
      * Creates a new carfax drivetrain.
      * @param right The right top motor of the carfax
      */
-    public Carfax(Motor right, Motor left) {
+    public Carfax(StandardMotor right, StandardMotor left) {
         RIGHT = right;
         LEFT = left;
     }
@@ -100,12 +99,21 @@ public class Carfax extends Control {
         LEFT.reset();
     }
 
-    public Motor getRight() {
+    public StandardMotor getRight() {
         return RIGHT;
     }
 
-    public Motor getLeft() {
+    public StandardMotor getLeft() {
         return LEFT;
     }
-    
+
+    @Override
+    public boolean isInputDevice() {
+        return true;
+    }
+
+    @Override
+    public boolean isOutputDevice() {
+        return false;
+    }
 }
