@@ -92,9 +92,9 @@ public class MecanumAutonomous extends LinearOpMode {
 
         //Run code while the opMode is active.
         if(opModeIsActive()) {
-            driveStraight(10,0.8,5.0);
-            drive(0,10, 0.8, 5.0);
-            drive(0,10,-0.8,5.0);
+            driveStraight(50,0.8,5.0);
+            drive(0,25, 0.8, 5.0);
+            drive(0,25,-0.8,5.0);
             rotate(90, 0.8);
             rotate(-90, 0.8);
         }
