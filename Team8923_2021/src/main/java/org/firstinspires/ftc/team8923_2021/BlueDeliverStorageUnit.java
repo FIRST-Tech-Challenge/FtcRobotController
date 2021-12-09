@@ -8,11 +8,12 @@ public class BlueDeliverStorageUnit extends MasterAutonomous {
         initAuto();
         waitForStart();
         double referenceAngle = imu.getAngularOrientation().firstAngle;
-        moveForward(5.0, 10, 10);
-        imuPivot(referenceAngle, 180, 35, 0.015, 3.0);
-        moveForward(-2.0, 10, 10);
+        moveForward(-15.0, 10, 10);
+//      imuPivot(referenceAngle, , 35, 0.015, 3.0);
+        //moveForward(-2.0, 10, 10);
         autoDeliver();
         imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
+        moveForward(4, 10, 10);
         moveForward(30.0, 10, 10);
     }
 }

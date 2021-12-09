@@ -200,23 +200,28 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     public void spinCarouselBlue() {
         motorCarousel.setPower(1.0);
-        sleep(3500);
+        sleep(4300);
         motorCarousel.setPower(0.0);
     }
 
     public void spinCarouselRed() {
         motorCarousel.setPower(-1.0);
-        sleep(3500);
+        sleep(4300);
         motorCarousel.setPower(0.0);
     }
 
-    public void autoDeliver() throws InterruptedException {
+    public void autoDeliver() {
             //motorLift.setTargetPosition(10);
+            servoGrabber.setPosition(0.5);
             motorLift.setPower(0.1);
-            sleep(2000);
+            sleep(3000);
             servoGrabber.setPosition(1.0);
-            servoGrabber.setPosition(-0.8);
+            sleep(2000);
+            servoGrabber.setPosition(0.0);
+            sleep(1000);
+            moveForward(5, 10, 10);
             motorLift.setPower(-0.1);
+            sleep(2000);
             motorLift.setPower(0.0);
         }
 

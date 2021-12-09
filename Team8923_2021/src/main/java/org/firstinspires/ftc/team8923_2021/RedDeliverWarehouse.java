@@ -8,13 +8,11 @@ public class RedDeliverWarehouse extends MasterAutonomous {
         initAuto();
         waitForStart();
         double referenceAngle = imu.getAngularOrientation().firstAngle;
-        moveForward(5.0, 10, 10);
-        imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
-        moveForward(-2.0, 10, 10);
+        moveForward(-16, 10, 10);
+        /*imuPivot(referenceAngle, 180, 35, 0.015, 3.0);
+        moveForward(-2.0, 10, 10);*/
         autoDeliver();
-        moveForward(2.0, 10, 10);
         imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
-        moveForward(10.0, 10, 10);
-        imuPivot(referenceAngle, 90, 35, 0.015, 3.0);
+        moveForward(45.0, 10, 10);
     }
 }
