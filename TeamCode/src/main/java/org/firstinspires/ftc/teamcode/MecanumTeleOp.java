@@ -40,7 +40,8 @@ public class MecanumTeleOp extends LinearOpMode {
          while (! isStarted()) {
 
              telemetry.addData("Arm Encoder", robot.motorArm.getCurrentPosition());
-             telemetry.addData("Say GEX GEX GEx", "Hello Driver");
+             telemetry.addData("Say GEX GEX GEX", "Hello Driver");
+             telemetry.addData("arm limit switch", robot.armLimitSwitch.isPressed());
              telemetry.update();
          }
 
