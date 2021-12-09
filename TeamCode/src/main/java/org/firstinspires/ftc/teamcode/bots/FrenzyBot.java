@@ -33,6 +33,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public static int LIFT_LEVEL_TWO = -1360;
     public static int LIFT_LEVEL_ONE = -860; // Make sure to be further away for level one
     public static int LIFT_NO_EXTENSION = 0;
+    public static int LIFT_UNDER_EXTENTION = 5;
 
     private int liftLocation = LIFT_NO_EXTENSION;
     private static double LIFT_SPEED = 0.95;
@@ -41,7 +42,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     NormalizedColorSensor colorSensor;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_READY = 0.75;
+    private static double DROPPER_SERVO_POS_READY = 1;
     private static double DROPPER_SERVO_POS_MOVE = 0.6;
     private static double DROPPER_SERVO_POS_DROP = 0.0;
 
@@ -53,8 +54,8 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     //Intake
     private static double INTAKE_ELEMENT_MOVE_SPEED = -0.2;
-    private static double INTAKE_SPEED = 0.8;
-    private static double INTAKE_SPEED_REVERSE = -0.75;
+    private static double INTAKE_SPEED = 0.7;
+    private static double INTAKE_SPEED_REVERSE = -0.65;
 
     private boolean intakeRunning = false;
 
@@ -204,8 +205,8 @@ public class FrenzyBot extends FrenzyBaseBot {
 
             }
         }
-        liftLocation = LIFT_NO_EXTENSION;
-        this.lift.setTargetPosition(LIFT_NO_EXTENSION);
+        liftLocation = LIFT_UNDER_EXTENTION;
+        this.lift.setTargetPosition(LIFT_UNDER_EXTENTION);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if (getLiftPosition() == LIFT_LEVEL_ONE){
             this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED_LOW);
