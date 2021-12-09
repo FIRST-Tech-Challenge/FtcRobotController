@@ -48,6 +48,11 @@ public class drive extends LinearOpMode {
     int Drop_Rotation = 160;
     int Drop_Range = 30;
     int Pickup_Hover = 10;
+    boolean dropping = false;
+    double armTargetPos = 0;
+    double armPos = 0;
+    static double Right_TrigPosition;
+    static double spinPower = 0;
 
     //right trigger move one motor more depending on 1 or -1 values (Range.clip())
     //encoder used to move intake
@@ -71,13 +76,13 @@ public class drive extends LinearOpMode {
 
         // Set Motor variables
         // Motors using encoders:
-        spinnerArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // spinnerArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //spinnerArm.setTargetPosition(200);
         // set motors to run to target encoder position and stop with brakes on.
         //spinnerArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        spinnerArm.setPower(1);
+        // spinnerArm.setPower(1);
 
         // Motors without encoders
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -92,38 +97,35 @@ public class drive extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        // Define Variables
+        // Setup a variable for each drive wheel to save power level for telemetry
+        double LeftPower;
+        double RightPower;
+        double max;
+
+        double rightPower;
+        double servoposition;
+
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double LeftPower;
-            double RightPower;
-            double max;
-            double Right_TrigPosition;
-
-            double rightPower;
-            double spinPower;
-            double servoposition;
-            boolean dropping = false;
-            double armPos = 0;
-
 
             // **** MOVE THE ARM ****
             if (gamepad2.a) {
                 dropping = true;
-                armPos = Drop_Rotation;
+                armTargetPos = Drop_Rotation;
             } else if (gamepad2.b) {
                 dropping = false;
-                armPos = Pickup_Hover;
+                armTargetPos = Pickup_Hover;
             }
 
-            if (dropping == true) {
-                Right_TrigPosition = (Drop_Range * gamepad2.left_trigger);
+            if (dropping) {
+                Right_TrigPosition = armTargetPos + (int)(Drop_Range * gamepad2.left_trigger);
             } else {
-                Right_TrigPosition = 0;
+                Right_TrigPosition = armTargetPos + 0;
             }
 
-            /*
+            /*  //Keep going down until touch sensor is triggered
             if (BoxTouch.isPressed()) {
                 armPos = 0;
                 spinnerArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -134,11 +136,14 @@ public class drive extends LinearOpMode {
             }
             */
 
+            CalcArmPower((int)Right_TrigPosition);
+
+            spinnerArm.setPower(spinPower);
 
 
              // Move the Arm
-            spinnerArm.setTargetPosition((int) (armPos+Right_TrigPosition));
-            spinnerArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //spinnerArm.setTargetPosition((int) (armTargetPos+Right_TrigPosition));
+            //spinnerArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Missing code for Box Leveling servo
 
@@ -175,7 +180,7 @@ public class drive extends LinearOpMode {
 
 
             // Telemetry
-            telemetry.addData("Move to:", armPos+Right_TrigPosition);
+            telemetry.addData("Move to:", armTargetPos+Right_TrigPosition);
             telemetry.addData("Curr Pos:",spinnerArm.getCurrentPosition());
             telemetry.addData("is at target", !spinnerArm.isBusy());
 
@@ -215,5 +220,51 @@ public class drive extends LinearOpMode {
             //null;
             //}
         }
-    }
 
+    private void CalcArmPower(int right_trigPosition) {
+        // 1.Get current position
+        // 2.Compare with target position
+        // 3.Determine Side (Drop / PickUP)
+        // 4.Determine Power need (High / Low)
+        // 5.High Power => Power 100%
+        // 6.Low Power => Power 30%
+        // 7. Mid Power => Power 50%
+
+        // Asumptions
+        // Pickup is 0
+        // Drop is 160
+        //
+        // Variables
+        double OvershootPower = .3;
+        double FullPower = 1;
+        int MoveThreshold = 5;
+        // 1. Get current position
+        armPos = spinnerArm.getCurrentPosition();
+
+        if (Math.abs(Right_TrigPosition - armPos) < MoveThreshold) { //Inside Threshold don't move
+            spinPower = 0;
+        } else {  // Need to move the arm
+            if (armPos <= (Drop_Rotation/6*3)) {        //I'm in PickUp Zone
+                if(armPos < Right_TrigPosition) { //I'm lower than target
+                    spinPower = FullPower;
+                } else {  // I'm higher than target
+                    spinPower = -OvershootPower;
+                }
+            } else if (armPos >= (Drop_Rotation*5/6)) { //I'm in the Drop Zone
+                if(armPos < Right_TrigPosition) { //I'm higher than target
+                    spinPower = OvershootPower;
+                } else {  // I'm higher than target
+                    spinPower = -FullPower;
+                }
+            } else {                                    // I'm in the middle Zone
+                if(armPos < Right_TrigPosition) { //I'm higher than target
+                    spinPower = 0.5;
+                } else {  // I'm higher than target
+                    spinPower = -0.5;
+                }
+
+            }
+        }
+
+    }
+}

@@ -16,13 +16,13 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 // import lines were omitted. OnBotJava will add them automatically.
 
-@TeleOp(name="hexMotorIntake", group="Pushbot")
+@TeleOp(name="Spinner_Arm_Encoder", group="Pushbot")
 public class hexMotor_2021 extends LinearOpMode {
     DcMotor motor;
 
     @Override
     public void runOpMode() {
-        motor  = hardwareMap.get(DcMotor.class, "spinner_intake");
+        motor  = hardwareMap.get(DcMotor.class, "spinner_arm");
         int MotEncoderPosition = 0;
         double swing;
 
