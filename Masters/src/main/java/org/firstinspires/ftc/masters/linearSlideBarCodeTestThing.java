@@ -2,6 +2,7 @@ package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.Date;
 
@@ -18,34 +19,32 @@ public class linearSlideBarCodeTestThing extends LinearOpMode {
 
         //This stuff is the open CV, used when we get the placing the freight done
 
-//        robot.openCVInnitShenanigans();
-//        EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
-//
-//        waitForStart();
-//
-//        long startTime = new Date().getTime();
-//        long time = 0;
-//
-//        while (time < 200 && opModeIsActive()) {
-//            time = new Date().getTime() - startTime;
-//            freightLocation = robot.analyze();
-//
-//            telemetry.addData("Position", freightLocation);
-//            telemetry.update();
-//        }
-//        robot.forward(0.4, .8);
-//        robot.turnToHeadingSloppy(.25,-45,-45);
+        robot = new RobotClass(hardwareMap, telemetry, this);
+        robot.openCVInnitShenanigans();
+        EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
 
-//        if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
+        waitForStart();
 
+        long startTime = new Date().getTime();
+        long time = 0;
 
+        while (time < 200 && opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+            freightLocation = robot.analyze();
 
-//        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+            telemetry.addData("Position", freightLocation);
+            telemetry.update();
+        }
+        robot.forward(0.6, 1.5);
+        robot.turnToHeadingSloppy(.6,-45,-20);
+        robot.forward(.3,.8);
 
-//        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
-
-//        }
-
-
+        if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
+            robot.dumpFreightBottom();
+        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+            robot.dumpFreightMiddle();
+        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
+            robot.dumpFreightTop();
+        }
     }
 }

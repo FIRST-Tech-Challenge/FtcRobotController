@@ -208,7 +208,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 intakeOn = false;
                 linearSlideMotor.setTargetPosition(TOP_ENCODER_VALUE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(.4);
+                linearSlideMotor.setPower(.8);//.4
             }
 
             if (gamepad2.dpad_left) {
@@ -218,7 +218,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 intakeOn = false;
                 linearSlideMotor.setTargetPosition(MIDDLE_ENCODER_VALUE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(.4);
+                linearSlideMotor.setPower(.8);//.4
             }
 
             if (gamepad2.dpad_down) {
@@ -228,19 +228,20 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 intakeOn = false;
                 linearSlideMotor.setTargetPosition(BOTTOM_ENCODE_VALUE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(.4);
+                linearSlideMotor.setPower(.8);//.4
             }
 
             if (gamepad2.left_trigger >= .35) {
                 if (linearSlideMotor.getCurrentPosition() >= 500) {
 //                    dump
-                    dumpServo.setPosition(1.5);
+                    dumpServo.setPosition(.8);//1.5
                     sleep(1800);
-//                    linearSlideTarget = linearSlideTargets.BASE;
-//                    linearSlideMotor.setTargetPosition(0);
-//                    linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                    linearSlideMotor.setPower(-.4);
-                    dumpServo.setPosition(0.75);
+
+                    dumpServo.setPosition(.41);//0.75
+                    linearSlideTarget = linearSlideTargets.BASE;
+                    linearSlideMotor.setTargetPosition(0);
+                    linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    linearSlideMotor.setPower(-.8);//-.4
                 }
             }
 

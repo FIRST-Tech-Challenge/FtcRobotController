@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -67,10 +68,10 @@ public class RobotClass {
         colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
         colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
-        carousel = hardwareMap.get(DcMotor.class, "carousel");
+        carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
-        linearSlideMotor = hardwareMap.dcMotor.get("linearSlideMotor");
-        linearSlideServo = hardwareMap.servo.get("linearSlideServo");
+        linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
+        linearSlideServo = hardwareMap.servo.get("dump");
 
         this.opmode= opmode;
 
@@ -103,6 +104,16 @@ public class RobotClass {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
+        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
+        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
+        colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
+        carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
+        intakeMotor = hardwareMap.dcMotor.get("intake");
+        linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
+        linearSlideServo = hardwareMap.servo.get("dump");
+        linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        this.opmode= opmode;
 
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -110,10 +121,6 @@ public class RobotClass {
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
-
-        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
-        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
-        colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
 
         this.telemetry = telemetry;
 
@@ -128,7 +135,6 @@ public class RobotClass {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        this.opmode = opmode;
 
 
     }
@@ -232,6 +238,63 @@ public class RobotClass {
         carousel.setPower(speed);
         pauseButInSecondsForThePlebeians(seconds);
         carousel.setPower(0);
+    }
+
+    public void dumpFreightBottom () {
+        linearSlideMotor.setTargetPosition(800);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(.8);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideServo.setPosition(.8);//1.5
+        pause(1800);
+        linearSlideServo.setPosition(.41);
+        linearSlideMotor.setTargetPosition(0);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(-.8);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideMotor.setPower(0);
+    }
+
+    public void dumpFreightMiddle () {
+        linearSlideMotor.setTargetPosition(1300);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(.8);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideServo.setPosition(.8);//1.5
+        pause(1800);
+        linearSlideServo.setPosition(.41);
+        linearSlideMotor.setTargetPosition(0);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(-.8);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideMotor.setPower(0);
+    }
+
+    public void dumpFreightTop () {
+        linearSlideMotor.setTargetPosition(1700);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(.8);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideServo.setPosition(.8);//1.5
+        pause(1800);
+        linearSlideServo.setPosition(.41);
+        linearSlideMotor.setTargetPosition(0);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(-.8);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideMotor.setPower(0);
     }
 
     public void wayneStrafeBlue (double speed) {
