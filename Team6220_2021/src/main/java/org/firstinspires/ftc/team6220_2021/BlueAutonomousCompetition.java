@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 
 import java.util.List;
 
@@ -34,12 +35,22 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
         initVuforia();
         initTfod();
 
+        servoGrabber.setPosition(0.0);
+        pauseMillis(500);
+        servoArm.setPosition(0.81);
+
         if (tfod != null) {
             tfod.activate();
             tfod.setZoom(1.0, 16.0/9.0);
         }
 
         waitForStart();
+
+        servoArm.setPosition(0.15);
+        motorArm.setTargetPosition(555);
+        motorArm.setPower(0.9);
+
+        pauseMillis(1000);
 
         if (tfod != null) {
             tfod.activate();
@@ -75,46 +86,82 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                // close grabber
-
                 switch (barcode) {
                     case 0:
                         telemetry.addData("barcode: ", barcode);
                         telemetry.update();
 
-                        // lift arm to 1st level
+                        servoArm.setPosition(0.4);
+                        motorArm.setTargetPosition(300);
+                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(60);
+                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(-60);
+                        // move forward if necessary
+                        servoGrabber.setPosition(0.34);
+                        driveInches(-40, Constants.MINIMUM_DRIVE_POWER, false);
+                        motorArm.setTargetPosition(1100);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(-90);
+                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, true);
+                        motorDuck.setPower(0.6);
+                        pauseMillis(2000);
+                        motorDuck.setPower(0.0);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
+                        turnDegrees(180);
+                        driveInches(96, Constants.MINIMUM_DRIVE_POWER, true);
                         break;
 
                     case 1:
                         telemetry.addData("barcode: ", barcode);
                         telemetry.update();
 
-                        // lift arm to 2nd level
+                        servoArm.setPosition(0.3);
+                        motorArm.setTargetPosition(555);
+                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(60);
+                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(-60);
+                        // move forward if necessary
+                        servoGrabber.setPosition(0.34);
+                        driveInches(-40, Constants.MINIMUM_DRIVE_POWER, false);
+                        motorArm.setTargetPosition(1100);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(-90);
+                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, true);
+                        motorDuck.setPower(0.6);
+                        pauseMillis(2000);
+                        motorDuck.setPower(0.0);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
+                        turnDegrees(180);
+                        driveInches(96, Constants.MINIMUM_DRIVE_POWER, true);
                         break;
 
                     case 2:
                         telemetry.addData("barcode: ", barcode);
                         telemetry.update();
 
-                        // lift arm to 3rd level
+                        servoArm.setPosition(0.15);
+                        motorArm.setTargetPosition(900);
+                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(60);
+                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(-60);
+                        // move forward if necessary
+                        servoGrabber.setPosition(0.34);
+                        driveInches(-40, Constants.MINIMUM_DRIVE_POWER, false);
+                        motorArm.setTargetPosition(1100);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(-90);
+                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, true);
+                        motorDuck.setPower(0.6);
+                        pauseMillis(2000);
+                        motorDuck.setPower(0.0);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
+                        turnDegrees(180);
+                        driveInches(96, Constants.MINIMUM_DRIVE_POWER, true);
                         break;
                 }
-
-                driveInches(6, true);
-                turnDegrees(-60);
-                driveInches(48 / Math.sqrt(3), true);
-                turnDegrees(60);
-                // move forward if necessary
-                // open grabber
-                driveInches(-40, false);
-                // raise arm to max position
-                driveInches(4, true);
-                turnDegrees(90);
-                driveInches(50, true);
-                // spin carousel
-                driveInches(4, false);
-                turnDegrees(180);
-                driveInches(96, true);
 
                 // This goes inside of the switch and is used just like above, but with cubes/ducks/spheres instead of the TSE.
                 // Used to detect freight for cycling to the shared shipping hub in autonomous

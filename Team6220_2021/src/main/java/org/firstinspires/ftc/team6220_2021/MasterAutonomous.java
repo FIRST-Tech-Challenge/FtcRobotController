@@ -10,16 +10,20 @@ import org.firstinspires.ftc.team6220_2021.ResourceClasses.PIDFilter;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 
 public abstract class MasterAutonomous extends MasterOpMode {
+    public double max(double a, double b, double c) {
+        if (a > b && a > c) {
+            return a;
+        } else if (b > a && b > c) {
+            return b;
+        } else if (c > b && c > a) {
+            return c;
+        } else {
+            return a;
+        }
+    }
+
     // This method drives tank when given an angle drive power and turning power
     public void driveTank(double leftSidePower, double rightSidePower) {
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -27,25 +31,13 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         motorFrontLeft.setPower(leftSidePower);
         motorBackLeft.setPower(leftSidePower);
-<<<<<<< HEAD
-        motorFrontRight.setPower(rightSidePower);
-        motorBackRight.setPower(rightSidePower);
-
-//        pauseMillis(time);
-//
-//        motorFrontLeft.setPower(0);
-//        motorBackLeft.setPower(0);
-//        motorFrontRight.setPower(0);
-//        motorBackRight.setPower(0);
-=======
         motorFrontRight.setPower(-rightSidePower);
         motorBackRight.setPower(-rightSidePower);
->>>>>>> c8b3d9893abf9fb4cae33c73a63fec30dfd14d36
     }
 
     // This method drives a specified number of inches in a straight line when given a target distance and max speed
     // Set direction to true when going forward and false when going backwards
-    public void driveInches(double targetDistance, boolean direction) {
+    public void driveInches(double targetDistance, double minSpeed, boolean direction) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -76,23 +68,17 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
             // We drive the wheels with the PID value
             if (direction) {
-                driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER),
-                        Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_DRIVE_POWER));
+                driveTank(max(translationPID.getFilteredValue(), minSpeed, Constants.MINIMUM_DRIVE_POWER),
+                        max(translationPID.getFilteredValue(), minSpeed, Constants.MINIMUM_DRIVE_POWER));
             } else {
-                driveTank(Math.max(translationPID.getFilteredValue() * -1, Constants.MINIMUM_DRIVE_POWER) * -1,
-                        Math.max(translationPID.getFilteredValue() * -1, Constants.MINIMUM_DRIVE_POWER) * -1);
+                driveTank(max(translationPID.getFilteredValue() * -1, minSpeed, Constants.MINIMUM_DRIVE_POWER) * -1,
+                        max(translationPID.getFilteredValue() * -1, minSpeed, Constants.MINIMUM_DRIVE_POWER) * -1);
             }
 
-<<<<<<< HEAD
-//            if (Math.abs(angleDeviation) >= 1) {
-//                turnDegrees(angleDeviation * -1);
-//            }
-=======
             // todo - find a way to regulate the angle without the robot stopping half way through (maybe a way to concurrently turn and drive?)
             /*if (Math.abs(angleDeviation) >= 1) {
                 turnDegrees(angleDeviation * -1);
             }*/
->>>>>>> c8b3d9893abf9fb4cae33c73a63fec30dfd14d36
 
             // Update positions using last distance measured by encoders
             position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() -
@@ -114,17 +100,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     // This method turns a specified number of degrees when given a target angle to turn
     public void turnDegrees(double targetAngle) {
-<<<<<<< HEAD
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
-=======
->>>>>>> c8b3d9893abf9fb4cae33c73a63fec30dfd14d36
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

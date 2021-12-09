@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 
 import java.util.List;
 
@@ -48,7 +49,8 @@ public class RedAutonomousCompetition extends MasterAutonomous {
         servoArm.setPosition(0.15);
         motorArm.setTargetPosition(555);
         motorArm.setPower(0.9);
-        pauseMillis(500);
+
+        pauseMillis(1000);
 
         if (tfod != null) {
             tfod.activate();
@@ -82,8 +84,6 @@ public class RedAutonomousCompetition extends MasterAutonomous {
             }
         }
 
-        pauseMillis(2000);
-
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 switch (barcode) {
@@ -93,23 +93,23 @@ public class RedAutonomousCompetition extends MasterAutonomous {
 
                         servoArm.setPosition(0.4);
                         motorArm.setTargetPosition(300);
-                        driveInches(6, 0.5, true);
-                        turnDegrees(60);
-                        driveInches(48 / Math.sqrt(3), 0.75, true);
+                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
                         turnDegrees(-60);
+                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(60);
                         // move forward if necessary
                         servoGrabber.setPosition(0.34);
-                        driveInches(-40, 1.0, false);
+                        driveInches(-40, Constants.MINIMUM_DRIVE_POWER, false);
                         motorArm.setTargetPosition(1100);
-                        driveInches(4, 0.5, true);
-                        turnDegrees(-90);
-                        driveInches(50, 1.0, true);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(90);
+                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, true);
                         motorDuck.setPower(0.6);
                         pauseMillis(2000);
                         motorDuck.setPower(0.0);
-                        driveInches(4, 0.5, false);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
                         turnDegrees(180);
-                        driveInches(96, 1, true);
+                        driveInches(96, 0.75, true);
                         break;
 
                     case 1:
@@ -118,23 +118,23 @@ public class RedAutonomousCompetition extends MasterAutonomous {
 
                         servoArm.setPosition(0.3);
                         motorArm.setTargetPosition(555);
-                        driveInches(6, 0.5, true);
-                        turnDegrees(60);
-                        driveInches(48 / Math.sqrt(3), 0.75, true);
+                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
                         turnDegrees(-60);
+                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(60);
                         // move forward if necessary
                         servoGrabber.setPosition(0.34);
-                        driveInches(-40, 1.0, false);
+                        driveInches(-40, Constants.MINIMUM_DRIVE_POWER, false);
                         motorArm.setTargetPosition(1100);
-                        driveInches(4, 0.5, true);
-                        turnDegrees(-90);
-                        driveInches(50, 1.0, true);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(90);
+                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, true);
                         motorDuck.setPower(0.6);
                         pauseMillis(2000);
                         motorDuck.setPower(0.0);
-                        driveInches(4, 0.5, false);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
                         turnDegrees(180);
-                        driveInches(96, 1, true);
+                        driveInches(96, 0.75, true);
                         break;
 
                     case 2:
@@ -143,45 +143,26 @@ public class RedAutonomousCompetition extends MasterAutonomous {
 
                         servoArm.setPosition(0.15);
                         motorArm.setTargetPosition(900);
-                        driveInches(6, 0.5, true);
-                        turnDegrees(60);
-                        driveInches(48 / Math.sqrt(3), 0.75, true);
+                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
                         turnDegrees(-60);
+                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(60);
                         // move forward if necessary
                         servoGrabber.setPosition(0.34);
-                        driveInches(-40, 1.0, false);
+                        driveInches(-40, Constants.MINIMUM_DRIVE_POWER, false);
                         motorArm.setTargetPosition(1100);
-                        driveInches(4, 0.5, true);
-                        turnDegrees(-90);
-                        driveInches(50, 1.0, true);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
+                        turnDegrees(90);
+                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, true);
                         motorDuck.setPower(0.6);
                         pauseMillis(2000);
                         motorDuck.setPower(0.0);
-                        driveInches(4, 0.5, false);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
                         turnDegrees(180);
-                        driveInches(96, 1, true);
+                        driveInches(96, 0.75, true);
                         break;
                 }
 
-<<<<<<< HEAD
-=======
-                driveInches(6, true);
-                turnDegrees(60);
-                driveInches(48 / Math.sqrt(3), true);
-                turnDegrees(-60);
-                // move forward if necessary
-                // open grabber
-                driveInches(-40, false);
-                // raise arm to max position
-                driveInches(4, true);
-                turnDegrees(-90);
-                driveInches(50, true);
-                // spin carousel
-                driveInches(4, false);
-                turnDegrees(180);
-                driveInches(96, true);
-
->>>>>>> c8b3d9893abf9fb4cae33c73a63fec30dfd14d36
                 // This goes inside of the switch and is used just like above, but with cubes/ducks/spheres instead of the TSE
                 // Used for cycling freight in autonomous
                 /*if (tfod != null) {

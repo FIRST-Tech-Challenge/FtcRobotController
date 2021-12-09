@@ -16,25 +16,13 @@ public class Test extends MasterAutonomous {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-<<<<<<< HEAD
-//                driveInches(24, 0.75, true);
-//                pauseMillis(2000);
-//                driveInches(24, 0.75, false);
-//                pauseMillis(2000);
-//                turnDegrees(90);
-//                pauseMillis(2000);
-//                turnDegrees(-90);
-
-                driveTank(0.5, 0.5);
-=======
-                driveInches(24, true);
+                driveInches(24, 0.5, true);
                 pauseMillis(2000);
-                driveInches(24, false);
+                driveInches(24, 0.5, false);
                 pauseMillis(2000);
                 turnDegrees(90);
                 pauseMillis(2000);
                 turnDegrees(-90);
->>>>>>> c8b3d9893abf9fb4cae33c73a63fec30dfd14d36
                 break;
             }
         }
