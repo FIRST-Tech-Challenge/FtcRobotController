@@ -149,6 +149,7 @@ public class FF_6832 extends OpMode {
 
     @Override
     public void start() {
+        updateMostFrequentPosition();
         robot.setMostFrequentPosition(mostFrequentPosition);
         lastLoopClockTime = System.nanoTime();
         initializing = false;
@@ -228,36 +229,36 @@ public class FF_6832 extends OpMode {
         lastLoopClockTime = loopClockTime;
     }
 
+    private void updateMostFrequentPosition() {
+        int mostFrequentPositionCount = -1;
+        for(Map.Entry<Position, Integer> entry: positionFrequencies.entrySet()) {
+            int positionFrequency = entry.getValue();
+            if(positionFrequency > mostFrequentPositionCount) {
+                mostFrequentPositionCount = positionFrequency;
+                mostFrequentPosition = entry.getKey();
+            }
+        }
+    }
+
     private void handleTelemetry() {
         if(initializing) {
             robot.addTelemetryData("Detected Position", robot.visionProvider.getPosition());
         }
 
         if(robot.isDebugTelemetryEnabled()) {
-            if(initializing) {
-                // finding the most frequently detected position
-                int mostFrequentPositionCount = -1;
-                for(Map.Entry<Position, Integer> entry: positionFrequencies.entrySet()) {
-                    int positionFrequency = entry.getValue();
-                    if(positionFrequency > mostFrequentPositionCount) {
-                        mostFrequentPositionCount = positionFrequency;
-                        mostFrequentPosition = entry.getKey();
-                    }
-                }
-
+            if(initializing)
                 robot.addTelemetryData("Most Frequent Detected Position", mostFrequentPosition);
-            }
             robot.addTelemetryData("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
             robot.addTelemetryData("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
         }
         robot.addTelemetryData("Active", active);
         robot.addTelemetryData("State", String.format("(%d): %s", gameStateIndex, gameState));
-        robot.addTelemetryData("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
         robot.addTelemetryData("Dashboard Enabled", robot.isDashboardEnabled());
         robot.addTelemetryData("Debug Telemetry Enabled", robot.isDebugTelemetryEnabled());
 
         switch(gameState) {
             case TELE_OP:
+                robot.addTelemetryData("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
                 break;
             case AUTONOMOUS:
                 break;
@@ -269,10 +270,11 @@ public class FF_6832 extends OpMode {
 
     private void update() {
         if(initializing) {
+            if(robot.isDebugTelemetryEnabled())
+                updateMostFrequentPosition();
             robot.visionProvider.update();
             Position position = robot.visionProvider.getPosition();
             if(position != null)
-                // updating frequency of position detections
                 positionFrequencies.put(position, positionFrequencies.get(position) + 1);
         }
 

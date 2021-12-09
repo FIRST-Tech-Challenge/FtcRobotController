@@ -67,7 +67,7 @@ public class Robot implements Subsystem {
         try {
             visionProvider = VisionProviders.VISION_PROVIDERS[visionProviderIndex].newInstance();
         } catch(IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException("Error while instantiating visionProvider");
+            throw new RuntimeException("Error while instantiating vision provider");
         }
     }
 

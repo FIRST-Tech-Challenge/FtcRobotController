@@ -261,7 +261,11 @@ public class DriveTrain implements Subsystem {
         targetFrontRightVelocity = linearVelocity + angularVelocity * (targetTurnRadius + Constants.TRACK_WIDTH / 2);
         targetMiddleVelocity = linearVelocity + angularVelocity * Math.hypot(targetTurnRadius, chassisDistance);
 
-        targetSwivelAngle = angularVelocity == 0 ? Math.PI / 2 : linearVelocity == 0 ? 0 : Math.atan2(chassisDistance, targetTurnRadius);
+        targetSwivelAngle = angularVelocity == 0 || (angularVelocity == 0 && linearVelocity == 0)
+                ? Math.PI / 2
+                    : linearVelocity == 0
+                    ? 0
+                : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
 
         if(smoothingEnabled) {
             targetFrontLeftVelocity = frontLeftSmoother.update(targetFrontLeftVelocity);
@@ -286,7 +290,8 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
             telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
 
-            telemetryMap.put("chassis distance (m)", chassisDistance);
+            telemetryMap.put("chassis distance", chassisDistance);
+            telemetryMap.put("target chassis distance", targetChassisDistance);
 
             telemetryMap.put("pose (x)", pose.get(0));
             telemetryMap.put("pose (y)", pose.get(1));
