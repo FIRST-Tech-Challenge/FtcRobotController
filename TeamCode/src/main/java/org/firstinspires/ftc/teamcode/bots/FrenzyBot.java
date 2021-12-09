@@ -29,9 +29,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx rotatorLeft = null;
     private Servo dropperServo = null;
     private static final String TAG = "FrenzyBot";
-    public static int LIFT_LEVEL_THREE = -1930;
-    public static int LIFT_LEVEL_TWO = -1190;
-    public static int LIFT_LEVEL_ONE = -650;
+    public static int LIFT_LEVEL_THREE = -2000;
+    public static int LIFT_LEVEL_TWO = -1360;
+    public static int LIFT_LEVEL_ONE = -860; // Make sure to be further away for level one
     public static int LIFT_NO_EXTENSION = 0;
 
     private int liftLocation = LIFT_NO_EXTENSION;
@@ -266,13 +266,13 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Start turntable blue", defaultReturn = "")
     public void startTurntableBlue() {
-        activateRotatorRight(0.75);
-        activateRotatorLeft(0.75);
+        activateRotatorRight(0.35);
+        activateRotatorLeft(0.35);
     }
     @BotAction(displayName = "Start turntable red", defaultReturn = "")
     public void startTurntableRed() {
-        activateRotatorRight(-0.75);
-        activateRotatorLeft(-0.75);
+        activateRotatorRight(-0.35);
+        activateRotatorLeft(-0.35);
     }
 
     protected void delayWait(long ms) {
@@ -285,34 +285,41 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Start turntable blue gradual", defaultReturn = "")
     public void startTurntableBlueGradual() {
-        double startSpeed = 0.5;
-        double speedIncrement = 0.037;
-        int maxLoops = 20;
-        int loopDelayMs = 100;
+        double startSpeed = 0.2;
+        double speedIncrement = 0.02;
+        int maxLoops = 10;
+        int loopDelayMs = 150;
+        double maxSpeed = 0.3;
         double currSpeed = startSpeed;
         for(int i = 0; i < maxLoops; i++){
+            if (currSpeed > maxSpeed) {
+                currSpeed = maxSpeed;
+            }
             activateRotatorRight(currSpeed);
             activateRotatorLeft(currSpeed);
             currSpeed += speedIncrement;
             this.delayWait(loopDelayMs);
-
         }
         activateRotatorRight(0.0);
         activateRotatorLeft(0.0);
     }
     @BotAction(displayName = "Start turntable red gradual", defaultReturn = "")
     public void startTurntableRedGradual() {
-        double startSpeed = -0.7;
-        double speedIncrement = -0.037;
-        int maxLoops = 20;
-        int loopDelayMs = 100;
+        double startSpeed = -0.2;
+        double speedIncrement = -0.01;
+        int maxLoops = 10;
+        int loopDelayMs = 140;
+        double maxSpeed = -0.25;
         double currSpeed = startSpeed;
         for(int i = 0; i < maxLoops; i++){
+            currSpeed += speedIncrement;
+            if (currSpeed < maxSpeed) {
+                currSpeed = maxSpeed;
+            }
             activateRotatorRight(currSpeed);
             activateRotatorLeft(currSpeed);
-            currSpeed += speedIncrement;
-            this.delayWait(loopDelayMs);
 
+            this.delayWait(loopDelayMs);
         }
         activateRotatorRight(0.0);
         activateRotatorLeft(0.0);
