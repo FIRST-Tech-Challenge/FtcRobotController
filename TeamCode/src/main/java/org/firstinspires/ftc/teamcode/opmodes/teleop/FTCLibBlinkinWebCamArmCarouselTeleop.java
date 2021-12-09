@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.commands.arm.NudgeArm;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.carousel.MoveCarousel;
 import org.firstinspires.ftc.teamcode.commands.carousel.StopCarousel;
+import org.firstinspires.ftc.teamcode.commands.drive.bc4h.DefaultDrive;
 import org.firstinspires.ftc.teamcode.commands.intake.MoveIntake;
 import org.firstinspires.ftc.teamcode.commands.intake.StopIntake;
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowAllianceColor;
@@ -164,9 +165,10 @@ public class FTCLibBlinkinWebCamArmCarouselTeleop extends CommandOpMode {
         TriggerReader seReleaser = new TriggerReader(
                 toolOp2, GamepadKeys.Trigger.LEFT_TRIGGER
         );
+        
 
-        m_seGrabber = new MoveIntake(m_intake, -0.75, seGrabber, telemetry);
-        m_seReleaser = new MoveIntake(m_intake, 0.6, seReleaser, telemetry);
+        m_seGrabber = new MoveIntake(m_intake, -0.75, () -> toolOp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        m_seReleaser = new MoveIntake(m_intake, 0.6, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
         m_stopIntake = new StopIntake(m_intake);
 
         m_intake.setDefaultCommand(new PerpetualCommand(m_stopIntake));

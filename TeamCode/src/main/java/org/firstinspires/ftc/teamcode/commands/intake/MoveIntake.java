@@ -7,28 +7,29 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeSubsystem;
 
+import java.util.function.DoubleSupplier;
+
 public class MoveIntake extends CommandBase {
 
     private final IntakeSubsystem m_intakeSubsytem;
 
-    private final TriggerReader reader;
-
-    private final Double power;
+    private final double power;
+    private final DoubleSupplier trigger;
 
     private Telemetry telemetry;
 
 
-    public MoveIntake(IntakeSubsystem subsystem, Double power, TriggerReader reader){
+    public MoveIntake(IntakeSubsystem subsystem, double power, DoubleSupplier trigger){
         m_intakeSubsytem = subsystem;
         this.power = power;
-        this.reader = reader;
+        this.trigger = trigger;
         addRequirements(subsystem);
     }
 
-    public MoveIntake(IntakeSubsystem subsystem, Double power, TriggerReader reader, Telemetry telemetry){
+    public MoveIntake(IntakeSubsystem subsystem, double power, DoubleSupplier trigger, Telemetry telemetry){
         m_intakeSubsytem = subsystem;
         this.power = power;
-        this.reader = reader;
+        this.trigger = trigger;
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -36,17 +37,10 @@ public class MoveIntake extends CommandBase {
 
 
     @Override
-    public void initialize(){
-
-    }
-
-
-    @Override
     public void execute(){
 
-        if(reader.isDown()){
+        if(trigger.getAsDouble() > 0.5)
             m_intakeSubsytem.setPower(power);
-        }
     }
 
 }

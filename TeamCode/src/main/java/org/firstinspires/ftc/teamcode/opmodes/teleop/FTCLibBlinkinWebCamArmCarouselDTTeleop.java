@@ -159,19 +159,8 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
         m_intake = new IntakeSubsystem(hardwareMap,"intake", DcMotorSimple.Direction.REVERSE, 0.0);
 
-
-        //Trigger triggerGrabber = new GamepadButton(toolOp2,GamepadKeys.Trigger.RIGHT_TRIGGER);
-        //toolOp2.
-        TriggerReader seGrabber = new TriggerReader(
-                toolOp2, GamepadKeys.Trigger.RIGHT_TRIGGER
-        );
-
-        TriggerReader seReleaser = new TriggerReader(
-                toolOp2, GamepadKeys.Trigger.LEFT_TRIGGER
-        );
-
-        m_seGrabber = new MoveIntake(m_intake, -0.75, seGrabber, telemetry);
-        m_seReleaser = new MoveIntake(m_intake, 0.6, seReleaser, telemetry);
+        m_seGrabber = new MoveIntake(m_intake, -0.75, () -> toolOp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        m_seReleaser = new MoveIntake(m_intake, 0.6, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
         m_stopIntake = new StopIntake(m_intake);
 
         m_intake.setDefaultCommand(new PerpetualCommand(m_stopIntake));
