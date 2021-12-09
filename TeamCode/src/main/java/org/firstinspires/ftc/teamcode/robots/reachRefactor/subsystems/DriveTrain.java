@@ -227,7 +227,7 @@ public class DriveTrain implements Subsystem {
     public void update() {
         // state
         chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + Constants.DISTANCE_SENSOR_TO_FRONT_AXLE - Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
-        swivelAngle = getSwivelAngle();
+        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / (Constants.DRIVETRAIN_TICKS_PER_REVOLUTION * Constants.SWERVE_GEAR_RATIO) * 2 * Math.PI + Math.PI / 2) % (2 * Math.PI);;
 
         // PID corrections
         double maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
@@ -330,8 +330,8 @@ public class DriveTrain implements Subsystem {
     // Getters And Setters
     //----------------------------------------------------------------------------------------------
 
-    private double getSwivelAngle() {
-        return (motorMiddleSwivel.getCurrentPosition() / (Constants.DRIVETRAIN_TICKS_PER_REVOLUTION * Constants.SWERVE_GEAR_RATIO) * 2 * Math.PI + Math.PI / 2) % (2 * Math.PI);
+    public double getSwivelAngle() {
+        return swivelAngle;
     }
 
     public double getChassisDistance() {

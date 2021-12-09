@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
@@ -38,6 +39,7 @@ public class Robot implements Subsystem {
 
     // Vision
     public VisionProvider visionProvider;
+    private Position mostFrequentPosition;
 
     // State
     private Constants.Alliance alliance;
@@ -91,20 +93,41 @@ public class Robot implements Subsystem {
         SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
         SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0, -driveTrain.getChassisDistance() }});
 
-        SimpleMatrix rotationMatrix = new SimpleMatrix(new double[][] {
-                {Math.cos(heading), -Math.sin(heading)},
-                {Math.sin(heading), Math.cos(heading)}
-        });
-        leftWheel = position.plus(rotationMatrix.mult(leftWheel.transpose())).scale(Constants.INCHES_PER_METER);
-        rightWheel = position.plus(rotationMatrix.mult(rightWheel.transpose())).scale(Constants.INCHES_PER_METER);
-        swerveWheel = position.plus(rotationMatrix.mult(swerveWheel.transpose())).scale(Constants.INCHES_PER_METER);
+        leftWheel = position.plus(MathUtils.rotateVector(leftWheel, heading)).scale(Constants.INCHES_PER_METER);
+        rightWheel = position.plus(MathUtils.rotateVector(rightWheel, heading)).scale(Constants.INCHES_PER_METER);
+        swerveWheel = position.plus(MathUtils.rotateVector(swerveWheel, heading)).scale(Constants.INCHES_PER_METER);
 
         // drawing axles
         CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, Constants.AXLE_STROKE_COLOR);
         CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, Constants.AXLE_STROKE_COLOR);
 
         // drawing wheel vectors
-        CanvasUtils.drawVector(fieldOverlay, leftWheel, Constants.WHEEL_RADIUS * 2 * Constants.INCHES_PER_METER, Math.PI / 2, Constants.WHEEL_STROKE_COLOR);
+        SimpleMatrix genericWheelVector = new SimpleMatrix(new double[][]
+                {{ 0, Constants.WHEEL_RADIUS * 2 * Constants.INCHES_PER_METER }}
+        );
+        CanvasUtils.drawLine(fieldOverlay, leftWheel, leftWheel.plus(
+            MathUtils.rotateVector(
+                genericWheelVector,
+                heading
+            )
+        ), Constants.WHEEL_STROKE_COLOR);
+        CanvasUtils.drawLine(fieldOverlay, rightWheel, rightWheel.plus(
+            MathUtils.rotateVector(
+                genericWheelVector,
+                heading
+            )
+        ), Constants.WHEEL_STROKE_COLOR);
+        CanvasUtils.drawLine(fieldOverlay, swerveWheel, swerveWheel.plus(
+            MathUtils.rotateVector(
+                MathUtils.rotateVector(
+                    genericWheelVector,
+                    heading
+                ),
+                driveTrain.getSwivelAngle()
+            )
+        ), Constants.WHEEL_STROKE_COLOR);
+
+
 
         // calculating the instantaneous center of rotation
         double turnRadius = driveTrain.getTurnRadius();
@@ -288,4 +311,8 @@ public class Robot implements Subsystem {
     }
 
     public boolean isDebugTelemetryEnabled() { return debugTelemetryEnabled; }
+
+    public Position getMostFrequentPosition() { return mostFrequentPosition; }
+
+    public void setMostFrequentPosition(Position mostFrequentPosition) { this.mostFrequentPosition = mostFrequentPosition; }
 }

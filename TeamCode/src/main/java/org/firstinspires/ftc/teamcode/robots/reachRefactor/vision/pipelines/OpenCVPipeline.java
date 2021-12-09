@@ -1,27 +1,204 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.pipelines;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class OpenCVPipeline extends OpenCvPipeline {
+import java.util.ArrayList;
+import java.util.List;
 
+public class OpenCVPipeline extends OpenCvPipeline
+{
+    private Mat blurInput = new Mat();
+    private Mat blurOutput = new Mat();
+    private Mat hsvThresholdOutput = new Mat();
+    private List<MatOfPoint> findContoursOutput = new ArrayList<>();
+    private Mat findContoursOutputMat = new Mat();
+    private Mat finalContourOutputMat = new Mat();
+
+    private int largestX, largestY;
+    private double largestArea;
     private Position lastPosition;
-    private Mat dashboardOutput;
+
+    public OpenCVPipeline() {
+        largestX = -1;
+        largestY = -1;
+        largestArea = -1;
+    }
 
     @Override
-    public Mat processFrame(Mat input) {
-        dashboardOutput = input;
-        return null;
+    public Mat processFrame(Mat input)
+    {
+        // Step Blur0 (stage 1):
+        blurInput = input;
+        BlurType blurType = BlurType.get(Constants.BLUR);
+        double blurRadius = Constants.BLUR_RADIUS;
+        blur(blurInput, blurType, blurRadius, blurOutput);
+
+        // Step HSV_Threshold0  (stage 2):
+        Mat hsvThresholdInput = blurOutput;
+        double[] hsvThresholdHue = {Constants.HUE_MIN, Constants.HUE_MAX};
+        double[] hsvThresholdSaturation = {Constants.SATURATION_MIN, Constants.SATURATION_MAX};
+        double[] hsvThresholdValue = {Constants.VALUE_MIN, Constants.VALUE_MAX};
+        hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
+
+        // Step Find_Contours0 (stage 3):
+        Mat findContoursInput = hsvThresholdOutput;
+        boolean findContoursExternalOnly = false;
+        findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
+        findContoursOutputMat = input.clone();
+        for(int i = 0; i < findContoursOutput.size(); i++) {
+            Imgproc.drawContours(findContoursOutputMat, findContoursOutput, i, new Scalar(255, 255, 255), 2);
+        }
+
+        // Finding largest contour (stage 4):
+        finalContourOutputMat = input.clone();
+        largestArea = -1;
+        largestX = -1;
+        largestY = -1;
+        int largestContourIndex = -1;
+        for(int i = 0; i < findContoursOutput.size(); i++) {
+            MatOfPoint contour = findContoursOutput.get(i);
+            double contourArea = Imgproc.contourArea(contour);
+            if(contourArea > Constants.MIN_CONTOUR_AREA && contourArea > largestArea) {
+                Moments p = Imgproc.moments(contour, false);
+                int x = (int) (p.get_m10() / p.get_m00());
+                int y = (int) (p.get_m01() / p.get_m00());
+
+                largestContourIndex = i;
+                largestX = x;
+                largestY = y;
+                largestArea = contourArea;
+            }
+        }
+        if(largestContourIndex != -1)
+            Imgproc.drawContours(finalContourOutputMat, findContoursOutput, largestContourIndex, new Scalar(255, 255, 255), 2);
+
+        if(largestX > 0 && largestX < Constants.LEFT_THRESHOLD) {
+            lastPosition = Position.LEFT;
+        } else if(largestX > Constants.LEFT_THRESHOLD && largestX < Constants.RIGHT_THRESHOLD) {
+            lastPosition = Position.MIDDLE;
+        } else if(largestX > Constants.RIGHT_THRESHOLD && largestX < Constants.WEBCAM_WIDTH) {
+            lastPosition = Position.RIGHT;
+        } else
+            lastPosition = null;
+
+        return input;
+    }
+
+    public int[] getPosition() {
+        return new int[] {largestX, largestY};
+    }
+
+    public Mat getDashboardImage() {
+        Mat toSend = null;
+        switch(Constants.VIEW_OPEN_CV_PIPELINE_STAGE) {
+            case 0:
+                toSend = blurInput;
+                break;
+            case 1:
+                toSend = blurOutput;
+                break;
+            case 2:
+                toSend = hsvThresholdOutput;
+                break;
+            case 3:
+                toSend = findContoursOutputMat;
+                break;
+            case 4:
+                toSend = finalContourOutputMat;
+                break;
+        }
+        return toSend;
+    }
+
+
+
+
+    enum BlurType{
+        BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"),
+        BILATERAL("Bilateral Filter");
+
+        private final String label;
+
+        BlurType(String label) {
+            this.label = label;
+        }
+
+        public static BlurType get(String type) {
+            if (BILATERAL.label.equals(type)) {
+                return BILATERAL;
+            }
+            else if (GAUSSIAN.label.equals(type)) {
+                return GAUSSIAN;
+            }
+            else if (MEDIAN.label.equals(type)) {
+                return MEDIAN;
+            }
+            else {
+                return BOX;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return this.label;
+        }
+    }
+
+    private void blur(Mat input, BlurType type, double doubleRadius,
+                      Mat output) {
+        int radius = (int)(doubleRadius + 0.5);
+        int kernelSize;
+        switch(type){
+            case BOX:
+                kernelSize = 2 * radius + 1;
+                Imgproc.blur(input, output, new Size(kernelSize, kernelSize));
+                break;
+            case GAUSSIAN:
+                kernelSize = 6 * radius + 1;
+                Imgproc.GaussianBlur(input,output, new Size(kernelSize, kernelSize), radius);
+                break;
+            case MEDIAN:
+                kernelSize = 2 * radius + 1;
+                Imgproc.medianBlur(input, output, kernelSize);
+                break;
+            case BILATERAL:
+                Imgproc.bilateralFilter(input, output, -1, radius, radius);
+                break;
+        }
+    }
+
+    private void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val,
+                              Mat out) {
+        Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
+        Core.inRange(out, new Scalar(hue[0], sat[0], val[0]),
+                new Scalar(hue[1], sat[1], val[1]), out);
+    }
+
+    private void findContours(Mat input, boolean externalOnly,
+                              List<MatOfPoint> contours) {
+        Mat hierarchy = new Mat();
+        contours.clear();
+        int mode;
+        if (externalOnly) {
+            mode = Imgproc.RETR_EXTERNAL;
+        }
+        else {
+            mode = Imgproc.RETR_LIST;
+        }
+        int method = Imgproc.CHAIN_APPROX_SIMPLE;
+        Imgproc.findContours(input, contours, hierarchy, mode, method);
     }
 
     public Position getLastPosition() {
         return lastPosition;
-    }
-
-    public Mat getDashboardOutput() { return dashboardOutput; }
-
-    public void reset() {
-
     }
 }

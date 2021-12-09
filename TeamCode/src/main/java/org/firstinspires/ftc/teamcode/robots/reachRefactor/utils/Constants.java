@@ -82,6 +82,20 @@ public class Constants {
     public static int WEBCAM_WIDTH = 320;
     public static int WEBCAM_HEIGHT = 240;
 
+    public static int VIEW_OPEN_CV_PIPELINE_STAGE = 0;
+    public static double BLUR_RADIUS = 7;
+    public static double HUE_MIN = 0;
+    public static double HUE_MAX = 90;
+    public static double SATURATION_MIN = 150;
+    public static double SATURATION_MAX = 255;
+    public static double VALUE_MIN = 150;
+    public static double VALUE_MAX = 255;
+    public static double MIN_CONTOUR_AREA = 2500;
+    public static String BLUR = "Box Blur";
+
+    public static int LEFT_THRESHOLD = 107;
+    public static int RIGHT_THRESHOLD = 213;
+
     //----------------------------------------------------------------------------------------------
     // Enums
     //----------------------------------------------------------------------------------------------

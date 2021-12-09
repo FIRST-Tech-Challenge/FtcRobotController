@@ -12,6 +12,9 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /** Controls
  * Pregame
  * x - set alliance to blue
@@ -39,12 +42,13 @@ public class FF_6832 extends OpMode {
     private int gameStateIndex, visionProviderIndex;
     private boolean visionProviderFinalized;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
+    private Map<Position, Integer> positionFrequencies;
+    private Position mostFrequentPosition;
 
     // TPM Calibration state
     private boolean TPMCalibrationInitialized;
     private SimpleMatrix TPMCalibrationStartingTicks;
     private double averageTPMCalibrationTicksTraveled;
-    private double calculatedTPM;
 
     // timing
     private long lastLoopClockTime, loopTime;
@@ -77,6 +81,12 @@ public class FF_6832 extends OpMode {
         robot.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
         robot.visionProvider.initializeVision(hardwareMap);
         visionProviderFinalized = true;
+
+        positionFrequencies = new HashMap<Position, Integer>() {{
+            put(Position.LEFT, 0);
+            put(Position.MIDDLE, 0);
+            put(Position.RIGHT, 0);
+        }};
     }
 
     private void handleStateSwitch() {
@@ -139,7 +149,7 @@ public class FF_6832 extends OpMode {
 
     @Override
     public void start() {
-
+        robot.setMostFrequentPosition(mostFrequentPosition);
         lastLoopClockTime = System.nanoTime();
         initializing = false;
     }
@@ -224,6 +234,19 @@ public class FF_6832 extends OpMode {
         }
 
         if(robot.isDebugTelemetryEnabled()) {
+            if(initializing) {
+                // finding the most frequently detected position
+                int mostFrequentPositionCount = -1;
+                for(Map.Entry<Position, Integer> entry: positionFrequencies.entrySet()) {
+                    int positionFrequency = entry.getValue();
+                    if(positionFrequency > mostFrequentPositionCount) {
+                        mostFrequentPositionCount = positionFrequency;
+                        mostFrequentPosition = entry.getKey();
+                    }
+                }
+
+                robot.addTelemetryData("Most Frequent Detected Position", mostFrequentPosition);
+            }
             robot.addTelemetryData("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
             robot.addTelemetryData("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
         }
@@ -247,6 +270,10 @@ public class FF_6832 extends OpMode {
     private void update() {
         if(initializing) {
             robot.visionProvider.update();
+            Position position = robot.visionProvider.getPosition();
+            if(position != null)
+                // updating frequency of position detections
+                positionFrequencies.put(position, positionFrequencies.get(position) + 1);
         }
 
         handleTelemetry();

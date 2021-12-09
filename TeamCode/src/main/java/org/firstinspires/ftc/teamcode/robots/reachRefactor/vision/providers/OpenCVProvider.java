@@ -44,7 +44,7 @@ public class OpenCVProvider implements VisionProvider {
 
     @Override
     public void reset() {
-        pipeline.reset();
+
     }
 
     @Override
@@ -64,7 +64,7 @@ public class OpenCVProvider implements VisionProvider {
 
     @Override
     public Mat getDashboardImage() {
-        return pipeline.getDashboardOutput();
+        return pipeline.getDashboardImage();
     }
 
     @Override
