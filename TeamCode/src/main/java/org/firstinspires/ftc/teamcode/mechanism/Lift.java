@@ -14,6 +14,7 @@ public class Lift implements Mechanism {
     @Override
     public void init(HardwareMap hardwareMap) {
         liftMotor = hardwareMap.get(DcMotorEx.class, "lift");
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 

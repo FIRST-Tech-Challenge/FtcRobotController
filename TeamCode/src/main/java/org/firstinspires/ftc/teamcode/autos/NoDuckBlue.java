@@ -73,10 +73,10 @@ public class NoDuckBlue extends LinearOpMode {
         telemetry.update();
 
         // Drive to the the shipping hub
-        chassis.moveBackwardWithEncoders(0.6,400);
+        chassis.moveBackwardWithEncoders(0.6,300);
         delay(250);
         chassis.rotate(-30,0.5);
-        chassis.moveBackwardWithEncoders(0.6,300);
+        chassis.moveBackwardWithEncoders(0.6,800);
         delay(250);
 
         // Deposit the box on the correct level
@@ -97,9 +97,9 @@ public class NoDuckBlue extends LinearOpMode {
         lift.goTo(0,0.8);
 
         // Drive into the warehouse
-        chassis.moveForwardWithEncoders(0.6,300);
+        chassis.moveForwardWithEncoders(0.6,800);
         chassis.rotate(-60,0.5);
-        chassis.moveForwardWithEncoders(1, 1500);
+        chassis.moveForwardWithEncoders(0.6, 2000);
     }
 
     public void delay(int time) {
