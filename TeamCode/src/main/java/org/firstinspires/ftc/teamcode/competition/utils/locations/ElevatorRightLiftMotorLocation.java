@@ -7,17 +7,19 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
-public class DuckMotorLocation extends Location {
+import java.util.ArrayList;
 
-    private final StandardMotor MOTOR;
+public class ElevatorRightLiftMotorLocation extends Location {
 
-    public DuckMotorLocation(HardwareMap hardware) {
-        MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.DUCK_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD);
+    private final StandardMotor RIGHT;
+
+    public ElevatorRightLiftMotorLocation(HardwareMap hardware) {
+        RIGHT = new StandardMotor(hardware, hardware.appContext.getString(R.string.LIFT_RIGHT_ELEVATOR_MOTOR), DcMotorSimple.Direction.FORWARD);
     }
 
     @Override
     public void stop() {
-        MOTOR.stop();
+        RIGHT.stop();
     }
 
     @Override
@@ -32,7 +34,7 @@ public class DuckMotorLocation extends Location {
 
     @Override
     public InteractionSurface getInternalInteractionSurface() {
-        return MOTOR;
+        return RIGHT;
     }
 
 }

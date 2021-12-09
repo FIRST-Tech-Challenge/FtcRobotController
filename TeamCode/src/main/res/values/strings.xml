@@ -4,11 +4,11 @@
     <string name="WEBCAM">webcam</string>
     <!--
         NAMING CONVENTION:
-        String names are standardized as such.
+        String names are standardized as found in the Location abstract class. For the OTHER_INFORMATION section, follow this guide:
 
         ...SUBSYSTEM_...LOCATION_...JOB_...TYPE_...?AXIS
 
-        For example, a motor placed at the right top of a spinning device which controls movement on the y axis would be named:
+        For example, a motor placed at the right top of a spinning device which controls movement on the y axis would be appended:
 
         SPINNING_DEVICE_RIGHT_TOP_MOVING_MOTOR_Y
 
@@ -28,6 +28,6 @@
     <string name="HAND_DISTANCE_SENSOR">diD</string>
     <string name="DUCK_SPINNING_MOTOR">duM</string>
     <string name="INTAKE_LIFTING_SERVO">iuS</string>
-    <string name="HAND_SPINNING_MOTOR_X">htS</string>
-    <string name="HAND_SPINNING_MOTOR_Y">hfS</string>
+    <string name="HAND_SPINNING_SERVO_X">htS</string>
+    <string name="HAND_SPINNING_SERVO_Y">hfS</string>
 </resources>

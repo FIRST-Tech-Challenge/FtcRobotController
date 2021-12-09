@@ -6,18 +6,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardServo;
 
-public class DuckMotorLocation extends Location {
+public class HandSpinningServoXLocation extends Location {
 
-    private final StandardMotor MOTOR;
+    private final StandardServo SERVO;
 
-    public DuckMotorLocation(HardwareMap hardware) {
-        MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.DUCK_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD);
+    public HandSpinningServoXLocation(HardwareMap hardware) {
+        SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_SPINNING_SERVO_X));
     }
 
     @Override
     public void stop() {
-        MOTOR.stop();
+        SERVO.stop();
     }
 
     @Override
@@ -32,7 +33,7 @@ public class DuckMotorLocation extends Location {
 
     @Override
     public InteractionSurface getInternalInteractionSurface() {
-        return MOTOR;
+        return SERVO;
     }
 
 }

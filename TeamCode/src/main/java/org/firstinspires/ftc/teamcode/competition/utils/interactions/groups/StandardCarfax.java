@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.competition.utils.interactions.groups;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
-public class Carfax extends InteractionSurface {
+public class StandardCarfax extends InteractionSurface {
 
     private final StandardMotor RIGHT, LEFT;
 
@@ -11,7 +11,7 @@ public class Carfax extends InteractionSurface {
      * Creates a new carfax drivetrain.
      * @param right The right top motor of the carfax
      */
-    public Carfax(StandardMotor right, StandardMotor left) {
+    public StandardCarfax(StandardMotor right, StandardMotor left) {
         RIGHT = right;
         LEFT = left;
     }

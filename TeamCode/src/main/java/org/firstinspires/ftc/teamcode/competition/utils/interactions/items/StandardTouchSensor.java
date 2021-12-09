@@ -35,6 +35,14 @@ public class StandardTouchSensor extends InteractionSurface {
         return (int) Range.clip(SENSOR.getValue() * 100, 0, 100);
     }
 
+    public void stop() {
+        close();
+    }
+
+    public void close() {
+        SENSOR.close();
+    }
+
     public TouchSensor getInternalSensor() {
         return SENSOR;
     }

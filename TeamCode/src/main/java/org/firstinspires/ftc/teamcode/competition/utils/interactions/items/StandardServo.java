@@ -34,6 +34,14 @@ public class StandardServo extends InteractionSurface {
         }
     }
 
+    public void stop() {
+        close();
+    }
+
+    public void close() {
+        SERVO.close();
+    }
+
     /**
      * Gets the degree of the servo's set position. Note that this does not return the physical degree of rotation of the servo, only the position the servo is commanded to be in, as no API returning the true position is exposed by the servo
      * @return The position of the servo between -100 and 100
