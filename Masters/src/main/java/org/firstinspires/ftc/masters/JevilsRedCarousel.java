@@ -28,9 +28,13 @@ public class JevilsRedCarousel extends LinearOpMode {
             telemetry.addData("Position", freightLocation);
             telemetry.update();
         }
+        if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+
+        }
         robot.forward(0.6, 1.5);
         robot.turnToHeadingSloppy(.6,-45,-20);
         robot.forward(.3,.8);
+<<<<<<< HEAD
 
         //deposit shipping element
 
@@ -39,18 +43,30 @@ public class JevilsRedCarousel extends LinearOpMode {
 //        robot.strafeLeft(0.3,0.2);
 //        robot.turnToHeading(0.3,-125, 3);
 //        robot.forward(0.3,0.2);
+=======
+        robot.pauseButInSecondsForThePlebeians(.001);
+
+        //deposit shipping element
+        /*
+        robot.backwards(0.3,0.2);
+        robot.strafeLeft(0.3,0.2);
+        robot.turnToHeading(0.3,-125, 3);
+        robot.forward(0.3,0.2);
+>>>>>>> origin/master
         robot.forward(.3,-2.6);
 
-//        //Jevil turns carousel
+        //Jevil turns carousel
         robot.jevilTurnCarousel(.5,2);
 
         robot.turnToHeadingSloppy(.3,-90,-75);
         robot.strafeRight(.3,.8);
         robot.forward(.3,-0.8);
 
-//        robot.turnToHeading(0.3, -90, 3);
-//        robot.strafeRight(0.3,0.2);
-//        robot.forward(0.3,0.2);
-//        robot.parkRed();
+        robot.turnToHeading(0.3, -90, 3);
+        robot.strafeRight(0.3,0.2);
+        robot.forward(0.3,0.2);
+        robot.parkRed();
+        */
     }
 }
+
