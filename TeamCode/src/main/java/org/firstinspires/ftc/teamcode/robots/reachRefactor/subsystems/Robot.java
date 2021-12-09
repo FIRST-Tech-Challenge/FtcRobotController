@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
 
+import android.graphics.Bitmap;
+
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -13,11 +16,18 @@ import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtils;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.providers.OpenCVProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import android.graphics.Bitmap;
 
 public class Robot implements Subsystem {
     // Telemetry
@@ -27,13 +37,17 @@ public class Robot implements Subsystem {
     // Subsystems
     public DriveTrain driveTrain;
     private Subsystem[] subsystems;
+    private TelemetryProvider[] telemetryProviders;
+
+    // Vision
+    public VisionProvider visionProvider;
 
     // State
     private Constants.Alliance alliance;
     private boolean dashboardEnabled, telemetryDebugEnabled;
     private Map<String, Object> telemetryMap;
 
-    public static final String TELEMETRY_NAME = "Robot";
+    private static final String TELEMETRY_NAME = "Robot";
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, boolean dashboardEnabled) {
         this.telemetry = telemetry;
@@ -41,12 +55,28 @@ public class Robot implements Subsystem {
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap);
         subsystems = new Subsystem[] {driveTrain};
+        telemetryProviders = new TelemetryProvider[] {driveTrain};
 
         telemetryMap = new HashMap<>();
 
         this.dashboardEnabled = dashboardEnabled;
         if(dashboardEnabled)
             dashboard = FtcDashboard.getInstance();
+    }
+
+    public void createVisionProvider(int visionProviderIndex) {
+        try {
+            visionProvider = VisionProviders.VISION_PROVIDERS[visionProviderIndex].newInstance();
+        } catch(IllegalAccessException | InstantiationException e) {
+            throw new RuntimeException("Error while instantiating visionProvider");
+        }
+    }
+
+    private void sendVisionImage() {
+        Mat mat =  visionProvider.getDashboardImage();
+        Bitmap bm = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.RGB_565);
+        Utils.matToBitmap(mat, bm);
+        dashboard.sendImage(bm);
     }
 
     private void drawFieldOverlay(TelemetryPacket packet) {
@@ -101,10 +131,10 @@ public class Robot implements Subsystem {
         }
         telemetry.addLine();
 
-        // sending telemetry for subsystems
-        for(Subsystem subsystem: subsystems) {
-            Map<String, Object> telemetryMap = subsystem.getTelemetry(telemetryDebugEnabled);
-            String telemetryName = subsystem.getTelemetryName();
+        // sending telemetry for telemetry providers
+        for(TelemetryProvider telemetryProvider: telemetryProviders) {
+            Map<String, Object> telemetryMap = telemetryProvider.getTelemetry(telemetryDebugEnabled);
+            String telemetryName = telemetryProvider.getTelemetryName();
 
             packet.addLine(telemetryName);
             packet.putAll(telemetryMap);
@@ -133,6 +163,8 @@ public class Robot implements Subsystem {
 
         // dashboard telemetry
         if(dashboardEnabled) {
+            if(visionProvider.canSendDashboardImage())
+                sendVisionImage();
             drawFieldOverlay(packet);
             dashboard.sendTelemetryPacket(packet);
         }

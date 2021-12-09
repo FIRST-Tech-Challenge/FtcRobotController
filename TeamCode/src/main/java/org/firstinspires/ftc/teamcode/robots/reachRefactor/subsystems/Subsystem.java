@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
-import java.util.Map;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvider;
 
-public interface Subsystem {
-    Map<String, Object> getTelemetry(boolean debug);
-    String getTelemetryName();
+public interface Subsystem extends TelemetryProvider {
     void update();
     void reset();
     void stop();

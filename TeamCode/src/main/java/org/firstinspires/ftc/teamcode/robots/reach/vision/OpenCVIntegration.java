@@ -37,13 +37,6 @@ public class OpenCVIntegration implements VisionProvider {
         return pipeline.getLastStackHeight();
     }
 
-    /**
-     * This is the primary method that runs the entire pipeline and updates the outputs.
-     */
-    public Mat process(Mat source0) {
-        return null;
-    }
-
     @Override
     public void reset() {}
 }

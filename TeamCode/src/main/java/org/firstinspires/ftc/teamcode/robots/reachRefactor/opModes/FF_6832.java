@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.StickyGamepad;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
 
 /** Controls
  * Pregame
@@ -30,9 +32,10 @@ public class FF_6832 extends OpMode {
     private Robot robot;
 
     // global state
-    private boolean active;
+    private boolean active, initializing;
     private Constants.GameState gameState;
-    private int gameStateIndex;
+    private int gameStateIndex, visionProviderIndex;
+    private boolean visionProviderFinalized;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
 
     // TPM Calibration state
@@ -51,6 +54,7 @@ public class FF_6832 extends OpMode {
     public void init() {
         // global state
         active = true;
+        initializing = true;
         gameState = Constants.GameState.TELE_OP;
 
         // TPM calibration state
@@ -66,6 +70,11 @@ public class FF_6832 extends OpMode {
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
         robot = new Robot(hardwareMap, telemetry, Constants.DEFAULT_DASHBOARD_ENABLED);
+
+        // vision
+        robot.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
+        robot.visionProvider.initializeVision(hardwareMap);
+        visionProviderFinalized = true;
     }
 
     private void handleStateSwitch() {
@@ -80,6 +89,24 @@ public class FF_6832 extends OpMode {
 
         if (stickyGamepad1.start)
             active = !active;
+    }
+
+    private void handleVisionProviderSwitch() {
+        if(!active) {
+            if(!visionProviderFinalized) {
+                if (stickyGamepad1.dpad_left) {
+                    visionProviderIndex = (visionProviderIndex + 1) % VisionProviders.VISION_PROVIDERS.length; // switch vision provider
+                    robot.createVisionProvider(visionProviderIndex);
+                }
+                if (stickyGamepad1.dpad_up) {
+                    robot.visionProvider.initializeVision(hardwareMap); // this is blocking
+                    visionProviderFinalized = true;
+                }
+            } else if (stickyGamepad1.dpad_up) {
+                robot.visionProvider.shutdownVision(); // also blocking, but should be very quick
+                visionProviderFinalized = false;
+            }
+        }
     }
 
     private void handlePregameControls() {
@@ -98,16 +125,17 @@ public class FF_6832 extends OpMode {
     @Override
     public void init_loop() {
         handleStateSwitch();
-
-        if (active)
-            handlePregameControls();
+        handleVisionProviderSwitch();
+        handlePregameControls();
 
         update();
     }
 
     @Override
     public void start() {
+
         lastLoopClockTime = System.nanoTime();
+        initializing = false;
     }
 
     private void handleTeleOpDrive() {
@@ -180,11 +208,10 @@ public class FF_6832 extends OpMode {
         lastLoopClockTime = loopClockTime;
     }
 
-    private void update() {
-        stickyGamepad1.update();
-        stickyGamepad2.update();
-
-        updateTiming();
+    private void handleTelemetry() {
+        if(initializing) {
+            robot.addTelemetryData("Detected Position", robot.visionProvider.getPosition());
+        }
 
         if(robot.isTelemetryDebugEnabled()) {
             robot.addTelemetryData("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
@@ -204,6 +231,19 @@ public class FF_6832 extends OpMode {
                 robot.addTelemetryData("Average Ticks Traveled", averageTPMCalibrationTicksTraveled);
                 break;
         }
+    }
+
+    private void update() {
+        if(initializing) {
+            robot.visionProvider.update();
+        }
+
+        handleTelemetry();
+
+        updateTiming();
+
+        stickyGamepad1.update();
+        stickyGamepad2.update();
 
         robot.update();
     }
