@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.reach.utils;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -29,6 +30,15 @@ public class JankTrikeOpMode extends OpMode
     private DcMotor rightDrive = null;
     private DcMotor swerve = null;
     private DcMotor swerveAngle = null;
+    private Servo gripperPitchServo = null;
+    private Servo gripperServo = null;
+    int gripperClosed =900;
+    int gripperOpen = 1200;
+    int gripperUp = 900;
+    int gripperDown = 1766;
+    boolean gripperIsUp = true;
+
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -44,6 +54,9 @@ public class JankTrikeOpMode extends OpMode
         rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
         swerve  = hardwareMap.get(DcMotor.class, "swerve");
         swerveAngle = hardwareMap.get(DcMotor.class, "swerveAngle");
+        gripperPitchServo = hardwareMap.get(Servo.class, "gripperPitchServo");
+        gripperServo = hardwareMap.get(Servo.class, "gripperServo");
+
 
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -58,6 +71,9 @@ public class JankTrikeOpMode extends OpMode
         swerveAngle.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         swerveAngle.setPower(0);
         swerveAngle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        gripperServo.setPosition(gripperClosed);
+        gripperPitchServo.setPosition(gripperUp);
 
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -118,6 +134,30 @@ public class JankTrikeOpMode extends OpMode
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
         // leftPower  = -gamepad1.left_stick_y ;
         // rightPower = -gamepad1.right_stick_y ;
+
+
+        if(gamepad1.y){
+            gripperPitchServo.setPosition(gripperUp);
+            gripperIsUp = true;
+        }
+
+        if(gamepad1.x){
+            gripperPitchServo.setPosition(gripperDown);
+            gripperIsUp = false;
+        }
+
+
+        if(gamepad1.b){
+            if(!gripperIsUp) {
+                gripperServo.setPosition(gripperClosed);
+            }
+        }
+
+        if(gamepad1.a){
+            if(!gripperIsUp) {
+                gripperServo.setPosition(gripperOpen);
+            }
+        }
 
         // Send calculated power to wheels
         leftDrive.setPower(leftPower);
