@@ -100,21 +100,21 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         break;
                 }
 
-                driveInches(6, 0.5, true);
+                driveInches(6, true);
                 turnDegrees(-60);
-                driveInches(48 / Math.sqrt(3), 0.75, true);
+                driveInches(48 / Math.sqrt(3), true);
                 turnDegrees(60);
                 // move forward if necessary
                 // open grabber
-                driveInches(-40, 1.0, false);
+                driveInches(-40, false);
                 // raise arm to max position
-                driveInches(4, 0.5, true);
+                driveInches(4, true);
                 turnDegrees(90);
-                driveInches(50, 1.0, true);
+                driveInches(50, true);
                 // spin carousel
-                driveInches(4, 0.5, false);
+                driveInches(4, false);
                 turnDegrees(180);
-                driveInches(96, 1, true);
+                driveInches(96, true);
 
                 // This goes inside of the switch and is used just like above, but with cubes/ducks/spheres instead of the TSE.
                 // Used to detect freight for cycling to the shared shipping hub in autonomous

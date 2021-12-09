@@ -163,6 +163,25 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                         break;
                 }
 
+<<<<<<< HEAD
+=======
+                driveInches(6, true);
+                turnDegrees(60);
+                driveInches(48 / Math.sqrt(3), true);
+                turnDegrees(-60);
+                // move forward if necessary
+                // open grabber
+                driveInches(-40, false);
+                // raise arm to max position
+                driveInches(4, true);
+                turnDegrees(-90);
+                driveInches(50, true);
+                // spin carousel
+                driveInches(4, false);
+                turnDegrees(180);
+                driveInches(96, true);
+
+>>>>>>> c8b3d9893abf9fb4cae33c73a63fec30dfd14d36
                 // This goes inside of the switch and is used just like above, but with cubes/ducks/spheres instead of the TSE
                 // Used for cycling freight in autonomous
                 /*if (tfod != null) {
