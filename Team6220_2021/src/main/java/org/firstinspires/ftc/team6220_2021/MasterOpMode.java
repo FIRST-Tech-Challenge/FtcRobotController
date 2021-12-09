@@ -14,9 +14,9 @@ public abstract class MasterOpMode extends LinearOpMode {
     public static DcMotor motorFrontRight;
     public static DcMotor motorBackLeft;
     public static DcMotor motorBackRight;
-    public static DcMotor motorDuck;
+    public static DcMotor motorLeftDuck;
+    public static DcMotor motorRightDuck;
     public static DcMotor motorArm;
-
 
     // Other Devices
     public static Servo servoGrabber;
@@ -36,21 +36,24 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
-        motorDuck = hardwareMap.dcMotor.get("motorDuck");
         motorArm = hardwareMap.dcMotor.get("motorArm");
+        motorRightDuck = hardwareMap.dcMotor.get("motorRightDuck");
+        motorLeftDuck = hardwareMap.dcMotor.get("motorLeftDuck");
+        servoGrabber = hardwareMap.servo.get("servoGrabber");
         servoArm = hardwareMap.servo.get("servoArm");
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        servoArm.setPosition(0.01);
+        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         driver1 = new DriverInput(gamepad1);
         driver2 = new DriverInput(gamepad2);
@@ -65,6 +68,7 @@ public abstract class MasterOpMode extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
+
     public void Forward(double DriveInches, double power) {
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
@@ -113,19 +117,19 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorBackRight.setPower(0);
     }
     public void BlueDuck(){
-        motorDuck = hardwareMap.dcMotor.get("motorDuck");
+        motorLeftDuck = hardwareMap.dcMotor.get("motorDuck");
         double x = -0.7;
         while (true) {
-            motorDuck.setPower(x);
+            motorLeftDuck.setPower(x);
             pauseMillis(150);
             x -= 0.05;
-            telemetry.addData("duckPower", motorDuck.getPower());
+            telemetry.addData("duckPower", motorLeftDuck.getPower());
             telemetry.update();
             if (x <= -0.85){
                 pauseMillis(1500);
-                motorDuck.setPower(-.1);
+                motorLeftDuck.setPower(-.1);
                 pauseMillis(30);
-                motorDuck.setPower(0);
+                motorLeftDuck.setPower(0);
                 x=0.7;
                 break;
             }

@@ -17,6 +17,12 @@ public abstract class MasterAutonomous extends MasterOpMode {
             return b;
         } else if (c > b && c > a) {
             return c;
+        } else if (a < b && b == c){
+            return b;
+        } else if (b < c && c == a){
+            return c;
+        } else if (c < a && a == b){
+            return a;
         } else {
             return a;
         }
@@ -36,7 +42,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
     }
 
     // This method drives a specified number of inches in a straight line when given a target distance and max speed
-    // Set direction to true when going forward and false when going backwards
+    // Set direction to false when going forward and true when going backwards
     public void driveInches(double targetDistance, double minSpeed, boolean direction) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

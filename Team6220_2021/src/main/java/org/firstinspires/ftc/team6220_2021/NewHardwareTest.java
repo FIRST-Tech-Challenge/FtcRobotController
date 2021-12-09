@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.function.Continuation;
 
-@TeleOp(name = "New Hardware Test", group = "TeleOp")
+@TeleOp(name = "New Hardware AutonomousTest", group = "TeleOp")
 public class NewHardwareTest extends MasterOpMode{
     // Declaring motors and servos
     DcMotor motorBackLeft;

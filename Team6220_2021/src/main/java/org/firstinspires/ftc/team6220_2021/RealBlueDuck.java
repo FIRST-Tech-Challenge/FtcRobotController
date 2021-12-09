@@ -12,7 +12,7 @@ public class RealBlueDuck extends MasterOpMode{
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
     DcMotor motorFrontRight;
-    DcMotor motorDuck;
+    DcMotor motorLeftDuck;
     DcMotor motorArm;
     Servo servoGrabber;
     Servo servoArm;
@@ -24,7 +24,7 @@ public class RealBlueDuck extends MasterOpMode{
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorArm = hardwareMap.dcMotor.get("motorArm");
-        motorDuck = hardwareMap.dcMotor.get("motorDuck");
+        motorLeftDuck = hardwareMap.dcMotor.get("motorLeftDuck");
         servoGrabber = hardwareMap.servo.get("servoGrabber");
         servoArm = hardwareMap.servo.get("servoArm");
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -35,7 +35,7 @@ public class RealBlueDuck extends MasterOpMode{
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Set run mode of arm motor (encoders --> run to position)
         motorArm.setTargetPosition(0);
@@ -69,16 +69,16 @@ public class RealBlueDuck extends MasterOpMode{
         pauseMillis(100);
         x = 0.7;
         while (true) {
-            motorDuck.setPower(x);
+            motorLeftDuck.setPower(x);
             pauseMillis(150);
             x += 0.05;
-            telemetry.addData("duckPower", motorDuck.getPower());
+            telemetry.addData("duckPower", motorLeftDuck.getPower());
             telemetry.update();
             if (x >= 0.85){
                 pauseMillis(1500);
-                motorDuck.setPower(-.1);
+                motorLeftDuck.setPower(-.1);
                 pauseMillis(30);
-                motorDuck.setPower(0);
+                motorLeftDuck.setPower(0);
                 x=0.7;
                 break;
             }

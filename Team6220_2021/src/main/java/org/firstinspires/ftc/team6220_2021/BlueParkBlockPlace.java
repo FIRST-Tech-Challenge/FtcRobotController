@@ -11,7 +11,7 @@ public class BlueParkBlockPlace extends MasterOpMode{
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
     DcMotor motorFrontRight;
-    DcMotor motorDuck;
+    DcMotor motorLeftDuck;
     DcMotor motorArm;
     Servo servoGrabber;
     Servo servoArm;
@@ -22,7 +22,7 @@ public class BlueParkBlockPlace extends MasterOpMode{
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorArm = hardwareMap.dcMotor.get("motorArm");
-        motorDuck = hardwareMap.dcMotor.get("motorDuck");
+        motorLeftDuck = hardwareMap.dcMotor.get("motorLeftDuck");
         servoGrabber = hardwareMap.servo.get("servoGrabber");
         servoArm = hardwareMap.servo.get("servoArm");
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -33,7 +33,7 @@ public class BlueParkBlockPlace extends MasterOpMode{
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Set run mode of arm motor (encoders --> run to position)
         motorArm.setTargetPosition(0);

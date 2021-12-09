@@ -18,8 +18,8 @@ public class Constants {
 
     // Movement Control Constants
     // todo - adjust for new chassis
-    public static final double MINIMUM_DRIVE_POWER = 0.25;
-    public static final double MINIMUM_TURNING_POWER = 0.25;
+    public static final double MINIMUM_DRIVE_POWER = 0.35;
+    public static final double MINIMUM_TURNING_POWER = 0.35;
     // Constants for adjusting powers that are proportional to angle and position differences
     public static final double DRIVE_POWER_FACTOR = 0.03;
     public static final double TURNING_POWER_FACTOR = 0.005;

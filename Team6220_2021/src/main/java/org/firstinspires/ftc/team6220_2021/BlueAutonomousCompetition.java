@@ -26,7 +26,7 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    int barcode = -1;
+    int barcode = 2;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -47,8 +47,9 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
         waitForStart();
 
         servoArm.setPosition(0.15);
-        motorArm.setTargetPosition(555);
         motorArm.setPower(0.9);
+        motorArm.setTargetPosition(555);
+
 
         pauseMillis(1000);
 
@@ -93,23 +94,33 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
 
                         servoArm.setPosition(0.4);
                         motorArm.setTargetPosition(300);
-                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
+                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
                         turnDegrees(60);
-                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
+                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
                         turnDegrees(-60);
+                        pauseMillis(125);
                         // move forward if necessary
+                        pauseMillis(500);
                         servoGrabber.setPosition(0.34);
-                        driveInches(-40, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(500);
+                        driveInches(40, Constants.MINIMUM_DRIVE_POWER, true);
                         motorArm.setTargetPosition(1100);
-                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
-                        turnDegrees(-90);
-                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, true);
-                        motorDuck.setPower(0.6);
-                        pauseMillis(2000);
-                        motorDuck.setPower(0.0);
                         driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
+                        turnDegrees(-90);
+                        pauseMillis(125);
+                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, false);
+                        motorRightDuck.setPower(0.6);
+                        pauseMillis(2000);
+                        motorRightDuck.setPower(0.0);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
                         turnDegrees(180);
-                        driveInches(96, Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
+                        driveInches(96, Constants.MINIMUM_DRIVE_POWER, false);
                         break;
 
                     case 1:
@@ -118,23 +129,33 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
 
                         servoArm.setPosition(0.3);
                         motorArm.setTargetPosition(555);
-                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
+                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
                         turnDegrees(60);
-                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
+                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
                         turnDegrees(-60);
+                        pauseMillis(125);
                         // move forward if necessary
+                        pauseMillis(500);
                         servoGrabber.setPosition(0.34);
-                        driveInches(-40, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(500);
+                        driveInches(40, Constants.MINIMUM_DRIVE_POWER, true);
                         motorArm.setTargetPosition(1100);
-                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
-                        turnDegrees(-90);
-                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, true);
-                        motorDuck.setPower(0.6);
-                        pauseMillis(2000);
-                        motorDuck.setPower(0.0);
                         driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
+                        turnDegrees(-90);
+                        pauseMillis(125);
+                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, false);
+                        motorRightDuck.setPower(0.6);
+                        pauseMillis(2000);
+                        motorRightDuck.setPower(0.0);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
                         turnDegrees(180);
-                        driveInches(96, Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
+                        driveInches(96, Constants.MINIMUM_DRIVE_POWER, false);
                         break;
 
                     case 2:
@@ -143,23 +164,33 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
 
                         servoArm.setPosition(0.15);
                         motorArm.setTargetPosition(900);
-                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
+                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
                         turnDegrees(60);
-                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
+                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
                         turnDegrees(-60);
+                        pauseMillis(125);
                         // move forward if necessary
+                        pauseMillis(500);
                         servoGrabber.setPosition(0.34);
-                        driveInches(-40, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(500);
+                        driveInches(40, Constants.MINIMUM_DRIVE_POWER, true);
                         motorArm.setTargetPosition(1100);
-                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
-                        turnDegrees(-90);
-                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, true);
-                        motorDuck.setPower(0.6);
-                        pauseMillis(2000);
-                        motorDuck.setPower(0.0);
                         driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
+                        turnDegrees(-90);
+                        pauseMillis(125);
+                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, false);
+                        motorRightDuck.setPower(0.6);
+                        pauseMillis(2000);
+                        motorRightDuck.setPower(0.0);
+                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
                         turnDegrees(180);
-                        driveInches(96, Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
+                        driveInches(96, Constants.MINIMUM_DRIVE_POWER, false);
                         break;
                 }
 
