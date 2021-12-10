@@ -73,7 +73,7 @@ public class LinearSlide implements Runnable {
                 setTargetHeight(-1081);
                 return;
             case TopLevel:
-                setTargetHeight(-3900);
+                setTargetHeight(-4000);
                 return;
             case MiddleLevel:
                 setTargetHeight(-2560);
