@@ -4,6 +4,5 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvid
 
 public interface Subsystem extends TelemetryProvider {
     void update();
-    void reset();
     void stop();
 }
