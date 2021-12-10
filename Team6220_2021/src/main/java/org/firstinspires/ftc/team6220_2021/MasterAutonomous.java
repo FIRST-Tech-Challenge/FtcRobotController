@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.team6220_2021.ResourceClasses.PIDFilter;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
+import org.firstinspires.ftc.team6220_2021.ResourceClasses.PIDFilter;
 
 public abstract class MasterAutonomous extends MasterOpMode {
     public double max(double a, double b, double c) {
@@ -91,12 +90,12 @@ public abstract class MasterAutonomous extends MasterOpMode {
                     motorFrontRight.getCurrentPosition() - motorBackRight.getCurrentPosition()) / 4.0;
 
             if (direction) {
-                if (Math.abs(position - targetDistance) <= 1) {
+                if (Math.abs(position - targetDistance) <= 0.5) {
                     driveTank(0.0, 0.0);
                     distanceReached = true;
                 }
             } else {
-                if (Math.abs(position + targetDistance) <= 1) {
+                if (Math.abs(position + targetDistance) <= 0.5) {
                     driveTank(0.0, 0.0);
                     distanceReached = true;
                 }

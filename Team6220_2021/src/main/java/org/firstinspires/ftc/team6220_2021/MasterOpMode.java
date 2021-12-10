@@ -46,14 +46,17 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorArm.setTargetPosition(0);
+        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         driver1 = new DriverInput(gamepad1);
         driver2 = new DriverInput(gamepad2);
