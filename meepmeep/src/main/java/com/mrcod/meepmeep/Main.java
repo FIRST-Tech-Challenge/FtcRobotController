@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2dKt;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
+import com.mrcod.meepmeep.entity.field.CarouselEntity;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
@@ -34,6 +35,12 @@ public class Main {
         RoadRunnerBotEntity storageUnitBot = storageBot(meep);
         RoadRunnerBotEntity warehouseBot = warehouseBot(meep);
         meep.addEntity(storageUnitBot);
+        meep.addEntity(new CarouselEntity(meep,
+                new Vector2d(-70 + MeepMeepHelper.inchesToCoordinate(2),
+                        70 - MeepMeepHelper.inchesToCoordinate(2))));
+        meep.addEntity(new CarouselEntity(meep,
+                new Vector2d(-70 + MeepMeepHelper.inchesToCoordinate(2),
+                        -70 + MeepMeepHelper.inchesToCoordinate(2))));
         //meep.addEntity(warehouseBot);
 
 
@@ -63,7 +70,9 @@ public class Main {
 
         builder.lineTo(new Vector2d(-40, 55));
         builder.splineToLinearHeading(new Pose2d(-19, 40, Math.toRadians(110)), Math.toRadians(-110));
-        builder.splineToLinearHeading(new Pose2d(-50, 55, Math.toRadians(0)), Math.toRadians(-50));
+        builder.lineTo(new Vector2d(-19, 45));
+        builder.lineToLinearHeading(new Pose2d(-59, 57.5, Math.toRadians(240)));
+        builder.lineToLinearHeading(new Pose2d(-60, 35, Math.toRadians(270)));
 
         bot.followTrajectorySequence(builder.build());
 
