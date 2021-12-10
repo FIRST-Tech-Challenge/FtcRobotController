@@ -76,7 +76,7 @@ public class WebcamExample extends LinearOpMode
 
         // Second camera
         frontWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Front Webcam"), viewportContainerIds[1]);
-        DuckFinder pipeline2 = new DuckFinder();
+        DuckFinder pipeline2 = new DuckFinder(78);
         frontWebcam.setPipeline(pipeline2);
         frontWebcam.setMillisecondsPermissionTimeout(2500);
         frontWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
