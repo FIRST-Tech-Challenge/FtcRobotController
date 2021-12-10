@@ -28,14 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Robot implements Subsystem {
-    // Telemetry
-    private FtcDashboard dashboard;
-    private Telemetry telemetry;
-
     // Subsystems
     public DriveTrain driveTrain;
-    private Subsystem[] subsystems;
-    private TelemetryProvider[] telemetryProviders;
+    public Subsystem[] subsystems;
 
     // Vision
     public VisionProvider visionProvider;
@@ -43,24 +38,16 @@ public class Robot implements Subsystem {
 
     // State
     private Constants.Alliance alliance;
-    private boolean dashboardEnabled, debugTelemetryEnabled;
-    private Map<String, Object> telemetryMap;
+    private Articulation articulation;
 
     private static final String TELEMETRY_NAME = "Robot";
 
-    public Robot(HardwareMap hardwareMap, Telemetry telemetry, boolean dashboardEnabled) {
-        this.telemetry = telemetry;
-
+    public Robot(HardwareMap hardwareMap) {
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap);
         subsystems = new Subsystem[] {driveTrain};
-        telemetryProviders = new TelemetryProvider[] {driveTrain};
 
-        telemetryMap = new HashMap<>();
-
-        this.dashboardEnabled = dashboardEnabled;
-        if(dashboardEnabled)
-            dashboard = FtcDashboard.getInstance();
+        articulation = Articulation.MANUAL;
     }
 
     public void createVisionProvider(int visionProviderIndex) {
@@ -71,16 +58,7 @@ public class Robot implements Subsystem {
         }
     }
 
-    private void sendVisionImage() {
-        Mat mat = visionProvider.getDashboardImage();
-        if(mat != null && mat.width() > 0 && mat.height() > 0) {
-            Bitmap bm = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.RGB_565);
-            Utils.matToBitmap(mat, bm);
-            dashboard.sendImage(bm);
-        }
-    }
-
-    private void drawFieldOverlay(TelemetryPacket packet) {
+    public void drawFieldOverlay(TelemetryPacket packet) {
         Canvas fieldOverlay = packet.fieldOverlay();
 
         SimpleMatrix pose = driveTrain.getPose();
@@ -139,61 +117,6 @@ public class Robot implements Subsystem {
         fieldOverlay.strokeCircle(ICC.get(0), ICC.get(1), Math.abs(turnRadius * Constants.INCHES_PER_METER));
     }
 
-    public void sendTelemetry() {
-        TelemetryPacket packet = new TelemetryPacket();
-
-        // sending additional (opmode) telemetry
-        packet.addLine(Constants.DEFAULT_TELEMETRY_LINE);
-        packet.putAll(telemetryMap);
-        packet.addLine("");
-
-        telemetry.addLine(Constants.DEFAULT_TELEMETRY_LINE);
-        for(Map.Entry<String, Object> entry: telemetryMap.entrySet()) {
-            telemetry.addData(entry.getKey(), entry.getValue());
-        }
-        telemetry.addLine();
-
-        // sending telemetry for telemetry providers
-        for(TelemetryProvider telemetryProvider: telemetryProviders) {
-            Map<String, Object> telemetryMap = telemetryProvider.getTelemetry(debugTelemetryEnabled);
-            String telemetryName = telemetryProvider.getTelemetryName();
-
-            packet.addLine(telemetryName);
-            packet.putAll(telemetryMap);
-            packet.addLine("");
-
-            telemetry.addLine(telemetryName);
-            for(Map.Entry<String, Object> entry: telemetryMap.entrySet()) {
-                telemetry.addData(entry.getKey(), entry.getValue());
-            }
-            telemetry.addLine();
-        }
-
-        // sending telemetry for robot
-        Map<String, Object> robotTelemetry = getTelemetry(debugTelemetryEnabled);
-        String telemetryName = getTelemetryName();
-
-        packet.addLine(telemetryName);
-        packet.putAll(robotTelemetry);
-        packet.addLine("");
-
-        telemetry.addLine(telemetryName);
-        for(Map.Entry<String, Object> entry: robotTelemetry.entrySet()) {
-            telemetry.addData(entry.getKey(), entry.getValue());
-        }
-        telemetry.addLine();
-
-        // dashboard telemetry
-        if(dashboardEnabled) {
-//            if(visionProvider.canSendDashboardImage())
-//                sendVisionImage();
-//            drawFieldOverlay(packet);
-            dashboard.sendTelemetryPacket(packet);
-        }
-
-        telemetry.update();
-    }
-
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new HashMap<>();
@@ -212,14 +135,6 @@ public class Robot implements Subsystem {
     public void update() {
         for(Subsystem subsystem: subsystems)
             subsystem.update();
-
-        sendTelemetry();
-    }
-
-    @Override
-    public void reset() {
-        for(Subsystem subsystem: subsystems)
-            subsystem.reset();
     }
 
     @Override
@@ -239,9 +154,8 @@ public class Robot implements Subsystem {
 
         // autonomous articulations
         AUTONOMOUS_RED,
-        AUTONOMOUS_BLUE;
+        AUTONOMOUS_BLUE
     }
-    private Articulation articulation;
 
     public boolean articulate(Articulation articulation) {
         this.articulation = articulation;
@@ -249,36 +163,11 @@ public class Robot implements Subsystem {
         switch(articulation) {
             case MANUAL:
                 return true;
-            case AUTONOMOUS_BLUE:
-                if(autonomousBlue.execute())
-                    return true;
-            case AUTONOMOUS_RED:
-                if(autonomousRed.execute())
-                    return true;
         }
         return false;
     }
 
-    private StateMachine.Builder getStateMachine(Stage stage) {
-        return StateMachine.builder()
-                .stateSwitchAction(() -> {})
-                .stateEndAction(() -> { articulation = Robot.Articulation.MANUAL; })
-                .stage(stage);
-    }
-
     // Tele-Op articulations
-
-
-    // Autonomous articulations
-    private Stage autonomousRedStage = new Stage();
-    public StateMachine autonomousRed = getStateMachine(autonomousRedStage)
-            // TODO: insert autonomous red states here
-            .build();
-
-    private Stage autonomousBlueStage = new Stage();
-    public StateMachine autonomousBlue = getStateMachine(autonomousBlueStage)
-            // TODO: insert autonomous blue states here
-            .build();
 
     //----------------------------------------------------------------------------------------------
     // Getters And Setters
@@ -291,26 +180,6 @@ public class Robot implements Subsystem {
     public void setAlliance(Constants.Alliance alliance) {
         this.alliance = alliance;
     }
-
-    public void toggleIsDashboardEnabled() {
-        dashboardEnabled = !dashboardEnabled;
-        if(dashboard == null)
-            dashboard = FtcDashboard.getInstance();
-    }
-
-    public void toggleIsDebugTelemetryEnabled() {
-        debugTelemetryEnabled = !debugTelemetryEnabled;
-    }
-
-    public void addTelemetryData(String name, Object value) {
-        telemetryMap.put(name, value);
-    }
-
-    public boolean isDashboardEnabled() {
-        return dashboardEnabled;
-    }
-
-    public boolean isDebugTelemetryEnabled() { return debugTelemetryEnabled; }
 
     public Position getMostFrequentPosition() { return mostFrequentPosition; }
 

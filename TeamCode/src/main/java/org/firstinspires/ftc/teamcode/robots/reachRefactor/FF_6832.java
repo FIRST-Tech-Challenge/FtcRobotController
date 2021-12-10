@@ -1,16 +1,24 @@
-package org.firstinspires.ftc.teamcode.robots.reachRefactor.opModes;
+package org.firstinspires.ftc.teamcode.robots.reachRefactor;
+
+import android.graphics.Bitmap;
 
 import org.ejml.simple.SimpleMatrix;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.StickyGamepad;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +45,7 @@ import java.util.Map;
 @TeleOp(name = "refactored FF_6832")
 public class FF_6832 extends OpMode {
     private Robot robot;
+    private Autonomous auto;
 
     // global state
     private boolean active, initializing;
@@ -47,6 +56,10 @@ public class FF_6832 extends OpMode {
     private Map<Position, Integer> positionFrequencies;
     private Position mostFrequentPosition;
     private boolean usingDesmosDrive;
+    private boolean dashboardEnabled, debugTelemetryEnabled;
+
+    // Telemetry
+    private FtcDashboard dashboard;
 
     // TPM Calibration state
     private boolean TPMCalibrationInitialized;
@@ -65,6 +78,7 @@ public class FF_6832 extends OpMode {
         // global state
         active = true;
         initializing = true;
+        dashboardEnabled = Constants.DEFAULT_DASHBOARD_ENABLED;
         gameState = Constants.GameState.TELE_OP;
 
         // TPM calibration state
@@ -79,12 +93,16 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, telemetry, Constants.DEFAULT_DASHBOARD_ENABLED);
+        robot = new Robot(hardwareMap);
+        auto = new Autonomous(robot);
 
         // vision
 //        robot.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
 //        robot.visionProvider.initializeVision(hardwareMap);
 //        visionProviderFinalized = true;
+
+        if(dashboardEnabled)
+            dashboard = FtcDashboard.getInstance();
 
         positionFrequencies = new HashMap<Position, Integer>() {{
             put(Position.LEFT, 0);
@@ -126,6 +144,17 @@ public class FF_6832 extends OpMode {
         }
     }
 
+    public void toggleIsDashboardEnabled() {
+        dashboardEnabled = !dashboardEnabled;
+        if(dashboard == null)
+            dashboard = FtcDashboard.getInstance();
+    }
+
+    public void toggleIsDebugTelemetryEnabled() {
+        debugTelemetryEnabled = !debugTelemetryEnabled;
+    }
+
+
     private void handlePregameControls() {
         if(stickyGamepad1.x)
             robot.setAlliance(Constants.Alliance.BLUE);
@@ -133,11 +162,11 @@ public class FF_6832 extends OpMode {
             robot.setAlliance(Constants.Alliance.RED);
 
         if(stickyGamepad1.a)
-            robot.toggleIsDashboardEnabled();
+            toggleIsDashboardEnabled();
         if(stickyGamepad1.y)
             robot.driveTrain.toggleSmoothingEnabled();
         if(stickyGamepad1.dpad_down) {
-            robot.toggleIsDebugTelemetryEnabled();
+            toggleIsDebugTelemetryEnabled();
         }
     }
 
@@ -157,6 +186,7 @@ public class FF_6832 extends OpMode {
 //        robot.setMostFrequentPosition(mostFrequentPosition);
         lastLoopClockTime = System.nanoTime();
         initializing = false;
+        auto.visionProvider.shutdownVision();
     }
 
     private void handleTeleOpDrive() {
@@ -183,7 +213,7 @@ public class FF_6832 extends OpMode {
             usingDesmosDrive = !usingDesmosDrive;
         }
         if(stickyGamepad1.dpad_down) {
-            robot.toggleIsDebugTelemetryEnabled();
+            toggleIsDebugTelemetryEnabled();
         }
     }
 
@@ -214,12 +244,12 @@ public class FF_6832 extends OpMode {
                     break;
                 case AUTONOMOUS:
                     if (robot.getAlliance().equals(Constants.Alliance.RED)
-                            && robot.articulate(Robot.Articulation.AUTONOMOUS_RED)) {
+                            && auto.autonomousRed.execute()) {
                         active = false;
                         gameState = Constants.GameState.TELE_OP;
                         gameStateIndex = Constants.GameState.indexOf(Constants.GameState.TELE_OP);
                     } else if (robot.getAlliance().equals(Constants.Alliance.BLUE)
-                            && robot.articulate(Robot.Articulation.AUTONOMOUS_BLUE)) {
+                            && auto.autonomousBlue.execute()) {
                         active = false;
                         gameState = Constants.GameState.TELE_OP;
                         gameStateIndex = Constants.GameState.indexOf(Constants.GameState.TELE_OP);
@@ -255,33 +285,77 @@ public class FF_6832 extends OpMode {
         }
     }
 
-    private void handleTelemetry() {
-        if(initializing) {
-//            robot.addTelemetryData("Detected Position", robot.visionProvider.getPosition());
+    private void sendVisionImage() {
+        Mat mat = auto.visionProvider.getDashboardImage();
+        if(mat != null && mat.width() > 0 && mat.height() > 0) {
+            Bitmap bm = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(mat, bm);
+            dashboard.sendImage(bm);
         }
+    }
 
-        if(robot.isDebugTelemetryEnabled()) {
-            if(initializing)
-                robot.addTelemetryData("Most Frequent Detected Position", mostFrequentPosition);
-            robot.addTelemetryData("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
-            robot.addTelemetryData("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+    private void handleTelemetry(Map<String, Object> telemetryMap, String telemetryName, TelemetryPacket packet) {
+        packet.addLine(telemetryName);
+        packet.putAll(telemetryMap);
+        packet.addLine("");
+
+        telemetry.addLine(telemetryName);
+        for(Map.Entry<String, Object> entry: telemetryMap.entrySet()) {
+            telemetry.addData(entry.getKey(), entry.getValue());
         }
-        robot.addTelemetryData("Active", active);
-        robot.addTelemetryData("State", String.format("(%d): %s", gameStateIndex, gameState));
-        robot.addTelemetryData("Dashboard Enabled", robot.isDashboardEnabled());
-        robot.addTelemetryData("Debug Telemetry Enabled", robot.isDebugTelemetryEnabled());
-        robot.addTelemetryData("Using Desmos Drive", usingDesmosDrive);
+        telemetry.addLine();
+    }
+
+    private void updateTelemetry() {
+        TelemetryPacket packet = new TelemetryPacket();
+        Map<String, Object> opModeTelemetryMap = new HashMap<>();
+
+        // handling op mode telemetry
+        if(debugTelemetryEnabled) {
+            if(initializing)
+                opModeTelemetryMap.put("Most Frequent Detected Position", mostFrequentPosition);
+            opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
+            opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+        }
+        opModeTelemetryMap.put("Active", active);
+        opModeTelemetryMap.put("State", String.format("(%d): %s", gameStateIndex, gameState));
+        opModeTelemetryMap.put("Dashboard Enabled", dashboardEnabled);
+        opModeTelemetryMap.put("Debug Telemetry Enabled", debugTelemetryEnabled);
+        opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
 
         switch(gameState) {
             case TELE_OP:
-                robot.addTelemetryData("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
+                opModeTelemetryMap.put("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
                 break;
             case AUTONOMOUS:
                 break;
             case TPM_CALIBRATION:
-                robot.addTelemetryData("Average Ticks Traveled", averageTPMCalibrationTicksTraveled);
+                opModeTelemetryMap.put("Average Ticks Traveled", averageTPMCalibrationTicksTraveled);
                 break;
         }
+        handleTelemetry(opModeTelemetryMap, gameState.getName(), packet);
+
+        // handling subsystem telemetry
+        for(TelemetryProvider telemetryProvider: robot.subsystems)
+            handleTelemetry(telemetryProvider.getTelemetry(debugTelemetryEnabled), telemetryProvider.getTelemetryName(), packet);
+        handleTelemetry(robot.getTelemetry(debugTelemetryEnabled), robot.getTelemetryName(), packet);
+
+        // handling vision telemetry
+        Map<String, Object> visionTelemetryMap = new HashMap<>();
+        if(initializing) {
+//            visionTelemetryMap.put("Detected Position", robot.visionProvider.getPosition());
+        }
+        handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
+
+        if(dashboardEnabled) {
+//            if(auto.visionProvider.canSendDashboardImage())
+//                sendVisionImage();
+            robot.drawFieldOverlay(packet);
+            dashboard.sendTelemetryPacket(packet);
+        }
+
+
+        telemetry.update();
     }
 
     private void update() {
@@ -294,7 +368,7 @@ public class FF_6832 extends OpMode {
 //                positionFrequencies.put(position, positionFrequencies.get(position) + 1);
         }
 
-        handleTelemetry();
+        updateTelemetry();
 
         updateTiming();
 

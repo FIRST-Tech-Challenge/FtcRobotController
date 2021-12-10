@@ -354,23 +354,6 @@ public class DriveTrain implements Subsystem {
     }
 
     @Override
-    public void reset() {
-        // reset IMU
-        initializeIMU();
-
-        // reset motors
-        for (int i = 0; i < MOTOR_NAMES.length; i++) {
-            motors[i].setMode(RunMode.STOP_AND_RESET_ENCODER);
-            motors[i].setMode(RunMode.RUN_USING_ENCODER);
-        }
-
-        // reset smoothers
-        frontLeftSmoother = new ExponentialSmoother(Constants.FRONT_LEFT_SMOOTHING_FACTOR);
-        frontRightSmoother = new ExponentialSmoother(Constants.FRONT_RIGHT_SMOOTHING_FACTOR);
-        middleSmoother = new ExponentialSmoother(Constants.MIDDLE_SMOOTHING_FACTOR);
-    }
-
-    @Override
     public void stop() {
         for(int i = 0; i < motors.length; i++) {
             motors[i].setPower(0);

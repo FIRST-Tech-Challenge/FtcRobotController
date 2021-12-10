@@ -112,6 +112,8 @@ public class Constants {
             this.name = name;
         }
 
+        public String getName() { return name; }
+
         public static GameState getGameState(int index) {
             return GameState.values()[index];
         }
@@ -127,13 +129,13 @@ public class Constants {
     public enum Alliance {
         RED, BLUE
     }
-    public enum Positions {
+    public enum Position {
         START_RED(new SimpleMatrix(new double[][] {{0, 0, 0}})),
         START_BLUE(new SimpleMatrix(new double[][] {{0, 0, 0}}));
 
         private SimpleMatrix pose;
 
-        Positions(SimpleMatrix pose) {
+        Position(SimpleMatrix pose) {
             this.pose = pose;
         }
 
