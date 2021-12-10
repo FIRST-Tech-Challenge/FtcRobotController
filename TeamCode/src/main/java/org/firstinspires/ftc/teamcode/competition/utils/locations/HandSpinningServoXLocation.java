@@ -20,9 +20,8 @@ public class HandSpinningServoXLocation extends Location {
 
     public HandSpinningServoXLocation(HardwareMap hardware) {
         try {
-
+            SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_SPINNING_SERVO_X));
         } catch(Exception ignored) {}
-        SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_SPINNING_SERVO_X));
     }
 
     /**

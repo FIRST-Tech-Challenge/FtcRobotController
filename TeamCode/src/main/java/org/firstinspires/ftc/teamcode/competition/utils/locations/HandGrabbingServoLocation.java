@@ -18,9 +18,8 @@ public class HandGrabbingServoLocation extends Location {
 
     public HandGrabbingServoLocation(HardwareMap hardware) {
         try {
-
+            SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_GRABBING_SERVO));
         } catch(Exception ignored) {}
-        SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_GRABBING_SERVO));
     }
 
     /**

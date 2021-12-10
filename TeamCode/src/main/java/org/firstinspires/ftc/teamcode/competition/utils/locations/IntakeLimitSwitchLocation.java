@@ -17,9 +17,8 @@ public class IntakeLimitSwitchLocation extends Location {
 
     public IntakeLimitSwitchLocation(HardwareMap hardware) {
         try {
-
+            SENSOR = new StandardTouchSensor(hardware, hardware.appContext.getString(R.string.INTAKE_LIFTING_LIMIT_SWITCH));
         } catch(Exception ignored) {}
-        SENSOR = new StandardTouchSensor(hardware, hardware.appContext.getString(R.string.INTAKE_LIFTING_LIMIT_SWITCH));
     }
 
     public double returnOutput(Values values) {
