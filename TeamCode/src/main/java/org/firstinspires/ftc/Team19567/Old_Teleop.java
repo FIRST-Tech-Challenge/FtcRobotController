@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="TeleOP", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
+@TeleOp(name="TeleOPOLeopold", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
 public class Old_Teleop extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();

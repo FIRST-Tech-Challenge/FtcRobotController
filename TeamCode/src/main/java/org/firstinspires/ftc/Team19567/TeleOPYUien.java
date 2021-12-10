@@ -5,11 +5,12 @@ package org.firstinspires.ftc.Team19567; //The "namespace" for the project is de
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="TeleOP", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
+@TeleOp(name="TeleOpYyuan", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
 public class TeleOPYUien extends OpMode {
     //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
@@ -31,9 +32,10 @@ public class TeleOPYUien extends OpMode {
     private boolean isSlowmode = false;
     private double acc = 1.0;
     private int presetDelay = 0;
-    private TELEOPLOCATIONS location = null;
+    private TELEOPLOCATIONS location = TELEOPLOCATIONS.NULL;
 
     public enum TELEOPLOCATIONS {
+        NULL,
         SHARED_HUB,
         ALLIANCE_FIRST,
         ALLIANCE_SECOND,
@@ -57,7 +59,7 @@ public class TeleOPYUien extends OpMode {
         //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
 
         leftDCFront.setDirection(DcMotor.Direction.FORWARD);
-        rightDCFront.setDirection(DcMotor.Direction.REVERSE);
+        rightDCFront.setDirection(DcMotor.Direction.FORWARD);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
         intakeDC.setDirection(DcMotor.Direction.REVERSE);
@@ -117,7 +119,7 @@ public class TeleOPYUien extends OpMode {
         if (gamepad1.dpad_left || gamepad2.dpad_left) carouselPower = -0.5;
         else if (gamepad1.dpad_right || gamepad2.dpad_right) carouselPower = 0.5;
         else carouselPower = 0.0;
-        //LINEAR SLIDE
+        //RELEASE DC
         if (gamepad1.left_trigger > 0) releaseDcPos += gamepad1.left_trigger * 5;
         else if (gamepad2.left_trigger > 0) releaseDcPos += gamepad2.left_trigger * 5;
         if (gamepad1.left_bumper || gamepad2.left_bumper) {
@@ -147,51 +149,50 @@ public class TeleOPYUien extends OpMode {
                     releaseServoPos = releaseServo.MIN_POSITION;
                     presetDelay = 0;
                 }
-                switch (location) {
-                    case ALLIANCE_SECOND: {
-                        presetDelay++;
-                        releaseDcPos = 1000;
-                        if (presetDelay >= 40) {
-                            releaseServoPos = releaseServo.MIN_POSITION;
-                            presetDelay = 0;
-                        }
-                        switch (location) {
-                            case ALLIANCE_THIRD: {
-                                presetDelay++;
-                                releaseDcPos = 1000;
-                                if (presetDelay >= 100) {
-                                    releaseServoPos = releaseServo.MIN_POSITION;
-                                    presetDelay = 0;
-                                }
-                            }
-                            default: {
-                                break;
-                            }
-                        }
+            }
 
-//MOTOR SET POWER
-                        leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
-                        rightDCFront.setPower(rightFrontSpeed);
-                        leftDCBack.setPower(leftBackSpeed);
-                        rightDCBack.setPower(rightBackSpeed);
-                        carouselDC.setPower(carouselPower);
-                        intakeDC.setPower(intakePower);
-                        releaseDC.setTargetPosition((int) releaseDcPos);
-                        releaseDC.setPower(releaseDcPower);
-                        releaseDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        releaseServo.setPosition(releaseServoPos);
-                        intakeServo.setPosition(intakeServoPos);
-//TELEMETRY
-                        telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
-                        telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
-                        telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), carouselDC(%.2f), intakeDC(%.2f), releaseDC(%.2f), releaseServo(%.2f)",
-                                leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed, carouselPower, intakePower, releaseDcPos, releaseServoPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
-                        //(%.2f) is used here so that the displayed motor speeds aren't excessively long and don't cldfasdfasdtter(andy's one contribution) the screen.
-                        telemetry.update(); //Updates the telemetry
-                    }
+            case ALLIANCE_SECOND: {
+                presetDelay++;
+                releaseDcPos = 1000;
+                if (presetDelay >= 40) {
+                    releaseServoPos = releaseServo.MIN_POSITION;
+                    presetDelay = 0;
                 }
+            }
+            case ALLIANCE_THIRD: {
+                presetDelay++;
+                releaseDcPos = 1000;
+                if (presetDelay >= 100) {
+                    releaseServoPos = releaseServo.MIN_POSITION;
+                    presetDelay = 0;
+                }
+            }
+            case NULL: {
+                break;
+            }
+            default: {
+                break;
             }
         }
 
+//MOTOR SET POWER
+        leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
+        rightDCFront.setPower(rightFrontSpeed);
+        leftDCBack.setPower(leftBackSpeed);
+        rightDCBack.setPower(rightBackSpeed);
+        carouselDC.setPower(carouselPower);
+        intakeDC.setPower(intakePower);
+        releaseDC.setTargetPosition((int) releaseDcPos);
+        releaseDC.setPower(releaseDcPower);
+        releaseDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        releaseServo.setPosition(releaseServoPos);
+        intakeServo.setPosition(intakeServoPos);
+    //TELEMETRY
+        telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
+        telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
+        telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), carouselDC(%.2f), intakeDC(%.2f), releaseDC(%.2f), releaseServo(%.2f)",
+                leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed, carouselPower, intakePower, releaseDcPos, releaseServoPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
+        //(%.2f) is used here so that the displayed motor speeds aren't excessively long and don't cldfasdfasdtter(andy's one contribution) the screen.
+        telemetry.update(); //Updates the telemetry
     }
 }
