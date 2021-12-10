@@ -100,7 +100,7 @@ public class FrenzyModeBase extends LinearOpMode {
 
     private void handleDriveTrain() {
         // DRIVING
-        double drive = gamepad1.left_stick_y;
+        double drive = -gamepad1.left_stick_y; //negative to invert positive to normal
         double turn = 0;
         double ltrigger = gamepad1.left_trigger;
         double rtrigger = gamepad1.right_trigger;
@@ -113,7 +113,7 @@ public class FrenzyModeBase extends LinearOpMode {
         double strafe = gamepad1.right_stick_x;
 
         if (Math.abs(strafe) > 0) {
-            if (strafe < 0) {
+            if (strafe > 0) { // if want to invert change sign
                 robot.strafeRight(Math.abs(strafe));
             } else {
                 robot.strafeLeft(Math.abs(strafe));
