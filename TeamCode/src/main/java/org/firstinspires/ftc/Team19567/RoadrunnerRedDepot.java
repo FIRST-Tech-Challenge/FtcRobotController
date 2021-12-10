@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -21,7 +20,7 @@ import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
 
 @Autonomous(name="Roadrunner Test", group="Linear Opmode")
 
-public class RoadrunnerTest extends LinearOpMode {
+public class RoadrunnerRedDepot extends LinearOpMode {
 
     private tsePipeline pipeline = new tsePipeline(telemetry); //Team shipping element OpenCV Pipeline
     private ElapsedTime runtime = new ElapsedTime();
@@ -55,25 +54,25 @@ public class RoadrunnerTest extends LinearOpMode {
             @Override
             public void onOpened() {
                 camera.setPipeline(pipeline);
-                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
-                telemetry.addData("OpenCV","OpenCV actually connected wow");
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                telemetry.addData("OpenCV", "OpenCV actually connected wow");
                 telemetry.update();
 
                 waitForStart();
-                switch(pipeline.getLocation()) {
+                switch (pipeline.getLocation()) {
                     case ALLIANCE_FIRST: {
                         location = LOCATION.ALLIANCE_FIRST;
-                        telemetry.addData("OpenCV","First Level Detected");
+                        telemetry.addData("OpenCV", "First Level Detected");
                         telemetry.update();
                     }
                     case ALLIANCE_SECOND: {
                         location = LOCATION.ALLIANCE_SECOND;
-                        telemetry.addData("OpenCV","Second Level Detected");
+                        telemetry.addData("OpenCV", "Second Level Detected");
                         telemetry.update();
                     }
                     case ALLIANCE_THIRD: {
                         location = LOCATION.ALLIANCE_THIRD;
-                        telemetry.addData("OpenCV","Third Level Detected");
+                        telemetry.addData("OpenCV", "Third Level Detected");
                         telemetry.update();
                     }
                     default: {
@@ -81,22 +80,14 @@ public class RoadrunnerTest extends LinearOpMode {
                     }
                 }
             }
+
             @Override
             public void onError(int errorCode) {
-                telemetry.addData("OpenCV","OpenCV failed to load :( Error Code: " + errorCode);
+                telemetry.addData("OpenCV", "OpenCV failed to load :( Error Code: " + errorCode);
                 telemetry.update();
             }
         });
-        waitForStart();
 
-        if(!opModeIsActive()) return;
 
-        chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(90))).waitSeconds(5)
-                .lineToSplineHeading(new Pose2d(7,-24,0))
-                .waitSeconds(3)
-                .lineTo(new Vector2d(12,-64)).strafeTo(new Vector2d(47,-64)).waitSeconds(3)
-                .strafeTo(new Vector2d(15,-64)).lineToSplineHeading(new Pose2d(-11.5,-41,Math.toRadians(-90)))
-                .waitSeconds(3).lineToSplineHeading(new Pose2d(12,-64,0)).strafeTo(new Vector2d(45,-64)).waitSeconds(3)
-                .build().start();
     }
 }
