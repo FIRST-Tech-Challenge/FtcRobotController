@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
+@Disabled
 @Autonomous(name = "RedParkStorageUnit", group = "Autonomous")
 public class ParkStorageUnit extends MasterOpMode{
     DcMotor motorBackLeft;

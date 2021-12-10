@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team6220_2021;
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,8 +15,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
-
-@Autonomous(name = "RedBlockPlace", group = "Autonomous")
+@Disabled
+@Autonomous(name = "RedBlockPlace_notusing_", group = "Autonomous")
 public class RedParkBlockPlace extends MasterOpMode{
     DcMotor motorBackLeft;
     DcMotor motorBackRight;

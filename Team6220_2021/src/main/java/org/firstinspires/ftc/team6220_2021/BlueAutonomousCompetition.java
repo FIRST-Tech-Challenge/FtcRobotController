@@ -103,12 +103,12 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         // todo
                         driveInches(13, 0.1, false);
                         pauseMillis(125);
-                        driveInches(3, 0.1, false);
+                        Forward(4, 0.1);
                         pauseMillis(125);
                         motorDuck.setPower(-0.4);
                         pauseMillis(3000);
                         motorDuck.setPower(0.0);
-                        turnDegrees(160);
+                        turnDegrees(165);
                         pauseMillis(125);
                         // todo
                         driveInches(44, Constants.MINIMUM_DRIVE_POWER, false);
@@ -145,12 +145,12 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         // todo
                         driveInches(13, 0.1, false);
                         pauseMillis(125);
-                        driveInches(3, 0.1, false);
+                        Forward(4, 0.1);
                         pauseMillis(125);
                         motorDuck.setPower(-0.4);
                         pauseMillis(3000);
                         motorDuck.setPower(0.0);
-                        turnDegrees(160);
+                        turnDegrees(165);
                         pauseMillis(125);
                         // todo
                         driveInches(38, Constants.MINIMUM_DRIVE_POWER, false);
@@ -186,12 +186,12 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         // todo
                         driveInches(13, 0.1, false);
                         pauseMillis(125);
-                        driveInches(3, 0.1, false);
+                        Forward(4, 0.1);
                         pauseMillis(125);
                         motorDuck.setPower(-0.4);
                         pauseMillis(3000);
                         motorDuck.setPower(0.0);
-                        turnDegrees(160);
+                        turnDegrees(165);
                         pauseMillis(125);
                         // todo
                         driveInches(38, Constants.MINIMUM_DRIVE_POWER, false);

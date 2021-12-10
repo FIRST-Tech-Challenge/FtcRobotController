@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-@Disabled
-@Autonomous(name = "BlueBlockPlace1", group = "Autonomous")
-public class BlueParkBlockPLaceLeague1 extends MasterOpMode{
+@Autonomous(name = "RedBlockPlace", group = "Autonomous")
+public class RedParkBlockPLaceLeague2 extends MasterOpMode{
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
@@ -42,12 +40,12 @@ public class BlueParkBlockPLaceLeague1 extends MasterOpMode{
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        servoGrabber.setPosition(0.34);
+        servoGrabber.setPosition(0.0);
         pauseMillis(500);
-        servoArm.setPosition(0.01);
+        servoArm.setPosition(0.81);
         waitForStart();
-        servoArm.setPosition(1);
-        motorArm.setTargetPosition(-720);
+        servoArm.setPosition(0.15);
+        motorArm.setTargetPosition(900);
         motorArm.setPower(0.9);
         pauseMillis(500);
         motorBackLeft.setPower(0.6);
@@ -82,10 +80,10 @@ public class BlueParkBlockPLaceLeague1 extends MasterOpMode{
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
         pauseMillis(100);
-        motorBackLeft.setPower(-0.3);
-        motorBackRight.setPower(0.3);
-        motorFrontLeft.setPower(-0.3);
-        motorFrontRight.setPower(0.3);
+        motorBackLeft.setPower(0.3);
+        motorBackRight.setPower(-0.3);
+        motorFrontLeft.setPower(0.3);
+        motorFrontRight.setPower(-0.3);
         pauseMillis(1150);
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
