@@ -3,6 +3,8 @@ package org.firstinspires.ftc.masters;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import java.util.Date;
+
 @Autonomous(name = "Blue Carousel")
 public class JevilsBlueCarousel extends LinearOpMode {
     RobotClass robot;
@@ -10,7 +12,24 @@ public class JevilsBlueCarousel extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Here Wayne will do stuff eventualy
+        robot = new RobotClass(hardwareMap,telemetry,this);
+        robot.openCVInnitShenanigans();
+        EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+
         waitForStart();
+        // Read the bar code with open CV
+
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        while (time < 200 && opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+            freightLocation = robot.analyze();
+
+            telemetry.addData("Position", freightLocation);
+            telemetry.update();
+        }
+
         // Read the bar code with open CV
         robot.strafeLeft(0.3,0.2);
         robot.forward(0.3,0.2);
