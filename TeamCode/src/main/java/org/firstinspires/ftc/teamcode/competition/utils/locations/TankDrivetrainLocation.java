@@ -28,6 +28,9 @@ public class TankDrivetrainLocation extends Location {
     }
 
     public void handleInput(Action action, int rightInput, int leftInput) {
+        if(DRIVETRAIN == null) {
+            return;
+        }
         switch(action) {
             case SET_SPEED:
                 DRIVETRAIN.driveWithEncoder(rightInput, leftInput);
@@ -43,6 +46,9 @@ public class TankDrivetrainLocation extends Location {
 
     @Override
     public void stop() {
+        if(DRIVETRAIN == null) {
+            return;
+        }
         DRIVETRAIN.stop();
     }
 

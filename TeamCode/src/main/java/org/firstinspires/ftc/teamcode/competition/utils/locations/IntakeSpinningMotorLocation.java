@@ -22,6 +22,9 @@ public class IntakeSpinningMotorLocation extends Location {
     }
 
     public void handleInput(Action action, int input) {
+        if(MOTOR == null) {
+            return;
+        }
         switch(action) {
             case SET_SPEED:
                 MOTOR.driveWithEncoder(input);
@@ -37,6 +40,9 @@ public class IntakeSpinningMotorLocation extends Location {
 
     @Override
     public void stop() {
+        if(MOTOR == null) {
+            return;
+        }
         MOTOR.stop();
     }
 

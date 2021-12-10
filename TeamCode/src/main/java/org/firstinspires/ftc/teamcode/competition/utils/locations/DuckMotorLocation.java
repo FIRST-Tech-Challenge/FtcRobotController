@@ -15,13 +15,18 @@ public class DuckMotorLocation extends Location {
         MOVE_DISTANCE_IN_INCHES
     }
 
-    private final StandardMotor MOTOR;
+    private StandardMotor MOTOR;
 
     public DuckMotorLocation(HardwareMap hardware) {
-        MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.DUCK_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD);
+        try {
+            MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.DUCK_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD);
+        } catch(Exception ignored) {};
     }
 
     public void handleInput(Action action, int input) {
+        if(MOTOR == null) {
+            return;
+        }
         switch(action) {
             case SET_SPEED:
                 MOTOR.driveWithEncoder(input);
@@ -37,6 +42,9 @@ public class DuckMotorLocation extends Location {
 
     @Override
     public void stop() {
+        if(MOTOR == null) {
+            return;
+        }
         MOTOR.stop();
     }
 

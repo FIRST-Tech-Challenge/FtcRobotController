@@ -26,6 +26,9 @@ public class HandGrabbingServoLocation extends Location {
      * @param position The position between 0 and 100 if the action was SET_POSITION, otherwise ignored
      */
     public void handleInput(Action action, int position) {
+        if(SERVO == null) {
+            return;
+        }
         switch(action) {
             case SET_POSITION:
                 SERVO.setPosition(position);
@@ -41,6 +44,9 @@ public class HandGrabbingServoLocation extends Location {
 
     @Override
     public void stop() {
+        if(SERVO == null) {
+            return;
+        }
         SERVO.stop();
     }
 

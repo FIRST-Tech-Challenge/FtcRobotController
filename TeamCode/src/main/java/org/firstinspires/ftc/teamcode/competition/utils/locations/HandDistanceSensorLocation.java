@@ -21,11 +21,17 @@ public class HandDistanceSensorLocation extends Location {
      * @return The distance in millimeters
      */
     public double returnOutput() {
+        if(SENSOR == null) {
+            return 0;
+        }
         return SENSOR.getDistance(DistanceUnit.MM);
     }
 
     @Override
     public void stop() {
+        if(SENSOR == null) {
+            return;
+        }
         SENSOR.stop();
     }
 

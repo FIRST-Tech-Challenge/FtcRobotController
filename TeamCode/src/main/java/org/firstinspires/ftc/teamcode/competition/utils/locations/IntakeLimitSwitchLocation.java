@@ -20,6 +20,9 @@ public class IntakeLimitSwitchLocation extends Location {
     }
 
     public double returnOutput(Values values) {
+        if(SENSOR == null) {
+            return 0;
+        }
         switch(values) {
             case PRESSED:
                 return SENSOR.isPressed() ? 1 : 0;
@@ -32,6 +35,9 @@ public class IntakeLimitSwitchLocation extends Location {
 
     @Override
     public void stop() {
+        if(SENSOR == null) {
+            return;
+        }
         SENSOR.stop();
     }
 

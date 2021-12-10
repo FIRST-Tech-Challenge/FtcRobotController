@@ -17,15 +17,20 @@ public class CarfaxDrivetrainLocation extends Location {
         MOVE_DISTANCE_IN_INCHES
     }
 
-    private final StandardCarfax DRIVETRAIN;
+    private StandardCarfax DRIVETRAIN;
 
     public CarfaxDrivetrainLocation(HardwareMap hardware) {
-        StandardMotor rt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_RIGHT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);
-        StandardMotor lt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);
-        DRIVETRAIN = new StandardCarfax(rt, lt);
+        try {
+            StandardMotor rt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_RIGHT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);
+            StandardMotor lt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);
+            DRIVETRAIN = new StandardCarfax(rt, lt);
+        } catch(Exception ignored) {}
     }
 
     public void handleInput(Action action, int rightInput, int leftInput) {
+        if(DRIVETRAIN == null) {
+            return;
+        }
         switch(action) {
             case SET_SPEED:
                 DRIVETRAIN.driveWithEncoder(rightInput, leftInput);
@@ -41,6 +46,9 @@ public class CarfaxDrivetrainLocation extends Location {
 
     @Override
     public void stop() {
+        if(DRIVETRAIN == null) {
+            return;
+        }
         DRIVETRAIN.stop();
     }
 

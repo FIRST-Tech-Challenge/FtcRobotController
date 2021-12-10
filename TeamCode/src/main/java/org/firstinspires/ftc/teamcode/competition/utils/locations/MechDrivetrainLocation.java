@@ -27,6 +27,9 @@ public class MechDrivetrainLocation extends Location {
     }
 
     public void handleInput(Action action, int rightInput, int leftInput) {
+        if(DRIVETRAIN == null) {
+            return;
+        }
         switch(action) {
             case SET_SPEED:
                 DRIVETRAIN.driveWithEncoder(rightInput, leftInput);
@@ -42,6 +45,9 @@ public class MechDrivetrainLocation extends Location {
 
     @Override
     public void stop() {
+        if(DRIVETRAIN == null) {
+            return;
+        }
         DRIVETRAIN.stop();
     }
 

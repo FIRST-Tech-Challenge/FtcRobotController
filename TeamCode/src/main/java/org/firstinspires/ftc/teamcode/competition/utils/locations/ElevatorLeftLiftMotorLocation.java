@@ -22,6 +22,9 @@ public class ElevatorLeftLiftMotorLocation extends Location {
     }
 
     public void handleInput(Action action, int input) {
+        if(LEFT == null) {
+            return;
+        }
         switch(action) {
             case SET_SPEED:
                 LEFT.driveWithEncoder(input);
@@ -37,6 +40,9 @@ public class ElevatorLeftLiftMotorLocation extends Location {
 
     @Override
     public void stop() {
+        if(LEFT == null) {
+            return;
+        }
         LEFT.stop();
     }
 
