@@ -212,46 +212,15 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                         break;
                 }
 
-                // This goes inside of the switch and is used just like above, but with cubes/ducks/spheres instead of the TSE
-                // Used for cycling freight in autonomous
-                /*if (tfod != null) {
-                    tfod.activate();
-                    tfod.setZoom(2.0, 16.0/9.0);
-
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-
-                        int i = 0;
-                        for (Recognition recognition : updatedRecognitions) {
-                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
-                            i++;
-
-                            if (recognition.getLabel().equals("TSE")) {
-                                double TSELocation = (recognition.getLeft() + recognition.getRight()) / 2.0;
-
-                                if (TSELocation > 200.0 && TSELocation <= 333.0) {
-                                    barcode = 0;
-                                    telemetry.addData("barcode: ", barcode);
-                                } else if (TSELocation > 333.0 && TSELocation <= 467.0) {
-                                    barcode = 1;
-                                    telemetry.addData("barcode: ", barcode);
-                                } else if (TSELocation > 467.0 && TSELocation <= 600.0) {
-                                    barcode = 2;
-                                    telemetry.addData("barcode: ", barcode);
-                                }
-                            }
-                        }
-                        telemetry.update();
-                    }
-                }*/
-
                 break;
             }
         }
+        servoGrabber.setPosition(0.0);
+        pauseMillis(100);
+        servoArm.setPosition(0.81);
+        motorArm.setTargetPosition(-10);
+        motorArm.setPower(0.9);
+        pauseMillis(700);
 
         if (tfod != null) {
             tfod.shutdown();

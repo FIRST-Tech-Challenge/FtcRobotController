@@ -58,7 +58,7 @@ public class Park extends MasterOpMode{
         motorFrontLeft.setPower(-0.1);
         motorFrontRight.setPower(-0.1);
         pauseMillis(100);
-        motorArm.setTargetPosition(10);
+        motorArm.setTargetPosition(-10);
         motorArm.setPower(0.9);
         pauseMillis(500);
     }

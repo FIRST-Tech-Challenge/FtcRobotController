@@ -100,10 +100,10 @@ public class RedParkBlockPLaceLeague2 extends MasterOpMode{
         motorFrontLeft.setPower(-0.1);
         motorFrontRight.setPower(-0.1);
         pauseMillis(100);
-        servoGrabber.setPosition(0.34);
+        servoGrabber.setPosition(0.0);
         pauseMillis(100);
-        servoArm.setPosition(0.1);
-        motorArm.setTargetPosition(10);
+        servoArm.setPosition(0.81);
+        motorArm.setTargetPosition(-10);
         motorArm.setPower(0.9);
         pauseMillis(700);
     }
