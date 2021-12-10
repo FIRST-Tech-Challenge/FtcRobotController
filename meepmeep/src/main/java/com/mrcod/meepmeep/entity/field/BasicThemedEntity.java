@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class BasicThemedEntity implements ThemedEntity {
     private final MeepMeep meepMeep;
     private final String tag;
-    protected int zIndex = 0;
+    private int zIndex = 0;
 
 
     public BasicThemedEntity(MeepMeep meepMeep, String tag) {
