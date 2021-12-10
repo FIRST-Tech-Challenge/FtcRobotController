@@ -36,6 +36,8 @@ public class DuckAutoRed extends LinearOpMode {
         intake.init(hardwareMap);
         webcam.init(hardwareMap);
 
+        drive.setPoseEstimate(new Pose2d(-36, 64, Math.toRadians(90)));
+
         TrajectorySequence trajectory1 = drive.trajectorySequenceBuilder(new Pose2d(-36, 64, Math.toRadians(90)))
                 .strafeLeft(1.5)
                 .back(12)

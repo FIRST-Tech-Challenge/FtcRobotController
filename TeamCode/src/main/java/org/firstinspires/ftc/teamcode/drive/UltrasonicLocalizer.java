@@ -143,7 +143,6 @@ public class UltrasonicLocalizer implements Localizer {
 
             // Make a list of them
             // For each set, calculate the position of the robot that you could get from those
-            double theta = 0;
             for (int i = 0; i < 4; i++) {
                 double currentTheta = theta + (Math.PI/2 * i);
                 double distance = distances[i];
@@ -160,7 +159,7 @@ public class UltrasonicLocalizer implements Localizer {
 
             // Get all the possible combinations of the positions
             Iterator<int[]> iterator = CombinatoricsUtils.combinationsIterator(positions.size(), 2);
-            List<Vector2d[]> sets = new ArrayList<>(2);
+            List<Vector2d[]> sets = new ArrayList<>(6);
             while (iterator.hasNext()) {
                 int[] combination = iterator.next();
                 Vector2d first = positions.get(combination[0]);
@@ -178,6 +177,7 @@ public class UltrasonicLocalizer implements Localizer {
                 double firstY = first.getY();
                 double secondX = second.getX();
                 double secondY = second.getY();
+
 
                 double firstXDistanceFromPrevious = Math.abs(firstX - previousPose.getX());
                 double firstYDistanceFromPrevious = Math.abs(firstY - previousPose.getY());
