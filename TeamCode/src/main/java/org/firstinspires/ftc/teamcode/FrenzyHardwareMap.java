@@ -53,7 +53,7 @@ public class FrenzyHardwareMap {
     //IMU from RevHub.
     public BNO055IMU imu = null;
     //magnetic limit switch for arm
-    TouchSensor armLimitSwitch;
+    public TouchSensor armLimitSwitch;
     //Setup Wheel measurements for REV motors.
     //Encoder clicks are originally 28 per rotation, but multiply by 20:1.
     public final int REV_ENCODER_CLICKS = 560;
