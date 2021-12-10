@@ -35,7 +35,7 @@ public class linearSlideBarCodeTestThing extends LinearOpMode {
             telemetry.addData("Position", freightLocation);
             telemetry.update();
         }
-        robot.forward(0.6, 1.5);
+        robot.forward(0.6, 1.6);
         robot.turnToHeadingSloppy(.6,-45,-20);
         robot.forward(.3,.8);
 
