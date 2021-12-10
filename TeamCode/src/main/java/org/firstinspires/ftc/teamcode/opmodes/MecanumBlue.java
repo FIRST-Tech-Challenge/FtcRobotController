@@ -25,8 +25,6 @@ public class MecanumBlue extends OpMode {
         lift.init(hardwareMap);
         intake.init(hardwareMap);
         hopper.init(hardwareMap);
-
-
     }
 
     @Override
