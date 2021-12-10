@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.image.sample;
+package org.firstinspires.ftc.teamcode.main.autonomous.image.sample;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -56,7 +56,7 @@ public class OpenCvAndVuforiaOnSameCameraExample extends LinearOpMode
         parameters.vuforiaLicenseKey = hardwareMap.appContext.getString(R.string.VUFORIA_KEY);
         parameters.cameraDirection   = VuforiaLocalizer.CameraDirection.BACK;
         // Uncomment this line below to use a webcam
-        parameters.cameraName = hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.Webcam1));
+        parameters.cameraName = hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.WEBCAM));
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Create a Vuforia passthrough "virtual camera"

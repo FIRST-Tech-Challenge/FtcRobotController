@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.image.sample;
+package org.firstinspires.ftc.teamcode.main.autonomous.image.sample;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -41,7 +41,7 @@ public class WebcamExample extends LinearOpMode
         // webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.Webcam1)), cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.Webcam1)));
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.WEBCAM)));
 
         /*
          * Specify the image processing pipeline we wish to invoke upon receipt

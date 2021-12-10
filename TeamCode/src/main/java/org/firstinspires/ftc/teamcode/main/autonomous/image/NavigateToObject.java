@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.image;
+package org.firstinspires.ftc.teamcode.main.autonomous.image;
 
 import android.annotation.SuppressLint;
 

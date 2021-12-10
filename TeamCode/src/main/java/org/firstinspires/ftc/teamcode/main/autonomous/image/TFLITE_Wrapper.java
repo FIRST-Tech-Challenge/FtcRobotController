@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.image;
+package org.firstinspires.ftc.teamcode.main.autonomous.image;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -28,7 +28,7 @@ public class TFLITE_Wrapper {
                 "FreightFrenzy_BC.tflite",
                 new String[]{"Ball", "Cube"},
                 hardwareMap,
-                hardwareMap.appContext.getString(R.string.Webcam1)
+                hardwareMap.appContext.getString(R.string.WEBCAM)
         );
     }
 

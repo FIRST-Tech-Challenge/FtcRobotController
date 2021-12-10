@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.image;
+package org.firstinspires.ftc.teamcode.main.autonomous.image;
 
 public enum InitialPositions {
     POS1(200, "1"), POS2(400, "2"), POS3(600, "3");

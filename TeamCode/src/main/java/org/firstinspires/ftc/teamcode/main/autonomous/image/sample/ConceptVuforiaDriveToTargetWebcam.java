@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.image.sample;
+package org.firstinspires.ftc.teamcode.main.autonomous.image.sample;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -12,11 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.utils.TwoWDDrivetrain;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This OpMode illustrates using a webcam to locate and drive towards ANY Vuforia target.
@@ -42,8 +39,8 @@ import java.util.List;
  * is explained below.
  */
 
-@TeleOp(name="Drive To Target", group = "Image Testing")
-public class DriveToTargetTest extends LinearOpMode
+@TeleOp(name="Drive To Target Vuforia", group = "Concept")
+public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 8.0; //  this is how close the camera should get to the target (inches)
@@ -53,22 +50,37 @@ public class DriveToTargetTest extends LinearOpMode
     final double SPEED_GAIN =   0.02 ;   //  Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     final double TURN_GAIN  =   0.01 ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
-    final double MM_PER_INCH = 25.40 ;
+    final double MM_PER_INCH = 25.40 ;   //  Metric conversion
 
-
-    private String VUFORIA_KEY = null;
+    /*
+     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
+     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
+     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
+     * web site at https://developer.vuforia.com/license-manager.
+     *
+     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
+     * random data. As an example, here is a example of a fragment of a valid key:
+     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
+     * Once you've obtained a license key, copy the string from the Vuforia web site
+     * and paste it in to your code on the next line, between the double quotes.
+     */
+    private static final String VUFORIA_KEY =
+            "Aba0xlb/////AAABmSz/ja3/3kRRlbOmvxvSiyYo4i3sQUCZ+34YlXUoH5l4dHsqBfSB7zfhXIyA4n4WhMdrfsO/929aXOJGxekJAruHRpzmIejufYeZ33KTO3WTgSLJVNFDZxCQKnnfVDwWRinB2fQHKFuzZ+Pwv/5WLkBIz3MChC++b6Zy1TubceGUrKKlbKjyUyhKJnEgyaVLVHJw8Oq90Xb1Tb2cZp/u3qmkbh55V7VfpfM70YCMEjAVnoPPTOtvsb3s9P8SYaXUw011SuFSj+oS/X/OGJ6uSuKpt4iDAGKwJ8FCMs/2PZvuG45Hc2IczYBhREDz0DIqIY7btjAJ4/SzurPxL3R+R0sy2XGfrsOkpDwzHmZ+8eSa";
 
     VuforiaLocalizer vuforia    = null;
     OpenGLMatrix targetPose     = null;
     String targetName           = "";
 
-    private TwoWDDrivetrain drivetrain;
+    private DcMotor leftDrive   = null;
+    private DcMotor rightDrive  = null;
 
     @Override public void runOpMode()
     {
-
-        VUFORIA_KEY = "AcQbfNb/////AAABmUoZxvy9bUCeksf5rYATLidV6rQS+xwgakOfD4C+LPj4FmsvqtRDFihtnTBZUUxxFbyM7CJMfiYTUEwcDMJERl938oY8iVD43E/SxeO64bOSBfLC0prrE1H4E5SS/IzsVcQCa9GsNaWrTEushMhdoXA3VSaW6R9KrrwvKYdNN/SbaN4TPslQkTqSUr63K60pkE5GqpeadAQuIm8V6LK63JD1TlF665EgpfsDZeVUBeAiJE86iGlT1/vNJ9kisAqKpBHsRyokaVClRnjlp28lmodjVRqeSk8cjCuYryn74tClfxfHQpkDDIsJO+7IYwJQCZQZZ+U9KJaMUeben4HOj0JTnQaEE6MZLaLQzY+C/6MS";
-
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         * To get an on-phone camera preview, use the code below.
+         * If no camera preview is desired, use the parameter-less constructor instead (commented out below).
+         */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
@@ -79,7 +91,7 @@ public class DriveToTargetTest extends LinearOpMode
         parameters.useExtendedTracking = false;
 
         // Connect to the camera we are to use.  This name must match what is set up in Robot Configuration
-        parameters.cameraName = hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.Webcam1));
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "C1");
         this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Load the trackable objects from the Assets file, and give them meaningful names
@@ -92,15 +104,22 @@ public class DriveToTargetTest extends LinearOpMode
         // Start tracking targets in the background
         targetsFreightFrenzy.activate();
 
+
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        leftDrive  = hardwareMap.get(DcMotor.class, "ld1");
+        rightDrive = hardwareMap.get(DcMotor.class, "rd1");
+
+        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
+        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
 
-        List<String> motorNames = new ArrayList<String>();
-
-        motorNames.add(hardwareMap.appContext.getString(R.string.LEFT_DRIVE_1));
-        motorNames.add(hardwareMap.appContext.getString(R.string.RIGHT_DRIVE_1));
-
-        drivetrain = new TwoWDDrivetrain(motorNames, hardwareMap);
+        FtcDashboard.getInstance().startCameraStream(vuforia, 0);
 
         waitForStart();
 
@@ -176,7 +195,8 @@ public class DriveToTargetTest extends LinearOpMode
             // Calculate left and right wheel powers and send to them to the motors.
             double leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             double rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-            drivetrain.SetPower(leftPower, rightPower);
+            leftDrive.setPower(leftPower);
+            rightDrive.setPower(rightPower);
 
             sleep(10);
         }
