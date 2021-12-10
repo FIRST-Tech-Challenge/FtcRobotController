@@ -30,7 +30,14 @@ public class PileOfBlueStuff extends LinearOpMode {
         }
 
         // Read the bar code with open CV
+        robot.strafeLeft(1,.4);
+        robot.forward(0.3,1.6);
+        robot.turnToHeadingSloppy(.4,-35,0);
+        robot.forward(0.3, .4);
+        robot.pauseButInSecondsForThePlebeians(.5);
 
+        robot.turnToHeadingSloppy(.4, -87, 0);
+        robot.forward(1, -6);
 
         /*
         robot.strafeRight(0.5,2);
