@@ -14,7 +14,7 @@ public class HandGrabbingServoLocation extends Location {
         START
     }
 
-    private final StandardServo SERVO;
+    private StandardServo SERVO;
 
     public HandGrabbingServoLocation(HardwareMap hardware) {
         SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_GRABBING_SERVO));

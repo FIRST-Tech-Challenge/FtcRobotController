@@ -16,7 +16,7 @@ public class MechDrivetrainLocation extends Location {
         MOVE_DISTANCE_IN_INCHES
     }
 
-    private final StandardTank DRIVETRAIN;
+    private StandardTank DRIVETRAIN;
 
     public MechDrivetrainLocation(HardwareMap hardware) {
         StandardMotor rt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_RIGHT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);

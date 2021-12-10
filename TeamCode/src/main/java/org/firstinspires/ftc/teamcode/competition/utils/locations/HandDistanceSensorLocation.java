@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.Stand
 
 public class HandDistanceSensorLocation extends Location {
 
-    private final StandardDistanceSensor SENSOR;
+    private StandardDistanceSensor SENSOR;
 
     public HandDistanceSensorLocation(HardwareMap hardware) {
         SENSOR = new StandardDistanceSensor(hardware, hardware.appContext.getString(R.string.HAND_DISTANCE_SENSOR));

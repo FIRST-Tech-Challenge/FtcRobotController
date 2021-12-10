@@ -17,10 +17,12 @@ public class ElevatorRightLiftMotorLocation extends Location {
         MOVE_DISTANCE_IN_INCHES
     }
 
-    private final StandardMotor RIGHT;
+    private StandardMotor RIGHT;
 
     public ElevatorRightLiftMotorLocation(HardwareMap hardware) {
-        RIGHT = new StandardMotor(hardware, hardware.appContext.getString(R.string.LIFT_RIGHT_ELEVATOR_MOTOR), DcMotorSimple.Direction.FORWARD);
+        try {
+            RIGHT = new StandardMotor(hardware, hardware.appContext.getString(R.string.LIFT_RIGHT_ELEVATOR_MOTOR), DcMotorSimple.Direction.FORWARD);
+        } catch(Exception ignored) {}
     }
 
     public void handleInput(Action action, int input) {

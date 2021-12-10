@@ -13,7 +13,7 @@ public class IntakeLimitSwitchLocation extends Location {
         FORCE
     }
 
-    private final StandardTouchSensor SENSOR;
+    private StandardTouchSensor SENSOR;
 
     public IntakeLimitSwitchLocation(HardwareMap hardware) {
         SENSOR = new StandardTouchSensor(hardware, hardware.appContext.getString(R.string.INTAKE_LIFTING_LIMIT_SWITCH));

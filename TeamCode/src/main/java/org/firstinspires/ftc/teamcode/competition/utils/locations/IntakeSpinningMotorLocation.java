@@ -15,7 +15,7 @@ public class IntakeSpinningMotorLocation extends Location {
         MOVE_DISTANCE_IN_INCHES
     }
 
-    private final StandardMotor MOTOR;
+    private StandardMotor MOTOR;
 
     public IntakeSpinningMotorLocation(HardwareMap hardware) {
         MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.INTAKE_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD);

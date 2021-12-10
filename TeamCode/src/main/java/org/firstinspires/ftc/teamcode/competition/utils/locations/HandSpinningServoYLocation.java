@@ -15,7 +15,7 @@ public class HandSpinningServoYLocation extends Location {
         START
     }
 
-    private final StandardServo SERVO;
+    private StandardServo SERVO;
 
     public HandSpinningServoYLocation(HardwareMap hardware) {
         SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_SPINNING_SERVO_Y));
