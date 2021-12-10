@@ -54,6 +54,7 @@ public class FF_6832 extends OpMode {
     private long lastLoopClockTime, loopTime;
     private double averageLoopTime;
     private ExponentialSmoother loopTimeSmoother;
+//    private long[] times;
 
     // Code to run ONCE when the driver hits INIT
     @Override
@@ -159,7 +160,8 @@ public class FF_6832 extends OpMode {
         double forward = Math.pow(-gamepad1.right_stick_y, 3) * Constants.FORWARD_SCALING_FACTOR;
         double rotate = Math.pow(gamepad1.left_stick_x, 3) * Constants.ROTATE_SCALING_FACTOR;
 
-        robot.driveTrain.drive(forward, rotate);
+//        robot.driveTrain.drive(forward, rotate);
+        robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
     }
 
     private void handleEmergencyStop() {

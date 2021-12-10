@@ -227,7 +227,7 @@ public class DriveTrain implements Subsystem {
     public void update() {
         // state
         chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + Constants.DISTANCE_SENSOR_TO_FRONT_AXLE - Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
-        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / (Constants.DRIVETRAIN_TICKS_PER_REVOLUTION * Constants.SWERVE_GEAR_RATIO) * 2 * Math.PI + Math.PI / 2) % (2 * Math.PI);;
+        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / Constants.SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);;
 
         // PID corrections
         double maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
@@ -244,6 +244,14 @@ public class DriveTrain implements Subsystem {
         motorMiddle.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
 
         updatePose();
+    }
+
+    private void handleSmoothing() {
+        if(smoothingEnabled) {
+            targetFrontLeftVelocity = frontLeftSmoother.update(targetFrontLeftVelocity);
+            targetFrontRightVelocity = frontRightSmoother.update(targetFrontLeftVelocity);
+            targetMiddleVelocity = middleSmoother.update(targetMiddleVelocity);
+        }
     }
 
     /**
@@ -267,11 +275,38 @@ public class DriveTrain implements Subsystem {
                     ? 0
                 : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
 
-        if(smoothingEnabled) {
-            targetFrontLeftVelocity = frontLeftSmoother.update(targetFrontLeftVelocity);
-            targetFrontRightVelocity = frontRightSmoother.update(targetFrontLeftVelocity);
-            targetMiddleVelocity = middleSmoother.update(targetMiddleVelocity);
-        }
+        handleSmoothing();
+    }
+
+        public void driveDesmos(double linearVelocity, double angularVelocity, double dt) {
+        targetLinearVelocity = linearVelocity;
+        targetAngularVelocity = angularVelocity;
+
+        targetTurnRadius = angularVelocity == 0 ? 0 : linearVelocity / angularVelocity;
+
+        SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
+        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
+        SimpleMatrix middleWheel = new SimpleMatrix(new double[][] {{ 0, -getChassisDistance() }});
+
+        SimpleMatrix translation = new SimpleMatrix(new double[][] {{ 0, linearVelocity * dt }});
+
+        double heading = pose.get(2);
+
+        SimpleMatrix leftWheelPrime = translation.plus(MathUtils.rotateVector(leftWheel, heading));
+        SimpleMatrix rightWheelPrime = translation.plus(MathUtils.rotateVector(rightWheel, heading));
+        SimpleMatrix middleWheelPrime = translation.plus(MathUtils.rotateVector(middleWheel, heading));
+
+        targetFrontLeftVelocity = leftWheelPrime.minus(leftWheel).normF() / dt;
+        targetFrontRightVelocity = rightWheelPrime.minus(rightWheel).normF() / dt;
+        targetMiddleVelocity = middleWheelPrime.minus(middleWheel).normF() / dt;
+
+        targetSwivelAngle = angularVelocity == 0 || (angularVelocity == 0 && linearVelocity == 0)
+                ? Math.PI / 2
+                : linearVelocity == 0
+                ? 0
+                : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
+
+        handleSmoothing();
     }
 
 
@@ -279,6 +314,11 @@ public class DriveTrain implements Subsystem {
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new HashMap<>();
         if(debug) {
+            telemetryMap.put("fl position", motorFrontLeft.getCurrentPosition());
+            telemetryMap.put("fr position", motorFrontRight.getCurrentPosition());
+            telemetryMap.put("middle position", motorMiddle.getCurrentPosition());
+            telemetryMap.put("swivel position", motorMiddleSwivel.getCurrentPosition());
+
             telemetryMap.put("fl velocity", MathUtils.ticksToMeters(motorFrontLeft.getVelocity()));
             telemetryMap.put("fr velocity", MathUtils.ticksToMeters(motorFrontRight.getVelocity()));
             telemetryMap.put("middle velocity", MathUtils.ticksToMeters(motorMiddle.getVelocity()));

@@ -50,6 +50,7 @@ public class Constants {
 
     // conversion factors
     public static double DRIVETRAIN_TICKS_PER_REVOLUTION = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class).getTicksPerRev();
+    public static double SWERVE_TICKS_PER_REVOLUTION = 1740;
 
     public static double DRIVETRAIN_TICKS_PER_METER = DRIVETRAIN_TICKS_PER_REVOLUTION / (2 * Math.PI * WHEEL_RADIUS); // TODO: use TPM_CALIBRATION game state to calibrate TPM
     public static double INCHES_PER_METER = 39.3701;

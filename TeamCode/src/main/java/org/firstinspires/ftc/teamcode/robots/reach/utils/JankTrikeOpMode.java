@@ -35,7 +35,7 @@ public class JankTrikeOpMode extends OpMode
     int gripperClosed =900;
     int gripperOpen = 1200;
     int gripperUp = 900;
-    int gripperDown = 1766;
+    int gripperDown = 1650;
     boolean gripperIsUp = true;
 
 
@@ -69,11 +69,11 @@ public class JankTrikeOpMode extends OpMode
         swerveAngle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         swerveAngle.setTargetPosition(swerveAngle.getCurrentPosition());
         swerveAngle.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        swerveAngle.setPower(0);
+        swerveAngle.setPower(1);
         swerveAngle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        gripperServo.setPosition(gripperClosed);
-        gripperPitchServo.setPosition(gripperUp);
+        gripperServo.setPosition(servoNormalize(gripperClosed));
+        gripperPitchServo.setPosition(servoNormalize(gripperUp));
 
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -137,25 +137,25 @@ public class JankTrikeOpMode extends OpMode
 
 
         if(gamepad1.y){
-            gripperPitchServo.setPosition(gripperUp);
+            gripperPitchServo.setPosition(servoNormalize(gripperUp));
             gripperIsUp = true;
         }
 
         if(gamepad1.x){
-            gripperPitchServo.setPosition(gripperDown);
+            gripperPitchServo.setPosition(servoNormalize(gripperDown));
             gripperIsUp = false;
         }
 
 
         if(gamepad1.b){
             if(!gripperIsUp) {
-                gripperServo.setPosition(gripperClosed);
+                gripperServo.setPosition(servoNormalize(gripperClosed));
             }
         }
 
         if(gamepad1.a){
             if(!gripperIsUp) {
-                gripperServo.setPosition(gripperOpen);
+                gripperServo.setPosition(servoNormalize(gripperOpen));
             }
         }
 
@@ -180,5 +180,9 @@ public class JankTrikeOpMode extends OpMode
     public void stop() {
     }
 
+    public static double servoNormalize(int pulse){
+        double normalized = (double)pulse;
+        return (normalized - 750.0) / 1500.0; //convert mr servo controller pulse width to double on _0 - 1 scale
+    }
 }
 

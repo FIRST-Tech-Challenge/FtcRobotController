@@ -73,7 +73,7 @@ public class Robot implements Subsystem {
 
     private void sendVisionImage() {
         Mat mat = visionProvider.getDashboardImage();
-        if(mat != null) {
+        if(mat != null && mat.width() > 0 && mat.height() > 0) {
             Bitmap bm = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.RGB_565);
             Utils.matToBitmap(mat, bm);
             dashboard.sendImage(bm);
@@ -185,9 +185,9 @@ public class Robot implements Subsystem {
 
         // dashboard telemetry
         if(dashboardEnabled) {
-            if(visionProvider.canSendDashboardImage())
-                sendVisionImage();
-            drawFieldOverlay(packet);
+//            if(visionProvider.canSendDashboardImage())
+//                sendVisionImage();
+//            drawFieldOverlay(packet);
             dashboard.sendTelemetryPacket(packet);
         }
 
