@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3.driveUntilMechS
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,9 +13,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class CompBotW1Attachments extends CompBotW1 {
     public DcMotor intake = null, lift0 = null, lift1 = null;
 
-    public CRServo bucket, spin0, spin1;
+    public CRServo bucket0, bucket1, spin0, spin1;
 
+    public final static int liftSafeAdder = 0;
     public int[] liftZero = new int[2];
+    public int[] liftSafe = new int[2];
 
     public CompBotW1Attachments() {
         super();
@@ -42,11 +45,15 @@ public class CompBotW1Attachments extends CompBotW1 {
         spin1 = hardwareMap.get(CRServo.class, "spin1");
         // lift0 = hardwareMap.get(DcMotor.class, "lift1");
         // lift1 = hardwareMap.get(DcMotor.class, "lift2");
-        // bucket = hardwareMap.get(CRServo.class, "bucket");
+        bucket0 = hardwareMap.get(CRServo.class, "bucket0");
+        bucket1 = hardwareMap.get(CRServo.class, "bucket1");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // lift0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // lift1.setDirection(DcMotor.Direction.REVERSE);
+        bucket1.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // lift0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -55,10 +62,10 @@ public class CompBotW1Attachments extends CompBotW1 {
         intake.setPower(0);
         spin0.setPower(0);
         spin1.setPower(0);
+        bucket0.setPower(0);
+        bucket1.setPower(0);
         // lift0.setPower(0);
         // lift1.setPower(0);
-        // bucket.setPower(0);
-
         // resetLift();
     }
 
@@ -96,6 +103,7 @@ public class CompBotW1Attachments extends CompBotW1 {
         lift0.setPower(0);
         lift1.setPower(0);
         liftZero = new int[]{lift0.getCurrentPosition(), lift1.getCurrentPosition()};
+        liftSafe = new int[]{liftZero[0]+liftSafeAdder, liftZero[1]+liftSafeAdder};
     }
     public int getLiftPos() {
         return (int)((lift0.getCurrentPosition()-liftZero[0] + lift1.getCurrentPosition()-liftZero[1])/2);
@@ -118,6 +126,20 @@ public class CompBotW1Attachments extends CompBotW1 {
         lift1.setPower(0);
         lift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    public boolean isLiftSafe() {
+        if (lift0.getCurrentPosition()>liftSafe[0] && lift1.getCurrentPosition()>liftSafe[1]) {
+            return true;
+        }
+        return false;
+    }
+    public void goLiftSafe() {
+        goLiftPosition(liftSafeAdder, 1);
+    }
      */
+
+    public void setBucketPower(double x) {
+        bucket0.setPower(x);
+        bucket1.setPower(x);
+    }
 
 }

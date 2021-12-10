@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3;
-import org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3Attachments;
 
 @TeleOp(name="Viridian Competition Teleop, 1 Player")
 public class Teleop extends OpMode {
@@ -55,13 +54,14 @@ public class Teleop extends OpMode {
         r.br.setPower(MathUtils.clamp(-(y+x-turn),-1,1));
 
         r.intake.setPower((gamepad1.a?1:0) - (gamepad1.b?1:0));
-        //r.setLiftPower((gamepad1.dpad_up?1:0) - (gamepad1.dpad_down?1:0));
         r.spin0.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
         r.spin1.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
 
         if(gamepad1.right_stick_button) {
             r.imu.reset();
         }
+
+        r.setBucketPower((gamepad1.left_bumper?1:-1));
     }
 
     @Override
