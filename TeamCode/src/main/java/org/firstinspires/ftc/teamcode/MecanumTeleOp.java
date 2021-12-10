@@ -36,6 +36,9 @@ public class MecanumTeleOp extends LinearOpMode {
         //carousel power
         double carouselPower = 0;
 
+        //arm limit switch toggle to reset to 0
+        boolean armLimitSwitchFlag = true;
+
         //init loop
          while (! isStarted()) {
 
@@ -104,24 +107,33 @@ public class MecanumTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             // Track Arm Current Pos
             armCurrentPos = robot.motorArm.getCurrentPosition();
-            // Arm Up and Arm Down in small increments
-            if (gamepad2.right_stick_y != 0.25) {
-                //armSetPos += gamepad2.right_stick_y*10;
-                if (gamepad2.right_stick_y == -1 ){
-                    armSetPos = armSetPos + 5;
-                } else if (gamepad2.right_stick_y == 1 ) {
-                    armSetPos = armSetPos - 5;
+
+            //limit switch
+            if (robot.armLimitSwitch.isPressed() && armLimitSwitchFlag == false){
+                robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                armLimitSwitchFlag = true;
+            }else {
+                armLimitSwitchFlag = false;
+                // Arm Up and Arm Down in small increments
+                if (gamepad2.right_stick_y != 0.25) {
+                    //armSetPos += gamepad2.right_stick_y*10;
+                    if (gamepad2.right_stick_y == -1 ){
+                        armSetPos = armSetPos + 5;
+                    } else if (gamepad2.right_stick_y == 1 ) {
+                        armSetPos = armSetPos - 5;
+                    }
                 }
-            }
-            //set arm positions to gamepad.2 buttons
-            if (gamepad2.a) {
-                armSetPos = armLevel0;
-            }else if (gamepad2.x) {
-                armSetPos = armLevel1;
-            }else if (gamepad2.y) {
-                armSetPos = armLevel2;
-            }else if (gamepad2.b) {
-                armSetPos = armLevel3;
+                //set arm positions to gamepad.2 buttons
+                if (gamepad2.a) {
+                    armSetPos = armLevel0;
+                }else if (gamepad2.x) {
+                    armSetPos = armLevel1;
+                }else if (gamepad2.y) {
+                    armSetPos = armLevel2;
+                }else if (gamepad2.b) {
+                    armSetPos = armLevel3;
+                }
+
             }
 
 
