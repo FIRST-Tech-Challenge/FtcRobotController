@@ -34,17 +34,6 @@ public class JevilsRedCarousel extends LinearOpMode {
         robot.forward(0.6, 1.5);
         robot.turnToHeadingSloppy(.6,-45,-20);
         robot.forward(.3,.8);
-<<<<<<< HEAD
-
-        //deposit shipping element
-
-
-//        robot.backwards(0.3,0.2);
-//        robot.strafeLeft(0.3,0.2);
-//        robot.turnToHeading(0.3,-125, 3);
-//        robot.forward(0.3,0.2);
-=======
-        robot.pauseButInSecondsForThePlebeians(.001);
 
         //deposit shipping element
         /*

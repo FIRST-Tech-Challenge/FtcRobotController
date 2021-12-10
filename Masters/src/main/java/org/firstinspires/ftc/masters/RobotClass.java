@@ -572,7 +572,7 @@ public class RobotClass {
         if (deltaHeading < -180) {
             deltaHeading += 360;
         } else if (deltaHeading >= 180) {
-            deltaHeading -= 360;
+            deltaHeading -= 360;dumpFreightTop();
         }
 
         integratedHeading += deltaHeading;

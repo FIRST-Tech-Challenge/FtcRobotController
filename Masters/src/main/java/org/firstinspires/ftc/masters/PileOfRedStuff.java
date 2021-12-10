@@ -33,9 +33,13 @@ public class PileOfRedStuff extends LinearOpMode {
 
         robot.strafeRight(1,.4);
         robot.forward(0.3,1.6);
-        robot.turnToHeadingSloppy(.4,42,0);
-        robot.forward(0.3, .6);
+        robot.turnToHeadingSloppy(.4,35,0);
+        robot.forward(0.3, .4);
         robot.pauseButInSecondsForThePlebeians(.5);
+
+        robot.turnToHeadingSloppy(.4, 87, 0);
+        robot.forward(1, -6);
+
 
         //deposit shipping element.
         /*

@@ -12,6 +12,8 @@ public class PileOfBlueStuff extends LinearOpMode {
         waitForStart();
         // Read the bar code with open CV
 
+
+        /*
         robot.strafeRight(0.5,2);
         robot.forward(0.3,0.6);
         //deposit shipping element.
@@ -35,6 +37,6 @@ public class PileOfBlueStuff extends LinearOpMode {
         robot.turnToHeading(0.3,90,3);
         robot.forward(0.5,4.6);
         robot.turnToHeading(0.3,0,3);
-
+        */
     }
 }
