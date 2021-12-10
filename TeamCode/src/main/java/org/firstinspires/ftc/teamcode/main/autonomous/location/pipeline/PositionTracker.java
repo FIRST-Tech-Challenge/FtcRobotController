@@ -60,7 +60,7 @@ public class PositionTracker {
             x = eastWest.sensor2 * Math.sin(angleRadians);
         }
         if (y < 0) {
-
+            y = CoordinateSystem.maxLengthInCM - 18 - Math.abs(y);
         }
 
         // Do our updating
