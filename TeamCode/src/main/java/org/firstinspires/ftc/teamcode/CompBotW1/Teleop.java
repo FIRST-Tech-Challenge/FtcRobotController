@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Teleops;
+package org.firstinspires.ftc.teamcode.CompBotW1;
 
 import androidx.core.math.MathUtils;
 
@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3;
 import org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3Attachments;
 
-@TeleOp(name="Viridian Competition Teleop 2 Player")
-public class Teleop2p extends OpMode {
-    CompBotV3Attachments r = new CompBotV3Attachments();
+@TeleOp(name="Viridian Competition Teleop, 1 Player")
+public class Teleop extends OpMode {
+    CompBotW1Attachments r = new CompBotW1Attachments();
     double initialHeading, error;
     boolean headingReset = false;
 
@@ -54,20 +54,14 @@ public class Teleop2p extends OpMode {
         r.bl.setPower(MathUtils.clamp(y-x+turn,-1,1));
         r.br.setPower(MathUtils.clamp(-(y+x-turn),-1,1));
 
-        r.intake.setPower((gamepad2.a?1:0) - (gamepad2.b?1:0));
-        r.lift.setPower((gamepad2.dpad_up?1:0) - (gamepad2.dpad_down?1:0));
-        r.spin.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
-        r.bucket.setPower(gamepad2.left_bumper?-1:1);
+        r.intake.setPower((gamepad1.a?1:0) - (gamepad1.b?1:0));
+        //r.setLiftPower((gamepad1.dpad_up?1:0) - (gamepad1.dpad_down?1:0));
+        r.spin0.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
+        r.spin1.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
 
-        int a = r.lift.getCurrentPosition();
-        telemetry.addData("liftposition", a);
-        telemetry.addData("error", error);
-        telemetry.update();
-
-        if(gamepad2.right_stick_button) {
+        if(gamepad1.right_stick_button) {
             r.imu.reset();
         }
-
     }
 
     @Override
