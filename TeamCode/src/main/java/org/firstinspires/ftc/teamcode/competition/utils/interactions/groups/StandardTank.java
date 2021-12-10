@@ -1,27 +1,24 @@
-package org.firstinspires.ftc.teamcode.competition.utils;
+package org.firstinspires.ftc.teamcode.competition.utils.interactions.groups;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
-public class Tank {
+public class StandardTank extends InteractionSurface {
 
-    private final Telemetry TELEMETRY;
-    private final Motor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
+    private final StandardMotor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
 
     /**
      * Creates a new tank drivetrain.
-     * @param telemetry The telemetry to log to
      * @param rightTop The right top motor of the tank
      * @param rightBottom The right bottom motor of the tank
      * @param leftTop The left top motor of the tank
      * @param leftBottom The left bottom motor of the tank
      */
-    public Tank(Telemetry telemetry, Motor rightTop, Motor rightBottom, Motor leftTop, Motor leftBottom) {
+    public StandardTank(StandardMotor rightTop, StandardMotor rightBottom, StandardMotor leftTop, StandardMotor leftBottom) {
         RIGHT_TOP = rightTop;
         RIGHT_BOTTOM = rightBottom;
         LEFT_TOP = leftTop;
         LEFT_BOTTOM = leftBottom;
-        TELEMETRY = telemetry;
-        TELEMETRY.addData("Tank Ready", "Motors added and tank ready to drive.");
     }
 
     /**
@@ -123,24 +120,29 @@ public class Tank {
         LEFT_BOTTOM.reset();
     }
 
-    public Telemetry getTelemetry() {
-        return TELEMETRY;
-    }
-
-    public Motor getRightTop() {
+    public StandardMotor getRightTop() {
         return RIGHT_TOP;
     }
 
-    public Motor getRightBottom() {
+    public StandardMotor getRightBottom() {
         return RIGHT_BOTTOM;
     }
 
-    public Motor getLeftTop() {
+    public StandardMotor getLeftTop() {
         return LEFT_TOP;
     }
 
-    public Motor getLeftBottom() {
+    public StandardMotor getLeftBottom() {
         return LEFT_BOTTOM;
     }
 
+    @Override
+    public boolean isInputDevice() {
+        return true;
+    }
+
+    @Override
+    public boolean isOutputDevice() {
+        return false;
+    }
 }

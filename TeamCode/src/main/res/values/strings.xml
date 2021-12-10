@@ -1,22 +1,41 @@
 <resources>
     <string name="title_activity_imgproc">imgproc</string>
     <string name="VUFORIA_KEY">AcQbfNb/////AAABmUoZxvy9bUCeksf5rYATLidV6rQS+xwgakOfD4C+LPj4FmsvqtRDFihtnTBZUUxxFbyM7CJMfiYTUEwcDMJERl938oY8iVD43E/SxeO64bOSBfLC0prrE1H4E5SS/IzsVcQCa9GsNaWrTEushMhdoXA3VSaW6R9KrrwvKYdNN/SbaN4TPslQkTqSUr63K60pkE5GqpeadAQuIm8V6LK63JD1TlF665EgpfsDZeVUBeAiJE86iGlT1/vNJ9kisAqKpBHsRyokaVClRnjlp28lmodjVRqeSk8cjCuYryn74tClfxfHQpkDDIsJO+7IYwJQCZQZZ+U9KJaMUeben4HOj0JTnQaEE6MZLaLQzY+C/6MS</string>
-    <string name="Webcam1">C1</string>
-    <!---->
-    <string name="DRIVETRAIN_LEFT_DRIVE_1">ld1</string>
-    <string name="DRIVETRAIN_LEFT_DRIVE_2">ld2</string>
-    <string name="DRIVETRAIN_CNTR_DRIVE_1">cd1</string>
-    <string name="DRIVETRAIN_RIGHT_DRIVE_1">rd1</string>
-    <string name="DRIVETRAIN_RIGHT_DRIVE_2">rd2</string>
+    <string name="WEBCAM">webcam</string>
+    <!--
 
-    <string name="HW_SPINNER">spin</string>
-    <string name="HW_LIFT">liftOne</string>
-    <string name="HW_LIFT_TWO">liftTwo</string>
-    <string name="HW_GRABBER">grabber</string>
-    <string name="HW_TRAPPER">trapper</string>
-    <string name="HW_TRAPPER_TRIGGER">distance</string>
-    <string name="HW_DUCK">duck</string>
-    <string name="HW_SPINNER_SERVO">spinnerServo</string>
-    <string name="HW_LIFT_SERVO">liftServo</string>
-    <string name="HW_LIFT_DROPPER_SERVO">liftDropper</string>
+        NAMING CONVENTION:
+        String names are standardized as found in the Location abstract class. For the OTHER_INFORMATION section, follow this guide:
+
+        ...SUBSYSTEM_...LOCATION_...JOB_...TYPE_...?AXIS
+
+        For example, a motor placed at the right top of a spinning device which controls movement on the y axis would be appended:
+
+        SPINNING_DEVICE_RIGHT_TOP_MOVING_MOTOR_Y
+
+        The same motor without a specified axis (axes are optional as shown by the question mark in the syntax) would be:
+
+        SPINNING_DEVICE_RIGHT_TOP_MOVING_MOTOR
+
+    -->
+    <!-- DRIVETRAIN -->
+    <string name="DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR">ltM</string>
+    <string name="DRIVETRAIN_LEFT_BOTTOM_DRIVING_MOTOR">lbM</string>
+    <string name="DRIVETRAIN_CENTER_DRIVING_MOTOR">cdM</string>
+    <string name="DRIVETRAIN_RIGHT_TOP_DRIVING_MOTOR">rtM</string>
+    <string name="DRIVETRAIN_RIGHT_BOTTOM_DRIVING_MOTOR">rbM</string>
+    <!-- INTAKE -->
+    <string name="INTAKE_SPINNING_MOTOR">iM</string>
+    <string name="INTAKE_LIFTING_SERVO">iuS</string>
+    <string name="INTAKE_LIFTING_LIMIT_SWITCH">iT</string>
+    <!-- ELEVATOR -->
+    <string name="LIFT_RIGHT_ELEVATOR_MOTOR">l1M</string>
+    <string name="LIFT_LEFT_ELEVATOR_MOTOR">l2M</string>
+    <!-- HAND -->
+    <string name="HAND_DISTANCE_SENSOR">diD</string>
+    <string name="HAND_SPINNING_SERVO_X">htS</string>
+    <string name="HAND_SPINNING_SERVO_Y">hfS</string>
+    <string name="HAND_GRABBING_SERVO">hgS</string>
+    <!-- DUCK -->
+    <string name="DUCK_SPINNING_MOTOR">duM</string>
 </resources>

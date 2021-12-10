@@ -1,22 +1,19 @@
-package org.firstinspires.ftc.teamcode.competition.utils;
+package org.firstinspires.ftc.teamcode.competition.utils.interactions.groups;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
-public class Carfax {
+public class StandardCarfax extends InteractionSurface {
 
-    private final Telemetry TELEMETRY;
-    private final Motor RIGHT, LEFT;
+    private final StandardMotor RIGHT, LEFT;
 
     /**
      * Creates a new carfax drivetrain.
-     * @param telemetry The telemetry to log to
      * @param right The right top motor of the carfax
      */
-    public Carfax(Telemetry telemetry, Motor right, Motor left) {
+    public StandardCarfax(StandardMotor right, StandardMotor left) {
         RIGHT = right;
         LEFT = left;
-        TELEMETRY = telemetry;
-        TELEMETRY.addData("Carfax Ready", "Motors added and carfax ready to drive.");
     }
 
     /**
@@ -102,16 +99,21 @@ public class Carfax {
         LEFT.reset();
     }
 
-    public Telemetry getTelemetry() {
-        return TELEMETRY;
-    }
-
-    public Motor getRight() {
+    public StandardMotor getRight() {
         return RIGHT;
     }
 
-    public Motor getLeft() {
+    public StandardMotor getLeft() {
         return LEFT;
     }
-    
+
+    @Override
+    public boolean isInputDevice() {
+        return true;
+    }
+
+    @Override
+    public boolean isOutputDevice() {
+        return false;
+    }
 }

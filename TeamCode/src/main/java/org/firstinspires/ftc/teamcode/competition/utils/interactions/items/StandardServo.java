@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.competition.utils;
+package org.firstinspires.ftc.teamcode.competition.utils.interactions.items;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class StandardServo {
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
+
+public class StandardServo extends InteractionSurface {
 
     private final Servo SERVO;
 
@@ -20,16 +22,24 @@ public class StandardServo {
     }
 
     /**
-     * Sets the position of the servo, between -180 and 180
+     * Sets the position of the servo, between 0 and 100
      * @param position The position to set
      * @throws ArithmeticException The exception thrown when the position is not between -100 and 100
      */
     public void setPosition(int position) throws ArithmeticException {
-        if(position >= -100 && position <= 100) {
+        if(position >= 0 && position <= 100) {
             SERVO.setPosition(position / 100.0);
         }else{
-            throw new ArithmeticException("Position must be between -100 and 100!");
+            throw new ArithmeticException("Position must be between - and 100!");
         }
+    }
+
+    public void stop() {
+        close();
+    }
+
+    public void close() {
+        SERVO.close();
     }
 
     /**
@@ -52,4 +62,13 @@ public class StandardServo {
         return SERVO.getController();
     }
 
+    @Override
+    public boolean isInputDevice() {
+        return true;
+    }
+
+    @Override
+    public boolean isOutputDevice() {
+        return false;
+    }
 }

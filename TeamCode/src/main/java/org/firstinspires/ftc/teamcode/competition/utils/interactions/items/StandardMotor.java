@@ -1,18 +1,17 @@
-package org.firstinspires.ftc.teamcode.competition.utils;
+package org.firstinspires.ftc.teamcode.competition.utils.interactions.items;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 
 /**
  * Represents a motor attached to the robot.
  * @author Thomas Ricci, Mickael Lachut
  * */
-public class Motor {
+public class StandardMotor extends InteractionSurface {
 
-    private final Telemetry TELEMETRY;
     private final String NAME;
     private final HardwareMap HARDWARE;
     private final DcMotor MOTOR;
@@ -23,15 +22,23 @@ public class Motor {
     private final double COUNTS_PER_INCH;
     private final MotorType TYPE;
 
+    @Override
+    public boolean isInputDevice() {
+        return true;
+    }
+
+    @Override
+    public boolean isOutputDevice() {
+        return false;
+    }
+
     private enum MotorType {
         SIMPLE, 
         COMPLEX
     }
 
-
     /**
      * Creates a reference to a complex motor on the robot. This motor can drive to a position, unlike the simple variant.
-     * @param telemetry The telemetry object to log data to.
      * @param hardware The hardware object to locate the motor with.
      * @param name The name of the motor as listed on the FtcRobotController device.
      * @param offset The directional offset of the motor. This can be useful if a motor is mounted the opposite way it should be, for example upside down.
@@ -39,8 +46,7 @@ public class Motor {
      * @param gearReduction The reduction ratio of the motor's gearing.
      * @param radius The radius of the motor's attachment.
      */
-    public Motor(Telemetry telemetry, HardwareMap hardware, String name, DcMotorSimple.Direction offset, double countsPerRev, double gearReduction, double radius) {
-        TELEMETRY = telemetry;
+    public StandardMotor(HardwareMap hardware, String name, DcMotorSimple.Direction offset, double countsPerRev, double gearReduction, double radius) {
         NAME = name;
         HARDWARE = hardware;
         MOTOR = HARDWARE.get(DcMotor.class, name);
@@ -54,18 +60,15 @@ public class Motor {
         MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         MOTOR.setPower(0);
         TYPE = MotorType.COMPLEX;
-        TELEMETRY.addLine("Motor " + getName() + " is ready.");
     }
 
     /**
      * Creates a reference to a simple motor on the robot This motor can't drive a distance, but can drive with and without the encoder.
-     * @param telemetry The telemetry object to log data to.
      * @param hardware The hardware object to locate the motor with.
      * @param name The name of the motor as listed on the FtcRobotController device.
      * @param offset The directional offset of the motor. This can be useful if a motor is mounted the opposite way it should be, for example upside down.
      */
-    public Motor(Telemetry telemetry, HardwareMap hardware, String name, DcMotorSimple.Direction offset) {
-        TELEMETRY = telemetry;
+    public StandardMotor(HardwareMap hardware, String name, DcMotorSimple.Direction offset) {
         NAME = name;
         HARDWARE = hardware;
         MOTOR = hardware.get(DcMotor.class, name);
@@ -79,7 +82,6 @@ public class Motor {
         MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         MOTOR.setPower(0);
         TYPE = MotorType.SIMPLE;
-        TELEMETRY.addLine("Motor " + getName() + " is ready.");
 
     }
 
@@ -150,10 +152,6 @@ public class Motor {
      */
     public void reset() {
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    public Telemetry getTelemetry() {
-        return TELEMETRY;
     }
 
     public String getName() {
