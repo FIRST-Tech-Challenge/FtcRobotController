@@ -16,6 +16,9 @@ public class PileOfRedStuff extends LinearOpMode {
         robot.openCVInnitShenanigans();
         EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
 
+        waitForStart();
+        // Read the bar code with open CV
+
         long startTime = new Date().getTime();
         long time = 0;
 
@@ -26,10 +29,6 @@ public class PileOfRedStuff extends LinearOpMode {
             telemetry.addData("Position", freightLocation);
             telemetry.update();
         }
-
-        waitForStart();
-        // Read the bar code with open CV
-
 
         robot.strafeRight(1,.4);
         robot.forward(0.3,1.6);

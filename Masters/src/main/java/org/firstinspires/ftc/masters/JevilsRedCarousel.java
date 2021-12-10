@@ -18,6 +18,7 @@ public class JevilsRedCarousel extends LinearOpMode {
 
         waitForStart();
 
+
         long startTime = new Date().getTime();
         long time = 0;
 
@@ -35,13 +36,15 @@ public class JevilsRedCarousel extends LinearOpMode {
         robot.turnToHeadingSloppy(.6,-45,-20);
         robot.forward(.3,.8);
 
+        robot.pauseButInSecondsForThePlebeians(.001);
+
         //deposit shipping element
         /*
         robot.backwards(0.3,0.2);
         robot.strafeLeft(0.3,0.2);
         robot.turnToHeading(0.3,-125, 3);
         robot.forward(0.3,0.2);
->>>>>>> origin/master
+
         robot.forward(.3,-2.6);
 
         //Jevil turns carousel
