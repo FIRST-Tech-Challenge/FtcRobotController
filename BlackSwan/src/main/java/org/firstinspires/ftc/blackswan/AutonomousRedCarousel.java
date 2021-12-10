@@ -30,12 +30,10 @@ public class AutonomousRedCarousel extends LinearOpMode {
         robot.pause(100); //replace with color sensor check
         robot.right(.75,.5);
         robot.pause(100); //replace with color sensor check
-        robot.back(.5,.5);
-        robot.turnRight(45,.5);
+        robot.right(1.25,.5);
         robot.forward(.75,.5);
         robot.armThing(3);
         robot.back(.75,.5);
-        robot.turnLeft(45,.5);
         robot.left(2.5,.75);
         robot.forward(1.5,.5);
 

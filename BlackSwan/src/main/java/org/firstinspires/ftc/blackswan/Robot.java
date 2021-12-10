@@ -40,11 +40,11 @@ public class Robot {
         frontRight = hardwareMap.get(DcMotor.class,"frontRight");
         backRight = hardwareMap.get(DcMotor.class,"backRight");
 
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
-
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+        intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -248,7 +248,7 @@ public class Robot {
 //                    1000);
 //            arm.setPower(0);
 //        }
-        intake.setPower(1);
+        intake.setPower(-1);
         pause(1000);
         intake.setPower(0);
     }
