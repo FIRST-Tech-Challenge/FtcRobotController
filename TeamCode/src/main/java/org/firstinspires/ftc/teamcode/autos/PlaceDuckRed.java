@@ -157,21 +157,21 @@ public class PlaceDuckRed extends LinearOpMode {
         chassis.rotate(180,0.5);
         delay(100);
         int startPos = chassis.frontLeft.getCurrentPosition();
-        ArrayList<Point> initialPoints = pipeline2.getDuckCenters();
-        if(initialPoints.size() == 0) {
+        Point initialPoint = pipeline2.getFirstCenter();
+        if(initialPoint == null) {
             telemetry.addLine("No duck found (initially)");
         } else {
-            telemetry.addData("Duck x position", initialPoints.get(0).x);
+            telemetry.addData("Duck x position", initialPoint.x);
         }
         telemetry.update();
-        if(initialPoints.size() == 0 || initialPoints.get(0).x < 60) {
+        if(initialPoint == null || initialPoint.x < 80) {
             chassis.frontLeft.setPower(-0.3);
             chassis.frontRight.setPower(0.3);
             chassis.backLeft.setPower(0.3);
             chassis.backRight.setPower(-0.3);
-            while(pipeline2.getDuckCenters().size() == 0 || pipeline2.getDuckCenters().get(0).x < 60) {
+            while(pipeline2.getFirstCenter() == null || pipeline2.getFirstCenter().x < 80) {
                 // Wait until the duck is even with the intake
-                if(chassis.frontLeft.getCurrentPosition() - startPos < -800 && pipeline2.getDuckCenters().size() == 0) {
+                if(chassis.frontLeft.getCurrentPosition() - startPos < -800 && pipeline2.getFirstCenter() == null) {
                     // If the robot failed to spin the carousel and/or the duck isn't there, only search for 800 ticks
                     break;
                 }
@@ -180,13 +180,13 @@ public class PlaceDuckRed extends LinearOpMode {
             chassis.frontRight.setPower(0);
             chassis.backLeft.setPower(0);
             chassis.backRight.setPower(0);
-        } else if(initialPoints.get(0).x > 90) {
-            chassis.strafeRightWithEncoders(0.3,(int)initialPoints.get(0).x - 90);
+        } else if(initialPoint.x > 120) {
+            chassis.strafeRightWithEncoders(0.3,(int)initialPoint.x - 50);
         }
         int deltaPos = chassis.frontLeft.getCurrentPosition() - startPos;
 
         // Pick up the duck
-        intake.intakeMotor.setPower(0.8);
+        intake.intakeMotor.setPower(0.9);
         chassis.moveForwardWithEncoders(0.2,500);
         delay(400);
 
