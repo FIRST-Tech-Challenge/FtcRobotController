@@ -141,7 +141,7 @@ public class TeleOpComp extends MasterOpMode{
 
             motorBelt.setPower(gamepad2.left_stick_y);
             if (gamepad1.left_trigger>0){
-                speed = 0.3;
+                speed = 0.25;
             } else {
                 speed = 1;
             }

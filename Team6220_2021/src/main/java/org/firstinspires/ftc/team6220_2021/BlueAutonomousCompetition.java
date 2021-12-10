@@ -53,36 +53,37 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
 
         pauseMillis(1000);
 
-        if (tfod != null) {
-            tfod.activate();
-            tfod.setZoom(1.0, 16.0/9.0);
+        double startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < time && opModeIsActive()){
+            if (tfod != null) {
+                tfod.activate();
+                tfod.setZoom(1.0, 16.0 / 9.0);
 
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Object Detected", updatedRecognitions.size());
 
-            if (updatedRecognitions != null) {
-                telemetry.addData("# Object Detected", updatedRecognitions.size());
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
+                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
+                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
+                        i++;
 
-                int i = 0;
-                for (Recognition recognition : updatedRecognitions) {
-                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
-                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
-                    i++;
+                        if (recognition.getLabel().equals("TSE")) {
+                            double TSELocation = (recognition.getLeft() + recognition.getRight()) / 2.0;
 
-                    if (recognition.getLabel().equals("TSE")) {
-                        double TSELocation = (recognition.getLeft() + recognition.getRight()) / 2.0;
-
-                        if (TSELocation > 0.0 && TSELocation <= 267.0) {
-                            barcode = 0;
-                        } else if (TSELocation > 267.0 && TSELocation <= 533.0) {
-                            barcode = 1;
-                        } else if (TSELocation > 533.0 && TSELocation <= 800.0) {
-                            barcode = 2;
+                            if (TSELocation > 0.0 && TSELocation <= 267.0) {
+                                barcode = 0;
+                            } else if (TSELocation > 267.0 && TSELocation <= 533.0) {
+                                barcode = 1;
+                            } else if (TSELocation > 533.0 && TSELocation <= 800.0) {
+                                barcode = 2;
+                            }
                         }
                     }
                 }
-                telemetry.update();
-            }
+            }   telemetry.update();
         }
 
         if (opModeIsActive()) {
