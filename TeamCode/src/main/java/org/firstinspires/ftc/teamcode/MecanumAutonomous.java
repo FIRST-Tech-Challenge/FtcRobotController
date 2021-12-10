@@ -92,11 +92,11 @@ public class MecanumAutonomous extends LinearOpMode {
 
         //Run code while the opMode is active.
         if(opModeIsActive()) {
-            driveStraight(10,0.8,5.0);
-            drive(0,10, 0.8, 5.0);
-            drive(0,10,-0.8,5.0);
-            rotate(90, 0.8);
-            rotate(-90, 0.8);
+            //driveStraight(50,0.8,5.0);
+           drive(0,25, 0.8, 5.0);
+           drive(0,25,-0.8,5.0);
+           //rotate(45, 0.8);
+           //rotate(-45, 0.8);
         }
     }
 
@@ -107,6 +107,7 @@ public class MecanumAutonomous extends LinearOpMode {
     @param timeoutS Motor movement timeout (Adjust accordingly, or just put 5)
     */
     public void driveStraight(double distanceInCM, double power, double timeoutS) {
+        distanceInCM = -distanceInCM;
         telemetry.addData("status","encoder reset");
         telemetry.update();
         robot.restartEncoders();
@@ -161,6 +162,7 @@ public class MecanumAutonomous extends LinearOpMode {
         double slowdown = 1;
         //Set motor targets based on direction.
         if(degrees >= 0 && degrees <= 90) {
+            robot.setRunToPosition();
             //Both wheels go backwards.
             target = -target;
             robot.motorFrontLeft.setTargetPosition(target);
@@ -168,28 +170,30 @@ public class MecanumAutonomous extends LinearOpMode {
             direction = 1;
         }
         if(degrees >90 && degrees < 180) {
+            robot.setRunToPosition();
             //Both wheels go forward, no change needed.
             robot.motorFrontRight.setTargetPosition(target);
             robot.motorBackLeft.setTargetPosition(target);
             direction = 2;
         }
         if(degrees >= 180 && degrees <= 270) {
+            robot.setRunToPosition();
             //Both wheels go forward, no change needed.
             robot.motorFrontLeft.setTargetPosition(target);
             robot.motorBackRight.setTargetPosition(target);
             direction = 3;
         }
         if(degrees > 270 && degrees < 360) {
+            robot.setRunToPosition();
             //Both wheels go backwards.
             target = -target;
             robot.motorFrontRight.setTargetPosition(target);
             robot.motorBackLeft.setTargetPosition(target);
             direction = 4;
         }
-        //Set the motors' target and begin runtime for timeout.
-        robot.setRunToPosition();
+        //begin runtime for timeout.
         runtime.reset();
-        //Set initial motor powers.
+        //Set initial motor powers
         robot.motorFrontLeft.setPower(((y + x) / denominator)*power);
         robot.motorBackLeft.setPower(((y - x) / denominator)*power);
         robot.motorFrontRight.setPower(((y - x) / denominator)*power);

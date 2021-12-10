@@ -72,6 +72,7 @@ public class FrenzyHardwareMap {
         //Save reference to the hardware map.
         frenzyMap = hwMap;
         telemetry = frenzyTelemetry;
+
         //Define and initialize drivetrain motors.
         motorFrontLeft = frenzyMap.get(DcMotor.class, "frontLeft");
         motorBackLeft = frenzyMap.get(DcMotor.class, "backLeft");
