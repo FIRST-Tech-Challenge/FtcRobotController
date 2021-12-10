@@ -203,7 +203,7 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleLift() {
-        if (isButtonPressable() && !robot.isLiftBusy()) {
+        if (isButtonPressable()) {
             //lower level
             double liftVal = gamepad2.left_stick_y;
             if (liftVal > 0.5) {

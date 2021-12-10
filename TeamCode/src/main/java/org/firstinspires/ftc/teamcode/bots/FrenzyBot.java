@@ -6,7 +6,6 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -20,7 +19,6 @@ import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
 import org.firstinspires.ftc.teamcode.CVRec.GameElement;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
-import org.firstinspires.ftc.teamcode.skills.DetectedColor;
 
 public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx intake = null;
@@ -42,8 +40,8 @@ public class FrenzyBot extends FrenzyBaseBot {
     NormalizedColorSensor colorSensor;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_READY = 1;
-    private static double DROPPER_SERVO_POS_MOVE = 0.6;
+    private static double DROPPER_SERVO_POS_PICKUP = 0.95; // this is only to pick-up elements
+    private static double DROPPER_SERVO_POS_START = 0.95;  //default pos to start and transport
     private static double DROPPER_SERVO_POS_DROP = 0.0;
 
     // Detection
@@ -107,7 +105,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
         try {
             dropperServo =  hwMap.get(Servo.class, "dropper");
-            dropperServo.setPosition(DROPPER_SERVO_POS_READY);
+            prepDropperToMove();
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize dropperServo", ex);
         }
@@ -177,7 +175,6 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift level 3", defaultReturn = "")
     public void liftToLevel3(){
         liftLocation = LIFT_LEVEL_THREE;
-//        prepDropperToMove();
         this.lift.setTargetPosition(LIFT_LEVEL_THREE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
@@ -194,7 +191,6 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift level 1", defaultReturn = "")
     public void liftToLevel1(){
         liftLocation = LIFT_LEVEL_ONE;
-//        prepDropperToMove();
         this.lift.setTargetPosition(LIFT_LEVEL_ONE);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
@@ -241,14 +237,19 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Reset dropper", defaultReturn = "")
     public void resetDropper(){
+        prepDropperToMove();
+    }
+
+    @BotAction(displayName = "Prep dropper", defaultReturn = "")
+    public void prepDropperToMove(){
         if (dropperServo != null) {
-            dropperServo.setPosition(DROPPER_SERVO_POS_READY);
+            dropperServo.setPosition(DROPPER_SERVO_POS_START);
         }
     }
 
-    private void prepDropperToMove(){
+    public void dropperPickupPosition(){
         if (dropperServo != null) {
-            dropperServo.setPosition(DROPPER_SERVO_POS_MOVE);
+            dropperServo.setPosition(DROPPER_SERVO_POS_PICKUP);
         }
     }
 
@@ -256,6 +257,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void startIntake() {
         activateIntake(INTAKE_SPEED);
         intakeRunning = true;
+        dropperPickupPosition();
     }
 
     @BotAction(displayName = "Reverse intake", defaultReturn = "")
@@ -267,6 +269,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void stopIntake() {
         activateIntake(0);
         intakeRunning = false;
+        prepDropperToMove();
     }
 
     @BotAction(displayName = "Start turntable blue", defaultReturn = "")
@@ -290,11 +293,20 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Start turntable blue gradual", defaultReturn = "")
     public void startTurntableBlueGradual() {
-        duckLoop(false);
+        duckLoop(false, false);
     }
     @BotAction(displayName = "Start turntable red gradual", defaultReturn = "")
     public void startTurntableRedGradual() {
-        duckLoop(true);
+        duckLoop(true, false);
+    }
+
+    @BotAction(displayName = "Start turntable blue auto gradual", defaultReturn = "")
+    public void startTurntableBlueAutoGradual() {
+        duckLoop(false, true);
+    }
+    @BotAction(displayName = "Start turntable red auto gradual", defaultReturn = "")
+    public void startTurntableRedAutoGradual() {
+        duckLoop(true, true);
     }
 
     @BotAction(displayName = "Stop turntable", defaultReturn = "")
@@ -345,7 +357,7 @@ public class FrenzyBot extends FrenzyBaseBot {
                 gotIt = true;
                 break;
             }
-            if (runtime.milliseconds() > 3000){
+            if (runtime.milliseconds() > 4000){
                 Log.d(TAG, "Ran out of time");
                 break;
             }
@@ -359,17 +371,21 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     public void goDucks(boolean red){
         for(int i = 0; i < 12; i++){
-            duckLoop(red);
-            delayWait(300);
+            duckLoop(red, false);
+            delayWait(600);
         }
     }
 
-    private void duckLoop(boolean red){
+    private void duckLoop(boolean red, boolean auto){
         double startSpeed = -0.2;
         double speedIncrement = -0.01;
         int maxLoops = 10;
         int loopDelayMs = 140;
         double maxSpeed = 0.25;
+        if (auto){
+            maxSpeed = 0.055;
+            maxLoops = maxLoops*2;
+        }
         if (red){
             maxSpeed = - maxSpeed;
         }
