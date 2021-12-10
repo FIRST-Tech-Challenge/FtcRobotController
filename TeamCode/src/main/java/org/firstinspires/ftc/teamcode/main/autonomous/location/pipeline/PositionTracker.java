@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 import org.firstinspires.ftc.teamcode.main.autonomous.location.CoordinateSystem;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.MockDistanceSensor;
 
 public class PositionTracker {
     public Axis leftToRight;
@@ -86,7 +87,7 @@ public class PositionTracker {
         // No South-facing
         public AllSensors(SensorWrapper north, SensorWrapper east, SensorWrapper west) {
             this.north = north;
-            this.south = null;
+            this.south = new MockDistanceSensor();
             this.east = east;
             this.west = west;
         }

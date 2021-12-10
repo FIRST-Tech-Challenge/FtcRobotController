@@ -9,11 +9,11 @@ import com.qualcomm.robotcore.util.TypeConversion;
 
 @I2cSensor(name = "Ultrasonic Distance Sensor", description = "Ultrasonic Distance Sensor", xmlTag = "TOFSENSOR")
 public class EyeSquaredSeaDistanceSensor extends I2cDeviceSynchDevice<I2cDeviceSynch> {
-    protected void writeData(final Commands cmd, short value) {
+    public void writeData(final Commands cmd, short value) {
         deviceClient.write(cmd.bVal, TypeConversion.shortToByteArray(value));
     }
 
-    protected short readData(final Commands cmd, short value) {
+    public short readData(final Commands cmd) {
         return TypeConversion.byteArrayToShort(deviceClient.read(cmd.bVal, cmd.returnedValues));
     }
 

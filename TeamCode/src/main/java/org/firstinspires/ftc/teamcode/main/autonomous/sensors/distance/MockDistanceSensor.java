@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 
 public class MockDistanceSensor implements SensorWrapper {
 
-    MockDistanceSensorData data = new MockDistanceSensorData(10, false, "Mock Sensor 1");
+    MockDistanceSensorData data = new MockDistanceSensorData(0, false, "Mock Sensor 1");
 
     @Override
     public void setUnits(DistanceUnit unit) { }
