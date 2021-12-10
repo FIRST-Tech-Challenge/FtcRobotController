@@ -11,10 +11,30 @@ import java.util.ArrayList;
 
 public class ElevatorRightLiftMotorLocation extends Location {
 
+    public enum Action {
+        SET_SPEED,
+        SET_VOLTAGE,
+        MOVE_DISTANCE_IN_INCHES
+    }
+
     private final StandardMotor RIGHT;
 
     public ElevatorRightLiftMotorLocation(HardwareMap hardware) {
         RIGHT = new StandardMotor(hardware, hardware.appContext.getString(R.string.LIFT_RIGHT_ELEVATOR_MOTOR), DcMotorSimple.Direction.FORWARD);
+    }
+
+    public void handleInput(Action action, int input) {
+        switch(action) {
+            case SET_SPEED:
+                RIGHT.driveWithEncoder(input);
+                break;
+            case SET_VOLTAGE:
+                RIGHT.driveWithoutEncoder(input);
+                break;
+            case MOVE_DISTANCE_IN_INCHES:
+                RIGHT.driveDistance(input, 50);
+                break;
+        }
     }
 
     @Override

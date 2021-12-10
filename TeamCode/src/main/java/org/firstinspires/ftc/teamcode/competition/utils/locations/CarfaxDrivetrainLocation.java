@@ -11,12 +11,32 @@ import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.Stand
 
 public class CarfaxDrivetrainLocation extends Location {
 
+    public enum Action {
+        SET_SPEED,
+        SET_VOLTAGE,
+        MOVE_DISTANCE_IN_INCHES
+    }
+
     private final StandardCarfax DRIVETRAIN;
 
     public CarfaxDrivetrainLocation(HardwareMap hardware) {
         StandardMotor rt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_RIGHT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);
         StandardMotor lt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);
         DRIVETRAIN = new StandardCarfax(rt, lt);
+    }
+
+    public void handleInput(Action action, int rightInput, int leftInput) {
+        switch(action) {
+            case SET_SPEED:
+                DRIVETRAIN.driveWithEncoder(rightInput, leftInput);
+                break;
+            case SET_VOLTAGE:
+                DRIVETRAIN.driveWithoutEncoder(rightInput, leftInput);
+                break;
+            case MOVE_DISTANCE_IN_INCHES:
+                DRIVETRAIN.driveDistance(rightInput, leftInput, 50);
+                break;
+        }
     }
 
     @Override

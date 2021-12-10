@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition.utils.locations;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardDistanceSensor;
@@ -13,6 +14,14 @@ public class HandDistanceSensorLocation extends Location {
 
     public HandDistanceSensorLocation(HardwareMap hardware) {
         SENSOR = new StandardDistanceSensor(hardware, hardware.appContext.getString(R.string.HAND_DISTANCE_SENSOR));
+    }
+
+    /**
+     * Returns the distance detected by the sensor.
+     * @return The distance in millimeters
+     */
+    public double returnOutput() {
+        return SENSOR.getDistance(DistanceUnit.MM);
     }
 
     @Override
