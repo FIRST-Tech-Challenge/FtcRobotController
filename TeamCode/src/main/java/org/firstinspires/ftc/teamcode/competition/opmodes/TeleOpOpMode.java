@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.competition.utils.gamepads.GamepadManager;
 import org.firstinspires.ftc.teamcode.competition.utils.io.InputSpace;
 import org.firstinspires.ftc.teamcode.competition.utils.locations.TankDrivetrainLocation;
 
-@TeleOp(name="i_should_work", group="linear")
+@TeleOp(name="I_AM_THE_WORKING_ONE_TankTeleOp", group="linear")
 public class TeleOpOpMode extends LinearOpMode {
 
     @Override
