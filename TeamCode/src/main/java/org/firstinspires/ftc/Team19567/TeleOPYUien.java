@@ -31,6 +31,7 @@ public class TeleOPYUien extends OpMode {
     private boolean isSlowmode = false;
     private double acc = 1.0;
     private int presetDelay = 0;
+    private TELEOPLOCATIONS location = null;
 
     public enum TELEOPLOCATIONS {
         SHARED_HUB,
@@ -38,10 +39,6 @@ public class TeleOPYUien extends OpMode {
         ALLIANCE_SECOND,
         ALLIANCE_THIRD
     }
-
-    private TELEOPLOCATIONS location = TELEOPLOCATIONS.ALLIANCE_THIRD;
-    private TELEOPLOCATIONS location1 = TELEOPLOCATIONS.ALLIANCE_SECOND;
-    private TELEOPLOCATIONS location2 = TELEOPLOCATIONS.SHARED_HUB;
 
     @Override
     public void init() {
@@ -138,8 +135,8 @@ public class TeleOPYUien extends OpMode {
             releaseServoPos = releaseServo.MAX_POSITION;
         }
 
-        if (gamepad2.y) location1 = TELEOPLOCATIONS.ALLIANCE_SECOND;
-        if (gamepad2.x) location2 = TELEOPLOCATIONS.SHARED_HUB;
+        if (gamepad2.y) location = TELEOPLOCATIONS.ALLIANCE_SECOND;
+        if (gamepad2.x) location = TELEOPLOCATIONS.SHARED_HUB;
         if (gamepad2.y) location = TELEOPLOCATIONS.ALLIANCE_THIRD;
 
         switch (location) {
