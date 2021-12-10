@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class FrenzyHardwareMap {
@@ -51,6 +52,8 @@ public class FrenzyHardwareMap {
     public DcMotorEx motorCarousel = null;
     //IMU from RevHub.
     public BNO055IMU imu = null;
+    //magnetic limit switch for arm
+    public TouchSensor armLimitSwitch;
     //Setup Wheel measurements for REV motors.
     //Encoder clicks are originally 28 per rotation, but multiply by 20:1.
     public final int REV_ENCODER_CLICKS = 560;
@@ -82,6 +85,9 @@ public class FrenzyHardwareMap {
         motorCarousel = frenzyMap.get(DcMotorEx.class, "carousel");
         //Define the imu
         imu = frenzyMap.get(BNO055IMU.class, "imu");
+
+        //define limit switch
+        armLimitSwitch = frenzyMap.get(TouchSensor.class,"limitSwitch");
 
         // Set all motor directions.
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
