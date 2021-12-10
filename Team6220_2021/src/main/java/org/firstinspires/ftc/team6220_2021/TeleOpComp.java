@@ -5,7 +5,6 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -119,16 +118,21 @@ public class TeleOpComp extends MasterOpMode{
                     tickvalue = 900;
                     break;
                 case 4:
+                    servoArm.setPosition(0.1);
+                    motorArm.setPower(motorPower);
+                    tickvalue = 1100;
+                    break;
+                case 5:
                     servoArm.setPosition(0.4);
                     motorArm.setPower(motorPower);
                     tickvalue = 1980;
                     break;
-                case 5:
+                case 6:
                     servoArm.setPosition(0.25);
                     motorArm.setPower(motorPower);
                     tickvalue = 2310;
                     break;
-                case 6:
+                case 7:
                     servoArm.setPosition(0.4);
                     motorArm.setPower(motorPower);
                     tickvalue = 2330;
@@ -149,8 +153,8 @@ public class TeleOpComp extends MasterOpMode{
             if (gamepad2.dpad_up){
                 if (!isPressed) {
                     position += increase;
-                    if (position > 6){
-                        position = 6;
+                    if (position > 7){
+                        position = 7;
                     }
                 }
                 addingticks = 0;

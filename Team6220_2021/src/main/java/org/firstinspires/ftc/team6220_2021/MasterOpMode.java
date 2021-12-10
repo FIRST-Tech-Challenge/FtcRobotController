@@ -15,7 +15,7 @@ public abstract class MasterOpMode extends LinearOpMode {
     public static DcMotor motorBackLeft;
     public static DcMotor motorBackRight;
     public static DcMotor motorLeftDuck;
-    public static DcMotor motorRightDuck;
+    public static DcMotor motorDuck;
     public static DcMotor motorArm;
 
     // Other Devices
@@ -37,7 +37,7 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         motorArm = hardwareMap.dcMotor.get("motorArm");
-        motorRightDuck = hardwareMap.dcMotor.get("motorRightDuck");
+        motorDuck = hardwareMap.dcMotor.get("motorDuck");
         motorLeftDuck = hardwareMap.dcMotor.get("motorLeftDuck");
         servoGrabber = hardwareMap.servo.get("servoGrabber");
         servoArm = hardwareMap.servo.get("servoArm");
@@ -53,7 +53,7 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRightDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         driver1 = new DriverInput(gamepad1);
         driver2 = new DriverInput(gamepad2);

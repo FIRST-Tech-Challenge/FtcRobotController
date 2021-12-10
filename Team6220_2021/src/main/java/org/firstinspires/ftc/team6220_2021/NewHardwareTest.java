@@ -5,13 +5,12 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.function.Continuation;
-
+@Disabled
 @TeleOp(name = "New Hardware AutonomousTest", group = "TeleOp")
 public class NewHardwareTest extends MasterOpMode{
     // Declaring motors and servos

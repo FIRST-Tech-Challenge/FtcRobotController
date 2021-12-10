@@ -91,104 +91,112 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                         telemetry.update();
 
                         servoArm.setPosition(0.4);
-                        motorArm.setTargetPosition(300);
-                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
-                        turnDegrees(-60);
-                        pauseMillis(125);
-                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
-                        turnDegrees(60);
-                        pauseMillis(125);
-                        // move forward if necessary
-                        pauseMillis(500);
-                        servoGrabber.setPosition(0.34);
-                        pauseMillis(500);
-                        driveInches(40, Constants.MINIMUM_DRIVE_POWER, true);
                         motorArm.setTargetPosition(1100);
                         driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
                         pauseMillis(125);
                         turnDegrees(90);
                         pauseMillis(125);
-                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, false);
+                        // todo
+                        driveInches(20, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
                         motorLeftDuck.setPower(0.6);
                         pauseMillis(2000);
                         motorLeftDuck.setPower(0.0);
-                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
-                        pauseMillis(125);
                         turnDegrees(180);
                         pauseMillis(125);
-                        driveInches(96, 0.75, false);
+                        // todo
+                        driveInches(44, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
+                        motorArm.setTargetPosition(300);
+                        turnDegrees(90);
+                        pauseMillis(125);
+                        // todo
+                        driveInches(38, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(500);
+                        servoGrabber.setPosition(0.34);
+                        pauseMillis(500);
+                        // todo
+                        driveInches(14, Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
+                        motorArm.setTargetPosition(555);
+                        turnDegrees(-90);
+                        pauseMillis(125);
+                        driveInches(60, Constants.MINIMUM_DRIVE_POWER, false);
                         break;
 
                     case 1:
                         telemetry.addData("barcode: ", barcode);
                         telemetry.update();
 
-                        servoArm.setPosition(0.3);
-                        motorArm.setTargetPosition(555);
-                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
-                        turnDegrees(-60);
-                        pauseMillis(125);
-                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
-                        turnDegrees(60);
-                        pauseMillis(125);
-                        // move forward if necessary
-                        pauseMillis(500);
-                        servoGrabber.setPosition(0.34);
-                        pauseMillis(500);
-                        driveInches(40, Constants.MINIMUM_DRIVE_POWER, true);
+                        servoArm.setPosition(0.4);
                         motorArm.setTargetPosition(1100);
                         driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
                         pauseMillis(125);
                         turnDegrees(90);
                         pauseMillis(125);
-                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, false);
+                        // todo
+                        driveInches(20, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
                         motorLeftDuck.setPower(0.6);
                         pauseMillis(2000);
                         motorLeftDuck.setPower(0.0);
-                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
-                        pauseMillis(125);
                         turnDegrees(180);
                         pauseMillis(125);
-                        driveInches(96, 0.75, false);
+                        // todo
+                        driveInches(44, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
+                        motorArm.setTargetPosition(555);
+                        turnDegrees(90);
+                        pauseMillis(125);
+                        // todo
+                        driveInches(41, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(500);
+                        servoGrabber.setPosition(0.34);
+                        pauseMillis(500);
+                        // todo
+                        driveInches(17, Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
+                        turnDegrees(-90);
+                        pauseMillis(125);
+                        driveInches(60, Constants.MINIMUM_DRIVE_POWER, false);
                         break;
 
                     case 2:
                         telemetry.addData("barcode: ", barcode);
                         telemetry.update();
 
-                        servoArm.setPosition(0.15);
-                        motorArm.setTargetPosition(900);
-                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
-                        turnDegrees(-60);
-                        pauseMillis(125);
-                        driveInches(48 / Math.sqrt(3), Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
-                        turnDegrees(60);
-                        pauseMillis(125);
-                        // move forward if necessary
-                        pauseMillis(500);
-                        servoGrabber.setPosition(0.34);
-                        pauseMillis(500);
-                        driveInches(40, Constants.MINIMUM_DRIVE_POWER, true);
+                        servoArm.setPosition(0.4);
                         motorArm.setTargetPosition(1100);
                         driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
                         pauseMillis(125);
                         turnDegrees(90);
                         pauseMillis(125);
-                        driveInches(50, Constants.MINIMUM_DRIVE_POWER, false);
+                        // todo
+                        driveInches(20, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
                         motorLeftDuck.setPower(0.6);
                         pauseMillis(2000);
                         motorLeftDuck.setPower(0.0);
-                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, true);
-                        pauseMillis(125);
                         turnDegrees(180);
                         pauseMillis(125);
-                        driveInches(96, 0.75, false);
+                        // todo
+                        driveInches(44, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(125);
+                        motorArm.setTargetPosition(900);
+                        turnDegrees(90);
+                        pauseMillis(125);
+                        // todo
+                        driveInches(44, Constants.MINIMUM_DRIVE_POWER, false);
+                        pauseMillis(500);
+                        servoGrabber.setPosition(0.34);
+                        pauseMillis(500);
+                        // todo
+                        driveInches(20, Constants.MINIMUM_DRIVE_POWER, true);
+                        pauseMillis(125);
+                        motorArm.setTargetPosition(555);
+                        turnDegrees(-90);
+                        pauseMillis(125);
+                        driveInches(60, Constants.MINIMUM_DRIVE_POWER, false);
                         break;
                 }
 
