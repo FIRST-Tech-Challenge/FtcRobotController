@@ -12,6 +12,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class OpenCVProvider implements VisionProvider {
@@ -49,7 +51,19 @@ public class OpenCVProvider implements VisionProvider {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        return null;
+        Map<String, Object> telemetryMap = new HashMap<>();
+
+        if(debug) {
+            telemetryMap.put("Frame Count", camera.getFrameCount());
+            telemetryMap.put("FPS", String.format("%.2f", camera.getFps()));
+            telemetryMap.put("Total frame time ms", camera.getTotalFrameTimeMs());
+            telemetryMap.put("Pipeline time ms", camera.getPipelineTimeMs());
+            telemetryMap.put("Overhead time ms", camera.getOverheadTimeMs());
+            telemetryMap.put("Theoretical max FPS", camera.getCurrentPipelineMaxFps());
+        }
+        telemetryMap.put("Detected Position", Arrays.toString(pipeline.getPosition()));
+
+        return telemetryMap;
     }
 
     @Override

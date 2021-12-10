@@ -32,10 +32,6 @@ public class Robot implements Subsystem {
     public DriveTrain driveTrain;
     public Subsystem[] subsystems;
 
-    // Vision
-    public VisionProvider visionProvider;
-    private Position mostFrequentPosition;
-
     // State
     private Constants.Alliance alliance;
     private Articulation articulation;
@@ -48,14 +44,6 @@ public class Robot implements Subsystem {
         subsystems = new Subsystem[] {driveTrain};
 
         articulation = Articulation.MANUAL;
-    }
-
-    public void createVisionProvider(int visionProviderIndex) {
-        try {
-            visionProvider = VisionProviders.VISION_PROVIDERS[visionProviderIndex].newInstance();
-        } catch(IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException("Error while instantiating vision provider");
-        }
     }
 
     public void drawFieldOverlay(TelemetryPacket packet) {
@@ -100,7 +88,7 @@ public class Robot implements Subsystem {
                 MathUtils.rotateVector(
                     genericWheelVector,
                     heading
-                ),
+                ).transpose(),
                 driveTrain.getSwivelAngle()
             )
         ), Constants.WHEEL_STROKE_COLOR);
@@ -180,8 +168,4 @@ public class Robot implements Subsystem {
     public void setAlliance(Constants.Alliance alliance) {
         this.alliance = alliance;
     }
-
-    public Position getMostFrequentPosition() { return mostFrequentPosition; }
-
-    public void setMostFrequentPosition(Position mostFrequentPosition) { this.mostFrequentPosition = mostFrequentPosition; }
 }

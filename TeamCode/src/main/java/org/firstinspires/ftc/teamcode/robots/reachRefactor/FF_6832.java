@@ -98,7 +98,7 @@ public class FF_6832 extends OpMode {
 
         // vision
 //        robot.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
-//        robot.visionProvider.initializeVision(hardwareMap);
+//        auto.visionProvider.initializeVision(hardwareMap);
 //        visionProviderFinalized = true;
 
         if(dashboardEnabled)
@@ -131,14 +131,14 @@ public class FF_6832 extends OpMode {
             if(!visionProviderFinalized) {
                 if (stickyGamepad1.dpad_left) {
                     visionProviderIndex = (visionProviderIndex + 1) % VisionProviders.VISION_PROVIDERS.length; // switch vision provider
-                    robot.createVisionProvider(visionProviderIndex);
+                    auto.createVisionProvider(visionProviderIndex);
                 }
                 if (stickyGamepad1.dpad_up) {
-                    robot.visionProvider.initializeVision(hardwareMap); // this is blocking
+                    auto.visionProvider.initializeVision(hardwareMap); // this is blocking
                     visionProviderFinalized = true;
                 }
             } else if (stickyGamepad1.dpad_up) {
-                robot.visionProvider.shutdownVision(); // also blocking, but should be very quick
+                auto.visionProvider.shutdownVision(); // also blocking, but should be very quick
                 visionProviderFinalized = false;
             }
         }
@@ -186,7 +186,7 @@ public class FF_6832 extends OpMode {
 //        robot.setMostFrequentPosition(mostFrequentPosition);
         lastLoopClockTime = System.nanoTime();
         initializing = false;
-        auto.visionProvider.shutdownVision();
+//        auto.visionProvider.shutdownVision();
     }
 
     private void handleTeleOpDrive() {
@@ -343,14 +343,14 @@ public class FF_6832 extends OpMode {
         // handling vision telemetry
         Map<String, Object> visionTelemetryMap = new HashMap<>();
         if(initializing) {
-//            visionTelemetryMap.put("Detected Position", robot.visionProvider.getPosition());
+//            visionTelemetryMap.put("Detected Position", auto.visionProvider.getPosition());
         }
-        handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
+//        handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
 
         if(dashboardEnabled) {
 //            if(auto.visionProvider.canSendDashboardImage())
 //                sendVisionImage();
-            robot.drawFieldOverlay(packet);
+//            robot.drawFieldOverlay(packet);
             dashboard.sendTelemetryPacket(packet);
         }
 
@@ -362,8 +362,8 @@ public class FF_6832 extends OpMode {
         if(initializing) {
 //            if(robot.isDebugTelemetryEnabled())
 //                updateMostFrequentPosition();
-//            robot.visionProvider.update();
-//            Position position = robot.visionProvider.getPosition();
+//            auto.visionProvider.update();
+//            Position position = auto.visionProvider.getPosition();
 //            if(position != null)
 //                positionFrequencies.put(position, positionFrequencies.get(position) + 1);
         }

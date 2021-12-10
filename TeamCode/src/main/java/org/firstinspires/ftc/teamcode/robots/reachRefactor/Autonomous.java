@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
@@ -22,6 +23,13 @@ public class Autonomous {
                 .stage(stage);
     }
 
+    public void createVisionProvider(int visionProviderIndex) {
+        try {
+            visionProvider = VisionProviders.VISION_PROVIDERS[visionProviderIndex].newInstance();
+        } catch(IllegalAccessException | InstantiationException e) {
+            throw new RuntimeException("Error while instantiating vision provider");
+        }
+    }
 
     // Autonomous articulations
     private Stage autonomousRedStage = new Stage();
@@ -33,5 +41,13 @@ public class Autonomous {
     public StateMachine autonomousBlue = getStateMachine(autonomousBlueStage)
             // TODO: insert autonomous blue states here
             .build();
+
+    //----------------------------------------------------------------------------------------------
+    // Getters And Setters
+    //----------------------------------------------------------------------------------------------
+
+    public Position getMostFrequentPosition() { return mostFrequentPosition; }
+
+    public void setMostFrequentPosition(Position mostFrequentPosition) { this.mostFrequentPosition = mostFrequentPosition; }
 
 }
