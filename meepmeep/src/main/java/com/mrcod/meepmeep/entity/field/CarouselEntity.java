@@ -8,52 +8,31 @@ import com.noahbres.meepmeep.core.util.FieldUtil;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 
-public class CarouselEntity implements ThemedEntity {
-    private final MeepMeep meepMeep;
-    private int zIndex = 0;
+public class CarouselEntity extends BasicThemedEntity {
     private final Vector2d position;
 
     public CarouselEntity(MeepMeep meepMeep, Vector2d position) {
-        this.meepMeep = meepMeep;
+        super(meepMeep, "CAROUSEL_FIELD_ENTITY");
         this.position = position;
-    }
-
-    @NotNull
-    @Override
-    public MeepMeep getMeepMeep() {
-        return meepMeep;
-    }
-
-    @NotNull
-    @Override
-    public String getTag() {
-        return "CAROUSEL_FIELD_ENTITY";
-    }
-
-    @Override
-    public int getZIndex() {
-        return zIndex;
-    }
-
-    @Override
-    public void setZIndex(int i) {
-        this.zIndex = i;
     }
 
     @Override
     public void render(@NotNull Graphics2D graphics2D, int canvasWidth, int canvasHeight) {
-        Vector2d coords = FieldUtil.fieldCoordsToScreenCoords(this.position);
+        final double size = FieldUtil.scaleInchesToPixel(7.5, canvasWidth, canvasHeight);
+        final double halfSize = size / 2;
 
         AffineTransform transform = new AffineTransform();
-        transform.translate(coords.getX(), coords.getY());
-        transform.scale(FieldUtil.scaleInchesToPixel(15, canvasWidth, canvasHeight),
-                FieldUtil.scaleInchesToPixel(15, canvasWidth, canvasHeight));
+        Vector2d coords = FieldUtil.fieldCoordsToScreenCoords(this.position);
+        transform.translate(coords.getX() - halfSize, coords.getY() - halfSize);
+        transform.scale(size, size);
 
         graphics2D.transform(transform);
+        graphics2D.setColor(new Color(0, 0, 0));
         graphics2D.drawOval(0, 0, 1, 1);
         try {
             graphics2D.transform(transform.createInverse());
