@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.autos;
 
+import static org.firstinspires.ftc.teamcode.Constants.hopperBottom;
+import static org.firstinspires.ftc.teamcode.Constants.hopperTop;
+import static org.firstinspires.ftc.teamcode.Constants.level1;
+import static org.firstinspires.ftc.teamcode.Constants.level2;
+import static org.firstinspires.ftc.teamcode.Constants.level3;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,10 +20,13 @@ import org.firstinspires.ftc.teamcode.mechanism.Lift;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 import org.firstinspires.ftc.teamcode.opencv.DuckFinder;
 import org.firstinspires.ftc.teamcode.opencv.ShippingElementRecognizer;
+import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
+
+import java.util.ArrayList;
 
 @Autonomous(name = "Place Duck (Red)", group = "Sensor")
 public class PlaceDuckRed extends LinearOpMode {
@@ -113,18 +122,18 @@ public class PlaceDuckRed extends LinearOpMode {
 
         // Deposit the box on the correct level
         if(level == 1) {
-            lift.goTo(450,0.8);
+            lift.goTo(level1,0.8);
             delay(300);
         } else if (level == 2) {
-            lift.goTo(900,0.8);
+            lift.goTo(level2,0.8);
             delay(400);
         } else {
-            lift.goTo(1350, 0.8);
+            lift.goTo(level3, 0.8);
             delay(600);
         }
-        hopper.hopper.setPosition(0.33);
+        hopper.hopper.setPosition(hopperTop);
         delay(1200);
-        hopper.hopper.setPosition(0.05);
+        hopper.hopper.setPosition(hopperBottom);
         delay(200);
         lift.goTo(0,0.8);
 
@@ -148,14 +157,22 @@ public class PlaceDuckRed extends LinearOpMode {
         chassis.rotate(180,0.5);
         delay(100);
         int startPos = chassis.frontLeft.getCurrentPosition();
-        if(pipeline2.getDuckCenters().size() == 0 || pipeline2.getDuckCenters().get(0).x < 80) {
+        ArrayList<Point> initialPoints = pipeline2.getDuckCenters();
+        if(initialPoints.size() == 0) {
+            telemetry.addLine("No duck found (initially)");
+        } else {
+            telemetry.addData("Duck x position", initialPoints.get(0).x);
+        }
+        telemetry.update();
+        if(initialPoints.size() == 0 || initialPoints.get(0).x < 60) {
             chassis.frontLeft.setPower(-0.3);
             chassis.frontRight.setPower(0.3);
             chassis.backLeft.setPower(0.3);
             chassis.backRight.setPower(-0.3);
-            while(pipeline2.getDuckCenters().size() == 0 || pipeline2.getDuckCenters().get(0).x < 80) {
+            while(pipeline2.getDuckCenters().size() == 0 || pipeline2.getDuckCenters().get(0).x < 60) {
                 // Wait until the duck is even with the intake
-                if(chassis.frontLeft.getCurrentPosition() - startPos < 800) {
+                if(chassis.frontLeft.getCurrentPosition() - startPos < -800 && pipeline2.getDuckCenters().size() == 0) {
+                    // If the robot failed to spin the carousel and/or the duck isn't there, only search for 800 ticks
                     break;
                 }
             }
@@ -163,38 +180,28 @@ public class PlaceDuckRed extends LinearOpMode {
             chassis.frontRight.setPower(0);
             chassis.backLeft.setPower(0);
             chassis.backRight.setPower(0);
-        } else if(pipeline2.getDuckCenters().get(0).x > 140) {
-            chassis.frontLeft.setPower(0.3);
-            chassis.frontRight.setPower(-0.3);
-            chassis.backLeft.setPower(-0.3);
-            chassis.backRight.setPower(0.3);
-            while(pipeline2.getDuckCenters().get(0).x > 140) {
-                // Wait until the duck is even with the intake
-            }
-            chassis.frontLeft.setPower(0);
-            chassis.frontRight.setPower(0);
-            chassis.backLeft.setPower(0);
-            chassis.backRight.setPower(0);
+        } else if(initialPoints.get(0).x > 90) {
+            chassis.strafeRightWithEncoders(0.3,(int)initialPoints.get(0).x - 90);
         }
         int deltaPos = chassis.frontLeft.getCurrentPosition() - startPos;
 
         // Pick up the duck
         intake.intakeMotor.setPower(0.8);
-        chassis.moveForwardWithEncoders(0.2,400);
+        chassis.moveForwardWithEncoders(0.2,500);
         delay(400);
 
         // Place the duck
         chassis.moveBackwardWithEncoders(0.6,100);
         delay(200);
-        chassis.strafeLeftWithEncoders(0.6,1950 + deltaPos);
+        chassis.strafeLeftWithEncoders(0.6,1950 + deltaPos); // Account for movement to get the duck
         delay(200);
         chassis.moveBackwardWithEncoders(0.6,625);
         intake.intakeMotor.setPower(0);
         lift.goTo(1350,0.8);
         delay(700);
-        hopper.hopper.setPosition(0.33);
+        hopper.hopper.setPosition(hopperTop);
         delay(1200);
-        hopper.hopper.setPosition(0.05);
+        hopper.hopper.setPosition(hopperBottom);
         delay(200);
         lift.goTo(0,0.8);
 
