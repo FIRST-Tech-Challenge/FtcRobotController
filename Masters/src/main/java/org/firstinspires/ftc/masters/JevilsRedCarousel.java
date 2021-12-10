@@ -18,7 +18,6 @@ public class JevilsRedCarousel extends LinearOpMode {
 
         waitForStart();
 
-
         long startTime = new Date().getTime();
         long time = 0;
 
@@ -32,23 +31,37 @@ public class JevilsRedCarousel extends LinearOpMode {
         if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
 
         }
-        robot.forward(0.6, 1.5);
+        robot.forward(0.6, 1.6);
         robot.turnToHeadingSloppy(.6,-45,-20);
         robot.forward(.3,.8);
 
-        robot.pauseButInSecondsForThePlebeians(.001);
-
-        //deposit shipping element
-        /*
-        robot.backwards(0.3,0.2);
-        robot.strafeLeft(0.3,0.2);
-        robot.turnToHeading(0.3,-125, 3);
-        robot.forward(0.3,0.2);
+//        if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
+//            robot.dumpFreightBottom();
+//        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+//            robot.dumpFreightMiddle();
+//        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
+//            robot.dumpFreightTop();
+//        }
 
         robot.forward(.3,-2.6);
+        robot.strafeLeft(.4,.4);
+        robot.forward(.3,-.5);
+        robot.pivotLeftSloppy(.4,10);
+        robot.forward(.3, 3);
+        robot.turnToHeadingSloppy(.3,-90,3);
+        robot.parkRed();
+
+
 
         //Jevil turns carousel
         robot.jevilTurnCarousel(.5,2);
+//
+//        robot.forward(0.2,.4);
+//
+//        robot.turnToHeadingSloppy(.3,-90,-75);
+//        robot.strafeRight(.3,.8);
+//        robot.forward(.3,-1);
+//        robot.parkRed();
 
         robot.turnToHeadingSloppy(.3,-90,-75);
         robot.strafeRight(.3,.8);
