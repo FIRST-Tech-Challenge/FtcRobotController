@@ -17,6 +17,9 @@ public class IntakeLiftingServoLocation extends Location {
     private StandardServo SERVO;
 
     public IntakeLiftingServoLocation(HardwareMap hardware) {
+        try {
+
+        } catch(Exception ignored) {}
         SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.INTAKE_LIFTING_SERVO));
     }
 

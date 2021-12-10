@@ -13,7 +13,9 @@ public class HandDistanceSensorLocation extends Location {
     private StandardDistanceSensor SENSOR;
 
     public HandDistanceSensorLocation(HardwareMap hardware) {
-        SENSOR = new StandardDistanceSensor(hardware, hardware.appContext.getString(R.string.HAND_DISTANCE_SENSOR));
+        try {
+            SENSOR = new StandardDistanceSensor(hardware, hardware.appContext.getString(R.string.HAND_DISTANCE_SENSOR));
+        } catch(Exception ignored) {}
     }
 
     /**
