@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.groups.StandardMechanum;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.groups.StandardTank;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
@@ -16,7 +17,7 @@ public class MechDrivetrainLocation extends Location {
         MOVE_DISTANCE_IN_INCHES
     }
 
-    private StandardTank DRIVETRAIN;
+    private StandardMechanum DRIVETRAIN;
 
     public MechDrivetrainLocation(HardwareMap hardware) {
         try {
@@ -24,23 +25,23 @@ public class MechDrivetrainLocation extends Location {
             StandardMotor rb = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_RIGHT_BOTTOM_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);
             StandardMotor lt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);
             StandardMotor lb = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_BOTTOM_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD);
-            DRIVETRAIN = new StandardTank(rt, rb, lt, lb);
+            DRIVETRAIN = new StandardMechanum(rt, rb, lt, lb);
         } catch(Exception ignored) {}
     }
 
-    public void handleInput(Action action, int rightInput, int leftInput) {
+    public void handleInput(Action action, int rightTopInput, int rightBottomInput, int leftTopInput, int leftBottomInput) {
         if(DRIVETRAIN == null) {
             return;
         }
         switch(action) {
             case SET_SPEED:
-                DRIVETRAIN.driveWithEncoder(rightInput, leftInput);
+                DRIVETRAIN.driveWithEncoder(rightTopInput, rightBottomInput, leftTopInput, leftBottomInput);
                 break;
             case SET_VOLTAGE:
-                DRIVETRAIN.driveWithoutEncoder(rightInput, leftInput);
+                DRIVETRAIN.driveWithoutEncoder(rightTopInput, rightBottomInput, leftTopInput, leftBottomInput);
                 break;
             case MOVE_DISTANCE_IN_INCHES:
-                DRIVETRAIN.driveDistance(rightInput, leftInput, 50);
+                DRIVETRAIN.driveDistance(rightTopInput, rightBottomInput, leftTopInput, leftBottomInput, 50);
                 break;
         }
     }

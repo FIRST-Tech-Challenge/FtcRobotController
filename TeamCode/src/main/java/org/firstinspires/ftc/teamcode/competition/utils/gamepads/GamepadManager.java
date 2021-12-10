@@ -18,27 +18,27 @@ public class GamepadManager {
         this.f6 = f6;
     }
 
-    public Gamepad functionOneButtons() {
+    public Gamepad functionOneGamepad() {
         return f1;
     }
 
-    public Gamepad functionTwoButtons() {
+    public Gamepad functionTwoGamepad() {
         return f2;
     }
 
-    public Gamepad functionThreeButtons() {
+    public Gamepad functionThreeGamepad() {
         return f3;
     }
 
-    public Gamepad functionFourButtons() {
+    public Gamepad functionFourGamepad() {
         return f4;
     }
 
-    public Gamepad functionFiveButtons() {
+    public Gamepad functionFiveGamepad() {
         return f5;
     }
 
-    public Gamepad functionSixButtons() {
+    public Gamepad functionSixGamepad() {
         return f6;
     }
 
