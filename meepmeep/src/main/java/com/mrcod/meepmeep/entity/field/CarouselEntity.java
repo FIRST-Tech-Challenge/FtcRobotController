@@ -33,7 +33,7 @@ public class CarouselEntity extends BasicThemedEntity {
 
         graphics2D.transform(transform);
         graphics2D.setColor(new Color(0, 0, 0));
-        graphics2D.drawOval(0, 0, 1, 1);
+        graphics2D.fillOval(0, 0, 1, 1);
         try {
             graphics2D.transform(transform.createInverse());
         } catch (NoninvertibleTransformException e) {
