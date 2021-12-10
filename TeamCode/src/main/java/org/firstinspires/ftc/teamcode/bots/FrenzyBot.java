@@ -290,44 +290,11 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Start turntable blue gradual", defaultReturn = "")
     public void startTurntableBlueGradual() {
-        double startSpeed = 0.2;
-        double speedIncrement = 0.02;
-        int maxLoops = 10;
-        int loopDelayMs = 150;
-        double maxSpeed = 0.3;
-        double currSpeed = startSpeed;
-        for(int i = 0; i < maxLoops; i++){
-            if (currSpeed > maxSpeed) {
-                currSpeed = maxSpeed;
-            }
-            activateRotatorRight(currSpeed);
-            activateRotatorLeft(currSpeed);
-            currSpeed += speedIncrement;
-            this.delayWait(loopDelayMs);
-        }
-        activateRotatorRight(0.0);
-        activateRotatorLeft(0.0);
+        duckLoop(false);
     }
     @BotAction(displayName = "Start turntable red gradual", defaultReturn = "")
     public void startTurntableRedGradual() {
-        double startSpeed = -0.2;
-        double speedIncrement = -0.01;
-        int maxLoops = 10;
-        int loopDelayMs = 140;
-        double maxSpeed = -0.25;
-        double currSpeed = startSpeed;
-        for(int i = 0; i < maxLoops; i++){
-            currSpeed += speedIncrement;
-            if (currSpeed < maxSpeed) {
-                currSpeed = maxSpeed;
-            }
-            activateRotatorRight(currSpeed);
-            activateRotatorLeft(currSpeed);
-
-            this.delayWait(loopDelayMs);
-        }
-        activateRotatorRight(0.0);
-        activateRotatorLeft(0.0);
+        duckLoop(true);
     }
 
     @BotAction(displayName = "Stop turntable", defaultReturn = "")
@@ -388,6 +355,37 @@ public class FrenzyBot extends FrenzyBaseBot {
         stop();
 
         return gotIt;
+    }
+
+    public void goDucks(boolean red){
+        for(int i = 0; i < 12; i++){
+            duckLoop(red);
+            delayWait(300);
+        }
+    }
+
+    private void duckLoop(boolean red){
+        double startSpeed = -0.2;
+        double speedIncrement = -0.01;
+        int maxLoops = 10;
+        int loopDelayMs = 140;
+        double maxSpeed = 0.25;
+        if (red){
+            maxSpeed = - maxSpeed;
+        }
+        double currSpeed = startSpeed;
+        for(int i = 0; i < maxLoops; i++){
+            currSpeed += speedIncrement;
+            if (currSpeed < maxSpeed) {
+                currSpeed = maxSpeed;
+            }
+            activateRotatorRight(currSpeed);
+            activateRotatorLeft(currSpeed);
+
+            this.delayWait(loopDelayMs);
+        }
+        activateRotatorRight(0.0);
+        activateRotatorLeft(0.0);
     }
 
     public boolean isIntakeRunning() {
