@@ -22,6 +22,7 @@ public class MecanumTeleOp extends LinearOpMode {
         //set the controller stick values
         double controller1lstickx = 0.0;
         double controller1lsticky = 0.0;
+        double controller1rstickx = 0.0;
 
         // init motor and add intake for arm
         robot.motorArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -32,8 +33,8 @@ public class MecanumTeleOp extends LinearOpMode {
 
         //set arm levels
         int armLevel0 = 0;   // (a)
-        int armLevel1 = 200; // (x)
-        int armLevel2 = 550; // (y)
+        int armLevel1 = 250; // (x)
+        int armLevel2 = 600; // (y)
         int armLevel3 = 900; // (b)
 
         //intake power
@@ -41,6 +42,10 @@ public class MecanumTeleOp extends LinearOpMode {
 
         //carousel power
         double carouselPower = 0;
+
+        //booleans for slow mode
+        boolean bpressed = false;
+        boolean slowdownflag = false;
 
         //init loop
          while (! isStarted()) {
@@ -109,22 +114,30 @@ public class MecanumTeleOp extends LinearOpMode {
             //set joystick values
             controller1lstickx = gamepad1.left_stick_x;
             controller1lsticky = gamepad1.left_stick_y;
+            controller1rstickx = gamepad1.right_stick_x;
             if(controller1lstickx < 0.3 && controller1lstickx > -0.3)
                 controller1lstickx = 0.0;
             if(controller1lsticky < 0.3 && controller1lsticky > -0.3)
                 controller1lsticky = 0.0;
+            if(controller1rstickx < 0.3 && controller1rstickx > -0.3)
+                controller1rstickx = 0.0;
+
             //set slowdown
-            boolean slowdownflag = false;
-            if(gamepad1.b){
+            if(gamepad1.b == true && bpressed == false){
                 if(slowdownflag){
-                    slowdown = 0.5;
-                    slowdownflag = true;
-                }
-                else{
                     slowdown = 1;
                     slowdownflag = false;
                 }
+                else if(slowdownflag == false){
+                    slowdown = 0.5;
+                    slowdownflag = true;
+                }
             }
+            bpressed = gamepad1.b;
+            //Add slowdown
+            controller1lstickx = controller1lstickx * slowdown;
+            controller1lsticky = controller1lsticky * slowdown;
+            controller1rstickx = controller1rstickx * slowdown;
 
             // Track Arm Current Pos
             armCurrentPos = robot.motorArm.getCurrentPosition();
@@ -147,8 +160,6 @@ public class MecanumTeleOp extends LinearOpMode {
             }else if (gamepad2.b) {
                 armSetPos = armLevel3;
             }
-
-
 
             //intake
             if (gamepad2.right_trigger > 0.5){
@@ -180,7 +191,7 @@ public class MecanumTeleOp extends LinearOpMode {
             //drivetrain mecanum
             double y = controller1lsticky;
             double x = -controller1lstickx * 1.1; // * 1.1 Counteract imperfect strafing
-            double rx = -gamepad1.right_stick_x;
+            double rx = -controller1rstickx;
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]

@@ -93,10 +93,10 @@ public class MecanumAutonomous extends LinearOpMode {
         //Run code while the opMode is active.
         if(opModeIsActive()) {
             driveStraight(50,0.8,5.0);
-            drive(0,25, 0.8, 5.0);
-            drive(0,25,-0.8,5.0);
-            rotate(90, 0.8);
-            rotate(-90, 0.8);
+           //drive(0,25, 0.8, 5.0);
+           //drive(0,25,-0.8,5.0);
+           rotate(45, 0.8);
+           rotate(-45, 0.8);
         }
     }
 
@@ -107,6 +107,7 @@ public class MecanumAutonomous extends LinearOpMode {
     @param timeoutS Motor movement timeout (Adjust accordingly, or just put 5)
     */
     public void driveStraight(double distanceInCM, double power, double timeoutS) {
+        distanceInCM = -distanceInCM;
         telemetry.addData("status","encoder reset");
         telemetry.update();
         robot.restartEncoders();
