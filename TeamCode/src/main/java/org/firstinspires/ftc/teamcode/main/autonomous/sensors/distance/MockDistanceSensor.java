@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.competition.utils.sensors.distance;
+package org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.competition.utils.sensors.SensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 
 public class MockDistanceSensor implements SensorWrapper {
 

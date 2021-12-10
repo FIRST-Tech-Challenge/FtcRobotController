@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition.utils.sensors;
+package org.firstinspires.ftc.teamcode.main.autonomous.sensors;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 

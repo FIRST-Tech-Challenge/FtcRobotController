@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 
-import org.firstinspires.ftc.teamcode.competition.utils.sensors.SensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 import org.firstinspires.ftc.teamcode.main.autonomous.location.CoordinateSystem;
-
-import java.util.ArrayList;
-import java.util.Dictionary;
 
 public class PositionTracker {
     public Axis leftToRight;

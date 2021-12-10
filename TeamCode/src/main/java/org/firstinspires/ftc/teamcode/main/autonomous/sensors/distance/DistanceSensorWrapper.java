@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.competition.utils.sensors.distance;
+package org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.competition.utils.sensors.SensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 
 public class DistanceSensorWrapper implements SensorWrapper {
 

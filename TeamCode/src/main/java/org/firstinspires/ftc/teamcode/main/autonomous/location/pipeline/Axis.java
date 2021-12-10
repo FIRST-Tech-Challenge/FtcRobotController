@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.competition.utils.sensors.SensorWrapper;
-import org.firstinspires.ftc.teamcode.competition.utils.sensors.distance.DistanceSensorWrapper;
-import org.firstinspires.ftc.teamcode.competition.utils.sensors.distance.MockDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.DistanceSensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.MockDistanceSensor;
 
 public class Axis {
     public SensorWrapper sensor1;
