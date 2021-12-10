@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.autos;
 
+import static org.firstinspires.ftc.teamcode.Constants.hopperBottom;
+import static org.firstinspires.ftc.teamcode.Constants.hopperTop;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -92,9 +95,9 @@ public class FullAutoRed extends LinearOpMode {
             lift.goTo(1450, 0.8);
             delay(600);
         }
-        hopper.hopper.setPosition(0.33);
+        hopper.hopper.setPosition(hopperTop);
         delay(1200);
-        hopper.hopper.setPosition(0);
+        hopper.hopper.setPosition(hopperBottom);
         delay(200);
         lift.goTo(0,0.8);
 

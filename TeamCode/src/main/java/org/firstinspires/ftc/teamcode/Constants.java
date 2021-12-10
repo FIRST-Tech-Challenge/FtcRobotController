@@ -11,6 +11,8 @@ public class Constants {
     // Lift Constants:
     public static final double liftSpeed = 0.8;
     public static final int level1 = 500;
-    public static final int level2 = 800;
-    public static final int level3 = 1450;
+    public static final int level2 = 900;
+    public static final int level3 = 1350;
+    public static final double hopperBottom = 0.08;
+    public static final double hopperTop = 0.4;
 }

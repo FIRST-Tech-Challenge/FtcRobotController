@@ -14,7 +14,7 @@ public class Lift implements Mechanism {
     @Override
     public void init(HardwareMap hardwareMap) {
         liftMotor = hardwareMap.get(DcMotorEx.class, "lift");
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
@@ -34,7 +34,7 @@ public class Lift implements Mechanism {
                 targetPosition = 0;
                 onEncoders = true;
             }
-            targetPosition -= gamepad.left_stick_y * 10;
+            targetPosition -= gamepad.left_stick_y * 20;
             targetPosition = Range.clip(targetPosition, 0, 1475);
             goTo((int) targetPosition, 0.8);
         }
