@@ -27,7 +27,7 @@ public class IntakeLiftingServoLocation extends Location {
      * @param action The action of the servo
      * @param position The position between 0 and 100 if the action was SET_POSITION, otherwise ignored
      */
-    public void handleInput(HandGrabbingServoLocation.Action action, int position) {
+    public void handleInput(Action action, int position) {
         if(SERVO == null) {
             return;
         }
