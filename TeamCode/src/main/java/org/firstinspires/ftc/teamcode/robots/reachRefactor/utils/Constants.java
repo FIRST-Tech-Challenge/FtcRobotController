@@ -18,13 +18,13 @@ public class Constants {
 
     public static PIDCoefficients DRIVE_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.0055, 0, .13);
-    public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.1, 0, 0);
+    public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.1, 0, 0);
 
     public static double EPSILON = 0.001; // small value used for the approximately equal calculation in MathUtils
     public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
-    public static double FORWARD_SCALING_FACTOR = 5; // scales the target linear robot velocity from tele-op controls
-    public static double ROTATE_SCALING_FACTOR = 40; // scales the target angular robot velocity from tele-op controls
+    public static double FORWARD_SCALING_FACTOR = 3; // scales the target linear robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = 5; // scales the target angular robot velocity from tele-op controls
 
     // tele-op smoothing
     public static double FRONT_LEFT_SMOOTHING_FACTOR = 0.1;
@@ -42,6 +42,7 @@ public class Constants {
     public static double DISTANCE_TARGET_TO_BACK_WHEEL = 0.075;
     public static double MIN_CHASSIS_LENGTH = 0; // TODO: find real minimum chassis length
     public static double MAX_CHASSIS_LENGTH = 0.864;
+    public static double TEST_CHASSIS_DISTANCE = 0.864;
 
     // threshold to buffer from max chassis length when attempting to fully extend chassis
     // (to not put excessive strain on linear slide)

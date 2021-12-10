@@ -28,6 +28,8 @@ import java.util.Map;
  * right bumper - increment state
  *
  * Tele-Op
+ * dpad up - toggle desmos drive
+ * dpad down - toggle debug telemetry
  * right stick y - forward
  * left stick x - rotate
  * guide - emergency stop
@@ -44,6 +46,7 @@ public class FF_6832 extends OpMode {
     private StickyGamepad stickyGamepad1, stickyGamepad2;
     private Map<Position, Integer> positionFrequencies;
     private Position mostFrequentPosition;
+    private boolean usingDesmosDrive;
 
     // TPM Calibration state
     private boolean TPMCalibrationInitialized;
@@ -79,9 +82,9 @@ public class FF_6832 extends OpMode {
         robot = new Robot(hardwareMap, telemetry, Constants.DEFAULT_DASHBOARD_ENABLED);
 
         // vision
-        robot.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
-        robot.visionProvider.initializeVision(hardwareMap);
-        visionProviderFinalized = true;
+//        robot.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
+//        robot.visionProvider.initializeVision(hardwareMap);
+//        visionProviderFinalized = true;
 
         positionFrequencies = new HashMap<Position, Integer>() {{
             put(Position.LEFT, 0);
@@ -142,7 +145,7 @@ public class FF_6832 extends OpMode {
     @Override
     public void init_loop() {
         handleStateSwitch();
-        handleVisionProviderSwitch();
+//        handleVisionProviderSwitch();
         handlePregameControls();
 
         update();
@@ -150,8 +153,8 @@ public class FF_6832 extends OpMode {
 
     @Override
     public void start() {
-        updateMostFrequentPosition();
-        robot.setMostFrequentPosition(mostFrequentPosition);
+//        updateMostFrequentPosition();
+//        robot.setMostFrequentPosition(mostFrequentPosition);
         lastLoopClockTime = System.nanoTime();
         initializing = false;
     }
@@ -160,8 +163,11 @@ public class FF_6832 extends OpMode {
         double forward = Math.pow(-gamepad1.right_stick_y, 3) * Constants.FORWARD_SCALING_FACTOR;
         double rotate = Math.pow(gamepad1.left_stick_x, 3) * Constants.ROTATE_SCALING_FACTOR;
 
-//        robot.driveTrain.drive(forward, rotate);
-        robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
+
+        if(usingDesmosDrive)
+            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
+        else
+            robot.driveTrain.drive(forward, rotate);
     }
 
     private void handleEmergencyStop() {
@@ -172,6 +178,13 @@ public class FF_6832 extends OpMode {
     private void handleTeleOp() {
         handleTeleOpDrive();
         handleEmergencyStop();
+
+        if(stickyGamepad1.dpad_up) {
+            usingDesmosDrive = !usingDesmosDrive;
+        }
+        if(stickyGamepad1.dpad_down) {
+            robot.toggleIsDebugTelemetryEnabled();
+        }
     }
 
     private void handleTPMCalibration() {
@@ -244,7 +257,7 @@ public class FF_6832 extends OpMode {
 
     private void handleTelemetry() {
         if(initializing) {
-            robot.addTelemetryData("Detected Position", robot.visionProvider.getPosition());
+//            robot.addTelemetryData("Detected Position", robot.visionProvider.getPosition());
         }
 
         if(robot.isDebugTelemetryEnabled()) {
@@ -257,6 +270,7 @@ public class FF_6832 extends OpMode {
         robot.addTelemetryData("State", String.format("(%d): %s", gameStateIndex, gameState));
         robot.addTelemetryData("Dashboard Enabled", robot.isDashboardEnabled());
         robot.addTelemetryData("Debug Telemetry Enabled", robot.isDebugTelemetryEnabled());
+        robot.addTelemetryData("Using Desmos Drive", usingDesmosDrive);
 
         switch(gameState) {
             case TELE_OP:
@@ -272,12 +286,12 @@ public class FF_6832 extends OpMode {
 
     private void update() {
         if(initializing) {
-            if(robot.isDebugTelemetryEnabled())
-                updateMostFrequentPosition();
-            robot.visionProvider.update();
-            Position position = robot.visionProvider.getPosition();
-            if(position != null)
-                positionFrequencies.put(position, positionFrequencies.get(position) + 1);
+//            if(robot.isDebugTelemetryEnabled())
+//                updateMostFrequentPosition();
+//            robot.visionProvider.update();
+//            Position position = robot.visionProvider.getPosition();
+//            if(position != null)
+//                positionFrequencies.put(position, positionFrequencies.get(position) + 1);
         }
 
         handleTelemetry();

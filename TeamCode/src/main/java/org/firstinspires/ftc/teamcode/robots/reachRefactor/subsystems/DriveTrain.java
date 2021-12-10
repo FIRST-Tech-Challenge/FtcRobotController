@@ -54,6 +54,7 @@ public class DriveTrain implements Subsystem {
 
     // PID
     private PIDController turnPID, drivePID, swivelPID, chassisDistancePID;
+    private double maintainSwivelAngleCorrection;
 
     // Smoothers
     private ExponentialSmoother frontLeftSmoother;
@@ -226,24 +227,27 @@ public class DriveTrain implements Subsystem {
     @Override
     public void update() {
         // state
-        chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + Constants.DISTANCE_SENSOR_TO_FRONT_AXLE - Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
-        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / Constants.SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);;
+//        chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + Constants.DISTANCE_SENSOR_TO_FRONT_AXLE - Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
+        chassisDistance = Constants.TEST_CHASSIS_DISTANCE;
+        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / Constants.SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI + Math.PI / 2) % (2 * Math.PI);;
 
         // PID corrections
-        double maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
+        maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
         motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
 
-        updateTargetChassisDistance();
-        double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
-        targetMiddleVelocity += maintainChassisDistanceCorrection;
+//        updateTargetChassisDistance();
+//        double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
+//        targetMiddleVelocity += maintainChassisDistanceCorrection;
 
 
         // Motor controls
+//        if(swivelPID.onTarget()) {
         motorFrontLeft.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
         motorFrontRight.setVelocity(targetFrontRightVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
         motorMiddle.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
+//        }
 
-        updatePose();
+//        updatePose();
     }
 
     private void handleSmoothing() {
@@ -275,10 +279,10 @@ public class DriveTrain implements Subsystem {
                     ? 0
                 : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
 
-        handleSmoothing();
+//        handleSmoothing();
     }
 
-        public void driveDesmos(double linearVelocity, double angularVelocity, double dt) {
+    public void driveDesmos(double linearVelocity, double angularVelocity, double dt) {
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
 
@@ -292,9 +296,9 @@ public class DriveTrain implements Subsystem {
 
         double heading = pose.get(2);
 
-        SimpleMatrix leftWheelPrime = translation.plus(MathUtils.rotateVector(leftWheel, heading));
-        SimpleMatrix rightWheelPrime = translation.plus(MathUtils.rotateVector(rightWheel, heading));
-        SimpleMatrix middleWheelPrime = translation.plus(MathUtils.rotateVector(middleWheel, heading));
+        SimpleMatrix leftWheelPrime = translation.plus(MathUtils.rotateVector(leftWheel, heading).transpose());
+        SimpleMatrix rightWheelPrime = translation.plus(MathUtils.rotateVector(rightWheel, heading).transpose());
+        SimpleMatrix middleWheelPrime = translation.plus(MathUtils.rotateVector(middleWheel, heading).transpose());
 
         targetFrontLeftVelocity = leftWheelPrime.minus(leftWheel).normF() / dt;
         targetFrontRightVelocity = rightWheelPrime.minus(rightWheel).normF() / dt;
@@ -306,7 +310,7 @@ public class DriveTrain implements Subsystem {
                 ? 0
                 : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
 
-        handleSmoothing();
+//        handleSmoothing();
     }
 
 
@@ -329,6 +333,8 @@ public class DriveTrain implements Subsystem {
 
             telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
             telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
+            telemetryMap.put("swivel PID on target", swivelPID.onTarget());
+            telemetryMap.put("maintain swivel angle correction", maintainSwivelAngleCorrection);
 
             telemetryMap.put("chassis distance", chassisDistance);
             telemetryMap.put("target chassis distance", targetChassisDistance);
