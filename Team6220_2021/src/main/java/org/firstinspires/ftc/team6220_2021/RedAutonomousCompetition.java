@@ -49,7 +49,7 @@ public class RedAutonomousCompetition extends MasterAutonomous {
         motorArm.setPower(0.9);
         motorArm.setTargetPosition(555);
 
-        pauseMillis(1000);
+        pauseMillis(2000);
 
         if (tfod != null) {
             tfod.activate();
@@ -85,170 +85,59 @@ public class RedAutonomousCompetition extends MasterAutonomous {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+                telemetry.addData("barcode: ", barcode);
+                telemetry.update();
+
+                servoArm.setPosition(0.4);
+                motorArm.setTargetPosition(1100);
+                pauseMillis(1000);
+                driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
+                pauseMillis(125);
+                turnToAngle(-90);
+                pauseMillis(125);
+                // todo - distance to carousel
+                driveInches(16, Constants.MINIMUM_DRIVE_POWER, false);
+                pauseMillis(125);
+                motorDuck.setPower(-0.4);
+                pauseMillis(3000);
+                motorDuck.setPower(0.0);
+                turnToAngle(90);
+                pauseMillis(125);
+                // todo - distance before turning to the shipping hub
+                driveInches(44, Constants.MINIMUM_DRIVE_POWER, false);
+                pauseMillis(125);
+
                 switch (barcode) {
                     case 0:
-                        telemetry.addData("barcode: ", barcode);
-                        telemetry.update();
-
-                        servoArm.setPosition(0.4);
-                        motorArm.setTargetPosition(1100);
-                        motorArm.setPower(0.9);
-                        pauseMillis(1500);
-                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
-                        turnDegrees(75);
-                        pauseMillis(125);
-                        // todo
-                        driveInches(13, 0.1, false);
-                        pauseMillis(125);
-                        Forward(4, 0.1);
-                        pauseMillis(125);
-                        motorLeftDuck.setPower(0.4);
-                        pauseMillis(3000);
-                        motorLeftDuck.setPower(0.0);
-                        turnDegrees(-165);
-                        pauseMillis(125);
-                        // todo
-                        driveInches(38, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
                         motorArm.setTargetPosition(300);
-                        turnDegrees(80);
-                        pauseMillis(125);
-                        // todo
-                        driveInches(12, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(500);
-                        servoGrabber.setPosition(0.34);
-                        pauseMillis(500);
-                        // todo
-                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
-                        pauseMillis(125);
-                        motorArm.setTargetPosition(555);
-                        turnDegrees(-80);
-                        pauseMillis(125);
-                        driveInches(60, 0.75, false);
                         break;
 
                     case 1:
-                        telemetry.addData("barcode: ", barcode);
-                        telemetry.update();
-
-                        servoArm.setPosition(0.4);
-                        motorArm.setTargetPosition(1100);
-                        motorArm.setPower(0.9);
-                        pauseMillis(1500);
-                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
-                        turnDegrees(75);
-                        pauseMillis(125);
-                        // todo
-                        driveInches(13, 0.1, false);
-                        pauseMillis(125);
-                        Forward(4, 0.1);
-                        pauseMillis(125);
-                        motorLeftDuck.setPower(0.4);
-                        pauseMillis(3000);
-                        motorLeftDuck.setPower(0.0);
-                        turnDegrees(-165);
-                        pauseMillis(125);
-                        // todo
-                        driveInches(38, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
                         motorArm.setTargetPosition(555);
-                        turnDegrees(80);
-                        pauseMillis(125);
-                        // todo
-                        driveInches(15, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(500);
-                        servoGrabber.setPosition(0.34);
-                        pauseMillis(500);
-                        // todo
-                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
-                        pauseMillis(125);
-                        turnDegrees(-80);
-                        pauseMillis(125);
-                        driveInches(60, 0.75, false);
                         break;
 
                     case 2:
-                        telemetry.addData("barcode: ", barcode);
-                        telemetry.update();
-
-                        servoArm.setPosition(0.4);
-                        motorArm.setTargetPosition(1100);
-                        motorArm.setPower(0.9);
-                        pauseMillis(1500);
-                        driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
-                        turnDegrees(75);
-                        pauseMillis(125);
-                        // todo
-                        driveInches(13, 0.1, false);
-                        pauseMillis(125);
-                        Forward(4, 0.1);
-                        pauseMillis(125);
-                        motorLeftDuck.setPower(0.4);
-                        pauseMillis(3000);
-                        motorLeftDuck.setPower(0.0);
-                        turnDegrees(-165);
-                        pauseMillis(125);
-                        // todo
-                        driveInches(38, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(125);
                         motorArm.setTargetPosition(900);
-                        turnDegrees(80);
-                        pauseMillis(125);
-                        // todo
-                        driveInches(18, Constants.MINIMUM_DRIVE_POWER, false);
-                        pauseMillis(500);
-                        servoGrabber.setPosition(0.34);
-                        pauseMillis(500);
-                        // todo
-                        driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
-                        pauseMillis(125);
-                        motorArm.setTargetPosition(555);
-                        turnDegrees(-80);
-                        pauseMillis(125);
-                        driveInches(60, 0.75, false);
                         break;
                 }
 
-                // This goes inside of the switch and is used just like above, but with cubes/ducks/spheres instead of the TSE
-                // Used for cycling freight in autonomous
-                /*if (tfod != null) {
-                    tfod.activate();
-                    tfod.setZoom(2.0, 16.0/9.0);
-
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-
-                        int i = 0;
-                        for (Recognition recognition : updatedRecognitions) {
-                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
-                            i++;
-
-                            if (recognition.getLabel().equals("TSE")) {
-                                double TSELocation = (recognition.getLeft() + recognition.getRight()) / 2.0;
-
-                                if (TSELocation > 200.0 && TSELocation <= 333.0) {
-                                    barcode = 0;
-                                    telemetry.addData("barcode: ", barcode);
-                                } else if (TSELocation > 333.0 && TSELocation <= 467.0) {
-                                    barcode = 1;
-                                    telemetry.addData("barcode: ", barcode);
-                                } else if (TSELocation > 467.0 && TSELocation <= 600.0) {
-                                    barcode = 2;
-                                    telemetry.addData("barcode: ", barcode);
-                                }
-                            }
-                        }
-                        telemetry.update();
-                    }
-                }*/
-
+                turnToAngle(0);
+                pauseMillis(125);
+                // todo - distance to the shipping hub
+                driveInches(12, Constants.MINIMUM_DRIVE_POWER, false);
+                pauseMillis(500);
+                servoGrabber.setPosition(0.34);
+                pauseMillis(500);
+                // todo - distance backing up from the shipping hub
+                driveInches(6, Constants.MINIMUM_DRIVE_POWER, true);
+                pauseMillis(125);
+                motorArm.setTargetPosition(555);
+                turnToAngle(-90);
+                pauseMillis(125);
+                driveInches(60, 0.75, true);
+                servoArm.setPosition(0.0);
+                servoGrabber.setPosition(0.81);
+                motorArm.setTargetPosition(-10);
                 break;
             }
         }

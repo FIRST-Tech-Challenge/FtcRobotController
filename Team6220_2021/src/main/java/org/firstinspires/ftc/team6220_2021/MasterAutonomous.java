@@ -104,15 +104,13 @@ public abstract class MasterAutonomous extends MasterOpMode {
     }
 
     // This method turns a specified number of degrees when given a target angle to turn
-    public void turnDegrees(double targetAngle) {
+    public void turnToAngle(double targetAngle) {
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double angleLeft;
-        double angleTraveled;
 
         boolean angleReached = false;
 
@@ -122,22 +120,21 @@ public abstract class MasterAutonomous extends MasterOpMode {
         while (!angleReached && opModeIsActive()) {
             // This gets the angle change
             double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            angleTraveled = currentAngle - startAngle;
 
             // This adds a value to the PID loop so it can update
-            angleLeft = targetAngle - angleTraveled;
+            angleLeft = targetAngle - currentAngle;
             translationPID.roll(angleLeft);
 
             // We drive the wheels with the PID value
-            if (targetAngle > 0) {
+            if (angleLeft > 0) {
                 driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER),
                         Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER) * -1);
-            } else if (targetAngle < 0) {
+            } else if (angleLeft < 0) {
                 driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER) * -1,
                         Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER));
             }
 
-            if (Math.abs(targetAngle - angleTraveled) <= 1) {
+            if (Math.abs(angleLeft) <= 0.5) {
                 driveTank(0.0, 0.0);
                 angleReached = true;
             }
