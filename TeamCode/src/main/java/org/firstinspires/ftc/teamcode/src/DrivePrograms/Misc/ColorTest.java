@@ -18,8 +18,11 @@ public class ColorTest extends TeleopTemplate {
 
         while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("red:", intake.getColor("red"));
-            telemetry.addData("blue:", intake.getColor("blue"));
             telemetry.addData("green:", intake.getColor("green"));
+            telemetry.addData("blue:", intake.getColor("blue"));
+            telemetry.addData("argb", intake.getColor("argb"));
+            telemetry.addData("alpha", intake.getColor("alpha"));
+            telemetry.addData("distance:", intake.getCloseDistance());
 
             telemetry.update();
         }
