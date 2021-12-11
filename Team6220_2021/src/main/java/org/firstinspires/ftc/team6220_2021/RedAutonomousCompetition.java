@@ -76,6 +76,8 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                                 barcode = 1;
                             } else if (TSELocation > 533.0 && TSELocation <= 800.0) {
                                 barcode = 2;
+                            } else {
+                                barcode = 2;
                             }
                         }
                     }

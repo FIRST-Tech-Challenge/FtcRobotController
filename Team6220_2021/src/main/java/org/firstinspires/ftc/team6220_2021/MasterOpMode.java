@@ -171,9 +171,9 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorFrontRight.setTargetPosition(targetticks);
         motorBackRight.setTargetPosition(targetticks);
         motorFrontLeft.setPower(0.9);
-        motorBackLeft.setPower(0.8);
-        motorFrontRight.setPower(0.7);
-        motorBackRight.setPower(0.6);
+        motorBackLeft.setPower(0.9);
+        motorFrontRight.setPower(0.9);
+        motorBackRight.setPower(0.9);
         while(motorBackRight.isBusy() || motorBackLeft.isBusy() || motorFrontLeft.isBusy() || motorFrontRight.isBusy()) {
             telemetry.addData("Currently Running",motorFrontLeft.getCurrentPosition());
         }

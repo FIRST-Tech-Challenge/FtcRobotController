@@ -84,7 +84,7 @@ public class RedParkBlockPLaceLeague2 extends MasterOpMode{
         motorBackRight.setPower(-0.3);
         motorFrontLeft.setPower(0.3);
         motorFrontRight.setPower(-0.3);
-        pauseMillis(1150);
+        pauseMillis(1350);
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
         motorFrontLeft.setPower(0);

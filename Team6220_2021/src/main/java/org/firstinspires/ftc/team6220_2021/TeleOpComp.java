@@ -243,6 +243,19 @@ public class TeleOpComp extends MasterOpMode{
                     }
                 }
             }
+            if (gamepad2.left_trigger > 0.5 && gamepad2.right_trigger > 0.5){
+                servoGrabber.setPosition(0.0);
+                servoArm.setPosition(0.81);
+                motorArm.setTargetPosition(-930);
+                pauseMillis(700);
+                motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                pauseMillis(1000);
+                motorArm.setTargetPosition(0);
+                motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                position = 0;
+            }
         }
     }
 }
