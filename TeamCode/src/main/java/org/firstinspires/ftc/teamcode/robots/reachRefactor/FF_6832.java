@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Crane;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -55,7 +56,7 @@ public class FF_6832 extends OpMode {
     private StickyGamepad stickyGamepad1, stickyGamepad2;
     private Map<Position, Integer> positionFrequencies;
     private Position mostFrequentPosition;
-    private boolean usingDesmosDrive;
+    private boolean usingDesmosDrive = true;
     private boolean dashboardEnabled, debugTelemetryEnabled, smoothingEnabled;
 
     // Telemetry
@@ -204,12 +205,32 @@ public class FF_6832 extends OpMode {
         handleTeleOpDrive();
         handleEmergencyStop();
 
-        if(stickyGamepad1.dpad_up) {
-            usingDesmosDrive = !usingDesmosDrive;
+        if(stickyGamepad1.x){
+            robot.crane.Do(Crane.CommonPosition.HOME);
         }
-        if(stickyGamepad1.dpad_down) {
-            debugTelemetryEnabled = !debugTelemetryEnabled;
+
+        if(stickyGamepad1.y){
+            robot.crane.Do(Crane.CommonPosition.HIGH_TEIR);
         }
+
+        if(stickyGamepad1.b){
+            robot.crane.Do(Crane.CommonPosition.TRANSFER);
+        }
+
+        if(stickyGamepad1.dpad_down){
+            robot.gripper.togglePitch();
+        }
+
+        if(stickyGamepad1.dpad_up){
+            robot.gripper.toggleGripper();
+        }
+
+//        if(stickyGamepad1.dpad_up) {
+//            usingDesmosDrive = !usingDesmosDrive;
+//        }
+//        if(stickyGamepad1.dpad_down) {
+//            debugTelemetryEnabled = !debugTelemetryEnabled;
+//        }
     }
 
     private void handleTPMCalibration() {

@@ -19,6 +19,7 @@ public class Constants {
     public static PIDCoefficients DRIVE_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.0055, 0, .13);
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
+    public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.1, 0, 0);
     public static PIDCoefficients TURRET_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.5);
 

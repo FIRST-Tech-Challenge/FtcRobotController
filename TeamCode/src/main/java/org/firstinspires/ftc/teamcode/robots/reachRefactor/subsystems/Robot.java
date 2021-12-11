@@ -31,6 +31,7 @@ public class Robot implements Subsystem {
     // Subsystems
     public DriveTrain driveTrain;
     public Crane crane;
+    public Gripper gripper;
     public Subsystem[] subsystems;
 
     // State
@@ -43,7 +44,8 @@ public class Robot implements Subsystem {
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap);
         crane = new Crane(hardwareMap);
-        subsystems = new Subsystem[] {driveTrain, crane};
+        gripper = new Gripper(hardwareMap);
+        subsystems = new Subsystem[] {driveTrain, crane, gripper};
 
         articulation = Articulation.MANUAL;
     }
@@ -139,12 +141,7 @@ public class Robot implements Subsystem {
 
     public enum Articulation {
         MANUAL,
-
         // tele-op articulations
-
-        // autonomous articulations
-        AUTONOMOUS_RED,
-        AUTONOMOUS_BLUE
     }
 
     public boolean articulate(Articulation articulation) {

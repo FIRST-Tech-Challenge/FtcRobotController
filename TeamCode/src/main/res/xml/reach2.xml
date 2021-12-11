@@ -9,11 +9,11 @@
             <Servo name="firstLinkServo" port="1" />
             <Servo name="secondLinkServo" port="2" />
         </LynxModule>
-        <LynxModule name="Control Hub" port="173">
+        <LynxModule name="Control Hub" port="1">
             <RevRobotics40HDHexMotor name="motorFrontLeft" port="1" />
             <RevRobotics40HDHexMotor name="motorFrontRight" port="2" />
             <Servo name="gripperServo" port="0" />
-            <Servo name="pitchGripperServo" port="1" />
+            <Servo name="gripperPitchServo" port="1" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <REV_VL53L0X_RANGE_SENSOR name="distLength" port="0" bus="1" />
         </LynxModule>

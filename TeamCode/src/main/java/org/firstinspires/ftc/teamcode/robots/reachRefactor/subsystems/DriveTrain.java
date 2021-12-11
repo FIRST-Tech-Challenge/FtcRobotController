@@ -24,6 +24,8 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
+
 public class DriveTrain implements Subsystem {
 
     // Motors
@@ -52,7 +54,7 @@ public class DriveTrain implements Subsystem {
     private double chassisDistance, targetChassisDistance;
 
     // PID
-    private PIDController turnPID, drivePID, swivelPID, chassisDistancePID;
+    private PIDController turnPID, drivePID, distPID, swivelPID, chassisDistancePID;
     private double maintainSwivelAngleCorrection;
 
     // Smoothers
@@ -97,6 +99,7 @@ public class DriveTrain implements Subsystem {
         turnPID = new PIDController(Constants.ROTATE_PID_COEFFICIENTS);
         drivePID = new PIDController(Constants.DRIVE_PID_COEFFICIENTS);
         swivelPID = new PIDController(Constants.SWIVEL_PID_COEFFICIENTS);
+        distPID = new PIDController(Constants.DIST_PID_COEFFICIENTS);
         chassisDistancePID = new PIDController(Constants.CHASSIS_DISTANCE_PID_COEFFICIENTS);
 
         // Smoother
@@ -311,6 +314,73 @@ public class DriveTrain implements Subsystem {
                 : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
     }
 
+    public void movePID(double maxPwrFwd, boolean forward, double dist, double currentAngle, double targetAngle) {
+        // setup turnPID
+        turnPID.setOutputRange(-.5, .5);
+        turnPID.setIntegralCutIn(1);
+        turnPID.setSetpoint(targetAngle);
+        turnPID.setInputRange(0, 360);
+        turnPID.setContinuous();
+        turnPID.setInput(currentAngle);
+        turnPID.enable();
+
+        // setup distPID
+        distPID.setOutputRange(-maxPwrFwd, maxPwrFwd);
+        distPID.setIntegralCutIn(1);
+        distPID.setSetpoint(dist); //trying to get to a zero distance
+        distPID.setInput(0);
+        distPID.enable();
+
+        // calculate the angular correction to apply
+        double turnCorrection = turnPID.performPID();
+        // calculate chassis power
+        double basePwr = distPID.performPID();
+        if (!forward) basePwr *=-1;
+
+        // performs the drive with the correction applied
+
+        drive(basePwr, turnCorrection);
+    }
+
+    public boolean driveAbsoluteDistance(double pwr, double targetAngle, boolean forward, double targetMeters, double closeEnoughDist) {
+        targetAngle= wrap360(targetAngle);  //this was probably already done but repeated as a safety
+
+        if (Math.abs(targetMeters) > Math.abs(closeEnoughDist)) {
+            movePID(pwr, forward, targetMeters,getHeading(),targetAngle);
+            return false;
+        } // destination achieved
+        else {
+            stop(); //todo: maybe this should be optional when you are stringing moves together
+            return true;
+        }
+    }
+
+    private long turnTimer = 0;
+    private boolean turnTimerInit = false;
+    private double minTurnError = 2.0;
+    public boolean rotateIMU(double targetAngle, double maxTime) {
+        if (!turnTimerInit) { // intiate the timer that the robot will use to cut of the sequence if it takes
+            // too long; only happens on the first cycle
+            turnTimer = System.nanoTime() + (long) (maxTime * (long) 1e9);
+            turnTimerInit = true;
+        }
+        movePID(1,true,0, getHeading(), targetAngle);
+        // threshold of the target
+        if(Math.abs(getHeading() - targetAngle) < minTurnError) {
+            turnTimerInit = false;
+            stop();
+            return true;
+        }
+
+        if (turnTimer < System.nanoTime()) { // check to see if the robot takes too long to turn within a threshold of
+            // the target (e.g. it gets stuck)
+            turnTimerInit = false;
+            stop();
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
@@ -372,6 +442,10 @@ public class DriveTrain implements Subsystem {
 
     public SimpleMatrix getPose() {
         return pose;
+    }
+
+    public double getHeading(){
+        return Math.toDegrees(pose.get(2));
     }
 
     /**
