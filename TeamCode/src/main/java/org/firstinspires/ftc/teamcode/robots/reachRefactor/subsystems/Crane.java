@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,9 +56,9 @@ public class Crane implements Subsystem {
         public double turretAngle;
 
         CommonPosition(int firstLinkPos, int secondLinkPos, int bucketServoPos, double turretAngle){
-            this.firstLinkPos = firstLinkPos;
-            this.secondLinkPos = secondLinkPos;
-            this.bucketServoPos = bucketServoPos;
+            this.firstLinkPos = (int) UtilMethods.servoNormalize(firstLinkPos);
+            this.secondLinkPos = (int) UtilMethods.servoNormalize(secondLinkPos);
+            this.bucketServoPos = (int) UtilMethods.servoNormalize(bucketServoPos);
             this.turretAngle = turretAngle;
         }
     }
@@ -130,7 +131,7 @@ public class Crane implements Subsystem {
     private void setPos(CommonPosition targetPos){
         turret.setTurretAngle(targetPos.turretAngle);
         firstLinkServo.setPosition(targetPos.firstLinkPos);
-        firstLinkServo.setPosition(targetPos.firstLinkPos);
+        secondLinkServo.setPosition(targetPos.secondLinkPos);
         bucketServo.setPosition(targetPos.bucketServoPos);
     }
 
