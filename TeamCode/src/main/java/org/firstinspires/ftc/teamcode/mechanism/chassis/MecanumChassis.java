@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.mechanism.chassis;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-import static org.firstinspires.ftc.teamcode.Constants.driveStickThreshold;
-import static org.firstinspires.ftc.teamcode.Constants.sensitivity;
-import static org.firstinspires.ftc.teamcode.Constants.slowModeSensitivity;
-import static org.firstinspires.ftc.teamcode.Constants.triggerThreshold;
+import static org.firstinspires.ftc.teamcode.Constants.DRIVE_STICK_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.Constants.SENSITIVITY;
+import static org.firstinspires.ftc.teamcode.Constants.SLOW_MODE_SENSITIVITY;
+import static org.firstinspires.ftc.teamcode.Constants.TRIGGER_THRESHOLD;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -17,7 +16,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class MecanumChassis extends Chassis {
@@ -75,10 +73,10 @@ public class MecanumChassis extends Chassis {
     @Override
     public void run(Gamepad gamepad){
         //This works, just trust me on it. Slack me or something if you need a full explanation.
-        double flPower = (gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x)*driveStickThreshold;
-        double frPower = (-gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x)*driveStickThreshold;
-        double blPower = (-gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x)*driveStickThreshold;
-        double brPower = (gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x)*driveStickThreshold;
+        double flPower = (gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x)* DRIVE_STICK_THRESHOLD;
+        double frPower = (-gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x)* DRIVE_STICK_THRESHOLD;
+        double blPower = (-gamepad.left_stick_x - gamepad.left_stick_y + gamepad.right_stick_x)* DRIVE_STICK_THRESHOLD;
+        double brPower = (gamepad.left_stick_x - gamepad.left_stick_y - gamepad.right_stick_x)* DRIVE_STICK_THRESHOLD;
 
         //This bit seems complicated, but it just gets the maximum absolute value of all the motors.
         double maxPower = Math.max(Math.max(Math.abs(flPower), Math.abs(frPower)), Math.max(Math.abs(blPower), Math.abs(brPower)));
@@ -87,18 +85,18 @@ public class MecanumChassis extends Chassis {
         maxPower = Math.max(maxPower, 1);
 
         //Make all of them proportional to the greatest value and factor in the sensitivity.
-        flPower = (flPower / maxPower) * sensitivity;
-        frPower = (frPower / maxPower) * sensitivity;
-        blPower = (blPower / maxPower) * sensitivity;
-        brPower = (brPower / maxPower) * sensitivity;
+        flPower = (flPower / maxPower) * SENSITIVITY;
+        frPower = (frPower / maxPower) * SENSITIVITY;
+        blPower = (blPower / maxPower) * SENSITIVITY;
+        brPower = (brPower / maxPower) * SENSITIVITY;
 
         //Actually set them
 
-        if (gamepad.left_trigger > triggerThreshold) {
-            frontLeft.setPower(flPower*slowModeSensitivity);
-            frontRight.setPower(frPower*slowModeSensitivity);
-            backLeft.setPower(blPower*slowModeSensitivity);
-            backRight.setPower(brPower*slowModeSensitivity);
+        if (gamepad.left_trigger > TRIGGER_THRESHOLD) {
+            frontLeft.setPower(flPower* SLOW_MODE_SENSITIVITY);
+            frontRight.setPower(frPower* SLOW_MODE_SENSITIVITY);
+            backLeft.setPower(blPower* SLOW_MODE_SENSITIVITY);
+            backRight.setPower(brPower* SLOW_MODE_SENSITIVITY);
         }
         else {
             frontLeft.setPower(flPower);

@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.autos;
 
-import static org.firstinspires.ftc.teamcode.Constants.hopperBottom;
-import static org.firstinspires.ftc.teamcode.Constants.hopperTop;
-import static org.firstinspires.ftc.teamcode.Constants.level1;
-import static org.firstinspires.ftc.teamcode.Constants.level2;
-import static org.firstinspires.ftc.teamcode.Constants.level3;
+import static org.firstinspires.ftc.teamcode.Constants.HOPPER_BOTTOM;
+import static org.firstinspires.ftc.teamcode.Constants.HOPPER_TOP;
+import static org.firstinspires.ftc.teamcode.Constants.LEVEL_1;
+import static org.firstinspires.ftc.teamcode.Constants.LEVEL_2;
+import static org.firstinspires.ftc.teamcode.Constants.LEVEL_3;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -25,8 +25,6 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
-
-import java.util.ArrayList;
 
 @Autonomous(name = "Place Duck (Red)", group = "Sensor")
 public class PlaceDuckRed extends LinearOpMode {
@@ -122,18 +120,18 @@ public class PlaceDuckRed extends LinearOpMode {
 
         // Deposit the box on the correct level
         if(level == 1) {
-            lift.goTo(level1,0.8);
+            lift.goTo(LEVEL_1,0.8);
             delay(300);
         } else if (level == 2) {
-            lift.goTo(level2,0.8);
+            lift.goTo(LEVEL_2,0.8);
             delay(400);
         } else {
-            lift.goTo(level3, 0.8);
+            lift.goTo(LEVEL_3, 0.8);
             delay(600);
         }
-        hopper.hopper.setPosition(hopperTop);
+        hopper.hopper.setPosition(HOPPER_TOP);
         delay(1200);
-        hopper.hopper.setPosition(hopperBottom);
+        hopper.hopper.setPosition(HOPPER_BOTTOM);
         delay(200);
         lift.goTo(0,0.8);
 
@@ -199,9 +197,9 @@ public class PlaceDuckRed extends LinearOpMode {
         intake.intakeMotor.setPower(0);
         lift.goTo(1350,0.8);
         delay(700);
-        hopper.hopper.setPosition(hopperTop);
+        hopper.hopper.setPosition(HOPPER_TOP);
         delay(1200);
-        hopper.hopper.setPosition(hopperBottom);
+        hopper.hopper.setPosition(HOPPER_BOTTOM);
         delay(200);
         lift.goTo(0,0.8);
 

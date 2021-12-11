@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.mechanism.chassis;
 
-import static org.firstinspires.ftc.teamcode.Constants.sensitivity;
+import static org.firstinspires.ftc.teamcode.Constants.SENSITIVITY;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -27,8 +27,8 @@ public class FourWheelChassis extends Chassis {
         maxPower = Math.max(maxPower, 1);
 
         //Make all of them proportional to the greatest value and factor in the sensitivity.
-        lPower = (lPower / maxPower) * sensitivity;
-        rPower = (rPower / maxPower) * sensitivity;
+        lPower = (lPower / maxPower) * SENSITIVITY;
+        rPower = (rPower / maxPower) * SENSITIVITY;
 
         //Actually set them
         frontLeft.setPower(lPower);
