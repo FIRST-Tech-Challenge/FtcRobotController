@@ -16,7 +16,7 @@ public class JonDC extends LinearOpMode{
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
         br = hardwareMap.get(DcMotor.class, "br");
-        double[] power = new double[4];
+
         fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -26,10 +26,7 @@ public class JonDC extends LinearOpMode{
         br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        boolean ct = false;
-        boolean prevInput = false;
-        boolean ct2 = false;
-        boolean prevInput2 = false;
+        double[] power = new double[4];
         boolean lsDeadzone = false;
         boolean rsDeadzone = false;
 
@@ -79,10 +76,55 @@ public class JonDC extends LinearOpMode{
             bl.setPower(power[2]); //(+) for 2020-21 Mayhem bot
             br.setPower(power[3]); //(-) for 2020-21 Mayhem bot
 
+            /* --------------------------------------
+            Telemetry Stuff
+            -------------------------------------- */
 
+            telemetry.addData("Front Left Motor",power[0]);
+            telemetry.addData("Front Right Motor",power[1]);
+            telemetry.addData("Back Left Motor",power[2]);
+            telemetry.addData("Back Right Motor",power[3]);
+            //display direction
+            String[] dirDisp = dirDisplay(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y);
+            for (String dirLine: dirDisp){
+                telemetry.addLine(dirLine);
+            }
+            telemetry.update();
         }
     }
 
+    //Displays a Tic Tac Toe board of directions (may need adjustment depending on bot)
+    public static String[] dirDisplay(float xVal, float yVal){
+        String[] res = new String[3];
+        String[][] l1 = {{"O","|","O","|","O"}, {"O","|","O","|","O"}, {"O","|","O","|","O"}};
+        String temp = "";
+
+        int ylvl = 1;
+        if (yVal>.2) {
+            ylvl = 2;
+        } else if (yVal<-.2) {
+            ylvl = 0;
+        }
+
+        int xlvl = 2;
+        if (xVal>.2) {
+            xlvl = 4;
+        } else if (xVal<-.2) {
+            xlvl = 0;
+        }
+
+        l1[ylvl][xlvl] = "X";
+
+        for(int i = 0;i<3;i++){
+            temp = "";
+            for (int ii = 0; ii<5; ii++){
+                temp = (temp + l1[i][ii]);
+            }
+            res[i] = temp;
+        }
+
+        return res;
+    }
 }
 
 
