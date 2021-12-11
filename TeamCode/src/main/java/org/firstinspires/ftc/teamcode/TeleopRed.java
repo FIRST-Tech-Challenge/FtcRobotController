@@ -34,8 +34,9 @@ public class TeleopRed extends LinearOpMode {
     boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // sweeper (reverse)
     boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // box servo (dump)
 
-    boolean sweeperRunning  = false;
-    boolean sweeperReversed = false;
+    boolean sweeperRunning  = false;  // Intake sweeper forward (fast/continuous - for collecting)
+    boolean sweeperEjecting = false;  // Intake sweeper reverse (fast/continuous - eject extra freight)
+    boolean sweeperDumping  = false;  // Intake sweeper reverse (slow/button - while dumping)
     boolean clawServoOpen   = false;  // true=OPEN; false=CLOSED on team element
 
     double    freightArmServoPos = 0.48;      // Which servo setting to target once movement starts
@@ -208,24 +209,32 @@ public class TeleopRed extends LinearOpMode {
         // Check if gamepad2 LEFT BUMPER is pressed
         if( gamepad2_l_bumper_now ) {
             robot.sweepServo.setPower( -0.15 );  // ON (reverse)
-            sweeperReversed = true;   // note that we need to turn it back OFF
+            sweeperDumping = true;   // note that we need to turn it back OFF
         }
         // or not. but was PREVIOUSLY
-        else if( sweeperReversed ) {
+        else if( sweeperDumping ) {
             robot.sweepServo.setPower( 0.0 );  // OFF
-            sweeperReversed = false;   // only do this once!
+            sweeperDumping = false;   // only do this once!
         }
-        // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
-        if( gamepad2_cross_now && !gamepad2_cross_last) {
-            if( sweeperRunning ) {  // currently running, so toggle OFF
-                robot.sweepServo.setPower( 0.0 );  // OFF
-                sweeperRunning = false;
-            }
-            else {  // currently stopped, so toggle ON
-                robot.sweepServo.setPower( 1.0 );  // ON (forward)
-                sweeperRunning = true;
-            }
-        } // cross
+        // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button
+        if( gamepad2_square_now && !gamepad2_square_last) {
+          if( sweeperEjecting ) {  // already reverse; toggle back to forward
+            robot.sweepServo.setPower( 1.0 );  // ON (forward)
+            sweeperRunning  = true;
+            sweeperEjecting = false;
+          }
+          else {  // currently forward, so switch to reverse
+            robot.sweepServo.setPower( -1.0 );  // ON (reverse)
+            sweeperRunning  = true;
+            sweeperEjecting = true;
+          }
+        } // square
+        // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
+        if( gamepad2_triangle_now && !gamepad2_triangle_last) {
+            robot.sweepServo.setPower( 0.0 );  // OFF
+            sweeperRunning  = false;
+            sweeperEjecting = false;
+        } // triangle
     } // processSweeperControls
 
     /*---------------------------------------------------------------------------------*/
@@ -290,7 +299,8 @@ public class TeleopRed extends LinearOpMode {
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.20 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
             // automatically turn ON the sweeper
-            sweeperRunning = false;  // processSweeperControls() will turn it ON
+            robot.sweepServo.setPower( 1.0 );  // ON
+            sweeperRunning = true;
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP

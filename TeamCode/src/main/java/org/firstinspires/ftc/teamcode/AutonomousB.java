@@ -207,7 +207,7 @@ public class AutonomousB extends LinearOpMode {
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -3.0, 999.9, DRIVE_THRU );
         gyroTurn(TURN_SPEED_25, (getAngle() - 30.0) );   // Turn CCW 30 Degrees
-        robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.30 );
+        robot.freightArmPosition( robot.FREIGHT_ARM_POS_VERTICAL, 0.30 );
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -distanceToHub, 999.9, DRIVE_TO );
     } // moveToHub
 
