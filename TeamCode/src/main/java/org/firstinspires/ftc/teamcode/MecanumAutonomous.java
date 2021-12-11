@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -92,9 +95,18 @@ public class MecanumAutonomous extends LinearOpMode {
 
         //Run code while the opMode is active.
         if(opModeIsActive()) {
-            //driveStraight(50,0.8,5.0);
-           drive(0,25, 0.8, 5.0);
-           drive(0,-25,0.8,5.0);
+            driveStraight(25,0.8,5.0);
+            sleep(2000);
+           drive(0,10, 0.8, 5.0);
+           /*sleep(2000);
+           drive(225,25, 0.8, 5.0);
+           sleep(2000);
+           drive(270,25, 0.8, 5.0);
+           sleep(2000);
+           drive(315,25, 0.8, 5.0);
+           sleep(2000);
+           drive(360,25, 0.8, 5.0);
+           */
            //rotate(45, 0.8);
            //rotate(-45, 0.8);
         }
@@ -151,14 +163,14 @@ public class MecanumAutonomous extends LinearOpMode {
     @param timeout Motor movement timeout (In Seconds) (Adjust accordingly, or just put 5)
     */
     public void drive(double degrees, double distance, double power, double timeout) {
-        distance = -distance;
+       // distance = -distance;
         //Math to convert input(degrees) into x and y.
         double degreesToR = Math.toRadians(degrees);
         double x = Math.cos(degreesToR);
         double y = Math.sin(degreesToR);
         double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
         //Convert the input distance into something useable by encoders.
-        int target = (int) driveDistance(distance);
+        int target = (int) (driveDistance(distance) * 0.66);
         int direction = 1;
         double slowdown = 1;
         //Set motor targets based on direction.
@@ -167,18 +179,24 @@ public class MecanumAutonomous extends LinearOpMode {
             target = -target;
             robot.motorFrontLeft.setTargetPosition(target);
             robot.motorBackRight.setTargetPosition(target);
+            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             direction = 1;
         }
         if(degrees >90 && degrees < 180) {
             //Both wheels go forward, no change needed.
             robot.motorFrontRight.setTargetPosition(target);
             robot.motorBackLeft.setTargetPosition(target);
+            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             direction = 2;
         }
         if(degrees >= 180 && degrees <= 270) {
             //Both wheels go forward, no change needed.
             robot.motorFrontLeft.setTargetPosition(target);
             robot.motorBackRight.setTargetPosition(target);
+            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             direction = 3;
         }
         if(degrees > 270 && degrees < 360) {
@@ -186,9 +204,10 @@ public class MecanumAutonomous extends LinearOpMode {
             target = -target;
             robot.motorFrontRight.setTargetPosition(target);
             robot.motorBackLeft.setTargetPosition(target);
+            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             direction = 4;
         }
-        robot.setRunToPosition();
         //begin runtime for timeout.
         runtime.reset();
         //Set initial motor powers
@@ -196,7 +215,16 @@ public class MecanumAutonomous extends LinearOpMode {
         robot.motorBackLeft.setPower(((y - x) / denominator)*power);
         robot.motorFrontRight.setPower(((y - x) / denominator)*power);
         robot.motorBackRight.setPower(((y + x) / denominator)*power);
+        if(direction == 2 || direction == 4){
+            while (opModeIsActive() && runtime.seconds() < timeout && (robot.motorFrontRight.isBusy() && robot.motorBackLeft.isBusy())) {
+            }
+        }
+        if(direction == 1 || direction == 3) {
+            while (opModeIsActive() && runtime.seconds() < timeout && (robot.motorFrontLeft.isBusy() && robot.motorBackRight.isBusy())) {
+            }
+        }
         //Loop while the motors move to their target position
+        /*
         while (opModeIsActive() && (runtime.seconds() < timeout) && (robot.motorsBusy())) {
             //Add slowdown to robot if distance traveled is over 75% of the way there (this changes based on direction)
             if(direction == 1 && robot.motorFrontLeft.getCurrentPosition() > distance*0.75)
@@ -220,6 +248,7 @@ public class MecanumAutonomous extends LinearOpMode {
             telemetry.addData("The Motors Are Busy:", robot.motorsBusy());
             telemetry.update();
         }
+        */
         //Stop the motors, then reset the encoder counts
         robot.setPowers(0.0);
         robot.restartEncoders();
