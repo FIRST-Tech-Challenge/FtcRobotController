@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 
 @Disabled
-public class AutoObjDetectionTemplate extends AutonomousTemplate {
+public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
 
     private static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
@@ -20,41 +20,133 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
     private static final String VUFORIA_KEY =
             "AWVWPbH/////AAABmbzQF0cF/EvRnE4ykZKAXvpbnJrPQs1aBJ2i7u5ADGzYU+x0dxqGlB/G8yCrcY4FP8cPEA1w+xTXCpbFDmlYcKMG6VL/6v+H0Es3H/1f8xpQG86nSCXKPLxEbYGHkBxAYSlxB0gueBpnxMYsURezlq2Q9e5Br5OIhY7gmZZNa3VPHupscQkrCrVdRMI9mPAbEjMBhVBWjVJEL0+u2tyvEQuK4tllgi8C7AKq5V5lFoKEQG0VD89xlgUfRZsDq89HToRXBOUE2mubPHUcplKiX+1EfB+801eEt+k7lLJ1VyfrXr2tjwyWPjafvTpnaf3C35ox0/TOPdak5pq2gXLpXzAxXc6+RH28m2572tYB58AN";
 
-    public VuforiaLocalizer vuforia;
-    public TFObjectDetector tfod;
+    public volatile VuforiaLocalizer vuforia;
+    public volatile TFObjectDetector tfod;
 
+    private volatile boolean threadedObjReturn = true;
 
+    public void initVuforia() throws InterruptedException {
+        telemetry.addData("Vuforia initialization:", "Started");
+        telemetry.update();
 
-    public void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        Thread t = new Thread(this::_initVuforia);
+        t.start();
+        while (t.getState() != Thread.State.TERMINATED) {
+            if (isStopRequested()) {
+                threadedObjReturn = false;
+                throw new InterruptedException();
+            }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            continue;
+        }
+        t.join();
 
         telemetry.addData("Vuforia initialization:", "Complete");
         telemetry.update();
 
     }
 
-    public void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 320;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+    public void _initVuforia() {
+        //Waits for mutex to be available
+        if (globalInitThreadMutex.initThreadRunning) {
+            while (globalInitThreadMutex.initThreadRunning) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+
+        //Claims mutex
+        globalInitThreadMutex.initThreadRunning = true;
+
+        //does the initialization
+        VuforiaLocalizer Vuforia;
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
+        //  Instantiate the Vuforia engine
+        Vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        //Passes initialized obj back to caller class
+        if (threadedObjReturn) {
+            this.vuforia = Vuforia;
+        }
+
+        //frees mutex
+        globalInitThreadMutex.initThreadRunning = false;
+
+
+    }
+
+    public void initTfod() throws InterruptedException {
+        telemetry.addData("TFOD initialization:", "Started");
+        telemetry.update();
+
+
+        Thread t = new Thread(this::_initTfod);
+        t.start();
+        while (t.getState() != Thread.State.TERMINATED) {
+            if (isStopRequested()) {
+                threadedObjReturn = false;
+                throw new InterruptedException();
+            }
+        }
+
+        t.join();
+
 
         telemetry.addData("TFOD initialization:", "Complete");
         telemetry.update();
 
+    }
+
+    private void _initTfod() {
+        //Waits for mutex to be available
+        if (globalInitThreadMutex.initThreadRunning) {
+            while (globalInitThreadMutex.initThreadRunning) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+
+        //Claims mutex
+        globalInitThreadMutex.initThreadRunning = true;
+
+        //Runs initialization Code
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector Tfod;
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 320;
+        Tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        Tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+
+
+        //Passes initialized obj back to caller class
+        if (threadedObjReturn) {
+            this.tfod = Tfod;
+        }
+
+        //frees mutex
+        globalInitThreadMutex.initThreadRunning = false;
+    }
+
+
+    private static class globalInitThreadMutex {
+        static volatile boolean initThreadRunning;
     }
 
     public void activate() {
@@ -68,9 +160,7 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
             tfod.setZoom(2, 16.0 / 9.0);
-            //}
         }
-        // public void deactivate(){}
     }
 
     public MarkerPosition findPositionOfMarker() {
