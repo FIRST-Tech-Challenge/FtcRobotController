@@ -9,10 +9,13 @@ public class Gripper implements Subsystem{
     private Servo gripperPitchServo = null;
     private Servo gripperServo = null;
     int gripperClosed =900;
-    int gripperOpen = 1200;
+    int gripperOpenIntake = 1200;
+    int gripperOpenTransfer = 1200;
     int gripperUp = 900;
     int gripperDown = 1650;
     boolean gripperIsUp = true;
+    double transferTime = 1.0;
+    boolean gripperOpen = false;
 
     public Gripper(HardwareMap hardwareMap){
         gripperServo = hardwareMap.get(Servo.class, "gripperServo");
@@ -22,27 +25,77 @@ public class Gripper implements Subsystem{
         gripperPitchServo.setPosition(servoNormalize(gripperUp));
     }
 
-    public boolean actuateGripper(boolean open){
-        if(!gripperIsUp) {
+    public void actuateGripper(boolean open){
             if(open) {
-                gripperServo.setPosition(servoNormalize(gripperOpen));
-                return true;
+                if(gripperIsUp) {
+                    if(safeToTransfer) {
+                        gripperServo.setPosition(servoNormalize(gripperOpenTransfer));
+                        gripperOpen = true;
+                    }
+                }
+                else {
+                    gripperServo.setPosition(servoNormalize(gripperOpenIntake));
+                    gripperOpen = true;
+                }
             }
             else{
-                gripperServo.setPosition(servoNormalize(gripperOpen));
-                return true;
+                gripperServo.setPosition(servoNormalize(gripperClosed));
+                gripperOpen = false;
             }
+    }
+
+    public void pitchGripper(boolean up){
+        if(up) {
+            gripperPitchServo.setPosition(servoNormalize(gripperUp));
+            calculateSTFT = true;
+            gripperIsUp = true;
         }
+        else{
+            gripperPitchServo.setPosition(servoNormalize(gripperDown));
+            gripperIsUp = false;
+        }
+    }
+
+    boolean calculateSTFT = false;
+    boolean safeToTransfer = true;
+    boolean timerInitialized;
+    double safeToTransferTimer = 0;
+    private boolean safeToTransfer(double seconds){
+        if(timerInitialized){
+            safeToTransferTimer = System.nanoTime();
+            safeToTransfer = false;
+        }
+
+        if(System.nanoTime() - safeToTransferTimer > (seconds * 1E9)){
+            timerInitialized = false;
+            safeToTransfer = true;
+            return true;
+        }
+
         return false;
     }
 
-//    public boolean pitchGripper(){
-//        if()
-//    }
+    public void togglePitch(){
+        if(gripperIsUp){
+            pitchGripper(false);
+        }
+        else{
+            pitchGripper(true);
+        }
+    }
+
+    public void toggleGripper(){
+        if(gripperIsUp){
+            pitchGripper(false);
+        }
+        else{
+            pitchGripper(true);
+        }
+    }
 
     @Override
     public void update() {
-
+        safeToTransfer(transferTime); //update the timer
     }
 
     @Override
