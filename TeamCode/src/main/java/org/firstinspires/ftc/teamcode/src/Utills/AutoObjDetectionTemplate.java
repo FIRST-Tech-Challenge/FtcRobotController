@@ -146,7 +146,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
 
     private static class globalInitThreadMutex {
-        static volatile boolean initThreadRunning;
+        private static volatile boolean initThreadRunning;
     }
 
     public void activate() {
