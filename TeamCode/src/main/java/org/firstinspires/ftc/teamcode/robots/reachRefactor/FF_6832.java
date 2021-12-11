@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor;
 import android.graphics.Bitmap;
 
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Crane;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
@@ -241,13 +240,13 @@ public class FF_6832 extends OpMode {
         }
 
         if(stickyGamepad2.x){
-            robot.driveTrain.handleDuckSpinnerToggle();
+            robot.articulate(Robot.Articulation.TRANSFER);
         }
-
 
         if(stickyGamepad2.dpad_left){
             robot.crane.Do(Crane.CommonPosition.HOME);
         }
+
         if(stickyGamepad2.dpad_up){
             robot.crane.Do(Crane.CommonPosition.HIGH_TEIR);
         }

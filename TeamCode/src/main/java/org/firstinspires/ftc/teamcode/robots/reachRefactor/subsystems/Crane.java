@@ -46,7 +46,7 @@ public class Crane implements Subsystem {
     }
 
     public enum CommonPosition {
-        STARTING(2100,1650,1600,0),
+        STARTING(2200,1600,1600,0),
         HOME(1700,1650,1600,0),
         LOWEST_TEIR(0,0,0,0),
         MIDDLE_TEIR(0,0,0,0),

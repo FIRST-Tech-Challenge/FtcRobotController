@@ -1,28 +1,16 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
 
-import android.graphics.Bitmap;
-
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtils;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvider;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
-import org.firstinspires.ftc.teamcode.statemachine.Stage;
-import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -143,7 +131,7 @@ public class Robot implements Subsystem {
         MANUAL,
         // tele-op articulations
 
-        HANDOFF;
+        TRANSFER;
     }
 
 
@@ -154,7 +142,7 @@ public class Robot implements Subsystem {
         switch(articulation) {
             case MANUAL:
                 return true;
-            case HANDOFF:
+            case TRANSFER:
                 if(transfer()){
                     articulation = Articulation.MANUAL;
                     return true;
