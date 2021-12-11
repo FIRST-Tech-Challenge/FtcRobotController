@@ -118,4 +118,16 @@ public class InputSpace {
         return INTAKE_SPINNING_MOTOR;
     }
 
+    public void stop() {
+        TANK.stop();
+        DUCK.stop();
+        ELEVATOR_LEFT.stop();
+        ELEVATOR_RIGHT.stop();
+        HAND_GRABBING_SERVO.stop();
+        HAND_SPINNING_SERVO_X.stop();
+        HAND_SPINNING_SERVO_Y.stop();
+        INTAKE_LIFTING_SERVO.stop();
+        INTAKE_SPINNING_MOTOR.stop();
+    }
+
 }

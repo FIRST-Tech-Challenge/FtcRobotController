@@ -35,13 +35,13 @@ public class TankDrivetrainLocation extends Location {
         }
         switch(action) {
             case SET_SPEED:
-                DRIVETRAIN.driveWithEncoder(rightInput, leftInput);
+                DRIVETRAIN.driveWithEncoder(rightInput, -leftInput);
                 break;
             case SET_VOLTAGE:
-                DRIVETRAIN.driveWithoutEncoder(rightInput, leftInput);
+                DRIVETRAIN.driveWithoutEncoder(rightInput, -leftInput);
                 break;
             case MOVE_DISTANCE_IN_INCHES:
-                DRIVETRAIN.driveDistance(rightInput, leftInput, 50);
+                DRIVETRAIN.driveDistance(rightInput, -leftInput, 50);
                 break;
         }
     }
