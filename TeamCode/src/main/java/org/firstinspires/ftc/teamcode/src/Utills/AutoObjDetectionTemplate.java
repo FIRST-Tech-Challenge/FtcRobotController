@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 
 @Disabled
-public class AutoObjDetectionTemplate extends AutonomousTemplate {
+public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
 
     private static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
@@ -51,9 +51,21 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
     }
 
     public void _initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
+        //Waits for mutex to be available
+        if (globalInitThreadMutex.initThreadRunning) {
+            while (globalInitThreadMutex.initThreadRunning) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+
+        //Claims mutex
+        globalInitThreadMutex.initThreadRunning = true;
+
+        //does the initialization
         VuforiaLocalizer Vuforia;
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
@@ -62,9 +74,14 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         //  Instantiate the Vuforia engine
         Vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        //Passes initialized obj back to caller class
         if (threadedObjReturn) {
             this.vuforia = Vuforia;
         }
+
+        //frees mutex
+        globalInitThreadMutex.initThreadRunning = false;
 
 
     }
@@ -85,12 +102,28 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         t.join();
 
+
         telemetry.addData("TFOD initialization:", "Complete");
         telemetry.update();
 
     }
 
     private void _initTfod() {
+        //Waits for mutex to be available
+        if (globalInitThreadMutex.initThreadRunning) {
+            while (globalInitThreadMutex.initThreadRunning) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+
+        //Claims mutex
+        globalInitThreadMutex.initThreadRunning = true;
+
+        //Runs initialization Code
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector Tfod;
@@ -100,14 +133,20 @@ public class AutoObjDetectionTemplate extends AutonomousTemplate {
         tfodParameters.inputSize = 320;
         Tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         Tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+
+
+        //Passes initialized obj back to caller class
         if (threadedObjReturn) {
             this.tfod = Tfod;
         }
+
+        //frees mutex
+        globalInitThreadMutex.initThreadRunning = false;
     }
 
 
     private static class globalInitThreadMutex {
-        static boolean initThreadRunning = true;
+        static volatile boolean initThreadRunning;
     }
 
     public void activate() {

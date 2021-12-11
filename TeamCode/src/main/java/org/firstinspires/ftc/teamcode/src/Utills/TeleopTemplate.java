@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPo
 
 
 @Disabled
-public class TeleopTemplate extends LinearOpMode {
+public abstract class TeleopTemplate extends LinearOpMode {
 
     public TeleopDriveTrain driveTrain;
     public CarouselSpinner spinner;

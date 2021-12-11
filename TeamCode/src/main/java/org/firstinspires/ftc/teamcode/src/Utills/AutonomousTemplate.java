@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPo
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
 @Disabled
-public class AutonomousTemplate extends LinearOpMode {
+public abstract class AutonomousTemplate extends LinearOpMode {
     public OdometryPodServos podServos;
     public OdometryDrivetrain driveSystem;
     public CarouselSpinner spinner;
