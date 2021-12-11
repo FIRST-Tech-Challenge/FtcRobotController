@@ -94,7 +94,7 @@ public class MecanumAutonomous extends LinearOpMode {
         if(opModeIsActive()) {
             //driveStraight(50,0.8,5.0);
            drive(0,25, 0.8, 5.0);
-           drive(0,25,-0.8,5.0);
+           drive(0,-25,0.8,5.0);
            //rotate(45, 0.8);
            //rotate(-45, 0.8);
         }
@@ -151,6 +151,7 @@ public class MecanumAutonomous extends LinearOpMode {
     @param timeout Motor movement timeout (In Seconds) (Adjust accordingly, or just put 5)
     */
     public void drive(double degrees, double distance, double power, double timeout) {
+        distance = -distance;
         //Math to convert input(degrees) into x and y.
         double degreesToR = Math.toRadians(degrees);
         double x = Math.cos(degreesToR);
@@ -160,6 +161,7 @@ public class MecanumAutonomous extends LinearOpMode {
         int target = (int) driveDistance(distance);
         int direction = 1;
         double slowdown = 1;
+        robot.setRunToPosition();
         //Set motor targets based on direction.
         if(degrees >= 0 && degrees <= 90) {
             robot.setRunToPosition();
