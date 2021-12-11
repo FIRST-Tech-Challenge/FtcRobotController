@@ -36,9 +36,4 @@ public abstract class TeleopTemplate extends LinearOpMode {
         telemetry.addData("Initialization Status", "Initialized");
         telemetry.update();
     }
-
-    @Override
-    public void runOpMode() throws InterruptedException {
-
-    }
 }
