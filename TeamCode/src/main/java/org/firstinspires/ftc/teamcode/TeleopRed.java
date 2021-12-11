@@ -1,4 +1,4 @@
-/* FTC Team 7572 - Version 1.2 (12/03/2021)
+/* FTC Team 7572 - Version 2.0 (12/10/2021)
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -12,31 +12,30 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name="Teleop-Red", group="7592")
 //@Disabled
 public class TeleopRed extends LinearOpMode {
-    boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Duck motor on/off
-    boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Backwards Drive mode (also turns off driver-centric mode)
-    boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // sweeper on/off (collect)
-    boolean gamepad1_square_last,     gamepad1_square_now     = false;  // Enables/calibrates driver-centric mode
+    boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Capping arm score position
+    boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Duck motor control
+    boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // Capping arm claw open/close
+    boolean gamepad1_square_last,     gamepad1_square_now     = false;  // Capping arm collect/store positions
 //  boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;  // gamepad1.dpad_up used live/realtime
 //  boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;  //   (see processDpadDriveMode() below)
 //  boolean gamepad1_dpad_left_last,  gamepad1_dpad_left_now  = false;
 //  boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
-    boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;  // Duck Motor (slower)
-    boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;  // Duck Motor (faster)
+//  boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;  // gamepad1 bumpers used live/realtime
+//  boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;  //  (see processCappingArmControls() below)
 
-    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // Capping Arm (Capping Position)
-    boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Freight Arm (Transport Horizontal)
-    boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // Freight Arm (Collect)
-    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // claw servo open/close 
+    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  //
+    boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Freight Arm (Transport height)
+    boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // Freight Arm (Collect height)
+    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // Intake reverse
     boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;  // Freight Arm (Hub-Top)
     boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Freight Arm (Hub-Bottom) 
-    boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Freight Arm (Raise/Spin)
-    boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Freight Arm (Hub-Middle)
+    boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Freight Arm (Hub-Middle)
+    boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Freight Arm (score FRONT)
     boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // sweeper (reverse)
     boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // box servo (dump)
 
-    boolean sweeperRunning  = false;  // controlled by driver (gamepad1)
-    boolean sweeperReversed = false;  // controlled by operator (gamepad2)
-
+    boolean sweeperRunning  = false;
+    boolean sweeperReversed = false;
     boolean clawServoOpen   = false;  // true=OPEN; false=CLOSED on team element
 
     double    freightArmServoPos = 0.48;      // Which servo setting to target once movement starts
@@ -48,7 +47,7 @@ public class TeleopRed extends LinearOpMode {
     int       freightArmCycleCount     = FREIGHT_CYCLECOUNT_DONE;
     boolean   freightArmTweaked        = false;  // Reminder to zero power when trigger released
 
-    double    wristServoPos = 0.950;          // Which servo setting to target once capping arm movement starts
+    double    wristServoPos = 0.950;          // Servo setting to target once arm movement starts (WRIST_SERVO_INIT)
 
     final int CAPPING_CYCLECOUNT_START = 30;  // Capping Arm just started moving (1st cycle)
     final int CAPPING_CYCLECOUNT_SERVO = 20;  // Capping Arm off chassis (safe to rotate wrist servo)
@@ -68,8 +67,8 @@ public class TeleopRed extends LinearOpMode {
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
 
     boolean   duckMotorEnable = false;
-    double    duckPower = 0.670;  //red (positive!)
-    double    duckVelocity = 1600;      // target counts per second
+    double    duckPower = 0.670;      //red (positive!)
+    double    duckVelocity = 1600;    //red target counts per second (positive!)
 
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
@@ -103,50 +102,41 @@ public class TeleopRed extends LinearOpMode {
             robot.readBulkData();
 
             // Process all the driver/operator inputs
-            processSweeperControls();
             processDuckMotorControls();
             processFreightArmControls();
+            processSweeperControls();
             processCappingArmControls();
 
+/* DISABLE DRIVER-CENTRIC MODE FOR THIS SEASON
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
             {
                 driverMode = DRIVER_MODE_DRV_CENTRIC;
             }
+*/
 
+/* DISABLE BACKWARD MODE FOR THIS SEASON
             // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button (toggles STANDARD/BACKWARD drive control)
             if( gamepad1_triangle_now && !gamepad1_triangle_last)
             {
                 // If currently in DRIVER-CENTRIC mode, switch to STANDARD (robot-centric) mode
                 if( driverMode != DRIVER_MODE_STANDARD ) {
                     driverMode = DRIVER_MODE_STANDARD;
-//                  backwardDriveControl = false;  // reset to forward mode
+                    backwardDriveControl = false;  // reset to forward mode
                 }
                 // Already in STANDARD mode; Just toggle forward/backward mode
                 else {  //(disabled for now)
-//                  backwardDriveControl = !backwardDriveControl; // reverses which end of robot is "FRONT"
+                    backwardDriveControl = !backwardDriveControl; // reverses which end of robot is "FRONT"
                 }
             }
-
-            if( false ) {
-                telemetry.addData("triangle", "Robot-centric");
-                telemetry.addData("square", "Driver-centric (set joystick!)");
-                telemetry.addData("d-pad", "Fine control (20%)");
-                telemetry.addData("circle", "Duck Motor On/Off");
-                telemetry.addData("bumpers", "Duck Motor Speed");
-                telemetry.addData("bumpers", "Duck Motor Speed");
-                telemetry.addData("cross", "Sweeper On/Off");
-                telemetry.addData(" ", " ");
-            }
-
+*/
             if( processDpadDriveMode() == false ) {
                 // Control based on joystick; report the sensed values
                 telemetry.addData("Joystick", "x=%.3f, y=%.3f spin=%.3f",
                         -gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x );
                 switch( driverMode ) {
                     case DRIVER_MODE_STANDARD :
-                        telemetry.addData("Driver Mode", "STD-%s (cir)",
-                                (backwardDriveControl)? "BACKWARD":"FORWARD" );
+                        telemetry.addData("Driver Mode", "STD%s (cir)", (backwardDriveControl)? "-BACKWARD":"" );
                         processStandardDriveMode();
                         break;
                     case DRIVER_MODE_DRV_CENTRIC :
@@ -195,8 +185,8 @@ public class TeleopRed extends LinearOpMode {
 //      gamepad1_dpad_down_last  = gamepad1_dpad_down_now;   gamepad1_dpad_down_now  = gamepad1.dpad_down;
 //      gamepad1_dpad_left_last  = gamepad1_dpad_left_now;   gamepad1_dpad_left_now  = gamepad1.dpad_left;
 //      gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
-        gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
-        gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
+//      gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
+//      gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -217,7 +207,7 @@ public class TeleopRed extends LinearOpMode {
     void processSweeperControls() {
         // Check if gamepad2 LEFT BUMPER is pressed
         if( gamepad2_l_bumper_now ) {
-            robot.sweepServo.setPower( -0.25 );  // ON (reverse)
+            robot.sweepServo.setPower( -0.15 );  // ON (reverse)
             sweeperReversed = true;   // note that we need to turn it back OFF
         }
         // or not. but was PREVIOUSLY
@@ -226,15 +216,16 @@ public class TeleopRed extends LinearOpMode {
             sweeperReversed = false;   // only do this once!
         }
         // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
-        else if( gamepad1_cross_now && !gamepad1_cross_last) {
+        if( gamepad2_cross_now && !gamepad2_cross_last) {
             if( sweeperRunning ) {  // currently running, so toggle OFF
                 robot.sweepServo.setPower( 0.0 );  // OFF
+                sweeperRunning = false;
             }
             else {  // currently stopped, so toggle ON
                 robot.sweepServo.setPower( 1.0 );  // ON (forward)
+                sweeperRunning = true;
             }
-            sweeperRunning = !sweeperRunning;
-        }
+        } // cross
     } // processSweeperControls
 
     /*---------------------------------------------------------------------------------*/
@@ -243,44 +234,43 @@ public class TeleopRed extends LinearOpMode {
         if( gamepad1_circle_now && !gamepad1_circle_last)
         {   // toggle motor ON/OFF
             if( duckMotorEnable ) {
-                robot.duckMotor.setPower( 0.0 );
+//              robot.duckMotor.setPower( 0.0 );
+                robot.duckMotor.setVelocity( 0.0 );
             }
             else {
-                robot.duckMotor.setPower( duckPower );
-//              robot.duckMotor.setVelocity( duckVelocity );
+//              robot.duckMotor.setPower( duckPower );
+                robot.duckMotor.setVelocity( duckVelocity );
             }
             duckMotorEnable = !duckMotorEnable;
         }
-        // Check for an OFF-to-ON toggle of the gamepad1 left bumper
-        if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last)
-        {
-            // decrease duck motor speed
-            duckPower -= 0.02;   // 2% decrements
-//          duckVelocity -= 20;
-            if( duckMotorEnable ) {
-                robot.duckMotor.setPower( duckPower );
-//              robot.duckMotor.setVelocity( duckVelocity );
-            }
-        }
-        // Check for an OFF-to-ON toggle of the gamepad1 right bumper
-        if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last)
-        {
-            // increase duck motor speed
-            duckPower += 0.02;   // 2% increments
-//          duckVelocity += 20;
-            if( duckMotorEnable ) {
-                robot.duckMotor.setPower( duckPower );
-//              robot.duckMotor.setVelocity( duckVelocity );
-            }
-        }
     } // processDuckMotorControls
+
+    /*---------------------------------------------------------------------------------*/
+    double determineFreightArmPos() {
+        double servoTarget   = robot.BOX_SERVO_DUMP_BOTTOM; // updated below...
+        int    freightArmPos = robot.freightMotorPos;       // current encoder count
+        int    midpoint1     = (robot.FREIGHT_ARM_POS_HUB_TOP    + robot.FREIGHT_ARM_POS_HUB_MIDDLE)/2;
+        int    midpoint2     = (robot.FREIGHT_ARM_POS_HUB_MIDDLE + robot.FREIGHT_ARM_POS_HUB_BOTTOM)/2;
+        // Determine servo DUMP ANGLE based on  freight-arm location 
+        if( freightArmPos < robot.FREIGHT_ARM_POS_VERTICAL )
+            servoTarget = robot.BOX_SERVO_DUMP_FRONT;
+        else if( freightArmPos < midpoint1 )
+            servoTarget = robot.BOX_SERVO_DUMP_TOP;
+        else if( freightArmPos < midpoint2 )
+            servoTarget = robot.BOX_SERVO_DUMP_MIDDLE;
+        else 
+            servoTarget = robot.BOX_SERVO_DUMP_BOTTOM;
+        
+        return servoTarget;
+    } // determineFreightArmPos
 
     /*---------------------------------------------------------------------------------*/
     void processFreightArmControls() {
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
         {
-            robot.boxServo.setPosition( robot.BOX_SERVO_DUMP_TOP );
+            double boxServoTarget = determineFreightArmPos();
+            robot.boxServo.setPosition( boxServoTarget );   // DUMP!
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
@@ -299,41 +289,36 @@ public class TeleopRed extends LinearOpMode {
             freightArmServoPos =  robot.BOX_SERVO_COLLECT;
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.20 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
-            // automatically turn on the sweeper
-            robot.sweepServo.setPower( 1.0 );  // ON (forward)
-            sweeperRunning = true;
+            // automatically turn ON the sweeper
+            sweeperRunning = false;  // processSweeperControls() will turn it ON
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {
             freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
-//          robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_TOP, 0.80 );
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_TOP, 1.0 );
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_TOP, 0.85 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {
             freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
-//          robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE, 0.50 );
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE, 1.0 );
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE, 0.85 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {
             freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
-//          robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE, 0.50 );
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE, 1.0 );
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_SHARED, 0.50 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {
             freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
-//          robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_BOTTOM, 0.30 );
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_BOTTOM, 1.0 );
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_BOTTOM, 0.85 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         //===================================================================
@@ -362,12 +347,12 @@ public class TeleopRed extends LinearOpMode {
         else { // freightArmCycleCount == FREIGHT_CYCLECOUNT_DONE
             // arm must be idle; check for manual arm control
             freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;   // ensure we're reset
-            if( gamepad2.left_trigger > 0.05 ) {
-                robot.freightMotor.setPower( 0.10 );
+            if( gamepad2.left_stick_y > 0.05 ) {
+                robot.freightMotor.setPower( 0.20 );
                 freightArmTweaked = true;
             }
-            else if( gamepad2.right_trigger > 0.05 ) {
-                robot.freightMotor.setPower( -0.10 );
+            else if( gamepad2.left_stick_y < -0.05 ) {
+                robot.freightMotor.setPower( -0.20 );
                 freightArmTweaked = true;
             }
             else if( freightArmTweaked ) {
@@ -379,12 +364,43 @@ public class TeleopRed extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processCappingArmControls() {
-        // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
-        if( gamepad2_triangle_now && !gamepad2_triangle_last)
+        // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
+        if( gamepad1_cross_now && !gamepad1_cross_last)
+        {
+            if( clawServoOpen ) {
+                robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );
+            }
+            else {
+                robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );
+            }
+            clawServoOpen = !clawServoOpen;
+        }
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
+        if( gamepad1_triangle_now && !gamepad1_triangle_last)
         {
             wristServoPos =  robot.WRIST_SERVO_CAP;
             robot.cappingArmPosition( robot.CAPPING_ARM_POS_CAP, 0.70 );
             cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
+        }
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button
+        else if( gamepad1_square_now && !gamepad1_square_last)
+        {
+            // toggle between GRAB and STORE positions 
+            // (use current arm position to decide)
+            if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_CAP )
+            {  // currently STORE; switch to GRAB
+              wristServoPos = robot.WRIST_SERVO_GRAB;
+              robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.70 );
+              cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
+            }
+            else
+            { // currently GRAB; switch to STORE
+              wristServoPos = robot.WRIST_SERVO_STORE;
+              robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.70 );
+              cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
+            }
         }
         //===================================================================
         if( cappingArmCycleCount > CAPPING_CYCLECOUNT_SERVO ) {
@@ -412,22 +428,22 @@ public class TeleopRed extends LinearOpMode {
         else { // cappingArmCycleCount == CAPPING_CYCLECOUNT_DONE
             // arm must be idle; check for manual arm control
             cappingArmCycleCount = CAPPING_CYCLECOUNT_DONE;   // ensure we're reset
-            double gamepad2_left_stick_y = gamepad2.left_stick_y;
-            double cappingMotorPower = 0.25 * gamepad2_left_stick_y;
-            if( gamepad2_left_stick_y < -0.05 ) {
+            double gamepad1_left_trigger  = gamepad1.left_trigger;
+            double gamepad1_right_trigger = gamepad1.right_trigger;
+            if( gamepad1_left_trigger > 0.05 ) {
                 // limit how far we can drive this direction
                 if( robot.cappingMotorPos > 0 ) {
-                    robot.cappingMotor.setPower( cappingMotorPower );
+                    robot.cappingMotor.setPower( -0.10 * gamepad1_left_trigger );
                     cappingArmTweaked = true;
                 }
                 else {
                     robot.cappingMotor.setPower( 0.0 );
                 }
             }
-            else if( gamepad2_left_stick_y > 0.05 ) {
+            else if( gamepad1_right_trigger > 0.05 ) {
                 // limit how far we can drive this direction
                 if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_GRAB ) {
-                    robot.cappingMotor.setPower( cappingMotorPower );
+                    robot.cappingMotor.setPower( +0.10 * gamepad1_right_trigger );
                     cappingArmTweaked = true;
                 }
                 else {
@@ -440,19 +456,7 @@ public class TeleopRed extends LinearOpMode {
             }
         }
         //===================================================================
-        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
-        if( gamepad2_square_now && !gamepad2_square_last)
-        {
-            if( clawServoOpen ) {
-                robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );
-            }
-            else {
-                robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );
-            }
-            clawServoOpen = !clawServoOpen;
-        }
-        //===================================================================
-        if( gamepad2.right_stick_y < -0.03 ) {
+        if( gamepad1.left_bumper ) {
             // What was the last commanded position?
             double curPos = robot.wristServo.getPosition();
             if( curPos >  -0.95 ) {
@@ -460,7 +464,7 @@ public class TeleopRed extends LinearOpMode {
                 robot.wristServo.setPosition( newPos );
             }
         }
-        else if( gamepad2.right_stick_y > 0.03 ) {
+        else if( gamepad1.right_bumper ) {
             // What was the last commanded position?
             double curPos = robot.wristServo.getPosition();
             if( curPos <  0.95 ) {
@@ -475,7 +479,7 @@ public class TeleopRed extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
         double fineControlSpeed = 0.15;
-        double fineTurnSpeed = 0.05;
+        double fineTurnSpeed    = 0.05;
         boolean dPadMode = true;
         // Only process 1 Dpad button at a time
         if( gamepad1.dpad_up ) {
@@ -492,6 +496,7 @@ public class TeleopRed extends LinearOpMode {
             rearLeft   = -fineControlSpeed;
             rearRight  = -fineControlSpeed;
         }
+/* DISABLE D-PAD LEFT/RIGHT STRAFE FOR THIS SEASON
         else if( gamepad1.dpad_left ) {
             telemetry.addData("Dpad","LEFT");
             frontLeft  = -fineControlSpeed;
@@ -506,19 +511,20 @@ public class TeleopRed extends LinearOpMode {
             rearLeft   = -fineControlSpeed;
             rearRight  =  fineControlSpeed;
         }
-        else if(gamepad1.left_trigger>0.10){
-            telemetry.addData("Trigger","LEFT");
-            frontLeft  =  -fineTurnSpeed;
-            frontRight = fineTurnSpeed;
+*  INSTEAD USE LEFT/RIGHT FOR FINE-TURNING CONTROL */
+        else if( gamepad1.dpad_left ) {
+            telemetry.addData("Dpad","TURN");
+            frontLeft  = -fineTurnSpeed;
+            frontRight =  fineTurnSpeed;
             rearLeft   = -fineTurnSpeed;
             rearRight  =  fineTurnSpeed;
         }
-        else if(gamepad1.right_trigger>0.10){
-            telemetry.addData("Trigger","RIGHT");
+        else if( gamepad1.dpad_right ) {
+            telemetry.addData("Dpad","TURN");
             frontLeft  =  fineTurnSpeed;
             frontRight = -fineTurnSpeed;
-            rearLeft   = fineTurnSpeed;
-            rearRight  =  -fineTurnSpeed;
+            rearLeft   =  fineTurnSpeed;
+            rearRight  = -fineTurnSpeed;
         }
         else {
             dPadMode = false;
@@ -546,7 +552,7 @@ public class TeleopRed extends LinearOpMode {
         double valueOut;
 
         //========= NO JOYSTICK INPUT =========
-        if( Math.abs( valueIn) < 0.04 ) {
+        if( Math.abs( valueIn) < 0.05 ) {
             valueOut = 0.0;
         }
         //========= POSITIVE JOYSTICK INPUTS =========
@@ -585,30 +591,30 @@ public class TeleopRed extends LinearOpMode {
         double valueOut;
 
         //========= NO JOYSTICK INPUT =========
-        if( Math.abs( valueIn) < 0.04 ) {
+        if( Math.abs( valueIn) < 0.05 ) {
             valueOut = 0.0;
         }
         //========= POSITIVE JOYSTICK INPUTS =========
         else if( valueIn > 0.0 ) {
-            if( valueIn < 0.33 ) {                       // NOTE: approx 0.06 required to **initiate** rotation
-                valueOut = (0.25 * valueIn) + 0.0550;    // 0.01=0.060   0.33=0.1375
+            if( valueIn < 0.50 ) {                       // NOTE: approx 0.06 required to **initiate** rotation
+                valueOut = (0.25 * valueIn) + 0.040;     // 0.01=0.0425   0.50=0.1650
             }
             else if( valueIn < 0.90 ) {
-                valueOut = (1.00 * valueIn) - 0.1925;   // 0.33=0.1375   0.90=0.7075
+                valueOut = (0.75 * valueIn) - 0.210;     // 0.50=0.1650   0.90=0.4650
             }
             else
-                valueOut = (14.0 * valueIn) - 11.8925;  // 0.90=0.7075   1.00=2.1075 (clipped)
+                valueOut = (8.0 * valueIn) - 6.735;      // 0.90=0.4650   1.00=1.265 (clipped)
         }
         //========= NEGATIVE JOYSTICK INPUTS =========
         else { // valueIn < 0.0
-            if( valueIn > -0.33 ) {
-                valueOut = (0.25 * valueIn) - 0.0550;
+            if( valueIn > -0.50 ) {
+                valueOut = (0.25 * valueIn) - 0.040;
             }
             else if( valueIn > -0.90 ) {
-                valueOut = (1.00 * valueIn) + 0.1925;
+                valueOut = (0.75 * valueIn) + 0.210;
             }
             else
-                valueOut = (14.0 * valueIn) + 11.8925;
+                valueOut = (8.0 * valueIn) + 6.735;
         }
 
         return valueOut;
