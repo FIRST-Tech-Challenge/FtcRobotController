@@ -42,4 +42,15 @@
         6. Rotate 120 degrees clockwise
         7. Drive into shipping depot.
         8. Put shipping element into the team wobble goal
+//If team element cannot be detected, but shipping elements can
+    AutonomousCodeBlueVariant2
+        1. Turn 90 degrees to the carousel
+        2. Drive robot until the two touch sensors are touching
+        3. Spin Duck out of Carousel
+        4. Turn robot around 180 degrees, and drive into shipping depot
+        5. Detect shipping element and drop it off in team wobble goal
+        6. Drive to parking
+
+
+
 
