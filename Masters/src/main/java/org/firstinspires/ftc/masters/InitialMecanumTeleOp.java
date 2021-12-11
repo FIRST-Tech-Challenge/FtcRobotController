@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="freightFrenzy")
+@TeleOp(name="freightFrenzy", group="competition")
 public class InitialMecanumTeleOp extends LinearOpMode {
 
 

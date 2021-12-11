@@ -8,7 +8,7 @@ import java.util.Date;
 
 //For this to work, the robot needs to start on the red carousel side.
 
-@Autonomous(name = "Linear Slide and bar code test thing.")
+@Autonomous(name = "Linear Slide and bar code test thing.", group ="test")
 public class linearSlideBarCodeTestThing extends LinearOpMode {
     RobotClass robot;
 

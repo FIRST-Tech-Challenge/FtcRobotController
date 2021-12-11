@@ -41,7 +41,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "TestComputerVision")
+@TeleOp(name = "TestComputerVision", group ="test")
 public class EasyOpenCVLocateTeamItem extends LinearOpMode
 {
     OpenCvWebcam webcam;

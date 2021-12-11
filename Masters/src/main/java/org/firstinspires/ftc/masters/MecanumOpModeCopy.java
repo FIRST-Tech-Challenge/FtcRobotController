@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  *
  */
 
-@TeleOp(name="MecanumOpModeCopy", group="Linear Opmode") // @Autonomous(...) is the other common choice
+@TeleOp(name="MecanumOpModeCopy", group="test") // @Autonomous(...) is the other common choice
 // @Disabled
 public class MecanumOpModeCopy extends LinearOpMode {
 
