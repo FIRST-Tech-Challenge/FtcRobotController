@@ -19,7 +19,7 @@ public class IntakeSpinningMotorLocation extends Location {
 
     public IntakeSpinningMotorLocation(HardwareMap hardware) {
         try {
-            MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.INTAKE_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD);
+            MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.INTAKE_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD, 1120, 1, 1.75);
         } catch(Exception ignored) {}
     }
 
