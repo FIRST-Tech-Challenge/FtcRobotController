@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.commands.webcam.StreamToDashboard;
+import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -22,6 +23,8 @@ public class WebCamSubsystem extends SubsystemBase {
 
     private int width = 640;
     private int height = 480;
+
+    OpenCvShippingElementDetector.TSELocation location;
 
     public WebCamSubsystem(final HardwareMap hwMap, final String deviceName){
 
@@ -109,6 +112,14 @@ public class WebCamSubsystem extends SubsystemBase {
                  */
             }
         });
+    }
+
+    public void setLocation(OpenCvShippingElementDetector.TSELocation location){
+        this.location = location;
+    }
+
+    public OpenCvShippingElementDetector.TSELocation getLocation(){
+        return location;
     }
 
 

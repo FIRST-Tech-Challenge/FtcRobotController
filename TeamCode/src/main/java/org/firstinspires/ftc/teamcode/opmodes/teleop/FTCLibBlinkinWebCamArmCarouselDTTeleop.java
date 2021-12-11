@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowTeamColors;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StreamToDashboard;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drive.bc4h.BC4HDriveSubsystem;
@@ -48,12 +49,9 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
     private CarouselSubsystem m_carousel;
     private BC4HDriveSubsystem m_bc4h_drive;
 
-    private ShowAllianceColor m_showAllianceBlueColorCommand;
-    private ShowAllianceColor m_showAllianceRedColorCommand;
-    private ShowTeamColors m_showTeamColorsCommand;
 
-    private DetectTSEPosition m_detectTSEPosition;
-    private StreamToDashboard m_streamToDashboard;
+
+
 
     private NudgeArm m_nudgeArmUp;
     private NudgeArm m_nudgeArmDown;
@@ -85,32 +83,15 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         //set up Game pad 2
         GamepadEx toolOp2 = new GamepadEx(gamepad2);
 
-        //X (Blue) button
-        Button blueAlliance = new GamepadButton(driveOp, GamepadKeys.Button.X);
-        //B (Red) button
-        Button redAlliance = new GamepadButton(driveOp, GamepadKeys.Button.B);
-        //A (Team) button
-        Button teamColors = new GamepadButton(driveOp, GamepadKeys.Button.A);
-
         //create LED SubSystem
-        m_leds = new LEDSubsystem(hardwareMap,"blinkin", 10);
+        CreateLEDs createLEDs = new CreateLEDs(hardwareMap, "blinkin", driveOp, true);
 
-        //create commands
-        m_showAllianceBlueColorCommand = new ShowAllianceColor(m_leds, ShowAllianceColor.AllianceColor.BLUE);
-        m_showAllianceRedColorCommand = new ShowAllianceColor(m_leds, ShowAllianceColor.AllianceColor.RED);
-        m_showTeamColorsCommand = new ShowTeamColors(m_leds);
-
-        //assign buttons to commands
-        blueAlliance.whenPressed(m_showAllianceBlueColorCommand);
-        redAlliance.whenPressed(m_showAllianceRedColorCommand);
-        teamColors.whenPressed(m_showTeamColorsCommand);
+        //m_leds = new LEDSubsystem(hardwareMap,"blinkin", 10);
 
         //create webcam subsystem
-        m_webCam = new WebCamSubsystem(hardwareMap,"Webcam 1",new OpenCvShippingElementDetector(640,480,telemetry));
+        //m_webCam = new WebCamSubsystem(hardwareMap,"Webcam 1",new OpenCvShippingElementDetector(640,480,telemetry));
 
-        m_detectTSEPosition = new DetectTSEPosition(m_webCam, telemetry);
 
-        m_streamToDashboard = new StreamToDashboard(m_webCam,dashboard);
 
         Map<Integer, Integer> armLevels = new HashMap<>();
         armLevels.put(0,0);
@@ -188,8 +169,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         m_driveRobot = new DefaultDrive(m_bc4h_drive, () -> driveOp.getLeftY(), () -> driveOp.getLeftX(), () -> driveOp.getRightX());
         m_bc4h_drive.setDefaultCommand(m_driveRobot);
 
-        m_streamToDashboard.schedule();
-        m_detectTSEPosition.schedule();
+
         m_seGrabber.schedule();
         m_seReleaser.schedule();
 

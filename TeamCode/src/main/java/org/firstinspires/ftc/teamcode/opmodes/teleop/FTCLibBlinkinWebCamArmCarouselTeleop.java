@@ -165,7 +165,7 @@ public class FTCLibBlinkinWebCamArmCarouselTeleop extends CommandOpMode {
         TriggerReader seReleaser = new TriggerReader(
                 toolOp2, GamepadKeys.Trigger.LEFT_TRIGGER
         );
-        
+
 
         m_seGrabber = new MoveIntake(m_intake, -0.75, () -> toolOp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
         m_seReleaser = new MoveIntake(m_intake, 0.6, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);

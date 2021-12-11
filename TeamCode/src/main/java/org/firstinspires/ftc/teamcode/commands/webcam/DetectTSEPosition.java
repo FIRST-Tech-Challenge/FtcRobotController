@@ -15,6 +15,7 @@ public class DetectTSEPosition extends CommandBase {
     private final OpenCvShippingElementDetector detector;
     private Telemetry telemetry;
     private Boolean gotPosition = false;
+    private OpenCvShippingElementDetector.TSELocation location;
 
     public DetectTSEPosition(WebCamSubsystem subsystem){
         m_webCamSubsytem = subsystem;
@@ -38,44 +39,39 @@ public class DetectTSEPosition extends CommandBase {
 
     @Override
     public void execute(){
-        OpenCvShippingElementDetector.TSELocation location = detector.getLocation();
+        location = detector.getLocation();
 
         telemetry.addData("We have a", location);
 
 
         if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_LEFT) {
-            // Do something with the plane
-            telemetry.addData("We have a 2", location);
-            gotPosition = true;
+            setLocation();
         }
         else if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_RIGHT) {
-            // Do something with the plane
-            telemetry.addData("We have a 2", location);
-            gotPosition = true;
+            setLocation();
         }
         else if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_MIDDLE) {
-            // Do something with the plane
-            telemetry.addData("We have a 2", location);
-            gotPosition = true;
+            setLocation();
         }
         else if (location == OpenCvShippingElementDetector.TSELocation.P2_BLUE_RIGHT) {
-            // Do something with the plane
-            telemetry.addData("We have a 2", location);
-            gotPosition = true;
+
+            setLocation();
         }
         else if (location == OpenCvShippingElementDetector.TSELocation.P2_BLUE_LEFT) {
-            // Do something with the plane
-            telemetry.addData("We have a 2", location);
-            gotPosition = true;
+            setLocation();
         }
         else if (location == OpenCvShippingElementDetector.TSELocation.P2_BLUE_MIDDLE) {
-            // Do something with the plane
-            telemetry.addData("We have a 2", location);
-            gotPosition = true;
+            setLocation();
         }
 
 
         telemetry.update();
+    }
+
+    private void setLocation(){
+        telemetry.addData("We have a 2", location);
+        m_webCamSubsytem.setLocation(location);
+        gotPosition = true;
     }
 
     @Override
