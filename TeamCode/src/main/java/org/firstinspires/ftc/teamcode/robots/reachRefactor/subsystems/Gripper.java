@@ -98,7 +98,9 @@ public class Gripper implements Subsystem{
 
     @Override
     public void update() {
-        safeToTransfer(transferTime); //update the timer
+        if(calculateSTFT) {
+            safeToTransfer(transferTime); //update the timer
+        }
     }
 
     @Override

@@ -142,7 +142,11 @@ public class Robot implements Subsystem {
     public enum Articulation {
         MANUAL,
         // tele-op articulations
+
+        HANDOFF;
     }
+
+
 
     public boolean articulate(Articulation articulation) {
         this.articulation = articulation;
@@ -150,11 +154,56 @@ public class Robot implements Subsystem {
         switch(articulation) {
             case MANUAL:
                 return true;
+            case HANDOFF:
+                if(transfer()){
+                    articulation = Articulation.MANUAL;
+                    return true;
+                }
+                break;
         }
         return false;
     }
 
     // Tele-Op articulations
+
+    int handOffState = 0;
+    double transferTimer = 0.0;
+    public boolean transfer(){
+        switch(handOffState){
+            case 0:
+                crane.Do(Crane.CommonPosition.TRANSFER);
+                handOffState++;
+                break;
+            case 1:
+                if(crane.isFinished()){
+                    gripper.pitchGripper(true);
+                    handOffState++;
+                }
+                break;
+            case 2:
+                if(gripper.safeToTransfer){
+                    gripper.toggleGripper();
+                    transferTimer = System.nanoTime();
+                    handOffState++;
+                }
+                break;
+            case 3:
+                if(transferTimer - System.nanoTime() > 1 / 1E9){
+                    gripper.actuateGripper(false);
+                    gripper.pitchGripper(false);
+                    transferTimer = System.nanoTime();
+                    handOffState++;
+
+                }
+            case 4:
+                if(transferTimer - System.nanoTime() > 1 / 1E9){
+                    handOffState = 0;
+                    return true;
+                }
+
+        }
+        return false;
+    }
 
     //----------------------------------------------------------------------------------------------
     // Getters And Setters

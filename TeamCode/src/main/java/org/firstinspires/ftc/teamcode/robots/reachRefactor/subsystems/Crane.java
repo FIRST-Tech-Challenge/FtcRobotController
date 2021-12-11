@@ -102,6 +102,10 @@ public class Crane implements Subsystem {
         return true;
     }
 
+    public boolean isFinished(){
+        return currentTargetPos == CommonPosition.FINISHED;
+    }
+
     private boolean checkForHome(){
         if(isAtHome){
             setPos(CommonPosition.HOME);
