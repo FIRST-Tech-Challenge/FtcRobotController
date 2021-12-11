@@ -21,6 +21,7 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Config
@@ -30,10 +31,12 @@ public class Turret implements Subsystem {
     private double correction;
 
     //PID
-    PIDController turretPID;
+    private PIDController turretPID;
 
-    double turretHeading;
+    private double turretHeading;
     private double targetTurretHeading;
+
+    private static final String TELEMETRY_NAME = "Turret";
 
     public Turret(HardwareMap hardwareMap) {
         this.motor = hardwareMap.get(DcMotor.class, "turret");
@@ -107,12 +110,14 @@ public class Turret implements Subsystem {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        return null;
+        Map<String, Object> telemetryMap = new HashMap<String, Object>();
+
+        return telemetryMap;
     }
 
     @Override
     public String getTelemetryName() {
-        return null;
+        return TELEMETRY_NAME;
     }
 }
 

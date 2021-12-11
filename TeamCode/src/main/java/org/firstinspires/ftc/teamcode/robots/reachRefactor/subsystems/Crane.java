@@ -8,26 +8,29 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Crane implements Subsystem {
 
-    Turret turret;
-    Servo firstLinkServo;
-    Servo secondLinkServo;
-    Servo bucketServo;
+    public Turret turret;
+    private Servo firstLinkServo;
+    private Servo secondLinkServo;
+    private Servo bucketServo;
 
     //use these maybe for motion smoothing
-    int firstLinkServoTargetPos;
-    int secondLinkServoTargetPos;
-    int bucketServoTargetPos;
-    double turretTargetPos;
+    private int firstLinkServoTargetPos;
+    private int secondLinkServoTargetPos;
+    private int bucketServoTargetPos;
+    private double turretTargetPos;
 
-    double toHomeTime = 2;//todo- update
-    double avgTransferTime = 4; //todo- update
-    int bucketUpPos = 900;
-    int bucketDownPos = 1200;
-    boolean isAtHome = false;
+    private double toHomeTime = 2;//todo- update
+    private double avgTransferTime = 4; //todo- update
+    private int bucketUpPos = 900;
+    private int bucketDownPos = 1200;
+    private boolean isAtHome = false;
+
+    private static final String TELEMETRY_NAME = "Crane";
 
     public Crane(HardwareMap hardwareMap) {
         firstLinkServo = hardwareMap.get(Servo.class, "firstLinkServo");
@@ -168,12 +171,18 @@ public class Crane implements Subsystem {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        return null;
+        Map<String, Object> telemetryMap = new HashMap<String, Object>();
+
+        telemetryMap.put("Turret:", "");
+        Map<String, Object> turretTelemetryMap = turret.getTelemetry(debug);
+        telemetryMap.putAll(turretTelemetryMap);
+
+        return telemetryMap;
     }
 
     @Override
     public String getTelemetryName() {
-        return null;
+        return TELEMETRY_NAME;
     }
 }
 
