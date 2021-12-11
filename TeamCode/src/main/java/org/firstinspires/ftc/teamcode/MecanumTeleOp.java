@@ -47,6 +47,9 @@ public class MecanumTeleOp extends LinearOpMode {
         //arm limit switch toggle to reset to 0
         boolean armLimitSwitchFlag = true;
 
+        //arm state
+        String armState = "down";
+
         //booleans for slow mode
         boolean bpressed = false;
         boolean slowdownflag = false;
@@ -100,17 +103,26 @@ public class MecanumTeleOp extends LinearOpMode {
             // Track Arm Current Pos
             armCurrentPos = robot.motorArm.getCurrentPosition();
 
-            //limit switch
+            /* limit switch current state
+            if(robot.armLimitSwitch.isPressed()){
+                armState = "down";
+            }else{
+                armState = "up";
+            }
+            */
+
+
             if (robot.armLimitSwitch.isPressed() && armLimitSwitchFlag == false){
+
                 robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);  
                 armLimitSwitchFlag = true;
 
                 telemetry.addData("limitSwitch", robot.armLimitSwitch.isPressed());
                 telemetry.addData("limitSwitchFlag", armLimitSwitchFlag);
+
             }else {
-                if (robot.armLimitSwitch.isPressed()){
-                    armLimitSwitchFlag = false;
-                }
+
                 // Arm Up and Arm Down in small increments
                 if (gamepad2.right_stick_y != 0.25) {
                     //armSetPos += gamepad2.right_stick_y*10;
@@ -130,6 +142,12 @@ public class MecanumTeleOp extends LinearOpMode {
                 }else if (gamepad2.b) {
                     armSetPos = armLevel3;
                 }
+                
+                if( armCurrentPos > 20 && !robot.armLimitSwitch.isPressed()) {
+                    armState = "up";
+                    armLimitSwitchFlag = false;
+                }
+                
                 telemetry.addData("limitSwitchFlag", armLimitSwitchFlag);
                 telemetry.addData("limitSwitch", robot.armLimitSwitch.isPressed());
             }
@@ -190,6 +208,7 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("Left Stick Y", controller1lsticky);
             telemetry.addData("Arm pos", armCurrentPos);
             telemetry.addData("Arm Set pos", armSetPos);
+            telemetry.addData("Arm State", armState);
             telemetry.addData("Right Y Stick",gamepad1.right_stick_y);
             telemetry.addData("Left Y Stick",gamepad1.left_stick_y);
             telemetry.addData("Slowdown:",slowdownflag);
