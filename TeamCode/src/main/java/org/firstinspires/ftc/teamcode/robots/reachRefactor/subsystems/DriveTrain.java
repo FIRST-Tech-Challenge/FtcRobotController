@@ -32,7 +32,7 @@ public class DriveTrain implements Subsystem {
     private DcMotorEx motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel, duckSpinner;
     private DcMotorEx[] motors;
     private String[] MOTOR_NAMES = {"motorFrontLeft", "motorFrontRight", "motorMiddle", "motorMiddleSwivel", "duckSpinner"};
-    private boolean[] REVERSED = {true, false, false, false, false};
+    private boolean[] REVERSED = {true, false, true, false, false};
     private DcMotor.ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new DcMotor.ZeroPowerBehavior[] {ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.BRAKE};
 
     // Sensors
@@ -241,11 +241,11 @@ public class DriveTrain implements Subsystem {
         motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
 
 //        updateTargetChassisDistance();
-        if(maintainChassisDistanceEnabled) {
-            double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
-            targetFrontLeftVelocity += maintainChassisDistanceCorrection;
-            targetFrontRightVelocity += maintainChassisDistanceCorrection;
-        }
+//        if(maintainChassisDistanceEnabled) {
+//            double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
+//            targetFrontLeftVelocity += maintainChassisDistanceCorrection;
+//            targetFrontRightVelocity += maintainChassisDistanceCorrection;
+//        }
 
 
         // Motor controls

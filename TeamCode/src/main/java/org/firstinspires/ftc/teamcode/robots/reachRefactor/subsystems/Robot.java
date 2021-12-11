@@ -171,7 +171,6 @@ public class Robot implements Subsystem {
     // Misc. Articulations
     private Stage startStage = new Stage();
     private StateMachine start = getStateMachine(startStage)
-            .addSingleState(() -> crane.enablePwm())
             .addTimedState(1f, () -> gripper.actuateGripper(false), () -> {})
             .addTimedState(2f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
             .addSingleState(()-> crane.Do(Crane.CommonPosition.HOME))

@@ -13,8 +13,8 @@ public class Gripper implements Subsystem{
     int gripperClosed =900;
     int gripperOpenIntake = 1200;
     int gripperOpenTransfer = 1200;
-    int gripperUp = 900;
-    int gripperDown = 1650;
+    int gripperUp = 2100;
+    int gripperDown = 1240;
     boolean gripperIsUp = true;
     double transferTime = 1.0;
     boolean gripperOpen = true;

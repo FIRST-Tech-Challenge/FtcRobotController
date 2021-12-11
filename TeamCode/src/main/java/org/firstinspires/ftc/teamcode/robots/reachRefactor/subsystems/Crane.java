@@ -44,21 +44,7 @@ public class Crane implements Subsystem {
 
         turret = new Turret(hardwareMap);
 
-        Do(CommonPosition.HOME);
-
-        disablePwm();
-    }
-
-    public void disablePwm() {
-        firstLinkServo.setPwmDisable();
-        secondLinkServo.setPwmDisable();
-        bucketServo.setPwmDisable();
-    }
-
-    public void enablePwm() {
-        firstLinkServo.setPwmEnable();
-        secondLinkServo.setPwmEnable();
-        bucketServo.setPwmEnable();
+        Do(CommonPosition.STARTING);
     }
 
     public enum CommonPosition {

@@ -55,7 +55,7 @@ public class FF_6832 extends OpMode {
     private StickyGamepad stickyGamepad1, stickyGamepad2;
     private Map<Position, Integer> positionFrequencies;
     private Position mostFrequentPosition;
-    private boolean usingDesmosDrive = true;
+    private boolean usingDesmosDrive;
     private boolean dashboardEnabled, debugTelemetryEnabled, smoothingEnabled;
 
     // Telemetry
@@ -241,10 +241,6 @@ public class FF_6832 extends OpMode {
             robot.driveTrain.handleDuckSpinnerToggle(robot.getAlliance().getMod());
         }
 
-        if(stickyGamepad2.x){
-            robot.articulate(Robot.Articulation.TRANSFER);
-        }
-
         if(stickyGamepad2.dpad_left){
             robot.crane.Do(Crane.CommonPosition.HOME);
         }
@@ -253,19 +249,23 @@ public class FF_6832 extends OpMode {
             robot.crane.Do(Crane.CommonPosition.HIGH_TEIR);
         }
 
+        if(stickyGamepad2.dpad_right){
+            robot.crane.Do(Crane.CommonPosition.TRANSFER);
+        }
 
-        if(stickyGamepad1.dpad_up) {
-            usingDesmosDrive = !usingDesmosDrive;
-        }
-        if(stickyGamepad1.dpad_down) {
-            debugTelemetryEnabled = !debugTelemetryEnabled;
-        }
-        if(gamepad1.dpad_left) {
-            robot.driveTrain.setTargetChassisDistance(robot.driveTrain.getChassisDistance() + Constants.TELEOP_CHASSIS_DISTANCE_INCREMENT);
-        }
-        if(gamepad1.dpad_right) {
-            robot.driveTrain.setTargetChassisDistance(robot.driveTrain.getChassisDistance() - Constants.TELEOP_CHASSIS_DISTANCE_INCREMENT);
-        }
+
+//        if(stickyGamepad1.dpad_up) {
+//            usingDesmosDrive = !usingDesmosDrive;
+//        }
+//        if(stickyGamepad1.dpad_down) {
+//            debugTelemetryEnabled = !debugTelemetryEnabled;
+//        }
+//        if(gamepad1.dpad_left) {
+//            robot.driveTrain.setTargetChassisDistance(robot.driveTrain.getChassisDistance() + Constants.TELEOP_CHASSIS_DISTANCE_INCREMENT);
+//        }
+//        if(gamepad1.dpad_right) {
+//            robot.driveTrain.setTargetChassisDistance(robot.driveTrain.getChassisDistance() - Constants.TELEOP_CHASSIS_DISTANCE_INCREMENT);
+//        }
     }
 
     private void handleTPMCalibration() {
