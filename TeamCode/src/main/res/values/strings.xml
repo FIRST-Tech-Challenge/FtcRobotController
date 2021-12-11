@@ -31,6 +31,7 @@
     <!-- ELEVATOR -->
     <string name="LIFT_RIGHT_ELEVATOR_MOTOR">l1M</string>
     <string name="LIFT_LEFT_ELEVATOR_MOTOR">l2M</string>
+    <string name="LIFT_BOTTOM_LIFTING_LIMIT_SWITCH">lT</string>
     <!-- HAND -->
     <string name="HAND_DISTANCE_SENSOR">diD</string>
     <string name="HAND_SPINNING_SERVO_X">htS</string>

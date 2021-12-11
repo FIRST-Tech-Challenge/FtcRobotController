@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition.utils.interactions.items;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 
@@ -51,9 +52,9 @@ public class StandardMotor extends InteractionSurface {
         HARDWARE = hardware;
         MOTOR = HARDWARE.get(DcMotor.class, name);
         OFFSET = offset;
-        COUNTS_PER_REV = countsPerRev;
-        GEAR_REDUCTION = gearReduction;
-        RADIUS = radius;
+        COUNTS_PER_REV = countsPerRev == 0 ? countsPerRev + 0.00000000000001 : countsPerRev;
+        GEAR_REDUCTION = gearReduction == 0 ? gearReduction + 0.00000000000001 : gearReduction;
+        RADIUS = radius == 0 ? radius + 0.00000000000001 : radius;
         COUNTS_PER_INCH = (COUNTS_PER_REV * GEAR_REDUCTION) / (RADIUS * 2 * Math.PI);
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MOTOR.setDirection(offset);

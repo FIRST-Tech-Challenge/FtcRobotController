@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition.opmodes;
+package org.firstinspires.ftc.teamcode.competition.opmodes.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,15 +7,17 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.competition.utils.gamepads.GamepadManager;
 import org.firstinspires.ftc.teamcode.competition.utils.io.InputSpace;
+import org.firstinspires.ftc.teamcode.competition.utils.io.OutputSpace;
 import org.firstinspires.ftc.teamcode.competition.utils.locations.TankDrivetrainLocation;
 
-@TeleOp(name="I_AM_THE_WORKING_ONE_TankTeleOp", group="linear")
-public class TeleOpOpMode extends LinearOpMode {
+@TeleOp(name="TankTestTeleOp", group="physical_tests")
+public class TankTestTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
         GamepadManager gamepads = new GamepadManager(gamepad1, gamepad1, gamepad1, gamepad1, gamepad1, gamepad1);
         InputSpace input = new InputSpace(hardwareMap);
+        OutputSpace output = new OutputSpace(hardwareMap);
         waitForStart();
         resetStartTime();
         while(opModeIsActive()) {

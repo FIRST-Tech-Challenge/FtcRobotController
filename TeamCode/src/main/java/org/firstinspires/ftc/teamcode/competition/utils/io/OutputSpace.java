@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.competition.utils.io;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.competition.utils.locations.ElevatorBottomLimitSwitchLocation;
 import org.firstinspires.ftc.teamcode.competition.utils.locations.HandDistanceSensorLocation;
 import org.firstinspires.ftc.teamcode.competition.utils.locations.IntakeLimitSwitchLocation;
 
@@ -13,11 +14,13 @@ public class OutputSpace {
     private final HardwareMap HARDWARE;
     private final HandDistanceSensorLocation HAND_DISTANCE_SENSOR;
     private final IntakeLimitSwitchLocation INTAKE_LIMIT_SWITCH;
+    private final ElevatorBottomLimitSwitchLocation ELEVATOR_BOTTOM_LIMIT_SWITCH;
 
     public OutputSpace(HardwareMap hardware) {
         HARDWARE = hardware;
         HAND_DISTANCE_SENSOR = new HandDistanceSensorLocation(HARDWARE);
         INTAKE_LIMIT_SWITCH = new IntakeLimitSwitchLocation(HARDWARE);
+        ELEVATOR_BOTTOM_LIMIT_SWITCH = new ElevatorBottomLimitSwitchLocation(HARDWARE);
     }
 
     public double receiveOutputFromHandDistanceSensor() {
@@ -28,4 +31,23 @@ public class OutputSpace {
         return INTAKE_LIMIT_SWITCH.returnOutput(type);
     }
 
+    public double receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values type) {
+        return ELEVATOR_BOTTOM_LIMIT_SWITCH.returnOutput(type);
+    }
+
+    public HardwareMap getHardware() {
+        return HARDWARE;
+    }
+
+    public HandDistanceSensorLocation getHandDistanceSensor() {
+        return HAND_DISTANCE_SENSOR;
+    }
+
+    public IntakeLimitSwitchLocation getIntakeLimitSwitch() {
+        return INTAKE_LIMIT_SWITCH;
+    }
+
+    public ElevatorBottomLimitSwitchLocation getElevatorBottomLimitSwitch() {
+        return ELEVATOR_BOTTOM_LIMIT_SWITCH;
+    }
 }
