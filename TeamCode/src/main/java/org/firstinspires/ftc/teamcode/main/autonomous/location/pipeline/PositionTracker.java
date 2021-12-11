@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.location.CoordinateSystem;
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.MockDistanceSensor;
 
 public class PositionTracker {

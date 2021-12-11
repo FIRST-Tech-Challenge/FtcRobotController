@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.main.autonomous.location;
+package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 
 public class CoordinateSystem {
     public static double maxWidthInCM = 381;
