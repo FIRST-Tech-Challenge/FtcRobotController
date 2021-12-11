@@ -81,7 +81,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
         initHardwareMap(rfName, rbName, lfName, lbName, verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
 
         //Create and start GlobalCoordinatePosition thread to constantly update the global coordinate positions\
-        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, 75);
+        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, 75, this::opModeIsActive, this::isStopRequested);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 

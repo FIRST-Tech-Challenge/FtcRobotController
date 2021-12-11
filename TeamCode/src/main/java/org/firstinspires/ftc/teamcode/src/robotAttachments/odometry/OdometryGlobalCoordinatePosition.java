@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.Utills.ThreadedSubsystemTemplate;
 
 import java.io.File;
@@ -54,7 +55,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @param horizontalEncoder    horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      * @param threadSleepDelay     delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
      */
-    public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, int threadSleepDelay) {
+    public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, int threadSleepDelay, Executable<Boolean> _isOpmodeActive, Executable<Boolean> _isStopRequested) {
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
         this.horizontalEncoder = horizontalEncoder;
@@ -62,6 +63,9 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
 
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
+
+        this.isStopRequested = _isStopRequested;
+        this.opModeIsActive = _isOpmodeActive;
 
     }
 
@@ -78,7 +82,6 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         telemetry.addData("X: ", this.returnRelativeXPosition());
         telemetry.addData("Y: ", this.returnRelativeYPosition());
         telemetry.addData("Rotation: ", this.returnOrientation());
-        telemetry.update();
     }
 
     public double getCOUNTS_PER_INCH() {

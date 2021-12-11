@@ -23,13 +23,9 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
     public RobotVoltageSensor voltageSensor;
     public volatile int chosenPosition;
 
-    private Executable<Boolean> isStopRequested;
-    private Executable<Boolean> opModeIsActive;
-
-
     //public static final double level_one_height = 0;
 
-    public LinearSlide(HardwareMap hardwareMap, String dcMotorName) {
+    private LinearSlide(HardwareMap hardwareMap, String dcMotorName) {
         linearSlide = hardwareMap.dcMotor.get(dcMotorName);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -110,20 +106,6 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
             power = MiscUtills.boundNumber(power);
         }
         linearSlide.setPower(power);
-    }
-
-    @Override
-    public void run() {
-        try {
-            while (isRunning && opModeIsActive.call() && !isStopRequested.call()) {
-                threadMain();
-                Thread.sleep(sleepTime);
-            }
-        } catch (NullPointerException e) {
-            throw new NullPointerException("To Use The threaded functionality of the Linear Slide, One must use constructor that takes two Exception<Boolean>");
-        } catch (InterruptedException e) {
-            return;
-        }
     }
 
     public void resetEncoder() {
