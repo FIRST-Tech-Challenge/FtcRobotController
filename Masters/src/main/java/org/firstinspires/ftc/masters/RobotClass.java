@@ -241,18 +241,18 @@ public class RobotClass {
     }
 
     public void dumpFreightBottom () {
-        linearSlideMotor.setTargetPosition(800);
+        linearSlideMotor.setTargetPosition(900);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.8);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
 
         }
         linearSlideServo.setPosition(.8);//1.5
-        pause(1800);
+        pause(1500);
         linearSlideServo.setPosition(.41);
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(-.8);
+        linearSlideMotor.setPower(-.4);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
 
         }
@@ -260,18 +260,19 @@ public class RobotClass {
     }
 
     public void dumpFreightMiddle () {
-        linearSlideMotor.setTargetPosition(1300);
+        linearSlideMotor.setTargetPosition(1400);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.8);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
 
         }
         linearSlideServo.setPosition(.8);//1.5
-        pause(1800);
+        pause(1500);
+        forward(0.3, -0.4);
         linearSlideServo.setPosition(.41);
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(-.8);
+        linearSlideMotor.setPower(-.4);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
 
         }
@@ -279,7 +280,7 @@ public class RobotClass {
     }
 
     public void dumpFreightTop () {
-        linearSlideMotor.setTargetPosition(1700);
+        linearSlideMotor.setTargetPosition(1800);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.8);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
@@ -287,10 +288,11 @@ public class RobotClass {
         }
         linearSlideServo.setPosition(.8);//1.5
         pause(1800);
+        forward(0.3, -0.2);
         linearSlideServo.setPosition(.41);
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(-.8);
+        linearSlideMotor.setPower(-.4);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
 
         }
@@ -299,10 +301,10 @@ public class RobotClass {
 
     public void wayneStrafeBlue (double speed) {
 
-        frontLeft.setPower(speed);
-        frontRight.setPower(-speed);
-        backLeft.setPower(-speed);
-        backRight.setPower(speed);
+        frontLeft.setPower(-speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(-speed);
 
         while (colorSensorRight.blue()< 120 && colorSensorLeft.blue()<120) {
             telemetry.addData("Right blue ", colorSensorRight.blue());
@@ -315,10 +317,10 @@ public class RobotClass {
 
     public void wayneStrafeRed (double speed) {
 
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(-speed);
+        frontLeft.setPower(speed);
+        frontRight.setPower(-speed);
+        backLeft.setPower(-speed);
+        backRight.setPower(speed);
 
         while (colorSensorRight.red()< 120 && colorSensorLeft.red()<120) {
             telemetry.addData("Right red ", colorSensorRight.red());
@@ -331,24 +333,24 @@ public class RobotClass {
 
     public void parkRed () {
 
-        wayneStrafeRed(0.2);
-        if (colorSensorLeft.red()>120) {
-            strafeLeft(0.2, 0.35);
-        }
+        wayneStrafeRed(0.3);
         if (colorSensorRight.red()>120) {
-            strafeRight(0.2,0.35);
+            strafeLeft(0.3, 0.35);
         }
-        forward(0.2,-1);
+        if (colorSensorLeft.red()>120) {
+            strafeRight(0.3,0.35);
+        }
+        forward(0.3,-0.4);
 
     }
 
     public void parkBlue () {
         wayneStrafeBlue(0.2);
-        if (colorSensorRight.blue()>120) {
-            strafeRight(0.2, 0.35);
-        }
         if (colorSensorLeft.blue()>120) {
-            strafeLeft(0.2,0.35);
+            strafeLeft(0.2, 0.35);
+        }
+        if (colorSensorRight.blue()>120) {
+            strafeRight(0.2,0.35);
         }
         forward(0.2,-1);
     }
@@ -572,7 +574,7 @@ public class RobotClass {
         if (deltaHeading < -180) {
             deltaHeading += 360;
         } else if (deltaHeading >= 180) {
-            deltaHeading -= 360;
+            deltaHeading -= 360;dumpFreightTop();
         }
 
         integratedHeading += deltaHeading;
@@ -617,7 +619,7 @@ public class RobotClass {
                 telemetry.addData("Target Heading: ",targetHeading);
                 telemetry.update();
                 if (getAngleFromGyro() > targetHeading-slowAt) {
-                    setSpeedForTurnLeft(.1);
+                    setSpeedForTurnLeft(.2);
                 }
             }
         } else if (targetHeading < 0) {
@@ -627,7 +629,7 @@ public class RobotClass {
                 telemetry.addData("Target Heading: ",targetHeading);
                 telemetry.update();
                 if (getAngleFromGyro() < targetHeading+slowAt) {
-                    setSpeedForTurnRight(.1);
+                    setSpeedForTurnRight(.2);
                 }
             }
         }

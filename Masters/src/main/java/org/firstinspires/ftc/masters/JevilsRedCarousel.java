@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.Date;
 
-@Autonomous(name = "Red Carousel")
+@Autonomous(name = "Red Carousel", group ="competition")
 public class JevilsRedCarousel extends LinearOpMode {
     RobotClass robot;
 
@@ -15,14 +15,13 @@ public class JevilsRedCarousel extends LinearOpMode {
         robot = new RobotClass(hardwareMap, telemetry, this);
         robot.openCVInnitShenanigans();
         EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
-
+        freightLocation = robot.analyze();
         waitForStart();
-
 
         long startTime = new Date().getTime();
         long time = 0;
 
-        while (time < 200 && opModeIsActive()) {
+        while (time < 1000 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
             freightLocation = robot.analyze();
 
@@ -32,33 +31,30 @@ public class JevilsRedCarousel extends LinearOpMode {
         if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
 
         }
-        robot.forward(0.6, 1.5);
-        robot.turnToHeadingSloppy(.6,-45,-20);
-        robot.forward(.3,.8);
+        robot.forward(0.4, 1.6);
+        robot.turnToHeadingSloppy(.4,-45,-15);
+        robot.forward(.3,.7);
 
-        robot.pauseButInSecondsForThePlebeians(.001);
+        if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
+            robot.dumpFreightBottom();
+        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+            robot.dumpFreightMiddle();
+        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
+            robot.dumpFreightTop();
+        }
 
-        //deposit shipping element
-        /*
-        robot.backwards(0.3,0.2);
-        robot.strafeLeft(0.3,0.2);
-        robot.turnToHeading(0.3,-125, 3);
-        robot.forward(0.3,0.2);
+        robot.forward(.3,-2.5);
+        robot.strafeLeft(.4,.45);
+        robot.forward(.2,-.4);
 
-        robot.forward(.3,-2.6);
-
-        //Jevil turns carousel
         robot.jevilTurnCarousel(.5,2);
+        robot.forward(0.3, 1);
+        robot.turnToHeadingSloppy(.3,-90,-10);
+        robot.forward(0.3, -1.5);
 
-        robot.turnToHeadingSloppy(.3,-90,-75);
-        robot.strafeRight(.3,.8);
-        robot.forward(.3,-0.8);
-
-        robot.turnToHeading(0.3, -90, 3);
-        robot.strafeRight(0.3,0.2);
-        robot.forward(0.3,0.2);
+        robot.strafeRight(0.3, 0.5);
         robot.parkRed();
-        */
+
     }
 }
 

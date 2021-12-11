@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="freightFrenzy")
+@TeleOp(name="freightFrenzy", group="competition")
 public class InitialMecanumTeleOp extends LinearOpMode {
 
 
@@ -141,41 +141,6 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
 
-//            // Reset speed variables
-//            LF = 0; RF = 0; LR = 0; RR = 0;
-//
-//            // Get joystick values
-//            Y1 = -gamepad1.left_stick_y * joyScale; // invert so up is positive
-//            X1 = gamepad1.left_stick_x * joyScale;
-//            Y2 = -gamepad1.right_stick_y * joyScale; // Y2 is not used at present
-//            X2 = gamepad1.right_stick_x * joyScale;
-//
-//            // Forward/back movement
-//            LF += Y1; RF += Y1; LR += Y1; RR += Y1;
-//
-//            // Side to Side movement
-//            LF += X1; RF -= X1; LR -= X1; RR += X1;
-//
-//            // Rotation movement
-//            LF += X2; RF -= X2; LR += X2; RR -= X2;
-//
-//            // Clip motor power values to +-motorMax
-//            LF = Math.max(-motorMax, Math.min(LF, motorMax));
-//            RF = Math.max(-motorMax, Math.min(RF, motorMax));
-//            LR = Math.max(-motorMax, Math.min(LR, motorMax));
-//            RR = Math.max(-motorMax, Math.min(RR, motorMax));
-//
-//            // Send values to the motors
-//            leftFrontMotor.setPower(LF);
-//            rightFrontMotor.setPower(RF);
-//            leftRearMotor.setPower(LR);
-//            rightRearMotor.setPower(RR);
-//
-//            // Send some useful parameters to the driver station
-//            telemetry.addData("LF", "%.3f", LF);
-//            telemetry.addData("RF", "%.3f", RF);
-//            telemetry.addData("LR", "%.3f", LR);
-//            telemetry.addData("RR", "%.3f", RR);
 
             if(gamepad2.y && !carouselOn) {
                 if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
@@ -184,8 +149,8 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             } else if(!gamepad2.y) carouselOn = false;
 
             if(gamepad2.a) {
-//                if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
-//                else
+                if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
+                else
                     intakeMotor.setPower(-.8);
                 intakeOn = true;
             } else if (gamepad2.b) {
@@ -196,10 +161,6 @@ public class InitialMecanumTeleOp extends LinearOpMode {
                 intakeMotor.setPower(0);
             }
 
-//            if (gamepad2.x){
-//                intakeOn=false;
-//                intakeMotor.setPower(0);
-//            }
 
             if (gamepad2.dpad_up) {
 //                Top scoring

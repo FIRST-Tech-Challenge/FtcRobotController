@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.Date;
 
-@Autonomous(name = "warehouse red", group="competition")
-public class PileOfRedStuff extends LinearOpMode {
+@Autonomous(name = "warehouse blue strafe", group="competition")
+public class WarehouseBlueStrafe extends LinearOpMode {
     RobotClass robot;
 
     @Override
@@ -30,33 +30,37 @@ public class PileOfRedStuff extends LinearOpMode {
             telemetry.update();
         }
 
-       // robot.strafeRight(1,.4);
-        robot.forward(0.3,1.6);
-        if (freightLocation== EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT|| freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE){
-            robot.forward(0.4, 1.6);
-            robot.forward(0.3, -1.6);
-        }
-        robot.turnToHeadingSloppy(.4,35,0);
+        robot.strafeLeft(0.3,2.2);
+        robot.forward(0.3,1.5);
+//        if (freightLocation== EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT|| freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE){
+//            robot.forward(0.4, 1.6);
+//            robot.forward(0.3, -1.6);
+//        }
+//        robot.turnToHeadingSloppy(.4,35,0);
 
 
         if (freightLocation== EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT ){
-            robot.forward(0.3, 1.15);
-        }else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE){
-            robot.forward(0.3, 1.05);
-        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT){
-            robot.forward(0.3, 0.9);
+            robot.forward(0.3, .2);
         }
+//        else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE){
+//            robot.forward(0.3, 1.05);
+//        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT){
+//            robot.forward(0.3, 1);
+//        }
         robot.pauseButInSecondsForThePlebeians(.5);
         if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
             robot.dumpFreightBottom();
+            robot.forward(0.3, -0.2);
         } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
             robot.dumpFreightMiddle();
         } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
             robot.dumpFreightTop();
         }
-        robot.forward(0.3, -0.4);
-        robot.turnToHeadingSloppy(.4, 87, 0);
-        robot.forward(1, -6);
+
+        robot.turnToHeadingSloppy(.4, -90, 15);
+        robot.forward(0.4, -1);
+        robot.strafeRight(0.3,0.6);
+        robot.forward(1, -7);
 
 
 

@@ -38,7 +38,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "TestComputerVisionShippingElement")
+@TeleOp(name = "TestComputerVisionShippingElement", group ="test")
 public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
