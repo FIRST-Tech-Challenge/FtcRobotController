@@ -6,20 +6,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.Utills.ThreadedSubsystemTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 
-public class LinearSlide implements Runnable {
+public class LinearSlide extends ThreadedSubsystemTemplate {
 
     private final DcMotor linearSlide;
 
 
-    private static final double motorPower = 0.5;
     private static final double ticksPerRevolution = 145.1;
     private static final double spoolRadius = 0.55 / 2; //in inches
-    private static final double inchesPerRevolution = ticksPerRevolution * 2 * Math.PI * spoolRadius;
-    private static final int linearSlideAngle = 68;
-    private static final double stopPower = 0.13;
-    public volatile boolean threadActive = true;
+    //private static final double inchesPerRevolution = ticksPerRevolution * 2 * Math.PI * spoolRadius;
+    //private static final int linearSlideAngle = 68;
+    //private static final double stopPower = 0.13;
+    //public volatile boolean threadActive = true;
     public RobotVoltageSensor voltageSensor;
     public volatile int chosenPosition;
 
@@ -27,7 +27,7 @@ public class LinearSlide implements Runnable {
     private Executable<Boolean> opModeIsActive;
 
 
-    public static final double level_one_height = 0;
+    //public static final double level_one_height = 0;
 
     public LinearSlide(HardwareMap hardwareMap, String dcMotorName) {
         linearSlide = hardwareMap.dcMotor.get(dcMotorName);
@@ -92,15 +92,11 @@ public class LinearSlide implements Runnable {
         linearSlide.setPower(power);
     }
 
-    public void stop() {
-        threadActive = false;
-    }
-
     public int getEncoderCount() {
         return linearSlide.getCurrentPosition();
     }
 
-    public void updatePower() {
+    public void threadMain() {
         double power;// power = -(distance* C1 )^3 + (voltage * C2)
         {
             double volts = voltageSensor.getVoltage();
@@ -119,11 +115,14 @@ public class LinearSlide implements Runnable {
     @Override
     public void run() {
         try {
-            while (threadActive && opModeIsActive.call() && !isStopRequested.call()) {
-                updatePower();
+            while (isRunning && opModeIsActive.call() && !isStopRequested.call()) {
+                threadMain();
+                Thread.sleep(sleepTime);
             }
         } catch (NullPointerException e) {
             throw new NullPointerException("To Use The threaded functionality of the Linear Slide, One must use constructor that takes two Exception<Boolean>");
+        } catch (InterruptedException e) {
+            return;
         }
     }
 

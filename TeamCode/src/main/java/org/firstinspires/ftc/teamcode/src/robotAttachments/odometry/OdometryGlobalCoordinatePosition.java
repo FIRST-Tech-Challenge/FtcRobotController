@@ -6,13 +6,14 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.src.Utills.ThreadedSubsystemTemplate;
 
 import java.io.File;
 
 /**
  * Created by Sarthak on 6/1/2019.
  */
-public class OdometryGlobalCoordinatePosition implements Runnable {
+public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate {
     //Odometry wheels
     private BNO055IMU imu = null;
     private final DcMotor verticalEncoderLeft;
@@ -23,8 +24,6 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
 
     private boolean isActive = false;
 
-    //Thead run condition
-    private volatile boolean isRunning = true;
 
     //Position variables used for storage and calculations
     double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
@@ -154,7 +153,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
      */
-    private void globalCoordinatePositionUpdate() {
+    protected void threadMain() {
         isActive = true;
         if (imu != null) {
             robotOrientationRadians = Math.toRadians(getImu()) + angleOffset;
@@ -224,12 +223,6 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
         return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
     }
 
-    /**
-     * Stops the position update thread
-     */
-    public void stop() {
-        isRunning = false;
-    }
 
     protected String getHorizontalMotorName() {
         return horizontalEncoder.getDeviceName();
@@ -267,19 +260,4 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
         }
     }
 
-    /**
-     * Runs the thread
-     */
-    @Override
-    public void run() {
-        while (isRunning) {
-            globalCoordinatePositionUpdate();
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return;
-    }
 }
