@@ -1,16 +1,18 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.reach.Turret;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
+import java.util.Arrays;
 import java.util.Map;
 
-public class Crane implements Subsystem{
+public class Crane implements Subsystem {
 
-    org.firstinspires.ftc.teamcode.robots.reach.Turret turret;
+    Turret turret;
     Servo firstLinkServo;
     Servo secondLinkServo;
     Servo bucketServo;
@@ -21,13 +23,21 @@ public class Crane implements Subsystem{
     int bucketServoTargetPos;
     double turretTargetPos;
 
-    final double toHomeTime = 2;//todo- update
-    final double avgTransferTime = 4; //todo- update
-    final int bucketUpPos = 900;
-    final int bucketDownPos = 1200;
+    double toHomeTime = 2;//todo- update
+    double avgTransferTime = 4; //todo- update
+    int bucketUpPos = 900;
+    int bucketDownPos = 1200;
     boolean isAtHome = false;
 
-    public enum commonPositions{
+    public Crane(HardwareMap hardwareMap) {
+        firstLinkServo = hardwareMap.get(Servo.class, "firstLinkServo");
+        secondLinkServo = hardwareMap.get(Servo.class, "secondLinkServo");
+        bucketServo = hardwareMap.get(Servo.class, "bucketServo");
+
+        turret = new Turret(hardwareMap);
+    }
+
+    public enum CommonPosition {
         STARTING(0,0,0,0),
         HOME(0,0,0,0),
         LOWEST_TEIR(0,0,0,0),
@@ -40,7 +50,7 @@ public class Crane implements Subsystem{
         public int firstLinkPos, secondLinkPos, bucketServoPos;
         public double turretAngle;
 
-        private commonPositions(int firstLinkPos, int secondLinkPos, int bucketServoPos, double turretAngle){
+        CommonPosition(int firstLinkPos, int secondLinkPos, int bucketServoPos, double turretAngle){
             this.firstLinkPos = firstLinkPos;
             this.secondLinkPos = secondLinkPos;
             this.bucketServoPos = bucketServoPos;
@@ -48,47 +58,40 @@ public class Crane implements Subsystem{
         }
     }
 
-    public Crane(DcMotor turretMotor, Servo firstLinkServo, Servo secondLinkServo, Servo bucketServo){
-        turret = new Turret(turretMotor);
-        this.firstLinkServo = firstLinkServo;
-        this.secondLinkServo = secondLinkServo;
-        this.bucketServo = bucketServo;
-    }
+    CommonPosition currentTargetPos = CommonPosition.FINISHED;
 
-    org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions currentTargetPos = org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.FINISHED;
-
-    public org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions Do(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions targetPos){
+    public CommonPosition Do(CommonPosition targetPos) {
         currentTargetPos = targetPos;
 
 
         switch(currentTargetPos){
             case STARTING:
-                setPos(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.STARTING);
+                setPos(CommonPosition.STARTING);
                 break;
             case HOME:
-                setPosSafeley(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.HOME);
+                setPosSafeley(CommonPosition.HOME);
                 break;
             case TRANSFER:
-                setPosSafeley(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.TRANSFER);
+                setPosSafeley(CommonPosition.TRANSFER);
                 break;
             case HIGH_TEIR:
-                setPosSafeley(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.HIGH_TEIR);
+                setPosSafeley(CommonPosition.HIGH_TEIR);
                 break;
             case LOWEST_TEIR:
-                setPosSafeley(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.LOWEST_TEIR);
+                setPosSafeley(CommonPosition.LOWEST_TEIR);
                 break;
             case MIDDLE_TEIR:
-                setPosSafeley(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.MIDDLE_TEIR);
+                setPosSafeley(CommonPosition.MIDDLE_TEIR);
                 break;
             default:
                 break;
         }
 
-        return targetPos;
+        return currentTargetPos;
     }
 
-    public boolean doAuton(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions targetPos){
-        if(Do(targetPos) == org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.FINISHED){
+    public boolean doAuton(CommonPosition targetPos){
+        if(Do(targetPos) == CommonPosition.FINISHED){
             return true;
         }
         return true;
@@ -96,7 +99,7 @@ public class Crane implements Subsystem{
 
     private boolean checkForHome(){
         if(isAtHome){
-            setPos(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.HOME);
+            setPos(CommonPosition.HOME);
             if(commonTimer(toHomeTime)){
                 isAtHome = true;
                 return true;
@@ -108,19 +111,19 @@ public class Crane implements Subsystem{
         return false;
     }
 
-    private void setPosSafeley(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions targetPos){
+    private void setPosSafeley(CommonPosition targetPos){
         if(checkForHome()){
 
             setPos(targetPos);
 
             if(commonTimer(avgTransferTime)){
-                currentTargetPos = org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.FINISHED;
-                isAtHome = (targetPos == org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions.HOME);
+                currentTargetPos = CommonPosition.FINISHED;
+                isAtHome = (targetPos == CommonPosition.HOME);
             }
         }
     }
 
-    private void setPos(org.firstinspires.ftc.teamcode.robots.reach.Crane.commonPositions targetPos){
+    private void setPos(CommonPosition targetPos){
         turret.setTurretAngle(targetPos.turretAngle);
         firstLinkServo.setPosition(targetPos.firstLinkPos);
         firstLinkServo.setPosition(targetPos.firstLinkPos);
@@ -155,6 +158,7 @@ public class Crane implements Subsystem{
         bucketServo.setPosition(bucketServoTargetPos);
 
         Do(currentTargetPos);
+        turret.update();
     }
 
     @Override

@@ -56,7 +56,7 @@ public class FF_6832 extends OpMode {
     private Map<Position, Integer> positionFrequencies;
     private Position mostFrequentPosition;
     private boolean usingDesmosDrive;
-    private boolean dashboardEnabled, debugTelemetryEnabled;
+    private boolean dashboardEnabled, debugTelemetryEnabled, smoothingEnabled;
 
     // Telemetry
     private FtcDashboard dashboard;
@@ -150,11 +150,6 @@ public class FF_6832 extends OpMode {
             dashboard = FtcDashboard.getInstance();
     }
 
-    public void toggleIsDebugTelemetryEnabled() {
-        debugTelemetryEnabled = !debugTelemetryEnabled;
-    }
-
-
     private void handlePregameControls() {
         if(stickyGamepad1.x)
             robot.setAlliance(Constants.Alliance.BLUE);
@@ -164,9 +159,9 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.a)
             toggleIsDashboardEnabled();
         if(stickyGamepad1.y)
-            robot.driveTrain.toggleSmoothingEnabled();
+            smoothingEnabled = !smoothingEnabled;
         if(stickyGamepad1.dpad_down) {
-            toggleIsDebugTelemetryEnabled();
+            debugTelemetryEnabled = !debugTelemetryEnabled;
         }
     }
 
@@ -213,7 +208,7 @@ public class FF_6832 extends OpMode {
             usingDesmosDrive = !usingDesmosDrive;
         }
         if(stickyGamepad1.dpad_down) {
-            toggleIsDebugTelemetryEnabled();
+            debugTelemetryEnabled = !debugTelemetryEnabled;
         }
     }
 
@@ -325,7 +320,7 @@ public class FF_6832 extends OpMode {
 
         switch(gameState) {
             case TELE_OP:
-                opModeTelemetryMap.put("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
+                opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
                 break;
             case AUTONOMOUS:
                 break;

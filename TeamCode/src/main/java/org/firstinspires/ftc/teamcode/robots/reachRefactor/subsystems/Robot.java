@@ -30,6 +30,7 @@ import java.util.Map;
 public class Robot implements Subsystem {
     // Subsystems
     public DriveTrain driveTrain;
+    public Crane crane;
     public Subsystem[] subsystems;
 
     // State
@@ -41,7 +42,8 @@ public class Robot implements Subsystem {
     public Robot(HardwareMap hardwareMap) {
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap);
-        subsystems = new Subsystem[] {driveTrain};
+        crane = new Crane(hardwareMap);
+        subsystems = new Subsystem[] {driveTrain, crane};
 
         articulation = Articulation.MANUAL;
     }

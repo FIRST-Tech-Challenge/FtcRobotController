@@ -50,7 +50,6 @@ public class DriveTrain implements Subsystem {
 
     private double swivelAngle;
     private double chassisDistance, targetChassisDistance;
-    private boolean smoothingEnabled;
 
     // PID
     private PIDController turnPID, drivePID, swivelPID, chassisDistancePID;
@@ -132,6 +131,7 @@ public class DriveTrain implements Subsystem {
         swivelPID.setOutputRange(-1.0, 1.0);
         swivelPID.setPID(Constants.SWIVEL_PID_COEFFICIENTS);
         swivelPID.setSetpoint(targetSwivelAngle);
+        swivelPID.setTolerance(Constants.SWIVEL_PID_TOLERANCE);
         swivelPID.enable();
 
         //initialization of the PID calculator's input range and current value
@@ -229,7 +229,7 @@ public class DriveTrain implements Subsystem {
         // state
 //        chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + Constants.DISTANCE_SENSOR_TO_FRONT_AXLE - Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
         chassisDistance = Constants.TEST_CHASSIS_DISTANCE;
-        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / Constants.SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI + Math.PI / 2) % (2 * Math.PI);;
+        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / Constants.SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);;
 
         // PID corrections
         maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
@@ -241,21 +241,23 @@ public class DriveTrain implements Subsystem {
 
 
         // Motor controls
-//        if(swivelPID.onTarget()) {
-        motorFrontLeft.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
-        motorFrontRight.setVelocity(targetFrontRightVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
-        motorMiddle.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
-//        }
+        if(swivelPID.onTarget()) {
+            motorFrontLeft.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
+            motorFrontRight.setVelocity(targetFrontRightVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
+            motorMiddle.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
+        } else {
+            motorFrontLeft.setVelocity(0);
+            motorFrontRight.setVelocity(0);
+            motorMiddle.setVelocity(0);
+        }
 
 //        updatePose();
     }
 
     private void handleSmoothing() {
-        if(smoothingEnabled) {
-            targetFrontLeftVelocity = frontLeftSmoother.update(targetFrontLeftVelocity);
-            targetFrontRightVelocity = frontRightSmoother.update(targetFrontLeftVelocity);
-            targetMiddleVelocity = middleSmoother.update(targetMiddleVelocity);
-        }
+        targetFrontLeftVelocity = frontLeftSmoother.update(targetFrontLeftVelocity);
+        targetFrontRightVelocity = frontRightSmoother.update(targetFrontLeftVelocity);
+        targetMiddleVelocity = middleSmoother.update(targetMiddleVelocity);
     }
 
     /**
@@ -278,8 +280,6 @@ public class DriveTrain implements Subsystem {
                     : linearVelocity == 0
                     ? 0
                 : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
-
-//        handleSmoothing();
     }
 
     public void driveDesmos(double linearVelocity, double angularVelocity, double dt) {
@@ -309,8 +309,6 @@ public class DriveTrain implements Subsystem {
                 : linearVelocity == 0
                 ? 0
                 : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
-
-//        handleSmoothing();
     }
 
 
@@ -374,14 +372,6 @@ public class DriveTrain implements Subsystem {
 
     public SimpleMatrix getPose() {
         return pose;
-    }
-
-    public void toggleSmoothingEnabled() {
-        smoothingEnabled = !smoothingEnabled;
-    }
-
-    public boolean isSmoothingEnabled() {
-        return smoothingEnabled;
     }
 
     /**

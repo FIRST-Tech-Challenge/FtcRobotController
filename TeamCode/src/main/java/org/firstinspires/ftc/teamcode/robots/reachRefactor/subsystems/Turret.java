@@ -5,11 +5,12 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.util.RateController;
 
@@ -20,48 +21,37 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 
+import java.util.Map;
+
 @Config
-public class Turret{
+public class Turret implements Subsystem {
     //motor
-    private  DcMotor motor = null;
-    private boolean active = true;
+    private DcMotor motor;
+    private double correction;
 
     //PID
     PIDController turretPID;
-    public static double kpTurret = 0.03; //proportional constant multiplier goodish
-    public static  double kiTurret = 0; //integral constant multiplier
-    public static  double kdTurret= .05; //derivative constant multiplier
-    double correction = 0.00; //correction to apply to turret motor
 
     double turretHeading;
-    boolean initialized = false;
-    private double turretTargetHeading = 0.0;
+    private double targetTurretHeading;
 
-    public static double TURRET_TICKS_PER_DEGREE = 15.320535022020206; //determine with a calibration run
-
-    public Turret(DcMotor motor) {
-        this.motor = motor;
-        turretTargetHeading = 0.0;
+    public Turret(HardwareMap hardwareMap) {
+        this.motor = hardwareMap.get(DcMotor.class, "turret");
         turretPID = new PIDController(0,0,0);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void update(){
-        turretHeading = motor.getCurrentPosition() / (1 / TURRET_TICKS_PER_DEGREE);
+        turretHeading = motor.getCurrentPosition() / (1 / Constants.TURRET_TICKS_PER_DEGREE);
 
-        if(active) {
-            movePIDTurret(kpTurret, kiTurret, kdTurret, turretHeading, turretTargetHeading);
-        }
-        else
-            motor.setPower(0);
+        movePIDTurret(Constants.TURRET_PID_COEFFICIENTS.p, Constants.TURRET_PID_COEFFICIENTS.i, Constants.TURRET_PID_COEFFICIENTS.d, turretHeading, targetTurretHeading);
     }
 
-    public boolean isActive(){
-        return active;
-    }
+    @Override
+    public void stop() {
 
-    public void setActive(boolean active){this.active = active;}
+    }
 
     public boolean rotateCardinalTurret(boolean right){
 
@@ -70,13 +60,8 @@ public class Turret{
         return true;
     }
 
-    public void stopAll() {
-        setPower(0);
-        active = false;
-    }
-
     public boolean setTurretAngle(double angle){
-        turretTargetHeading=wrap360(angle);
+        targetTurretHeading = wrap360(angle);
         return isTurretNearTarget();
     }
 
@@ -103,8 +88,7 @@ public class Turret{
 
         turnError = diffAngle2(targetAngle, currentAngle);
 
-        //calculates the angular correction to apply
-        correction = turretPID.performPID();
+        double correction = turretPID.performPID();
 
         //performs the turn with the correction applied
         setPower(correction);
@@ -115,11 +99,21 @@ public class Turret{
     }
 
     public double getTargetHeading(){
-        return turretTargetHeading;
+        return targetTurretHeading;
     }
 
     public double getCorrection(){return correction;}
     public double getMotorPwr(){return motor.getPower();}
+
+    @Override
+    public Map<String, Object> getTelemetry(boolean debug) {
+        return null;
+    }
+
+    @Override
+    public String getTelemetryName() {
+        return null;
+    }
 }
 
 
