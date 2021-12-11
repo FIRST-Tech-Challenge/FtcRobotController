@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class AutonomousRedCarousel extends LinearOpMode {
     Robot robot;
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         robot = new Robot(hardwareMap,telemetry,this);
         waitForStart();
         robot.left(.5,.5);
         robot.turnLeft(45,.5);
         robot.left(.5,.5);
         robot.back(.47,.5);
-        robot.redCarousel(3000);
+        robot.redCarousel(4000);
         robot.forward(.47,.5);
         robot.right(.5,.5);
         robot.turnLeft(25,.5);
@@ -30,11 +30,11 @@ public class AutonomousRedCarousel extends LinearOpMode {
         robot.pause(100); //replace with color sensor check
         robot.right(.75,.5);
         robot.pause(100); //replace with color sensor check
-        robot.right(1.75,.5);
+        robot.right(2,.5);
         robot.forward(.75,.5);
         robot.armThing(3);
         robot.back(.75,.5);
-        robot.left(3.75,.75);
+        robot.left(4.25,.75);
         robot.forward(1,.5);
 
 
