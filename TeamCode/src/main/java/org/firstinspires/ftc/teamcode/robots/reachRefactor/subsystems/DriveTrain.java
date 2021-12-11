@@ -29,11 +29,11 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
 public class DriveTrain implements Subsystem {
 
     // Motors
-    private DcMotorEx motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel;
+    private DcMotorEx motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel, duckSpinner;
     private DcMotorEx[] motors;
-    private String[] MOTOR_NAMES = {"motorFrontLeft", "motorFrontRight", "motorMiddle", "motorMiddleSwivel"};
-    private boolean[] REVERSED = {true, false, false, false};
-    private DcMotor.ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new DcMotor.ZeroPowerBehavior[] {ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT};
+    private String[] MOTOR_NAMES = {"motorFrontLeft", "motorFrontRight", "motorMiddle", "motorMiddleSwivel", "duckSpinner"};
+    private boolean[] REVERSED = {true, false, false, false, false};
+    private DcMotor.ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new DcMotor.ZeroPowerBehavior[] {ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.BRAKE};
 
     // Sensors
     private BNO055IMU imu;
@@ -71,7 +71,8 @@ public class DriveTrain implements Subsystem {
         motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
         motorMiddle= hardwareMap.get(DcMotorEx.class, "motorMiddle");
         motorMiddleSwivel = hardwareMap.get(DcMotorEx.class, "motorMiddleSwivel");
-        motors = new DcMotorEx[] {motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel};
+        duckSpinner = hardwareMap.get(DcMotorEx.class,"duckSpinner");
+        motors = new DcMotorEx[] {motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel, duckSpinner};
 
         for (int i = 0; i < MOTOR_NAMES.length; i++) {
             motors[i] = hardwareMap.get(DcMotorEx.class, MOTOR_NAMES[i]);
@@ -379,6 +380,25 @@ public class DriveTrain implements Subsystem {
             return true;
         }
         return false;
+    }
+
+    public boolean handleDuckSpinner(double power){
+        duckSpinner.setPower(power);
+        return true;
+    }
+
+    boolean duckSpinnerIsOn = false;
+    public boolean handleDuckSpinnerToggle(){
+        if(duckSpinnerIsOn) {
+            handleDuckSpinner(0);
+            duckSpinnerIsOn = false;
+        }
+        else{
+            handleDuckSpinner(.5);
+            duckSpinnerIsOn = true;
+        }
+
+        return true;
     }
 
 

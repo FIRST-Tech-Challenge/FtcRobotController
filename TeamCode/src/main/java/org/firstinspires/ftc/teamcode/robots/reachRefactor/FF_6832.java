@@ -205,25 +205,53 @@ public class FF_6832 extends OpMode {
         handleTeleOpDrive();
         handleEmergencyStop();
 
-        if(stickyGamepad1.x){
-            robot.crane.Do(Crane.CommonPosition.HOME);
+        //gamepad 1
+        if(stickyGamepad1.left_bumper){
+            robot.gripper.pitchGripper(true);
+        }
+
+        if(stickyGamepad1.right_bumper){
+            robot.gripper.pitchGripper(false);
         }
 
         if(stickyGamepad1.y){
-            robot.crane.Do(Crane.CommonPosition.HIGH_TEIR);
+            //complete code
         }
 
         if(stickyGamepad1.b){
-            robot.crane.Do(Crane.CommonPosition.TRANSFER);
-        }
-
-        if(stickyGamepad1.dpad_down){
-            robot.gripper.togglePitch();
-        }
-
-        if(stickyGamepad1.dpad_up){
             robot.gripper.toggleGripper();
         }
+
+        if(stickyGamepad1.a){
+            robot.driveTrain.handleDuckSpinnerToggle();
+        }
+
+        //gamepad 2
+
+        if(stickyGamepad2.y){
+            //complete code
+        }
+
+        if(stickyGamepad2.b){
+            robot.gripper.toggleGripper();
+        }
+
+        if(stickyGamepad2.a){
+            robot.driveTrain.handleDuckSpinnerToggle();
+        }
+
+        if(stickyGamepad2.x){
+            robot.driveTrain.handleDuckSpinnerToggle();
+        }
+
+
+        if(stickyGamepad2.dpad_left){
+            robot.crane.Do(Crane.CommonPosition.HOME);
+        }
+        if(stickyGamepad2.dpad_up){
+            robot.crane.Do(Crane.CommonPosition.HIGH_TEIR);
+        }
+
 
 //        if(stickyGamepad1.dpad_up) {
 //            usingDesmosDrive = !usingDesmosDrive;

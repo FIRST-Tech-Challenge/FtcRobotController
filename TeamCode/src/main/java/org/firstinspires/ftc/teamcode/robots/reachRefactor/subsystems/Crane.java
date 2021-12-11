@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods.servoNormalize;
+
 public class Crane implements Subsystem {
 
     public Turret turret;
@@ -39,6 +41,8 @@ public class Crane implements Subsystem {
         bucketServo = hardwareMap.get(Servo.class, "bucketServo");
 
         turret = new Turret(hardwareMap);
+
+        Do(CommonPosition.STARTING);
     }
 
     public enum CommonPosition {
@@ -56,14 +60,14 @@ public class Crane implements Subsystem {
         public double turretAngle;
 
         CommonPosition(int firstLinkPos, int secondLinkPos, int bucketServoPos, double turretAngle){
-            this.firstLinkPos = (int) UtilMethods.servoNormalize(firstLinkPos);
-            this.secondLinkPos = (int) UtilMethods.servoNormalize(secondLinkPos);
-            this.bucketServoPos = (int) UtilMethods.servoNormalize(bucketServoPos);
+            this.firstLinkPos =firstLinkPos;
+            this.secondLinkPos =secondLinkPos;
+            this.bucketServoPos =bucketServoPos;
             this.turretAngle = turretAngle;
         }
     }
 
-    CommonPosition currentTargetPos = CommonPosition.FINISHED;
+    CommonPosition currentTargetPos = CommonPosition.STARTING;
 
     public CommonPosition Do(CommonPosition targetPos) {
         currentTargetPos = targetPos;
@@ -133,10 +137,10 @@ public class Crane implements Subsystem {
     }
 
     private void setPos(CommonPosition targetPos){
-        turret.setTurretAngle(targetPos.turretAngle);
-        firstLinkServo.setPosition(targetPos.firstLinkPos);
-        secondLinkServo.setPosition(targetPos.secondLinkPos);
-        bucketServo.setPosition(targetPos.bucketServoPos);
+        turretTargetPos = targetPos.turretAngle;
+        firstLinkServoTargetPos = targetPos.firstLinkPos;
+        secondLinkServoTargetPos = targetPos.secondLinkPos;
+        bucketServoTargetPos = targetPos.bucketServoPos;
     }
 
     boolean initialized;
@@ -162,9 +166,9 @@ public class Crane implements Subsystem {
     @Override
     public void update(){
         turret.setTurretAngle(turretTargetPos);
-        firstLinkServo.setPosition(firstLinkServoTargetPos);
-        secondLinkServo.setPosition(secondLinkServoTargetPos);
-        bucketServo.setPosition(bucketServoTargetPos);
+        firstLinkServo.setPosition(servoNormalize(firstLinkServoTargetPos));
+        secondLinkServo.setPosition(servoNormalize(secondLinkServoTargetPos));
+        bucketServo.setPosition(servoNormalize(bucketServoTargetPos));
 
         Do(currentTargetPos);
         turret.update();

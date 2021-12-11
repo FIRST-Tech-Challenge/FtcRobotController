@@ -130,9 +130,11 @@ public class Constants {
             return Arrays.asList(GameState.values()).indexOf(gameState);
         }
     }
+
     public enum Alliance {
         RED, BLUE
     }
+
     public enum Position {
         START_RED(new SimpleMatrix(new double[][] {{0, 0, 0}})),
         START_BLUE(new SimpleMatrix(new double[][] {{0, 0, 0}}));
