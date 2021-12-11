@@ -64,6 +64,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor motDrive = null;
 
     private DcMotor spiner = null;
+    private DcMotor crane = null;
     // private DcMotor pully = null;
 
     @Override
@@ -79,6 +80,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         claw = hardwareMap.servo.get("claw");
 
         spiner = hardwareMap.get(DcMotor.class, "spinner");////////////////////////////////////////////////
+        crane = hardwareMap.get(DcMotor.class,  "crane" );
         //pully = hardwareMap.get(DcMotor.class, "lift");
         //motDrive = hardwareMap.get(DcMotor.class, "mot");
 
@@ -108,6 +110,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             double pullPower;
             double spinPower;
+            double cranePower;
 
 
             // Choose to drive using either Tank Mode, or POV Mode
@@ -117,8 +120,9 @@ public class BasicOpMode_Linear extends LinearOpMode {
             // - This uses basic math to combine motions and is easier to drive straight.
             double drive = -gamepad1.left_stick_y;
             double turn  = -gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -0.60, 0.60) ;
-            rightPower   = Range.clip(drive - turn, -0.60, 0.60) ;
+            double boost = gamepad1.right_trigger;
+            leftPower    = Range.clip(drive + turn, -0.40 - boost, 0.40 + boost );
+            rightPower   = Range.clip(drive - turn, -0.40 - boost, 0.40 + boost );
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -128,6 +132,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
             //double spin = gamepad1.right_trigger;
             boolean spin = gamepad1.x;
             boolean spin_2 = gamepad1.a;
+            boolean arm1 = gamepad1.y;
+            boolean arm2 = gamepad1.b;
             double pull = gamepad1.left_trigger;
             double x = 0.1;
             //spinPower = Range.clip(spin, -1.0, 1.0);
@@ -139,6 +145,14 @@ public class BasicOpMode_Linear extends LinearOpMode {
             }
             else{
                 spinPower = 0;
+            }
+
+            if (crane1 = true) {
+                cranePower = 1;
+            } else if (crane2 = true) {
+                cranePower = -1;
+            } else {
+                cranePower = 0;
             }
 
             // pullPower = Range.clip(pull, -1.0, 1.0);
