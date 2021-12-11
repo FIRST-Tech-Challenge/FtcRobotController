@@ -39,7 +39,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "TestComputerVisionBack")
+
 public class ObsoleteEasyOpenCVExample extends LinearOpMode
 {
     OpenCvWebcam webcam;

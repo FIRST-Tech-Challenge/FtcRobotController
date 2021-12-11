@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="freightFrenzyRed")
+@TeleOp(name="freight Frenzy Red", group = "competition")
 public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
 
@@ -208,9 +208,11 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 }
             }
 
+            rotateCarousel();
+
         }
     }
-    protected void rotateCarousel(CRServo carousel){
+    protected void rotateCarousel(){
         if(gamepad2.y && !carouselOn) {
             if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
             else carouselMotor.setPower(.6);

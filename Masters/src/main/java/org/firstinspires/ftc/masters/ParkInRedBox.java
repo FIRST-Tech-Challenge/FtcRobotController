@@ -14,14 +14,7 @@ public class ParkInRedBox extends LinearOpMode {
 
         waitForStart();
 
-        robot.wayneStrafeRed(0.2);
-        if (robot.colorSensorLeft.red()>120) {
-            robot.strafeLeft(0.2, 0.35);
-        }
-        if (robot.colorSensorRight.red()>120) {
-            robot.strafeRight(0.2,0.35);
-        }
-        robot.forward(0.2,-1);
+        robot.parkRed();
 
 //        int seeRed = 0;
 //        String direction = null;

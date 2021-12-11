@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-@TeleOp(name = "Test color sensors")
+@TeleOp(name = "Test color sensors", group ="test")
 public class TestColorSensors extends LinearOpMode {
 
     RobotClass robot;
