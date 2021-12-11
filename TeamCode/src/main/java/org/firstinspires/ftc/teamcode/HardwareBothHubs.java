@@ -111,9 +111,9 @@ public class HardwareBothHubs
     public double       BOX_SERVO_INIT             = 0.48;  // we init to the COLLECT position
     public double       BOX_SERVO_COLLECT          = 0.48;
     public double       BOX_SERVO_TRANSPORT        = 0.28;
-    public double       BOX_SERVO_DUMP_TOP         = 0.48;
-    public double       BOX_SERVO_DUMP_MIDDLE      = 0.48;
-    public double       BOX_SERVO_DUMP_BOTTOM      = 0.48;
+    public double       BOX_SERVO_DUMP_TOP         = 0.55;
+    public double       BOX_SERVO_DUMP_MIDDLE      = 0.55;
+    public double       BOX_SERVO_DUMP_BOTTOM      = 0.55;
     public double       BOX_SERVO_DUMP_FRONT       = 0.80;  // ??
 
     public CRServo      sweepServo                 = null;  // CONTINUOUS, so no need for fixed positions
