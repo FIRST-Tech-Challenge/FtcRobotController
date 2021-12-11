@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.Intake;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,12 +18,12 @@ public class Intake {
 
 
     public void intakeToggle(Boolean inp) {
-        if(inp == true && prevInput == false) {
+        if(inp && !prevInput) {
             itToggle = !itToggle;
             prevInput = true;
         }
         prevInput = inp;
-        if (itToggle == true) {
+        if (itToggle) {
             intakeMotor.setPower(1);
         } else {
             intakeMotor.setPower(0);
@@ -33,7 +32,7 @@ public class Intake {
 
 
     public void intakeHold(Boolean inp) {
-        if (inp == true) {
+        if (inp) {
             intakeMotor.setPower(1);
         } else {
             intakeMotor.setPower(0);
@@ -41,5 +40,3 @@ public class Intake {
     }
 
 }
-
-

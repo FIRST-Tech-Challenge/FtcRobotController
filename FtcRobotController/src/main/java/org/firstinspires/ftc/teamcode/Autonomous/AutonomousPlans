@@ -9,7 +9,7 @@
         6. Rotate 90 degrees clockwise
         7. Drive into parking.
 
-//If team eleemnt cannot be detected, but shipping elements can
+//If team element cannot be detected, but shipping elements can
     AutonomousCodeBlue:
         1. Rotate 90 degrees clockwise(facing shipping depot), and drive through the bar until it detects shipping element
         2. Put shipping element into the team wobble goal
