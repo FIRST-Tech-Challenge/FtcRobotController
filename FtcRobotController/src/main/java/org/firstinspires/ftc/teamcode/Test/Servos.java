@@ -47,7 +47,7 @@ public class Servos extends LinearOpMode {
         while (opModeIsActive()){
 
             if (this.gamepad1.a && prevInput == false) {
-                s1.setPosition(1.0);
+                s1.setPosition(0.5);
                 ct = !ct;
                 prevInput = true;
             }
@@ -55,9 +55,9 @@ public class Servos extends LinearOpMode {
             prevInput = gamepad1.a;
 
             if (ct == true) {
-                s1.setPosition(1.0);
+                s1.setPosition(0.5);
             } else {
-                s1.setPosition(0.0);
+                s1.setPosition(0.167);
             }
         }
 
