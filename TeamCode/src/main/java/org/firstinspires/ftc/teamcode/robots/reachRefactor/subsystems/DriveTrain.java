@@ -33,7 +33,7 @@ public class DriveTrain implements Subsystem {
     private DcMotorEx[] motors;
     private String[] MOTOR_NAMES = {"motorFrontLeft", "motorFrontRight", "motorMiddle", "motorMiddleSwivel", "duckSpinner"};
     private boolean[] REVERSED = {true, false, true, false, false};
-    private DcMotor.ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new DcMotor.ZeroPowerBehavior[] {ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.BRAKE};
+    private DcMotor.ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new DcMotor.ZeroPowerBehavior[] {ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE};
 
     // Sensors
     private BNO055IMU imu;

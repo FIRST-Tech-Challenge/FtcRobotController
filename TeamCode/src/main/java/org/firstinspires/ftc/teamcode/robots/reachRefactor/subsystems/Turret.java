@@ -42,13 +42,14 @@ public class Turret implements Subsystem {
         this.motor = hardwareMap.get(DcMotor.class, "turret");
         turretPID = new PIDController(0,0,0);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setTargetPosition(motor.getCurrentPosition());
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void update(){
         turretHeading = motor.getCurrentPosition() / (1 / Constants.TURRET_TICKS_PER_DEGREE);
 
-        movePIDTurret(Constants.TURRET_PID_COEFFICIENTS.p, Constants.TURRET_PID_COEFFICIENTS.i, Constants.TURRET_PID_COEFFICIENTS.d, turretHeading, targetTurretHeading);
+        //movePIDTurret(Constants.TURRET_PID_COEFFICIENTS.p, Constants.TURRET_PID_COEFFICIENTS.i, Constants.TURRET_PID_COEFFICIENTS.d, turretHeading, targetTurretHeading);
     }
 
     @Override

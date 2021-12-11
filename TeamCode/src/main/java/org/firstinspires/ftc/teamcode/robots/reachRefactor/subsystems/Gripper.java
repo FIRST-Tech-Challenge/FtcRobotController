@@ -31,10 +31,8 @@ public class Gripper implements Subsystem{
     public void actuateGripper(boolean open){
             if(open) {
                 if(gripperIsUp) {
-                    if(safeToTransfer) {
                         gripperServo.setPosition(servoNormalize(gripperOpenTransfer));
                         gripperOpen = true;
-                    }
                 }
                 else {
                     gripperServo.setPosition(servoNormalize(gripperOpenIntake));
