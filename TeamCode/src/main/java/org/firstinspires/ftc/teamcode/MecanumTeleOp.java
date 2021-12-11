@@ -151,11 +151,14 @@ public class MecanumTeleOp extends LinearOpMode {
             //limit switch
             if (robot.armLimitSwitch.isPressed() && armLimitSwitchFlag == false){
                 robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                telemetry.addData("limitSwitch", robot.armLimitSwitch.isPressed());
                 armLimitSwitchFlag = true;
+
+                telemetry.addData("limitSwitch", robot.armLimitSwitch.isPressed());
                 telemetry.addData("limitSwitchFlag", armLimitSwitchFlag);
             }else {
-                armLimitSwitchFlag = false;
+                if (robot.armLimitSwitch.isPressed()){
+                    armLimitSwitchFlag = false;
+                }
                 // Arm Up and Arm Down in small increments
                 if (gamepad2.right_stick_y != 0.25) {
                     //armSetPos += gamepad2.right_stick_y*10;
