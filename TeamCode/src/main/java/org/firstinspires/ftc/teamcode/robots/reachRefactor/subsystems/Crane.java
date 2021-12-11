@@ -165,7 +165,9 @@ public class Crane implements Subsystem {
 
     @Override
     public void update(){
-        turret.setTurretAngle(turretTargetPos);
+        if(isAtHome) {
+            turret.setTurretAngle(turretTargetPos);
+        }
         firstLinkServo.setPosition(servoNormalize(firstLinkServoTargetPos));
         secondLinkServo.setPosition(servoNormalize(secondLinkServoTargetPos));
         bucketServo.setPosition(servoNormalize(bucketServoTargetPos));

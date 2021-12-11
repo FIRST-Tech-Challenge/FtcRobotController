@@ -7,8 +7,6 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods.returnsNothing;
-
 public class Autonomous {
     public VisionProvider visionProvider;
     private Position mostFrequentPosition;
@@ -37,9 +35,12 @@ public class Autonomous {
     private Stage autonomousRedStage = new Stage();
     public StateMachine autonomousRed = getStateMachine(autonomousRedStage)
             .addState(() -> robot.driveTrain.driveAbsoluteDistance(1,0,true,1,.2))
-            .addTimedState(.5f, () -> returnsNothing(), () -> returnsNothing())
+            .addTimedState(.5f, () -> {}, () -> {})
             .addState(() -> robot.driveTrain.rotateIMU(90,2))
-            .addTimedState(2f, () -> returnsNothing(), () -> returnsNothing())
+            .addTimedState(2f, () -> {}, () -> {})
+            .addTimedState(2f, () -> {
+                robot.driveTrain.handleDuckSpinnerToggle(robot.getAlliance().getMod());
+            }, () -> {})
             .build();
 
     private Stage autonomousBlueStage = new Stage();

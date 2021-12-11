@@ -109,6 +109,8 @@ public class FF_6832 extends OpMode {
             put(Position.MIDDLE, 0);
             put(Position.RIGHT, 0);
         }};
+
+        robot.articulate(Robot.Articulation.START);
     }
 
     private void handleStateSwitch() {
@@ -222,7 +224,7 @@ public class FF_6832 extends OpMode {
         }
 
         if(stickyGamepad1.a){
-            robot.driveTrain.handleDuckSpinnerToggle();
+            robot.driveTrain.handleDuckSpinnerToggle(robot.getAlliance().getMod());
         }
 
         //gamepad 2
@@ -236,7 +238,7 @@ public class FF_6832 extends OpMode {
         }
 
         if(stickyGamepad2.a){
-            robot.driveTrain.handleDuckSpinnerToggle();
+            robot.driveTrain.handleDuckSpinnerToggle(robot.getAlliance().getMod());
         }
 
         if(stickyGamepad2.x){

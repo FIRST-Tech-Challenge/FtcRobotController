@@ -21,7 +21,7 @@ public class Constants {
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.1, 0, 0);
-    public static PIDCoefficients TURRET_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.5);
+    public static PIDCoefficients TURRET_PID_COEFFICIENTS = new PIDCoefficients(0.02, 0, 0);
 
     public static double EPSILON = 0.001; // small value used for the approximately equal calculation in MathUtils
     public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
@@ -132,7 +132,17 @@ public class Constants {
     }
 
     public enum Alliance {
-        RED, BLUE
+        RED(-1), BLUE(1);
+
+        private int mod;
+
+        Alliance(int mod) {
+            this.mod = mod;
+        }
+
+        public int getMod() {
+            return mod;
+        }
     }
 
     public enum Position {

@@ -85,8 +85,7 @@ public class Turret implements Subsystem {
         turretPID.enable();
 
         //initialization of the PID calculator's input range and current value
-        turretPID.setInputRange(0, 360);
-        turretPID.setContinuous();
+        turretPID.setInputRange(-90, 90);
         turretPID.setInput(currentAngle);
 
         turnError = diffAngle2(targetAngle, currentAngle);

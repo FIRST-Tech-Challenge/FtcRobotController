@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtils;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -128,18 +130,22 @@ public class Robot implements Subsystem {
     //----------------------------------------------------------------------------------------------
 
     public enum Articulation {
+        START,
         MANUAL,
         // tele-op articulations
 
-        TRANSFER;
+        TRANSFER,
     }
-
-
 
     public boolean articulate(Articulation articulation) {
         this.articulation = articulation;
 
         switch(articulation) {
+            case START:
+                if(start.execute()) {
+                    articulation = Articulation.MANUAL;
+                    return true;
+                }
             case MANUAL:
                 return true;
             case TRANSFER:
@@ -148,9 +154,25 @@ public class Robot implements Subsystem {
                     return true;
                 }
                 break;
+
         }
         return false;
     }
+
+    private StateMachine.Builder getStateMachine(Stage stage) {
+        return StateMachine.builder()
+                .stateSwitchAction(() -> {})
+                .stateEndAction(() -> {})
+                .stage(stage);
+    }
+
+    // Misc. Articulations
+    private Stage startStage = new Stage();
+    private StateMachine start = getStateMachine(startStage)
+            .addTimedState(2f, () -> gripper.toggleGripper(), () -> {})
+            .addTimedState(2f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
+            .addState(() -> crane.doAuton((Crane.CommonPosition.HOME)))
+            .build();
 
     // Tele-Op articulations
 

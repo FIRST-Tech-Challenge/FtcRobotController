@@ -179,6 +179,4 @@ public class UtilMethods {
         }
         return tmp*90;
     }
-
-    public static void returnsNothing(){}
 }

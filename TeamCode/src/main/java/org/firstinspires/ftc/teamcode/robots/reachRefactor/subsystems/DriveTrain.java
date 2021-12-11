@@ -196,8 +196,8 @@ public class DriveTrain implements Subsystem {
         });
 
         // calculating wheel displacements
-        SimpleMatrix wheelTicks = getWheelTicks().rows(0, 2);
-        SimpleMatrix wheelDisplacementMeters = wheelTicks.minus(previousWheelTicks.rows(0, 2)).divide(Constants.DRIVETRAIN_TICKS_PER_METER);
+//        SimpleMatrix wheelTicks = getWheelTicks().rows(0, 2);
+//        SimpleMatrix wheelDisplacementMeters = wheelTicks.minus(previousWheelTicks.rows(0, 2)).divide(Constants.DRIVETRAIN_TICKS_PER_METER);
 
 //        // rotating swivel wheel by swivel angle
 //        double swivelAngle = getSwivelAngle();
@@ -210,22 +210,22 @@ public class DriveTrain implements Subsystem {
 //        wheelDisplacementMeters.setRow(2, 0, swivelWheel.get(0), swivelWheel.get(1));
 
         // calculating average average wheel displacement
-        SimpleMatrix ones = new SimpleMatrix(new double[][] {{1, 1}});
-        SimpleMatrix averageDisplacementMeters = ones.mult(wheelDisplacementMeters).divide(2);
+//        SimpleMatrix ones = new SimpleMatrix(new double[][] {{1, 1}});
+//        SimpleMatrix averageDisplacementMeters = ones.mult(wheelDisplacementMeters).divide(2);
 
         // rotating displacement by heading
         double heading = angles.get(0);
-        averageDisplacementMeters = MathUtils.rotateVector(averageDisplacementMeters, heading);
+//        averageDisplacementMeters = MathUtils.rotateVector(averageDisplacementMeters, heading);
 
         // updating pose [x, y, heading]
-        pose = pose.plus(new SimpleMatrix(new double[][] {{
-            averageDisplacementMeters.get(0, 0),
-            averageDisplacementMeters.get(1, 0),
-            0
-        }}).transpose());
+//        pose = pose.plus(new SimpleMatrix(new double[][] {{
+//            averageDisplacementMeters.get(0, 0),
+//            averageDisplacementMeters.get(1, 0),
+//            0
+//        }}).transpose());
         pose.set(2, 0, angles.get(0));
 
-        previousWheelTicks = wheelTicks.copy();
+//        previousWheelTicks = wheelTicks.copy();
     }
 
     @Override
@@ -240,8 +240,9 @@ public class DriveTrain implements Subsystem {
         motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
 
 //        updateTargetChassisDistance();
-//        double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
-//        targetMiddleVelocity += maintainChassisDistanceCorrection;
+        double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
+        targetFrontLeftVelocity += maintainChassisDistanceCorrection;
+        targetFrontRightVelocity += maintainChassisDistanceCorrection;
 
 
         // Motor controls
@@ -388,19 +389,18 @@ public class DriveTrain implements Subsystem {
     }
 
     boolean duckSpinnerIsOn = false;
-    public boolean handleDuckSpinnerToggle(){
+    public boolean handleDuckSpinnerToggle(int mod) {
         if(duckSpinnerIsOn) {
             handleDuckSpinner(0);
             duckSpinnerIsOn = false;
         }
         else{
-            handleDuckSpinner(.5);
+            handleDuckSpinner(mod * .5);
             duckSpinnerIsOn = true;
         }
 
         return true;
     }
-
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
