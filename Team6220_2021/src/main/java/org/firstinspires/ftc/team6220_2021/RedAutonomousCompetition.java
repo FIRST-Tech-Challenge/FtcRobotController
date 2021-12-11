@@ -106,25 +106,29 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                 // todo - distance before turning to the shipping hub
                 driveInches(44, Constants.MINIMUM_DRIVE_POWER, false);
                 pauseMillis(125);
+                turnToAngle(0);
+                pauseMillis(125);
 
                 switch (barcode) {
                     case 0:
                         motorArm.setTargetPosition(300);
+                        // todo - distance to the shipping hub
+                        driveInches(12, Constants.MINIMUM_DRIVE_POWER, false);
                         break;
 
                     case 1:
                         motorArm.setTargetPosition(555);
+                        // todo - distance to the shipping hub
+                        driveInches(12, Constants.MINIMUM_DRIVE_POWER, false);
                         break;
 
                     case 2:
                         motorArm.setTargetPosition(900);
+                        // todo - distance to the shipping hub
+                        driveInches(12, Constants.MINIMUM_DRIVE_POWER, false);
                         break;
                 }
 
-                turnToAngle(0);
-                pauseMillis(125);
-                // todo - distance to the shipping hub
-                driveInches(12, Constants.MINIMUM_DRIVE_POWER, false);
                 pauseMillis(500);
                 servoGrabber.setPosition(0.34);
                 pauseMillis(500);
