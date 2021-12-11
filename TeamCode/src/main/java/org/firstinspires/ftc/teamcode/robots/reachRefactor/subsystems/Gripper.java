@@ -17,14 +17,14 @@ public class Gripper implements Subsystem{
     int gripperDown = 1650;
     boolean gripperIsUp = true;
     double transferTime = 1.0;
-    boolean gripperOpen = false;
+    boolean gripperOpen = true;
     private static final String TELEMETRY_NAME = "Gripper";
 
     public Gripper(HardwareMap hardwareMap){
         gripperServo = hardwareMap.get(Servo.class, "gripperServo");
         gripperPitchServo = hardwareMap.get(Servo.class, "gripperPitchServo");
 
-        gripperServo.setPosition(servoNormalize(gripperClosed));
+        gripperServo.setPosition(servoNormalize(gripperOpenIntake));
         gripperPitchServo.setPosition(servoNormalize(gripperUp));
     }
 

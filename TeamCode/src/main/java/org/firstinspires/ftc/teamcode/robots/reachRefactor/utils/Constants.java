@@ -34,6 +34,8 @@ public class Constants {
     public static double FRONT_RIGHT_SMOOTHING_FACTOR = 0.1;
     public static double MIDDLE_SMOOTHING_FACTOR = 0.1;
 
+    public static double TELEOP_CHASSIS_DISTANCE_INCREMENT = 0.01;
+
     //----------------------------------------------------------------------------------------------
     // Physical Constants
     //----------------------------------------------------------------------------------------------
@@ -41,8 +43,9 @@ public class Constants {
     // distance measurements
     public static double WHEEL_RADIUS = 0.1016;
     public static double TRACK_WIDTH = 0.308162;
-    public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 0.285;
-    public static double DISTANCE_TARGET_TO_BACK_WHEEL = 0.075;
+    public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 0.07;
+    public static double DISTANCE_TARGET_TO_BACK_WHEEL = 0.18;
+    public static double DEFAULT_TARGET_DISTANCE = 0.48;
     public static double MIN_CHASSIS_LENGTH = 0; // TODO: find real minimum chassis length
     public static double MAX_CHASSIS_LENGTH = 0.864;
     public static double TEST_CHASSIS_DISTANCE = 0.61;

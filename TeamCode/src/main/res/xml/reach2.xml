@@ -16,7 +16,7 @@
             <Servo name="gripperServo" port="0" />
             <Servo name="gripperPitchServo" port="1" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
-            <REV_VL53L0X_RANGE_SENSOR name="distLength" port="0" bus="1" />
+            <REV_VL53L0X_RANGE_SENSOR name="distLength" port="1" bus="1" />
         </LynxModule>
     </LynxUsbDevice>
     <Webcam name="Webcam 1" serialNumber="1B4CAC40" />

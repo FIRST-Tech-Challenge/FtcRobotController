@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
@@ -17,9 +18,9 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMeth
 public class Crane implements Subsystem {
 
     public Turret turret;
-    private Servo firstLinkServo;
-    private Servo secondLinkServo;
-    private Servo bucketServo;
+    private ServoImplEx firstLinkServo;
+    private ServoImplEx secondLinkServo;
+    private ServoImplEx bucketServo;
 
     //use these maybe for motion smoothing
     private int firstLinkServoTargetPos;
@@ -32,17 +33,32 @@ public class Crane implements Subsystem {
     private int bucketUpPos = 900;
     private int bucketDownPos = 1200;
     private boolean isAtHome = false;
+    private boolean servosEnabled;
 
     private static final String TELEMETRY_NAME = "Crane";
 
     public Crane(HardwareMap hardwareMap) {
-        firstLinkServo = hardwareMap.get(Servo.class, "firstLinkServo");
-        secondLinkServo = hardwareMap.get(Servo.class, "secondLinkServo");
-        bucketServo = hardwareMap.get(Servo.class, "bucketServo");
+        firstLinkServo = hardwareMap.get(ServoImplEx.class, "firstLinkServo");
+        secondLinkServo = hardwareMap.get(ServoImplEx.class, "secondLinkServo");
+        bucketServo = hardwareMap.get(ServoImplEx.class, "bucketServo");
 
         turret = new Turret(hardwareMap);
 
-        Do(CommonPosition.STARTING);
+        Do(CommonPosition.HOME);
+
+        disablePwm();
+    }
+
+    public void disablePwm() {
+        firstLinkServo.setPwmDisable();
+        secondLinkServo.setPwmDisable();
+        bucketServo.setPwmDisable();
+    }
+
+    public void enablePwm() {
+        firstLinkServo.setPwmEnable();
+        secondLinkServo.setPwmEnable();
+        bucketServo.setPwmEnable();
     }
 
     public enum CommonPosition {
@@ -67,7 +83,7 @@ public class Crane implements Subsystem {
         }
     }
 
-    CommonPosition currentTargetPos = CommonPosition.STARTING;
+    CommonPosition currentTargetPos;
 
     public CommonPosition Do(CommonPosition targetPos) {
         currentTargetPos = targetPos;
@@ -168,9 +184,11 @@ public class Crane implements Subsystem {
         if(isAtHome) {
             turret.setTurretAngle(turretTargetPos);
         }
-        firstLinkServo.setPosition(servoNormalize(firstLinkServoTargetPos));
-        secondLinkServo.setPosition(servoNormalize(secondLinkServoTargetPos));
-        bucketServo.setPosition(servoNormalize(bucketServoTargetPos));
+        if(servosEnabled) {
+            firstLinkServo.setPosition(servoNormalize(firstLinkServoTargetPos));
+            secondLinkServo.setPosition(servoNormalize(secondLinkServoTargetPos));
+            bucketServo.setPosition(servoNormalize(bucketServoTargetPos));
+        }
 
         Do(currentTargetPos);
         turret.update();
@@ -184,6 +202,16 @@ public class Crane implements Subsystem {
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new HashMap<String, Object>();
+
+        telemetryMap.put("Current Target Position", currentTargetPos);
+
+        if(debug) {
+            telemetryMap.put("Is At Home", isAtHome);
+            telemetryMap.put("First Servo Target Position", firstLinkServoTargetPos);
+            telemetryMap.put("Second Servo Target Position", secondLinkServoTargetPos);
+            telemetryMap.put("Bucket Target Position", bucketServoTargetPos);
+            telemetryMap.put("Turret Target Position", turretTargetPos);
+        }
 
         telemetryMap.put("Turret:", "");
         Map<String, Object> turretTelemetryMap = turret.getTelemetry(debug);

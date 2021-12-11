@@ -94,6 +94,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
         robot = new Robot(hardwareMap);
+        robot.setAlliance(Constants.Alliance.BLUE);
         auto = new Autonomous(robot);
 
         // vision
@@ -109,8 +110,6 @@ public class FF_6832 extends OpMode {
             put(Position.MIDDLE, 0);
             put(Position.RIGHT, 0);
         }};
-
-        robot.articulate(Robot.Articulation.START);
     }
 
     private void handleStateSwitch() {
@@ -183,6 +182,7 @@ public class FF_6832 extends OpMode {
 //        robot.setMostFrequentPosition(mostFrequentPosition);
         lastLoopClockTime = System.nanoTime();
         initializing = false;
+        robot.articulate(Robot.Articulation.START);
 //        auto.visionProvider.shutdownVision();
     }
 
@@ -254,12 +254,18 @@ public class FF_6832 extends OpMode {
         }
 
 
-//        if(stickyGamepad1.dpad_up) {
-//            usingDesmosDrive = !usingDesmosDrive;
-//        }
-//        if(stickyGamepad1.dpad_down) {
-//            debugTelemetryEnabled = !debugTelemetryEnabled;
-//        }
+        if(stickyGamepad1.dpad_up) {
+            usingDesmosDrive = !usingDesmosDrive;
+        }
+        if(stickyGamepad1.dpad_down) {
+            debugTelemetryEnabled = !debugTelemetryEnabled;
+        }
+        if(gamepad1.dpad_left) {
+            robot.driveTrain.setTargetChassisDistance(robot.driveTrain.getChassisDistance() + Constants.TELEOP_CHASSIS_DISTANCE_INCREMENT);
+        }
+        if(gamepad1.dpad_right) {
+            robot.driveTrain.setTargetChassisDistance(robot.driveTrain.getChassisDistance() - Constants.TELEOP_CHASSIS_DISTANCE_INCREMENT);
+        }
     }
 
     private void handleTPMCalibration() {

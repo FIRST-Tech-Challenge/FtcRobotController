@@ -117,6 +117,8 @@ public class Robot implements Subsystem {
     public void update() {
         for(Subsystem subsystem: subsystems)
             subsystem.update();
+
+        articulate(articulation);
     }
 
     @Override
@@ -143,18 +145,18 @@ public class Robot implements Subsystem {
         switch(articulation) {
             case START:
                 if(start.execute()) {
-                    articulation = Articulation.MANUAL;
+                    this.articulation = Articulation.MANUAL;
                     return true;
                 }
+                break;
             case MANUAL:
                 return true;
             case TRANSFER:
                 if(transfer()){
-                    articulation = Articulation.MANUAL;
+                    this.articulation = Articulation.MANUAL;
                     return true;
                 }
                 break;
-
         }
         return false;
     }
@@ -169,9 +171,12 @@ public class Robot implements Subsystem {
     // Misc. Articulations
     private Stage startStage = new Stage();
     private StateMachine start = getStateMachine(startStage)
-            .addTimedState(2f, () -> gripper.toggleGripper(), () -> {})
+            .addSingleState(() -> crane.enablePwm())
+            .addTimedState(1f, () -> gripper.actuateGripper(false), () -> {})
             .addTimedState(2f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
-            .addState(() -> crane.doAuton((Crane.CommonPosition.HOME)))
+            .addSingleState(()-> crane.Do(Crane.CommonPosition.HOME))
+            .addSingleState(() -> driveTrain.setTargetChassisDistance(Constants.DEFAULT_TARGET_DISTANCE))
+            .addSingleState(() -> driveTrain.setMaintainChassisDistanceEnabled(true))
             .build();
 
     // Tele-Op articulations

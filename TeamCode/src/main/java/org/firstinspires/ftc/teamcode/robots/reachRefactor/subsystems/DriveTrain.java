@@ -49,6 +49,7 @@ public class DriveTrain implements Subsystem {
     // PIVs
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
     private double targetLinearVelocity, targetAngularVelocity, targetTurnRadius;
+    private boolean maintainChassisDistanceEnabled;
 
     private double swivelAngle;
     private double chassisDistance, targetChassisDistance;
@@ -231,8 +232,8 @@ public class DriveTrain implements Subsystem {
     @Override
     public void update() {
         // state
-//        chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + Constants.DISTANCE_SENSOR_TO_FRONT_AXLE - Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
-        chassisDistance = Constants.TEST_CHASSIS_DISTANCE;
+        chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + Constants.DISTANCE_SENSOR_TO_FRONT_AXLE + Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
+//        chassisDistance = Constants.TEST_CHASSIS_DISTANCE;
         swivelAngle = (motorMiddleSwivel.getCurrentPosition() / Constants.SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);;
 
         // PID corrections
@@ -240,21 +241,23 @@ public class DriveTrain implements Subsystem {
         motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
 
 //        updateTargetChassisDistance();
-        double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
-        targetFrontLeftVelocity += maintainChassisDistanceCorrection;
-        targetFrontRightVelocity += maintainChassisDistanceCorrection;
+        if(maintainChassisDistanceEnabled) {
+            double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
+            targetFrontLeftVelocity += maintainChassisDistanceCorrection;
+            targetFrontRightVelocity += maintainChassisDistanceCorrection;
+        }
 
 
         // Motor controls
-        if(swivelPID.onTarget()) {
+//        if(swivelPID.onTarget()) {
             motorFrontLeft.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
             motorFrontRight.setVelocity(targetFrontRightVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
             motorMiddle.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
-        } else {
-            motorFrontLeft.setVelocity(0);
-            motorFrontRight.setVelocity(0);
-            motorMiddle.setVelocity(0);
-        }
+//        } else {
+//            motorFrontLeft.setVelocity(0);
+//            motorFrontRight.setVelocity(0);
+//            motorMiddle.setVelocity(0);
+//        }
 
 //        updatePose();
     }
@@ -426,6 +429,7 @@ public class DriveTrain implements Subsystem {
 
             telemetryMap.put("chassis distance", chassisDistance);
             telemetryMap.put("target chassis distance", targetChassisDistance);
+            telemetryMap.put("maintain chassis distance enabled", maintainChassisDistanceEnabled);
 
             telemetryMap.put("pose (x)", pose.get(0));
             telemetryMap.put("pose (y)", pose.get(1));
@@ -483,5 +487,17 @@ public class DriveTrain implements Subsystem {
 
     public double getTurnRadius() {
         return targetTurnRadius;
+    }
+
+    public boolean isMaintainChassisDistanceEnabled() {
+        return maintainChassisDistanceEnabled;
+    }
+
+    public void setMaintainChassisDistanceEnabled(boolean maintainChassisDistanceEnabled) {
+        this.maintainChassisDistanceEnabled = maintainChassisDistanceEnabled;
+    }
+
+    public void setTargetChassisDistance(double targetChassisDistance) {
+        this.targetChassisDistance = targetChassisDistance;
     }
 }
