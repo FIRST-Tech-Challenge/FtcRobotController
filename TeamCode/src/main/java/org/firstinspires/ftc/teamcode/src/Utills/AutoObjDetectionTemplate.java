@@ -12,13 +12,10 @@ import java.util.List;
 @Disabled
 public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
-
     private static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
     private static final String[] LABELS = {"Pink Team Marker"};
 
-
-    private static final String VUFORIA_KEY =
-            "AWVWPbH/////AAABmbzQF0cF/EvRnE4ykZKAXvpbnJrPQs1aBJ2i7u5ADGzYU+x0dxqGlB/G8yCrcY4FP8cPEA1w+xTXCpbFDmlYcKMG6VL/6v+H0Es3H/1f8xpQG86nSCXKPLxEbYGHkBxAYSlxB0gueBpnxMYsURezlq2Q9e5Br5OIhY7gmZZNa3VPHupscQkrCrVdRMI9mPAbEjMBhVBWjVJEL0+u2tyvEQuK4tllgi8C7AKq5V5lFoKEQG0VD89xlgUfRZsDq89HToRXBOUE2mubPHUcplKiX+1EfB+801eEt+k7lLJ1VyfrXr2tjwyWPjafvTpnaf3C35ox0/TOPdak5pq2gXLpXzAxXc6+RH28m2572tYB58AN";
+    private static final String VUFORIA_KEY = "AWVWPbH/////AAABmbzQF0cF/EvRnE4ykZKAXvpbnJrPQs1aBJ2i7u5ADGzYU+x0dxqGlB/G8yCrcY4FP8cPEA1w+xTXCpbFDmlYcKMG6VL/6v+H0Es3H/1f8xpQG86nSCXKPLxEbYGHkBxAYSlxB0gueBpnxMYsURezlq2Q9e5Br5OIhY7gmZZNa3VPHupscQkrCrVdRMI9mPAbEjMBhVBWjVJEL0+u2tyvEQuK4tllgi8C7AKq5V5lFoKEQG0VD89xlgUfRZsDq89HToRXBOUE2mubPHUcplKiX+1EfB+801eEt+k7lLJ1VyfrXr2tjwyWPjafvTpnaf3C35ox0/TOPdak5pq2gXLpXzAxXc6+RH28m2572tYB58AN";
 
     public volatile VuforiaLocalizer vuforia;
     public volatile TFObjectDetector tfod;
@@ -50,7 +47,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
     }
 
-    public void _initVuforia() {
+    private void _initVuforia() {
         //Waits for mutex to be available
         if (globalInitThreadMutex.initThreadRunning) {
             while (globalInitThreadMutex.initThreadRunning) {
@@ -67,13 +64,15 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         //does the initialization
         VuforiaLocalizer Vuforia;
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        {
+            VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+            parameters.vuforiaLicenseKey = VUFORIA_KEY;
+            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
 
-        //  Instantiate the Vuforia engine
-        Vuforia = ClassFactory.getInstance().createVuforia(parameters);
+            //  Instantiate the Vuforia engine
+            Vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        }
 
         //Passes initialized obj back to caller class
         if (threadedObjReturn) {
@@ -82,8 +81,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         //frees mutex
         globalInitThreadMutex.initThreadRunning = false;
-
-
     }
 
     public void initTfod() throws InterruptedException {
@@ -144,7 +141,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         globalInitThreadMutex.initThreadRunning = false;
     }
 
-
     private static class globalInitThreadMutex {
         private static volatile boolean initThreadRunning;
     }
@@ -181,7 +177,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         }
         return MarkerPosition.NotSeen;
     }
-
 
     public MarkerPosition getAverageOfMarker(int arraySize, int sleepTime) throws InterruptedException {
 
