@@ -51,10 +51,10 @@ public class Chassis {
 
         //rotation
         if(!rsDeadzone){
-            power[0]+=rx;
-            power[1]-=rx;
-            power[2]+=rx;
-            power[3]-=rx;
+            power[0]-=rx;
+            power[1]+=rx;
+            power[2]-=rx;
+            power[3]+=rx;
         }
 
 
