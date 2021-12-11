@@ -95,13 +95,14 @@ public class MecanumAutonomous extends LinearOpMode {
 
         //Run code while the opMode is active.
         if(opModeIsActive()) {
-            driveStraight(25,0.8,5.0);
-            sleep(2000);
-           drive(0,10, 0.8, 5.0);
-           /*sleep(2000);
-           drive(225,25, 0.8, 5.0);
+            //driveStraight(25,0.8,5.0);
+            //sleep(2000);
+           drive(0,25, 0.8, 1.0);
            sleep(2000);
-           drive(270,25, 0.8, 5.0);
+           drive(45,25, 0.8, 1.0);
+           sleep(2000);
+           drive(90,25, 0.8, 1.0);
+           /*
            sleep(2000);
            drive(315,25, 0.8, 5.0);
            sleep(2000);
@@ -163,6 +164,26 @@ public class MecanumAutonomous extends LinearOpMode {
     @param timeout Motor movement timeout (In Seconds) (Adjust accordingly, or just put 5)
     */
     public void drive(double degrees, double distance, double power, double timeout) {
+        double degreesToR = Math.toRadians(degrees);
+        double x = Math.cos(degreesToR);
+        double y = Math.sin(degreesToR);
+        double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
+        double frontLeftPower = ((y + x) / denominator);
+        double backLeftPower = ((y - x) / denominator);
+        double frontRightPower = ((y - x) / denominator);
+        double backRightPower = ((y + x) / denominator);
+        //begin runtime for timeout.
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < timeout)) {
+            robot.motorFrontLeft.setPower(frontLeftPower);
+            robot.motorBackLeft.setPower(backLeftPower);
+            robot.motorFrontRight.setPower(frontRightPower);
+            robot.motorBackRight.setPower(backRightPower);
+        }
+        robot.setPowers(0);
+
+    }
+    public void driveOLD(double degrees, double distance, double power, double timeout) {
        // distance = -distance;
         //Math to convert input(degrees) into x and y.
         double degreesToR = Math.toRadians(degrees);
@@ -217,10 +238,52 @@ public class MecanumAutonomous extends LinearOpMode {
         robot.motorBackRight.setPower(((y + x) / denominator)*power);
         if(direction == 2 || direction == 4){
             while (opModeIsActive() && runtime.seconds() < timeout && (robot.motorFrontRight.isBusy() && robot.motorBackLeft.isBusy())) {
+                //Add slowdown to robot if distance traveled is over 75% of the way there (this changes based on direction)
+                if(direction == 1 && robot.motorFrontLeft.getCurrentPosition() > distance*0.75)
+                    slowdown = 0.25;
+                if(direction == 2 && robot.motorFrontRight.getCurrentPosition() < distance*0.75)
+                    slowdown = 0.25;
+                if(direction == 3 && robot.motorFrontLeft.getCurrentPosition() < distance*0.75)
+                    slowdown = 0.25;
+                if(direction == 4 && robot.motorFrontRight.getCurrentPosition() > distance*0.75)
+                    slowdown = 0.25;
+                //Calculate the power for the motors (takes direction and multiplies it by slowdown and power)
+                double newSpeed = slowdown*power;
+                double input1 = ((y + x) / denominator) * newSpeed;
+                double input2 = ((y - x) / denominator) * newSpeed;
+                //Set the motors to their correct powers
+                robot.motorFrontLeft.setPower(input1);
+                robot.motorBackLeft.setPower(input2);
+                robot.motorFrontRight.setPower(input2);
+                robot.motorBackRight.setPower(input1);
+                //Display telemetry for motor business
+                telemetry.addData("The Motors Are Busy:", robot.motorsBusy());
+                telemetry.update();
             }
         }
         if(direction == 1 || direction == 3) {
             while (opModeIsActive() && runtime.seconds() < timeout && (robot.motorFrontLeft.isBusy() && robot.motorBackRight.isBusy())) {
+                //Add slowdown to robot if distance traveled is over 75% of the way there (this changes based on direction)
+                if(direction == 1 && robot.motorFrontLeft.getCurrentPosition() > distance*0.75)
+                    slowdown = 0.25;
+                if(direction == 2 && robot.motorFrontRight.getCurrentPosition() < distance*0.75)
+                    slowdown = 0.25;
+                if(direction == 3 && robot.motorFrontLeft.getCurrentPosition() < distance*0.75)
+                    slowdown = 0.25;
+                if(direction == 4 && robot.motorFrontRight.getCurrentPosition() > distance*0.75)
+                    slowdown = 0.25;
+                //Calculate the power for the motors (takes direction and multiplies it by slowdown and power)
+                double newSpeed = slowdown*power;
+                double input1 = ((y + x) / denominator) * newSpeed;
+                double input2 = ((y - x) / denominator) * newSpeed;
+                //Set the motors to their correct powers
+                robot.motorFrontLeft.setPower(input1);
+                robot.motorBackLeft.setPower(input2);
+                robot.motorFrontRight.setPower(input2);
+                robot.motorBackRight.setPower(input1);
+                //Display telemetry for motor business
+                telemetry.addData("The Motors Are Busy:", robot.motorsBusy());
+                telemetry.update();
             }
         }
         //Loop while the motors move to their target position
