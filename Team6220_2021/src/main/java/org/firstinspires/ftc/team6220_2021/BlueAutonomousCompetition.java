@@ -96,7 +96,7 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         telemetry.update();
                         driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
                         pauseMillis(125);
-                        turnDegrees(-75);
+                        turnDegrees(-77);
                         pauseMillis(125);
                         // todo
                         driveInches(13, 0.1, false);
@@ -108,7 +108,7 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         motorDuck.setPower(0.0);
                         Forward(-15, 0.3);
                         pauseMillis(125);
-                        TurnAngle(-215);
+                        TurnAngle(-213);
                         // todo
                         Forward(32,0.5);
                         pauseMillis(125);
@@ -135,7 +135,7 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         telemetry.update();
                         driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
                         pauseMillis(125);
-                        turnDegrees(-75);
+                        turnDegrees(-77);
                         pauseMillis(125);
                         // todo
                         driveInches(13, 0.1, false);
@@ -147,7 +147,7 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         motorDuck.setPower(0.0);
                         Forward(-15, 0.3);
                         pauseMillis(125);
-                        TurnAngle(-215);
+                        TurnAngle(-213);
                         // todo
                         Forward(32,0.5);
                         pauseMillis(125);
@@ -174,7 +174,7 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         telemetry.update();
                         driveInches(4, Constants.MINIMUM_DRIVE_POWER, false);
                         pauseMillis(125);
-                        turnDegrees(-75);
+                        turnDegrees(-77);
                         pauseMillis(125);
                         // todo
                         driveInches(13, 0.1, false);
@@ -186,7 +186,7 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
                         motorDuck.setPower(0.0);
                         Forward(-15, 0.3);
                         pauseMillis(125);
-                        TurnAngle(-215);
+                        TurnAngle(-213);
                         // todo
                         Forward(32,0.5);
                         pauseMillis(125);
