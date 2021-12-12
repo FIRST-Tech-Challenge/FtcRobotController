@@ -116,7 +116,14 @@ public class AAMainTeleop extends LinearOpMode {
             motorBackLeft.setPower((powerTwo + (rotation))*powerMod);
             motorBackRight.setPower((powerOne + (rotation))*powerMod);
 
+            telemetry.addData("ticks main:", motorFrontLeft.getCurrentPosition());
+            telemetry.addData("intake ticks", motorFrontRight.getCurrentPosition());
+            telemetry.addData("ticks main:", motorOuttake.getCurrentPosition());
+            telemetry.addData("intake ticks", motorIntake.getCurrentPosition());
             telemetry.update();
+
+
+
         }
     }
 }

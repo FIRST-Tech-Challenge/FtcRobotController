@@ -194,6 +194,7 @@ public class Robot_2022FF {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         resetEncoders();
         resetAngle();
@@ -831,40 +832,67 @@ public class Robot_2022FF {
         //do later!!!todo
         resetEncoders();
         //????
+        //hello this is jolei
 
     }
 
-    public void dropTop(double power){
+    public void dropTop(double power) throws InterruptedException{
+        resetEncoders();
+        while(outtake.getCurrentPosition() < 215 && opMode.opModeIsActive()){
+            outtake.setPower(power);
+        }
+        outtake.setPower(0);
+        bucket.setPosition(1);
+         Thread.sleep(500);
+        bucket.setPosition(0);
+        //turn bucket
+        //wait a second
+        //turn back
+        //wait a second
 
+        while(outtake.getCurrentPosition() < 215 && opMode.opModeIsActive()){
+            outtake.setPower(power);
+        }
+        outtake.setPower(0);
     }
     public void dropMiddle(double power) throws InterruptedException{
-        outtake.setPower(-0.25);//todo change!
-        Thread.sleep(2);
+        resetEncoders();
+        while(outtake.getCurrentPosition() < 170 && opMode.opModeIsActive()){
+            outtake.setPower(power);
+        }
         outtake.setPower(0);
-        bucket.setPosition(1);
-        bucket.setPosition(0);
-        outtake.setPower(0.25);//todo change!
-        Thread.sleep(2);
+        //turn bucket
+        //wait a second
+        //turn back
+        //wait a second
+
+        while(outtake.getCurrentPosition() < 170 && opMode.opModeIsActive()){
+            outtake.setPower(power);
+        }
         outtake.setPower(0);
     }
-    public void dropBottom(double power){
+
+    public void dropBottom (double power) throws InterruptedException{
         resetEncoders();
-
-        while (outtake.getCurrentPosition()<10 && opMode.opModeIsActive()) {
-            telemetry.addData("ticks:", outtake.getCurrentPosition());
+        
+        while(outtake.getCurrentPosition() < 100 && opMode.opModeIsActive()){
             outtake.setPower(power);
-
+            telemetry.addData("ticks", outtake.getCurrentPosition());
+            telemetry.update();
         }
-        telemetry.addData("yes?", "yes");
         outtake.setPower(0);
-
+        //turn bucket
+        //wait a second
         bucket.setPosition(1);
+        Thread.sleep(500);
+        //turn back
         bucket.setPosition(0);
+        //wait a second
 
-        while (outtake.getCurrentPosition()>0) {
+        while(outtake.getCurrentPosition() > 0 && opMode.opModeIsActive()){
             outtake.setPower(-power);
         }
         outtake.setPower(0);
-        telemetry.update();
+
     }
 }

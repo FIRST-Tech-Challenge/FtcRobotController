@@ -93,46 +93,24 @@ public class Auto_2022_noPID extends LinearOpMode {
         robot.duck(0);
 
         //to hub
-        //todo: adjust these values to make it work! You only need to change cm really, and maybe flip the angle for the second strafe if it's going in the wrong direction
-//        robot.gyroStrafeCm(0.5,Math.atan2(4.0,3.0),152);//todo may need to make it 2 sides of rectangle instead of hypotenuse?
+        //2 sides of rectangle instead of hypotenuse
         robot.gyroStrafeCm(0.5,90,130);
         robot.gyroStrafeCm(0.5,0,85);
 
         switch (code) {//shell for later, do not delete!!!
             case 2:
+                robot.dropMiddle(0.25);
                 //center, middle
-                motorOuttake.setPower(-0.25);//todo change!
-                Thread.sleep(2);
-                motorOuttake.setPower(0);
-                bucket.setPosition(1);
-                bucket.setPosition(0);
-                motorOuttake.setPower(0.25);//todo change!
-                Thread.sleep(2);
-                motorOuttake.setPower(0);
                 break;
             case 3:
                 //right, top
-                motorOuttake.setPower(-0.25);//todo change!
-                Thread.sleep(4);
-                motorOuttake.setPower(0);
-                bucket.setPosition(1);
-                bucket.setPosition(0);
-                motorOuttake.setPower(0.25);//todo change!
-                Thread.sleep(4);
-                motorOuttake.setPower(0);
+                robot.dropTop(0.25);
                 break;
             case 1:
             default:
                 //left, bottom
+                robot.dropBottom(0.25);
                 //error, put on bottom, do case1
-                motorOuttake.setPower(-0.25);//todo change!
-                Thread.sleep(1);
-                motorOuttake.setPower(0);
-                bucket.setPosition(1);
-                bucket.setPosition(0);
-                motorOuttake.setPower(0.25);//todo change!
-                Thread.sleep(1);
-                motorOuttake.setPower(0);
                 break;
         }
 
