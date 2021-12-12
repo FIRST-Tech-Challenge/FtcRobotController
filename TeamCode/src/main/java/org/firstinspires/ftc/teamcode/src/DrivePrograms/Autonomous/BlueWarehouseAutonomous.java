@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
 
@@ -14,18 +13,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
     @Override
     public void runOpMode() throws InterruptedException {
         this.initAll();
-
-
         MarkerPosition Pos = MarkerPosition.NotSeen;
-        RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
-        slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
-        /*slide.setMotorPower(-.1);
-        Thread.sleep(500);
-        slide.resetEncoder();
-        slide.setMotorPower(0);
-
-         */
-        Thread t = new Thread(slide);
         slide.setTargetLevel(LinearSlide.HeightLevels.Down);
         this.initVuforia();
         this.initTfod();
@@ -44,7 +32,6 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             tfod.shutdown();
             vuforia.close();
             System.gc();
-            t.start();
 
 
             switch (Pos) {
@@ -149,8 +136,8 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             }
         }
-        slide.stop();
-        odometry.stop();
+        slide.end();
+        odometry.end();
 
     }
 }

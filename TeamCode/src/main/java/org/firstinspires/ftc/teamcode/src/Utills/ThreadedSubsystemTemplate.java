@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.Utills;
 
-public abstract class ThreadedSubsystemTemplate implements Runnable {
+public abstract class ThreadedSubsystemTemplate extends Thread {
     protected volatile boolean isRunning = true;
     protected long sleepTime = 50;
     protected Executable<Boolean> opModeIsActive;
@@ -8,7 +8,12 @@ public abstract class ThreadedSubsystemTemplate implements Runnable {
 
     protected abstract void threadMain();
 
-    public void stop() {
+    public ThreadedSubsystemTemplate(Executable<Boolean> opModeIsActive, Executable<Boolean> isStopRequested) {
+        this.isStopRequested = isStopRequested;
+        this.opModeIsActive = opModeIsActive;
+    }
+
+    public void end() {
         this.isRunning = false;
     }
 

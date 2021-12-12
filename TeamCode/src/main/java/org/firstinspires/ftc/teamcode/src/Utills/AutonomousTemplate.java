@@ -62,15 +62,17 @@ public abstract class AutonomousTemplate extends LinearOpMode {
 
 
         odometry.reverseLeftEncoder();
-        Thread positionThread = new Thread(odometry);
-        positionThread.start();
+        odometry.start();
 
         driveSystem = new OdometryDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive);
 
 
         spinner = new CarouselSpinner(hardwareMap, "duck_spinner");
+
         RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
         slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
+        slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+        slide.start();
 
         intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo");
         intake.setServoUp();

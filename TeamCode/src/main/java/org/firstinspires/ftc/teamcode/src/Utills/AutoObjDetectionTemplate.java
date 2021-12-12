@@ -20,7 +20,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     public volatile VuforiaLocalizer vuforia;
     public volatile TFObjectDetector tfod;
 
-    private volatile boolean threadedObjReturn = true;
+    private volatile boolean doThreadedObjReturn = true;
 
     public void initVuforia() throws InterruptedException {
         telemetry.addData("Vuforia initialization:", "Started");
@@ -30,15 +30,17 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         t.start();
         while (t.getState() != Thread.State.TERMINATED) {
             if (isStopRequested()) {
-                threadedObjReturn = false;
+                doThreadedObjReturn = false;
                 throw new InterruptedException();
             }
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } finally {
+                doThreadedObjReturn = false;
+
             }
-            continue;
         }
         t.join();
 
@@ -49,38 +51,28 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
     private void _initVuforia() {
         //Waits for mutex to be available
-        if (globalInitThreadMutex.initThreadRunning) {
-            while (globalInitThreadMutex.initThreadRunning) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    return;
-                }
+        synchronized (InitThreadLockContainer.lock1) {
+            if (!doThreadedObjReturn) {
+                return;
+            }
+
+            //does the initialization
+            VuforiaLocalizer Vuforia;
+            {
+                VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+                parameters.vuforiaLicenseKey = VUFORIA_KEY;
+                parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
+                //  Instantiate the Vuforia engine
+                Vuforia = ClassFactory.getInstance().createVuforia(parameters);
+            }
+
+            //Passes initialized obj back to caller class
+            if (doThreadedObjReturn) {
+                this.vuforia = Vuforia;
             }
         }
-
-        //Claims mutex
-        globalInitThreadMutex.initThreadRunning = true;
-
-        //does the initialization
-        VuforiaLocalizer Vuforia;
-        {
-            VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-            parameters.vuforiaLicenseKey = VUFORIA_KEY;
-            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-
-            //  Instantiate the Vuforia engine
-            Vuforia = ClassFactory.getInstance().createVuforia(parameters);
-        }
-
-        //Passes initialized obj back to caller class
-        if (threadedObjReturn) {
-            this.vuforia = Vuforia;
-        }
-
-        //frees mutex
-        globalInitThreadMutex.initThreadRunning = false;
     }
 
     public void initTfod() throws InterruptedException {
@@ -92,7 +84,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         t.start();
         while (t.getState() != Thread.State.TERMINATED) {
             if (isStopRequested()) {
-                threadedObjReturn = false;
+                doThreadedObjReturn = false;
                 throw new InterruptedException();
             }
         }
@@ -107,42 +99,51 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
     private void _initTfod() {
         //Waits for mutex to be available
-        if (globalInitThreadMutex.initThreadRunning) {
-            while (globalInitThreadMutex.initThreadRunning) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    return;
-                }
+        synchronized (InitThreadLockContainer.lock2) {
+
+            if (!doThreadedObjReturn) {
+                return;
+            }
+
+            //Runs initialization Code
+            int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                    "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            TFObjectDetector Tfod;
+            TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+            tfodParameters.minResultConfidence = 0.8f;
+            tfodParameters.isModelTensorFlow2 = true;
+            tfodParameters.inputSize = 320;
+            Tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+            Tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+
+
+            //Passes initialized obj back to caller class
+            if (doThreadedObjReturn) {
+                this.tfod = Tfod;
+            }
+        }
+    }
+
+    public void initTfodAndVuf() throws InterruptedException {
+        Thread t = new Thread(this::_initTfod);
+        t.start();
+        Thread t2 = new Thread(this::_initVuforia);
+        t2.start();
+        while ((t.getState() != Thread.State.TERMINATED) || (t2.getState() != Thread.State.TERMINATED)) {
+            if (isStopRequested()) {
+                doThreadedObjReturn = false;
+                throw new InterruptedException();
             }
         }
 
-        //Claims mutex
-        globalInitThreadMutex.initThreadRunning = true;
+        t.join();
+        t2.join();
 
-        //Runs initialization Code
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector Tfod;
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 320;
-        Tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        Tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-
-
-        //Passes initialized obj back to caller class
-        if (threadedObjReturn) {
-            this.tfod = Tfod;
-        }
-
-        //frees mutex
-        globalInitThreadMutex.initThreadRunning = false;
     }
 
-    private static class globalInitThreadMutex {
-        private static volatile boolean initThreadRunning;
+    private static class InitThreadLockContainer {
+        private static final Object lock1 = new Object();
+        private static final Object lock2 = new Object();
     }
 
     public void activate() {
@@ -191,7 +192,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         for (int i = 0; i < arraySize; i++) {
             switch (markerPositions[i]) {
                 case NotSeen:
-                    sum = sum;
                     break;
                 case Right:
                     sum++;

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.src.Utills.Executable;
@@ -25,23 +24,15 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
 
     //public static final double level_one_height = 0;
 
-    private LinearSlide(HardwareMap hardwareMap, String dcMotorName) {
-        linearSlide = hardwareMap.dcMotor.get(dcMotorName);
-        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-    }
 
     public LinearSlide(HardwareMap hardwareMap, String dcMotorName, RobotVoltageSensor voltSensor,
                        Executable<Boolean> _isOpmodeActive, Executable<Boolean> _isStopRequested) {
+        super(_isOpmodeActive, _isStopRequested);
         linearSlide = hardwareMap.dcMotor.get(dcMotorName);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.voltageSensor = voltSensor;
-        this.isStopRequested = _isStopRequested;
-        this.opModeIsActive = _isOpmodeActive;
     }
 
     public boolean isAtPosition() {
@@ -56,7 +47,7 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
     }
 
     public void finalize() {
-        this.stop();
+        this.end();
     }
 
     public void setTargetHeight(int height) {
@@ -109,7 +100,7 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
     }
 
     public void resetEncoder() {
-        this.resetEncoder();
+        this.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
