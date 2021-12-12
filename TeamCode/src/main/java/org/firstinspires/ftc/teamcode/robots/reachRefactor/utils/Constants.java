@@ -20,7 +20,7 @@ public class Constants {
     public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.0055, 0, .13);
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
-    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.1, 0, 0);
+    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.2, 0, 0);
     public static PIDCoefficients TURRET_PID_COEFFICIENTS = new PIDCoefficients(0.02, 0, 0);
 
     public static double EPSILON = 0.001; // small value used for the approximately equal calculation in MathUtils
@@ -45,11 +45,10 @@ public class Constants {
     public static double TRACK_WIDTH = 0.308162;
     public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 0.07;
     public static double DISTANCE_TARGET_TO_BACK_WHEEL = 0.18;
-    public static double DEFAULT_TARGET_DISTANCE = 0.48;
-    public static double MIN_CHASSIS_LENGTH = 0; // TODO: find real minimum chassis length
-    public static double MAX_CHASSIS_LENGTH = 0.864;
-    public static double TEST_CHASSIS_DISTANCE = 0.61;
-
+    public static double MIN_CHASSIS_LENGTH = 0.3;
+    public static double MAX_CHASSIS_LENGTH = 0.9;
+    public static double[] CHASSIS_DISTANCE_LEVELS = new double[] {MIN_CHASSIS_LENGTH, MIN_CHASSIS_LENGTH + (MAX_CHASSIS_LENGTH - MIN_CHASSIS_LENGTH) / 3,  MIN_CHASSIS_LENGTH + 2 * (MAX_CHASSIS_LENGTH - MIN_CHASSIS_LENGTH) / 3, MAX_CHASSIS_LENGTH};
+    public static double DEFAULT_TARGET_DISTANCE = CHASSIS_DISTANCE_LEVELS[1];
     // threshold to buffer from max chassis length when attempting to fully extend chassis
     // (to not put excessive strain on linear slide)
     public static double CHASSIS_LENGTH_THRESHOLD = 0.1;
@@ -111,7 +110,7 @@ public class Constants {
 
     // enum to store possible game states for use in FF_6832
     public enum GameState {
-        TELE_OP("Tele-Op"), AUTONOMOUS("Autonomous"), TPM_CALIBRATION("TPM Calibration");
+        TELE_OP("Tele-Op"), AUTONOMOUS("Autonomous");
 
         private String name;
 

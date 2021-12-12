@@ -32,6 +32,7 @@ import java.util.Map;
  * dpad up - initialize / shutdown vision provider
  * dpad left - increment vision provider index
  * dpad down - toggle debug telemetry
+ * dpad right - toggle arcade drive for teleop
  * left bumper - decrement state
  * right bumper - increment state
  *
@@ -56,7 +57,8 @@ public class FF_6832 extends OpMode {
     private Map<Position, Integer> positionFrequencies;
     private Position mostFrequentPosition;
     private boolean usingDesmosDrive;
-    private boolean dashboardEnabled, debugTelemetryEnabled, smoothingEnabled;
+    private boolean dashboardEnabled, debugTelemetryEnabled, smoothingEnabled, arcadeDriveEnabled;
+    private int chassisDistanceLevelIndex;
 
     // Telemetry
     private FtcDashboard dashboard;
@@ -164,6 +166,9 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.dpad_down) {
             debugTelemetryEnabled = !debugTelemetryEnabled;
         }
+        if(stickyGamepad1.dpad_right)
+            arcadeDriveEnabled = !arcadeDriveEnabled;
+
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -186,9 +191,23 @@ public class FF_6832 extends OpMode {
 //        auto.visionProvider.shutdownVision();
     }
 
-    private void handleTeleOpDrive() {
-        double forward = Math.pow(-gamepad1.right_stick_y, 3) * Constants.FORWARD_SCALING_FACTOR;
-        double rotate = Math.pow(gamepad1.left_stick_x, 3) * Constants.ROTATE_SCALING_FACTOR;
+    private void handleTeleOpDriveArcade() {
+        double forward = Math.pow(-gamepad1.left_stick_y, 3) * Constants.FORWARD_SCALING_FACTOR;
+        double rotate = Math.pow(gamepad1.right_stick_x, 3) * Constants.ROTATE_SCALING_FACTOR;
+
+
+        if(usingDesmosDrive)
+            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
+        else
+            robot.driveTrain.drive(forward, rotate);
+    }
+
+    private void handleTeleOpDriveTank() {
+        double left = -gamepad1.left_stick_y;
+        double right = -gamepad1.right_stick_y;
+
+        double forward = (left + right) / 2 * Constants.FORWARD_SCALING_FACTOR;
+        double rotate = (right - left) / 2 * Constants.ROTATE_SCALING_FACTOR;
 
 
         if(usingDesmosDrive)
@@ -203,7 +222,10 @@ public class FF_6832 extends OpMode {
     }
 
     private void handleTeleOp() {
-        handleTeleOpDrive();
+        if(arcadeDriveEnabled)
+            handleTeleOpDriveArcade();
+        else
+            handleTeleOpDriveTank();
         handleEmergencyStop();
 
         //gamepad 1
@@ -213,6 +235,14 @@ public class FF_6832 extends OpMode {
 
         if(stickyGamepad1.right_bumper){
             robot.gripper.pitchGripper(false);
+        }
+
+        if(gamepad1.right_trigger > .1){
+            robot.gripper.actuateGripper(false);
+        }
+
+        if(gamepad1.left_trigger > .1){
+            robot.gripper.actuateGripper(true);
         }
 
         if(stickyGamepad1.y){
@@ -253,6 +283,13 @@ public class FF_6832 extends OpMode {
             robot.crane.Do(Crane.CommonPosition.TRANSFER);
         }
 
+        if(stickyGamepad2.right_bumper) {
+            chassisDistanceLevelIndex++;
+        } else if(stickyGamepad2.left_bumper) {
+            chassisDistanceLevelIndex--;
+        }
+        chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % Constants.CHASSIS_DISTANCE_LEVELS.length);
+        robot.driveTrain.setTargetChassisDistance(Constants.CHASSIS_DISTANCE_LEVELS[chassisDistanceLevelIndex]);
 
 //        if(stickyGamepad1.dpad_up) {
 //            usingDesmosDrive = !usingDesmosDrive;
@@ -260,28 +297,6 @@ public class FF_6832 extends OpMode {
 //        if(stickyGamepad1.dpad_down) {
 //            debugTelemetryEnabled = !debugTelemetryEnabled;
 //        }
-//        if(gamepad1.dpad_left) {
-//            robot.driveTrain.setTargetChassisDistance(robot.driveTrain.getChassisDistance() + Constants.TELEOP_CHASSIS_DISTANCE_INCREMENT);
-//        }
-//        if(gamepad1.dpad_right) {
-//            robot.driveTrain.setTargetChassisDistance(robot.driveTrain.getChassisDistance() - Constants.TELEOP_CHASSIS_DISTANCE_INCREMENT);
-//        }
-    }
-
-    private void handleTPMCalibration() {
-        handleTeleOpDrive();
-        handleEmergencyStop();
-
-        // initializing TPM calibration state
-        if(!TPMCalibrationInitialized) {
-            TPMCalibrationStartingTicks = robot.driveTrain.getWheelTicks().cols(0, 1);
-            TPMCalibrationInitialized = true;
-        }
-
-        // calculating average wheel ticks traveled
-        SimpleMatrix ticks = robot.driveTrain.getWheelTicks().cols(0, 1);
-        SimpleMatrix ones = new SimpleMatrix(new double[][] {{1, 1, 1}});
-        averageTPMCalibrationTicksTraveled = ones.mult(ticks.minus(TPMCalibrationStartingTicks)).divide(3).get(0);
     }
 
     @Override
@@ -305,9 +320,6 @@ public class FF_6832 extends OpMode {
                         gameState = Constants.GameState.TELE_OP;
                         gameStateIndex = Constants.GameState.indexOf(Constants.GameState.TELE_OP);
                     }
-                    break;
-                case TPM_CALIBRATION:
-                    handleTPMCalibration();
                     break;
             }
         } else {
@@ -372,16 +384,15 @@ public class FF_6832 extends OpMode {
         opModeTelemetryMap.put("State", String.format("(%d): %s", gameStateIndex, gameState));
         opModeTelemetryMap.put("Dashboard Enabled", dashboardEnabled);
         opModeTelemetryMap.put("Debug Telemetry Enabled", debugTelemetryEnabled);
+        opModeTelemetryMap.put("Drive Mode", arcadeDriveEnabled ? "Arcade" : "Tank");
         opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
+        opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, Constants.CHASSIS_DISTANCE_LEVELS.length));
 
         switch(gameState) {
             case TELE_OP:
                 opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
                 break;
             case AUTONOMOUS:
-                break;
-            case TPM_CALIBRATION:
-                opModeTelemetryMap.put("Average Ticks Traveled", averageTPMCalibrationTicksTraveled);
                 break;
         }
         handleTelemetry(opModeTelemetryMap, gameState.getName(), packet);

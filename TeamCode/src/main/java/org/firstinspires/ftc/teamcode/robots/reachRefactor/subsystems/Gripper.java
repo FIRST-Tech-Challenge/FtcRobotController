@@ -12,12 +12,13 @@ public class Gripper implements Subsystem{
     private Servo gripperServo = null;
     int gripperClosed =900;
     int gripperOpenIntake = 1200;
-    int gripperOpenTransfer = 1200;
     int gripperUp = 2100;
     int gripperDown = 1240;
     boolean gripperIsUp = true;
-    double transferTime = 1.0;
     boolean gripperOpen = true;
+
+    int gripperTargetPos = 0;
+
     private static final String TELEMETRY_NAME = "Gripper";
 
     public Gripper(HardwareMap hardwareMap){
@@ -29,26 +30,19 @@ public class Gripper implements Subsystem{
     }
 
     public void actuateGripper(boolean open){
-            if(open) {
-                if(gripperIsUp) {
-                        gripperServo.setPosition(servoNormalize(gripperOpenTransfer));
-                        gripperOpen = true;
-                }
-                else {
-                    gripperServo.setPosition(servoNormalize(gripperOpenIntake));
-                    gripperOpen = true;
-                }
-            }
-            else{
-                gripperServo.setPosition(servoNormalize(gripperClosed));
-                gripperOpen = false;
-            }
+        if(open) {
+            gripperTargetPos = gripperOpenIntake;
+            gripperOpen = true;
+        }
+        else{
+            gripperTargetPos = gripperClosed;
+            gripperOpen = false;
+        }
     }
 
     public void pitchGripper(boolean up){
         if(up) {
             gripperPitchServo.setPosition(servoNormalize(gripperUp));
-            calculateSTFT = true;
             gripperIsUp = true;
         }
         else{
@@ -57,24 +51,6 @@ public class Gripper implements Subsystem{
         }
     }
 
-    boolean calculateSTFT = false;
-    boolean safeToTransfer = true;
-    boolean timerInitialized;
-    double safeToTransferTimer = 0;
-    private boolean safeToTransfer(double seconds){
-        if(timerInitialized){
-            safeToTransferTimer = System.nanoTime();
-            safeToTransfer = false;
-        }
-
-        if(System.nanoTime() - safeToTransferTimer > (seconds * 1E9)){
-            timerInitialized = false;
-            safeToTransfer = true;
-            return true;
-        }
-
-        return false;
-    }
 
     public void togglePitch(){
         if(gripperIsUp){
@@ -86,7 +62,7 @@ public class Gripper implements Subsystem{
     }
 
     public void toggleGripper(){
-        if(gripperIsUp){
+        if(gripperOpen){
             actuateGripper(false);
         }
         else{
@@ -96,9 +72,7 @@ public class Gripper implements Subsystem{
 
     @Override
     public void update() {
-        if(calculateSTFT) {
-            safeToTransfer(transferTime); //update the timer
-        }
+        gripperServo.setPosition(servoNormalize(gripperTargetPos));
     }
 
     @Override
@@ -109,6 +83,11 @@ public class Gripper implements Subsystem{
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new HashMap<String, Object>();
+
+        if(debug) {
+            telemetryMap.put("GripperTargetPos", gripperTargetPos);
+
+        }
 
         return telemetryMap;
     }

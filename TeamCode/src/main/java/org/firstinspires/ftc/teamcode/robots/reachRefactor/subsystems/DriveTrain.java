@@ -49,14 +49,14 @@ public class DriveTrain implements Subsystem {
     // PIVs
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
     private double targetLinearVelocity, targetAngularVelocity, targetTurnRadius;
-    private boolean maintainChassisDistanceEnabled;
 
     private double swivelAngle;
     private double chassisDistance, targetChassisDistance;
 
     // PID
     private PIDController turnPID, drivePID, distPID, swivelPID, chassisDistancePID;
-    private double maintainSwivelAngleCorrection;
+    private double maintainSwivelAngleCorrection, maintainChassisDistanceCorrection;
+    private boolean maintainChassisDistanceEnabled;
 
     // Smoothers
     private ExponentialSmoother frontLeftSmoother;
@@ -141,7 +141,7 @@ public class DriveTrain implements Subsystem {
 
         //initialization of the PID calculator's input range and current value
         swivelPID.setInputRange(0, 2 * Math.PI);
-        swivelPID.setContinuous();
+        swivelPID.setContinuous(true);
         swivelPID.setInput(swivelAngle);
 
         //calculates the angular correction to apply
@@ -172,14 +172,14 @@ public class DriveTrain implements Subsystem {
 
     private double getMaintainChassisDistanceCorrection() {
         // initialization of the PID calculator's output range, target value and multipliers
-        swivelPID.setOutputRange(-1.0, 1.0);
-        swivelPID.setPID(Constants.CHASSIS_DISTANCE_PID_COEFFICIENTS);
-        swivelPID.setSetpoint(targetChassisDistance);
-        swivelPID.enable();
+        chassisDistancePID.setOutputRange(-5.0, 5.0);
+        chassisDistancePID.setPID(Constants.CHASSIS_DISTANCE_PID_COEFFICIENTS);
+        chassisDistancePID.setSetpoint(targetChassisDistance);
+        chassisDistancePID.enable();
 
         // initialization of the PID calculator's input range and current value
-        swivelPID.setInputRange(0, Constants.MAX_CHASSIS_LENGTH);
-        swivelPID.setInput(chassisDistance);
+        chassisDistancePID.setInputRange(0, Constants.MAX_CHASSIS_LENGTH);
+        chassisDistancePID.setInput(chassisDistance);
 
         // calculating correction
         return chassisDistancePID.performPID();
@@ -241,18 +241,22 @@ public class DriveTrain implements Subsystem {
         motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
 
 //        updateTargetChassisDistance();
-//        if(maintainChassisDistanceEnabled) {
-//            double maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
-//            targetFrontLeftVelocity += maintainChassisDistanceCorrection;
-//            targetFrontRightVelocity += maintainChassisDistanceCorrection;
-//        }
+        if(maintainChassisDistanceEnabled) {
+            maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
+            targetFrontLeftVelocity += maintainChassisDistanceCorrection;
+            targetFrontRightVelocity += maintainChassisDistanceCorrection;
+        }
+
+        if(swivelAngle > Math.PI && swivelAngle < 2 * Math.PI) {
+//            targetMiddleVelocity = -targetMiddleVelocity;
+        }
 
 
         // Motor controls
 //        if(swivelPID.onTarget()) {
             motorFrontLeft.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
             motorFrontRight.setVelocity(targetFrontRightVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
-            motorMiddle.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
+            motorMiddle.setVelocity(targetMiddleVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
 //        } else {
 //            motorFrontLeft.setVelocity(0);
 //            motorFrontRight.setVelocity(0);
@@ -430,6 +434,7 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("chassis distance", chassisDistance);
             telemetryMap.put("target chassis distance", targetChassisDistance);
             telemetryMap.put("maintain chassis distance enabled", maintainChassisDistanceEnabled);
+            telemetryMap.put("maintain chassis distance correction", maintainChassisDistanceCorrection);
 
             telemetryMap.put("pose (x)", pose.get(0));
             telemetryMap.put("pose (y)", pose.get(1));

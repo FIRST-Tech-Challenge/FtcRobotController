@@ -195,11 +195,9 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 2:
-                if(gripper.safeToTransfer){
                     gripper.toggleGripper();
                     transferTimer = System.nanoTime();
                     handOffState++;
-                }
                 break;
             case 3:
                 if(transferTimer - System.nanoTime() > 1 / 1E9){
