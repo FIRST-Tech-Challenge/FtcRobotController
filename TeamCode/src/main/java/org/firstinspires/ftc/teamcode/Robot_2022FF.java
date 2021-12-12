@@ -848,6 +848,23 @@ public class Robot_2022FF {
         outtake.setPower(0);
     }
     public void dropBottom(double power){
+        resetEncoders();
 
+        while (outtake.getCurrentPosition()<10 && opMode.opModeIsActive()) {
+            telemetry.addData("ticks:", outtake.getCurrentPosition());
+            outtake.setPower(power);
+
+        }
+        telemetry.addData("yes?", "yes");
+        outtake.setPower(0);
+
+        bucket.setPosition(1);
+        bucket.setPosition(0);
+
+        while (outtake.getCurrentPosition()>0) {
+            outtake.setPower(-power);
+        }
+        outtake.setPower(0);
+        telemetry.update();
     }
 }

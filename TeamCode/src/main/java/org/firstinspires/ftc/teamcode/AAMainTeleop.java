@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.TargetPositionNotSetException;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.internal.ftdi.eeprom.FT_EEPROM_232H;
@@ -14,6 +16,9 @@ public class AAMainTeleop extends LinearOpMode {
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight, motorIntake, motorOuttake;
     private CRServo servoDuck;
     private Servo bucket;
+    private Robot_2022FF robot;
+    private DistanceSensor distsense;
+    private BNO055IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException, TargetPositionNotSetException {
@@ -25,6 +30,9 @@ public class AAMainTeleop extends LinearOpMode {
         motorOuttake = hardwareMap.dcMotor.get("outtake");
         servoDuck = hardwareMap.crservo.get("duck");
         bucket = hardwareMap.servo.get("bucket");
+        distsense = hardwareMap.get(DistanceSensor.class, "distsense");
+
+        robot = new Robot_2022FF(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, motorIntake, motorOuttake, bucket, servoDuck, distsense, imu, this);
 
         //reverse the needed motors
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -34,9 +42,8 @@ public class AAMainTeleop extends LinearOpMode {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorOuttake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //motorOuttake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorOuttake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         double powerMod;
 
@@ -59,7 +66,6 @@ public class AAMainTeleop extends LinearOpMode {
 
             if (gamepad1.left_bumper) {
                 motorIntake.setPower(powerMod);
-                telemetry.addData("yes?", "yes");
             }
             else if (gamepad1.right_bumper) {
                 motorIntake.setPower(-powerMod);
@@ -86,23 +92,17 @@ public class AAMainTeleop extends LinearOpMode {
             }
 
             motorOuttake.setPower(gamepad2.right_stick_y/2);
-            //motorOuttake.setPower(gamepad2.right_stick_y);
 
             //trying to keep the arm in position and not swinging around
-            /*if (gamepad2.x) {
-                motorOuttake.setTargetPosition(5);
+            if (gamepad2.x) {
+                robot.dropBottom(powerMod);
             }
-            else if (gamepad2.a) {
-                motorOuttake.setTargetPosition(10);
+            if (gamepad2.a) {
+                robot.dropMiddle(powerMod);
             }
-            else if (gamepad2.b) {
-                motorOuttake.setTargetPosition(15);
+            if (gamepad2.b) {
+                robot.dropTop(powerMod);
             }
-            else {
-                motorOuttake.setTargetPosition(0);
-            }*/
-
-            motorOuttake.setPower(gamepad2.right_stick_y);
 
             double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + (Math.PI/4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
