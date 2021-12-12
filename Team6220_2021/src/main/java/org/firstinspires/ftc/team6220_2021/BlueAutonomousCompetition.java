@@ -38,19 +38,15 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
         servoGrabber.setPosition(0.0);
         servoArm.setPosition(0.81);
 
-        if (tfod != null) {
-            tfod.activate();
-            tfod.setZoom(1.0, 16.0/9.0);
-        }
-
-        waitForStart();
+        pauseMillis(500);
 
         servoArm.setPosition(0.15);
         motorArm.setPower(0.9);
         motorArm.setTargetPosition(555);
 
+        waitForStart();
 
-        pauseMillis(2000);
+        pauseMillis(1000);
 
         if (tfod != null) {
             tfod.activate();
