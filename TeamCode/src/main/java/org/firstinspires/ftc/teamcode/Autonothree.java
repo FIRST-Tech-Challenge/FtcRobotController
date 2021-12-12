@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "yxorauto3")
+@Autonomous(name = "red-auto-right")
 public class Autonothree extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 

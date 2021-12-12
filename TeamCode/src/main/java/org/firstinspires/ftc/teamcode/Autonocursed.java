@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "yxorautocursed")
+@Autonomous(name = "red-auto-cara")
 public class Autonocursed extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 
@@ -38,6 +38,8 @@ public class Autonocursed extends LinearOpMode {
                     "fS13tOJRwxWAg/Ju3B5ctPVo+wUFJJ4uWWf5xpc8ArvzzAD+niHQxOvHxa0xi+tbvQOJ12MQ";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
+
+    private final int[] pos = {-400, -600, -800};
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -90,8 +92,8 @@ public class Autonocursed extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+        int duckPos = 3;
         /*
-        int DuckPos = 3;
         // TensorFlow find duck
         if (tfod != null) {
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -110,7 +112,26 @@ public class Autonocursed extends LinearOpMode {
             }
         }
         */
-        goToWayPoint(-0.41, 0.05, -90, 10, 100, 0.005, 1);
+        goToWayPoint(-0.5, 0.15, -53, 10, 70, 0.005, 1);
+        liftnextend(pos[duckPos-1],4000,1,1);
+        this.robot.duck.setPower(-0.2);
+        sleep(3000);
+        this.robot.duck.setPower(0);
+        if(duckPos == 1){
+
+            this.robot.intakeUp.setPower(1);
+        } else if(duckPos == 2){
+
+            this.robot.intakeUp.setPower(1);
+        } else {
+            goToWayPoint(0.32, 0.51, -53, 10, 30, 0.01, 1);
+            this.robot.intakeUp.setPower(1);
+        }
+
+        this.robot.intakeUp.setPower(0);
+        extend(0,1);
+        sleep(4000);
+        lift(0,0.3);
 
 
     }
@@ -148,10 +169,21 @@ public class Autonocursed extends LinearOpMode {
         this.robot.lift.setPower(power);
     }
 
-    private void exten(int target, double power){
+    private void extend(int target, double power){
         this.robot.exten.setTargetPosition(target);
         this.robot.exten.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.robot.exten.setPower(power);
+    }
+
+    private void liftnextend(int targetL, int targetE, double powerL, double powerE){
+        this.robot.exten.setTargetPosition(targetE);
+        this.robot.lift.setTargetPosition(targetL);
+
+        this.robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.robot.exten.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        this.robot.lift.setPower(powerL);
+        this.robot.exten.setPower(powerE);
     }
 
     private void initVuforia() {
