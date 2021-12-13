@@ -23,13 +23,19 @@ public class test extends LinearOpMode {
         final Encoder frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backEncoder"));
         final int frontOffset = Math.abs(frontEncoder.getCurrentPosition());
         final GamepadEx moveGamepad = new GamepadEx(gamepad1);
-        final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
+        final ControllerMovement move = new ControllerMovement(hardwareMap, moveGamepad);
         waitForStart();
         while (opModeIsActive()) {
             telemetry.addData("distance", sensor.getDistance(DistanceUnit.MM));
             telemetry.addData("leftEncoder",leftEncoder.getCurrentPosition() - leftOffset);
             telemetry.addData("rightEncoder",rightEncoder.getCurrentPosition() - rightOffset);
             telemetry.addData("frontEncoder",frontEncoder.getCurrentPosition() - frontOffset);
+            double[] velocities = move.motorVelocities();
+            telemetry.addData("leftFront", velocities[0]);
+            telemetry.addData("leftRight", velocities[1]);
+            telemetry.addData("rightFront", velocities[2]);
+            telemetry.addData("rightBack", velocities[3]);
+
             telemetry.update();
             move.update();
         }

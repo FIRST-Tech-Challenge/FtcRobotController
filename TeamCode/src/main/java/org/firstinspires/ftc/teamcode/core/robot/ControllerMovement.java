@@ -23,4 +23,8 @@ public class ControllerMovement {
             move.driveDRS(gamepad.getLeftY(), 0, gamepad.getLeftX());
         }
     }
+
+    public double[] motorVelocities() {
+        return ((StrafedMovementImpl) move).motorVelocities();
+    }
 }

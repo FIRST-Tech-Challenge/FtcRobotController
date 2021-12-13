@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode.core.movement.impl;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.movement.api.StrafingMovement;
 
 public class StrafedMovementImpl implements StrafingMovement {
-    private final DcMotor frontLeft;
-    private final DcMotor frontRight;
-    private final DcMotor backRight;
-    private final DcMotor backLeft;
+    private final DcMotorEx frontLeft;
+    private final DcMotorEx frontRight;
+    private final DcMotorEx backRight;
+    private final DcMotorEx backLeft;
 
-    public StrafedMovementImpl(DcMotor frontLeft, DcMotor frontRight, DcMotor backRight, DcMotor backLeft) {
+    public StrafedMovementImpl(DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backRight, DcMotorEx backLeft) {
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
         this.backRight = backRight;
@@ -19,18 +20,27 @@ public class StrafedMovementImpl implements StrafingMovement {
     }
 
     public StrafedMovementImpl(HardwareMap hardwareMap) {
-        this(hardwareMap.get(DcMotor.class, "front left wheel"),
-                hardwareMap.get(DcMotor.class, "front right wheel"),
-                hardwareMap.get(DcMotor.class, "back right wheel"),
-                hardwareMap.get(DcMotor.class, "back left wheel"));
+        this(hardwareMap.get(DcMotorEx.class, "front left wheel"),
+                hardwareMap.get(DcMotorEx.class, "front right wheel"),
+                hardwareMap.get(DcMotorEx.class, "back right wheel"),
+                hardwareMap.get(DcMotorEx.class, "back left wheel"));
     }
 
     @Override
     public void drivePower(double frontLeftPower, double frontRightPower, double backRightPower, double backLeftPower) {
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
-        backRight.setPower(-backRightPower);
-        backLeft.setPower(backLeftPower);
+        backRight.setPower(backRightPower);
+        backLeft.setPower(-backLeftPower);
+    }
+
+    public double[] motorVelocities() {
+        return new double[] {
+                frontLeft.getVelocity(),
+                frontLeft.getVelocity(),
+                backRight.getVelocity(),
+                backLeft.getVelocity()
+        };
     }
 
     @Override
@@ -62,4 +72,6 @@ public class StrafedMovementImpl implements StrafingMovement {
     public void stop() {
         this.drivePower(0, 0, 0, 0);
     }
+
+
 }

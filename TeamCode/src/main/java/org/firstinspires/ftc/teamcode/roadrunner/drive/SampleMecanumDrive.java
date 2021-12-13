@@ -70,7 +70,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private TrajectoryFollower follower;
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
-    private List<DcMotorEx> motors;
+    public List<DcMotorEx> motors;
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -100,10 +100,28 @@ public class SampleMecanumDrive extends MecanumDrive {
         // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "front left wheel");
+        leftRear = hardwareMap.get(DcMotorEx.class, "back left wheel");
+        rightRear = hardwareMap.get(DcMotorEx.class, "back right+ wheel");
+        rightFront = hardwareMap.get(DcMotorEx.class, "front right wheel");
+        /*
+        leftFront = hardwareMap.get(DcMotorEx.class, "front left wheel");
         leftRear = hardwareMap.get(DcMotorEx.class, "front right wheel");
         rightRear = hardwareMap.get(DcMotorEx.class, "back left wheel");
         rightFront = hardwareMap.get(DcMotorEx.class, "back right wheel");
+         */
 
+        //front left = front right
+        // front right = rear right
+        // rear right  = front left
+        // rear left correct
+
+
+        /*
+        rear left is not outputting
+        rear right is outputting to the rear left motor port - cable 2 should be in 1
+        front right is outputting to rear right - cable in 0 should b
+        front left is outputtin to front right
+         */
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (DcMotorEx motor : motors) {
@@ -256,12 +274,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
         return wheelPositions;
     }
-
+// 36.7518566271246 12.955587348170218
     @Override
     public List<Double> getWheelVelocities() {
         List<Double> wheelVelocities = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()* (motor != rightFront ? -1 : -1)));
+            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
         }
         return wheelVelocities;
     }
