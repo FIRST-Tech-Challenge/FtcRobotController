@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class DuckFinder extends OpenCvPipeline {
     ArrayList<MatOfPoint> duckContours = new ArrayList<>();
-    ArrayList<Point> duckCenters = new ArrayList<>();
+    Point duckCenter = null;
     Rect duckRect;
 
 
@@ -30,11 +30,11 @@ public class DuckFinder extends OpenCvPipeline {
     private double horizontalFocalLength;
     private double verticalFocalLength;
 
-    int index0 = 0;
     boolean duckOnScreen = false;
 
-    public ArrayList<Point> getDuckCenters() {
-        return duckCenters;
+    public Point getDuckCenter() {
+        if(duckOnScreen) return duckCenter;
+        else return null;
     }
 
     public DuckFinder(double fov, double cameraPitchOffset, double cameraYawOffset) {
@@ -67,17 +67,10 @@ public class DuckFinder extends OpenCvPipeline {
         verticalFocalLength = this.imageHeight / (2 * Math.tan(verticalView / 2));
     }
 
-    public Point getFirstCenter() {
-        if(duckOnScreen && duckCenters.size() > index0) {
-            return duckCenters.get(index0);
-        } else {
-            return null;
-        }
-    }
-
     // A pipeline that finds and draws contours around the the ducks in the frame
     @Override
     public Mat processFrame(Mat input) {
+        duckRect = null;
         Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
         Scalar lower = new Scalar(22, 60, 50);
@@ -89,12 +82,6 @@ public class DuckFinder extends OpenCvPipeline {
 
         duckContours.clear();
         Imgproc.findContours(mat, duckContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        if(duckContours.size() > 0) {
-            index0 = duckCenters.size();
-            duckOnScreen = true;
-        } else {
-            duckOnScreen = false;
-        }
         for (int i = 0; i < duckContours.size(); i++) {
             Rect rect = Imgproc.boundingRect(duckContours.get(i));
             if (rect.width > 10 && rect.height > 10) {
@@ -107,7 +94,10 @@ public class DuckFinder extends OpenCvPipeline {
         }
         if (duckRect != null){
             Imgproc.rectangle(input, duckRect, new Scalar(0, 255, 0));
-            duckCenters.add(getCenterofRect(duckRect));
+            duckCenter = getCenterofRect(duckRect);
+            duckOnScreen = true;
+        } else {
+            duckOnScreen = false;
         }
 
         mat.release();
@@ -115,8 +105,7 @@ public class DuckFinder extends OpenCvPipeline {
     }
 
     public double calculateYaw(double offsetCenterX) {
-        Rect currentRect = duckRect;
-        double duckCenterX = getCenterofRect(currentRect).x;
+        double duckCenterX = duckCenter.x;
 
         return Math.atan((duckCenterX - offsetCenterX) / horizontalFocalLength
         );

@@ -12,7 +12,7 @@ public class Constants {
     public static final double LIFT_SPEED = 0.8;
     public static final int LEVEL_1 = 500;
     public static final int LEVEL_2 = 900;
-    public static final int LEVEL_3 = 1350;
+    public static final int LEVEL_3 = 1300;
     public static final double HOPPER_BOTTOM = 0.08;
     public static final double HOPPER_TOP = 0.4;
 }

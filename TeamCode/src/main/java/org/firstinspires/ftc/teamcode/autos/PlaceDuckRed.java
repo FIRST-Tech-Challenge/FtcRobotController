@@ -137,12 +137,12 @@ public class PlaceDuckRed extends LinearOpMode {
 
         // Move to the carousel and spin it
         chassis.moveForwardWithEncoders(0.6,700);
-        chassis.rotate(180,0.6);
-        chassis.moveBackwardWithEncoders(0.4,625);
-        chassis.moveForwardWithEncoders(0.6,110);
-        delay(200);
+        chassis.rotateToGlobalAngle(-180,0.6);
+        chassis.moveBackwardWithEncoders(0.3,300);
+        chassis.moveForwardWithEncoders(0.6,150);
+        delay(250);
         chassis.strafeLeftWithEncoders(0.6,2000);
-        chassis.strafeLeftWithEncoders(0.3,250);
+        chassis.strafeLeftWithEncoders(0.3,150);
         delay(150);
         carousel.turnCarousel();
         delay(3000);
@@ -152,25 +152,25 @@ public class PlaceDuckRed extends LinearOpMode {
         // Locate and move towards the duck
         chassis.strafeRightWithEncoders(0.6,50);
         chassis.moveForwardWithEncoders(0.6,200);
-        chassis.rotate(180,0.5);
+        chassis.rotateToGlobalAngle(0,0.5);
         delay(100);
         int startPos = chassis.frontLeft.getCurrentPosition();
-        Point initialPoint = pipeline2.getFirstCenter();
+        Point initialPoint = pipeline2.getDuckCenter();
         if(initialPoint == null) {
             telemetry.addLine("No duck found (initially)");
         } else {
             telemetry.addData("Duck x position", initialPoint.x);
         }
         telemetry.update();
-        if(initialPoint == null || initialPoint.x < 80) {
-            chassis.frontLeft.setPower(-0.3);
-            chassis.frontRight.setPower(0.3);
-            chassis.backLeft.setPower(0.3);
-            chassis.backRight.setPower(-0.3);
-            while(pipeline2.getFirstCenter() == null || pipeline2.getFirstCenter().x < 80) {
+        if(initialPoint == null || initialPoint.x < 70) {
+            chassis.frontLeft.setPower(-0.5);
+            chassis.frontRight.setPower(0.5);
+            chassis.backLeft.setPower(0.5);
+            chassis.backRight.setPower(-0.5);
+            while(pipeline2.getDuckCenter() == null || pipeline2.getDuckCenter().x < 30) {
                 // Wait until the duck is even with the intake
-                if(chassis.frontLeft.getCurrentPosition() - startPos < -800 && pipeline2.getFirstCenter() == null) {
-                    // If the robot failed to spin the carousel and/or the duck isn't there, only search for 800 ticks
+                if(chassis.frontLeft.getCurrentPosition() - startPos < -1800 && pipeline2.getDuckCenter() == null) {
+                    // If the robot failed to spin the carousel and/or the duck isn't there, only search for 1800 ticks
                     break;
                 }
             }
@@ -178,22 +178,22 @@ public class PlaceDuckRed extends LinearOpMode {
             chassis.frontRight.setPower(0);
             chassis.backLeft.setPower(0);
             chassis.backRight.setPower(0);
-        } else if(initialPoint.x > 120) {
+        } else if(initialPoint.x > 110) {
             chassis.strafeRightWithEncoders(0.3,(int)initialPoint.x - 50);
         }
         int deltaPos = chassis.frontLeft.getCurrentPosition() - startPos;
 
         // Pick up the duck
         intake.intakeMotor.setPower(0.9);
-        chassis.moveForwardWithEncoders(0.2,500);
-        delay(400);
+        chassis.moveForwardWithEncoders(0.2,400);
+        delay(1000);
 
         // Place the duck
         chassis.moveBackwardWithEncoders(0.6,100);
         delay(200);
-        chassis.strafeLeftWithEncoders(0.6,1950 + deltaPos); // Account for movement to get the duck
+        chassis.strafeLeftWithEncoders(0.8,2050 + deltaPos); // Account for movement to get the duck
         delay(200);
-        chassis.moveBackwardWithEncoders(0.6,625);
+        chassis.moveBackwardWithEncoders(0.6,575);
         intake.intakeMotor.setPower(0);
         lift.goTo(1350,0.8);
         delay(700);
@@ -205,9 +205,9 @@ public class PlaceDuckRed extends LinearOpMode {
 
         // Drive into the warehouse
         chassis.moveForwardWithEncoders(0.6,500);
-        chassis.rotate(90,0.5);
-        chassis.strafeRightWithEncoders(0.5,800);
-        chassis.moveForwardWithEncoders(0.6, 3000);
+        chassis.rotateToGlobalAngle(90,0.5);
+        chassis.strafeRightWithEncoders(0.5,750);
+        chassis.moveForwardWithEncoders(0.8, 3000);
     }
 
     public void delay(int time) {
