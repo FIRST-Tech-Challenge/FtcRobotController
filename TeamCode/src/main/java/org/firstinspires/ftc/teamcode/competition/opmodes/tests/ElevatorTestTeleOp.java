@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.competition.utils.gamepads.GamepadManager;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 import org.firstinspires.ftc.teamcode.competition.utils.io.InputSpace;
 import org.firstinspires.ftc.teamcode.competition.utils.io.OutputSpace;
 import org.firstinspires.ftc.teamcode.competition.utils.locations.ElevatorBottomLimitSwitchLocation;
@@ -24,7 +25,7 @@ public class ElevatorTestTeleOp extends LinearOpMode {
         resetStartTime();
         while(opModeIsActive()) {
             telemetry.addData("Tank? ", input.getTank().getInternalInteractionSurface());
-            int inputVal = (int) Range.clip(gamepads.functionOneGamepad().left_stick_y * 25, -25, 25);
+            int inputVal = ((StandardMotor) input.getElevatorLeftLift().getInternalInteractionSurface()).getDcMotor().getCurrentPosition() > -200 ? (int) Range.clip(gamepads.functionOneGamepad().left_stick_y * 25, -5, 3) : (int) Range.clip(gamepads.functionOneGamepad().left_stick_y * 25, -25, 10);
             if(inputVal < 0 || output.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 0) {
                 input.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, inputVal);
                 input.sendInputToElevatorRightLift(ElevatorRightLiftMotorLocation.Action.SET_SPEED, inputVal);

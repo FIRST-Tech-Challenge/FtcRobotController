@@ -24,7 +24,11 @@ public class ElevatorTestAutonomous extends LinearOpMode {
         resetStartTime();
         int inputVal = -6;
         input.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.MOVE_DISTANCE_IN_INCHES, inputVal);
-        while(opModeIsActive());
+        while(opModeIsActive()) {
+            if(output.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 1) {
+                input.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, 0);
+            }
+        }
         stop();
     }
 

@@ -89,7 +89,7 @@ public class StandardMotor extends InteractionSurface {
     /**
      * Drives the motor a certain distance.
      * @param distance The distance to drive in inches.
-     * @param speed The maximum speed of the motor. The speed may be anywhere between -1 and this value, depending on where the motor is. This value cannot be below 0 though.
+     * @param speed The maximum speed of the motor. The speed may be anywhere between -100 and 100.
      * @throws IllegalArgumentException The error to throw when the maximum speed is not between -100 and 100.
      * @throws IllegalStateException The error to throw when the motor's TYPE != MotorType.COMPLEX.
      */
