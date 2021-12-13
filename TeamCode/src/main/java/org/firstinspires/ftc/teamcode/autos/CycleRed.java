@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "Non-Roadrunner Cycle Auto (Red)", group = "Sensor")
+@Autonomous(name = "Non-Roadrunner Cycle Auto (Red)", group = "Autonomous")
 public class CycleRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();

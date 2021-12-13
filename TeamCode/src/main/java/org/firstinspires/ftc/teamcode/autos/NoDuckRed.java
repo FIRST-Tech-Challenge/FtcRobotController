@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "Auto Minus Duck (Red)", group = "Sensor")
+@Autonomous(name = "Auto Minus Duck (Red)", group = "Autonomous")
 public class NoDuckRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();

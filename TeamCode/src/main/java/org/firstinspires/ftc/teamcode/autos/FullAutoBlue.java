@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.Constants.LEVEL_2;
 import static org.firstinspires.ftc.teamcode.Constants.LEVEL_3;
 import static org.firstinspires.ftc.teamcode.Constants.LIFT_SPEED;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,6 +25,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+@Disabled
 @Autonomous(name = "(old) Auto (Blue)", group = "Sensor")
 public class FullAutoBlue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();

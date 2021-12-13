@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.mechanism.Carousel;
 import org.firstinspires.ftc.teamcode.mechanism.Color;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
-@Autonomous(name = "Test", group = "Sensor")
+@Autonomous(group = "Test")
 public class Test extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();

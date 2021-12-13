@@ -27,7 +27,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "Auto (Red)", group = "Sensor")
+@Autonomous(name = "Auto (Red)", group = "Autonomous")
 public class PlaceDuckRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();

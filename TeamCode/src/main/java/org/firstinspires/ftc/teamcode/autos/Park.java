@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.mechanism.Carousel;
 import org.firstinspires.ftc.teamcode.mechanism.Color;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
-@Autonomous(name = "Park", group = "Sensor")
+@Autonomous(name = "Park", group = "Autonomous")
 public class Park extends LinearOpMode {
     private MecanumChassis chassis = new MecanumChassis();
     private Carousel carousel = new Carousel(Color.BLUE);

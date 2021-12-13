@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanism.chassis.MecanumChassis;
 
-@Autonomous
+@Autonomous(group="Test")
 public class EncoderTest extends LinearOpMode {
 
     @Override
