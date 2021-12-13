@@ -78,7 +78,7 @@ public class MecanumTeleOp extends LinearOpMode {
              */
             armCurrentPos = robot.motorArm.getCurrentPosition();
 
-            if (robot.armLimitSwitch.isPressed() && armLimitSwitchFlag == false){
+            /*if (robot.armLimitSwitch.isPressed() && armLimitSwitchFlag == false){
                 // Reset to 0 if the magnetic limit switch is pressed and our flag is set to false
                 robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);  
@@ -106,7 +106,28 @@ public class MecanumTeleOp extends LinearOpMode {
                 if( armCurrentPos > 20 && !robot.armLimitSwitch.isPressed()) {
                     armLimitSwitchFlag = false;
                 }
+            }*/
+
+            // Arm Up and Arm Down in small increments
+            if (gamepad2.right_stick_y != 0.25) {
+                //armSetPos += gamepad2.right_stick_y*10;
+                if (gamepad2.right_stick_y == -1 ){
+                    armSetPos = armSetPos + 5;
+                } else if (gamepad2.right_stick_y == 1 ) {
+                    armSetPos = armSetPos - 5;
+                }
             }
+            //set arm positions to gamepad.2 buttons
+            if (gamepad2.a) {
+                armSetPos = armLevel0;
+            }else if (gamepad2.x) {
+                armSetPos = armLevel1;
+            }else if (gamepad2.y) {
+                armSetPos = armLevel2;
+            }else if (gamepad2.b) {
+                armSetPos = armLevel3;
+            }
+
             //set arm power
             robot.motorArm.setTargetPosition(armSetPos);
             robot.motorArm.setPower(0.5);
