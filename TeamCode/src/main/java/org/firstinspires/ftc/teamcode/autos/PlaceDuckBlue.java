@@ -27,7 +27,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "Place Duck (Blue)", group = "Sensor")
+@Autonomous(name = "Auto (Blue)", group = "Autonomous")
 public class PlaceDuckBlue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();
@@ -124,7 +124,7 @@ public class PlaceDuckBlue extends LinearOpMode {
             lift.goTo(LEVEL_1,LIFT_SPEED);
             delay(300);
         } else if (level == 2) {
-            lift.goTo(LEVEL_2,LIFT_SPEED);
+            lift.goTo(LEVEL_2-50,LIFT_SPEED);
             delay(400);
         } else {
             lift.goTo(LEVEL_3, LIFT_SPEED);
@@ -137,12 +137,12 @@ public class PlaceDuckBlue extends LinearOpMode {
         lift.goTo(0,LIFT_SPEED);
 
         // Move to the carousel and spin it
-        chassis.moveForwardWithEncoders(0.6,400);
+        chassis.moveForwardWithEncoders(0.6,350);
         chassis.rotateToGlobalAngle(-90,0.6);
         chassis.moveBackwardWithEncoders(0.6,2200);
         chassis.moveBackwardWithEncoders(0.3,200);
         chassis.moveForwardWithEncoders(0.5,25);
-        chassis.strafeLeftWithEncoders(0.3,500);
+        chassis.strafeLeftWithEncoders(0.3,350);
         carousel.turnCarousel();
         delay(3000);
         carousel.carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -150,7 +150,8 @@ public class PlaceDuckBlue extends LinearOpMode {
 
         // Locate and move towards the duck
         chassis.strafeRightWithEncoders(0.6,50);
-        chassis.moveForwardWithEncoders(0.6,500);
+        chassis.moveBackwardWithEncoders(0.3,150);
+        chassis.moveForwardWithEncoders(0.6,400);
         chassis.rotateToGlobalAngle(0,0.5);
         delay(100);
         int startPos = chassis.frontLeft.getCurrentPosition();
@@ -184,15 +185,16 @@ public class PlaceDuckBlue extends LinearOpMode {
 
         // Pick up the duck
         intake.intakeMotor.setPower(0.9);
-        chassis.moveForwardWithEncoders(0.2,400);
+        chassis.moveForwardWithEncoders(0.2,600);
         delay(1000);
 
         // Place the duck
         chassis.moveBackwardWithEncoders(0.6,100);
         delay(200);
-        chassis.strafeRightWithEncoders(0.8,2150 - deltaPos); // Account for movement to get the duck
+        chassis.rotateToGlobalAngle(0,0.3);
+        chassis.strafeRightWithEncoders(0.8,2100 - deltaPos); // Account for movement to get the duck
         delay(200);
-        chassis.moveBackwardWithEncoders(0.6,575);
+        chassis.moveBackwardWithEncoders(0.6,450);
         intake.intakeMotor.setPower(0);
         lift.goTo(LEVEL_3,LIFT_SPEED);
         delay(700);
@@ -206,7 +208,9 @@ public class PlaceDuckBlue extends LinearOpMode {
         chassis.moveForwardWithEncoders(0.6,500);
         chassis.rotateToGlobalAngle(-90,0.5);
         chassis.strafeLeftWithEncoders(0.5,750);
-        chassis.moveForwardWithEncoders(0.8, 3000);
+        chassis.strafeRightWithEncoders(0.5,10);
+        chassis.moveForwardWithEncoders(0.8, 2600);
+        chassis.strafeRightWithEncoders(0.5,50);
     }
 
     public void delay(int time) {
