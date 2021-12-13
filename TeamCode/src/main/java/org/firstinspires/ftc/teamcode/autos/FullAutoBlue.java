@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.autos;
 
 import static org.firstinspires.ftc.teamcode.Constants.HOPPER_BOTTOM;
 import static org.firstinspires.ftc.teamcode.Constants.HOPPER_TOP;
+import static org.firstinspires.ftc.teamcode.Constants.LEVEL_1;
+import static org.firstinspires.ftc.teamcode.Constants.LEVEL_2;
+import static org.firstinspires.ftc.teamcode.Constants.LEVEL_3;
+import static org.firstinspires.ftc.teamcode.Constants.LIFT_SPEED;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -56,7 +60,7 @@ public class FullAutoBlue extends LinearOpMode {
         waitForStart();
         // Start button is pressed
 
-        // Get the placement of the shipping element 100 times and pick the most frequent position
+        // Get the placement of the shipping element 50 times and pick the most frequent position
         int level;
         int[] counts = {0,0,0};
         for(int i=0;i<50;i++) {
@@ -87,20 +91,20 @@ public class FullAutoBlue extends LinearOpMode {
 
         // Deposit the box on the correct level
         if(level == 1) {
-            lift.goTo(450,0.8);
+            lift.goTo(LEVEL_1,LIFT_SPEED);
             delay(300);
         } else if (level == 2) {
-            lift.goTo(900,0.8);
+            lift.goTo(LEVEL_2,LIFT_SPEED);
             delay(400);
         } else {
-            lift.goTo(1450, 0.8);
+            lift.goTo(LEVEL_3, LIFT_SPEED);
             delay(500);
         }
         hopper.hopper.setPosition(HOPPER_TOP);
         delay(1200);
         hopper.hopper.setPosition(HOPPER_BOTTOM);
         delay(200);
-        lift.goTo(0,0.8);
+        lift.goTo(0,LIFT_SPEED);
 
         // Move to the carousel and spin it
         chassis.moveForwardWithEncoders(0.6,400);

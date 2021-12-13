@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.mechanism;
 
+import static org.firstinspires.ftc.teamcode.Constants.LIFT_SPEED;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -36,7 +38,7 @@ public class Lift implements Mechanism {
             }
             targetPosition -= gamepad.left_stick_y * 20;
             targetPosition = Range.clip(targetPosition, 0, 1475);
-            goTo((int) targetPosition, 0.8);
+            goTo((int) targetPosition, LIFT_SPEED);
         }
     }
 

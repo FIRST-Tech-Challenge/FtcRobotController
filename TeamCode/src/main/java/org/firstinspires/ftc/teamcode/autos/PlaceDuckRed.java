@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Constants.HOPPER_TOP;
 import static org.firstinspires.ftc.teamcode.Constants.LEVEL_1;
 import static org.firstinspires.ftc.teamcode.Constants.LEVEL_2;
 import static org.firstinspires.ftc.teamcode.Constants.LEVEL_3;
+import static org.firstinspires.ftc.teamcode.Constants.LIFT_SPEED;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,7 +27,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "Place Duck (Red)", group = "Sensor")
+@Autonomous(name = "Auto (Red)", group = "Sensor")
 public class PlaceDuckRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();
@@ -120,20 +121,20 @@ public class PlaceDuckRed extends LinearOpMode {
 
         // Deposit the box on the correct level
         if(level == 1) {
-            lift.goTo(LEVEL_1,0.8);
+            lift.goTo(LEVEL_1,LIFT_SPEED);
             delay(300);
         } else if (level == 2) {
-            lift.goTo(LEVEL_2,0.8);
+            lift.goTo(LEVEL_2,LIFT_SPEED);
             delay(400);
         } else {
-            lift.goTo(LEVEL_3, 0.8);
+            lift.goTo(LEVEL_3, LIFT_SPEED);
             delay(600);
         }
         hopper.hopper.setPosition(HOPPER_TOP);
         delay(1200);
         hopper.hopper.setPosition(HOPPER_BOTTOM);
         delay(200);
-        lift.goTo(0,0.8);
+        lift.goTo(0,LIFT_SPEED);
 
         // Move to the carousel and spin it
         chassis.moveForwardWithEncoders(0.6,700);
@@ -195,13 +196,13 @@ public class PlaceDuckRed extends LinearOpMode {
         delay(200);
         chassis.moveBackwardWithEncoders(0.6,575);
         intake.intakeMotor.setPower(0);
-        lift.goTo(1350,0.8);
+        lift.goTo(LEVEL_3,LIFT_SPEED);
         delay(700);
         hopper.hopper.setPosition(HOPPER_TOP);
         delay(1200);
         hopper.hopper.setPosition(HOPPER_BOTTOM);
         delay(200);
-        lift.goTo(0,0.8);
+        lift.goTo(0,LIFT_SPEED);
 
         // Drive into the warehouse
         chassis.moveForwardWithEncoders(0.6,500);
