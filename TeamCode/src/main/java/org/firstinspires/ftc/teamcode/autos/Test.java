@@ -25,8 +25,8 @@ public class Test extends LinearOpMode {
         chassis.moveBackwardByTime(0.5,1000);
         chassis.strafeLeftByTime(0.5,1000);
         chassis.strafeRightByTime(0.5,1000);
-        chassis.rotate(-90,0.5);
-        chassis.rotate(90,0.5);
+        chassis.rotateToGlobalAngle(90,0.5);
+        chassis.rotateToGlobalAngle(0,0.5);
     }
 
 }

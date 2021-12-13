@@ -350,18 +350,16 @@ public class MecanumChassis extends Chassis {
      */
     public void rotateToGlobalAngle(int degrees, double power) throws InterruptedException {
 
-        // restart imu movement tracking.
-        globalAngle = getGlobalAngle();
+        // get the initial angle of rotation.
+        double initialAngle = getGlobalAngle();
+        double deltaDegrees = degrees - initialAngle;
 
         // getAngle() returns + when rotating counter clockwise (left) and - when rotating
         // clockwise (right).
 
-        if (degrees < 0) {   // turn right.
+        if (deltaDegrees < 0) {   // turn right.
             power = -power;
-
-        } else if (degrees > 0) {   // turn left.
-            return;//power = power; dont need to change anything because assuming the power is already positive, that should make the robot turn right when put into the turn function
-        } else return;
+        }
 
         // set power to rotate.
         frontRight.setPower(power);
@@ -369,17 +367,27 @@ public class MecanumChassis extends Chassis {
         frontLeft.setPower(-power);
         backLeft.setPower(-power);
 
+        double tempPower;
         // rotate until turn is completed.
-        if (degrees < 0) {
-            // On right turn we have to get off zero first.
-            while (getAngle() == 0) {
+        if (deltaDegrees < 0) {
+            // right turn
+            while (getGlobalAngle() > degrees && degrees - getGlobalAngle() >= deltaDegrees - 10) {
+                tempPower = power * (getGlobalAngle() - degrees) / deltaDegrees + 0.1;
+                frontRight.setPower(-tempPower);
+                backRight.setPower(-tempPower);
+                frontLeft.setPower(tempPower);
+                backLeft.setPower(tempPower);
             }
-
-            while (getAngle() > degrees) {
+        } else {
+            // left turn.
+            while (getGlobalAngle() < degrees && degrees - getGlobalAngle() <= deltaDegrees + 10) {
+                tempPower = power * (degrees - getGlobalAngle()) / deltaDegrees + 0.1;
+                frontRight.setPower(tempPower);
+                backRight.setPower(tempPower);
+                frontLeft.setPower(-tempPower);
+                backLeft.setPower(-tempPower);
             }
-        } else    // left turn.
-            while (getAngle() < degrees) {
-            }
+        }
 
         // turn the motors off.
         frontLeft.setPower(0);
