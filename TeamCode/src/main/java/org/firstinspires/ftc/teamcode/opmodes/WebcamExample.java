@@ -115,10 +115,11 @@ public class WebcamExample extends LinearOpMode
             telemetry.addData("shippinghublevel", pipeline.getShippingHubLevel());
             telemetry.addData("leftrectaverage", pipeline.getLeftValue());
             telemetry.addData("rightrectaverage", pipeline.getRightValue());
-            if(pipeline2.getFirstCenter() == null) {
+            if(pipeline2.getDuckCenter() == null) {
                 telemetry.addLine("No duck found");
             } else {
-                telemetry.addData("Duck 0 x position", pipeline2.getFirstCenter().x);
+                telemetry.addData("Duck 0 x position", pipeline2.getDuckCenter().x);
+                telemetry.addData("Duck yaw", Math.toDegrees(pipeline2.calculateYaw(0)));
             }
             telemetry.update();
 

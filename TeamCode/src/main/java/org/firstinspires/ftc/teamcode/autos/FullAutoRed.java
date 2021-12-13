@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Disabled
-@Autonomous(name = "Auto (Red)", group = "Sensor")
+@Autonomous(name = "(old) Auto (Red)", group = "Sensor")
 public class FullAutoRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private MecanumChassis chassis = new MecanumChassis();
