@@ -90,7 +90,9 @@ public class MotorDirectionDebugger extends LinearOpMode {
             }
             byte i = 0;
             for (DcMotorEx motor : drive.motors) {
-                telemetry.addData(String.valueOf(i), motor.getVelocity());
+                final String motorValue = "Motor " + String.valueOf(i);
+                telemetry.addData(motorValue + " velocity", motor.getVelocity());
+                telemetry.addData(motorValue + " power", motor.getPower());
                 i++;
             }
             telemetry.update();

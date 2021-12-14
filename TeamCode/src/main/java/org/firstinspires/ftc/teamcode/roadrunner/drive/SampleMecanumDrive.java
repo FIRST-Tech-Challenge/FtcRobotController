@@ -101,27 +101,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         leftFront = hardwareMap.get(DcMotorEx.class, "front left wheel");
         leftRear = hardwareMap.get(DcMotorEx.class, "back left wheel");
-        rightRear = hardwareMap.get(DcMotorEx.class, "back right+ wheel");
+        rightRear = hardwareMap.get(DcMotorEx.class, "back right wheel");
         rightFront = hardwareMap.get(DcMotorEx.class, "front right wheel");
-        /*
-        leftFront = hardwareMap.get(DcMotorEx.class, "front left wheel");
-        leftRear = hardwareMap.get(DcMotorEx.class, "front right wheel");
-        rightRear = hardwareMap.get(DcMotorEx.class, "back left wheel");
-        rightFront = hardwareMap.get(DcMotorEx.class, "back right wheel");
-         */
 
-        //front left = front right
-        // front right = rear right
-        // rear right  = front left
-        // rear left correct
-
-
-        /*
-        rear left is not outputting
-        rear right is outputting to the rear left motor port - cable 2 should be in 1
-        front right is outputting to rear right - cable in 0 should b
-        front left is outputtin to front right
-         */
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (DcMotorEx motor : motors) {
@@ -141,6 +123,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
@@ -270,7 +253,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public List<Double> getWheelPositions() {
         List<Double> wheelPositions = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
+            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition() * (motor == leftFront || motor == rightFront ? -1 : 1)));
         }
         return wheelPositions;
     }
@@ -279,7 +262,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public List<Double> getWheelVelocities() {
         List<Double> wheelVelocities = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
+            wheelVelocities.add(encoderTicksToInches(motor.getVelocity() * (motor == leftFront || motor == rightFront ? -1 : 1)));
         }
         return wheelVelocities;
     }
