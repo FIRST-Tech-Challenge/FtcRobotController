@@ -79,6 +79,7 @@ public class AdrianTest extends AdrianMecanumControls {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+
         drive.ArmLifter(1,4);
         sleep(2000);
         drive.ArmLifter(2,4);

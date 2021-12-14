@@ -123,7 +123,7 @@ public class AutoWithParkingInWearhouse extends LinearOpMode {
                 .build();
 //Level High
         Trajectory goToBasketTowerLevelHigh = drive.trajectoryBuilder(goToBasketTowerStrafe.end())
-                .lineTo(new Vector2d(-12, -48.5 * teamColor))
+                .lineTo(new Vector2d(-12, -47.5 * teamColor))
                 .build();
 
         Trajectory gobackfromBasketTowerLevelHigh = drive.trajectoryBuilder(goToBasketTowerLevelHigh.end())
@@ -136,7 +136,7 @@ public class AutoWithParkingInWearhouse extends LinearOpMode {
                 .build();
 //Level Low
         Trajectory goToBasketTowerLevelLow = drive.trajectoryBuilder(goToBasketTowerStrafe.end())
-                .lineTo(new Vector2d(-12, -54.5 * teamColor))
+                .lineTo(new Vector2d(-12, -53.2 * teamColor))
                 .build();
 
         Trajectory gobackfromBasketTowerLevelLow = drive.trajectoryBuilder(goToBasketTowerLevelLow.end())

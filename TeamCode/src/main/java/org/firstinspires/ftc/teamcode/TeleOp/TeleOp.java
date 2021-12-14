@@ -24,10 +24,11 @@ public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+
         waitForStart();
 
         MecanumDrive6340 drive = new MecanumDrive6340(hardwareMap);
-
+       // drive.armMinPowerDuringHold = 0.176;
         PIDFCoefficients SHOOTER_PID = new PIDFCoefficients(30, 0, 0, 13);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -35,13 +36,13 @@ public class TeleOp extends LinearOpMode {
         drive.shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int startPosition=0;
         int poistionOfArm =0;
-
+/*
         startPosition = drive.ArmMotor.getCurrentPosition();
         int endPosition = startPosition;
         int level1endPosition = startPosition + 76;
         int level2endPosition = startPosition + 104;
         int level3endPosition = startPosition + 176;
-
+*/
        // drive.ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (opModeIsActive()) {
@@ -59,6 +60,11 @@ public class TeleOp extends LinearOpMode {
                 drive.ArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
                 drive.ArmMotor.setPower(gamepad1.right_trigger*0.35);
             }
+            if (gamepad1.left_trigger>0){
+                drive.ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+                drive.ArmMotor.setPower(gamepad1.left_trigger*0.3);
+            }
+
             if (drive.digitalTouch.getState() == true) {
                 telemetry.addData("Digital Touch", "Is Not Pressed");
             }
@@ -75,22 +81,64 @@ public class TeleOp extends LinearOpMode {
             }
             if (gamepad2.dpad_down) // X is intake system
                 drive.spinwheelstop();
-            if (gamepad1.y) // X is intake system
+            if (gamepad2.y) // X is intake system
             {
              drive.ArmLifter(3,4);
+               /*
+                drive.RotorArmFunctionGo();
+                sleep(1000);
+                drive.RotorArmStop();
+                drive.outTakeblocks();
+                sleep(2000);
+                drive.stopIntakeBlocks();
+                drive.RotorArmFunctionBack();
+                sleep(1000);
+                drive.RotorArmStop();
+                drive.ArmMotor.setPower(0.0);
+                */
+
             }
-            if (gamepad1.b) // X is intake system
+            if (gamepad2.b) // X is intake system
             {
                 drive.ArmLifter(2,4);
+                /*
+                drive.RotorArmFunctionGo();
+                sleep(1000);
+                drive.RotorArmStop();
+                drive.outTakeblocks();
+                sleep(2000);
+                drive.stopIntakeBlocks();
+                drive.RotorArmFunctionBack();
+                sleep(1000);
+                drive.RotorArmStop();
+                drive.ArmMotor.setPower(0.0);
+
+                 */
             }
-            if (gamepad1.a) // X is intake system
+            if (gamepad2.a) // X is intake system
             {
                 drive.ArmLifter(1,4);
+                /*
+                drive.RotorArmFunctionGo();
+                sleep(1000);
+                drive.RotorArmStop();
+                drive.outTakeblocks();
+                sleep(2000);
+                drive.stopIntakeBlocks();
+                drive.RotorArmFunctionBack();
+                sleep(1000);
+                drive.RotorArmStop();
+                drive.ArmMotor.setPower(0.0);
+
+                 */
             }
+       /*
             if (gamepad1.x) // X is intake system
             {
                 drive.ArmLifter(-1, 4);
             }
+
+        */
             if (gamepad2.right_bumper) // X is intake system
             {
                 drive.inTakeblocks();
@@ -136,9 +184,6 @@ public class TeleOp extends LinearOpMode {
 
 // Show the potentiometer’s voltage in telemetry
             telemetry.addData(("PostionLevel:"),poistionOfArm);
-            telemetry.addData(("startPosition:"),startPosition);
-            telemetry.addData(("endPosition:"),endPosition);
-
             telemetry.addData("Position", drive.ArmMotor.getCurrentPosition());
             telemetry.update();
             telemetry.update();

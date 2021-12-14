@@ -125,7 +125,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
 
         Trajectory GoToWearhouseLevelMiddle = drive.trajectoryBuilder(GoBackToStartLevelMiddle.end())
                 //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(52, -72*teamColor, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50, -72*teamColor, Math.toRadians(0)))
                 .build();
 
         Trajectory GoBackToStartLevelMiddleTwo = drive.trajectoryBuilder(GoToWearhouseLevelMiddle.end())
@@ -135,7 +135,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
                 .build();
 
         Trajectory goToBasketTowerLevelMiddleTwo = drive.trajectoryBuilder(GoBackToStartLevelMiddleTwo.end())
-                .lineToLinearHeading(new Pose2d(-14, -47.5 * teamColor, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-14, -47.5 *teamColor, Math.toRadians(90*teamColor)))
                 .build();
 
         Trajectory GoBackToStartLevelMiddleFinal = drive.trajectoryBuilder(goToBasketTowerLevelMiddleTwo.end())
@@ -150,12 +150,12 @@ public class AutoWithTwoBlocks extends LinearOpMode {
                 .build();
         Trajectory GoToWearhouseLevelMiddleFinal = drive.trajectoryBuilder(GoBackToStartLevelMiddleFinal.end())
                 //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(52, -60*teamColor, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(45, -72*teamColor, Math.toRadians(0)))
                 .build();
 
 //Level High
         Trajectory goToBasketTowerLevelHigh = drive.trajectoryBuilder(goToBasketTowerStrafe.end())
-                .lineTo(new Vector2d(-12, -48.5 * teamColor))
+                .lineTo(new Vector2d(-12, -47.5 * teamColor))
                 .build();
         Trajectory GoBackToStartLevelHigh = drive.trajectoryBuilder(goToBasketTowerLevelHigh.end())
                 //.splineToConst
@@ -170,7 +170,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
 
         Trajectory GoToWearhouseLevelHigh = drive.trajectoryBuilder(GoBackToStartLevelHigh.end())
                 //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(52, -72*teamColor, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50, -72*teamColor, Math.toRadians(0)))
                 .build();
 
         Trajectory GoBackToStartLevelHighTwo = drive.trajectoryBuilder(GoToWearhouseLevelHigh.end())
@@ -180,7 +180,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
                 .build();
 
         Trajectory goToBasketTowerLevelHighTwo = drive.trajectoryBuilder(GoBackToStartLevelHighTwo.end())
-                .lineToLinearHeading(new Pose2d(-14, -47.5 * teamColor, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-14, -47.5 * teamColor, Math.toRadians(90*teamColor)))
                 .build();
 
         Trajectory GoBackToStartLevelHighFinal = drive.trajectoryBuilder(goToBasketTowerLevelHighTwo.end())
@@ -195,7 +195,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
                 .build();
         Trajectory GoToWearhouseLevelHighFinal = drive.trajectoryBuilder(GoBackToStartLevelHighFinal.end())
                 //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(52, -60*teamColor, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(45, -72*teamColor, Math.toRadians(0)))
                 .build();
         
         
@@ -221,7 +221,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
 
         Trajectory GoToWearhouseLevelLow = drive.trajectoryBuilder(GoBackToStartLevelLow.end())
                 //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(52, -72*teamColor, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50, -72*teamColor, Math.toRadians(0)))
                 .build();
 
         Trajectory GoBackToStartLevelLowTwo = drive.trajectoryBuilder(GoToWearhouseLevelLow.end())
@@ -231,7 +231,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
                 .build();
 
         Trajectory goToBasketTowerLevelLowTwo = drive.trajectoryBuilder(GoBackToStartLevelLowTwo.end())
-                .lineToLinearHeading(new Pose2d(-14, -47.5 * teamColor, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-14, -47.5 * teamColor, Math.toRadians(90*teamColor)))
                 .build();
 
         Trajectory GoBackToStartLevelLowFinal = drive.trajectoryBuilder(goToBasketTowerLevelLowTwo.end())
@@ -246,7 +246,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
                 .build();
         Trajectory GoToWearhouseLevelLowFinal = drive.trajectoryBuilder(GoBackToStartLevelLowFinal.end())
                 //.splineToConstantHeading(new Vector2d( -65,-72), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(52, -60*teamColor, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(45, -72*teamColor, Math.toRadians(0)))
                 .build();
 
 
@@ -266,8 +266,13 @@ public class AutoWithTwoBlocks extends LinearOpMode {
         telemetry.addData(">", "Ready To Go Teammate. Let's Go ICE 6340!");
         telemetry.update();
         waitForStart();
+        drive.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(500);
         drive.ArmLifter(0,4);
         sleep(1000);
+        drive.RotorArmFunctionGo();
+        sleep(1000);
+        drive.RotorArmStop();
         VuforiaStuff.capElementPositionData posData = null;
         posData = vuforiaStuff.vuforiascan(true, true);
         double distanceToDropOffSkystone = 0;
@@ -316,7 +321,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
             sleep(2000);
             drive.stopIntakeBlocks();
             drive.followTrajectory(GoBackToStartLevelMiddleFinal);
-            drive.inTakeblocks();
+          //  drive.inTakeblocks();
             drive.followTrajectory(GoToWearhouseLevelMiddleFinal);
 
         }
@@ -339,7 +344,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
             sleep(2000);
             drive.stopIntakeBlocks();
             drive.followTrajectory(GoBackToStartLevelHighFinal);
-            drive.inTakeblocks();
+          //  drive.inTakeblocks();
             drive.followTrajectory(GoToWearhouseLevelHighFinal);
         }
         if(pos == VuforiaStuff.capElementPos.LEFT)
@@ -360,7 +365,7 @@ public class AutoWithTwoBlocks extends LinearOpMode {
             sleep(2000);
             drive.stopIntakeBlocks();
             drive.followTrajectory(GoBackToStartLevelLowFinal);
-            drive.inTakeblocks();
+          //  drive.inTakeblocks();
             drive.followTrajectory(GoToWearhouseLevelLowFinal);
         }
 
