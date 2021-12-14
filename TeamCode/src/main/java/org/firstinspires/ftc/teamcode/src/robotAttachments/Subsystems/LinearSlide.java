@@ -46,10 +46,6 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
         return dist < tolerence;
     }
 
-    public void finalize() {
-        this.end();
-    }
-
     public void setTargetHeight(int height) {
         chosenPosition = height;
     }

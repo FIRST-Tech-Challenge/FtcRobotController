@@ -36,7 +36,7 @@ public class ContinuousIntake {
     This next constructor has a parameter for the name of the color sensor in the configuration
     and a boolean value for to have the color sensor LED on or off
      */
-    public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName, String colorSensor, Boolean sensorDetectionLight) {
+    public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName, String colorSensor, boolean sensorDetectionLight) {
         intakeMotor = hardwareMap.dcMotor.get(motorName);
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

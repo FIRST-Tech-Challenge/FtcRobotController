@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
 
 @Autonomous(name = "RedCarouselMeet2")
 public class RedCarouselAutoMeet2 extends AutoObjDetectionTemplate {
-    LinearSlide slide;
 
     @Override
     public void runOpMode() throws InterruptedException {

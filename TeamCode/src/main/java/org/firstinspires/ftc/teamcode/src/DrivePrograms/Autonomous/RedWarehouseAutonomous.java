@@ -8,8 +8,6 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
 
 @Autonomous(name = "RedWarehouseAutonomous")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
-    LinearSlide slide;
-
     @Override
     public void runOpMode() throws InterruptedException {
         this.initAll();

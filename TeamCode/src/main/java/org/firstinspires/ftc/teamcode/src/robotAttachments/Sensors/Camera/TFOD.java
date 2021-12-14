@@ -25,9 +25,9 @@ public class TFOD extends TFObjectDetectorImpl {
     public TFOD(TFObjectDetector.Parameters tfodParameters, VuforiaLocalizer vuforiaLocalizer, HardwareMap hardwareMap) {
 
         super(tfodParameters, vuforiaLocalizer);
-        hardwareMap = hardwareMap;
+        this.hardwareMap = hardwareMap;
         vuforia = vuforiaLocalizer;
-        tfodParameters = tfodParameters;
+        this.tfodParameters = tfodParameters;
 
     }
 
