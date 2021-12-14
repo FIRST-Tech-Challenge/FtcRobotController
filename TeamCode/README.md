@@ -40,9 +40,9 @@ This year, there seems to be no conflicts, as FTC packaged everything in a diffe
     *.txt file with labels.
 It does not matter what you call them since you will be referencing the files by name in your code.
 
-* For an example of how to consume the detection, take a look at [TeamCode/skills/GenericDetector](https://github.com/MHSRoboticEagles/FtcRobotController/blob/1ad8e47f8932f2b5aa500d87c877d4dcd73968a8/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/skills/GenericDetector.java) class.
+* For an example of how to consume the detection, take a look at [TeamCode/skills/GenericDetector](https://github.com/MHSRoboticEagles/FtcRobotController/blob/235ca8cccc163215f3cb28e3d297cc7fa8876725/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/skills/GenericDetector.java) class.
 It is a wrapper of the tflite engine that we have in `tfrec` folder. This class is specific to the last season. Note that it is a runnable, to run on a separate thread. This is where we reference the file names of our model. Make sure to change them based on your model file names.
-You can use [TeamCode/OpMOdes/GenericRecognitionTest](https://github.com/MHSRoboticEagles/FtcRobotController/blob/1ad8e47f8932f2b5aa500d87c877d4dcd73968a8/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/OpModes/GenericRecognitionTest.java) as an example opmode that consumes the GenericDetector.
+You can use [TeamCode/OpMOdes/GenericRecognitionTest](https://github.com/MHSRoboticEagles/FtcRobotController/blob/235ca8cccc163215f3cb28e3d297cc7fa8876725/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/OpModes/GenericRecognitionTest.java) as an example opmode that consumes the GenericDetector.
 Both of these generic classes are meant to be a starting point from which you can build up the recognition logic for your specific needs.
 
 Note that we initialize the detector in the “init” phase of the Op mode. 
