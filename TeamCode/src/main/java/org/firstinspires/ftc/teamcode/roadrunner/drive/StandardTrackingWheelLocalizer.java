@@ -12,8 +12,10 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.toRadians;
 /*
- * Sample tracking wheel localizer implementation assuming the standard configuration:
+ * Sample tracking wheel localizer implementation assuming the stan'[dard configuration:
  *
  *    /--------------\
  *    |     ____     |
@@ -31,19 +33,19 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 0.748031; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
     public static double X_MULTIPLIER = 1; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
+    public static double Y_MULTIPLIER = 1.00483091787; // Multiplier in the Y direction
 
     // TODO: Make the lateral distance and forward offset not shit.
-    public static double LATERAL_DISTANCE = 2.25; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = 2.2027284927978528; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = 6.75; // in; offset of the lateral wheel
 
-    private Encoder leftEncoder, rightEncoder, frontEncoder;
+    private final Encoder leftEncoder, rightEncoder, frontEncoder;
 
     public StandardTrackingWheelLocalizer(@NonNull HardwareMap hardwareMap) {
         super(Arrays.asList(
                 new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
                 new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
-                new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
+                new Pose2d(FORWARD_OFFSET, 0, toRadians(90)) // front
         ));
 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
@@ -56,7 +58,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     }
 
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return WHEEL_RADIUS * 2 * PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
     @NonNull

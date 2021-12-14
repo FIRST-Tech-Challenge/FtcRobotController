@@ -50,6 +50,10 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 @Config
 @Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
+    // Accel (found max speed with 0.94) 43.15642598389812
+    // max speed 23.15642598389812 (switched first digit to 2 from 4)
+    // 12.95965989722095F
+
     public static double DISTANCE = 72; // in
 
     enum Mode {

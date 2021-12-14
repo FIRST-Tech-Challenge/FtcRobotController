@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
 
+import android.util.Pair;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -38,7 +41,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  *
  * Uncomment the @Disabled tag below to use this opmode.
  */
-@Disabled
 @Config
 @TeleOp(group = "drive")
 public class MotorDirectionDebugger extends LinearOpMode {
@@ -86,7 +88,13 @@ public class MotorDirectionDebugger extends LinearOpMode {
                 drive.setMotorPowers(0, 0, 0, 0);
                 telemetry.addLine("Running Motor: None");
             }
-
+            byte i = 0;
+            for (DcMotorEx motor : drive.motors) {
+                final String motorValue = "Motor " + String.valueOf(i);
+                telemetry.addData(motorValue + " velocity", motor.getVelocity());
+                telemetry.addData(motorValue + " power", motor.getPower());
+                i++;
+            }
             telemetry.update();
         }
     }
