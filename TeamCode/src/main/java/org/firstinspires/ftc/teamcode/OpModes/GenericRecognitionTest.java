@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
+import org.firstinspires.ftc.teamcode.bots.OutreachBot;
 import org.firstinspires.ftc.teamcode.skills.GenericDetector;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
@@ -19,13 +20,16 @@ public class GenericRecognitionTest extends LinearOpMode {
     // Declare OpMode members.
     private GenericDetector rf = null;
     private String result = "";
+    private OutreachBot bot = new OutreachBot();
 
     @Override
     public void runOpMode() {
         try {
             try {
-//                Led lights = new Led();
-//                lights.init(this.hardwareMap, telemetry);
+                //initialize the bot
+                bot.init(this, this.hardwareMap, telemetry);
+
+                //initialize the detector. It will run on its own thread continuously
                 rf = new GenericDetector(this.hardwareMap,  this,  telemetry);
                 Thread detectThread = new Thread(rf);
                 detectThread.start();
@@ -47,7 +51,12 @@ public class GenericRecognitionTest extends LinearOpMode {
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
-                telemetry.addData("Result", result);
+                //move the bot
+                double drive = gamepad1.left_stick_y;
+                bot.move(drive);
+
+                //show recognition result
+                telemetry.addData("Detection result", result);
                 telemetry.update();
             }
         } catch (Exception ex) {
