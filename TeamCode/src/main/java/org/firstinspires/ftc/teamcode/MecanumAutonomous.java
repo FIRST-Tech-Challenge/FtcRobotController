@@ -96,7 +96,6 @@ public class MecanumAutonomous extends LinearOpMode {
         //Run code while the opMode is active.
         if(opModeIsActive()) {
             //driveStraight(25,0.8,5.0);
-            //sleep(2000);
            drive(0,25, 0.8, 1.0);
            sleep(2000);
            drive(45,25, 0.8, 1.0);
@@ -164,24 +163,57 @@ public class MecanumAutonomous extends LinearOpMode {
     @param timeout Motor movement timeout (In Seconds) (Adjust accordingly, or just put 5)
     */
     public void drive(double degrees, double distance, double power, double timeout) {
-        double degreesToR = Math.toRadians(degrees);
+        double degreesToR = Math.toRadians(degrees - 90);
         double x = Math.cos(degreesToR);
-        double y = Math.sin(degreesToR);
+        double y = -Math.sin(degreesToR);
+        double rx = 0;
         double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
-        double frontLeftPower = ((y + x) / denominator);
-        double backLeftPower = ((y - x) / denominator);
-        double frontRightPower = ((y - x) / denominator);
-        double backRightPower = ((y + x) / denominator);
+        double frontLeftPower = ((y + x) + rx / denominator) * power;
+        double backLeftPower = ((y - x) + rx / denominator) * power;
+        double frontRightPower = ((y - x) + rx / denominator) * power;
+        double backRightPower = ((y + x) + rx / denominator) * power;
+        double travelDistance = driveDistance(distance);
+        DcMotor trackEncoderFor = robot.motorFrontLeft;
+        String trackEncoderForTelemetry = "Front Left";
+        if(
+                (degrees > 90 && degrees <= 180)
+                || (degrees < 360 && degrees >= 270)
+                || (degrees < -0 && degrees >= -90)
+        ){
+            trackEncoderFor = robot.motorFrontRight;
+            trackEncoderForTelemetry = "Front Right";
+        }
+
         //begin runtime for timeout.
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < timeout)) {
+
+        robot.restartEncoders();
+
+        while (opModeIsActive() && (runtime.seconds() < timeout) && Math.abs(trackEncoderFor.getCurrentPosition()) > travelDistance) {
             robot.motorFrontLeft.setPower(frontLeftPower);
             robot.motorBackLeft.setPower(backLeftPower);
             robot.motorFrontRight.setPower(frontRightPower);
             robot.motorBackRight.setPower(backRightPower);
+
+            // Examples of how to use telemetry!
+            telemetry.addData("degrees",degrees);
+            telemetry.addData("x",Math.abs(x));
+            telemetry.addData("y",Math.abs(y));
+            telemetry.addData("denominator", denominator);
+            telemetry.addData("trackEncoderFor", trackEncoderForTelemetry);
+            telemetry.addData("Track which motor?", trackEncoderFor.getCurrentPosition() );
+            telemetry.addData("m1 Current Pos", robot.motorFrontLeft.getCurrentPosition() );
+            telemetry.addData("m2 Current Pos", robot.motorFrontRight.getCurrentPosition() );
+            telemetry.addData("m1 Current Power", robot.motorFrontLeft.getPower() );
+            telemetry.addData("m2 Current Power", robot.motorFrontRight.getPower() );
+            telemetry.addData("m3 Current Power", robot.motorBackRight.getPower() );
+            telemetry.addData("m4 Current Power", robot.motorBackLeft.getPower() );
+            telemetry.addData("Travel Distance", travelDistance);
+            telemetry.update();
+
         }
         robot.setPowers(0);
-
+        robot.restartEncoders();
     }
     public void driveOLD(double degrees, double distance, double power, double timeout) {
        // distance = -distance;
