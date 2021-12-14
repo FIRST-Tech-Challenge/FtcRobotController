@@ -171,9 +171,9 @@ public class FrenzyModeBase extends LinearOpMode {
                 changedRotator1 = !changedRotator1;
 
                 if (changedRotator1) {
-                    robot.goDucks(true);//robot.startTurntableRed(); //change back MAKE SURE
+                    robot.startTurntableBlueGradual();//robot.startTurntableRed(); //change back MAKE SURE
                 } else {
-                    robot.stopTurntable();
+                    robot.startTurntableBlueGradual();
                 }
             }
         }
