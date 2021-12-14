@@ -52,7 +52,7 @@ public class forward extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
         tower1.setDirection(DcMotor.Direction.FORWARD);
-        tower2.setDirection(DcMotor.Direction.REVERSE);
+        tower2.setDirection(DcMotor.Direction.FORWARD);
 
         duckspinner.setDirection(CRServo.Direction.FORWARD);
 
