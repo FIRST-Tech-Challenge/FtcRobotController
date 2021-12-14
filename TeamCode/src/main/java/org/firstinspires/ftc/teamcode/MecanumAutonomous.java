@@ -95,12 +95,38 @@ public class MecanumAutonomous extends LinearOpMode {
 
         //Run code while the opMode is active.
         if(opModeIsActive()) {
+
+            // Test 0 degrees forward/back
+            drive(0, 30, 0.5, 8);
+            drive(180, 30, 0.5, 8);
+
+            // 90 degree square
+            drive(-90, 40, 0.5, 8);
+            drive(0, 40, 0.5, 8);
+            drive(90, 40, 0.5, 8);
+            drive(180, 40, 0.5, 8);
+
+            // 45 degree diagonals
+            drive(45, 30, 0.5, 8);
+            drive(-45, 30, 0.5, 8);
+            drive(-135, 30, 0.5, 8);
+            drive(135, 30, 0.5, 8);
+
+            // Check weird angles
+            drive(21, 20, 0.5, 8);
+            drive(98, 20, 0.5, 8);
+            drive(-22, 20, 0.5, 8);
+            drive(-126, 20, 0.5, 8);
+
+            sleep(3000);
+            
             //driveStraight(25,0.8,5.0);
-           drive(0,25, 0.8, 1.0);
+           driveByAngle(0,10, 0.8, 1.0);
            sleep(2000);
-           drive(45,25, 0.8, 1.0);
+
+           driveByAngle(45,10, 0.8, 1.0);
            sleep(2000);
-           drive(90,25, 0.8, 1.0);
+           driveByAngle(90,10, 0.8, 1.0);
            /*
            sleep(2000);
            drive(315,25, 0.8, 5.0);
@@ -109,6 +135,9 @@ public class MecanumAutonomous extends LinearOpMode {
            */
            //rotate(45, 0.8);
            //rotate(-45, 0.8);
+
+
+            sleep(20000);
         }
     }
 
@@ -165,7 +194,7 @@ public class MecanumAutonomous extends LinearOpMode {
     public void drive(double degrees, double distance, double power, double timeout) {
         double degreesToR = Math.toRadians(degrees - 90);
         double x = Math.cos(degreesToR);
-        double y = -Math.sin(degreesToR);
+        double y = Math.sin(degreesToR);
         double rx = 0;
         double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
         double frontLeftPower = ((y + x) + rx / denominator) * power;
@@ -186,8 +215,6 @@ public class MecanumAutonomous extends LinearOpMode {
 
         //begin runtime for timeout.
         runtime.reset();
-
-        robot.restartEncoders();
 
         while (opModeIsActive() && (runtime.seconds() < timeout) && Math.abs(trackEncoderFor.getCurrentPosition()) > travelDistance) {
             robot.motorFrontLeft.setPower(frontLeftPower);
@@ -215,137 +242,94 @@ public class MecanumAutonomous extends LinearOpMode {
         robot.setPowers(0);
         robot.restartEncoders();
     }
-    public void driveOLD(double degrees, double distance, double power, double timeout) {
-       // distance = -distance;
-        //Math to convert input(degrees) into x and y.
-        double degreesToR = Math.toRadians(degrees);
-        double x = Math.cos(degreesToR);
-        double y = Math.sin(degreesToR);
-        double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
-        //Convert the input distance into something useable by encoders.
-        int target = (int) (driveDistance(distance) * 0.66);
-        int direction = 1;
-        double slowdown = 1;
-        //Set motor targets based on direction.
-        if(degrees >= 0 && degrees <= 90) {
-            //Both wheels go backwards.
-            target = -target;
-            robot.motorFrontLeft.setTargetPosition(target);
-            robot.motorBackRight.setTargetPosition(target);
-            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            direction = 1;
-        }
-        if(degrees >90 && degrees < 180) {
-            //Both wheels go forward, no change needed.
-            robot.motorFrontRight.setTargetPosition(target);
-            robot.motorBackLeft.setTargetPosition(target);
-            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            direction = 2;
-        }
-        if(degrees >= 180 && degrees <= 270) {
-            //Both wheels go forward, no change needed.
-            robot.motorFrontLeft.setTargetPosition(target);
-            robot.motorBackRight.setTargetPosition(target);
-            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            direction = 3;
-        }
-        if(degrees > 270 && degrees < 360) {
-            //Both wheels go backwards.
-            target = -target;
-            robot.motorFrontRight.setTargetPosition(target);
-            robot.motorBackLeft.setTargetPosition(target);
-            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            direction = 4;
-        }
+
+
+    /*
+     Drive in any direction, distance in CM is tracked from the front left and right wheels.
+     Distance will not be exact due to mecanum wheel slip
+     @param degrees Direction to be driven (In degrees) (From 0 to 360 OR use negatives! ie, -90)
+     @param distance Distance to be driven (In centimeters, always positive)
+     @param scalePower Motor power (From 0.0 to 1.0), always positive think of as a magnitude of the calculated power
+     @param timeout Motor movement timeout (In Seconds) (Adjust accordingly, or just put 5)
+
+     NOTE, the robot simulator requires me to pass in the motors, you shouldn't need to do this!
+   */
+    public void driveByAngle(double degrees, double distance, double scalePower, double timeout) {
+
+        // Rotate the X axis - 1/4PI to point up
+        double degreesToR = Math.toRadians(degrees - 90); // -90deg to rotate the x axis forward
+        double x = Math.cos(degreesToR); // x is cosine, rotate X axis -90deg
+        double y = Math.sin(degreesToR); // y is sine, flipped robot like the joystick since forward is -1!
+        double rx = 0; // We can add rotate later! (like the right stick)
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+
+        // Combine x & y
+        double frontLeftbackRightPower   = ((y + x) + rx / denominator) * scalePower;
+        double frontRightbackLeftPower  = ((y - x) + rx / denominator) * scalePower;
+
+        // Calculate CM to encoder counts, distance will not be exact due to mecanum wheel slip
+        double travelDistance = driveDistance(distance);
+
         //begin runtime for timeout.
         runtime.reset();
-        //Set initial motor powers
-        robot.motorFrontLeft.setPower(((y + x) / denominator)*power);
-        robot.motorBackLeft.setPower(((y - x) / denominator)*power);
-        robot.motorFrontRight.setPower(((y - x) / denominator)*power);
-        robot.motorBackRight.setPower(((y + x) / denominator)*power);
-        if(direction == 2 || direction == 4){
-            while (opModeIsActive() && runtime.seconds() < timeout && (robot.motorFrontRight.isBusy() && robot.motorBackLeft.isBusy())) {
-                //Add slowdown to robot if distance traveled is over 75% of the way there (this changes based on direction)
-                if(direction == 1 && robot.motorFrontLeft.getCurrentPosition() > distance*0.75)
-                    slowdown = 0.25;
-                if(direction == 2 && robot.motorFrontRight.getCurrentPosition() < distance*0.75)
-                    slowdown = 0.25;
-                if(direction == 3 && robot.motorFrontLeft.getCurrentPosition() < distance*0.75)
-                    slowdown = 0.25;
-                if(direction == 4 && robot.motorFrontRight.getCurrentPosition() > distance*0.75)
-                    slowdown = 0.25;
-                //Calculate the power for the motors (takes direction and multiplies it by slowdown and power)
-                double newSpeed = slowdown*power;
-                double input1 = ((y + x) / denominator) * newSpeed;
-                double input2 = ((y - x) / denominator) * newSpeed;
-                //Set the motors to their correct powers
-                robot.motorFrontLeft.setPower(input1);
-                robot.motorBackLeft.setPower(input2);
-                robot.motorFrontRight.setPower(input2);
-                robot.motorBackRight.setPower(input1);
-                //Display telemetry for motor business
-                telemetry.addData("The Motors Are Busy:", robot.motorsBusy());
-                telemetry.update();
-            }
+
+        /* Which motor to track encoder counts for and how to track?
+         * Defaults to m1
+         * track m1 for the upper right quadrant and lower left quadrant
+         * track m2 for upper left quadrant and lower right quadrant
+         *
+         * This is a simpler way of tracking the encoder counts
+         * We can accomplish this by instantiating a new DcMotor trackEncoderFor
+         * and assigning the motor we would like to follow
+         *
+         * Also accounts for negative degress if someone enters -45
+         */
+        DcMotor trackEncoderFor = robot.motorFrontLeft;
+        String trackEncoderForTelemetry = "m1";
+        if( (
+                (degrees > 90 && degrees <= 180) )
+                || (degrees < 360 && degrees >= 270)
+                || (degrees < -0 && degrees >= -90)
+        ){
+            trackEncoderFor = robot.motorFrontRight;
+            trackEncoderForTelemetry = "m2";
         }
-        if(direction == 1 || direction == 3) {
-            while (opModeIsActive() && runtime.seconds() < timeout && (robot.motorFrontLeft.isBusy() && robot.motorBackRight.isBusy())) {
-                //Add slowdown to robot if distance traveled is over 75% of the way there (this changes based on direction)
-                if(direction == 1 && robot.motorFrontLeft.getCurrentPosition() > distance*0.75)
-                    slowdown = 0.25;
-                if(direction == 2 && robot.motorFrontRight.getCurrentPosition() < distance*0.75)
-                    slowdown = 0.25;
-                if(direction == 3 && robot.motorFrontLeft.getCurrentPosition() < distance*0.75)
-                    slowdown = 0.25;
-                if(direction == 4 && robot.motorFrontRight.getCurrentPosition() > distance*0.75)
-                    slowdown = 0.25;
-                //Calculate the power for the motors (takes direction and multiplies it by slowdown and power)
-                double newSpeed = slowdown*power;
-                double input1 = ((y + x) / denominator) * newSpeed;
-                double input2 = ((y - x) / denominator) * newSpeed;
-                //Set the motors to their correct powers
-                robot.motorFrontLeft.setPower(input1);
-                robot.motorBackLeft.setPower(input2);
-                robot.motorFrontRight.setPower(input2);
-                robot.motorBackRight.setPower(input1);
-                //Display telemetry for motor business
-                telemetry.addData("The Motors Are Busy:", robot.motorsBusy());
-                telemetry.update();
-            }
-        }
-        //Loop while the motors move to their target position
-        /*
-        while (opModeIsActive() && (runtime.seconds() < timeout) && (robot.motorsBusy())) {
-            //Add slowdown to robot if distance traveled is over 75% of the way there (this changes based on direction)
-            if(direction == 1 && robot.motorFrontLeft.getCurrentPosition() > distance*0.75)
-                slowdown = 0.25;
-            if(direction == 2 && robot.motorFrontRight.getCurrentPosition() < distance*0.75)
-                slowdown = 0.25;
-            if(direction == 3 && robot.motorFrontLeft.getCurrentPosition() < distance*0.75)
-                slowdown = 0.25;
-            if(direction == 4 && robot.motorFrontRight.getCurrentPosition() > distance*0.75)
-                slowdown = 0.25;
-            //Calculate the power for the motors (takes direction and multiplies it by slowdown and power)
-            double newSpeed = slowdown*power;
-            double input1 = ((y + x) / denominator) * newSpeed;
-            double input2 = ((y - x) / denominator) * newSpeed;
-            //Set the motors to their correct powers
-            robot.motorFrontLeft.setPower(input1);
-            robot.motorBackLeft.setPower(input2);
-            robot.motorFrontRight.setPower(input2);
-            robot.motorBackRight.setPower(input1);
-            //Display telemetry for motor business
-            telemetry.addData("The Motors Are Busy:", robot.motorsBusy());
+
+        /* During our while loop check the encoder travelDistance that
+         * we want to travel against the abs value of the current position
+         * Math.abs ensures we are always checking a positive value even if encoder is negative!
+         */
+        while (opModeIsActive()
+                && (runtime.seconds() < timeout)
+                && Math.abs(trackEncoderFor.getCurrentPosition()) < travelDistance
+        ) {
+            /* @TODO: If needed, add simple proportional slowdown here OR use the PIDController */
+
+            robot.motorFrontLeft.setPower(frontLeftbackRightPower); // front Left
+            robot.motorFrontRight.setPower(frontRightbackLeftPower); // front Right
+            robot.motorBackRight.setPower(frontLeftbackRightPower); // back Right
+            robot.motorBackLeft.setPower(frontRightbackLeftPower); // back Left
+
+            // Examples of how to use telemetry!
+            telemetry.addData("degrees",degrees);
+            telemetry.addData("x",Math.abs(x));
+            telemetry.addData("y",Math.abs(y));
+            telemetry.addData("denominator", denominator);
+            telemetry.addData("trackEncoderFor", trackEncoderForTelemetry);
+            telemetry.addData("Track which motor?", trackEncoderFor.getCurrentPosition() );
+            telemetry.addData("m1 Current Pos", robot.motorFrontLeft.getCurrentPosition() );
+            telemetry.addData("m2 Current Pos", robot.motorFrontRight.getCurrentPosition() );
+
+            telemetry.addData("m1 Current Power", robot.motorFrontLeft.getPower() );
+            telemetry.addData("m2 Current Power", robot.motorFrontRight.getPower() );
+            telemetry.addData("m3 Current Power", robot.motorBackRight.getPower() );
+            telemetry.addData("m4 Current Power", robot.motorBackLeft.getPower() );
+            telemetry.addData("Travel Distance", travelDistance);
             telemetry.update();
         }
-        */
-        //Stop the motors, then reset the encoder counts
-        robot.setPowers(0.0);
+        // Kill Power
+        robot.setPowers(0);
+        // Reset Encoders to 0 - this takes time in the loop, consider using relative position values
         robot.restartEncoders();
     }
 
