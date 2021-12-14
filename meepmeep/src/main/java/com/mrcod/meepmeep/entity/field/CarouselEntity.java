@@ -2,8 +2,6 @@ package com.mrcod.meepmeep.entity.field;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
-import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
-import com.noahbres.meepmeep.core.entity.ThemedEntity;
 import com.noahbres.meepmeep.core.util.FieldUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +12,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 
 public class CarouselEntity extends BasicThemedEntity {
+    private static final Color color = new Color(0, 0, 0);
     private final Vector2d position;
 
     public CarouselEntity(MeepMeep meepMeep, Vector2d position) {
@@ -32,7 +31,7 @@ public class CarouselEntity extends BasicThemedEntity {
         transform.scale(size, size);
 
         graphics2D.transform(transform);
-        graphics2D.setColor(new Color(0, 0, 0));
+        graphics2D.setColor(color);
         graphics2D.fillOval(0, 0, 1, 1);
         try {
             graphics2D.transform(transform.createInverse());
@@ -48,11 +47,6 @@ public class CarouselEntity extends BasicThemedEntity {
 
     @Override
     public void update(long l) {
-
-    }
-
-    @Override
-    public void switchScheme(@NotNull ColorScheme colorScheme) {
 
     }
 }

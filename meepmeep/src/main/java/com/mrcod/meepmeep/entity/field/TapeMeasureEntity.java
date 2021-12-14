@@ -16,6 +16,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 
 public class TapeMeasureEntity extends BasicThemedEntity {
+    private static final Color color = new Color(255, 218, 104);
     private final double maxLength;
     private final double speed;
 
@@ -26,7 +27,7 @@ public class TapeMeasureEntity extends BasicThemedEntity {
     public TapeMeasureEntity(MeepMeep meepMeep, Pose2d pose, double maxLength, double speed) {
         super(meepMeep, "TAPE_MEASURE_FIELD_ENTITY");
         this.maxLength = maxLength;
-        this.speed = speed;
+        this.speed = speed / 1000000000;
         this.pose = pose;
     }
 
@@ -42,14 +43,12 @@ public class TapeMeasureEntity extends BasicThemedEntity {
         transform.scale(width, -pixelLength);
 
         graphics2D.transform(transform);
-        graphics2D.setColor(new Color(255, 218, 104));
+        graphics2D.setColor(color);
         graphics2D.fillRect(0, 0, 1, 1);
 
         try {
             graphics2D.transform(transform.createInverse());
-        } catch (NoninvertibleTransformException e) {
-            e.printStackTrace();
-        }
+        } catch (NoninvertibleTransformException ignored) {}
     }
 
     public void setLength(double length) {
@@ -60,8 +59,8 @@ public class TapeMeasureEntity extends BasicThemedEntity {
         this.pose = pose;
     }
 
-    public void setExtending(boolean extend) {
-        this.extending = extend;
+    public void setExtending(boolean extending) {
+        this.extending = extending;
     }
 
     @Override
@@ -72,12 +71,7 @@ public class TapeMeasureEntity extends BasicThemedEntity {
     @Override
     public void update(long deltaTime) {
         if(this.extending && this.length < this.maxLength) {
-            this.length = Math.min(this.maxLength, this.length + (this.speed * deltaTime / 1000000000));
+            this.length = Math.min(this.maxLength, this.length + this.speed * deltaTime);
         }
-    }
-
-    @Override
-    public void switchScheme(@NotNull ColorScheme colorScheme) {
-
     }
 }

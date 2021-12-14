@@ -1,13 +1,11 @@
 package com.mrcod.meepmeep.entity.field;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
-import com.noahbres.meepmeep.core.entity.ThemedEntity;
+import com.noahbres.meepmeep.core.entity.Entity;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BasicThemedEntity implements ThemedEntity {
+public abstract class BasicThemedEntity implements Entity {
     private final MeepMeep meepMeep;
     private final String tag;
     private int zIndex = 0;
