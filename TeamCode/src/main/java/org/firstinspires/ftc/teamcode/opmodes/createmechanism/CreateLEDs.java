@@ -4,18 +4,20 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowAllianceColor;
-import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowTeamColors;
+import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowColor;
+//import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowTeamColors;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 
 public class CreateLEDs {
 
     private final GamepadEx op;
-    private LEDSubsystem m_leds;
+    private LEDSubsystem leds;
     private final HardwareMap hwMap;
     private final String deviceName;
+    private static final int LED_PERIOD = 10;
 
     public CreateLEDs (final HardwareMap hwMap, final String ledName, final GamepadEx op){
         this.op = op;
@@ -32,9 +34,9 @@ public class CreateLEDs {
     }
 
     public void create(){
-        ShowAllianceColor m_showAllianceBlueColorCommand;
-        ShowAllianceColor m_showAllianceRedColorCommand;
-        ShowTeamColors m_showTeamColorsCommand;
+        ShowColor m_showAllianceBlueColorCommand;
+        ShowColor m_showAllianceRedColorCommand;
+        ShowColor m_showTeamColorsCommand;
 
         //X (Blue) button
         Button blueAlliance = new GamepadButton(op, GamepadKeys.Button.X);
@@ -44,12 +46,12 @@ public class CreateLEDs {
         Button teamColors = new GamepadButton(op, GamepadKeys.Button.A);
 
         //create LED SubSystem
-        m_leds = new LEDSubsystem(hwMap,deviceName, 10);
+        leds = new LEDSubsystem(hwMap,deviceName, LED_PERIOD);
 
         //create commands
-        m_showAllianceBlueColorCommand = new ShowAllianceColor(m_leds, ShowAllianceColor.AllianceColor.BLUE);
-        m_showAllianceRedColorCommand = new ShowAllianceColor(m_leds, ShowAllianceColor.AllianceColor.RED);
-        m_showTeamColorsCommand = new ShowTeamColors(m_leds);
+        m_showAllianceBlueColorCommand = new ShowColor(leds, RevBlinkinLedDriver.BlinkinPattern.BLUE);
+        m_showAllianceRedColorCommand = new ShowColor(leds, RevBlinkinLedDriver.BlinkinPattern.RED);
+        m_showTeamColorsCommand = new ShowColor(leds, RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
 
         //assign buttons to commands
         blueAlliance.whenPressed(m_showAllianceBlueColorCommand);
