@@ -11,22 +11,22 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
 public class DetectTSEPosition extends CommandBase {
 
-    private final WebCamSubsystem m_webCamSubsytem;
+    private final WebCamSubsystem webCamSubsytem;
     private final OpenCvShippingElementDetector detector;
     private Telemetry telemetry;
     private Boolean gotPosition = false;
     private OpenCvShippingElementDetector.TSELocation location;
 
     public DetectTSEPosition(WebCamSubsystem subsystem){
-        m_webCamSubsytem = subsystem;
-        detector = (OpenCvShippingElementDetector) m_webCamSubsytem.getPipeline();
+        webCamSubsytem = subsystem;
+        detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
 
         addRequirements(subsystem);
     }
 
     public DetectTSEPosition(WebCamSubsystem subsystem, Telemetry telemetry){
-        m_webCamSubsytem = subsystem;
-        detector = (OpenCvShippingElementDetector) m_webCamSubsytem.getPipeline();
+        webCamSubsytem = subsystem;
+        detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -34,7 +34,7 @@ public class DetectTSEPosition extends CommandBase {
 
     @Override
     public void initialize(){
-        m_webCamSubsytem.openCameraDeviceAsync();
+        webCamSubsytem.openCameraDeviceAsync();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class DetectTSEPosition extends CommandBase {
 
     private void setLocation(){
         telemetry.addData("We have a 2", location);
-        m_webCamSubsytem.setLocation(location);
+        webCamSubsytem.setLocation(location);
         gotPosition = true;
     }
 

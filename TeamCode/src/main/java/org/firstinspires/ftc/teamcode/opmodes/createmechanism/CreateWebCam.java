@@ -4,10 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 
-import com.arcrobotics.ftclib.command.button.Button;
-import com.arcrobotics.ftclib.command.button.GamepadButton;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,8 +22,8 @@ public class CreateWebCam {
     private final String deviceName;
     private final FtcDashboard dashboard;
 
-    private DetectTSEPosition m_detectTSEPosition;
-    private StreamToDashboard m_streamToDashboard;
+    private DetectTSEPosition detectTSEPosition;
+    private StreamToDashboard streamToDashboard;
 
     public CreateWebCam(final HardwareMap hwMap, String webCamName, final FtcDashboard dashboard, final Telemetry telemetry){
 
@@ -50,18 +46,18 @@ public class CreateWebCam {
     public void create(){
         subsystem = new WebCamSubsystem(hwMap,deviceName,new OpenCvShippingElementDetector(640,480,telemetry));
 
-        m_detectTSEPosition = new DetectTSEPosition(subsystem, telemetry);
-        m_streamToDashboard = new StreamToDashboard(subsystem,dashboard);
+        detectTSEPosition = new DetectTSEPosition(subsystem, telemetry);
+        streamToDashboard = new StreamToDashboard(subsystem,dashboard);
         
-        m_streamToDashboard.schedule();
-        m_detectTSEPosition.schedule();
+        streamToDashboard.schedule();
+        detectTSEPosition.schedule();
 
-        CommandScheduler.getInstance().onCommandFinish( m_detectTSEPosition -> telemetry.addData("got position", subsystem.getLocation()));
+        CommandScheduler.getInstance().onCommandFinish( detectTSEPosition -> telemetry.addData("got position", subsystem.getLocation()));
 
     }
 
     public DetectTSEPosition getDetectTSEPositionCommand(){
-        return m_detectTSEPosition;
+        return detectTSEPosition;
 
     }
 

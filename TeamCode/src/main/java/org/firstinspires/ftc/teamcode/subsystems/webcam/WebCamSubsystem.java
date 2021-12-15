@@ -19,30 +19,34 @@ public class WebCamSubsystem extends SubsystemBase {
     private OpenCvWebcam webCam;
     private OpenCvPipeline pipeline;
 
-    private int MS_PERM_TO = 2500;
+    private int msPermTo = 2500;
 
     private int width = 640;
     private int height = 480;
+
+    private static final int MAX_FRAMES_PER_SECOND = 10;
+    private static final String ID_NAME = "cameraMonitorViewId";
+    private static final String ID_DEF_TYPE = "id";
 
     OpenCvShippingElementDetector.TSELocation location;
 
     public WebCamSubsystem(final HardwareMap hwMap, final String deviceName){
 
-        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier(ID_NAME, ID_DEF_TYPE, hwMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, deviceName), cameraMonitorViewId);
 
     }
 
     public WebCamSubsystem(final HardwareMap hwMap, final String deviceName, OpenCvPipeline pipeline){
 
-        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier(ID_NAME, ID_DEF_TYPE, hwMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, deviceName), cameraMonitorViewId);
         setPipeline(pipeline);
     }
 
     public WebCamSubsystem(final HardwareMap hwMap, final String deviceName, int msPermTo){
 
-        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier(ID_NAME, ID_DEF_TYPE, hwMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, deviceName), cameraMonitorViewId);
 
         setMSPermTO(msPermTo);
@@ -50,7 +54,7 @@ public class WebCamSubsystem extends SubsystemBase {
 
     public WebCamSubsystem(final HardwareMap hwMap, final String deviceName, int msPermTo, int width, int height){
 
-        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier(ID_NAME, ID_DEF_TYPE, hwMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, deviceName), cameraMonitorViewId);
 
         setMSPermTO(msPermTo);
@@ -59,7 +63,7 @@ public class WebCamSubsystem extends SubsystemBase {
     }
 
     public void setMSPermTO(int msPermTO){
-        MS_PERM_TO = msPermTO;
+        msPermTo = msPermTO;
     }
 
     public void setWidth(int w){
@@ -80,7 +84,7 @@ public class WebCamSubsystem extends SubsystemBase {
     }
 
     public void StreamToDashboard(FtcDashboard dashboard){
-        dashboard.startCameraStream(webCam, 10);
+        dashboard.startCameraStream(webCam, MAX_FRAMES_PER_SECOND);
     }
 
     public void openCameraDeviceAsync(){
