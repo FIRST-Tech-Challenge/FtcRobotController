@@ -6,7 +6,7 @@ public interface SensorWrapper {
     DistanceUnit units = DistanceUnit.CM;
 
     void setUnits(DistanceUnit unit);
-    double getData();
+    int getData();
     String getName();
     boolean didTimeoutOccur();
 }

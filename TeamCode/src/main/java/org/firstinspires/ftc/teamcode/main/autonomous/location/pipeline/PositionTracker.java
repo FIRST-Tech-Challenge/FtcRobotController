@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.MockDistanceSensor;
 
-public class PositionTracker {
+class PositionTracker {
     public Axis leftToRight;
     public Axis upAndDown;
 
@@ -28,8 +28,6 @@ public class PositionTracker {
     }
 
     private void EvalReadings(Axis.AxisReading eastWest, Axis.AxisReading northSouth) {
-        // TODO: Implement EvalReadings
-
         boolean eastWestValid = true;
         boolean northSouthValid = true;
 
@@ -45,6 +43,8 @@ public class PositionTracker {
 
         double x = eastWest.sensor1;
         double y = northSouth.sensor1;
+
+        // TODO: Do angle calculations
 
         // do some geometry-I honors level math
         double angleDegrees = coordinateSystem.angleDegrees;
