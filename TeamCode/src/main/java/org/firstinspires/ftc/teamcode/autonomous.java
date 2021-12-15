@@ -1,4 +1,5 @@
-//TODO:Test Code
+//TODO: Test tflite model.
+//TODO: Change movement values.
 
 package org.firstinspires.ftc.teamcode;
 
@@ -13,16 +14,16 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.ftcsecrets;
 
 import java.util.List;
 
 @Autonomous
 
 public class autonomous extends LinearOpMode {
-    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    private static final String LABEL_QUAD = "four";
-    private static final String LABEL_SINGLE = "one";
+    private static final String TFOD_MODEL_ASSET = "FreightFrenzy.tflite";
+    private static final String LABEL_LEFT = "left";
+    private static final String LABEL_MIDDLE = "middle";
+    private static final String LABEL_RIGHT = "right";
 
     private static final String VUFORIA_KEY = ftcsecrets.secrets.autonomousKey;
 
@@ -33,14 +34,9 @@ public class autonomous extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
-    private DcMotor shooter;
-    private DcMotor belt;
-    private DcMotor intake;
 
-    private Servo wobble;
-
-    private boolean shouldShoot = true;
-    private boolean shouldDrive = true;
+    private boolean shouldShoot = false;
+    private boolean shouldDrive = false;
     private boolean shouldDetectRings = true;
     private boolean ringDetectTestMode = false;
 
@@ -48,8 +44,6 @@ public class autonomous extends LinearOpMode {
     public void runOpMode() {
 
         initDriveMotors();
-        initShootingMotors();
-        initOtherMotors();
 
         initVuforia();
         initTensorFlowObjDetector();
@@ -61,39 +55,14 @@ public class autonomous extends LinearOpMode {
 
         int zone;
         if (opModeIsActive()) {
-            shoot(0.72);
-
-            move(-0.4, 500);
-            sleep(500);
-            strafeLeft(500);
             do {
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        move(0.4, 3750);
-                        wobble.setPosition(1.0);
-                        sleep(2000);
                         break;
                     case 1:
-                        strafeRight(1500);
-                        move(0.8, 2000);
-                        wobble.setPosition(1.0);
-                        sleep(2000);
-                        move(-0.4, 1000);
-                        strafeLeft(1900);
-                        move(-0.8, 500);
-                        belt.setPower(1);
-                        intake.setPower(1);
-                        move(-0.8, 500);
-                        move(0.8, 1000);
                         break;
                     case 2:
-                        strafeRight(1500);
-                        move(0.8, 3000);
-                        strafeLeft(1500);
-                        wobble.setPosition(1.0);
-                        sleep(2000);
-                        move(-0.4, 3000);
                         break;
                     default:
                         break;
@@ -103,59 +72,6 @@ public class autonomous extends LinearOpMode {
 
         if (tensorFlowObjDetector != null) {
             tensorFlowObjDetector.shutdown();
-        }
-    }
-
-    public void move(double speed, int time) {
-        if (shouldDrive) {
-            frontLeft.setPower(speed);
-            frontRight.setPower(speed);
-            backLeft.setPower(speed);
-            backRight.setPower(speed);
-            sleep(time);
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-        }
-    }
-
-    public void strafeRight(int time) {
-        if (shouldDrive) {
-            frontLeft.setPower(0.5);
-            backLeft.setPower(-0.5);
-            frontRight.setPower(-0.5);
-            backRight.setPower(0.5);
-            sleep(time);
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-        }
-    }
-
-    public void strafeLeft(int time) {
-        if (shouldDrive) {
-            frontLeft.setPower(-0.5);
-            backLeft.setPower(0.5);
-            frontRight.setPower(0.5);
-            backRight.setPower(-0.5);
-            sleep(time);
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-        }
-    }
-
-    public void shoot(double power) {
-        if (shouldShoot) {
-            shooter.setPower(power);
-            sleep(2000);
-            belt.setPower(.75);
-            sleep(5500);
-            shooter.setPower(0);
-            belt.setPower(0);
         }
     }
 
@@ -208,27 +124,23 @@ public class autonomous extends LinearOpMode {
             List<Recognition> updatedRecognitions = tensorFlowObjDetector.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
                 telemetry.addData("# Object Detected", updatedRecognitions.size());
-                if (updatedRecognitions.size() == 0) {
-                    telemetry.addData("TFOD", "No items detected.");
-                    telemetry.addData("Target Zone", "A");
-                    zone = 0;
-                } else {
-                    // list is not empty.
-                    // step through the list of recognitions and display boundary info.
+                if (updatedRecognitions.size() >= 0) {
                     for (Recognition recognition : updatedRecognitions) {
 
                         // check label to see which target zone to go after.
-                        if (recognition.getLabel().equals(LABEL_SINGLE)) {
-                            telemetry.addData("Target Zone", "B");
+                        if (recognition.getLabel().equals(LABEL_MIDDLE)) {
+                            telemetry.addData("Target Zone", "Top");
                             zone = 1;
-                        } else if (recognition.getLabel().equals(LABEL_QUAD)) {
-                            telemetry.addData("Target Zone", "C");
+                        } else if (recognition.getLabel().equals(LABEL_LEFT)) {
+                            telemetry.addData("Target Zone", "Middle");
                             zone = 2;
-                        } else {
-                            telemetry.addData("Target Zone", "UNKNOWN");
-                            zone = -1;
+                        } else if (recognition.getLabel().equals(LABEL_RIGHT)){
+                            telemetry.addData("Target Zone", "Bottom");
+                            zone = 0;
                         }
                     }
+
+
                 }
 
                 telemetry.update();
@@ -237,10 +149,6 @@ public class autonomous extends LinearOpMode {
         }
 
         return zone;
-    }
-
-    private void initOtherMotors(){
-        wobble = hardwareMap.get(Servo.class, "wobble");
     }
 
     private void initDriveMotors(){
@@ -254,18 +162,6 @@ public class autonomous extends LinearOpMode {
             frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
             backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        }
-    }
-
-    private void initShootingMotors(){
-        if (shouldShoot) {
-            shooter = hardwareMap.get(DcMotor.class, "buzz");
-            belt = hardwareMap.get(DcMotor.class, "belt");
-            intake = hardwareMap.get(DcMotor.class, "intake");
-
-            shooter.setDirection(DcMotorSimple.Direction.FORWARD);
-            belt.setDirection(DcMotorSimple.Direction.REVERSE);
-            intake.setDirection(DcMotorSimple.Direction.REVERSE);
         }
     }
 
@@ -292,7 +188,7 @@ public class autonomous extends LinearOpMode {
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.8f;
         tensorFlowObjDetector = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tensorFlowObjDetector.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_QUAD, LABEL_SINGLE);
+        tensorFlowObjDetector.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_LEFT, LABEL_MIDDLE, LABEL_RIGHT);
         tensorFlowObjDetector.activate();
         tensorFlowObjDetector.setZoom(1.75, 1.78);
     }
