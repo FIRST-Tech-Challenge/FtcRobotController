@@ -122,36 +122,81 @@ public class ContinuousIntake {
         double y = (m * x) + b;
         return y;
     }
-    //ball red or green: y = 3.5x +43.833
-    //ball blue: y = -3x +29
-    //cube red or green: y = -4.5 + 45.167
-    //cube blue: y= -1.75x + 20.417
-    //duck green or red: y = -2x + 30.667
-    //duck blue: y = 0.5x + 10.833
-    // y is the color value for x(distance from sensor)
 
+    protected double[] getRGBFromList(ContinuousIntake.gameObject object) {
 
-    public String getObjectType() {
-        String s = null;
-        double red = this.getColor("red");
-        double green = this.getColor("green");
-        double blue = this.getColor("blue");
-        double distance = this.getCloseDistance();
-        if (Math.abs(blue - linearEquation(-3, 29, distance)) >= Math.abs(blue - linearEquation(.5, 10.833, distance))) {
-            s = "ball";
+        switch (object) {
+
+            case BALL:
+                // change the values of these arrays
+                // order of color values in array is Red Green Blue
+                double[] ball = {1, 1, 1};
+                return ball;
+
+            case CUBESMOOTH:
+                double[] cubeSmooth = {1, 1, 1};
+                return cubeSmooth;
+
+            case CUBEWAFFLE:
+                double[] cubeWaffle = {1, 1, 1};
+                return cubeWaffle;
+
+            case DUCK:
+                double[] duck = {1, 1, 1};
+                return duck;
+            case EMPTY:
+                return new double[]{1, 1, 1};
+
         }
-        /*else if () {
-            s = "duck";
-        } else if () {
-            s = "cube";
-        }else{
-            s= "none";
-        }
+        return new double[]{0, 0, 0};
+    }
 
-         */
-        return s;
+    public double getDifferenceOfColor(double[] sight, double[] object) {
+        double difference;
+        double r = Math.abs(sight[0] - object[0]);
+        double g = Math.abs(sight[1] - object[1]);
+        double b = Math.abs(sight[2] - object[2]);
+        // this calculates the 3d distance between colors
+
+        difference = Math.sqrt(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)) + Math.pow(b, 2));
+
+        return difference;
+    }
+
+    public String identify(double[] sight) {
+        String type = "uknown";
+        double distanceFromBall = getDifferenceOfColor(sight, getRGBFromList(gameObject.BALL));
+        double distanceFromCubeSmooth = getDifferenceOfColor(sight, getRGBFromList(gameObject.CUBESMOOTH));
+        double distanceFromCubeWaffle = getDifferenceOfColor(sight, getRGBFromList(gameObject.CUBEWAFFLE));
+        double distanceFromDuck = getDifferenceOfColor(sight, getRGBFromList(gameObject.DUCK));
+        double distanceFromEmpty = getDifferenceOfColor(sight, getRGBFromList(gameObject.EMPTY));
+        // determining the type of object involves comparing the 3D color distance from all known color positions
+        // this is what the following logic statements determine
+        if (distanceFromEmpty > distanceFromDuck && distanceFromEmpty > distanceFromBall && distanceFromEmpty > distanceFromCubeSmooth && distanceFromEmpty > distanceFromCubeWaffle) {
+            if (distanceFromBall < distanceFromDuck && distanceFromBall < distanceFromCubeSmooth && distanceFromBall < distanceFromCubeWaffle) {
+                type = "ball";
+            } else if (distanceFromDuck < distanceFromCubeSmooth && distanceFromDuck < distanceFromCubeWaffle) {
+                type = "duck";
+            } else {
+                type = "cube";
+            }
+
+        } else {
+            type = "empty";
+        }
+        return type;
+
+    }
+
+    public enum gameObject {
+        BALL,
+        CUBESMOOTH,
+        CUBEWAFFLE,
+        DUCK,
+        EMPTY
 
     }
 
 
 }
+

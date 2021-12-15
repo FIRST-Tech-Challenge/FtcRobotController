@@ -23,6 +23,8 @@ public class ColorTest extends TeleopTemplate {
             telemetry.addData("argb", intake.getColor("argb"));
             telemetry.addData("alpha", intake.getColor("alpha"));
             telemetry.addData("distance:", intake.getCloseDistance());
+            intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
+
 
             telemetry.update();
         }
