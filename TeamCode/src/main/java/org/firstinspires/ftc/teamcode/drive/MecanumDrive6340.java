@@ -131,6 +131,7 @@ public class MecanumDrive6340 extends MecanumDrive {
 
 
 
+
     protected VoltageSensor batteryVoltageSensor;
 
     private Pose2d lastPoseOnTurn;
@@ -139,7 +140,7 @@ public class MecanumDrive6340 extends MecanumDrive {
     public int targetEncoderCountLevel1 = 1200;
     public int targetEncoderCountLevel2 = 2200;
     public int targetEncoderCountLevel3 = 3200;
-    public double armMinPowerDuringMove = 0.35;
+    public double armMinPowerDuringMove = 1.0;
     public double armMinPowerDuringMoveTeleop = 0.40;
     public double armMinPowerDuringHold = 0.02;
 
@@ -197,6 +198,7 @@ public class MecanumDrive6340 extends MecanumDrive {
         duckMotor = hardwareMap.get(DcMotorEx.class, "leftEncoder");
         indexer = hardwareMap.get(DcMotorEx.class, "leftEncoder");
         digitalTouch = hardwareMap.get(DigitalChannel.class, "touchSensor");
+
 
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
@@ -628,20 +630,34 @@ public class MecanumDrive6340 extends MecanumDrive {
         int initialPosition = ArmMotor.getCurrentPosition();
         timerForPid.reset();
         double powerToApply = 0.0;
+        /*
         if(ArmMotor.getCurrentPosition()-targetEnconderCountLevel<0){
-            ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            //ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             powerToApply=armMinPowerDuringMove;
             Log.d("Came Here: ", "Came here: ");
         }
         else{
-            ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-            powerToApply=0.0;
+            //ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            powerToApply=-1.0*armMinPowerDuringMove;
         }
+
+         */
+        if(ArmMotor.getCurrentPosition() - targetEnconderCountLevel < -100){
+            powerToApply = 0.7;
+        }
+        else if(ArmMotor.getCurrentPosition() - targetEnconderCountLevel > 100){
+            powerToApply = -0.7;
+        }
+        else{
+            powerToApply = 0.0;
+            ArmMotor.setPower(powerToApply);
+        }
+        /*
         if(targetEnconderCountLevel==0){
             powerToApply=0.0;
         }
-
-        while(Math.abs(ArmMotor.getCurrentPosition() - targetEnconderCountLevel)> 20 && timerForPid.seconds()<pidTimerInSeconds)
+*/
+        while(Math.abs(ArmMotor.getCurrentPosition() - targetEnconderCountLevel)> 100 && timerForPid.seconds()<pidTimerInSeconds)
         {
             /*
             powerToApply = Math.abs(ArmMotor.getCurrentPosition() - targetEnconderCountLevel) * 1.0/Math.abs(initialPosition-targetEnconderCountLevel);
@@ -653,15 +669,20 @@ public class MecanumDrive6340 extends MecanumDrive {
              */
             ArmMotor.setPower(powerToApply);
             Log.d("ArmLifter powerToApply: ", String.valueOf(powerToApply));
+            Log.d("CurrentPosition ", String.valueOf(ArmMotor.getCurrentPosition()));
+            Log.d("Targe Post", String.valueOf(targetEnconderCountLevel));
 
         }
-        if(targetEnconderCountLevel==0){
+        ArmMotor.setPower(0.0);
+  /*      if(targetEnconderCountLevel==0){
             powerToApply=0.0;
         }
         else
         {
             ArmMotor.setPower(armMinPowerDuringHold);
         }
+
+   */
         //ArmMotor.ZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
