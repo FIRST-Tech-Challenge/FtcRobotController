@@ -31,11 +31,15 @@ public class SetArmLevel extends CommandBase {
     @Override
     public void initialize(){
 
+        //telemetry.addData("moving arm command",m_armSubsytem.getLevel(levelIndicator));
+        //telemetry.update();
+        m_armSubsytem.setArmTargetPosition(m_armSubsytem.getLevel(levelIndicator));
+
     }
 
     @Override
-    public void execute(){
-        m_armSubsytem.setArmTargetPosition(m_armSubsytem.getLevel(levelIndicator));
+    public boolean isFinished(){
+        return true;
     }
 
 }

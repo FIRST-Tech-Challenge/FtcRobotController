@@ -48,7 +48,6 @@ public class LEDSubsystem extends SubsystemBase {
         setPattern(p);
         setLedPeriod(ledPeriod);
         setLedCycleDeadline();
-
     }
 
     public void setDisplayKind(DisplayKind dk){

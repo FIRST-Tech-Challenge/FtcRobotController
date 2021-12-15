@@ -114,7 +114,7 @@ public class FTCLibBlinkinWebCamArmCarouselTeleop extends CommandOpMode {
         armLevels.put(2,500);
         armLevels.put(3,850);
 
-        m_arm = new ArmSubsystem(hardwareMap,"arm", DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels);
+        m_arm = new ArmSubsystem(hardwareMap,"arm", DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
         m_arm.setArmTargetPosition(0);
         m_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -165,10 +165,10 @@ public class FTCLibBlinkinWebCamArmCarouselTeleop extends CommandOpMode {
         TriggerReader seReleaser = new TriggerReader(
                 toolOp2, GamepadKeys.Trigger.LEFT_TRIGGER
         );
-        
 
-        m_seGrabber = new MoveIntake(m_intake, -0.75, () -> toolOp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
-        m_seReleaser = new MoveIntake(m_intake, 0.6, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
+
+        m_seGrabber = new MoveIntake(m_intake, -0.75, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> toolOp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        //m_seReleaser = new MoveIntake(m_intake, 0.6, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
         m_stopIntake = new StopIntake(m_intake);
 
         m_intake.setDefaultCommand(new PerpetualCommand(m_stopIntake));
@@ -190,8 +190,8 @@ public class FTCLibBlinkinWebCamArmCarouselTeleop extends CommandOpMode {
 
         m_streamToDashboard.schedule();
         m_detectTSEPosition.schedule();
-        m_seGrabber.schedule();
-        m_seReleaser.schedule();
+        m_seGrabber.schedule(true);
+        //m_seReleaser.schedule();
 
         CommandScheduler.getInstance().run();
 

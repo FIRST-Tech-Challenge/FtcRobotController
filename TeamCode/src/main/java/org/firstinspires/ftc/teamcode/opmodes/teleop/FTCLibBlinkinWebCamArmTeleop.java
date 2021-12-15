@@ -99,7 +99,7 @@ public class FTCLibBlinkinWebCamArmTeleop extends CommandOpMode {
         armLevels.put(2,500);
         armLevels.put(3,850);
 
-        m_arm = new ArmSubsystem(hardwareMap,"arm", DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels);
+        m_arm = new ArmSubsystem(hardwareMap,"arm", DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
         m_arm.setArmTargetPosition(0);
         m_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -119,9 +119,9 @@ public class FTCLibBlinkinWebCamArmTeleop extends CommandOpMode {
         //X Level 1
         Button armLevel1 = new GamepadButton(toolOp2, GamepadKeys.Button.X);
         //Y Level 2
-        Button armLevel2 = new GamepadButton(toolOp, GamepadKeys.Button.Y);
+        Button armLevel2 = new GamepadButton(toolOp2, GamepadKeys.Button.Y);
         //B Level 3
-        Button armLevel3 = new GamepadButton(toolOp, GamepadKeys.Button.B);
+        Button armLevel3 = new GamepadButton(toolOp2, GamepadKeys.Button.B);
 
 
         armNudger.whenPressed(new InstantCommand(() -> {

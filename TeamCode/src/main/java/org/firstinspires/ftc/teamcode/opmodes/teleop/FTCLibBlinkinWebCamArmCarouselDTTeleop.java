@@ -27,6 +27,8 @@ import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowTeamColors;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StreamToDashboard;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drive.bc4h.BC4HDriveSubsystem;
@@ -48,12 +50,9 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
     private CarouselSubsystem m_carousel;
     private BC4HDriveSubsystem m_bc4h_drive;
 
-    private ShowAllianceColor m_showAllianceBlueColorCommand;
-    private ShowAllianceColor m_showAllianceRedColorCommand;
-    private ShowTeamColors m_showTeamColorsCommand;
 
-    private DetectTSEPosition m_detectTSEPosition;
-    private StreamToDashboard m_streamToDashboard;
+
+
 
     private NudgeArm m_nudgeArmUp;
     private NudgeArm m_nudgeArmDown;
@@ -65,7 +64,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
     private MoveIntake m_seGrabber;
     private MoveIntake m_seReleaser;
-    private StopIntake m_stopIntake;
+    private MoveIntake m_stopIntake;
 
     private MoveCarousel m_moveCarouselRight;
     private MoveCarousel m_moveCarouselLeft;
@@ -85,44 +84,29 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         //set up Game pad 2
         GamepadEx toolOp2 = new GamepadEx(gamepad2);
 
-        //X (Blue) button
-        Button blueAlliance = new GamepadButton(driveOp, GamepadKeys.Button.X);
-        //B (Red) button
-        Button redAlliance = new GamepadButton(driveOp, GamepadKeys.Button.B);
-        //A (Team) button
-        Button teamColors = new GamepadButton(driveOp, GamepadKeys.Button.A);
-
         //create LED SubSystem
-        m_leds = new LEDSubsystem(hardwareMap,"blinkin", 10);
+        CreateLEDs createLEDs = new CreateLEDs(hardwareMap, "blinkin", driveOp, true);
 
-        //create commands
-        m_showAllianceBlueColorCommand = new ShowAllianceColor(m_leds, ShowAllianceColor.AllianceColor.BLUE);
-        m_showAllianceRedColorCommand = new ShowAllianceColor(m_leds, ShowAllianceColor.AllianceColor.RED);
-        m_showTeamColorsCommand = new ShowTeamColors(m_leds);
-
-        //assign buttons to commands
-        blueAlliance.whenPressed(m_showAllianceBlueColorCommand);
-        redAlliance.whenPressed(m_showAllianceRedColorCommand);
-        teamColors.whenPressed(m_showTeamColorsCommand);
+        //m_leds = new LEDSubsystem(hardwareMap,"blinkin", 10);
 
         //create webcam subsystem
-        m_webCam = new WebCamSubsystem(hardwareMap,"Webcam 1",new OpenCvShippingElementDetector(640,480,telemetry));
+        //m_webCam = new WebCamSubsystem(hardwareMap,"Webcam 1",new OpenCvShippingElementDetector(640,480,telemetry));
+        //CreateWebCam createWebCam = new CreateWebCam(hardwareMap, "Webcam 1", dashboard, telemetry, true);
 
-        m_detectTSEPosition = new DetectTSEPosition(m_webCam, telemetry);
-
-        m_streamToDashboard = new StreamToDashboard(m_webCam,dashboard);
+        //DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
 
         Map<Integer, Integer> armLevels = new HashMap<>();
         armLevels.put(0,0);
         armLevels.put(1,200);
-        armLevels.put(2,500);
+        armLevels.put(2,550);
         armLevels.put(3,850);
 
-        m_arm = new ArmSubsystem(hardwareMap,"arm", DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels);
-        m_arm.setArmTargetPosition(0);
+        m_arm = new ArmSubsystem(hardwareMap,"arm", DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
+        m_arm.setArmTargetPosition(m_arm.getLevel(0));
         m_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m_arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        m_nudgeArmUp = new NudgeArm(m_arm,5, telemetry);
+        m_nudgeArmUp = new NudgeArm(m_arm,5,telemetry);
         m_nudgeArmDown = new NudgeArm(m_arm, -5, telemetry);
 
         m_moveToLevel0 = new SetArmLevel(m_arm,0, telemetry);
@@ -130,8 +114,17 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         m_moveToLevel2 = new SetArmLevel(m_arm,2, telemetry);
         m_moveToLevel3 = new SetArmLevel(m_arm,3, telemetry);
 
+        //CommandScheduler.getInstance().onCommandFinish( detectTSEPosition -> m_moveToLevel3);
 
-        Button armNudger = new GamepadButton(toolOp2, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+
+        Button armNudgerUp = new GamepadButton(toolOp2, GamepadKeys.Button.DPAD_UP);
+        Button armNudgerDown = new GamepadButton(toolOp2, GamepadKeys.Button.DPAD_DOWN);
+
+        //Button armNudgerUp = new GamepadButton(toolOp2, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+        //Button armNudgerDown = new GamepadButton(toolOp2, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+
+        armNudgerUp.whileHeld(m_nudgeArmUp);
+        armNudgerDown.whileHeld(m_nudgeArmDown);
 
         //A Level 0
         Button armLevel0 = new GamepadButton(toolOp2, GamepadKeys.Button.A);
@@ -143,14 +136,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         Button armLevel3 = new GamepadButton(toolOp2, GamepadKeys.Button.B);
 
 
-        armNudger.whenPressed(new InstantCommand(() -> {
-            if(toolOp2.getRightY() == 1){
-                m_nudgeArmUp.schedule();
-            }
-            else if(toolOp2.getRightY() == -1){
-                m_nudgeArmDown.schedule();
-            }
-        }));
+
 
         armLevel0.whenPressed(m_moveToLevel0);
         armLevel1.whenPressed(m_moveToLevel1);
@@ -159,11 +145,11 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
         m_intake = new IntakeSubsystem(hardwareMap,"intake", DcMotorSimple.Direction.REVERSE, 0.0);
 
-        m_seGrabber = new MoveIntake(m_intake, -0.75, () -> toolOp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
-        m_seReleaser = new MoveIntake(m_intake, 0.6, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
-        m_stopIntake = new StopIntake(m_intake);
+        m_seGrabber = new MoveIntake(m_intake, -0.75, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> toolOp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        //m_seReleaser = new MoveIntake(m_intake, 0.6, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
+        //m_stopIntake = new MoveIntake(m_intake, 0.0, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
 
-        m_intake.setDefaultCommand(new PerpetualCommand(m_stopIntake));
+        //m_intake.setDefaultCommand(new PerpetualCommand(m_stopIntake));
 
 
         m_carousel = new CarouselSubsystem(hardwareMap,"carousel");
@@ -188,10 +174,20 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         m_driveRobot = new DefaultDrive(m_bc4h_drive, () -> driveOp.getLeftY(), () -> driveOp.getLeftX(), () -> driveOp.getRightX());
         m_bc4h_drive.setDefaultCommand(m_driveRobot);
 
-        m_streamToDashboard.schedule();
-        m_detectTSEPosition.schedule();
-        m_seGrabber.schedule();
-        m_seReleaser.schedule();
+
+        m_seGrabber.schedule(true);
+        //m_seReleaser.schedule(true);
+
+
+        //m_moveToLevel1.schedule(true);
+        //m_moveToLevel2.schedule(true);
+        //m_moveToLevel3.schedule(true);
+        //m_moveToLevel0.schedule(true);
+        //m_nudgeArm.schedule(true);
+
+
+
+
 
         CommandScheduler.getInstance().run();
 

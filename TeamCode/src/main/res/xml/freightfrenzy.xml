@@ -9,6 +9,7 @@
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
         <LynxModule name="Expansion Hub 2" port="3">
+            <RevBlinkinLedDriver name="blinkin" port="0"/>
             <RevRoboticsCoreHexMotor name="intake" port="0" />
             <RevRobotics40HDHexMotor name="arm" port="1" />
             <RevRoboticsCoreHexMotor name="carousel" port="2" />

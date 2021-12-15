@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,26 +26,29 @@ public class ArmSubsystem extends SubsystemBase {
     //private int armCurrentPos = 0;
     private int targetPostion = 0;
     private int maxTargetPositon = 1200;
+    private final Telemetry telemetry;
 
     Map<Integer, Integer> levels = new HashMap<>();
 
 
 
-    public ArmSubsystem(final HardwareMap hwMap, final String deviceName){
+    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, Telemetry telemetry){
         motorArm = hwMap.get(DcMotorEx.class, deviceName);
-
+        this.telemetry = telemetry;
     }
 
-    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, DcMotor.RunMode mode){
+    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, DcMotor.RunMode mode, Telemetry telemetry){
         motorArm = hwMap.get(DcMotorEx.class, deviceName);
         setMode(mode);
+        this.telemetry = telemetry;
 
     }
 
-    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, DcMotor.RunMode mode, HashMap levels){
+    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, DcMotor.RunMode mode, HashMap levels, Telemetry telemetry){
         motorArm = hwMap.get(DcMotorEx.class, deviceName);
         setMode(mode);
         setLevels(levels);
+        this.telemetry = telemetry;
 
     }
 
@@ -63,7 +68,10 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setArmTargetPosition(int armTargetPosition){
+        telemetry.addData("moving arm subsystem",armTargetPosition);
+        telemetry.update();
         motorArm.setTargetPosition(armTargetPosition);
+        setPower(0.5);
     }
     public int getCurrentPosition(){
         return motorArm.getCurrentPosition();
