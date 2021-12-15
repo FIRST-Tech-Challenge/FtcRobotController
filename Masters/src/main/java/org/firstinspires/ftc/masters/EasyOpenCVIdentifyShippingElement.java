@@ -98,6 +98,11 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
             telemetry.addData("Analysis2", pipeline.getAnalysis2());
             telemetry.addData("Analysis3", pipeline.getAnalysis3());
             telemetry.addData("Position", pipeline.position);
+
+            telemetry.addData("Analysis of Hub Left", pipeline.getAnalysisHubLeft());
+            telemetry.addData("Analysis of Hub Center", pipeline.getAnalysisHubCenter());
+            telemetry.addData("Analysis of Hub Right", pipeline.getAnalysisHubRight());
+            telemetry.addData("Hub Position", pipeline.hub_position);
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample
@@ -122,6 +127,12 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
             RIGHT
         }
 
+        public enum HubPosition {
+            LEFT,
+            CENTER,
+            RIGHT,
+        }
+
         /*
          * Some color constants
          */
@@ -136,11 +147,19 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(312, 210);
         static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(607, 210);
 
+        static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1,33);
+        static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(281,33);
+        static final Point REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(361,33);
+
 
         static final int REGION_WIDTH = 30;
         static final int REGION_HEIGHT = 42;
 
+        static final int HUB_REGION_HEIGHT = 50;
+
         final int FREIGHT_PRESENT_THRESHOLD = 110;
+
+        final int HUB_PRESENT_THRESHOLD = 130;
 
         Point region1_pointA = new Point(
                 REGION1_TOP_LEFT_ANCHOR_POINT.x,
@@ -162,6 +181,29 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
                 REGION3_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION3_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
+
+//        Hub regions
+        Point region_hub_left_pointA = new Point(
+                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x,
+                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.y);
+        Point region_hub_left_pointB = new Point(
+                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x + 279,
+                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+
+        Point region_hub_center_pointA = new Point(
+                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.x,
+                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.y);
+        Point region_hub_center_pointB = new Point(
+                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.x + 80,
+                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+
+        Point region_hub_right_pointA = new Point(
+                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.x,
+                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.y);
+        Point region_hub_right_pointB = new Point(
+                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.x + 279,
+                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+
         /*
          * Working variables
          */
@@ -175,8 +217,18 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         int avg2 = 0;
         int avg3 = 0;
 
+        Mat hub_region_left_A;
+        Mat hub_region_center_A;
+        Mat hub_region_right_A;
+
+        int hub_avg_left = 0;
+        int hub_avg_center = 0;
+        int hub_avg_right = 0;
+
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile FreightPosition position = FreightPosition.LEFT;
+
+        public volatile HubPosition hub_position = HubPosition.LEFT;
 
         /*
          * This function takes the RGB frame, converts to LAB,
@@ -195,6 +247,10 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
             region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
             region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
             region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
+
+            hub_region_left_A = A.submat(new Rect(region_hub_left_pointA, region_hub_left_pointB));
+            hub_region_center_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
+            hub_region_right_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
         }
 
         @Override
@@ -207,6 +263,14 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
             avg1 = (int) Core.mean(region1_A).val[0];
             avg2 = (int) Core.mean(region2_A).val[0];
             avg3 = (int) Core.mean(region3_A).val[0];
+
+            region1_A = A.submat(new Rect(region_hub_left_pointA, region_hub_right_pointB));
+            region2_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
+            region3_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+
+            hub_avg_left = (int) Core.mean(hub_region_left_A).val[0];
+            hub_avg_center = (int) Core.mean(hub_region_center_A).val[0];
+            hub_avg_right = (int) Core.mean(hub_region_right_A).val[0];
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
@@ -230,6 +294,28 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
                     RED, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_hub_left_pointA, // First point which defines the rectangle
+                    region_hub_left_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    4); // Thickness of the rectangle lines
+
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_hub_center_pointA, // First point which defines the rectangle
+                    region_hub_center_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    4); // Thickness of the rectangle lines
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_hub_right_pointA, // First point which defines the rectangle
+                    region_hub_right_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    4); // Thickness of the rectangle lines
+
 
             if (avg1 < FREIGHT_PRESENT_THRESHOLD) {
                 position = FreightPosition.LEFT;
@@ -242,6 +328,20 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
             telemetry.addData("Analysis2", avg2);
             telemetry.addData("Analysis3", avg3);
             telemetry.addData("Position", position);
+
+            if (hub_avg_left > HUB_PRESENT_THRESHOLD) {
+                hub_position = HubPosition.LEFT;
+            } else if (hub_avg_center > HUB_PRESENT_THRESHOLD) {
+                hub_position = HubPosition.CENTER;
+            } else {
+                hub_position = HubPosition.RIGHT;
+            }
+            telemetry.addData("Analysis of Hub Left", hub_avg_left);
+            telemetry.addData("Analysis2 of Hub Center", hub_avg_center);
+            telemetry.addData("Analysis3 of Hub Right", hub_avg_right);
+            telemetry.addData("Position", hub_position);
+
+
             telemetry.update();
 
 
@@ -260,6 +360,17 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
             return avg3;
         }
 
+        public int getAnalysisHubLeft() {
+            return hub_avg_left;
+        }
+
+        public int getAnalysisHubCenter() {
+            return hub_avg_center;
+        }
+
+        public int getAnalysisHubRight() {
+            return hub_avg_right;
+        }
 
     }
 

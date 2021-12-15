@@ -240,6 +240,11 @@ public class RobotClass {
         carousel.setPower(0);
     }
 
+    public void jevilTurnCarouselOther (double speed, double seconds) {
+        carousel.setPower(-speed);
+        pauseButInSecondsForThePlebeians(seconds);
+        carousel.setPower(0);
+    }
     public void dumpFreightBottom () {
         linearSlideMotor.setTargetPosition(900);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -306,7 +311,7 @@ public class RobotClass {
         backLeft.setPower(speed);
         backRight.setPower(-speed);
 
-        while (colorSensorRight.blue()< 120 && colorSensorLeft.blue()<120) {
+        while (colorSensorRight.blue()< 325 && colorSensorLeft.blue()<325) {
             telemetry.addData("Right blue ", colorSensorRight.blue());
             telemetry.addData("Left blue ", colorSensorLeft.blue());
             telemetry.update();
@@ -346,10 +351,10 @@ public class RobotClass {
 
     public void parkBlue () {
         wayneStrafeBlue(0.2);
-        if (colorSensorLeft.blue()>120) {
+        if (colorSensorLeft.blue()>325) {
             strafeLeft(0.2, 0.35);
         }
-        if (colorSensorRight.blue()>120) {
+        if (colorSensorRight.blue()>325) {
             strafeRight(0.2,0.35);
         }
         forward(0.2,-1);
@@ -715,156 +720,167 @@ if 360-abs(currentHeading)-abs(targetHeading) > 180
         RIGHT
     }
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
-        Telemetry telemetry;
-
-        public SkystoneDeterminationPipeline(Telemetry telemetry) {
-            this.telemetry = telemetry;
-        }
-
-        /*
-         * Some color constants
-         */
-        static final Scalar BLUE = new Scalar(0, 0, 255);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
-        static final Scalar RED = new Scalar(255, 0, 0);
-
-        /*
-         * The core values which define the location and size of the sample regions
-         */
-        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(45, 230);
-        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(285, 250);
-        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(603, 280);
 
 
-        static final int REGION_WIDTH = 30;
-        static final int REGION_HEIGHT = 42;
-
-        final int FREIGHT_PRESENT_THRESHOLD = 110;
-
-        Point region1_pointA = new Point(
-                REGION1_TOP_LEFT_ANCHOR_POINT.x,
-                REGION1_TOP_LEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
-                REGION1_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-        Point region2_pointA = new Point(
-                REGION2_TOP_LEFT_ANCHOR_POINT.x,
-                REGION2_TOP_LEFT_ANCHOR_POINT.y);
-        Point region2_pointB = new Point(
-                REGION2_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION2_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
-        Point region3_pointA = new Point(
-                REGION3_TOP_LEFT_ANCHOR_POINT.x,
-                REGION3_TOP_LEFT_ANCHOR_POINT.y);
-        Point region3_pointB = new Point(
-                REGION3_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION3_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
-        /*
-         * Working variables
-         */
-        Mat region1_A;
-        Mat region2_A;
-        Mat region3_A;
-        Mat LAB = new Mat();
-
-        Mat A = new Mat();
-        int avg1 = 0;
-        int avg2 = 0;
-        int avg3 = 0;
-
-        // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition position = EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT;
-
-        /*
-         * This function takes the RGB frame, converts to LAB,
-         * and extracts the A channel to the 'A' variable*/
-
-        void inputToLAB_A(Mat input) {
-
-            Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
-            Core.extractChannel(LAB, A, 1);
-        }
-
-        @Override
-        public void init(Mat firstFrame) {
-            inputToLAB_A(firstFrame);
-
-            region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
-            region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
-            region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
-        }
-
-        @Override
-        public Mat processFrame(Mat input) {
-            inputToLAB_A(input);
-            region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
-            region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
-            region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
-
-            avg1 = (int) Core.mean(region1_A).val[0];
-            avg2 = (int) Core.mean(region2_A).val[0];
-            avg3 = (int) Core.mean(region3_A).val[0];
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region2_pointA, // First point which defines the rectangle
-                    region2_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region3_pointA, // First point which defines the rectangle
-                    region3_pointB, // Second point which defines the rectangle
-                    RED, // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-
-
-            if (avg1 < FREIGHT_PRESENT_THRESHOLD) {
-                position = EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT;
-            } else if (avg2 < FREIGHT_PRESENT_THRESHOLD) {
-                position = EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE;
-            } else {
-                position = EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT;
-            }
-            telemetry.addData("Analysis", avg1);
-            telemetry.addData("Analysis2", avg2);
-            telemetry.addData("Analysis3", avg3);
-            telemetry.addData("Position", position);
-            telemetry.update();
-
-
-            return input;
-        }
-
-        public int getAnalysis() {
-            return avg1;
-        }
-
-        public int getAnalysis2() {
-            return avg2;
-        }
-
-        public int getAnalysis3() {
-            return avg3;
-        }
-
-
-    }
-        public EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition analyze() {
-        pipeline.getAnalysis();
+//    public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
+//        Telemetry telemetry;
+//
+//        public SkystoneDeterminationPipeline(Telemetry telemetry) {
+//            this.telemetry = telemetry;
+//        }
+//
+//        /*
+//         * Some color constants
+//         */
+//        static final Scalar BLUE = new Scalar(0, 0, 255);
+//        static final Scalar GREEN = new Scalar(0, 255, 0);
+//        static final Scalar RED = new Scalar(255, 0, 0);
+//
+//        /*
+//         * The core values which define the location and size of the sample regions
+//         */
+//        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(45, 230);
+//        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(285, 250);
+//        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(603, 280);
+//
+//
+//        static final int REGION_WIDTH = 30;
+//        static final int REGION_HEIGHT = 42;
+//
+//        final int FREIGHT_PRESENT_THRESHOLD = 110;
+//
+//        Point region1_pointA = new Point(
+//                REGION1_TOP_LEFT_ANCHOR_POINT.x,
+//                REGION1_TOP_LEFT_ANCHOR_POINT.y);
+//        Point region1_pointB = new Point(
+//                REGION1_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
+//                REGION1_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+//        Point region2_pointA = new Point(
+//                REGION2_TOP_LEFT_ANCHOR_POINT.x,
+//                REGION2_TOP_LEFT_ANCHOR_POINT.y);
+//        Point region2_pointB = new Point(
+//                REGION2_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
+//                REGION2_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+//
+//        Point region3_pointA = new Point(
+//                REGION3_TOP_LEFT_ANCHOR_POINT.x,
+//                REGION3_TOP_LEFT_ANCHOR_POINT.y);
+//        Point region3_pointB = new Point(
+//                REGION3_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
+//                REGION3_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+//
+//        /*
+//         * Working variables
+//         */
+//        Mat region1_A;
+//        Mat region2_A;
+//        Mat region3_A;
+//        Mat LAB = new Mat();
+//
+//        Mat A = new Mat();
+//        int avg1 = 0;
+//        int avg2 = 0;
+//        int avg3 = 0;
+//
+//        // Volatile since accessed by OpMode thread w/o synchronization
+//        public volatile EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition position = EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT;
+//
+//        /*
+//         * This function takes the RGB frame, converts to LAB,
+//         * and extracts the A channel to the 'A' variable*/
+//
+//        void inputToLAB_A(Mat input) {
+//
+//            Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
+//            Core.extractChannel(LAB, A, 1);
+//        }
+//
+//        @Override
+//        public void init(Mat firstFrame) {
+//            inputToLAB_A(firstFrame);
+//
+//            region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
+//            region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
+//            region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
+//        }
+//
+//        @Override
+//        public Mat processFrame(Mat input) {
+//            inputToLAB_A(input);
+//            region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
+//            region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
+//            region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
+//
+//            avg1 = (int) Core.mean(region1_A).val[0];
+//            avg2 = (int) Core.mean(region2_A).val[0];
+//            avg3 = (int) Core.mean(region3_A).val[0];
+//
+//            Imgproc.rectangle(
+//                    input, // Buffer to draw on
+//                    region1_pointA, // First point which defines the rectangle
+//                    region1_pointB, // Second point which defines the rectangle
+//                    BLUE, // The color the rectangle is drawn in
+//                    2); // Thickness of the rectangle lines
+//
+//
+//            Imgproc.rectangle(
+//                    input, // Buffer to draw on
+//                    region2_pointA, // First point which defines the rectangle
+//                    region2_pointB, // Second point which defines the rectangle
+//                    GREEN, // The color the rectangle is drawn in
+//                    2); // Thickness of the rectangle lines
+//
+//            Imgproc.rectangle(
+//                    input, // Buffer to draw on
+//                    region3_pointA, // First point which defines the rectangle
+//                    region3_pointB, // Second point which defines the rectangle
+//                    RED, // The color the rectangle is drawn in
+//                    2); // Thickness of the rectangle lines
+//
+//
+//            if (avg1 < FREIGHT_PRESENT_THRESHOLD) {
+//                position = EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT;
+//            } else if (avg2 < FREIGHT_PRESENT_THRESHOLD) {
+//                position = EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE;
+//            } else {
+//                position = EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT;
+//            }
+//            telemetry.addData("Analysis", avg1);
+//            telemetry.addData("Analysis2", avg2);
+//            telemetry.addData("Analysis3", avg3);
+//            telemetry.addData("Position", position);
+//            telemetry.update();
+//
+//
+//            return input;
+//        }
+//
+//        public int getAnalysis() {
+//            return avg1;
+//        }
+//
+//        public int getAnalysis2() {
+//            return avg2;
+//        }
+//
+//        public int getAnalysis3() {
+//            return avg3;
+//        }
+//
+//
+//    }
+    public EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition analyze() {
         return pipeline.position;
     }
 
+
+    public enum HubPosition {
+        LEFT,
+        CENTER,
+        RIGHT,
+    }
+
+    public EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.HubPosition analyze_hub() {
+        return pipeline.hub_position;
+    }
 }

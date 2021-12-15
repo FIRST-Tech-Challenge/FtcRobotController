@@ -44,15 +44,15 @@ public class JevilsBlueCarousel extends LinearOpMode {
         }
 
         robot.forward(.3,-2.5);
-        robot.strafeRight(.4,.45);
-        robot.forward(.2,-.4);
+        robot.strafeLeft(.4,.45);
+        robot.forward(.2,-.5);
 
-        robot.jevilTurnCarousel(.5,2);
+        robot.jevilTurnCarouselOther(.5,2);
         robot.forward(0.3, 1);
         robot.turnToHeadingSloppy(.3,90,10);
         robot.forward(0.3, -1.5);
 
-        robot.strafeLeft(0.3, 0.5);
+        robot.strafeRight(0.3, 0.5);
         robot.parkBlue();
     }
 }

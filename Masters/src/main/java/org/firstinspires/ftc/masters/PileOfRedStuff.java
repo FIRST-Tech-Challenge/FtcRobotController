@@ -11,7 +11,6 @@ public class PileOfRedStuff extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Here Wayne will do stuff eventualy
         robot = new RobotClass(hardwareMap,telemetry,this);
         robot.openCVInnitShenanigans();
         EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;

@@ -43,7 +43,8 @@ public class PileOfBlueStuff extends LinearOpMode {
             robot.dumpFreightTop();
         }
         robot.turnToHeadingSloppy(.4, -87, 0);
-        robot.forward(1, -6);
+        robot.forward(.5, .4);
+        robot.forward(1, -7);
 
         /*
         robot.strafeRight(0.5,2);
