@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -120,6 +121,9 @@ public class MecanumDrive6340 extends MecanumDrive {
 
     protected BNO055IMU imu;
 
+   public DigitalChannel redLED;
+   public DigitalChannel greenLED;
+
     /*
     Instantiate servos
      */
@@ -198,6 +202,9 @@ public class MecanumDrive6340 extends MecanumDrive {
         duckMotor = hardwareMap.get(DcMotorEx.class, "leftEncoder");
         indexer = hardwareMap.get(DcMotorEx.class, "leftEncoder");
         digitalTouch = hardwareMap.get(DigitalChannel.class, "touchSensor");
+        // Get the LED colors and touch sensor from the hardwaremap
+        redLED = hardwareMap.get(DigitalChannel.class, "red");
+        greenLED = hardwareMap.get(DigitalChannel.class, "green");
 
 
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
