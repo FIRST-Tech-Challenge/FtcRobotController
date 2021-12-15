@@ -81,9 +81,8 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
         initHardwareMap(rfName, rbName, lfName, lbName, verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
 
         //Create and start GlobalCoordinatePosition thread to constantly update the global coordinate positions\
-        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, 75);
-        Thread positionThread = new Thread(globalPositionUpdate);
-        positionThread.start();
+        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, 75, this::opModeIsActive, this::isStopRequested);
+        globalPositionUpdate.start();
 
 
         //Init complete
@@ -136,7 +135,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
                 telemetry.addData("Y Position", Math.round((globalPositionUpdate.returnRelativeYPosition()) * 100.0) / 100.0);
                 telemetry.addData("Orientation (Degrees, ODO)", Math.round(globalPositionUpdate.returnOrientation() * 100.0) / 100.0);
                 telemetry.addData("Orientation (Degrees, IMU)", getZAngle());
-                telemetry.addData("Thread Active", positionThread.isAlive());
+                telemetry.addData("Thread Active", globalPositionUpdate.isAlive());
                 telemetry.update();
 
             }
@@ -147,7 +146,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
         }
 
         //Stop the thread
-        globalPositionUpdate.stop();
+        globalPositionUpdate.end();
     }
 
     private double getZAngle() {
@@ -209,8 +208,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
-        String sStackTrace = sw.toString(); // stack trace as a string
-        return sStackTrace;
+        return sw.toString();
     }
 
     public void printStackTrace(Exception e) {

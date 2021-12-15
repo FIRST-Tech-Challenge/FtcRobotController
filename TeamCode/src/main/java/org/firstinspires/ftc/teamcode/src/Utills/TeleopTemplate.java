@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.TeleopDriveTrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.ContinuousIntake;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
@@ -27,7 +28,8 @@ public abstract class TeleopTemplate extends LinearOpMode {
         pod = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
         pod.raise();
 
-        slide = new LinearSlide(hardwareMap, "slide_motor");
+        RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
+        slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
 
         intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo");
         intake.setServoDown();

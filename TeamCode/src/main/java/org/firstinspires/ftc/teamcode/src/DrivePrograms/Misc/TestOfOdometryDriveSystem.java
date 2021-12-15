@@ -1,30 +1,20 @@
-package org.firstinspires.ftc.teamcode.src.Utills;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.OdometryDrivetrain;
+import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.IMU;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.CarouselSpinner;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.ContinuousIntake;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
 @Disabled
-public abstract class AutonomousTemplate extends LinearOpMode {
-    public OdometryPodServos podServos;
-    public OdometryDrivetrain driveSystem;
-    public CarouselSpinner spinner;
-    public OdometryGlobalCoordinatePosition odometry;
-    public ContinuousIntake intake;
-    public LinearSlide slide;
+@Autonomous(name = "TestOfOdometryDriveSystem")
+public class TestOfOdometryDriveSystem extends AutonomousTemplate {
 
-
-    public void initAll() {
+    public void runOpMode() throws InterruptedException {
         podServos = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
         podServos.lower();
 
@@ -64,22 +54,13 @@ public abstract class AutonomousTemplate extends LinearOpMode {
         odometry.reverseLeftEncoder();
         odometry.start();
 
-        driveSystem = new OdometryDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive);
-
-
-        spinner = new CarouselSpinner(hardwareMap, "duck_spinner");
-
-        RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
-        slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
-        slide.setTargetLevel(LinearSlide.HeightLevels.Down);
-        slide.start();
-
-        intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo");
-        intake.setServoUp();
-
-        telemetry.addData("Default Initialization: ", "Finished");
-        telemetry.update();
-
+        waitForStart();
+        while (opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("Active", odometry.isActive());
+            telemetry.addData("Thread State", odometry.isRunning());
+            telemetry.addData("Thread State OBJ", odometry.getState());
+            odometry.showPosition(telemetry);
+            telemetry.update();
+        }
     }
-
 }

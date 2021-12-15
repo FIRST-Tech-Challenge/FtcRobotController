@@ -3,22 +3,16 @@ package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
 
 @Autonomous(name = "BlueCarouselAuto")
 public class BlueCarouselAuto extends AutoObjDetectionTemplate {
-    LinearSlide slide;
 
     @Override
     public void runOpMode() throws InterruptedException {
         this.initAll();
         MarkerPosition Pos = MarkerPosition.NotSeen;
-        RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
-        slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
-        Thread t = new Thread(slide);
-        slide.setTargetLevel(LinearSlide.HeightLevels.Down);
         this.initVuforia();
         this.initTfod();
         this.activate();
@@ -37,8 +31,7 @@ public class BlueCarouselAuto extends AutoObjDetectionTemplate {
             tfod.shutdown();
             vuforia.close();
             System.gc();
-            t.start();
-
+            slide.start();
 
             switch (Pos) {
                 case NotSeen:
@@ -193,8 +186,8 @@ public class BlueCarouselAuto extends AutoObjDetectionTemplate {
 
             }
         }
-        slide.stop();
-        odometry.stop();
+        slide.end();
+        odometry.end();
 
     }
 }

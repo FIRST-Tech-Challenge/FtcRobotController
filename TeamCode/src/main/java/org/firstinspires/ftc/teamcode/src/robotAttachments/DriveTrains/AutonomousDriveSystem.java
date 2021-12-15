@@ -72,7 +72,7 @@ public class AutonomousDriveSystem extends OdometryDrivetrain {
         this.back_right = motorObjects[3];
         this.back_left = motorObjects[2];
 
-        this.odometry = new OdometryGlobalCoordinatePosition(encoderObjects[1], encoderObjects[2], encoderObjects[0], 25);
+        this.odometry = new OdometryGlobalCoordinatePosition(encoderObjects[1], encoderObjects[2], encoderObjects[0], 25, isOpModeActive, isStopRequested);
 
         this.reinitializeMotors();
         this._isStopRequested = isStopRequested;

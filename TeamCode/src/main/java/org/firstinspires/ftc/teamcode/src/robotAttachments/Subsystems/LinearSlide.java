@@ -1,51 +1,38 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.Utills.ThreadedSubsystemTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 
-public class LinearSlide implements Runnable {
+public class LinearSlide extends ThreadedSubsystemTemplate {
 
     private final DcMotor linearSlide;
 
 
-    private static final double motorPower = 0.5;
     private static final double ticksPerRevolution = 145.1;
     private static final double spoolRadius = 0.55 / 2; //in inches
-    private static final double inchesPerRevolution = ticksPerRevolution * 2 * Math.PI * spoolRadius;
-    private static final int linearSlideAngle = 68;
-    private static final double stopPower = 0.13;
-    public volatile boolean threadActive = true;
+    //private static final double inchesPerRevolution = ticksPerRevolution * 2 * Math.PI * spoolRadius;
+    //private static final int linearSlideAngle = 68;
+    //private static final double stopPower = 0.13;
+    //public volatile boolean threadActive = true;
     public RobotVoltageSensor voltageSensor;
     public volatile int chosenPosition;
 
-    private Executable<Boolean> isStopRequested;
-    private Executable<Boolean> opModeIsActive;
+    //public static final double level_one_height = 0;
 
-
-    public static final double level_one_height = 0;
-
-    public LinearSlide(HardwareMap hardwareMap, String dcMotorName) {
-        linearSlide = hardwareMap.dcMotor.get(dcMotorName);
-        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-    }
 
     public LinearSlide(HardwareMap hardwareMap, String dcMotorName, RobotVoltageSensor voltSensor,
                        Executable<Boolean> _isOpmodeActive, Executable<Boolean> _isStopRequested) {
+        super(_isOpmodeActive, _isStopRequested);
         linearSlide = hardwareMap.dcMotor.get(dcMotorName);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.voltageSensor = voltSensor;
-        this.isStopRequested = _isStopRequested;
-        this.opModeIsActive = _isOpmodeActive;
     }
 
     public boolean isAtPosition() {
@@ -57,10 +44,6 @@ public class LinearSlide implements Runnable {
         int target = this.linearSlide.getTargetPosition();
         int dist = Math.abs(currentPos - target);
         return dist < tolerence;
-    }
-
-    public void finalize() {
-        this.stop();
     }
 
     public void setTargetHeight(int height) {
@@ -92,15 +75,11 @@ public class LinearSlide implements Runnable {
         linearSlide.setPower(power);
     }
 
-    public void stop() {
-        threadActive = false;
-    }
-
     public int getEncoderCount() {
         return linearSlide.getCurrentPosition();
     }
 
-    public void updatePower() {
+    public void threadMain() {
         double power;// power = -(distance* C1 )^3 + (voltage * C2)
         {
             double volts = voltageSensor.getVoltage();
@@ -116,19 +95,8 @@ public class LinearSlide implements Runnable {
         linearSlide.setPower(power);
     }
 
-    @Override
-    public void run() {
-        try {
-            while (threadActive && opModeIsActive.call() && !isStopRequested.call()) {
-                updatePower();
-            }
-        } catch (NullPointerException e) {
-            throw new NullPointerException("To Use The threaded functionality of the Linear Slide, One must use constructor that takes two Exception<Boolean>");
-        }
-    }
-
     public void resetEncoder() {
-        this.resetEncoder();
+        this.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 

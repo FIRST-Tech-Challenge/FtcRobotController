@@ -24,7 +24,7 @@ public class BlueAutonomousNearWarehouse extends AutonomousTemplate {
         driveSystem.stopAll();
         slide.setMotorPower(1);
         Thread.sleep(500);
-        slide.stop();
+        slide.end();
         driveSystem.strafeAtAngle(0, 1);
         Thread.sleep(1250);
         driveSystem.stopAll();
