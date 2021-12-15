@@ -17,10 +17,10 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
 
-import org.firstinspires.ftc.masters.sequencesegment.SequenceSegment;
-import org.firstinspires.ftc.masters.sequencesegment.TrajectorySegment;
-import org.firstinspires.ftc.masters.sequencesegment.TurnSegment;
-import org.firstinspires.ftc.masters.sequencesegment.WaitSegment;
+import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.SequenceSegment;
+import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.TrajectorySegment;
+import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.TurnSegment;
+import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.masters.util.DashboardUtil;
 
 import java.util.ArrayList;
