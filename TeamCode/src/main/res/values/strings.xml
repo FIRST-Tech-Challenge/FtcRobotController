@@ -31,6 +31,7 @@
     <string name="INTAKE_SPINNING_MOTOR">iM</string>
     <string name="INTAKE_LIFTING_SERVO">iuS</string>
     <string name="INTAKE_LIFTING_LIMIT_SWITCH">iT</string>
+    <string name="INTAKE_LIFTING_DISTANCE_SENSOR">iS</string>
     <!-- ELEVATOR -->
     <string name="LIFT_RIGHT_ELEVATOR_MOTOR">l1M</string>
     <string name="LIFT_LEFT_ELEVATOR_MOTOR">l2M</string>

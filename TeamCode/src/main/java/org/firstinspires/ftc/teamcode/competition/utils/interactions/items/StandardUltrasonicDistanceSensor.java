@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.teamcode.competition.utils.interactions.items;
 
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.DistanceSensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.UltrasonicDistanceSensor;
 
-public class StandardDistanceSensor extends InteractionSurface {
+public class StandardUltrasonicDistanceSensor extends InteractionSurface {
 
-    private final DistanceSensorWrapper SENSOR;
+    private final UltrasonicDistanceSensor SENSOR;
 
-    public StandardDistanceSensor(HardwareMap hardware, String name) {
-        SENSOR = new DistanceSensorWrapper(hardware, name);
+    public StandardUltrasonicDistanceSensor(HardwareMap hardware, String name) {
+        SENSOR = new UltrasonicDistanceSensor(hardware, name);
     }
 
     public double getDistance(DistanceUnit unit) {
@@ -29,7 +28,7 @@ public class StandardDistanceSensor extends InteractionSurface {
         SENSOR.getSensor().close();
     }
 
-    public DistanceSensorWrapper getInternalSensor() {
+    public UltrasonicDistanceSensor getInternalSensor() {
         return SENSOR;
     }
 

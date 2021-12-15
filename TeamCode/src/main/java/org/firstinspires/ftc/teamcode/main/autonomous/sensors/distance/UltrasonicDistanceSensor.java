@@ -37,4 +37,9 @@ public class UltrasonicDistanceSensor implements SensorWrapper {
     public boolean didTimeoutOccur() {
         return false;
     }
+
+    public EyeSquaredSeaDistanceSensor getSensor() {
+        return sensor;
+    }
+
 }

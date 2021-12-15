@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.competition.utils.interactions.groups;
 
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
-public class StandardCarfax extends DrivetrainTemplate {
+public class StandardCarfax extends StandardDrivetrain {
 
     private final StandardMotor RIGHT, LEFT;
 

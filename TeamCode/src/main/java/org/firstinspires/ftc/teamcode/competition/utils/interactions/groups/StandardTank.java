@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.competition.utils.interactions.groups;
 
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
-public class StandardTank extends DrivetrainTemplate {
+public class StandardTank extends StandardDrivetrain {
 
     private final StandardMotor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
 
