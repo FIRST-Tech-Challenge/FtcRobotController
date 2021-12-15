@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.competition.utils.interactions.groups;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardMotor;
 
-public class StandardTank extends InteractionSurface {
+public class StandardTank extends DrivetrainTemplate {
 
     private final StandardMotor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
 
@@ -27,6 +27,7 @@ public class StandardTank extends InteractionSurface {
      * @param leftDistance The distance of the left two motors
      * @param speed The speed of all four motors
      */
+    @Override
     public void driveDistance(int rightDistance, int leftDistance, int speed) {
         RIGHT_TOP.driveDistance(rightDistance, speed);
         RIGHT_BOTTOM.driveDistance(rightDistance, speed);
@@ -39,6 +40,7 @@ public class StandardTank extends InteractionSurface {
      * @param distance The distance of all four motors
      * @param speed The speed of all four motors
      */
+    @Override
     public void driveDistance(int distance, int speed) {
         RIGHT_TOP.driveDistance(distance, speed);
         RIGHT_BOTTOM.driveDistance(distance, speed);
@@ -51,6 +53,7 @@ public class StandardTank extends InteractionSurface {
      * @param rightSpeed The speed of the right two motors
      * @param leftSpeed The speed of the left two motors
      */
+    @Override
     public void driveWithEncoder(int rightSpeed, int leftSpeed) {
         RIGHT_TOP.driveWithEncoder(rightSpeed);
         RIGHT_BOTTOM.driveWithEncoder(rightSpeed);
@@ -62,6 +65,7 @@ public class StandardTank extends InteractionSurface {
      * Drives the tank at a certain speed
      * @param speed The speed of all four motors
      */
+    @Override
     public void driveWithEncoder(int speed) {
         RIGHT_TOP.driveWithEncoder(speed);
         RIGHT_BOTTOM.driveWithEncoder(speed);
@@ -74,6 +78,7 @@ public class StandardTank extends InteractionSurface {
      * @param rightPower The voltage to send to the right two motors
      * @param leftPower The voltage to send to the left two motors
      */
+    @Override
     public void driveWithoutEncoder(int rightPower, int leftPower) {
         RIGHT_TOP.driveWithoutEncoder(rightPower);
         RIGHT_BOTTOM.driveWithoutEncoder(rightPower);
@@ -85,6 +90,7 @@ public class StandardTank extends InteractionSurface {
      * Sends a certain voltage to the tank
      * @param power The voltage to send
      */
+    @Override
     public void driveWithoutEncoder(int power) {
         RIGHT_TOP.driveWithoutEncoder(power);
         RIGHT_BOTTOM.driveWithoutEncoder(power);
@@ -95,6 +101,7 @@ public class StandardTank extends InteractionSurface {
     /**
      * Brings the tank to a stop and resets it
      */
+    @Override
     public void stop() {
         brake();
         reset();
@@ -103,6 +110,7 @@ public class StandardTank extends InteractionSurface {
     /**
      * Brings the tank to a stop
      */
+    @Override
     public void brake() {
         RIGHT_TOP.brake();
         RIGHT_BOTTOM.brake();
@@ -113,6 +121,7 @@ public class StandardTank extends InteractionSurface {
     /**
      * Resets the tank
      */
+    @Override
     public void reset() {
         RIGHT_TOP.reset();
         RIGHT_BOTTOM.reset();
