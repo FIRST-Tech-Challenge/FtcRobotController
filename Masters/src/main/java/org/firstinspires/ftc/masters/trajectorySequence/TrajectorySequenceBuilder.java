@@ -20,10 +20,10 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.acmerobotics.roadrunner.util.Angle;
 
 
-import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.SequenceSegment;
-import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.TrajectorySegment;
-import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.TurnSegment;
-import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.WaitSegment;
+import org.firstinspires.ftc.masters.sequencesegment.SequenceSegment;
+import org.firstinspires.ftc.masters.sequencesegment.TrajectorySegment;
+import org.firstinspires.ftc.masters.sequencesegment.TurnSegment;
+import org.firstinspires.ftc.masters.sequencesegment.WaitSegment;
 
 import java.util.ArrayList;
 import java.util.Collections;

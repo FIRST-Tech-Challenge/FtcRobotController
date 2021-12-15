@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.masters.trajectorySequence.sequencesegment;
+package org.firstinspires.ftc.masters.sequencesegment;
 
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
