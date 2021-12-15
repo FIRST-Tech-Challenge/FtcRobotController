@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="BlueStorage" size="223.000000 163.911911" />
+    <ImageTarget name="BlueAllianceWall" size="228.000000 152.000000" />
+    <ImageTarget name="RedStorage" size="228.000000 148.375381" />
+    <ImageTarget name="RedAllianceWall" size="228.000000 142.427567" />
+  </Tracking>
+</QCARConfig>

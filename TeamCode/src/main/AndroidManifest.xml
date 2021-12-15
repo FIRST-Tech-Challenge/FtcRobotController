@@ -14,16 +14,6 @@
                Set to true if your app is Standalone, that is, it does not require the handheld
                app to run.
         -->
-        <activity
-            android:name=".imgproc.ImgProc"
-            android:label="@string/title_activity_imgproc">
-
-            <!--
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-            -->
-        </activity>
     </application>
 
 </manifest>
