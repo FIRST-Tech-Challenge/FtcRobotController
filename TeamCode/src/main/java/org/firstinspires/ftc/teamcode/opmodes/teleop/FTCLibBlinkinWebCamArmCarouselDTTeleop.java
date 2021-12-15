@@ -89,6 +89,8 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         //set up Game pad 2
         GamepadEx toolOp2 = new GamepadEx(gamepad2);
 
+        CreateWebCam createWebCam = new CreateWebCam(hardwareMap, "Webcam 1", dashboard, telemetry, true);
+
         //create LED SubSystem
         CreateLEDs createLEDs = new CreateLEDs(hardwareMap, "blinkin", driveOp, true);
 
@@ -100,7 +102,6 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
         //create webcam subsystem
         //m_webCam = new WebCamSubsystem(hardwareMap,"Webcam 1",new OpenCvShippingElementDetector(640,480,telemetry));
-        //CreateWebCam createWebCam = new CreateWebCam(hardwareMap, "Webcam 1", dashboard, telemetry, true);
 
         //DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
 

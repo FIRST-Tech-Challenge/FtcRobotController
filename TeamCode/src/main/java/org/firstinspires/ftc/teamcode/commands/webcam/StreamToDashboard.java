@@ -9,19 +9,19 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
 public class StreamToDashboard extends CommandBase {
 
-    private final WebCamSubsystem m_webCamSubsytem;
+    private final WebCamSubsystem webCamSubsytem;
 
     private final FtcDashboard dashboard;
 
 
     public StreamToDashboard(WebCamSubsystem subsystem){
-        m_webCamSubsytem = subsystem;
+        webCamSubsytem = subsystem;
         dashboard = null;
 
     }
 
     public StreamToDashboard(WebCamSubsystem subsystem, FtcDashboard dashboard){
-        m_webCamSubsytem = subsystem;
+        webCamSubsytem = subsystem;
         this.dashboard = dashboard;
 
         addRequirements(subsystem);
@@ -29,7 +29,7 @@ public class StreamToDashboard extends CommandBase {
 
     @Override
     public void initialize(){
-        m_webCamSubsytem.StreamToDashboard(dashboard);
+        webCamSubsytem.StreamToDashboard(dashboard);
     }
 
 
