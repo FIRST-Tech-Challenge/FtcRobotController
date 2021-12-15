@@ -594,10 +594,14 @@ public class MecanumDrive6340 extends MecanumDrive {
     public void inTakeblocks (){
         leftWheelServo.setPower(-1.0);
         rightWheelServo.setPower(1.0);
+         greenLED.setState(false);
+         redLED.setState(true);
     }
     public void stopIntakeBlocks(){
         leftWheelServo.setPower(0.0);
         rightWheelServo.setPower(0.0);
+        redLED.setState(false);
+        greenLED.setState(true);
     }
 
     public void RotorArmFunctionGo(){
