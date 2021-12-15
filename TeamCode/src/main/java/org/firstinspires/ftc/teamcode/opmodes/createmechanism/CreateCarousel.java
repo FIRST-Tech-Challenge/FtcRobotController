@@ -44,7 +44,7 @@ public class CreateCarousel {
 
     public void create(){
 
-        carousel = new CarouselSubsystem(hwMap,"carousel");
+        carousel = new CarouselSubsystem(hwMap,deviceName);
 
         MoveCarousel moveCarouselRight = new MoveCarousel(carousel,MOVE_RIGHT_POWER, telemetry);
         MoveCarousel moveCarouselLeft = new MoveCarousel(carousel, MOVE_LEFT_POWER, telemetry);

@@ -11,27 +11,32 @@ import java.util.function.DoubleSupplier;
 
 public class MoveIntake extends CommandBase {
 
-    private final IntakeSubsystem m_intakeSubsytem;
+    private final IntakeSubsystem intakeSubsytem;
 
-    private final double power;
+    private final double rTriggerPower;
+    private final double lTriggerPower;
     private final DoubleSupplier lTrigger;
     private final DoubleSupplier rTrigger;
     private boolean triggerStopped = false;
+    private static final double ZERO_POWER = 0.0;
+    private static final double TRIGGER_ACTIVE_THRESHOLD = 0.5;
 
     private Telemetry telemetry;
 
 
-    public MoveIntake(IntakeSubsystem subsystem, double power, DoubleSupplier lt, DoubleSupplier rt){
-        m_intakeSubsytem = subsystem;
-        this.power = power;
+    public MoveIntake(IntakeSubsystem subsystem, final double rPower, final double lPower, DoubleSupplier lt, DoubleSupplier rt){
+        intakeSubsytem = subsystem;
+        rTriggerPower = rPower;
+        lTriggerPower = lPower;
         lTrigger = lt;
         rTrigger = rt;
         addRequirements(subsystem);
     }
 
-    public MoveIntake(IntakeSubsystem subsystem, double power, DoubleSupplier lt, DoubleSupplier rt, Telemetry telemetry){
-        m_intakeSubsytem = subsystem;
-        this.power = power;
+    public MoveIntake(IntakeSubsystem subsystem, final double rPower, final double lPower, DoubleSupplier lt, DoubleSupplier rt, Telemetry telemetry){
+        intakeSubsytem = subsystem;
+        rTriggerPower = rPower;
+        lTriggerPower = lPower;
         lTrigger = lt;
         rTrigger = rt;
         this.telemetry = telemetry;
@@ -51,17 +56,17 @@ public class MoveIntake extends CommandBase {
         telemetry.addData("Move intake lt command",rTrigger.getAsDouble());
 
         telemetry.update();
-        if(lTrigger.getAsDouble() > 0.5) {
-            m_intakeSubsytem.setPower(0.6);
+        if(lTrigger.getAsDouble() > TRIGGER_ACTIVE_THRESHOLD) {
+            intakeSubsytem.setPower(lTriggerPower);
             triggerStopped = false;
         }
-        else if(rTrigger.getAsDouble() > 0.5) {
-            m_intakeSubsytem.setPower(-0.75);
+        else if(rTrigger.getAsDouble() > TRIGGER_ACTIVE_THRESHOLD) {
+            intakeSubsytem.setPower(rTriggerPower);
             triggerStopped = false;
         }
 
         else{
-            m_intakeSubsytem.setPower(0.0);
+            intakeSubsytem.setPower(ZERO_POWER);
             triggerStopped = true;
         }
 

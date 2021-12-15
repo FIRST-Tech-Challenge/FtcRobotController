@@ -27,7 +27,10 @@ import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowTeamColors;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StreamToDashboard;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateBC4HDrive;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateIntake;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
 
@@ -90,7 +93,9 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         CreateLEDs createLEDs = new CreateLEDs(hardwareMap, "blinkin", driveOp, true);
 
         CreateCarousel createCarousel = new CreateCarousel(hardwareMap,"carousel",toolOp2,telemetry,true);
-
+        CreateIntake createIntake = new CreateIntake(hardwareMap, "intake", toolOp2, telemetry, true);
+        CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, telemetry, true);
+        CreateBC4HDrive createBC4HDrive = new CreateBC4HDrive(hardwareMap,"frontLeft", "backLeft", "frontRight", "backRight", driveOp, telemetry, true );
         //m_leds = new LEDSubsystem(hardwareMap,"blinkin", 10);
 
         //create webcam subsystem
@@ -99,7 +104,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
         //DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
 
-        Map<Integer, Integer> armLevels = new HashMap<>();
+        /*Map<Integer, Integer> armLevels = new HashMap<>();
         armLevels.put(0,0);
         armLevels.put(1,200);
         armLevels.put(2,550);
@@ -145,11 +150,11 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         armLevel0.whenPressed(m_moveToLevel0);
         armLevel1.whenPressed(m_moveToLevel1);
         armLevel2.whenPressed(m_moveToLevel2);
-        armLevel3.whenPressed(m_moveToLevel3);
+        armLevel3.whenPressed(m_moveToLevel3);*/
 
-        m_intake = new IntakeSubsystem(hardwareMap,"intake", DcMotorSimple.Direction.REVERSE, 0.0);
+        //m_intake = new IntakeSubsystem(hardwareMap,"intake", DcMotorSimple.Direction.REVERSE, 0.0);
 
-        m_seGrabber = new MoveIntake(m_intake, -0.75, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> toolOp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        //m_seGrabber = new MoveIntake(m_intake, -0.75, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> toolOp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
         //m_seReleaser = new MoveIntake(m_intake, 0.6, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
         //m_stopIntake = new MoveIntake(m_intake, 0.0, () -> toolOp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
 
@@ -172,17 +177,17 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
 
 
-        m_bc4h_drive = new BC4HDriveSubsystem(hardwareMap, "frontLeft", "backLeft", "frontRight", "backRight",
+        /*m_bc4h_drive = new BC4HDriveSubsystem(hardwareMap, "frontLeft", "backLeft", "frontRight", "backRight",
                                                        560, 7.5, DcMotor.Direction.FORWARD, DcMotor.Direction.FORWARD,
                                                         DcMotor.Direction.REVERSE, DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER );
 
 
         m_driveRobot = new DefaultDrive(m_bc4h_drive, () -> driveOp.getLeftY(), () -> driveOp.getLeftX(), () -> driveOp.getRightX());
-        m_bc4h_drive.setDefaultCommand(m_driveRobot);
+        m_bc4h_drive.setDefaultCommand(m_driveRobot);*/
 
 
 
-        m_seGrabber.schedule(true);
+        //m_seGrabber.schedule(true);
         //m_seReleaser.schedule(true);
 
 
