@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 
 public class MoveCarousel extends CommandBase {
 
-    private final CarouselSubsystem m_carouselSubsytem;
+    private final CarouselSubsystem carouselSubsytem;
 
     private final Double power;
 
@@ -16,13 +16,13 @@ public class MoveCarousel extends CommandBase {
 
 
     public MoveCarousel(CarouselSubsystem subsystem, Double power){
-        m_carouselSubsytem = subsystem;
+        carouselSubsytem = subsystem;
         this.power = power;
         addRequirements(subsystem);
     }
 
     public MoveCarousel(CarouselSubsystem subsystem, Double power, Telemetry telemetry){
-        m_carouselSubsytem = subsystem;
+        carouselSubsytem = subsystem;
         this.power = power;
         this.telemetry = telemetry;
 
@@ -32,7 +32,7 @@ public class MoveCarousel extends CommandBase {
 
     @Override
     public void initialize(){
-        m_carouselSubsytem.setPower(power);
+        carouselSubsytem.setPower(power);
     }
 
 

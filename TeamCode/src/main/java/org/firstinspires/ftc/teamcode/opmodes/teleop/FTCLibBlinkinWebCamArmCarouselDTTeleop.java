@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowTeamColors;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StreamToDashboard;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
 
@@ -87,6 +88,8 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
         //create LED SubSystem
         CreateLEDs createLEDs = new CreateLEDs(hardwareMap, "blinkin", driveOp, true);
+
+        CreateCarousel createCarousel = new CreateCarousel(hardwareMap,"carousel",toolOp2,telemetry,true);
 
         //m_leds = new LEDSubsystem(hardwareMap,"blinkin", 10);
 
@@ -153,7 +156,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         //m_intake.setDefaultCommand(new PerpetualCommand(m_stopIntake));
 
 
-        m_carousel = new CarouselSubsystem(hardwareMap,"carousel");
+        /*m_carousel = new CarouselSubsystem(hardwareMap,"carousel");
 
         m_moveCarouselRight = new MoveCarousel(m_carousel,0.5, telemetry);
         m_moveCarouselLeft = new MoveCarousel(m_carousel, -0.5, telemetry);
@@ -165,7 +168,9 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
         carouselRight.whileHeld(m_moveCarouselRight);
         carouselLeft.whileHeld(m_moveCarouselLeft);
-        m_carousel.setDefaultCommand(new PerpetualCommand(m_stopCarousel));
+        m_carousel.setDefaultCommand(new PerpetualCommand(m_stopCarousel));*/
+
+
 
         m_bc4h_drive = new BC4HDriveSubsystem(hardwareMap, "frontLeft", "backLeft", "frontRight", "backRight",
                                                        560, 7.5, DcMotor.Direction.FORWARD, DcMotor.Direction.FORWARD,

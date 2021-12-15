@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 
 public class StopCarousel extends CommandBase {
 
-    private final CarouselSubsystem m_carouselSubsytem;
+    private final CarouselSubsystem carouselSubsytem;
 
     private final Double power = 0.0;
 
@@ -15,12 +15,12 @@ public class StopCarousel extends CommandBase {
 
 
     public StopCarousel(CarouselSubsystem subsystem){
-        m_carouselSubsytem = subsystem;
+        carouselSubsytem = subsystem;
         addRequirements(subsystem);
     }
 
     public StopCarousel(CarouselSubsystem subsystem, Telemetry telemetry){
-        m_carouselSubsytem = subsystem;
+        carouselSubsytem = subsystem;
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -29,7 +29,7 @@ public class StopCarousel extends CommandBase {
 
     @Override
     public void initialize(){
-        m_carouselSubsytem.setPower(power);
+        carouselSubsytem.setPower(power);
     }
 
 }
