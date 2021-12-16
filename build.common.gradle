@@ -47,9 +47,6 @@ android {
         }
     }
 
-    aaptOptions {
-        noCompress "tflite"
-    }
 
     defaultConfig {
         signingConfig signingConfigs.debug
@@ -94,7 +91,7 @@ android {
             signingConfig signingConfigs.release
 
             ndk {
-                abiFilters "armeabi-v7a", "arm-v8a"
+                abiFilters "armeabi-v7a"
             }
         }
         debug {
@@ -102,7 +99,7 @@ android {
             jniDebuggable true
             renderscriptDebuggable true
             ndk {
-                abiFilters "armeabi-v7a", "arm-v8a"
+                abiFilters "armeabi-v7a"
             }
         }
     }
@@ -126,6 +123,5 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
-    jcenter()
 }
 
