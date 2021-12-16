@@ -5,20 +5,20 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class TeleDriveController {
 
-    private static final double EPSILON = 0.001;
+    private static final double p_EPSILON = 0.001;
     private DcMotor p_leftFront, p_rightFront, p_leftBack, p_rightBack;
     private boolean p_smoothActivation = false;
 
-    public TeleDriveController(DcMotor leftFront, DcMotor rightFront, DcMotor leftBack, DcMotor rightBack) {
-        this.p_leftFront = leftFront;
-        this.p_rightFront = rightFront;
-        this.p_leftBack = leftBack;
-        this.p_rightBack = rightBack;
+    public TeleDriveController (DcMotor leftFront, DcMotor rightFront, DcMotor leftBack, DcMotor rightBack) {
+        p_leftFront = leftFront;
+        p_rightFront = rightFront;
+        p_leftBack = leftBack;
+        p_rightBack = rightBack;
 
-        this.p_leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.p_rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.p_leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.p_rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        p_leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        p_rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        p_leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        p_rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void update (double x, double y, double r) {
@@ -28,7 +28,7 @@ public class TeleDriveController {
         p_rightBack.setPower(getPower(x, y, r, false, false));
     }
 
-    public void setSmoothActivation(boolean p_smoothActivation) {
+    public void setSmoothActivation (boolean p_smoothActivation) {
         this.p_smoothActivation = p_smoothActivation;
     }
 
@@ -39,18 +39,18 @@ public class TeleDriveController {
         else
             ret = activationFunction(getTransYPrime(x, y) + (isLeft ? (r) : (-1 * r)));
 
-        if (Math.abs(ret) < EPSILON) {
+        if (Math.abs(ret) < p_EPSILON) {
             return 0;
         }
         return ret;
     }
 
     private double getTransXPrime (double x, double y) {
-        return ((x + y) / Math.sqrt(2));
+        return ((x - y) / Math.sqrt(2));
     }
 
     private double getTransYPrime (double x, double y) {
-        return ((y - x) / Math.sqrt(2));
+        return ((-y - x) / Math.sqrt(2));
     }
 
     private double activationFunction (double a) {

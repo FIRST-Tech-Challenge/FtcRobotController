@@ -35,6 +35,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import ca.webber.ftc.helpers.TelePivotController;
+
 /**
  * This OpMode scans a single servo back and forwards until Stop is pressed.
  * The code is structured as a LinearOpMode
@@ -49,18 +51,20 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@TeleOp(name = "Servo Test", group = "Concept")
+@TeleOp(name = "Motor Test", group = "Concept")
 @Disabled
-public class ServoTest extends LinearOpMode {
+public class MotorTest extends LinearOpMode {
 
     // Define class members
-    DcMotor motor;
+    private TelePivotController telePivotController;
 
     @Override
     public void runOpMode() {
 
-        motor = hardwareMap.get(DcMotor.class, "motor0");
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        // instantiates the pivotController
+        telePivotController = new TelePivotController(
+                hardwareMap.get(DcMotor.class, "motor0")
+        );
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
@@ -75,16 +79,13 @@ public class ServoTest extends LinearOpMode {
             telemetry.addData("Left Input: ", "" + gamepad1.left_stick_x);
             telemetry.update();
 
-            updateMotor(gamepad1.left_stick_x);
+            // operates the pivot controller
+            telePivotController.update(gamepad1.left_stick_x);
 
         }
 
         // Signal done;
         telemetry.addData(">", "Done");
         telemetry.update();
-    }
-
-    private void updateMotor (double power) {
-        motor.setPower(power);
     }
 }
