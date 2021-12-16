@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 
 public class SetArmLevel extends CommandBase {
 
-    private final ArmSubsystem m_armSubsytem;
+    private final ArmSubsystem armSubsytem;
 
     private final Integer levelIndicator;
 
@@ -15,25 +15,33 @@ public class SetArmLevel extends CommandBase {
 
 
     public SetArmLevel(ArmSubsystem subsystem, Integer levelIndicator){
-        m_armSubsytem = subsystem;
+        armSubsytem = subsystem;
         this.levelIndicator = levelIndicator;
         addRequirements(subsystem);
     }
 
     public SetArmLevel(ArmSubsystem subsystem, Integer levelIndicator, Telemetry telemetry){
-        m_armSubsytem = subsystem;
+        armSubsytem = subsystem;
+        telemetry.addData("SetArmLevel",levelIndicator);
+        telemetry.update();
         this.levelIndicator = levelIndicator;
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
     }
 
+
     @Override
     public void initialize(){
 
-        //telemetry.addData("moving arm command",m_armSubsytem.getLevel(levelIndicator));
-        //telemetry.update();
-        m_armSubsytem.setArmTargetPosition(m_armSubsytem.getLevel(levelIndicator));
+        telemetry.addData("moving arm command",armSubsytem.getLevel(levelIndicator));
+        telemetry.update();
+        armSubsytem.setArmTargetPosition(armSubsytem.getLevel(levelIndicator));
+
+    }
+
+    @Override
+    public void execute(){
 
     }
 

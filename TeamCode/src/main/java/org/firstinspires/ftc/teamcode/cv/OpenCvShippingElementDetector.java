@@ -15,7 +15,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class OpenCvShippingElementDetector extends OpenCvPipeline {
@@ -39,6 +41,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     }
 
     TSELocation location;
+    Map<TSELocation, Integer> levels = new HashMap<>();
+
 
     private int width; // width of the image
     private int height = 240;
@@ -67,6 +71,24 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         this.height = height;
         this.telemetry = telemetry;
 
+        levels.put(TSELocation.NONE,0);
+
+        levels.put(TSELocation.P1_BLUE_RIGHT,1);
+        levels.put(TSELocation.P2_BLUE_RIGHT,1);
+        levels.put(TSELocation.P1_RED_RIGHT,1);
+        levels.put(TSELocation.P2_RED_RIGHT,1);
+
+        levels.put(TSELocation.P1_BLUE_MIDDLE,2);
+        levels.put(TSELocation.P2_BLUE_MIDDLE,2);
+        levels.put(TSELocation.P1_RED_MIDDLE,2);
+        levels.put(TSELocation.P2_RED_MIDDLE,2);
+
+        levels.put(TSELocation.P1_BLUE_LEFT,3);
+        levels.put(TSELocation.P2_BLUE_LEFT,3);
+        levels.put(TSELocation.P1_RED_LEFT,3);
+        levels.put(TSELocation.P2_RED_LEFT,3);
+
+        location = TSELocation.NONE;
 
 
         cvDNN = new Dnn();
@@ -80,7 +102,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat inputFrame) {
 
-        //telemetry.addLine("Inside ProcessFrame");
+        telemetry.addLine("Inside ProcessFrame");
         //telemetry.update();
         //Mat imageRGB = new Mat();
         Mat blob = null;
@@ -129,7 +151,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 String label =  className + ": " + df.format(confidence);
                 Scalar color = colors.get(class_id);
 
-                //telemetry.addData("This is a real new", className);
+                telemetry.addData("This is a real new", className);
                 //telemetry.update();
 
                 switch (className)
@@ -160,6 +182,32 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                         location = TSELocation.P2_BLUE_MIDDLE;
                         break;
 
+                    case "p1_red_left":
+                        location = TSELocation.P1_RED_LEFT;
+                        break;
+
+                    case "p1_red_right":
+                        //telemetry.addData("This is a new p1br", className);
+                        //telemetry.update();
+                        location = TSELocation.P1_RED_RIGHT;
+                        break;
+
+                    case "p1_red_middle":
+                        location = TSELocation.P1_RED_MIDDLE;
+                        break;
+
+                    case "p2_red_left":
+                        location = TSELocation.P2_RED_LEFT;
+                        break;
+
+                    case "p2_red_right":
+                        location = TSELocation.P2_RED_RIGHT;
+                        break;
+
+                    case "p2_red_middle":
+                        location = TSELocation.P2_RED_MIDDLE;
+                        break;
+
                     default:
                         location = TSELocation.NONE;
                 }
@@ -184,5 +232,9 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     }
     public TSELocation getLocation() {
         return this.location;
+    }
+    public int getTSELevel(){
+        telemetry.addData("getTSELevel", location);
+        return levels.get(location);
     }
 }

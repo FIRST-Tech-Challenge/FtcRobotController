@@ -28,7 +28,8 @@ public class WebCamSubsystem extends SubsystemBase {
     private static final String ID_NAME = "cameraMonitorViewId";
     private static final String ID_DEF_TYPE = "id";
 
-    OpenCvShippingElementDetector.TSELocation location;
+    private OpenCvShippingElementDetector.TSELocation location;
+    private int currrentLevel = 2;
 
     public WebCamSubsystem(final HardwareMap hwMap, final String deviceName){
 
@@ -122,8 +123,16 @@ public class WebCamSubsystem extends SubsystemBase {
         this.location = location;
     }
 
+    public void setLevel(int level){
+        currrentLevel = level;
+    }
+
     public OpenCvShippingElementDetector.TSELocation getLocation(){
         return location;
+    }
+
+    public int getLevel(){
+        return currrentLevel;
     }
 
 

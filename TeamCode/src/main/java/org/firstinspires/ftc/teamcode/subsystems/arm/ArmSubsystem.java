@@ -28,6 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
     private int maxTargetPositon = 1200;
     private final Telemetry telemetry;
 
+
     Map<Integer, Integer> levels = new HashMap<>();
 
 
@@ -68,8 +69,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setArmTargetPosition(int armTargetPosition){
-        telemetry.addData("moving arm subsystem",armTargetPosition);
-        telemetry.update();
+        //telemetry.addData("moving arm subsystem",armTargetPosition);
+        //telemetry.update();
         motorArm.setTargetPosition(armTargetPosition);
         setPower(0.5);
     }

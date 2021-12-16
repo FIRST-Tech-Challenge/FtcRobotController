@@ -51,11 +51,7 @@ public class MoveIntake extends CommandBase {
 
     @Override
     public void execute(){
-
-        telemetry.addData("Move intake lt command",lTrigger.getAsDouble());
-        telemetry.addData("Move intake lt command",rTrigger.getAsDouble());
-
-        telemetry.update();
+        
         if(lTrigger.getAsDouble() > TRIGGER_ACTIVE_THRESHOLD) {
             intakeSubsytem.setPower(lTriggerPower);
             triggerStopped = false;

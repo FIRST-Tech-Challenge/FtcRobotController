@@ -31,14 +31,15 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         //set up Game pad 2
         GamepadEx toolOp2 = new GamepadEx(gamepad2);
 
-        CreateWebCam createWebCam = new CreateWebCam(hardwareMap, "Webcam 1", dashboard, telemetry, true);
+        CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, telemetry, true);
+
+        CreateWebCam createWebCam = new CreateWebCam(hardwareMap, "Webcam 1", dashboard,createArm.getArm(), telemetry, true);
         //create LED SubSystem
         CreateLEDs createLEDs = new CreateLEDs(hardwareMap, "blinkin", driveOp, true);
         CreateCarousel createCarousel = new CreateCarousel(hardwareMap,"carousel",toolOp2,telemetry,true);
         CreateIntake createIntake = new CreateIntake(hardwareMap, "intake", toolOp2, telemetry, true);
-        CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, telemetry, true);
         CreateBC4HDrive createBC4HDrive = new CreateBC4HDrive(hardwareMap,"frontLeft", "backLeft", "frontRight", "backRight", driveOp, telemetry, true );
-        
+
         CommandScheduler.getInstance().run();
 
 

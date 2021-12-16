@@ -94,4 +94,8 @@ public class CreateArm {
 
 
     }
+
+    public ArmSubsystem getArm(){
+        return arm;
+    }
 }
