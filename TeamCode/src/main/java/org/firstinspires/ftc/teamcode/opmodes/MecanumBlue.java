@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.mechanism.Capper;
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
 import org.firstinspires.ftc.teamcode.mechanism.Color;
 import org.firstinspires.ftc.teamcode.mechanism.Hopper;
@@ -17,6 +18,7 @@ public class MecanumBlue extends OpMode {
     Lift lift = new Lift();
     Intake intake = new Intake();
     Hopper hopper = new Hopper();
+    Capper capper = new Capper();
 
     public void init() {
         // Initialize each mechanism
@@ -25,6 +27,7 @@ public class MecanumBlue extends OpMode {
         lift.init(hardwareMap);
         intake.init(hardwareMap);
         hopper.init(hardwareMap);
+        capper.init(hardwareMap);
     }
 
     @Override
@@ -35,5 +38,6 @@ public class MecanumBlue extends OpMode {
         lift.run(gamepad2);
         intake.run(gamepad2);
         hopper.run(gamepad2);
+        capper.run(gamepad2);
     }
 }

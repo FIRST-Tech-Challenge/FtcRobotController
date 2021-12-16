@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.mechanism.Capper;
 import org.firstinspires.ftc.teamcode.mechanism.Carousel;
 import org.firstinspires.ftc.teamcode.mechanism.Color;
 import org.firstinspires.ftc.teamcode.mechanism.Hopper;
@@ -17,6 +18,7 @@ public class MecanumRed extends OpMode {
     Lift lift = new Lift();
     Intake intake = new Intake();
     Hopper hopper = new Hopper();
+    Capper capper = new Capper();
 
     public void init() {
         // Initialize each mechanism
@@ -25,7 +27,7 @@ public class MecanumRed extends OpMode {
         lift.init(hardwareMap);
         intake.init(hardwareMap);
         hopper.init(hardwareMap);
-
+        capper.init(hardwareMap);
 
     }
 
@@ -37,10 +39,12 @@ public class MecanumRed extends OpMode {
         lift.run(gamepad2);
         intake.run(gamepad2);
         hopper.run(gamepad2);
+        capper.run(gamepad2);
         telemetry.addData("lift level", lift.liftMotor.getCurrentPosition());
         telemetry.addData("front left pos", chassis.frontLeft.getCurrentPosition());
         telemetry.addData("front right pos", chassis.frontRight.getCurrentPosition());
         telemetry.addData("back left pos", chassis.backLeft.getCurrentPosition());
         telemetry.addData("back right pos", chassis.backRight.getCurrentPosition());
+        telemetry.addData("capper pos", capper.arm.getCurrentPosition());
     }
 }

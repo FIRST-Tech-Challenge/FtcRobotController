@@ -17,6 +17,9 @@ public class Constants {
     public static final double HOPPER_BOTTOM = 0.08;
     public static final double HOPPER_TOP = 0.4;
 
+    // Capper Constants:
+    public static final double CAPPER_SPEED = 0.3;
+
     // Camera Constants:
     public static final double CAMERA_POSITION = 100;
 }
