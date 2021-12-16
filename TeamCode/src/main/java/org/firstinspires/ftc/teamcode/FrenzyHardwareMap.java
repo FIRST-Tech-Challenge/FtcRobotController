@@ -57,6 +57,7 @@ public class FrenzyHardwareMap {
     final double REV_WHEEL_DIAM = 7.5;
     public final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
     final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
+
     //Setup local opmode members.
     HardwareMap frenzyMap = null;
     Telemetry telemetry = null;
