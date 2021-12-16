@@ -6,13 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 
 
-@TeleOp(name = "Drive Program Red")
-public class DriveProgramRed extends TeleopTemplate {
+@TeleOp(name = "Blue Drive Program")
+public class BlueDriveProgram extends TeleopTemplate {
 
     public void runOpMode() throws InterruptedException {
 
         this.initAll();
-        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -22,11 +22,11 @@ public class DriveProgramRed extends TeleopTemplate {
             slide.setMotorPower(1 * gamepad2.left_stick_y);
             intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
 
-            if (gamepad2.x){
+            if (gamepad2.x) {
                 spinner.setPowerBlueDirection();
-            }else if (gamepad2.b){
+            } else if (gamepad2.b) {
                 spinner.setPowerRedDirection();
-            }else{
+            } else {
                 spinner.stop();
             }
 

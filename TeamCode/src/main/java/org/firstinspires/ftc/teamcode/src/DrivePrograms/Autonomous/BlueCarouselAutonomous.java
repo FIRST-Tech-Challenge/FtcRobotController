@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
 
 
 @Autonomous(name = "Blue Carousel Autonomous")
-public class BlueCarouselAuto extends AutoObjDetectionTemplate {
+public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
     @Override
     public void runOpMode() throws InterruptedException {
