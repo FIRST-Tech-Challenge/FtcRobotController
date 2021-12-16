@@ -44,7 +44,7 @@ public class DetectTSEPosition extends CommandBase {
         location = detector.getLocation();
         level = detector.getTSELevel();
 
-        telemetry.addData("We have a", location);
+        //telemetry.addData("We have a", location);
 
 
         setLocation();
@@ -76,12 +76,12 @@ public class DetectTSEPosition extends CommandBase {
     }
 
     private void setLocation(){
-        telemetry.addData("We have a 2", location);
+        //telemetry.addData("We have a 2", location);
         webCamSubsytem.setLocation(location);
     }
 
     private void setLevel(){
-        telemetry.addData("We have a 2 level", level);
+        //telemetry.addData("We have a 2 level", level);
         webCamSubsytem.setLevel(level);
         if(level > 0)
             gotPosition = true;
@@ -89,8 +89,8 @@ public class DetectTSEPosition extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        telemetry.addData("We are finished", gotPosition);
-        telemetry.update();
+        //telemetry.addData("We are finished", gotPosition);
+        //telemetry.update();
         return gotPosition;
     }
 
