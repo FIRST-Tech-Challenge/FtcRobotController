@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition.utils.eyesquaredsea;
-
-import androidx.annotation.RequiresPermission;
+package org.firstinspires.ftc.teamcode.competition.utils.devices;
 
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;

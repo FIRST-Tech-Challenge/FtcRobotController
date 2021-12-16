@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.competition.utils.eyesquaredsea.EyeSquaredSeaDistanceSensor;
+import org.firstinspires.ftc.teamcode.competition.utils.devices.EyeSquaredSeaDistanceSensor;
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 
 public class UltrasonicDistanceSensor implements SensorWrapper {
