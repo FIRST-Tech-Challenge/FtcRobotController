@@ -51,9 +51,9 @@ public class CreateArm {
 
         Map<Integer, Integer> armLevels = new HashMap<>();
         armLevels.put(0,0);
-        armLevels.put(1,200);
-        armLevels.put(2,550);
-        armLevels.put(3,850);
+        armLevels.put(1,250);
+        armLevels.put(2,600);
+        armLevels.put(3,900);
 
         arm = new ArmSubsystem(hwMap,deviceName, DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
 

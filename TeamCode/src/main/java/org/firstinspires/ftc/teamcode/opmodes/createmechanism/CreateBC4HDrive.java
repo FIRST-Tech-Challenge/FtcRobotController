@@ -55,7 +55,7 @@ public class CreateBC4HDrive {
                 REV_ENCODER_CLICKS, REV_WHEEL_DIAM, DcMotor.Direction.FORWARD, DcMotor.Direction.FORWARD,
                 DcMotor.Direction.REVERSE, DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER );
 
-        DefaultDrive driveRobot = new DefaultDrive(drive, () -> op.getLeftY(), () -> op.getLeftX(), () -> op.getRightX());
+        DefaultDrive driveRobot = new DefaultDrive(drive, () -> op.getLeftY(), () -> op.getLeftX(), () -> op.getRightX(), () -> op.isDown(GamepadKeys.Button.B));
         drive.setDefaultCommand(driveRobot);
     }
 }
