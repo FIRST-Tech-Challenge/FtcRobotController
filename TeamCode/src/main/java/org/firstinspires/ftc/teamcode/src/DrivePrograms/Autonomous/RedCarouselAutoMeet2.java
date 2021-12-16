@@ -1,16 +1,18 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
-@Autonomous(name = "RedCarouselMeet2")
+@Autonomous(name = "Red Carousel Autonomous")
 public class RedCarouselAutoMeet2 extends AutoObjDetectionTemplate {
 
     @Override
     public void runOpMode() throws InterruptedException {
         this.initAll();
+        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
         MarkerPosition Pos = MarkerPosition.NotSeen;
         slide.setTargetLevel(LinearSlide.HeightLevels.Down);
         this.initVuforia();

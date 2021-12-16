@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.ContinuousIntake;
 
 @TeleOp(name = "ColorTest")
+@Disabled
 public class ColorTest extends TeleopTemplate {
 
     public void runOpMode() throws InterruptedException {

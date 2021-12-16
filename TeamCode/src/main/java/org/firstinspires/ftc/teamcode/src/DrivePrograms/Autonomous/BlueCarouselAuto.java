@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
 
-@Autonomous(name = "BlueCarouselAuto")
+@Autonomous(name = "Blue Carousel Autonomous")
 public class BlueCarouselAuto extends AutoObjDetectionTemplate {
 
     @Override
     public void runOpMode() throws InterruptedException {
         this.initAll();
+        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         MarkerPosition Pos = MarkerPosition.NotSeen;
         this.initVuforia();
         this.initTfod();

@@ -82,8 +82,8 @@ public class SampleRevBlinkinLedDriver extends OpMode {
     {
         displayKind = DisplayKind.AUTO;
 
-        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
+        pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
         blinkinLedDriver.setPattern(pattern);
 
         display = telemetry.addData("Display Kind: ", displayKind.toString());

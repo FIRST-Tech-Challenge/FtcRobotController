@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
 
-@Autonomous(name = "BlueWarehouseAutonomous")
+@Autonomous(name = "Blue Warehouse Autonomous")
 public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
     @Override
     public void runOpMode() throws InterruptedException {
         this.initAll();
+        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         MarkerPosition Pos = MarkerPosition.NotSeen;
         slide.setTargetLevel(LinearSlide.HeightLevels.Down);
         this.initVuforia();
@@ -19,8 +21,9 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         this.activate();
         odometry.setPosition(133, 63, 270);
 
-        while (!isStarted() && !isStopRequested()) {
+        while (!isStarted()) {
             Pos = this.getAverageOfMarker(10, 100);
+            checkStop();
             telemetry.addData("Position", Pos);
             telemetry.update();
         }

@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Disabled
 public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
@@ -20,78 +21,53 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     public volatile VuforiaLocalizer vuforia;
     public volatile TFObjectDetector tfod;
 
-    private volatile boolean doThreadedObjReturn = true;
 
     public void initVuforia() throws InterruptedException {
         telemetry.addData("Vuforia initialization:", "Started");
         telemetry.update();
 
-        Thread t = new Thread(this::_initVuforia);
-        t.start();
-        while (t.getState() != Thread.State.TERMINATED) {
-            if (isStopRequested()) {
-                doThreadedObjReturn = false;
-                throw new InterruptedException();
-            }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                doThreadedObjReturn = false;
-
-            }
-        }
-        t.join();
+        checkStop();
+        this._initVuforia();
+        checkStop();
 
         telemetry.addData("Vuforia initialization:", "Complete");
         telemetry.update();
 
     }
 
-    private void _initVuforia() {
+    private void _initVuforia() throws InterruptedException {
         //Waits for mutex to be available
-        synchronized (InitThreadLockContainer.lock1) {
-            if (!doThreadedObjReturn) {
-                return;
-            }
+
+        synchronized (InitThreadLockContainer.VF_Lock) {
 
             //does the initialization
             VuforiaLocalizer Vuforia;
-            {
-                VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-                parameters.vuforiaLicenseKey = VUFORIA_KEY;
-                parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+            VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-                //  Instantiate the Vuforia engine
-                Vuforia = ClassFactory.getInstance().createVuforia(parameters);
-            }
+            parameters.vuforiaLicenseKey = VUFORIA_KEY;
+            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
+            //  Instantiate the Vuforia engine
+            checkStop();
+            Vuforia = ClassFactory.getInstance().createVuforia(parameters);
+            checkStop();
+
 
             //Passes initialized obj back to caller class
-            if (doThreadedObjReturn) {
-                this.vuforia = Vuforia;
-            }
+            this.vuforia = Vuforia;
         }
+
     }
 
     public void initTfod() throws InterruptedException {
         telemetry.addData("TFOD initialization:", "Started");
         telemetry.update();
+        checkStop();
 
+        this._initTfod();
 
-        Thread t = new Thread(this::_initTfod);
-        t.start();
-        while (t.getState() != Thread.State.TERMINATED) {
-            if (isStopRequested()) {
-                doThreadedObjReturn = false;
-                throw new InterruptedException();
-            }
-        }
-
-        t.join();
-
-
+        checkStop();
         telemetry.addData("TFOD initialization:", "Complete");
         telemetry.update();
 
@@ -99,12 +75,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
     private void _initTfod() {
         //Waits for mutex to be available
-        synchronized (InitThreadLockContainer.lock2) {
-
-            if (!doThreadedObjReturn) {
-                return;
-            }
-
+        synchronized (InitThreadLockContainer.TFOD_Lock) {
             //Runs initialization Code
             int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                     "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -118,65 +89,18 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
 
             //Passes initialized obj back to caller class
-            if (doThreadedObjReturn) {
-                this.tfod = Tfod;
-            }
-        }
-    }
-
-    public void initTfodAndVuf() throws InterruptedException {
-        Thread t = new Thread(this::_initTfod);
-        t.start();
-        Thread t2 = new Thread(this::_initVuforia);
-        t2.start();
-        while ((t.getState() != Thread.State.TERMINATED) || (t2.getState() != Thread.State.TERMINATED)) {
-            if (isStopRequested()) {
-                doThreadedObjReturn = false;
-                throw new InterruptedException();
-            }
+            this.tfod = Tfod;
         }
 
-        t.join();
-        t2.join();
-
     }
 
-    private static class InitThreadLockContainer {
-        private static final Object lock1 = new Object();
-        private static final Object lock2 = new Object();
-    }
-
-    public void activate() {
+    public void activate() throws InterruptedException {
+        checkStop();
         if (tfod != null) {
             tfod.activate();
-
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 16/9).
             tfod.setZoom(2, 16.0 / 9.0);
         }
-    }
-
-    public MarkerPosition findPositionOfMarker() {
-        if (tfod != null) {
-
-            // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-
-            if (updatedRecognitions != null && (updatedRecognitions.size() > 0)) {
-                if (updatedRecognitions.get(0).getLeft() > 615) {
-                    return MarkerPosition.Right;
-                }
-                if (updatedRecognitions.get(0).getLeft() <= 615) {
-                    return MarkerPosition.Left;
-                }
-            }
-        }
-        return MarkerPosition.NotSeen;
+        checkStop();
     }
 
     public MarkerPosition getAverageOfMarker(int arraySize, int sleepTime) throws InterruptedException {
@@ -186,6 +110,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         for (int i = 0; i < arraySize; i++) {
             markerPositions[i] = this.findPositionOfMarker();
             Thread.sleep(sleepTime);
+            checkStop();
         }
 
         int sum = 0;
@@ -214,6 +139,30 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 return MarkerPosition.Left;
         }
         return MarkerPosition.Left; //It never reaches this line
+    }
+
+    public MarkerPosition findPositionOfMarker() {
+        if (tfod != null) {
+
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+
+            if (updatedRecognitions != null && (updatedRecognitions.size() > 0)) {
+                if (updatedRecognitions.get(0).getLeft() > 615) {
+                    return MarkerPosition.Right;
+                }
+                if (updatedRecognitions.get(0).getLeft() <= 615) {
+                    return MarkerPosition.Left;
+                }
+            }
+        }
+        return MarkerPosition.NotSeen;
+    }
+
+    private static class InitThreadLockContainer {
+        private static final ReentrantLock VF_Lock = new ReentrantLock();
+        private static final ReentrantLock TFOD_Lock = new ReentrantLock();
     }
 
     public enum MarkerPosition {

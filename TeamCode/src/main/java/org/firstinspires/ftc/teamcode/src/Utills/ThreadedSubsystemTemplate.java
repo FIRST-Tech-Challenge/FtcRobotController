@@ -24,7 +24,7 @@ public abstract class ThreadedSubsystemTemplate extends Thread {
                 Thread.sleep(sleepTime);
             }
         } catch (NullPointerException | InterruptedException e) {
-            e.printStackTrace();
+            return;
         }
 
     }

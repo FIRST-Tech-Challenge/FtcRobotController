@@ -14,7 +14,7 @@ public class ContinuousIntake {
     final static double forwardPower = 1;
     DcMotor intakeMotor;
 
-    private static final double BucketUpPosition = .92;
+    private static final double BucketUpPosition = .98;
     private static final double BucketDownPosition = .46;
     Servo slantServo;
     public ColorRangeSensor intakeSensor;

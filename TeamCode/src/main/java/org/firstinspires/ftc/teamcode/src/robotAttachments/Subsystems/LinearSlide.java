@@ -12,17 +12,10 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
 
     private final DcMotor linearSlide;
 
-
     private static final double ticksPerRevolution = 145.1;
     private static final double spoolRadius = 0.55 / 2; //in inches
-    //private static final double inchesPerRevolution = ticksPerRevolution * 2 * Math.PI * spoolRadius;
-    //private static final int linearSlideAngle = 68;
-    //private static final double stopPower = 0.13;
-    //public volatile boolean threadActive = true;
     public RobotVoltageSensor voltageSensor;
     public volatile int chosenPosition;
-
-    //public static final double level_one_height = 0;
 
 
     public LinearSlide(HardwareMap hardwareMap, String dcMotorName, RobotVoltageSensor voltSensor,

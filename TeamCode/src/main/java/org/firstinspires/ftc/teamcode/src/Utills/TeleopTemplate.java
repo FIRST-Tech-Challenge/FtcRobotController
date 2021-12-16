@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.Utills;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -19,6 +20,7 @@ public abstract class TeleopTemplate extends LinearOpMode {
     public OdometryPodServos pod;
     public LinearSlide slide;
     public ContinuousIntake intake;
+    public RevBlinkinLedDriver leds;
 
     public void initAll() {
         driveTrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
@@ -33,6 +35,8 @@ public abstract class TeleopTemplate extends LinearOpMode {
 
         intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo");
         intake.setServoDown();
+
+        leds = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
 
 
         telemetry.addData("Initialization Status", "Initialized");
