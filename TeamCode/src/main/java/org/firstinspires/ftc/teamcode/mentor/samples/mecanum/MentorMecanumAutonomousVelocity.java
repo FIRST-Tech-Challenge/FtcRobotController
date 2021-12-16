@@ -11,8 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.external.libs.PIDController;
-@Autonomous(name="MecanumAutonomous", group="FreightFrenzy")
-public class MecanumAutonomous extends LinearOpMode {
+@Autonomous(name="Mentor-MecanumAutonomous", group="FreightFrenzy")
+public class MentorMecanumAutonomousVelocity extends LinearOpMode {
     //Add an ElapsedTime for function runtime calculations.
     private ElapsedTime runtime = new ElapsedTime();
 
