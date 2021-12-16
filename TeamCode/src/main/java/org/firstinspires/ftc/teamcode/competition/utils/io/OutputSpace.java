@@ -61,4 +61,16 @@ public class OutputSpace {
     public ElevatorBottomLimitSwitchLocation getElevatorBottomLimitSwitch() {
         return ELEVATOR_BOTTOM_LIMIT_SWITCH;
     }
+
+    public void stop() {
+        close();
+    }
+
+    public void close() {
+        HAND_DISTANCE_SENSOR.stop();
+        INTAKE_DISTANCE_SENSOR.stop();
+        ELEVATOR_BOTTOM_LIMIT_SWITCH.stop();
+        INTAKE_LIMIT_SWITCH.stop();
+    }
+
 }

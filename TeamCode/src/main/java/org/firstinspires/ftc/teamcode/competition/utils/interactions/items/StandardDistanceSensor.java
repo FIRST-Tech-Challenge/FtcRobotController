@@ -16,7 +16,11 @@ public class StandardDistanceSensor extends InteractionSurface {
         SENSOR = new DistanceSensorWrapper(hardware, name);
     }
 
-    public double getDistance(DistanceUnit unit) {
+    public int getData(DistanceUnit unit) {
+        return getDistance(unit);
+    }
+
+    public int getDistance(DistanceUnit unit) {
         SENSOR.setUnits(unit);
         return SENSOR.getData();
     }

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.competition.utils.interactions.Interaction
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.DistanceSensorWrapper;
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.UltrasonicDistanceSensor;
 
-public class StandardUltrasonicDistanceSensor extends InteractionSurface {
+public class StandardUltrasonicDistanceSensor {
 
     private final UltrasonicDistanceSensor SENSOR;
 
