@@ -66,4 +66,8 @@ public class GamepadManager {
         this.f6 = f6;
     }
 
+    public boolean shouldNotCallThePolice() {
+        return !f1.back || !f2.back || !f3.back || !f4.back || !f5.back || !f6.back;
+    }
+
 }

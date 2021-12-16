@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.competition.utils.interactions.groups;
 
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 
-public abstract class DrivetrainTemplate extends InteractionSurface {
+public abstract class StandardDrivetrain extends InteractionSurface {
     public abstract void driveDistance(int rightDistance, int leftDistance, int speed);
     public abstract void driveDistance(int distance, int speed);
     public abstract void driveWithEncoder(int rightSpeed, int leftSpeed);

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.competition.utils.eyesquaredsea.EyeSquaredSeaDistanceSensor;
+import org.firstinspires.ftc.teamcode.competition.utils.devices.EyeSquaredSeaDistanceSensor;
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 
 public class UltrasonicDistanceSensor implements SensorWrapper {
@@ -40,4 +40,9 @@ public class UltrasonicDistanceSensor implements SensorWrapper {
     public boolean didTimeoutOccur() {
         return false;
     }
+
+    public EyeSquaredSeaDistanceSensor getSensor() {
+        return sensor;
+    }
+
 }

@@ -21,7 +21,7 @@ public class ElevatorRightLiftMotorLocation extends Location {
 
     public ElevatorRightLiftMotorLocation(HardwareMap hardware) {
         try {
-            RIGHT = new StandardMotor(hardware, hardware.appContext.getString(R.string.LIFT_RIGHT_ELEVATOR_MOTOR), DcMotorSimple.Direction.FORWARD);
+            RIGHT = new StandardMotor(hardware, hardware.appContext.getString(R.string.LIFT_RIGHT_ELEVATOR_MOTOR), DcMotorSimple.Direction.FORWARD, 288, 1, 1);
         } catch(Exception ignored) {}
     }
 

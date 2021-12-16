@@ -2,6 +2,7 @@
     <string name="title_activity_imgproc">imgproc</string>
     <string name="VUFORIA_KEY">AcQbfNb/////AAABmUoZxvy9bUCeksf5rYATLidV6rQS+xwgakOfD4C+LPj4FmsvqtRDFihtnTBZUUxxFbyM7CJMfiYTUEwcDMJERl938oY8iVD43E/SxeO64bOSBfLC0prrE1H4E5SS/IzsVcQCa9GsNaWrTEushMhdoXA3VSaW6R9KrrwvKYdNN/SbaN4TPslQkTqSUr63K60pkE5GqpeadAQuIm8V6LK63JD1TlF665EgpfsDZeVUBeAiJE86iGlT1/vNJ9kisAqKpBHsRyokaVClRnjlp28lmodjVRqeSk8cjCuYryn74tClfxfHQpkDDIsJO+7IYwJQCZQZZ+U9KJaMUeben4HOj0JTnQaEE6MZLaLQzY+C/6MS</string>
     <string name="WEBCAM">webcam</string>
+    <string name="Webcam1">webcam</string>
     <!--
 
         NAMING CONVENTION:
@@ -33,9 +34,11 @@
     <string name="INTAKE_SPINNING_MOTOR">iM</string>
     <string name="INTAKE_LIFTING_SERVO">iuS</string>
     <string name="INTAKE_LIFTING_LIMIT_SWITCH">iT</string>
+    <string name="INTAKE_LIFTING_DISTANCE_SENSOR">iS</string>
     <!-- ELEVATOR -->
     <string name="LIFT_RIGHT_ELEVATOR_MOTOR">l1M</string>
     <string name="LIFT_LEFT_ELEVATOR_MOTOR">l2M</string>
+    <string name="LIFT_BOTTOM_LIFTING_LIMIT_SWITCH">lT</string>
     <!-- HAND -->
     <string name="HAND_DISTANCE_SENSOR">diD</string>
     <string name="HAND_SPINNING_SERVO_X">htS</string>
