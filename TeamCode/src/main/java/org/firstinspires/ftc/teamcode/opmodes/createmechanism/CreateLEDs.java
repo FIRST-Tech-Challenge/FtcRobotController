@@ -41,7 +41,7 @@ public class CreateLEDs {
         //X (Blue) button
         Button blueAlliance = new GamepadButton(op, GamepadKeys.Button.X);
         //B (Red) button
-        Button redAlliance = new GamepadButton(op, GamepadKeys.Button.B);
+        Button redAlliance = new GamepadButton(op, GamepadKeys.Button.Y);
         //A (Team) button
         Button teamColors = new GamepadButton(op, GamepadKeys.Button.A);
 
