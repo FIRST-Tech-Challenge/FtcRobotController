@@ -13,6 +13,8 @@ public class Teleop extends OpMode {
     double initialHeading, error;
     boolean headingReset = false;
 
+    double liftPower = 1;
+
     @Override
     public void init() {
         r.init(hardwareMap);
@@ -57,11 +59,21 @@ public class Teleop extends OpMode {
         r.spin0.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
         r.spin1.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
 
+        if(gamepad1.dpad_up) {
+            r.stopPoweredHold();
+            r.setLiftPower(liftPower);
+        } else if(gamepad1.dpad_down) {
+            r.stopPoweredHold();
+            r.setLiftPower(-liftPower);
+        } else {
+            r.poweredHoldCycle();
+        }
+
         if(gamepad1.right_stick_button) {
             r.imu.reset();
         }
 
-        r.setBucketPower((gamepad1.left_bumper?1:-1));
+        r.setBucket((gamepad1.left_bumper?0:1));
     }
 
     @Override
