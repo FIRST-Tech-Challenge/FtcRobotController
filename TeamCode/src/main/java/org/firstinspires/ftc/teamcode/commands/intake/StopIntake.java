@@ -8,20 +8,20 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeSubsystem;
 
 public class StopIntake extends CommandBase {
 
-    private final IntakeSubsystem m_intakeSubsytem;
+    private final IntakeSubsystem intakeSubsytem;
 
-    private final Double power = 0.0;
+    private static final Double ZERO_POWER = 0.0;
 
     private Telemetry telemetry;
 
 
     public StopIntake(IntakeSubsystem subsystem){
-        m_intakeSubsytem = subsystem;
+        intakeSubsytem = subsystem;
         addRequirements(subsystem);
     }
 
     public StopIntake(IntakeSubsystem subsystem, Telemetry telemetry){
-        m_intakeSubsytem = subsystem;
+        intakeSubsytem = subsystem;
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -30,8 +30,13 @@ public class StopIntake extends CommandBase {
 
     @Override
     public void initialize(){
-        telemetry.addData("Stopping intake in command", power);
-        m_intakeSubsytem.setPower(power);
+        telemetry.addData("Stopping intake in command", ZERO_POWER);
+        intakeSubsytem.setPower(ZERO_POWER);
+    }
+
+    @Override
+    public boolean isFinished(){
+        return Thread.currentThread().isInterrupted();
     }
 
 }

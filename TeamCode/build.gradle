@@ -29,5 +29,5 @@ dependencies {
     implementation 'org.ftclib.ftclib:core:1.2.1' // core
     implementation 'org.openftc:easyopencv:1.5.1' // easyOpenCV
     implementation 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'com.acmerobotics.roadrunner:core:0.5.3' //RoadRunner
+    implementation 'com.acmerobotics.roadrunner:core:0.5.4' //RoadRunner
 }

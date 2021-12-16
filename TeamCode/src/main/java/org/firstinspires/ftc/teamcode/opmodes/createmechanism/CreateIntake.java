@@ -11,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.carousel.MoveCarousel;
 import org.firstinspires.ftc.teamcode.commands.carousel.StopCarousel;
 import org.firstinspires.ftc.teamcode.commands.intake.MoveIntake;
+import org.firstinspires.ftc.teamcode.commands.intake.MoveIntakeWithTrigger;
+import org.firstinspires.ftc.teamcode.commands.intake.StopIntake;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeSubsystem;
 
@@ -47,7 +49,14 @@ public class CreateIntake {
 
         intake = new IntakeSubsystem(hwMap,deviceName);
 
-        MoveIntake seGrabber = new MoveIntake(intake, RIGHT_TRIGGER_POWER,LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        MoveIntakeWithTrigger seGrabber = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
+
+        StopIntake stopIntake = new StopIntake(intake);
+
+        intake.setDefaultCommand(new PerpetualCommand(stopIntake));
+
         seGrabber.schedule(true);
+        seReleaser.schedule(true);
     }
 }
