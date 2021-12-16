@@ -104,11 +104,16 @@ public class DuckFinder extends OpenCvPipeline {
         return input;
     }
 
-    public double calculateYaw(double offsetCenterX) {
-        double duckCenterX = duckCenter.x;
-
-        return Math.atan((duckCenterX - offsetCenterX) / horizontalFocalLength
-        );
+    public Double calculateYaw(double offsetCenterX) {
+        Double duckCenterX = null;
+        if (duckCenter != null) {
+           duckCenterX  = duckCenter.x;
+        }
+        if (duckOnScreen && duckCenterX != null) {
+            return Math.atan((duckCenterX - offsetCenterX) / horizontalFocalLength);
+        } else {
+            return null;
+        }
     }
 
     public Point getCenterofRect(@NonNull Rect rect) {

@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.autos;
 
+import static org.firstinspires.ftc.teamcode.Constants.CAMERA_POSITION;
+import static org.firstinspires.ftc.teamcode.Constants.HOPPER_BOTTOM;
+import static org.firstinspires.ftc.teamcode.Constants.HOPPER_TOP;
 import static org.firstinspires.ftc.teamcode.Constants.LEVEL_1;
 import static org.firstinspires.ftc.teamcode.Constants.LEVEL_2;
 import static org.firstinspires.ftc.teamcode.Constants.LEVEL_3;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,12 +28,12 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.LinkedList;
+
 @Autonomous(name="RoadRunner Carousel Auto Blue", group="Autonomous")
 public class DuckAutoBlue extends LinearOpMode {
     ElapsedTime runtime = new ElapsedTime();
     SampleMecanumDrive drive;
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
@@ -37,6 +41,12 @@ public class DuckAutoBlue extends LinearOpMode {
         Lift lift = new Lift();
         Hopper hopper = new Hopper();
         Intake intake = new Intake();
+
+        carousel.init(hardwareMap);
+        lift.init(hardwareMap);
+        hopper.init(hardwareMap);
+        intake.init(hardwareMap);
+
         OpenCvWebcam webcam;
         OpenCvWebcam frontWebcam;
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -78,40 +88,58 @@ public class DuckAutoBlue extends LinearOpMode {
                 // This will be called if the camera could not be opened
             }
         });
-        carousel.init(hardwareMap);
-        lift.init(hardwareMap);
-        hopper.init(hardwareMap);
-        intake.init(hardwareMap);
 
         drive.setPoseEstimate(new Pose2d(-36, 64, Math.toRadians(90)));
 
-        TrajectorySequence trajectory1 = drive.trajectorySequenceBuilder(new Pose2d(-36, 64, Math.toRadians(90)))
-                .strafeRight(1.5)
-                .back(12)
-                .turn(Math.toRadians(40))
-                .back(19)
+        TrajectorySequence goToHub = drive.trajectorySequenceBuilder(new Pose2d(-36, 64, Math.toRadians(90)))
+//                .strafeLeft(1.5)
+//                .back(12)
+//                .turn(Math.toRadians(-40))
+//                .back(19)
+//                .build();
+                .setReversed(true)
+                .splineTo(new Vector2d(-24, 37), Math.toRadians(-45))
                 .build();
-        TrajectorySequence trajectory2 = drive.trajectorySequenceBuilder(trajectory1.end())
-                .forward(28)
-                .turn(Math.toRadians(-130))
-                .back(18)
+        TrajectorySequence goToCarousel = drive.trajectorySequenceBuilder(goToHub.end())
+//                .forward(28)
+//                .turn(Math.toRadians(130))
+//                .strafeRight(3.35)
+//                .back(15)
+//                .build();
+                .forward(8)
+                .turn(Math.toRadians(-140))
+                .splineTo(new Vector2d(-62, 63), Math.toRadians(130))
+                .setReversed(false)
                 .build();
-        TrajectorySequence trajectory3 = drive.trajectorySequenceBuilder(trajectory2.end())
+        TrajectorySequence beginDuckFind = drive.trajectorySequenceBuilder(goToCarousel.end())
+//                .forward(5)
+//                .strafeRight(2)
+//                .forward(90)
+//                .build();
                 .forward(5)
-                .strafeLeft(5.5)
-                .forward(100)
+                .turn(Math.toRadians(150))
                 .build();
-
+        TrajectorySequence interruptableStrafe = drive.trajectorySequenceBuilder(beginDuckFind.end())
+                .strafeRight(5)
+                .build();
+        TrajectorySequence goToWarehouse = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-24, 37), Math.toRadians(45)))
+                .setReversed(false)
+                .splineTo(new Vector2d(44, 64), Math.toRadians(0))
+                .build();
         delay(500);
+
         int level = 3;
-
-
-        while (!isStarted() && !isStopRequested()){
-            level = pipeline.getShippingHubLevel();
+        LinkedList<Integer> levels = new LinkedList<>();
+        // Make the level the most common one from the past 100 loops
+        while (!isStarted() && !isStopRequested()) {
+            levels.add(pipeline.getShippingHubLevel());
+            if (levels.size() > 100) {
+                levels.removeFirst();
+            }
         }
+        level = AutoUtil.mostCommon(levels);
         waitForStart();
-
-        drive.followTrajectorySequence(trajectory1);
+        drive.followTrajectorySequence(goToHub);
         if (level == 1) {
             lift.goTo(LEVEL_1, 0.8);
         } else if (level == 2) {
@@ -122,35 +150,47 @@ public class DuckAutoBlue extends LinearOpMode {
             throw new IllegalStateException("Invalid shipping hub level: " + level);
         }
         delay(750);
-        hopper.hopper.setPosition(0.33);
+        hopper.hopper.setPosition(HOPPER_TOP);
         delay(1200);
-        hopper.hopper.setPosition(0);
+        hopper.hopper.setPosition(HOPPER_BOTTOM);
         lift.goTo(0,0.8);
-        drive.followTrajectorySequence(trajectory2);
+        drive.followTrajectorySequence(goToCarousel);
         carousel.turnCarousel();
         delay(2500);
-        drive.followTrajectorySequence(trajectory3);
-        drive.turn(pipeline2.calculateYaw(0));
-        intake.intakeMotor.setPower(.9);
+        drive.followTrajectorySequence(beginDuckFind);
+        if (pipeline2.calculateYaw(CAMERA_POSITION) != null) {
+            drive.turn(pipeline2.calculateYaw(CAMERA_POSITION));
+        } else {
+            drive.followTrajectorySequenceAsync(interruptableStrafe);
+            while (opModeIsActive() && pipeline2.calculateYaw(0) == null && drive.isBusy()) {
+                drive.update();
+                // Wait for the camera to detect a duck
+            }
+            if (pipeline2.calculateYaw(CAMERA_POSITION) != null) {
+                drive.turn(pipeline2.calculateYaw(CAMERA_POSITION));
+            }
+        }
+        intake.intakeMotor.setPower(0.9);
+        TrajectorySequence pickUpDuck = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .forward(8)
+                .build();
+        drive.followTrajectorySequence(pickUpDuck);
+        intake.intakeMotor.setPower(0);
+        TrajectorySequence returnToHub = drive.trajectorySequenceBuilder(pickUpDuck.end())
+                .setReversed(true)
+                .splineTo(new Vector2d(-24, 37), Math.toRadians(-45))
+                .build();
+        drive.followTrajectorySequence(returnToHub);
+        lift.goTo(LEVEL_3, 0.8);
+        delay(750);
+        hopper.hopper.setPosition(HOPPER_TOP);
+        delay(1200);
+        lift.goTo(0,0.8);
+        hopper.hopper.setPosition(HOPPER_BOTTOM);
+        drive.followTrajectorySequence(goToWarehouse);
 
 
-//                        .setReversed(true)
-//                .splineTo(new Vector2d(-24, 37), Math.toRadians(-45))
-//                .waitSeconds(1)
-//                .forward(8)
-//                .turn(Math.toRadians(-140))
-//                .splineTo(new Vector2d(-55, 55), Math.toRadians(135))
-//                .setReversed(false)
-//                .waitSeconds(1)
-//                .forward(5)
-//                .turn(Math.toRadians(135))
-//                .forward(8)
-//                .setReversed(true)
-//                .splineTo(new Vector2d(-24, 37), Math.toRadians(-45))
-//                .waitSeconds(1)
-//                .setReversed(false)
-//                .splineTo(new Vector2d(44, 64), Math.toRadians(0))
-//                .build());
+
         //                        .waitSeconds(2)
 //                        .setReversed(true)
 //                        .splineTo(new Vector2d(-55, 55), Math.toRadians(135))
@@ -161,7 +201,25 @@ public class DuckAutoBlue extends LinearOpMode {
 //                        .setReversed(false)
 //                        .waitSeconds(1)
 //                        .splineTo(new Vector2d(44, 64), Math.toRadians(0))
+//                                .setReversed(true)
+//                .splineTo(new Vector2d(-24, -37), Math.toRadians(45))
+//                .waitSeconds(1)
+//                .forward(8)
+//                .turn(Math.toRadians(140))
+//                .splineTo(new Vector2d(-55, -55), Math.toRadians(-135))
+//                .setReversed(false)
+//                .waitSeconds(1)
+//                .forward(5)
+//                .turn(Math.toRadians(-135))
+//                .forward(8)
+//                .setReversed(true)
+//                .splineTo(new Vector2d(-24, -37), Math.toRadians(45))
+//                .waitSeconds(1)
+//                .setReversed(false)
+//                .splineTo(new Vector2d(44, -64), Math.toRadians(0))
+//                .build());
     }
+
     public void delay(int time) {
         double startTime = runtime.milliseconds();
         while (runtime.milliseconds() - startTime < time && !isStopRequested()) {
