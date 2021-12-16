@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis1;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis1;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis2;
 
 import java.util.Objects;
 
@@ -24,9 +25,9 @@ import java.util.Objects;
  */
 @Config
 @Autonomous(group = "drive")
-@Disabled
+
 public class MaxVelocityTuner extends LinearOpMode {
-    public static double RUNTIME = 1.5;
+    public static double RUNTIME = 1.2;
 
     private ElapsedTime timer;
     private double maxVelocity = 0.0;
@@ -35,7 +36,7 @@ public class MaxVelocityTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive_Chassis1 drive = new SampleMecanumDrive_Chassis1(hardwareMap);
+        SampleMecanumDrive_Chassis2 drive = new SampleMecanumDrive_Chassis2(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

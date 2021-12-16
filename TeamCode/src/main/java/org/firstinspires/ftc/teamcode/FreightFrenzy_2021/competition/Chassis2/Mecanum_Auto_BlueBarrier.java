@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.Chassis1;
+package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.Chassis2;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -25,8 +25,8 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "RED BARRIER", group = "Competition")
-public class Mecanum_Auto_RedBarrier extends LinearOpMode {
+@Autonomous(name = "BLUE BARRIER 2", group = "Competition")
+public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -99,7 +99,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         //initialize position
         Push.setPosition(0.4);
         Slide.setPower(0.15);
-        sleep(200);
+        sleep(100);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Rotate.setPosition(0.03);
@@ -119,7 +119,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
-        //Traj
+        //TRAJ
         SampleMecanumDrive_Chassis1 drive = new SampleMecanumDrive_Chassis1(hardwareMap);
 
         waitForStart();
@@ -148,21 +148,21 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
                     }
                 }
             }
-            Pose2d startPose = FieldConstant.RED_BARRIER_STARTING_POSE;
+            Pose2d startPose = FieldConstant.BLUE_BARRIER_STARTING_POSE;
             drive.setPoseEstimate(startPose);
             if (center < 0) {
-                visionResult = "RIGHT";
-            } else if (center < 420.725) {
                 visionResult = "LEFT";
+            } else if (center < 321.85) {
+                visionResult = "MIDDLE";
                 Trajectory plateTraj0 = drive.trajectoryBuilder(startPose,true)
-                        .strafeLeft(5)
+                        .strafeRight(5)
                         .build();
                 drive.followTrajectory(plateTraj0);
                 startPose = plateTraj0.end();
             } else {
-                visionResult = "MIDDLE";
+                visionResult = "RIGHT";
                 Trajectory plateTraj0 = drive.trajectoryBuilder(startPose,true)
-                        .strafeLeft(5)
+                        .strafeRight(5)
                         .build();
                 drive.followTrajectory(plateTraj0);
                 startPose = plateTraj0.end();
@@ -182,7 +182,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
 
             //MOTION TO PLATE
             Trajectory plateTraj3 = drive.trajectoryBuilder(plateTraj2.end())
-                    .lineToLinearHeading(new Pose2d(7.875, -23.75, toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(7.875, 23.75, toRadians(0)))
                     .build();
             drive.followTrajectory(plateTraj3);
 
@@ -225,9 +225,9 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             Slide.setPower(0.8);
 
             //BACK TO WALL
-            if(visionResult == "LEFT"){
+            if(visionResult == "RIGHT"){
                 Trajectory wallTrajR1 = drive.trajectoryBuilder(closerTraj.end())
-                        .lineToLinearHeading(new Pose2d(14.8, -23.75, toRadians(-90)))
+                        .lineToLinearHeading(new Pose2d(14.8, 23.75, toRadians(90)))
                         .build();
                 drive.followTrajectory(wallTrajR1);
                 Trajectory wallTrajR2 = drive.trajectoryBuilder(wallTrajR1.end())
@@ -237,7 +237,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
                 drive.setPoseEstimate(wallTrajR2.end());
             }
             Trajectory wallTraj1 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(6.5, -65, toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(6.5, 65, toRadians(0)))
                     .build();
             drive.followTrajectory(wallTraj1);
             sleep(300);
@@ -249,8 +249,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
 
 
             PoseStorage.currentPose = wallTraj1.end();
-            PoseStorage.state = DriveMethod.poseState.RED;
-
+            PoseStorage.state = DriveMethod.poseState.BLUE;
         }
 
     }

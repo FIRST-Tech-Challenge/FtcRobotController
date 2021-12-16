@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis1;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis2;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis1;
 
 /*
@@ -25,7 +26,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassi
  */
 @Config
 @Autonomous(group = "drive")
-@Disabled
+
 public class TrackWidthTuner extends LinearOpMode {
     public static double ANGLE = 180; // deg
     public static int NUM_TRIALS = 5;
@@ -69,7 +70,7 @@ public class TrackWidthTuner extends LinearOpMode {
                 drive.update();
             }
 
-            double trackWidth = DriveConstants_Chassis1.TRACK_WIDTH * Math.toRadians(ANGLE) / headingAccumulator;
+            double trackWidth = DriveConstants_Chassis2.TRACK_WIDTH * Math.toRadians(ANGLE) / headingAccumulator;
             trackWidthStats.add(trackWidth);
 
             sleep(DELAY);

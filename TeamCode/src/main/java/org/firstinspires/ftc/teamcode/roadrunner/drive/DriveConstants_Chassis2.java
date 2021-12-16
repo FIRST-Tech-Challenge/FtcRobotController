@@ -20,7 +20,7 @@ public class DriveConstants_Chassis2 {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 384.5;//
+    public static final double TICKS_PER_REV = 384.5;
     public static final double MAX_RPM = 435;
 
     /*
@@ -32,8 +32,8 @@ public class DriveConstants_Chassis2 {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(20, 0, 10,
+            14.13);
     //f:getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)
 
     /*
@@ -66,7 +66,7 @@ public class DriveConstants_Chassis2 {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 53; //You can adjust the max velocity value here
+    public static double MAX_VEL = 51.8; //You can adjust the max velocity value here
     public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = 5.4;
     public static double MAX_ANG_ACCEL = Math.toRadians(60);

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.Chassis1;
+package org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.Chassis2;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "RED BARRIER", group = "Competition")
+@Autonomous(name = "RED BARRIER 2", group = "Competition")
 public class Mecanum_Auto_RedBarrier extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -250,7 +250,6 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
 
             PoseStorage.currentPose = wallTraj1.end();
             PoseStorage.state = DriveMethod.poseState.RED;
-
         }
 
     }

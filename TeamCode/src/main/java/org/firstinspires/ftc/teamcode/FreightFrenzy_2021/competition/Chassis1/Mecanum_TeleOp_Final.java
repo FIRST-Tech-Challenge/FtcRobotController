@@ -444,6 +444,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             telemetry.addData("Back Motors", "LB (%.2f), RB (%.2f)", LBPower, RBPower);
             telemetry.addData("Controller", "X (%.2f), Y (%.2f)", strafe, drive);
             telemetry.addData("Speed:", speed);
+            telemetry.addData("Distance", "LF (%.2f), RF (%.2f), LB (%.2f), RB (%.2f)", LF.getCurrentPosition(), RF.getCurrentPosition(), LB.getCurrentPosition(), RB.getCurrentPosition());
 
             telemetry.update();
 

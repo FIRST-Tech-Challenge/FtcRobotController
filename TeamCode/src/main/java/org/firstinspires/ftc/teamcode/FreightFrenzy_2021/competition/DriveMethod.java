@@ -262,12 +262,6 @@ public class DriveMethod {
             RF.setPower(RF_power);
             LB.setPower(LB_power);
             RB.setPower(RB_power);
-//            telemetry.addData("RF_power", RF_power);
-//            telemetry.addData("RB_power", RB_power);
-//            telemetry.addData("LF_power", LF_power);
-//            telemetry.addData("LB_power", LB_power);
-//            telemetry.update();
-//            displayEncoderValue();
         }
         stopMotion();
     }
@@ -281,7 +275,7 @@ public class DriveMethod {
         if (isLeft) {
             perpendicularFactor = 1;
         }
-        double targetAngle = normalizeAngle(currentAngle + 90 * perpendicularFactor);
+        double targetAngle = currentAngle;
         double LF_power;
         double LB_power;
         double RF_power;
@@ -292,17 +286,17 @@ public class DriveMethod {
             LB_power = perpendicularFactor * power;
             RF_power = perpendicularFactor * power;
             RB_power = -1 * perpendicularFactor * power;
-            if (tempAngle < normalizeAngle(targetAngle - 1 * margin)) {
-                RF_power += perpendicularFactor * 0.1;
-                RB_power -= perpendicularFactor * 0.1;
-                LF_power += perpendicularFactor * 0.1;
-                LB_power -= perpendicularFactor * 0.1;
-            } else if (tempAngle > normalizeAngle(targetAngle + (margin))) {
-                RF_power -= perpendicularFactor * 0.1;
-                RB_power += perpendicularFactor * 0.1;
-                LF_power -= perpendicularFactor * 0.1;
-                LB_power += perpendicularFactor * 0.1;
-            }
+//            if (tempAngle < normalizeAngle(targetAngle - 1 * margin)) {
+//                RF_power += perpendicularFactor * 0.1;
+//                RB_power += perpendicularFactor * 0.1;
+//                LF_power -= perpendicularFactor * 0.1;
+//                LB_power -= perpendicularFactor * 0.1;
+//            } else if (tempAngle > normalizeAngle(targetAngle + (margin))) {
+//                RF_power -= perpendicularFactor * 0.1;
+//                RB_power -= perpendicularFactor * 0.1;
+//                LF_power += perpendicularFactor * 0.1;
+//                LB_power += perpendicularFactor * 0.1;
+//            }
             RF_power = Range.clip(RF_power, -1, 1);
             RB_power = Range.clip(RB_power, -1, 1);
             LF_power = Range.clip(LF_power, -1, 1);
@@ -311,11 +305,6 @@ public class DriveMethod {
             RF.setPower(RF_power);
             LB.setPower(LB_power);
             RB.setPower(RB_power);
-//            telemetry.addData("RF_power", RF_power);
-//            telemetry.addData("RB_power", RB_power);
-//            telemetry.addData("LF_power", LF_power);
-//            telemetry.addData("LB_power", LB_power);
-//            telemetry.update();
         }
         stopMotion();
     }
