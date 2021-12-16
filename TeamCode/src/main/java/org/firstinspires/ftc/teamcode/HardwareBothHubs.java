@@ -16,6 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import java.util.Arrays;
+
 /**
  * Hardware class for goBilda robot (15"x15" chassis with 6" Andymark mecanum wheels)
  */
@@ -103,7 +105,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_SHARED     = 350;   // Front scoring into shared shipping hub
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 400;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_VERTICAL   = 1350;  // Vertical ("up" vs "down" reverse at this point)
-    public int          FREIGHT_ARM_POS_HUB_TOP    = 2000;  // For dumping into hub top level
+    public int          FREIGHT_ARM_POS_HUB_TOP    = 1950;  // For dumping into hub top level
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 2275;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2400;  // For dumping into hub bottom level
 
@@ -119,26 +121,40 @@ public class HardwareBothHubs
     public CRServo      sweepServo                 = null;  // CONTINUOUS, so no need for fixed positions
 
     //====== NAVIGATION DISTANCE SENSORS =====
-//  private MaxSonarI2CXL sonar_left  = null;
-//  private MaxSonarI2CXL sonar_right = null;
+    private MaxSonarI2CXL sonarRangeL = null;   // Must include MaxSonarI2CXL.java in teamcode folder
+    private MaxSonarI2CXL sonarRangeR = null;
+    private MaxSonarI2CXL sonarRangeF = null;
+    private MaxSonarI2CXL sonarRangeB = null;
 
 //  private DistanceSensor tofRangeL  = null;
 //  private DistanceSensor tofRangeR  = null;
 
-//  private int      sonarRangeLIndex   = 0;                          // 0...4
-//  private double[] sonarRangeLSamples = {0,0,0,0,0};                // results of continuous sampling
-//  private int      sonarRangeLSampCnt = sonarRangeLSamples.length;  // 5
-//  private double   sonarRangeLMedian  = 0.0;
-//  public  double   sonarRangeLStdev   = 0.0;
+    private int      sonarRangeLIndex   = 0;                          // 0...4 (SampCnt-1)
+    private double[] sonarRangeLSamples = {0,0,0,0,0};                // continuous sampling data (most recent 5)
+    private int      sonarRangeLSampCnt = sonarRangeLSamples.length;  // 5
+    private double   sonarRangeLMedian  = 0.0;                        // CM (divide by 2.54 for INCHES)
+    public  double   sonarRangeLStdev   = 0.0;
 
-//  private int      sonarRangeRIndex   = 0;                          // 0...4
-//  private double[] sonarRangeRSamples = {0,0,0,0,0};                // results of continuous sampling (most recent 5)
-//  private int      sonarRangeRSampCnt = sonarRangeRSamples.length;  // 5
-//  private double   sonarRangeRMedian  = 0.0;
-//  public  double   sonarRangeRStdev   = 0.0;
+    private int      sonarRangeRIndex   = 0;                          // 0...4 (SampCnt-1)
+    private double[] sonarRangeRSamples = {0,0,0,0,0};                // continuous sampling data (most recent 5)
+    private int      sonarRangeRSampCnt = sonarRangeRSamples.length;  // 5
+    private double   sonarRangeRMedian  = 0.0;                        // CM (divide by 2.54 for INCHES)
+    public  double   sonarRangeRStdev   = 0.0;
+
+    private int      sonarRangeFIndex   = 0;                          // 0...4 (SampCnt-1)
+    private double[] sonarRangeFSamples = {0,0,0,0,0};                // continuous sampling data (most recent 5)
+    private int      sonarRangeFSampCnt = sonarRangeLSamples.length;  // 5
+    private double   sonarRangeFMedian  = 0.0;                        // CM (divide by 2.54 for INCHES)
+    public  double   sonarRangeFStdev   = 0.0;
+
+    private int      sonarRangeBIndex   = 0;                          // 0...4 (SampCnt-1)
+    private double[] sonarRangeBSamples = {0,0,0,0,0};                // continuous sampling data (most recent 5)
+    private int      sonarRangeBSampCnt = sonarRangeRSamples.length;  // 5
+    private double   sonarRangeBMedian  = 0.0;                        // CM (divide by 2.54 for INCHES)
+    public  double   sonarRangeBStdev   = 0.0;
 
 //  private int      tofRangeLIndex     = 0;                          // 0...4
-//  private double[] tofRangeLSamples   = {0,0,0,0,0};                // results of continuous sampling
+//  private double[] tofRangeLSamples   = {0,0,0,0,0};                // results of continuous sampling (most recent 5)
 //  private int      tofRangeLSampCnt   = tofRangeLSamples.length;  // 5
 //  private double   tofRangeLMedian    = 0.0;
 //  public  double   tofRangeLStdev     = 0.0;
@@ -240,9 +256,11 @@ public class HardwareBothHubs
         sweepServo.setDirection( CRServo.Direction.REVERSE );
         sweepServo.setPower( 0.0 );
 
-        //Instantiate Maxbotics ultrasonic range sensors
-//      sonar_left  = hwMap.get( MaxSonarI2CXL.class, "left_ultrasonic" );
-//      sonar_right = hwMap.get( MaxSonarI2CXL.class, "right_ultrasonic" );
+        //Instantiate Maxbotics ultrasonic range sensors (sensors wired to I2C ports)
+        sonarRangeL = hwMap.get( MaxSonarI2CXL.class, "left_ultrasonic" );
+        sonarRangeR = hwMap.get( MaxSonarI2CXL.class, "right_ultrasonic" );
+        sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "front_ultrasonic" );
+        sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "back_ultrasonic" );
 
         //Instantiate REV 2-meter Time-Of-Flight Distance Sensors
 //      tofRangeL   = hwMap.get( DistanceSensor.class, "ToF_distanceL" );
@@ -408,6 +426,133 @@ public class HardwareBothHubs
         freightMotor.setPower( motorPower );
 
     } // freightArmPosition
+    
+    /*--------------------------------------------------------------------------------------------*/
+    /* NOTE ABOUT RANGE SENSORS:                                                                  */
+    /* The REV 2m Range Sensor is really only 1.2m (47.2") maximum in DEFAULT mode. Depending on  */        
+    /* reflectivity of the surface encountered, it can be even shorter.  For example, the black   */
+    /* metal paint on the field wall is highly absorptive, so we only get reliable range readings */
+    /* out to 12" or so.  In contrast, the Maxbotics ultrasonic range sensors have a minimum      */
+    /* range of 20 cm (about 8").  A combined Autonomous solution that requires both short (< 8") */
+    /* and long (> 12-47") requires *both* REV Time-of-Flight (tof) range sensors and Maxbotics   */
+    /* Ultrasonic range sensors. Also note that if you mount either ToF/Ultrasonic sensor too low */
+    /* on the robot you'll get invalid distance readings due to reflections off the field tiles   */
+    /* due to "fanout" of both laser/ultrasonic signals the further you get from the robot.       */
+    /*--------------------------------------------------------------------------------------------*/
+
+    // ULTRASONIC READINGS: The ultrasonic driver can be queried in two different update modes:
+    // a) getDistanceSync()  sends a new ping and WAITS 50msec for the return
+    // b) getDistanceAsync() sends a new ping and RETURNS IMMEDIATELY with the most recent valiue
+
+    public double updateSonarRangeL() {
+        // Query the current range sensor reading as the next sample to our LEFT range dataset
+//      sonarRangeLSamples[ sonarRangeLIndex ] = sonarRangeL.getDistanceSync();
+        sonarRangeLSamples[ sonarRangeLIndex ] = sonarRangeL.getDistanceAsync();
+        if( ++sonarRangeLIndex >= sonarRangeLSampCnt ) sonarRangeLIndex = 0;
+        // Create a duplicate copy that's sorted
+        double[] sonarRangeLSorted = sonarRangeLSamples;
+        Arrays.sort(sonarRangeLSorted);
+        // Determine the running median (middle value of the last 5; assumes sonarRangeLSampCnt=5)
+        sonarRangeLMedian = sonarRangeLSorted[2];
+        // Compute the standard deviation of the collection of readings
+        sonarRangeLStdev = stdevSonarRangeL();
+        return sonarRangeLMedian;
+    } // updateSonarRangeL
+
+    private double stdevSonarRangeL(){
+        double sum1=0.0, sum2=0.0, mean;
+        for( int i=0; i<sonarRangeLSampCnt; i++ ) {
+            sum1 += sonarRangeLSamples[i];
+        }
+        mean = sum1 / (double)sonarRangeLSampCnt;
+        for( int i=0; i<sonarRangeLSampCnt; i++ ) {
+            sum2 += Math.pow( (sonarRangeLSamples[i] - mean), 2.0);
+        }
+        return Math.sqrt( sum2 / (double)sonarRangeLSampCnt );
+    } // stdevSonarRangeL
+
+    /*--------------------------------------------------------------------------------------------*/
+    public double updateSonarRangeR() {
+        // Query the current range sensor reading as the next sample to our RIGHT range dataset
+//      sonarRangeRSamples[ sonarRangeRIndex ] = sonarRangeR.getDistanceSync();
+        sonarRangeRSamples[ sonarRangeRIndex ] = sonarRangeR.getDistanceAsync();
+        if( ++sonarRangeRIndex >= sonarRangeRSampCnt ) sonarRangeRIndex = 0;
+        // Create a duplicate copy that's sorted
+        double[] sonarRangeRSorted = sonarRangeRSamples;
+        Arrays.sort(sonarRangeRSorted);
+        // Determine the running median (middle value of the last 5; assumes sonarRangeRSampCnt=5)
+        sonarRangeRMedian = sonarRangeRSorted[2];
+        // Compute the standard deviation of the collection of readings
+        sonarRangeRStdev = stdevSonarRangeR();
+        return sonarRangeRMedian;
+    } // updateSonarRangeR
+
+    private double stdevSonarRangeR(){
+        double sum1=0.0, sum2=0.0, mean;
+        for( int i=0; i<sonarRangeRSampCnt; i++ ) {
+            sum1 += sonarRangeRSamples[i];
+        }
+        mean = sum1 / (double)sonarRangeRSampCnt;
+        for( int i=0; i<sonarRangeRSampCnt; i++ ) {
+            sum2 += Math.pow( (sonarRangeRSamples[i] - mean), 2.0);
+        }
+        return Math.sqrt( sum2 / (double)sonarRangeRSampCnt );
+    } // stdevSonarRangeR
+    
+    public double updateSonarRangeF() {
+        // Query the current range sensor reading as the next sample to our FRONT range dataset
+//      sonarRangeFSamples[ sonarRangeFIndex ] = sonarRangeF.getDistanceSync();
+        sonarRangeFSamples[ sonarRangeFIndex ] = sonarRangeF.getDistanceAsync();
+        if( ++sonarRangeFIndex >= sonarRangeFSampCnt ) sonarRangeFIndex = 0;
+        // Create a duplicate copy that's sorted
+        double[] sonarRangeFSorted = sonarRangeFSamples;
+        Arrays.sort(sonarRangeFSorted);
+        // Determine the running median (middle value of the last 5; assumes sonarRangeFSampCnt=5)
+        sonarRangeFMedian = sonarRangeFSorted[2];
+        // Compute the standard deviation of the collection of readings
+        sonarRangeFStdev = stdevSonarRangeF();
+        return sonarRangeFMedian;
+    } // updateSonarRangeF
+
+    private double stdevSonarRangeF(){
+        double sum1=0.0, sum2=0.0, mean;
+        for( int i=0; i<sonarRangeFSampCnt; i++ ) {
+            sum1 += sonarRangeFSamples[i];
+        }
+        mean = sum1 / (double)sonarRangeFSampCnt;
+        for( int i=0; i<sonarRangeFSampCnt; i++ ) {
+            sum2 += Math.pow( (sonarRangeFSamples[i] - mean), 2.0);
+        }
+        return Math.sqrt( sum2 / (double)sonarRangeFSampCnt );
+    } // stdevSonarRangeF
+
+    /*--------------------------------------------------------------------------------------------*/
+    public double updateSonarRangeB() {
+        // Query the current range sensor reading as the next sample to our BACK range dataset
+//      sonarRangeBSamples[ sonarRangeBIndex ] = sonarRangeB.getDistanceSync();
+        sonarRangeBSamples[ sonarRangeBIndex ] = sonarRangeB.getDistanceAsync();
+        if( ++sonarRangeBIndex >= sonarRangeBSampCnt ) sonarRangeBIndex = 0;
+        // Create a duplicate copy that's sorted
+        double[] sonarRangeBSorted = sonarRangeBSamples;
+        Arrays.sort(sonarRangeBSorted);
+        // Determine the running median (middle value of the last 5; assumes sonarRangeBSampCnt=5)
+        sonarRangeBMedian = sonarRangeBSorted[2];
+        // Compute the standard deviation of the collection of readings
+        sonarRangeBStdev = stdevSonarRangeB();
+        return sonarRangeBMedian;
+    } // updateSonarRangeB
+
+    private double stdevSonarRangeB(){
+        double sum1=0.0, sum2=0.0, mean;
+        for( int i=0; i<sonarRangeBSampCnt; i++ ) {
+            sum1 += sonarRangeBSamples[i];
+        }
+        mean = sum1 / (double)sonarRangeBSampCnt;
+        for( int i=0; i<sonarRangeBSampCnt; i++ ) {
+            sum2 += Math.pow( (sonarRangeBSamples[i] - mean), 2.0);
+        }
+        return Math.sqrt( sum2 / (double)sonarRangeBSampCnt );
+    } // stdevSonarRangeB
 
     /***
      *

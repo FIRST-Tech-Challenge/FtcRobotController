@@ -72,6 +72,9 @@ public abstract class Teleop extends LinearOpMode {
     double    duckPower;
     double    duckVelocity;
 
+    double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
+    boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
+
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
 
@@ -107,6 +110,11 @@ public abstract class Teleop extends LinearOpMode {
 
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
+
+            // If enabled, process ultrasonic range sensors
+            if( rangeSensorsEnabled ) {
+                processRangeSensors();
+            }
 
             // Process all the driver/operator inputs
             processDuckMotorControls();
@@ -173,6 +181,10 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Freight Arm", "%d cts %.2f mA", robot.freightMotorPos, robot.freightMotorAmps );
             telemetry.addData("Capping Arm", "%d cts %.2f mA", robot.cappingMotorPos, robot.cappingMotorAmps );
             telemetry.addData("Capping Wrist", "%.3f (commanded)", robot.wristServo.getPosition() );
+            if( rangeSensorsEnabled ) {
+               telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f in", sonarRangeL/2.54, sonarRangeR/2.54 );
+               telemetry.addData("Sonar Range (F/B)", "%.1f  %.1f in", sonarRangeF/2.54, sonarRangeB/2.54 );
+            }
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
 
@@ -395,9 +407,23 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
         if( gamepad1_triangle_now && !gamepad1_triangle_last)
         {
+            // <MIN> STORE ... midpoint1 ... CAP ... midpoint2 ... GRAB <MAX>
+            int midpoint1 = (robot.CAPPING_ARM_POS_STORE + robot.CAPPING_ARM_POS_CAP)/2;
+            int midpoint2 = (robot.CAPPING_ARM_POS_CAP   + robot.CAPPING_ARM_POS_GRAB)/2;
+            // toggle into and out of CAP position (use current arm position to decide)
+            if( (robot.cappingMotorPos < midpoint1) ||   /* currently STORE */
+                (robot.cappingMotorPos > midpoint2) )    /* currently GRAB  */
+            {  // switch to CAP
             wristServoPos =  robot.WRIST_SERVO_CAP;
             robot.cappingArmPosition( robot.CAPPING_ARM_POS_CAP, 0.70 );
             cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
+            }
+            else
+            { // currently CAP; switch to STORE
+              wristServoPos = robot.WRIST_SERVO_STORE;
+              robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.70 );
+              cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
+            }
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button
@@ -746,5 +772,42 @@ public abstract class Teleop extends LinearOpMode {
         robot.driveTrainMotors( -frontLeft, frontRight, -rearLeft, rearRight );
 
     } // processDriverCentricDriveMode
+
+    /*---------------------------------------------------------------------------------*/
+    /*  TELE-OP: Capture range-sensor data (one reading! call from main control loop)  */
+    /*                                                                                 */
+    /*  Designed for test programs that are used to assess the mounting location of    */
+    /*  your sensors and whether you get reliable/repeatable returns off various field */
+    /*  elements.                                                                      */
+    /*                                                                                 */
+    /*  IMPORTANT!! updateSonarRangeL / updateSonarRangeR may call getDistanceSync(),  */
+    /*  which sends out an ultrasonic pulse and SLEEPS for the sonar propogation delay */
+    /*  (50 sec) before reading the range result.  Don't use in applications where an  */
+    /*  extra 50/100 msec (ie, 1 or 2 sensors) in the loop time will create problems.  */
+    /*  If getDistanceAsync() is used, then this warning doesn't apply.                */
+    /*---------------------------------------------------------------------------------*/
+    void processRangeSensors() {
+        sonarRangeL = robot.updateSonarRangeL();
+        sonarRangeR = robot.updateSonarRangeR();
+        sonarRangeF = robot.updateSonarRangeF();
+        sonarRangeB = robot.updateSonarRangeB();
+    } // processRangeSensors
+
+    /*---------------------------------------------------------------------------------*/
+    /*  TELE-OP: averaged range-sensor data (multiple readings!)                       */
+    /*                                                                                 */
+    /*  Designed for applications where continuous range updates are unnecessary, but  */
+    /*  we want to know the correct distance "right now".                              */
+    /*---------------------------------------------------------------------------------*/
+    void averagedRangeSensors() {
+        // repeatedly update all 4 readings.  Each loop adds a reading to the
+        // internal array from which we return the new MEDIAN value.
+        for( int i=0; i<5; i++ ) {
+          sonarRangeL = robot.updateSonarRangeL();
+          sonarRangeR = robot.updateSonarRangeR();
+          sonarRangeF = robot.updateSonarRangeF();
+          sonarRangeB = robot.updateSonarRangeB();
+        }
+    } // averagedRangeSensors
 
 } // TeleopBlue
