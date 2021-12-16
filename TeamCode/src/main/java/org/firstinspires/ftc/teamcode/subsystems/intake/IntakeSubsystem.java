@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class IntakeSubsystem extends SubsystemBase {
+public class  IntakeSubsystem extends SubsystemBase {
 
     //Motor in Port 1, Rev Hub 2
     private DcMotorEx motorIntake = null;

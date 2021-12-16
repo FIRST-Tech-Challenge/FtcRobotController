@@ -102,7 +102,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat inputFrame) {
 
-        telemetry.addLine("Inside ProcessFrame");
+        //telemetry.addLine("Inside ProcessFrame");
         //telemetry.update();
         //Mat imageRGB = new Mat();
         Mat blob = null;
@@ -151,7 +151,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 String label =  className + ": " + df.format(confidence);
                 Scalar color = colors.get(class_id);
 
-                telemetry.addData("This is a real new", className);
+                //telemetry.addData("This is a real new", className);
                 //telemetry.update();
 
                 switch (className)
@@ -234,7 +234,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         return this.location;
     }
     public int getTSELevel(){
-        telemetry.addData("getTSELevel", location);
+        //telemetry.addData("getTSELevel", location);
         return levels.get(location);
     }
 }

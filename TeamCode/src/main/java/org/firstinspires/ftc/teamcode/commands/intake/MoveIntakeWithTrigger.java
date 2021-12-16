@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeSubsystem;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class MoveIntakeWithTrigger extends CommandBase {
@@ -13,6 +14,7 @@ public class MoveIntakeWithTrigger extends CommandBase {
 
     private final double triggerPower;
     private final DoubleSupplier trigger;
+
     private boolean triggerStopped = false;
     private static final double ZERO_POWER = 0.0;
     private static final double TRIGGER_ACTIVE_THRESHOLD = 0.5;
@@ -29,6 +31,10 @@ public class MoveIntakeWithTrigger extends CommandBase {
     }
 
     public MoveIntakeWithTrigger(IntakeSubsystem subsystem, final double power, DoubleSupplier trig, Telemetry telemetry){
+
+        telemetry.addData("make trigger:", power );
+        //telemetry.update();
+
         intakeSubsytem = subsystem;
         triggerPower = power;
         trigger = trig;
@@ -44,13 +50,15 @@ public class MoveIntakeWithTrigger extends CommandBase {
 
     @Override
     public void execute(){
-        
+
+        telemetry.addData("trigger", TRIGGER_ACTIVE_THRESHOLD );
+        telemetry.update();
         if(trigger.getAsDouble() > TRIGGER_ACTIVE_THRESHOLD) {
             intakeSubsytem.setPower(triggerPower);
             triggerStopped = false;
         }
         else{
-            //intakeSubsytem.setPower(ZERO_POWER);
+            intakeSubsytem.setPower(ZERO_POWER);
             triggerStopped = true;
         }
 
@@ -58,7 +66,11 @@ public class MoveIntakeWithTrigger extends CommandBase {
 
     @Override
     public boolean isFinished(){
+        schedule(true);
+        telemetry.addData("trigger done", TRIGGER_ACTIVE_THRESHOLD );
+        telemetry.update();
         return Thread.currentThread().isInterrupted() || triggerStopped;
+
     }
 
 

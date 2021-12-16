@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -46,17 +47,22 @@ public class CreateIntake {
     }
 
     public void create(){
-
+        telemetry.addData("create intake","creating");
         intake = new IntakeSubsystem(hwMap,deviceName);
 
-        MoveIntakeWithTrigger seGrabber = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
-        MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
 
-        StopIntake stopIntake = new StopIntake(intake);
+        MoveIntake seGrabber = new MoveIntake(intake, RIGHT_TRIGGER_POWER,LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
 
-        intake.setDefaultCommand(new PerpetualCommand(stopIntake));
+        //MoveIntakeWithTrigger seGrabber = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        //MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
+        //MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+
+        StopIntake stopIntake = new StopIntake(intake, telemetry);
+
+
 
         seGrabber.schedule(true);
-        seReleaser.schedule(true);
+        //seReleaser.schedule(true);
+        intake.setDefaultCommand(new PerpetualCommand(stopIntake));
     }
 }
