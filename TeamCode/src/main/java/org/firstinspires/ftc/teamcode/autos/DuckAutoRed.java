@@ -129,9 +129,11 @@ public class DuckAutoRed extends LinearOpMode {
         TrajectorySequence interruptableStrafe = drive.trajectorySequenceBuilder(beginDuckFind.end())
                 .strafeLeft(10)
                 .build();
-        TrajectorySequence goToWarehouse = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-24, -37), Math.toRadians(45)))
+        TrajectorySequence goToWarehouse = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-24, -37), Math.toRadians(225)))
                 .setReversed(false)
-                .splineTo(new Vector2d(44, -64), Math.toRadians(0))
+                .forward(2)
+                .splineTo(new Vector2d(30, -67), Math.toRadians(0))
+                .splineTo(new Vector2d(44, -67), Math.toRadians(0))
                 .build();
 
         delay(500);
@@ -169,33 +171,35 @@ public class DuckAutoRed extends LinearOpMode {
         delay(2500);
         drive.followTrajectorySequence(beginDuckFind);
         if (pipeline2.calculateYaw(CAMERA_POSITION) != null) {
-            drive.turn(pipeline2.calculateYaw(CAMERA_POSITION));
+            drive.turn(-pipeline2.calculateYaw(CAMERA_POSITION));
             telemetry.addData("Yaw", pipeline2.calculateYaw(CAMERA_POSITION));
             telemetry.update();
         } else {
             drive.followTrajectorySequenceAsync(interruptableStrafe);
             while (opModeIsActive() && pipeline2.calculateYaw(CAMERA_POSITION) == null && drive.isBusy()) {
                 drive.update();
-                telemetry.addData("Yaw", pipeline2.calculateYaw(CAMERA_POSITION));
+                if (pipeline2.calculateYaw(CAMERA_POSITION) != null){
+                    telemetry.addData("Yaw", -pipeline2.calculateYaw(CAMERA_POSITION));
+                }
                 // Wait for the camera to detect a duck
             }
             if (pipeline2.calculateYaw(CAMERA_POSITION) != null) {
-                drive.turn(pipeline2.calculateYaw(CAMERA_POSITION));
+                drive.turn(-pipeline2.calculateYaw(CAMERA_POSITION));
                 telemetry.addData("Yaw", pipeline2.calculateYaw(CAMERA_POSITION));
                 telemetry.update();
             }
         }
-        intake.intakeMotor.setPower(1);
+        intake.intakeMotor.setPower(.9);
         TrajectorySequence pickUpDuck = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .forward(8)
                 .build();
         drive.followTrajectorySequence(pickUpDuck);
-        intake.intakeMotor.setPower(0);
         TrajectorySequence returnToHub = drive.trajectorySequenceBuilder(pickUpDuck.end())
                 .setReversed(true)
                 .splineTo(new Vector2d(-24, -37), Math.toRadians(45))
                 .build();
         drive.followTrajectorySequence(returnToHub);
+        intake.intakeMotor.setPower(0);
         lift.goTo(LEVEL_3, 0.8);
         delay(750);
         hopper.hopper.setPosition(HOPPER_TOP);

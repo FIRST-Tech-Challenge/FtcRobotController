@@ -2,6 +2,7 @@ package com.atomictheory.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 import com.noahbres.meepmeep.roadrunner.Constraints;
@@ -12,7 +13,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep mm = new MeepMeep(800);
         Constraints constraints = new Constraints(40, 30, Math.toRadians(180), Math.toRadians(180), 13);
-        RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
+        RoadRunnerBotEntity blueCycleBot = new DefaultBotBuilder(mm)
                 .setDimensions(11.95, 13.8)
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(constraints)
@@ -41,7 +42,7 @@ public class MeepMeepTesting {
                         .splineTo(new Vector2d(44, 48), Math.toRadians(0))
                         .build());
 
-        RoadRunnerBotEntity bot2 = new DefaultBotBuilder(mm)
+        RoadRunnerBotEntity blueCarouselBot = new DefaultBotBuilder(mm)
                 .setDimensions(11.95, 13.8)
                 .setColorScheme(new ColorSchemeRedDark())
                 .setConstraints(constraints)
@@ -131,6 +132,9 @@ public class MeepMeepTesting {
                         .forward(8)
                         .setReversed(true)
                         .splineTo(new Vector2d(-24, -37), Math.toRadians(45))
+                        .addTemporalMarker(() -> {
+                            System.out.println(blueCarouselBot.getPose());
+                        })
                         .waitSeconds(1)
                         .setReversed(false)
                         .splineTo(new Vector2d(44, -64), Math.toRadians(0))
@@ -141,8 +145,8 @@ public class MeepMeepTesting {
                 .setTheme(new ColorSchemeRedDark())
                 // Background opacity from 0-1
                 .setBackgroundAlpha(1f)
-                .addEntity(bot)
-                .addEntity(bot2)
+                .addEntity(blueCycleBot)
+                .addEntity(blueCarouselBot)
                 .addEntity(bot3)
                 .addEntity(bot4)
                 .start();

@@ -9,7 +9,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class ShippingElementRecognizer extends OpenCvPipeline {
-    private int shippingHubLevel = 0;
+    private int shippingHubLevel = 3;
     double leftValue;
     double rightValue;
     public int getShippingHubLevel() {
