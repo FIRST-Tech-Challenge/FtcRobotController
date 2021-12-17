@@ -1,22 +1,22 @@
 package org.firstinspires.ftc.teamcode.core.robot;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorImpl;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedIndefinitelyEvent;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 
 import androidx.annotation.NonNull;
 
 public class BetterMotor {
     private double power;
-    private DcMotor motor;
+    public DcMotorEx motor;
     private EventThread eventThread;
 
     public BetterMotor(EventThread eventThread, @NonNull HardwareMap hardwareMap, String name, double power) {
         this.eventThread = eventThread;
-        this.motor = hardwareMap.get(DcMotor.class, name);
+        this.motor = hardwareMap.get(DcMotorEx.class, name);
         this.power = power;
     }
     public void init() {
@@ -31,7 +31,12 @@ public class BetterMotor {
         this.power = power;
     }
 
-    public double getCurrentPosition() {
-        return motor.getCurrentPosition();
+    public void runForMs(long milliseconds, double power, double returnPower) {
+        setPower(power);
+        eventThread.addEvent(new TimedEvent(() -> setPower(returnPower), milliseconds));
+    }
+
+    public void runForMs(long milliseconds, double power) {
+        runForMs(milliseconds, power, getPower());
     }
 }
