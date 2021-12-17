@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.team8923_2021;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+@Autonomous(name="BlueStorageUnit")
+
 public class BlueStorageUnit extends MasterAutonomous {
     public void runOpMode() {
         double referenceAngle = imu.getAngularOrientation().firstAngle;
