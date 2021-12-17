@@ -8,14 +8,15 @@ import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
+@Deprecated
 public class AutonomousDriveSystem extends OdometryDrivetrain {
     OdometryPodServos pod;
     Thread positionThread;
 
     public AutonomousDriveSystem(HardwareMap hardwareMap, String front_right, String front_left, String back_right, String back_left,
-                                 String horizontalEncoderName, String leftEncoderName, String rightEncoderName,String horizontalServo,
-                                 String leftVerticalServo,String rightVerticalServo,
-                                 Executable<Boolean> isStopRequested, Executable<Boolean> isOpModeActive,Telemetry telemetry) {
+                                 String horizontalEncoderName, String leftEncoderName, String rightEncoderName, String horizontalServo,
+                                 String leftVerticalServo, String rightVerticalServo,
+                                 Executable<Boolean> isStopRequested, Executable<Boolean> isOpModeActive, Telemetry telemetry) {
 
 
         super(); //initializes the underlying OdometryDrivetrain and BasicDrivetrain to null
@@ -25,10 +26,10 @@ public class AutonomousDriveSystem extends OdometryDrivetrain {
         //would have been created from the string "Motor 1"
         String[] motorNames = {front_left, front_right, back_left, back_right};
         DcMotor[] motorObjects =  {
-            hardwareMap.dcMotor.get(front_left),
-            hardwareMap.dcMotor.get(front_right),
-            hardwareMap.dcMotor.get(back_left),
-            hardwareMap.dcMotor.get(back_right)
+                hardwareMap.dcMotor.get(front_left),
+                hardwareMap.dcMotor.get(front_right),
+                hardwareMap.dcMotor.get(back_left),
+                hardwareMap.dcMotor.get(back_right)
 
         };
         //loops over the array of motorObjects and initializes them

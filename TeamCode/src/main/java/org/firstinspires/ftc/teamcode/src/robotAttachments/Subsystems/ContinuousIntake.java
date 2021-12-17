@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -13,10 +14,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class ContinuousIntake {
     final static double forwardPower = 1;
     DcMotor intakeMotor;
+
 
     private static final double BucketUpPosition = .98;
     private static final double BucketDownPosition = .46;
@@ -122,8 +125,9 @@ public class ContinuousIntake {
         return distance;
     }
 
-    private static final ArrayList<gameObject> gameObjectList = new ArrayList<gameObject>(Arrays.asList(gameObject.values()));
 
+    /*
+    @Deprecated
     protected double[] getRGBFromList(ContinuousIntake.gameObject object) {
         //this is a list of approximations of values of RGB for different objects and empty
         //css is cube smooth side and cws is cube waffle side
@@ -133,7 +137,7 @@ public class ContinuousIntake {
            css:  56.5, 34.5, 20
            ball: 611, 652, 594.5
            duck: 17.67, 15.67, 9
-         */
+
 
 
         switch (object) {
@@ -160,9 +164,9 @@ public class ContinuousIntake {
 
         }
         return new double[]{0, 0, 0};
-    }
+    }*/
 
-    public double getDifferenceOfColor(double[] sight, double[] object) {
+    public static double getDifferenceOfColor(double[] sight, double[] object) {
         double difference;
         double r = Math.abs(sight[0] - object[0]);
         double g = Math.abs(sight[1] - object[1]);
@@ -172,39 +176,15 @@ public class ContinuousIntake {
         return difference;
     }
 
-    public enum gameObject {
-        BALL,
-        CUBESMOOTH,
-        CUBEWAFFLE,
-        DUCK,
-        EMPTY
-
+    public RevBlinkinLedDriver.BlinkinPattern getLEDPatternFromFreight() {
+        RevBlinkinLedDriver.BlinkinPattern o = gameObject.RevColorOfObj.get(ContinuousIntake.gameObject.identify(this.getRGB()));
+        return o;
     }
 
-    public gameObject identify(double[] sight) {
-        int size = gameObjectList.size();
-        double[][] originalRGB = new double[size][3];
-        double[] differences = new double[size];
-        for (int x = 0; x < size; x++) {
-            originalRGB[x] = getRGBFromList(gameObjectList.get(x));
-        }
-        for (int x = 0; x < size; x++) {
-            differences[x] = getDifferenceOfColor(sight, originalRGB[x]);
-        }
-        double smallestValue = Double.MAX_VALUE;
-        int index = -1;
-
-        for (int i = 0; i < size; i++) {
-            if (differences[i] < smallestValue) {
-                smallestValue = differences[i];
-                index = i;
-            }
-        }
-        return gameObjectList.get(index);
 
 
-    }
-
+    /*
+    @Deprecated
     private RevBlinkinLedDriver.BlinkinPattern getRevColorFromEnum(gameObject o) {
         switch (o) {
             case BALL:
@@ -220,10 +200,56 @@ public class ContinuousIntake {
         }
         return RevBlinkinLedDriver.BlinkinPattern.BLACK;
     }
+     */
 
-    public RevBlinkinLedDriver.BlinkinPattern getLEDFromFreight() {
-        RevBlinkinLedDriver.BlinkinPattern o = this.getRevColorFromEnum(this.identify(this.getRGB()));
-        return o;
+    public enum gameObject {
+        BALL,
+        CUBESMOOTH,
+        CUBEWAFFLE,
+        DUCK,
+        EMPTY;
+        protected static final ArrayList<gameObject> gameObjectList = new ArrayList<gameObject>(Arrays.asList(gameObject.values()));
+
+        protected static final HashMap<gameObject, BlinkinPattern> RevColorOfObj = new HashMap<gameObject, BlinkinPattern>() {{
+            put(gameObject.BALL, BlinkinPattern.WHITE);
+            put(gameObject.CUBESMOOTH, BlinkinPattern.ORANGE);
+            put(gameObject.CUBEWAFFLE, BlinkinPattern.ORANGE);
+            put(gameObject.DUCK, BlinkinPattern.GREEN);
+            put(gameObject.EMPTY, null);
+        }};
+
+        protected static final HashMap<gameObject, double[]> RGBOfObj = new HashMap<gameObject, double[]>() {{
+            put(gameObject.BALL, new double[]{611.0, 652.0, 594.5});
+            put(gameObject.CUBESMOOTH, new double[]{56.5, 34.5, 20});
+            put(gameObject.CUBEWAFFLE, new double[]{31, 18.5, 12});
+            put(gameObject.DUCK, new double[]{17.67, 15.67, 9});
+            put(gameObject.EMPTY, new double[]{8, 9, 6});
+        }};
+
+        public static gameObject identify(double[] RGB) {
+            int size = gameObject.gameObjectList.size();
+            double[][] originalRGB = new double[size][3];
+            double[] differences = new double[size];
+            for (int x = 0; x < size; x++) {
+                originalRGB[x] = gameObject.RGBOfObj.get((gameObject.gameObjectList.get(x)));
+            }
+            for (int x = 0; x < size; x++) {
+                differences[x] = getDifferenceOfColor(RGB, originalRGB[x]);
+            }
+            double smallestValue = Double.MAX_VALUE;
+            int index = -1;
+
+            for (int i = 0; i < size; i++) {
+                if (differences[i] < smallestValue) {
+                    smallestValue = differences[i];
+                    index = i;
+                }
+            }
+            return gameObject.gameObjectList.get(index);
+
+
+        }
+
     }
 
 }

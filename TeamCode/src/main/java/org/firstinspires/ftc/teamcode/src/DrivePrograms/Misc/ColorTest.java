@@ -30,7 +30,7 @@ public class ColorTest extends TeleopTemplate {
 
             if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
                 intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
-                RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDFromFreight();
+                RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
                 if (o == RevBlinkinLedDriver.BlinkinPattern.BLACK) {
                     leds.setPattern(defaultColor);
                 } else {
@@ -46,7 +46,7 @@ public class ColorTest extends TeleopTemplate {
             sight[2] = intake.getColor("blue");
 
 
-            telemetry.addData("identity:", intake.identify(sight));
+            telemetry.addData("identity:", ContinuousIntake.gameObject.identify(sight));
 
 
             telemetry.update();
