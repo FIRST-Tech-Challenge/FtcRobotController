@@ -11,7 +11,7 @@ public class MockDistanceSensor implements SensorWrapper {
     public void setUnits(DistanceUnit unit) { }
 
     @Override
-    public double getData() {
+    public int getData() {
         return data.getDistance();
     }
 

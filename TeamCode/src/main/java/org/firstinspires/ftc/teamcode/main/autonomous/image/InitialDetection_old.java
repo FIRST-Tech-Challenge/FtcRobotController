@@ -134,7 +134,7 @@ public class InitialDetection_old extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.Webcam1));
+        parameters.cameraName = hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.WEBCAM));
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);

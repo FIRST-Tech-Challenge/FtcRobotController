@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.DistanceSensorWrapper;
 import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.MockDistanceSensor;
 
-public class Axis {
+class Axis {
     public SensorWrapper sensor1;
     public SensorWrapper sensor2;
     public double interSensorDistance = 10;

@@ -21,7 +21,9 @@
     -->
 
     <!-- NAVIGATION SENSORS-->
-    <string name="NAVIGATION_FRONT_DISTANCE_SENSOR">distN</string>
+    <string name="NAVIGATION_NORTH_DISTANCE_SENSOR">distN</string>
+    <string name="NAVIGATION_EAST_DISTANCE_SENSOR">distE</string>
+    <string name="NAVIGATION_WEST_DISTANCE_SENSOR">distW</string>
     <!-- DRIVETRAIN -->
     <string name="DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR">ltM</string>
     <string name="DRIVETRAIN_LEFT_BOTTOM_DRIVING_MOTOR">lbM</string>

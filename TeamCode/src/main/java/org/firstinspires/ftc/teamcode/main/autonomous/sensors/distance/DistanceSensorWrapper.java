@@ -28,8 +28,8 @@ public class DistanceSensorWrapper implements SensorWrapper {
     }
 
     @Override
-    public double getData() {
-        return sensor.getDistance(units);
+    public int getData() {
+        return (int) sensor.getDistance(units);
     }
 
     @Override
