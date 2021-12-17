@@ -28,6 +28,7 @@ public class CreateMagneticLimitSwitch {
     private final HardwareMap hwMap;
     private final String deviceName;
     private final Telemetry telemetry;
+    private Trigger mlsTrigger;
 
 
     private static final int NUDGE = 5;
@@ -54,7 +55,7 @@ public class CreateMagneticLimitSwitch {
 
         magneticLimitSwitch = new MagneticLimitSwitchSubsystem(hwMap, deviceName, telemetry);
         ResetArmCount resetArmCount = new ResetArmCount(magneticLimitSwitch, armSubsystem, telemetry);
-        Trigger mlsTrigger = new Trigger(() -> magneticLimitSwitch.armLimitSwitchPressed());
+        mlsTrigger = new Trigger(magneticLimitSwitch::armLimitSwitchPressed);
 
         mlsTrigger.whenActive(resetArmCount);
 
@@ -63,7 +64,7 @@ public class CreateMagneticLimitSwitch {
 
     }
 
-    public MagneticLimitSwitchSubsystem getMagneticLimitSwitch(){
-        return magneticLimitSwitch;
+    public Trigger getMagneticLimitSwitchTrigger(){
+        return mlsTrigger;
     }
 }

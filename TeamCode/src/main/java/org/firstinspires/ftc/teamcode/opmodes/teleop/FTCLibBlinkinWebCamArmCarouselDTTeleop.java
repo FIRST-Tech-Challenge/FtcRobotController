@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateIntake;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateMagneticLimitSwitch;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
+import org.firstinspires.ftc.teamcode.opmodes.triggers.CreateMagneticLimitSwitchTrigger;
 
 
 @TeleOp(name="Telop: FTCLib BlinkinWebCamArmCarouselDT Example", group="FTCLib")
@@ -32,8 +34,12 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         //set up Game pad 2
         GamepadEx toolOp2 = new GamepadEx(gamepad2);
 
-        CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, telemetry, true);
-        CreateMagneticLimitSwitch createMagneticLimitSwitch = new CreateMagneticLimitSwitch(hardwareMap, "limitSwitch", createArm.getArm(), telemetry,true);
+        //create any Triggers that are self contained subsystem
+        CreateMagneticLimitSwitchTrigger createMagneticLimitSwitchTrigger = new CreateMagneticLimitSwitchTrigger(hardwareMap, "limitSwitch",telemetry);
+        Trigger mlsTrigger = createMagneticLimitSwitchTrigger.getMagneticLimitSwitchTrigger();
+
+        CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, mlsTrigger, telemetry, true);
+        //CreateMagneticLimitSwitch createMagneticLimitSwitch = new CreateMagneticLimitSwitch(hardwareMap, "limitSwitch", createArm.getArm(), telemetry,true);
 
         CreateWebCam createWebCam = new CreateWebCam(hardwareMap, "Webcam 1", dashboard,createArm.getArm(), telemetry, true);
         //create LED SubSystem

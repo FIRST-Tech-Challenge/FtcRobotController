@@ -10,25 +10,22 @@ import java.util.function.BooleanSupplier;
 
 public class ResetArmCount extends CommandBase {
 
-    public final MagneticLimitSwitchSubsystem magneticLimitSwitchSubsystem;
     public final ArmSubsystem armSubsytem;
     //private final BooleanSupplier magneticLimitSwitchPressed;
     private Telemetry telemetry;
 
 
-    public ResetArmCount(MagneticLimitSwitchSubsystem subsystem, ArmSubsystem armSubsystem){
-        magneticLimitSwitchSubsystem = subsystem;
-        armSubsytem = armSubsystem;
-        //magneticLimitSwitchPressed = isPressed;
-        addRequirements(subsystem,armSubsystem);
+    public ResetArmCount(ArmSubsystem subsystem){
+        armSubsytem = subsystem;
+        addRequirements(subsystem);
     }
 
-    public ResetArmCount(MagneticLimitSwitchSubsystem subsystem, ArmSubsystem armSubsystem, Telemetry telemetry){
-        magneticLimitSwitchSubsystem = subsystem;
-        armSubsytem = armSubsystem;
-        //magneticLimitSwitchPressed = isPressed;
+    public ResetArmCount(ArmSubsystem subsystem, Telemetry telemetry){
+
+        armSubsytem = subsystem;
+
         this.telemetry = telemetry;
-        addRequirements(subsystem, armSubsystem);
+        addRequirements(subsystem);
     }
 
     @Override
@@ -41,7 +38,7 @@ public class ResetArmCount extends CommandBase {
     @Override
     public void execute(){
         //if(magneticLimitSwitchPressed.getAsBoolean()){
-            armSubsytem.setZero();
+            //armSubsytem.setZero();
         //}
         //telemetry.addData("reset arm encoders to zero",magneticLimitSwitchPressed.getAsBoolean());
         //telemetry.update();

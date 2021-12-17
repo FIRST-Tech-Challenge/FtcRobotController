@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.createmechanism;
 
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,7 +13,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.NudgeArm;
+import org.firstinspires.ftc.teamcode.commands.arm.ResetArmCount;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
+import org.firstinspires.ftc.teamcode.opmodes.triggers.CreateMagneticLimitSwitchTrigger;
 import org.firstinspires.ftc.teamcode.subsystems.magnetic.limitswitch.MagneticLimitSwitchSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 
@@ -25,21 +29,24 @@ public class CreateArm {
     private final String deviceName;
     private final Telemetry telemetry;
     private final GamepadEx op;
+    private final Trigger mlsTrigger;
 
     private static final int NUDGE = 5;
 
-    public CreateArm(final HardwareMap hwMap, final String deviceName, final GamepadEx op, Telemetry telemetry){
+    public CreateArm(final HardwareMap hwMap, final String deviceName, final GamepadEx op, Trigger mls, Telemetry telemetry){
         this.deviceName = deviceName;
         this.hwMap = hwMap;
         this.op = op;
+        mlsTrigger = mls;
         this.telemetry = telemetry;
 
     }
 
-    public CreateArm(final HardwareMap hwMap, final String deviceName, final GamepadEx op, Telemetry telemetry, boolean autoCreate){
+    public CreateArm(final HardwareMap hwMap, final String deviceName, final GamepadEx op, Trigger mls, Telemetry telemetry, boolean autoCreate){
         this.deviceName = deviceName;
         this.hwMap = hwMap;
         this.op = op;
+        mlsTrigger = mls;
         this.telemetry = telemetry;
 
         if (autoCreate) create();
@@ -60,6 +67,10 @@ public class CreateArm {
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        ResetArmCount resetArmCount = new ResetArmCount(arm, telemetry);
+
+        mlsTrigger.whenActive(resetArmCount);
+
         NudgeArm nudgeArmUp = new NudgeArm(arm,NUDGE,telemetry);
         NudgeArm nudgeArmDown = new NudgeArm(arm, -NUDGE, telemetry);
 
@@ -75,7 +86,9 @@ public class CreateArm {
         Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
 
         armNudgerUp.whileHeld(nudgeArmUp);
-        armNudgerDown.whileHeld(nudgeArmDown);
+        //only nudge down if the limit switch is off
+        armNudgerDown.whileHeld(new ConditionalCommand(nudgeArmDown,resetArmCount,() -> { return !mlsTrigger.get();}));
+
 
         //A Level 0
         Button armLevel0 = new GamepadButton(op, GamepadKeys.Button.A);
