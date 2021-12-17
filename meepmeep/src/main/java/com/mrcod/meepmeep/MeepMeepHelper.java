@@ -13,9 +13,9 @@ public class MeepMeepHelper {
 
     /**
      * Since changing feet to coords is multiplying by 3/35, and a foot is 12 inches, we can
-     * multiply inches by 35/3 * 1/12, which is equivalent to 1/140.
+     * multiply inches by 35/3 * 1/12, which is equivalent to 35/36.
      */
     public static double inchesToCoordinate(double inches) {
-        return feetToCoordinate(inches/12);
+        return inches*35/36;
     }
 }
