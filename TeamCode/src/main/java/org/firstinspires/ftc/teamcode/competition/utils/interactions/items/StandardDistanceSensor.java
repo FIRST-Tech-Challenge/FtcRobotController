@@ -5,17 +5,24 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.DistanceSensorWrapper;
 
 public class StandardDistanceSensor extends InteractionSurface {
 
-    private final DistanceSensor SENSOR;
+    private final DistanceSensorWrapper SENSOR;
 
     public StandardDistanceSensor(HardwareMap hardware, String name) {
-        SENSOR = hardware.get(DistanceSensor.class, name);
+        SENSOR = new DistanceSensorWrapper(hardware, name);
     }
 
-    public double getDistance(DistanceUnit unit) {
-        return SENSOR.getDistance(unit);
+    public int getData(DistanceUnit unit) {
+        return getDistance(unit);
+    }
+
+    public int getDistance(DistanceUnit unit) {
+        SENSOR.setUnits(unit);
+        return (int) SENSOR.getData();
     }
 
     public void stop() {
@@ -23,10 +30,10 @@ public class StandardDistanceSensor extends InteractionSurface {
     }
 
     public void close() {
-        SENSOR.close();
+        SENSOR.getSensor().close();
     }
 
-    public DistanceSensor getInternalSensor() {
+    public DistanceSensorWrapper getInternalSensor() {
         return SENSOR;
     }
 

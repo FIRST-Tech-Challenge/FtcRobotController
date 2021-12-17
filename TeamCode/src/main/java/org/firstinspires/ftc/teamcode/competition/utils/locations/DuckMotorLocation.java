@@ -19,7 +19,7 @@ public class DuckMotorLocation extends Location {
 
     public DuckMotorLocation(HardwareMap hardware) {
         try {
-            MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.DUCK_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD);
+            MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.DUCK_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
         } catch(Exception ignored) {};
     }
 

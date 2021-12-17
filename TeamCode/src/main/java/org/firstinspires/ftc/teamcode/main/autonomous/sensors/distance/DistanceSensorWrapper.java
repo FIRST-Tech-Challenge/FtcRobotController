@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
 public class DistanceSensorWrapper implements SensorWrapper {
 
     DistanceUnit units = DistanceUnit.CM;
-    Rev2mDistanceSensor sensor;
+    DistanceSensor sensor;
     HardwareMap hardwareMap;
     String name;
 
@@ -19,7 +19,7 @@ public class DistanceSensorWrapper implements SensorWrapper {
         this.hardwareMap = hardwareMap;
         this.name = name;
 
-        sensor = (Rev2mDistanceSensor)hardwareMap.get(DistanceSensor.class, name);
+        sensor = hardwareMap.get(DistanceSensor.class, name);
     }
 
     @Override
@@ -39,6 +39,15 @@ public class DistanceSensorWrapper implements SensorWrapper {
 
     @Override
     public boolean didTimeoutOccur() {
-        return sensor.didTimeoutOccur();
+        try {
+            return ((Rev2mDistanceSensor) sensor).didTimeoutOccur();
+        } catch(ClassCastException e) {
+            return false;
+        }
     }
+
+    public DistanceSensor getSensor() {
+        return sensor;
+    }
+
 }

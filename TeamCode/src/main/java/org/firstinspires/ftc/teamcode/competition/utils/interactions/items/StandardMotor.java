@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition.utils.interactions.items;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 
@@ -51,9 +52,9 @@ public class StandardMotor extends InteractionSurface {
         HARDWARE = hardware;
         MOTOR = HARDWARE.get(DcMotor.class, name);
         OFFSET = offset;
-        COUNTS_PER_REV = countsPerRev;
-        GEAR_REDUCTION = gearReduction;
-        RADIUS = radius;
+        COUNTS_PER_REV = countsPerRev == 0 ? countsPerRev + 0.00000000000001 : countsPerRev;
+        GEAR_REDUCTION = gearReduction == 0 ? gearReduction + 0.00000000000001 : gearReduction;
+        RADIUS = radius == 0 ? radius + 0.00000000000001 : radius;
         COUNTS_PER_INCH = (COUNTS_PER_REV * GEAR_REDUCTION) / (RADIUS * 2 * Math.PI);
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MOTOR.setDirection(offset);
@@ -88,7 +89,7 @@ public class StandardMotor extends InteractionSurface {
     /**
      * Drives the motor a certain distance.
      * @param distance The distance to drive in inches.
-     * @param speed The maximum speed of the motor. The speed may be anywhere between -1 and this value, depending on where the motor is. This value cannot be below 0 though.
+     * @param speed The maximum speed of the motor. The speed may be anywhere between -100 and 100.
      * @throws IllegalArgumentException The error to throw when the maximum speed is not between -100 and 100.
      * @throws IllegalStateException The error to throw when the motor's TYPE != MotorType.COMPLEX.
      */
