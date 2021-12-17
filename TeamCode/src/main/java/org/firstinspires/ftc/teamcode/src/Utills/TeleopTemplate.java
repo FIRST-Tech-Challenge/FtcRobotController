@@ -33,7 +33,7 @@ public abstract class TeleopTemplate extends LinearOpMode {
         RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
         slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
 
-        intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo");
+        intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo", "color_sensor", true);
         intake.setServoDown();
 
         leds = hardwareMap.get(RevBlinkinLedDriver.class, "LED");

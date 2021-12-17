@@ -31,5 +31,10 @@ public class MiscUtills {
         return sw.toString();
     }
 
+    public double linearEquation(double m, double b, double x) {
+        double y = (m * x) + b;
+        return y;
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,6 +10,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ContinuousIntake {
     final static double forwardPower = 1;
@@ -118,34 +122,41 @@ public class ContinuousIntake {
         return distance;
     }
 
-    public double linearEquation(double m, double b, double x) {
-        double y = (m * x) + b;
-        return y;
-    }
+    private static final ArrayList<gameObject> gameObjectList = new ArrayList<gameObject>(Arrays.asList(gameObject.values()));
 
     protected double[] getRGBFromList(ContinuousIntake.gameObject object) {
+        //this is a list of approximations of values of RGB for different objects and empty
+        //css is cube smooth side and cws is cube waffle side
+
+        /* empty: 8,9,6
+           cws:  31, 18.5, 12
+           css:  56.5, 34.5, 20
+           ball: 611, 652, 594.5
+           duck: 17.67, 15.67, 9
+         */
+
 
         switch (object) {
 
             case BALL:
                 // change the values of these arrays
                 // order of color values in array is Red Green Blue
-                double[] ball = {1, 1, 1};
+                double[] ball = {611, 652, 594.5};
                 return ball;
 
             case CUBESMOOTH:
-                double[] cubeSmooth = {1, 1, 1};
+                double[] cubeSmooth = {56.5, 34.5, 20};
                 return cubeSmooth;
 
             case CUBEWAFFLE:
-                double[] cubeWaffle = {1, 1, 1};
+                double[] cubeWaffle = {31, 18.5, 12};
                 return cubeWaffle;
 
             case DUCK:
-                double[] duck = {1, 1, 1};
+                double[] duck = {17.67, 15.67, 9};
                 return duck;
             case EMPTY:
-                return new double[]{1, 1, 1};
+                return new double[]{8, 9, 6};
 
         }
         return new double[]{0, 0, 0};
@@ -157,35 +168,8 @@ public class ContinuousIntake {
         double g = Math.abs(sight[1] - object[1]);
         double b = Math.abs(sight[2] - object[2]);
         // this calculates the 3d distance between colors
-
-        difference = Math.sqrt(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)) + Math.pow(b, 2));
-
+        difference = Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
         return difference;
-    }
-
-    public String identify(double[] sight) {
-        String type = "uknown";
-        double distanceFromBall = getDifferenceOfColor(sight, getRGBFromList(gameObject.BALL));
-        double distanceFromCubeSmooth = getDifferenceOfColor(sight, getRGBFromList(gameObject.CUBESMOOTH));
-        double distanceFromCubeWaffle = getDifferenceOfColor(sight, getRGBFromList(gameObject.CUBEWAFFLE));
-        double distanceFromDuck = getDifferenceOfColor(sight, getRGBFromList(gameObject.DUCK));
-        double distanceFromEmpty = getDifferenceOfColor(sight, getRGBFromList(gameObject.EMPTY));
-        // determining the type of object involves comparing the 3D color distance from all known color positions
-        // this is what the following logic statements determine
-        if (distanceFromEmpty > distanceFromDuck && distanceFromEmpty > distanceFromBall && distanceFromEmpty > distanceFromCubeSmooth && distanceFromEmpty > distanceFromCubeWaffle) {
-            if (distanceFromBall < distanceFromDuck && distanceFromBall < distanceFromCubeSmooth && distanceFromBall < distanceFromCubeWaffle) {
-                type = "ball";
-            } else if (distanceFromDuck < distanceFromCubeSmooth && distanceFromDuck < distanceFromCubeWaffle) {
-                type = "duck";
-            } else {
-                type = "cube";
-            }
-
-        } else {
-            type = "empty";
-        }
-        return type;
-
     }
 
     public enum gameObject {
@@ -197,6 +181,50 @@ public class ContinuousIntake {
 
     }
 
+    public gameObject identify(double[] sight) {
+        int size = gameObjectList.size();
+        double[][] originalRGB = new double[size][3];
+        double[] differences = new double[size];
+        for (int x = 0; x < size; x++) {
+            originalRGB[x] = getRGBFromList(gameObjectList.get(x));
+        }
+        for (int x = 0; x < size; x++) {
+            differences[x] = getDifferenceOfColor(sight, originalRGB[x]);
+        }
+        double smallestValue = Double.MAX_VALUE;
+        int index = -1;
+
+        for (int i = 0; i < size; i++) {
+            if (differences[i] < smallestValue) {
+                smallestValue = differences[i];
+                index = i;
+            }
+        }
+        return gameObjectList.get(index);
+
+
+    }
+
+    private RevBlinkinLedDriver.BlinkinPattern getRevColorFromEnum(gameObject o) {
+        switch (o) {
+            case BALL:
+                return RevBlinkinLedDriver.BlinkinPattern.WHITE;
+            case CUBESMOOTH:
+                return RevBlinkinLedDriver.BlinkinPattern.ORANGE;
+            case CUBEWAFFLE:
+                return RevBlinkinLedDriver.BlinkinPattern.ORANGE;
+            case DUCK:
+                return RevBlinkinLedDriver.BlinkinPattern.GREEN;
+            case EMPTY:
+                return RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        }
+        return RevBlinkinLedDriver.BlinkinPattern.BLACK;
+    }
+
+    public RevBlinkinLedDriver.BlinkinPattern getLEDFromFreight() {
+        RevBlinkinLedDriver.BlinkinPattern o = this.getRevColorFromEnum(this.identify(this.getRGB()));
+        return o;
+    }
 
 }
 

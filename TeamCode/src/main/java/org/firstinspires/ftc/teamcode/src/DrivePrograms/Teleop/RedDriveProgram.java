@@ -8,11 +8,11 @@ import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 
 @TeleOp(name = "Red Drive Program")
 public class RedDriveProgram extends TeleopTemplate {
-
+    private static final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.RED;
     public void runOpMode() throws InterruptedException {
 
         this.initAll();
-        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+        leds.setPattern(defaultColor);
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -20,13 +20,24 @@ public class RedDriveProgram extends TeleopTemplate {
 
             //Handles Linear Slide Control
             slide.setMotorPower(1 * gamepad2.left_stick_y);
-            intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
+            if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
+                intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
+                RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDFromFreight();
+                if (o == RevBlinkinLedDriver.BlinkinPattern.BLACK) {
+                    leds.setPattern(defaultColor);
+                } else {
+                    leds.setPattern(o);
+                }
 
-            if (gamepad2.x){
+            } else {
+                intake.setMotorPower(0);
+            }
+
+            if (gamepad2.x) {
                 spinner.setPowerBlueDirection();
-            }else if (gamepad2.b){
+            } else if (gamepad2.b) {
                 spinner.setPowerRedDirection();
-            }else{
+            } else {
                 spinner.stop();
             }
 
