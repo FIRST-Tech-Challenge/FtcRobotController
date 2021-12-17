@@ -11,7 +11,7 @@ import java.util.function.DoubleSupplier;
 
 public class NudgeArm extends CommandBase {
 
-    private final ArmSubsystem m_armSubsytem;
+    private final ArmSubsystem armSubsytem;
 
     private final int nudge;
     private int armSetPos = 0;
@@ -21,39 +21,32 @@ public class NudgeArm extends CommandBase {
 
 
     public NudgeArm(ArmSubsystem subsystem, int nudge){
-        m_armSubsytem = subsystem;
+        armSubsytem = subsystem;
         this.nudge = nudge;
 
-        addRequirements(subsystem);
+        addRequirements(armSubsytem);
     }
 
     public NudgeArm(ArmSubsystem subsystem, int nudge, Telemetry telemetry){
-        m_armSubsytem = subsystem;
+        armSubsytem = subsystem;
         this.nudge = nudge;
 
         this.telemetry = telemetry;
 
-        addRequirements(subsystem);
+        addRequirements(armSubsytem);
     }
 
     @Override
     public void initialize(){
-
+        int currentArmPos = armSubsytem.getCurrentPosition();
+        telemetry.addData("nudigng in command", currentArmPos);
+        armSetPos = currentArmPos + nudge;
+        armSubsytem.setArmTargetPosition(armSetPos);
     }
     @Override
     public void execute(){
 
-        int currentArmPos = m_armSubsytem.getCurrentPosition();
-        telemetry.addData("nudigng in command", currentArmPos);
 
-        //if(trigger.getAsDouble() == 1.0){
-        armSetPos = currentArmPos + nudge;
-        //}
-        //else if(trigger.getAsDouble() == -1.0){
-        //armSetPos = armSetPos + nudge;
-        //}
-
-        m_armSubsytem.setArmTargetPosition(armSetPos);
     }
 
 

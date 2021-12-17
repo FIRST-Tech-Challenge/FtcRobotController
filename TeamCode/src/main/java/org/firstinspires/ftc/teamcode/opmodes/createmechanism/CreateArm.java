@@ -68,11 +68,11 @@ public class CreateArm {
         SetArmLevel moveToLevel2 = new SetArmLevel(arm,2, telemetry);
         SetArmLevel moveToLevel3 = new SetArmLevel(arm,3, telemetry);
 
-        Button armNudgerUp = new GamepadButton(op, GamepadKeys.Button.DPAD_UP);
-        Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.DPAD_DOWN);
+        //Button armNudgerUp = new GamepadButton(op, GamepadKeys.Button.DPAD_UP);
+        //Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.DPAD_DOWN);
 
-        //Button armNudgerUp = new GamepadButton(toolOp2, GamepadKeys.Button.RIGHT_STICK_BUTTON);
-        //Button armNudgerDown = new GamepadButton(toolOp2, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+        Button armNudgerUp = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+        Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
 
         armNudgerUp.whileHeld(nudgeArmUp);
         armNudgerDown.whileHeld(nudgeArmDown);

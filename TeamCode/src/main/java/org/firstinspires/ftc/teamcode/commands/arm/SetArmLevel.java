@@ -17,7 +17,7 @@ public class SetArmLevel extends CommandBase {
     public SetArmLevel(ArmSubsystem subsystem, Integer levelIndicator){
         armSubsytem = subsystem;
         this.levelIndicator = levelIndicator;
-        addRequirements(subsystem);
+        addRequirements(armSubsytem);
     }
 
     public SetArmLevel(ArmSubsystem subsystem, Integer levelIndicator, Telemetry telemetry){
@@ -27,7 +27,7 @@ public class SetArmLevel extends CommandBase {
         this.levelIndicator = levelIndicator;
         this.telemetry = telemetry;
 
-        addRequirements(subsystem);
+        addRequirements(armSubsytem);
     }
 
 
