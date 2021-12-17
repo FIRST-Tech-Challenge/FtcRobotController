@@ -3,9 +3,11 @@ package ca.webber.ftc.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import ca.webber.ftc.helpers.TeleServoController;
 import ca.webber.ftc.helpers.TeleDriveController;
 import ca.webber.ftc.helpers.IntakeController;
 import ca.webber.ftc.helpers.TelePivotController;
@@ -22,6 +24,8 @@ public class TeleOp_01 extends LinearOpMode {
     private TelePivotController telePivotController;
     private TeleElevatorController teleElevatorController;
     private TouchSensor touchSensor;
+    private TeleServoController teleCloserController;
+    private TeleServoController teleBucketRotateController;
 
     @Override
     public void runOpMode () {
@@ -57,10 +61,10 @@ public class TeleOp_01 extends LinearOpMode {
         );
 
         // Servos
-        teleCloserController = new TeleCloserController(
+        teleCloserController = new TeleServoController(
                 hardwareMap.get(Servo.class, "closer")
         );
-        teleBucketRotateController = new TeleCloserController(
+        teleBucketRotateController = new TeleServoController(
                 hardwareMap.get(Servo.class, "bucketRotate")
         );
 
@@ -108,6 +112,22 @@ public class TeleOp_01 extends LinearOpMode {
             }
             else {
                 teleElevatorController.stop();
+            }
+
+            // operates the servos
+            if (gamepad1.y) {
+                teleCloserController.open();
+            }
+            if (gamepad1.x) {
+                teleCloserController.close();
+            }
+
+            // operates the servos
+            if (gamepad1.a) {
+                teleBucketRotateController.open();
+            }
+            if (gamepad1.b) {
+                teleBucketRotateController.close();
             }
 
             // Show the elapsed game time and wheel power.
