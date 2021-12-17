@@ -9,18 +9,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.commands.arm.NudgeArm;
+
 import org.firstinspires.ftc.teamcode.commands.arm.ResetArmCount;
-import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.magnetic.limitswitch.MagneticLimitSwitchSubsystem;
 
-import java.util.HashMap;
-import java.util.Map;
-
+@Deprecated
 public class CreateMagneticLimitSwitch {
 
     private MagneticLimitSwitchSubsystem magneticLimitSwitch;
@@ -30,8 +26,6 @@ public class CreateMagneticLimitSwitch {
     private final Telemetry telemetry;
     private Trigger mlsTrigger;
 
-
-    private static final int NUDGE = 5;
 
     public CreateMagneticLimitSwitch(final HardwareMap hwMap, final String deviceName, final ArmSubsystem armSubsystem, Telemetry telemetry){
         this.deviceName = deviceName;
@@ -54,7 +48,7 @@ public class CreateMagneticLimitSwitch {
     public void create(){
 
         magneticLimitSwitch = new MagneticLimitSwitchSubsystem(hwMap, deviceName, telemetry);
-        ResetArmCount resetArmCount = new ResetArmCount(magneticLimitSwitch, armSubsystem, telemetry);
+        ResetArmCount resetArmCount = new ResetArmCount(armSubsystem, telemetry);
         mlsTrigger = new Trigger(magneticLimitSwitch::armLimitSwitchPressed);
 
         mlsTrigger.whenActive(resetArmCount);
