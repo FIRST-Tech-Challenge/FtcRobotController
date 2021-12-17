@@ -57,7 +57,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat inputFrame) {
 
-        telemetry.addLine("Inside ProcessFrame");
+        //telemetry.addLine("Inside ProcessFrame");
         //telemetry.update();
 
         Mat blob = null;
@@ -111,8 +111,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 String label = classNames[class_id].toString() + ": " + df.format(confidence);
                 Scalar color = colors.get(class_id);
 
-                telemetry.addData("This is a ", label);
-                telemetry.update();
+                //telemetry.addData("This is a ", label);
+                //telemetry.update();
 
                 Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);
                 Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 0), 4);

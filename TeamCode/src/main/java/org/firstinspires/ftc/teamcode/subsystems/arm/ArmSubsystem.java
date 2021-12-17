@@ -68,6 +68,14 @@ public class ArmSubsystem extends SubsystemBase {
         motorArm.setMode(this.mode);
     }
 
+    public void setZero(){
+        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        telemetry.addData("ArmSubsystem","set 0 limit switch");
+        telemetry.update();
+    }
+
     public void setArmTargetPosition(int armTargetPosition){
         //telemetry.addData("moving arm subsystem",armTargetPosition);
         //telemetry.update();

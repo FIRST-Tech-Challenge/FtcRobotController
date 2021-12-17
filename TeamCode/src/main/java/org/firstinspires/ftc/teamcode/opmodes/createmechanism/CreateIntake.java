@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.createmechanism;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
@@ -51,10 +52,16 @@ public class CreateIntake {
         intake = new IntakeSubsystem(hwMap,deviceName);
 
 
-        MoveIntake seGrabber = new MoveIntake(intake, RIGHT_TRIGGER_POWER,LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        //MoveIntake seGrabber = new MoveIntake(intake, RIGHT_TRIGGER_POWER,LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
 
+        Trigger rTrigger = new Trigger(() -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5);
+        Trigger lTrigger = new Trigger(() -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5);
 
-        //MoveIntakeWithTrigger seGrabber = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
+        MoveIntakeWithTrigger seGrabber = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, telemetry);
+        MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, LEFT_TRIGGER_POWER, telemetry);
+        //
+        rTrigger.whileActiveContinuous(seGrabber);
+        lTrigger.whileActiveContinuous(seReleaser);
         //MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
         //MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
 
@@ -62,7 +69,7 @@ public class CreateIntake {
 
 
 
-        seGrabber.schedule(true);
+        //seGrabber.schedule(true);
         //seReleaser.schedule(true);
         intake.setDefaultCommand(new PerpetualCommand(stopIntake));
     }

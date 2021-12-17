@@ -12,9 +12,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.NudgeArm;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
-import org.firstinspires.ftc.teamcode.commands.intake.MoveIntake;
+import org.firstinspires.ftc.teamcode.subsystems.magnetic.limitswitch.MagneticLimitSwitchSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeSubsystem;
 
 import java.util.HashMap;
 import java.util.Map;

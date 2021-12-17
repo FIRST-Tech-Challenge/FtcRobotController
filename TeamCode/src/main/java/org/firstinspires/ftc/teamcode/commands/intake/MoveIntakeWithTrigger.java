@@ -13,7 +13,6 @@ public class MoveIntakeWithTrigger extends CommandBase {
     private final IntakeSubsystem intakeSubsytem;
 
     private final double triggerPower;
-    private final DoubleSupplier trigger;
 
     private boolean triggerStopped = false;
     private static final double ZERO_POWER = 0.0;
@@ -22,22 +21,20 @@ public class MoveIntakeWithTrigger extends CommandBase {
     private Telemetry telemetry;
 
 
-    public MoveIntakeWithTrigger(IntakeSubsystem subsystem, final double power, DoubleSupplier trig){
+    public MoveIntakeWithTrigger(IntakeSubsystem subsystem, final double power){
         intakeSubsytem = subsystem;
         triggerPower = power;
-        trigger = trig;
 
         addRequirements(subsystem);
     }
 
-    public MoveIntakeWithTrigger(IntakeSubsystem subsystem, final double power, DoubleSupplier trig, Telemetry telemetry){
+    public MoveIntakeWithTrigger(IntakeSubsystem subsystem, final double power, Telemetry telemetry){
 
         telemetry.addData("make trigger:", power );
         //telemetry.update();
 
         intakeSubsytem = subsystem;
         triggerPower = power;
-        trigger = trig;
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -45,26 +42,16 @@ public class MoveIntakeWithTrigger extends CommandBase {
 
     @Override
     public void initialize(){
-
+        intakeSubsytem.setPower(triggerPower);
     }
 
     @Override
     public void execute(){
 
-        telemetry.addData("trigger", TRIGGER_ACTIVE_THRESHOLD );
-        telemetry.update();
-        if(trigger.getAsDouble() > TRIGGER_ACTIVE_THRESHOLD) {
-            intakeSubsytem.setPower(triggerPower);
-            triggerStopped = false;
-        }
-        else{
-
-            triggerStopped = true;
-        }
 
     }
 
-    @Override
+   /* @Override
     public void end(boolean interrupted) {
         if (interrupted) {
             intakeSubsytem.setPower(ZERO_POWER);
@@ -78,7 +65,7 @@ public class MoveIntakeWithTrigger extends CommandBase {
         telemetry.update();
         return Thread.currentThread().isInterrupted() || triggerStopped;
 
-    }
+    }*/
 
 
 

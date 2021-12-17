@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateBC4HDrive;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateIntake;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateMagneticLimitSwitch;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
 
 
@@ -32,6 +33,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         GamepadEx toolOp2 = new GamepadEx(gamepad2);
 
         CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, telemetry, true);
+        CreateMagneticLimitSwitch createMagneticLimitSwitch = new CreateMagneticLimitSwitch(hardwareMap, "limitSwitch", createArm.getArm(), telemetry,true);
 
         CreateWebCam createWebCam = new CreateWebCam(hardwareMap, "Webcam 1", dashboard,createArm.getArm(), telemetry, true);
         //create LED SubSystem
