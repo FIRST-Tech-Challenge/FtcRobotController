@@ -53,6 +53,7 @@ public class CreateIntake {
 
         MoveIntake seGrabber = new MoveIntake(intake, RIGHT_TRIGGER_POWER,LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
 
+
         //MoveIntakeWithTrigger seGrabber = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
         //MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
         //MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);

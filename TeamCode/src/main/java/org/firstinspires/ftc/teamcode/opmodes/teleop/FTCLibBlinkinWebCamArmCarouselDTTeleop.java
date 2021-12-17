@@ -40,7 +40,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         CreateIntake createIntake = new CreateIntake(hardwareMap, "intake", toolOp2, telemetry, true);
         CreateBC4HDrive createBC4HDrive = new CreateBC4HDrive(hardwareMap,"frontLeft", "backLeft", "frontRight", "backRight", driveOp, telemetry, true );
 
-        CommandScheduler.getInstance().run();
+        //CommandScheduler.getInstance().run();
 
 
     }

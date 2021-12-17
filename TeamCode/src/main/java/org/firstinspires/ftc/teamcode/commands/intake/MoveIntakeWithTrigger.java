@@ -58,10 +58,17 @@ public class MoveIntakeWithTrigger extends CommandBase {
             triggerStopped = false;
         }
         else{
-            intakeSubsytem.setPower(ZERO_POWER);
+
             triggerStopped = true;
         }
 
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (interrupted) {
+            intakeSubsytem.setPower(ZERO_POWER);
+        }
     }
 
     @Override
