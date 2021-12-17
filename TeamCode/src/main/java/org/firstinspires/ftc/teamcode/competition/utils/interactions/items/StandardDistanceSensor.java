@@ -22,7 +22,7 @@ public class StandardDistanceSensor extends InteractionSurface {
 
     public int getDistance(DistanceUnit unit) {
         SENSOR.setUnits(unit);
-        return SENSOR.getData();
+        return (int) SENSOR.getData();
     }
 
     public void stop() {

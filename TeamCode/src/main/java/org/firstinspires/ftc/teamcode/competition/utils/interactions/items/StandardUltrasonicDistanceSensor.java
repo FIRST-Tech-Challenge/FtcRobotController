@@ -15,9 +15,9 @@ public class StandardUltrasonicDistanceSensor {
         SENSOR = new UltrasonicDistanceSensor(hardware, name);
     }
 
-    public double getDistance(DistanceUnit unit) {
+    public int getDistance(DistanceUnit unit) {
         SENSOR.setUnits(unit);
-        return SENSOR.getData();
+        return (int) SENSOR.getData();
     }
 
     public void stop() {
@@ -30,16 +30,6 @@ public class StandardUltrasonicDistanceSensor {
 
     public UltrasonicDistanceSensor getInternalSensor() {
         return SENSOR;
-    }
-
-    @Override
-    public boolean isInputDevice() {
-        return false;
-    }
-
-    @Override
-    public boolean isOutputDevice() {
-        return true;
     }
 
 }

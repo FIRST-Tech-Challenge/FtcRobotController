@@ -120,9 +120,4 @@ public class MainTempTeleOpScript extends TeleOpScript {
         outputSpace.stop();
     }
 
-    @Override
-    public String getName() {
-        return "MainTempTeleOpScript";
-    }
-
 }
