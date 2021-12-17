@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
+@Deprecated
 public class TFODHomadeML extends TFOD {
 
     // This class will access the file and label of our homemade machine learning tool's model

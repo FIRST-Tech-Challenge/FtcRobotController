@@ -43,7 +43,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(120, 84, 1);
 
 
-                    slide.setTargetLevel(LinearSlide.HeightLevels.TopLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
                     intake.setServoDown();
 
                     Thread.sleep(2000);
@@ -60,7 +60,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     intake.intakeOff();
                     driveSystem.moveToPosition(120, 84, 1);
                     intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
 
 
@@ -97,7 +97,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(120, 84, 1);
 
 
-                    slide.setTargetLevel(LinearSlide.HeightLevels.MiddleLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
 
                     //TODO: have robot move in closer to load objects on to the hub
 
@@ -116,7 +116,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     intake.intakeOff();
                     driveSystem.moveToPosition(117, 84, 1);
                     intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     //following this is unique to carousel and warehouse
 
@@ -144,7 +144,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(120, 84, 1);
 
 
-                    slide.setTargetLevel(LinearSlide.HeightLevels.BottomLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
 
 
                     //TODO: have robot move in closer to load objects on to the hub
@@ -162,7 +162,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     intake.intakeOff();
                     driveSystem.moveToPosition(117, 84, 1);
                     intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     //following this is unique to carousel and warehouse
 

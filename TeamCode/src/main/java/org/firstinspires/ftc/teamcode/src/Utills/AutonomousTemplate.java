@@ -76,7 +76,7 @@ public abstract class AutonomousTemplate extends LinearOpMode {
 
         RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
         slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
-        slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+        slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         slide.start();
         checkStop();
 

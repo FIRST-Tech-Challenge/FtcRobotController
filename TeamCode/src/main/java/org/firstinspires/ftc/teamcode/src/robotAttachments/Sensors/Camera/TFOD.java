@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.internal.tfod.TFObjectDetectorImpl;
 
+@Deprecated
 public class TFOD extends TFObjectDetectorImpl {
 
     // This class will access the file and label for the model made with the FTC ML tool

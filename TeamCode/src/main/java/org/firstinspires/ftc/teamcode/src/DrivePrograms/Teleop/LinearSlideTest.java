@@ -13,7 +13,7 @@ public class LinearSlideTest extends TeleopTemplate {
 
     public void runOpMode() throws InterruptedException {
         this.initAll();
-        linearSlide.setTargetLevel(LinearSlide.HeightLevels.Down);
+        linearSlide.setTargetLevel(LinearSlide.HeightLevel.Down);
 
 
         telemetry.addData("Initialization Status", "Initialized");
@@ -23,17 +23,17 @@ public class LinearSlideTest extends TeleopTemplate {
         while (opModeIsActive() && !isStopRequested()) {
             driveTrain.setPowerFromGamepad(gamepad1);
 
-            linearSlide.setTargetLevel(LinearSlide.HeightLevels.BottomLevel);
+            linearSlide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
 
             //intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
             telemetry.addData("LS Height: ", linearSlide.getEncoderCount());
             telemetry.update();
 
             Thread.sleep(5000);
-            linearSlide.setTargetLevel(LinearSlide.HeightLevels.TopLevel);
+            linearSlide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
 
             Thread.sleep(5000);
-            linearSlide.setTargetLevel(LinearSlide.HeightLevels.Down);
+            linearSlide.setTargetLevel(LinearSlide.HeightLevel.Down);
 
         }
     }

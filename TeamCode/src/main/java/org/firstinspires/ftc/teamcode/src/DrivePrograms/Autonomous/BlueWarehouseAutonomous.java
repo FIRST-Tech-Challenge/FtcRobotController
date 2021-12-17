@@ -15,7 +15,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         this.initAll();
         leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         MarkerPosition Pos = MarkerPosition.NotSeen;
-        slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+        slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         this.initVuforia();
         this.initTfod();
         this.activate();
@@ -43,7 +43,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
                     driveSystem.moveToPosition(120, 84, 1);
 
-                    slide.setTargetLevel(LinearSlide.HeightLevels.TopLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
                     Thread.sleep(1500);
 
 
@@ -59,7 +59,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
                     intake.intakeOff();
                     driveSystem.moveToPosition(120, 84, 1);
                     intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
 
 
@@ -76,7 +76,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
                     telemetry.update();
                     driveSystem.moveToPosition(120, 84, 1);
 
-                    slide.setTargetLevel(LinearSlide.HeightLevels.BottomLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
 
                     Thread.sleep(1500);
 
@@ -92,7 +92,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
                     intake.intakeOff();
                     driveSystem.moveToPosition(117, 84, 1);
                     intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     //following this is unique to carousel and warehouse
 
@@ -108,7 +108,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
                     telemetry.update();
                     driveSystem.moveToPosition(120, 84, 1);
 
-                    slide.setTargetLevel(LinearSlide.HeightLevels.MiddleLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
 
                     Thread.sleep(1500);
 
@@ -124,7 +124,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
                     intake.intakeOff();
                     driveSystem.moveToPosition(117, 84, 1);
                     intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     //following this is unique to carousel and warehouse
 

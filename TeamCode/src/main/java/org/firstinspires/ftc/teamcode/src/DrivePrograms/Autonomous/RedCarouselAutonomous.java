@@ -14,7 +14,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
         this.initAll();
         leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
         MarkerPosition Pos = MarkerPosition.NotSeen;
-        slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+        slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         this.initVuforia();
         this.initTfod();
         this.activate();
@@ -40,7 +40,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     telemetry.addData("position", " is right");
                     telemetry.update();
                     driveSystem.moveToPosition(20, 84, 1);
-                    slide.setTargetLevel(LinearSlide.HeightLevels.TopLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
 
                     //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
                     Thread.sleep(1500);
@@ -58,7 +58,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(23, 84, 1);
                     intake.setServoUp();
                     Thread.sleep(500);
-                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     //following this is unique to carousel and warehouse
 
@@ -86,7 +86,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     telemetry.update();
                     driveSystem.moveToPosition(20, 85, 1);
 
-                    slide.setTargetLevel(LinearSlide.HeightLevels.BottomLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
 
                     //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
 
@@ -104,7 +104,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     intake.intakeOff();
                     driveSystem.moveToPosition(23, 84, 1);
                     intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     //following this is unique to carousel and warehouse
                     driveSystem.moveToPosition(20, 130, 1);
@@ -132,7 +132,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     telemetry.update();
                     driveSystem.moveToPosition(20, 85, 1);
 
-                    slide.setTargetLevel(LinearSlide.HeightLevels.MiddleLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
                     //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
 
                     Thread.sleep(1500);
@@ -149,7 +149,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     intake.intakeOff();
                     driveSystem.moveToPosition(23, 84, 1);
                     intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevels.Down);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     //following this is unique to carousel and warehouse
 

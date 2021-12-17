@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
 import org.firstinspires.ftc.teamcode.src.Utills.ThreadedSubsystemTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 
+import java.util.HashMap;
+
 public class LinearSlide extends ThreadedSubsystemTemplate {
 
     private final DcMotor linearSlide;
@@ -43,25 +45,8 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
         chosenPosition = height;
     }
 
-    public void setTargetLevel(LinearSlide.HeightLevels level) {
-        switch (level) {
-            case BottomLevel:
-                setTargetHeight(-1081);
-                return;
-            case TopLevel:
-                setTargetHeight(-4000);
-                return;
-            case MiddleLevel:
-                setTargetHeight(-2560);
-                return;
-            case GetOverObstacles:
-                setTargetHeight(-1000);
-                return;
-
-            case Down:
-                setTargetHeight(0);
-                return;
-        }
+    public void setTargetLevel(HeightLevel level) {
+        setTargetHeight(HeightLevel.EncoderCount.get(level));
     }
 
     public void setMotorPower(double power) {
@@ -93,11 +78,18 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
 
     }
 
-    public enum HeightLevels {
+    public enum HeightLevel {
         Down,
         BottomLevel,
         MiddleLevel,
         TopLevel,
-        GetOverObstacles
+        GetOverObstacles;
+        protected static final HashMap<HeightLevel, Integer> EncoderCount = new HashMap<HeightLevel, Integer>() {{
+            put(HeightLevel.BottomLevel, -1081);
+            put(HeightLevel.MiddleLevel, 2560);
+            put(HeightLevel.TopLevel, -4000);
+            put(HeightLevel.GetOverObstacles, -1000);
+            put(HeightLevel.Down, 0);
+        }};
     }
 }

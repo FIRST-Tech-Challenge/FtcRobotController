@@ -23,7 +23,7 @@ public abstract class ThreadedSubsystemTemplate extends Thread {
                 this.threadMain();
                 Thread.sleep(sleepTime);
             }
-        } catch (NullPointerException | InterruptedException e) {
+        } catch (InterruptedException e) {
             return;
         }
 
