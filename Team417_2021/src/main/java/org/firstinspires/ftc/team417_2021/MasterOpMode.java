@@ -37,21 +37,21 @@ abstract public class MasterOpMode extends LinearOpMode {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     // arm and grabber constants
-    static final double GRABBER_IN = 0.9;
-    static final double GRABBER_OUT = 0.0;
-    static final int ELBOW_LEVEL_1 = 1460;
-    static final int ELBOW_LEVEL_2 = 1430;
+    static final double GRABBER_IN = 1;
+    static final double GRABBER_OUT = 0.1;
+    static final int ELBOW_LEVEL_1 = 1900;
+    static final int ELBOW_LEVEL_2 = 1100;
     static final int ELBOW_LEVEL_3 = 300;
     static final int ELBOW_CAP = 0;
-    static final int SHOULDER_LEVEL_1 = -1770;
+    static final int SHOULDER_LEVEL_1 = -1650;
     static final int SHOULDER_LEVEL_2 = -1650;
     static final int SHOULDER_LEVEL_3 = -1500;
     static final int SHOULDER_CAP = 0; // todo get correct values
-    static final double WRIST_POS = 0.4;
+    static final double WRIST_POS = 0.85;
 
     protected void initializeHardware() {
         // initialize move filters
-        turnFilter = new PIDFilter(0.008, 0, 0.0005);
+        turnFilter = new PIDFilter(0.005, 0, 0.0005);
         moveFilter = new PIDFilter(0.04, 0, 0);
         // weights for weighted average
         double[] filterCoefficients = {1};

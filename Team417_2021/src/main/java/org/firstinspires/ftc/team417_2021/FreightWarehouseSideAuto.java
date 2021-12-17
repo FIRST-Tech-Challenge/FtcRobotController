@@ -7,8 +7,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Auto Freight Carousel Side")
-public class FreightAuto extends MasterAutonomous {
+@Autonomous(name = "Auto Freight Warehouse Side")
+public class FreightWarehouseSideAuto extends MasterAutonomous {
     int allianceSide = 1;
     int barcodeIndex = 0;
     boolean farSide = false;
@@ -59,7 +59,7 @@ public class FreightAuto extends MasterAutonomous {
                     barcodeIndex = 2;
                 }
             }
-            //barcodeIndex = barcodeDetector.index;
+
             telemetry.addLine("1 for blue, -1 for red");
             telemetry.addData("Alliance", allianceSide);
             telemetry.addLine("False for starting on side nearest warehouse");
@@ -72,40 +72,11 @@ public class FreightAuto extends MasterAutonomous {
 
         waitForStart();
         robot.setInitialAngle();
+        sleep(5000);
 
-
-        // raise arm to position depending on barcode
-        /*if (barcodeIndex == 0) {
-            // highest level
-            runMotorToPosition(elbowMotor, ELBOW_LEVEL_3, 0.5);
-        } else if (barcodeIndex == 1) {
-            // middle level
-            runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_2, 0.5);
-        } else {
-            // lowest level
-            runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_1, 0.5);
-        }*/
-
-        // ----------------- RIGHT SIDE AUTO -----------------
-        /*moveInches(10, 0.7);
-        pivot(-90, 0.5);
-        moveInches(21,0.7);
-        pivot(-180, 0.5);
-        moveInches(13, 0.5);
-        carouselMotor.setPower(1);
-        sleep(3200);
-        carouselMotor.setPower(0);
-        moveInches(-6,0.7);
-        pivot(90,0.7);
-        moveInches(48,0.7);
-        pivot(0,0.7);
-        */
-
-
-        //wristServo.setPosition(0.0);
         if (barcodeIndex == 0) {
             moveInches(9, 0.7);
-            pivot(90 * allianceSide, 0.5);
+            pivot(-90 * allianceSide, 0.5);
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_1, 0.5);
             runMotorToPosition(elbowMotor, ELBOW_LEVEL_1, 0.3);
             // 15 for level 3
@@ -115,7 +86,7 @@ public class FreightAuto extends MasterAutonomous {
             }
         } else if (barcodeIndex == 1) {
             moveInches(7, 0.7);
-            pivot(90 * allianceSide, 0.5);
+            pivot(-90 * allianceSide, 0.5);
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_2, 0.5);
             runMotorToPosition(elbowMotor, ELBOW_LEVEL_2, 0.3);
             // 15 for level 3
@@ -123,8 +94,8 @@ public class FreightAuto extends MasterAutonomous {
                 telemetry.addLine("pathli");
             }
         } else {
-            moveInches(10, 0.7);
-            pivot(90 * allianceSide, 0.5);
+            moveInches(9, 0.7);
+            pivot(-90 * allianceSide, 0.5);
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_3, 0.5);
             runMotorToPosition(elbowMotor, ELBOW_LEVEL_3, 0.3);
             // 15 for level 3
@@ -135,25 +106,28 @@ public class FreightAuto extends MasterAutonomous {
         //
         //pivot(90, 0.5);
         if (barcodeIndex == 2) {
-            moveInches(28, 0.7);
+            moveInches(18, 0.7);
         } else {
-            moveInches(32, 0.7);
+            moveInches(18, 0.7);
         }
         pivot(0, 0.5);
         if (barcodeIndex == 0) {
-            moveInches(9, 0.7);
+            moveInches(6, 0.7);
         } else{
-            moveInches(11, 0.7);
+            moveInches(9, 0.7);
         }
 
 
         grabberServo.setPosition(GRABBER_OUT);
+        moveInches(-7,0.7);
 
-        moveInches(-5,0.7);
+        pivot(90 * allianceSide, 0.9);
         runMotorToPosition(shoulderMotor, 0, 0.5);
         runMotorToPosition(elbowMotor, 0, 0.5);
-        pivot(90 * allianceSide, 0.9);
-       moveInches(78, 1.0);
+        while (shoulderMotor.isBusy() || elbowMotor.isBusy()) {
+            telemetry.addLine("moving arm");
+        }
+        moveInches(70, 1.0);
 
     }
 

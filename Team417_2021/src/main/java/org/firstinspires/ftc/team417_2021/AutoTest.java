@@ -14,12 +14,17 @@ public class AutoTest extends MasterAutonomous {
         waitForStart();
         robot.setInitialAngle();
 
+        /*
         wristServo.setPosition(0.0);
         runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_3, 0.2);
         runMotorToPosition(elbowMotor, ELBOW_LEVEL_3, 0.5);
         while(shoulderMotor.isBusy() || elbowMotor.isBusy()) {
             telemetry.addLine("pathli");
         }
+        */
+        pivot(90, 0.6);
+
+
         //moveInches(15, 0.8);
         //pivot(-180, 0.2);
         //moveInches(15, 0.2);

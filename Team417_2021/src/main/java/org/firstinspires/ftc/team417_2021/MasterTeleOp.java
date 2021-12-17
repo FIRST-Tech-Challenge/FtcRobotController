@@ -8,7 +8,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     int shoulderPos = 0;
     int elbowPos = 0;
-    double wristPos = 0.0;
+    double wristPos = WRIST_POS;
     Toggler grabberToggle = new Toggler();
     boolean grabberState = false;
 
@@ -56,10 +56,10 @@ abstract public class MasterTeleOp extends MasterOpMode {
         elbowMotor.setPower(gamepad2.right_stick_y);
 
         // if wrist servo position needs to be changed
-        if (gamepad2.dpad_up) {
+        if (gamepad2.right_bumper) {
             wristPos += 0.1;
             wristServo.setPosition(wristPos);
-        } else if (gamepad2.dpad_down){
+        } else if (gamepad2.left_bumper) {
             wristPos -= 0.1;
             wristServo.setPosition(wristPos);
         }

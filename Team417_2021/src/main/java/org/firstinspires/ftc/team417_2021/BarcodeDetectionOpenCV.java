@@ -28,8 +28,8 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
     Scalar lower = new Scalar (0, 62, 0);
     Scalar higher = new Scalar (255, 117, 116);
 
-    static final int LEFT_BARCODE_POS = 163;
-    static final int RIGHT_BARCODE_POS = 376;
+    static final int LEFT_BARCODE_POS = 143;
+    static final int RIGHT_BARCODE_POS = 486;
 
     Rect rect = new Rect();
     Rect maxRect = new Rect();
@@ -69,7 +69,7 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
     public int findBarcodeIndex(int x) {
         // 213, 426
         int index = 0;
-        if (x < LEFT_BARCODE_POS) {
+        if (x < LEFT_BARCODE_POS) { // prob need to decrease
             index = 0;
         } else if (x > LEFT_BARCODE_POS && x < RIGHT_BARCODE_POS) {
             index = 1;
@@ -78,4 +78,5 @@ public class BarcodeDetectionOpenCV extends OpenCvPipeline {
         }
         return index;
     }
+
 }

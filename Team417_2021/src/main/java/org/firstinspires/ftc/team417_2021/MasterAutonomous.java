@@ -43,7 +43,7 @@ abstract public class MasterAutonomous extends MasterOpMode {
     public void moveInches(double inches, double maxSpeed) throws InterruptedException {
         double movingPower;
         double turningPower;
-        double targetAngle = this.targetAngle;
+        double targetAngle = robot.getCorrectedHeading();
         double errorAngle;
         double initialInches = robotInches();
         double errorDistance;
@@ -68,7 +68,7 @@ abstract public class MasterAutonomous extends MasterOpMode {
             telemetry.addData("dist", errorDistance);
             telemetry.update();
         }
-        while ((Math.abs(errorAngle) > angleTolerance || Math.abs(errorDistance) > distanceTolerance) && opModeIsActive());
+        while ((Math.abs(errorAngle) > 3 || Math.abs(errorDistance) > distanceTolerance) && opModeIsActive());
         motorFR.setPower(0);
         motorFL.setPower(0);
         motorBR.setPower(0);
