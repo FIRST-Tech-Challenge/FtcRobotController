@@ -30,23 +30,24 @@ public class ResetArmCount extends CommandBase {
     @Override
     public void initialize(){
 
-        if(magneticLimitSwitchPressed.getAsBoolean()){
-            armSubsytem.setZero();
-        }
-        telemetry.addData("reset arm encoders to zero","");
-        telemetry.update();
+
 
 
     }
 
     @Override
     public void execute(){
+        if(magneticLimitSwitchPressed.getAsBoolean()){
+            armSubsytem.setZero();
+        }
+        telemetry.addData("reset arm encoders to zero","");
+        telemetry.update();
 
     }
 
-    @Override
+    /*@Override
     public boolean isFinished(){
         return true;
-    }
+    }*/
 
 }

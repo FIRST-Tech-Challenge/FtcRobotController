@@ -33,7 +33,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         GamepadEx toolOp2 = new GamepadEx(gamepad2);
 
         CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, telemetry, true);
-        CreateMagneticLimitSwitch createMagneticLimitSwitch = new CreateMagneticLimitSwitch(hardwareMap, "limitSwitch", createArm.getArm(), telemetry);
+        CreateMagneticLimitSwitch createMagneticLimitSwitch = new CreateMagneticLimitSwitch(hardwareMap, "limitSwitch", createArm.getArm(), telemetry,true);
 
         CreateWebCam createWebCam = new CreateWebCam(hardwareMap, "Webcam 1", dashboard,createArm.getArm(), telemetry, true);
         //create LED SubSystem

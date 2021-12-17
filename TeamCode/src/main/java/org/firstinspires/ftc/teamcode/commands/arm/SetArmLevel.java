@@ -22,8 +22,8 @@ public class SetArmLevel extends CommandBase {
 
     public SetArmLevel(ArmSubsystem subsystem, Integer levelIndicator, Telemetry telemetry){
         armSubsytem = subsystem;
-        telemetry.addData("SetArmLevel",levelIndicator);
-        telemetry.update();
+        //telemetry.addData("SetArmLevel",levelIndicator);
+        //telemetry.update();
         this.levelIndicator = levelIndicator;
         this.telemetry = telemetry;
 
@@ -34,8 +34,8 @@ public class SetArmLevel extends CommandBase {
     @Override
     public void initialize(){
 
-        telemetry.addData("moving arm command",armSubsytem.getLevel(levelIndicator));
-        telemetry.update();
+        //telemetry.addData("moving arm command",armSubsytem.getLevel(levelIndicator));
+        //telemetry.update();
         armSubsytem.setArmTargetPosition(armSubsytem.getLevel(levelIndicator));
 
     }
