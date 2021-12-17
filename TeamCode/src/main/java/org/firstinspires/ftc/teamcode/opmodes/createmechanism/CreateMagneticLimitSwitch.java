@@ -52,7 +52,7 @@ public class CreateMagneticLimitSwitch {
     public void create(){
 
         magneticLimitSwitch = new MagneticLimitSwitchSubsystem(hwMap, deviceName, telemetry);
-        ResetArmCount resetArmCount = new ResetArmCount(armSubsystem, () -> magneticLimitSwitch.armLimitSwitchPressed(), telemetry);
+        ResetArmCount resetArmCount = new ResetArmCount(magneticLimitSwitch, armSubsystem, () -> magneticLimitSwitch.armLimitSwitchPressed(), telemetry);
         resetArmCount.schedule();
 
         telemetry.addData("Arm","set 0 limit switch");

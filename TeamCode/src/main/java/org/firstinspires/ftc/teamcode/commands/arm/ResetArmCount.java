@@ -4,33 +4,35 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.magnetic.limitswitch.MagneticLimitSwitchSubsystem;
 
 import java.util.function.BooleanSupplier;
 
 public class ResetArmCount extends CommandBase {
 
+    public final MagneticLimitSwitchSubsystem magneticLimitSwitchSubsystem;
     public final ArmSubsystem armSubsytem;
     private final BooleanSupplier magneticLimitSwitchPressed;
     private Telemetry telemetry;
 
 
-    public ResetArmCount(ArmSubsystem subsystem, BooleanSupplier isPressed){
-        armSubsytem = subsystem;
+    public ResetArmCount(MagneticLimitSwitchSubsystem subsystem, ArmSubsystem armSubsystem, BooleanSupplier isPressed){
+        magneticLimitSwitchSubsystem = subsystem;
+        armSubsytem = armSubsystem;
         magneticLimitSwitchPressed = isPressed;
-        addRequirements(subsystem);
+        addRequirements(subsystem,armSubsystem);
     }
 
-    public ResetArmCount(ArmSubsystem subsystem, BooleanSupplier isPressed, Telemetry telemetry){
-        armSubsytem = subsystem;
+    public ResetArmCount(MagneticLimitSwitchSubsystem subsystem, ArmSubsystem armSubsystem, BooleanSupplier isPressed, Telemetry telemetry){
+        magneticLimitSwitchSubsystem = subsystem;
+        armSubsytem = armSubsystem;
         magneticLimitSwitchPressed = isPressed;
         this.telemetry = telemetry;
-        addRequirements(subsystem);
+        addRequirements(subsystem, armSubsystem);
     }
 
     @Override
     public void initialize(){
-
-
 
 
     }
