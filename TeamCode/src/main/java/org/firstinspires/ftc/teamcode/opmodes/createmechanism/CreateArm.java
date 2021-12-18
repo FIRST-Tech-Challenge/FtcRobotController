@@ -69,7 +69,7 @@ public class CreateArm {
 
         ResetArmCount resetArmCount = new ResetArmCount(arm, telemetry);
 
-
+        mlsTrigger.whenActive(resetArmCount);
 
         NudgeArm nudgeArmUp = new NudgeArm(arm,NUDGE,telemetry);
         NudgeArm nudgeArmDown = new NudgeArm(arm, -NUDGE, telemetry);
@@ -91,10 +91,8 @@ public class CreateArm {
         armNudgerUpTrigger.whileActiveContinuous(nudgeArmUp);
         //only nudge down if the limit switch is off
 
-        mlsTrigger.whenActive(resetArmCount)
-                .or(armNudgerDownTrigger.whileActiveContinuous(new ConditionalCommand(resetArmCount,nudgeArmDown,mlsTrigger::get)));
-        
 
+        armNudgerDownTrigger.whileActiveContinuous(new ConditionalCommand(() -> { return null;},nudgeArmDown,mlsTrigger::get));
 
         //A Level 0
         Button armLevel0 = new GamepadButton(op, GamepadKeys.Button.A);
