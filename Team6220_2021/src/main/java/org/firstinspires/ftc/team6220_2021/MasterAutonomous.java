@@ -42,7 +42,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     // This method drives a specified number of inches in a straight line when given a target distance and max speed
     // Set direction to false when going forward and true when going backwards
-    public void driveInches(double targetDistance, double minSpeed, boolean direction) {
+    public void driveInches(double targetDistance, double minSpeed, boolean backwards) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -72,7 +72,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             translationPID.roll(distanceLeft);
 
             // We drive the wheels with the PID value
-            if (direction) {
+            if (backwards) {
                 driveTank(max(translationPID.getFilteredValue(), minSpeed, Constants.MINIMUM_DRIVE_POWER),
                         max(translationPID.getFilteredValue(), minSpeed, Constants.MINIMUM_DRIVE_POWER));
             } else {
@@ -89,7 +89,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
             position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() -
                     motorFrontRight.getCurrentPosition() - motorBackRight.getCurrentPosition()) / 4.0;
 
-            if (direction) {
+            if (backwards) {
                 if (Math.abs(position - targetDistance) <= 0.5) {
                     driveTank(0.0, 0.0);
                     distanceReached = true;
@@ -111,7 +111,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double angleLeft;
-
         boolean angleReached = false;
 
         PIDFilter translationPID;
@@ -123,6 +122,13 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
             // This adds a value to the PID loop so it can update
             angleLeft = targetAngle - currentAngle;
+
+            if (Math.abs(angleLeft) > 180 && angleLeft > 180) {
+                angleLeft = angleLeft - 360;
+            } else if (Math.abs(angleLeft) > 180 && angleLeft < 180) {
+                angleLeft = angleLeft + 360;
+            }
+
             translationPID.roll(angleLeft);
 
             // We drive the wheels with the PID value
@@ -130,11 +136,11 @@ public abstract class MasterAutonomous extends MasterOpMode {
                 driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER),
                         Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER) * -1);
             } else if (angleLeft < 0) {
-                driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER) * -1,
+                driveTank(Math.min(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER * -1),
                         Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER));
             }
 
-            if (Math.abs(angleLeft) <= 0.5) {
+            if (Math.abs(angleLeft) <= 8) {
                 driveTank(0.0, 0.0);
                 angleReached = true;
             }
