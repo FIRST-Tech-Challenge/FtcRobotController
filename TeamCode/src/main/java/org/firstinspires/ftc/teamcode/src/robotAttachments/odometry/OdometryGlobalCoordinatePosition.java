@@ -19,10 +19,9 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     private final DcMotor verticalEncoderLeft;
     private final DcMotor verticalEncoderRight;
     private final DcMotor horizontalEncoder;
+    private static final Object lock = new Object();
 
     private final double COUNTS_PER_INCH = 1892.3724283364;
-
-    private final Object lock = new Object();
     private volatile boolean isActive = false;
 
 

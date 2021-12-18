@@ -16,18 +16,26 @@ public class BlueDriveProgram extends TeleopTemplate {
         leds.setPattern(defaultColor);
         waitForStart();
 
+        RevBlinkinLedDriver.BlinkinPattern currentColor = defaultColor;
+
         while (opModeIsActive() && !isStopRequested()) {
             driveTrain.setPowerFromGamepad(gamepad1);
 
             //Handles Linear Slide Control
             slide.setMotorPower(1 * gamepad2.left_stick_y);
             if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
-                intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
+                intake.setMotorPower(0.5 * (gamepad2.right_trigger - gamepad2.left_trigger));
                 RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
                 if (o == null) {
-                    leds.setPattern(defaultColor);
+                    if (currentColor != defaultColor) {
+                        leds.setPattern(defaultColor);
+                        currentColor = defaultColor;
+                    }
                 } else {
-                    leds.setPattern(o);
+                    if (currentColor != o) {
+                        leds.setPattern(o);
+                        currentColor = o;
+                    }
                 }
 
             } else {

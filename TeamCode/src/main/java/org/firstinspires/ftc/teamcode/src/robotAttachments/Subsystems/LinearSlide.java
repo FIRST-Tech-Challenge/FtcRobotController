@@ -16,8 +16,9 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
 
     private static final double ticksPerRevolution = 145.1;
     private static final double spoolRadius = 0.55 / 2; //in inches
-    public RobotVoltageSensor voltageSensor;
-    public volatile int chosenPosition;
+    private static final Object lock = new Object();
+    private final RobotVoltageSensor voltageSensor;
+    private volatile int targetHeight;
 
 
     public LinearSlide(HardwareMap hardwareMap, String dcMotorName, RobotVoltageSensor voltSensor,
@@ -41,12 +42,18 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
         return dist < tolerence;
     }
 
+    public int getTargetHeight() {
+        return this.targetHeight;
+    }
+
     public void setTargetHeight(int height) {
-        chosenPosition = height;
+        targetHeight = height;
     }
 
     public void setTargetLevel(HeightLevel level) {
-        setTargetHeight(HeightLevel.EncoderCount.get(level));
+        synchronized (lock) {
+            setTargetHeight(HeightLevel.EncoderCount.get(level));
+        }
     }
 
     public void setMotorPower(double power) {
@@ -59,17 +66,16 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
 
     public void threadMain() {
         double power;// power = -(distance* C1 )^3 + (voltage * C2)
-        {
             double volts = voltageSensor.getVoltage();
-            int encoderTicks = linearSlide.getCurrentPosition();
-            int distanceFromPos = chosenPosition - encoderTicks;
-            final double C1 = 0.01; //Scales the sensitivity of the function, smaller value is lower sensativity
+        int encoderTicks = linearSlide.getCurrentPosition();
+        int distanceFromPos = targetHeight - encoderTicks;
+        final double C1 = 0.01; //Scales the sensitivity of the function, smaller value is lower sensativity
             final double C2 = 0.017; //The approximate power required to hold itself at the current height
 
             power = (Math.pow(((distanceFromPos * C1)), 3));
             power = power + (volts * C2);
             power = MiscUtills.boundNumber(power);
-        }
+
         linearSlide.setPower(power);
     }
 
@@ -85,10 +91,10 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
         TopLevel,
         GetOverObstacles;
         protected static final HashMap<HeightLevel, Integer> EncoderCount = new HashMap<HeightLevel, Integer>() {{
-            put(HeightLevel.BottomLevel, -1081);
-            put(HeightLevel.MiddleLevel, 2560);
-            put(HeightLevel.TopLevel, -4000);
-            put(HeightLevel.GetOverObstacles, -1000);
+            put(HeightLevel.BottomLevel, -876);
+            put(HeightLevel.MiddleLevel, -1763);
+            put(HeightLevel.TopLevel, -2800);
+            put(HeightLevel.GetOverObstacles, -675);
             put(HeightLevel.Down, 0);
         }};
     }
