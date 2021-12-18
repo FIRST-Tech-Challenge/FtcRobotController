@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Disabled
 @Autonomous
 
 public class blueRightCarousel extends LinearOpMode {
@@ -32,29 +31,33 @@ public class blueRightCarousel extends LinearOpMode {
     DcMotor carousel;
     DcMotor crane;
 
-    public void runOpMode(){
-
+    public void runOpMode()
+    {
         initDriveMotors();
         initMiscMotors();
         initGyro();
 
         waitForStart();
         telemetry.addLine("Y'all ready for this?");
+        telemetry.update();
         
         if (opModeIsActive()){
             //move forwards a few inches
-            move(0.5, 500, false);
-            //turn 90 degrees counter clockwise
-            gyroTurning(-90);
-            //reverse back into carousel
-            move(0.75, 5000, true);
-            //turn on carousel motor
-            carouselMotor(0.25, 2500);
+            move(-0.25, 500);
+//             //turn 90 degrees counter clockwise
+
+            while (!gyroTurning(90)) {
+            }
+//             //reverse back into carousel
+            move(0.5, 500);
+//             //turn on carousel motor
+//             carouselMotor(0.25, 2500);
         }
     }
 
     //Init methods
-    public void initDriveMotors(){
+    public void initDriveMotors()
+    {
         //Setting variables in code to a motor in the configuration.
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -68,12 +71,14 @@ public class blueRightCarousel extends LinearOpMode {
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    public void initMiscMotors(){
+    public void initMiscMotors()
+    {
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         crane = hardwareMap.get(DcMotor.class, "crane");
     }
 
-    public void initGyro(){
+    public void initGyro()
+    {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
         parameters.calibrationDataFile  = "BNO055IMUCalibration.json";
@@ -85,40 +90,47 @@ public class blueRightCarousel extends LinearOpMode {
     }
 
     //Movement methods
-    public void gyroTurning(int target){
+    public boolean gyroTurning(int target)
+    {
         angles                       = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double currentAngle = angles.firstAngle;
-        if (angles.firstAngle >= target-0.5 && angles.firstAngle <= target+0.5){
+        boolean foundTarget = false;
+        if (angles.firstAngle >= target-0.5 && angles.firstAngle <= target+0.5) {
             frontLeft.setPower(0);
             frontRight.setPower(0);
             backLeft.setPower(0);
             backRight.setPower(0);
-        }else if (angles.firstAngle >= target+0.5){
-            if (angles.firstAngle <= 100){
+            foundTarget = true;
+        } else if (angles.firstAngle >= target+0.5) {
+            if (angles.firstAngle <= target+1) {
                 frontLeft.setPower(-0.15);
                 frontRight.setPower(0.15);
                 backLeft.setPower(-0.15);
                 backRight.setPower(0.15);
-            }else {
+                foundTarget = false;
+            } else {
                 frontLeft.setPower(-0.5);
                 frontRight.setPower(0.5);
                 backLeft.setPower(-0.5);
                 backRight.setPower(0.5);
+                foundTarget = false;
             }
-        }else if (angles.firstAngle <= target-0.5){
-            if (angles.firstAngle >= 80){
+        } else if (angles.firstAngle > target-0.5) {
+            if (angles.firstAngle >= 80) {
                 frontLeft.setPower(0.15);
                 frontRight.setPower(-0.15);
                 backLeft.setPower(0.15);
                 backRight.setPower(-0.15);
-
-            }else{
+                foundTarget = false;
+            } else {
                 frontLeft.setPower(0.5);
                 frontRight.setPower(-0.5);
                 backLeft.setPower(0.5);
                 backRight.setPower(-0.5);
+                foundTarget = false;
             }
         }
+        return foundTarget;
     }
 
     public void stopMotors(){
@@ -128,18 +140,11 @@ public class blueRightCarousel extends LinearOpMode {
         backRight.setPower(0);
     }
 
-    public void move(double power, int time, boolean reverse){
-        if (reverse) {
-            frontLeft.setPower(-power);
-            frontRight.setPower(-power);
-            backLeft.setPower(-power);
-            backRight.setPower(-power);
-        }else{
-            frontLeft.setPower(power);
-            frontRight.setPower(power);
-            backLeft.setPower(power);
-            backRight.setPower(power);
-        }
+    public void move(double power, int time){
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(power);
         sleep(time);
         stopMotors();
     }
