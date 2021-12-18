@@ -33,7 +33,6 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             tfod.shutdown();
             vuforia.close();
             System.gc();
-            slide.start();
 
             switch (Pos) {
                 case NotSeen:

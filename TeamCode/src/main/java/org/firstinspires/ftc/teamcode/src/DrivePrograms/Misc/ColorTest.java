@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.ContinuousIntake;
 
 @TeleOp(name = "ColorTest")
-//@Disabled
+@Disabled
 public class ColorTest extends TeleopTemplate {
     private final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.BLUE;
 
@@ -31,7 +32,7 @@ public class ColorTest extends TeleopTemplate {
             if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
                 intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
                 RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
-                if (o == RevBlinkinLedDriver.BlinkinPattern.BLACK) {
+                if (o == null) {
                     leds.setPattern(defaultColor);
                 } else {
                     leds.setPattern(o);
