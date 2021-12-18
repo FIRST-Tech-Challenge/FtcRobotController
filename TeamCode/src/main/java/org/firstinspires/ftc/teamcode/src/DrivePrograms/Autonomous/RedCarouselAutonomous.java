@@ -46,11 +46,10 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
 
                     //this position will vary for different heights on the goal
-                    driveSystem.moveToPosition(24, 81, 1);
+                    driveSystem.moveToPosition(22, 81, 1);
 
                     intake.setServoDown();
                     Thread.sleep(500);
-
 
 
                     break;
@@ -68,7 +67,6 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
                     //this position will vary for different heights on the goal
                     driveSystem.moveToPosition(25, 84, 1);
-
 
 
                     break;
@@ -114,11 +112,27 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             //spin off the duck
             spinner.spinOffRedDuck();
 
-            // park
-            driveSystem.moveToPosition(31.5, 130, 1);
-            driveSystem.strafeAtAngle(270, .5);
-            Thread.sleep(300);
-            driveSystem.stopAll();
+            boolean wareHousePark = true;
+            if (wareHousePark) {
+                //Parks in the Warehouse
+                driveSystem.strafeAtAngle(270, .5);
+                Thread.sleep(500);
+                odometry.setPosition(17, 134, 90); //This recalibrates the Odometry to the spot it should be at this point
+                driveSystem.moveToPosition(24, 75, 1);
+                driveSystem.turnTo(180, 0.5);
+                podServos.raise();
+                driveSystem.stopAll();
+                Thread.sleep(500);
+                driveSystem.strafeAtAngle(0, 1);
+                Thread.sleep(1750);
+
+            } else {
+                // parks in depot
+                driveSystem.moveToPosition(31.5, 130, 1);
+                driveSystem.strafeAtAngle(270, .5);
+                Thread.sleep(300);
+                driveSystem.stopAll();
+            }
         }
         slide.end();
         odometry.end();
