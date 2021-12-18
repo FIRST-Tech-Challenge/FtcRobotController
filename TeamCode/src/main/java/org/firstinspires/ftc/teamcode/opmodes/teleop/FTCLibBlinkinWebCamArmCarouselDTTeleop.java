@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 
@@ -26,7 +27,8 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
     public void initialize() {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = dashboard.getTelemetry();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        telemetry.setAutoClear(false);
 
         //set up Game pad 1
         GamepadEx driveOp = new GamepadEx(gamepad1);
