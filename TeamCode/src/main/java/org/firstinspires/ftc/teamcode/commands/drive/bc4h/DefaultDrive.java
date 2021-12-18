@@ -64,6 +64,7 @@ public class DefaultDrive extends CommandBase {
         controller1lstickx = m_ls_x.getAsDouble() ;
         controller1lsticky = m_ls_y.getAsDouble();;
         controller1rstickx = m_rs_x.getAsDouble();
+
         if(controller1lstickx < 0.3 && controller1lstickx > -0.3)
             controller1lstickx = 0.0;
         if(controller1lsticky < 0.3 && controller1lsticky > -0.3)
