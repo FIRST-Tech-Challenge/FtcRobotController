@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+/**
+ * this is the class for our robot's intake subsystem
+ */
 public class ContinuousIntake {
     final static double forwardPower = 1;
     DcMotor intakeMotor;
@@ -39,6 +42,16 @@ public class ContinuousIntake {
 
     }
 
+    /**
+     * this is a contructor for the Continuous intake that declares
+     * hardware on the intake and initializes the intake motor
+     *
+     * @param hardwareMap          this is the hardware map
+     * @param motorName            this is a string for the name of the intake motor
+     * @param servoName            this is a string for the name of the intake motor
+     * @param colorSensor          this is a string for the name of the color sensor on the intake
+     * @param sensorDetectionLight this is a true or false value for turning the color sensor light on or off
+     */
     /*
     This next constructor has a parameter for the name of the color sensor in the configuration
     and a boolean value for to have the color sensor LED on or off
@@ -58,37 +71,72 @@ public class ContinuousIntake {
 
     }
 
+    /**
+     * this turns on the intake motor to intake freight
+     */
     public void intakeOn() {
         intakeMotor.setPower(forwardPower);
     }
 
+    /**
+     * turns off the intake motor
+     */
     public void intakeOff() {
         intakeMotor.setPower(0);
     }
 
+    /**
+     * reverses the intake motor to remove freight from the intake bucket
+     */
     public void intakeReverse() {
         intakeMotor.setPower(-forwardPower);
     }
 
+    /**
+     * @param power a variable input for the power of the intake motor
+     *              this sets the power of the intake motor to the power variable input
+     */
     public void setMotorPower(double power) {
         intakeMotor.setPower(power);
     }
 
+    /**
+     * uses the intake's servo hinge to put the intake in the up position
+     */
     public void setServoUp() {
         slantServo.setPosition(BucketUpPosition);
     }
 
+    /**
+     * uses the intake's servo hinge to put the intake in the down position
+     */
     public void setServoDown() {
         slantServo.setPosition(BucketDownPosition);
     }
 
 
+    /**
+     * @param color the name of the color wanted as a String
+     * @return this returns a number of the value for the name of the wanted color
+     */
     /*
     this following method takes a parameter for the type of color and outputs the
     sensor's number for that color
      */
     public double getColor(String color) {
+        HashMap<String, Double> colorKey = new HashMap<String, Double>() {{
+            put("red", (double) (intakeSensor.red()));
+            put("green", (double) intakeSensor.green());
+            put("blue", (double) (intakeSensor.blue()));
+            put("alpha", (double) (intakeSensor.red()));
+        }};
+        return colorKey.get(color).doubleValue();
+    }
+
+
+   /* public double getColor(String color) {
         int i;
+
         double[] colorNumber = {intakeSensor.red(), intakeSensor.blue(), intakeSensor.green(), intakeSensor.alpha(), intakeSensor.argb()};
         switch (color) {
             case "red":
@@ -112,6 +160,8 @@ public class ContinuousIntake {
         return colorNumber[i];
 
     }
+
+    */
 
     public double[] getRGB() {
 

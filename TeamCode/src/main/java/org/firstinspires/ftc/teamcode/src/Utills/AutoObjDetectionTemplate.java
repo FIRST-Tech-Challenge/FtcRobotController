@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+
 @Disabled
 public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
