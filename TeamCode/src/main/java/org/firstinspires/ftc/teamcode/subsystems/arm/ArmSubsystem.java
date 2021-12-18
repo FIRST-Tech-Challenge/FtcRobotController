@@ -79,7 +79,16 @@ public class ArmSubsystem extends SubsystemBase {
     public void setArmTargetPosition(int armTargetPosition){
         //telemetry.addData("moving arm subsystem",armTargetPosition);
         //telemetry.update();
-        motorArm.setTargetPosition(armTargetPosition);
+        if(armTargetPosition < targetPostion){
+            motorArm.setTargetPosition(targetPostion);
+        }
+        else if(armTargetPosition > maxTargetPositon)
+        {
+            motorArm.setTargetPosition(maxTargetPositon);
+        }
+        else
+            motorArm.setTargetPosition(armTargetPosition);
+        
         setPower(0.5);
     }
     public int getCurrentPosition(){
