@@ -27,7 +27,7 @@ public class DefaultDrive extends CommandBase {
     private double controller1rstickx = 0.0;
 
     private double slowdown = 1.0;
-    private boolean bpressed = false;
+    //private boolean bpressed = false;
     private boolean slowdownflag = false;
 
     private Telemetry telemetry;
@@ -71,7 +71,7 @@ public class DefaultDrive extends CommandBase {
         if(controller1rstickx < 0.3 && controller1rstickx > -0.3)
             controller1rstickx = 0.0;
 
-        if(!bpressed){
+        if(!bPressed.getAsBoolean()){
             if(slowdownflag){
                 slowdown = 1;
                 slowdownflag = false;
