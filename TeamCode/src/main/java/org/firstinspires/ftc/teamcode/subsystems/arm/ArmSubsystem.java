@@ -88,7 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
         }
         else
             motorArm.setTargetPosition(armTargetPosition);
-        
+
         setPower(0.5);
     }
     public int getCurrentPosition(){

@@ -89,13 +89,13 @@ public class CreateArm {
         Trigger armNudgerDownTrigger = new Trigger(() -> op.getRightY() == -1);
 
         armNudgerUpTrigger.whileActiveContinuous(nudgeArmUp);
-        //only nudge down if the limit switch is off
+        armNudgerDownTrigger.whileActiveContinuous(nudgeArmDown);
 
-        armNudgerDownTrigger.whileActiveContinuous(() -> {
+        /*armNudgerDownTrigger.whileActiveContinuous(() -> {
             if(!mlsTrigger.get()){
                  nudgeArmDown.schedule();
             }
-        });
+        });*/
         //armNudgerDownTrigger.whileActiveContinuous(new ConditionalCommand(() -> { return null;},nudgeArmDown,mlsTrigger::get));
 
         //A Level 0
