@@ -24,7 +24,7 @@ public class ArmSubsystem extends SubsystemBase {
     private DcMotor.RunMode mode;
 
     //private int armCurrentPos = 0;
-    private int targetPostion = 0;
+    private static final int MIN_TARGET_POSITION = 0;
     private int maxTargetPositon = 1200;
     private final Telemetry telemetry;
 
@@ -79,8 +79,8 @@ public class ArmSubsystem extends SubsystemBase {
     public void setArmTargetPosition(int armTargetPosition){
         //telemetry.addData("moving arm subsystem",armTargetPosition);
         //telemetry.update();
-        if(armTargetPosition < targetPostion){
-            motorArm.setTargetPosition(targetPostion);
+        if(armTargetPosition < MIN_TARGET_POSITION){
+            motorArm.setTargetPosition(MIN_TARGET_POSITION);
         }
         else if(armTargetPosition > maxTargetPositon)
         {
