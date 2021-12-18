@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -36,7 +37,7 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Disabled
 @TeleOp(name="Telop: FTCLib BlinkinWebCamArmCarousel Example", group="FTCLib")
 public class FTCLibBlinkinWebCamArmCarouselTeleop extends CommandOpMode {
 

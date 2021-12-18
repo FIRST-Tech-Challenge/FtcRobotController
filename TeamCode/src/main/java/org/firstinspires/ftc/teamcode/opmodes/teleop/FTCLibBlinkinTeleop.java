@@ -6,13 +6,14 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowAllianceColor;
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowTeamColors;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 
-
+@Disabled
 @TeleOp(name="Telop: FTCLib BlinkinExample", group="FTCLib")
 public class FTCLibBlinkinTeleop extends CommandOpMode {
 

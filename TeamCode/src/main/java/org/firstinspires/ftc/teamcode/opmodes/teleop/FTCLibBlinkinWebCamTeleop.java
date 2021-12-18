@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.DetectShippingElement;
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
-
+@Disabled
 @TeleOp(name="Telop: FTCLib BlinkinWebCam Example", group="FTCLib")
 public class FTCLibBlinkinWebCamTeleop extends CommandOpMode {
 

@@ -69,7 +69,7 @@ public class CreateArm {
 
         ResetArmCount resetArmCount = new ResetArmCount(arm, telemetry);
 
-        mlsTrigger.whenActive(resetArmCount);
+
 
         NudgeArm nudgeArmUp = new NudgeArm(arm,NUDGE,telemetry);
         NudgeArm nudgeArmDown = new NudgeArm(arm, -NUDGE, telemetry);
@@ -82,15 +82,18 @@ public class CreateArm {
         //Button armNudgerUp = new GamepadButton(op, GamepadKeys.Button.DPAD_UP);
         //Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.DPAD_DOWN);
 
-        Button armNudgerUp = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
-        Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+        //Button armNudgerUp = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+        //Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
 
         Trigger armNudgerUpTrigger = new Trigger(() -> op.getRightY() == 1);
         Trigger armNudgerDownTrigger = new Trigger(() -> op.getRightY() == -1);
 
         armNudgerUpTrigger.whileActiveContinuous(nudgeArmUp);
         //only nudge down if the limit switch is off
-        armNudgerDownTrigger.whileActiveContinuous(new ConditionalCommand(resetArmCount,nudgeArmDown,mlsTrigger::get));
+
+        mlsTrigger.whenActive(resetArmCount)
+                .or(armNudgerDownTrigger.whileActiveContinuous(new ConditionalCommand(resetArmCount,nudgeArmDown,mlsTrigger::get)));
+        
 
 
         //A Level 0
