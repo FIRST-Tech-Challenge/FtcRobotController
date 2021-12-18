@@ -62,13 +62,13 @@ public class blueLeftTFOD extends LinearOpMode {
                 zone = calculateZone();
                 switch (zone) {
                     case 0:
-                        break;
+                        telemetry.addLine("Bottom");
                     case 1:
-                        break;
+                        telemetry.addLine("Top");
                     case 2:
-                        break;
+                        telemetry.addLine("Middle");
                     default:
-                        break;
+                        telemetry.addLine("Didn't recognize any ducks");
                 }
             } while (opModeIsActive() && ringDetectTestMode == true);
         }
