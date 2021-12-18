@@ -35,7 +35,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         GamepadEx toolOp2 = new GamepadEx(gamepad2);
 
         //create any Triggers that are self contained subsystem
-        CreateMagneticLimitSwitchTrigger createMagneticLimitSwitchTrigger = new CreateMagneticLimitSwitchTrigger(hardwareMap, "limitSwitch",telemetry);
+        CreateMagneticLimitSwitchTrigger createMagneticLimitSwitchTrigger = new CreateMagneticLimitSwitchTrigger(hardwareMap, "limitSwitch",telemetry,true);
         Trigger mlsTrigger = createMagneticLimitSwitchTrigger.getMagneticLimitSwitchTrigger();
 
         CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, mlsTrigger, telemetry, true);
