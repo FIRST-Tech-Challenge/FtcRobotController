@@ -42,53 +42,24 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(20, 84, 1);
                     slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
 
-                    //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
                     Thread.sleep(1500);
 
 
                     //this position will vary for different heights on the goal
-                    driveSystem.moveToPosition(25, 81, 1);
+                    driveSystem.moveToPosition(24, 81, 1);
 
                     intake.setServoDown();
                     Thread.sleep(500);
 
-                    intake.intakeOn();
-                    Thread.sleep(1000);
-                    intake.intakeOff();
-                    driveSystem.moveToPosition(23, 84, 1);
-                    intake.setServoUp();
-                    Thread.sleep(500);
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                    Thread.sleep(500);
-                    //following this is unique to carousel and warehouse
 
-                    driveSystem.moveToPosition(20, 130, 1);
-
-                    //strafe at angle into the wall and then the carousel
-                    driveSystem.strafeAtAngle(270, .5);
-                    Thread.sleep(500);
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(650);
-                    driveSystem.stopAll();
-
-                    //spin off the duck
-                    spinner.spinOffRedDuck();
-
-                    // park
-                    driveSystem.moveToPosition(31.5, 130, 1);
-                    driveSystem.strafeAtAngle(270, .5);
-                    Thread.sleep(300);
-                    driveSystem.stopAll();
 
                     break;
                 case NotSeen:
                     telemetry.addData("position", " far left");
                     telemetry.update();
-                    driveSystem.moveToPosition(20, 85, 1);
+                    driveSystem.moveToPosition(18, 85, 1);
 
                     slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
-
-                    //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
 
                     Thread.sleep(1500);
 
@@ -98,42 +69,15 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     //this position will vary for different heights on the goal
                     driveSystem.moveToPosition(25, 84, 1);
 
-
-                    intake.intakeOn();
-                    Thread.sleep(1000);
-                    intake.intakeOff();
-                    driveSystem.moveToPosition(23, 84, 1);
-                    intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                    Thread.sleep(500);
-                    //following this is unique to carousel and warehouse
-                    driveSystem.moveToPosition(20, 130, 1);
-
-                    //strafe at angle into the wall and then the carousel
-                    driveSystem.strafeAtAngle(270, .5);
-                    Thread.sleep(500);
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(650);
-                    driveSystem.stopAll();
-
-                    //spin off the duck
-                    spinner.spinOffRedDuck();
-
-                    // park
-                    driveSystem.moveToPosition(31.5, 130, 1);
-                    driveSystem.strafeAtAngle(270, .5);
-                    Thread.sleep(300);
-                    driveSystem.stopAll();
 
 
                     break;
                 case Left:
                     telemetry.addData("position", "is center");
                     telemetry.update();
-                    driveSystem.moveToPosition(20, 85, 1);
+                    driveSystem.moveToPosition(19, 85, 1);
 
                     slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
-                    //TODO: create movements to raise linearslide, drop bucket, move forward and unload objects into the goal
 
                     Thread.sleep(1500);
 
@@ -144,38 +88,37 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(25, 84, 1);
 
 
-                    intake.intakeOn();
-                    Thread.sleep(1000);
-                    intake.intakeOff();
-                    driveSystem.moveToPosition(23, 84, 1);
-                    intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                    Thread.sleep(500);
-                    //following this is unique to carousel and warehouse
-
-                    driveSystem.moveToPosition(20, 130, 1);
-
-                    //strafe at angle into the wall and then the carousel
-                    driveSystem.strafeAtAngle(270, .5);
-                    Thread.sleep(500);
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(650);
-                    driveSystem.stopAll();
-
-                    //spin off the duck
-                    spinner.spinOffRedDuck();
-
-                    // park
-                    driveSystem.moveToPosition(31.2, 130, 1);
-                    driveSystem.strafeAtAngle(270, .5);
-                    Thread.sleep(300);
-                    driveSystem.stopAll();
-
-
                     break;
 
 
             }
+            //Shared Code
+            intake.intakeOn();
+            Thread.sleep(1000);
+            intake.intakeOff();
+            driveSystem.moveToPosition(23, 84, 1);
+            intake.setServoUp();
+            slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+            Thread.sleep(500);
+            //following this is unique to carousel and warehouse
+
+            driveSystem.moveToPosition(20, 130, 1);
+
+            //strafe at angle into the wall and then the carousel
+            driveSystem.strafeAtAngle(270, .5);
+            Thread.sleep(500);
+            driveSystem.strafeAtAngle(180, .5);
+            Thread.sleep(650);
+            driveSystem.stopAll();
+
+            //spin off the duck
+            spinner.spinOffRedDuck();
+
+            // park
+            driveSystem.moveToPosition(31.5, 130, 1);
+            driveSystem.strafeAtAngle(270, .5);
+            Thread.sleep(300);
+            driveSystem.stopAll();
         }
         slide.end();
         odometry.end();
