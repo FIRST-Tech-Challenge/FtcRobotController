@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 
-public class MeepMeepTesting {
+public class RedWarehouse {
     public static void main(String args[]) {
         MeepMeep mm = new MeepMeep(800)
                 // Set field image
