@@ -14,6 +14,7 @@ public class RedDriveProgram extends TeleopTemplate {
         this.initAll();
         leds.setPattern(defaultColor);
         waitForStart();
+        RevBlinkinLedDriver.BlinkinPattern currentColor = defaultColor;
 
         while (opModeIsActive() && !isStopRequested()) {
             driveTrain.setPowerFromGamepad(gamepad1);
@@ -24,9 +25,15 @@ public class RedDriveProgram extends TeleopTemplate {
                 intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
                 RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
                 if (o == null) {
-                    leds.setPattern(defaultColor);
+                    if (currentColor != defaultColor) {
+                        leds.setPattern(defaultColor);
+                        currentColor = defaultColor;
+                    }
                 } else {
-                    leds.setPattern(o);
+                    if (currentColor != o) {
+                        leds.setPattern(o);
+                        currentColor = o;
+                    }
                 }
 
 

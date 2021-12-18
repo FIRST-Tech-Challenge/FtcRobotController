@@ -13,9 +13,6 @@ import java.util.HashMap;
 public class LinearSlide extends ThreadedSubsystemTemplate {
 
     private final DcMotor linearSlide;
-
-    private static final double ticksPerRevolution = 145.1;
-    private static final double spoolRadius = 0.55 / 2; //in inches
     private static final Object lock = new Object();
     private final RobotVoltageSensor voltageSensor;
     private volatile int targetHeight;
