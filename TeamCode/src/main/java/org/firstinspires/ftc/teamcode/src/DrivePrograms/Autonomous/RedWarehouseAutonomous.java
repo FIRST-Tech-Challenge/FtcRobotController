@@ -104,7 +104,9 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.strafeAtAngle(90, .5);
                     Thread.sleep(300);
 
+                    // this is when it goes through the red warehouse pass
                     driveSystem.moveToPosition(9, 24, 1);
+
 
                     break;
                 case Left:
