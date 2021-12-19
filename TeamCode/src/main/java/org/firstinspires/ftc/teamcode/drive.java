@@ -58,18 +58,18 @@ import com.qualcomm.robotcore.util.Range;
 public class drive extends LinearOpMode {
 
     // Declare OpMode members.
-    private DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+    private DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");//hardware
     private DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
     private DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
     private DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
     private Servo servo0 = hardwareMap.servo.get("servo0");
 
-    public static PIDCoefficients pidCoeffs = new PIDCoefficients(0,0,0);
-    public PIDCoefficients pidGain = new PIDCoefficients(0,0,0);
-    private ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    ElapsedTime timing = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    //public static PIDCoefficients pidCoeffs = new PIDCoefficients(0,0,0);currently not used
+    //public PIDCoefficients pidGain = new PIDCoefficients(0,0,0);
+    private ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);//gets time, used for PID
+    ElapsedTime timing = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);//gets time, used for a second PID
 
-    static double kP=0.8; //tuning factor
+    static double kP=0.8; //tuning factor, change these numbers around if the PID overshoots or is too slow
     static double kI=0.8;
     static double kD=0.5;
 
@@ -77,13 +77,13 @@ public class drive extends LinearOpMode {
     static double skI=0.8;
     static double skD=0.5;
 
-    static double maxSpeed= 1.5;//idk, how fast is the motor's top speed in ticks/ms
-    static double max_i = 1;
+    static double maxSpeed= 1.5;//idk, how fast is the motor's top speed in ticks/ms. if you find out change this number to match
+    static double max_i = 1;// the max amount that the integral portion of the PID influences the output by
 
 
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() {//default code from basic linearOPmode
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -107,20 +107,20 @@ public class drive extends LinearOpMode {
 
         //format: previous time, previous encoder value, previous error, integral,prev Power
 
-        double[] fL = {0,0,0,0,0};
+        double[] fL = {0,0,0,0,0};//these arrays contain data used by the PID, the order of the data is 2 lines above
         double[] bL = {0,0,0,0,0};
         double[] fR = {0,0,0,0,0};
         double[] bR = {0,0,0,0,0};
 
         // double prev time, double previous_error, double integral,position
-        double[] srvo = {0,0,0,0,0};
+        double[] srvo = {0,0,0,0};//used for servo PID
 
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);//reseting encoders
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//turns off the built in PID, it'll still get measurements from the encoders
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -131,7 +131,7 @@ public class drive extends LinearOpMode {
         // run until the end of the match (driver presses STOP
         while (opModeIsActive()) {
 
-            //UPDATE SPEED
+            //UPDATE SPEED, finds out what percent of max speed to use from controller + direction
             double y = -gamepad1.left_stick_y*maxSpeed; // Remember, this is reversed!
             double x = gamepad1.left_stick_x*maxSpeed;
             double rx = gamepad1.right_stick_x*maxSpeed;
@@ -139,24 +139,24 @@ public class drive extends LinearOpMode {
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), maxSpeed);
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), maxSpeed);//turns gamepad input into motor speed
             double frontLeftSpeed = (y + x + rx) / denominator;
             double backLeftSpeed = (y - x + rx) / denominator;
             double frontRightSpeed= (y - x - rx) / denominator;
             double backRightSpeed = (y + x - rx) / denominator;
 
-            fL=PID(motorFrontLeft,frontLeftSpeed,fL[0],fL[1],fL[2],fL[3]);
+            fL=PID(motorFrontLeft,frontLeftSpeed,fL[0],fL[1],fL[2],fL[3]);//runs PID on motor to get to desired motor speed
             fR=PID(motorFrontRight,frontRightSpeed,fR[0],fR[1],fR[2],fR[3]);
             bR=PID(motorBackRight,backRightSpeed,bR[0],bR[1],bR[2],bR[3]);
             bL=PID(motorBackLeft,backLeftSpeed,bL[0],bL[1],bL[2],bL[3]);
 
-            motorFrontLeft.setPower(fL[5]);
+            motorFrontLeft.setPower(fL[5]);//sets motor power to PID output
             motorFrontRight.setPower(fR[5]);
             motorBackLeft.setPower(bL[5]);
             motorBackRight.setPower(bR[5]);
 
-            int state = 0;
-            //PID loop for servo here.
+            int state = 0;//state 0 indicates servo is in starting position
+
             switch(state){ //servo
                 case 0:
                     if(gamepad1.a){//if press a, servo begins turning to position 1.
@@ -195,40 +195,40 @@ public class drive extends LinearOpMode {
     }
 
 
-    public double[] PID(DcMotor motor, double desire_speed,double prevTime,double prevEncode, double previous_error, double integral){
+    public double[] PID(DcMotor motor, double desire_speed,double prevTime,double prevEncode, double previous_error, double integral){//the PID for motor speed
 
         double p; //proportional
         double d; //derivative
-        double curr_encode = motor.getCurrentPosition();
+        double curr_encode = motor.getCurrentPosition();//gets motor position. used in calculating current speed
 
-        double current_time = runtime.time();
-        double current_speed = (curr_encode-prevEncode)/(current_time-prevTime);
-        double current_error = desire_speed-current_speed;
+        double current_time = runtime.time();//gets time, used in calculating current speed
+        double current_speed = (curr_encode-prevEncode)/(current_time-prevTime);//calculate the current speed
+        double current_error = desire_speed-current_speed;//get error
 
-        p = (kP * current_error)/maxSpeed;
+        p = (kP * current_error)/maxSpeed;//proportional term output
 
-        integral += kI * (current_error * (current_time - prevTime));
+        integral += kI * (current_error * (current_time - prevTime));//integral term output
 
-        if (integral > max_i) {
+        if (integral > max_i) {//sets integral term to max_i if it exceeds
             integral = max_i;
         }
 
-        else if(integral < -max_i) {
+        else if(integral < -max_i) {//same but for if it goes too low
             integral = -max_i;
         }
 
-        d = (kD * (current_error - previous_error) / (current_time - prevTime))/maxSpeed;
+        d = (kD * (current_error - previous_error) / (current_time - prevTime))/maxSpeed;//derivative term output
 
-        double newPower= p + integral + d;
+        double newPower= p + integral + d;//output of PID
 
-        double[] output = {current_time,curr_encode,current_error,integral,newPower};
+        double[] output = {current_time,curr_encode,current_error,integral,newPower};//sends back data to be used in next loop of PID + the motor power
 
 
         return output;
 
     }
 
-    public double[] PID2(Servo servo, double desire_pos, double prevTime, double previous_error, double integral){
+    public double[] PID2(Servo servo, double desire_pos, double prevTime, double previous_error, double integral){//PID but for servo pos, pretty much the same
 
         double p; //proportional
         double d; //derivative
