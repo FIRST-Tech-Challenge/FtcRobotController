@@ -73,8 +73,8 @@ public class CreateArm {
 
         mlsTrigger.whenActive(resetArmCount);
 
-        NudgeArmWithStick nudgeArmUp = new NudgeArmWithStick(arm,-NUDGE,telemetry);
-        NudgeArmWithStick nudgeArmDown = new NudgeArmWithStick(arm, NUDGE, telemetry);
+        NudgeArmWithStick nudgeArmUp = new NudgeArmWithStick(arm,NUDGE,telemetry);
+        NudgeArmWithStick nudgeArmDown = new NudgeArmWithStick(arm, -NUDGE, telemetry);
 
         //NudgeArmWithSupplier nudgeArmUp = new NudgeArmWithSupplier(arm,()->op.getRightY(),NUDGE,telemetry);
         //NudgeArmWithSupplier nudgeArmDown = new NudgeArmWithSupplier(arm, ()->op.getRightY(), NUDGE, telemetry);
@@ -101,11 +101,11 @@ public class CreateArm {
 
         armNudgerUpTrigger.whileActiveContinuous(() -> {
             telemetry.addData("inside lamda",op.getRightY());
-            if(op.getRightY() == 1){
-                 nudgeArmDown.schedule();
+            if(op.getRightY() == -1){
+                nudgeArmUp.schedule();
             }
             else if(op.getRightY() == 1){
-                nudgeArmUp.schedule();
+                nudgeArmDown.schedule();
             }
         });
         //armNudgerDownTrigger.whileActiveContinuous(new ConditionalCommand(() -> { return null;},nudgeArmDown,mlsTrigger::get));
