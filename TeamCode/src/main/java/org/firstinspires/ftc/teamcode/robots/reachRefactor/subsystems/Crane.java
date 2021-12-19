@@ -1,202 +1,128 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Turret;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods.servoNormalize;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+
+@Config
 public class Crane implements Subsystem {
 
     public Turret turret;
-    private ServoImplEx firstLinkServo;
-    private ServoImplEx secondLinkServo;
-    private ServoImplEx bucketServo;
 
-    //use these maybe for motion smoothing
-    private int firstLinkServoTargetPos;
-    private int secondLinkServoTargetPos;
-    private int bucketServoTargetPos;
-    private double turretTargetPos;
+    // Servos
+    private ServoImplEx shoulderServo;
+    private ServoImplEx elbowServo;
+    private ServoImplEx wristServo;
 
-    private double toHomeTime = 2;//todo- update
-    private double avgTransferTime = 4; //todo- update
-    private int bucketUpPos = 900;
-    private int bucketDownPos = 1200;
-    private boolean isAtHome = false;
-    private boolean servosEnabled;
+    // State
+    private int shoulderTargetPos;
+    private int elbowTargetPos;
+    private int wristTargetPos;
 
+    private Articulation previousArticulation;
+    private Articulation articulation;
+
+    // Constants
     private static final String TELEMETRY_NAME = "Crane";
 
+    public static int BUCKET_UP_POS = 900;
+    public static int BUCKET_DOWN_POS = 1200;
+
     public Crane(HardwareMap hardwareMap) {
-        firstLinkServo = hardwareMap.get(ServoImplEx.class, "firstLinkServo");
-        secondLinkServo = hardwareMap.get(ServoImplEx.class, "secondLinkServo");
-        bucketServo = hardwareMap.get(ServoImplEx.class, "bucketServo");
+        shoulderServo = hardwareMap.get(ServoImplEx.class, "firstLinkServo");
+        elbowServo = hardwareMap.get(ServoImplEx.class, "secondLinkServo");
+        wristServo = hardwareMap.get(ServoImplEx.class, "bucketServo");
 
         turret = new Turret(hardwareMap);
-
-        Do(CommonPosition.STARTING);
+        articulation = Articulation.MANUAL;
+        previousArticulation = Articulation.MANUAL;
+//        Do(CommonPosition.STARTING);
     }
 
-    public enum CommonPosition {
-        STARTING(2200,1600,1600,0),
-        HOME(1700,1650,1600,0),
-        LOWEST_TEIR(0,0,0,0),
-        MIDDLE_TEIR(0,0,0,0),
-        HIGH_TEIR(1500, 1000,1650,0),
-        CAP(1500, 900,1650,0),
-        TRANSFER(1850,2000,1550,0),
-        FINISHED(0,0,0,0);
+    public enum Articulation {
+        MANUAL(0, 0, 0, 0, 0),
+        STARTING(2200,1600,1600,0, 5),
+        HOME(1700,1650,1600,0, 0),
+        LOWEST_TEIR(0,0,0,0, 5),
+        MIDDLE_TEIR(0,0,0,0, 5),
+        HIGH_TEIR(1500, 1000,1650,0, 5),
+        CAP(1500, 900,1650,0, 5),
+        TRANSFER(1850,2000,1550,0, 5);
 
-
-        public int firstLinkPos, secondLinkPos, bucketServoPos;
+        public int shoulderPos, elbowPos, wristPos;
         public double turretAngle;
+        public int toHomeTime;
 
-        CommonPosition(int firstLinkPos, int secondLinkPos, int bucketServoPos, double turretAngle){
-            this.firstLinkPos =firstLinkPos;
-            this.secondLinkPos =secondLinkPos;
-            this.bucketServoPos =bucketServoPos;
+        Articulation(int shoulderPos, int elbowPos, int wristPos, double turretAngle, int toHomeTime){
+            this.shoulderPos = shoulderPos;
+            this.elbowPos = elbowPos;
+            this.wristPos = wristPos;
             this.turretAngle = turretAngle;
+            this.toHomeTime = toHomeTime;
         }
     }
 
-    CommonPosition currentTargetPos;
+    private Stage mainStage = new Stage();
+    private StateMachine main = UtilMethods.getStateMachine(mainStage)
+            .addTimedState(() -> previousArticulation.toHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
+            .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation), () -> {})
+            .build();
 
-    public CommonPosition Do(CommonPosition targetPos) {
-        currentTargetPos = targetPos;
-
-
-        switch(currentTargetPos){
-            case STARTING:
-                setPos(CommonPosition.STARTING);
-                break;
-            case HOME:
-                setPosSafeley(CommonPosition.HOME);
-                break;
-            case TRANSFER:
-                setPosSafeley(CommonPosition.TRANSFER);
-                break;
-            case HIGH_TEIR:
-                setPosSafeley(CommonPosition.HIGH_TEIR);
-                break;
-            case LOWEST_TEIR:
-                setPosSafeley(CommonPosition.LOWEST_TEIR);
-                break;
-            case MIDDLE_TEIR:
-                setPosSafeley(CommonPosition.MIDDLE_TEIR);
-                break;
-            default:
-                break;
-        }
-
-        return currentTargetPos;
-    }
-
-    public boolean doAuton(CommonPosition targetPos){
-        if(Do(targetPos) == CommonPosition.FINISHED){
+    public boolean articulate(Articulation articulation) {
+        if(articulation.equals(Articulation.MANUAL))
             return true;
-        }
-        return true;
-    }
-
-    public boolean isFinished(){
-        return currentTargetPos == CommonPosition.FINISHED;
-    }
-
-    private boolean checkForHome(){
-        if(isAtHome){
-            setPos(CommonPosition.HOME);
-            if(commonTimer(toHomeTime)){
-                isAtHome = true;
+        else {
+            previousArticulation = this.articulation;
+            this.articulation = articulation;
+            if(main.execute()) {
+                this.articulation = Articulation.MANUAL;
                 return true;
             }
         }
-        else {
-            return true;
-        }
-        return false;
-    }
-
-    private void setPosSafeley(CommonPosition targetPos){
-        if(checkForHome()){
-
-            setPos(targetPos);
-
-            if(commonTimer(avgTransferTime)){
-                currentTargetPos = CommonPosition.FINISHED;
-                isAtHome = (targetPos == CommonPosition.HOME);
-            }
-        }
-    }
-
-    private void setPos(CommonPosition targetPos){
-        turretTargetPos = targetPos.turretAngle;
-        firstLinkServoTargetPos = targetPos.firstLinkPos;
-        secondLinkServoTargetPos = targetPos.secondLinkPos;
-        bucketServoTargetPos = targetPos.bucketServoPos;
-    }
-
-    boolean initialized;
-    double commonTimerStartTime = 0;
-    private boolean commonTimer(double seconds){
-        if(initialized){
-            commonTimerStartTime = System.nanoTime();
-        }
-
-        if(System.nanoTime() - commonTimerStartTime > (seconds * 1E9)){
-            initialized = false;
-            return true;
-        }
 
         return false;
     }
 
-    public boolean flipBucket(boolean down){
-        bucketServoTargetPos = (down) ? bucketDownPos : bucketUpPos;
+    public boolean flipBucket(boolean down) {
+        wristTargetPos = down ? BUCKET_DOWN_POS : BUCKET_UP_POS;
         return true;
     }
 
     @Override
     public void update(){
-        if(isAtHome) {
-            turret.setTurretAngle(turretTargetPos);
-        }
-        if(servosEnabled) {
-            firstLinkServo.setPosition(servoNormalize(firstLinkServoTargetPos));
-            secondLinkServo.setPosition(servoNormalize(secondLinkServoTargetPos));
-            bucketServo.setPosition(servoNormalize(bucketServoTargetPos));
-        }
+        articulate(articulation);
 
-        Do(currentTargetPos);
+        shoulderServo.setPosition(servoNormalize(shoulderTargetPos));
+        elbowServo.setPosition(servoNormalize(elbowTargetPos));
+        wristServo.setPosition(servoNormalize(wristTargetPos));
+
         turret.update();
     }
 
     @Override
     public void stop(){
-
+        turret.stop();
     }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new HashMap<String, Object>();
 
-        telemetryMap.put("Current Target Position", currentTargetPos);
+        telemetryMap.put("Current Articulation", articulation);
 
         if(debug) {
-            telemetryMap.put("Is At Home", isAtHome);
-            telemetryMap.put("First Servo Target Position", firstLinkServoTargetPos);
-            telemetryMap.put("Second Servo Target Position", secondLinkServoTargetPos);
-            telemetryMap.put("Bucket Target Position", bucketServoTargetPos);
-            telemetryMap.put("Turret Target Position", turretTargetPos);
+            telemetryMap.put("Shoulder Target Position", shoulderTargetPos);
+            telemetryMap.put("Elbow Target Position", elbowTargetPos);
+            telemetryMap.put("Wrist Target Position", wristTargetPos);
         }
 
         telemetryMap.put("Turret:", "");
@@ -209,6 +135,14 @@ public class Crane implements Subsystem {
     @Override
     public String getTelemetryName() {
         return TELEMETRY_NAME;
+    }
+
+    private void setTargetPositions(Articulation articulation) {
+        this.shoulderTargetPos = articulation.shoulderPos;
+        this.elbowTargetPos = articulation.elbowPos;
+        this.wristTargetPos = articulation.wristPos;
+
+        turret.setTargetAngle(articulation.turretAngle);
     }
 }
 

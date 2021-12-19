@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.statemachine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class StateMachine {
 
@@ -96,6 +97,32 @@ public class StateMachine {
                 }
 
             }.setTime(seconds));
+            return this;
+        }
+
+        public Builder addTimedState(final TimeProvider timeProvider, final SingleState start, final SingleState stop) {
+            states.add(new State() {
+                private long timer;
+                private boolean started = false;
+
+                @Override
+                public boolean runState() {
+                    if (!started) {
+                        timer = futureTime(timeProvider.getTime());
+                        start.runState();
+                        started = true;
+                        return false;
+                    } else {
+                        if (System.nanoTime() >= timer) {
+                            stop.runState();
+                            started = false;
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            });
             return this;
         }
         

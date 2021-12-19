@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
@@ -9,23 +11,31 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.Range;
 
+import org.checkerframework.checker.units.qual.Current;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.MathUtils;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.MAX_CHASSIS_LENGTH;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.MIN_CHASSIS_LENGTH;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.WHEEL_RADIUS;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
 
+@Config
 public class DriveTrain implements Subsystem {
 
     // Motors
@@ -46,7 +56,7 @@ public class DriveTrain implements Subsystem {
     private SimpleMatrix offsetAngles; // [heading, roll, pitch]
     private SimpleMatrix previousWheelTicks; // [left, right, middle]
 
-    // PIVs
+    // State
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
     private double targetLinearVelocity, targetAngularVelocity, targetTurnRadius;
 
@@ -66,6 +76,31 @@ public class DriveTrain implements Subsystem {
     // Constants
     public static final String TELEMETRY_NAME = "Drive Train";
 
+    // PID
+    public static PIDCoefficients DRIVE_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.0055, 0, .13);
+    public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
+    public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
+    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.2, 0, 0);
+    public static double SWIVEL_PID_TOLERANCE = 10;
+
+    // Smoothing
+    public static double FRONT_LEFT_SMOOTHING_FACTOR = 0.1;
+    public static double FRONT_RIGHT_SMOOTHING_FACTOR = 0.1;
+    public static double MIDDLE_SMOOTHING_FACTOR = 0.1;
+
+    // Measurements
+    public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 0.07;
+    public static double DISTANCE_TARGET_TO_BACK_WHEEL = 0.18;
+
+    public static double SWERVE_TICKS_PER_REVOLUTION = 1740;
+    public static double TICKS_PER_REVOLUTION = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class).getTicksPerRev();
+    public static double TICKS_PER_METER = TICKS_PER_REVOLUTION / (2 * Math.PI * Constants.WHEEL_RADIUS); // TODO: use TPM_CALIBRATION game state to calibrate TPM
+
+    // threshold to buffer from max chassis length when attempting to fully extend chassis
+    // (to not put excessive strain on linear slide)
+    public static double CHASSIS_LENGTH_THRESHOLD = 0.1;
+
     public DriveTrain(HardwareMap hardwareMap) {
         // Motors
         motorFrontLeft = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
@@ -80,7 +115,7 @@ public class DriveTrain implements Subsystem {
             motors[i].setMode(RunMode.STOP_AND_RESET_ENCODER);
             motors[i].setMode(RunMode.RUN_USING_ENCODER);
             motors[i].setZeroPowerBehavior(ZERO_POWER_BEHAVIORS[i]);
-            if(REVERSED[i])
+            if (REVERSED[i])
                 motors[i].setDirection(Direction.REVERSE);
         }
 
@@ -98,16 +133,16 @@ public class DriveTrain implements Subsystem {
         previousWheelTicks = new SimpleMatrix(3, 2);
 
         // PID
-        turnPID = new PIDController(Constants.ROTATE_PID_COEFFICIENTS);
-        drivePID = new PIDController(Constants.DRIVE_PID_COEFFICIENTS);
-        swivelPID = new PIDController(Constants.SWIVEL_PID_COEFFICIENTS);
-        distPID = new PIDController(Constants.DIST_PID_COEFFICIENTS);
-        chassisDistancePID = new PIDController(Constants.CHASSIS_DISTANCE_PID_COEFFICIENTS);
+        turnPID = new PIDController(ROTATE_PID_COEFFICIENTS);
+        drivePID = new PIDController(DRIVE_PID_COEFFICIENTS);
+        swivelPID = new PIDController(SWIVEL_PID_COEFFICIENTS);
+        distPID = new PIDController(DIST_PID_COEFFICIENTS);
+        chassisDistancePID = new PIDController(CHASSIS_DISTANCE_PID_COEFFICIENTS);
 
         // Smoother
-        frontLeftSmoother = new ExponentialSmoother(Constants.FRONT_LEFT_SMOOTHING_FACTOR);
-        frontRightSmoother = new ExponentialSmoother(Constants.FRONT_RIGHT_SMOOTHING_FACTOR);
-        middleSmoother = new ExponentialSmoother(Constants.MIDDLE_SMOOTHING_FACTOR);
+        frontLeftSmoother = new ExponentialSmoother(FRONT_LEFT_SMOOTHING_FACTOR);
+        frontRightSmoother = new ExponentialSmoother(FRONT_RIGHT_SMOOTHING_FACTOR);
+        middleSmoother = new ExponentialSmoother(MIDDLE_SMOOTHING_FACTOR);
 
         // Miscellaneous
         previousWheelTicks = getWheelTicks();
@@ -134,9 +169,9 @@ public class DriveTrain implements Subsystem {
     private double getMaintainSwivelAngleCorrection() {
         //initialization of the PID calculator's output range, target value and multipliers
         swivelPID.setOutputRange(-1.0, 1.0);
-        swivelPID.setPID(Constants.SWIVEL_PID_COEFFICIENTS);
+        swivelPID.setPID(SWIVEL_PID_COEFFICIENTS);
         swivelPID.setSetpoint(targetSwivelAngle);
-        swivelPID.setTolerance(Constants.SWIVEL_PID_TOLERANCE);
+        swivelPID.setTolerance(SWIVEL_PID_TOLERANCE);
         swivelPID.enable();
 
         //initialization of the PID calculator's input range and current value
@@ -148,37 +183,15 @@ public class DriveTrain implements Subsystem {
         return swivelPID.performPID();
     }
 
-    /**
-     * updates the target chassis distance to maintain rotation without slipping
-     */
-    private void updateTargetChassisDistance() {
-        double turnRadius = targetAngularVelocity == 0 ? 0 : targetLinearVelocity / targetAngularVelocity;
-        targetChassisDistance = targetAngularVelocity == 0 ?
-            // if not rotating, set target chassis distance to max length - threshold
-            Constants.MAX_CHASSIS_LENGTH - Constants.CHASSIS_LENGTH_THRESHOLD :
-            // when rotating, if calculated distance is smaller than minimum length, set to minimum length
-            Math.max(
-                Constants.MIN_CHASSIS_LENGTH + Constants.CHASSIS_LENGTH_THRESHOLD,
-                // when rotating, if calculated distance is greater than maximum length, set to maximum length
-                Math.min(
-                    Constants.MAX_CHASSIS_LENGTH - Constants.CHASSIS_LENGTH_THRESHOLD,
-                    Math.sqrt(
-                        Math.pow(Constants.DRIVETRAIN_COEFFICIENT_OF_FRICTION * Constants.ACCELERATION_OF_GRAVITY / Math.pow(targetAngularVelocity, 2), 2)
-                      - Math.pow(turnRadius, 2)
-                )
-            )
-        );
-    }
-
     private double getMaintainChassisDistanceCorrection() {
         // initialization of the PID calculator's output range, target value and multipliers
         chassisDistancePID.setOutputRange(-5.0, 5.0);
-        chassisDistancePID.setPID(Constants.CHASSIS_DISTANCE_PID_COEFFICIENTS);
+        chassisDistancePID.setPID(CHASSIS_DISTANCE_PID_COEFFICIENTS);
         chassisDistancePID.setSetpoint(targetChassisDistance);
         chassisDistancePID.enable();
 
         // initialization of the PID calculator's input range and current value
-        chassisDistancePID.setInputRange(0, Constants.MAX_CHASSIS_LENGTH);
+        chassisDistancePID.setInputRange(Constants.MIN_CHASSIS_LENGTH, Constants.MAX_CHASSIS_LENGTH);
         chassisDistancePID.setInput(chassisDistance);
 
         // calculating correction
@@ -191,14 +204,14 @@ public class DriveTrain implements Subsystem {
     private void updatePose() {
         Orientation imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         angles = new SimpleMatrix(new double[][] {
-                {MathUtils.wrapAngle(360 - imuAngles.firstAngle, offsetAngles.get(0))},
-                {MathUtils.wrapAngle(imuAngles.thirdAngle, offsetAngles.get(1))},
-                {MathUtils.wrapAngle(imuAngles.secondAngle, offsetAngles.get(2))}
+                {UtilMethods.wrapAngle(360 - imuAngles.firstAngle, offsetAngles.get(0))},
+                {UtilMethods.wrapAngle(imuAngles.thirdAngle, offsetAngles.get(1))},
+                {UtilMethods.wrapAngle(imuAngles.secondAngle, offsetAngles.get(2))}
         });
 
         // calculating wheel displacements
 //        SimpleMatrix wheelTicks = getWheelTicks().rows(0, 2);
-//        SimpleMatrix wheelDisplacementMeters = wheelTicks.minus(previousWheelTicks.rows(0, 2)).divide(Constants.DRIVETRAIN_TICKS_PER_METER);
+//        SimpleMatrix wheelDisplacementMeters = wheelTicks.minus(previousWheelTicks.rows(0, 2)).divide(TICKS_PER_METER);
 
 //        // rotating swivel wheel by swivel angle
 //        double swivelAngle = getSwivelAngle();
@@ -216,7 +229,7 @@ public class DriveTrain implements Subsystem {
 
         // rotating displacement by heading
         double heading = angles.get(0);
-//        averageDisplacementMeters = MathUtils.rotateVector(averageDisplacementMeters, heading);
+//        averageDisplacementMeters = UtilMethods.rotateVector(averageDisplacementMeters, heading);
 
         // updating pose [x, y, heading]
 //        pose = pose.plus(new SimpleMatrix(new double[][] {{
@@ -232,9 +245,9 @@ public class DriveTrain implements Subsystem {
     @Override
     public void update() {
         // state
-        chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + Constants.DISTANCE_SENSOR_TO_FRONT_AXLE + Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
-//        chassisDistance = Constants.TEST_CHASSIS_DISTANCE;
-        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / Constants.SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);;
+        chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
+//        chassisDistance = TEST_CHASSIS_DISTANCE;
+        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);;
 
         // PID corrections
         maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
@@ -254,9 +267,9 @@ public class DriveTrain implements Subsystem {
 
         // Motor controls
 //        if(swivelPID.onTarget()) {
-            motorFrontLeft.setVelocity(targetFrontLeftVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
-            motorFrontRight.setVelocity(targetFrontRightVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
-            motorMiddle.setVelocity(targetMiddleVelocity * Constants.DRIVETRAIN_TICKS_PER_METER);
+            motorFrontLeft.setVelocity(targetFrontLeftVelocity * TICKS_PER_METER);
+            motorFrontRight.setVelocity(targetFrontRightVelocity * TICKS_PER_METER);
+            motorMiddle.setVelocity(targetMiddleVelocity * TICKS_PER_METER);
 //        } else {
 //            motorFrontLeft.setVelocity(0);
 //            motorFrontRight.setVelocity(0);
@@ -308,9 +321,9 @@ public class DriveTrain implements Subsystem {
 
         double heading = pose.get(2);
 
-        SimpleMatrix leftWheelPrime = translation.plus(MathUtils.rotateVector(leftWheel, heading).transpose());
-        SimpleMatrix rightWheelPrime = translation.plus(MathUtils.rotateVector(rightWheel, heading).transpose());
-        SimpleMatrix middleWheelPrime = translation.plus(MathUtils.rotateVector(middleWheel, heading).transpose());
+        SimpleMatrix leftWheelPrime = translation.plus(UtilMethods.rotateVector(leftWheel, heading).transpose());
+        SimpleMatrix rightWheelPrime = translation.plus(UtilMethods.rotateVector(rightWheel, heading).transpose());
+        SimpleMatrix middleWheelPrime = translation.plus(UtilMethods.rotateVector(middleWheel, heading).transpose());
 
         targetFrontLeftVelocity = leftWheelPrime.minus(leftWheel).normF() / dt;
         targetFrontRightVelocity = rightWheelPrime.minus(rightWheel).normF() / dt;
@@ -418,18 +431,25 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("middle position", motorMiddle.getCurrentPosition());
             telemetryMap.put("swivel position", motorMiddleSwivel.getCurrentPosition());
 
-            telemetryMap.put("fl velocity", MathUtils.ticksToMeters(motorFrontLeft.getVelocity()));
-            telemetryMap.put("fr velocity", MathUtils.ticksToMeters(motorFrontRight.getVelocity()));
-            telemetryMap.put("middle velocity", MathUtils.ticksToMeters(motorMiddle.getVelocity()));
+            telemetryMap.put("fl velocity", ticksToMeters(motorFrontLeft.getVelocity()));
+            telemetryMap.put("fr velocity", ticksToMeters(motorFrontRight.getVelocity()));
+            telemetryMap.put("middle velocity", ticksToMeters(motorMiddle.getVelocity()));
 
             telemetryMap.put("fl target velocity", targetFrontLeftVelocity);
             telemetryMap.put("fr target velocity", targetFrontRightVelocity);
             telemetryMap.put("middle target velocity", targetMiddleVelocity);
+            telemetryMap.put("swivel target power", maintainSwivelAngleCorrection);
+            telemetryMap.put("duck power", duckSpinner.getPower());
+
+            telemetryMap.put("fl amps", motorFrontLeft.getCurrent(CurrentUnit.AMPS));
+            telemetryMap.put("fr amps", motorFrontRight.getCurrent(CurrentUnit.AMPS));
+            telemetryMap.put("middle amps", motorMiddle.getCurrent(CurrentUnit.AMPS));
+            telemetryMap.put("swivel amps", motorMiddleSwivel.getCurrent(CurrentUnit.AMPS));
+            telemetryMap.put("duck amps", duckSpinner.getCurrent(CurrentUnit.AMPS));
 
             telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
             telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
             telemetryMap.put("swivel PID on target", swivelPID.onTarget());
-            telemetryMap.put("maintain swivel angle correction", maintainSwivelAngleCorrection);
 
             telemetryMap.put("chassis distance", chassisDistance);
             telemetryMap.put("target chassis distance", targetChassisDistance);
@@ -503,6 +523,18 @@ public class DriveTrain implements Subsystem {
     }
 
     public void setTargetChassisDistance(double targetChassisDistance) {
-        this.targetChassisDistance = targetChassisDistance;
+        this.targetChassisDistance = Range.clip(targetChassisDistance, MIN_CHASSIS_LENGTH + CHASSIS_LENGTH_THRESHOLD, MAX_CHASSIS_LENGTH - CHASSIS_LENGTH_THRESHOLD);
+    }
+
+    public static int metersToTicks(double meters) {
+        double circumference = 2 * Math.PI * WHEEL_RADIUS;
+        double revolutions = meters / circumference;
+        return (int) (revolutions * TICKS_PER_REVOLUTION);
+    }
+
+    public static double ticksToMeters(double ticks) {
+        double revolutions = ticks / TICKS_PER_REVOLUTION;
+        double circumference = 2 * Math.PI * WHEEL_RADIUS;
+        return revolutions * circumference;
     }
 }

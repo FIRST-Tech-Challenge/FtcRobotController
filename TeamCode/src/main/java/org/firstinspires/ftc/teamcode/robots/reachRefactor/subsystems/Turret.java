@@ -3,53 +3,56 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 //written by Cooper Clem, 2021
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.firstinspires.ftc.teamcode.util.RateController;
 
 import static org.firstinspires.ftc.teamcode.util.utilMethods.between360Clockwise;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.diffAngle2;
-import static org.firstinspires.ftc.teamcode.util.utilMethods.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
-import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
-import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Config
 public class Turret implements Subsystem {
-    //motor
-    private DcMotor motor;
-    private double correction;
+    // Motors
+    private DcMotorEx motor;
 
-    //PID
+    // PID
+    private double correction;
     private PIDController turretPID;
 
-    private double turretHeading;
-    private double targetTurretHeading;
+    private double heading;
+    private double targetHeading;
 
+    // Constants
     private static final String TELEMETRY_NAME = "Turret";
 
+    public static PIDCoefficients TURRET_PID_COEFFICIENTS = new PIDCoefficients(0.02, 0, 0);
+    public static double TURRET_TOLERANCE = 2;
+
+    public static double TICKS_PER_REVOLUTION = 1740;
+
+
     public Turret(HardwareMap hardwareMap) {
-        this.motor = hardwareMap.get(DcMotor.class, "turret");
-        turretPID = new PIDController(0,0,0);
+        this.motor = hardwareMap.get(DcMotorEx.class, "turret");
+
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setTargetPosition(motor.getCurrentPosition());
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        turretPID = new PIDController(TURRET_PID_COEFFICIENTS);
     }
 
     public void update(){
-        turretHeading = motor.getCurrentPosition() / (1 / Constants.TURRET_TICKS_PER_DEGREE);
+        heading = (motor.getCurrentPosition() / TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);;
 
-        //movePIDTurret(Constants.TURRET_PID_COEFFICIENTS.p, Constants.TURRET_PID_COEFFICIENTS.i, Constants.TURRET_PID_COEFFICIENTS.d, turretHeading, targetTurretHeading);
+
+        movePIDTurret(TURRET_PID_COEFFICIENTS, heading, targetHeading);
     }
 
     @Override
@@ -57,31 +60,24 @@ public class Turret implements Subsystem {
 
     }
 
-    public boolean rotateCardinalTurret(boolean right){
-
-        setTurretAngle(nextCardinal(getHeading(),right,10));
-
-        return true;
-    }
-
-    public boolean setTurretAngle(double angle){
-        targetTurretHeading = wrap360(angle);
+    public boolean setTargetAngle(double angle){
+        targetHeading = Math.toDegrees(wrap360(angle));
         return isTurretNearTarget();
     }
 
     public boolean isTurretNearTarget(){
-        return between360Clockwise(getHeading(), getTargetHeading() - Constants.TURRET_TOLERANCE, getTargetHeading() + Constants.TURRET_TOLERANCE);
+        return between360Clockwise(heading, targetHeading - TURRET_TOLERANCE, heading + TURRET_TOLERANCE);
     }
 
-    private void setPower(double pwr){
-        motor.setPower(pwr);
+    private void setPower(double power){
+        motor.setPower(power);
     }
 
     double turnError = 0;
-    public void movePIDTurret(double Kp, double Ki, double Kd, double currentAngle, double targetAngle) {
+    public void movePIDTurret(PIDCoefficients pidCoefficients, double currentAngle, double targetAngle) {
         //initialization of the PID calculator's output range, target value and multipliers
+        turretPID.setPID(pidCoefficients);
         turretPID.setOutputRange(-.69, .69); //this is funny
-        turretPID.setPID(Kp, Ki, Kd);
         turretPID.setSetpoint(targetAngle);
         turretPID.enable();
 
@@ -91,26 +87,20 @@ public class Turret implements Subsystem {
 
         turnError = diffAngle2(targetAngle, currentAngle);
 
-        double correction = turretPID.performPID();
+        correction = turretPID.performPID();
 
         //performs the turn with the correction applied
         setPower(correction);
     }
 
-    public double getHeading(){
-        return turretHeading;
-    }
-
-    public double getTargetHeading(){
-        return targetTurretHeading;
-    }
-
-    public double getCorrection(){return correction;}
-    public double getMotorPwr(){return motor.getPower();}
-
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new HashMap<String, Object>();
+        if(debug) {
+            telemetryMap.put("motor position", motor.getCurrentPosition());
+            telemetryMap.put("motor power", correction);
+            telemetryMap.put("motor amps", motor.getCurrent(CurrentUnit.AMPS));
+        }
 
         return telemetryMap;
     }

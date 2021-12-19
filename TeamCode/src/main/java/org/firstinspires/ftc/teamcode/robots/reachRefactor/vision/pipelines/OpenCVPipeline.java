@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.pipelines;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
 import org.opencv.core.Core;
@@ -14,6 +16,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
+@Config
 public class OpenCVPipeline extends OpenCvPipeline
 {
     private Mat blurInput = new Mat();
@@ -26,6 +29,21 @@ public class OpenCVPipeline extends OpenCvPipeline
     private int largestX, largestY;
     private double largestArea;
     private Position lastPosition;
+    
+    // Constants
+    public static int VIEW_OPEN_CV_PIPELINE_STAGE = 0;
+    public static double BLUR_RADIUS = 7;
+    public static double HUE_MIN = 0;
+    public static double HUE_MAX = 90;
+    public static double SATURATION_MIN = 150;
+    public static double SATURATION_MAX = 255;
+    public static double VALUE_MIN = 150;
+    public static double VALUE_MAX = 255;
+    public static double MIN_CONTOUR_AREA = 2500;
+    public static String BLUR = "Box Blur";
+
+    public static int LEFT_THRESHOLD = 107;
+    public static int RIGHT_THRESHOLD = 213;
 
     public OpenCVPipeline() {
         largestX = -1;
@@ -38,15 +56,15 @@ public class OpenCVPipeline extends OpenCvPipeline
     {
         // Step Blur0 (stage 1):
         blurInput = input;
-        BlurType blurType = BlurType.get(Constants.BLUR);
-        double blurRadius = Constants.BLUR_RADIUS;
+        BlurType blurType = BlurType.get(BLUR);
+        double blurRadius = BLUR_RADIUS;
         blur(blurInput, blurType, blurRadius, blurOutput);
 
         // Step HSV_Threshold0  (stage 2):
         Mat hsvThresholdInput = blurOutput;
-        double[] hsvThresholdHue = {Constants.HUE_MIN, Constants.HUE_MAX};
-        double[] hsvThresholdSaturation = {Constants.SATURATION_MIN, Constants.SATURATION_MAX};
-        double[] hsvThresholdValue = {Constants.VALUE_MIN, Constants.VALUE_MAX};
+        double[] hsvThresholdHue = {HUE_MIN, HUE_MAX};
+        double[] hsvThresholdSaturation = {SATURATION_MIN, SATURATION_MAX};
+        double[] hsvThresholdValue = {VALUE_MIN, VALUE_MAX};
         hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
         // Step Find_Contours0 (stage 3):
@@ -67,7 +85,7 @@ public class OpenCVPipeline extends OpenCvPipeline
         for(int i = 0; i < findContoursOutput.size(); i++) {
             MatOfPoint contour = findContoursOutput.get(i);
             double contourArea = Imgproc.contourArea(contour);
-            if(contourArea > Constants.MIN_CONTOUR_AREA && contourArea > largestArea) {
+            if(contourArea > MIN_CONTOUR_AREA && contourArea > largestArea) {
                 Moments p = Imgproc.moments(contour, false);
                 int x = (int) (p.get_m10() / p.get_m00());
                 int y = (int) (p.get_m01() / p.get_m00());
@@ -81,11 +99,11 @@ public class OpenCVPipeline extends OpenCvPipeline
         if(largestContourIndex != -1)
             Imgproc.drawContours(finalContourOutputMat, findContoursOutput, largestContourIndex, new Scalar(255, 255, 255), 2);
 
-        if(largestX > 0 && largestX < Constants.LEFT_THRESHOLD) {
+        if(largestX > 0 && largestX < LEFT_THRESHOLD) {
             lastPosition = Position.LEFT;
-        } else if(largestX > Constants.LEFT_THRESHOLD && largestX < Constants.RIGHT_THRESHOLD) {
+        } else if(largestX > LEFT_THRESHOLD && largestX < RIGHT_THRESHOLD) {
             lastPosition = Position.MIDDLE;
-        } else if(largestX > Constants.RIGHT_THRESHOLD && largestX < Constants.WEBCAM_WIDTH) {
+        } else if(largestX > RIGHT_THRESHOLD && largestX < input.width()) {
             lastPosition = Position.RIGHT;
         } else
             lastPosition = null;
@@ -99,7 +117,7 @@ public class OpenCVPipeline extends OpenCvPipeline
 
     public Mat getDashboardImage() {
         Mat toSend = null;
-        switch(Constants.VIEW_OPEN_CV_PIPELINE_STAGE) {
+        switch(VIEW_OPEN_CV_PIPELINE_STAGE) {
             case 0:
                 toSend = blurInput;
                 break;

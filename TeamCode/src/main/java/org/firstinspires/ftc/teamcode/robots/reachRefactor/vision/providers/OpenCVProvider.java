@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.providers;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -16,11 +17,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@Config
 public class OpenCVProvider implements VisionProvider {
     private OpenCvCamera camera;
     private OpenCVPipeline pipeline;
 
+    // Constants
     private static final String TELEMETRY_NAME = "OpenCV Vision Provider";
+    public static int WEBCAM_WIDTH = 320;
+    public static int WEBCAM_HEIGHT = 240;
 
     @Override
     public void initializeVision(HardwareMap hardwareMap) {
@@ -29,7 +34,7 @@ public class OpenCVProvider implements VisionProvider {
 
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(() -> {
-            camera.startStreaming(Constants.WEBCAM_WIDTH, Constants.WEBCAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+            camera.startStreaming(WEBCAM_WIDTH, WEBCAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
         });
     }
 

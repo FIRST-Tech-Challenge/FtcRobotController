@@ -10,13 +10,16 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvider;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
@@ -37,10 +40,23 @@ import java.util.Map;
  * right bumper - increment state
  *
  * Tele-Op
- * dpad up - toggle desmos drive
- * dpad down - toggle debug telemetry
- * right stick y - forward
- * left stick x - rotate
+ * gamepad 1: left bumper - raise gripper
+ * gamepad 1: right bumper - lower gripper
+ * gamepad 1: left trigger - open gripper
+ * gamepad 1: right trigger - close gripper
+ * gamepad 1: tank drive
+ *
+ * gamepad 2: b - toggle gripper
+ * gamepad 2: a - toggle duck spinner
+ * gamepad 2: dpad left - articulate crane to home
+ * gamepad 2: dpad up - articulate crane to high teir
+ * gamepad 2: dpad right - articulate crane to transfer
+ * gamepad 2: right bumper - increment chassis length stage
+ * gamepad 2: left bumper - decrement chassis length stage
+ * gamepad 2: arcade drive
+ *
+ * left stick y - forward
+ * right stick x - rotate
  * guide - emergency stop
  */
 @TeleOp(name = "refactored FF_6832")
@@ -54,10 +70,11 @@ public class FF_6832 extends OpMode {
     private int gameStateIndex, visionProviderIndex;
     private boolean visionProviderFinalized;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
-    private Map<Position, Integer> positionFrequencies;
-    private Position mostFrequentPosition;
+    private Map<org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position, Integer> positionFrequencies;
+    private org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position mostFrequentPosition;
     private boolean usingDesmosDrive;
-    private boolean dashboardEnabled, debugTelemetryEnabled, smoothingEnabled, arcadeDriveEnabled;
+    private boolean dashboardEnabled, debugTelemetryEnabled, smoothingEnabled;
+    private boolean gamepad1JoysticksActive, gamepad2JoysticksActive;
     private int chassisDistanceLevelIndex;
 
     // Telemetry
@@ -74,13 +91,27 @@ public class FF_6832 extends OpMode {
     private ExponentialSmoother loopTimeSmoother;
 //    private long[] times;
 
+    // Constants
+    public static double TRIGGER_DEADZONE_THRESHOLD = 0.4;
+    public static double JOYSTICK_DEADZONE_THRESHOLD = 0.4;
+    public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
+    public static boolean DEFAULT_DASHBOARD_ENABLED = true;
+    public static double FORWARD_SCALING_FACTOR = 3; // scales the target linear robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = 5; // scales the target angular robot velocity from tele-op controls
+    public static double[] CHASSIS_DISTANCE_LEVELS = new double[] {
+            Constants.MIN_CHASSIS_LENGTH,
+            Constants.MIN_CHASSIS_LENGTH + (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
+            Constants.MIN_CHASSIS_LENGTH + 2 * (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
+            Constants.MAX_CHASSIS_LENGTH
+    };
+
     // Code to run ONCE when the driver hits INIT
     @Override
     public void init() {
         // global state
         active = true;
         initializing = true;
-        dashboardEnabled = Constants.DEFAULT_DASHBOARD_ENABLED;
+        dashboardEnabled = DEFAULT_DASHBOARD_ENABLED;
         gameState = Constants.GameState.TELE_OP;
 
         // TPM calibration state
@@ -89,7 +120,7 @@ public class FF_6832 extends OpMode {
 
         // timing
         lastLoopClockTime = System.nanoTime();
-        loopTimeSmoother = new ExponentialSmoother(Constants.AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
+        loopTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
 
         // gamepads
         stickyGamepad1 = new StickyGamepad(gamepad1);
@@ -107,10 +138,10 @@ public class FF_6832 extends OpMode {
         if(dashboardEnabled)
             dashboard = FtcDashboard.getInstance();
 
-        positionFrequencies = new HashMap<Position, Integer>() {{
-            put(Position.LEFT, 0);
-            put(Position.MIDDLE, 0);
-            put(Position.RIGHT, 0);
+        positionFrequencies = new HashMap<org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position, Integer>() {{
+            put(org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position.LEFT, 0);
+            put(org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position.MIDDLE, 0);
+            put(org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position.RIGHT, 0);
         }};
     }
 
@@ -166,9 +197,6 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.dpad_down) {
             debugTelemetryEnabled = !debugTelemetryEnabled;
         }
-        if(stickyGamepad1.dpad_right)
-            arcadeDriveEnabled = !arcadeDriveEnabled;
-
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -191,10 +219,9 @@ public class FF_6832 extends OpMode {
 //        auto.visionProvider.shutdownVision();
     }
 
-    private void handleTeleOpDriveArcade() {
-        double forward = Math.pow(-gamepad1.left_stick_y, 3) * Constants.FORWARD_SCALING_FACTOR;
-        double rotate = Math.pow(gamepad1.right_stick_x, 3) * Constants.ROTATE_SCALING_FACTOR;
-
+    private void handleTeleOpDriveArcade(Gamepad gamepad) {
+        double forward = Math.pow(-gamepad.left_stick_y, 3) * FORWARD_SCALING_FACTOR;
+        double rotate = Math.pow(gamepad.right_stick_x, 3) * ROTATE_SCALING_FACTOR;
 
         if(usingDesmosDrive)
             robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
@@ -202,12 +229,12 @@ public class FF_6832 extends OpMode {
             robot.driveTrain.drive(forward, rotate);
     }
 
-    private void handleTeleOpDriveTank() {
-        double left = -gamepad1.left_stick_y;
-        double right = -gamepad1.right_stick_y;
+    private void handleTeleOpDriveTank(Gamepad gamepad) {
+        double left = -gamepad.left_stick_y;
+        double right = -gamepad.right_stick_y;
 
-        double forward = (left + right) / 2 * Constants.FORWARD_SCALING_FACTOR;
-        double rotate = (right - left) / 2 * Constants.ROTATE_SCALING_FACTOR;
+        double forward = (left + right) / 2 * FORWARD_SCALING_FACTOR;
+        double rotate = (right - left) / 2 * ROTATE_SCALING_FACTOR;
 
 
         if(usingDesmosDrive)
@@ -222,81 +249,96 @@ public class FF_6832 extends OpMode {
     }
 
     private void handleTeleOp() {
-        if(arcadeDriveEnabled)
-            handleTeleOpDriveArcade();
-        else
-            handleTeleOpDriveTank();
-        handleEmergencyStop();
-
-        //gamepad 1
-        if(stickyGamepad1.left_bumper){
+        // gamepad 1
+        if(stickyGamepad1.left_bumper)
             robot.gripper.pitchGripper(true);
-        }
-
-        if(stickyGamepad1.right_bumper){
+        if(stickyGamepad1.right_bumper)
             robot.gripper.pitchGripper(false);
-        }
 
-        if(gamepad1.right_trigger > .1){
+        if(UtilMethods.notDeadZone(gamepad1.right_trigger, TRIGGER_DEADZONE_THRESHOLD))
             robot.gripper.actuateGripper(false);
-        }
-
-        if(gamepad1.left_trigger > .1){
+        if(UtilMethods.notDeadZone(gamepad1.left_trigger, TRIGGER_DEADZONE_THRESHOLD))
             robot.gripper.actuateGripper(true);
-        }
 
-        if(stickyGamepad1.y){
-            //complete code
-        }
-
-        if(stickyGamepad1.b){
+        if(stickyGamepad1.b)
             robot.gripper.toggleGripper();
-        }
 
-        if(stickyGamepad1.a){
+        if(stickyGamepad1.a)
             robot.driveTrain.handleDuckSpinnerToggle(robot.getAlliance().getMod());
-        }
 
-        //gamepad 2
+        if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
+            handleTeleOpDriveTank(gamepad1);
 
-        if(stickyGamepad2.y){
-            //complete code
-        }
-
-        if(stickyGamepad2.b){
+        // gamepad 2
+        if(stickyGamepad2.b)
             robot.gripper.toggleGripper();
-        }
 
-        if(stickyGamepad2.a){
+        if(stickyGamepad2.a)
             robot.driveTrain.handleDuckSpinnerToggle(robot.getAlliance().getMod());
-        }
 
-        if(stickyGamepad2.dpad_left){
-            robot.crane.Do(Crane.CommonPosition.HOME);
-        }
+        if(stickyGamepad2.dpad_left)
+            robot.crane.articulate(Crane.Articulation.HOME);
+        if(stickyGamepad2.dpad_up)
+            robot.crane.articulate(Crane.Articulation.HIGH_TEIR);
+        if(stickyGamepad2.dpad_right)
+            robot.articulate(Robot.Articulation.TRANSFER);
 
-        if(stickyGamepad2.dpad_up){
-            robot.crane.Do(Crane.CommonPosition.HIGH_TEIR);
-        }
-
-        if(stickyGamepad2.dpad_right){
-            robot.crane.Do(Crane.CommonPosition.TRANSFER);
-        }
-
-        if(stickyGamepad2.right_bumper) {
+        if(stickyGamepad2.right_bumper)
             chassisDistanceLevelIndex++;
-        } else if(stickyGamepad2.left_bumper) {
+        else if(stickyGamepad2.left_bumper)
             chassisDistanceLevelIndex--;
-        }
-        chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % Constants.CHASSIS_DISTANCE_LEVELS.length);
-        robot.driveTrain.setTargetChassisDistance(Constants.CHASSIS_DISTANCE_LEVELS[chassisDistanceLevelIndex]);
 
-//        if(stickyGamepad1.dpad_up) {
-//            usingDesmosDrive = !usingDesmosDrive;
-//        }
-//        if(stickyGamepad1.dpad_down) {
-//            debugTelemetryEnabled = !debugTelemetryEnabled;
-//        }
+        if(gamepad2JoysticksActive && !gamepad1JoysticksActive)
+            handleTeleOpDriveArcade(gamepad2);
+
+        chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % CHASSIS_DISTANCE_LEVELS.length);
+        robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[chassisDistanceLevelIndex]);
+    }
+
+    private Stage diagnosticStage = new Stage();
+    private StateMachine diagnostic = UtilMethods.getStateMachine(diagnosticStage)
+            // testing drivetrain
+            .addTimedState(3f, () -> {
+                robot.driveTrain.drive(0.25, 0);
+            }, () -> {})
+            .addTimedState(3f, () -> {
+                robot.driveTrain.drive(0, Math.PI / 2);
+            }, () -> {})
+
+            // testing crane
+            .addState(() -> robot.crane.articulate(Crane.Articulation.HOME))
+            .addState(() -> robot.crane.articulate(Crane.Articulation.LOWEST_TEIR))
+            .addState(() -> robot.crane.articulate(Crane.Articulation.HIGH_TEIR))
+            .addState(() -> robot.crane.articulate(Crane.Articulation.MIDDLE_TEIR))
+            .addState(() -> robot.crane.articulate(Crane.Articulation.STARTING))
+            .addState(() -> robot.crane.articulate(Crane.Articulation.CAP))
+            .addState(() -> robot.articulate(Robot.Articulation.TRANSFER))
+
+            // testing gripper
+            .addState(() -> robot.crane.articulate(Crane.Articulation.HOME))
+            .addTimedState(3f, () -> {
+                robot.gripper.togglePitch();
+            }, () -> {})
+            .addTimedState(3f, () -> {
+                robot.gripper.toggleGripper();
+            }, () -> {})
+
+            // testing turret
+            .addTimedState(3f,
+                    () -> robot.crane.turret.setTargetAngle(Math.PI / 2),
+                    () -> {})
+            .addTimedState(3f,
+                    () -> robot.crane.turret.setTargetAngle(Math.PI),
+                    () -> {})
+            .addTimedState(3f,
+                    () -> robot.crane.turret.setTargetAngle(3 * Math.PI / 2),
+                    () -> {})
+            .addTimedState(3f,
+                    () -> robot.crane.turret.setTargetAngle(2 * Math.PI),
+                    () -> {})
+            .build();
+    private void handleDiagnostic() {
+        diagnostic.execute();
     }
 
     @Override
@@ -321,6 +363,9 @@ public class FF_6832 extends OpMode {
                         gameStateIndex = Constants.GameState.indexOf(Constants.GameState.TELE_OP);
                     }
                     break;
+//                case DIAGNOSTIC:
+//                    handleDiagnostic();
+//                    break;
             }
         } else {
             handleStateSwitch();
@@ -339,7 +384,7 @@ public class FF_6832 extends OpMode {
 
     private void updateMostFrequentPosition() {
         int mostFrequentPositionCount = -1;
-        for(Map.Entry<Position, Integer> entry: positionFrequencies.entrySet()) {
+        for(Map.Entry<org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position, Integer> entry: positionFrequencies.entrySet()) {
             int positionFrequency = entry.getValue();
             if(positionFrequency > mostFrequentPositionCount) {
                 mostFrequentPositionCount = positionFrequency;
@@ -358,15 +403,17 @@ public class FF_6832 extends OpMode {
     }
 
     private void handleTelemetry(Map<String, Object> telemetryMap, String telemetryName, TelemetryPacket packet) {
-        packet.addLine(telemetryName);
-        packet.putAll(telemetryMap);
-        packet.addLine("");
-
         telemetry.addLine(telemetryName);
+        packet.addLine(telemetryName);
+
         for(Map.Entry<String, Object> entry: telemetryMap.entrySet()) {
-            telemetry.addData(entry.getKey(), entry.getValue());
+            String line = String.format("%s: %s", entry.getKey(), entry.getValue());
+            telemetry.addLine(line);
+            packet.addLine(line);
         }
+
         telemetry.addLine();
+        packet.addLine("");
     }
 
     private void updateTelemetry() {
@@ -384,9 +431,8 @@ public class FF_6832 extends OpMode {
         opModeTelemetryMap.put("State", String.format("(%d): %s", gameStateIndex, gameState));
         opModeTelemetryMap.put("Dashboard Enabled", dashboardEnabled);
         opModeTelemetryMap.put("Debug Telemetry Enabled", debugTelemetryEnabled);
-        opModeTelemetryMap.put("Drive Mode", arcadeDriveEnabled ? "Arcade" : "Tank");
         opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
-        opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, Constants.CHASSIS_DISTANCE_LEVELS.length));
+        opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, CHASSIS_DISTANCE_LEVELS.length));
 
         switch(gameState) {
             case TELE_OP:
@@ -420,6 +466,13 @@ public class FF_6832 extends OpMode {
         telemetry.update();
     }
 
+    private boolean joysticksActive(Gamepad gamepad) {
+        return  UtilMethods.notDeadZone(gamepad.left_stick_x, JOYSTICK_DEADZONE_THRESHOLD) &&
+                UtilMethods.notDeadZone(gamepad.left_stick_y, JOYSTICK_DEADZONE_THRESHOLD) &&
+                UtilMethods.notDeadZone(gamepad.right_stick_x, JOYSTICK_DEADZONE_THRESHOLD) &&
+                UtilMethods.notDeadZone(gamepad.right_stick_y, JOYSTICK_DEADZONE_THRESHOLD);
+    }
+
     private void update() {
         if(initializing) {
 //            if(robot.isDebugTelemetryEnabled())
@@ -429,6 +482,9 @@ public class FF_6832 extends OpMode {
 //            if(position != null)
 //                positionFrequencies.put(position, positionFrequencies.get(position) + 1);
         }
+
+        gamepad1JoysticksActive = joysticksActive(gamepad1);
+        gamepad2JoysticksActive = joysticksActive(gamepad2);
 
         updateTelemetry();
 

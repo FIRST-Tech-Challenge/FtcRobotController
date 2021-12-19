@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -7,72 +8,55 @@ import java.util.HashMap;
 import java.util.Map;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods.servoNormalize;
 
+@Config
 public class Gripper implements Subsystem{
-    private Servo gripperPitchServo = null;
-    private Servo gripperServo = null;
-    int gripperClosed =900;
-    int gripperOpenIntake = 1200;
-    int gripperUp = 2100;
-    int gripperDown = 1240;
-    boolean gripperIsUp = true;
-    boolean gripperOpen = true;
+    // Servos
+    private Servo pitchServo;
+    private Servo servo;
 
-    int gripperTargetPos = 0;
+    // State
+    boolean up = true;
+    boolean open = true;
 
+    private int targetPos = 0;
+    private int pitchTargetPos = 0;
+
+    // Constants
     private static final String TELEMETRY_NAME = "Gripper";
 
-    public Gripper(HardwareMap hardwareMap){
-        gripperServo = hardwareMap.get(Servo.class, "gripperServo");
-        gripperPitchServo = hardwareMap.get(Servo.class, "gripperPitchServo");
+    public static int CLOSED = 900;
+    public static int OPEN = 1200;
+    public static int PITCH_UP = 2100;
+    public static int PITCH_DOWN = 1240;
 
-        gripperServo.setPosition(servoNormalize(gripperOpenIntake));
-        gripperPitchServo.setPosition(servoNormalize(gripperUp));
+    public Gripper(HardwareMap hardwareMap){
+        servo = hardwareMap.get(Servo.class, "gripperServo");
+        pitchServo = hardwareMap.get(Servo.class, "gripperPitchServo");
     }
 
     public void actuateGripper(boolean open){
-        if(open) {
-            gripperTargetPos = gripperOpenIntake;
-            gripperOpen = true;
-        }
-        else{
-            gripperTargetPos = gripperClosed;
-            gripperOpen = false;
-        }
+        this.open = open;
+        targetPos = open ? OPEN : CLOSED;
     }
 
     public void pitchGripper(boolean up){
-        if(up) {
-            gripperPitchServo.setPosition(servoNormalize(gripperUp));
-            gripperIsUp = true;
-        }
-        else{
-            gripperPitchServo.setPosition(servoNormalize(gripperDown));
-            gripperIsUp = false;
-        }
+        this.up = up;
+        pitchTargetPos = up ? PITCH_UP : PITCH_DOWN;
     }
 
 
     public void togglePitch(){
-        if(gripperIsUp){
-            pitchGripper(false);
-        }
-        else{
-            pitchGripper(true);
-        }
+        pitchGripper(!up);
     }
 
     public void toggleGripper(){
-        if(gripperOpen){
-            actuateGripper(false);
-        }
-        else{
-            actuateGripper(true);
-        }
+        actuateGripper(!open);
     }
 
     @Override
     public void update() {
-        gripperServo.setPosition(servoNormalize(gripperTargetPos));
+        servo.setPosition(servoNormalize(targetPos));
+        pitchServo.setPosition(servoNormalize(pitchTargetPos));
     }
 
     @Override
@@ -85,8 +69,10 @@ public class Gripper implements Subsystem{
         Map<String, Object> telemetryMap = new HashMap<String, Object>();
 
         if(debug) {
-            telemetryMap.put("GripperTargetPos", gripperTargetPos);
-
+            telemetryMap.put("Servo Target Pos", targetPos);
+            telemetryMap.put("Pitch Servo Target Pos", pitchTargetPos);
+            telemetryMap.put("Open", open);
+            telemetryMap.put("Up", up);
         }
 
         return telemetryMap;
