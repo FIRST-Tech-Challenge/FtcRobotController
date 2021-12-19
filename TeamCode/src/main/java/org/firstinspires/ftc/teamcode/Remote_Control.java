@@ -45,6 +45,36 @@ public class Remote_Control extends LinearOpMode {
 
             //double angle = yAxis/xAxis; double medSpeed = 0.2679; double lowSpeed = 0.0875;
             double maxSpeed = 0.8;
+            boolean spinPower = false;
+            double speedspin = 0;
+            spinPower = gamepad1.left_bumper;
+            if(spinPower == true){
+                speedspin = 1;
+            }
+            else if(gamepad1.right_bumper == true){
+                speedspin = -1;
+            }
+            else{
+                speedspin = 0;
+            }
+            robot.spinner.setPower(speedspin);
+
+
+            //double arm_angle = 0;
+          // if(gamepad1.left_trigger == true){
+          //      arm_angle = 0.6;
+          //  }
+         //   else if(gamepad1.right_trigger == true){
+         //       arm_angle = -0.6;
+         //   }
+         //   else{
+        //        arm_angle = 0;
+         //   }
+
+         //   robot.liftArm.setPower(arm_angle);
+
+
+
 
             //determining the power based on degree on angle on joystick
             //if (medSpeed <= angle & angle <= -medSpeed){
@@ -55,7 +85,18 @@ public class Remote_Control extends LinearOpMode {
             //}
             //else{
             //    maxSpeed = 0.4;
-            //}
+            //}///////////////////////////////////////
+            double upPower = Range.clip( gamepad1.left_trigger , -maxSpeed, maxSpeed);
+            double downPower = Range.clip( gamepad1.right_trigger, -maxSpeed, maxSpeed);
+            if(upPower > 0){
+
+                robot.liftArm.setPower(upPower);
+            } else if(downPower > 0){
+                robot.liftArm.setPower(-downPower);
+            }else{
+                robot.liftArm.setPower(0);
+            }
+            //robot.liftArm.setPower();///////////////////////
 
             leftPower   = Range.clip(yAxis + xAxis, -maxSpeed, maxSpeed);
             rightPower  = Range.clip(yAxis - xAxis, -maxSpeed, maxSpeed);
@@ -84,17 +125,20 @@ public class Remote_Control extends LinearOpMode {
                 robot.gyroTurn(0.6, 360);
             }
             if (armUp == true){
-                robot.liftArm.setPower(-0.6);
+                robot.liftArm.setPower(-0.7);//-0.6
             }
             if (armDown == true){
-                robot.liftArm.setPower(0.6);
+                robot.liftArm.setPower(0.6);//0.6
             }
+
             if (clawOpen == true){
-                robot.claw.setPosition(0.6);
+                robot.claw.setPosition(0.8);
             }
             if (clawClose == true){
-                robot.claw.setPosition(-0.6);
+                robot.claw.setPosition(-0.2);//this claw position
             }
+
+
             sleep(10);
         }
     }

@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import java.sql.Driver;
+
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -36,7 +38,7 @@ public class Basic_automation_duck extends LinearOpMode {
 
     private DcMotor spiner = null;
     // private DcMotor pully = null;
-
+                                //20 = 1 in 20*11 = 220.
 
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
@@ -44,7 +46,7 @@ public class Basic_automation_duck extends LinearOpMode {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
-    static final double     DRIVE_SPEED             = 0.6;
+    static final double     DRIVE_SPEED             = -0.6;
     static final double     TURN_SPEED              = 0.5;
 
     @Override
@@ -93,15 +95,24 @@ public class Basic_automation_duck extends LinearOpMode {
             leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+
+
             leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+            double cal = 26/4;//11+15
+
+            encoderDrive(DRIVE_SPEED,  2,  2, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+            encoderDrive(TURN_SPEED,   2, -2, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+            encoderDrive(DRIVE_SPEED, -cal, -cal , 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
 
 
+            //encoderSpin(DRIVE_SPEED, 8,10.0);
+           //encoderDrive(DRIVE_SPEED, -1,-1,2.0);
+
+            //encoderSpin(DRIVE_SPEED, 4,10.0);
+            //encoderDrive(DRIVE_SPEED,200,20, 2.0);
             //spiner.setPower(spinPower);
 
 
@@ -109,6 +120,7 @@ public class Basic_automation_duck extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
+            break;
         }
     }
 
@@ -122,7 +134,7 @@ public class Basic_automation_duck extends LinearOpMode {
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
-            // Determine new target position, and pass to motor controller
+            // Determine new target position, and pass to motor controller. 473 increments corresponds to one revolution of a motor
             newLeftTarget = leftDrive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
             newRightTarget = rightDrive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
             leftDrive.setTargetPosition(newLeftTarget);
@@ -166,4 +178,46 @@ public class Basic_automation_duck extends LinearOpMode {
             //  sleep(250);   // optional pause after each move
         }
     }
+
+
+    public void encoderSpin(double speed ,double spinamount, double timeoutS)
+    {
+        int newSpinTarget;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+
+            newSpinTarget = spiner.getCurrentPosition() + (int) (spinamount * COUNTS_PER_INCH);
+
+            spiner.setTargetPosition(newSpinTarget);
+
+            spiner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+            runtime.reset();
+            spiner.setPower(Math.abs(speed));
+            //rightDrive.setPower(Math.abs(speed));
+
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (spiner.isBusy() /*&& rightDrive.isBusy() */)) {
+
+
+            }
+
+            // Stop all motion;
+            leftDrive.setPower(0);
+            rightDrive.setPower(0);
+            spiner.setPower(0);
+            // Turn off RUN_TO_POSITION
+            leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            spiner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //  sleep(250);   // optional pause after each move
+        }
+    }
+
 }
