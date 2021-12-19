@@ -19,6 +19,7 @@ public class TeleOpCompetition extends MasterTeleOp
             runCarousel();
             deliver();
             grab();
+            cap();
             idle();
         }
     }
