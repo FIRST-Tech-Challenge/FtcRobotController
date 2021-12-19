@@ -29,7 +29,7 @@ public class ResetArmCount extends CommandBase {
     public void initialize(){
         armSubsytem.setZero();
         telemetry.addData("reset arm encoders to zero","");
-        telemetry.update();
+        //telemetry.update();
     }
 
     @Override

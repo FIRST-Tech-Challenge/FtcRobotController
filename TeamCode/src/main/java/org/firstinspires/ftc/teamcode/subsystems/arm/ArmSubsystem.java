@@ -76,12 +76,22 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setZero(){
-        setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        telemetry.addData("ArmSubsystem set zero",magneticLimitSwitch.armLimitSwitchPressed());
 
 
-        telemetry.addData("ArmSubsystem","set 0 limit switch");
-        telemetry.update();
+        if(magneticLimitSwitch.armLimitSwitchPressed() && !getArmLimitSwitchFlag())
+        {
+            setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            armLimitSwitchFlag = true;
+
+            telemetry.addData("ArmSubsystem","set 0 limit switch");
+            telemetry.update();
+        }
+        else if(getCurrentPosition() > 10 && !magneticLimitSwitch.armLimitSwitchPressed()){
+            armLimitSwitchFlag = false;
+        }
+
     }
 
     public void setArmTargetPosition(int armTargetPosition){
@@ -112,6 +122,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     public Integer getLevel(Integer levelIndicator){
         return levels.get(levelIndicator);
+    }
+
+    public boolean getArmLimitSwitchFlag(){
+        return armLimitSwitchFlag;
     }
 
 }

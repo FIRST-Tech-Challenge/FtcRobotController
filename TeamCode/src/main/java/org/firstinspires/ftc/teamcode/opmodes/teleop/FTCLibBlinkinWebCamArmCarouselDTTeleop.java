@@ -28,7 +28,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        //telemetry.setAutoClear(false);
+        telemetry.setAutoClear(false);
 
         //set up Game pad 1
         GamepadEx driveOp = new GamepadEx(gamepad1);

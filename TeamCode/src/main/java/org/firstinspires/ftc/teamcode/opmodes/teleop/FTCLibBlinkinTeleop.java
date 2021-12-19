@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowAllianceColor;
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowTeamColors;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 
+@Deprecated
 @Disabled
 @TeleOp(name="Telop: FTCLib BlinkinExample", group="FTCLib")
 public class FTCLibBlinkinTeleop extends CommandOpMode {

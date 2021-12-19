@@ -19,7 +19,7 @@ public class LEDSubsystem extends SubsystemBase {
     /*
      * Change the pattern every 10 seconds in AUTO mode.
      */
-    private int ledPeriod = 10;
+    private int ledPeriod = 60;
 
     private Deadline ledCycleDeadline;
 

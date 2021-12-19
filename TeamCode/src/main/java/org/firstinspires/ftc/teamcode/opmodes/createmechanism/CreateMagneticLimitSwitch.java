@@ -45,10 +45,6 @@ public class CreateMagneticLimitSwitch {
 
         magneticLimitSwitch = new MagneticLimitSwitchSubsystem(hwMap, deviceName, telemetry);
 
-
-        telemetry.addData("Arm","set 0 limit switch");
-        telemetry.update();
-
     }
 
     public MagneticLimitSwitchSubsystem getMagneticLimitSwitchTrigger(){

@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 @Disabled
 @TeleOp(name="Telop: FTCLib BlinkinWebCamArmCarousel Example", group="FTCLib")
 public class FTCLibBlinkinWebCamArmCarouselTeleop extends CommandOpMode {
@@ -115,7 +116,7 @@ public class FTCLibBlinkinWebCamArmCarouselTeleop extends CommandOpMode {
         armLevels.put(2,500);
         armLevels.put(3,850);
 
-        m_arm = new ArmSubsystem(hardwareMap,"arm", DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
+        //m_arm = new ArmSubsystem(hardwareMap,"arm", DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
         m_arm.setArmTargetPosition(0);
         m_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 

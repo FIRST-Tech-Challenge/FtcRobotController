@@ -40,7 +40,7 @@ public class NudgeArmWithStick extends CommandBase {
     @Override
     public void execute(){
         int currentArmPos = m_armSubsytem.getCurrentPosition();
-        telemetry.addData("nudigng in command", currentArmPos);
+        //telemetry.addData("nudigng in command", currentArmPos);
 
         armSetPos = currentArmPos + nudge;
 

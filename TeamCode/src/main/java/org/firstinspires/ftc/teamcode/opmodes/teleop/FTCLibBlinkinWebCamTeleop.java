@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
+@Deprecated
 @Disabled
 @TeleOp(name="Telop: FTCLib BlinkinWebCam Example", group="FTCLib")
 public class FTCLibBlinkinWebCamTeleop extends CommandOpMode {

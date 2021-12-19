@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.createmechanism;
 
 import com.arcrobotics.ftclib.command.ConditionalCommand;
+import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -67,6 +68,7 @@ public class CreateArm {
 
         arm = new ArmSubsystem(hwMap,deviceName, magneticLimitSwitch, DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
 
+
         arm.setArmTargetPosition(arm.getLevel(0));
         arm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         arm.setDirection(DcMotorEx.Direction.REVERSE);
@@ -100,6 +102,9 @@ public class CreateArm {
         armLevel1.whenPressed(moveToLevel1);
         armLevel2.whenPressed(moveToLevel2);
         armLevel3.whenPressed(moveToLevel3);
+
+        ResetArmCount resetArmCount = new ResetArmCount(arm,telemetry);
+        arm.setDefaultCommand(new PerpetualCommand(resetArmCount));
 
 
     }
