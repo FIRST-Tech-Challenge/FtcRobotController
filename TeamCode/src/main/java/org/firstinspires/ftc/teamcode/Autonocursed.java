@@ -39,7 +39,7 @@ public class Autonocursed extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    private final int[] pos = {-400, -600, -800};
+    private final int[] pos = {-375, -775, -1100};
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -112,11 +112,11 @@ public class Autonocursed extends LinearOpMode {
             }
         }
         */
-        goToWayPoint(-0.5, 0.15, -53, 10, 70, 0.005, 1);
-        liftnextend(pos[duckPos-1],4000,1,1);
+        goToWayPoint(-0.5, 0.15, -53, 2, 50, 0.005, 1);
         this.robot.duck.setPower(-0.2);
         sleep(3000);
         this.robot.duck.setPower(0);
+        lift(pos[duckPos-1],1);
         if(duckPos == 1){
 
             this.robot.intakeUp.setPower(1);
@@ -124,14 +124,16 @@ public class Autonocursed extends LinearOpMode {
 
             this.robot.intakeUp.setPower(1);
         } else {
-            goToWayPoint(0.32, 0.51, -53, 10, 30, 0.01, 1);
-            this.robot.intakeUp.setPower(1);
+            goToWayPoint(0.37344, 0.75636, -53, 1.5, 30, 0.01, 1);
+            this.robot.intakeUp.setPower(0.7);
+            sleep(1500);
         }
-
         this.robot.intakeUp.setPower(0);
-        extend(0,1);
-        sleep(4000);
         lift(0,0.3);
+        goToWayPoint(1.6, -0.02, -90,   1.5, 30, 0.01, 1);
+        goToWayPoint(2.6, -0.02, -90,   1.5, 30, 0.01, 1);
+        sleep(1000);
+        
 
 
     }
@@ -153,6 +155,14 @@ public class Autonocursed extends LinearOpMode {
             telemetry.update();
         }
         Thread.sleep(200);
+
+    }
+
+    private void forwardGTWP(double x, double y, double angle, double distance, double vel, double vw, double disRes, double angleRes) throws InterruptedException{
+        
+    }
+
+    private void lateralGTWP(){
 
     }
 
