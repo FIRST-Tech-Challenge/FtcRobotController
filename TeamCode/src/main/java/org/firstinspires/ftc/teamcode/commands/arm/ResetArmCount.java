@@ -4,9 +4,6 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.magnetic.limitswitch.MagneticLimitSwitchSubsystem;
-
-import java.util.function.BooleanSupplier;
 
 public class ResetArmCount extends CommandBase {
 

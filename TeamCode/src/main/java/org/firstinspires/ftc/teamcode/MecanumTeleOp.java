@@ -179,6 +179,7 @@ public class MecanumTeleOp extends LinearOpMode {
             controller1lstickx = gamepad1.left_stick_x;
             controller1lsticky = gamepad1.left_stick_y;
             controller1rstickx = gamepad1.right_stick_x;
+
             if(controller1lstickx < 0.3 && controller1lstickx > -0.3)
                 controller1lstickx = 0.0;
             if(controller1lsticky < 0.3 && controller1lsticky > -0.3)
@@ -204,9 +205,10 @@ public class MecanumTeleOp extends LinearOpMode {
             controller1lsticky = controller1lsticky * slowdown;
             controller1rstickx = controller1rstickx * slowdown;
 
-            double y = controller1lsticky;
             double x = -controller1lstickx * 1.1; // * 1.1 Counteract imperfect strafing
+            double y = controller1lsticky;
             double rx = -controller1rstickx;
+
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]

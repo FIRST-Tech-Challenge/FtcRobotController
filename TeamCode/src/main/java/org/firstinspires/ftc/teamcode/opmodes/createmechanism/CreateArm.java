@@ -6,13 +6,15 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.hardware.DcMotor;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.NudgeArm;
+import org.firstinspires.ftc.teamcode.commands.arm.NudgeArmWithStick;
+import org.firstinspires.ftc.teamcode.commands.arm.NudgeArmWithSupplier;
 import org.firstinspires.ftc.teamcode.commands.arm.ResetArmCount;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.opmodes.triggers.CreateMagneticLimitSwitchTrigger;
@@ -64,15 +66,19 @@ public class CreateArm {
         arm = new ArmSubsystem(hwMap,deviceName, DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
 
         arm.setArmTargetPosition(arm.getLevel(0));
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        arm.setDirection(DcMotorEx.Direction.REVERSE);
 
         ResetArmCount resetArmCount = new ResetArmCount(arm, telemetry);
 
         mlsTrigger.whenActive(resetArmCount);
 
-        NudgeArm nudgeArmUp = new NudgeArm(arm,NUDGE,telemetry);
-        NudgeArm nudgeArmDown = new NudgeArm(arm, -NUDGE, telemetry);
+        NudgeArmWithStick nudgeArmUp = new NudgeArmWithStick(arm,-NUDGE,telemetry);
+        NudgeArmWithStick nudgeArmDown = new NudgeArmWithStick(arm, NUDGE, telemetry);
+
+        //NudgeArmWithSupplier nudgeArmUp = new NudgeArmWithSupplier(arm,()->op.getRightY(),NUDGE,telemetry);
+        //NudgeArmWithSupplier nudgeArmDown = new NudgeArmWithSupplier(arm, ()->op.getRightY(), NUDGE, telemetry);
+        //arm.setDefaultCommand(nudgeArmUp);
 
         SetArmLevel moveToLevel0 = new SetArmLevel(arm,0, telemetry);
         SetArmLevel moveToLevel1 = new SetArmLevel(arm,1, telemetry);
@@ -85,17 +91,23 @@ public class CreateArm {
         //Button armNudgerUp = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
         //Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
 
-        Trigger armNudgerUpTrigger = new Trigger(() -> op.getRightY() == 1);
-        Trigger armNudgerDownTrigger = new Trigger(() -> op.getRightY() == -1);
+        Trigger armNudgerUpTrigger = new Trigger(() -> op.getRightY() == 1 || op.getRightY() == -1);
+        //Trigger armNudgerDownTrigger = new Trigger(() -> op.getRightY() == -1);
 
-        armNudgerUpTrigger.whileActiveContinuous(nudgeArmUp);
-        armNudgerDownTrigger.whileActiveContinuous(nudgeArmDown);
+        //armNudgerUpTrigger.whileActiveContinuous(nudgeArmUp);
+        //armNudgerDownTrigger.whileActiveContinuous(nudgeArmDown);
 
-        /*armNudgerDownTrigger.whileActiveContinuous(() -> {
-            if(!mlsTrigger.get()){
+        //armNudgerUpTrigger.whileActiveContinuous(nudgeArmUp);
+
+        armNudgerUpTrigger.whileActiveContinuous(() -> {
+            telemetry.addData("inside lamda",op.getRightY());
+            if(op.getRightY() == 1){
                  nudgeArmDown.schedule();
             }
-        });*/
+            else if(op.getRightY() == 1){
+                nudgeArmUp.schedule();
+            }
+        });
         //armNudgerDownTrigger.whileActiveContinuous(new ConditionalCommand(() -> { return null;},nudgeArmDown,mlsTrigger::get));
 
         //A Level 0

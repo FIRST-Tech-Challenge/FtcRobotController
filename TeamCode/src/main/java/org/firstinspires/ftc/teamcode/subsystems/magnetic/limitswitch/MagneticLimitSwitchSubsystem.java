@@ -24,7 +24,7 @@ public class MagneticLimitSwitchSubsystem extends SubsystemBase {
 
     // Return the state of the Limit Switch, true/false
     public boolean armLimitSwitchPressed(){
-        telemetry.addData("ArmLimitSwitchPressed", magneticLimitSwitch.isPressed() );
+        //telemetry.addData("ArmLimitSwitchPressed", magneticLimitSwitch.isPressed() );
         telemetry.update();
 
         return magneticLimitSwitch.isPressed();

@@ -38,7 +38,7 @@ public class CreateMagneticLimitSwitchTrigger {
         magneticLimitSwitch = new MagneticLimitSwitchSubsystem(hwMap, deviceName, telemetry);
         mlsTrigger = new Trigger(magneticLimitSwitch::armLimitSwitchPressed);
 
-        telemetry.addData("trigger create","trigger created");
+        telemetry.addData("trigger created","trigger created");
         telemetry.update();
 
     }
