@@ -28,7 +28,7 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        telemetry.setAutoClear(false);
+        //telemetry.setAutoClear(false);
 
         //set up Game pad 1
         GamepadEx driveOp = new GamepadEx(gamepad1);
@@ -36,11 +36,9 @@ public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
         //set up Game pad 2
         GamepadEx toolOp2 = new GamepadEx(gamepad2);
 
-        //create any Triggers that are self contained subsystem
-        CreateMagneticLimitSwitchTrigger createMagneticLimitSwitchTrigger = new CreateMagneticLimitSwitchTrigger(hardwareMap, "limitSwitch",telemetry,true);
-        Trigger mlsTrigger = createMagneticLimitSwitchTrigger.getMagneticLimitSwitchTrigger();
 
-        CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, mlsTrigger, telemetry, true);
+
+        CreateArm createArm = new CreateArm(hardwareMap,"arm", toolOp2, telemetry, true);
         //CreateMagneticLimitSwitch createMagneticLimitSwitch = new CreateMagneticLimitSwitch(hardwareMap, "limitSwitch", createArm.getArm(), telemetry,true);
 
         CreateWebCam createWebCam = new CreateWebCam(hardwareMap, "Webcam 1", dashboard,createArm.getArm(), telemetry, true);

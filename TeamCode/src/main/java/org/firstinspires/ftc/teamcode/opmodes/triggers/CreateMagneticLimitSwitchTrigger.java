@@ -10,22 +10,26 @@ import org.firstinspires.ftc.teamcode.subsystems.magnetic.limitswitch.MagneticLi
 
 public class CreateMagneticLimitSwitchTrigger {
 
-    private MagneticLimitSwitchSubsystem magneticLimitSwitch;
+    private  MagneticLimitSwitchSubsystem magneticLimitSwitch;
+    private final ArmSubsystem armSubsystem;
+
     private final HardwareMap hwMap;
     private final String deviceName;
     private final Telemetry telemetry;
     private Trigger mlsTrigger;
 
 
-    public CreateMagneticLimitSwitchTrigger(final HardwareMap hwMap, final String deviceName, Telemetry telemetry){
+    public CreateMagneticLimitSwitchTrigger(final HardwareMap hwMap, final String deviceName, final ArmSubsystem arm,  Telemetry telemetry){
         this.deviceName = deviceName;
+        armSubsystem = arm;
         this.hwMap = hwMap;
         this.telemetry = telemetry;
 
     }
 
-    public CreateMagneticLimitSwitchTrigger(final HardwareMap hwMap, final String deviceName, Telemetry telemetry, boolean autoCreate){
+    public CreateMagneticLimitSwitchTrigger(final HardwareMap hwMap, final String deviceName, final ArmSubsystem arm, Telemetry telemetry, boolean autoCreate){
         this.deviceName = deviceName;
+        armSubsystem = arm;
         this.hwMap = hwMap;
         this.telemetry = telemetry;
 
@@ -36,7 +40,7 @@ public class CreateMagneticLimitSwitchTrigger {
     public void create(){
 
         magneticLimitSwitch = new MagneticLimitSwitchSubsystem(hwMap, deviceName, telemetry);
-        mlsTrigger = new Trigger(magneticLimitSwitch::armLimitSwitchPressed);
+        mlsTrigger = new Trigger(() -> magneticLimitSwitch.armLimitSwitchPressed() && armSubsystem.getCanResetArmFlag());
 
         telemetry.addData("trigger created","trigger created");
         telemetry.update();

@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.magnetic.limitswitch.MagneticLimitSwitchSubsystem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 public class ArmSubsystem extends SubsystemBase {
 
+    MagneticLimitSwitchSubsystem magneticLimitSwitch;
     //Motor in Port 1, Rev Hub 2
     private DcMotorEx motorArm = null;
     private DcMotorEx.Direction direction;
@@ -28,25 +30,30 @@ public class ArmSubsystem extends SubsystemBase {
     private int maxTargetPositon = 1200;
     private final Telemetry telemetry;
 
+    private boolean armLimitSwitchFlag = false;
+
 
     Map<Integer, Integer> levels = new HashMap<>();
 
 
 
-    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, Telemetry telemetry){
+    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, MagneticLimitSwitchSubsystem magneticLimitSwitchSubsystem, Telemetry telemetry){
         motorArm = hwMap.get(DcMotorEx.class, deviceName);
+        magneticLimitSwitch = magneticLimitSwitchSubsystem;
         this.telemetry = telemetry;
     }
 
-    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, DcMotorEx.RunMode mode, Telemetry telemetry){
+    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, MagneticLimitSwitchSubsystem magneticLimitSwitchSubsystem, DcMotorEx.RunMode mode, Telemetry telemetry){
         motorArm = hwMap.get(DcMotorEx.class, deviceName);
+        magneticLimitSwitch = magneticLimitSwitchSubsystem;
         setMode(mode);
         this.telemetry = telemetry;
 
     }
 
-    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, DcMotorEx.RunMode mode, HashMap levels, Telemetry telemetry){
+    public ArmSubsystem(final HardwareMap hwMap, final String deviceName, MagneticLimitSwitchSubsystem magneticLimitSwitchSubsystem, DcMotorEx.RunMode mode, HashMap levels, Telemetry telemetry){
         motorArm = hwMap.get(DcMotorEx.class, deviceName);
+        magneticLimitSwitch = magneticLimitSwitchSubsystem;
         setMode(mode);
         setLevels(levels);
         this.telemetry = telemetry;
@@ -72,23 +79,18 @@ public class ArmSubsystem extends SubsystemBase {
         setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
+
         telemetry.addData("ArmSubsystem","set 0 limit switch");
         telemetry.update();
     }
 
     public void setArmTargetPosition(int armTargetPosition){
-        //telemetry.addData("moving arm subsystem",armTargetPosition);
+        //telemetry.addData("can reset",canResetArmFlag);
         //telemetry.update();
         setPower(0.5);
-        if(armTargetPosition < MIN_TARGET_POSITION){
-            motorArm.setTargetPosition(MIN_TARGET_POSITION);
-        }
-        else if(armTargetPosition > maxTargetPositon)
-        {
-            motorArm.setTargetPosition(maxTargetPositon);
-        }
-        else
-            motorArm.setTargetPosition(armTargetPosition);
+        motorArm.setTargetPosition(armTargetPosition);
+
+
 
 
     }

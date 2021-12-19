@@ -27,28 +27,27 @@ import java.util.Map;
 public class CreateArm {
 
     private ArmSubsystem arm;
+    private MagneticLimitSwitchSubsystem magneticLimitSwitch;
     private final HardwareMap hwMap;
     private final String deviceName;
     private final Telemetry telemetry;
     private final GamepadEx op;
-    private final Trigger mlsTrigger;
+    private Trigger mlsTrigger;
 
     private static final int NUDGE = 5;
 
-    public CreateArm(final HardwareMap hwMap, final String deviceName, final GamepadEx op, Trigger mls, Telemetry telemetry){
+    public CreateArm(final HardwareMap hwMap, final String deviceName, final GamepadEx op, Telemetry telemetry){
         this.deviceName = deviceName;
         this.hwMap = hwMap;
         this.op = op;
-        mlsTrigger = mls;
         this.telemetry = telemetry;
 
     }
 
-    public CreateArm(final HardwareMap hwMap, final String deviceName, final GamepadEx op, Trigger mls, Telemetry telemetry, boolean autoCreate){
+    public CreateArm(final HardwareMap hwMap, final String deviceName, final GamepadEx op, Telemetry telemetry, boolean autoCreate){
         this.deviceName = deviceName;
         this.hwMap = hwMap;
         this.op = op;
-        mlsTrigger = mls;
         this.telemetry = telemetry;
 
         if (autoCreate) create();
@@ -63,52 +62,30 @@ public class CreateArm {
         armLevels.put(2,600);
         armLevels.put(3,900);
 
-        arm = new ArmSubsystem(hwMap,deviceName, DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
+        CreateMagneticLimitSwitch createMagneticLimitSwitch = new CreateMagneticLimitSwitch(hwMap, "limitSwitch", telemetry,true);
+        magneticLimitSwitch = createMagneticLimitSwitch.getMagneticLimitSwitchTrigger();
+
+        arm = new ArmSubsystem(hwMap,deviceName, magneticLimitSwitch, DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
 
         arm.setArmTargetPosition(arm.getLevel(0));
         arm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         arm.setDirection(DcMotorEx.Direction.REVERSE);
 
-        ResetArmCount resetArmCount = new ResetArmCount(arm, telemetry);
-
-        mlsTrigger.whenActive(resetArmCount);
 
         NudgeArmWithStick nudgeArmUp = new NudgeArmWithStick(arm,NUDGE,telemetry);
         NudgeArmWithStick nudgeArmDown = new NudgeArmWithStick(arm, -NUDGE, telemetry);
-
-        //NudgeArmWithSupplier nudgeArmUp = new NudgeArmWithSupplier(arm,()->op.getRightY(),NUDGE,telemetry);
-        //NudgeArmWithSupplier nudgeArmDown = new NudgeArmWithSupplier(arm, ()->op.getRightY(), NUDGE, telemetry);
-        //arm.setDefaultCommand(nudgeArmUp);
 
         SetArmLevel moveToLevel0 = new SetArmLevel(arm,0, telemetry);
         SetArmLevel moveToLevel1 = new SetArmLevel(arm,1, telemetry);
         SetArmLevel moveToLevel2 = new SetArmLevel(arm,2, telemetry);
         SetArmLevel moveToLevel3 = new SetArmLevel(arm,3, telemetry);
 
-        //Button armNudgerUp = new GamepadButton(op, GamepadKeys.Button.DPAD_UP);
-        //Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.DPAD_DOWN);
+        Trigger armNudgerUpTrigger = new Trigger(() -> op.getRightY() <= -0.5);
+        Trigger armNudgerDownTrigger = new Trigger(() -> op.getRightY() >= 0.5);
 
-        //Button armNudgerUp = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
-        //Button armNudgerDown = new GamepadButton(op, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+        armNudgerUpTrigger.whileActiveContinuous(nudgeArmUp);
+        armNudgerDownTrigger.whileActiveContinuous(nudgeArmDown);
 
-        Trigger armNudgerUpTrigger = new Trigger(() -> op.getRightY() == 1 || op.getRightY() == -1);
-        //Trigger armNudgerDownTrigger = new Trigger(() -> op.getRightY() == -1);
-
-        //armNudgerUpTrigger.whileActiveContinuous(nudgeArmUp);
-        //armNudgerDownTrigger.whileActiveContinuous(nudgeArmDown);
-
-        //armNudgerUpTrigger.whileActiveContinuous(nudgeArmUp);
-
-        armNudgerUpTrigger.whileActiveContinuous(() -> {
-            telemetry.addData("inside lamda",op.getRightY());
-            if(op.getRightY() == -1){
-                nudgeArmUp.schedule();
-            }
-            else if(op.getRightY() == 1){
-                nudgeArmDown.schedule();
-            }
-        });
-        //armNudgerDownTrigger.whileActiveContinuous(new ConditionalCommand(() -> { return null;},nudgeArmDown,mlsTrigger::get));
 
         //A Level 0
         Button armLevel0 = new GamepadButton(op, GamepadKeys.Button.A);

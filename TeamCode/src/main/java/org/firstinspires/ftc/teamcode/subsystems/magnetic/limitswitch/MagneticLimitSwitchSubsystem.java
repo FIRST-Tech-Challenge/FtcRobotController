@@ -12,6 +12,7 @@ public class MagneticLimitSwitchSubsystem extends SubsystemBase {
 
     //Arm Magnetic Limit Switch in Digital Port 2, Rev Hub 2
     private TouchSensor magneticLimitSwitch;
+    private boolean armLimitSwitchFlag = true;
 
     private final Telemetry telemetry;
 
@@ -29,4 +30,5 @@ public class MagneticLimitSwitchSubsystem extends SubsystemBase {
 
         return magneticLimitSwitch.isPressed();
     }
+
 }

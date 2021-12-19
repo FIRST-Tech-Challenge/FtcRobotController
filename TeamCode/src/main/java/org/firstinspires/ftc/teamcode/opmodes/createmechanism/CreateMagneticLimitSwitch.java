@@ -16,28 +16,24 @@ import org.firstinspires.ftc.teamcode.commands.arm.ResetArmCount;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.magnetic.limitswitch.MagneticLimitSwitchSubsystem;
 
-@Deprecated
 public class CreateMagneticLimitSwitch {
 
     private MagneticLimitSwitchSubsystem magneticLimitSwitch;
-    private final ArmSubsystem armSubsystem;
     private final HardwareMap hwMap;
     private final String deviceName;
     private final Telemetry telemetry;
     private Trigger mlsTrigger;
 
 
-    public CreateMagneticLimitSwitch(final HardwareMap hwMap, final String deviceName, final ArmSubsystem armSubsystem, Telemetry telemetry){
+    public CreateMagneticLimitSwitch(final HardwareMap hwMap, final String deviceName, Telemetry telemetry){
         this.deviceName = deviceName;
-        this.armSubsystem = armSubsystem;
         this.hwMap = hwMap;
         this.telemetry = telemetry;
 
     }
 
-    public CreateMagneticLimitSwitch(final HardwareMap hwMap, final String deviceName, final ArmSubsystem armSubsystem, Telemetry telemetry, boolean autoCreate){
+    public CreateMagneticLimitSwitch(final HardwareMap hwMap, final String deviceName, Telemetry telemetry, boolean autoCreate){
         this.deviceName = deviceName;
-        this.armSubsystem = armSubsystem;
         this.hwMap = hwMap;
         this.telemetry = telemetry;
 
@@ -48,17 +44,14 @@ public class CreateMagneticLimitSwitch {
     public void create(){
 
         magneticLimitSwitch = new MagneticLimitSwitchSubsystem(hwMap, deviceName, telemetry);
-        ResetArmCount resetArmCount = new ResetArmCount(armSubsystem, telemetry);
-        mlsTrigger = new Trigger(magneticLimitSwitch::armLimitSwitchPressed);
 
-        mlsTrigger.whenActive(resetArmCount);
 
         telemetry.addData("Arm","set 0 limit switch");
         telemetry.update();
 
     }
 
-    public Trigger getMagneticLimitSwitchTrigger(){
-        return mlsTrigger;
+    public MagneticLimitSwitchSubsystem getMagneticLimitSwitchTrigger(){
+        return magneticLimitSwitch;
     }
 }
