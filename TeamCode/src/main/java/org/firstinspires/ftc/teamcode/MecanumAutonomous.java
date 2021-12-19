@@ -15,21 +15,17 @@ import org.firstinspires.ftc.teamcode.external.libs.PIDController;
 public class MecanumAutonomous extends LinearOpMode {
     //Add an ElapsedTime for function runtime calculations.
     private ElapsedTime runtime = new ElapsedTime();
-
     //Import the robot's hardware map.
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
-
     // Declare IMU
     BNO055IMU.Parameters IMU_Parameters;
     double globalAngle;
     double rotation;
-
     //Declare the PIDController and other variables for it.
     PIDController pidRotate;
     Orientation lastAngles = new Orientation();
     double correction;
     float Yaw_Angle = 0;
-
     //True if Y is pressed
     boolean startPositionDuck = false;
     //True if X is pressed
@@ -40,23 +36,22 @@ public class MecanumAutonomous extends LinearOpMode {
     private boolean yPressed;
     private boolean xPressed;
 
+    private double intakePowerOut = 0.4;
     @Override
     public void runOpMode() {
         //Import the robot's hardware map
         robot.init(hardwareMap, telemetry);
-
         // Initialize IMU
         IMU_Parameters = new BNO055IMU.Parameters();
         IMU_Parameters.mode = BNO055IMU.SensorMode.IMU;
         robot.imu.initialize(IMU_Parameters);
         IMU_Calibrated();
-
-        /* Set PID proportional value to start reducing power at about 50 degrees of rotation.
+        /*
+        Set PID proportional value to start reducing power at about 50 degrees of rotation.
         P by itself may stall before turn completed so we add a bit of I (integral) which
         causes the PID controller to gently increase power if the turn is not completed.
         */
         pidRotate = new PIDController(.003, .00003, 0);
-
         /*
         Selection code for starting position and alliance settings.
         Booleans descriptions are True / False
@@ -74,13 +69,14 @@ public class MecanumAutonomous extends LinearOpMode {
             if (gamepad1.x & !xPressed) {
                 redAlliance = !redAlliance;
             }
+            //Set pressed variable so when the loop runs next frame an input only registers if it is new.
             xPressed = gamepad1.x;
             if (gamepad1.a & !aPressed) {
                 endPositionDuck = !endPositionDuck;
                 telemetry.addData("A Pressed", "pressed");
             }
+            //Set pressed variable so when the loop runs next frame an input only registers if it is new.
             aPressed = gamepad1.a;
-
             //Print input telemetry.
             telemetry.addData("Start Position", "Y = Start Position \n X = Alliance \n A = End Position");
             telemetry.addData("Settings", "\n%s, %s, %s",
@@ -89,58 +85,64 @@ public class MecanumAutonomous extends LinearOpMode {
                     endPositionDuck ?  "endDuck" : "endWarehouse");
             telemetry.update();
         }
-
         //Wait for the input's start.
         waitForStart();
-
         //Run code while the opMode is active.
         if(opModeIsActive()) {
 
             // Test 0 degrees forward/back
-            drive(0, 30, 0.5, 8);
-            drive(180, 30, 0.5, 8);
+            drive(0, 30, 0.2, 4);
+            drive(180, 30, 0.2, 4);
 
             // 90 degree square
-            drive(-90, 40, 0.5, 8);
-            drive(0, 40, 0.5, 8);
-            drive(90, 40, 0.5, 8);
-            drive(180, 40, 0.5, 8);
+            drive(-90, 40, 0.2, 4); // right strafe
+            drive(0, 40, 0.2, 4); // forward
+            drive(90, 40, 0.2, 4); // left strafe
+            drive(180, 40, 0.2, 4); // back
 
             // 45 degree diagonals
-            drive(45, 30, 0.5, 8);
-            drive(-45, 30, 0.5, 8);
-            drive(-135, 30, 0.5, 8);
-            drive(135, 30, 0.5, 8);
+            drive(45, 10, 0.2, 4); // diagonal right forward
+            drive(-45, 10, 0.2, 4); // diagonal left forward
+            drive(-135, 10, 0.2, 4); // diagonal right back
+            drive(135, 10, 0.2, 4); // diagonal left back
 
             // Check weird angles
-            drive(21, 20, 0.5, 8);
-            drive(98, 20, 0.5, 8);
-            drive(-22, 20, 0.5, 8);
-            drive(-126, 20, 0.5, 8);
+            drive(21, 10, 0.2, 4);
+            drive(98, 10, 0.2, 4);
+            drive(-22, 10, 0.2, 4);
+            drive(-126, 10, 0.2, 4);
 
-            sleep(3000);
-            
-            //driveStraight(25,0.8,5.0);
-           driveByAngle(0,10, 0.8, 1.0);
+            /*
+           driveStraight(25,0.8,5.0);
+           moveArm(600,0.5);
+           sleep(1000);
+           moveArm(0,0.5);
+           sleep(1000);
+           drive(0,25, 0.8, 1.0);
            sleep(2000);
-
-           driveByAngle(45,10, 0.8, 1.0);
+           drive(45,25, 0.8, 1.0);
            sleep(2000);
-           driveByAngle(90,10, 0.8, 1.0);
-           /*
-           sleep(2000);
-           drive(315,25, 0.8, 5.0);
-           sleep(2000);
-           drive(360,25, 0.8, 5.0);
+           drive(90,25, 0.8, 1.0);
            */
-           //rotate(45, 0.8);
-           //rotate(-45, 0.8);
 
 
-            sleep(20000);
+           /*
+           drive(45,25, 0.8, 5.0);
+           rotate(45, 0.8);
+           robot.motorIntake.setPower(intakePowerOut);
+           robot.motorCarousel.setPower(0);
+           moveArm(0,0.5);
+           rotate(-45, 0.8);
+           */
+
         }
     }
-
+    //Sets the arm to move to position with power
+    public void moveArm(int armSetPos, double power){
+        robot.motorArm.setTargetPosition(armSetPos);
+        robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.motorArm.setPower(0.5);
+    }
     /*
     Drive forward/backward. Travel distance in CM.
     @param distanceInCM Distance to be driven (In centimeters)
@@ -169,9 +171,9 @@ public class MecanumAutonomous extends LinearOpMode {
             //Loop while motors are moving towards target.
             while (opModeIsActive() && (runtime.seconds() < timeoutS) && (robot.motorsBusy())) {
                 if(forward && robot.motorFrontLeft.getCurrentPosition() > target*0.75 && robot.motorFrontRight.getCurrentPosition() > target*0.75)
-                slowdown = 0.25;
+                    slowdown = 0.25;
                 if(!forward && robot.motorFrontLeft.getCurrentPosition() < target*0.75 && robot.motorFrontRight.getCurrentPosition() < target*0.75)
-                slowdown = 0.25;
+                    slowdown = 0.25;
                 robot.setPowers(power*slowdown);
                 telemetry.addData("Target", target);
                 telemetry.addData("The Motors Are Busy:", robot.motorsBusy());
@@ -183,19 +185,17 @@ public class MecanumAutonomous extends LinearOpMode {
             robot.restartEncoders();
         }
     }
-
     /*
-     Drive in any direction, distance in CM is tracked from the front left and right wheels.
-     Distance will not be exact due to mecanum wheel slip
-     @param degrees Direction to be driven (In degrees) (From 0 to 360 OR use negatives! ie, -90)
-     @param distance Distance to be driven (In centimeters, always positive)
-     @param scalePower Motor power (From 0.0 to 1.0), always positive think of as a magnitude of the calculated power
-     @param timeout Motor movement timeout (In Seconds) (Adjust accordingly, or just put 5)
+    Drive in any direction.
+    @param degrees Direction to be driven (In degrees) (From 0 to 359)
+    @param distance Distance to be driven (In centimeters)
+    @param power Motor power (From 0.0 to 1.0)
+    @param timeout Motor movement timeout (In Seconds) (Adjust accordingly, or just put 5)
     */
     public void drive(double degrees, double distance, double power, double timeout) {
-        double degreesToR = Math.toRadians(degrees - 90);
+        double degreesToR = Math.toRadians(degrees + 90); // flip sine/cosine -90 degrees to move x-axis forward
         double x = Math.cos(degreesToR);
-        double y = Math.sin(degreesToR);
+        double y = -Math.sin(degreesToR); // Flip sine/cosine to clockwise
         double rx = 0;
         double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
         double frontLeftPower = ((y + x) + rx / denominator) * power;
@@ -203,137 +203,38 @@ public class MecanumAutonomous extends LinearOpMode {
         double frontRightPower = ((y - x) + rx / denominator) * power;
         double backRightPower = ((y + x) + rx / denominator) * power;
         double travelDistance = driveDistance(distance);
+
+        //Track for front right instead of front left
+        // *** NOTE: sine for the y axis has now been flipped and the quadrants corrected!
         DcMotor trackEncoderFor = robot.motorFrontLeft;
         String trackEncoderForTelemetry = "Front Left";
-        if(
-                (degrees > 90 && degrees <= 180)
-                || (degrees < 360 && degrees >= 270)
-                || (degrees < -0 && degrees >= -90)
-        ){
+        if( degrees > 90 && degrees <= 180 || degrees < 360 && degrees >= 270  || degrees < -0 && degrees >= -90 ){
             trackEncoderFor = robot.motorFrontRight;
             trackEncoderForTelemetry = "Front Right";
         }
-
-        //begin runtime for timeout.
+        //begin runtime for timeout and restart encoders
         runtime.reset();
-
+        robot.restartEncoders();
+        //while loop for active movement
         while (opModeIsActive() && (runtime.seconds() < timeout) && Math.abs(trackEncoderFor.getCurrentPosition()) < travelDistance) {
+            //Set powers.
             robot.motorFrontLeft.setPower(frontLeftPower);
             robot.motorBackLeft.setPower(backLeftPower);
             robot.motorFrontRight.setPower(frontRightPower);
             robot.motorBackRight.setPower(backRightPower);
-
-            // Examples of how to use telemetry!
+            //Telemetry.
             telemetry.addData("degrees",degrees);
             telemetry.addData("x",Math.abs(x));
             telemetry.addData("y",Math.abs(y));
             telemetry.addData("denominator", denominator);
             telemetry.addData("trackEncoderFor", trackEncoderForTelemetry);
             telemetry.addData("Track which motor?", trackEncoderFor.getCurrentPosition() );
-            telemetry.addData("m1 Current Pos", robot.motorFrontLeft.getCurrentPosition() );
-            telemetry.addData("m2 Current Pos", robot.motorFrontRight.getCurrentPosition() );
-            telemetry.addData("m1 Current Power", robot.motorFrontLeft.getPower() );
-            telemetry.addData("m2 Current Power", robot.motorFrontRight.getPower() );
-            telemetry.addData("m3 Current Power", robot.motorBackRight.getPower() );
-            telemetry.addData("m4 Current Power", robot.motorBackLeft.getPower() );
             telemetry.addData("Travel Distance", travelDistance);
             telemetry.update();
-
         }
         robot.setPowers(0);
         robot.restartEncoders();
     }
-
-
-    /*
-     Drive in any direction, distance in CM is tracked from the front left and right wheels.
-     Distance will not be exact due to mecanum wheel slip
-     @param degrees Direction to be driven (In degrees) (From 0 to 360 OR use negatives! ie, -90)
-     @param distance Distance to be driven (In centimeters, always positive)
-     @param scalePower Motor power (From 0.0 to 1.0), always positive think of as a magnitude of the calculated power
-     @param timeout Motor movement timeout (In Seconds) (Adjust accordingly, or just put 5)
-
-     NOTE, the robot simulator requires me to pass in the motors, you shouldn't need to do this!
-   */
-    public void driveByAngle(double degrees, double distance, double scalePower, double timeout) {
-
-        // Rotate the X axis - 1/4PI to point up
-        double degreesToR = Math.toRadians(degrees - 90); // -90deg to rotate the x axis forward
-        double x = Math.cos(degreesToR); // x is cosine, rotate X axis -90deg
-        double y = Math.sin(degreesToR); // y is sine, flipped robot like the joystick since forward is -1!
-        double rx = 0; // We can add rotate later! (like the right stick)
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-
-        // Combine x & y
-        double frontLeftbackRightPower   = ((y + x) + rx / denominator) * scalePower;
-        double frontRightbackLeftPower  = ((y - x) + rx / denominator) * scalePower;
-
-        // Calculate CM to encoder counts, distance will not be exact due to mecanum wheel slip
-        double travelDistance = driveDistance(distance);
-
-        //begin runtime for timeout.
-        runtime.reset();
-
-        /* Which motor to track encoder counts for and how to track?
-         * Defaults to m1
-         * track m1 for the upper right quadrant and lower left quadrant
-         * track m2 for upper left quadrant and lower right quadrant
-         *
-         * This is a simpler way of tracking the encoder counts
-         * We can accomplish this by instantiating a new DcMotor trackEncoderFor
-         * and assigning the motor we would like to follow
-         *
-         * Also accounts for negative degress if someone enters -45
-         */
-        DcMotor trackEncoderFor = robot.motorFrontLeft;
-        String trackEncoderForTelemetry = "m1";
-        if( (
-                (degrees > 90 && degrees <= 180) )
-                || (degrees < 360 && degrees >= 270)
-                || (degrees < -0 && degrees >= -90)
-        ){
-            trackEncoderFor = robot.motorFrontRight;
-            trackEncoderForTelemetry = "m2";
-        }
-
-        /* During our while loop check the encoder travelDistance that
-         * we want to travel against the abs value of the current position
-         * Math.abs ensures we are always checking a positive value even if encoder is negative!
-         */
-        while (opModeIsActive()
-                && (runtime.seconds() < timeout)
-                && Math.abs(trackEncoderFor.getCurrentPosition()) < travelDistance
-        ) {
-            /* @TODO: If needed, add simple proportional slowdown here OR use the PIDController */
-
-            robot.motorFrontLeft.setPower(frontLeftbackRightPower); // front Left
-            robot.motorFrontRight.setPower(frontRightbackLeftPower); // front Right
-            robot.motorBackRight.setPower(frontLeftbackRightPower); // back Right
-            robot.motorBackLeft.setPower(frontRightbackLeftPower); // back Left
-
-            // Examples of how to use telemetry!
-            telemetry.addData("degrees",degrees);
-            telemetry.addData("x",Math.abs(x));
-            telemetry.addData("y",Math.abs(y));
-            telemetry.addData("denominator", denominator);
-            telemetry.addData("trackEncoderFor", trackEncoderForTelemetry);
-            telemetry.addData("Track which motor?", trackEncoderFor.getCurrentPosition() );
-            telemetry.addData("m1 Current Pos", robot.motorFrontLeft.getCurrentPosition() );
-            telemetry.addData("m2 Current Pos", robot.motorFrontRight.getCurrentPosition() );
-
-            telemetry.addData("m1 Current Power", robot.motorFrontLeft.getPower() );
-            telemetry.addData("m2 Current Power", robot.motorFrontRight.getPower() );
-            telemetry.addData("m3 Current Power", robot.motorBackRight.getPower() );
-            telemetry.addData("m4 Current Power", robot.motorBackLeft.getPower() );
-            telemetry.addData("Travel Distance", travelDistance);
-            telemetry.update();
-        }
-        // Kill Power
-        robot.setPowers(0);
-        // Reset Encoders to 0 - this takes time in the loop, consider using relative position values
-        robot.restartEncoders();
-    }
-
     /*
     Calculate drive distance to be used in driving methods by converting centimeters into encoder clicks.
     @param distance Distance to be driven (In centimeters)
@@ -342,13 +243,11 @@ public class MecanumAutonomous extends LinearOpMode {
         double drive  = (robot.REV_ENCODER_CLICKS/ robot.REV_WHEEL_CIRC);
         return (int)Math.floor(drive * distance);
     }
-
-    //Reset IMU angle calculations
+    //Reset IMU angle calculations.
     private void resetAngle() {
         lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         globalAngle = 0;
     }
-
     //Get the IMU's global angle.
     private double getAngle() {
         // We experimentally determined the Z axis is the axis we want to use for heading angle.
@@ -365,10 +264,9 @@ public class MecanumAutonomous extends LinearOpMode {
         lastAngles = angles;
         return globalAngle;
     }
-
     /*
     Turn the robot (Counterclockwise).
-    @param degrees Amount of degrees to be turned (0 to 360)
+    @param degrees Amount of degrees to be turned (0 to 359)
     */
     private void rotate(int degrees, double power) {
         //Reset IMU's angle tracking.
@@ -401,7 +299,8 @@ public class MecanumAutonomous extends LinearOpMode {
                 sleep(100);
             }
             do {
-                power = pidRotate.performPID(getAngle()); //power will be - on right turn.
+                power = pidRotate.performPID(getAngle());
+                //power will be - on right turn.
                 robot.motorBackLeft.setPower(power);
                 robot.motorFrontLeft.setPower(power);
                 robot.motorBackRight.setPower(-power);
@@ -435,7 +334,6 @@ public class MecanumAutonomous extends LinearOpMode {
         //Reset IMU's angle tracking.
         resetAngle();
     }
-
     //Returns telemetry for IMU Calibration.
     public void IMU_Calibrated() {
         telemetry.addData("IMU Calibration Status", robot.imu.getCalibrationStatus());

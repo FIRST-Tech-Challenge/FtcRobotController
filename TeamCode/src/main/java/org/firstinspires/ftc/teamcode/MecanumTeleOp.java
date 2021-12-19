@@ -43,6 +43,7 @@ public class MecanumTeleOp extends LinearOpMode {
         double carouselPower = 0;
 
         //arm limit switch toggle to reset to 0
+        boolean armLimitPressed;
         boolean armLimitSwitchFlag = true;
 
         //booleans for slow mode
@@ -51,12 +52,12 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
         //init loop
-         while (! isStarted()) {
-             telemetry.addData("Arm Encoder", robot.motorArm.getCurrentPosition());
-             telemetry.addData("Say GEX GEX GEX", "Hello Driver");
-             telemetry.addData("Arm Limit Switch", robot.armLimitSwitch.isPressed());
-             telemetry.update();
-         }
+        while (! isStarted()) {
+            telemetry.addData("Arm Encoder", robot.motorArm.getCurrentPosition());
+            telemetry.addData("Say GEX GEX GEX", "Hello Driver");
+            telemetry.addData("Arm Limit Switch", robot.armLimitSwitch.isPressed());
+            telemetry.update();
+        }
 
 
         waitForStart();
@@ -77,48 +78,28 @@ public class MecanumTeleOp extends LinearOpMode {
              * Rightstick Y - nudge up and down in small incremenets
              */
             armCurrentPos = robot.motorArm.getCurrentPosition();
+            armLimitPressed = robot.armLimitSwitch.isPressed();
 
             // Magnetic Limit Switch
-            if (robot.armLimitSwitch.isPressed() && armLimitSwitchFlag == false){
+            if (armLimitPressed && !armLimitSwitchFlag){
                 // Reset to 0 if the magnetic limit switch is pressed and our flag is set to false
                 robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);  
+                robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armSetPos = 0;
                 armLimitSwitchFlag = true;
-            }else {
+            }else if( armCurrentPos > 10 && !armLimitPressed) {
                 // when arm is up set the limit switch flag to false to allow reset on next limit switch press
-                if( armCurrentPos > 0 && !robot.armLimitSwitch.isPressed()) {
-                    armLimitSwitchFlag = false;
-                }
+                armLimitSwitchFlag = false;
             }
 
-            // Arm Up and Arm Down in small increments, >= 0.25 helps prevent issues with 0 value
-            if (gamepad2.right_stick_y >= 0.25) {
-                if (gamepad2.right_stick_y == -1 ){
-                    armSetPos = armSetPos + 5;
-                } else if (gamepad2.right_stick_y == 1 ) {
-                    armSetPos = armSetPos - 5;
-                }
-            }
-            //set arm positions to gamepad.2 buttons
-            if (gamepad2.a) {
-                armSetPos = armLevel0;
-            }else if (gamepad2.x) {
-                armSetPos = armLevel1;
-            }else if (gamepad2.y) {
-                armSetPos = armLevel2;
-            }else if (gamepad2.b) {
-                armSetPos = armLevel3;
+            // Arm Up and Arm Down in small increments, >= 0.5 helps prevent issues with 0 value
+            if (gamepad2.right_stick_y <= -0.5){
+                armSetPos = armSetPos + 5;
+            } else if (gamepad2.right_stick_y >= 0.5 && (!armLimitPressed && !armLimitSwitchFlag)) {
+                armSetPos = armSetPos - 5;
             }
 
-            // Arm Up and Arm Down in small increments
-            if (gamepad2.right_stick_y != 0.25) {
-                //armSetPos += gamepad2.right_stick_y*10;
-                if (gamepad2.right_stick_y == -1 ){
-                    armSetPos = armSetPos + 5;
-                } else if (gamepad2.right_stick_y == 1 ) {
-                    armSetPos = armSetPos - 5;
-                }
-            }
+
             //set arm positions to gamepad.2 buttons
             if (gamepad2.a) {
                 armSetPos = armLevel0;
@@ -132,7 +113,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
             //set arm power
             robot.motorArm.setTargetPosition(armSetPos);
-            robot.motorArm.setPower(0.5);
+            robot.motorArm.setPower(0.2); // needs to be slow otherwise is jerky
 
 
             /* Intake, Gamepad 2
@@ -179,7 +160,6 @@ public class MecanumTeleOp extends LinearOpMode {
             controller1lstickx = gamepad1.left_stick_x;
             controller1lsticky = gamepad1.left_stick_y;
             controller1rstickx = gamepad1.right_stick_x;
-
             if(controller1lstickx < 0.3 && controller1lstickx > -0.3)
                 controller1lstickx = 0.0;
             if(controller1lsticky < 0.3 && controller1lsticky > -0.3)
@@ -205,10 +185,9 @@ public class MecanumTeleOp extends LinearOpMode {
             controller1lsticky = controller1lsticky * slowdown;
             controller1rstickx = controller1rstickx * slowdown;
 
-            double x = -controller1lstickx * 1.1; // * 1.1 Counteract imperfect strafing
             double y = controller1lsticky;
+            double x = -controller1lstickx * 1.1; // * 1.1 Counteract imperfect strafing
             double rx = -controller1rstickx;
-
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
