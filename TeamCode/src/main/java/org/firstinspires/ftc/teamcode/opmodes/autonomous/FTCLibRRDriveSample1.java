@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -50,6 +51,7 @@ public class FTCLibRRDriveSample1 extends CommandOpMode {
     private TurnCommand turnCommand5;
 
     private Command trajGroup;
+    private Pose2d startPose;
 
     @Override
     public void initialize() {
@@ -59,36 +61,38 @@ public class FTCLibRRDriveSample1 extends CommandOpMode {
         telemetry.setAutoClear(false);
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), false);
+        startPose = new Pose2d(-37, 72, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
 
         LEDSubsystem ledSubsystem = new LEDSubsystem(hardwareMap,"blinkin");
         ShowAllianceColor allianceColor = new ShowAllianceColor(ledSubsystem,ShowAllianceColor.AllianceColor.BLUE);
 
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-37, 72, Math.toRadians(270)))
+        Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-15,40),Math.toRadians(270))
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                 })
                 .build();
 
-        turnCommand1 = new TurnCommand(drive, -135);
+        turnCommand1 = new TurnCommand(drive, Math.toRadians(-135));
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d())
+        Trajectory traj2 = drive.trajectoryBuilder(traj1.end().plus(new Pose2d(0, 0, Math.toRadians(-135))))
                 .lineTo(new Vector2d(-46,55))//step 5
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 2", "performing path 2 action");
                 }) //step 6
                 .build();
 
-        turnCommand2 = new TurnCommand(drive, 135);
+        turnCommand2 = new TurnCommand(drive, Math.toRadians(135));
 
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-                .back(10) //step 8
-                .strafeTo(new Vector2d(52,67)) //step 8
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end().plus(new Pose2d(0, 0, Math.toRadians(135))))
+                .splineToConstantHeading(new Vector2d(52,67),Math.toDegrees(260.3)) //step 8
+                //
                 .build();
 
-        turnCommand3 = new TurnCommand(drive, 90);
+        //turnCommand3 = new TurnCommand(drive, Math.toRadians(90));
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d())
+        /*Trajectory traj4 = drive.trajectoryBuilder(new Pose2d())
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 4", "performing path 4 action");
                     allianceColor.schedule();
@@ -106,25 +110,20 @@ public class FTCLibRRDriveSample1 extends CommandOpMode {
 
         Trajectory traj6 = drive.trajectoryBuilder(new Pose2d())
                 .back(45)
-                .build();
+                .build();*/
+        sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
+        sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
+        sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
+        //sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
+        //sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+        //sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
 
-        schedule(new WaitUntilCommand(this::isStarted).andThen(new RunCommand(()->{
-                    sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
-                    sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
-                    sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
-                    sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-                    sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
-                    sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
-
-                    trajGroup = new SequentialCommandGroup(sample1Follower1,
-                            turnCommand1,sample1Follower2,turnCommand2,
-                            sample1Follower3,turnCommand3,sample1Follower4,
-                            turnCommand4,sample1Follower5,turnCommand5,
-                            sample1Follower6);
-                    trajGroup.schedule();
-            })
+        schedule(new WaitUntilCommand(this::isStarted).andThen(
+                sample1Follower1.andThen(turnCommand1,
+                        sample1Follower2,turnCommand2,
+                        sample1Follower3)
         ));
 
-
+        telemetry.update();
     }
 }

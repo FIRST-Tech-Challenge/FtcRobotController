@@ -33,7 +33,6 @@ public class Sample1 {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(41.065033847087705, 41.065033847087705, Math.toRadians(180), Math.toRadians(180), 13.2435)
-
                     .followTrajectorySequence(drive ->
                             drive.trajectorySequenceBuilder(new Pose2d(-37, 72, Math.toRadians(270)))
                                     .splineTo(new Vector2d(-15,40),Math.toRadians(270))
@@ -44,16 +43,19 @@ public class Sample1 {
                                     .addDisplacementMarker(()->{}) //step 6
                                     .waitSeconds(3)
                                     .turn(Math.toRadians(135)) //step 7
-                                    .back(10) //step 8
-                                    .strafeTo(new Vector2d(52,67)) //step 8
-                                    .turn(Math.toRadians(90)) //step 9
-                                    .addDisplacementMarker(()->{}) //step 10
-                                    .waitSeconds(1) //step 10
-                                    .turn(Math.toRadians(-90)) //step 11
-                                    .strafeTo(new Vector2d(11,67)) //step 12
-                                    .splineToConstantHeading(new Vector2d(-15,40),Math.toRadians(-90)) //step 13
-                                    .turn(Math.toRadians(90))
-                                    .back(45)
+                                    .splineToConstantHeading(new Vector2d(52,67),Math.toDegrees(260.3))
+                                    //.splineToConstantHeading(new Vector2d(52,67),Math.toDegrees(270))
+
+                                    //.back(10) //step 8
+                                    //.strafeTo(new Vector2d(52,67)) //step 8
+                                    //.turn(Math.toRadians(90)) //step 9
+                                    //.addDisplacementMarker(()->{}) //step 10
+                                    //.waitSeconds(1) //step 10
+                                    //.turn(Math.toRadians(-90)) //step 11
+                                    //.strafeTo(new Vector2d(11,67)) //step 12
+                                    //.splineToConstantHeading(new Vector2d(-15,40),Math.toRadians(-90)) //step 13
+                                    //.turn(Math.toRadians(90))
+                                    //.back(45)
                        /* drive.trajectorySequenceBuilder(new Pose2d(-37, -72, Math.toRadians(90))) //step 1
                                 .splineTo(new Vector2d(-15,-40),Math.toRadians(90)) //step 2
                                 .addDisplacementMarker(()->{}) //step 3
