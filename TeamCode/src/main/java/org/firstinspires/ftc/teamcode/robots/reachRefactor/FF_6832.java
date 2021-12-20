@@ -11,7 +11,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
@@ -19,16 +18,14 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
-import org.firstinspires.ftc.teamcode.statemachine.Stage;
-import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.tools.Diagnostic;
+import java.util.function.DoubleConsumer;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 /** Controls
  * Pregame
@@ -36,6 +33,7 @@ import javax.tools.Diagnostic;
  * b - set alliance to red
  * a - toggle FTC dashboard
  * y - toggle drivetrain smoothing
+ * right stick button - toggle desmos drive
  * dpad up - initialize / shutdown vision provider
  * dpad left - increment vision provider index
  * dpad down - toggle debug telemetry
@@ -80,6 +78,11 @@ public class FF_6832 extends OpMode {
     private boolean dashboardEnabled, debugTelemetryEnabled, smoothingEnabled;
     private boolean gamepad1JoysticksActive, gamepad2JoysticksActive;
     private int chassisDistanceLevelIndex;
+
+    // Diagnostic State
+    private DiagnosticStep diagnosticStep;
+    private int diagnosticIndex;
+    private boolean diagnosticFinished;
 
     // Telemetry
     private FtcDashboard dashboard;
@@ -203,9 +206,10 @@ public class FF_6832 extends OpMode {
             toggleIsDashboardEnabled();
         if(stickyGamepad1.y)
             smoothingEnabled = !smoothingEnabled;
-        if(stickyGamepad1.dpad_down) {
+        if(stickyGamepad1.dpad_down)
             debugTelemetryEnabled = !debugTelemetryEnabled;
-        }
+        if(stickyGamepad1.right_stick_button)
+            usingDesmosDrive = !usingDesmosDrive;
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -234,9 +238,9 @@ public class FF_6832 extends OpMode {
         double rotate = Math.pow(gamepad.right_stick_x, 3) * ROTATE_SCALING_FACTOR;
 
         if(usingDesmosDrive)
-            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
+            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9, smoothingEnabled);
         else
-            robot.driveTrain.drive(forward, rotate);
+            robot.driveTrain.drive(forward, rotate, smoothingEnabled);
     }
 
     private void handleTeleOpDriveTank(Gamepad gamepad) {
@@ -248,9 +252,9 @@ public class FF_6832 extends OpMode {
 
 
         if(usingDesmosDrive)
-            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
+            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9, smoothingEnabled);
         else
-            robot.driveTrain.drive(forward, rotate);
+            robot.driveTrain.drive(forward, rotate, smoothingEnabled);
     }
 
     private void handleEmergencyStop() {
@@ -305,49 +309,6 @@ public class FF_6832 extends OpMode {
         robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[chassisDistanceLevelIndex]);
     }
 
-    private Stage diagnosticStage = new Stage();
-    private StateMachine diagnostic = UtilMethods.getStateMachine(diagnosticStage)
-            // testing drivetrain
-            .addTimedState(3f, () -> {
-                robot.driveTrain.drive(0.25, 0);
-            }, () -> {})
-            .addTimedState(3f, () -> {
-                robot.driveTrain.drive(0, Math.PI / 2);
-            }, () -> {})
-
-            // testing crane
-            .addState(() -> robot.crane.articulate(Crane.Articulation.HOME))
-            .addState(() -> robot.crane.articulate(Crane.Articulation.LOWEST_TEIR))
-            .addState(() -> robot.crane.articulate(Crane.Articulation.HIGH_TEIR))
-            .addState(() -> robot.crane.articulate(Crane.Articulation.MIDDLE_TEIR))
-            .addState(() -> robot.crane.articulate(Crane.Articulation.STARTING))
-            .addState(() -> robot.crane.articulate(Crane.Articulation.CAP))
-            .addState(() -> robot.articulate(Robot.Articulation.TRANSFER))
-
-            // testing gripper
-            .addState(() -> robot.crane.articulate(Crane.Articulation.HOME))
-            .addTimedState(3f, () -> {
-                robot.gripper.togglePitch();
-            }, () -> {})
-            .addTimedState(3f, () -> {
-                robot.gripper.toggleGripper();
-            }, () -> {})
-
-            // testing turret
-            .addTimedState(3f,
-                    () -> robot.crane.turret.setTargetAngle(Math.PI / 2),
-                    () -> {})
-            .addTimedState(3f,
-                    () -> robot.crane.turret.setTargetAngle(Math.PI),
-                    () -> {})
-            .addTimedState(3f,
-                    () -> robot.crane.turret.setTargetAngle(3 * Math.PI / 2),
-                    () -> {})
-            .addTimedState(3f,
-                    () -> robot.crane.turret.setTargetAngle(2 * Math.PI),
-                    () -> {})
-            .build();
-
     private enum DiagnosticStep {
         DRIVETRAIN_LEFT_MOTOR, DRIVETRAIN_RIGHT_MOTOR, DRIVETRAIN_MIDDLE_MOTOR, DRIVETRAIN_MIDDLE_SWIVEL_MOTOR,
         CRANE_SHOULDER_SERVO, CRANE_ELBOW_SERVO, CRANE_WRIST_SERVO, TURRET_MOTOR,
@@ -363,83 +324,57 @@ public class FF_6832 extends OpMode {
         }
     }
 
-    private int servoClip(int position) {
-        return Range.clip(position, 750, 2250);
+    private void handleDiagnosticMotorControls(DoubleConsumer setTargetVelocity) {
+        setTargetVelocity.accept(-gamepad1.right_stick_y);
     }
 
-    private DiagnosticStep diagnosticStep = DiagnosticStep.DRIVETRAIN_LEFT_MOTOR;
-    private int diagnosticIndex = 0;
-    private boolean diagnosticTargetsInitialized = false;
+    private void handleDiagnosticServoControls(IntSupplier getTargetPos, IntConsumer setTargetPos) {
+        setTargetPos.accept(UtilMethods.servoClip((int) (getTargetPos.getAsInt() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW)));
+        setTargetPos.accept(UtilMethods.servoClip((int) (getTargetPos.getAsInt() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST)));
+    }
+
     private void handleManualDiagnostic() {
-        if(stickyGamepad1.right_bumper) {
+        if(stickyGamepad1.right_bumper)
             diagnosticIndex++;
-            diagnosticIndex %= DiagnosticStep.getNumDiagnosticSteps();
-            diagnosticIndex = Math.abs(diagnosticIndex);
-            diagnosticStep = DiagnosticStep.getDiagnosticStep(diagnosticIndex);
-        } else if(stickyGamepad1.left_bumper) {
+        else if(stickyGamepad1.left_bumper)
             diagnosticIndex--;
-            diagnosticIndex %= DiagnosticStep.getNumDiagnosticSteps();
-            diagnosticIndex = Math.abs(diagnosticIndex);
-            diagnosticStep = DiagnosticStep.getDiagnosticStep(diagnosticIndex);
-        }
+        diagnosticIndex %= DiagnosticStep.getNumDiagnosticSteps();
+        diagnosticIndex = Math.abs(diagnosticIndex);
+        diagnosticStep = DiagnosticStep.getDiagnosticStep(diagnosticIndex);
 
         switch(diagnosticStep) {
             case DRIVETRAIN_LEFT_MOTOR:
-                robot.driveTrain.setFrontLeftTargetVelocity(-gamepad1.right_stick_y);
+                handleDiagnosticMotorControls(robot.driveTrain::setFrontLeftTargetVelocity);
                 break;
             case DRIVETRAIN_RIGHT_MOTOR:
-                robot.driveTrain.setFrontRightTargetVelocity(-gamepad1.right_stick_y);
+                handleDiagnosticMotorControls(robot.driveTrain::setFrontRightTargetVelocity);
                 break;
             case DRIVETRAIN_MIDDLE_MOTOR:
-                robot.driveTrain.setMiddleTargetVelocity(-gamepad1.right_stick_y);
+                handleDiagnosticMotorControls(robot.driveTrain::setMiddleTargetVelocity);
                 break;
             case DRIVETRAIN_MIDDLE_SWIVEL_MOTOR:
                 robot.driveTrain.setSwivelTargetAngle(robot.driveTrain.getSwivelTargetAngle() - gamepad1.right_stick_y);
                 break;
             case CRANE_SHOULDER_SERVO:
-                robot.crane.setShoulderTargetPos(
-                        servoClip((int) (robot.crane.getShoulderTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
-                );
-                robot.crane.setShoulderTargetPos(
-                        servoClip((int) (robot.crane.getShoulderTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST)));
+                handleDiagnosticServoControls(robot.crane::getShoulderTargetPos, robot.crane::setShoulderTargetPos);
                 break;
             case CRANE_ELBOW_SERVO:
-                robot.crane.setElbowTargetPos(
-                        servoClip((int) (robot.crane.getElbowTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
-                );
-                robot.crane.setElbowTargetPos(
-                        servoClip((int) (robot.crane.getElbowTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST))
-                );
+                handleDiagnosticServoControls(robot.crane::getElbowTargetPos, robot.crane::setElbowTargetPos);
                 break;
             case CRANE_WRIST_SERVO:
-                robot.crane.setWristTargetPos(
-                        servoClip((int) (robot.crane.getWristTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
-                );
-                robot.crane.setWristTargetPos(
-                        servoClip((int) (robot.crane.getWristTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST))
-                );
+                handleDiagnosticServoControls(robot.crane::getWristTargetPos, robot.crane::setWristTargetPos);
                 break;
             case TURRET_MOTOR:
                 robot.crane.turret.setTargetAngle(robot.crane.turret.getTargetAngle() - gamepad1.right_stick_y);
                 break;
             case GRIPPER_SERVO:
-                robot.gripper.setTargetPos(
-                        servoClip((int) (robot.gripper.getTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
-                );
-                robot.gripper.setTargetPos(
-                        servoClip((int) (robot.gripper.getTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST))
-                );
+                handleDiagnosticServoControls(robot.gripper::getTargetPos, robot.gripper::setTargetPos);
                 break;
             case GRIPPER_PITCH_SERVO:
-                robot.gripper.setPitchTargetPos(
-                        servoClip((int) (robot.gripper.getPitchTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
-                );
-                robot.gripper.setPitchTargetPos(
-                        servoClip((int) (robot.gripper.getPitchTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST))
-                );
+                handleDiagnosticServoControls(robot.gripper::getPitchTargetPos, robot.gripper::setPitchTargetPos);
                 break;
             case DUCK_SPINNER:
-                robot.driveTrain.duckSpinner.setPower(gamepad1.right_stick_y);
+                robot.driveTrain.duckSpinner.setPower(-gamepad1.right_stick_y);
                 break;
         }
     }
@@ -467,19 +402,11 @@ public class FF_6832 extends OpMode {
                     }
                     break;
                 case AUTONOMOUS_DIAGNOSTIC:
-                    diagnostic.execute();
+                    if(!diagnosticFinished && robot.articulate(Robot.Articulation.DIAGNOSTIC))
+                            diagnosticFinished = true;
                     break;
                 case MANUAL_DIAGNOSTIC:
-                    if(!diagnosticTargetsInitialized) {
-                        robot.crane.setShoulderTargetPos(750);
-                        robot.crane.setElbowTargetPos(750);
-                        robot.crane.setWristTargetPos(750);
-
-                        robot.gripper.setTargetPos(750);
-                        robot.gripper.setPitchTargetPos(750);
-                        diagnosticTargetsInitialized = true;
-                    } else
-                        handleManualDiagnostic();
+                    handleManualDiagnostic();
                     break;
             }
         } else {
@@ -541,6 +468,7 @@ public class FF_6832 extends OpMode {
                 opModeTelemetryMap.put("Most Frequent Detected Position", mostFrequentPosition);
             opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
             opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+            opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
         }
         opModeTelemetryMap.put("Active", active);
         opModeTelemetryMap.put("State", String.format("(%d): %s", gameStateIndex, gameState));

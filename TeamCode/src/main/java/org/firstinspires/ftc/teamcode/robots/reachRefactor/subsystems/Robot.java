@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
-
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -62,9 +61,9 @@ public class Robot implements Subsystem {
         SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
         SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0, -driveTrain.getChassisDistance() }});
 
-        leftWheel = position.plus(UtilMethods.rotateVector(leftWheel, heading)).scale(Constants.INCHES_PER_METER);
-        rightWheel = position.plus(UtilMethods.rotateVector(rightWheel, heading)).scale(Constants.INCHES_PER_METER);
-        swerveWheel = position.plus(UtilMethods.rotateVector(swerveWheel, heading)).scale(Constants.INCHES_PER_METER);
+        leftWheel = position.plus(UtilMethods.rotateVector(leftWheel, Math.toRadians(heading))).scale(Constants.INCHES_PER_METER);
+        rightWheel = position.plus(UtilMethods.rotateVector(rightWheel, Math.toRadians(heading))).scale(Constants.INCHES_PER_METER);
+        swerveWheel = position.plus(UtilMethods.rotateVector(swerveWheel, Math.toRadians(heading))).scale(Constants.INCHES_PER_METER);
 
         // drawing axles
         CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, AXLE_STROKE_COLOR);
@@ -76,23 +75,20 @@ public class Robot implements Subsystem {
         );
         CanvasUtils.drawLine(fieldOverlay, leftWheel, leftWheel.plus(
             UtilMethods.rotateVector(
-                genericWheelVector,
-                heading
+                genericWheelVector, Math.toRadians(heading)
             )
         ), WHEEL_STROKE_COLOR);
         CanvasUtils.drawLine(fieldOverlay, rightWheel, rightWheel.plus(
             UtilMethods.rotateVector(
-                genericWheelVector,
-                heading
+                genericWheelVector, Math.toRadians(heading)
             )
         ), WHEEL_STROKE_COLOR);
         CanvasUtils.drawLine(fieldOverlay, swerveWheel, swerveWheel.plus(
             UtilMethods.rotateVector(
                 UtilMethods.rotateVector(
                     genericWheelVector,
-                    heading
-                ).transpose(),
-                driveTrain.getSwivelAngle()
+                        Math.toRadians(heading)
+                ).transpose(), Math.toRadians(driveTrain.getSwivelAngle())
             )
         ), WHEEL_STROKE_COLOR);
 
@@ -141,13 +137,23 @@ public class Robot implements Subsystem {
     //----------------------------------------------------------------------------------------------
 
     public enum Articulation {
+        MANUAL,
+
+        // misc. articulations
         INIT,
         START,
-        MANUAL,
-        // tele-op articulations
+        DIAGNOSTIC,
 
+        // tele-op articulations
         TRANSFER,
     }
+
+    private Map<Articulation, StateMachine> articulationMap = new HashMap<Articulation, StateMachine>() {{
+        put(Articulation.INIT, init);
+        put(Articulation.START, start);
+        put(Articulation.DIAGNOSTIC, diagnostic);
+        put(Articulation.TRANSFER, transfer);
+    }};
 
     // Misc. Articulations
     private Stage initStage = new Stage();
@@ -170,6 +176,49 @@ public class Robot implements Subsystem {
             .addSingleState(() -> driveTrain.setMaintainChassisDistanceEnabled(true))
             .build();
 
+    private Stage diagnosticStage = new Stage();
+    private StateMachine diagnostic = UtilMethods.getStateMachine(diagnosticStage)
+            // testing drivetrain
+            .addTimedState(3f, () -> {
+                driveTrain.drive(0.25, 0, false);
+            }, () -> {})
+            .addTimedState(3f, () -> {
+                driveTrain.drive(0, Math.PI / 2, false);
+            }, () -> {})
+
+            // testing crane
+            .addState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addState(() -> crane.articulate(Crane.Articulation.LOWEST_TEIR))
+            .addState(() -> crane.articulate(Crane.Articulation.HIGH_TEIR))
+            .addState(() -> crane.articulate(Crane.Articulation.MIDDLE_TEIR))
+            .addState(() -> crane.articulate(Crane.Articulation.STARTING))
+            .addState(() -> crane.articulate(Crane.Articulation.CAP))
+            .addState(() -> articulate(Robot.Articulation.TRANSFER))
+
+            // testing gripper
+            .addState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addTimedState(3f, () -> {
+                gripper.togglePitch();
+            }, () -> {})
+            .addTimedState(3f, () -> {
+                gripper.toggleGripper();
+            }, () -> {})
+
+            // testing turret
+            .addTimedState(3f,
+                    () -> crane.turret.setTargetAngle(90),
+                    () -> {})
+            .addTimedState(3f,
+                    () -> crane.turret.setTargetAngle(180),
+                    () -> {})
+            .addTimedState(3f,
+                    () -> crane.turret.setTargetAngle(270),
+                    () -> {})
+            .addTimedState(3f,
+                    () -> crane.turret.setTargetAngle(360),
+                    () -> {})
+            .build();
+
     // Tele-Op articulations
     private Stage transferStage = new Stage();
     private StateMachine transfer = UtilMethods.getStateMachine(transferStage)
@@ -187,26 +236,11 @@ public class Robot implements Subsystem {
     public boolean articulate(Articulation articulation) {
         this.articulation = articulation;
 
-        switch(articulation) {
-            case MANUAL:
-                return true;
-            case INIT:
-                if(init.execute()) {
-                    this.articulation = Articulation.MANUAL;
-                    return true;
-                }
-            case START:
-                if(start.execute()) {
-                    this.articulation = Articulation.MANUAL;
-                    return true;
-                }
-                break;
-            case TRANSFER:
-                if(transfer.execute()){
-                    this.articulation = Articulation.MANUAL;
-                    return true;
-                }
-                break;
+        if(articulation.equals(Articulation.MANUAL))
+            return true;
+        else if(articulationMap.get(articulation).execute()) {
+            this.articulation = Articulation.MANUAL;
+            return true;
         }
         return false;
     }

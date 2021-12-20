@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.EPSILON;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.util.Range;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
@@ -70,5 +71,9 @@ public class UtilMethods {
             if(value > max)
                 max = value;
         return max;
+    }
+
+    public static int servoClip(int position) {
+        return Range.clip(position, 750, 2250);
     }
 }

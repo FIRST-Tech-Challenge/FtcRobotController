@@ -40,7 +40,6 @@ public class Crane implements Subsystem {
         turret = new Turret(hardwareMap);
         articulation = Articulation.MANUAL;
         previousArticulation = Articulation.MANUAL;
-//        Do(CommonPosition.STARTING);
     }
 
     public enum Articulation {
@@ -79,24 +78,16 @@ public class Crane implements Subsystem {
             .build();
 
     public boolean articulate(Articulation articulation) {
-        this.articulation = articulation;
-
         if(articulation.equals(Articulation.MANUAL))
             return true;
         else if(articulation.equals(Articulation.INIT)) {
-            if(init.execute()) {
-                this.articulation = Articulation.MANUAL;
-                return true;
-            }
+            this.articulation = articulation;
+            return init.execute();
         } else {
             previousArticulation = this.articulation;
-            if(main.execute()) {
-                this.articulation = Articulation.MANUAL;
-                return true;
-            }
+            this.articulation = articulation;
+            return main.execute();
         }
-
-        return false;
     }
 
     public boolean flipBucket(boolean down) {

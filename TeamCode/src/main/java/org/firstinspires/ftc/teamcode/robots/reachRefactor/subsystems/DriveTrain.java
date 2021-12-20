@@ -150,7 +150,7 @@ public class DriveTrain implements Subsystem {
 
     private void initializeIMU() {
         BNO055IMU.Parameters parametersIMU = new BNO055IMU.Parameters();
-        parametersIMU.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parametersIMU.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parametersIMU.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parametersIMU.loggingEnabled = true;
         parametersIMU.loggingTag = "baseIMU";
@@ -175,7 +175,7 @@ public class DriveTrain implements Subsystem {
         swivelPID.enable();
 
         //initialization of the PID calculator's input range and current value
-        swivelPID.setInputRange(0, 2 * Math.PI);
+        swivelPID.setInputRange(0, 360);
         swivelPID.setContinuous(true);
         swivelPID.setInput(swivelAngle);
 
@@ -219,7 +219,7 @@ public class DriveTrain implements Subsystem {
 //                new SimpleMatrix(
 //                        new double[][] {{ wheelDisplacementMeters.get(2, 0), 0 }}
 //                ),
-//                swivelAngle
+//                Math.toRadians(swivelAngle)
 //        );
 //        wheelDisplacementMeters.setRow(2, 0, swivelWheel.get(0), swivelWheel.get(1));
 
@@ -229,7 +229,7 @@ public class DriveTrain implements Subsystem {
 
         // rotating displacement by heading
         double heading = angles.get(0);
-//        averageDisplacementMeters = UtilMethods.rotateVector(averageDisplacementMeters, heading);
+//        averageDisplacementMeters = UtilMethods.rotateVector(averageDisplacementMeters, Math.toRadians(heading));
 
         // updating pose [x, y, heading]
 //        pose = pose.plus(new SimpleMatrix(new double[][] {{
@@ -246,8 +246,7 @@ public class DriveTrain implements Subsystem {
     public void update() {
         // state
         chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
-//        chassisDistance = TEST_CHASSIS_DISTANCE;
-        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);;
+        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 360) % 360;
 
         // PID corrections
         maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
@@ -260,7 +259,7 @@ public class DriveTrain implements Subsystem {
             targetFrontRightVelocity += maintainChassisDistanceCorrection;
         }
 
-        if(swivelAngle > Math.PI && swivelAngle < 2 * Math.PI) {
+        if(swivelAngle > 180 && swivelAngle < 360) {
 //            targetMiddleVelocity = -targetMiddleVelocity;
         }
 
@@ -290,7 +289,7 @@ public class DriveTrain implements Subsystem {
      * @param linearVelocity the velocity, in m/s, to drive the robot
      * @param angularVelocity the angular velocity, in rad/s, to drive the robot
      */
-    public void drive(double linearVelocity, double angularVelocity) {
+    public void drive(double linearVelocity, double angularVelocity, boolean smoothingEnabled) {
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
 
@@ -301,13 +300,16 @@ public class DriveTrain implements Subsystem {
         targetMiddleVelocity = linearVelocity + angularVelocity * Math.hypot(targetTurnRadius, chassisDistance);
 
         targetSwivelAngle = angularVelocity == 0 || (angularVelocity == 0 && linearVelocity == 0)
-                ? Math.PI / 2
+                ? 90
                     : linearVelocity == 0
                     ? 0
-                : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
+                : 90 - Math.atan2(chassisDistance, targetTurnRadius);
+
+        if(smoothingEnabled)
+            handleSmoothing();
     }
 
-    public void driveDesmos(double linearVelocity, double angularVelocity, double dt) {
+    public void driveDesmos(double linearVelocity, double angularVelocity, double dt, boolean smoothingEnabled) {
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
 
@@ -321,19 +323,22 @@ public class DriveTrain implements Subsystem {
 
         double heading = pose.get(2);
 
-        SimpleMatrix leftWheelPrime = translation.plus(UtilMethods.rotateVector(leftWheel, heading).transpose());
-        SimpleMatrix rightWheelPrime = translation.plus(UtilMethods.rotateVector(rightWheel, heading).transpose());
-        SimpleMatrix middleWheelPrime = translation.plus(UtilMethods.rotateVector(middleWheel, heading).transpose());
+        SimpleMatrix leftWheelPrime = translation.plus(UtilMethods.rotateVector(leftWheel, Math.toRadians(heading)).transpose());
+        SimpleMatrix rightWheelPrime = translation.plus(UtilMethods.rotateVector(rightWheel, Math.toRadians(heading)).transpose());
+        SimpleMatrix middleWheelPrime = translation.plus(UtilMethods.rotateVector(middleWheel, Math.toRadians(heading)).transpose());
 
         targetFrontLeftVelocity = leftWheelPrime.minus(leftWheel).normF() / dt;
         targetFrontRightVelocity = rightWheelPrime.minus(rightWheel).normF() / dt;
         targetMiddleVelocity = middleWheelPrime.minus(middleWheel).normF() / dt;
 
         targetSwivelAngle = angularVelocity == 0 || (angularVelocity == 0 && linearVelocity == 0)
-                ? Math.PI / 2
+                ? 90
                 : linearVelocity == 0
                 ? 0
-                : Math.PI / 2 - Math.atan2(chassisDistance, targetTurnRadius);
+                : 90 - Math.atan2(chassisDistance, targetTurnRadius);
+
+        if(smoothingEnabled)
+            handleSmoothing();
     }
 
     public void movePID(double maxPwrFwd, boolean forward, double dist, double currentAngle, double targetAngle) {
@@ -361,7 +366,7 @@ public class DriveTrain implements Subsystem {
 
         // performs the drive with the correction applied
 
-        drive(basePwr, turnCorrection);
+        drive(basePwr, turnCorrection, false);
     }
 
     public boolean driveAbsoluteDistance(double pwr, double targetAngle, boolean forward, double targetMeters, double closeEnoughDist) {
