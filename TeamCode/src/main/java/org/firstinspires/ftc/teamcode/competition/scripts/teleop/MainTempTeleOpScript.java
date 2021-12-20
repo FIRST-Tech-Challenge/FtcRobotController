@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.competition.scripts.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.competition.utils.gamepads.GamepadManager;
@@ -35,6 +36,17 @@ public class MainTempTeleOpScript extends TeleOpScript {
         intakeUpperPos = 30;
         intakeShouldBeDown = false;
         intakeIsAtPosition = false;
+        int timeAsOfLastElevatorCalibrationBegin = (int) getOpMode().time;
+        while(outputSpace.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 0 && timeAsOfLastElevatorCalibrationBegin > (int) getOpMode().time - 1) {
+            inputSpace.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, 100);
+            inputSpace.sendInputToElevatorRightLift(ElevatorRightLiftMotorLocation.Action.SET_SPEED, -100);
+        }
+        while(outputSpace.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 0) {
+            inputSpace.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, -10);
+            inputSpace.sendInputToElevatorRightLift(ElevatorRightLiftMotorLocation.Action.SET_SPEED, 10);
+        }
+        ((StandardMotor) inputSpace.getElevatorLeftLift().getInternalInteractionSurface()).reset();
+        ((StandardMotor) inputSpace.getElevatorRightLift().getInternalInteractionSurface()).reset();
 //        while(!intakeIsAtPosition) {
 //            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
 //                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
@@ -59,36 +71,36 @@ public class MainTempTeleOpScript extends TeleOpScript {
         inputSpace.sendInputToTank(TankDrivetrainLocation.Action.SET_SPEED, -right, -left);
 
         // intake lifter
-        if(gamepadManager.functionOneGamepad().dpad_right) {
-            intakeShouldBeDown = false;
-        }else if(gamepadManager.functionOneGamepad().dpad_left) {
-            intakeShouldBeDown = true;
-        }
-        if(intakeShouldBeDown) {
-            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
-                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
-                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeLowerPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
-                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeLowerPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
-                }else{
-                    intakeIsAtPosition = true;
-                }
-                timeAsOfLastIntakeMovement = getOpMode().time;
-            }
-        }else{
-            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
-                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
-                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeUpperPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
-                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeUpperPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
-                }else{
-                    intakeIsAtPosition = true;
-                }
-                timeAsOfLastIntakeMovement = getOpMode().time;
-            }
-        }
+//        if(gamepadManager.functionOneGamepad().dpad_right) {
+//            intakeShouldBeDown = false;
+//        }else if(gamepadManager.functionOneGamepad().dpad_left) {
+//            intakeShouldBeDown = true;
+//        }
+//        if(intakeShouldBeDown) {
+//            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
+//                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
+//                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeLowerPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
+//                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeLowerPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
+//                }else{
+//                    intakeIsAtPosition = true;
+//                }
+//                timeAsOfLastIntakeMovement = getOpMode().time;
+//            }
+//        }else{
+//            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
+//                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
+//                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeUpperPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
+//                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeUpperPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
+//                }else{
+//                    intakeIsAtPosition = true;
+//                }
+//                timeAsOfLastIntakeMovement = getOpMode().time;
+//            }
+//        }
 
         getOpMode().telemetry.addData("Distance: ", outputSpace.receiveOutputFromIntakeLiftingDistanceSensor());
         getOpMode().telemetry.update();
@@ -103,8 +115,9 @@ public class MainTempTeleOpScript extends TeleOpScript {
 
         // elevator
         int elevatorInput = (gamepadManager.functionOneGamepad().right_bumper ? 0 : 1) + (gamepadManager.functionOneGamepad().left_bumper ? 0 : -1);
-        int inputVal = ((StandardMotor) inputSpace.getElevatorLeftLift().getInternalInteractionSurface()).getDcMotor().getCurrentPosition() > -200 ? Range.clip(elevatorInput * 25, -25, 5) : Range.clip(elevatorInput * 25, -25, 25);
+        int inputVal = ((StandardMotor) inputSpace.getElevatorLeftLift().getInternalInteractionSurface()).getDcMotor().getCurrentPosition() > -300 ? Range.clip(elevatorInput * 75, -25, 5) : Range.clip(elevatorInput * 75, -75, 75);
         if(inputVal < 0 || outputSpace.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 0) {
+            int leftInputVal = inputVal == 0 ? inputVal : inputVal + 5;
             inputSpace.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, inputVal);
             inputSpace.sendInputToElevatorRightLift(ElevatorRightLiftMotorLocation.Action.SET_SPEED, -inputVal);
         }else{

@@ -9,5 +9,6 @@ public interface SensorWrapper {
     int getData();
     String getName();
     boolean didTimeoutOccur();
+
 }
 
