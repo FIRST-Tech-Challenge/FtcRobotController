@@ -302,11 +302,11 @@ public class FF_6832 extends OpMode {
         else if(stickyGamepad2.left_bumper)
             chassisDistanceLevelIndex--;
 
-        if(gamepad2JoysticksActive && !gamepad1JoysticksActive)
-            handleTeleOpDriveArcade(gamepad2);
-
         chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % CHASSIS_DISTANCE_LEVELS.length);
         robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[chassisDistanceLevelIndex]);
+
+        if(gamepad2JoysticksActive && !gamepad1JoysticksActive)
+            handleTeleOpDriveArcade(gamepad2);
     }
 
     private enum DiagnosticStep {

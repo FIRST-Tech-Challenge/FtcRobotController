@@ -158,9 +158,8 @@ public class Robot implements Subsystem {
     // Misc. Articulations
     private Stage initStage = new Stage();
     private StateMachine init = UtilMethods.getStateMachine(initStage)
-            .addSimultaneousStates(
-                    () -> crane.articulate(Crane.Articulation.INIT),
-                    () -> {gripper.setPitchTargetPos(Gripper.PITCH_INIT); return true;})
+            .addSingleState(() -> gripper.setPitchTargetPos(Gripper.PITCH_INIT))
+            .addState(() -> crane.articulate(Crane.Articulation.INIT))
             .build();
 
     private Stage startStage = new Stage();
@@ -173,7 +172,7 @@ public class Robot implements Subsystem {
             .addTimedState(2f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
             .addSingleState(() -> driveTrain.setTargetChassisDistance(DEFAULT_TARGET_DISTANCE))
-            .addSingleState(() -> driveTrain.setMaintainChassisDistanceEnabled(true))
+            .addSingleState(() -> driveTrain.setMaintainChassisDistanceEnabled(false))
             .build();
 
     private Stage diagnosticStage = new Stage();
