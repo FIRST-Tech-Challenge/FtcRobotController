@@ -11,6 +11,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
@@ -23,8 +24,11 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.tools.Diagnostic;
 
 /** Controls
  * Pregame
@@ -104,6 +108,8 @@ public class FF_6832 extends OpMode {
             Constants.MIN_CHASSIS_LENGTH + 2 * (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
             Constants.MAX_CHASSIS_LENGTH
     };
+    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW = 10;
+    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST = 30;
 
     // Code to run ONCE when the driver hits INIT
     @Override
@@ -143,6 +149,8 @@ public class FF_6832 extends OpMode {
             put(org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position.MIDDLE, 0);
             put(org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position.RIGHT, 0);
         }};
+
+        robot.articulate(Robot.Articulation.INIT);
     }
 
     private void handleStateSwitch() {
@@ -153,6 +161,7 @@ public class FF_6832 extends OpMode {
                 gameStateIndex += 1;
 
             gameStateIndex %= Constants.GameState.getNumGameStates();
+            gameStateIndex = Math.abs(gameStateIndex);
             gameState = Constants.GameState.getGameState(gameStateIndex);
         }
 
@@ -215,6 +224,7 @@ public class FF_6832 extends OpMode {
 //        robot.setMostFrequentPosition(mostFrequentPosition);
         lastLoopClockTime = System.nanoTime();
         initializing = false;
+        if(gameState.equals(Constants.GameState.AUTONOMOUS) || gameState.equals(Constants.GameState.TELE_OP))
         robot.articulate(Robot.Articulation.START);
 //        auto.visionProvider.shutdownVision();
     }
@@ -337,8 +347,101 @@ public class FF_6832 extends OpMode {
                     () -> robot.crane.turret.setTargetAngle(2 * Math.PI),
                     () -> {})
             .build();
-    private void handleDiagnostic() {
-        diagnostic.execute();
+
+    private enum DiagnosticStep {
+        DRIVETRAIN_LEFT_MOTOR, DRIVETRAIN_RIGHT_MOTOR, DRIVETRAIN_MIDDLE_MOTOR, DRIVETRAIN_MIDDLE_SWIVEL_MOTOR,
+        CRANE_SHOULDER_SERVO, CRANE_ELBOW_SERVO, CRANE_WRIST_SERVO, TURRET_MOTOR,
+        GRIPPER_SERVO, GRIPPER_PITCH_SERVO,
+        DUCK_SPINNER;
+
+        public static DiagnosticStep getDiagnosticStep(int index) {
+            return DiagnosticStep.values()[index];
+        }
+
+        public static int getNumDiagnosticSteps() {
+            return DiagnosticStep.values().length;
+        }
+    }
+
+    private int servoClip(int position) {
+        return Range.clip(position, 750, 2250);
+    }
+
+    private DiagnosticStep diagnosticStep = DiagnosticStep.DRIVETRAIN_LEFT_MOTOR;
+    private int diagnosticIndex = 0;
+    private boolean diagnosticTargetsInitialized = false;
+    private void handleManualDiagnostic() {
+        if(stickyGamepad1.right_bumper) {
+            diagnosticIndex++;
+            diagnosticIndex %= DiagnosticStep.getNumDiagnosticSteps();
+            diagnosticIndex = Math.abs(diagnosticIndex);
+            diagnosticStep = DiagnosticStep.getDiagnosticStep(diagnosticIndex);
+        } else if(stickyGamepad1.left_bumper) {
+            diagnosticIndex--;
+            diagnosticIndex %= DiagnosticStep.getNumDiagnosticSteps();
+            diagnosticIndex = Math.abs(diagnosticIndex);
+            diagnosticStep = DiagnosticStep.getDiagnosticStep(diagnosticIndex);
+        }
+
+        switch(diagnosticStep) {
+            case DRIVETRAIN_LEFT_MOTOR:
+                robot.driveTrain.setFrontLeftTargetVelocity(-gamepad1.right_stick_y);
+                break;
+            case DRIVETRAIN_RIGHT_MOTOR:
+                robot.driveTrain.setFrontRightTargetVelocity(-gamepad1.right_stick_y);
+                break;
+            case DRIVETRAIN_MIDDLE_MOTOR:
+                robot.driveTrain.setMiddleTargetVelocity(-gamepad1.right_stick_y);
+                break;
+            case DRIVETRAIN_MIDDLE_SWIVEL_MOTOR:
+                robot.driveTrain.setSwivelTargetAngle(robot.driveTrain.getSwivelTargetAngle() - gamepad1.right_stick_y);
+                break;
+            case CRANE_SHOULDER_SERVO:
+                robot.crane.setShoulderTargetPos(
+                        servoClip((int) (robot.crane.getShoulderTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
+                );
+                robot.crane.setShoulderTargetPos(
+                        servoClip((int) (robot.crane.getShoulderTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST)));
+                break;
+            case CRANE_ELBOW_SERVO:
+                robot.crane.setElbowTargetPos(
+                        servoClip((int) (robot.crane.getElbowTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
+                );
+                robot.crane.setElbowTargetPos(
+                        servoClip((int) (robot.crane.getElbowTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST))
+                );
+                break;
+            case CRANE_WRIST_SERVO:
+                robot.crane.setWristTargetPos(
+                        servoClip((int) (robot.crane.getWristTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
+                );
+                robot.crane.setWristTargetPos(
+                        servoClip((int) (robot.crane.getWristTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST))
+                );
+                break;
+            case TURRET_MOTOR:
+                robot.crane.turret.setTargetAngle(robot.crane.turret.getTargetAngle() - gamepad1.right_stick_y);
+                break;
+            case GRIPPER_SERVO:
+                robot.gripper.setTargetPos(
+                        servoClip((int) (robot.gripper.getTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
+                );
+                robot.gripper.setTargetPos(
+                        servoClip((int) (robot.gripper.getTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST))
+                );
+                break;
+            case GRIPPER_PITCH_SERVO:
+                robot.gripper.setPitchTargetPos(
+                        servoClip((int) (robot.gripper.getPitchTargetPos() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW))
+                );
+                robot.gripper.setPitchTargetPos(
+                        servoClip((int) (robot.gripper.getPitchTargetPos() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST))
+                );
+                break;
+            case DUCK_SPINNER:
+                robot.driveTrain.duckSpinner.setPower(gamepad1.right_stick_y);
+                break;
+        }
     }
 
     @Override
@@ -363,9 +466,21 @@ public class FF_6832 extends OpMode {
                         gameStateIndex = Constants.GameState.indexOf(Constants.GameState.TELE_OP);
                     }
                     break;
-//                case DIAGNOSTIC:
-//                    handleDiagnostic();
-//                    break;
+                case AUTONOMOUS_DIAGNOSTIC:
+                    diagnostic.execute();
+                    break;
+                case MANUAL_DIAGNOSTIC:
+                    if(!diagnosticTargetsInitialized) {
+                        robot.crane.setShoulderTargetPos(750);
+                        robot.crane.setElbowTargetPos(750);
+                        robot.crane.setWristTargetPos(750);
+
+                        robot.gripper.setTargetPos(750);
+                        robot.gripper.setPitchTargetPos(750);
+                        diagnosticTargetsInitialized = true;
+                    } else
+                        handleManualDiagnostic();
+                    break;
             }
         } else {
             handleStateSwitch();
@@ -439,6 +554,11 @@ public class FF_6832 extends OpMode {
                 opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
                 break;
             case AUTONOMOUS:
+                break;
+            case AUTONOMOUS_DIAGNOSTIC:
+                break;
+            case MANUAL_DIAGNOSTIC:
+                opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);
                 break;
         }
         handleTelemetry(opModeTelemetryMap, gameState.getName(), packet);

@@ -13,7 +13,7 @@
             <RevRobotics40HDHexMotor name="motorFrontLeft" port="1" />
             <RevRobotics40HDHexMotor name="motorFrontRight" port="2" />
             <RevRobotics40HDHexMotor name="duckSpinner" port="3" />
-            <Servo name="gripperServo" port="2" />
+            <Servo name="gripperServo" port="0" />
             <Servo name="gripperPitchServo" port="1" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <REV_VL53L0X_RANGE_SENSOR name="distLength" port="1" bus="1" />

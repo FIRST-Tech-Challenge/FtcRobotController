@@ -39,7 +39,7 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
 public class DriveTrain implements Subsystem {
 
     // Motors
-    private DcMotorEx motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel, duckSpinner;
+    public DcMotorEx motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel, duckSpinner;
     private DcMotorEx[] motors;
     private String[] MOTOR_NAMES = {"motorFrontLeft", "motorFrontRight", "motorMiddle", "motorMiddleSwivel", "duckSpinner"};
     private boolean[] REVERSED = {true, false, true, false, false};
@@ -536,5 +536,22 @@ public class DriveTrain implements Subsystem {
         double revolutions = ticks / TICKS_PER_REVOLUTION;
         double circumference = 2 * Math.PI * WHEEL_RADIUS;
         return revolutions * circumference;
+    }
+
+    public void setFrontLeftTargetVelocity(double velocity) {
+        targetFrontLeftVelocity = velocity;
+    }
+    public void setFrontRightTargetVelocity(double velocity) {
+        targetFrontRightVelocity = velocity;
+    }
+    public void setMiddleTargetVelocity(double velocity) {
+        targetMiddleVelocity = velocity;
+    }
+    public void setSwivelTargetAngle(double targetAngle) {
+        targetSwivelAngle = targetAngle;
+    }
+
+    public double getSwivelTargetAngle() {
+        return targetSwivelAngle;
     }
 }

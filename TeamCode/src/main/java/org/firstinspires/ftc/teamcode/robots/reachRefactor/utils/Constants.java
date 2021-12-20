@@ -38,7 +38,10 @@ public class Constants {
 
     // enum to store possible game states for use in FF_6832
     public enum GameState {
-        TELE_OP("Tele-Op"), AUTONOMOUS("Autonomous"), DIAGNOSTIC("Diagnostic");
+        TELE_OP("Tele-Op"),
+        AUTONOMOUS("Autonomous"),
+        AUTONOMOUS_DIAGNOSTIC("Autonomous Diagnostic"),
+        MANUAL_DIAGNOSTIC("Manual Diagnostic");
 
         private String name;
 

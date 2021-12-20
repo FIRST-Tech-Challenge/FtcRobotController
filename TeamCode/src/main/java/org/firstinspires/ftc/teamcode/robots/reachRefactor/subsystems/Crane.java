@@ -19,17 +19,12 @@ public class Crane implements Subsystem {
     public Turret turret;
 
     // Servos
-    private ServoImplEx shoulderServo;
-    private ServoImplEx elbowServo;
-    private ServoImplEx wristServo;
+    public ServoImplEx shoulderServo, elbowServo, wristServo;
 
     // State
-    private int shoulderTargetPos;
-    private int elbowTargetPos;
-    private int wristTargetPos;
+    private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
 
-    private Articulation previousArticulation;
-    private Articulation articulation;
+    private Articulation previousArticulation, articulation;
 
     // Constants
     private static final String TELEMETRY_NAME = "Crane";
@@ -49,6 +44,7 @@ public class Crane implements Subsystem {
     }
 
     public enum Articulation {
+        INIT(2169, 1183, 1316, 0, 5),
         MANUAL(0, 0, 0, 0, 0),
         STARTING(2200,1600,1600,0, 5),
         HOME(1700,1650,1600,0, 0),
@@ -77,12 +73,23 @@ public class Crane implements Subsystem {
             .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation), () -> {})
             .build();
 
+    private Stage initStage = new Stage();
+    private StateMachine init = UtilMethods.getStateMachine(initStage)
+            .addTimedState(2f, () -> setTargetPositions(Articulation.INIT), () -> {})
+            .build();
+
     public boolean articulate(Articulation articulation) {
+        this.articulation = articulation;
+
         if(articulation.equals(Articulation.MANUAL))
             return true;
-        else {
+        else if(articulation.equals(Articulation.INIT)) {
+            if(init.execute()) {
+                this.articulation = Articulation.MANUAL;
+                return true;
+            }
+        } else {
             previousArticulation = this.articulation;
-            this.articulation = articulation;
             if(main.execute()) {
                 this.articulation = Articulation.MANUAL;
                 return true;
@@ -143,6 +150,35 @@ public class Crane implements Subsystem {
         this.wristTargetPos = articulation.wristPos;
 
         turret.setTargetAngle(articulation.turretAngle);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Getters And Setters
+    //----------------------------------------------------------------------------------------------
+
+
+    public void setShoulderTargetPos(int shoulderTargetPos) {
+        this.shoulderTargetPos = shoulderTargetPos;
+    }
+
+    public void setElbowTargetPos(int elbowTargetPos) {
+        this.elbowTargetPos = elbowTargetPos;
+    }
+
+    public void setWristTargetPos(int wristTargetPos) {
+        this.wristTargetPos = wristTargetPos;
+    }
+
+    public int getShoulderTargetPos() {
+        return shoulderTargetPos;
+    }
+
+    public int getElbowTargetPos() {
+        return elbowTargetPos;
+    }
+
+    public int getWristTargetPos() {
+        return wristTargetPos;
     }
 }
 

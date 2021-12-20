@@ -11,8 +11,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMeth
 @Config
 public class Gripper implements Subsystem{
     // Servos
-    private Servo pitchServo;
-    private Servo servo;
+    public Servo pitchServo, servo;
 
     // State
     boolean up = true;
@@ -28,6 +27,7 @@ public class Gripper implements Subsystem{
     public static int OPEN = 1200;
     public static int PITCH_UP = 2100;
     public static int PITCH_DOWN = 1240;
+    public static int PITCH_INIT = 1854;
 
     public Gripper(HardwareMap hardwareMap){
         servo = hardwareMap.get(Servo.class, "gripperServo");
@@ -82,4 +82,25 @@ public class Gripper implements Subsystem{
     public String getTelemetryName() {
         return TELEMETRY_NAME;
     }
+
+    //----------------------------------------------------------------------------------------------
+    // Getters And Setters
+    //----------------------------------------------------------------------------------------------
+
+    public int getTargetPos() {
+        return targetPos;
+    }
+
+    public void setTargetPos(int targetPos) {
+        this.targetPos = targetPos;
+    }
+
+    public int getPitchTargetPos() {
+        return pitchTargetPos;
+    }
+
+    public void setPitchTargetPos(int pitchTargetPos) {
+        this.pitchTargetPos = pitchTargetPos;
+    }
+
 }

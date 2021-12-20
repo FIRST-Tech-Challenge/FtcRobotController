@@ -65,6 +65,10 @@ public class Turret implements Subsystem {
         return isTurretNearTarget();
     }
 
+    public double getTargetAngle() {
+        return targetHeading;
+    }
+
     public boolean isTurretNearTarget(){
         return between360Clockwise(heading, targetHeading - TURRET_TOLERANCE, heading + TURRET_TOLERANCE);
     }

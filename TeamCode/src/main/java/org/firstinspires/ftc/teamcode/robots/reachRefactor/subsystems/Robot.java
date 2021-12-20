@@ -141,6 +141,7 @@ public class Robot implements Subsystem {
     //----------------------------------------------------------------------------------------------
 
     public enum Articulation {
+        INIT,
         START,
         MANUAL,
         // tele-op articulations
@@ -149,6 +150,13 @@ public class Robot implements Subsystem {
     }
 
     // Misc. Articulations
+    private Stage initStage = new Stage();
+    private StateMachine init = UtilMethods.getStateMachine(initStage)
+            .addSimultaneousStates(
+                    () -> crane.articulate(Crane.Articulation.INIT),
+                    () -> {gripper.setPitchTargetPos(Gripper.PITCH_INIT); return true;})
+            .build();
+
     private Stage startStage = new Stage();
     private StateMachine start = UtilMethods.getStateMachine(startStage)
             .addTimedState(1f, () -> {
@@ -182,6 +190,11 @@ public class Robot implements Subsystem {
         switch(articulation) {
             case MANUAL:
                 return true;
+            case INIT:
+                if(init.execute()) {
+                    this.articulation = Articulation.MANUAL;
+                    return true;
+                }
             case START:
                 if(start.execute()) {
                     this.articulation = Articulation.MANUAL;
@@ -209,6 +222,4 @@ public class Robot implements Subsystem {
     public void setAlliance(Constants.Alliance alliance) {
         this.alliance = alliance;
     }
-
-
 }
