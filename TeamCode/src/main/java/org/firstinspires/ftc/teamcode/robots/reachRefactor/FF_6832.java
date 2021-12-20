@@ -229,7 +229,7 @@ public class FF_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
         initializing = false;
         if(gameState.equals(Constants.GameState.AUTONOMOUS) || gameState.equals(Constants.GameState.TELE_OP))
-        robot.articulate(Robot.Articulation.START);
+            robot.articulate(Robot.Articulation.START);
 //        auto.visionProvider.shutdownVision();
     }
 

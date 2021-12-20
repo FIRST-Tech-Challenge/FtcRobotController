@@ -37,6 +37,7 @@ public class Robot implements Subsystem {
     public static double DOTTED_LINE_DASH_LENGTH = 1; // in inches
 
     public static double DEFAULT_TARGET_DISTANCE =  Constants.MIN_CHASSIS_LENGTH + (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3;
+    private Map<Articulation, StateMachine> articulationMap;
 
     public Robot(HardwareMap hardwareMap) {
         // initializing subsystems
@@ -46,6 +47,12 @@ public class Robot implements Subsystem {
         subsystems = new Subsystem[] {driveTrain, crane, gripper};
 
         articulation = Articulation.MANUAL;
+
+        articulationMap = new HashMap<>();
+        articulationMap.put(Articulation.INIT, init);
+        articulationMap.put(Articulation.START, start);
+        articulationMap.put(Articulation.DIAGNOSTIC, diagnostic);
+        articulationMap.put(Articulation.TRANSFER, transfer);
     }
 
     public void drawFieldOverlay(TelemetryPacket packet) {
@@ -147,13 +154,6 @@ public class Robot implements Subsystem {
         // tele-op articulations
         TRANSFER,
     }
-
-    private Map<Articulation, StateMachine> articulationMap = new HashMap<Articulation, StateMachine>() {{
-        put(Articulation.INIT, init);
-        put(Articulation.START, start);
-        put(Articulation.DIAGNOSTIC, diagnostic);
-        put(Articulation.TRANSFER, transfer);
-    }};
 
     // Misc. Articulations
     private Stage initStage = new Stage();
