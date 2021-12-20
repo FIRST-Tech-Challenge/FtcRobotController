@@ -12,7 +12,7 @@ public class StandardUltrasonicDistanceSensor {
     private final UltrasonicDistanceSensor SENSOR;
 
     public StandardUltrasonicDistanceSensor(HardwareMap hardware, String name) {
-        SENSOR = new UltrasonicDistanceSensor(hardware, name);
+        SENSOR = new UltrasonicDistanceSensor(hardware, name, null);
     }
 
     public int getDistance(DistanceUnit unit) {

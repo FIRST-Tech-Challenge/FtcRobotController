@@ -27,7 +27,8 @@ public class UltrasonicDistanceSensor implements SensorWrapper {
     @Override
     public int getData() {
         sensor.writeData(EyeSquaredSeaDistanceSensor.Commands.WRITE_RANGE_COMMAND);
-        opMode.sleep(100);
+        // FIXME: we cant do this, itll stop the whole opmode
+//        opMode.sleep(100);
         return (int) sensor.readData(EyeSquaredSeaDistanceSensor.Commands.READ_LAST.bVal);
     }
 
