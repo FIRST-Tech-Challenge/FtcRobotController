@@ -112,27 +112,37 @@ public class Autonocursed extends LinearOpMode {
             }
         }
         */
-        goToWayPoint(-0.5, 0.15, -53, 2, 50, 0.005, 1);
         this.robot.duck.setPower(-0.2);
-        sleep(3000);
-        this.robot.duck.setPower(0);
+        goToWayPoint(-0.5, 0.15, -53, 1, 30, 0.005, 1);
+        sleep(1500);
+
         lift(pos[duckPos-1],1);
         if(duckPos == 1){
 
-            this.robot.intakeUp.setPower(1);
         } else if(duckPos == 2){
 
-            this.robot.intakeUp.setPower(1);
         } else {
-            goToWayPoint(0.37344, 0.75636, -53, 1.5, 30, 0.01, 1);
-            this.robot.intakeUp.setPower(0.7);
-            sleep(1500);
+            goToWayPoint(0.373, 0.756, -53, 1, 30, 0.01, 1);
         }
+        this.robot.intakeUp.setPower(1.0);
+        sleep(1500);
+        this.robot.duck.setPower(0);
         this.robot.intakeUp.setPower(0);
-        lift(0,0.3);
-        goToWayPoint(1.6, -0.02, -90,   1.5, 30, 0.01, 1);
-        goToWayPoint(2.6, -0.02, -90,   1.5, 30, 0.01, 1);
-        sleep(1000);
+
+        goToWayPoint(0.4, 0.1, -90, 1, 50, 0.05, 1);
+        lift(-50,0.3);
+        goToWayPoint(1.6, -0.05, -90,   1, 30, 0.01, 1);
+        this.robot.intakeUp.setPower(-1.0);
+        goToWayPoint(2.5, -0.05, -90,   0.7, 30, 0.01, 1);
+        goToWayPoint(1.4, -0.05, -90,   0.7, 30, 0.1, 1);
+        this.robot.intakeUp.setPower(0.0);
+        lift(pos[duckPos-1],1);
+        goToWayPoint(1.2, 0.756, 30, 1, 80, 0.01, 1);
+        this.robot.intakeUp.setPower(1.0);
+        sleep(1500);
+        this.robot.intakeUp.setPower(0);
+        goToWayPoint(1.4, -0.05, -90,   1, 30, 0.1, 1);
+        lift(-50,0.3);
         
 
 
