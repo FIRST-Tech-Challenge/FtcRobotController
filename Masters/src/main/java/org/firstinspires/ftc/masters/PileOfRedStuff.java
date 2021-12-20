@@ -13,7 +13,7 @@ public class PileOfRedStuff extends LinearOpMode {
     public void runOpMode() {
         robot = new RobotClass(hardwareMap,telemetry,this);
         robot.openCVInnitShenanigans();
-        EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         freightLocation = robot.analyze();
 
         waitForStart();
@@ -31,26 +31,26 @@ public class PileOfRedStuff extends LinearOpMode {
 
        // robot.strafeRight(1,.4);
         robot.forward(0.3,1.6);
-        if (freightLocation== EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT|| freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE){
+        if (freightLocation== FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.LEFT|| freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.MIDDLE){
             robot.forward(0.4, 1.6);
             robot.forward(0.3, -1.6);
         }
         robot.turnToHeadingSloppy(.4,35,0);
 
 
-        if (freightLocation== EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT ){
+        if (freightLocation== FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.LEFT ){
             robot.forward(0.3, 1.15);
-        }else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE){
+        }else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.MIDDLE){
             robot.forward(0.3, 1.05);
-        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT){
+        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.RIGHT){
             robot.forward(0.3, 0.9);
         }
         robot.pauseButInSecondsForThePlebeians(.5);
-        if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
+        if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
             robot.dumpFreightBottom();
-        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
             robot.dumpFreightMiddle();
-        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
+        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
             robot.dumpFreightTop();
         }
         robot.forward(0.3, -0.4);
