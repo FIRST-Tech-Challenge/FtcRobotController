@@ -23,6 +23,7 @@ package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -38,14 +39,12 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "TestComputerVisionShippingElement", group ="test")
-public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
+
+public class FreightFrenzyComputerVision{
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
 
-    @Override
-    public void runOpMode() {
-
+    public FreightFrenzyComputerVision (HardwareMap hardwareMap, Telemetry telemetry){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
         pipeline = new SkystoneDeterminationPipeline(telemetry);
@@ -88,28 +87,9 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
                  */
             }
         });
-
-        waitForStart();
-        telemetry.addData("Position", "HELLO");
-        telemetry.update();
-
-        while (opModeIsActive()) {
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.addData("Analysis2", pipeline.getAnalysis2());
-            telemetry.addData("Analysis3", pipeline.getAnalysis3());
-            telemetry.addData("Position", pipeline.position);
-
-            telemetry.addData("Analysis of Hub Left", pipeline.getAnalysisHubLeft());
-            telemetry.addData("Analysis of Hub Center", pipeline.getAnalysisHubCenter());
-            telemetry.addData("Analysis of Hub Right", pipeline.getAnalysisHubRight());
-            telemetry.addData("Hub Position", pipeline.hub_position);
-            telemetry.update();
-
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
-        }
-
     }
+
+
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
         Telemetry telemetry;
@@ -131,6 +111,7 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
             LEFT,
             CENTER,
             RIGHT,
+            SHRUG_NOISES
         }
 
         /*
@@ -148,8 +129,8 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(607, 210);
 
         static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1,33);
-        static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(281,33);
-        static final Point REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(361,33);
+        static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(295,33);
+        static final Point REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(345,33);
 
 
         static final int REGION_WIDTH = 30;
@@ -159,7 +140,7 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
 
         final int FREIGHT_PRESENT_THRESHOLD = 110;
 
-        final int HUB_PRESENT_THRESHOLD = 130;
+        final int HUB_PRESENT_THRESHOLD = 129;
 
         Point region1_pointA = new Point(
                 REGION1_TOP_LEFT_ANCHOR_POINT.x,
@@ -187,21 +168,21 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
                 REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x,
                 REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.y);
         Point region_hub_left_pointB = new Point(
-                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x + 279,
+                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x + 294,
                 REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
 
         Point region_hub_center_pointA = new Point(
                 REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.x,
                 REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.y);
         Point region_hub_center_pointB = new Point(
-                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.x + 80,
+                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.x + 50,
                 REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
 
         Point region_hub_right_pointA = new Point(
                 REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.x,
                 REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.y);
         Point region_hub_right_pointB = new Point(
-                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.x + 279,
+                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.x + 294,
                 REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
 
         /*
@@ -228,7 +209,7 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile FreightPosition position = FreightPosition.LEFT;
 
-        public volatile HubPosition hub_position = HubPosition.LEFT;
+        public volatile HubPosition hub_position = HubPosition.SHRUG_NOISES;
 
         /*
          * This function takes the RGB frame, converts to LAB,
@@ -263,7 +244,6 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
             avg1 = (int) Core.mean(region1_A).val[0];
             avg2 = (int) Core.mean(region2_A).val[0];
             avg3 = (int) Core.mean(region3_A).val[0];
-
 
             region1_A = A.submat(new Rect(region_hub_left_pointA, region_hub_right_pointB));
             region2_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
@@ -330,9 +310,9 @@ public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
             telemetry.addData("Analysis3", avg3);
             telemetry.addData("Position", position);
 
-            if (hub_avg_left > HUB_PRESENT_THRESHOLD) {
+            if (hub_avg_left >= HUB_PRESENT_THRESHOLD) {
                 hub_position = HubPosition.LEFT;
-            } else if (hub_avg_center > HUB_PRESENT_THRESHOLD) {
+            } else if (hub_avg_center >= HUB_PRESENT_THRESHOLD) {
                 hub_position = HubPosition.CENTER;
             } else {
                 hub_position = HubPosition.RIGHT;

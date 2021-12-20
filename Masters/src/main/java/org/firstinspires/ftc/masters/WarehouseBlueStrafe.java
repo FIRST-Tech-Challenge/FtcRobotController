@@ -14,7 +14,7 @@ public class WarehouseBlueStrafe extends LinearOpMode {
         // Here Wayne will do stuff eventualy
         robot = new RobotClass(hardwareMap,telemetry,this);
         robot.openCVInnitShenanigans();
-        EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         freightLocation = robot.analyze();
 
         waitForStart();
@@ -39,7 +39,7 @@ public class WarehouseBlueStrafe extends LinearOpMode {
 //        robot.turnToHeadingSloppy(.4,35,0);
 
 
-        if (freightLocation== EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT ){
+        if (freightLocation== FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.LEFT ){
             robot.forward(0.3, .2);
         }
 //        else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE){
@@ -48,12 +48,12 @@ public class WarehouseBlueStrafe extends LinearOpMode {
 //            robot.forward(0.3, 1);
 //        }
         robot.pauseButInSecondsForThePlebeians(.5);
-        if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
+        if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
             robot.dumpFreightBottom();
             robot.forward(0.3, -0.2);
-        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
             robot.dumpFreightMiddle();
-        } else if (freightLocation == EasyOpenCVIdentifyShippingElement.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
+        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
             robot.dumpFreightTop();
         }
 
