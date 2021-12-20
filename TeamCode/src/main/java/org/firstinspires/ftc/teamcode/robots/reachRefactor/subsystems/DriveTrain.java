@@ -452,8 +452,8 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("swivel amps", motorMiddleSwivel.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("duck amps", duckSpinner.getCurrent(CurrentUnit.AMPS));
 
-            telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
-            telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
+            telemetryMap.put("swivel angle", swivelAngle);
+            telemetryMap.put("target swivel angle", targetSwivelAngle);
             telemetryMap.put("swivel PID on target", swivelPID.onTarget());
 
             telemetryMap.put("chassis distance", chassisDistance);
