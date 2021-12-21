@@ -22,5 +22,7 @@ dependencies {
     //noinspection GradleDependency
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-FreightFrenzy:1.0.0'
+    // wpilib
+    implementation 'org.ejml:ejml-all:0.40'
 }
 

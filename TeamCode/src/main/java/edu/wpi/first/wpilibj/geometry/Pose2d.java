@@ -233,13 +233,4 @@ public class Pose2d {
   public int hashCode() {
     return Objects.hash(m_translation, m_rotation);
   }
-
-  public com.acmerobotics.roadrunner.geometry.Pose2d convert() {
-    return new com.acmerobotics.roadrunner.geometry.Pose2d(m_translation.getX(), m_translation.getY(), m_rotation.getRadians());
-  }
-
-  public Pose2d(com.acmerobotics.roadrunner.geometry.Pose2d pose2d) {
-    m_translation = new Translation2d(pose2d.getX(), pose2d.getY());
-    m_rotation = new Rotation2d(pose2d.getHeading());
-  }
 }
