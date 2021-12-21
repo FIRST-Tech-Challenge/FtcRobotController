@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.MockDistanceSensor;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.SensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.MockDistanceSensor;
 
 class PositionTracker {
     public Axis leftToRight;
@@ -11,7 +12,7 @@ class PositionTracker {
 
     public PositionTracker(AllSensors sensors) {
         leftToRight = new Axis(sensors.east, sensors.west);
-        upAndDown = new Axis(sensors.north, sensors.west);
+        upAndDown = new Axis(sensors.north, sensors.north);
 
         coordinateSystem = new CoordinateSystem();
     }
@@ -71,22 +72,12 @@ class PositionTracker {
     }
 
     public static class AllSensors {
-        public SensorWrapper north;
-        public SensorWrapper south;
-        public SensorWrapper east;
-        public SensorWrapper west;
+        public StandardDistanceSensor north;
+        public StandardDistanceSensor east;
+        public StandardDistanceSensor west;
 
-        public AllSensors(SensorWrapper north, SensorWrapper south, SensorWrapper east, SensorWrapper west) {
+        public AllSensors(StandardDistanceSensor north, StandardDistanceSensor south, StandardDistanceSensor east, StandardDistanceSensor west) {
             this.north = north;
-            this.south = south;
-            this.east = east;
-            this.west = west;
-        }
-
-        // No South-facing
-        public AllSensors(SensorWrapper north, SensorWrapper east, SensorWrapper west) {
-            this.north = north;
-            this.south = new MockDistanceSensor();
             this.east = east;
             this.west = west;
         }

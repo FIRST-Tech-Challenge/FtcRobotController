@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance;
+package org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers;
 
 public class MockDistanceSensorData {
     int Distance;

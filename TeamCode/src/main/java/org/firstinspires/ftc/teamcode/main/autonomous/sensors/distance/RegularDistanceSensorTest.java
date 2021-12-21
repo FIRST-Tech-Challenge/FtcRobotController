@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.DistanceSensorWrapper;
 
 @Autonomous(name="Regular Distance Sensor Test", group="linear")
 public class RegularDistanceSensorTest extends LinearOpMode {
