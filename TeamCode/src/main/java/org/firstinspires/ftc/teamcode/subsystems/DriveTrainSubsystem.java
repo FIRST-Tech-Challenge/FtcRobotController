@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.lib.drive.ArcadeDrive;
+import org.firstinspires.ftc.teamcode.lib.drive.HorizontalDrive;
 import org.firstinspires.ftc.teamcode.lib.drive.TankDrive;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static org.commandftc.RobotUniversal.hardwareMap;
 
-public class DriveTrainSubsystem extends SubsystemBase implements TankDrive, ArcadeDrive {
+public class DriveTrainSubsystem extends SubsystemBase implements TankDrive, ArcadeDrive, HorizontalDrive {
     private final DcMotor m_FrontLeftMotor;
     private final DcMotor m_RearLeftMotor;
     private final DcMotor m_FrontRightMotor;
@@ -87,6 +88,7 @@ public class DriveTrainSubsystem extends SubsystemBase implements TankDrive, Arc
         m_RearRightMotor.setPower(rearRight);
     }
 
+    @Override
     public void driveLeft(double power) {
         m_FrontLeftMotor.setPower(power);
         m_RearLeftMotor.setPower(-power);
@@ -94,6 +96,7 @@ public class DriveTrainSubsystem extends SubsystemBase implements TankDrive, Arc
         m_RearRightMotor.setPower(power);
     }
 
+    @Override
     public void driveRight(double power) {
         m_FrontLeftMotor.setPower(-power);
         m_RearLeftMotor.setPower(power);
