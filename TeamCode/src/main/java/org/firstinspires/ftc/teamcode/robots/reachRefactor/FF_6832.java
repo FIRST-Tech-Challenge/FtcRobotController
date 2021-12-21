@@ -100,7 +100,7 @@ public class FF_6832 extends OpMode {
 
     // Constants
     public static double TRIGGER_DEADZONE_THRESHOLD = 0.4;
-    public static double JOYSTICK_DEADZONE_THRESHOLD = 0.4;
+    public static double JOYSTICK_DEADZONE_THRESHOLD = 0.05;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DASHBOARD_ENABLED = true;
     public static double FORWARD_SCALING_FACTOR = 3; // scales the target linear robot velocity from tele-op controls
@@ -233,9 +233,9 @@ public class FF_6832 extends OpMode {
 //        auto.visionProvider.shutdownVision();
     }
 
-    private void handleTeleOpDriveArcade(Gamepad gamepad) {
-        double forward = Math.pow(-gamepad.left_stick_y, 3) * FORWARD_SCALING_FACTOR;
-        double rotate = Math.pow(gamepad.right_stick_x, 3) * ROTATE_SCALING_FACTOR;
+    private void handleTeleOpDriveArcade() {
+        double forward = Math.pow(-gamepad2.left_stick_y, 3) * FORWARD_SCALING_FACTOR;
+        double rotate = Math.pow(gamepad2.right_stick_x, 3) * ROTATE_SCALING_FACTOR;
 
         if(usingDesmosDrive)
             robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9, smoothingEnabled);
@@ -243,9 +243,9 @@ public class FF_6832 extends OpMode {
             robot.driveTrain.drive(forward, rotate, smoothingEnabled);
     }
 
-    private void handleTeleOpDriveTank(Gamepad gamepad) {
-        double left = -gamepad.left_stick_y;
-        double right = -gamepad.right_stick_y;
+    private void handleTeleOpDriveTank() {
+        double left = -gamepad1.left_stick_y;
+        double right = -gamepad1.right_stick_y;
 
         double forward = (left + right) / 2 * FORWARD_SCALING_FACTOR;
         double rotate = (right - left) / 2 * ROTATE_SCALING_FACTOR;
@@ -280,8 +280,7 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.a)
             robot.driveTrain.handleDuckSpinnerToggle(robot.getAlliance().getMod());
 
-        if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
-            handleTeleOpDriveTank(gamepad1);
+        handleTeleOpDriveTank();
 
         // gamepad 2
         if(stickyGamepad2.b)
@@ -305,8 +304,7 @@ public class FF_6832 extends OpMode {
         chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % CHASSIS_DISTANCE_LEVELS.length);
         robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[chassisDistanceLevelIndex]);
 
-        if(gamepad2JoysticksActive && !gamepad1JoysticksActive)
-            handleTeleOpDriveArcade(gamepad2);
+        handleTeleOpDriveArcade();
     }
 
     private enum DiagnosticStep {
@@ -353,7 +351,8 @@ public class FF_6832 extends OpMode {
                 handleDiagnosticMotorControls(robot.driveTrain::setMiddleTargetVelocity);
                 break;
             case DRIVETRAIN_MIDDLE_SWIVEL_MOTOR:
-                robot.driveTrain.setSwivelTargetAngle(robot.driveTrain.getSwivelTargetAngle() - gamepad1.right_stick_y);
+                robot.driveTrain.setMaintainSwivelAngleEnabled(false);
+                robot.driveTrain.setMaintainSwivelAngleCorrection(-gamepad1.right_stick_y);
                 break;
             case CRANE_SHOULDER_SERVO:
                 handleDiagnosticServoControls(robot.crane::getShoulderTargetPos, robot.crane::setShoulderTargetPos);
@@ -504,6 +503,8 @@ public class FF_6832 extends OpMode {
 //        handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
 
         if(dashboardEnabled) {
+            packet.put("swivel angle", robot.driveTrain.getSwivelAngle());
+            packet.put("target swivel angle", robot.driveTrain.getSwivelTargetAngle());
 //            if(auto.visionProvider.canSendDashboardImage())
 //                sendVisionImage();
 //            robot.drawFieldOverlay(packet);

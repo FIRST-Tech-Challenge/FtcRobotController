@@ -66,7 +66,7 @@ public class DriveTrain implements Subsystem {
     // PID
     private PIDController turnPID, drivePID, distPID, swivelPID, chassisDistancePID;
     private double maintainSwivelAngleCorrection, maintainChassisDistanceCorrection;
-    private boolean maintainChassisDistanceEnabled;
+    private boolean maintainChassisDistanceEnabled, maintainSwivelAngleEnabled;
 
     // Smoothers
     private ExponentialSmoother frontLeftSmoother;
@@ -78,10 +78,10 @@ public class DriveTrain implements Subsystem {
 
     // PID
     public static PIDCoefficients DRIVE_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.0055, 0, .13);
-    public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
+    public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.005, 0, .13);
+    public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.05, 0, 0);
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
-    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.2, 0, 0);
+    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(8, 0, 5);
     public static double SWIVEL_PID_TOLERANCE = 10;
 
     // Smoothing
@@ -119,6 +119,8 @@ public class DriveTrain implements Subsystem {
                 motors[i].setDirection(Direction.REVERSE);
         }
 
+        motorMiddleSwivel.setMode(RunMode.RUN_WITHOUT_ENCODER);
+
         // Sensors
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         initializeIMU();
@@ -146,6 +148,7 @@ public class DriveTrain implements Subsystem {
 
         // Miscellaneous
         previousWheelTicks = getWheelTicks();
+        maintainSwivelAngleEnabled = true;
     }
 
     private void initializeIMU() {
@@ -249,7 +252,8 @@ public class DriveTrain implements Subsystem {
         swivelAngle = (motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 360) % 360;
 
         // PID corrections
-        maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
+        if(maintainSwivelAngleEnabled)
+            maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
         motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
 
 //        updateTargetChassisDistance();
@@ -558,5 +562,13 @@ public class DriveTrain implements Subsystem {
 
     public double getSwivelTargetAngle() {
         return targetSwivelAngle;
+    }
+
+    public void setMaintainSwivelAngleEnabled(boolean maintainSwivelAngleEnabled) {
+        this.maintainSwivelAngleEnabled = maintainSwivelAngleEnabled;
+    }
+
+    public void setMaintainSwivelAngleCorrection(double maintainSwivelAngleCorrection) {
+        this.maintainSwivelAngleCorrection = maintainSwivelAngleCorrection;
     }
 }

@@ -82,12 +82,19 @@ public class Crane implements Subsystem {
             return true;
         else if(articulation.equals(Articulation.INIT)) {
             this.articulation = articulation;
-            return init.execute();
+            if(init.execute()) {
+                this.articulation = Articulation.MANUAL;
+                return true;
+            }
         } else {
             previousArticulation = this.articulation;
             this.articulation = articulation;
-            return main.execute();
+            if(main.execute()) {
+                this.articulation = Articulation.MANUAL;
+                return true;
+            }
         }
+        return false;
     }
 
     public boolean flipBucket(boolean down) {
