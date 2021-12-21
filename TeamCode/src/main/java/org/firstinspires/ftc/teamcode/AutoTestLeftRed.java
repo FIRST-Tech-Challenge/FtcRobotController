@@ -52,7 +52,7 @@ public class AutoTestLeftRed extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.FORWARD);
         rb.setDirection(DcMotor.Direction.REVERSE);
         tower1.setDirection(DcMotor.Direction.FORWARD);
-        tower2.setDirection(DcMotor.Direction.REVERSE);
+        tower2.setDirection(DcMotor.Direction.FORWARD);
         duckspinner.setDirection(CRServo.Direction.FORWARD);
 
         waitForStart();
