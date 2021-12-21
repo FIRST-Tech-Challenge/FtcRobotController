@@ -75,24 +75,25 @@ public class HardwareBothHubs
     public int          cappingMotorPos  = 0;          // current encoder count
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
 
-    public int          CAPPING_ARM_POS_START = 0;     // also used for STORE
-    public int          CAPPING_ARM_POS_STORE = 349;
-    public int          CAPPING_ARM_POS_CAP   = 1600;
-    public int          CAPPING_ARM_POS_GRAB  = 2470;
-
+    public int          CAPPING_ARM_POS_START   = 0;     // also used for STORE
+    public int          CAPPING_ARM_POS_STORE   = 349;
+    public int          CAPPING_ARM_POS_LIBERTY = 942;   // status of liberty pose (end duck-autonomous here)
+    public int          CAPPING_ARM_POS_CAP     = 1600;
+    public int          CAPPING_ARM_POS_GRAB    = 2490;
     public int          cappingArmPos = CAPPING_ARM_POS_START;
 
     // CAPPING ARM WRIST SERVO
     public Servo   wristServo = null;
-    public double  WRIST_SERVO_INIT   = 0.950;
-    public double  WRIST_SERVO_GRAB   = 0.464;
-    public double  WRIST_SERVO_STORE  = 0.269;
-    public double  WRIST_SERVO_CAP    = 0.133;
+    public double  WRIST_SERVO_INIT    = 0.950;
+    public double  WRIST_SERVO_GRAB    = 0.455;
+    public double  WRIST_SERVO_LIBERTY = 0.500;  // status of liberty pose (end duck-autonomous here)
+    public double  WRIST_SERVO_STORE   = 0.259;
+    public double  WRIST_SERVO_CAP     = 0.133;
 
     public Servo   clawServo = null;
-    public double  CLAW_SERVO_INIT   = -0.10;
-    public double  CLAW_SERVO_CLOSED = -0.10;
-    public double  CLAW_SERVO_OPEN   =  0.30;
+    public double  CLAW_SERVO_INIT   = 0.028;
+    public double  CLAW_SERVO_CLOSED = CLAW_SERVO_INIT;
+    public double  CLAW_SERVO_OPEN   = 0.300;
 
     //====== FREIGHT ARM MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx freightMotor     = null;
@@ -101,7 +102,7 @@ public class HardwareBothHubs
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
 
     public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
-    public int          FREIGHT_ARM_POS_SPIN       = 50;    // Raised enough for box to spin clearly
+    public int          FREIGHT_ARM_POS_SPIN       = 150;   // Raised enough for box to spin clearly
     public int          FREIGHT_ARM_POS_SHARED     = 350;   // Front scoring into shared shipping hub
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 400;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_VERTICAL   = 1350;  // Vertical ("up" vs "down" reverse at this point)
@@ -165,6 +166,9 @@ public class HardwareBothHubs
 //  private double   tofRangeRMedian    = 0.0;
 //  public  double   tofRangeRStdev     = 0.0;
 
+    //====== ENCODER RESET FLAG ======
+    static private boolean transitionFromAutonomous = false;  // reset 1st time, plus anytime we do teleop-to-teleop
+
     /* local OpMode members. */
     protected HardwareMap hwMap = null;
     private ElapsedTime period  = new ElapsedTime();
@@ -174,7 +178,7 @@ public class HardwareBothHubs
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap, boolean isAutonomous ) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
@@ -231,12 +235,16 @@ public class HardwareBothHubs
         cappingMotor = hwMap.get(DcMotorEx.class,"CappingMotor");
         cappingMotor.setDirection(DcMotor.Direction.REVERSE);  // goBilda fwd/rev opposite of Matrix motors!
         cappingMotor.setPower( 0.0 );
-        cappingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (!transitionFromAutonomous) {
+            cappingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
         cappingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         cappingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         wristServo = hwMap.servo.get("WristServo");    // servo port 0 (hub 2)
-        wristServo.setPosition( WRIST_SERVO_INIT );
+        if (!transitionFromAutonomous) {
+            wristServo.setPosition( WRIST_SERVO_INIT );
+        }
 
         clawServo = hwMap.servo.get("ClawServo");      // servo port 1 (hub 2)
         clawServo.setPosition( CLAW_SERVO_INIT );
@@ -245,7 +253,9 @@ public class HardwareBothHubs
         freightMotor = hwMap.get(DcMotorEx.class,"FreightMotor");
         freightMotor.setDirection(DcMotor.Direction.REVERSE);  // goBilda fwd/rev opposite of Matrix motors!
         freightMotor.setPower( 0.0 );
-        freightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (!transitionFromAutonomous) {
+            freightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
         freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         freightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -268,6 +278,9 @@ public class HardwareBothHubs
 
         // Initialize REV Expansion Hub IMU
         initIMU();
+
+        // Make a note that we just finished autonomous setup
+        transitionFromAutonomous = (isAutonomous)? true:false;
     } /* init */
 
     /*--------------------------------------------------------------------------------------------*/

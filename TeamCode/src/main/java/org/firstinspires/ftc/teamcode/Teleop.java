@@ -73,8 +73,8 @@ public abstract class Teleop extends LinearOpMode {
     double    duckVelocity;
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
-    boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
-
+    boolean   rangeSensorsEnabled = false;  // enable only when designing an Autonomous plan (takes time!)
+    boolean   rangeSensorPingPong = true;   // only send a new ping out every other control cycle
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
 
@@ -91,7 +91,7 @@ public abstract class Teleop extends LinearOpMode {
         telemetry.update();
 
         // Initialize robot hardware
-        robot.init(hardwareMap);
+        robot.init(hardwareMap,false);
         setAllianceSpecificBehavior();
 
         // Send telemetry message to signify robot waiting;
@@ -113,8 +113,15 @@ public abstract class Teleop extends LinearOpMode {
 
             // If enabled, process ultrasonic range sensors
             if( rangeSensorsEnabled ) {
-                processRangeSensors();
-            }
+                if( rangeSensorPingPong ) {
+                    processRangeSensors();
+                    rangeSensorPingPong = false;
+                }
+                else {
+                    // skip this cycle
+                    rangeSensorPingPong = true;
+                }
+            } // rangeSensorsEnabled
 
             // Process all the driver/operator inputs
             processDuckMotorControls();
@@ -185,6 +192,7 @@ public abstract class Teleop extends LinearOpMode {
                telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f in", sonarRangeL/2.54, sonarRangeR/2.54 );
                telemetry.addData("Sonar Range (F/B)", "%.1f  %.1f in", sonarRangeF/2.54, sonarRangeB/2.54 );
             }
+//          telemetry.addData("Gyro Angle", "%.1f deg", robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
 
@@ -474,8 +482,8 @@ public abstract class Teleop extends LinearOpMode {
             double gamepad1_right_trigger = gamepad1.right_trigger;
             if( gamepad1_left_trigger > 0.05 ) {
                 // limit how far we can drive this direction
-                if( robot.cappingMotorPos > 0 ) {
-                    robot.cappingMotor.setPower( -0.10 * gamepad1_left_trigger );
+                if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_GRAB ) {
+                    robot.cappingMotor.setPower( +0.10 * gamepad1_left_trigger );
                     cappingArmTweaked = true;
                 }
                 else {
@@ -484,8 +492,8 @@ public abstract class Teleop extends LinearOpMode {
             }
             else if( gamepad1_right_trigger > 0.05 ) {
                 // limit how far we can drive this direction
-                if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_GRAB ) {
-                    robot.cappingMotor.setPower( +0.10 * gamepad1_right_trigger );
+                if( robot.cappingMotorPos > 0 ) {
+                    robot.cappingMotor.setPower( -0.10 * gamepad1_right_trigger );
                     cappingArmTweaked = true;
                 }
                 else {
@@ -626,7 +634,7 @@ public abstract class Teleop extends LinearOpMode {
                 valueOut = (6.00 * valueIn) + 4.8925;
         }
 
-        return valueOut;
+        return valueOut/2.0;
     } // multSegLinearRot
 
     private double multSegLinearXY( double valueIn ) {
@@ -668,9 +676,12 @@ public abstract class Teleop extends LinearOpMode {
     void processStandardDriveMode() {
         // Retrieve X/Y and ROTATION joystick input
         if( controlMultSegLinear ) {
-            yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
-            xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
-            rotation     = multSegLinearRot( -gamepad1.right_stick_x );
+//          yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
+//          xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
+//          rotation     = multSegLinearRot( -gamepad1.right_stick_x );
+            yTranslation = -gamepad1.left_stick_y * 0.60;
+            xTranslation =  gamepad1.left_stick_x * 0.60;
+            rotation     = -gamepad1.right_stick_x * 0.28;
         }
         else {
             yTranslation = -gamepad1.left_stick_y;
