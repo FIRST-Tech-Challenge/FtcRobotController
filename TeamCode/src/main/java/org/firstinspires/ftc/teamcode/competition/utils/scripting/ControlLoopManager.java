@@ -8,13 +8,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class ControlLoopManager {
 
     private final LinearOpMode OP_MODE;
+    private boolean shouldStop;
 
     public ControlLoopManager(LinearOpMode opMode) {
         OP_MODE = opMode;
     }
 
     public boolean shouldContinue() {
-        return !OP_MODE.isStopRequested() && !OP_MODE.gamepad1.back && !OP_MODE.gamepad2.back && OP_MODE.opModeIsActive();
+        return !shouldStop && !OP_MODE.isStopRequested() && !OP_MODE.gamepad1.back && !OP_MODE.gamepad2.back && OP_MODE.opModeIsActive();
+    }
+
+    public void requestStop() {
+        shouldStop = true;
     }
 
 }
