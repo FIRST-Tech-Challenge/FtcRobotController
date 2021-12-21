@@ -24,7 +24,7 @@ public class DriveTrainSubsystem extends SubsystemBase implements TankDrive, Arc
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         // Default drive type
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
