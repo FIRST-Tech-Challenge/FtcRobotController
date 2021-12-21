@@ -39,4 +39,12 @@ public class LiftSubsystem extends SubsystemBase {
     public double getPower() {
         return m_liftMotor.getPower();
     }
+
+    public void stop() {
+        m_liftMotor.setPower(0);
+    }
+
+    public boolean isBusy() {
+        return m_liftMotor.isBusy();
+    }
 }
