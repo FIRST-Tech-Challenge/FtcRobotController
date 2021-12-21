@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardIMU;
 
-import java.util.Dictionary;
-
 @TeleOp(name = "IMU Test")
 public class IMUTest extends LinearOpMode {
 
@@ -17,11 +15,12 @@ public class IMUTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            Dictionary<StandardIMU.DataPoint, Float> data = imu.getData();
+            StandardIMU.ReturnData<StandardIMU.DataPoint, Float> data = imu.getData();
+            data.put(StandardIMU.DataPoint.HEADING, -data.getHeading());
 
-            telemetry.addData("Heading", data.get(StandardIMU.DataPoint.HEADING));
-            telemetry.addData("Roll", data.get(StandardIMU.DataPoint.ROLL));
-            telemetry.addData("Pitch", data.get(StandardIMU.DataPoint.PITCH));
+            telemetry.addData("Heading", data.getHeading());
+            telemetry.addData("Roll", data.getHeading());
+            telemetry.addData("Pitch", data.getHeading());
 
             telemetry.update();
         }

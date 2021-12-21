@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -13,8 +12,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
 
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Set;
 
 public class StandardIMU extends InteractionSurface {
     //----------------------------------------------------------------------------------------------
@@ -24,14 +26,29 @@ public class StandardIMU extends InteractionSurface {
     // The IMU sensor object
     BNO055IMU imu;
 
-    float offset;
+    float headingOffset;
 
-    public float getOffset() {
-        return offset;
+    public float getHeadingOffset() {
+        return headingOffset;
+    }
+    public void setHeadingOffset(float offset) {
+        this.headingOffset = offset;
     }
 
-    public void setOffset(float offset) {
-        this.offset = offset;
+    float rollOffset;
+    public float getRollOffset() {
+        return rollOffset;
+    }
+    public void setRollOffset(float offset) {
+        this.rollOffset = offset;
+    }
+
+    float pitchOffset;
+    public float getPitchOffset() {
+        return headingOffset;
+    }
+    public void setPitchOffset(float offset) {
+        this.pitchOffset = offset;
     }
 
     // State used for updating telemetry
@@ -58,13 +75,28 @@ public class StandardIMU extends InteractionSurface {
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
     }
 
-    public Dictionary<DataPoint, Float> getData() {
-        angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+    public ReturnData<DataPoint, Float> getData() {
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        Hashtable<DataPoint, Float> toReturn = new Hashtable<>();
-        toReturn.put(DataPoint.HEADING, angles.firstAngle + offset + 180);
-        toReturn.put(DataPoint.ROLL, angles.secondAngle + offset + 180);
-        toReturn.put(DataPoint.PITCH, angles.thirdAngle + offset + 180);
+        float heading = angles.firstAngle + headingOffset;
+        /*if (heading < 0) {
+            heading = 360 + heading;
+        }*/
+
+        float roll = angles.secondAngle + rollOffset;
+        /*if (roll < 0) {
+            roll = 360 + roll;
+        }*/
+
+        float pitch = angles.secondAngle + pitchOffset;
+        /*if (pitch < 0) {
+            pitch = 360 + pitch;
+        }*/
+
+        ReturnData<DataPoint, Float> toReturn = new ReturnData<>();
+        toReturn.put(DataPoint.HEADING, heading);
+        toReturn.put(DataPoint.ROLL, roll);
+        toReturn.put(DataPoint.PITCH, pitch);
 
         return toReturn;
     }
@@ -80,4 +112,22 @@ public class StandardIMU extends InteractionSurface {
     }
 
     public enum DataPoint {HEADING, PITCH, ROLL}
+
+    public class ReturnData<K, V> extends Hashtable<K,V> {
+        public ReturnData() {
+            super();
+        }
+
+        public float getHeading() {
+            return (float) this.get(DataPoint.HEADING);
+        }
+
+        public float getPitch() {
+            return (float) this.get(DataPoint.PITCH);
+        }
+
+        public float getRoll() {
+            return (float) this.get(DataPoint.ROLL);
+        }
+    }
 }
