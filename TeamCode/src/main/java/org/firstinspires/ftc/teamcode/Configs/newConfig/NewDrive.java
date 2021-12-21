@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Configs.newConfig.HardwareNew;
  * This class handles the manual driving.
  * @author aryansinha
  * also in a less prominent fashion
- * @author karthikperi
+ * @soon-to-be-author author karthikperi
  */
 @TeleOp(name="Basic: Fat OpMode", group="Linear Opmode")
 public class NewDrive extends BaseNewOpMode {

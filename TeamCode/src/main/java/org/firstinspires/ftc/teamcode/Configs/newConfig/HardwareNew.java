@@ -25,7 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 /**
  * This class defines the hardware components.
  * @author aryansinha
- * @author karthikperi
+ * @soon-to-be-author karthikperi
  */
 public final class HardwareNew
 {
@@ -87,7 +87,6 @@ public final class HardwareNew
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         arm.setDirection(DcMotor.Direction.FORWARD);
         leftClaw.setDirection(Servo.Direction.REVERSE);
-        rightClaw.setDirection(Servo.Direction.FORWARD);
 
         // Set all motors to zero power
         frontRightDrive.setPower(0);
@@ -95,6 +94,7 @@ public final class HardwareNew
         backRightDrive.setPower(0);
         backLeftDrive.setPower(0);
         arm.setPower(0);
+        Carousel.setPower(0);
 
         imu = hwMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -123,6 +123,7 @@ public final class HardwareNew
 
 
     public void turnRight(double degrees, double power){
+        degrees*=-1;
         //Angle before you turn
         double startingAngle = getHeading();
         //Setting motors to turn right
@@ -141,7 +142,7 @@ public final class HardwareNew
         backRightDrive.setPower(0);
     }
     public void turnLeft(double degrees, double power){
-        degrees *= -1;
+
         //Angle before you turn
         double startingAngle = getHeading();
         //Setting motors to turn right

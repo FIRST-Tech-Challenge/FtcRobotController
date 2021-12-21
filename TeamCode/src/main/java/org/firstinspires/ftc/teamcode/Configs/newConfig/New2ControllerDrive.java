@@ -5,7 +5,7 @@ FTC team 202101101
 
 package org.firstinspires.ftc.teamcode.Configs.newConfig;
 
-import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.logData;
+import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.logData;
 import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.logLine;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -18,10 +18,10 @@ import org.firstinspires.ftc.teamcode.Configs.newConfig.HardwareNew;
 
 /**
  * This class handles the manual driving.
- * @author karthikperi
+ * @soon-to-be-author karthikperi
  * @author aryansinha
  */
-@TeleOp(name="Basic: Double Fat OpMode", group="Linear Opmode")
+@TeleOp(name="Basic: Obese OpMode", group="Linear Opmode")
 public class New2ControllerDrive extends BaseNewOpMode {
     private final HardwareNew robot = new HardwareNew(true);
 
@@ -79,28 +79,22 @@ public class New2ControllerDrive extends BaseNewOpMode {
                 }
             }
 
-            if (gamepad2.dpad_left) {
-                telemetry.addLine("Pressed Left DPad");
-                robot.getCarousel().setPower(-1);
-                sleep(1000);
-                robot.getCarousel().setPower(0);
-            }
 
             if (gamepad2.dpad_right) {
                 telemetry.addLine("Pressed Right DPad");
-                robot.getCarousel().setPower(1);
+                robot.getCarousel().setPower(.8);
                 sleep(1000);
                 robot.getCarousel().setPower(0);
                         }
 
             if (gamepad2.left_bumper) {
-                robot.getLeftClaw().setPosition(0.5);
-                robot.getRightClaw().setPosition(0.5);
+                robot.getRightClaw().setPosition(1.0);
+                robot.getLeftClaw().setPosition(1.0);
             }
             else if (gamepad2.right_bumper)
             {
-                robot.getLeftClaw().setPosition(0.1);
-                robot.getRightClaw().setPosition(0.1);
+                robot.getRightClaw().setPosition(0.3);
+                robot.getLeftClaw().setPosition(0.3);
             }
 
             if (gamepad2.left_trigger > 0)
@@ -115,6 +109,7 @@ public class New2ControllerDrive extends BaseNewOpMode {
                 sleep(1);
                 robot.getArm().setPower(0);
             }
+            logData(this, "IMU", String.format("x: %f, y: %f, z: %f", robot.getImu().getAngularOrientation().firstAngle, robot.getImu().getAngularOrientation().secondAngle, robot.getImu().getAngularOrientation().thirdAngle) );
         }
     }
 

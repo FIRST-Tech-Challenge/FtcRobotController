@@ -16,7 +16,7 @@ public class FTCConstants {
     /**
      * Drive gear (Ratios, we don't need to worry about this as we're using a hex core)
      */
-    public static final double DRIVE_GEAR_REDUCTION = 5.55555555556;
+    public static final double DRIVE_GEAR_REDUCTION = 10.5556;
 
     /**
      * For figuring circumference

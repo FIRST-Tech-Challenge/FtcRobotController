@@ -16,9 +16,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * This class defines the warehouse driving.
  * @author aryansinha
  * kind-of in a less prominent way
- * @author karthikperi
+ * @soon-to-be-author karthikperi
  */
-@Autonomous(name="New Warehouse Driving")
+@Autonomous(name="Warehouse Drive Blue")
 public class WarehouseDriveBlue extends BaseNewOpMode {
     private final HardwareNew robot;
     private final ElapsedTime runtime = new ElapsedTime();
@@ -37,7 +37,7 @@ public class WarehouseDriveBlue extends BaseNewOpMode {
 
     /**
      * {@inheritDoc}
-     */
+     * */
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,9 +51,14 @@ public class WarehouseDriveBlue extends BaseNewOpMode {
         //reset Runtime
         runtime.reset();
 
-        encoderDrive(this,1,(double)49,(double)49, 5);
+        encoderDrive(this,1,(double)26,(double)26, 5);
+        robot.getArm().setPower(0.5);
+        sleep(5000);
+        robot.getArm().setPower(0);
+        robot.getLeftClaw().setPosition(0.5);
+        robot.getRightClaw().setPosition(0.5);
+        encoderDrive(this, 1, (double)-20, (double)-20, 5);
         robot.turnLeft(90, 0.2);
-        encoderDrive(this, 1, 2, 2, 1);
         encoderDrive(this,-1,(double)49,(double)49, 5);
         robot.turnRight(90, 0.2);
         encoderDrive(this, -1, 2, 2, 1);
@@ -64,10 +69,10 @@ public class WarehouseDriveBlue extends BaseNewOpMode {
                 robot.getRightDrive().getCurrentPosition()));
 
 
+
         robot.turnLeft(90, 0.1);
         encoderDrive(this, 1, 80, 80, 5);
         sleep(500);
-
 
     }
 }
