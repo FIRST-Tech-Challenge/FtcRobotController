@@ -80,7 +80,7 @@ public class CreateBC4HDrive {
                 DcMotorEx.Direction.REVERSE,
                 DcMotorEx.RunMode.RUN_USING_ENCODER );
 
-        Button slowDown = new GamepadButton(op, GamepadKeys.Button.B);
+        Button slowDown = new GamepadButton(op, GamepadKeys.Button.RIGHT_BUMPER);
         ToggleSlowdown toggleSlowdown = new ToggleSlowdown(drive, telemetry);
         slowDown.whenPressed(toggleSlowdown);
 

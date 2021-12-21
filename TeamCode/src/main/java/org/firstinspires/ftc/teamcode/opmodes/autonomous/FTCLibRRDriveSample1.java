@@ -67,6 +67,31 @@ public class FTCLibRRDriveSample1 extends CommandOpMode {
         LEDSubsystem ledSubsystem = new LEDSubsystem(hardwareMap,"blinkin");
         ShowAllianceColor allianceColor = new ShowAllianceColor(ledSubsystem,ShowAllianceColor.AllianceColor.BLUE);
 
+        /*.splineTo(new Vector2d(-15,40),Math.toRadians(270))
+                .addDisplacementMarker(()->{}) //step 3
+                .waitSeconds(3) //step 3
+
+                .turn(Math.toRadians(-135)) //step 4
+
+                .lineTo(new Vector2d(-46,55))//step 5
+                .addDisplacementMarker(()->{}) //step 6
+                .waitSeconds(3)
+
+                .turn(Math.toRadians(135)) //step 7
+
+                .splineToConstantHeading(new Vector2d(0,64),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(42,64),Math.toRadians(0))
+
+                .turn(Math.toRadians(90))
+
+                .addDisplacementMarker(()->{}) //step 10
+                .waitSeconds(1) //step
+
+                .splineToSplineHeading(new Pose2d(8,64,Math.toRadians(270)),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-15,40),Math.toRadians(57))
+                .turn(Math.toRadians(90))
+                .back(45)*/
+
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-15,40),Math.toRadians(270))
                 .addDisplacementMarker(()-> {
@@ -86,42 +111,45 @@ public class FTCLibRRDriveSample1 extends CommandOpMode {
         turnCommand2 = new TurnCommand(drive, Math.toRadians(135));
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end().plus(new Pose2d(0, 0, Math.toRadians(135))))
-                .splineToConstantHeading(new Vector2d(52,67),Math.toDegrees(260.3)) //step 8
-                //
+                .splineToConstantHeading(new Vector2d(0,64),Math.toRadians(0)) //step 8
+                .splineToConstantHeading(new Vector2d(42,64),Math.toRadians(0))
                 .build();
 
-        //turnCommand3 = new TurnCommand(drive, Math.toRadians(90));
+        turnCommand3 = new TurnCommand(drive, Math.toRadians(90));
 
-        /*Trajectory traj4 = drive.trajectoryBuilder(new Pose2d())
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d())
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 4", "performing path 4 action");
                     allianceColor.schedule();
                 }) //step 10
                 .build();
 
-        turnCommand4 = new TurnCommand(drive, 90);
+        //turnCommand4 = new TurnCommand(drive, 90);
 
         Trajectory traj5 = drive.trajectoryBuilder(new Pose2d())
-                .strafeTo(new Vector2d(11,67)) //step 12
-                .splineToConstantHeading(new Vector2d(-15,40),Math.toRadians(-90)) //step 13
+                .splineToSplineHeading(new Pose2d(8,64,Math.toRadians(270)),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-15,40),Math.toRadians(57))
                 .build();
 
         turnCommand5 = new TurnCommand(drive, -90);
 
         Trajectory traj6 = drive.trajectoryBuilder(new Pose2d())
                 .back(45)
-                .build();*/
+                .build();
+
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
-        //sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-        //sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
-        //sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
+        sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
+        sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+        sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
 
         schedule(new WaitUntilCommand(this::isStarted).andThen(
                 sample1Follower1.andThen(turnCommand1,
                         sample1Follower2,turnCommand2,
-                        sample1Follower3)
+                        sample1Follower3,turnCommand3,
+                        sample1Follower4,sample1Follower5,
+                        turnCommand5, sample1Follower6)
         ));
 
         telemetry.update();
