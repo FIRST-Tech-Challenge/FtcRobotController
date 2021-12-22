@@ -24,6 +24,7 @@ public class MainTempTeleOpScript extends TeleOpScript {
     private OutputSpace outputSpace;
 
     public MainTempTeleOpScript(LinearOpMode opMode) {
+        // set values
         super(opMode);
         inputSpace = new InputSpace(getOpMode().hardwareMap);
         outputSpace = new OutputSpace(getOpMode().hardwareMap);
@@ -33,6 +34,7 @@ public class MainTempTeleOpScript extends TeleOpScript {
         intakeUpperPos = 30;
         intakeShouldBeDown = false;
         intakeIsAtPosition = false;
+        // calibrate elevator
         int timeAsOfLastElevatorCalibrationBegin = (int) getOpMode().time;
         while(outputSpace.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 0 && timeAsOfLastElevatorCalibrationBegin > (int) getOpMode().time - 1) {
             inputSpace.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, 100);
@@ -44,6 +46,7 @@ public class MainTempTeleOpScript extends TeleOpScript {
         }
         ((StandardMotor) inputSpace.getElevatorLeftLift().getInternalInteractionSurface()).reset();
         ((StandardMotor) inputSpace.getElevatorRightLift().getInternalInteractionSurface()).reset();
+        // calibrate intake
 //        while(!intakeIsAtPosition) {
 //            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
 //                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
@@ -61,13 +64,11 @@ public class MainTempTeleOpScript extends TeleOpScript {
 
     @Override
     public void main() {
-
-        // driving
+        // update drivetrain
         int left = (int) Range.clip(gamepadManager.functionOneGamepad().left_stick_y * 75, -75, 75);
         int right = (int) Range.clip(gamepadManager.functionOneGamepad().right_stick_y * 75, -75, 75);
         inputSpace.sendInputToTank(TankDrivetrainLocation.Action.SET_SPEED, -right, -left);
-
-        // intake lifter
+        // lift intake if needed
 //        if(gamepadManager.functionOneGamepad().dpad_right) {
 //            intakeShouldBeDown = false;
 //        }else if(gamepadManager.functionOneGamepad().dpad_left) {
@@ -98,19 +99,17 @@ public class MainTempTeleOpScript extends TeleOpScript {
 //                timeAsOfLastIntakeMovement = getOpMode().time;
 //            }
 //        }
-
+        // debugging
         getOpMode().telemetry.addData("Distance: ", outputSpace.receiveOutputFromIntakeLiftingDistanceSensor());
         getOpMode().telemetry.update();
-
-        // intake
+        // update intake motor
         if(intakeShouldBeDown && intakeIsAtPosition) {
             int intakeGas = (int) Range.clip(gamepadManager.functionOneGamepad().left_trigger * 100, 0, 100);
             int intakeBrake = (int) Range.clip(gamepadManager.functionOneGamepad().right_trigger * 100, 0, 100);
             int intakeSpeed = Range.clip(intakeGas - intakeBrake, -100, 100);
             inputSpace.sendInputToIntakeSpinner(IntakeSpinningMotorLocation.Action.SET_SPEED, intakeSpeed);
         }
-
-        // elevator
+        // control elevator
         int elevatorInput = (gamepadManager.functionOneGamepad().right_bumper ? 0 : 1) + (gamepadManager.functionOneGamepad().left_bumper ? 0 : -1);
         int inputVal = ((StandardMotor) inputSpace.getElevatorLeftLift().getInternalInteractionSurface()).getDcMotor().getCurrentPosition() > -300 ? Range.clip(elevatorInput * 75, -25, 5) : Range.clip(elevatorInput * 75, -75, 75);
         if(inputVal < 0 || outputSpace.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 0) {
@@ -121,7 +120,6 @@ public class MainTempTeleOpScript extends TeleOpScript {
             inputSpace.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, 0);
             inputSpace.sendInputToElevatorRightLift(ElevatorRightLiftMotorLocation.Action.SET_SPEED, 0);
         }
-
     }
 
     @Override

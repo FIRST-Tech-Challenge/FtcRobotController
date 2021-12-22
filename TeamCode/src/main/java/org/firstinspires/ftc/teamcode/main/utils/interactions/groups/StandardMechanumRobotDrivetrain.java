@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.main.utils.interactions.groups;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
 
-public class StandardMechanum extends InteractionSurface {
+public class StandardMechanumRobotDrivetrain extends StandardRobotDrivetrain {
 
     private final StandardMotor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
 
@@ -14,7 +14,7 @@ public class StandardMechanum extends InteractionSurface {
      * @param leftTop The left top motor of the mechanum
      * @param leftBottom The left bottom motor of the mechanum
      */
-    public StandardMechanum(StandardMotor rightTop, StandardMotor rightBottom, StandardMotor leftTop, StandardMotor leftBottom) {
+    public StandardMechanumRobotDrivetrain(StandardMotor rightTop, StandardMotor rightBottom, StandardMotor leftTop, StandardMotor leftBottom) {
         RIGHT_TOP = rightTop;
         RIGHT_BOTTOM = rightBottom;
         LEFT_TOP = leftTop;

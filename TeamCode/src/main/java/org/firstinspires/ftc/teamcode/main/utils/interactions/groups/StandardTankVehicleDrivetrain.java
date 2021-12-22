@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.main.utils.interactions.groups;
 
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
 
-public class StandardTank extends StandardDrivetrain {
+public class StandardTankVehicleDrivetrain extends StandardVehicleDrivetrain {
 
     private final StandardMotor RIGHT_TOP, RIGHT_BOTTOM, LEFT_TOP, LEFT_BOTTOM;
 
@@ -13,7 +13,7 @@ public class StandardTank extends StandardDrivetrain {
      * @param leftTop The left top motor of the tank
      * @param leftBottom The left bottom motor of the tank
      */
-    public StandardTank(StandardMotor rightTop, StandardMotor rightBottom, StandardMotor leftTop, StandardMotor leftBottom) {
+    public StandardTankVehicleDrivetrain(StandardMotor rightTop, StandardMotor rightBottom, StandardMotor leftTop, StandardMotor leftBottom) {
         RIGHT_TOP = rightTop;
         RIGHT_BOTTOM = rightBottom;
         LEFT_TOP = leftTop;
