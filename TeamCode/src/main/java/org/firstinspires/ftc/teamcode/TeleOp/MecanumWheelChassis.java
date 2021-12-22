@@ -1,15 +1,12 @@
 /*
 Copyright 2021 FIRST Tech Challenge Team FTC
-
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
 including without limitation the rights to use, copy, modify, merge, publish, distribute,
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all copies or substantial
 portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
 NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -46,6 +43,11 @@ public class MecanumWheelChassis extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor backRight;
     
+    private DcMotor bucket;
+    private DcMotor linearSlide;
+    private DcMotor carouselTurner;
+    private DcMotor linkage;
+    
     @Override
     public void runOpMode() {
         
@@ -59,30 +61,73 @@ public class MecanumWheelChassis extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             
-            if (gamepad1.right_bumper) {
-                // go right
-                frontRight.setPower(1);
-                frontLeft.setPower(-1);
-                backRight.setPower(-1);
-                backLeft.setPower(1);
+            if (gamepad2.y) {
+                
+                linearSlide.setPower(0.5);
+                
 
-            } else if (gamepad1.left_bumper) {
-                // go left
-                frontLeft.setPower(-1);
-                frontRight.setPower(1);
-                backLeft.setPower(1);
-                backRight.setPower(-1);
+            } else if (gamepad2.a) {
+                
+                linearSlide.setPower(-0.5);
+                
 
             } else {
         
-                frontLeft.setPower(gamepad1.left_stick_y * 0.5);
-                backLeft.setPower(gamepad1.right_stick_y * 0.5);
-                frontRight.setPower(gamepad1.right_stick_y * 0.5);
-                backRight.setPower(gamepad1.left_stick_y * 0.5);
+                linearSlide.setPower(0);
+                
 
             }
- 
             
+            if (gamepad2.dpad_up) {
+                
+                bucket.setPower(1);
+                
+            } else if (gamepad2.dpad_down) {
+                
+                bucket.setPower(-1);
+                
+            } else {
+                
+                bucket.setPower(0);
+                
+            }
+            
+            linearSlide.setPower(gamepad2.right_stick_y);
+            
+            if (gamepad2.dpad_right) {
+            
+                linkage.setPower(0.5);
+                
+            } else if (gamepad2.dpad_left) {
+                
+                linkage.setPower(-0.5);
+                
+                
+            } else {
+                
+                linkage.setPower(0);
+                
+            }
+            
+            
+            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double rx = gamepad1.right_stick_x;
+
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio, but only when
+            // at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
+
+            frontLeft.setPower(frontLeftPower * 0.5);
+            backLeft.setPower(backLeftPower * 0.5);
+            frontRight.setPower(frontRightPower * 0.5);
+            backRight.setPower(backRightPower * 0.5);
+ 
             
             telemetry.addData("Status", "Running");
             telemetry.update();
@@ -98,11 +143,15 @@ public class MecanumWheelChassis extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class,"BackLeft");
         backRight = hardwareMap.get(DcMotor.class,"BackRight");
         
-       frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-       backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        bucket = hardwareMap.get(DcMotor.class,"Bucket");
+        linearSlide = hardwareMap.get(DcMotor.class, "LinearSlide" );
+        linkage = hardwareMap.get(DcMotor.class, "Linkage" );
+        carouselTurner = hardwareMap.get(DcMotor.class, "CarouselTurner" );
+        
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
        
-       
+        linkage.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         
     }
 }
-
