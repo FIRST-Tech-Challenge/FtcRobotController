@@ -3,30 +3,32 @@ package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.DistanceSensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.MockDistanceSensor;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardDistanceSensor;
+import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardSensor;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.MockDistanceSensor;
 
 class Axis {
-    public SensorWrapper sensor1;
-    public SensorWrapper sensor2;
+    public StandardDistanceSensor sensor1;
+    public StandardDistanceSensor sensor2;
     public double interSensorDistance = 10;
     public DistanceUnit unit = DistanceUnit.CM;
 
-    public Axis(SensorWrapper sensor1, SensorWrapper sensor2) {
+    public Axis(StandardDistanceSensor sensor1, StandardDistanceSensor sensor2) {
         this.sensor1 = sensor1;
         this.sensor2 = sensor2;
     }
 
     public Axis(HardwareMap hardwareMap, String sensor1Name, String sensor2Name) {
-        this.sensor1 = new DistanceSensorWrapper(hardwareMap, sensor1Name);
-        this.sensor2 = new DistanceSensorWrapper(hardwareMap, sensor2Name);
+        this.sensor1 = new StandardDistanceSensor(hardwareMap, sensor1Name);
+        this.sensor2 = new StandardDistanceSensor(hardwareMap, sensor2Name);
     }
 
+    /*
     public Axis(MockDistanceSensor sensor1, MockDistanceSensor sensor2) {
         this.sensor1 = sensor1;
         this.sensor2 = sensor2;
     }
+    */
 
     public AxisReading getReadings() {
         return new AxisReading(

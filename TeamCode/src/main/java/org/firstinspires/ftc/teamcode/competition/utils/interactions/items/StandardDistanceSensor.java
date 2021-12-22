@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.competition.utils.interactions.items;
 
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.competition.utils.interactions.InteractionSurface;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.SensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.DistanceSensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.UltrasonicDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.SensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.DistanceSensorWrapper;
+import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.UltrasonicDistanceSensor;
 
 /**
  * A StandardDistanceSensor represents a DistanceSensorWrapper and/or an UltrasonicDistanceSensor, depending on the robot's configuration.
@@ -30,8 +29,8 @@ public class StandardDistanceSensor extends InteractionSurface {
         }
     }
 
-    public int getData(DistanceUnit unit) {
-        return getDistance(unit);
+    public int getData() {
+        return getDistance(DistanceUnit.CM);
     }
 
     public int getDistance(DistanceUnit unit) {
@@ -44,6 +43,18 @@ public class StandardDistanceSensor extends InteractionSurface {
                 return (int) SENSOR_ULTRASONIC.getData();
             } catch(Exception ignoredAlso) {
                 return 0;
+            }
+        }
+    }
+
+    public boolean didTimeoutOccur() {
+        try {
+            return SENSOR_DISTANCE.didTimeoutOccur();
+        } catch(Exception ignored) {
+            try {
+                return SENSOR_ULTRASONIC.didTimeoutOccur();
+            } catch(Exception ignoredAlso) {
+                return false;
             }
         }
     }
