@@ -1,12 +1,9 @@
-package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
+package org.firstinspires.ftc.teamcode.main.utils.autonomous.location.pipeline;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardDistanceSensor;
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardDistanceSensor;
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardIMU;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.NavigationSensorCollection;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.SensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.MockDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.utils.autonomous.location.pipeline.Axis.AxisReading;
+import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.NavigationSensorCollection;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardIMU;
 
 public class PositionSystem {
     public Axis leftToRight;
@@ -27,7 +24,7 @@ public class PositionSystem {
     }
 
     private void UpdateCoordinateSystem(CoordinateSystem.FieldCoordinates coordinates) {
-        coordinateSystem.Update(coordinates);
+        coordinateSystem.update(coordinates);
     }
 
     public void SetAngle(double angle, AngleUnit unit) {
@@ -42,13 +39,13 @@ public class PositionSystem {
     }
 
     public void getAndEvalReadings() {
-        Axis.AxisReading ew = leftToRight.getReadings();
-        Axis.AxisReading ns = upAndDown.getReadings();
+        AxisReading ew = leftToRight.getReadings();
+        AxisReading ns = upAndDown.getReadings();
 
         evalReadings(ew, ns);
     }
 
-    private void evalReadings(Axis.AxisReading eastWest, Axis.AxisReading northSouth) {
+    private void evalReadings(AxisReading eastWest, AxisReading northSouth) {
         boolean eastWestValid = true;
         boolean northSouthValid = true;
 

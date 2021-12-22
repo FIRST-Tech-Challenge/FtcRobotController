@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.main.autonomous.sensors;
+package org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors;
 
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardDistanceSensor;
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardIMU;
-import org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline.PositionSystem;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardIMU;
 
 public class NavigationSensorCollection {
     public StandardDistanceSensor north;

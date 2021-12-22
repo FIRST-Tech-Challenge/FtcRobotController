@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardDistanceSensor;
 
-class Axis {
+public class Axis {
     public StandardDistanceSensor sensor1;
     public StandardDistanceSensor sensor2;
     public double interSensorDistance = 10;
@@ -46,7 +46,7 @@ class Axis {
         return isValid;
     }
 
-    static class AxisReading {
+    public static class AxisReading {
         public double sensor1;
         public double sensor2;
         public double interSensorDistance;
