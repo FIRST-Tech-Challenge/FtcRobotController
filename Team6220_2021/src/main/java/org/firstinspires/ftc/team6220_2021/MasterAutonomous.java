@@ -6,25 +6,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
-import org.firstinspires.ftc.team6220_2021.ResourceClasses.PIDFilter;
+
+import java.util.Arrays;
 
 public abstract class MasterAutonomous extends MasterOpMode {
     public double max(double a, double b, double c) {
-        if (a > b && a > c) {
-            return a;
-        } else if (b > a && b > c) {
-            return b;
-        } else if (c > b && c > a) {
-            return c;
-        } else if (a < b && b == c){
-            return b;
-        } else if (b < c && c == a){
-            return c;
-        } else if (c < a && a == b){
-            return a;
-        } else {
-            return a;
-        }
+        double[] array = {a, b, c};
+        Arrays.sort(array);
+
+        return array[2];
     }
 
     // This method drives tank when given an angle drive power and turning power
@@ -36,13 +26,13 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         motorFrontLeft.setPower(leftSidePower);
         motorBackLeft.setPower(leftSidePower);
-        motorFrontRight.setPower(-rightSidePower);
-        motorBackRight.setPower(-rightSidePower);
+        motorFrontRight.setPower(rightSidePower);
+        motorBackRight.setPower(rightSidePower);
     }
 
     // This method drives a specified number of inches in a straight line when given a target distance and max speed
     // Set direction to false when going forward and true when going backwards
-    public void driveInches(double targetDistance, double minSpeed, boolean direction) {
+    public void driveInches(double targetDistance, double minSpeed, boolean backwards) {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -60,24 +50,22 @@ public abstract class MasterAutonomous extends MasterOpMode {
         double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double angleDeviation;
 
-        PIDFilter translationPID;
-        translationPID = new PIDFilter(Constants.TRANSLATION_P, Constants.TRANSLATION_I, Constants.TRANSLATION_D);
-
         while (!distanceReached && opModeIsActive()) {
             // This calculates the angle deviation
             angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle;
 
-            // This adds a value to the PID loop so it can update
-            distanceLeft = targetDistance - position;
-            translationPID.roll(distanceLeft);
-
-            // We drive the wheels with the PID value
-            if (direction) {
-                driveTank(max(translationPID.getFilteredValue(), minSpeed, Constants.MINIMUM_DRIVE_POWER),
-                        max(translationPID.getFilteredValue(), minSpeed, Constants.MINIMUM_DRIVE_POWER));
+            if (backwards) {
+                distanceLeft = targetDistance + position;
             } else {
-                driveTank(max(translationPID.getFilteredValue() * -1, minSpeed, Constants.MINIMUM_DRIVE_POWER) * -1,
-                        max(translationPID.getFilteredValue() * -1, minSpeed, Constants.MINIMUM_DRIVE_POWER) * -1);
+                distanceLeft = targetDistance - position;
+            }
+
+            if (backwards) {
+                driveTank(max(distanceLeft / 48, minSpeed, Constants.MIN_DRIVE_PWR) * -1,
+                        max(distanceLeft / 48, minSpeed, Constants.MIN_DRIVE_PWR) * -1);
+            } else {
+                driveTank(max(distanceLeft / 48, minSpeed, Constants.MIN_DRIVE_PWR),
+                        max(distanceLeft / 48, minSpeed, Constants.MIN_DRIVE_PWR));
             }
 
             // todo - find a way to regulate the angle without the robot stopping half way through (maybe a way to concurrently turn and drive?)
@@ -89,13 +77,13 @@ public abstract class MasterAutonomous extends MasterOpMode {
             position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() -
                     motorFrontRight.getCurrentPosition() - motorBackRight.getCurrentPosition()) / 4.0;
 
-            if (direction) {
-                if (Math.abs(position - targetDistance) <= 0.5) {
+            if (backwards) {
+                if (Math.abs(position + targetDistance) <= 0.5) {
                     driveTank(0.0, 0.0);
                     distanceReached = true;
                 }
             } else {
-                if (Math.abs(position + targetDistance) <= 0.5) {
+                if (Math.abs(position - targetDistance) <= 0.5) {
                     driveTank(0.0, 0.0);
                     distanceReached = true;
                 }
@@ -104,40 +92,36 @@ public abstract class MasterAutonomous extends MasterOpMode {
     }
 
     // This method turns a specified number of degrees when given a target angle to turn
-    public void turnDegrees(double targetAngle) {
+    public void turnToAngle(double targetAngle) {
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double angleLeft;
-        double angleTraveled;
-
         boolean angleReached = false;
 
-        PIDFilter translationPID;
-        translationPID = new PIDFilter(Constants.ROTATION_P, Constants.ROTATION_I, Constants.ROTATION_D);
-
         while (!angleReached && opModeIsActive()) {
-            // This gets the angle change
             double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            angleTraveled = currentAngle - startAngle;
 
-            // This adds a value to the PID loop so it can update
-            angleLeft = targetAngle - angleTraveled;
-            translationPID.roll(angleLeft);
+            // This gets the angle change
+            angleLeft = targetAngle - currentAngle;
 
-            // We drive the wheels with the PID value
-            if (targetAngle > 0) {
-                driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER),
-                        Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER) * -1);
-            } else if (targetAngle < 0) {
-                driveTank(Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER) * -1,
-                        Math.max(translationPID.getFilteredValue(), Constants.MINIMUM_TURNING_POWER));
+            if (Math.abs(angleLeft) > 180 && angleLeft > 180) {
+                angleLeft = angleLeft - 360;
+            } else if (Math.abs(angleLeft) > 180 && angleLeft < 180) {
+                angleLeft = angleLeft + 360;
             }
 
-            if (Math.abs(targetAngle - angleTraveled) <= 1) {
+            if (angleLeft > 0) {
+                driveTank(Math.max(angleLeft / 90, Constants.MIN_TURN_PWR),
+                        Math.max(angleLeft / 90, Constants.MIN_TURN_PWR) * -1);
+            } else if (angleLeft < 0) {
+                driveTank(Math.min(angleLeft / 90, Constants.MIN_TURN_PWR * -1),
+                        Math.max(angleLeft / 90, Constants.MIN_TURN_PWR));
+            }
+
+            if (Math.abs(angleLeft) <= 0.5) {
                 driveTank(0.0, 0.0);
                 angleReached = true;
             }
