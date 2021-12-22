@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardDistanceSensor;
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardSensor;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.MockDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardDistanceSensor;
 
 class Axis {
     public StandardDistanceSensor sensor1;

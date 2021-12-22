@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.main.autonomous.location.pipeline;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardDistanceSensor;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.SensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.MockDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardDistanceSensor;
 
 public class PositionSystem {
     public Axis leftToRight;

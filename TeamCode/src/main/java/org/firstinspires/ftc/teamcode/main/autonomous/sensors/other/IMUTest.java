@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.main.autonomous.sensors.other;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.competition.utils.interactions.items.StandardIMU;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardIMU;
 
 @TeleOp(name = "IMU Test")
 public class IMUTest extends LinearOpMode {
