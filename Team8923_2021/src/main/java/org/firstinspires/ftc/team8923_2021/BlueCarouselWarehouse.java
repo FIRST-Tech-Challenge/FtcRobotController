@@ -14,7 +14,7 @@ public class BlueCarouselWarehouse extends MasterAutonomous{
         imuPivot(referenceAngle, -90, 30, 0.015, 3.0);
         moveForward(15, 50, 10);
         imuPivot(referenceAngle, referenceAngle, 30, 0.015, 3.0);
-        moveForward(80, 50, 10);
+        moveForward(87, 50, 10);
     }
 }
 
