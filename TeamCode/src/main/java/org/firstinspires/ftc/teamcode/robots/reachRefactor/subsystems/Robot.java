@@ -186,9 +186,9 @@ public class Robot implements Subsystem {
 
             // testing crane
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
-            .addState(() -> crane.articulate(Crane.Articulation.LOWEST_TEIR))
-            .addState(() -> crane.articulate(Crane.Articulation.HIGH_TEIR))
-            .addState(() -> crane.articulate(Crane.Articulation.MIDDLE_TEIR))
+            .addState(() -> crane.articulate(Crane.Articulation.LOWEST_TIER))
+            .addState(() -> crane.articulate(Crane.Articulation.HIGH_TIER))
+            .addState(() -> crane.articulate(Crane.Articulation.MIDDLE_TIER))
             .addState(() -> crane.articulate(Crane.Articulation.STARTING))
             .addState(() -> crane.articulate(Crane.Articulation.CAP))
             .addState(() -> articulate(Robot.Articulation.TRANSFER))

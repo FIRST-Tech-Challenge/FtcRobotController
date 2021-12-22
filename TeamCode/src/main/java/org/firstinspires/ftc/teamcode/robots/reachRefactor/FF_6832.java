@@ -195,6 +195,11 @@ public class FF_6832 extends OpMode {
                 visionProviderFinalized = false;
             }
         }
+        else
+            if(stickyGamepad1.dpad_right && visionProviderFinalized)
+        {
+            auto.visionProvider.saveDashboardImage();
+        }
     }
 
     private void handlePregameControls() {
@@ -209,6 +214,7 @@ public class FF_6832 extends OpMode {
             debugTelemetryEnabled = !debugTelemetryEnabled;
         if(stickyGamepad1.a)
             usingDesmosDrive = !usingDesmosDrive;
+
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -285,7 +291,7 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad2.dpad_left)
             robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad2.dpad_up)
-            robot.crane.articulate(Crane.Articulation.HIGH_TEIR);
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
         if(stickyGamepad2.dpad_right)
             robot.articulate(Robot.Articulation.TRANSFER);
 

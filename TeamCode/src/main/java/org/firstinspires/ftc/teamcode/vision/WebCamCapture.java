@@ -101,9 +101,9 @@ public class WebCamCapture extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        this.headlight = hardwareMap.dcMotor.get("headlight");
-        this.headlight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        headlight.setPower(-0.7f);
+//        this.headlight = hardwareMap.dcMotor.get("headlight");
+//        this.headlight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        headlight.setPower(-0.7f);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
