@@ -27,9 +27,17 @@ public class AutonomousPath1 {
                 //Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(41.065033847887705,41.065033847887705, Math.toRadians(100), Math.toRadians(180), 13.2435)
                     .followTrajectorySequence(drive ->
-                            drive.trajectorySequenceBuilder(new Pose2d(-18,30, Math.toRadians(270)))
-                            .splineTo(new Vector2d(-30, 30),Math.toRadians(270))
+                            drive.trajectorySequenceBuilder(new Pose2d(-36,60, Math.toRadians(270)))
+                            .strafeTo(new Vector2d(-60, 60))
+                            .strafeTo(new Vector2d(-60, 24))
+                            .splineToLinearHeading(new Pose2d(-32, 24, Math.toRadians(0)),Math.toRadians(270))
+                            .splineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(270)),Math.toRadians(270))
                             .build()
                     );
+        meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
+            .setDarkMode(true)
+            .setBackgroundAlpha(0.95f)
+            .addEntity(myBot)
+            .start();
     }
 }
