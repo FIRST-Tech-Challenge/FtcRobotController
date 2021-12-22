@@ -19,17 +19,16 @@ import java.util.Map;
 
 @Config
 public class Robot implements Subsystem {
-    // Subsystems
+    // subsystems
     public DriveTrain driveTrain;
     public Crane crane;
     public Gripper gripper;
     public Subsystem[] subsystems;
 
-    // State
-    private Constants.Alliance alliance;
+    // state
     private Articulation articulation;
 
-    // Constants
+    // constants
     private static final String TELEMETRY_NAME = "Robot";
     public static String AXLE_STROKE_COLOR = "Black";
     public static String TURN_RADIUS_STROKE_COLOR = "Crimson";
@@ -242,17 +241,5 @@ public class Robot implements Subsystem {
             return true;
         }
         return false;
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // Getters And Setters
-    //----------------------------------------------------------------------------------------------
-
-    public Constants.Alliance getAlliance() {
-        return alliance;
-    }
-
-    public void setAlliance(Constants.Alliance alliance) {
-        this.alliance = alliance;
     }
 }

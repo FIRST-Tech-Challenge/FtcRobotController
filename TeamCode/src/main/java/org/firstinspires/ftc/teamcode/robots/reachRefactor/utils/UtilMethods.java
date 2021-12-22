@@ -73,6 +73,14 @@ public class UtilMethods {
         return max;
     }
 
+    public static int max(int... values) {
+        int max = Integer.MIN_VALUE;
+        for(int value : values)
+            if(value > max)
+                max = value;
+        return max;
+    }
+
     public static int servoClip(int position) {
         return Range.clip(position, 750, 2250);
     }

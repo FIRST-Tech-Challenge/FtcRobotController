@@ -35,39 +35,10 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
     // Enums
     //----------------------------------------------------------------------------------------------
-
-    // enum to store possible game states for use in FF_6832
-    public enum GameState {
-        TELE_OP("Tele-Op"),
-        AUTONOMOUS("Autonomous"),
-        AUTONOMOUS_DIAGNOSTIC("Autonomous Diagnostic"),
-        MANUAL_DIAGNOSTIC("Manual Diagnostic");
-
-        private String name;
-
-        GameState(String name) {
-            this.name = name;
-        }
-
-        public String getName() { return name; }
-
-        public static GameState getGameState(int index) {
-            return GameState.values()[index];
-        }
-
-        public static int getNumGameStates() {
-            return GameState.values().length;
-        }
-
-        public static int indexOf(GameState gameState) {
-            return Arrays.asList(GameState.values()).indexOf(gameState);
-        }
-    }
-
     public enum Alliance {
         RED(-1), BLUE(1);
 
-        private int mod;
+        private final int mod;
 
         Alliance(int mod) {
             this.mod = mod;
@@ -82,7 +53,7 @@ public class Constants {
         START_RED(new SimpleMatrix(new double[][] {{0, 0, 0}})),
         START_BLUE(new SimpleMatrix(new double[][] {{0, 0, 0}}));
 
-        private SimpleMatrix pose;
+        private final SimpleMatrix pose;
 
         Position(SimpleMatrix pose) {
             this.pose = pose;

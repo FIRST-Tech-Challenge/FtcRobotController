@@ -9,7 +9,7 @@ import org.opencv.core.Mat;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TensorflowProvider implements VisionProvider {
+public class TensorflowProvider extends VisionProvider {
 
     private static final String TELEMETRY_NAME = "Tensorflow Provider";
 
@@ -35,7 +35,7 @@ public class TensorflowProvider implements VisionProvider {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        return new HashMap<>();
+        return super.getTelemetry(debug);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TensorflowProvider implements VisionProvider {
     }
 
     @Override
-    public void update() {
+    public void updateVision() {
 
     }
 }

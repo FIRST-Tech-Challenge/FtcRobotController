@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.pipelines;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -21,23 +21,26 @@ public class OpenCVPipeline extends OpenCvPipeline
 {
     private Mat blurInput = new Mat();
     private Mat blurOutput = new Mat();
+    private Mat hsvThresholdInput = new Mat();
     private Mat hsvThresholdOutput = new Mat();
     private List<MatOfPoint> findContoursOutput = new ArrayList<>();
+    private Mat findContoursInput = new Mat();
     private Mat findContoursOutputMat = new Mat();
     private Mat finalContourOutputMat = new Mat();
+    private volatile Mat dashboardImage = new Mat();
 
     private int largestX, largestY;
     private double largestArea;
-    private Position lastPosition;
+    private volatile Position lastPosition;
     
     // Constants
-    public static int VIEW_OPEN_CV_PIPELINE_STAGE = 0;
+    public static int VIEW_OPEN_CV_PIPELINE_STAGE = 4;
     public static double BLUR_RADIUS = 7;
     public static double HUE_MIN = 0;
     public static double HUE_MAX = 90;
-    public static double SATURATION_MIN = 150;
+    public static double SATURATION_MIN = 120;
     public static double SATURATION_MAX = 255;
-    public static double VALUE_MIN = 150;
+    public static double VALUE_MIN = 100;
     public static double VALUE_MAX = 255;
     public static double MIN_CONTOUR_AREA = 2500;
     public static String BLUR = "Box Blur";
@@ -49,6 +52,7 @@ public class OpenCVPipeline extends OpenCvPipeline
         largestX = -1;
         largestY = -1;
         largestArea = -1;
+        lastPosition = Position.HOLD;
     }
 
     @Override
@@ -61,16 +65,15 @@ public class OpenCVPipeline extends OpenCvPipeline
         blur(blurInput, blurType, blurRadius, blurOutput);
 
         // Step HSV_Threshold0  (stage 2):
-        Mat hsvThresholdInput = blurOutput;
+        hsvThresholdInput = blurOutput;
         double[] hsvThresholdHue = {HUE_MIN, HUE_MAX};
         double[] hsvThresholdSaturation = {SATURATION_MIN, SATURATION_MAX};
         double[] hsvThresholdValue = {VALUE_MIN, VALUE_MAX};
         hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
         // Step Find_Contours0 (stage 3):
-        Mat findContoursInput = hsvThresholdOutput;
-        boolean findContoursExternalOnly = false;
-        findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
+        findContoursInput = hsvThresholdOutput;
+        findContours(findContoursInput, findContoursOutput);
         findContoursOutputMat = input.clone();
         for(int i = 0; i < findContoursOutput.size(); i++) {
             Imgproc.drawContours(findContoursOutputMat, findContoursOutput, i, new Scalar(255, 255, 255), 2);
@@ -96,8 +99,10 @@ public class OpenCVPipeline extends OpenCvPipeline
                 largestArea = contourArea;
             }
         }
-        if(largestContourIndex != -1)
+        if(largestContourIndex != -1) {
             Imgproc.drawContours(finalContourOutputMat, findContoursOutput, largestContourIndex, new Scalar(255, 255, 255), 2);
+            Imgproc.drawMarker(finalContourOutputMat, new Point(largestX, largestY), new Scalar(255, 255, 255));
+        }
 
         if(largestX > 0 && largestX < LEFT_THRESHOLD) {
             lastPosition = Position.LEFT;
@@ -106,7 +111,28 @@ public class OpenCVPipeline extends OpenCvPipeline
         } else if(largestX > RIGHT_THRESHOLD && largestX < input.width()) {
             lastPosition = Position.RIGHT;
         } else
-            lastPosition = null;
+            lastPosition = Position.NONE_FOUND;
+
+        switch(VIEW_OPEN_CV_PIPELINE_STAGE) {
+            case 0:
+                dashboardImage = blurInput;
+                break;
+            case 1:
+                dashboardImage = blurOutput;
+                break;
+            case 2:
+                dashboardImage = hsvThresholdOutput;
+                break;
+            case 3:
+                dashboardImage = findContoursOutputMat;
+                break;
+            case 4:
+                dashboardImage = finalContourOutputMat;
+                break;
+            default:
+                dashboardImage = input;
+                break;
+        }
 
         return input;
     }
@@ -116,29 +142,8 @@ public class OpenCVPipeline extends OpenCvPipeline
     }
 
     public Mat getDashboardImage() {
-        Mat toSend = null;
-        switch(VIEW_OPEN_CV_PIPELINE_STAGE) {
-            case 0:
-                toSend = blurInput;
-                break;
-            case 1:
-                toSend = blurOutput;
-                break;
-            case 2:
-                toSend = hsvThresholdOutput;
-                break;
-            case 3:
-                toSend = findContoursOutputMat;
-                break;
-            case 4:
-                toSend = finalContourOutputMat;
-                break;
-        }
-        return toSend;
+        return dashboardImage;
     }
-
-
-
 
     enum BlurType{
         BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"),
@@ -201,17 +206,10 @@ public class OpenCVPipeline extends OpenCvPipeline
                 new Scalar(hue[1], sat[1], val[1]), out);
     }
 
-    private void findContours(Mat input, boolean externalOnly,
-                              List<MatOfPoint> contours) {
+    private void findContours(Mat input, List<MatOfPoint> contours) {
         Mat hierarchy = new Mat();
         contours.clear();
-        int mode;
-        if (externalOnly) {
-            mode = Imgproc.RETR_EXTERNAL;
-        }
-        else {
-            mode = Imgproc.RETR_LIST;
-        }
+        int mode = Imgproc.RETR_LIST;
         int method = Imgproc.CHAIN_APPROX_SIMPLE;
         Imgproc.findContours(input, contours, hierarchy, mode, method);
     }

@@ -66,7 +66,7 @@ public class Gripper implements Subsystem{
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        Map<String, Object> telemetryMap = new HashMap<String, Object>();
+        Map<String, Object> telemetryMap = new HashMap<>();
 
         if(debug) {
             telemetryMap.put("Servo Target Pos", targetPos);

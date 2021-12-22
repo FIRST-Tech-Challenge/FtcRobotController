@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.pipelines.OpenCVPipeline;
@@ -14,11 +13,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 @Config
-public class OpenCVProvider implements VisionProvider {
+public class OpenCVProvider extends VisionProvider {
     private OpenCvCamera camera;
     private OpenCVPipeline pipeline;
 
@@ -33,15 +31,23 @@ public class OpenCVProvider implements VisionProvider {
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         camera.setPipeline(pipeline);
-        camera.openCameraDeviceAsync(() -> {
-            camera.startStreaming(WEBCAM_WIDTH, WEBCAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(WEBCAM_WIDTH, WEBCAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
         });
     }
 
     @Override
     public void shutdownVision() {
-        camera.closeCameraDevice();
         camera.stopStreaming();
+        camera.closeCameraDevice();
     }
 
     @Override
@@ -56,7 +62,7 @@ public class OpenCVProvider implements VisionProvider {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        Map<String, Object> telemetryMap = new HashMap<>();
+        Map<String, Object> telemetryMap = super.getTelemetry(debug);
 
         if(debug) {
             telemetryMap.put("Frame Count", camera.getFrameCount());
@@ -66,7 +72,6 @@ public class OpenCVProvider implements VisionProvider {
             telemetryMap.put("Overhead time ms", camera.getOverheadTimeMs());
             telemetryMap.put("Theoretical max FPS", camera.getCurrentPipelineMaxFps());
         }
-        telemetryMap.put("Detected Position", Arrays.toString(pipeline.getPosition()));
 
         return telemetryMap;
     }
@@ -87,7 +92,7 @@ public class OpenCVProvider implements VisionProvider {
     }
 
     @Override
-    public void update() {
+    public void updateVision() {
 
     }
 }

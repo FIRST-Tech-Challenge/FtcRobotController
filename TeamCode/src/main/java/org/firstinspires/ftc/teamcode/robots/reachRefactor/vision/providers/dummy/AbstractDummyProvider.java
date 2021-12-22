@@ -9,7 +9,7 @@ import org.opencv.core.Mat;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractDummyProvider implements VisionProvider {
+public abstract class AbstractDummyProvider extends VisionProvider {
     @Override
     public void initializeVision(HardwareMap hardwareMap) {
 
@@ -30,7 +30,7 @@ public abstract class AbstractDummyProvider implements VisionProvider {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        return new HashMap<>();
+        return super.getTelemetry(debug);
     }
 
     @Override
@@ -47,7 +47,7 @@ public abstract class AbstractDummyProvider implements VisionProvider {
     }
 
     @Override
-    public void update() {
+    public void updateVision() {
 
     }
 }

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.RC;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reach.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.BlobStats;
 import org.firstinspires.ftc.teamcode.util.VisionUtils;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
@@ -49,8 +49,16 @@ public class OpenCVIntegration implements VisionProvider {
         pipeline = new Pipeline(enableDashboard);
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         camera.setPipeline(pipeline);
-        camera.openCameraDeviceAsync(() -> {
-                camera.startStreaming(Constants.WEBCAM_WIDTH, Constants.WEBCAM_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(org.firstinspires.ftc.teamcode.robots.reach.utils.Constants.WEBCAM_WIDTH, Constants.WEBCAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
         });
     }
 

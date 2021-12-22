@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 
-import org.checkerframework.checker.units.qual.Current;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -38,25 +37,22 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
 @Config
 public class DriveTrain implements Subsystem {
 
-    // Motors
+    // motors
     public DcMotorEx motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel, duckSpinner;
     private DcMotorEx[] motors;
-    private String[] MOTOR_NAMES = {"motorFrontLeft", "motorFrontRight", "motorMiddle", "motorMiddleSwivel", "duckSpinner"};
-    private boolean[] REVERSED = {true, false, true, false, false};
-    private DcMotor.ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new DcMotor.ZeroPowerBehavior[] {ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE};
 
-    // Sensors
+    // sensors
     private BNO055IMU imu;
     private DistanceSensor sensorChassisDistance;
 
-    // Kinematics
+    // kinematics
     private SimpleMatrix pose; // [x, y, yaw]
     private SimpleMatrix velocity; // [vx, vy, w]
     private SimpleMatrix angles; // [heading, roll, pitch]
     private SimpleMatrix offsetAngles; // [heading, roll, pitch]
     private SimpleMatrix previousWheelTicks; // [left, right, middle]
 
-    // State
+    // state
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
     private double targetLinearVelocity, targetAngularVelocity, targetTurnRadius;
 
@@ -68,15 +64,14 @@ public class DriveTrain implements Subsystem {
     private double maintainSwivelAngleCorrection, maintainChassisDistanceCorrection;
     private boolean maintainChassisDistanceEnabled, maintainSwivelAngleEnabled;
 
-    // Smoothers
+    // smoothers
     private ExponentialSmoother frontLeftSmoother;
     private ExponentialSmoother frontRightSmoother;
     private ExponentialSmoother middleSmoother;
 
-    // Constants
+    // constants
     public static final String TELEMETRY_NAME = "Drive Train";
 
-    // PID
     public static PIDCoefficients DRIVE_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.005, 0, .13);
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.05, 0, 0);
@@ -84,12 +79,10 @@ public class DriveTrain implements Subsystem {
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(8, 0, 5);
     public static double SWIVEL_PID_TOLERANCE = 10;
 
-    // Smoothing
     public static double FRONT_LEFT_SMOOTHING_FACTOR = 0.1;
     public static double FRONT_RIGHT_SMOOTHING_FACTOR = 0.1;
     public static double MIDDLE_SMOOTHING_FACTOR = 0.1;
 
-    // Measurements
     public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 0.07;
     public static double DISTANCE_TARGET_TO_BACK_WHEEL = 0.18;
 
@@ -102,6 +95,10 @@ public class DriveTrain implements Subsystem {
     public static double CHASSIS_LENGTH_THRESHOLD = 0.1;
 
     public DriveTrain(HardwareMap hardwareMap) {
+        String[] MOTOR_NAMES = {"motorFrontLeft", "motorFrontRight", "motorMiddle", "motorMiddleSwivel", "duckSpinner"};
+        ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new ZeroPowerBehavior[]{ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE};
+        boolean[] REVERSED = {true, false, true, false, false};
+
         // Motors
         motorFrontLeft = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
         motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
@@ -481,8 +478,8 @@ public class DriveTrain implements Subsystem {
 
     @Override
     public void stop() {
-        for(int i = 0; i < motors.length; i++) {
-            motors[i].setPower(0);
+        for (DcMotorEx motor : motors) {
+            motor.setPower(0);
         }
     }
 
@@ -506,11 +503,6 @@ public class DriveTrain implements Subsystem {
         return Math.toDegrees(pose.get(2));
     }
 
-    /**
-     * returns the current motor encoder positions for all three drivetrain motors:
-     * [left, right, middle]
-     * @return
-     */
     public SimpleMatrix getWheelTicks() {
         return new SimpleMatrix(new double[][] {
                 { motorFrontLeft.getCurrentPosition(), 0 },
@@ -521,10 +513,6 @@ public class DriveTrain implements Subsystem {
 
     public double getTurnRadius() {
         return targetTurnRadius;
-    }
-
-    public boolean isMaintainChassisDistanceEnabled() {
-        return maintainChassisDistanceEnabled;
     }
 
     public void setMaintainChassisDistanceEnabled(boolean maintainChassisDistanceEnabled) {

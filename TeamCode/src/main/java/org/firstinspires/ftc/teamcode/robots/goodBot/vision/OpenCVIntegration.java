@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.goodBot.vision;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reach.utils.Constants;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -21,8 +21,16 @@ public class OpenCVIntegration implements VisionProvider {
         pipeline = new Pipeline(enableDashboard);
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         camera.setPipeline(pipeline);
-        camera.openCameraDeviceAsync(() -> {
-                camera.startStreaming(Constants.WEBCAM_WIDTH, Constants.WEBCAM_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(Constants.WEBCAM_WIDTH, Constants.WEBCAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
         });
     }
 

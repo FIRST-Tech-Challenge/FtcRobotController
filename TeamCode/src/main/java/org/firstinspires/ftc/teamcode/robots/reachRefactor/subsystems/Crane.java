@@ -66,14 +66,14 @@ public class Crane implements Subsystem {
         }
     }
 
-    private Stage mainStage = new Stage();
-    private StateMachine main = UtilMethods.getStateMachine(mainStage)
+    private final Stage mainStage = new Stage();
+    private final StateMachine main = UtilMethods.getStateMachine(mainStage)
             .addTimedState(() -> previousArticulation.toHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
             .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation), () -> {})
             .build();
 
-    private Stage initStage = new Stage();
-    private StateMachine init = UtilMethods.getStateMachine(initStage)
+    private final Stage initStage = new Stage();
+    private final StateMachine init = UtilMethods.getStateMachine(initStage)
             .addTimedState(2f, () -> setTargetPositions(Articulation.INIT), () -> {})
             .build();
 
@@ -120,7 +120,7 @@ public class Crane implements Subsystem {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        Map<String, Object> telemetryMap = new HashMap<String, Object>();
+        Map<String, Object> telemetryMap = new HashMap<>();
 
         telemetryMap.put("Current Articulation", articulation);
 

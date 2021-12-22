@@ -49,7 +49,7 @@ public class Turret implements Subsystem {
     }
 
     public void update(){
-        heading = (motor.getCurrentPosition() / TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);;
+        heading = (motor.getCurrentPosition() / TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);
 
 
         movePIDTurret(TURRET_PID_COEFFICIENTS, heading, targetHeading);
@@ -99,7 +99,7 @@ public class Turret implements Subsystem {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        Map<String, Object> telemetryMap = new HashMap<String, Object>();
+        Map<String, Object> telemetryMap = new HashMap<>();
         if(debug) {
             telemetryMap.put("motor position", motor.getCurrentPosition());
             telemetryMap.put("motor power", correction);
