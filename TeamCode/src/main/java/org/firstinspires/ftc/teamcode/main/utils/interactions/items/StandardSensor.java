@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface
 import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance.wrappers.SensorWrapper;
 
 @Deprecated
-public abstract class StandardSensor extends InteractionSurface {
+public abstract class StandardSensor extends InteractionItem {
     public abstract int getData();
 
     abstract int getDistance(DistanceUnit unit);

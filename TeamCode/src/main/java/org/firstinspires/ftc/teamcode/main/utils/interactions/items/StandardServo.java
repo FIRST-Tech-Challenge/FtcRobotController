@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 
-public class StandardServo extends InteractionSurface {
+public class StandardServo extends InteractionItem {
 
     private final Servo SERVO;
 
