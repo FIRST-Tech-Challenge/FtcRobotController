@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.main.utils.interactions.items;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.SensorWrapper;
+import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance.wrappers.SensorWrapper;
 
 @Deprecated
 public abstract class StandardSensor extends InteractionSurface {

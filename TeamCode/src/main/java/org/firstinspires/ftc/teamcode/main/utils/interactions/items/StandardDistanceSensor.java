@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.SensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.DistanceSensorWrapper;
-import org.firstinspires.ftc.teamcode.main.autonomous.sensors.distance.wrappers.UltrasonicDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance.wrappers.SensorWrapper;
+import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance.wrappers.DistanceSensorWrapper;
+import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance.wrappers.UltrasonicDistanceSensor;
 
 /**
  * A StandardDistanceSensor represents a DistanceSensorWrapper and/or an UltrasonicDistanceSensor, depending on the robot's configuration.
