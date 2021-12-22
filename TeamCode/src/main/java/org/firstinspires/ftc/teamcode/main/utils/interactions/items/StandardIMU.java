@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface
 
 import java.util.Hashtable;
 
-public class StandardIMU extends InteractionSurface {
+public class StandardIMU extends InteractionItem {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------

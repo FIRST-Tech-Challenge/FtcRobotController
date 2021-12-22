@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance.wra
 /**
  * A StandardDistanceSensor represents a DistanceSensorWrapper and/or an UltrasonicDistanceSensor, depending on the robot's configuration.
  */
-public class StandardDistanceSensor extends InteractionSurface {
+public class StandardDistanceSensor extends InteractionItem {
 
     private DistanceSensorWrapper SENSOR_DISTANCE;
     private UltrasonicDistanceSensor SENSOR_ULTRASONIC;
