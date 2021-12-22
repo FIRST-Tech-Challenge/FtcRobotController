@@ -8,7 +8,7 @@ public class CoordinateSystem {
     public FieldCoordinates last = FieldCoordinates.TOP_LEFT;
     public double angleDegrees;
 
-    public void Update(FieldCoordinates coordinates) {
+    public void update(FieldCoordinates coordinates) {
         last = current;
         current = coordinates;
     }
