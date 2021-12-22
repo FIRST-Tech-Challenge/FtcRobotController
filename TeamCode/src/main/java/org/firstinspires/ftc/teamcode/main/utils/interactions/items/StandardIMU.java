@@ -109,7 +109,7 @@ public class StandardIMU extends InteractionItem {
 
     public enum DataPoint {HEADING, PITCH, ROLL}
 
-    public class ReturnData<K, V> extends Hashtable<K,V> {
+    public static class ReturnData<K, V> extends Hashtable<K,V> {
         public ReturnData() {
             super();
         }

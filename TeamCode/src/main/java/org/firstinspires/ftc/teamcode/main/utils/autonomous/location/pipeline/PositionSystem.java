@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.main.utils.autonomous.location.pipeline;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.utils.autonomous.location.pipeline.Axis.AxisReading;
+import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.NavigationSensorCollection;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardIMU;
 
 public class PositionSystem {
     public Axis leftToRight;
@@ -9,15 +11,20 @@ public class PositionSystem {
 
     public CoordinateSystem coordinateSystem;
 
-    public PositionSystem(AllSensors sensors) {
+    public StandardIMU imu;
+    public StandardIMU.DataPoint imuDirection;
+    public StandardIMU.ReturnData imuData;
+
+    public PositionSystem(NavigationSensorCollection sensors) {
         leftToRight = new Axis(sensors.east, sensors.west);
         upAndDown = new Axis(sensors.north, sensors.north);
+        this.imu = sensors.imu;
 
         coordinateSystem = new CoordinateSystem();
     }
 
     private void UpdateCoordinateSystem(CoordinateSystem.FieldCoordinates coordinates) {
-        coordinateSystem.Update(coordinates);
+        coordinateSystem.update(coordinates);
     }
 
     public void SetAngle(double angle, AngleUnit unit) {
@@ -31,14 +38,14 @@ public class PositionSystem {
         }
     }
 
-    public void GetAndEvalReadings() {
-        Axis.AxisReading ew = leftToRight.getReadings();
-        Axis.AxisReading ns = upAndDown.getReadings();
+    public void getAndEvalReadings() {
+        AxisReading ew = leftToRight.getReadings();
+        AxisReading ns = upAndDown.getReadings();
 
-        EvalReadings(ew, ns);
+        evalReadings(ew, ns);
     }
 
-    private void EvalReadings(Axis.AxisReading eastWest, Axis.AxisReading northSouth) {
+    private void evalReadings(AxisReading eastWest, AxisReading northSouth) {
         boolean eastWestValid = true;
         boolean northSouthValid = true;
 
@@ -56,7 +63,7 @@ public class PositionSystem {
         double y = northSouth.sensor1;
 
         // do some geometry-I honors level math
-        double angleDegrees = coordinateSystem.angleDegrees;
+        int angleDegrees = (int) coordinateSystem.angleDegrees;
         double angleRadians = Math.toRadians(angleDegrees);
 
         x = x * Math.sin(angleRadians);
@@ -73,25 +80,24 @@ public class PositionSystem {
             y = CoordinateSystem.maxLengthInCM - northSouth.interSensorDistance - Math.abs(y);
         }
 
+        // Some special exceptions
+        if (angleDegrees == 90) {
+            x = CoordinateSystem.maxWidthInCM - northSouth.interSensorDistance - northSouth.sensor1;
+            y = eastWest.sensor2;
+        } else if (angleDegrees == 180) {
+            x = eastWest.sensor2;
+        } else if (angleDegrees == -90 || angleDegrees == 270) {
+            y = eastWest.sensor1;
+            x = northSouth.sensor1;
+        }
+
         // Do our updating
         if (eastWestValid && northSouthValid) {
-            coordinateSystem.Update(CoordinateSystem.FieldCoordinates.make(x, y));
+            coordinateSystem.update(CoordinateSystem.FieldCoordinates.make(x, y));
         } else if (eastWestValid) {
-            coordinateSystem.Update(CoordinateSystem.FieldCoordinates.make(x, coordinateSystem.current.y));
+            coordinateSystem.update(CoordinateSystem.FieldCoordinates.make(x, coordinateSystem.current.y));
         } else if (northSouthValid) {
-            coordinateSystem.Update(CoordinateSystem.FieldCoordinates.make(coordinateSystem.current.x, y));
-        }
-    }
-
-    public static class AllSensors {
-        public StandardDistanceSensor north;
-        public StandardDistanceSensor east;
-        public StandardDistanceSensor west;
-
-        public AllSensors(StandardDistanceSensor north, StandardDistanceSensor east, StandardDistanceSensor west) {
-            this.north = north;
-            this.east = east;
-            this.west = west;
+            coordinateSystem.update(CoordinateSystem.FieldCoordinates.make(coordinateSystem.current.x, y));
         }
     }
 }
