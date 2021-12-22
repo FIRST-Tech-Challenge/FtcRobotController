@@ -21,26 +21,22 @@ public class CarouselSubsystem extends SubsystemBase {
 
     public CarouselSubsystem(final HardwareMap hwMap, final String deviceName){
         motorCarousel = hwMap.get(DcMotorEx.class, deviceName);
-
     }
 
     public CarouselSubsystem(final HardwareMap hwMap, final String deviceName, DcMotorSimple.Direction direction){
         motorCarousel = hwMap.get(DcMotorEx.class, deviceName);
         setDirection(direction);
-
     }
 
     public CarouselSubsystem(final HardwareMap hwMap, final String deviceName, DcMotorSimple.Direction direction, Double power){
         motorCarousel = hwMap.get(DcMotorEx.class, deviceName);
         setDirection(direction);
         setPower(power);
-
     }
 
     public CarouselSubsystem(final HardwareMap hwMap, final String deviceName, DcMotor.RunMode mode){
         motorCarousel = hwMap.get(DcMotorEx.class, deviceName);
         setMode(mode);
-
     }
 
     public void setDirection(DcMotorSimple.Direction direction){
@@ -61,6 +57,7 @@ public class CarouselSubsystem extends SubsystemBase {
     public void setArmTargetPosition(int armTargetPosition){
         motorCarousel.setTargetPosition(armTargetPosition);
     }
+
     public int getCurrentPosition(){
         return motorCarousel.getCurrentPosition();
     }
