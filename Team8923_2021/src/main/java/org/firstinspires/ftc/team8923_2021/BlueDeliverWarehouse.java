@@ -9,8 +9,6 @@ public class BlueDeliverWarehouse extends MasterAutonomous {
         waitForStart();
         double referenceAngle = imu.getAngularOrientation().firstAngle;
         moveForward(-16.0, 10, 10);
-        /*imuPivot(referenceAngle, 180, 35, 0.015, 3.0);
-        moveForward(-2.0, 10, 10);*/
         autoDeliver();
         imuPivot(referenceAngle, -90, 35, 0.015, 3.0);
         moveForward(50.0, 10, 10);

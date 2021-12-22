@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.team8923_2021;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+@Autonomous(name="RedStorageUnit")
 public class RedStorageUnit extends MasterAutonomous {
     public void runOpMode() {
         initAuto();

@@ -12,7 +12,7 @@ public class BlueCarouselWarehouse extends MasterAutonomous{
         spinCarouselBlue();
         moveForward(13, 50, 10);
         imuPivot(referenceAngle, -90, 30, 0.015, 3.0);
-        moveForward(15, 50, 10); //check distance on this
+        moveForward(15, 50, 10);
         imuPivot(referenceAngle, referenceAngle, 30, 0.015, 3.0);
         moveForward(80, 50, 10);
     }

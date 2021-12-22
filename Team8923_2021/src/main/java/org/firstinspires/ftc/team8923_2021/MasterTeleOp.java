@@ -61,6 +61,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
         } else {
             motorLift.setPower(0.0);
         }
+
     }
 
     public void grab() {
