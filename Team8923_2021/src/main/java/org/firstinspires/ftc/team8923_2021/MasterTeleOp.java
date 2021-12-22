@@ -29,7 +29,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
         if (isSlowMode) {
             driveSpeed = 0.25;
         } else {
-            driveSpeed = 1.5;
+            driveSpeed = 1.0;
         }
     }
 
@@ -72,7 +72,6 @@ abstract public class MasterTeleOp extends MasterOpMode {
         } else if (gamepad2.dpad_left) {
             servoGrabber.setPosition(0.4);
         }
-
     }
 
     public void cap() {
