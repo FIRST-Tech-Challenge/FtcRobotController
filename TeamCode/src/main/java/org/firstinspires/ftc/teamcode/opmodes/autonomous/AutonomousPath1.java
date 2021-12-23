@@ -95,9 +95,9 @@ public class AutonomousPath1 extends CommandOpMode {
         SpinOneDuckCarousel spinOneDuckCarousel = new SpinOneDuckCarousel(carouselSubsystem,0.3);
 
 
-        /*Command spinDuck = new SequentialCommandGroup(
+        Command spinDuck = new SequentialCommandGroup(
             spinOneDuckCarousel, new WaitUntilCommand( spinOneDuckCarousel::isFinished )
-        );*/
+        );
 
         /*.splineTo(new Vector2d(-15,40),Math.toRadians(270))
                 .addDisplacementMarker(()->{}) //step 3
@@ -192,7 +192,7 @@ public class AutonomousPath1 extends CommandOpMode {
         //sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
 
         schedule(new WaitUntilCommand(this::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroup,
+                sample1Follower1.andThen(spinDuck,
                         sample1Follower2)
         ));
 
