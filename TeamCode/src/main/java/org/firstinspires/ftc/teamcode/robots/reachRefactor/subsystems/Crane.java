@@ -47,9 +47,9 @@ public class Crane implements Subsystem {
         MANUAL(0, 0, 0, 0, 0),
         STARTING(2200,1600,1600,0, 5),
         HOME(1700,1650,1600,0, 0),
-        LOWEST_TEIR(0,0,0,0, 5),
-        MIDDLE_TEIR(0,0,0,0, 5),
-        HIGH_TEIR(1500, 1000,1650,0, 5),
+        LOWEST_TIER(0,0,0,0, 5),
+        MIDDLE_TIER(0,0,0,0, 5),
+        HIGH_TIER(1500, 1000,1650,0, 5),
         CAP(1500, 900,1650,0, 5),
         TRANSFER(1850,2000,1550,0, 5);
 
