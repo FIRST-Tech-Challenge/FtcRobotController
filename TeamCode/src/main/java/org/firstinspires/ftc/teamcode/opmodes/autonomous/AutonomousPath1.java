@@ -192,7 +192,7 @@ public class AutonomousPath1 extends CommandOpMode {
         //sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
 
         schedule(new WaitUntilCommand(this::isStarted).andThen(
-                sample1Follower1.andThen(spinDuck,
+                sample1Follower1.andThen(carouselGroup,
                         sample1Follower2)
         ));
 
