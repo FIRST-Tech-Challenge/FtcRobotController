@@ -10,14 +10,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class CarouselSubsystem extends SubsystemBase {
 
     //Motor in Port 1, Rev Hub 2
-    private DcMotorEx motorCarousel = null;
+    private DcMotorEx motorCarousel;
     private DcMotorSimple.Direction direction;
     private double power = 0.0;
     private DcMotor.RunMode mode;
-
-    //private int armCurrentPos = 0;
-    private int targetPostion = 0;
-
 
     public CarouselSubsystem(final HardwareMap hwMap, final String deviceName){
         motorCarousel = hwMap.get(DcMotorEx.class, deviceName);
@@ -54,11 +50,14 @@ public class CarouselSubsystem extends SubsystemBase {
         motorCarousel.setMode(this.mode);
     }
 
-    public void setArmTargetPosition(int armTargetPosition){
-        motorCarousel.setTargetPosition(armTargetPosition);
+    public void setCarouselTargetPosition(int carouselTargetPosition, double power){
+        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorCarousel.setTargetPosition(carouselTargetPosition);
+        setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setPower(power);
     }
 
-    public int getCurrentPosition(){
+    public int getCarouselCurrentPosition(){
         return motorCarousel.getCurrentPosition();
     }
 

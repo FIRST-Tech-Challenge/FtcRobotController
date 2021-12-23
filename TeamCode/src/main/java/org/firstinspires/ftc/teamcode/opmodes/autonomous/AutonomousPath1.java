@@ -7,13 +7,16 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.commands.carousel.SpinOneDuckCarousel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TurnCommand;
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowAllianceColor;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 
@@ -46,11 +49,21 @@ public class AutonomousPath1 extends CommandOpMode {
         telemetry.setAutoClear(false);
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), false);
+
         startPose = new Pose2d(-36, 60, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         LEDSubsystem ledSubsystem = new LEDSubsystem(hardwareMap,"blinkin");
         ShowAllianceColor allianceColor = new ShowAllianceColor(ledSubsystem,ShowAllianceColor.AllianceColor.BLUE);
+
+
+        CarouselSubsystem carouselSubsystem = new CarouselSubsystem(hardwareMap, "carousel");
+        SpinOneDuckCarousel spinOneDuckCarousel = new SpinOneDuckCarousel(carouselSubsystem,0.3);
+
+
+        Command spinDuck = new SequentialCommandGroup(
+            spinOneDuckCarousel, new WaitUntilCommand( spinOneDuckCarousel::isFinished )
+        );
 
         /*.splineTo(new Vector2d(-15,40),Math.toRadians(270))
                 .addDisplacementMarker(()->{}) //step 3
@@ -82,6 +95,8 @@ public class AutonomousPath1 extends CommandOpMode {
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                     allianceColor.schedule();
+                    //spinDuck.schedule();
+                    spinOneDuckCarousel.schedule();
                 })
                 .build();
 
