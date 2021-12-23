@@ -11,7 +11,9 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.commands.carousel.MoveCarousel;
 import org.firstinspires.ftc.teamcode.commands.carousel.SpinOneDuckCarousel;
+import org.firstinspires.ftc.teamcode.commands.carousel.StopCarousel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TurnCommand;
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowAllianceColor;
@@ -19,6 +21,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
+
+import java.util.function.BooleanSupplier;
 
 
 @Autonomous(name="AutonomousPath1", group="FTCLib")
@@ -58,6 +62,17 @@ public class AutonomousPath1 extends CommandOpMode {
 
 
         CarouselSubsystem carouselSubsystem = new CarouselSubsystem(hardwareMap, "carousel");
+
+        /*How Alex would do it with what we currently have
+        MoveCarousel moveCarousel = new MoveCarousel(carouselSubsystem,0.3);
+        StopCarousel stopCarousel = new StopCarousel(carouselSubsystem);
+        BooleanSupplier carouselPosition = new BooleanSupplier() {
+            @Override
+            public boolean getAsBoolean() {
+                return carouselSubsystem.getCarouselCurrentPosition() >= 1000;
+            }
+        };*/
+
         SpinOneDuckCarousel spinOneDuckCarousel = new SpinOneDuckCarousel(carouselSubsystem,0.3);
 
 
@@ -97,6 +112,12 @@ public class AutonomousPath1 extends CommandOpMode {
                     allianceColor.schedule();
                     //spinDuck.schedule();
                     spinOneDuckCarousel.schedule();
+
+                    /*How Alex would do it with what we currently have
+                    SequentialCommandGroup carouselGroup = new SequentialCommandGroup(moveCarousel,
+                            new WaitUntilCommand(carouselPosition).andThen(stopCarousel));
+
+                     */
                 })
                 .build();
 
