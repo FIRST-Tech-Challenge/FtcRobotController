@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.providers;
 
+import android.graphics.Bitmap;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
@@ -39,7 +41,7 @@ public class TensorflowProvider extends VisionProvider {
     }
 
     @Override
-    public Mat getDashboardImage() {
+    public Bitmap getDashboardImage() {
         return null;
     }
 

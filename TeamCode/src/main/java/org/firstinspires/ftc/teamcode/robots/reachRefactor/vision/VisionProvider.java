@@ -22,7 +22,7 @@ public abstract class VisionProvider implements TelemetryProvider {
 
     private Map<Position, Integer> positionFrequencies;
     private Position mostFrequentPosition;
-    private Mat dashboardImage;
+    private Bitmap dashboardImage;
     private FtcDashboard dashboard;
     private boolean saveDashboard;
 
@@ -34,7 +34,6 @@ public abstract class VisionProvider implements TelemetryProvider {
         positionFrequencies.put(Position.MIDDLE, 0);
         positionFrequencies.put(Position.RIGHT, 0);
 
-        dashboardImage = new Mat();
         dashboard = FtcDashboard.getInstance();
         saveDashboard = false;
     }
@@ -49,7 +48,7 @@ public abstract class VisionProvider implements TelemetryProvider {
 
     abstract public boolean canSendDashboardImage();
 
-    abstract public Mat getDashboardImage();
+    abstract public Bitmap getDashboardImage();
 
     private void updateMostFrequentPosition() {
         int mostFrequentPositionCount = -1;
@@ -69,12 +68,10 @@ public abstract class VisionProvider implements TelemetryProvider {
 
     private void sendDashboardImage() {
         dashboardImage = getDashboardImage();
-        if(dashboardImage != null && !dashboardImage.empty()) {
-            Bitmap bm = Bitmap.createBitmap(dashboardImage.width(), dashboardImage.height(), Bitmap.Config.RGB_565);
-            Utils.matToBitmap(dashboardImage, bm);
-            dashboard.sendImage(bm);
+        if(dashboardImage != null) {
+            dashboard.sendImage(dashboardImage);
             if (saveDashboard){
-                savePreview(bm);
+                savePreview(dashboardImage);
                 saveDashboard=false;
             }
         }
@@ -114,7 +111,7 @@ public abstract class VisionProvider implements TelemetryProvider {
     public void savePreview(Bitmap bitmap) {
         if (isExternalStorageWritable()) {
             saveImage(bitmap);
-        }else{
+        } else {
             //prompt the user or do something
         }
     }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.providers;
 
+import android.graphics.Bitmap;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -66,7 +68,7 @@ public class OpenCVProvider extends VisionProvider {
     }
 
     @Override
-    public Mat getDashboardImage() {
+    public Bitmap getDashboardImage() {
         return pipeline.getDashboardImage();
     }
 

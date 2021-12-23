@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.pipelines;
 
 import android.graphics.Bitmap;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
@@ -35,7 +34,8 @@ public class OpenCVPipeline extends OpenCvPipeline
     private Mat findContoursInput = new Mat();
     private Mat findContoursOutputMat = new Mat();
     private Mat finalContourOutputMat = new Mat();
-    private Mat dashboardImage = new Mat();
+    private Mat dashboardMat = new Mat();
+    private volatile Bitmap dashboardBitmap;
 
     private int largestX, largestY;
     private double largestArea;
@@ -43,10 +43,10 @@ public class OpenCVPipeline extends OpenCvPipeline
     
     // Constants
     public static int VIEW_OPEN_CV_PIPELINE_STAGE = 6;
-    public static int TOP_LEFT_X = 70;
-    public static int TOP_LEFT_Y = 160;
-    public static int BOTTOM_RIGHT_X = 180;
-    public static int BOTTOM_RIGHT_Y = 230;
+    public static int TOP_LEFT_X = 0;
+    public static int TOP_LEFT_Y = 120;
+    public static int BOTTOM_RIGHT_X = 320;
+    public static int BOTTOM_RIGHT_Y = 240;
     public static double NORMALIZE_ALPHA = 51.0;
     public static double NORMALIZE_BETA = 261.0;
     public static double BLUR_RADIUS = 7;
@@ -56,7 +56,7 @@ public class OpenCVPipeline extends OpenCvPipeline
     public static double SATURATION_MAX = 255;
     public static double VALUE_MIN = 100;
     public static double VALUE_MAX = 255;
-    public static double MIN_CONTOUR_AREA = 2500;
+    public static double MIN_CONTOUR_AREA = 2000;
     public static String BLUR = "Box Blur";
 
     public static int LEFT_THRESHOLD = 107;
@@ -83,7 +83,7 @@ public class OpenCVPipeline extends OpenCvPipeline
         normalize(normalizeInput, normalizeType, normalizeAlpha, normalizeBeta, normalizeOutput);
 
         // Step Blur0 (stage 3):
-        blurInput = input;
+        blurInput = normalizeOutput;
         BlurType blurType = BlurType.get(BLUR);
         double blurRadius = BLUR_RADIUS;
         blur(blurInput, blurType, blurRadius, blurOutput);
@@ -98,13 +98,13 @@ public class OpenCVPipeline extends OpenCvPipeline
         // Step Find_Contours0 (stage 5):
         findContoursInput = hsvThresholdOutput;
         findContours(findContoursInput, findContoursOutput);
-        findContoursOutputMat = input.clone();
+        findContoursOutputMat = cropOutput.clone();
         for(int i = 0; i < findContoursOutput.size(); i++) {
             Imgproc.drawContours(findContoursOutputMat, findContoursOutput, i, new Scalar(255, 255, 255), 2);
         }
 
         // Finding largest contour (stage 6):
-        finalContourOutputMat = input.clone();
+        finalContourOutputMat = cropOutput.clone();
         largestArea = -1;
         largestX = -1;
         largestY = -1;
@@ -132,36 +132,40 @@ public class OpenCVPipeline extends OpenCvPipeline
             lastPosition = Position.LEFT;
         } else if(largestX > LEFT_THRESHOLD && largestX < RIGHT_THRESHOLD) {
             lastPosition = Position.MIDDLE;
-        } else if(largestX > RIGHT_THRESHOLD && largestX < input.width()) {
+        } else if(largestX > RIGHT_THRESHOLD && largestX < cropOutput.width()) {
             lastPosition = Position.RIGHT;
         } else
             lastPosition = Position.NONE_FOUND;
 
         switch(VIEW_OPEN_CV_PIPELINE_STAGE) {
             case 0:
-                dashboardImage = cropOutput;
+                dashboardMat = cropOutput;
                 break;
             case 1:
-                dashboardImage = normalizeOutput;
+                dashboardMat = normalizeOutput;
                 break;
             case 2:
-                dashboardImage = blurInput;
+                dashboardMat = blurInput;
                 break;
             case 3:
-                dashboardImage = blurOutput;
+                dashboardMat = blurOutput;
                 break;
             case 4:
-                dashboardImage = hsvThresholdOutput;
+                dashboardMat = hsvThresholdOutput;
                 break;
             case 5:
-                dashboardImage = findContoursOutputMat;
+                dashboardMat = findContoursOutputMat;
                 break;
             case 6:
-                dashboardImage = finalContourOutputMat;
+                dashboardMat = finalContourOutputMat;
                 break;
             default:
-                dashboardImage = input;
+                dashboardMat = input;
                 break;
+        }
+        if(dashboardMat != null && !dashboardMat.empty()) {
+            dashboardBitmap = Bitmap.createBitmap(dashboardMat.width(), dashboardMat.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(dashboardMat, dashboardBitmap);
         }
 
         return input;
@@ -171,8 +175,8 @@ public class OpenCVPipeline extends OpenCvPipeline
         return new int[] {largestX, largestY};
     }
 
-    public Mat getDashboardImage() {
-        return dashboardImage;
+    public Bitmap getDashboardImage() {
+        return dashboardBitmap;
     }
 
     private Mat crop(Mat image, Point topLeftCorner, Point bottomRightCorner) {
