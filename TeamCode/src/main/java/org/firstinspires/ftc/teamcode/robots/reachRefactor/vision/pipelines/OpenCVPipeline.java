@@ -40,7 +40,6 @@ public class OpenCVPipeline extends OpenCvPipeline
     private int largestX, largestY;
     private double largestArea;
     private volatile Position lastPosition;
-    private FtcDashboard dashboard;
     
     // Constants
     public static int VIEW_OPEN_CV_PIPELINE_STAGE = 6;
@@ -68,16 +67,6 @@ public class OpenCVPipeline extends OpenCvPipeline
         largestY = -1;
         largestArea = -1;
         lastPosition = Position.HOLD;
-
-        dashboard = FtcDashboard.getInstance();
-    }
-
-    private void sendDashboardImage() {
-        if(dashboardImage != null && !dashboardImage.empty()) {
-            Bitmap bm = Bitmap.createBitmap(dashboardImage.width(), dashboardImage.height(), Bitmap.Config.RGB_565);
-            Utils.matToBitmap(dashboardImage, bm);
-            dashboard.sendImage(bm);
-        }
     }
 
     @Override
@@ -174,8 +163,6 @@ public class OpenCVPipeline extends OpenCvPipeline
                 dashboardImage = input;
                 break;
         }
-
-        sendDashboardImage();
 
         return input;
     }

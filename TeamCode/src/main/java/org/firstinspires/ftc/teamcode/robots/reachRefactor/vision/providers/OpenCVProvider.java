@@ -61,6 +61,16 @@ public class OpenCVProvider extends VisionProvider {
     }
 
     @Override
+    public boolean canSendDashboardImage() {
+        return true;
+    }
+
+    @Override
+    public Mat getDashboardImage() {
+        return pipeline.getDashboardImage();
+    }
+
+    @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = super.getTelemetry(debug);
 

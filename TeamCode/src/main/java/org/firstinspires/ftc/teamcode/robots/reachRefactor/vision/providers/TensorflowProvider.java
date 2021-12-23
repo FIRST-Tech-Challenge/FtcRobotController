@@ -34,6 +34,16 @@ public class TensorflowProvider extends VisionProvider {
     }
 
     @Override
+    public boolean canSendDashboardImage() {
+        return false;
+    }
+
+    @Override
+    public Mat getDashboardImage() {
+        return null;
+    }
+
+    @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         return super.getTelemetry(debug);
     }
