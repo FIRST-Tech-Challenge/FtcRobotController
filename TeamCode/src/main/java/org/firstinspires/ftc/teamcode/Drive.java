@@ -57,6 +57,8 @@ public class Drive extends CommandBasedTeleOp
 
         // Telemetry
         // No need for anything but update in loop because use of suppliers
+        telemetry.addData("Runtime", this::getRuntime);
         telemetry.addData("lift height", liftSubsystem::getHeight);
+        telemetry.update();
     }
 }
