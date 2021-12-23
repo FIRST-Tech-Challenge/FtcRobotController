@@ -39,4 +39,13 @@ public class Constants {
 
     // Servo Values
     // servo constants go here
+
+    // TensorFlow Autonomous
+    public static final String VUFORIA_KEY = "AXDNhID/////AAABmTzx9+zSP0cgsSvEBLeS2Y9I1y9lY1nEbJ0" +
+            "/cUmIw6GzDXvrllKLQizl4X4T6iAxXFMJXR5zS8fcXuy6uS6lzlZJOBRnDXn3FusCpuunkIRPgIVyq+peMid" +
+            "0PN1gwSloq8A+nrV6W1LU10WzZ/Pez2F0to+5aV0bOBB+VhZIdN5ABnoSMPa6JxtR6QaCI3dg++wpGw+/X3R" +
+            "wDJhllOoGVmsLE9DTEuBBAI+MtRIpFNrSR7mcv3TEHMf8YIc+qxED8YE7Az3PGK1xy/NzLqNtFdnNVFhp023" +
+            "8Kaaqnu3DABLRXRjSJ1QRSHmE8mIur5Dk3OcqMv3fwTNt5CnhC2J/D5biVGixUQ+dveylNEVNmp0k";
+    public static final String[] TENSORFLOW_LABELS = {"TSE"};
+    public static final String TENSORFLOW_MODEL_ASSET = "model_20211128_184150.tflite";
 }

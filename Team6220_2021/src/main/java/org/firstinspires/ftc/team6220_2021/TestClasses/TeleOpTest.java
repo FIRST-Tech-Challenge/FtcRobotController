@@ -17,11 +17,9 @@ public class TeleOpTest extends MasterOpMode {
         Initialize();
         waitForStart();
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                telemetry.addData("imu angle:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-                telemetry.update();
-            }
+        while (opModeIsActive()) {
+            telemetry.addData("imu angle:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.update();
         }
     }
 }

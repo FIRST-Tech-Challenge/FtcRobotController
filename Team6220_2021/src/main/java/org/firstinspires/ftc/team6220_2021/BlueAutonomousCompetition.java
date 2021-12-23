@@ -15,13 +15,9 @@ import java.util.List;
 
 @Autonomous(name = "Blue Autonomous Competition", group = "Competition")
 public class BlueAutonomousCompetition extends MasterAutonomous {
-    private static final String TFOD_MODEL_ASSET = "model_20211128_184150.tflite";
-    private static final String[] LABELS = {"TSE"};
-    private static final String VUFORIA_KEY = "AXDNhID/////AAABmTzx9+zSP0cgsSvEBLeS2Y9I1y9lY1nEbJ" +
-            "0/cUmIw6GzDXvrllKLQizl4X4T6iAxXFMJXR5zS8fcXuy6uS6lzlZJOBRnDXn3FusCpuunkIRPgIVyq+peMi" +
-            "d0PN1gwSloq8A+nrV6W1LU10WzZ/Pez2F0to+5aV0bOBB+VhZIdN5ABnoSMPa6JxtR6QaCI3dg++wpGw+/X3" +
-            "RwDJhllOoGVmsLE9DTEuBBAI+MtRIpFNrSR7mcv3TEHMf8YIc+qxED8YE7Az3PGK1xy/NzLqNtFdnNVFhp02" +
-            "38Kaaqnu3DABLRXRjSJ1QRSHmE8mIur5Dk3OcqMv3fwTNt5CnhC2J/D5biVGixUQ+dveylNEVNmp0k";
+    private static final String TFOD_MODEL_ASSET = Constants.TENSORFLOW_MODEL_ASSET;
+    private static final String[] LABELS = Constants.TENSORFLOW_LABELS;
+    private static final String VUFORIA_KEY = Constants.VUFORIA_KEY;
 
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;

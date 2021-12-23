@@ -7,14 +7,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 
-import java.util.Arrays;
-
 public abstract class MasterAutonomous extends MasterOpMode {
     public double max(double a, double b, double c) {
-        double[] array = {a, b, c};
-        Arrays.sort(array);
-
-        return array[2];
+        return Math.max(a, Math.max(b, c));
     }
 
     // This method drives tank when given an angle drive power and turning power
