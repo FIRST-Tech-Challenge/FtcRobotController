@@ -17,6 +17,7 @@ public abstract class CommandBasedAuto extends OpMode {
         RobotUniversal.hardwareMap = hardwareMap;
         RobotUniversal.telemetry = telemetry;
         RobotUniversal.opMode = this;
+        RobotUniversal.opModeType = RobotUniversal.OpModeType.Autonomous;
         plan();
     }
 

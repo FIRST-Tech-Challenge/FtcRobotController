@@ -11,4 +11,10 @@ public final class RobotUniversal {
     public static HardwareMap hardwareMap;
     public static Telemetry telemetry;
     public static OpMode opMode;
+    public static OpModeType opModeType;
+
+    public enum OpModeType {
+        Autonomous,
+        TeleOp
+    }
 }
