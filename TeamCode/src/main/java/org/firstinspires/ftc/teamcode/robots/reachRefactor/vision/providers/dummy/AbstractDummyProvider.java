@@ -37,16 +37,6 @@ public abstract class AbstractDummyProvider extends VisionProvider {
     public abstract String getTelemetryName();
 
     @Override
-    public boolean canSendDashboardImage() {
-        return false;
-    }
-
-    @Override
-    public Mat getDashboardImage() {
-        return null;
-    }
-
-    @Override
     public void updateVision() {
 
     }

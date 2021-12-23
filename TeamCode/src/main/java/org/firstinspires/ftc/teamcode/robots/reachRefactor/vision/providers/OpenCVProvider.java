@@ -82,16 +82,6 @@ public class OpenCVProvider extends VisionProvider {
     }
 
     @Override
-    public boolean canSendDashboardImage() {
-        return true;
-    }
-
-    @Override
-    public Mat getDashboardImage() {
-        return pipeline.getDashboardImage();
-    }
-
-    @Override
     public void updateVision() {
 
     }

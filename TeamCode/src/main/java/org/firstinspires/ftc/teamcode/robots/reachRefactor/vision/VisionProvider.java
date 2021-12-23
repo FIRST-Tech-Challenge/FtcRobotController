@@ -17,8 +17,6 @@ public abstract class VisionProvider implements TelemetryProvider {
 
     private Map<Position, Integer> positionFrequencies;
     private Position mostFrequentPosition;
-    private Mat dashboardImage;
-    private FtcDashboard dashboard;
 
     public VisionProvider() {
         mostFrequentPosition = Position.HOLD;
@@ -27,9 +25,6 @@ public abstract class VisionProvider implements TelemetryProvider {
         positionFrequencies.put(Position.LEFT, 0);
         positionFrequencies.put(Position.MIDDLE, 0);
         positionFrequencies.put(Position.RIGHT, 0);
-
-        dashboardImage = new Mat();
-        dashboard = FtcDashboard.getInstance();
     }
 
     abstract public void initializeVision(HardwareMap hardwareMap);
@@ -39,10 +34,6 @@ public abstract class VisionProvider implements TelemetryProvider {
     abstract public Position getPosition();
 
     abstract public void reset();
-
-    abstract public boolean canSendDashboardImage();
-
-    abstract public Mat getDashboardImage();
 
     private void updateMostFrequentPosition() {
         int mostFrequentPositionCount = -1;
@@ -60,15 +51,6 @@ public abstract class VisionProvider implements TelemetryProvider {
             mostFrequentPosition = Position.NONE_FOUND;
     }
 
-    private void sendDashboardImage() {
-        dashboardImage = getDashboardImage();
-        if(dashboardImage != null && !dashboardImage.empty()) {
-            Bitmap bm = Bitmap.createBitmap(dashboardImage.width(), dashboardImage.height(), Bitmap.Config.RGB_565);
-            Utils.matToBitmap(dashboardImage, bm);
-            dashboard.sendImage(bm);
-        }
-    }
-
     abstract protected void updateVision();
 
     public void update() {
@@ -78,9 +60,6 @@ public abstract class VisionProvider implements TelemetryProvider {
         if(position != Position.HOLD && position != Position.NONE_FOUND)
             positionFrequencies.put(position, positionFrequencies.get(position) + 1);
         updateMostFrequentPosition();
-
-        if(canSendDashboardImage())
-            sendDashboardImage();
     }
 
     public Position getMostFrequentPosition() {

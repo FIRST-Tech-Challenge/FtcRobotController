@@ -34,6 +34,7 @@ public class Robot implements Subsystem {
     public static String TURN_RADIUS_STROKE_COLOR = "Crimson";
     public static String WHEEL_STROKE_COLOR = "SpringGreen";
     public static double DOTTED_LINE_DASH_LENGTH = 1; // in inches
+    public static double INCHES_PER_METER = 39.3701;
 
     public static double DEFAULT_TARGET_DISTANCE =  Constants.MIN_CHASSIS_LENGTH + (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3;
     private Map<Articulation, StateMachine> articulationMap;
@@ -67,9 +68,9 @@ public class Robot implements Subsystem {
         SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
         SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0, -driveTrain.getChassisDistance() }});
 
-        leftWheel = position.plus(UtilMethods.rotateVector(leftWheel, Math.toRadians(heading))).scale(Constants.INCHES_PER_METER);
-        rightWheel = position.plus(UtilMethods.rotateVector(rightWheel, Math.toRadians(heading))).scale(Constants.INCHES_PER_METER);
-        swerveWheel = position.plus(UtilMethods.rotateVector(swerveWheel, Math.toRadians(heading))).scale(Constants.INCHES_PER_METER);
+        leftWheel = position.plus(UtilMethods.rotateVector(leftWheel, Math.toRadians(heading))).scale(INCHES_PER_METER);
+        rightWheel = position.plus(UtilMethods.rotateVector(rightWheel, Math.toRadians(heading))).scale(INCHES_PER_METER);
+        swerveWheel = position.plus(UtilMethods.rotateVector(swerveWheel, Math.toRadians(heading))).scale(INCHES_PER_METER);
 
         // drawing axles
         CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, AXLE_STROKE_COLOR);
@@ -77,7 +78,7 @@ public class Robot implements Subsystem {
 
         // drawing wheel vectors
         SimpleMatrix genericWheelVector = new SimpleMatrix(new double[][]
-                {{ 0, Constants.WHEEL_RADIUS * 2 * Constants.INCHES_PER_METER }}
+                {{ 0, Constants.WHEEL_RADIUS * 2 * INCHES_PER_METER }}
         );
         CanvasUtils.drawLine(fieldOverlay, leftWheel, leftWheel.plus(
             UtilMethods.rotateVector(
@@ -103,11 +104,11 @@ public class Robot implements Subsystem {
         // calculating the instantaneous center of rotation
         double turnRadius = driveTrain.getTurnRadius();
         SimpleMatrix ICC = new SimpleMatrix(new double[][] {{ -turnRadius, 0 }});
-        ICC = UtilMethods.rotateVector(ICC, heading).scale(Constants.INCHES_PER_METER);
+        ICC = UtilMethods.rotateVector(ICC, heading).scale(INCHES_PER_METER);
 
         // drawing ICC and turn radius
-        CanvasUtils.drawDottedLine(fieldOverlay, ICC, position.scale(Constants.INCHES_PER_METER), TURN_RADIUS_STROKE_COLOR, DOTTED_LINE_DASH_LENGTH);
-        fieldOverlay.strokeCircle(ICC.get(0), ICC.get(1), Math.abs(turnRadius * Constants.INCHES_PER_METER));
+        CanvasUtils.drawDottedLine(fieldOverlay, ICC, position.scale(INCHES_PER_METER), TURN_RADIUS_STROKE_COLOR, DOTTED_LINE_DASH_LENGTH);
+        fieldOverlay.strokeCircle(ICC.get(0), ICC.get(1), Math.abs(turnRadius * INCHES_PER_METER));
     }
 
     @Override

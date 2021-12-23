@@ -29,9 +29,6 @@ public class Constants {
     public static double WHEEL_RADIUS = 0.1016;
     public static double TRACK_WIDTH = 0.308162;
 
-    // conversion factors
-     public static double INCHES_PER_METER = 39.3701;
-
     //----------------------------------------------------------------------------------------------
     // Enums
     //----------------------------------------------------------------------------------------------

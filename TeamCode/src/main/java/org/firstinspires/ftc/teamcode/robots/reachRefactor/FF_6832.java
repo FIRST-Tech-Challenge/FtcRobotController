@@ -93,7 +93,7 @@ public class FF_6832 extends OpMode {
     public static double TRIGGER_DEADZONE_THRESHOLD = 0.4;
     public static double JOYSTICK_DEADZONE_THRESHOLD = 0.05;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
-    public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = true;
+    public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
     public static double FORWARD_SCALING_FACTOR = 3; // scales the target linear robot velocity from tele-op controls
     public static double ROTATE_SCALING_FACTOR = 5; // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_DISTANCE_LEVELS = new double[] {
@@ -437,11 +437,9 @@ public class FF_6832 extends OpMode {
         Map<String, Object> opModeTelemetryMap = new HashMap<>();
 
         // handling op mode telemetry
-        if(debugTelemetryEnabled) {
-            opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
-            opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
-            opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
-        }
+        opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
+        opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+        opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
         opModeTelemetryMap.put("Active", active);
         opModeTelemetryMap.put("State", String.format("(%d): %s", gameStateIndex, gameState));
         opModeTelemetryMap.put("Debug Telemetry Enabled", debugTelemetryEnabled);

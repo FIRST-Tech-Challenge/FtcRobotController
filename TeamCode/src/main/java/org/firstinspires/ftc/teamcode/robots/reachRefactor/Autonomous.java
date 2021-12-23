@@ -10,12 +10,10 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 public class Autonomous {
     public VisionProvider visionProvider;
-    private Position mostFrequentPosition;
     private Robot robot;
 
     public Autonomous(Robot robot) {
         this.robot = robot;
-        mostFrequentPosition = Position.HOLD;
     }
 
     private StateMachine.Builder getStateMachine(Stage stage) {
@@ -36,7 +34,7 @@ public class Autonomous {
     // Autonomous articulations
     private Stage autonomousRedStage = new Stage();
     public StateMachine autonomousRed = getStateMachine(autonomousRedStage)
-            .addMineralState(() -> mostFrequentPosition.getIndex(),
+            .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
                     () -> true,
                     () -> true,
                     () -> true
@@ -52,7 +50,7 @@ public class Autonomous {
 
     private Stage autonomousBlueStage = new Stage();
     public StateMachine autonomousBlue = getStateMachine(autonomousBlueStage)
-            .addMineralState(() -> mostFrequentPosition.getIndex(),
+            .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
                     () -> true,
                     () -> true,
                     () -> true

@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.pipelines;
 
+import android.graphics.Bitmap;
+
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -19,6 +24,9 @@ import java.util.List;
 @Config
 public class OpenCVPipeline extends OpenCvPipeline
 {
+    private Mat cropOutput = new Mat();
+    private Mat normalizeInput = new Mat();
+    private Mat normalizeOutput = new Mat();
     private Mat blurInput = new Mat();
     private Mat blurOutput = new Mat();
     private Mat hsvThresholdInput = new Mat();
@@ -27,14 +35,21 @@ public class OpenCVPipeline extends OpenCvPipeline
     private Mat findContoursInput = new Mat();
     private Mat findContoursOutputMat = new Mat();
     private Mat finalContourOutputMat = new Mat();
-    private volatile Mat dashboardImage = new Mat();
+    private Mat dashboardImage = new Mat();
 
     private int largestX, largestY;
     private double largestArea;
     private volatile Position lastPosition;
+    private FtcDashboard dashboard;
     
     // Constants
-    public static int VIEW_OPEN_CV_PIPELINE_STAGE = 4;
+    public static int VIEW_OPEN_CV_PIPELINE_STAGE = 6;
+    public static int TOP_LEFT_X = 70;
+    public static int TOP_LEFT_Y = 160;
+    public static int BOTTOM_RIGHT_X = 180;
+    public static int BOTTOM_RIGHT_Y = 230;
+    public static double NORMALIZE_ALPHA = 51.0;
+    public static double NORMALIZE_BETA = 261.0;
     public static double BLUR_RADIUS = 7;
     public static double HUE_MIN = 0;
     public static double HUE_MAX = 90;
@@ -53,25 +68,45 @@ public class OpenCVPipeline extends OpenCvPipeline
         largestY = -1;
         largestArea = -1;
         lastPosition = Position.HOLD;
+
+        dashboard = FtcDashboard.getInstance();
+    }
+
+    private void sendDashboardImage() {
+        if(dashboardImage != null && !dashboardImage.empty()) {
+            Bitmap bm = Bitmap.createBitmap(dashboardImage.width(), dashboardImage.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(dashboardImage, bm);
+            dashboard.sendImage(bm);
+        }
     }
 
     @Override
     public Mat processFrame(Mat input)
     {
-        // Step Blur0 (stage 1):
+        // Step crop (stage 1):
+        cropOutput = crop(input, new Point(TOP_LEFT_X, TOP_LEFT_Y), new Point(BOTTOM_RIGHT_X, BOTTOM_RIGHT_Y));
+
+        // Step Normalize0 (stage 2):
+        normalizeInput = cropOutput;
+        int normalizeType = Core.NORM_MINMAX;
+        double normalizeAlpha = NORMALIZE_ALPHA;
+        double normalizeBeta = NORMALIZE_BETA;
+        normalize(normalizeInput, normalizeType, normalizeAlpha, normalizeBeta, normalizeOutput);
+
+        // Step Blur0 (stage 3):
         blurInput = input;
         BlurType blurType = BlurType.get(BLUR);
         double blurRadius = BLUR_RADIUS;
         blur(blurInput, blurType, blurRadius, blurOutput);
 
-        // Step HSV_Threshold0  (stage 2):
+        // Step HSV_Threshold0  (stage 4):
         hsvThresholdInput = blurOutput;
         double[] hsvThresholdHue = {HUE_MIN, HUE_MAX};
         double[] hsvThresholdSaturation = {SATURATION_MIN, SATURATION_MAX};
         double[] hsvThresholdValue = {VALUE_MIN, VALUE_MAX};
         hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
-        // Step Find_Contours0 (stage 3):
+        // Step Find_Contours0 (stage 5):
         findContoursInput = hsvThresholdOutput;
         findContours(findContoursInput, findContoursOutput);
         findContoursOutputMat = input.clone();
@@ -79,7 +114,7 @@ public class OpenCVPipeline extends OpenCvPipeline
             Imgproc.drawContours(findContoursOutputMat, findContoursOutput, i, new Scalar(255, 255, 255), 2);
         }
 
-        // Finding largest contour (stage 4):
+        // Finding largest contour (stage 6):
         finalContourOutputMat = input.clone();
         largestArea = -1;
         largestX = -1;
@@ -115,24 +150,32 @@ public class OpenCVPipeline extends OpenCvPipeline
 
         switch(VIEW_OPEN_CV_PIPELINE_STAGE) {
             case 0:
-                dashboardImage = blurInput;
+                dashboardImage = cropOutput;
                 break;
             case 1:
-                dashboardImage = blurOutput;
+                dashboardImage = normalizeOutput;
                 break;
             case 2:
-                dashboardImage = hsvThresholdOutput;
+                dashboardImage = blurInput;
                 break;
             case 3:
-                dashboardImage = findContoursOutputMat;
+                dashboardImage = blurOutput;
                 break;
             case 4:
+                dashboardImage = hsvThresholdOutput;
+                break;
+            case 5:
+                dashboardImage = findContoursOutputMat;
+                break;
+            case 6:
                 dashboardImage = finalContourOutputMat;
                 break;
             default:
                 dashboardImage = input;
                 break;
         }
+
+        sendDashboardImage();
 
         return input;
     }
@@ -143,6 +186,23 @@ public class OpenCVPipeline extends OpenCvPipeline
 
     public Mat getDashboardImage() {
         return dashboardImage;
+    }
+
+    private Mat crop(Mat image, Point topLeftCorner, Point bottomRightCorner) {
+        Rect cropRect = new Rect(topLeftCorner, bottomRightCorner);
+        return new Mat(image, cropRect);
+    }
+
+    /**
+     * Normalizes or remaps the values of pixels in an image.
+     * @param input The image on which to perform the Normalize.
+     * @param type The type of normalization.
+     * @param a The minimum value.
+     * @param b The maximum value.
+     * @param output The image in which to store the output.
+     */
+    private void normalize(Mat input, int type, double a, double b, Mat output) {
+        Core.normalize(input, output, a, b, type);
     }
 
     enum BlurType{
