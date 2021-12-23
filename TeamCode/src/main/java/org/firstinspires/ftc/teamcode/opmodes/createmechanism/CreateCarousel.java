@@ -5,12 +5,16 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.carousel.MoveCarousel;
+import org.firstinspires.ftc.teamcode.commands.carousel.MoveCarouselToPosition;
 import org.firstinspires.ftc.teamcode.commands.carousel.StopCarousel;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
+
+import java.util.function.BooleanSupplier;
 
 public class CreateCarousel {
 
@@ -28,6 +32,7 @@ public class CreateCarousel {
 
     private MoveCarousel moveCarouselRight;
     private MoveCarousel moveCarouselLeft;
+    private MoveCarouselToPosition moveCarouselToPosition;
     private StopCarousel stopCarousel;
 
     public CreateCarousel (final HardwareMap hwMap, final String deviceName, final GamepadEx op, Telemetry telemetry){
@@ -77,7 +82,11 @@ public class CreateCarousel {
 
         carousel = new CarouselSubsystem(hwMap,deviceName);
 
+        //carousel.setCarouselTargetPosition(0,0.0);
+        carousel.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
         moveCarouselRight = new MoveCarousel(carousel,MOVE_AUTO_POWER, telemetry);
+        moveCarouselToPosition = new MoveCarouselToPosition(carousel,MAX_ENCODER_COUNT,MOVE_AUTO_POWER);
         stopCarousel = new StopCarousel(carousel, telemetry);
 
     }
@@ -90,8 +99,8 @@ public class CreateCarousel {
         return new StopCarousel(carousel, telemetry);
     }
 
-    public MoveCarousel getMoveCarouselRight(){
-        return moveCarouselRight;
+    public MoveCarouselToPosition getMoveCarouselToPosition(){
+        return moveCarouselToPosition;
     }
 
     public StopCarousel getStopCarousel(){
@@ -100,5 +109,16 @@ public class CreateCarousel {
 
     public boolean hasMetMaxEncoderCount(){
         return carousel.getCarouselCurrentPosition() >= MAX_ENCODER_COUNT;
+    }
+
+    public BooleanSupplier hasMaxEncoderCountSupplier(){
+        BooleanSupplier supplier = new BooleanSupplier() {
+            @Override
+            public boolean getAsBoolean() {
+                return hasMetMaxEncoderCount();
+            }
+        };
+
+        return supplier;
     }
 }

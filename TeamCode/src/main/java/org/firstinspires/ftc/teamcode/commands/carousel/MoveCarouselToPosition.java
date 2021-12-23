@@ -5,22 +5,28 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 
-public class StopCarousel extends CommandBase {
+public class MoveCarouselToPosition extends CommandBase {
 
     private final CarouselSubsystem carouselSubsytem;
 
-    private final Double power = 0.0;
+    private final Double power;
+    private final int postion;
 
     private Telemetry telemetry;
 
 
-    public StopCarousel(CarouselSubsystem subsystem){
+    public MoveCarouselToPosition(CarouselSubsystem subsystem, int position, Double power){
         carouselSubsytem = subsystem;
+        this.postion = position;
+        this.power = power;
+
         addRequirements(subsystem);
     }
 
-    public StopCarousel(CarouselSubsystem subsystem, Telemetry telemetry){
+    public MoveCarouselToPosition(CarouselSubsystem subsystem, int postion, Double power, Telemetry telemetry){
         carouselSubsytem = subsystem;
+        this.postion = postion;
+        this.power = power;
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -29,13 +35,9 @@ public class StopCarousel extends CommandBase {
 
     @Override
     public void initialize(){
-        carouselSubsytem.setPower(power);
+        carouselSubsytem.setCarouselTargetPosition(postion,power);
     }
 
-    @Override
-    public boolean isFinished(){
-        telemetry.addData("stop carousel","isFinished");
-        return true;
-    }
+
 
 }

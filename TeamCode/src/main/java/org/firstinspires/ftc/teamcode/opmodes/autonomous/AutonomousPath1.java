@@ -7,9 +7,11 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.commands.carousel.MoveCarousel;
 import org.firstinspires.ftc.teamcode.commands.carousel.SpinOneDuckCarousel;
@@ -63,6 +65,7 @@ public class AutonomousPath1 extends CommandOpMode {
 
 
         CarouselSubsystem carouselSubsystem = new CarouselSubsystem(hardwareMap, "carousel");
+        carouselSubsystem.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         /*Option 2 - How Alex would do it with what we currently have
         MoveCarousel moveCarousel = new MoveCarousel(carouselSubsystem,0.3);
@@ -74,19 +77,19 @@ public class AutonomousPath1 extends CommandOpMode {
             }
         };*/
 
-        /*Option 3 - How Alex would do it with what we currently have
+        //Option 3 - How Alex would do it with what we currently have
         CreateCarousel createCarousel = new CreateCarousel(hardwareMap,"carousel",telemetry);
         createCarousel.createAuto();
-        SequentialCommandGroup carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselRight(),
-                new WaitUntilCommand(createCarousel::hasMetMaxEncoderCount).andThen(createCarousel.getStopCarousel()));
-        */
+        SequentialCommandGroup carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
+                new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
+
 
         SpinOneDuckCarousel spinOneDuckCarousel = new SpinOneDuckCarousel(carouselSubsystem,0.3);
 
 
-        Command spinDuck = new SequentialCommandGroup(
+        /*Command spinDuck = new SequentialCommandGroup(
             spinOneDuckCarousel, new WaitUntilCommand( spinOneDuckCarousel::isFinished )
-        );
+        );*/
 
         /*.splineTo(new Vector2d(-15,40),Math.toRadians(270))
                 .addDisplacementMarker(()->{}) //step 3
@@ -127,9 +130,11 @@ public class AutonomousPath1 extends CommandOpMode {
                             new WaitUntilCommand(carouselPosition).andThen(stopCarousel));
                      */
 
-                     /*Option 3 How Alex would do it with what we currently have
-                       carouselGroup.schedule();
-                    */
+                     //Option 3 How Alex would do it with what we currently have
+
+                        //carouselGroup.schedule();
+
+
                 })
                 .build();
 
@@ -144,7 +149,7 @@ public class AutonomousPath1 extends CommandOpMode {
 
         //turnCommand2 = new TurnCommand(drive, Math.toRadians(135));
 
-        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+        /*Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
                 .splineToLinearHeading(new Pose2d(-32, 24, Math.toRadians(0)),Math.toRadians(270))
                 .splineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(270)),Math.toRadians(270))
                 .build();
@@ -169,18 +174,18 @@ public class AutonomousPath1 extends CommandOpMode {
 
         Trajectory traj6 = drive.trajectoryBuilder(new Pose2d())
                 .back(45)
-                .build();
+                .build();*/
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
-        sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
-        sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-        sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
-        sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
+        //sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
+        //sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
+        //sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+        //sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
 
         schedule(new WaitUntilCommand(this::isStarted).andThen(
                 sample1Follower1.andThen(
-                        sample1Follower2, sample1Follower3)
+                        sample1Follower2)
         ));
 
         telemetry.update();

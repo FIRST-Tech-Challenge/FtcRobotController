@@ -37,7 +37,7 @@ public class SpinOneDuckCarousel extends CommandBase {
 
         carouselSubsytem.setCarouselTargetPosition(oneSpinTargetPosition, power);
 
-        while( carouselSubsytem.getCarouselCurrentPosition() > oneSpinTargetPosition){
+        while( carouselSubsytem.getCarouselCurrentPosition() < oneSpinTargetPosition){
             // wait for the spin to end! Is this necessary or the correct way?
             //not the correct way, see comment in isFinished
         }
