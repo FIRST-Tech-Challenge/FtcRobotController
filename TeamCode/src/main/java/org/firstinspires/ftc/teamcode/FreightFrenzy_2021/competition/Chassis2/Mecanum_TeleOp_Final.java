@@ -31,14 +31,14 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     double rotate = 0;
-    double speed = 0.7;
+    double speed = 0.25;
     boolean reverse = false;
 
     @Override
     public void runOpMode() {
         LF  = hardwareMap.get(DcMotor.class, "LF");
         RF = hardwareMap.get(DcMotor.class, "RF");
-        LB  = hardwareMap.get(DcMotor.class, "LB");
+        LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
         Slide  = hardwareMap.get(DcMotor.class, "Slide");
         Intake  = hardwareMap.get(DcMotor.class, "Intake");
@@ -171,7 +171,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             }
             if (gamepad1.left_bumper) {
                 if (releasedLB1 && Slide.getCurrentPosition() < initialHeight + 30){
-                    intakePower = 1.0;
+                    intakePower = 0.6;
                     telemetry.addLine("INTAKE STARTS");
                     releasedLB1 = false;
                 }
@@ -182,7 +182,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             }
             if (gamepad1.right_bumper) {
                 if (releasedRB1 && Slide.getCurrentPosition() < initialHeight + 30){
-                    intakePower = -1.0;
+                    intakePower = -0.6;
                     telemetry.addLine("INTAKE REVERSE STARTS");
                     releasedRB1 = false;
                 }
@@ -194,7 +194,8 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
             if(gamepad1.a){
                 if(releasedA1) {
-                    speed = 0.3;
+                    speed = 0.1;
+                    releasedA1 = false;
                 }
             } else if(!releasedA1){
                 releasedA1 = true;
@@ -202,7 +203,8 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
             if(gamepad1.b){
                 if(releasedB1) {
-                    speed = 0.7;
+                    speed = 0.25;
+                    releasedB1 = false;
                 }
             } else if(!releasedB1){
                 releasedB1 = true;
@@ -261,7 +263,9 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                     speed = 0.3;
                     chassis.updatePoseEstimate();
                     PoseStorage.state = DriveMethod.poseToState(chassis.getPoseEstimate());
+                    releasedY1 = false;
                 } else if (!releasedY1) {
+                    speed = 0.2;
                     releasedY1 = true;
                 }
             }
@@ -269,11 +273,11 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
             //////////////GAMEPAD 2//////////////
             if(gamepad2.a){
                 if(releasedA2) {
+                    rotateWithSpeed(Rotate,0.95, rotateSpeed);
                     Slide.setTargetPosition(initialHeight);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
-                    sleep(500);
-                    rotateWithSpeed(Rotate,0.25, rotateSpeed);
+                    Slide.setPower(1);
+                    releasedA2 = false;
                 }
 
             } else if(!releasedA2){
@@ -283,9 +287,10 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 if(releasedB2) {
                     Slide.setTargetPosition(initialHeight + 500);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
+                    Slide.setPower(1);
                     sleep(500);
                     rotateWithSpeed(Rotate,0.25, rotateSpeed);
+                    releasedB2 = false;
                 }
             } else if(!releasedB2){
                 releasedB2 = true;
@@ -295,9 +300,10 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
                 if(releasedY2) {
                     Slide.setTargetPosition(initialHeight + 1150);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Slide.setPower(0.8);
+                    Slide.setPower(1);
                     sleep(500);
                     rotateWithSpeed(Rotate,0.25, rotateSpeed);
+                    releasedY2 = false;
                 }
             } else if(!releasedY2){
                 releasedY2 = true;
@@ -305,11 +311,12 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
             if(gamepad2.x){
                 if(releasedX2) {
-                    rotateWithSpeed(Rotate,0.95, rotateSpeed);
-                    sleep(500);
-                    Slide.setTargetPosition(initialHeight);
+                    Slide.setTargetPosition(initialHeight + 1150);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Slide.setPower(0.8);
+                    sleep(500);
+                    rotateWithSpeed(Rotate,0.25, rotateSpeed);
+                    releasedX2 = false;
                 }
             } else if(!releasedX2){
                 releasedX2 = true;
@@ -414,12 +421,12 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
             if(gamepad2.left_trigger == 1){
                 if (releasedLT2){
-                    if (toggleLT2 && !Slide.isBusy()) {
-                        rotateWithSpeed(Rotate, 0.95,rotateSpeed);
+                    if (toggleLT2 && Rotate.getPosition() <= 0.5) {
+                        rotateWithSpeed(Rotate, 0.95, rotateSpeed);
                         telemetry.addLine("ROTATE STARTS");
                         toggleLT2 = false;
                     } else {
-                        rotateWithSpeed(Rotate, 0.25 ,rotateSpeed);
+                        rotateWithSpeed(Rotate, 0.25, rotateSpeed);
                         telemetry.addLine("ROTATE STOPS");
                         toggleLT2 = true;
                     }
