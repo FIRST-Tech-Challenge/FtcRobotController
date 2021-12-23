@@ -64,11 +64,12 @@ public class AutonomousPath1 extends CommandOpMode {
         LEDSubsystem ledSubsystem = new LEDSubsystem(hardwareMap,"blinkin");
         ShowAllianceColor allianceColor = new ShowAllianceColor(ledSubsystem,ShowAllianceColor.AllianceColor.BLUE);
 
-
         CarouselSubsystem carouselSubsystem = new CarouselSubsystem(hardwareMap, "carousel");
-        carouselSubsystem.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        //Option 2 - How Alex would do it with what we currently have
+        /*
+        carouselSubsystem.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);*/
+
+        /*//Option 2 - How Alex would do it with what we currently have
         MoveCarouselToPosition moveCarouselToPosition = new MoveCarouselToPosition(carouselSubsystem,1000,0.3,telemetry);
         StopCarousel stopCarousel = new StopCarousel(carouselSubsystem,telemetry);
         BooleanSupplier carouselPosition = new BooleanSupplier() {
@@ -76,7 +77,7 @@ public class AutonomousPath1 extends CommandOpMode {
             public boolean getAsBoolean() {
                 return carouselSubsystem.getCarouselCurrentPosition() >= 1000;
             }
-        };
+        };*/
 
         //Option 3 - How Alex would do it with what we currently have
         CreateCarousel createCarousel = new CreateCarousel(hardwareMap,"carousel",telemetry);
@@ -84,8 +85,11 @@ public class AutonomousPath1 extends CommandOpMode {
         SequentialCommandGroup carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
                 new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
 
+        /*//Option 2 - How Alex would do it with what we currently have
         SequentialCommandGroup opt2CarouselGroup = new SequentialCommandGroup(moveCarouselToPosition,
                 new WaitUntilCommand(carouselPosition).andThen(stopCarousel));
+
+         */
 
 
         SpinOneDuckCarousel spinOneDuckCarousel = new SpinOneDuckCarousel(carouselSubsystem,0.3);
@@ -188,7 +192,7 @@ public class AutonomousPath1 extends CommandOpMode {
         //sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
 
         schedule(new WaitUntilCommand(this::isStarted).andThen(
-                sample1Follower1.andThen(opt2CarouselGroup,
+                sample1Follower1.andThen(carouselGroup,
                         sample1Follower2)
         ));
 
