@@ -39,6 +39,7 @@ public class SpinOneDuckCarousel extends CommandBase {
 
         while( carouselSubsytem.getCarouselCurrentPosition() > oneSpinTargetPosition){
             // wait for the spin to end! Is this necessary or the correct way?
+            //not the correct way, see comment in isFinished
         }
         carouselSubsytem.setPower(0.0);
         carouselSubsytem.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -47,6 +48,9 @@ public class SpinOneDuckCarousel extends CommandBase {
 
     @Override
     public boolean isFinished(){
+
+        //instead of doing the while loop, you would do
+        //return carouselSubsytem.getCarouselCurrentPosition() > oneSpinTargetPosition;
         return true;
     }
 

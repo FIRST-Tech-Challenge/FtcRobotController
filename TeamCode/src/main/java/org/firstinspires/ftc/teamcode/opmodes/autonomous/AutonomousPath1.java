@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollow
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TurnCommand;
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowAllianceColor;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
@@ -63,7 +64,7 @@ public class AutonomousPath1 extends CommandOpMode {
 
         CarouselSubsystem carouselSubsystem = new CarouselSubsystem(hardwareMap, "carousel");
 
-        /*How Alex would do it with what we currently have
+        /*Option 2 - How Alex would do it with what we currently have
         MoveCarousel moveCarousel = new MoveCarousel(carouselSubsystem,0.3);
         StopCarousel stopCarousel = new StopCarousel(carouselSubsystem);
         BooleanSupplier carouselPosition = new BooleanSupplier() {
@@ -72,6 +73,13 @@ public class AutonomousPath1 extends CommandOpMode {
                 return carouselSubsystem.getCarouselCurrentPosition() >= 1000;
             }
         };*/
+
+        /*Option 3 - How Alex would do it with what we currently have
+        CreateCarousel createCarousel = new CreateCarousel(hardwareMap,"carousel",telemetry);
+        createCarousel.createAuto();
+        SequentialCommandGroup carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselRight(),
+                new WaitUntilCommand(createCarousel::hasMetMaxEncoderCount).andThen(createCarousel.getStopCarousel()));
+        */
 
         SpinOneDuckCarousel spinOneDuckCarousel = new SpinOneDuckCarousel(carouselSubsystem,0.3);
 
@@ -113,11 +121,15 @@ public class AutonomousPath1 extends CommandOpMode {
                     //spinDuck.schedule();
                     spinOneDuckCarousel.schedule();
 
-                    /*How Alex would do it with what we currently have
+
+                    /*Option 2 How Alex would do it with what we currently have
                     SequentialCommandGroup carouselGroup = new SequentialCommandGroup(moveCarousel,
                             new WaitUntilCommand(carouselPosition).andThen(stopCarousel));
-
                      */
+
+                     /*Option 3 How Alex would do it with what we currently have
+                       carouselGroup.schedule();
+                    */
                 })
                 .build();
 
