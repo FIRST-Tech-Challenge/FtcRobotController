@@ -64,8 +64,8 @@ public class CreateCarousel {
 
         carousel = new CarouselSubsystem(hwMap,deviceName);
 
-        moveCarouselRight = new MoveCarousel(carousel,MOVE_RIGHT_POWER, telemetry);
-        moveCarouselLeft = new MoveCarousel(carousel, MOVE_LEFT_POWER, telemetry);
+        moveCarouselRight = createMoveCarousel(MOVE_RIGHT_POWER);
+        moveCarouselLeft = createMoveCarousel(MOVE_LEFT_POWER);
         stopCarousel = new StopCarousel(carousel, telemetry);
 
         Button carouselRight = new GamepadButton(op, GamepadKeys.Button.RIGHT_BUMPER);
@@ -82,17 +82,19 @@ public class CreateCarousel {
 
         carousel = new CarouselSubsystem(hwMap,deviceName);
 
-        //carousel.setCarouselTargetPosition(0,0.0);
         carousel.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        moveCarouselRight = new MoveCarousel(carousel,MOVE_AUTO_POWER, telemetry);
-        moveCarouselToPosition = new MoveCarouselToPosition(carousel,MAX_ENCODER_COUNT,MOVE_AUTO_POWER);
-        stopCarousel = new StopCarousel(carousel, telemetry);
+        moveCarouselToPosition = createMoveCarouselToPostion();
+        stopCarousel = createStopCarousel();
 
     }
 
     private MoveCarousel createMoveCarousel(double power){
         return new MoveCarousel(carousel,power, telemetry);
+    }
+
+    private MoveCarouselToPosition createMoveCarouselToPostion(){
+        return new MoveCarouselToPosition(carousel,MAX_ENCODER_COUNT,MOVE_AUTO_POWER);
     }
 
     private StopCarousel createStopCarousel(){
