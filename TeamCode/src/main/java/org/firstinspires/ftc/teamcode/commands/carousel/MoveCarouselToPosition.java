@@ -38,6 +38,12 @@ public class MoveCarouselToPosition extends CommandBase {
         carouselSubsytem.setCarouselTargetPosition(postion,power);
     }
 
+    @Override
+    public boolean isFinished(){
 
+        //instead of doing the while loop, you would do
+        return carouselSubsytem.getCarouselCurrentPosition() > postion;
+        //return true;
+    }
 
 }

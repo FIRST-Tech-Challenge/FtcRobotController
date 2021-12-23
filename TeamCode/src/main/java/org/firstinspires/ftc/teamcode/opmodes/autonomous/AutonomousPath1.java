@@ -122,7 +122,7 @@ public class AutonomousPath1 extends CommandOpMode {
                     telemetry.addData("Path 1", "performing path 1 action");
                     allianceColor.schedule();
                     //spinDuck.schedule();
-                    spinOneDuckCarousel.schedule();
+                    //spinOneDuckCarousel.schedule();
 
 
                     /*Option 2 How Alex would do it with what we currently have
@@ -184,7 +184,7 @@ public class AutonomousPath1 extends CommandOpMode {
         //sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
 
         schedule(new WaitUntilCommand(this::isStarted).andThen(
-                sample1Follower1.andThen(
+                sample1Follower1.andThen(carouselGroup,
                         sample1Follower2)
         ));
 
