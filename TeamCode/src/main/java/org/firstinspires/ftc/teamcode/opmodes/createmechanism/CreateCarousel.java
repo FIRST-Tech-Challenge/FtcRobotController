@@ -28,7 +28,11 @@ public class CreateCarousel {
     private static final double MOVE_LEFT_POWER = -0.5;
     private static final double MOVE_AUTO_POWER = 0.3;
 
-    private static final int MAX_ENCODER_COUNT = 1000;
+    private static final double SPINNER_WHEEL_CIRC = 12.567; //inches
+    private static final double CAROUSELL_WHEEL_CIRC = 47.124; //inches
+    private static final double GEAR_RATIO = 3/4;
+    private static final double MOTOR_ENCODER_COUNT = 1120 * GEAR_RATIO; //840
+    private static final int MAX_ENCODER_COUNT = (int)((SPINNER_WHEEL_CIRC / CAROUSELL_WHEEL_CIRC) * MOTOR_ENCODER_COUNT);
 
     private MoveCarousel moveCarouselRight;
     private MoveCarousel moveCarouselLeft;
