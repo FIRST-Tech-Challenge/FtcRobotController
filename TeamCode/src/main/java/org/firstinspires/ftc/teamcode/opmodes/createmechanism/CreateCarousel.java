@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.carousel.MoveCarousel;
 import org.firstinspires.ftc.teamcode.commands.carousel.MoveCarouselToPosition;
 import org.firstinspires.ftc.teamcode.commands.carousel.StopCarousel;
+import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 
 import java.util.function.BooleanSupplier;
@@ -98,7 +99,16 @@ public class CreateCarousel {
     }
 
     private MoveCarouselToPosition createMoveCarouselToPostion(){
-        return new MoveCarouselToPosition(carousel,MAX_ENCODER_COUNT,MOVE_AUTO_POWER);
+
+        int maxEncoderCount = MAX_ENCODER_COUNT;
+        if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
+            maxEncoderCount = MAX_ENCODER_COUNT;
+        }
+        else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED)
+        {
+            maxEncoderCount = -MAX_ENCODER_COUNT;
+        }
+        return new MoveCarouselToPosition(carousel,maxEncoderCount,MOVE_AUTO_POWER);
     }
 
     private StopCarousel createStopCarousel(){

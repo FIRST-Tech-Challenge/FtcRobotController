@@ -7,9 +7,14 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.arcrobotics.ftclib.command.button.Button;
+import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -21,6 +26,7 @@ import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollow
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TurnCommand;
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowAllianceColor;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
@@ -55,6 +61,22 @@ public class AutonomousPath1 extends CommandOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         telemetry.setAutoClear(false);
+
+        GamepadEx settingsOp = new GamepadEx(gamepad1);
+
+        //X (Blue) button
+        Button blueAlliance = new GamepadButton(settingsOp, GamepadKeys.Button.X);
+        //Y (Red) button
+        Button redAlliance = new GamepadButton(settingsOp, GamepadKeys.Button.Y);
+
+
+        blueAlliance.whenPressed(()->{
+            Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.BLUE);
+
+        });
+        redAlliance.whenPressed(()->{
+            Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.RED);
+        });
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), false);
 
