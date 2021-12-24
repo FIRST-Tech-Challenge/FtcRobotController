@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TurnCommand;
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowAllianceColor;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.globals.Alliance;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath1;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
@@ -62,12 +63,24 @@ public class AutonomousPath1 extends CommandOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         telemetry.setAutoClear(false);
 
+        schedule(new InstantCommand(() -> {
+            telemetry.clearAll();
+            telemetry.addLine("What is your Alliance?");
+            telemetry.addLine("Press (X) for BLUE, (Y) for RED");
+            telemetry.update();
+        }));
+
         GamepadEx settingsOp = new GamepadEx(gamepad1);
 
         //X (Blue) button
         Button blueAlliance = new GamepadButton(settingsOp, GamepadKeys.Button.X);
         //Y (Red) button
         Button redAlliance = new GamepadButton(settingsOp, GamepadKeys.Button.Y);
+
+        Button path1Selector = new GamepadButton(settingsOp, GamepadKeys.Button.DPAD_UP);
+        Button path2Selector = new GamepadButton(settingsOp, GamepadKeys.Button.DPAD_RIGHT);
+        Button path3Selector = new GamepadButton(settingsOp, GamepadKeys.Button.DPAD_DOWN);
+        Button path4Selector = new GamepadButton(settingsOp, GamepadKeys.Button.DPAD_LEFT);
 
 
         blueAlliance.whenPressed(()->{
@@ -78,7 +91,21 @@ public class AutonomousPath1 extends CommandOpMode {
             Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.RED);
         });
 
-        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), false);
+        path1Selector.whenPressed(()->{
+            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
+                BluePath1 bluePath1 = new BluePath1(hardwareMap,telemetry);
+                bluePath1.createPath();
+                bluePath1.execute(this);
+            }
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED){
+
+            }
+        });
+
+
+
+
+        /*drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), false);
 
         startPose = new Pose2d(-36, 60, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
@@ -101,11 +128,11 @@ public class AutonomousPath1 extends CommandOpMode {
             }
         };*/
 
-        //Option 3 - How Alex would do it with what we currently have
+        /*//Option 3 - How Alex would do it with what we currently have
         CreateCarousel createCarousel = new CreateCarousel(hardwareMap,"carousel",telemetry);
         createCarousel.createAuto();
         SequentialCommandGroup carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
-                new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
+                new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));*/
 
         /*//Option 2 - How Alex would do it with what we currently have
         SequentialCommandGroup opt2CarouselGroup = new SequentialCommandGroup(moveCarouselToPosition,
@@ -113,7 +140,7 @@ public class AutonomousPath1 extends CommandOpMode {
 
          */
 
-
+/*
         SpinOneDuckCarousel spinOneDuckCarousel = new SpinOneDuckCarousel(carouselSubsystem,0.3);
 
 
@@ -145,7 +172,7 @@ public class AutonomousPath1 extends CommandOpMode {
                 .splineToConstantHeading(new Vector2d(-15,40),Math.toRadians(57))
                 .turn(Math.toRadians(90))
                 .back(45)*/
-
+/*
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .strafeTo(new Vector2d(-60, 60))
                 .addDisplacementMarker(()-> {
@@ -164,18 +191,18 @@ public class AutonomousPath1 extends CommandOpMode {
 
                         //carouselGroup.schedule();
 
-
+/*
                 })
-                .build();
+                .build();*/
 
         //turnCommand1 = new TurnCommand(drive, Math.toRadians(-135));
 
-        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+        /*Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .strafeTo(new Vector2d(-60, 24))
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 2", "performing path 2 action");
                 }) //step 6
-                .build();
+                .build();*/
 
         //turnCommand2 = new TurnCommand(drive, Math.toRadians(135));
 
@@ -206,7 +233,7 @@ public class AutonomousPath1 extends CommandOpMode {
                 .back(45)
                 .build();*/
 
-        sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
+        /*sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
         //sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         //sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
@@ -218,6 +245,6 @@ public class AutonomousPath1 extends CommandOpMode {
                         sample1Follower2)
         ));
 
-        telemetry.update();
+        telemetry.update();*/
     }
 }
