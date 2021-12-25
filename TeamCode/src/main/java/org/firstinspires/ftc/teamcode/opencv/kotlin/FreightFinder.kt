@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opencv
+package org.firstinspires.ftc.teamcode.opencv.kotlin
 
 import org.opencv.core.*
 import org.openftc.easyopencv.OpenCvPipeline
@@ -6,7 +6,9 @@ import org.opencv.imgproc.Imgproc
 import java.util.ArrayList
 
 class FreightFinder : OpenCvPipeline() {
-    var freightArray = ArrayList<Point>()
+    var boxArray: ArrayList<Rect> = ArrayList()
+    var ballArray: ArrayList<Rect> = ArrayList()
+
     val whiteContours: List<MatOfPoint> = ArrayList()
     val yellowContours: List<MatOfPoint> = ArrayList()
 
@@ -40,6 +42,14 @@ class FreightFinder : OpenCvPipeline() {
         Imgproc.drawContours(input, whiteContours, -1, Scalar(0.0, 255.0, 0.0), 3)
         Imgproc.drawContours(input, yellowContours, -1, Scalar(0.0, 0.0, 255.0), 3)
 
+        for (contour in whiteContours) {
+            val rect = Imgproc.boundingRect(contour)
+            ballArray.add(rect)
+        }
+        for (contour in yellowContours) {
+            val rect = Imgproc.boundingRect(contour)
+            boxArray.add(rect)
+        }
 
 
         return input
