@@ -32,8 +32,18 @@ public class CreateArm {
     private final HardwareMap hwMap;
     private final String deviceName;
     private final Telemetry telemetry;
-    private final GamepadEx op;
+    private GamepadEx op;
     private Trigger mlsTrigger;
+
+    private Map<Integer, Integer> armLevels = new HashMap<>();
+
+    private SetArmLevel moveToLevel0;
+    private SetArmLevel moveToLevel1;
+    private SetArmLevel moveToLevel2;
+    private SetArmLevel moveToLevel3;
+
+    private ResetArmCount resetArmCount;
+
 
     private static final int NUDGE = 5;
 
@@ -55,9 +65,19 @@ public class CreateArm {
 
     }
 
+    public CreateArm(final HardwareMap hwMap, final String deviceName, Telemetry telemetry){
+        this.deviceName = deviceName;
+        this.hwMap = hwMap;
+
+        this.telemetry = telemetry;
+
+
+
+    }
+
     public void create(){
 
-        Map<Integer, Integer> armLevels = new HashMap<>();
+
         armLevels.put(0,0);
         armLevels.put(1,250);
         armLevels.put(2,600);
@@ -77,10 +97,10 @@ public class CreateArm {
         NudgeArmWithStick nudgeArmUp = new NudgeArmWithStick(arm,NUDGE,telemetry);
         NudgeArmWithStick nudgeArmDown = new NudgeArmWithStick(arm, -NUDGE, telemetry);
 
-        SetArmLevel moveToLevel0 = new SetArmLevel(arm,0, telemetry);
-        SetArmLevel moveToLevel1 = new SetArmLevel(arm,1, telemetry);
-        SetArmLevel moveToLevel2 = new SetArmLevel(arm,2, telemetry);
-        SetArmLevel moveToLevel3 = new SetArmLevel(arm,3, telemetry);
+        moveToLevel0 = createSetArmLevel(0);
+        moveToLevel1 = createSetArmLevel(1);
+        moveToLevel2 = createSetArmLevel(2);
+        moveToLevel3 = createSetArmLevel(3);
 
         Trigger armNudgerUpTrigger = new Trigger(() -> op.getRightY() <= -0.5);
         Trigger armNudgerDownTrigger = new Trigger(() -> op.getRightY() >= 0.5);
@@ -103,10 +123,49 @@ public class CreateArm {
         armLevel2.whenPressed(moveToLevel2);
         armLevel3.whenPressed(moveToLevel3);
 
-        ResetArmCount resetArmCount = new ResetArmCount(arm,telemetry);
+        resetArmCount = createResetArmCount();
         arm.setDefaultCommand(new PerpetualCommand(resetArmCount));
 
 
+    }
+
+    public void createAuto(){
+
+
+        armLevels.put(0,0);
+        armLevels.put(1,250);
+        armLevels.put(2,600);
+        armLevels.put(3,900);
+
+        CreateMagneticLimitSwitch createMagneticLimitSwitch = new CreateMagneticLimitSwitch(hwMap, "limitSwitch", telemetry,true);
+        magneticLimitSwitch = createMagneticLimitSwitch.getMagneticLimitSwitchTrigger();
+
+        arm = new ArmSubsystem(hwMap,deviceName, magneticLimitSwitch, DcMotorEx.RunMode.STOP_AND_RESET_ENCODER, (HashMap) armLevels, telemetry);
+
+
+        arm.setArmTargetPosition(arm.getLevel(0));
+        arm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        arm.setDirection(DcMotorEx.Direction.REVERSE);
+
+
+        moveToLevel0 = createSetArmLevel(0);
+        moveToLevel1 = createSetArmLevel(1);
+        moveToLevel2 = createSetArmLevel(2);
+        moveToLevel3 = createSetArmLevel(3);
+
+
+        resetArmCount = createResetArmCount();
+        arm.setDefaultCommand(new PerpetualCommand(resetArmCount));
+
+
+    }
+
+    private SetArmLevel createSetArmLevel(int levelIndicator){
+        return new SetArmLevel(arm,levelIndicator, telemetry);
+    }
+
+    private ResetArmCount createResetArmCount(){
+        return new ResetArmCount(arm,telemetry);
     }
 
     public ArmSubsystem getArm(){
