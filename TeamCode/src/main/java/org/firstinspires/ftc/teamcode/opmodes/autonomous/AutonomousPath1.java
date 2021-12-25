@@ -75,7 +75,7 @@ public class AutonomousPath1 extends CommandOpMode {
         //X (Blue) button
         Button blueAlliance = new GamepadButton(settingsOp, GamepadKeys.Button.X);
         //Y (Red) button
-        Button redAlliance = new GamepadButton(settingsOp, GamepadKeys.Button.Y);
+        Button redAlliance = new GamepadButton(settingsOp, GamepadKeys.Button.B);
 
         Button path1Selector = new GamepadButton(settingsOp, GamepadKeys.Button.DPAD_UP);
         Button path2Selector = new GamepadButton(settingsOp, GamepadKeys.Button.DPAD_RIGHT);
