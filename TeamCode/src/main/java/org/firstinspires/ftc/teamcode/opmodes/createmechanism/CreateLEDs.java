@@ -9,15 +9,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowColor;
 //import org.firstinspires.ftc.teamcode.commands.leds.blinkin.ShowTeamColors;
+import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 
 public class CreateLEDs {
 
-    private final GamepadEx op;
+    private GamepadEx op;
     private LEDSubsystem leds;
     private final HardwareMap hwMap;
     private final String deviceName;
     private static final int LED_PERIOD = 10;
+
+    ShowColor showAllianceBlueColorCommand;
+    ShowColor showAllianceRedColorCommand;
+    ShowColor showTeamColorsCommand;
 
     public CreateLEDs (final HardwareMap hwMap, final String ledName, final GamepadEx op){
         this.op = op;
@@ -33,10 +38,16 @@ public class CreateLEDs {
         if (autoCreate) create();
     }
 
+    public CreateLEDs (final HardwareMap hwMap, final String ledName){
+
+        deviceName = ledName;
+        this.hwMap = hwMap;
+
+
+    }
+
     public void create(){
-        ShowColor m_showAllianceBlueColorCommand;
-        ShowColor m_showAllianceRedColorCommand;
-        ShowColor m_showTeamColorsCommand;
+
 
         //X (Blue) button
         Button blueAlliance = new GamepadButton(op, GamepadKeys.Button.X);
@@ -49,13 +60,40 @@ public class CreateLEDs {
         leds = new LEDSubsystem(hwMap,deviceName, LED_PERIOD);
 
         //create commands
-        m_showAllianceBlueColorCommand = new ShowColor(leds, RevBlinkinLedDriver.BlinkinPattern.BLUE);
-        m_showAllianceRedColorCommand = new ShowColor(leds, RevBlinkinLedDriver.BlinkinPattern.RED);
-        m_showTeamColorsCommand = new ShowColor(leds, RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
+        showAllianceBlueColorCommand = createShowColor(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+        showAllianceRedColorCommand = createShowColor(RevBlinkinLedDriver.BlinkinPattern.RED);
+        showTeamColorsCommand = createShowColor(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
 
         //assign buttons to commands
-        blueAlliance.whenPressed(m_showAllianceBlueColorCommand);
-        redAlliance.whenPressed(m_showAllianceRedColorCommand);
-        teamColors.whenPressed(m_showTeamColorsCommand);
+        blueAlliance.whenPressed(showAllianceBlueColorCommand);
+        redAlliance.whenPressed(showAllianceRedColorCommand);
+        teamColors.whenPressed(showTeamColorsCommand);
+    }
+
+    public void createAuto(){
+
+
+        //create LED SubSystem
+        leds = new LEDSubsystem(hwMap,deviceName, LED_PERIOD);
+
+        //create commands
+        showAllianceBlueColorCommand = createShowColor(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+        showAllianceRedColorCommand = createShowColor(RevBlinkinLedDriver.BlinkinPattern.RED);
+        showTeamColorsCommand = createShowColor(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
+
+        if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
+            showAllianceBlueColorCommand.schedule();
+        }
+        else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED){
+            showAllianceRedColorCommand.schedule();
+        }
+    }
+
+    private ShowColor createShowColor(RevBlinkinLedDriver.BlinkinPattern pattern){
+        return new ShowColor(leds, pattern);
+    }
+
+    public ShowColor getShowTeamColors(){
+        return showTeamColorsCommand;
     }
 }

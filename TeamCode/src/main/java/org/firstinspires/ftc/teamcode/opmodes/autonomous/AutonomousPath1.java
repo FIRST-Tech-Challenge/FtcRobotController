@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath1;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 import org.firstinspires.ftc.teamcode.subsystems.carousel.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
@@ -83,12 +84,17 @@ public class AutonomousPath1 extends CommandOpMode {
         Button path4Selector = new GamepadButton(settingsOp, GamepadKeys.Button.DPAD_LEFT);
 
 
+        CreateLEDs createLEDs = new CreateLEDs(hardwareMap, "blinkin");
+
+
         blueAlliance.whenPressed(()->{
             Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.BLUE);
+            createLEDs.createAuto();
 
         });
         redAlliance.whenPressed(()->{
             Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.RED);
+            createLEDs.createAuto();
         });
 
         path1Selector.whenPressed(()->{

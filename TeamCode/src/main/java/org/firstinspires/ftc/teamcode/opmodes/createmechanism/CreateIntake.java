@@ -51,7 +51,7 @@ public class CreateIntake {
 
     }
 
-    public CreateIntake(final HardwareMap hwMap, final String deviceName, Telemetry telemetry, boolean autoCreate){
+    public CreateIntake(final HardwareMap hwMap, final String deviceName, Telemetry telemetry){
         this.deviceName = deviceName;
         this.hwMap = hwMap;
         this.telemetry = telemetry;
