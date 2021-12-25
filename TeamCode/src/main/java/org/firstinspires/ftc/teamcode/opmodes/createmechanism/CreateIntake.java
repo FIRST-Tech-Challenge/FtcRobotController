@@ -24,7 +24,11 @@ public class CreateIntake {
     private final HardwareMap hwMap;
     private final String deviceName;
     private final Telemetry telemetry;
-    private final GamepadEx op;
+    private GamepadEx op;
+
+    private MoveIntakeWithTrigger seGrabber;
+    private MoveIntakeWithTrigger seReleaser;
+    private StopIntake stopIntake;
 
     private static final double RIGHT_TRIGGER_POWER = -0.75;
     private static final double LEFT_TRIGGER_POWER = 0.6;
@@ -47,30 +51,62 @@ public class CreateIntake {
 
     }
 
+    public CreateIntake(final HardwareMap hwMap, final String deviceName, Telemetry telemetry, boolean autoCreate){
+        this.deviceName = deviceName;
+        this.hwMap = hwMap;
+        this.telemetry = telemetry;
+
+    }
+
     public void create(){
         telemetry.addData("create intake","creating");
         intake = new IntakeSubsystem(hwMap,deviceName);
 
 
-        //MoveIntake seGrabber = new MoveIntake(intake, RIGHT_TRIGGER_POWER,LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
-
         Trigger rTrigger = new Trigger(() -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5);
         Trigger lTrigger = new Trigger(() -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5);
 
-        MoveIntakeWithTrigger seGrabber = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, telemetry);
-        MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, LEFT_TRIGGER_POWER, telemetry);
-        //
+        seGrabber = createMoveIntake(RIGHT_TRIGGER_POWER);
+        seReleaser = createMoveIntake(LEFT_TRIGGER_POWER);
+
         rTrigger.whileActiveContinuous(seGrabber);
         lTrigger.whileActiveContinuous(seReleaser);
-        //MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, LEFT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), telemetry);
-        //MoveIntakeWithTrigger seReleaser = new MoveIntakeWithTrigger(intake, RIGHT_TRIGGER_POWER, () -> op.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), telemetry);
 
-        StopIntake stopIntake = new StopIntake(intake, telemetry);
+        stopIntake = createStopIntake();
 
-
-
-        //seGrabber.schedule(true);
-        //seReleaser.schedule(true);
         intake.setDefaultCommand(new PerpetualCommand(stopIntake));
+    }
+
+    public void createAuto(){
+        telemetry.addData("create intake","creating");
+        intake = new IntakeSubsystem(hwMap,deviceName);
+
+        seGrabber = createMoveIntake(RIGHT_TRIGGER_POWER);
+        seReleaser = createMoveIntake(LEFT_TRIGGER_POWER);
+
+        stopIntake = createStopIntake();
+
+        intake.setDefaultCommand(new PerpetualCommand(stopIntake));
+    }
+
+    private MoveIntakeWithTrigger createMoveIntake(double power){
+        return new MoveIntakeWithTrigger(intake, power, telemetry);
+
+    }
+
+    private StopIntake createStopIntake(){
+        return new StopIntake(intake, telemetry);
+    }
+
+    public MoveIntakeWithTrigger getSeGrabber(){
+        return seGrabber;
+    }
+
+    public MoveIntakeWithTrigger getSeReleaser(){
+        return seReleaser;
+    }
+
+    public StopIntake getStopIntake(){
+        return stopIntake;
     }
 }
