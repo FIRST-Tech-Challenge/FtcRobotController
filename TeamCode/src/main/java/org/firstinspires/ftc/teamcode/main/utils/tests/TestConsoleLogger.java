@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.main.utils.tests;
 
-import java.util.Date;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -11,12 +15,12 @@ import java.util.logging.SimpleFormatter;
 /**
  * A TestLogger logs information from Test in a proper way. It uses a Logger under the hood. It logs information about a Tester's current status and the status of Tests, like their passes, failures, and logs.
  */
-public class TestLogger {
+public class TestConsoleLogger {
 
     private Logger LOGGER;
 
-    public TestLogger() {
-        Logger mainLogger = Logger.getLogger(TestLogger.class.getName());
+    public TestConsoleLogger() {
+        Logger mainLogger = Logger.getLogger(TestConsoleLogger.class.getName());
         // setup custom logger handler
         mainLogger.setUseParentHandlers(false);
         ConsoleHandler handler = new ConsoleHandler();
@@ -43,12 +47,7 @@ public class TestLogger {
         LOGGER = mainLogger;
     }
 
-    public enum Grade {
-        PASSING,
-        FAILING
-    }
-
-    public void logTestResult(Grade grade, String name, String logs, long startTime, long endTime) {
+    public void logTestResult(Grade grade, String name, String logs, long startTime, long endTime, Tester.FailureReason reason, Exception exception) {
         // build result message
         StringBuilder message = new StringBuilder();
         String separator = "-----------------------------------------------";
@@ -56,14 +55,23 @@ public class TestLogger {
         if(logs != null && logs.length() > 0) {
             // shorten lines to be 4 shorter than the separator for style
             StringBuilder finalLogs = new StringBuilder();
-            String workingLogs = logs;
+            StringBuilder workingLogs = new StringBuilder().append(logs);
             while(workingLogs.length() > 0) {
                 int min = Math.min(workingLogs.length(), separator.length() - 5);
                 finalLogs.append(workingLogs.substring(0, min)).append(System.lineSeparator());
-                workingLogs = workingLogs.substring(0, min);
+                workingLogs.delete(min - 1, workingLogs.length());
             }
+            message.append(workingLogs).append(System.lineSeparator());
         }
         message.append(separator).append("Test completed in ").append(endTime - startTime).append("ms");
+        // if there was an exception, log it
+        if(reason == Tester.FailureReason.EXCEPTION) {
+            StringWriter string = new StringWriter();
+            PrintWriter printer = new PrintWriter(string);
+            exception.printStackTrace(printer);
+            String stackTrace = string.toString();
+            message.append(System.lineSeparator()).append(separator).append("Exception: ").append(exception.getLocalizedMessage()).append(System.lineSeparator()).append(System.lineSeparator()).append(stackTrace);
+        }
         // log with level based on grade
         if(grade == Grade.PASSING) {
             LOGGER.log(Level.INFO, message.toString());
@@ -98,6 +106,22 @@ public class TestLogger {
 
     public void logIntegrationRun() {
         LOGGER.log(Level.WARNING, "Running Integration Tests...");
+    }
+
+    public void logResults(ArrayList<HashMap<String, Boolean>> results) {
+        int passes = 0;
+        int failures = 0;
+        for(HashMap<String, Boolean> result : results) {
+            HashMap.Entry<String, Boolean> entry = result.entrySet().iterator().next();
+            if(entry.getValue().equals(true)) {
+                LOGGER.log(Level.WARNING, entry.getKey() + " passed!");
+                passes++;
+            }else{
+                LOGGER.log(Level.WARNING, entry.getKey() + " failed!");
+                failures++;
+            }
+        }
+        LOGGER.log(Level.WARNING, passes + " passes and " + failures + " failures.");
     }
 
     public void logEnd() {

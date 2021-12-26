@@ -12,7 +12,7 @@ public class TestOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        new Tester();
+        new Tester(this);
     }
 
 }

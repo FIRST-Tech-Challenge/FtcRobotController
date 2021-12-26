@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode.main.utils.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.HashMap;
 import java.util.Set;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
@@ -23,38 +18,70 @@ import java.util.zip.DataFormatException;
 
 public class Tester {
 
-    private final TestLogger LOGGER;
+    private final TestConsoleLogger LOGGER;
+    private final TestTelemetryLogger TELEMETRY;
+    private final LinearOpMode OP_MODE;
 
     /**
      * Creates a new Tester, which will run all Tests it can find automatically.
+     * @param opMode The LinearOpMode to receive the Telemetry object to log to from. Telemetry is not the only place things will log to, as more detailed logs will be found in the console
      */
-    public Tester() {
-        LOGGER = new TestLogger();
+    public Tester(LinearOpMode opMode) {
+        LOGGER = new TestConsoleLogger();
+        TELEMETRY = new TestTelemetryLogger(opMode.telemetry);
+        OP_MODE = opMode;
         LOGGER.logStart();
+        TELEMETRY.logStart();
+        TELEMETRY.logDisclaimer();
+        OP_MODE.sleep(3000);
         LOGGER.logSearch();
+        TELEMETRY.logSearch();
         ArrayList<ArrayList<Class<? extends Test>>> tests = findMeaningfulTests();
+        ArrayList<HashMap<String, Boolean>> results = new ArrayList<>();
         try {
-            runTests(tests);
+            results = runTests(tests);
         } catch(DataFormatException e) {
             LOGGER.logFindErr();
+            TELEMETRY.logFindErr();
         }
+        OP_MODE.sleep(2000);
+        LOGGER.logResults(results);
         LOGGER.logEnd();
-        // TODO: telemetry logging
+        TELEMETRY.clear();
+        TELEMETRY.logResults(results);
+        TELEMETRY.logEnd();
+        OP_MODE.sleep(10000);
+        // TODO: opMode associated with tests - via reflection
         // TODO: virtualize robot - in the sense of being able to run an opmode in an android emulator
     }
 
-    private void runTests(ArrayList<ArrayList<Class<? extends Test>>> tests) throws DataFormatException {
+    public enum FailureReason {
+        EXCEPTION,
+        FALSEHOOD,
+        DID_NOT_FAIL
+    }
+
+    private ArrayList<HashMap<String, Boolean>> runTests(ArrayList<ArrayList<Class<? extends Test>>> tests) throws DataFormatException {
+        ArrayList<HashMap<String, Boolean>> results = new ArrayList<>();
         if(tests.size() != 2) {
             // fail if test arraylist is formatted incorrectly
             throw new DataFormatException("Test Arraylist must only have two elements.");
         }else{
             LOGGER.logFind();
+            TELEMETRY.logFind();
+            OP_MODE.sleep(1000);
             // get unit/integration tests from where they're expected to be and run each test
             ArrayList<Class<? extends Test>> unitTests = tests.get(0);
             ArrayList<Class<? extends Test>> integrationTests = tests.get(1);
             LOGGER.logUnitRun();
+            TELEMETRY.clear();
+            TELEMETRY.logUnitRun();
             for(Class<? extends Test> testClass : unitTests) {
                 LOGGER.logSpecificRun(testClass.getName());
+                TELEMETRY.clear();
+                TELEMETRY.logSpecificRun(TestTelemetryLogger.TestType.UNIT, testClass.getName());
+                OP_MODE.sleep(1000);
+                HashMap<String, Boolean> result = new HashMap<>();
                 long time = System.currentTimeMillis();
                 try {
                     // Setup test (given), and fail the test if it threw an exception
@@ -63,26 +90,39 @@ public class Tester {
                         // Run test (when), and fail the test if it threw an exception
                         test.when();
                     } catch(Exception e) {
-                        failTest(test, time);
+                        result.put(testClass.getName(), false);
+                        failTest(test, time, FailureReason.EXCEPTION, e);
                     }
                     try {
                         // determine whether the test passed, and fail if if not or if it threw an exception
                         boolean grade = test.then();
                         if(grade) {
+                            result.put(testClass.getName(), true);
                             passTest(test, time);
                         }else{
-                            failTest(test, time);
+                            result.put(testClass.getName(), false);
+                            failTest(test, time, FailureReason.FALSEHOOD, null);
                         }
                     } catch(Exception e) {
-                        failTest(test, time);
+                        result.put(testClass.getName(), false);
+                        failTest(test, time, FailureReason.EXCEPTION, e);
                     }
                 } catch(Exception e) {
-                    failTest(testClass, time);
+                    result.put(testClass.getName(), false);
+                    failTest(testClass, time, e);
                 }
+                results.add(result);
             }
+            OP_MODE.sleep(1000);
             LOGGER.logIntegrationRun();
+            TELEMETRY.clear();
+            TELEMETRY.logIntegrationRun();
             for(Class<? extends Test> testClass : integrationTests) {
                 LOGGER.logSpecificRun(testClass.getName());
+                TELEMETRY.clear();
+                TELEMETRY.logSpecificRun(TestTelemetryLogger.TestType.UNIT, testClass.getName());
+                OP_MODE.sleep(1000);
+                HashMap<String, Boolean> result = new HashMap<>();
                 long time = System.currentTimeMillis();
                 try {
                     // Setup test (given), and fail the test if it threw an exception
@@ -91,36 +131,55 @@ public class Tester {
                         // Run test (when), and fail the test if it threw an exception
                         test.when();
                     } catch(Exception e) {
-                        failTest(test, time);
+                        result.put(testClass.getName(), false);
+                        failTest(test, time, FailureReason.EXCEPTION, e);
                     }
                     try {
                         // determine whether the test passed, and fail if if not or if it threw an exception
                         boolean grade = test.then();
                         if(grade) {
+                            result.put(testClass.getName(), true);
                             passTest(test, time);
                         }else{
-                            failTest(test, time);
+                            result.put(testClass.getName(), false);
+                            failTest(test, time, FailureReason.FALSEHOOD, null);
                         }
                     } catch(Exception e) {
-                        failTest(test, time);
+                        result.put(testClass.getName(), false);
+                        failTest(test, time, FailureReason.EXCEPTION, e);
                     }
                 } catch(Exception e) {
-                    failTest(testClass, time);
+                    result.put(testClass.getName(), false);
+                    failTest(testClass, time, e);
                 }
+                results.add(result);
             }
         }
+        return results;
     }
 
-    private void failTest(Class<? extends Test> test, long startTime) {
-        LOGGER.logTestResult(TestLogger.Grade.FAILING, test.getName(), "Failed at Initialization (then), logs unavailable.", startTime, System.currentTimeMillis());
+    private void failTest(Class<? extends Test> test, long startTime, Exception e) {
+        long endTime = System.currentTimeMillis();
+        LOGGER.logTestResult(Grade.FAILING, test.getName(), "Failed at Initialization (then), logs unavailable.", startTime, endTime, FailureReason.EXCEPTION, e);
+        TELEMETRY.logTestResult(Grade.FAILING, test.getName(), startTime, endTime, FailureReason.EXCEPTION, e);
+        OP_MODE.sleep(2000);
+        TELEMETRY.clear();
     }
 
-    private void failTest(Test test, long startTime) {
-        LOGGER.logTestResult(TestLogger.Grade.FAILING, test.getClass().getName(), test.getLogs(), startTime, System.currentTimeMillis());
+    private void failTest(Test test, long startTime, FailureReason reason, Exception e) {
+        long endTime = System.currentTimeMillis();
+        LOGGER.logTestResult(Grade.FAILING, test.getClass().getName(), test.getLogs(), startTime, endTime, reason, e);
+        TELEMETRY.logTestResult(Grade.FAILING, test.getName(), startTime, endTime, reason, e);
+        OP_MODE.sleep(2000);
+        TELEMETRY.clear();
     }
 
     private void passTest(Test test, long startTime) {
-        LOGGER.logTestResult(TestLogger.Grade.PASSING, test.getClass().getName(), test.getLogs(), startTime, System.currentTimeMillis());
+        long endTime = System.currentTimeMillis();
+        LOGGER.logTestResult(Grade.PASSING, test.getClass().getName(), test.getLogs(), startTime, endTime, FailureReason.DID_NOT_FAIL, null);
+        TELEMETRY.logTestResult(Grade.FAILING, test.getName(), startTime, endTime, FailureReason.DID_NOT_FAIL, null);
+        OP_MODE.sleep(2000);
+        TELEMETRY.clear();
     }
 
     private ArrayList<ArrayList<Class<? extends Test>>> findMeaningfulTests() {
