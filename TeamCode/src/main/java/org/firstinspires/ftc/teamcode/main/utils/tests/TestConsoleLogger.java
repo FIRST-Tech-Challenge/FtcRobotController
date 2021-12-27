@@ -17,7 +17,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class TestConsoleLogger {
 
-    private Logger LOGGER;
+    private final Logger LOGGER;
 
     public TestConsoleLogger() {
         Logger mainLogger = Logger.getLogger(TestConsoleLogger.class.getName());

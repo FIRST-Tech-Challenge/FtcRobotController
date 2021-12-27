@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.main.utils.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -13,8 +15,10 @@ import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
 /**
- * A Tester finds all Tests and tests them automatically, unless they have an @Skippable annotation. If a Test throws an Exception or Test.then() returns false, the Test fails. If Test.then() return true, the Test passes.
+ * A Tester finds all Tests and tests them unless they have an @Skippable annotation. If a Test throws an Exception or Test.then() returns false, the Test fails. If Test.then() return true, the Test passes. Results are logged via the console and the Telemetry screen on a Driver Station. Run the AutomatedTester Autonomous OpMode to create and run a Tester.
  */
+
+// TODO: virtualize robot - in the sense of being able to run an opmode in an android emulator
 
 public class Tester {
 
@@ -30,6 +34,8 @@ public class Tester {
         LOGGER = new TestConsoleLogger();
         TELEMETRY = new TestTelemetryLogger(opMode.telemetry);
         OP_MODE = opMode;
+        TestResources.opMode = OP_MODE;
+        OP_MODE.telemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.OLDEST_FIRST);
         LOGGER.logStart();
         TELEMETRY.logStart();
         TELEMETRY.logDisclaimer();
@@ -51,8 +57,6 @@ public class Tester {
         TELEMETRY.logResults(results);
         TELEMETRY.logEnd();
         OP_MODE.sleep(10000);
-        // TODO: opMode associated with tests - via reflection
-        // TODO: virtualize robot - in the sense of being able to run an opmode in an android emulator
     }
 
     public enum FailureReason {

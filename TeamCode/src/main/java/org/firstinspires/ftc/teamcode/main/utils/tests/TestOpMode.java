@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.main.utils.scripting.AutonomousStubScript;
 import org.firstinspires.ftc.teamcode.main.utils.scripting.Script;
 import org.firstinspires.ftc.teamcode.main.utils.scripting.ScriptRunner;
 
-@Autonomous(name="Tester", group="tests")
+@Autonomous(name="AutomatedTester", group="tests")
 public class TestOpMode extends LinearOpMode {
 
     @Override
