@@ -29,7 +29,7 @@ public class Intake {
 
     public void update() {
         reader.readValue();
-        if (distanceSensor.getDistance(DistanceUnit.MM) >= 210) {
+        if (!thingInside()) {
             if (reader.getState()) {
                 if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
                     motor.setPower(1);
@@ -45,4 +45,9 @@ public class Intake {
             motor.setPower(0);
         }
     }
+
+    public boolean thingInside() {
+        return distanceSensor.getDistance(DistanceUnit.MM) <= 210;
+    }
+
 }

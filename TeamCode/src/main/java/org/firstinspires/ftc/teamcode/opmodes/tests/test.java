@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.opmodes.tests;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -16,28 +18,28 @@ public class test extends LinearOpMode {
     public void runOpMode() {
         final DistanceSensor sensor = hardwareMap.get(DistanceSensor.class, "intakeSensor");
         final Encoder leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
-        final int leftOffset = Math.abs(leftEncoder.getCurrentPosition());
         final Encoder rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "tapeMeasure"));
-        final int rightOffset = Math.abs(rightEncoder.getCurrentPosition());
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
         final Encoder frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backEncoder"));
-        final int frontOffset = Math.abs(frontEncoder.getCurrentPosition());
-        final GamepadEx moveGamepad = new GamepadEx(gamepad1);
-        final ControllerMovement move = new ControllerMovement(hardwareMap, moveGamepad);
+        final DcMotor one = hardwareMap.get(DcMotorEx.class, "front left wheel");
+        final DcMotor two = hardwareMap.get(DcMotorEx.class, "front right wheel");
+        final DcMotor three = hardwareMap.get(DcMotorEx.class, "back right wheel");
+        final DcMotor four = hardwareMap.get(DcMotorEx.class, "back left wheel");
+        four.setDirection(DcMotorSimple.Direction.REVERSE);
+        two.setDirection(DcMotorSimple.Direction.REVERSE);
+        final DcMotor[] motors = {one, two, three, four};
+        final GamepadEx gamepadEx = new GamepadEx(gamepad1);
         waitForStart();
         while (opModeIsActive()) {
+            final double stick = gamepadEx.getLeftY();
+            for (DcMotor motor : motors) {
+                motor.setPower(stick);
+            }
             telemetry.addData("distance", sensor.getDistance(DistanceUnit.MM));
-            telemetry.addData("leftEncoder",leftEncoder.getCurrentPosition() - leftOffset);
-            telemetry.addData("rightEncoder",rightEncoder.getCurrentPosition() - rightOffset);
-            telemetry.addData("frontEncoder",frontEncoder.getCurrentPosition() - frontOffset);
-            double[] velocities = move.motorVelocities();
-            telemetry.addData("leftFront", velocities[0]);
-            telemetry.addData("leftRight", velocities[1]);
-            telemetry.addData("rightFront", velocities[2]);
-            telemetry.addData("rightBack", velocities[3]);
-
+            telemetry.addData("leftEncoder",leftEncoder.getCurrentPosition());
+            telemetry.addData("rightEncoder",rightEncoder.getCurrentPosition());
+            telemetry.addData("frontEncoder",frontEncoder.getCurrentPosition());
             telemetry.update();
-            move.update();
         }
     }
 }

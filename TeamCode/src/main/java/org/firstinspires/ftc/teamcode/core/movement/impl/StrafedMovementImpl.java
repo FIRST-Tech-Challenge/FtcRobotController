@@ -31,7 +31,7 @@ public class StrafedMovementImpl implements StrafingMovement {
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
-        backLeft.setPower(-backLeftPower);
+        backLeft.setPower(backLeftPower);
     }
 
     public double[] motorVelocities() {
