@@ -3,9 +3,13 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.commandftc.RobotUniversal;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static org.commandftc.RobotUniversal.hardwareMap;
+
+import org.firstinspires.ftc.teamcode.Constants.ArmConstants;
 
 public class ArmSubsystem extends SubsystemBase {
 	private final DcMotor m_motor;
@@ -29,5 +33,17 @@ public class ArmSubsystem extends SubsystemBase {
 
 	public double getPower() {
 		return m_motor.getPower();
+	}
+
+	public double getAngle() {
+		return (double)m_motor.getCurrentPosition() / ArmConstants.motorGear / ArmConstants.gear;
+	}
+
+	public int getTargetPosition() {
+		return m_motor.getTargetPosition();
+	}
+
+	public int getCurrentPosition() {
+		return m_motor.getCurrentPosition();
 	}
 }

@@ -51,8 +51,8 @@ public class Drive extends CommandBasedTeleOp
         lowerLift = new MoveLiftCommand(liftSubsystem, 0.3, -0.05);
 
         rotateArmCommand = new RotateArmCommand(armSubsystem,
-                () -> (gamepad2.left_trigger > gamepad1.right_trigger ?
-                        gamepad2.left_trigger : -gamepad1.right_stick_y));
+                () -> (gamepad2.left_trigger > gamepad2.right_trigger ?
+                        gamepad2.left_trigger : -gamepad2.right_trigger) * 0.1);
 
         // DriveTrain commands
         driveTrain.setDefaultCommand(tankDriveCommand);
@@ -64,11 +64,13 @@ public class Drive extends CommandBasedTeleOp
         // Lift commands
         gp2.dpad_up().whenHeld(raiseLift);
         gp2.dpad_down().whenHeld(lowerLift);
+        // Arm command
+        armSubsystem.setDefaultCommand(rotateArmCommand);
 
         // Telemetry
         // No need for anything but update in loop because use of suppliers
         telemetry.addData("Runtime", this::getRuntime);
-        telemetry.addData("lift height", liftSubsystem::getHeight);
+        telemetry.addData("arm power", armSubsystem::getPower);
         telemetry.update();
     }
 }

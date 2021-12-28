@@ -29,8 +29,8 @@ public class DriveRightCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if (m_powerSupplier != null) m_drive.driveLeft(m_powerSupplier.getAsDouble());
-        else                         m_drive.driveLeft(m_power);
+        if (m_powerSupplier != null) m_drive.driveRight(m_powerSupplier.getAsDouble());
+        else                         m_drive.driveRight(m_power);
     }
 
     @Override

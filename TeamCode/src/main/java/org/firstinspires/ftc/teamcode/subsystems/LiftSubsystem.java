@@ -18,6 +18,7 @@ public class LiftSubsystem extends SubsystemBase {
         m_liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m_liftMotor.setTargetPosition(0);
         m_liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m_liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public int getCurrentPosition() {

@@ -19,7 +19,7 @@ public class RotateArmCommand extends CommandBase {
     }
 
     @Override
-    public void initialize() {
+    public void execute() {
         m_ArmSubsystem.setPower(m_powerSupplier.getAsDouble());
     }
 

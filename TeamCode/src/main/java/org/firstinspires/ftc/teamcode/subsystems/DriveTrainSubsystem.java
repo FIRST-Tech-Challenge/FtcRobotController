@@ -96,18 +96,18 @@ public class DriveTrainSubsystem extends SubsystemBase implements TankDrive, Arc
 
     @Override
     public void driveLeft(double power) {
-        m_FrontLeftMotor.setPower(power);
-        m_RearLeftMotor.setPower(-power);
-        m_FrontRightMotor.setPower(-power);
-        m_RearRightMotor.setPower(power);
-    }
-
-    @Override
-    public void driveRight(double power) {
         m_FrontLeftMotor.setPower(-power);
         m_RearLeftMotor.setPower(power);
         m_FrontRightMotor.setPower(power);
         m_RearRightMotor.setPower(-power);
+    }
+
+    @Override
+    public void driveRight(double power) {
+        m_FrontLeftMotor.setPower(power);
+        m_RearLeftMotor.setPower(-power);
+        m_FrontRightMotor.setPower(-power);
+        m_RearRightMotor.setPower(power);
     }
 
     public int getFrontLeftEncoder() {
