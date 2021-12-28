@@ -98,21 +98,21 @@ public class AutonomousPath1 extends CommandOpMode {
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
                 .splineToLinearHeading(new Pose2d(-32, 24, Math.toRadians(0)),Math.toRadians(270))
-                .splineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(270)),Math.toRadians(270))
                 .build();
 
         //turnCommand3 = new TurnCommand(drive, Math.toRadians(90));
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d())
-                .addDisplacementMarker(()->{
-                    telemetry.addData("Path 4", "performing path 4 action");
-                    allianceColor.schedule();
-                }) //step 10
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .splineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(270)),Math.toRadians(270))
                 .build();
 
         //turnCommand4 = new TurnCommand(drive, 90);
-
+        /*
         Trajectory traj5 = drive.trajectoryBuilder(new Pose2d())
+                .addDisplacementMarker(()->{
+                    allianceColor.schedule();
+                    telemetry.addData("Path 5", "performing path 5 action");
+                }) //step 10
                 .splineToSplineHeading(new Pose2d(8,64,Math.toRadians(270)),Math.toRadians(180))
                 .splineToConstantHeading(new Vector2d(-15,40),Math.toRadians(57))
                 .build();
@@ -122,17 +122,18 @@ public class AutonomousPath1 extends CommandOpMode {
         Trajectory traj6 = drive.trajectoryBuilder(new Pose2d())
                 .back(45)
                 .build();
+        */
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-        sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
-        sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
+        //sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+        //sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
 
         schedule(new WaitUntilCommand(this::isStarted).andThen(
                 sample1Follower1.andThen(
-                        sample1Follower2, sample1Follower3)
+                        sample1Follower2, sample1Follower3, sample1Follower4)
         ));
 
         telemetry.update();
