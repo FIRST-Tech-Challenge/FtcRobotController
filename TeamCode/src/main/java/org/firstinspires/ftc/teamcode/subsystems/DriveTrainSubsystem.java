@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.lib.drive.ArcadeDrive;
 import org.firstinspires.ftc.teamcode.lib.drive.HorizontalDrive;
@@ -26,6 +27,11 @@ public class DriveTrainSubsystem extends SubsystemBase implements TankDrive, Arc
         // Default drive type
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        m_FrontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        m_RearLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        m_FrontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        m_RearRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
@@ -83,7 +89,7 @@ public class DriveTrainSubsystem extends SubsystemBase implements TankDrive, Arc
 
     public void setPowers(double frontLeft, double rearLeft, double frontRight, double rearRight) {
         m_FrontLeftMotor.setPower(frontLeft);
-        m_RearLeftMotor.setPower(rearRight);
+        m_RearLeftMotor.setPower(rearLeft);
         m_FrontRightMotor.setPower(frontRight);
         m_RearRightMotor.setPower(rearRight);
     }

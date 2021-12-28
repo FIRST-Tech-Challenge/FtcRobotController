@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants.LiftConstants;
 
@@ -11,9 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class LiftSubsystem extends SubsystemBase {
     private final DcMotor m_liftMotor;
 
-    public LiftSubsystem() {
+        public LiftSubsystem() {
         m_liftMotor = hardwareMap.dcMotor.get("LiftMotor");
-
         m_liftMotor.setPower(0);
         m_liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m_liftMotor.setTargetPosition(0);
