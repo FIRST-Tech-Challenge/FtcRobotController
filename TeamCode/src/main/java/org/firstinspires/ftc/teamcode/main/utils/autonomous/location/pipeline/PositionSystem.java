@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.main.utils.autonomous.location.pipeline.Axis.AxisReading;
 import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.NavigationSensorCollection;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardDrivetrain;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardVehicleDrivetrain;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardIMU;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ public class PositionSystem {
 
     public CoordinateSystem coordinateSystem;
 
-    private StandardDrivetrain drivetrain = null;
+    private StandardVehicleDrivetrain drivetrain = null;
     public StandardIMU imu;
     public StandardIMU.DataPoint imuDirection;
     public StandardIMU.ReturnData imuData;
@@ -30,10 +31,10 @@ public class PositionSystem {
         coordinateSystem = new CoordinateSystem();
     }
 
-    public StandardDrivetrain getDrivetrain() {
+    public StandardVehicleDrivetrain getDrivetrain() {
         return drivetrain;
     }
-    public void setDrivetrain(StandardDrivetrain drivetrain) {
+    public void setDrivetrain(StandardVehicleDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
     }
 

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.main.utils.gamepads.GamepadManager;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardDrivetrain;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardVehicleDrivetrain;
 import org.firstinspires.ftc.teamcode.main.utils.io.InputSpace;
 import org.firstinspires.ftc.teamcode.main.utils.io.OutputSpace;
 import org.firstinspires.ftc.teamcode.main.utils.locations.TankDrivetrainLocation;
@@ -22,7 +23,7 @@ public class EncoderTestAutonomous extends LinearOpMode {
         InputSpace input = new InputSpace(hardwareMap);
         OutputSpace output = new OutputSpace(hardwareMap);
 
-        StandardDrivetrain standardDrivetrain = (StandardDrivetrain) input.getTank().getInternalInteractionSurface();
+        StandardVehicleDrivetrain standardDrivetrain = (StandardVehicleDrivetrain) input.getTank().getInternalInteractionSurface();
 
         waitForStart();
         resetStartTime();
