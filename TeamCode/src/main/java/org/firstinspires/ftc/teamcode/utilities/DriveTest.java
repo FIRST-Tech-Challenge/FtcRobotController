@@ -56,6 +56,12 @@ public class DriveTest extends LinearOpMode {
             telemetry.update();
         }
 
+        robot.motorFrontLeft.setPower(0.0);
+        robot.motorBackLeft.setPower(0.0);
+        robot.motorBackRight.setPower(0.0);
+        robot.motorFrontRight.setPower(0.0);
+
+        sleep(1000);
 
        robot.motorFrontLeft.setPower(0.5);
        telemetry.addData("motor", "front left");
