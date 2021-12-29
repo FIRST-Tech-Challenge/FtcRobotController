@@ -14,7 +14,6 @@ package org.firstinspires.ftc.teamcode.utilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
@@ -41,8 +40,8 @@ public class DriveTest extends LinearOpMode {
         //Code to test if the motors are functioning as intended. Leave commented out if not testing.
 
 
-        timer = 0;
-        while (timer < 5000 && opModeIsActive()){
+        timer.reset();
+        while (timer.time() < 5000 && opModeIsActive()){
 
             robot.motorFrontLeft.setPower(0.5);
             robot.motorBackLeft.setPower(0.5);
