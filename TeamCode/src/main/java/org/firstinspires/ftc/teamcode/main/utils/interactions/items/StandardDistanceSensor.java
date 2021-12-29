@@ -63,15 +63,7 @@ public class StandardDistanceSensor extends InteractionItem {
         close();
     }
 
-    public void close() {
-        try {
-            SENSOR_DISTANCE.getSensor().close();
-        } catch(Exception ignored) {
-            try {
-                SENSOR_ULTRASONIC.getSensor().close();
-            } catch(Exception ignored1) {}
-        }
-    }
+    public void close() {}
 
     public enum StandardDistanceSensorInternalType {
         DEFAULT,

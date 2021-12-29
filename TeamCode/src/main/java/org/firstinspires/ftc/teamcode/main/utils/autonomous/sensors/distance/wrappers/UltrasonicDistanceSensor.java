@@ -14,6 +14,7 @@ public class UltrasonicDistanceSensor implements SensorWrapper {
     public UltrasonicDistanceSensor(HardwareMap hardwareMap, String name) {
         this.name = name;
         sensor = hardwareMap.get(EyeSquaredSeaDistanceSensor.class, name);
+        sensor.resetDeviceConfigurationForOpMode();
     }
 
     public UltrasonicDistanceSensor(HardwareMap hardwareMap, String name, LinearOpMode opMode) {

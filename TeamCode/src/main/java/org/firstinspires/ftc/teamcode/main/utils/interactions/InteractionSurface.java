@@ -5,6 +5,11 @@ package org.firstinspires.ftc.teamcode.main.utils.interactions;
  */
 public abstract class InteractionSurface {
 
+    /**
+     * This will stop the InteractionSurface. This method usually calls #stop() or #close() on the InteractionSurface's device(s).
+     */
+    public abstract void stop();
+
     public abstract boolean isInputDevice();
 
     public abstract boolean isOutputDevice();

@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.main.utils.io;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance.wrappers.DistanceSensorWrapper;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardTouchSensor;
 import org.firstinspires.ftc.teamcode.main.utils.locations.ElevatorBottomLimitSwitchLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.HandDistanceSensorLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.IntakeLiftingDistanceSensorLocation;

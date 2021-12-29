@@ -17,6 +17,7 @@ public class StandardTouchSensor extends InteractionItem {
      */
     public StandardTouchSensor(HardwareMap hardware, String name) {
         SENSOR = hardware.get(TouchSensor.class, name);
+        SENSOR.resetDeviceConfigurationForOpMode();
     }
 
     /**
@@ -35,13 +36,7 @@ public class StandardTouchSensor extends InteractionItem {
         return (int) Range.clip(SENSOR.getValue() * 100, 0, 100);
     }
 
-    public void stop() {
-        close();
-    }
-
-    public void close() {
-        SENSOR.close();
-    }
+    public void stop() {}
 
     public TouchSensor getInternalSensor() {
         return SENSOR;

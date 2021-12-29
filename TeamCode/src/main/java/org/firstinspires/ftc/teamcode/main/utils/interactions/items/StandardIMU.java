@@ -98,6 +98,9 @@ public class StandardIMU extends InteractionItem {
     }
 
     @Override
+    public void stop() {}
+
+    @Override
     public boolean isInputDevice() {
         return false;
     }
