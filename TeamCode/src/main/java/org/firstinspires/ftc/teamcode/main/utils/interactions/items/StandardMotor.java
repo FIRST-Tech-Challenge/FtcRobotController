@@ -55,6 +55,7 @@ public class StandardMotor extends InteractionItem {
         GEAR_REDUCTION = gearReduction == 0 ? gearReduction + 0.00000000000001 : gearReduction;
         RADIUS = radius == 0 ? radius + 0.00000000000001 : radius;
         COUNTS_PER_INCH = (COUNTS_PER_REV * GEAR_REDUCTION) / (RADIUS * 2 * Math.PI);
+        MOTOR.resetDeviceConfigurationForOpMode();
         MOTOR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MOTOR.setDirection(offset);
         MOTOR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

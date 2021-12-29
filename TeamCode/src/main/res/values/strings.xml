@@ -44,7 +44,8 @@
     <string name="HAND_DISTANCE_SENSOR">diD</string>
     <string name="HAND_SPINNING_SERVO_X">htS</string>
     <string name="HAND_SPINNING_SERVO_Y">hfS</string>
-    <string name="HAND_GRABBING_SERVO">hgS</string>
+    <string name="HAND_RIGHT_GRABBING_SERVO">hgrS</string>
+    <string name="HAND_LEFT_GRABBING_SERVO">hglS</string>
     <!-- DUCK -->
     <string name="DUCK_SPINNING_MOTOR">duM</string>
 </resources>

@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardServo;
 
-public class HandGrabbingServoLocation extends Location {
+public class HandGrabbingServoRightLocation extends Location {
 
     public enum Action {
         SET_POSITION,
@@ -16,9 +16,9 @@ public class HandGrabbingServoLocation extends Location {
 
     private StandardServo SERVO;
 
-    public HandGrabbingServoLocation(HardwareMap hardware) {
+    public HandGrabbingServoRightLocation(HardwareMap hardware) {
         try {
-            SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_GRABBING_SERVO));
+            SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_RIGHT_GRABBING_SERVO));
         } catch(Exception ignored) {}
     }
 

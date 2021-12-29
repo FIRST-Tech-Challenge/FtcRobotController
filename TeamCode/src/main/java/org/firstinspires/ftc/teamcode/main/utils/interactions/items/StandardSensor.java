@@ -10,8 +10,6 @@ public abstract class StandardSensor extends InteractionItem {
 
     abstract int getDistance(DistanceUnit unit);
 
-    abstract void stop();
-
     abstract void close();
 
     abstract SensorWrapper getInternalSensor(StandardDistanceSensor.StandardDistanceSensorInternalType type);

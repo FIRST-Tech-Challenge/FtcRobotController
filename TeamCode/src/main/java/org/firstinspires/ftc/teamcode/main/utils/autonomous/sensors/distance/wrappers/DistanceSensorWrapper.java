@@ -19,6 +19,7 @@ public class DistanceSensorWrapper implements SensorWrapper {
         this.name = name;
 
         sensor = hardwareMap.get(DistanceSensor.class, name);
+        sensor.resetDeviceConfigurationForOpMode();
     }
 
     @Override

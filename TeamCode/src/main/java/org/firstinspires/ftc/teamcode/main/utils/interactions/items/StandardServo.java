@@ -34,13 +34,7 @@ public class StandardServo extends InteractionItem {
         }
     }
 
-    public void stop() {
-        close();
-    }
-
-    public void close() {
-        SERVO.close();
-    }
+    public void stop() {}
 
     /**
      * Gets the degree of the servo's set position. Note that this does not return the physical degree of rotation of the servo, only the position the servo is commanded to be in, as no API returning the true position is exposed by the servo
