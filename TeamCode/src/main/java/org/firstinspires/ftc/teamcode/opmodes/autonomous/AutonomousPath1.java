@@ -78,14 +78,15 @@ public class AutonomousPath1 extends CommandOpMode {
                 .back(45)*/
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .strafeTo(new Vector2d(-60, 60))
+                //.strafeTo(new Vector2d(-60, 60))
+                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(270))
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                     allianceColor.schedule();
                 })
                 .build();
 
-        //turnCommand1 = new TurnCommand(drive, Math.toRadians(-135));
+        //turnCommand1 = new TurnCommand(drive, Math.toRadians(-45));
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .strafeTo(new Vector2d(-60, 24))
@@ -133,7 +134,7 @@ public class AutonomousPath1 extends CommandOpMode {
 
         schedule(new WaitUntilCommand(this::isStarted).andThen(
                 sample1Follower1.andThen(
-                        sample1Follower2, sample1Follower3, sample1Follower4)
+                    sample1Follower2, sample1Follower3, sample1Follower4)
         ));
 
         telemetry.update();
