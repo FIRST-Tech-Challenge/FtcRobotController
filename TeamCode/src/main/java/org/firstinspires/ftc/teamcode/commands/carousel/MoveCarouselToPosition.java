@@ -35,7 +35,7 @@ public class MoveCarouselToPosition extends CommandBase {
 
     @Override
     public void initialize(){
-        carouselSubsytem.setCarouselTargetPosition(postion,power);
+        carouselSubsytem.resetAndSetCarouselTargetPosition(postion,power);
     }
 
     @Override

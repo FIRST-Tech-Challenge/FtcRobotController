@@ -86,9 +86,6 @@ public class CreateCarousel {
     public void createAuto(){
 
         carousel = new CarouselSubsystem(hwMap,deviceName);
-
-        carousel.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
         moveCarouselToPosition = createMoveCarouselToPostion();
         stopCarousel = createStopCarousel();
 
