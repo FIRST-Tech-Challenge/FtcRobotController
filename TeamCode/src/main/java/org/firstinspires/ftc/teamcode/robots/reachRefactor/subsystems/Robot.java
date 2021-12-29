@@ -171,8 +171,8 @@ public class Robot implements Subsystem {
             .addTimedState(1f, () -> gripper.actuateGripper(false), () -> {})
             .addTimedState(2f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
-            .addSingleState(() -> driveTrain.setTargetChassisDistance(DEFAULT_TARGET_DISTANCE))
-            .addSingleState(() -> driveTrain.setMaintainChassisDistanceEnabled(true))
+//            .addSingleState(() -> driveTrain.setTargetChassisDistance(DEFAULT_TARGET_DISTANCE))
+            .addSingleState(() -> driveTrain.setMaintainChassisDistanceEnabled(false)) //todo-make this false when ready to fix maintainChassisDistance
             .build();
 
     private Stage diagnosticStage = new Stage();

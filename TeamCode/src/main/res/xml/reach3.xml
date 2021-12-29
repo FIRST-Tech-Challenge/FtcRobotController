@@ -3,9 +3,9 @@
     <Webcam name="Webcam 1" serialNumber="SN0001" />
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
         <LynxModule name="Expansion Hub 1" port="1">
-            <RevRoboticsCoreHexMotor name="motorMiddleSwivel" port="0" />
-            <RevRoboticsCoreHexMotor name="turret" port="2" />
-            <RevRobotics40HDHexMotor name="motorMiddle" port="3" />
+            <RevRoboticsCoreHexMotor name="motorMiddleSwivel" port="3" />
+            <RevRoboticsCoreHexMotor name="turret" port="0" />
+            <RevRobotics40HDHexMotor name="motorMiddle" port="2" />
             <Servo name="bucketServo" port="0" />
             <Servo name="firstLinkServo" port="1" />
             <Servo name="secondLinkServo" port="2" />

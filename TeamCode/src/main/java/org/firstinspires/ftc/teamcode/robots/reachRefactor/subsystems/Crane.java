@@ -25,7 +25,7 @@ public class Crane implements Subsystem {
     // State
     private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
 
-    private Articulation previousArticulation, articulation;
+    private Articulation articulation;
 
     // Constants
     private static final String TELEMETRY_NAME = "Crane";
@@ -57,7 +57,6 @@ public class Crane implements Subsystem {
 
         turret = new Turret(hardwareMap);
         articulation = Articulation.MANUAL;
-        previousArticulation = Articulation.MANUAL;
     }
 
     public enum Articulation {
@@ -84,10 +83,11 @@ public class Crane implements Subsystem {
         }
     }
 
+    private float currentToHomeTime = Articulation.HOME.toHomeTime;
     private final Stage mainStage = new Stage();
     private final StateMachine main = UtilMethods.getStateMachine(mainStage)
-            .addTimedState(() -> previousArticulation.toHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
-            .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation), () -> {})
+            .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
+            .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation), () -> {currentToHomeTime = articulation.toHomeTime;})
             .build();
 
     private final Stage initStage = new Stage();
@@ -104,8 +104,8 @@ public class Crane implements Subsystem {
                 this.articulation = Articulation.MANUAL;
                 return true;
             }
-        } else {
-            previousArticulation = this.articulation;
+        }
+        else {
             this.articulation = articulation;
             if(main.execute()) {
                 this.articulation = Articulation.MANUAL;
@@ -130,7 +130,7 @@ public class Crane implements Subsystem {
     //and convert to servo setting
     private double ShoulderServoValue(double targetpos){
         double newpos = Range.clip(targetpos,SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);
-        newpos = newpos*SHOULDER_PWM_PER_DEGREE+SHOULDER_HOME_PWM;
+        newpos = newpos * SHOULDER_PWM_PER_DEGREE+SHOULDER_HOME_PWM;
         return servoNormalize(newpos);
     }
 

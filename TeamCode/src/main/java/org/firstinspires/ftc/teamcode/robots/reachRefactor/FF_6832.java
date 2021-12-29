@@ -233,7 +233,7 @@ public class FF_6832 extends OpMode {
         initializing = false;
         if(gameState.equals(GameState.AUTONOMOUS) || gameState.equals(GameState.TELE_OP))
             robot.articulate(Robot.Articulation.START);
-        auto.visionProvider.shutdownVision();
+//        auto.visionProvider.shutdownVision();
     }
 
     private void handleTeleOpDriveArcade() {
@@ -290,8 +290,10 @@ public class FF_6832 extends OpMode {
 
         if(stickyGamepad2.dpad_left)
             robot.crane.articulate(Crane.Articulation.HOME);
+
         if(stickyGamepad2.dpad_up)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER);
+
         if(stickyGamepad2.dpad_right)
             robot.articulate(Robot.Articulation.TRANSFER);
 
