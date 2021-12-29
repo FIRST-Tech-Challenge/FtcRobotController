@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.main.utils.interactions.groups;
 
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
 
-public class StandardCarfax extends StandardDrivetrain {
+public class StandardCarfaxVehicleDrivetrain extends StandardVehicleDrivetrain {
 
     private final StandardMotor RIGHT, LEFT;
 
@@ -10,7 +10,7 @@ public class StandardCarfax extends StandardDrivetrain {
      * Creates a new carfax drivetrain.
      * @param right The right top motor of the carfax
      */
-    public StandardCarfax(StandardMotor right, StandardMotor left) {
+    public StandardCarfaxVehicleDrivetrain(StandardMotor right, StandardMotor left) {
         RIGHT = right;
         LEFT = left;
     }

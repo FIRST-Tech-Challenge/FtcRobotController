@@ -1,9 +1,7 @@
 <resources>
-    <string name="title_activity_imgproc">imgproc</string>
-    <string name="VUFORIA_KEY">AcQbfNb/////AAABmUoZxvy9bUCeksf5rYATLidV6rQS+xwgakOfD4C+LPj4FmsvqtRDFihtnTBZUUxxFbyM7CJMfiYTUEwcDMJERl938oY8iVD43E/SxeO64bOSBfLC0prrE1H4E5SS/IzsVcQCa9GsNaWrTEushMhdoXA3VSaW6R9KrrwvKYdNN/SbaN4TPslQkTqSUr63K60pkE5GqpeadAQuIm8V6LK63JD1TlF665EgpfsDZeVUBeAiJE86iGlT1/vNJ9kisAqKpBHsRyokaVClRnjlp28lmodjVRqeSk8cjCuYryn74tClfxfHQpkDDIsJO+7IYwJQCZQZZ+U9KJaMUeben4HOj0JTnQaEE6MZLaLQzY+C/6MS</string>
-    <string name="WEBCAM">webcam</string>
-    <string name="Webcam1">webcam</string>
     <!--
+
+        ROBOT CONFIGURATION RESOURCES
 
         NAMING CONVENTION:
         String names are standardized as found in the Location abstract class. For the OTHER_INFORMATION section, follow this guide:
@@ -19,7 +17,10 @@
         SPINNING_DEVICE_RIGHT_TOP_MOVING_MOTOR
 
     -->
-
+    <string name="title_activity_imgproc">imgproc</string>
+    <string name="VUFORIA_KEY">AcQbfNb/////AAABmUoZxvy9bUCeksf5rYATLidV6rQS+xwgakOfD4C+LPj4FmsvqtRDFihtnTBZUUxxFbyM7CJMfiYTUEwcDMJERl938oY8iVD43E/SxeO64bOSBfLC0prrE1H4E5SS/IzsVcQCa9GsNaWrTEushMhdoXA3VSaW6R9KrrwvKYdNN/SbaN4TPslQkTqSUr63K60pkE5GqpeadAQuIm8V6LK63JD1TlF665EgpfsDZeVUBeAiJE86iGlT1/vNJ9kisAqKpBHsRyokaVClRnjlp28lmodjVRqeSk8cjCuYryn74tClfxfHQpkDDIsJO+7IYwJQCZQZZ+U9KJaMUeben4HOj0JTnQaEE6MZLaLQzY+C/6MS</string>
+    <string name="WEBCAM">webcam</string>
+    <string name="Webcam1">webcam</string>
     <!-- NAVIGATION SENSORS-->
     <string name="NAVIGATION_NORTH_DISTANCE_SENSOR">distN</string>
     <string name="NAVIGATION_EAST_DISTANCE_SENSOR">distE</string>

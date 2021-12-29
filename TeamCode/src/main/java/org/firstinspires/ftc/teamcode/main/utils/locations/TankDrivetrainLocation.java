@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
-import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardTank;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardTankVehicleDrivetrain;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
 
 public class TankDrivetrainLocation extends Location {
@@ -16,7 +16,7 @@ public class TankDrivetrainLocation extends Location {
         MOVE_DISTANCE_IN_INCHES
     }
 
-    private StandardTank DRIVETRAIN;
+    private StandardTankVehicleDrivetrain DRIVETRAIN;
 
     public TankDrivetrainLocation(HardwareMap hardware) {
         try {
@@ -24,7 +24,7 @@ public class TankDrivetrainLocation extends Location {
             StandardMotor rb = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_RIGHT_BOTTOM_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 28, 20, 1);
             StandardMotor lt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 28, 20, 1);
             StandardMotor lb = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_BOTTOM_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 28, 20, 1);
-            DRIVETRAIN = new StandardTank(rt, rb, lt, lb);
+            DRIVETRAIN = new StandardTankVehicleDrivetrain(rt, rb, lt, lb);
         } catch(Exception ignored) {}
     }
 

@@ -30,6 +30,5 @@ If no one on the team can help, get answers to technical questions regarding FTC
 ### Sample OpModes
 This project contains a large selection of Sample OpModes (robot code examples) in `FtcRobotController/external` which can be cut and pasted into your `TeamCode` folder to be used as-is, or modified to suit your needs.
 
-# Release Information
-
-(Removed because the release notes are too long and not useful. See upstream for details.)
+# Changelogs
+* [Upstream Release Information](https://github.com/FIRST-Tech-Challenge/FtcRobotController#release-information)

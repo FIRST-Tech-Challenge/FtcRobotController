@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
-import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardMechanum;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardMechanumRobotDrivetrain;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
 
 public class MechDrivetrainLocation extends Location {
@@ -16,7 +16,7 @@ public class MechDrivetrainLocation extends Location {
         MOVE_DISTANCE_IN_INCHES
     }
 
-    private StandardMechanum DRIVETRAIN;
+    private StandardMechanumRobotDrivetrain DRIVETRAIN;
 
     public MechDrivetrainLocation(HardwareMap hardware) {
         try {
@@ -24,7 +24,7 @@ public class MechDrivetrainLocation extends Location {
             StandardMotor rb = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_RIGHT_BOTTOM_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 1120, 1, 2);
             StandardMotor lt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
             StandardMotor lb = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_BOTTOM_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 1120, 1, 2);
-            DRIVETRAIN = new StandardMechanum(rt, rb, lt, lb);
+            DRIVETRAIN = new StandardMechanumRobotDrivetrain(rt, rb, lt, lb);
         } catch(Exception ignored) {}
     }
 

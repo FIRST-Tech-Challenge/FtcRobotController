@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
-import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardCarfax;
+import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardCarfaxVehicleDrivetrain;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
 
 public class CarfaxDrivetrainLocation extends Location {
@@ -16,13 +16,13 @@ public class CarfaxDrivetrainLocation extends Location {
         MOVE_DISTANCE_IN_INCHES
     }
 
-    private StandardCarfax DRIVETRAIN;
+    private StandardCarfaxVehicleDrivetrain DRIVETRAIN;
 
     public CarfaxDrivetrainLocation(HardwareMap hardware) {
         try {
             StandardMotor rt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_RIGHT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
             StandardMotor lt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
-            DRIVETRAIN = new StandardCarfax(rt, lt);
+            DRIVETRAIN = new StandardCarfaxVehicleDrivetrain(rt, lt);
         } catch(Exception ignored) {}
     }
 
