@@ -51,7 +51,7 @@ public class AutonomousPath1 extends CommandOpMode {
         schedule(new InstantCommand(() -> {
             telemetry.clearAll();
             telemetry.addLine("What is your Alliance?");
-            telemetry.addLine("Press (X) for BLUE, (Y) for RED");
+            telemetry.addLine("Press (X) for BLUE, (B) for RED");
             telemetry.update();
         }));
 
