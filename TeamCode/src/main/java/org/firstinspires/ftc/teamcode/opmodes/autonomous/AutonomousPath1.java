@@ -130,13 +130,7 @@ public class AutonomousPath1 extends CommandOpMode {
 
          */
 
-/*
-        SpinOneDuckCarousel spinOneDuckCarousel = new SpinOneDuckCarousel(carouselSubsystem,0.3);
 
-
-        Command spinDuck = new SequentialCommandGroup(
-            spinOneDuckCarousel, new WaitUntilCommand( spinOneDuckCarousel::isFinished )
-        );
 
         /*.splineTo(new Vector2d(-15,40),Math.toRadians(270))
                 .addDisplacementMarker(()->{}) //step 3
@@ -168,8 +162,6 @@ public class AutonomousPath1 extends CommandOpMode {
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                     allianceColor.schedule();
-                    //spinDuck.schedule();
-                    //spinOneDuckCarousel.schedule();
 
 
                     /*Option 2 How Alex would do it with what we currently have
