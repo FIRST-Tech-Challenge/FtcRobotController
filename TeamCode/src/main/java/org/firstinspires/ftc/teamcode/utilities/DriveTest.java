@@ -15,12 +15,15 @@ package org.firstinspires.ftc.teamcode.utilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
 
 @TeleOp(name="Drive Test", group="Utilities")
 public class DriveTest extends LinearOpMode {
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
+
+    private ElapsedTime timer = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -38,30 +41,42 @@ public class DriveTest extends LinearOpMode {
         //Code to test if the motors are functioning as intended. Leave commented out if not testing.
 
 
+        timer = 0;
+        while (timer < 5000 && opModeIsActive()){
+
+            robot.motorFrontLeft.setPower(0.5);
+            robot.motorBackLeft.setPower(0.5);
+            robot.motorBackRight.setPower(0.5);
+            robot.motorFrontRight.setPower(0.5);
+
+            telemetry.addData("encder frontLeft", robot.motorFrontLeft.getCurrentPosition());
+            telemetry.addData("encoder frontRight", robot.motorFrontRight.getCurrentPosition());
+            telemetry.addData("encoder backRight", robot.motorBackRight.getCurrentPosition());
+            telemetry.addData("encoder backLeft", robot.motorBackLeft.getCurrentPosition());
+            telemetry.update();
+        }
+
+
        robot.motorFrontLeft.setPower(0.5);
        telemetry.addData("motor", "front left");
-       telemetry.addData("encoder", robot.motorFrontLeft.getCurrentPosition());
        telemetry.update();
        sleep(5000);
        robot.motorFrontLeft.setPower(0);
 
        robot.motorFrontRight.setPower(0.5);
        telemetry.addData("motor", "front right");
-       telemetry.addData("encoder", robot.motorFrontRight.getCurrentPosition());
        telemetry.update();
        sleep(5000);
         robot.motorFrontRight.setPower(0);
 
         robot.motorBackRight.setPower(0.5);
         telemetry.addData("motor","back right");
-        telemetry.addData("encoder", robot.motorBackRight.getCurrentPosition());
         telemetry.update();
         sleep(5000);
         robot.motorBackRight.setPower(0);
 
         robot.motorBackLeft.setPower(0.5);
         telemetry.addData("motor","back left");
-        telemetry.addData("encoder", robot.motorBackLeft.getCurrentPosition());
         telemetry.update();
         sleep(5000);
         robot.motorBackLeft.setPower(0);
