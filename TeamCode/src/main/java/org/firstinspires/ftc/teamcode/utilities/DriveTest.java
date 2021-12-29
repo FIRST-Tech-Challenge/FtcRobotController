@@ -31,6 +31,11 @@ public class DriveTest extends LinearOpMode {
         //init loop
         while (! isStarted()) {
             telemetry.addData("Drive Test", "This test is best run on top of a box to test each wheel");
+
+            telemetry.addData("encder frontLeft", robot.motorFrontLeft.getCurrentPosition());
+            telemetry.addData("encoder frontRight", robot.motorFrontRight.getCurrentPosition());
+            telemetry.addData("encoder backRight", robot.motorBackRight.getCurrentPosition());
+            telemetry.addData("encoder backLeft", robot.motorBackLeft.getCurrentPosition());
             telemetry.update();
         }
 
@@ -43,22 +48,12 @@ public class DriveTest extends LinearOpMode {
         timer.reset();
         while (timer.time() < 5000 && opModeIsActive()){
 
-            robot.motorFrontLeft.setPower(0.5);
-            robot.motorBackLeft.setPower(0.5);
-            robot.motorBackRight.setPower(0.5);
-            robot.motorFrontRight.setPower(0.5);
-
             telemetry.addData("encder frontLeft", robot.motorFrontLeft.getCurrentPosition());
             telemetry.addData("encoder frontRight", robot.motorFrontRight.getCurrentPosition());
             telemetry.addData("encoder backRight", robot.motorBackRight.getCurrentPosition());
             telemetry.addData("encoder backLeft", robot.motorBackLeft.getCurrentPosition());
             telemetry.update();
         }
-
-        robot.motorFrontLeft.setPower(0.0);
-        robot.motorBackLeft.setPower(0.0);
-        robot.motorBackRight.setPower(0.0);
-        robot.motorFrontRight.setPower(0.0);
 
         sleep(1000);
 
