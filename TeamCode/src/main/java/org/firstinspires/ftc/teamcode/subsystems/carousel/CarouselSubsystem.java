@@ -49,10 +49,14 @@ public class CarouselSubsystem extends SubsystemBase {
         this.mode = mode;
         motorCarousel.setMode(this.mode);
     }
+    public void setTargetPosition(int carouselTargetPosition){
+
+        motorCarousel.setTargetPosition(carouselTargetPosition);
+    }
 
     public void resetAndSetCarouselTargetPosition(int carouselTargetPosition, double power){
         setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorCarousel.setTargetPosition(carouselTargetPosition);
+        setTargetPosition(carouselTargetPosition);
         setMode(DcMotor.RunMode.RUN_TO_POSITION);
         setPower(power);
     }
