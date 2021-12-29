@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TurnCommand;
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath1;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 
-
+@Disabled
 @Autonomous(name="AutonomousPath1", group="FTCLib")
 public class AutonomousPath1 extends CommandOpMode {
 
