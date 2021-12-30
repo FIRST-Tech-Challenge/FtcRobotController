@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackSwan;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -24,6 +25,10 @@ public class Robot {
     DcMotor carousel, arm, intake;
     BNO055IMU imu;
     LinearOpMode opMode;
+    //RevColorSensorV3 colorSensorLeft;
+    RevColorSensorV3 colorSensorRight;
+
+
 
     final int TICKS_PER_ROTATION= 537;
 
@@ -46,7 +51,8 @@ public class Robot {
         backRight.setDirection(DcMotor.Direction.FORWARD);
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
-
+        //colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
+        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
