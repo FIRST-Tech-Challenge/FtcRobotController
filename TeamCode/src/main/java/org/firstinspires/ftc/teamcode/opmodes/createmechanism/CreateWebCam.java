@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -32,6 +33,8 @@ public class CreateWebCam {
     private MockDetectTSEPosition mockDetectTSEPosition;
     private StreamToDashboard streamToDashboard;
     private SetArmLevel setArmLevel;
+
+    private Trigger gotLevelTrigger;
 
     public CreateWebCam(final HardwareMap hwMap, String webCamName, final FtcDashboard dashboard, final Telemetry telemetry){
 
@@ -61,6 +64,7 @@ public class CreateWebCam {
         if (autoCreate) create();
     }
 
+
     public void create(){
         subsystem = new WebCamSubsystem(hwMap,deviceName,new OpenCvShippingElementDetector(640,480,telemetry));
 
@@ -85,25 +89,29 @@ public class CreateWebCam {
         subsystem = new WebCamSubsystem(hwMap,deviceName,new OpenCvShippingElementDetector(640,480,telemetry));
 
         mockDetectTSEPosition = new MockDetectTSEPosition(subsystem, telemetry);
+        //mockDetectTSEPosition.schedule();
 
-        setArmLevel = new SetArmLevel(armSubsystem,armSubsystem.getLevel(subsystem.getLevel()),telemetry);
+        gotLevelTrigger = new Trigger(()->subsystem.getLevel() > 0);
 
-
-        if(armSubsystem != null){
-            SequentialCommandGroup sequentialCommandGroup = new SequentialCommandGroup(mockDetectTSEPosition, new InstantCommand( () -> armSubsystem.setArmTargetPosition(armSubsystem.getLevel(subsystem.getLevel()))));
-            sequentialCommandGroup.schedule();
-        }
-        else{
-            detectTSEPosition.schedule();
-        }
-
-        //CommandScheduler.getInstance().onCommandFinish( detectTSEPosition -> telemetry.addData("got position", subsystem.getLocation()));
 
     }
 
     public DetectTSEPosition getDetectTSEPositionCommand(){
         return detectTSEPosition;
 
+    }
+
+    public MockDetectTSEPosition getMockDetectTSEPositionCommand(){
+        return mockDetectTSEPosition;
+
+    }
+
+    public Trigger getGotLevelTrigger(){
+        return gotLevelTrigger;
+    }
+
+    public WebCamSubsystem getWebCamSubsystem(){
+        return subsystem;
     }
 
 

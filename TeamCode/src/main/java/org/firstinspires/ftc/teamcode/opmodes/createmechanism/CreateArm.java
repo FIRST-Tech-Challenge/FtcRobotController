@@ -160,7 +160,7 @@ public class CreateArm {
 
     }
 
-    private SetArmLevel createSetArmLevel(int levelIndicator){
+    public SetArmLevel createSetArmLevel(int levelIndicator){
         return new SetArmLevel(arm,levelIndicator, telemetry);
     }
 

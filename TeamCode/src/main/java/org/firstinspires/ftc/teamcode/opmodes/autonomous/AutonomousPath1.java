@@ -92,7 +92,7 @@ public class AutonomousPath1 extends CommandOpMode {
             telemetry.addData("Selections Complete", String.format("Alliance: %s - Path: %s",selectedPath[0],selectedAlliance[0]));
             telemetry.update();
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
-                BluePath1 bluePath1 = new BluePath1(hardwareMap,telemetry);
+                BluePath1 bluePath1 = new BluePath1(hardwareMap,dashboard,telemetry);
                 bluePath1.createPath();
                 bluePath1.execute(this);
             }
