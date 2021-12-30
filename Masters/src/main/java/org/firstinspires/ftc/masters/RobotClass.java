@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.Date;
@@ -45,9 +47,12 @@ public class RobotClass {
     BNO055IMU imu;
 
     public Telemetry telemetry;
-    RevColorSensorV3 colorSensorLeft;
-    RevColorSensorV3 colorSensorRight;
-    RevColorSensorV3 colorSensorMiddle;
+//    RevColorSensorV3 colorSensorLeft;
+//    RevColorSensorV3 colorSensorRight;
+//    RevColorSensorV3 colorSensorMiddle;
+//    distance sensors
+    public DistanceSensor distanceSensorLeft;
+    public DistanceSensor distanceSensorRight;
 
     public DcMotor carousel;
 
@@ -65,13 +70,15 @@ public class RobotClass {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
-        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
-        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
-        colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
+//        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
+//        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
+//        colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
         carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
         linearSlideServo = hardwareMap.servo.get("dump");
+        distanceSensorLeft = hardwareMap.get(DistanceSensor.class, "distanceSensorLeft");
+        distanceSensorRight = hardwareMap.get(DistanceSensor.class, "distanceSensorRight");
 
         this.opmode= opmode;
 
@@ -104,13 +111,15 @@ public class RobotClass {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
-        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
-        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
-        colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
+//        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
+//        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
+//        colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
         carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
         linearSlideServo = hardwareMap.servo.get("dump");
+        distanceSensorLeft = hardwareMap.get(DistanceSensor.class, "distanceSensorLeft");
+        distanceSensorRight = hardwareMap.get(DistanceSensor.class, "distanceSensorRight");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.opmode= opmode;
@@ -299,61 +308,126 @@ public class RobotClass {
         linearSlideMotor.setPower(0);
     }
 
-    public void wayneStrafeBlue (double speed) {
+//    public void wayneStrafeBlue (double speed) {
+//
+//        frontLeft.setPower(-speed);
+//        frontRight.setPower(speed);
+//        backLeft.setPower(speed);
+//        backRight.setPower(-speed);
+//
+//        while (colorSensorRight.blue()< 120 && colorSensorLeft.blue()<120) {
+//            telemetry.addData("Right blue ", colorSensorRight.blue());
+//            telemetry.addData("Left blue ", colorSensorLeft.blue());
+//            telemetry.update();
+//        }
+//
+//        stopMotors();
+//    }
 
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(-speed);
+//    public void wayneStrafeRed (double speed) {
+//
+//        frontLeft.setPower(speed);
+//        frontRight.setPower(-speed);
+//        backLeft.setPower(-speed);
+//        backRight.setPower(speed);
+//
+//        while (colorSensorRight.red()< 120 && colorSensorLeft.red()<120) {
+//            telemetry.addData("Right red ", colorSensorRight.red());
+//            telemetry.addData("Left red ", colorSensorLeft.red());
+//            telemetry.update();
+//        }
+//
+//        stopMotors();
+//    }
 
-        while (colorSensorRight.blue()< 120 && colorSensorLeft.blue()<120) {
-            telemetry.addData("Right blue ", colorSensorRight.blue());
-            telemetry.addData("Left blue ", colorSensorLeft.blue());
-            telemetry.update();
-        }
-
-        stopMotors();
-    }
-
-    public void wayneStrafeRed (double speed) {
+    public void distanceSensorStrafeLeft (double speed) {
+        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
         frontLeft.setPower(speed);
         frontRight.setPower(-speed);
         backLeft.setPower(-speed);
         backRight.setPower(speed);
 
-        while (colorSensorRight.red()< 120 && colorSensorLeft.red()<120) {
-            telemetry.addData("Right red ", colorSensorRight.red());
-            telemetry.addData("Left red ", colorSensorLeft.red());
-            telemetry.update();
+        while (rightDistance-leftDistance>1) {
+            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
         }
-
         stopMotors();
     }
 
-    public void parkRed () {
+    public void distanceSensorStrafeRight (double speed) {
+        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
-        wayneStrafeRed(0.3);
-        if (colorSensorRight.red()>120) {
-            strafeLeft(0.3, 0.35);
+        frontLeft.setPower(-speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(-speed);
+
+        while (leftDistance-rightDistance>1) {
+            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
         }
-        if (colorSensorLeft.red()>120) {
-            strafeRight(0.3,0.35);
+        stopMotors();
+    }
+
+    public void distanceSensorForward (double speed) {
+        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+
+        frontLeft.setPower(speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
+
+        while (leftDistance > 15) {
+            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         }
-        forward(0.3,-0.4);
+        stopMotors();
+    }
+
+    public void distanceSensorStuff () {
+
+        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+
+
+        if (leftDistance-rightDistance>1) {
+            distanceSensorStrafeRight(.2);
+        } else if (rightDistance-leftDistance>1) {
+            distanceSensorStrafeLeft(.2);
+        }
+
+        if (leftDistance > 15) {
+            distanceSensorForward(.2);
+        }
 
     }
 
-    public void parkBlue () {
-        wayneStrafeBlue(0.2);
-        if (colorSensorLeft.blue()>120) {
-            strafeLeft(0.2, 0.35);
-        }
-        if (colorSensorRight.blue()>120) {
-            strafeRight(0.2,0.35);
-        }
-        forward(0.2,-1);
-    }
+//    public void parkRed () {
+//
+//        wayneStrafeRed(0.3);
+//        if (colorSensorRight.red()>120) {
+//            strafeLeft(0.3, 0.35);
+//        }
+//        if (colorSensorLeft.red()>120) {
+//            strafeRight(0.3,0.35);
+//        }
+//        forward(0.3,-0.4);
+//
+//    }
+//
+//    public void parkBlue () {
+//        wayneStrafeBlue(0.2);
+//        if (colorSensorLeft.blue()>120) {
+//            strafeLeft(0.2, 0.35);
+//        }
+//        if (colorSensorRight.blue()>120) {
+//            strafeRight(0.2,0.35);
+//        }
+//        forward(0.2,-1);
+//    }
 
     public void setSpeedForTurnRight (double speed) {
         frontLeft.setPower(speed);
