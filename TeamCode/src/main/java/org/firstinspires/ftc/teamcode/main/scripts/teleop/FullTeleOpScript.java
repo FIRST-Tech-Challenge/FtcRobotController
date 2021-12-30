@@ -20,6 +20,16 @@ import org.firstinspires.ftc.teamcode.main.utils.scripting.TeleOpScript;
 
 public class FullTeleOpScript extends TeleOpScript {
 
+
+    /*
+
+    MR. ROCHE - READ ME
+
+    Any comment that starts with // ROCHE in this file says something you should know to run this yourself.
+
+     */
+
+
     private GamepadManager gamepadManager;
     private double timeAsOfLastIntakeMovement;
     private int intakeLowerPos, intakeUpperPos;
@@ -39,6 +49,7 @@ public class FullTeleOpScript extends TeleOpScript {
         intakeShouldBeDown = false;
         intakeIsAtPosition = false;
         // calibrate elevator
+        // ROCHE - you can uncomment this code to make the elevator calibrate itself when it starts up, it requires both elevator motors and the limit switch to be working though
 //        int timeAsOfLastElevatorCalibrationBegin = (int) getOpMode().time;
 //        while(outputSpace.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 0 && timeAsOfLastElevatorCalibrationBegin > (int) getOpMode().time - 1) {
 //            inputSpace.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, 100);
@@ -60,6 +71,7 @@ public class FullTeleOpScript extends TeleOpScript {
         inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 100);
         inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 10);
         // calibrate intake
+        // ROCHE - you can uncomment this to make the spinny grabber thing calibrate itself, but it's not tested
 //        while(!intakeIsAtPosition) {
 //            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
 //                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
@@ -87,6 +99,7 @@ public class FullTeleOpScript extends TeleOpScript {
         }else if(gamepadManager.functionOneGamepad().dpad_left) {
             intakeShouldBeDown = true;
         }
+        // ROCHE - uncomment this to add functionality to the spinny grabber lifter thingy, untested like the calibration section. You also need to comment out lines 130 and 131 for this. If the spinny thing isnt at the right position while this code is uncommented and 130/131 is commented, it wont spin.
 //        if(intakeShouldBeDown) {
 //            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
 //                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
@@ -134,7 +147,7 @@ public class FullTeleOpScript extends TeleOpScript {
             inputSpace.sendInputToElevatorRightLift(ElevatorRightLiftMotorLocation.Action.SET_SPEED, 0);
         }
         // grab item if it exists
-        getOpMode().telemetry.addData("Distances<Hand, Intake>: ", String.valueOf(outputSpace.receiveOutputFromHandDistanceSensor()) + " " + String.valueOf(outputSpace.receiveOutputFromIntakeLiftingDistanceSensor()));
+        getOpMode().telemetry.addData("Distance<Hand, Intake>: ", String.valueOf(outputSpace.receiveOutputFromHandDistanceSensor()) + " " + String.valueOf(outputSpace.receiveOutputFromIntakeLiftingDistanceSensor()));
         getOpMode().telemetry.update();
         if(outputSpace.receiveOutputFromHandDistanceSensor() < 60) {
             inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 83);
