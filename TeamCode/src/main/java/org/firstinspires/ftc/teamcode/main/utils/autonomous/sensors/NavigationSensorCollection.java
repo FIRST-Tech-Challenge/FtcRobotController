@@ -9,11 +9,13 @@ public class NavigationSensorCollection {
     public StandardDistanceSensor west;
 
     public StandardIMU imu;
+    public int imuOffset;
 
     public NavigationSensorCollection(StandardDistanceSensor north,
                                       StandardDistanceSensor east,
                                       StandardDistanceSensor west,
-                                      StandardIMU imu) {
+                                      StandardIMU imu,
+                                      int imuOffset) {
         this.north = north;
         this.east = east;
         this.west = west;
