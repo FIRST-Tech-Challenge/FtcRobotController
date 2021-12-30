@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackSwan;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.blackswan.Robot;
+import org.firstinspires.ftc.blackSwan.Robot;
 
 @Autonomous
 

@@ -16,7 +16,6 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
-
 import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.TurnSegment;
