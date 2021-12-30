@@ -14,7 +14,7 @@ public class ParkInRedBox extends LinearOpMode {
 
         waitForStart();
 
-        robot.parkRed();
+//        robot.parkRed();
 
 //        int seeRed = 0;
 //        String direction = null;
