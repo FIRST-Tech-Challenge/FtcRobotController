@@ -76,6 +76,7 @@ public class Auto_2022_noPID extends LinearOpMode {
                 System.exit(0);
             }
         });
+
         telemetry.addData("angle", robot.getAngle());
         waitForStart();//if there is a camera error... and it crashes the program... then we need to find a way to "pause stream"
 
@@ -88,14 +89,14 @@ public class Auto_2022_noPID extends LinearOpMode {
 
         //caroseul
         robot.duck(-1);//turn on duck
-        robot.gyroStrafeCm(0.5,-90,80);//2 feet+a bit more(error) to right. todo change the cm, direction
+        robot.gyroStrafeEncoder(0.5,-90,80);//2 feet+a bit more(error) to right. todo change the cm, direction
         Thread.sleep(3000);
         robot.duck(0);
 
         //to hub
         //2 sides of rectangle instead of hypotenuse
-        robot.gyroStrafeCm(0.5,90,130);
-        robot.gyroStrafeCm(0.5,0,85);
+        robot.gyroStrafeEncoder(0.5,90,130);
+        robot.gyroStrafeEncoder(0.5,0,85);
 
         switch (code) {//shell for later, do not delete!!!
             case 2:

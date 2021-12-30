@@ -128,7 +128,6 @@ public class Robot_2022FF {
         this.imu = imu;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
-//        ticksperrev = motorFrontLeft.getMotorType().getTicksPerRev();
     }
 
     /**
@@ -151,7 +150,28 @@ public class Robot_2022FF {
         this.imu = imu;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
-//        ticksperrev = motorFrontLeft.getMotorType().getTicksPerRev();
+    }
+
+    /**
+     * Base only + outtake
+     * @param motorFrontRight
+     * @param motorFrontLeft
+     * @param motorBackRight
+     * @param motorBackLeft
+     * @param motorOuttake
+     * @param imu
+     * @param opMode
+     * */
+    public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                        DcMotor motorOuttake, BNO055IMU imu, LinearOpMode opMode){
+        this.motorFrontRight = motorFrontRight;
+        this.motorFrontLeft = motorFrontLeft;
+        this.motorBackRight = motorBackRight;
+        this.motorBackLeft = motorBackLeft;
+        this.outtake = motorOuttake;
+        this.imu = imu;
+        this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
     }
 
     /**
@@ -187,8 +207,8 @@ public class Robot_2022FF {
         //reverse the needed motors?
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 //        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-//        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+//        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -831,9 +851,9 @@ public class Robot_2022FF {
     public void moveArm(double degrees, double power) throws InterruptedException{
         //do later!!!todo
         resetEncoders();
-        //????
-        //hello this is jolei
-
+        while(outtake.getCurrentPosition() < degrees && opMode.opModeIsActive()){//change the degrees!!! Might not work
+            outtake.setPower(power);
+        }
     }
 
     public void dropTop(double power) throws InterruptedException{
@@ -855,6 +875,7 @@ public class Robot_2022FF {
         }
         outtake.setPower(0);
     }
+
     public void dropMiddle(double power) throws InterruptedException{
         resetEncoders();
         while(outtake.getCurrentPosition() < 170 && opMode.opModeIsActive()){
@@ -874,7 +895,7 @@ public class Robot_2022FF {
 
     public void dropBottom (double power) throws InterruptedException{
         resetEncoders();
-        
+
         while(outtake.getCurrentPosition() < 100 && opMode.opModeIsActive()){
             outtake.setPower(power);
             telemetry.addData("ticks", outtake.getCurrentPosition());
@@ -893,6 +914,5 @@ public class Robot_2022FF {
             outtake.setPower(-power);
         }
         outtake.setPower(0);
-
     }
 }

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "pushbot")
 public class Pushbot extends LinearOpMode {
-    private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
+    private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight, outtake;
 
     private BNO055IMU imu;
     private Robot_2022FF robot;
@@ -17,23 +17,25 @@ public class Pushbot extends LinearOpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
+        outtake = hardwareMap.dcMotor.get("outtake");
 
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        robot = new Robot_2022FF(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft,imu,this);
+        robot = new Robot_2022FF(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, outtake, imu,this);
         robot.setupRobot();
 
         waitForStart();
         robot.resetAngle();
         while(opModeIsActive()) {
-            double dist = robot.getDistanceTraveled();
-            double error = 50-dist;
-            telemetry.addData("current position", dist);
-            telemetry.addData("error", Math.abs(error));
+//            double dist = robot.getDistanceTraveled();
+//            double error = 50-dist;
+            telemetry.addData("Outtake Position", outtake.getCurrentPosition());
+//            telemetry.addData("current position", dist);
+//            telemetry.addData("error", Math.abs(error));
 
-            double angle = robot.getAngle();
-            telemetry.addData("angle", angle);
+//            double angle = robot.getAngle();
+//            telemetry.addData("angle", angle);
 
             telemetry.update();
         }
