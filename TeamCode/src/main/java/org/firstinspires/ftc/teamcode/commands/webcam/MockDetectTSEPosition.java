@@ -1,34 +1,36 @@
 package org.firstinspires.ftc.teamcode.commands.webcam;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.DetectShippingElement;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
-import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
-public class DetectTSEPosition extends CommandBase {
+import java.util.concurrent.ThreadLocalRandom;
+
+public class MockDetectTSEPosition extends CommandBase {
 
     private final WebCamSubsystem webCamSubsytem;
-    private final OpenCvShippingElementDetector detector;
+    //private final OpenCvShippingElementDetector detector;
     private Telemetry telemetry;
     private Boolean gotPosition = false;
     private OpenCvShippingElementDetector.TSELocation location;
     private int level = 0;
 
-    public DetectTSEPosition(WebCamSubsystem subsystem){
+    private static final int MIN_LEVEL = 1;
+    private static final int MAX_LEVEL = 3;
+
+    public MockDetectTSEPosition(WebCamSubsystem subsystem){
         webCamSubsytem = subsystem;
-        detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
+        //detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
 
         addRequirements(subsystem);
     }
 
-    public DetectTSEPosition(WebCamSubsystem subsystem, Telemetry telemetry){
+    public MockDetectTSEPosition(WebCamSubsystem subsystem, Telemetry telemetry){
         //telemetry.addData("DetectTSEPosition", level);
         webCamSubsytem = subsystem;
-        detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
+        //detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -36,16 +38,18 @@ public class DetectTSEPosition extends CommandBase {
 
     @Override
     public void initialize(){
-        webCamSubsytem.openCameraDeviceAsync();
+
+        setLevel();
+        //webCamSubsytem.openCameraDeviceAsync();
     }
 
     @Override
     public void execute(){
-        location = detector.getLocation();
-        level = detector.getTSELevel();
+        //location = detector.getLocation();
+        //level = detector.getTSELevel();
 
-        setLocation();
-        setLevel();
+        //setLocation();
+        //setLevel();
 
 
     }
@@ -57,9 +61,17 @@ public class DetectTSEPosition extends CommandBase {
 
     private void setLevel(){
         //telemetry.addData("We have a 2 level", level);
-        webCamSubsytem.setLevel(level);
-        if(level > 0)
+        //webCamSubsytem.setLevel(level);
+        determineLevel();
+        if(level > 0) {
+            webCamSubsytem.setLevel(level);
             gotPosition = true;
+        }
+
+    }
+
+    private void determineLevel(){
+        level = ThreadLocalRandom.current().nextInt(MIN_LEVEL, MAX_LEVEL + 1);
     }
 
     @Override

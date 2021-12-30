@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
+import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StreamToDashboard;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
@@ -28,6 +29,7 @@ public class CreateWebCam {
     private final FtcDashboard dashboard;
 
     private DetectTSEPosition detectTSEPosition;
+    private MockDetectTSEPosition mockDetectTSEPosition;
     private StreamToDashboard streamToDashboard;
     private SetArmLevel setArmLevel;
 
@@ -75,10 +77,25 @@ public class CreateWebCam {
             detectTSEPosition.schedule();
         }
 
+        //CommandScheduler.getInstance().onCommandFinish( detectTSEPosition -> telemetry.addData("got position", subsystem.getLocation()));
 
-        
+    }
+
+    public void createAuto(){
+        subsystem = new WebCamSubsystem(hwMap,deviceName,new OpenCvShippingElementDetector(640,480,telemetry));
+
+        mockDetectTSEPosition = new MockDetectTSEPosition(subsystem, telemetry);
+
+        setArmLevel = new SetArmLevel(armSubsystem,armSubsystem.getLevel(subsystem.getLevel()),telemetry);
 
 
+        if(armSubsystem != null){
+            SequentialCommandGroup sequentialCommandGroup = new SequentialCommandGroup(mockDetectTSEPosition, new InstantCommand( () -> armSubsystem.setArmTargetPosition(armSubsystem.getLevel(subsystem.getLevel()))));
+            sequentialCommandGroup.schedule();
+        }
+        else{
+            detectTSEPosition.schedule();
+        }
 
         //CommandScheduler.getInstance().onCommandFinish( detectTSEPosition -> telemetry.addData("got position", subsystem.getLocation()));
 
