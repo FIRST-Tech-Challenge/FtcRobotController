@@ -71,6 +71,14 @@ public class RedTowerGoalTracker2 extends LinearOpMode
                 camera.setPipeline(pipeline);
                 camera.startStreaming(1280,720, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
         });
 
         waitForStart();

@@ -3,10 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -126,6 +130,9 @@ public class HardwareBothHubs
     private MaxSonarI2CXL sonarRangeR = null;
     private MaxSonarI2CXL sonarRangeF = null;
     private MaxSonarI2CXL sonarRangeB = null;
+//    public ColorSensor freightIdentifier = null;
+//    public DistanceSensor freightFinder = null;
+    public NormalizedColorSensor freightFinder = null;
 
 //  private DistanceSensor tofRangeL  = null;
 //  private DistanceSensor tofRangeR  = null;
@@ -271,6 +278,9 @@ public class HardwareBothHubs
         sonarRangeR = hwMap.get( MaxSonarI2CXL.class, "right_ultrasonic" );
         sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "front_ultrasonic" );
         sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "back_ultrasonic" );
+        freightFinder = hwMap.get(NormalizedColorSensor.class, "freight_finder");
+//        freightFinder = hwMap.get( DistanceSensor.class, "freight_finder" );
+//        freightIdentifier = hwMap.get( ColorSensor.class, "freight_finder" );
 
         //Instantiate REV 2-meter Time-Of-Flight Distance Sensors
 //      tofRangeL   = hwMap.get( DistanceSensor.class, "ToF_distanceL" );

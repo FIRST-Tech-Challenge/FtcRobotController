@@ -2,9 +2,16 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * TeleOp Full Control.
@@ -73,10 +80,11 @@ public abstract class Teleop extends LinearOpMode {
     double    duckVelocity;
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
-    boolean   rangeSensorsEnabled = false;  // enable only when designing an Autonomous plan (takes time!)
+    boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
     boolean   rangeSensorPingPong = true;   // only send a new ping out every other control cycle
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
+    final float[] hsvValues = new float[3];
 
     /* Declare OpMode members. */
     HardwareBothHubs robot = new HardwareBothHubs();
@@ -92,6 +100,11 @@ public abstract class Teleop extends LinearOpMode {
 
         // Initialize robot hardware
         robot.init(hardwareMap,false);
+
+        // Need to adjust gain to where we want it, then set in init.
+        robot.freightFinder.setGain(2);
+        ((SwitchableLight)robot.freightFinder).enableLight(true);
+
         setAllianceSpecificBehavior();
 
         // Send telemetry message to signify robot waiting;
@@ -194,6 +207,21 @@ public abstract class Teleop extends LinearOpMode {
             }
 //          telemetry.addData("Gyro Angle", "%.1f deg", robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
+
+            // Testing Color and Distance sensor
+            NormalizedRGBA colors = robot.freightFinder.getNormalizedColors();
+            Color.colorToHSV(colors.toColor(), hsvValues);
+            telemetry.addLine()
+                    .addData("Red", "%.3f", colors.red)
+                    .addData("Green", "%.3f", colors.green)
+                    .addData("Blue", "%.3f", colors.blue);
+            telemetry.addLine()
+                    .addData("Hue", "%.3f", hsvValues[0])
+                    .addData("Saturation", "%.3f", hsvValues[1])
+                    .addData("Value", "%.3f", hsvValues[2]);
+            telemetry.addData("Alpha", "%.3f", colors.alpha);
+            telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) robot.freightFinder).getDistance(DistanceUnit.MM));
+
             telemetry.update();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
