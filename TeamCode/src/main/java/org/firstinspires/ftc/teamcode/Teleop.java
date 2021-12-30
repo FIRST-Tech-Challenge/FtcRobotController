@@ -204,8 +204,8 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
 
             // Testing Color and Distance sensor
-            robot.freightPresent();
-            robot.freightIsCube();
+            telemetry.addData("Freight Present: ", robot.freightPresent());
+            telemetry.addData("Freight Is Cube: ", robot.freightIsCube());
             telemetry.addLine()
                     .addData("Red", "%.3f", robot.colors.red)
                     .addData("Green", "%.3f", robot.colors.green)
