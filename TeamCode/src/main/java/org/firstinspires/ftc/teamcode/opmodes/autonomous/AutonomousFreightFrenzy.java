@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Disabled
-@Autonomous(name="AutonomousPath1", group="FTCLib")
-public class AutonomousPath1 extends CommandOpMode {
+@Autonomous(name="Auto Freight Frenzy", group="FreightFrenzy")
+public class AutonomousFreightFrenzy extends CommandOpMode {
 
     @Override
     public void initialize() {
