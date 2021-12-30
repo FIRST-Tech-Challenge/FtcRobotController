@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMoto
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardServo;
 import org.firstinspires.ftc.teamcode.main.utils.io.InputSpace;
 import org.firstinspires.ftc.teamcode.main.utils.io.OutputSpace;
+import org.firstinspires.ftc.teamcode.main.utils.locations.DuckMotorLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.ElevatorBottomLimitSwitchLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.ElevatorLeftLiftMotorLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.ElevatorRightLiftMotorLocation;
@@ -23,7 +24,8 @@ public class FullTeleOpScript extends TeleOpScript {
     private GamepadManager gamepadManager;
     private double timeAsOfLastIntakeMovement;
     private int intakeLowerPos, intakeUpperPos;
-    private boolean intakeShouldBeDown, intakeIsAtPosition;
+    private double timeOfLastTimeToDropTrigger;
+    private boolean intakeShouldBeDown, intakeIsAtPosition, timeToDrop;
     private InputSpace inputSpace;
     private OutputSpace outputSpace;
 
@@ -34,11 +36,12 @@ public class FullTeleOpScript extends TeleOpScript {
         outputSpace = new OutputSpace(getOpMode().hardwareMap);
         gamepadManager = new GamepadManager(getOpMode().gamepad1, getOpMode().gamepad1, getOpMode().gamepad1, getOpMode().gamepad1, getOpMode().gamepad1, getOpMode().gamepad1);
         timeAsOfLastIntakeMovement = 0;
-        // TODO: MIKE LOOK AT THIS THESE ARE THE VALUES OF THE DISTANCE SENSOR OF THE INTAKE LIFTER AT ITS HIGHEST AND LOWEST POINTS ITS ALLOWED TO MOVE TO, YOU NEED TO SET THESE TO THE CORRECT ONES BECAUSE THEYRE PROBABLY WRONG
         intakeLowerPos = 10;
         intakeUpperPos = 30;
         intakeShouldBeDown = false;
         intakeIsAtPosition = false;
+        timeOfLastTimeToDropTrigger = 0;
+        timeToDrop = false;
         // calibrate elevator
         int timeAsOfLastElevatorCalibrationBegin = (int) getOpMode().time;
         while(outputSpace.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 0 && timeAsOfLastElevatorCalibrationBegin > (int) getOpMode().time - 1) {
@@ -51,14 +54,15 @@ public class FullTeleOpScript extends TeleOpScript {
         }
         ((StandardMotor) inputSpace.getElevatorLeftLift().getInternalInteractionSurface()).reset();
         ((StandardMotor) inputSpace.getElevatorRightLift().getInternalInteractionSurface()).reset();
+        // calibrate hand
         inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 100);
         inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 10);
-        opMode.sleep(500);
+        opMode.sleep(1000);
         inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 83);
         inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 28);
-        opMode.sleep(500);
+        opMode.sleep(1000);
         inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 100);
-        inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 10);;
+        inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 10);
         // calibrate intake
         while(!intakeIsAtPosition) {
             if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
@@ -112,9 +116,6 @@ public class FullTeleOpScript extends TeleOpScript {
                 timeAsOfLastIntakeMovement = getOpMode().time;
             }
         }
-        // debugging
-        getOpMode().telemetry.addData("Distance: ", outputSpace.receiveOutputFromIntakeLiftingDistanceSensor());
-        getOpMode().telemetry.update();
         // update intake motor
         if(intakeShouldBeDown && intakeIsAtPosition) {
             int intakeGas = (int) Range.clip(gamepadManager.functionOneGamepad().left_trigger * 100, 0, 100);
@@ -132,16 +133,22 @@ public class FullTeleOpScript extends TeleOpScript {
             inputSpace.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, 0);
             inputSpace.sendInputToElevatorRightLift(ElevatorRightLiftMotorLocation.Action.SET_SPEED, 0);
         }
-        // grab item if it exists
-        getOpMode().telemetry.addData("distance: ", outputSpace.receiveOutputFromHandDistanceSensor());
-        getOpMode().telemetry.update();
-        if(outputSpace.receiveOutputFromHandDistanceSensor() < 60) {
+        // grab item if it exists and its not time to drop
+        if(timeOfLastTimeToDropTrigger < getOpMode().time - 1) {
+            timeToDrop = getOpMode().gamepad1.b;
+            timeOfLastTimeToDropTrigger = getOpMode().time;
+        }
+        if(outputSpace.receiveOutputFromHandDistanceSensor() < 60 && !timeToDrop) {
             inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 83);
             inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 28);
         }else{
             inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 100);
             inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 10);
         }
+        inputSpace.sendInputToDuckMotor(DuckMotorLocation.Action.SET_SPEED, getOpMode().gamepad1.a ? 50 : 0);
+        // debug
+        getOpMode().telemetry.addData("Distance<Hand, Intake>: ", String.valueOf(outputSpace.receiveOutputFromHandDistanceSensor()) + " " + String.valueOf(outputSpace.receiveOutputFromIntakeLiftingDistanceSensor()));
+        getOpMode().telemetry.update();
     }
 
     @Override
