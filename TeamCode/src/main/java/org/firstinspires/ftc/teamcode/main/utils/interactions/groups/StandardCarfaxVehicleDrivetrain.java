@@ -98,12 +98,17 @@ public class StandardCarfaxVehicleDrivetrain extends StandardVehicleDrivetrain {
         LEFT.reset();
     }
 
-    public StandardMotor getRight() {
+    public StandardMotor getRightTop() {
         return RIGHT;
     }
-
-    public StandardMotor getLeft() {
+    public StandardMotor getLeftTop() {
         return LEFT;
+    }
+    public StandardMotor getLeftBottom() {
+        return null;
+    }
+    public StandardMotor getRightBottom() {
+        return null;
     }
 
     @Override

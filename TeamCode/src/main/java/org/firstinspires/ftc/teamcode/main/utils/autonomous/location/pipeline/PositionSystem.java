@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.main.utils.autonomous.location.pipeline;
 
+import android.graphics.Path;
+
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.main.utils.Angle;
 import org.firstinspires.ftc.teamcode.main.utils.autonomous.location.pipeline.Axis.AxisReading;
 import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.NavigationSensorCollection;
-import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardDrivetrain;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardVehicleDrivetrain;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardIMU;
 import org.jetbrains.annotations.NotNull;
@@ -20,13 +22,16 @@ public class PositionSystem {
 
     private StandardVehicleDrivetrain drivetrain = null;
     public StandardIMU imu;
-    public StandardIMU.DataPoint imuDirection;
+    public StandardIMU.DataPoint imuDirection = StandardIMU.DataPoint.HEADING;
     public StandardIMU.ReturnData imuData;
+    public int imuOffset = 0;
 
     public PositionSystem(@NonNull NavigationSensorCollection sensors) {
         leftToRight = new Axis(sensors.east, sensors.west);
         upAndDown = new Axis(sensors.north, sensors.north);
         this.imu = sensors.imu;
+
+        imuOffset += sensors.imuOffset;
 
         coordinateSystem = new CoordinateSystem();
     }
@@ -39,6 +44,8 @@ public class PositionSystem {
     }
 
     public void getAndEvalReadings() {
+        updateAngle();
+
         AxisReading ew = leftToRight.getReadings();
         AxisReading ns = upAndDown.getReadings();
 
@@ -64,7 +71,7 @@ public class PositionSystem {
         double y = northSouth.sensor1;
 
         // do some geometry-I honors level math
-        int angleDegrees = (int) coordinateSystem.angleDegrees;
+        int angleDegrees = (int) coordinateSystem.angle.asDegree();
         double angleRadians = Math.toRadians(angleDegrees);
 
         x = x * Math.sin(angleRadians);
@@ -101,19 +108,23 @@ public class PositionSystem {
             coordinateSystem.update(CoordinateSystem.FieldCoordinates.make(coordinateSystem.current.x, y));
         }
     }
-
     private void updateCoordinateSystem(CoordinateSystem.FieldCoordinates coordinates) {
         coordinateSystem.update(coordinates);
     }
-    public void setAngle(double angle, @NonNull AngleUnit unit) {
-        switch (unit) {
-            case DEGREES:
-                coordinateSystem.angleDegrees = angle;
-                break;
-            case RADIANS:
-                coordinateSystem.angleDegrees = Math.toDegrees(angle);
-                break;
+    public void setAngle(Angle angle) {
+        coordinateSystem.angle = angle;
+    }
+    public void updateAngle() {
+        coordinateSystem.angle.convert(Angle.AngleUnit.DEGREE);
+        coordinateSystem.angle.value = imu.getData().getHeading() + imuOffset;
+    }
+
+    public float normalizeDegrees(Float input) {
+        if (input < 0) {
+            input = Math.abs(input) + 180;
         }
+
+        return input;
     }
 
     public void addDistance(double distance, double angleDegrees) {
@@ -121,12 +132,53 @@ public class PositionSystem {
                 coordinateSystem.current.x + distance * Math.cos(Math.toRadians(angleDegrees)),
                 coordinateSystem.current.y + distance * Math.sin(Math.toRadians(angleDegrees))));
     }
-
     public void encoderDrive(double distance) {
         if (drivetrain != null) {
             drivetrain.driveDistance((int) distance, 100);
 
-            addDistance(distance, this.coordinateSystem.angleDegrees);
+            addDistance(distance, this.coordinateSystem.angle.asDegree());
         }
+    }
+    public void encoderDrive(int distanceLeft, int distanceRight) {
+        if (drivetrain != null) {
+            drivetrain.driveDistance(distanceLeft, distanceRight, 100);
+
+            getAndEvalReadings();
+        }
+    }
+    public void turnDegree(int absoluteDegree, Path.Direction turnDirection) {
+        int leftInches = 2;
+        int rightInches = 2;
+
+        switch (turnDirection) {
+            case CW:
+                rightInches = -rightInches;
+                while (normalizeDegrees(imu.getData().get(imuDirection)) <= normalizeDegrees((float) absoluteDegree)) {
+                    encoderDrive(leftInches, rightInches);
+                    while (drivetrain.getRightTop().getDcMotor().isBusy() || drivetrain.getLeftTop().getDcMotor().isBusy() || drivetrain.getLeftBottom().getDcMotor().isBusy() || drivetrain.getRightBottom().getDcMotor().isBusy()) {}
+                }
+                break;
+            case CCW:
+                leftInches = -leftInches;
+                while (normalizeDegrees(imu.getData().get(imuDirection)) >= normalizeDegrees((float) absoluteDegree)) {
+                    encoderDrive(leftInches, rightInches);
+                    while (drivetrain.getRightTop().getDcMotor().isBusy() || drivetrain.getLeftTop().getDcMotor().isBusy() || drivetrain.getLeftBottom().getDcMotor().isBusy() || drivetrain.getRightBottom().getDcMotor().isBusy()) {}
+                }
+                break;
+        }
+    }
+    public void runToPosition(CoordinateSystem.FieldCoordinates target) {
+        getAndEvalReadings();
+
+        CoordinateSystem.FieldCoordinates current = coordinateSystem.current;
+        Angle angle = new Angle(Math.atan2(target.y - current.y, target.x - current.y), Angle.AngleUnit.RADIAN);
+
+        if (coordinateSystem.angle.lessThan(angle)) {
+            turnDegree(angle.asDegree(), Path.Direction.CW);
+        } else if (coordinateSystem.angle.greaterThan(angle)) {
+            turnDegree(angle.asDegree(), Path.Direction.CCW);
+        }
+
+        encoderDrive(Math.sqrt(Math.pow(target.y - current.y, 2) + Math.pow(target.x - current.x, 2)));
     }
 }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.main.utils.interactions.groups;
 
+import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
+
 /**
  * A StandardVehicleDrivetrain represents the motors which control movement of the robot in a way similar to a real-life vehicle, controlling each side of the motors on its own.
  */
@@ -17,4 +19,11 @@ public abstract class StandardVehicleDrivetrain extends StandardDrivetrain {
 
     public abstract void driveWithoutEncoder(int power);
 
+    public abstract StandardMotor getRightTop();
+
+    public abstract StandardMotor getRightBottom();
+
+    public abstract StandardMotor getLeftTop();
+
+    public abstract StandardMotor getLeftBottom();
 }

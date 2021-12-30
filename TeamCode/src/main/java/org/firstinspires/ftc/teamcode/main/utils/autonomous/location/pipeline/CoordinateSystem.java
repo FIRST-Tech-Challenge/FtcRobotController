@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.main.utils.autonomous.location.pipeline;
 
+import org.firstinspires.ftc.teamcode.main.utils.Angle;
+
 public class CoordinateSystem {
     public static double maxWidthInCM = 381;
     public static double maxLengthInCM = 381;
 
     public FieldCoordinates current = FieldCoordinates.TOP_LEFT;
     public FieldCoordinates last = FieldCoordinates.TOP_LEFT;
-    public double angleDegrees;
+    public Angle angle;
 
     public void update(FieldCoordinates coordinates) {
         last = current;
