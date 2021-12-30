@@ -6,9 +6,9 @@
             <RevRoboticsCoreHexMotor name="motorMiddleSwivel" port="3" />
             <RevRoboticsCoreHexMotor name="turret" port="0" />
             <RevRobotics40HDHexMotor name="motorMiddle" port="2" />
-            <Servo name="bucketServo" port="0" />
+            <Servo name="bucketServo" port="2" />
             <Servo name="firstLinkServo" port="1" />
-            <Servo name="secondLinkServo" port="2" />
+            <Servo name="secondLinkServo" port="0" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <RevRobotics40HDHexMotor name="motorFrontLeft" port="1" />

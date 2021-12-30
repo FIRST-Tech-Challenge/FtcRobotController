@@ -102,8 +102,8 @@ public class FF_6832 extends OpMode {
             Constants.MIN_CHASSIS_LENGTH + 2 * (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
             Constants.MAX_CHASSIS_LENGTH
     };
-    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW = 10;
-    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST = 30;
+    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW = 5;
+    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST = 15;
 
     public enum GameState {
         TELE_OP("Tele-Op"),
@@ -282,19 +282,32 @@ public class FF_6832 extends OpMode {
             handleTeleOpDriveTank();
 
         // gamepad 2
-        if(stickyGamepad2.b)
-            robot.gripper.toggleGripper();
 
-        if(stickyGamepad2.a)
-            robot.driveTrain.handleDuckSpinnerToggle(alliance.getMod());
-
-        if(stickyGamepad2.dpad_left)
+        if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
             robot.crane.articulate(Crane.Articulation.HOME);
 
-        if(stickyGamepad2.dpad_up)
+        if(stickyGamepad2.b) //dump bucket - might be able to combine this with Cycle Complete
+            robot.crane.Dump();
+
+        if(stickyGamepad2.a) //spin carousel
+            robot.driveTrain.handleDuckSpinnerToggle(alliance.getMod());
+
+        if(stickyGamepad2.dpad_left) //set for shared shipping hub
+            //todo "Home" is temporary - need to create a field-centric shared-shipping
+            //hub targeting method where the turret goes to the correct side based on the combination
+            //of alliance and which warehouse we are working
+            robot.crane.articulate(Crane.Articulation.HOME);
+
+        if(stickyGamepad2.dpad_up)  //High Tier
             robot.crane.articulate(Crane.Articulation.HIGH_TIER);
 
         if(stickyGamepad2.dpad_right)
+            robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
+
+        if(stickyGamepad2.dpad_down)
+            robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
+
+        if(stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
 
         if(stickyGamepad2.right_bumper)

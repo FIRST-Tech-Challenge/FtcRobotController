@@ -168,8 +168,8 @@ public class Robot implements Subsystem {
                 gripper.pitchGripper(true);
                 gripper.actuateGripper(true);
             }, () -> {})
-            .addTimedState(1f, () -> gripper.actuateGripper(false), () -> {})
-            .addTimedState(2f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
+            .addTimedState(0.5f, () -> gripper.actuateGripper(false), () -> {})
+            .addTimedState(.75f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
 //            .addSingleState(() -> driveTrain.setTargetChassisDistance(DEFAULT_TARGET_DISTANCE))
             .addSingleState(() -> driveTrain.setMaintainChassisDistanceEnabled(false)) //todo-make this false when ready to fix maintainChassisDistance
@@ -187,12 +187,16 @@ public class Robot implements Subsystem {
 
             // testing crane
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
-            .addState(() -> crane.articulate(Crane.Articulation.LOWEST_TIER))
+            .addState(() -> crane.articulate(Crane.Articulation.VALIDATE_ELBOW90))
+            .addState(() -> crane.articulate(Crane.Articulation.VALIDATE_SHOULDER90))
+            .addState(() -> crane.articulate(Crane.Articulation.VALIDATE_TURRET90R))
+            .addState(() -> crane.articulate(Crane.Articulation.VALIDATE_TURRET90L))
+            //.addState(() -> crane.articulate(Crane.Articulation.LOWEST_TIER))
             .addState(() -> crane.articulate(Crane.Articulation.HIGH_TIER))
-            .addState(() -> crane.articulate(Crane.Articulation.MIDDLE_TIER))
-            .addState(() -> crane.articulate(Crane.Articulation.STARTING))
-            .addState(() -> crane.articulate(Crane.Articulation.CAP))
-            .addState(() -> articulate(Robot.Articulation.TRANSFER))
+            //.addState(() -> crane.articulate(Crane.Articulation.MIDDLE_TIER))
+            //.addState(() -> crane.articulate(Crane.Articulation.STARTING))
+            //.addState(() -> crane.articulate(Crane.Articulation.CAP))
+            //.addState(() -> articulate(Robot.Articulation.TRANSFER))
 
             // testing gripper
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
