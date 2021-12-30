@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-@Disabled
+
 @Autonomous(name="Auto Freight Frenzy", group="FreightFrenzy")
 public class AutonomousFreightFrenzy extends CommandOpMode {
 
@@ -25,11 +25,12 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
     public void initialize() {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        // telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         telemetry.setAutoClear(false);
 
         final String[] selectedAlliance = new String[1];
         final String[] selectedPath = new String[1];
+        boolean blueteam = false;
 
         schedule(new InstantCommand(() -> {
             telemetry.clearAll();
@@ -53,8 +54,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
         CreateLEDs createLEDs = new CreateLEDs(hardwareMap, "blinkin");
 
-
-        blueAlliance.whenPressed(()->{
+        blueAlliance.whenReleased(()->{
             selectedAlliance[0] = "Blue";
 
             schedule(new InstantCommand(() -> {
@@ -72,6 +72,8 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
 
         });
+
+
         redAlliance.whenPressed(()->{
             selectedAlliance[0] = "Red";
             schedule(new InstantCommand(() -> {

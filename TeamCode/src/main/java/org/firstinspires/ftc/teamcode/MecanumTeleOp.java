@@ -94,9 +94,9 @@ public class MecanumTeleOp extends LinearOpMode {
 
             // Arm Up and Arm Down in small increments, >= 0.5 helps prevent issues with 0 value
             if (gamepad2.right_stick_y <= -0.5){
-                armSetPos = armSetPos + 5;
+                armSetPos = armSetPos + 1;
             } else if (gamepad2.right_stick_y >= 0.5 && (!armLimitPressed && !armLimitSwitchFlag)) {
-                armSetPos = armSetPos - 5;
+                armSetPos = armSetPos - 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ;
             }
 
 
@@ -113,7 +113,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
             //set arm power
             robot.motorArm.setTargetPosition(armSetPos);
-            robot.motorArm.setPower(0.2); // needs to be slow otherwise is jerky
+            robot.motorArm.setPower(0.4); // needs to be slow otherwise is jerky
 
 
             /* Intake, Gamepad 2

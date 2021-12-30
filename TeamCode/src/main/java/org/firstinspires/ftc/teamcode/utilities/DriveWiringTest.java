@@ -49,7 +49,7 @@ public class DriveWiringTest extends LinearOpMode {
         trackMotorAndEncoderTimeDelay(robot.motorFrontLeft, "frontLeft");
         trackMotorAndEncoderTimeDelay(robot.motorFrontRight, "frontRight");
         trackMotorAndEncoderTimeDelay(robot.motorBackRight, "backRight");
-        trackMotorAndEncoderTimeDelay(robot.motorFrontRight, "frontRight");
+        trackMotorAndEncoderTimeDelay(robot.motorBackLeft, "backLeft");
 
         sleep(5000);
 
