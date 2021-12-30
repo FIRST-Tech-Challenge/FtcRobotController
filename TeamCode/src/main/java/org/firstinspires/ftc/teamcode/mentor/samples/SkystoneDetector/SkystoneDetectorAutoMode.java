@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.mentor.samples.SkystoneDetector;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-
+@Disabled
 @Autonomous(name="Auto: SkyStone Detector")
 public class SkystoneDetectorAutoMode extends LinearOpMode {
     // Handle hardware stuff...

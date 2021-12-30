@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.mentor.samples.mecanum;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.external.libs.PIDController;
 
 import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
 
+@Disabled
 @Autonomous(name="Mentor-MecanumAutonomous", group="FreightFrenzy")
 public class MentorMecanumAutonomousVelocity extends LinearOpMode {
     //Add an ElapsedTime for function runtime calculations.
