@@ -34,7 +34,6 @@ public class FullTeleOpScript extends TeleOpScript {
         outputSpace = new OutputSpace(getOpMode().hardwareMap);
         gamepadManager = new GamepadManager(getOpMode().gamepad1, getOpMode().gamepad1, getOpMode().gamepad1, getOpMode().gamepad1, getOpMode().gamepad1, getOpMode().gamepad1);
         timeAsOfLastIntakeMovement = 0;
-        // TODO: MIKE LOOK AT THIS THESE ARE THE VALUES OF THE DISTANCE SENSOR OF THE INTAKE LIFTER AT ITS HIGHEST AND LOWEST POINTS ITS ALLOWED TO MOVE TO, YOU NEED TO SET THESE TO THE CORRECT ONES BECAUSE THEYRE PROBABLY WRONG
         intakeLowerPos = 10;
         intakeUpperPos = 30;
         intakeShouldBeDown = false;
