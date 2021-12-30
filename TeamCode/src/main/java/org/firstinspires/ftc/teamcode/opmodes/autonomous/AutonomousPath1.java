@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-@Disabled
 @Autonomous(name="AutonomousPath1", group="FTCLib")
 public class AutonomousPath1 extends CommandOpMode {
 

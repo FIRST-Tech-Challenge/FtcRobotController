@@ -46,10 +46,16 @@ public class BluePath1 {
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
                 .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(270))
+                .addDisplacementMarker(()-> {
+                    telemetry.addData("Path 1", "performing path 1 action");
+                })
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .strafeTo(new Vector2d(-60, 24))
+                .addDisplacementMarker(()->{
+                    telemetry.addData("Path 2", "performing path 2 action");
+                }) //step 6
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())

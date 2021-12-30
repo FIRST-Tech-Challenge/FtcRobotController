@@ -10,7 +10,6 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TurnCommand;
@@ -19,8 +18,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 
-@Autonomous(name="AutonomousPath2", group="FTCLib")
-public class AutonomousPath2 extends CommandOpMode {
+@Autonomous(name="AutonomousPath3", group="FTCLib")
+public class AutonomousPath3 extends CommandOpMode {
 
     private MecanumDriveSubsystem drive;
     private TrajectoryFollowerCommand sample1Follower1;
@@ -49,7 +48,7 @@ public class AutonomousPath2 extends CommandOpMode {
         telemetry.setAutoClear(false);
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), false);
-        startPose = new Pose2d(-36, 70, Math.toRadians(270));
+        startPose = new Pose2d(-36, 60, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         LEDSubsystem ledSubsystem = new LEDSubsystem(hardwareMap,"blinkin");
@@ -82,7 +81,7 @@ public class AutonomousPath2 extends CommandOpMode {
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
-                .splineToLinearHeading(new Pose2d(-75, 60, Math.toRadians(245)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(270))
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                     allianceColor.schedule();
