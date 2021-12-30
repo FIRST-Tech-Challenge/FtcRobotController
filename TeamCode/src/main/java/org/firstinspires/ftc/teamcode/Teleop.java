@@ -84,7 +84,6 @@ public abstract class Teleop extends LinearOpMode {
     boolean   rangeSensorPingPong = true;   // only send a new ping out every other control cycle
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
-    final float[] hsvValues = new float[3];
 
     /* Declare OpMode members. */
     HardwareBothHubs robot = new HardwareBothHubs();
@@ -100,10 +99,6 @@ public abstract class Teleop extends LinearOpMode {
 
         // Initialize robot hardware
         robot.init(hardwareMap,false);
-
-        // Need to adjust gain to where we want it, then set in init.
-        robot.freightFinder.setGain(2);
-        ((SwitchableLight)robot.freightFinder).enableLight(true);
 
         setAllianceSpecificBehavior();
 
@@ -209,18 +204,18 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
 
             // Testing Color and Distance sensor
-            NormalizedRGBA colors = robot.freightFinder.getNormalizedColors();
-            Color.colorToHSV(colors.toColor(), hsvValues);
+            robot.freightPresent();
+            robot.freightIsCube();
             telemetry.addLine()
-                    .addData("Red", "%.3f", colors.red)
-                    .addData("Green", "%.3f", colors.green)
-                    .addData("Blue", "%.3f", colors.blue);
+                    .addData("Red", "%.3f", robot.colors.red)
+                    .addData("Green", "%.3f", robot.colors.green)
+                    .addData("Blue", "%.3f", robot.colors.blue);
             telemetry.addLine()
-                    .addData("Hue", "%.3f", hsvValues[0])
-                    .addData("Saturation", "%.3f", hsvValues[1])
-                    .addData("Value", "%.3f", hsvValues[2]);
-            telemetry.addData("Alpha", "%.3f", colors.alpha);
-            telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) robot.freightFinder).getDistance(DistanceUnit.MM));
+                    .addData("Hue", "%.3f", robot.hsvValues[0])
+                    .addData("Saturation", "%.3f", robot.hsvValues[1])
+                    .addData("Value", "%.3f", robot.hsvValues[2]);
+            telemetry.addData("Alpha", "%.3f", robot.colors.alpha);
+            telemetry.addData("Distance (mm)", "%.3f", robot.distance);
 
             telemetry.update();
 

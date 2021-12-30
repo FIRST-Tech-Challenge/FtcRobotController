@@ -76,6 +76,7 @@ public class PipelineStageSwitchingExample extends LinearOpMode
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
+            @Override
             public void onError(int errorCode)
             {
                 /*

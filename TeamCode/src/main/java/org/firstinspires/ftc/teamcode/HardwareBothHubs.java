@@ -3,22 +3,26 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
+
+import android.graphics.Color;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
 
 import java.util.Arrays;
 
@@ -132,7 +136,11 @@ public class HardwareBothHubs
     private MaxSonarI2CXL sonarRangeB = null;
 //    public ColorSensor freightIdentifier = null;
 //    public DistanceSensor freightFinder = null;
-    public NormalizedColorSensor freightFinder = null;
+    private NormalizedColorSensor freightFinder = null;
+    private DistanceSensor freightDetector = null;
+    public final float[] hsvValues = new float[3];
+    public NormalizedRGBA colors;
+    public double distance;
 
 //  private DistanceSensor tofRangeL  = null;
 //  private DistanceSensor tofRangeR  = null;
@@ -279,8 +287,8 @@ public class HardwareBothHubs
         sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "front_ultrasonic" );
         sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "back_ultrasonic" );
         freightFinder = hwMap.get(NormalizedColorSensor.class, "freight_finder");
-//        freightFinder = hwMap.get( DistanceSensor.class, "freight_finder" );
-//        freightIdentifier = hwMap.get( ColorSensor.class, "freight_finder" );
+        freightDetector = (DistanceSensor)freightFinder;
+        freightFinder.setGain(2.0f);
 
         //Instantiate REV 2-meter Time-Of-Flight Distance Sensors
 //      tofRangeL   = hwMap.get( DistanceSensor.class, "ToF_distanceL" );
@@ -577,6 +585,16 @@ public class HardwareBothHubs
         return Math.sqrt( sum2 / (double)sonarRangeBSampCnt );
     } // stdevSonarRangeB
 
+    public boolean freightPresent() {
+        distance = freightDetector.getDistance(DistanceUnit.MM);
+        return distance < 75;
+    }
+
+    public boolean freightIsCube() {
+        colors = freightFinder.getNormalizedColors();
+        Color.colorToHSV(colors.toColor(), hsvValues);
+        return hsvValues[0] > 12;
+    }
     /***
      *
      * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
