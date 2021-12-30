@@ -15,10 +15,6 @@ import java.util.List;
 
 @Autonomous(name = "Red Autonomous Competition", group = "Competition")
 public class RedAutonomousCompetition extends MasterAutonomous {
-    private static final String TFOD_MODEL_ASSET = Constants.TENSORFLOW_MODEL_ASSET;
-    private static final String[] LABELS = Constants.TENSORFLOW_LABELS;
-    private static final String VUFORIA_KEY = Constants.VUFORIA_KEY;
-
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
@@ -158,7 +154,7 @@ public class RedAutonomousCompetition extends MasterAutonomous {
     private void initVuforia() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.vuforiaLicenseKey = Constants.VUFORIA_KEY;
         parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -171,6 +167,6 @@ public class RedAutonomousCompetition extends MasterAutonomous {
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);
     }
 }
