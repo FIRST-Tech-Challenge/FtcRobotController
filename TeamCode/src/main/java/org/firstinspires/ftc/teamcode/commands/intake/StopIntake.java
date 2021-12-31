@@ -30,8 +30,7 @@ public class StopIntake extends CommandBase {
 
     @Override
     public void initialize(){
-        telemetry.addData("Stopping intake in command", ZERO_POWER);
-        telemetry.update();
+        //telemetry.addData("Stopping intake in command", ZERO_POWER);
         intakeSubsytem.setPower(ZERO_POWER);
     }
 

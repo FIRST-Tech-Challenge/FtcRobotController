@@ -78,9 +78,11 @@ public class BluePath1 {
         CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
-        /* This triggers the command group error */
-        intakeGroupBlue1 = new SequentialCommandGroup(createIntake.getSeReleaser(), new WaitCommand(2000).andThen(createIntake.getStopIntake()));
-
+        intakeGroupBlue1 = new SequentialCommandGroup(
+                createIntake.getSeReleaser(),
+                new WaitCommand(800)
+                        .andThen(createIntake.getStopIntake())
+        );
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
@@ -146,9 +148,10 @@ public class BluePath1 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                intakeGroupBlue1
+                // intakeGroupBlue1
                 // carouselGroupBlue1
                 // sample1Follower1.andThen(carouselGroup,sample1Follower2,intakeGroup, sample1Follower3, sample1Follower4)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,intakeGroupBlue1)
         ));
     }
 }

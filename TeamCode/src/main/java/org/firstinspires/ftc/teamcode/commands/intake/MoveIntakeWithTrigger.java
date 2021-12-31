@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.intake;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeSubsystem;
@@ -16,7 +17,10 @@ public class MoveIntakeWithTrigger extends CommandBase {
 
     private boolean triggerStopped = false;
     private static final double ZERO_POWER = 0.0;
+    private static final double TIMEOUT = 800;
     private static final double TRIGGER_ACTIVE_THRESHOLD = 0.5;
+
+    private ElapsedTime intakeTimer = new ElapsedTime();;
 
     private Telemetry telemetry;
 
@@ -30,7 +34,7 @@ public class MoveIntakeWithTrigger extends CommandBase {
 
     public MoveIntakeWithTrigger(IntakeSubsystem subsystem, final double power, Telemetry telemetry){
 
-        telemetry.addData("make trigger:", power );
+        //telemetry.addData("make trigger:", power );
         //telemetry.update();
 
         intakeSubsytem = subsystem;
@@ -42,31 +46,24 @@ public class MoveIntakeWithTrigger extends CommandBase {
 
     @Override
     public void initialize(){
+        intakeTimer.reset();
         intakeSubsytem.setPower(triggerPower);
     }
 
-    @Override
-    public void execute(){
-
-
+    public void end(){
+        intakeSubsytem.setPower(ZERO_POWER);
     }
 
-   /* @Override
-    public void end(boolean interrupted) {
-        if (interrupted) {
-            intakeSubsytem.setPower(ZERO_POWER);
-        }
-    }
 
-    @Override
     public boolean isFinished(){
-        schedule(true);
-        telemetry.addData("trigger done", TRIGGER_ACTIVE_THRESHOLD );
-        telemetry.update();
-        return Thread.currentThread().isInterrupted() || triggerStopped;
-
-    }*/
-
+        /*
+        while(intakeTimer.milliseconds() < TIMEOUT){
+            telemetry.addData("intake complete", intakeTimer.milliseconds());
+            telemetry.update();
+        }
+         */
+        return intakeTimer.milliseconds() > TIMEOUT;
+    }
 
 
 }
