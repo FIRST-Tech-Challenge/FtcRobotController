@@ -86,7 +86,6 @@ public class Drive extends CommandBasedTeleOp
         telemetry.addData("Runtime", this::getRuntime);
         telemetry.addData("arm position", armSubsystem::getCurrentPosition);
         telemetry.addData("arm angle", armSubsystem::getAngle);
-        telemetry.addData("intake power", intakeSubsystem::getIntakePower);
         telemetry.update();
     }
 }

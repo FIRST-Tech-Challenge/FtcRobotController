@@ -28,11 +28,6 @@ public class ArmSubsystem extends SubsystemBase {
 
 		m_rightServo.setDirection(Servo.Direction.REVERSE);
 	}
-	public int getDirection() {
-		if(m_motor.getPower() > 0) return 1; // 1 == positive
-		else if(m_motor.getPower() < 0) return -1; // -1 == negative
-		else return  0;// 0 == neutral
-	}
 
 	public void setPower(double power) {
 		m_motor.setPower(power);
