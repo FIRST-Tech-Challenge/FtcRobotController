@@ -13,25 +13,25 @@ import com.qualcomm.robotcore.util.Range;
 public class TeleOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
-    private final ElapsedTime linearSlidePressDelay = new ElapsedTime();
-    private final ElapsedTime servoPressDelay = new ElapsedTime();
     private DcMotor leftDCFront = null;
     private DcMotor rightDCFront = null;
     private DcMotor leftDCBack = null;
     private DcMotor rightDCBack = null;
-    private DcMotor carouselDC = null;
+    private DcMotor carouselLeft = null;
+    private DcMotor carouselRight = null;
     private DcMotor intakeDC = null;
-    private DcMotor linearSlideDC = null;
+    private DcMotor armDC = null;
     private Servo releaseServo = null;
-    private Servo intakeServo = null;
-    private double carouselPower = 0.0;
-    private double linearSlidePower = 1.0;
-    private double linearSlidePos = 0.0;
+    private Servo balanceServo = null;
+    private double carouselLeftPower = 0.0;
+    private double carouselRightPower = 0.0;
+    private double armPos = 0;
+    private double armPower = 1.0;
     private double releaseServoPos = 0.0;
-    private double intakeServoPos = 0.0;
-    private boolean preset3 = false;
+    private double balanceServoPos = 0.0;
     private boolean isSlowmode = false;
     private double acc = 1.0;
+    private Mechanisms mechanisms = null;
 
     @Override
     public void init() {
@@ -41,11 +41,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         rightDCFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftDCBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightDCBack = hardwareMap.get(DcMotor.class, "rightBack");
-        carouselDC = hardwareMap.get(DcMotor.class, "carouselDC");
+        carouselLeft = hardwareMap.get(DcMotor.class, "carouselLeft");
+        carouselRight = hardwareMap.get(DcMotor.class,"carouselRight");
         intakeDC = hardwareMap.get(DcMotor.class, "intakeDC");
-        linearSlideDC = hardwareMap.get(DcMotor.class, "linearSlideDC");
+        armDC = hardwareMap.get(DcMotor.class, "armDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
-        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        balanceServo = hardwareMap.get(Servo.class, "balanceServo");
 
         //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
 
@@ -54,10 +55,11 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
         intakeDC.setDirection(DcMotor.Direction.REVERSE);
-        linearSlideDC.setDirection(DcMotor.Direction.FORWARD);
+        armDC.setDirection(DcMotor.Direction.FORWARD);
 
         releaseServoPos = releaseServo.MAX_POSITION;
-        intakeServoPos = intakeServo.MIN_POSITION;
+        balanceServoPos = balanceServo.MIN_POSITION;
+        mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo);
 
         telemetry.update();
     }
@@ -70,13 +72,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 
     @Override
     public void start() {
-        linearSlideDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlideDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         telemetry.addData("Status", "Started");
         telemetry.update();
         runtime.reset(); //Reset runtime
-        linearSlidePressDelay.reset();
-        servoPressDelay.reset();
     }
 
     @Override
@@ -106,51 +107,40 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         //INTAKE
         double intakePower = 0.0;
         if(gamepad2.right_trigger > 0) intakePower = gamepad2.right_trigger;
-        if(gamepad1.right_trigger >0) intakePower = gamepad1.right_trigger;
+        if(gamepad1.right_trigger > 0) intakePower = gamepad1.right_trigger;
         if(gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
         //CAROUSEL
-        if(gamepad1.x || gamepad2.x) carouselPower = -0.5;
-        else if(gamepad1.a || gamepad2.a) carouselPower = 0.5;
-        else carouselPower = 0.0;
-        //LINEAR SLIDE
-        if(gamepad1.left_trigger > 0) linearSlidePos += gamepad1.left_trigger*5;
-        else if(gamepad2.left_trigger > 0) linearSlidePos += gamepad2.left_trigger*5;
-        if(gamepad1.left_bumper || gamepad2.left_bumper) {
-           if(linearSlidePressDelay.milliseconds() <= 10) linearSlidePos = 0.0;
-           else linearSlidePos = Range.clip(linearSlidePos - 10, 0.0, linearSlidePos - 5);
-           linearSlidePressDelay.reset();
-        }
-
+        if(gamepad1.dpad_right || gamepad2.dpad_right) carouselLeftPower = 0.5;
+        else carouselLeftPower = 0.0;
+        if(gamepad1.dpad_left || gamepad2.dpad_left) carouselRightPower = 0.5;
+        else carouselRightPower = 0.0;
+        //ARM
+        if(gamepad1.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*2,0,300);
+        else if(gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*2,0,300);
+        if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-15,0,300);
 
 //SERVOS
-        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos+0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
-        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos-0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
-        if(gamepad1.dpad_left || gamepad2.dpad_left) intakeServoPos = intakeServo.MIN_POSITION;
-        else if(gamepad1.dpad_right || gamepad2.dpad_right) intakeServoPos = Range.clip(intakeServoPos + 0.01,intakeServo.MIN_POSITION,intakeServo.MAX_POSITION);
-        if(gamepad1.b || gamepad2.b) preset3 = !preset3;
-        if(preset3) {
-            linearSlidePos = 600;
-            releaseServoPos = releaseServo.MIN_POSITION;
-        }
+        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
+        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
 
 //MOTOR SET POWER
         leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
         rightDCFront.setPower(rightFrontSpeed);
         leftDCBack.setPower(leftBackSpeed);
         rightDCBack.setPower(rightBackSpeed);
-        carouselDC.setPower(carouselPower);
+        carouselLeft.setPower(carouselLeftPower);
         intakeDC.setPower(intakePower);
-        linearSlideDC.setTargetPosition((int) linearSlidePos);
-        linearSlideDC.setPower(linearSlidePower);
-        linearSlideDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armDC.setTargetPosition((int) armPos);
+        armDC.setPower(armPower);
         releaseServo.setPosition(releaseServoPos);
-        intakeServo.setPosition(intakeServoPos);
+        mechanisms.maintainBalance(); //TODO: SEE IF THIS ACTUALLY WORKS
 //TELEMETRY
         telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
-        telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), carouselDC(%.2f), intakeDC(%.2f), linearSlideDC(%.2f), releaseServo(%.2f)",
-                leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed, carouselPower, intakePower, linearSlidePos, releaseServoPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
+        telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), carouselLeft(%.2f), carouselRight(%.2f), intakeDC(%.2f), armDC(%.2f)",
+                leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed, carouselLeftPower, carouselRightPower, intakePower, armPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
         //(%.2f) is used here so that the displayed motor speeds aren't excessively long and don't cldfasdfasdtter(andy's one contribution) the screen.
+        telemetry.addData("Servos","releaseServoPos(%.2f), balanceServoPos(%.2f)",releaseServoPos, balanceServoPos);
         telemetry.update(); //Updates the telemetry
     }
 

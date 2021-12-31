@@ -24,6 +24,7 @@ import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
 
 public class RoadrunnerTest extends LinearOpMode {
 
+    private ElapsedTime timeout = new ElapsedTime();
     private tsePipeline pipeline = new tsePipeline(telemetry); //Team shipping element OpenCV Pipeline
     private DcMotor armDC = null;
     private DcMotor carouselLeft = null;
@@ -36,12 +37,12 @@ public class RoadrunnerTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        armDC = hardwareMap.get(DcMotor.class, "linearSlideDC");
+        armDC = hardwareMap.get(DcMotor.class, "armDC");
         carouselLeft = hardwareMap.get(DcMotor.class, "carouselLeft");
         carouselRight = hardwareMap.get(DcMotor.class,"carouselRight");
         intakeDC = hardwareMap.get(DcMotor.class,"intakeDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
-        balanceServo = hardwareMap.get(Servo.class, "intakeServo");
+        balanceServo = hardwareMap.get(Servo.class, "balanceServo");
 
         mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo);
 
@@ -68,11 +69,22 @@ public class RoadrunnerTest extends LinearOpMode {
             }
         });
 
-        TrajectorySequence testTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(90)))
-                .lineToSplineHeading(new Pose2d(7,-24,0))
-                .lineTo(new Vector2d(12,-64)).strafeTo(new Vector2d(47,-64))
-                .strafeTo(new Vector2d(15,-64)).lineToSplineHeading(new Pose2d(-11.5,-41,Math.toRadians(-90)))
-                .lineToSplineHeading(new Pose2d(12,-64,0)).strafeTo(new Vector2d(45,-64))
+        TrajectorySequence mainSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(90)))
+                .addTemporalMarker(8000,() -> { mechanisms.moveIntake(1.0); })
+                .lineToSplineHeading(new Pose2d(8,-24,0))
+                .addDisplacementMarker(() -> {
+                    timeout.reset();
+                    mechanisms.rotateArm(1400,0.5);
+                    while(mechanisms.armDC.getCurrentPosition() <= 1400 || timeout.milliseconds() <= 3000) {
+                        mechanisms.maintainBalance();
+                    }
+                }).waitSeconds(1.5)
+                .addDisplacementMarker(() -> { mechanisms.releaseServoMove(0.6); }).waitSeconds(1)
+                .addDisplacementMarker(() -> { mechanisms.reset(); }).splineTo(new Vector2d(10, -55), Math.toRadians(270))
+                .splineTo(new Vector2d(36, -64),0).strafeTo(new Vector2d(47, -64)).waitSeconds(3)
+                .addDisplacementMarker(() -> { mechanisms.reset(); }).strafeTo(new Vector2d(15,-64))
+                .lineToSplineHeading(new Pose2d(-11.5,-41,Math.toRadians(-90))).waitSeconds(3)
+                .splineTo(new Vector2d(45,-64),0).waitSeconds(5)
                 .build();
 
         while(!opModeIsActive()) {
@@ -104,7 +116,7 @@ public class RoadrunnerTest extends LinearOpMode {
             }
         }
 
-        chassis.followTrajectorySequence(testTrajectory);
+        chassis.followTrajectorySequence(mainSequence);
 
     }
 }

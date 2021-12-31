@@ -2,9 +2,10 @@ package org.firstinspires.ftc.Team19567;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 public class Mechanisms {
-    private DcMotor armDC = null;
+    public DcMotor armDC = null;
     private DcMotor carouselLeft = null;
     private DcMotor carouselRight = null;
     private DcMotor intakeDC = null;
@@ -24,7 +25,7 @@ public class Mechanisms {
         armDC.setTargetPosition(pos);
     }
     public void maintainBalance() {
-        balanceServo.setPosition(armDC.getCurrentPosition()/1000);
+        balanceServo.setPosition(Range.clip(armDC.getCurrentPosition()/500,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
     }
     public void rotateCarousel(double speed, boolean left) {
         if(left) carouselLeft.setPower(speed);
@@ -35,5 +36,14 @@ public class Mechanisms {
     }
     public void releaseServoMove(double pos) {
         releaseServo.setPosition(pos);
+    }
+
+    public void reset() {
+        releaseServo.setPosition(0);
+        carouselLeft.setPower(0);
+        carouselRight.setPower(0);
+        intakeDC.setPower(0);
+        armDC.setTargetPosition(0);
+        balanceServo.setPosition(0);
     }
 }
