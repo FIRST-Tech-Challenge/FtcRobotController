@@ -14,7 +14,7 @@ public class JevilsBlueCarousel extends LinearOpMode {
         // Here Wayne will do stuff eventually
         robot = new RobotClass(hardwareMap, telemetry, this);
         robot.openCVInnitShenanigans();
-        FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         freightLocation = robot.analyze();
         waitForStart();
 
@@ -28,18 +28,18 @@ public class JevilsBlueCarousel extends LinearOpMode {
             telemetry.addData("Position", freightLocation);
             telemetry.update();
         }
-        if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+        if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
 
         }
         robot.forward(0.4, 1.6);
         robot.turnToHeadingSloppy(.4,45,15);
         robot.forward(.3,.7);
 
-        if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
+        if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
             robot.dumpFreightBottom();
-        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+        } else if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
             robot.dumpFreightMiddle();
-        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
+        } else if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
             robot.dumpFreightTop();
         }
 

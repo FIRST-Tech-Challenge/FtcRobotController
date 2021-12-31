@@ -2,7 +2,6 @@ package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.Date;
 
@@ -21,7 +20,7 @@ public class linearSlideBarCodeTestThing extends LinearOpMode {
 
         robot = new RobotClass(hardwareMap, telemetry, this);
         robot.openCVInnitShenanigans();
-        FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
 
         waitForStart();
 
@@ -39,11 +38,11 @@ public class linearSlideBarCodeTestThing extends LinearOpMode {
         robot.turnToHeadingSloppy(.6,-45,-20);
         robot.forward(.3,.8);
 
-        if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
+        if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
             robot.dumpFreightBottom();
-        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+        } else if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
             robot.dumpFreightMiddle();
-        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
+        } else if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
             robot.dumpFreightTop();
         }
     }
