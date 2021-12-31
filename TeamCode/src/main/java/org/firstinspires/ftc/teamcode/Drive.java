@@ -69,8 +69,12 @@ public class Drive extends CommandBasedTeleOp
 
         // Telemetry
         // No need for anything but update in loop because use of suppliers
+
+        gp1.left_bumper().whenPressed(() -> armSubsystem.setVerticalPosition(armSubsystem.getVerticalPosition() + 0.1), armSubsystem);
+        gp1.right_bumper().whenPressed(() -> armSubsystem.setVerticalPosition(armSubsystem.getVerticalPosition() - 0.1), armSubsystem);
+
         telemetry.addData("Runtime", this::getRuntime);
-        telemetry.addData("arm power", armSubsystem::getPower);
+        telemetry.addData("arm vertical position", armSubsystem::getVerticalPosition);
         telemetry.update();
     }
 }
