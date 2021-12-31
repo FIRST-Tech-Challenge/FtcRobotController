@@ -149,8 +149,8 @@ public class InitialMecanumTeleOp extends LinearOpMode {
             } else if(!gamepad2.y) carouselOn = false;
 
             if(gamepad2.a) {
-                if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
-                else
+//                if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
+//                else
                     intakeMotor.setPower(-.8);
                 intakeOn = true;
             } else if (gamepad2.b) {

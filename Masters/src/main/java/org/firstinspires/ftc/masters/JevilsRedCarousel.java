@@ -53,7 +53,7 @@ public class JevilsRedCarousel extends LinearOpMode {
         robot.forward(0.3, -1.5);
 
         robot.strafeRight(0.3, 0.5);
-        robot.parkRed();
+//        robot.parkRed();
 
     }
 }
