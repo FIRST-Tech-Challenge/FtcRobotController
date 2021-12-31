@@ -19,9 +19,9 @@ public class AutoStorage extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
-
-        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(new Pose2d(-40, multiplier * 70 - inchesToCoordinate(9),
-                Math.toRadians(90 + directionAdder)));
+        final Pose2d start = new Pose2d(-40, multiplier * 70 - inchesToCoordinate(9), Math.toRadians(90 + directionAdder));
+        drive.setPoseEstimate(start);
+        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(start);
 
         builder.waitSeconds(0.1);
         // 9.35 seconds long
