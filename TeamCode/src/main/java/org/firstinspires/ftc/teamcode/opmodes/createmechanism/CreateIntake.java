@@ -60,6 +60,8 @@ public class CreateIntake {
 
     public void create(){
         telemetry.addData("create intake","creating");
+        telemetry.update();
+
         intake = new IntakeSubsystem(hwMap,deviceName);
 
 
@@ -78,7 +80,9 @@ public class CreateIntake {
     }
 
     public void createAuto(){
-        telemetry.addData("create intake","creating");
+        telemetry.addData("create intake","creating auto");
+        telemetry.update();
+
         intake = new IntakeSubsystem(hwMap,deviceName);
 
         seGrabber = createMoveIntake(RIGHT_TRIGGER_POWER);
@@ -96,6 +100,9 @@ public class CreateIntake {
     }
 
     private StopIntake createStopIntake(){
+        telemetry.addData("create intake","create stop");
+        telemetry.update();
+
         return new StopIntake(intake, telemetry);
     }
 
@@ -108,6 +115,9 @@ public class CreateIntake {
     }
 
     public StopIntake getStopIntake(){
+
+        //telemetry.addData("create intake","get stop");
+        //telemetry.update();
         return stopIntake;
     }
 }
