@@ -41,12 +41,13 @@ public class BluePath1 {
     public void createPath(){
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
         createCarousel.createAuto();
-        carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
-                new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
+        //carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
+                //new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
+        carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition());
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
-                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(225)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                 })
@@ -54,7 +55,7 @@ public class BluePath1 {
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeTo(new Vector2d(-60, 24))
+                .strafeTo(new Vector2d(-60, 22))
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 2", "performing path 2 action");
                 }) //step 6
@@ -63,14 +64,14 @@ public class BluePath1 {
         //turnCommand2 = new TurnCommand(drive, Math.toRadians(135));
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .splineToLinearHeading(new Pose2d(-26, 24, Math.toRadians(0)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-40, 22, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         //turnCommand3 = new TurnCommand(drive, Math.toRadians(90));
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .splineToLinearHeading(new Pose2d(-60, 36)
-                        , Math.toRadians(270)),Math+-*/.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-60, 33
+                        , Math.toRadians(270)),Math.toRadians(90))
                 .build();
 
         /*Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
@@ -93,7 +94,7 @@ public class BluePath1 {
 
 
         Trajectory traj6 = drive.trajectoryBuilder(new Pose2d())
-                .back(45)-
+                .back(45)
                 .build();*/
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
@@ -106,7 +107,7 @@ public class BluePath1 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(sample1Follower2, sample1Follower3, sample1Follower4)
+                sample1Follower1.andThen(carouselGroup,sample1Follower2, sample1Follower3, sample1Follower4)
         ));
     }
 }

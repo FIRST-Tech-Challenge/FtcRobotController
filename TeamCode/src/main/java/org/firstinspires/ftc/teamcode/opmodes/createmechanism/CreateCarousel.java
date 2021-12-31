@@ -76,7 +76,6 @@ public class CreateCarousel {
         Button carouselRight = new GamepadButton(op, GamepadKeys.Button.RIGHT_BUMPER);
         Button carouselLeft = new GamepadButton(op, GamepadKeys.Button.LEFT_BUMPER);
 
-
         carouselRight.whileHeld(moveCarouselRight);
         carouselLeft.whileHeld(moveCarouselLeft);
         carousel.setDefaultCommand(new PerpetualCommand(stopCarousel));
@@ -97,13 +96,19 @@ public class CreateCarousel {
 
     private MoveCarouselToPosition createMoveCarouselToPostion(){
 
+        telemetry.addLine("MoveCarouselToPosition");
+        telemetry.update();
         int maxEncoderCount = MAX_ENCODER_COUNT;
-        if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
-            maxEncoderCount = MAX_ENCODER_COUNT;
-        }
-        else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED)
+        if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED)
         {
             maxEncoderCount = -MAX_ENCODER_COUNT;
+            telemetry.addLine("redCarousel");
+            telemetry.update();
+        }
+        else{
+            maxEncoderCount = MAX_ENCODER_COUNT;
+            telemetry.addLine("blueCarousel");
+            telemetry.update();
         }
         return new MoveCarouselToPosition(carousel,maxEncoderCount,MOVE_AUTO_POWER);
     }
