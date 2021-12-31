@@ -62,13 +62,13 @@ public class Crane implements Subsystem {
     public enum Articulation {
         INIT(0, 0, 0, 0, 5,0),
         MANUAL(0, 0, 0, 0, 0,0),
-        STARTING(-90,0,70,0, 1.5f,0),
+        SIZING(-90,0,70,0, 1.5f,0),
         HOME(0,0,0,0, 0,0),
         LOWEST_TIER(75,130,20,0, 1.5f, 130),
         MIDDLE_TIER(60,130,40,0, 1, 150),
         HIGH_TIER(40, 130,70,0, 1, 170),
         CAP(30, 140,0,0, 1, 170),
-        TRANSFER(-20,-40,-70,0, 2,0),
+        TRANSFER(-70,-60,-35,0, 2,0),
         //these articulations are meant to observe the motions and angles to check for belt skips
         VALIDATE_ELBOW90(0,90,90,0, .5f,0),
         VALIDATE_SHOULDER90(90,15,-90+15,0, .5f,0),

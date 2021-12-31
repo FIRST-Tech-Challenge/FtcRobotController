@@ -160,7 +160,7 @@ public class FF_6832 extends OpMode {
 
         dashboard = FtcDashboard.getInstance();
 
-        robot.articulate(Robot.Articulation.INIT);
+        robot.articulate(Robot.Articulation.SELFTEST);
     }
 
     private void handleStateSwitch() {
@@ -203,6 +203,13 @@ public class FF_6832 extends OpMode {
     }
 
     private void handlePregameControls() {
+        if (active) {
+            if (stickyGamepad1.left_bumper)
+                robot.articulate(Robot.Articulation.SELFTEST);
+            if (stickyGamepad1.right_bumper)
+                robot.articulate(Robot.Articulation.LEGALSTARTPOS);
+        }
+
         if(stickyGamepad1.x)
             alliance = Constants.Alliance.BLUE;
         if(stickyGamepad1.b)
@@ -227,12 +234,13 @@ public class FF_6832 extends OpMode {
         update();
     }
 
+    //Code that runs ONCE after the driver hits PLAY
     @Override
     public void start() {
         lastLoopClockTime = System.nanoTime();
         initializing = false;
-        if(gameState.equals(GameState.AUTONOMOUS) || gameState.equals(GameState.TELE_OP))
-            robot.articulate(Robot.Articulation.START);
+        //if(gameState.equals(GameState.AUTONOMOUS) || gameState.equals(GameState.TELE_OP))
+            //robot.articulate(Robot.Articulation.START);
 //        auto.visionProvider.shutdownVision();
     }
 
@@ -272,8 +280,14 @@ public class FF_6832 extends OpMode {
         if(UtilMethods.notDeadZone(gamepad1.left_trigger, TRIGGER_DEADZONE_THRESHOLD))
             robot.gripper.actuateGripper(true);
 
+        if (stickyGamepad1.x)
+            robot.gripper.Set();
+
         if(stickyGamepad1.b)
-            robot.gripper.toggleGripper();
+            robot.gripper.Lift();
+
+        if (stickyGamepad1.y)
+            robot.articulate(Robot.Articulation.TRANSFER);
 
         if(stickyGamepad1.a)
             robot.driveTrain.handleDuckSpinnerToggle(alliance.getMod());
@@ -385,10 +399,10 @@ public class FF_6832 extends OpMode {
                 robot.crane.turret.setTargetAngle(robot.crane.turret.getTargetAngle() - gamepad1.right_stick_y);
                 break;
             case GRIPPER_SERVO:
-                handleDiagnosticServoControls(robot.gripper::getTargetPos, robot.gripper::setTargetPos);
+                handleDiagnosticServoControls(robot.gripper::getTargetPos, robot.gripper::setTargetPosDiag);
                 break;
             case GRIPPER_PITCH_SERVO:
-                handleDiagnosticServoControls(robot.gripper::getPitchTargetPos, robot.gripper::setPitchTargetPos);
+                handleDiagnosticServoControls(robot.gripper::getPitchTargetPos, robot.gripper::setPitchTargetPosDiag);
                 break;
             case DUCK_SPINNER:
                 robot.driveTrain.duckSpinner.setPower(-gamepad1.right_stick_y);
@@ -396,6 +410,7 @@ public class FF_6832 extends OpMode {
         }
     }
 
+    //Main loop that repeats after hitting PLAY
     @Override
     public void loop() {
         handleStateSwitch();

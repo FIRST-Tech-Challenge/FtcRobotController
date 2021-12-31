@@ -49,8 +49,8 @@ public class Robot implements Subsystem {
         articulation = Articulation.MANUAL;
 
         articulationMap = new HashMap<>();
-        articulationMap.put(Articulation.INIT, init);
-        articulationMap.put(Articulation.START, start);
+        articulationMap.put(Articulation.SELFTEST, selftest);
+        articulationMap.put(Articulation.LEGALSTARTPOS, startpos);
         articulationMap.put(Articulation.DIAGNOSTIC, diagnostic);
         articulationMap.put(Articulation.TRANSFER, transfer);
     }
@@ -147,8 +147,8 @@ public class Robot implements Subsystem {
         MANUAL,
 
         // misc. articulations
-        INIT,
-        START,
+        SELFTEST,
+        LEGALSTARTPOS,
         DIAGNOSTIC,
 
         // tele-op articulations
@@ -156,21 +156,18 @@ public class Robot implements Subsystem {
     }
 
     // Misc. Articulations
-    private Stage initStage = new Stage();
-    private StateMachine init = UtilMethods.getStateMachine(initStage)
-            .addSingleState(() -> gripper.setPitchTargetPos(Gripper.PITCH_INIT))
+    private Stage selfTest = new Stage();
+    private StateMachine selftest = UtilMethods.getStateMachine(selfTest)
+            .addSingleState(() -> gripper.Set())
             .addState(() -> crane.articulate(Crane.Articulation.INIT))
             .build();
 
-    private Stage startStage = new Stage();
-    private StateMachine start = UtilMethods.getStateMachine(startStage)
-            .addTimedState(1f, () -> {
-                gripper.pitchGripper(true);
-                gripper.actuateGripper(true);
-            }, () -> {})
-            .addTimedState(0.5f, () -> gripper.actuateGripper(false), () -> {})
-            .addTimedState(.75f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
-            .addState(() -> crane.articulate(Crane.Articulation.HOME))
+    private Stage legalStartPos = new Stage();
+    private StateMachine startpos = UtilMethods.getStateMachine(legalStartPos)
+            //todo - move deploy duckspinner to end of auton:
+            // .addTimedState(.75f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
+            .addState(() -> crane.articulate(Crane.Articulation.SIZING)) //fold the crane
+            .addSingleState(()-> gripper.Lift()) //lift the gripper to vertical
 //            .addSingleState(() -> driveTrain.setTargetChassisDistance(DEFAULT_TARGET_DISTANCE))
             .addSingleState(() -> driveTrain.setMaintainChassisDistanceEnabled(false)) //todo-make this false when ready to fix maintainChassisDistance
             .build();
@@ -226,14 +223,9 @@ public class Robot implements Subsystem {
     private Stage transferStage = new Stage();
     private StateMachine transfer = UtilMethods.getStateMachine(transferStage)
             .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
-            .addTimedState(1, () -> {
-                gripper.pitchGripper(true);
-                gripper.toggleGripper();
-            }, () -> {
-                gripper.actuateGripper(false);
-                gripper.pitchGripper(false);
-            })
-            .addTimedState(1, () -> {}, () -> {})
+            //todo test whether the crane is in the right position
+            //with some kind of sensor - at least check chassis length
+            .addState(()-> gripper.articulate(Gripper.Articulation.TRANSFER))
             .build();
 
     public boolean articulate(Articulation articulation) {
