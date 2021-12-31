@@ -21,10 +21,12 @@ public class AutoStorage extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         AutoCarousel carousel = new AutoCarousel(hardwareMap);
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
+        final Pose2d initial = new Pose2d(-40, multiplier * (70 - inchesToCoordinate(9)),
+                Math.toRadians(90 * multiplier));
 
-        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(new Pose2d(-40, multiplier * (70 - inchesToCoordinate(9)),
-                Math.toRadians(90 * multiplier)));
+        SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
+        drive.setPoseEstimate(initial);
+        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(initial);
 
         builder.waitSeconds(0.1);
         // 9.35 seconds long
