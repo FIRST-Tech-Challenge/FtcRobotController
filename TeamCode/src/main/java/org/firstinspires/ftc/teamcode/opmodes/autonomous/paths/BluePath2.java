@@ -17,12 +17,12 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSu
 public class BluePath2 {
 
     private MecanumDriveSubsystem drive;
-    private TrajectoryFollowerCommand sample1Follower1;
-    private TrajectoryFollowerCommand sample1Follower2;
-    private TrajectoryFollowerCommand sample1Follower3;
-    private TrajectoryFollowerCommand sample1Follower4;
-    private TrajectoryFollowerCommand sample1Follower5;
-    private TrajectoryFollowerCommand sample1Follower6;
+    private TrajectoryFollowerCommand blue2Follower1;
+    private TrajectoryFollowerCommand blue2Follower2;
+    private TrajectoryFollowerCommand blue2Follower3;
+    private TrajectoryFollowerCommand blue2Follower4;
+    private TrajectoryFollowerCommand blue2Follower5;
+    private TrajectoryFollowerCommand blue2Follower6;
 
     SequentialCommandGroup carouselGroup;
 
@@ -35,6 +35,7 @@ public class BluePath2 {
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
         startPose = new Pose2d(-36, 60, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
     }
 
     public void createPath(){
@@ -78,18 +79,18 @@ public class BluePath2 {
                 .back(45)
                 .build();*/
 
-        sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
-        sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
-        //sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
-        //sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-        //sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
-        //sample1Follower6 = new TrajectoryFollowerCommand(drive,traj6);
+        blue2Follower1 = new TrajectoryFollowerCommand(drive,traj1);
+        blue2Follower2 = new TrajectoryFollowerCommand(drive,traj2);
+        //blue2Follower3 = new TrajectoryFollowerCommand(drive,traj3);
+        //blue2Follower4 = new TrajectoryFollowerCommand(drive,traj4);
+        //blue2Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+        //blue2Follower6 = new TrajectoryFollowerCommand(drive,traj6);
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroup,
-                        sample1Follower2)
+                blue2Follower1.andThen(carouselGroup,
+                        blue2Follower2)
         ));
     }
 }

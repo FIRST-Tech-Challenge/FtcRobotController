@@ -10,7 +10,6 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TurnCommand;
@@ -19,8 +18,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 
-@Autonomous(name="AutonomousPath2", group="FTCLib")
-public class AutonomousPath2 extends CommandOpMode {
+@Autonomous(name="AutonomousPath3", group="FTCLib")
+public class AutonomousPath3 extends CommandOpMode {
 
     private MecanumDriveSubsystem drive;
     private TrajectoryFollowerCommand sample1Follower1;
@@ -82,7 +81,7 @@ public class AutonomousPath2 extends CommandOpMode {
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
-                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(225)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(270))
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                     allianceColor.schedule();
@@ -100,14 +99,13 @@ public class AutonomousPath2 extends CommandOpMode {
         //turnCommand2 = new TurnCommand(drive, Math.toRadians(135));
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .splineToLinearHeading(new Pose2d(-26, 24, Math.toRadians(0)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-32, 24, Math.toRadians(0)),Math.toRadians(270))
                 .build();
 
         //turnCommand3 = new TurnCommand(drive, Math.toRadians(90));
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .splineToLinearHeading(new Pose2d(-60, 36
-                        , Math.toRadians(270)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(270)),Math.toRadians(270))
                 .build();
 
         //turnCommand4 = new TurnCommand(drive, 90);

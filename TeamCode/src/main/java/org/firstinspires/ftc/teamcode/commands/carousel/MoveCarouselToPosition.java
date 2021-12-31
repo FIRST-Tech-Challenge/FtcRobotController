@@ -36,8 +36,11 @@ public class MoveCarouselToPosition extends CommandBase {
     @Override
     public void initialize(){
         carouselSubsytem.resetAndSetCarouselTargetPosition(postion,power);
-    }
 
+        // telemetry.addData("MoveToCarouselPosition Initialize", carouselSubsytem.getCarouselCurrentPosition());
+        //telemetry.update();
+    }
+    
     @Override
     public boolean isFinished(){
 
