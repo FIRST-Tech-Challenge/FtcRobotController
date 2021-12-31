@@ -13,7 +13,7 @@ public class PileOfBlueStuff extends LinearOpMode {
     public void runOpMode() {
         robot = new RobotClass(hardwareMap,telemetry,this);
         robot.openCVInnitShenanigans();
-        FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         freightLocation = robot.analyze();
         waitForStart();
         // Read the bar code with open CV
@@ -35,11 +35,11 @@ public class PileOfBlueStuff extends LinearOpMode {
         robot.turnToHeadingSloppy(.4,-35,0);
         robot.forward(0.3, .4);
         robot.pauseButInSecondsForThePlebeians(.5);
-        if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
+        if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.LEFT) {
             robot.dumpFreightBottom();
-        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
+        } else if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.MIDDLE) {
             robot.dumpFreightMiddle();
-        } else if (freightLocation == FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
+        } else if (freightLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition.RIGHT) {
             robot.dumpFreightTop();
         }
         robot.turnToHeadingSloppy(.4, -87, 0);

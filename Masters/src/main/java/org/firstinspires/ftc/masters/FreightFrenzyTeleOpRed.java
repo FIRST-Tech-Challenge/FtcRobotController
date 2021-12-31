@@ -120,10 +120,10 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
-            double leftFrontPower = y + x - rx;
-            double leftRearPower = y - x - rx;
-            double rightFrontPower = y - x + rx;
-            double rightRearPower = y + x + rx;
+            double leftFrontPower = y + x + rx;
+            double leftRearPower = y - x + rx;
+            double rightFrontPower = y - x - rx;
+            double rightRearPower = y + x - rx;
 
             if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 

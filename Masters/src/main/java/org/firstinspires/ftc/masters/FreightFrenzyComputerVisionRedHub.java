@@ -21,8 +21,6 @@
 
 package org.firstinspires.ftc.masters;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -40,11 +38,11 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
-public class FreightFrenzyComputerVision{
+public class FreightFrenzyComputerVisionRedHub {
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
 
-    public FreightFrenzyComputerVision (HardwareMap hardwareMap, Telemetry telemetry){
+    public FreightFrenzyComputerVisionRedHub(HardwareMap hardwareMap, Telemetry telemetry){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
         pipeline = new SkystoneDeterminationPipeline(telemetry);
@@ -128,9 +126,9 @@ public class FreightFrenzyComputerVision{
         static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(312, 210);
         static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(607, 210);
 
-        static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1,33);
-        static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(295,33);
-        static final Point REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(345,33);
+        static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1,73);
+        static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(295,73);
+        static final Point REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(345,73);
 
 
         static final int REGION_WIDTH = 30;
@@ -194,17 +192,20 @@ public class FreightFrenzyComputerVision{
         Mat LAB = new Mat();
 
         Mat A = new Mat();
+
         int avg1 = 0;
         int avg2 = 0;
         int avg3 = 0;
+
+
 
         Mat hub_region_left_A;
         Mat hub_region_center_A;
         Mat hub_region_right_A;
 
-        int hub_avg_left = 0;
-        int hub_avg_center = 0;
-        int hub_avg_right = 0;
+        int hub_avg_left_A = 0;
+        int hub_avg_center_A = 0;
+        int hub_avg_right_A = 0;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile FreightPosition position = FreightPosition.LEFT;
@@ -215,15 +216,15 @@ public class FreightFrenzyComputerVision{
          * This function takes the RGB frame, converts to LAB,
          * and extracts the A channel to the 'A' variable*/
 
-        void inputToLAB_A(Mat input) {
-
+        void extractLABChannel(Mat input) {
+//            "A" channel for detecting red and green by default
             Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
             Core.extractChannel(LAB, A, 1);
         }
 
         @Override
         public void init(Mat firstFrame) {
-            inputToLAB_A(firstFrame);
+            extractLABChannel(firstFrame);
 
             region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
             region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
@@ -232,11 +233,12 @@ public class FreightFrenzyComputerVision{
             hub_region_left_A = A.submat(new Rect(region_hub_left_pointA, region_hub_left_pointB));
             hub_region_center_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
             hub_region_right_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+
         }
 
         @Override
         public Mat processFrame(Mat input) {
-            inputToLAB_A(input);
+            extractLABChannel(input);
             region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
             region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
             region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
@@ -245,13 +247,14 @@ public class FreightFrenzyComputerVision{
             avg2 = (int) Core.mean(region2_A).val[0];
             avg3 = (int) Core.mean(region3_A).val[0];
 
-            region1_A = A.submat(new Rect(region_hub_left_pointA, region_hub_right_pointB));
-            region2_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
-            region3_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+            hub_region_left_A = A.submat(new Rect(region_hub_left_pointA, region_hub_right_pointB));
+            hub_region_center_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
+            hub_region_right_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
 
-            hub_avg_left = (int) Core.mean(hub_region_left_A).val[0];
-            hub_avg_center = (int) Core.mean(hub_region_center_A).val[0];
-            hub_avg_right = (int) Core.mean(hub_region_right_A).val[0];
+            hub_avg_left_A = (int) Core.mean(hub_region_left_A).val[0];
+            hub_avg_center_A = (int) Core.mean(hub_region_center_A).val[0];
+            hub_avg_right_A = (int) Core.mean(hub_region_right_A).val[0];
+
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
@@ -310,16 +313,16 @@ public class FreightFrenzyComputerVision{
             telemetry.addData("Analysis3", avg3);
             telemetry.addData("Position", position);
 
-            if (hub_avg_left >= HUB_PRESENT_THRESHOLD) {
+            if (hub_avg_left_A >= HUB_PRESENT_THRESHOLD) {
                 hub_position = HubPosition.LEFT;
-            } else if (hub_avg_center >= HUB_PRESENT_THRESHOLD) {
+            } else if (hub_avg_center_A >= HUB_PRESENT_THRESHOLD) {
                 hub_position = HubPosition.CENTER;
             } else {
                 hub_position = HubPosition.RIGHT;
             }
-            telemetry.addData("Analysis of Hub Left", hub_avg_left);
-            telemetry.addData("Analysis2 of Hub Center", hub_avg_center);
-            telemetry.addData("Analysis3 of Hub Right", hub_avg_right);
+            telemetry.addData("Analysis of Hub Left", hub_avg_left_A);
+            telemetry.addData("Analysis2 of Hub Center", hub_avg_center_A);
+            telemetry.addData("Analysis3 of Hub Right", hub_avg_right_A);
             telemetry.addData("Position", hub_position);
 
 
@@ -342,15 +345,15 @@ public class FreightFrenzyComputerVision{
         }
 
         public int getAnalysisHubLeft() {
-            return hub_avg_left;
+            return hub_avg_left_A;
         }
 
         public int getAnalysisHubCenter() {
-            return hub_avg_center;
+            return hub_avg_center_A;
         }
 
         public int getAnalysisHubRight() {
-            return hub_avg_right;
+            return hub_avg_right_A;
         }
 
     }

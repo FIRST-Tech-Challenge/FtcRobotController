@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -19,9 +18,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.Date;
 
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
@@ -43,7 +39,7 @@ public class RobotClass {
     RevColorSensorV3 colorSensorMiddle;
 
     public DcMotor carousel;
-    FreightFrenzyComputerVision CV;
+    FreightFrenzyComputerVisionRedHub CV;
 
     LinearOpMode opmode;
     HardwareMap hardwareMap;
@@ -51,7 +47,7 @@ public class RobotClass {
 
 
     OpenCvWebcam webcam;
-    FreightFrenzyComputerVision.SkystoneDeterminationPipeline pipeline;
+    FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline pipeline;
 
 
 
@@ -630,7 +626,7 @@ if 360-abs(currentHeading)-abs(targetHeading) > 180
 
 
 
-        CV = new FreightFrenzyComputerVision(hardwareMap, telemetry);
+        CV = new FreightFrenzyComputerVisionRedHub(hardwareMap, telemetry);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
@@ -642,14 +638,19 @@ if 360-abs(currentHeading)-abs(targetHeading) > 180
 
 
 
-    public FreightFrenzyComputerVision.SkystoneDeterminationPipeline.FreightPosition analyze() {
+    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition analyze() {
         return CV.pipeline.position;
     }
 
 
 
-    public FreightFrenzyComputerVision.SkystoneDeterminationPipeline.HubPosition analyze_hub() {
+    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
         return CV.pipeline.hub_position;
     }
+
+    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
+        return CV.pipeline.hub_position;
+    }
+
 
 }
