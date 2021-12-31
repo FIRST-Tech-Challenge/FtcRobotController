@@ -8,9 +8,11 @@ import org.firstinspires.ftc.teamcode.commands.drive.ArcadeDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.DriveLeftCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.DriveRightCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.TankDriveCommand;
+import org.firstinspires.ftc.teamcode.commands.intake.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.lift.MoveLiftCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrainSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
 
 @TeleOp(name = "Drive")
@@ -19,6 +21,7 @@ public class Drive extends CommandBasedTeleOp
     DriveTrainSubsystem driveTrain;
     LiftSubsystem liftSubsystem;
     ArmSubsystem armSubsystem;
+    IntakeSubsystem intakeSubsystem;
     // Drive Commands
     TankDriveCommand tankDriveCommand;
     ArcadeDriveCommand arcadeDriveCommand;
@@ -29,6 +32,8 @@ public class Drive extends CommandBasedTeleOp
     MoveLiftCommand lowerLift;
     // Arm commands
     RotateArmCommand rotateArmCommand;
+    // intake commands
+    IntakeCommand intakeCommand;
 
     private double getDriveSpeed() {
         if (gamepad1.left_trigger > 0)          return 0.5;
@@ -41,6 +46,7 @@ public class Drive extends CommandBasedTeleOp
         driveTrain = new DriveTrainSubsystem();
         liftSubsystem = new LiftSubsystem();
         armSubsystem = new ArmSubsystem();
+        intakeSubsystem = new IntakeSubsystem();
 
         tankDriveCommand = new TankDriveCommand(driveTrain, () -> -gamepad1.left_stick_y * getDriveSpeed(), () -> -gamepad1.right_stick_y * getDriveSpeed());
         arcadeDriveCommand = new ArcadeDriveCommand(driveTrain, () -> gamepad1.left_stick_x, () -> -gamepad1.left_stick_y, () -> gamepad1.right_stick_x);
@@ -52,7 +58,9 @@ public class Drive extends CommandBasedTeleOp
 
         rotateArmCommand = new RotateArmCommand(armSubsystem,
                 () -> (gamepad2.left_trigger > gamepad2.right_trigger ?
-                        gamepad2.left_trigger : -gamepad2.right_trigger) * 0.1);
+                        gamepad2.left_trigger : -gamepad2.right_trigger) * 0.2);
+
+        intakeCommand = new IntakeCommand(intakeSubsystem, () -> -gamepad2.left_stick_y);
 
         // DriveTrain commands
         driveTrain.setDefaultCommand(tankDriveCommand);
@@ -66,15 +74,19 @@ public class Drive extends CommandBasedTeleOp
         gp2.dpad_down().whenHeld(lowerLift);
         // Arm command
         armSubsystem.setDefaultCommand(rotateArmCommand);
+        // Intake commands
+        intakeSubsystem.setDefaultCommand(intakeCommand);
 
         // Telemetry
         // No need for anything but update in loop because use of suppliers
 
-        gp1.left_bumper().whenPressed(() -> armSubsystem.setVerticalPosition(armSubsystem.getVerticalPosition() + 0.1), armSubsystem);
-        gp1.right_bumper().whenPressed(() -> armSubsystem.setVerticalPosition(armSubsystem.getVerticalPosition() - 0.1), armSubsystem);
+        gp2.left_bumper().whenPressed(() -> armSubsystem.setVerticalPosition(armSubsystem.getVerticalPosition() + 0.1), armSubsystem);
+        gp2.right_bumper().whenPressed(() -> armSubsystem.setVerticalPosition(armSubsystem.getVerticalPosition() - 0.1), armSubsystem);
 
         telemetry.addData("Runtime", this::getRuntime);
-        telemetry.addData("arm vertical position", armSubsystem::getVerticalPosition);
+        telemetry.addData("arm position", armSubsystem::getCurrentPosition);
+        telemetry.addData("arm angle", armSubsystem::getAngle);
+        telemetry.addData("intake power", intakeSubsystem::getIntakePower);
         telemetry.update();
     }
 }

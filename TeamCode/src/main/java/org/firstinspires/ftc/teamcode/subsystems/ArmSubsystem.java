@@ -19,8 +19,8 @@ public class ArmSubsystem extends SubsystemBase {
 
 	public ArmSubsystem() {
 		m_motor = hardwareMap.dcMotor.get("ArmMotor");
-		m_leftServo = hardwareMap.servo.get("LeftIntakeServo");
-		m_rightServo = hardwareMap.servo.get("RightIntakeServo");
+		m_leftServo = hardwareMap.servo.get("LeftIntakeArmServo");
+		m_rightServo = hardwareMap.servo.get("RightIntakeArmServo");
 		// TODO: check direction (spin clockwise on positive)
 		m_motor.setDirection(DcMotorSimple.Direction.FORWARD);
 		m_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
