@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
@@ -18,15 +19,17 @@ public class AutoStorage extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        AutoCarousel carousel = new AutoCarousel(hardwareMap);
+
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
 
-        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(new Pose2d(-40, multiplier * 70 - inchesToCoordinate(9),
-                Math.toRadians(90 + directionAdder)));
+        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(new Pose2d(-40, multiplier * (70 - inchesToCoordinate(9)),
+                Math.toRadians(90 * multiplier)));
 
         builder.waitSeconds(0.1);
         // 9.35 seconds long
-        builder.lineTo(new Vector2d(-40, 55));
-        builder.splineToLinearHeading(new Pose2d(-20, 40, Math.toRadians(-110)),
+        builder.lineTo(new Vector2d(-40, 55 * multiplier));
+        builder.splineToLinearHeading(new Pose2d(-20, 40, Math.toRadians(-110 * multiplier)),
                 Math.toRadians(-110));
         builder.addDisplacementMarker(() -> {
             // TODO LIFT UP
@@ -36,15 +39,11 @@ public class AutoStorage extends LinearOpMode {
             // TODO LIFT DOWN
         });
         builder.waitSeconds(2);
-        builder.lineTo(new Vector2d(-19, 45));
+        builder.lineTo(new Vector2d(-19, 45 * multiplier));
         builder.lineToLinearHeading(new Pose2d(-59, 57.5, Math.toRadians(240)));
-        builder.addDisplacementMarker(() -> {
-            // TODO START CAROSUEL
-        });
+        builder.addDisplacementMarker(carousel::on);
         builder.waitSeconds(3);
-        builder.addDisplacementMarker(() -> {
-            // TODO STOP CAROSUEL
-        });
+        builder.addDisplacementMarker(carousel::off);
         builder.lineToLinearHeading(new Pose2d(-60, 35, Math.toRadians(90)));
         builder.waitSeconds(10);
         builder.addDisplacementMarker(() -> {

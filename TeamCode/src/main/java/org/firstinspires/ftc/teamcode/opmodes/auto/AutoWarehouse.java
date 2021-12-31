@@ -13,24 +13,23 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 
 @Autonomous
 public class AutoWarehouse extends LinearOpMode {
-    public int multiplier = 1;
-    public int directionAdder = 0;
+    protected int multiplier = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
 
         TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
-                Math.toRadians(90 + directionAdder)));
+                Math.toRadians(90 * multiplier)));
 
-        builder.lineToLinearHeading(new Pose2d(-3, 40, Math.toRadians(70)));
+        builder.lineToLinearHeading(new Pose2d(-3, 40 * multiplier, Math.toRadians(70 * multiplier)));
         builder.waitSeconds(2);
-        builder.lineToLinearHeading(new Pose2d(-3, 60, Math.toRadians(0)));
-        builder.lineTo(new Vector2d(20, 64));
-        builder.lineTo(new Vector2d(40, 64));
+        builder.lineToLinearHeading(new Pose2d(-3, 60 * multiplier, Math.toRadians(0)));
+        builder.lineTo(new Vector2d(20, 64 * multiplier));
+        builder.lineTo(new Vector2d(40, 64 * multiplier));
         for (int i = 0; i < 4; i++) {
-            builder.lineTo(new Vector2d(-3,64));
-            builder.lineToLinearHeading(new Pose2d(-3, 40, Math.toRadians(70)));
+            builder.lineTo(new Vector2d(-3,64 * multiplier));
+            builder.lineToLinearHeading(new Pose2d(-3, 40 * multiplier, Math.toRadians(70 * multiplier)));
             builder.addDisplacementMarker(() -> {
                 // TODO LIFT UP
             });
@@ -38,8 +37,8 @@ public class AutoWarehouse extends LinearOpMode {
             builder.addDisplacementMarker(() -> {
                 // TODO LIFT DOWN
             });
-            builder.lineToLinearHeading(new Pose2d(-3,64,0));
-            builder.lineTo(new Vector2d(40,64));
+            builder.lineToLinearHeading(new Pose2d(-3,64 * multiplier,0));
+            builder.lineTo(new Vector2d(40,64 * multiplier));
         }
 
         TrajectorySequence trajSeq = builder.build();

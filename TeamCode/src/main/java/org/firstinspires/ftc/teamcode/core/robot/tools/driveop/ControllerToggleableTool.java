@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.core.robot;
+package org.firstinspires.ftc.teamcode.core.robot.tools.driveop;
 
 import androidx.annotation.NonNull;
 
@@ -8,17 +8,15 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.HeadlessToggleableTool;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerIndefinitelyEvent;
 
 /**
  * simple button push toggleable tool
  */
-public abstract class ToggleableTool<T extends DcMotorSimple>{
-    protected final T motor;
-    protected final double power;
+public abstract class ControllerToggleableTool<T extends DcMotorSimple> extends HeadlessToggleableTool<T> {
     protected final ButtonReader reader;
-    protected boolean toggle = false;
 
     /**
      * @param eventThread local instance of eventThread
@@ -29,16 +27,18 @@ public abstract class ToggleableTool<T extends DcMotorSimple>{
      * @param button      button to be pushed for toggle, uses GamepadKeys.Button
      * @param power       power motor should be set to upon toggle
      */
-    public ToggleableTool(@NonNull EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, Class<T> tClass, String name, GamepadKeys.Button button, double power) {
-        this.motor = map.get(tClass, name);
+    public ControllerToggleableTool(@NonNull EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, Class<T> tClass, String name, GamepadKeys.Button button, double power) {
+        super(map, tClass, name, power);
         this.reader = new ButtonReader(toolGamepad, button);
-        this.power = power;
         makeEvent(eventThread, reader);
     }
 
     protected void run() {
-        toggle = !toggle;
-        motor.setPower(toggle ? power : 0);
+        if (currentState) {
+            this.off();
+        } else {
+            this.on();
+        }
     }
 
     protected void makeEvent(@NonNull EventThread eventThread, ButtonReader reader) {
