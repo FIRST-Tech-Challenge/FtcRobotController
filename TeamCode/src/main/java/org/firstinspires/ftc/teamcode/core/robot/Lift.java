@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.core.robot;
+
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +19,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * lift and arm
  */
 public class Lift {
+    private final Telemetry telemetry;
+    private final DcMotor liftMotor;
+    private final Servo armServo;
+    // private final DigitalChannel bottomSensor;
+    private final DigitalChannel topSensor;
+    private final GamepadEx gamepad;
+    private final ButtonReader rBumpReader;
+    private final ButtonReader aReader;
+    private double curPos = 0;
+    private boolean running = false; // currently moving down
+    private boolean first = true; // first time its reached bottom
+    private final AtomicBoolean dumping = new AtomicBoolean(false);
+    private final AtomicBoolean dumpingEventRunning = new AtomicBoolean(false);
+    private final EventThread eventThread;
+    private TimedEvent event;
+
     /**
      * @param eventThread local eventThread instance
      * @param map local hardwareMap instance
@@ -42,22 +59,6 @@ public class Lift {
         aReader = new ButtonReader(toolGamepad, GamepadKeys.Button.A);
         this.eventThread = eventThread;
     }
-
-    private final Telemetry telemetry;
-    private final DcMotor liftMotor;
-    private final Servo armServo;
-    // private final DigitalChannel bottomSensor;
-    private final DigitalChannel topSensor;
-    private final GamepadEx gamepad;
-    private final ButtonReader rBumpReader;
-    private final ButtonReader aReader;
-    private double curPos = 0;
-    private boolean running = false; // currently moving down
-    private boolean first = true; // first time its reached bottom
-    private final AtomicBoolean dumping = new AtomicBoolean(false);
-    private final AtomicBoolean dumpingEventRunning = new AtomicBoolean(false);
-    private final EventThread eventThread;
-    private TimedEvent event;
 
     public void update() {
         curPos = liftMotor.getCurrentPosition();

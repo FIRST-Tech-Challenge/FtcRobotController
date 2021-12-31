@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -34,13 +33,7 @@ public abstract class ToggleableTool<T extends DcMotorSimple>{
         this.motor = map.get(tClass, name);
         this.reader = new ButtonReader(toolGamepad, button);
         this.power = power;
-        eventThread.addEvent(new RunListenerIndefinitelyEvent(this::run) {
-            @Override
-            public boolean shouldRun() {
-                reader.readValue();
-                return reader.wasJustReleased();
-            }
-        });
+        makeEvent(eventThread, reader);
     }
 
     protected void run() {
