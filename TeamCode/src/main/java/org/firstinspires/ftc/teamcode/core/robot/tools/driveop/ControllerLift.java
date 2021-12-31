@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.core.robot;
+package org.firstinspires.ftc.teamcode.core.robot.tools.driveop;
 
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * lift and arm
  */
-public class Lift {
+public class ControllerLift {
     private final Telemetry telemetry;
     private final DcMotor liftMotor;
     private final Servo armServo;
@@ -41,7 +41,7 @@ public class Lift {
      * @param telemetry local telemetry instance
      * @param toolGamepad instance of FtcLib GamepadEx
      */
-    public Lift(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
+    public ControllerLift(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
         liftMotor = map.get(DcMotor.class,"liftMotor");
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
