@@ -176,7 +176,7 @@ public class FTCLibBlinkinWebCamArmCarouselTeleop extends CommandOpMode {
         //m_intake.setDefaultCommand(new PerpetualCommand(m_stopIntake));
 
 
-        m_carousel = new CarouselSubsystem(hardwareMap,"carousel");
+        m_carousel = new CarouselSubsystem(hardwareMap,"carousel", telemetry);
 
         m_moveCarouselRight = new MoveCarousel(m_carousel,0.5, telemetry);
         m_moveCarouselLeft = new MoveCarousel(m_carousel, -0.5, telemetry);

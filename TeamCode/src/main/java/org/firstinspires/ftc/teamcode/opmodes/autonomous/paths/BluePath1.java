@@ -41,9 +41,8 @@ public class BluePath1 {
     public void createPath(){
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
         createCarousel.createAuto();
-        //carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
-                //new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
-        carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition());
+        carouselGroup = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
+                new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
@@ -107,7 +106,8 @@ public class BluePath1 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroup,sample1Follower2, sample1Follower3, sample1Follower4)
+                carouselGroup
+                //sample1Follower1.andThen(carouselGroup,sample1Follower2, sample1Follower3, sample1Follower4)
         ));
     }
 }
