@@ -35,6 +35,7 @@ public class BluePath1 {
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
         startPose = new Pose2d(-36, 60, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
     }
 
     public void createPath(){
@@ -45,11 +46,12 @@ public class BluePath1 {
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
-                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(225)),Math.toRadians(270))
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                 })
                 .build();
+
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .strafeTo(new Vector2d(-60, 24))
@@ -58,12 +60,17 @@ public class BluePath1 {
                 }) //step 6
                 .build();
 
+        //turnCommand2 = new TurnCommand(drive, Math.toRadians(135));
+
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .splineToLinearHeading(new Pose2d(-32, 24, Math.toRadians(0)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-26, 24, Math.toRadians(0)),Math.toRadians(270))
                 .build();
 
+        //turnCommand3 = new TurnCommand(drive, Math.toRadians(90));
+
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .splineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(270)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-60, 36)
+                        , Math.toRadians(270)),Math+-*/.toRadians(270))
                 .build();
 
         /*Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
@@ -86,7 +93,7 @@ public class BluePath1 {
 
 
         Trajectory traj6 = drive.trajectoryBuilder(new Pose2d())
-                .back(45)
+                .back(45)-
                 .build();*/
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
@@ -99,8 +106,7 @@ public class BluePath1 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroup,
-                        sample1Follower2, sample1Follower3, sample1Follower4)
+                sample1Follower1.andThen(sample1Follower2, sample1Follower3, sample1Follower4)
         ));
     }
 }

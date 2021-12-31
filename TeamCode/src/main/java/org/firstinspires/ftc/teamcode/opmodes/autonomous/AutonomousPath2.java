@@ -49,7 +49,7 @@ public class AutonomousPath2 extends CommandOpMode {
         telemetry.setAutoClear(false);
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), false);
-        startPose = new Pose2d(-36, 70, Math.toRadians(270));
+        startPose = new Pose2d(-36, 60, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         LEDSubsystem ledSubsystem = new LEDSubsystem(hardwareMap,"blinkin");
@@ -82,7 +82,7 @@ public class AutonomousPath2 extends CommandOpMode {
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
-                .splineToLinearHeading(new Pose2d(-75, 60, Math.toRadians(245)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(225)),Math.toRadians(270))
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                     allianceColor.schedule();
@@ -100,13 +100,14 @@ public class AutonomousPath2 extends CommandOpMode {
         //turnCommand2 = new TurnCommand(drive, Math.toRadians(135));
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .splineToLinearHeading(new Pose2d(-32, 24, Math.toRadians(0)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-26, 24, Math.toRadians(0)),Math.toRadians(270))
                 .build();
 
         //turnCommand3 = new TurnCommand(drive, Math.toRadians(90));
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .splineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(270)),Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-60, 36
+                        , Math.toRadians(270)),Math.toRadians(270))
                 .build();
 
         //turnCommand4 = new TurnCommand(drive, 90);
