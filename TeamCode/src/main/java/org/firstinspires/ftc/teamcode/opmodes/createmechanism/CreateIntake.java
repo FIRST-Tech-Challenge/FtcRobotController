@@ -86,7 +86,8 @@ public class CreateIntake {
 
         stopIntake = createStopIntake();
 
-        intake.setDefaultCommand(new PerpetualCommand(stopIntake));
+        // NOTE: This was causing an exception https://first.wpi.edu/FRC/roborio/release/docs/java/edu/wpi/first/wpilibj/command/IllegalUseOfCommandException.html
+        // intake.setDefaultCommand(new PerpetualCommand(stopIntake));
     }
 
     private MoveIntakeWithTrigger createMoveIntake(double power){
