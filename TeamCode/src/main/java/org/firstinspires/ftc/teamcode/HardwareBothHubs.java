@@ -288,7 +288,7 @@ public class HardwareBothHubs
         sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "back_ultrasonic" );
         freightFinder = hwMap.get(NormalizedColorSensor.class, "freight_finder");
         freightDetector = (DistanceSensor)freightFinder;
-        freightFinder.setGain(2.0f);
+        freightFinder.setGain(5.0f);
 
         //Instantiate REV 2-meter Time-Of-Flight Distance Sensors
 //      tofRangeL   = hwMap.get( DistanceSensor.class, "ToF_distanceL" );
@@ -593,7 +593,7 @@ public class HardwareBothHubs
     public boolean freightIsCube() {
         colors = freightFinder.getNormalizedColors();
         Color.colorToHSV(colors.toColor(), hsvValues);
-        return hsvValues[0] > 12;
+        return hsvValues[1] > 0.5;
     }
     /***
      *

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
@@ -75,12 +76,18 @@ public abstract class Teleop extends LinearOpMode {
 
     boolean   duckMotorEnable = false;
 
+    boolean collectingFreight = false;
+    boolean freightPresent = false;
+    boolean freightIsCube = false;
+    Gamepad.RumbleEffect ballRumbleEffect1;    // Use to build a custom rumble sequence.
+    Gamepad.RumbleEffect ballRumbleEffect2;    // Use to build a custom rumble sequence.
+
     // These are set in the alliance specific teleops
     double    duckPower;
     double    duckVelocity;
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
-    boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
+    boolean   rangeSensorsEnabled = false;  // enable only when designing an Autonomous plan (takes time!)
     boolean   rangeSensorPingPong = true;   // only send a new ping out every other control cycle
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
@@ -96,6 +103,17 @@ public abstract class Teleop extends LinearOpMode {
 
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
+
+        ballRumbleEffect1 = new Gamepad.RumbleEffect.Builder()
+                .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
+                .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
+                .addStep(1.0, 0.0, 500)  //  Rumble left motor 100% for 500 mSec
+                .build();
+        ballRumbleEffect2 = new Gamepad.RumbleEffect.Builder()
+                .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
+                .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
+                .addStep(1.0, 0.0, 500)  //  Rumble left motor 100% for 500 mSec
+                .build();
 
         // Initialize robot hardware
         robot.init(hardwareMap,false);
@@ -118,6 +136,8 @@ public abstract class Teleop extends LinearOpMode {
 
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
+            freightPresent = robot.freightPresent();
+            freightIsCube = robot.freightIsCube();
 
             // If enabled, process ultrasonic range sensors
             if( rangeSensorsEnabled ) {
@@ -133,6 +153,7 @@ public abstract class Teleop extends LinearOpMode {
 
             // Process all the driver/operator inputs
             processDuckMotorControls();
+            processFreightDetector();
             processFreightArmControls();
             processSweeperControls();
             processCappingArmControls();
@@ -204,9 +225,10 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
 
             // Testing Color and Distance sensor
-            telemetry.addData("Freight Present: ", robot.freightPresent());
-            telemetry.addData("Freight Is Cube: ", robot.freightIsCube());
-            telemetry.addLine()
+            telemetry.addData("Collecting Freight: ", collectingFreight);
+            telemetry.addData("Freight Present: ", freightPresent);
+            telemetry.addData("Freight Is Cube: ", freightIsCube);
+ /*           telemetry.addLine()
                     .addData("Red", "%.3f", robot.colors.red)
                     .addData("Green", "%.3f", robot.colors.green)
                     .addData("Blue", "%.3f", robot.colors.blue);
@@ -216,7 +238,7 @@ public abstract class Teleop extends LinearOpMode {
                     .addData("Value", "%.3f", robot.hsvValues[2]);
             telemetry.addData("Alpha", "%.3f", robot.colors.alpha);
             telemetry.addData("Distance (mm)", "%.3f", robot.distance);
-
+*/
             telemetry.update();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
@@ -224,6 +246,22 @@ public abstract class Teleop extends LinearOpMode {
         } // opModeIsActive
 
     } // runOpMode
+
+    private void processFreightDetector() {
+        if(collectingFreight){
+            freightPresent = robot.freightPresent();
+            if(freightPresent) {
+                freightIsCube = robot.freightIsCube();
+                if(freightIsCube){
+                    gamepad1.rumble(500);
+                    gamepad2.rumble(500);
+                } else{
+                    gamepad1.runRumbleEffect(ballRumbleEffect1);
+                    gamepad2.runRumbleEffect(ballRumbleEffect2);
+                }
+            }
+        }
+    }
 
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
@@ -332,13 +370,14 @@ public abstract class Teleop extends LinearOpMode {
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
-        if( gamepad2_circle_now && !gamepad2_circle_last)
+        if(( gamepad2_circle_now && !gamepad2_circle_last) || (freightPresent && collectingFreight))
         {
             freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.80 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
             // automatically turn OFF the sweeper
             robot.sweepServo.setPower( 0.0 );  // OFF
+            collectingFreight = false;
             sweeperRunning = false;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button ()
@@ -351,6 +390,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.sweepServo.setPower( 1.0 );  // ON
             sweeperRunning = true;
         }
+
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
@@ -401,6 +441,11 @@ public abstract class Teleop extends LinearOpMode {
                 robot.freightMotor.setPower( 0.0 );
                 robot.freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;   // ensure we're reset
+                if(!collectingFreight && sweeperRunning) {
+                    collectingFreight = true;
+                    freightPresent = false;
+                    freightIsCube = false;
+                }
             }
         }
         else { // freightArmCycleCount == FREIGHT_CYCLECOUNT_DONE
@@ -843,5 +888,6 @@ public abstract class Teleop extends LinearOpMode {
           sonarRangeB = robot.updateSonarRangeB();
         }
     } // averagedRangeSensors
+
 
 } // TeleopBlue
