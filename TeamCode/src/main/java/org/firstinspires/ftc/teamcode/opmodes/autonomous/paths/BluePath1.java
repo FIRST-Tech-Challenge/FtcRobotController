@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
+import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
@@ -68,21 +69,24 @@ public class BluePath1 {
         createWebCam.createAuto();
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
 
-        MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
-        mockDetectTSEPosition.schedule();
+        //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
+        //mockDetectTSEPosition.schedule();
+
+        DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
+        detectTSEPosition.schedule();
 
         createCarousel.createAuto();
         carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
                 new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
 
-        CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
+        /*CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
         intakeGroupBlue1 = new SequentialCommandGroup(
                 createIntake.getSeReleaser(),
                 new WaitCommand(800)
                         .andThen(createIntake.getStopIntake())
-        );
+        );*/
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
@@ -101,8 +105,8 @@ public class BluePath1 {
                     setArmLevel.schedule();
                 })
                 .addDisplacementMarker(()->{
-                    createIntake.getSeReleaser().schedule();
-                    new WaitCommand(800).andThen(createIntake.getStopIntake()).schedule();
+                    //createIntake.getSeReleaser().schedule();
+                    //new WaitCommand(800).andThen(createIntake.getStopIntake()).schedule();
 
                 })
                 .build();

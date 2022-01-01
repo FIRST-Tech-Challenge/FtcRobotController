@@ -25,18 +25,18 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
 
     public enum TSELocation {
-        P1_RED_LEFT,
-        P1_RED_MIDDLE,
-        P1_RED_RIGHT,
-        P2_RED_LEFT,
-        P2_RED_MIDDLE,
-        P2_RED_RIGHT,
-        P1_BLUE_LEFT,
-        P1_BLUE_MIDDLE,
-        P1_BLUE_RIGHT,
-        P2_BLUE_LEFT,
-        P2_BLUE_MIDDLE,
-        P2_BLUE_RIGHT,
+        P1_RED_LEVEL_3,
+        P1_RED_LEVEL_2,
+        P1_RED_LEVEL_1,
+        P2_RED_LEVEL_3,
+        P2_RED_LEVEL_2,
+        P2_RED_LEVEL_1,
+        P1_BLUE_LEVEL_3,
+        P1_BLUE_LEVEL_2,
+        P1_BLUE_LEVEL_1,
+        P2_BLUE_LEVEL_3,
+        P2_BLUE_LEVEL_2,
+        P2_BLUE_LEVEL_1,
         NONE
     }
 
@@ -55,7 +55,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     private Mat imageRGB = new Mat();
 
     private final String[] classNames = {"background",
-            "p1_blue_right", "p1_blue_left", "p1_blue_middle", "p2_blue_right", "p2_blue_left", "p2_blue_middle" };
+            "p1_blue_level_1", "p1_blue_level_2", "p1_blue_level_3", "p2_blue_level_1", "p2_blue_level_2", "p2_blue_level_3" };
 
 
 
@@ -73,26 +73,26 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
         levels.put(TSELocation.NONE,0);
 
-        levels.put(TSELocation.P1_BLUE_RIGHT,1);
-        levels.put(TSELocation.P2_BLUE_RIGHT,1);
-        levels.put(TSELocation.P1_RED_RIGHT,1);
-        levels.put(TSELocation.P2_RED_RIGHT,1);
+        levels.put(TSELocation.P1_BLUE_LEVEL_1,1);
+        levels.put(TSELocation.P2_BLUE_LEVEL_1,1);
+        levels.put(TSELocation.P1_RED_LEVEL_1,1);
+        levels.put(TSELocation.P2_RED_LEVEL_1,1);
 
-        levels.put(TSELocation.P1_BLUE_MIDDLE,2);
-        levels.put(TSELocation.P2_BLUE_MIDDLE,2);
-        levels.put(TSELocation.P1_RED_MIDDLE,2);
-        levels.put(TSELocation.P2_RED_MIDDLE,2);
+        levels.put(TSELocation.P1_BLUE_LEVEL_2,2);
+        levels.put(TSELocation.P2_BLUE_LEVEL_2,2);
+        levels.put(TSELocation.P1_RED_LEVEL_2,2);
+        levels.put(TSELocation.P2_RED_LEVEL_2,2);
 
-        levels.put(TSELocation.P1_BLUE_LEFT,3);
-        levels.put(TSELocation.P2_BLUE_LEFT,3);
-        levels.put(TSELocation.P1_RED_LEFT,3);
-        levels.put(TSELocation.P2_RED_LEFT,3);
+        levels.put(TSELocation.P1_BLUE_LEVEL_3,3);
+        levels.put(TSELocation.P2_BLUE_LEVEL_3,3);
+        levels.put(TSELocation.P1_RED_LEVEL_3,3);
+        levels.put(TSELocation.P2_RED_LEVEL_3,3);
 
         location = TSELocation.NONE;
 
 
         cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_tse_optimized_graph.pb");
+        net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_graph.pb");
         for(int i=0; i<classNames.length; i++)
             colors.add(randomColor());
 
@@ -156,56 +156,52 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
                 switch (className)
                 {
-                    case "p1_blue_left":
-                        location = TSELocation.P1_BLUE_LEFT;
+                    case "p1_blue_level_1":
+                        location = TSELocation.P1_BLUE_LEVEL_1;
                         break;
 
-                    case "p1_blue_right":
-                        //telemetry.addData("This is a new p1br", className);
-                        //telemetry.update();
-                        location = TSELocation.P1_BLUE_RIGHT;
+                    case "p1_blue_level_2":
+                        location = TSELocation.P1_BLUE_LEVEL_2;
                         break;
 
-                    case "p1_blue_middle":
-                        location = TSELocation.P1_BLUE_MIDDLE;
+                    case "p1_blue_level_3":
+                        location = TSELocation.P1_BLUE_LEVEL_3;
                         break;
 
-                    case "p2_blue_left":
-                        location = TSELocation.P2_BLUE_LEFT;
+                    case "p2_blue_level_1":
+                        location = TSELocation.P2_BLUE_LEVEL_1;
                         break;
 
-                    case "p2_blue_right":
-                        location = TSELocation.P2_BLUE_RIGHT;
+                    case "p2_blue_level_2":
+                        location = TSELocation.P2_BLUE_LEVEL_2;
                         break;
 
-                    case "p2_blue_middle":
-                        location = TSELocation.P2_BLUE_MIDDLE;
+                    case "p2_blue_level_3":
+                        location = TSELocation.P2_BLUE_LEVEL_3;
                         break;
 
-                    case "p1_red_left":
-                        location = TSELocation.P1_RED_LEFT;
+                    case "p1_red_level_1":
+                        location = TSELocation.P1_RED_LEVEL_1;
                         break;
 
-                    case "p1_red_right":
-                        //telemetry.addData("This is a new p1br", className);
-                        //telemetry.update();
-                        location = TSELocation.P1_RED_RIGHT;
+                    case "p1_red_level_2":
+                        location = TSELocation.P1_RED_LEVEL_2;
                         break;
 
-                    case "p1_red_middle":
-                        location = TSELocation.P1_RED_MIDDLE;
+                    case "p1_red_level_3":
+                        location = TSELocation.P1_RED_LEVEL_3;
                         break;
 
-                    case "p2_red_left":
-                        location = TSELocation.P2_RED_LEFT;
+                    case "p2_red_level_1":
+                        location = TSELocation.P2_RED_LEVEL_1;
                         break;
 
-                    case "p2_red_right":
-                        location = TSELocation.P2_RED_RIGHT;
+                    case "p2_red_level_2":
+                        location = TSELocation.P2_RED_LEVEL_2;
                         break;
 
-                    case "p2_red_middle":
-                        location = TSELocation.P2_RED_MIDDLE;
+                    case "p2_red_level_3":
+                        location = TSELocation.P2_RED_LEVEL_3;
                         break;
 
                     default:

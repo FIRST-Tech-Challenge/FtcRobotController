@@ -123,7 +123,7 @@ public class DetectShippingElement extends LinearOpMode
             telemetry.addData("We have a", location);
 
 
-            if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_LEFT) {
+            /*if (location == OpenCvShippingElementDetector.TSELocation.P1_BLUE_LEFT) {
                 // Do something with the plane
                 telemetry.addData("We have a 2", location);
                 //telemetry.update();
@@ -155,7 +155,7 @@ public class DetectShippingElement extends LinearOpMode
             }
 
 
-            telemetry.update();
+            telemetry.update();*/
             
 
             /*
