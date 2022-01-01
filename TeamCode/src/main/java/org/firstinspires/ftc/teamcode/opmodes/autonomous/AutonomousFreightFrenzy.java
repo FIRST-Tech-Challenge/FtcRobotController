@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
@@ -32,6 +33,8 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
         final String[] selectedPath = new String[1];
         boolean blueteam = false;
 
+        GamepadEx settingsOp = new GamepadEx(gamepad1);
+
         schedule(new InstantCommand(() -> {
             telemetry.clearAll();
             telemetry.addLine("What is your Alliance?");
@@ -39,7 +42,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             telemetry.update();
         }));
 
-        GamepadEx settingsOp = new GamepadEx(gamepad1);
+
 
         //X (Blue) button
         Button blueAlliance = new GamepadButton(settingsOp, GamepadKeys.Button.X);
@@ -138,6 +141,11 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
             }
         });
+
+        //while (opModeIsActive() && !isStarted()) {
+        //run the scheduler before the start button is pressed
+        CommandScheduler.getInstance().run();
+        //}
 
     }
 }

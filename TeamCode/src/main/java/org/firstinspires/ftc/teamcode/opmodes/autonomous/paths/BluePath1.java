@@ -99,7 +99,12 @@ public class BluePath1 {
                     telemetry.addData("Path 2", "performing path 2 action");
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
                     setArmLevel.schedule();
-                }) //step 6
+                })
+                .addDisplacementMarker(()->{
+                    createIntake.getSeReleaser().schedule();
+                    new WaitCommand(800).andThen(createIntake.getStopIntake()).schedule();
+
+                })
                 .build();
 
         //turnCommand2 = new TurnCommand(drive, Math.toRadians(135));
@@ -151,7 +156,7 @@ public class BluePath1 {
                 // intakeGroupBlue1
                 // carouselGroupBlue1
                 // sample1Follower1.andThen(carouselGroup,sample1Follower2,intakeGroup, sample1Follower3, sample1Follower4)
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,intakeGroupBlue1)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2)
         ));
     }
 }

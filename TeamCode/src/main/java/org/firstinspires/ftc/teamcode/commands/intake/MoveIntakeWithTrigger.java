@@ -20,7 +20,7 @@ public class MoveIntakeWithTrigger extends CommandBase {
     private static final double TIMEOUT = 800;
     private static final double TRIGGER_ACTIVE_THRESHOLD = 0.5;
 
-    private ElapsedTime intakeTimer = new ElapsedTime();;
+    //private ElapsedTime intakeTimer = new ElapsedTime();;
 
     private Telemetry telemetry;
 
@@ -46,24 +46,24 @@ public class MoveIntakeWithTrigger extends CommandBase {
 
     @Override
     public void initialize(){
-        intakeTimer.reset();
+        //intakeTimer.reset();
         intakeSubsytem.setPower(triggerPower);
     }
 
     public void end(){
-        intakeSubsytem.setPower(ZERO_POWER);
+        //intakeSubsytem.setPower(ZERO_POWER);
     }
 
 
-    public boolean isFinished(){
+    /*public boolean isFinished(){
         /*
         while(intakeTimer.milliseconds() < TIMEOUT){
             telemetry.addData("intake complete", intakeTimer.milliseconds());
             telemetry.update();
         }
-         */
+
         return intakeTimer.milliseconds() > TIMEOUT;
-    }
+    }*/
 
 
 }

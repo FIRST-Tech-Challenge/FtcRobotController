@@ -95,6 +95,11 @@ public class BluePathExampleSubsystems {
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
                     setArmLevel.schedule();
                 })
+                .addDisplacementMarker(()->{
+                    createIntake.getSeReleaser().schedule();
+                    new WaitCommand(5000).schedule();
+                    createIntake.getStopIntake().schedule();
+                })
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
@@ -139,7 +144,7 @@ public class BluePathExampleSubsystems {
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
                 sample1Follower1.andThen(carouselGroup,
-                        sample1Follower2,intakeGroup, sample1Follower3, sample1Follower4)
+                        sample1Follower2, sample1Follower3, sample1Follower4)
         ));
     }
 }
