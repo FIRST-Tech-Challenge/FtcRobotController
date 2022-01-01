@@ -136,8 +136,6 @@ public abstract class Teleop extends LinearOpMode {
 
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
-            freightPresent = robot.freightPresent();
-            freightIsCube = robot.freightIsCube();
 
             // If enabled, process ultrasonic range sensors
             if( rangeSensorsEnabled ) {
