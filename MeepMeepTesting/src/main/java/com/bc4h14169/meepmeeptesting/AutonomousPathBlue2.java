@@ -29,8 +29,8 @@ public class AutonomousPathBlue2 {
                     .followTrajectorySequence(drive ->
                             drive.trajectorySequenceBuilder(new Pose2d(12,60, Math.toRadians(270)))
                             .strafeTo(new Vector2d(-12, 42))
-                            .strafeTo(new Vector2d(-12, 64))
-                                    .strafeTo(new Vector2d(44, 64))
+                            .strafeTo(new Vector2d(-12, 60))
+                                    .strafeTo(new Vector2d(44, 60))
                                     .strafeTo(new Vector2d(44, 40))
                             .build()
                     );
