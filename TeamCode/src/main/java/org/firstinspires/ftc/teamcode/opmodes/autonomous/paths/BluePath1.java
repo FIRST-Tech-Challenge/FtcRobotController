@@ -46,8 +46,7 @@ public class BluePath1 {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
-        startPose = new Pose2d(-36, 60, Math.toRadians(270));
-        drive.setPoseEstimate(startPose);
+
     }
 
     public BluePath1(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
@@ -55,11 +54,13 @@ public class BluePath1 {
         dashboard = db;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
-        startPose = new Pose2d(-36, 60, Math.toRadians(270));
-        drive.setPoseEstimate(startPose);
+       
     }
 
     public void createPath(){
+        startPose = new Pose2d(-36, 60, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
+
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
         CreateWebCam createWebCam = new CreateWebCam(hwMap, "Webcam 1", dashboard, telemetry);
         CreateArm createArm = new CreateArm(hwMap, "arm", telemetry);
@@ -79,10 +80,10 @@ public class BluePath1 {
         carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
                 new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
 
-        /*CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
+        CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
-        intakeGroupBlue1 = new SequentialCommandGroup(
+        /*intakeGroupBlue1 = new SequentialCommandGroup(
                 createIntake.getSeGrabber(),
                 new WaitCommand(800)
                         .andThen(createIntake.getStopIntake())
@@ -100,36 +101,37 @@ public class BluePath1 {
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .strafeTo(new Vector2d(-60, 22))
                 .addDisplacementMarker(()->{
-                    telemetry.addData("Path 2", "performing path 2 action");
+                    telemetry.addData("Path 2 Set Level", webCamSubsystem.getLevel());
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
                     setArmLevel.schedule();
-                })
-                .addDisplacementMarker(()->{
-                    //createIntake.getSeReleaser().schedule();
-                    //new WaitCommand(800).andThen(createIntake.getStopIntake()).schedule();
-
                 })
 
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+
                 .splineToLinearHeading(new Pose2d(-34.58, 22, Math.toRadians(0)),Math.toRadians(90))
+                .addDisplacementMarker(()->{
+                    createIntake.getSeReleaser().schedule();
+                    new WaitCommand(2000).andThen(createIntake.getStopIntake()).schedule();
+
+                })
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
                 .strafeTo(new Vector2d(-37,22))
+                //.splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(270)),Math.toRadians(90))
                 .build();
 
-        Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .splineToLinearHeading(new Pose2d(-63, 32
-                        , Math.toRadians(270)),Math.toRadians(90))
-                .build();
+        /*Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
+                .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(270)),Math.toRadians(90))
+                .build();*/
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-        sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+        //sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
     }
 
     public void execute(CommandOpMode commandOpMode){
@@ -138,7 +140,7 @@ public class BluePath1 {
                 // carouselGroupBlue1
                 // sample1Follower1.andThen(carouselGroup,sample1Follower2,intakeGroup, sample1Follower3, sample1Follower4)
 
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4, sample1Follower5)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3,sample1Follower4)
         ));
     }
 }

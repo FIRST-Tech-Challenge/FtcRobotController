@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath1;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath2;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -26,7 +27,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
     public void initialize() {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        // telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         telemetry.setAutoClear(false);
 
         final String[] selectedAlliance = new String[1];
@@ -97,7 +98,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             telemetry.addData("Selections Complete", String.format("Alliance: %s - Path: %s",selectedPath[0],selectedAlliance[0]));
             telemetry.update();
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
-                BluePath1 bluePath1 = new BluePath1(hardwareMap,telemetry);
+                BluePath1 bluePath1 = new BluePath1(hardwareMap,dashboard,telemetry);
                 bluePath1.createPath();
                 bluePath1.execute(this);
             }
@@ -111,6 +112,9 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             telemetry.addData("Selections Complete", String.format("Alliance: %s - Path: %s",selectedPath[0],selectedAlliance[0]));
             telemetry.update();
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
+                BluePath2 bluePath2 = new BluePath2(hardwareMap, telemetry);
+                bluePath2.createPath();
+                bluePath2.execute(this);
 
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED){

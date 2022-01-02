@@ -53,8 +53,7 @@ public class BluePath2 {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
-        startPose = new Pose2d(-36, 60, Math.toRadians(270));
-        drive.setPoseEstimate(startPose);
+
     }
 
     public BluePath2(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
@@ -62,11 +61,13 @@ public class BluePath2 {
         dashboard = db;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
-        startPose = new Pose2d(12, 60, Math.toRadians(270));
-        drive.setPoseEstimate(startPose);
+
     }
 
     public void createPath(){
+        startPose = new Pose2d(-36, 60, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
+
         CreateWebCam createWebCam = new CreateWebCam(hwMap, "Webcam 1", dashboard, telemetry);
         CreateArm createArm = new CreateArm(hwMap, "arm", telemetry);
 

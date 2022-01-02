@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+@Disabled
 @Autonomous(name="Auto Freight Frenzy Gamepad", group="FreightFrenzy")
 public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
 

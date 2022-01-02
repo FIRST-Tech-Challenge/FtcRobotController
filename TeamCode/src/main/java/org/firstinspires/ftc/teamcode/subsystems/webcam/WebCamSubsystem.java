@@ -29,7 +29,7 @@ public class WebCamSubsystem extends SubsystemBase {
     private static final String ID_DEF_TYPE = "id";
 
     private OpenCvShippingElementDetector.TSELocation location;
-    private int currrentLevel = 2;
+    private int currrentLevel = 0;
 
     public WebCamSubsystem(final HardwareMap hwMap, final String deviceName){
 
