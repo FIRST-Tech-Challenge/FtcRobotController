@@ -12,10 +12,9 @@ public class AutonomousPathBlue2 {
         /*
         Steps for Autonomous:
         1) Move to the right
-        2) Spin the carosel
-        3) Move forward to the end of the blue square
-        4) Move left to the Shipping Hub
-        5) Move diagonally (back right) to return and park into the blue square
+        2) Move forward to the Shipping Hub
+        3) Move back and then strafe across the wall
+        4) Park in warehouse second square in
         */
 
 

@@ -12,10 +12,10 @@ public class AutonomousPath3 {
         /*
         Steps for Autonomous:
         1) Move to the right
-        2) Spin the carosel
+        2) Spin the carousel
         3) Move forward to the end of the blue square
         4) Move left to the Shipping Hub
-        5) Move diagonally (back right) to return and park into the blue square
+        5) Move diagonally (back right) and then strafe along back wall to park in the warehouse
         */
 
 
