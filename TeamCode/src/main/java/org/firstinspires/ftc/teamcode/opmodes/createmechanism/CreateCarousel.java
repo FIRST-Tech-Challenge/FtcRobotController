@@ -25,15 +25,15 @@ public class CreateCarousel {
     private final Telemetry telemetry;
     private GamepadEx op;
 
-    private static final double MOVE_RIGHT_POWER = 0.5;
-    private static final double MOVE_LEFT_POWER = -0.5;
-    private static final double MOVE_AUTO_POWER = 0.5;
+    private static final double MOVE_RIGHT_POWER = 0.8;
+    private static final double MOVE_LEFT_POWER = -0.8;
+    private static final double MOVE_AUTO_POWER = 0.8;
 
     private static final double SPINNER_WHEEL_CIRC = 12.567; //inches
     private static final double CAROUSEL_WHEEL_CIRC = 47.124; //inches
     private static final double GEAR_RATIO = 3.0 / 4.0;
     private static final double MOTOR_ENCODER_COUNT = 1120 * GEAR_RATIO; //840
-    private static final int CAROUSEL_MAX_ENCODER_COUNT = (int)( CAROUSEL_WHEEL_CIRC / SPINNER_WHEEL_CIRC * MOTOR_ENCODER_COUNT );
+    private static final int CAROUSEL_MAX_ENCODER_COUNT = (int)( CAROUSEL_WHEEL_CIRC / SPINNER_WHEEL_CIRC * MOTOR_ENCODER_COUNT + 900);
 
     private MoveCarousel moveCarouselRight;
     private MoveCarousel moveCarouselLeft;
@@ -98,12 +98,12 @@ public class CreateCarousel {
         int maxEncoderCount = CAROUSEL_MAX_ENCODER_COUNT;
         if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED)
         {
-            maxEncoderCount = -CAROUSEL_MAX_ENCODER_COUNT;
+            maxEncoderCount = CAROUSEL_MAX_ENCODER_COUNT;
             telemetry.addLine("redCarousel");
             telemetry.update();
         }
         else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
-            maxEncoderCount = CAROUSEL_MAX_ENCODER_COUNT;
+            maxEncoderCount = -CAROUSEL_MAX_ENCODER_COUNT;
             telemetry.addLine("blueCarousel");
             telemetry.update();
         }
@@ -127,7 +127,7 @@ public class CreateCarousel {
     }
 
     public boolean hasMetMaxEncoderCount(){
-        return carousel.getCarouselCurrentPosition() >= CAROUSEL_MAX_ENCODER_COUNT;
+        return Math.abs(carousel.getCarouselCurrentPosition()) >= CAROUSEL_MAX_ENCODER_COUNT;
     }
 
     public BooleanSupplier hasMaxEncoderCountSupplier(){
