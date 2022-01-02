@@ -41,7 +41,6 @@ public class BluePath3 {
     private FtcDashboard dashboard;
 
     private SequentialCommandGroup carouselGroupBlue1;
-    private SequentialCommandGroup intakeGroupBlue1;
 
     private Pose2d startPose;
     private final HardwareMap hwMap;
@@ -85,11 +84,6 @@ public class BluePath3 {
         CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
-        intakeGroupBlue1 = new SequentialCommandGroup(
-                createIntake.getSeGrabber(),
-                new WaitCommand(800)
-                        .andThen(createIntake.getStopIntake())
-        );
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
@@ -111,11 +105,6 @@ public class BluePath3 {
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
                 .splineToLinearHeading(new Pose2d(-35, 22, Math.toRadians(0)),Math.toRadians(90))
-                .addDisplacementMarker(()->{
-                    createIntake.getSeReleaser().schedule();
-                    new WaitCommand(2000).andThen(createIntake.getStopIntake()).schedule();
-
-                })
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())

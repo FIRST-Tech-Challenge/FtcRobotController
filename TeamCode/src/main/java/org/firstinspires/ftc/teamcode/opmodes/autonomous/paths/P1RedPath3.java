@@ -29,32 +29,30 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
-public class BluePath3 {
+public class P1RedPath3 {
 
     private MecanumDriveSubsystem drive;
     private TrajectoryFollowerCommand sample1Follower1;
     private TrajectoryFollowerCommand sample1Follower2;
     private TrajectoryFollowerCommand sample1Follower3;
     private TrajectoryFollowerCommand sample1Follower4;
-    private TrajectoryFollowerCommand sample1Follower5;
 
     private FtcDashboard dashboard;
 
     private SequentialCommandGroup carouselGroupBlue1;
-    private SequentialCommandGroup intakeGroupBlue1;
 
     private Pose2d startPose;
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
-    public BluePath3(HardwareMap hwMap, Telemetry telemetry){
+    public P1RedPath3(HardwareMap hwMap, Telemetry telemetry){
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
 
     }
 
-    public BluePath3(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
+    public P1RedPath3(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
         this.hwMap = hwMap;
         dashboard = db;
         this.telemetry = telemetry;
@@ -63,7 +61,7 @@ public class BluePath3 {
     }
 
     public void createPath(){
-        startPose = new Pose2d(-36, 60, Math.toRadians(270));
+        startPose = new Pose2d(-36, -60, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
@@ -85,23 +83,16 @@ public class BluePath3 {
         CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
-        intakeGroupBlue1 = new SequentialCommandGroup(
-                createIntake.getSeGrabber(),
-                new WaitCommand(800)
-                        .andThen(createIntake.getStopIntake())
-        );
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
-                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
-                .addDisplacementMarker(()-> {
-                    telemetry.addData("Path 1", "performing path 1 action");
-                })
+                .splineToLinearHeading(new Pose2d(-55, -60, Math.toRadians(245)),Math.toRadians(180))
                 .build();
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeTo(new Vector2d(-60, 22))
+                .splineToLinearHeading(new Pose2d(-55, -24, Math.toRadians(0)),Math.toRadians(90))
+                .strafeTo(new Vector2d(-34.58, -24))
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 2", "performing path 2 action");
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
@@ -110,16 +101,7 @@ public class BluePath3 {
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .splineToLinearHeading(new Pose2d(-35, 22, Math.toRadians(0)),Math.toRadians(90))
-                .addDisplacementMarker(()->{
-                    createIntake.getSeReleaser().schedule();
-                    new WaitCommand(2000).andThen(createIntake.getStopIntake()).schedule();
-
-                })
-                .build();
-
-        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .splineToLinearHeading(new Pose2d(-60, 33, Math.toRadians(270)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-60, -33, Math.toRadians(90)),Math.toRadians(90))
                 .addDisplacementMarker(()->{
                     createIntake.getSeGrabber().schedule();
                     new WaitCommand(800)
@@ -127,21 +109,22 @@ public class BluePath3 {
                 })
                 .build();
 
-        Trajectory traj5 = drive.trajectoryBuilder(traj3.end())
-                .splineToLinearHeading(new Pose2d(-33, 60, Math.toRadians(270)),Math.toRadians(0))
-                .strafeTo(new Vector2d(44,60))
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .splineToLinearHeading(new Pose2d(-33, -64, Math.toRadians(90)),Math.toRadians(0))
+                .strafeTo(new Vector2d(44,-64))
+                .strafeTo(new Vector2d(44, -40))
                 .build();
+
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-        sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4, sample1Follower5)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4)
         ));
     }
 }
