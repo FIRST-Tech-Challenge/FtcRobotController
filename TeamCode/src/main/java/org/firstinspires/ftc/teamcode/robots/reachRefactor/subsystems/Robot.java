@@ -6,6 +6,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.ejml.simple.SimpleMatrix;
@@ -24,6 +26,10 @@ public class Robot implements Subsystem {
     public Crane crane;
     public Gripper gripper;
     public Subsystem[] subsystems;
+
+    // sensors
+    public DigitalChannel freightSensor;
+
 
     // state
     private Articulation articulation;

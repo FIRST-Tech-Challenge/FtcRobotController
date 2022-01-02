@@ -294,18 +294,24 @@ public class DriveTrain implements Subsystem {
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
 
-        targetTurnRadius = angularVelocity == 0 ? 0 : linearVelocity / angularVelocity;
+        targetTurnRadius = (angularVelocity == 0 ? 0 : linearVelocity / angularVelocity);
 
-        targetFrontLeftVelocity = linearVelocity + angularVelocity * (targetTurnRadius - Constants.TRACK_WIDTH / 2);
-        targetFrontRightVelocity = linearVelocity + angularVelocity * (targetTurnRadius + Constants.TRACK_WIDTH / 2);
+        targetFrontLeftVelocity = linearVelocity - angularVelocity * (targetTurnRadius - Constants.TRACK_WIDTH / 2);
+        targetFrontRightVelocity = linearVelocity - angularVelocity * (targetTurnRadius + Constants.TRACK_WIDTH / 2);
         targetMiddleVelocity = linearVelocity + angularVelocity * Math.hypot(targetTurnRadius, chassisDistance);
 
-        targetSwivelAngle = angularVelocity == 0 || (angularVelocity == 0 && linearVelocity == 0)
+        /*
+        targetSwivelAngle = (angularVelocity == 0 || (angularVelocity == 0 && linearVelocity == 0))
                 ? 90
                     : linearVelocity == 0
                     ? 0
                 : 90 - Math.atan2(chassisDistance, targetTurnRadius);
+         */
 
+            targetSwivelAngle = 90 - Math.toDegrees(Math.atan2(chassisDistance*angularVelocity, linearVelocity));
+
+
+        //angularVelocity and linear
         if(smoothingEnabled)
             handleSmoothing();
     }
@@ -452,6 +458,9 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("middle amps", motorMiddle.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("swivel amps", motorMiddleSwivel.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("duck amps", duckSpinner.getCurrent(CurrentUnit.AMPS));
+            telemetryMap.put("atan2 ", Math.atan2(chassisDistance, targetTurnRadius));
+            telemetryMap.put("90 - atan2 to deg ", 90 - Math.toDegrees(Math.atan2(chassisDistance, targetTurnRadius)));
+            telemetryMap.put("turn radius", targetTurnRadius);
 
             telemetryMap.put("swivel angle", swivelAngle);
             telemetryMap.put("target swivel angle", targetSwivelAngle);

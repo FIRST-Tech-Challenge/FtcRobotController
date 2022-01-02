@@ -268,7 +268,7 @@ public class FF_6832 extends OpMode {
             robot.driveTrain.drive(forward, rotate, smoothingEnabled);
     }
 
-    private void handleTeleOp() {
+    private void handleTeleOp() { // apple
         // gamepad 1
         if(stickyGamepad1.left_bumper)
             robot.gripper.pitchGripper(true);
