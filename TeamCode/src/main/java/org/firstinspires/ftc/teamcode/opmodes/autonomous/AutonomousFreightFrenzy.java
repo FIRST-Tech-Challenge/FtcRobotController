@@ -150,8 +150,9 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             }
         });
 
-        while (!isStarted()) {
-            //run the scheduler before the start button is pressed
+
+        while(!isStarted()) {
+
             CommandScheduler.getInstance().run();
         }
 

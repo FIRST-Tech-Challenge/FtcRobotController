@@ -121,9 +121,9 @@ public class BluePath3 {
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
                 .splineToLinearHeading(new Pose2d(-60, 33, Math.toRadians(270)),Math.toRadians(90))
                 .addDisplacementMarker(()->{
-                    telemetry.addData("Path 4", "performing path 4 action");
-                    SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
-                    setArmLevel.schedule();
+                    createIntake.getSeGrabber().schedule();
+                    new WaitCommand(800)
+                            .andThen(createIntake.getStopIntake()).schedule();
                 })
                 .build();
 

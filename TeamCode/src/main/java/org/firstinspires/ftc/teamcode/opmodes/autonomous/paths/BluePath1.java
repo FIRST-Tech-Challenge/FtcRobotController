@@ -111,20 +111,22 @@ public class BluePath1 {
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
 
                 .splineToLinearHeading(new Pose2d(-34.58, 22, Math.toRadians(0)),Math.toRadians(90))
-                .addDisplacementMarker(()->{
-                    createIntake.getSeReleaser().schedule();
-                    new WaitCommand(2000).andThen(createIntake.getStopIntake()).schedule();
-
-                })
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .addDisplacementMarker(()->{
+                    createIntake.getSeGrabber().schedule();
+                    new WaitCommand(800)
+                            .andThen(createIntake.getStopIntake()).schedule();
+                })
                 .strafeTo(new Vector2d(-37,22))
                 .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         /*Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
+
                 .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(270)),Math.toRadians(90))
+
                 .build();*/
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
@@ -139,8 +141,8 @@ public class BluePath1 {
                 // intakeGroupBlue1
                 // carouselGroupBlue1
                 // sample1Follower1.andThen(carouselGroup,sample1Follower2,intakeGroup, sample1Follower3, sample1Follower4)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4)
 
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3,sample1Follower4)
         ));
     }
 }

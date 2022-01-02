@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class BluePath2 {
+public class P1RedPath2 {
     public static void main(String[] args){
 
         /*
@@ -27,11 +27,11 @@ public class BluePath2 {
                 //Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(41.065033847887705,41.065033847887705, Math.toRadians(100), Math.toRadians(180), 13.2435)
                     .followTrajectorySequence(drive ->
-                            drive.trajectorySequenceBuilder(new Pose2d(-36,60, Math.toRadians(270)))
-                                    .strafeTo(new Vector2d(-12, 42))
-                                    .strafeTo(new Vector2d(-12, 60))
-                                    .strafeTo(new Vector2d(44, 60))
-                                    .strafeTo(new Vector2d(44, 40))
+                            drive.trajectorySequenceBuilder(new Pose2d(-36,-60, Math.toRadians(90)))
+                                    .strafeTo(new Vector2d(-12, -42))
+                                    .strafeTo(new Vector2d(-12, -64))
+                                    .strafeTo(new Vector2d(44, -64))
+                                    .strafeTo(new Vector2d(44, -40))
                             .build()
                     );
         meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)

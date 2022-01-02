@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class BluePath3 {
+public class P1RedPath3 {
     public static void main(String[] args){
 
         /*
@@ -27,13 +27,14 @@ public class BluePath3 {
                 //Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(41.065033847887705,41.065033847887705, Math.toRadians(100), Math.toRadians(180), 13.2435)
                     .followTrajectorySequence(drive ->
-                            drive.trajectorySequenceBuilder(new Pose2d(-36,60, Math.toRadians(270)))
-                                    .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
-                                    .strafeTo(new Vector2d(-60, 22))
-                                    .splineToLinearHeading(new Pose2d(-35, 22, Math.toRadians(0)),Math.toRadians(90))
-                                    .splineToLinearHeading(new Pose2d(-60, 33, Math.toRadians(270)),Math.toRadians(90))
-                                    .splineToLinearHeading(new Pose2d(-33, 60, Math.toRadians(270)),Math.toRadians(0))
-                                    .strafeTo(new Vector2d(44,60))
+                            drive.trajectorySequenceBuilder(new Pose2d(-36,-60, Math.toRadians(90)))
+                                    .splineToLinearHeading(new Pose2d(-55, -60, Math.toRadians(245)),Math.toRadians(180))
+                                    .splineToLinearHeading(new Pose2d(-55, -24, Math.toRadians(0)),Math.toRadians(90))
+                                    .strafeTo(new Vector2d(-34.58, -24))
+                                    .splineToLinearHeading(new Pose2d(-60, -33, Math.toRadians(90)),Math.toRadians(90))
+                                    .splineToLinearHeading(new Pose2d(-33, -64, Math.toRadians(90)),Math.toRadians(0))
+                                    .strafeTo(new Vector2d(44,-64))
+                                    .strafeTo(new Vector2d(44, -40))
                             .build()
                     );
         meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)

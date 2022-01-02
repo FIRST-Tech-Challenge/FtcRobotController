@@ -96,7 +96,6 @@ public class BluePath2 {
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .strafeTo(new Vector2d(-12, 42))
                 .addDisplacementMarker(()->{
-                    telemetry.addData("Path 2 Set Level", webCamSubsystem.getLevel());
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
                     setArmLevel.schedule();
                 })
@@ -105,9 +104,10 @@ public class BluePath2 {
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .addDisplacementMarker(()->{
-                    createIntake.getSeReleaser().schedule();
-                    new WaitCommand(2000).andThen(createIntake.getStopIntake()).schedule();
 
+                    createIntake.getSeGrabber().schedule();
+                    new WaitCommand(800)
+                            .andThen(createIntake.getStopIntake()).schedule();
                 })
                 .strafeTo(new Vector2d(-12, 60))
                 .build();

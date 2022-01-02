@@ -143,7 +143,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
                 Point left_top = new Point(left, top);
                 Point right_bottom = new Point(right, bottom);
-                Point label_left_top = new Point(left, top - 5);
+                Point label_left_top = new Point(left, top - 10);
                 DecimalFormat df = new DecimalFormat("#.##");
 
                 int class_id = (int) classIdPoint.x;
