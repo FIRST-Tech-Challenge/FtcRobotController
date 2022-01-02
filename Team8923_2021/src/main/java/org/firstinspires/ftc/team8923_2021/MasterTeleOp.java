@@ -76,9 +76,10 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     public void cap() {
         if (gamepad2.y) {
-            servoGrabber.setPosition(0.3);
+            servoCapper.setPosition(0.3);
         } else if (gamepad2.a) {
-            servoGrabber.setPosition(0.0);
+            servoCapper.setPosition(0.0);
         }
     }
+
 }

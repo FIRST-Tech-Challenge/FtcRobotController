@@ -18,6 +18,7 @@ abstract public class MasterOpMode extends LinearOpMode {
 
     //declare servos
     public Servo servoGrabber = null;
+    public Servo servoCapper = null;
 
     //declare imu
     public BNO055IMU imu;
@@ -55,6 +56,9 @@ abstract public class MasterOpMode extends LinearOpMode {
         //init servos
         servoGrabber = hardwareMap.get(Servo.class, "servoGrabber");
         servoGrabber.setPosition(0.0);
+
+        servoCapper = hardwareMap.get(Servo.class, "servoCapper");
+        servoCapper.setPosition(0.0);
 
         //init imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
