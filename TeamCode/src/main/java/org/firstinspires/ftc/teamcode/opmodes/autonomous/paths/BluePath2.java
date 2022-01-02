@@ -90,14 +90,19 @@ public class BluePath2 {
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .strafeTo(new Vector2d(-12, 42))
-                .addDisplacementMarker(()-> {
-                    telemetry.addData("Path 1", "performing path 1 action");
-                    //deliver shipping element to hub
+                .addDisplacementMarker(()->{
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
+                    setArmLevel.schedule();
                 })
                 .build();
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .addDisplacementMarker(()->{
+                    createIntake.getSeGrabber().schedule();
+                    new WaitCommand(800)
+                            .andThen(createIntake.getStopIntake()).schedule();
+                })
                 .strafeTo(new Vector2d(-12, 60))
                 .build();
 
