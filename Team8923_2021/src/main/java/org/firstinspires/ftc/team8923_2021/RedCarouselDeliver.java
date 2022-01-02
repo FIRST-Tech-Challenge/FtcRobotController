@@ -13,6 +13,8 @@ public class RedCarouselDeliver extends MasterAutonomous {
         spinCarouselRed();
         moveForward(30.0, 10, 10);
         imuPivot(referenceAngle, 180, 35, 0.015, 3.0);
+        imuPivot(referenceAngle, 30,35, 0.015, 3.0 );
+        moveForward(-5.0, 10, 10);
         autoDeliver();
     }
 }
