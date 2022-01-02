@@ -27,7 +27,16 @@ public class AutonomousPath1 {
                 //Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(41.065033847887705,41.065033847887705, Math.toRadians(100), Math.toRadians(180), 13.2435)
                     .followTrajectorySequence(drive ->
-                            drive.trajectorySequenceBuilder(new Pose2d(-36,60, Math.toRadians(270)))
+                            drive.trajectorySequenceBuilder(new Pose2d(-34.25,65, Math.toRadians(270)))
+
+                                    /* Check Starting Position, it should be approximately.....
+                                       X Axis is (Half Robot Width + 1 square - 2 inches from left of square)  -34.25
+                                       Y Axis is (72 - Half the Robot Height) = 65.375 and rounded down
+
+                                       Old coordinates were -36,60
+                                       a difference of  x: +1.75 and y: -5
+                                     */
+                                    .waitSeconds(5)
 
                                     // traj1
                                     .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
