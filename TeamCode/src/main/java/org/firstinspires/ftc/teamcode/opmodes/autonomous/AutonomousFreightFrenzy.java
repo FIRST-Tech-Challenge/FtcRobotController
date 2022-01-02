@@ -140,7 +140,9 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             }
         });
 
-        CommandScheduler.getInstance().run();
+        while(!isStarted()) {
+            CommandScheduler.getInstance().run();
+        }
 
     }
 }

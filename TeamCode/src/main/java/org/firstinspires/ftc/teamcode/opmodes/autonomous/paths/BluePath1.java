@@ -78,11 +78,11 @@ public class BluePath1 {
         CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
-        intakeGroupBlue1 = new SequentialCommandGroup(
+        /*intakeGroupBlue1 = new SequentialCommandGroup(
                 createIntake.getSeGrabber(),
                 new WaitCommand(800)
                         .andThen(createIntake.getStopIntake())
-        );
+        );*/
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
@@ -114,6 +114,7 @@ public class BluePath1 {
                             .andThen(createIntake.getStopIntake()).schedule();
                 })
                 .strafeTo(new Vector2d(-37,22))
+                .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         /*Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
