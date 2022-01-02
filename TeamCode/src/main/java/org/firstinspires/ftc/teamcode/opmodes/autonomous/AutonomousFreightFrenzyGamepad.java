@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath1;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath2;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath3;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -112,6 +113,20 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
                     BluePath2 bluePath2 = new BluePath2(hardwareMap, telemetry);
                     bluePath2.createPath();
                     bluePath2.execute(this);
+                } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
+                    /*
+                    RedPath1 redPath1 = new RedPath1(hardwareMap,telemetry);
+                    redPath1.createPath();
+                    redPath1.execute(this);
+                    */
+                }
+            }
+
+            if (selectedPath[0] == "Path 3") {
+                if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
+                    BluePath3 bluePath3 = new BluePath3(hardwareMap, telemetry);
+                    bluePath3.createPath();
+                    bluePath3.execute(this);
                 } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
                     /*
                     RedPath1 redPath1 = new RedPath1(hardwareMap,telemetry);

@@ -54,7 +54,7 @@ public class BluePath1 {
         dashboard = db;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
-       
+
     }
 
     public void createPath(){

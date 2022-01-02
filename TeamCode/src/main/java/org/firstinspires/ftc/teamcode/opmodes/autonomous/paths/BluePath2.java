@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
+import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
@@ -76,8 +77,11 @@ public class BluePath2 {
         createWebCam.createAuto();
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
 
-        MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
-        mockDetectTSEPosition.schedule();
+        //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
+        //mockDetectTSEPosition.schedule();
+
+        DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
+        detectTSEPosition.schedule();
 
 
         CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
@@ -91,14 +95,20 @@ public class BluePath2 {
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .strafeTo(new Vector2d(-12, 42))
-                .addDisplacementMarker(()-> {
-                    telemetry.addData("Path 1", "performing path 1 action");
-                    //deliver shipping element to hub
+                .addDisplacementMarker(()->{
+                    telemetry.addData("Path 2 Set Level", webCamSubsystem.getLevel());
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
+                    setArmLevel.schedule();
                 })
                 .build();
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .addDisplacementMarker(()->{
+                    createIntake.getSeReleaser().schedule();
+                    new WaitCommand(2000).andThen(createIntake.getStopIntake()).schedule();
+
+                })
                 .strafeTo(new Vector2d(-12, 60))
                 .build();
 

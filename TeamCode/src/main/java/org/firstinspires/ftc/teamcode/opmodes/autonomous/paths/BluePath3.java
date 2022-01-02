@@ -51,8 +51,7 @@ public class BluePath3 {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
-        startPose = new Pose2d(-36, 60, Math.toRadians(270));
-        drive.setPoseEstimate(startPose);
+
     }
 
     public BluePath3(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
@@ -60,11 +59,13 @@ public class BluePath3 {
         dashboard = db;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
-        startPose = new Pose2d(-36, 60, Math.toRadians(270));
-        drive.setPoseEstimate(startPose);
+
     }
 
     public void createPath(){
+        startPose = new Pose2d(-36, 60, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
+
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
         CreateWebCam createWebCam = new CreateWebCam(hwMap, "Webcam 1", dashboard, telemetry);
         CreateArm createArm = new CreateArm(hwMap, "arm", telemetry);
@@ -110,11 +111,15 @@ public class BluePath3 {
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
                 .splineToLinearHeading(new Pose2d(-35, 22, Math.toRadians(0)),Math.toRadians(90))
+                .addDisplacementMarker(()->{
+                    createIntake.getSeReleaser().schedule();
+                    new WaitCommand(2000).andThen(createIntake.getStopIntake()).schedule();
+
+                })
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .splineToLinearHeading(new Pose2d(-60, 33
-                        , Math.toRadians(270)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-60, 33, Math.toRadians(270)),Math.toRadians(90))
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 4", "performing path 4 action");
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
@@ -136,7 +141,7 @@ public class BluePath3 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, intakeGroupBlue1, sample1Follower4, sample1Follower5)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4, sample1Follower5)
         ));
     }
 }

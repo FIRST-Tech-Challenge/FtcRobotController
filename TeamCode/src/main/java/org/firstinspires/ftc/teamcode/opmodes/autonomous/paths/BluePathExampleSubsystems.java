@@ -45,8 +45,7 @@ public class BluePathExampleSubsystems {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
-        startPose = new Pose2d(-36, 60, Math.toRadians(270));
-        drive.setPoseEstimate(startPose);
+
     }
 
     public BluePathExampleSubsystems(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
@@ -54,11 +53,13 @@ public class BluePathExampleSubsystems {
         dashboard = db;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
-        startPose = new Pose2d(-36, 60, Math.toRadians(270));
-        drive.setPoseEstimate(startPose);
+
     }
 
     public void createPath(){
+        startPose = new Pose2d(-36, 60, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
+
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
         CreateWebCam createWebCam = new CreateWebCam(hwMap,"Webcam 1",dashboard,telemetry);
         CreateArm createArm = new CreateArm(hwMap,"arm", telemetry);
