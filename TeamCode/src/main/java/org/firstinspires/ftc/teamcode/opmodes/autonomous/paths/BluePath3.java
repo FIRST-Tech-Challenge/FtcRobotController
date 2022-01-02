@@ -116,9 +116,9 @@ public class BluePath3 {
                 .splineToLinearHeading(new Pose2d(-60, 33
                         , Math.toRadians(270)),Math.toRadians(90))
                 .addDisplacementMarker(()->{
-                    telemetry.addData("Path 4", "performing path 4 action");
-                    SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
-                    setArmLevel.schedule();
+                    createIntake.getSeGrabber().schedule();
+                    new WaitCommand(800)
+                            .andThen(createIntake.getStopIntake()).schedule();
                 })
                 .build();
 
@@ -136,7 +136,7 @@ public class BluePath3 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, intakeGroupBlue1, sample1Follower4, sample1Follower5)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4, sample1Follower5)
         ));
     }
 }
