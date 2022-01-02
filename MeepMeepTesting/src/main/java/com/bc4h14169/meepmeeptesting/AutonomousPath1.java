@@ -28,10 +28,28 @@ public class AutonomousPath1 {
                 .setConstraints(41.065033847887705,41.065033847887705, Math.toRadians(100), Math.toRadians(180), 13.2435)
                     .followTrajectorySequence(drive ->
                             drive.trajectorySequenceBuilder(new Pose2d(-36,60, Math.toRadians(270)))
-                            .strafeTo(new Vector2d(-60, 60))
-                            .strafeTo(new Vector2d(-60, 24))
-                            .splineToLinearHeading(new Pose2d(-32, 24, Math.toRadians(0)),Math.toRadians(270))
-                            .splineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(270)),Math.toRadians(270))
+
+                                    // traj1
+                                    .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
+                                    .addDisplacementMarker(()-> {
+                                        //telemetry.addData("Path 1", "performing path 1 action");
+                                    })
+
+                                    //traj2
+                                    .strafeTo(new Vector2d(-60, 22))
+                                    .addDisplacementMarker(()->{
+                                        //telemetry.addData("Path 2", "performing path 2 action");
+                                        //SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
+                                        //setArmLevel.schedule();
+                                    })
+
+                                    //traj3
+                                    .splineToLinearHeading(new Pose2d(-34.58, 22, Math.toRadians(0)),Math.toRadians(90))
+
+                                    //traj4
+                                    .strafeTo(new Vector2d(-37,22))
+                                    .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(0)),Math.toRadians(90))
+
                             .build()
                     );
         meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
