@@ -225,20 +225,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
             motorLift.setPower(0.0);
         }
 
-        public void capAuto() {
-            servoCapper.setPosition(0.5);
-            motorLift.setPower(0.1);
-            sleep(3000);
-            servoCapper.setPosition(1.0);
-            sleep(2000);
-            servoCapper.setPosition(0.0);
-            sleep(1000);
-            moveForward(5, 10, 10);
-            motorLift.setPower(-0.1);
-            sleep(2000);
-            motorLift.setPower(0.0);
-        }
-
     public void sendTelemetry() {
         //Informs drivers of robot location
         telemetry.addData("X", robotX);
