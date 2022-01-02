@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
-public class BluePath3 {
+public class DuckSideBluePath3 {
 
     private MecanumDriveSubsystem drive;
     private TrajectoryFollowerCommand sample1Follower1;
@@ -46,14 +46,14 @@ public class BluePath3 {
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
-    public BluePath3(HardwareMap hwMap, Telemetry telemetry){
+    public DuckSideBluePath3(HardwareMap hwMap, Telemetry telemetry){
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
 
     }
 
-    public BluePath3(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
+    public DuckSideBluePath3(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
         this.hwMap = hwMap;
         dashboard = db;
         this.telemetry = telemetry;

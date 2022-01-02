@@ -1,24 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
-import com.arcrobotics.ftclib.command.button.Button;
-import com.arcrobotics.ftclib.command.button.GamepadButton;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.globals.Alliance;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath1;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath2;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.BluePath3;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath1;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath2;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath3;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 @Disabled
 @Autonomous(name="Auto Freight Frenzy Gamepad", group="FreightFrenzy")
@@ -95,7 +86,7 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
             // Path 1, start on duck end, spin the duck, deliver to the shipping hub, park in the storage container
             if (selectedPath[0] == "Path 1") {
                 if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
-                    BluePath1 bluePath1 = new BluePath1(hardwareMap, telemetry);
+                    DuckSideBluePath1 bluePath1 = new DuckSideBluePath1(hardwareMap, telemetry);
                     bluePath1.createPath();
                     bluePath1.execute(this);
                 } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
@@ -110,9 +101,9 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
             // Path 2, start on duck end, spin the duck, deliver to the shipping hub, park in the storage container
             if (selectedPath[0] == "Path 2") {
                 if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
-                    BluePath2 bluePath2 = new BluePath2(hardwareMap, telemetry);
-                    bluePath2.createPath();
-                    bluePath2.execute(this);
+                    DuckSideBluePath2 duckSideBluePath2 = new DuckSideBluePath2(hardwareMap, telemetry);
+                    duckSideBluePath2.createPath();
+                    duckSideBluePath2.execute(this);
                 } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
                     /*
                     RedPath1 redPath1 = new RedPath1(hardwareMap,telemetry);
@@ -124,9 +115,9 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
 
             if (selectedPath[0] == "Path 3") {
                 if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
-                    BluePath3 bluePath3 = new BluePath3(hardwareMap, telemetry);
-                    bluePath3.createPath();
-                    bluePath3.execute(this);
+                    DuckSideBluePath3 duckSideBluePath3 = new DuckSideBluePath3(hardwareMap, telemetry);
+                    duckSideBluePath3.createPath();
+                    duckSideBluePath3.execute(this);
                 } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
                     /*
                     RedPath1 redPath1 = new RedPath1(hardwareMap,telemetry);
