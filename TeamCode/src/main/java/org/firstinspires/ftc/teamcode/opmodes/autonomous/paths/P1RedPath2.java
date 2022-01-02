@@ -22,16 +22,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
-import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
-import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateIntake;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
-public class BluePath2 {
+public class P1RedPath2 {
 
     private MecanumDriveSubsystem drive;
     private TrajectoryFollowerCommand sample1Follower1;
@@ -39,18 +37,19 @@ public class BluePath2 {
 
     private FtcDashboard dashboard;
 
+
     private Pose2d startPose;
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
-    public BluePath2(HardwareMap hwMap, Telemetry telemetry){
+    public P1RedPath2(HardwareMap hwMap, Telemetry telemetry){
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
 
     }
 
-    public BluePath2(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
+    public P1RedPath2(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
         this.hwMap = hwMap;
         dashboard = db;
         this.telemetry = telemetry;
@@ -59,7 +58,7 @@ public class BluePath2 {
     }
 
     public void createPath(){
-        startPose = new Pose2d(-36, 60, Math.toRadians(270));
+        startPose = new Pose2d(-36, -60, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         CreateWebCam createWebCam = new CreateWebCam(hwMap, "Webcam 1", dashboard, telemetry);
@@ -82,7 +81,7 @@ public class BluePath2 {
 
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .strafeTo(new Vector2d(-12, 42))
+                .strafeTo(new Vector2d(-12, -42))
                 .addDisplacementMarker(()->{
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
                     setArmLevel.schedule();
@@ -97,14 +96,15 @@ public class BluePath2 {
                     new WaitCommand(800)
                             .andThen(createIntake.getStopIntake()).schedule();
                 })
-                .strafeTo(new Vector2d(-12, 60))
-                .strafeTo(new Vector2d(44, 60))
-                .strafeTo(new Vector2d(44, 40))
+                .strafeTo(new Vector2d(-12, -64))
+                .strafeTo(new Vector2d(44, -64))
+                .strafeTo(new Vector2d(44, -40))
                 .build();
 
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
+
     }
 
     public void execute(CommandOpMode commandOpMode){
