@@ -32,7 +32,7 @@ public class BluePath1 {
                                     .strafeTo(new Vector2d(-60, 22))
                                     .splineToLinearHeading(new Pose2d(-34.58, 22, Math.toRadians(0)),Math.toRadians(90))
                                     .strafeTo(new Vector2d(-37,22))
-                                    .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(270)),Math.toRadians(90))
+                                    .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(0)),Math.toRadians(90))
                             .build()
                     );
         meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)

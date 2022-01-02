@@ -120,7 +120,7 @@ public class BluePath1 {
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
                 .strafeTo(new Vector2d(-37,22))
-                //.splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(270)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         /*Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
