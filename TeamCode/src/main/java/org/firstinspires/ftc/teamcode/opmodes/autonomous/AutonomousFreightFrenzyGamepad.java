@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath2
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath1;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath2;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideBluePath1;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideRedPath1;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
 @Autonomous(name="Auto Freight Frenzy Gamepad", group="FreightFrenzy")
@@ -138,7 +139,9 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
                     warehouseSideBluePath1.execute(this);
                 }
                 else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
-
+                    WarehouseSideRedPath1 warehouseSideRedPath1 = new WarehouseSideRedPath1(hardwareMap,selectedStartPos[0],dashboard,telemetry);
+                    warehouseSideRedPath1.createPath();
+                    warehouseSideRedPath1.execute(this);
                 }
             }
 

@@ -18,11 +18,23 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath2
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath2;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath1;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideBluePath1;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideRedPath1;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
 
 @Autonomous(name="Auto Freight Frenzy", group="FreightFrenzy")
 public class AutonomousFreightFrenzy extends CommandOpMode {
+
+    private static final String BLUE_ALLIANCE = "Blue";
+    private static final String RED_ALLIANCE = "Red";
+
+    private static final String DUCK_SIDE = "Duck";
+    private static final String WAREHOUSE_SIDE = "Warehouse";
+
+    private static final String PATH_1 = "Path 1";
+    private static final String PATH_2 = "Path 2";
+    private static final String PATH_3 = "Path 3";
+    private static final String PATH_4 = "Path 4";
 
     @Override
     public void initialize() {
@@ -30,6 +42,8 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         telemetry.setAutoClear(false);
+
+
 
         final String[] selectedAlliance = new String[1];
         final String[] selectedSide = new String[1];
@@ -72,7 +86,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
 
         blueAlliance.whenPressed(()->{
-            selectedAlliance[0] = "Blue";
+            selectedAlliance[0] = BLUE_ALLIANCE;
             Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.BLUE);
             createLEDs.createAuto();
 
@@ -89,7 +103,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
         });
 
         redAlliance.whenPressed(()->{
-            selectedAlliance[0] = "Red";
+            selectedAlliance[0] = RED_ALLIANCE;
             Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.RED);
             createLEDs.createAuto();
 
@@ -107,7 +121,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
         duckSide.whenPressed(()->{
 
-            selectedSide[0] = "Duck";
+            selectedSide[0] = DUCK_SIDE;
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
                 selectedStartPos[0] = duckBlueStartPose;
 
@@ -128,7 +142,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
         });
 
         warehouseSide.whenPressed(()->{
-            selectedSide[0] = "Warehouse";
+            selectedSide[0] = WAREHOUSE_SIDE;
 
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
                 selectedStartPos[0] = warehouseBlueStartPose;
@@ -151,86 +165,88 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
 
         path1Selector.whenPressed(()->{
-            selectedPath[0] = "Path 1";
+            selectedPath[0] = PATH_1;
             telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
-            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Duck"){
+            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == DUCK_SIDE){
                 DuckSideBluePath1 duckSideBluePath1 = new DuckSideBluePath1(hardwareMap, selectedStartPos[0], dashboard,telemetry);
                 duckSideBluePath1.createPath();
                 duckSideBluePath1.execute(this);
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Duck"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == DUCK_SIDE){
                 DuckSideRedPath1 duckSideRedPath1 = new DuckSideRedPath1(hardwareMap,selectedStartPos[0],dashboard,telemetry);
                 duckSideRedPath1.createPath();
                 duckSideRedPath1.execute(this);
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == WAREHOUSE_SIDE){
                 WarehouseSideBluePath1 warehouseSideBluePath1 = new WarehouseSideBluePath1(hardwareMap,selectedStartPos[0],dashboard,telemetry);
                 warehouseSideBluePath1.createPath();
                 warehouseSideBluePath1.execute(this);
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
-
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == WAREHOUSE_SIDE){
+                WarehouseSideRedPath1 warehouseSideRedPath1 = new WarehouseSideRedPath1(hardwareMap,selectedStartPos[0],dashboard,telemetry);
+                warehouseSideRedPath1.createPath();
+                warehouseSideRedPath1.execute(this);
             }
         });
 
         path2Selector.whenPressed(()->{
-            selectedPath[0] = "Path 2";
+            selectedPath[0] = PATH_2;
             telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
-            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Duck"){
+            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == DUCK_SIDE){
                 DuckSideBluePath2 duckSideBluePath2 = new DuckSideBluePath2(hardwareMap, selectedStartPos[0], dashboard, telemetry);
                 duckSideBluePath2.createPath();
                 duckSideBluePath2.execute(this);
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Duck"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == DUCK_SIDE){
                 DuckSideRedPath2 duckSideRedPath2 = new DuckSideRedPath2(hardwareMap,selectedStartPos[0], dashboard,telemetry);
                 duckSideRedPath2.createPath();
                 duckSideRedPath2.execute(this);
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == WAREHOUSE_SIDE){
 
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == WAREHOUSE_SIDE){
 
             }
         });
 
         path3Selector.whenPressed(()->{
-            selectedPath[0] = "Path 3";
+            selectedPath[0] = PATH_3;
             telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
-            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Duck"){
+            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == DUCK_SIDE){
 
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Duck"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == DUCK_SIDE){
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == WAREHOUSE_SIDE){
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == WAREHOUSE_SIDE){
 
             }
         });
 
         path4Selector.whenPressed(()->{
-            selectedPath[0] = "Path 4";
+            selectedPath[0] = PATH_4;
             telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
-            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Duck"){
+            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == DUCK_SIDE){
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Duck"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == DUCK_SIDE){
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == WAREHOUSE_SIDE){
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == WAREHOUSE_SIDE){
 
             }
         });
