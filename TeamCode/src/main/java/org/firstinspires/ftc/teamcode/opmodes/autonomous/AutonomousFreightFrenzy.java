@@ -15,11 +15,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath1;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath2;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath3;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath2;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath3;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath1;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideBluePath2;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideBluePath1;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
 
@@ -167,7 +165,9 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
                 duckSideRedPath1.execute(this);
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
-
+                WarehouseSideBluePath1 warehouseSideBluePath1 = new WarehouseSideBluePath1(hardwareMap,selectedStartPos[0],dashboard,telemetry);
+                warehouseSideBluePath1.createPath();
+                warehouseSideBluePath1.execute(this);
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
 
@@ -191,9 +191,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
 
-                WarehouseSideBluePath2 warehouseSideBluePath2 = new WarehouseSideBluePath2(hardwareMap, selectedStartPos[0], dashboard, telemetry);
-                warehouseSideBluePath2.createPath();
-                warehouseSideBluePath2.execute(this);
+
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
 
@@ -206,14 +204,10 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             telemetry.update();
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Duck"){
 
-                DuckSideBluePath3 duckSideBluePath3 = new DuckSideBluePath3(hardwareMap, selectedStartPos[0], dashboard, telemetry);
-                duckSideBluePath3.createPath();
-                duckSideBluePath3.execute(this);
+
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Duck"){
-                DuckSideRedPath3 duckSideRedPath3 = new DuckSideRedPath3(hardwareMap, selectedStartPos[0], dashboard,telemetry);
-                duckSideRedPath3.createPath();
-                duckSideRedPath3.execute(this);
+
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
 

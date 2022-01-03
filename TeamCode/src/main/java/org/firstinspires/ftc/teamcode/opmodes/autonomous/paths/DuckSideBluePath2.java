@@ -1,10 +1,9 @@
 /*
-blue path 2
-starts warehouse blue
-delivers cube to hub
-back to wall
-strafe to warehouse
-move to 2nd square in warehouse
+starting blue carousel
+strafe to spin carousel
+forward to end of blue block
+move to deliver cube
+spline to blue square to park storage unit
  */
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.paths;
 
@@ -36,14 +35,19 @@ public class DuckSideBluePath2 {
     private MecanumDriveSubsystem drive;
     private TrajectoryFollowerCommand sample1Follower1;
     private TrajectoryFollowerCommand sample1Follower2;
+    private TrajectoryFollowerCommand sample1Follower3;
+    private TrajectoryFollowerCommand sample1Follower4;
+    private TrajectoryFollowerCommand sample1Follower5;
 
     private FtcDashboard dashboard;
+
+    private SequentialCommandGroup carouselGroupBlue1;
 
     private final Pose2d startPose;
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
-    public DuckSideBluePath2(HardwareMap hwMap, Pose2d sp,Telemetry telemetry){
+    public DuckSideBluePath2(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
         startPose = sp;
         this.telemetry = telemetry;
@@ -64,6 +68,7 @@ public class DuckSideBluePath2 {
         //startPose = new Pose2d(-36, 60, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
+        CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
         CreateWebCam createWebCam = new CreateWebCam(hwMap, "Webcam 1", dashboard, telemetry);
         CreateArm createArm = new CreateArm(hwMap, "arm", telemetry);
 
@@ -78,40 +83,60 @@ public class DuckSideBluePath2 {
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
         detectTSEPosition.schedule();
 
+        createCarousel.createAuto();
+        carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
+                new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
 
         CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .strafeTo(new Vector2d(-12, 42))
-                .addDisplacementMarker(()->{
-                    SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
-                    setArmLevel.schedule();
+                //.strafeTo(new Vector2d(-60, 60))
+                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
+                .addDisplacementMarker(()-> {
+                    telemetry.addData("Path 1", "performing path 1 action");
                 })
                 .build();
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .strafeTo(new Vector2d(-60, 22))
                 .addDisplacementMarker(()->{
+                    telemetry.addData("Path 2", "performing path 2 action");
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
+                    setArmLevel.schedule();
+                })
+                .build();
 
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                .splineToLinearHeading(new Pose2d(-35, 22, Math.toRadians(0)),Math.toRadians(90))
+                .build();
+
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .splineToLinearHeading(new Pose2d(-60, 33, Math.toRadians(270)),Math.toRadians(90))
+                .addDisplacementMarker(()->{
                     createIntake.getSeGrabber().schedule();
                     new WaitCommand(800)
                             .andThen(createIntake.getStopIntake()).schedule();
                 })
-                .strafeTo(new Vector2d(-12, 60))
-                .strafeTo(new Vector2d(44, 60))
-                .strafeTo(new Vector2d(44, 40))
                 .build();
 
+        Trajectory traj5 = drive.trajectoryBuilder(traj3.end())
+                .splineToLinearHeading(new Pose2d(-33, 60, Math.toRadians(270)),Math.toRadians(0))
+                .strafeTo(new Vector2d(44,60))
+                .build();
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
+        sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
+        sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
+        sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(sample1Follower2)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4, sample1Follower5)
         ));
     }
 }

@@ -26,12 +26,14 @@ public class DuckSideBluePath2 {
                 .setDimensions(16.5, 13.25)
                 //Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(41.065033847887705,41.065033847887705, Math.toRadians(100), Math.toRadians(180), 13.2435)
-                    .followTrajectorySequence(drive ->
+                .followTrajectorySequence(drive ->
                             drive.trajectorySequenceBuilder(new Pose2d(-36,60, Math.toRadians(270)))
-                                    .strafeTo(new Vector2d(-12, 42))
-                                    .strafeTo(new Vector2d(-12, 60))
-                                    .strafeTo(new Vector2d(44, 60))
-                                    .strafeTo(new Vector2d(44, 40))
+                                    .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
+                                    .strafeTo(new Vector2d(-60, 22))
+                                    .splineToLinearHeading(new Pose2d(-35, 22, Math.toRadians(0)),Math.toRadians(90))
+                                    .splineToLinearHeading(new Pose2d(-60, 33, Math.toRadians(270)),Math.toRadians(90))
+                                    .splineToLinearHeading(new Pose2d(-33, 60, Math.toRadians(270)),Math.toRadians(0))
+                                    .strafeTo(new Vector2d(44,60))
                             .build()
                     );
         meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
