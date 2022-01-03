@@ -61,7 +61,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
         //Y (Yellow) button
         Button duckSide = new GamepadButton(settingsOp, GamepadKeys.Button.Y);
         //A (Green) button
-        Button wharehouseSide = new GamepadButton(settingsOp, GamepadKeys.Button.A);
+        Button warehouseSide = new GamepadButton(settingsOp, GamepadKeys.Button.A);
 
         Button path1Selector = new GamepadButton(settingsOp, GamepadKeys.Button.DPAD_UP);
         Button path2Selector = new GamepadButton(settingsOp, GamepadKeys.Button.DPAD_RIGHT);
@@ -81,7 +81,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
                 telemetry.clearAll();
                 telemetry.addLine("Blue Alliance Selected");
                 telemetry.addLine("What is your Position?");
-                telemetry.addLine("Press (Y) for Duck side, (A) for Wharehouse side");
+                telemetry.addLine("Press (Y) for Duck side, (A) for Warehouse side");
                 telemetry.update();
             }));
 
@@ -98,7 +98,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
                 telemetry.clearAll();
                 telemetry.addLine("Red Alliance Selected");
                 telemetry.addLine("What is your Position?");
-                telemetry.addLine("Press (Y) for Duck side, (A) for Wharehouse side");
+                telemetry.addLine("Press (Y) for Duck side, (A) for Warehouse side");
                 telemetry.update();
             }));
 
@@ -128,8 +128,8 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             }));
         });
 
-        wharehouseSide.whenPressed(()->{
-            selectedSide[0] = "Wharehouse";
+        warehouseSide.whenPressed(()->{
+            selectedSide[0] = "Warehouse";
 
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
                 selectedStartPos[0] = warehouseBlueStartPose;
@@ -141,7 +141,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
             schedule(new InstantCommand(() -> {
                 telemetry.clearAll();
-                telemetry.addLine(String.format("%s Alliance on Wharehouse side Selected",selectedAlliance[0]));
+                telemetry.addLine(String.format("%s Alliance on Warehouse side Selected",selectedAlliance[0]));
                 telemetry.addLine("Press (^) for Path 1");
                 telemetry.addLine("Press (>) for Path 2");
                 telemetry.addLine("Press (v) for Path 3");

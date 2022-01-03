@@ -71,7 +71,7 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
                 yPressed = gamepad1.y;
 
                 if (gamepad1.a & !aPressed) {
-                    selectedSide[0] = "Wharehouse";
+                    selectedSide[0] = "Warehouse";
 
                     if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
                         selectedStartPos[0] = warehouseBlueStartPose;
