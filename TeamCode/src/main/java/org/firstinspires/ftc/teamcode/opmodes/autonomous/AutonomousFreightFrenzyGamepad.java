@@ -29,8 +29,8 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
 
         final Pose2d duckBlueStartPose = new Pose2d(-36, 60, Math.toRadians(270));
         final Pose2d duckRedStartPose = new Pose2d(-36, -60, Math.toRadians(90));
-        final Pose2d wharehouseBlueStartPose = null;
-        final Pose2d wharehouseRedStartPose = null;
+        final Pose2d warehouseBlueStartPose = null;
+        final Pose2d warehouseRedStartPose = null;
 
         final Pose2d[] selectedStartPos = new Pose2d[1];
 
@@ -73,9 +73,9 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
                     selectedSide[0] = "Wharehouse";
 
                     if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
-                        selectedStartPos[0] = wharehouseBlueStartPose;
+                        selectedStartPos[0] = warehouseBlueStartPose;
                     } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
-                        selectedStartPos[0] = wharehouseRedStartPose;
+                        selectedStartPos[0] = warehouseRedStartPose;
                     }
                 }
                 aPressed = gamepad1.a;
