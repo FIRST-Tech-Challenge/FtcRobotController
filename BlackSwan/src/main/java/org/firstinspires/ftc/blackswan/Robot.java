@@ -1,12 +1,9 @@
-package org.firstinspires.ftc.blackSwan;
+package org.firstinspires.ftc.blackswan;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -25,7 +22,7 @@ public class Robot {
     DcMotor carousel, arm, intake;
     BNO055IMU imu;
     LinearOpMode opMode;
-    //RevColorSensorV3 colorSensorLeft;
+    RevColorSensorV3 colorSensorLeft;
     RevColorSensorV3 colorSensorRight;
 
 
@@ -51,7 +48,7 @@ public class Robot {
         backRight.setDirection(DcMotor.Direction.FORWARD);
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
-        //colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
+        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -236,24 +233,24 @@ public class Robot {
         carousel.setPower(0);
     }
     public void armThing(int level){
-//        if(level == 1) {
-//            arm.setPower(.5);
-//            pause(//some random number test and change later
-//                    1000);
-//            arm.setPower(0);
-//        }
-//        if(level == 2) {
-//            arm.setPower(.5);
-//            pause(//some random number test and change later
-//                    1000);
-//            arm.setPower(0);
-//        }
-//        if(level == 3) {
-//            arm.setPower(.5);
-//            pause(//some random number test and change later
-//                    1000);
-//            arm.setPower(0);
-//        }
+        if(level == 1) {
+            arm.setPower(.5);
+            pause(//some random number test and change later
+                    1000);
+            arm.setPower(0);
+        }
+        if(level == 2) {
+            arm.setPower(.5);
+            pause(//some random number test and change later
+                    1000);
+            arm.setPower(0);
+        }
+        if(level == 3) {
+            arm.setPower(.5);
+            pause(//some random number test and change later
+                    1000);
+            arm.setPower(0);
+        }
         intake.setPower(-1);
         pause(1000);
         intake.setPower(0);
