@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.Utills.Executable;
+import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
 /**
@@ -28,6 +30,11 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     Executable<Boolean> _opModeIsActive;
 
     /**
+     * A voltage sensor to monitor the robot voltage
+     */
+    RobotVoltageSensor voltageSensor;
+
+    /**
      * A empty constructor for subclassing
      */
     protected OdometryDrivetrain() {
@@ -46,12 +53,13 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
      */
-    public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
+    public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
         super(front_right, front_left, back_right, back_left);
         this.telemetry = telemetry;
         this.odometry = odometry;
         this._isStopRequested = isStopRequested;
         this._opModeIsActive = opmodeIsActive;
+        this.voltageSensor = voltageSensor;
     }
 
     /**
@@ -63,7 +71,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
      */
-    public OdometryDrivetrain(BasicDrivetrain drivetrain, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
+    public OdometryDrivetrain(BasicDrivetrain drivetrain, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
         super(drivetrain.front_right, drivetrain.front_left, drivetrain.back_right, drivetrain.back_left);
         this.telemetry = telemetry;
         this.odometry = odometry;
@@ -206,6 +214,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         this.stopAll();
     }
 
+
     /**
      * Moves the robot to the given position with the option for debug information
      *
@@ -216,51 +225,37 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @throws InterruptedException Throws an exception if stop is requested during the move
      */
     public void moveToPosition(double x, double y, double tolerance, boolean consoleOutput) throws InterruptedException {
-        final String s = x + " , " + y;
-        double power = 0;
+        final String coordinateString = x + " , " + y;
+        double power, odometry_angle;
+
         double odometry_x = odometry.returnRelativeXPosition();
         double odometry_y = odometry.returnRelativeYPosition();
-        double distance = distance(odometry_x, odometry_y, x, y);
-        double odometry_angle;
 
+        double currentDistance = distance(odometry_x, odometry_y, x, y);
+        double initialDistance = currentDistance;
 
-        while (distance > tolerance && !isStopRequested() && opModeIsActive()) {
-            //By calculating the values here once in this loop and declaring the variables above, we minimize the number
-            //of memory allocation calls and the number of variable calculations.
+        while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
             odometry_x = odometry.returnRelativeXPosition(); //odometry x
             odometry_y = odometry.returnRelativeYPosition(); //odometry y
-            distance = distance(odometry_x, odometry_y, x, y); //distance value
+            currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
             odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
 
-            /*The next if-else block takes the distance from target and
-             sets the power variable to odometry_angle power following the function
-             @param zeroPoint is the point where the robot goes at 1
-             power = 0.8/zeroPoint(distance) + 0.2
-             if the distance is greater than 24 in or ~2 ft, robot moves at power of 1
-             */
-            final double zeroPoint = 24;
-            if (distance > zeroPoint) {
-                power = 1;
-            } else {
-                power = ((0.9 / zeroPoint) * distance) + 0.2;
-            }
-            //power = Math.abs(power);
-
+            power = -Math.cos(2 * Math.PI * (currentDistance / initialDistance)) + (1.0 + (0.2 * (12 / voltageSensor.getVoltage())));
+            power = power / 2;
+            power = MiscUtills.boundNumber(power);
 
             if (consoleOutput) {
-
-                telemetry.addData("Moving to", s);
-                telemetry.addData("distance", distance);
+                telemetry.addData("Moving to", coordinateString);
+                telemetry.addData("currentDistance", currentDistance);
                 telemetry.addData("angle", odometry_angle);
-                telemetry.addData("Moving?", distance > tolerance);
+                telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
                 telemetry.addData("X Pos", odometry_x);
                 telemetry.addData("Y Pos", odometry_y);
                 telemetry.addData("Power", power);
                 telemetry.update();
-
             }
-            strafeAtAngle(odometry_angle, power);
 
+            strafeAtAngle(odometry_angle, power);
 
         }
         stopAll();
