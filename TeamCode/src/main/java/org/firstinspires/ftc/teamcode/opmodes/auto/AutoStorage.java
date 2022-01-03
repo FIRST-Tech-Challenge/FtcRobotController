@@ -43,9 +43,9 @@ public class AutoStorage extends LinearOpMode {
         builder.waitSeconds(2);
         builder.lineTo(new Vector2d(-19, 45 * multiplier));
         builder.lineToLinearHeading(new Pose2d(-59, 57.5, Math.toRadians(240)));
-        builder.addDisplacementMarker(carousel::on);
+        //builder.addDisplacementMarker(carousel::on);
         builder.waitSeconds(3);
-        builder.addDisplacementMarker(carousel::off);
+        //builder.addDisplacementMarker(carousel::off);
         builder.lineToLinearHeading(new Pose2d(-60, 35, Math.toRadians(90)));
         builder.waitSeconds(10);
         builder.addDisplacementMarker(() -> {
@@ -58,6 +58,7 @@ public class AutoStorage extends LinearOpMode {
         waitForStart();
 
         if (!isStopRequested()) {
+            carousel.on();
             drive.followTrajectorySequence(trajSeq);
         }
     }

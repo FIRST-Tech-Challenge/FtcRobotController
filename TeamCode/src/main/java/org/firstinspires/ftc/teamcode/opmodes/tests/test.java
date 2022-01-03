@@ -10,12 +10,14 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
 @TeleOp
 public class test extends LinearOpMode {
     @Override
     public void runOpMode() {
+        final AutoCarousel carousel =  new AutoCarousel(hardwareMap);
         final DistanceSensor sensor = hardwareMap.get(DistanceSensor.class, "intakeSensor");
         final Encoder leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
         final Encoder rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "tapeMeasure"));
@@ -30,6 +32,7 @@ public class test extends LinearOpMode {
         final DcMotor[] motors = {one, two, three, four};
         final GamepadEx gamepadEx = new GamepadEx(gamepad1);
         waitForStart();
+        carousel.on();
         while (opModeIsActive()) {
             final double stick = gamepadEx.getLeftY();
             for (DcMotor motor : motors) {

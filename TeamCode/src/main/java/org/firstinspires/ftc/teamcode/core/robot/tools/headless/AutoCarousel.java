@@ -6,7 +6,11 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class AutoCarousel extends HeadlessToggleableTool<CRServo> {
+    public AutoCarousel(@NonNull HardwareMap hardwareMap, double power) {
+        super(hardwareMap, CRServo.class, "spinner", power);
+    }
+
     public AutoCarousel(@NonNull HardwareMap hardwareMap) {
-        super(hardwareMap, CRServo.class, "spinner", -1);
+        this(hardwareMap, 1);
     }
 }
