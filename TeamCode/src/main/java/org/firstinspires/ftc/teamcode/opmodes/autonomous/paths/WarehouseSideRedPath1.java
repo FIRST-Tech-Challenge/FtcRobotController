@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -35,6 +36,7 @@ public class WarehouseSideRedPath1 {
     private TrajectoryFollowerCommand sample1Follower2;
 
     private FtcDashboard dashboard;
+    private SequentialCommandGroup intakeGroup;
 
     private final Pose2d startPose;
     private final HardwareMap hwMap;
@@ -79,6 +81,12 @@ public class WarehouseSideRedPath1 {
         CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
+        intakeGroup = new SequentialCommandGroup(
+                createIntake.getSeGrabber(),
+                new WaitCommand(800)
+                        .andThen(createIntake.getStopIntake())
+        );
+
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .strafeTo(new Vector2d(-12, 42))
@@ -90,12 +98,6 @@ public class WarehouseSideRedPath1 {
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .addDisplacementMarker(()->{
-
-                    createIntake.getSeGrabber().schedule();
-                    new WaitCommand(800)
-                            .andThen(createIntake.getStopIntake()).schedule();
-                })
                 .strafeTo(new Vector2d(-12, 60))
                 .strafeTo(new Vector2d(44, 60))
                 .strafeTo(new Vector2d(44, 40))
@@ -108,7 +110,7 @@ public class WarehouseSideRedPath1 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(sample1Follower2)
+                sample1Follower1.andThen(intakeGroup,sample1Follower2)
         ));
     }
 }

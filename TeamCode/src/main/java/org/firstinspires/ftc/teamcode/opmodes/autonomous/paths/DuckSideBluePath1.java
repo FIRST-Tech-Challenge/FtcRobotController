@@ -36,7 +36,7 @@ public class DuckSideBluePath1 {
     private FtcDashboard dashboard;
 
     private SequentialCommandGroup carouselGroupBlue1;
-    private SequentialCommandGroup intakeGroupBlue1;
+    private SequentialCommandGroup intakeGroup;
 
     private final Pose2d startPose;
     private final HardwareMap hwMap;
@@ -87,7 +87,7 @@ public class DuckSideBluePath1 {
         createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
-        intakeGroupBlue1 = new SequentialCommandGroup(
+        intakeGroup = new SequentialCommandGroup(
                 createIntake.getSeGrabber(),
                 new WaitCommand(800)
                         .andThen(createIntake.getStopIntake())
@@ -122,25 +122,16 @@ public class DuckSideBluePath1 {
                 .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
-        /*Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-
-                .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(270)),Math.toRadians(90))
-
-                .build();*/
-
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-        //sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                // intakeGroupBlue1
-                // carouselGroupBlue1
-                // sample1Follower1.andThen(carouselGroup,sample1Follower2,intakeGroup, sample1Follower3, sample1Follower4)
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, intakeGroupBlue1,sample1Follower4)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, intakeGroup,sample1Follower4)
 
         ));
     }

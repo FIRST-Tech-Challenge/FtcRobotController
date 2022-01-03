@@ -40,6 +40,7 @@ public class DuckSideRedPath2 {
     private FtcDashboard dashboard;
 
     private SequentialCommandGroup carouselGroupBlue1;
+    private SequentialCommandGroup intakeGroup;
 
     private final Pose2d startPose;
     private final HardwareMap hwMap;
@@ -85,6 +86,12 @@ public class DuckSideRedPath2 {
         CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
+        intakeGroup = new SequentialCommandGroup(
+                createIntake.getSeGrabber(),
+                new WaitCommand(800)
+                        .andThen(createIntake.getStopIntake())
+        );
+
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
@@ -104,11 +111,6 @@ public class DuckSideRedPath2 {
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
                 .splineToLinearHeading(new Pose2d(-60, -33, Math.toRadians(90)),Math.toRadians(90))
-                .addDisplacementMarker(()->{
-                    createIntake.getSeGrabber().schedule();
-                    new WaitCommand(800)
-                            .andThen(createIntake.getStopIntake()).schedule();
-                })
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
@@ -126,7 +128,7 @@ public class DuckSideRedPath2 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, intakeGroup, sample1Follower4)
         ));
     }
 }
