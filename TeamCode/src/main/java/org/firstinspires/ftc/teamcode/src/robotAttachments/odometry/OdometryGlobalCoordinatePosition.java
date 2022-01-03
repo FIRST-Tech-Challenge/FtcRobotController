@@ -11,8 +11,12 @@ import org.firstinspires.ftc.teamcode.src.Utills.ThreadedSubsystemTemplate;
 
 import java.io.File;
 
+
 /**
- * Created by Sarthak on 6/1/2019.
+ * A class to do position triangulation based on dead wheel odometry
+ *
+ * @author Sarthak
+ * @since 6/1/2019
  */
 public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate {
     private static final Object lock = new Object();
@@ -27,7 +31,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     private final File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
     private final File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
     //Position variables used for storage and calculations
-    double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
+    private double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
     private BNO055IMU imu = null;
     private volatile boolean isActive = false;
     private volatile double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
@@ -60,7 +64,12 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
 
     }
 
-    //Vertical Right, Vertical Left, Horizontal
+
+    /**
+     * Returns the ports the encoders are plugged into for debug purposes
+     *
+     * @return the ports in the form Vertical Right, Vertical Left, Horizontal
+     */
     public Integer[] getPorts() {
         Integer[] ports = new Integer[3];
         ports[0] = verticalEncoderRight.getPortNumber();
@@ -69,29 +78,58 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         return ports;
     }
 
+    /**
+     * Outputs the location to the telemetry
+     *
+     * @param telemetry The OpMode telemetry
+     */
     public void showPosition(Telemetry telemetry) {
         telemetry.addData("X: ", this.returnRelativeXPosition());
         telemetry.addData("Y: ", this.returnRelativeYPosition());
         telemetry.addData("Rotation: ", this.returnOrientation());
     }
 
+    /**
+     * Getter for the COUNTS_PER_INCH variable
+     *
+     * @return COUNTS_PER_INCH in ticks per inch
+     */
     public double getCOUNTS_PER_INCH() {
         return COUNTS_PER_INCH;
     }
 
+    /**
+     * Getter for the right encoder position
+     *
+     * @return The right encoder position in ticks
+     */
     public int returnRightEncoderPosition() {
         return verticalRightEncoderPositionMultiplier * verticalEncoderRight.getCurrentPosition();
     }
 
+    /**
+     * Getter for the left encoder position
+     *
+     * @return The left encoder position in ticks
+     */
     public int returnLeftEncoderPosition() {
         return verticalLeftEncoderPositionMultiplier * verticalEncoderLeft.getCurrentPosition();
     }
 
+    /**
+     * Getter for the horizontal encoder position
+     *
+     * @return The horizontal encoder position in ticks
+     */
     public int returnHorizontalEncoderPosition() {
         return normalEncoderPositionMultiplier * horizontalEncoder.getCurrentPosition();
     }
 
-    //Vertical Right, Vertical Left, Horizontal
+    /**
+     * Returns the tick values of the encoders
+     *
+     * @return Returns in this order: Vertical Right, Vertical Left, Horizontal
+     */
     public int[] returnRaw() {
         int[] positions = new int[3];
         positions[0] = verticalEncoderRight.getCurrentPosition();
@@ -100,30 +138,51 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         return positions;
     }
 
+    /**
+     * Sets the orientation of the odometry calibration system
+     *
+     * @param angle the angle to be at
+     */
     public void setOrientation(double angle) {
         synchronized (lock) {
-            robotOrientationRadians = Math.toRadians(angle);
-        }
-    }
-
-    public void setPosition(double x, double y, double angle) {
-        synchronized (lock) {
-            robotGlobalXCoordinatePosition = x * COUNTS_PER_INCH;
-            robotGlobalYCoordinatePosition = y * COUNTS_PER_INCH;
             if (imu != null) {
                 angleOffset = Math.toRadians(angle);
             } else {
                 robotOrientationRadians = Math.toRadians(angle);
             }
         }
+    }
+
+    /**
+     * Sets the position of the robot
+     *
+     * @param x     The x-position in inches
+     * @param y     The y-position in inches
+     * @param angle The angle in degrees
+     */
+    public void setPosition(double x, double y, double angle) {
+        synchronized (lock) {
+            robotGlobalXCoordinatePosition = x * COUNTS_PER_INCH;
+            robotGlobalYCoordinatePosition = y * COUNTS_PER_INCH;
+            setOrientation(angle);
+        }
 
     }
 
-    @Deprecated
+    /**
+     * Returns if the Thread Main is currently executing
+     *
+     * @return True if Thread Main is currently executing, false otherwise
+     */
     public boolean isActive() {
         return isActive;
     }
 
+    /**
+     * Gets the current angle of the IMU
+     *
+     * @return The angle parallel to the floor in degrees
+     */
     protected double getImuAngle() {
         double returnVal = 0;
         if (imu.getAngularOrientation().firstAngle < 0) {
@@ -135,6 +194,11 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
 
     }
 
+    /**
+     * Sets the IMU
+     *
+     * @param imu The imu to set to
+     */
     public void setImu(BNO055IMU imu) {
         synchronized (lock) {
             this.imu = imu;
@@ -208,27 +272,54 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         return Math.toDegrees(robotOrientationRadians) % 360;
     }
 
+    /**
+     * Returns the robot's global X Position in inches
+     *
+     * @return global X Position in inches
+     */
     public double returnRelativeXPosition() {
         return robotGlobalXCoordinatePosition / COUNTS_PER_INCH;
     }
 
+    /**
+     * Returns the robot's global Y Position in inches
+     *
+     * @return global Y Position in inches
+     */
     public double returnRelativeYPosition() {
         return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
     }
 
-
+    /**
+     * Returns the string name of the horizontal encoder
+     *
+     * @return string name of the horizontal encoder
+     */
     protected String getHorizontalMotorName() {
         return horizontalEncoder.getDeviceName();
     }
 
+    /**
+     * Returns the string name of the Right encoder
+     *
+     * @return string name of the Right encoder
+     */
     protected String getVerticalRightMotorName() {
         return verticalEncoderRight.getDeviceName();
     }
 
+    /**
+     * Returns the string name of the Left encoder
+     *
+     * @return string name of the Left encoder
+     */
     protected String getVerticalLeftMotorName() {
         return verticalEncoderLeft.getDeviceName();
     }
 
+    /**
+     * Reverses the left encoder
+     */
     public void reverseLeftEncoder() {
         if (verticalLeftEncoderPositionMultiplier == 1) {
             verticalLeftEncoderPositionMultiplier = -1;
@@ -237,6 +328,9 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         }
     }
 
+    /**
+     * Reverses the right encoder
+     */
     public void reverseRightEncoder() {
         if (verticalRightEncoderPositionMultiplier == 1) {
             verticalRightEncoderPositionMultiplier = -1;
@@ -245,6 +339,9 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         }
     }
 
+    /**
+     * Reverses the Horizontal encoder
+     */
     public void reverseNormalEncoder() {
         if (normalEncoderPositionMultiplier == 1) {
             normalEncoderPositionMultiplier = -1;

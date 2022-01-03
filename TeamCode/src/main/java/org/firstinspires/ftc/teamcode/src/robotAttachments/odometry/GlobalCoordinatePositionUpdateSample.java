@@ -13,7 +13,8 @@ import java.io.StringWriter;
 
 
 /**
- * Created by Sarthak on 6/1/2019.
+ * @author Sarthak
+ * @since 6/1/2019
  * Example OpMode that runs the GlobalCoordinatePosition thread and accesses the (x, y, theta) coordinate values
  */
 @Disabled
