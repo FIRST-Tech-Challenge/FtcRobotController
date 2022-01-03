@@ -21,8 +21,8 @@ public class WebCamSubsystem extends SubsystemBase {
 
     private int msPermTo = 2500;
 
-    private int width = 640;
-    private int height = 480;
+    private int width = 320;
+    private int height = 240;
 
     private static final int MAX_FRAMES_PER_SECOND = 10;
     private static final String ID_NAME = "cameraMonitorViewId";

@@ -36,7 +36,7 @@ public class StopIntake extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        return Thread.currentThread().isInterrupted();
+        return true;
     }
 
 }

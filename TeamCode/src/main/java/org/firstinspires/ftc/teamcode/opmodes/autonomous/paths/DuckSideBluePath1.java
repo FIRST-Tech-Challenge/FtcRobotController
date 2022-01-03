@@ -42,6 +42,8 @@ public class DuckSideBluePath1 {
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
+    private CreateIntake createIntake;
+
     public DuckSideBluePath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
         startPose = sp;
@@ -74,7 +76,7 @@ public class DuckSideBluePath1 {
 
         //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
         //mockDetectTSEPosition.schedule();
-
+        telemetry.addLine("Detecting Position");
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
         detectTSEPosition.schedule();
 
@@ -82,14 +84,14 @@ public class DuckSideBluePath1 {
         carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
                 new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
 
-        CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
+        createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
-        /*intakeGroupBlue1 = new SequentialCommandGroup(
+        intakeGroupBlue1 = new SequentialCommandGroup(
                 createIntake.getSeGrabber(),
                 new WaitCommand(800)
                         .andThen(createIntake.getStopIntake())
-        );*/
+        );
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
@@ -116,11 +118,6 @@ public class DuckSideBluePath1 {
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .addDisplacementMarker(()->{
-                    createIntake.getSeGrabber().schedule();
-                    new WaitCommand(800)
-                            .andThen(createIntake.getStopIntake()).schedule();
-                })
                 .strafeTo(new Vector2d(-37,22))
                 .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(0)),Math.toRadians(90))
                 .build();
@@ -143,7 +140,7 @@ public class DuckSideBluePath1 {
                 // intakeGroupBlue1
                 // carouselGroupBlue1
                 // sample1Follower1.andThen(carouselGroup,sample1Follower2,intakeGroup, sample1Follower3, sample1Follower4)
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, intakeGroupBlue1,sample1Follower4)
 
         ));
     }

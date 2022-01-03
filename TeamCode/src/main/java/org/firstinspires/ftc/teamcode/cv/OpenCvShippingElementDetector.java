@@ -45,7 +45,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
 
     private int width; // width of the image
-    private int height = 240;
+    private int height = 224;
     private double inScaleFactor = 0.007843;
     private double thresholdDnn =  0.2;
     private double meanVal = 127.5;
@@ -111,7 +111,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_RGBA2RGB);
 
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
-                new Size(width, height),
+                new Size(224, 224),
                 new Scalar(meanVal, meanVal, meanVal),
                 false, false);
 
@@ -143,7 +143,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
                 Point left_top = new Point(left, top);
                 Point right_bottom = new Point(right, bottom);
-                Point label_left_top = new Point(left, top + 20);
+                Point label_left_top = new Point(left, top + 30);
                 DecimalFormat df = new DecimalFormat("#.##");
 
                 int class_id = (int) classIdPoint.x;
@@ -151,8 +151,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 String label =  className + ": " + df.format(confidence);
                 Scalar color = colors.get(class_id);
 
-                //telemetry.addData("This is a real new", className);
-                //telemetry.update();
+                telemetry.addData("This is a real new", className);
+                telemetry.update();
 
                 switch (className)
                 {
