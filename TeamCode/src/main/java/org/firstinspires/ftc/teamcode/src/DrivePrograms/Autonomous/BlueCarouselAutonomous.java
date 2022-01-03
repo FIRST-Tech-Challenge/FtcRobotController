@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
-
+/**
+ * The Autonomous ran on Blue side near spinner for Meet 3
+ */
 @Autonomous(name = "Blue Carousel Autonomous")
 public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 

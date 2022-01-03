@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 
 
+/**
+ * A OpMode to test Odometry turning capabilities
+ */
 @Autonomous(name = "OdTurn")
 @Disabled
 public class OdTurn extends AutonomousTemplate {

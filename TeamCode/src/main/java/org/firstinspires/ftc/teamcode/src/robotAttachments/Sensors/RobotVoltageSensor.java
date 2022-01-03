@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+/**
+ * A wrapper class for the Robot Voltage sensor
+ */
 public class RobotVoltageSensor {
     private VoltageSensor sensor;
 

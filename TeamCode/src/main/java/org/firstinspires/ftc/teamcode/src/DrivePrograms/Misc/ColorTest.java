@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.ContinuousIntake;
 
+/**
+ * A Autonomous to test color sensor capabilities
+ */
 @TeleOp(name = "ColorTest")
 @Disabled
 public class ColorTest extends TeleopTemplate {

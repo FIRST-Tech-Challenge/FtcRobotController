@@ -15,6 +15,9 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
+/**
+ * A template for Autonomous OpModes, allows for easy initialization
+ */
 @Disabled
 public abstract class AutonomousTemplate extends LinearOpMode {
     /**

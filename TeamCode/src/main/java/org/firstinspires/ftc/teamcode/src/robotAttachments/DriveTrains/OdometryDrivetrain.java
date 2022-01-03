@@ -151,7 +151,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * This wraps the Executable<Boolean> _isStopRequested
+     * This wraps the Executable _isStopRequested
      *
      * @return it returns false if the OpMode stop is not requested
      * @throws InterruptedException Throws if stop is requested
@@ -164,7 +164,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * This wraps the Executable<Boolean> _opModeIsActive
+     * This wraps the Executable _opModeIsActive
      *
      * @return it returns true if the OpMode is active, returns false otherwise
      */

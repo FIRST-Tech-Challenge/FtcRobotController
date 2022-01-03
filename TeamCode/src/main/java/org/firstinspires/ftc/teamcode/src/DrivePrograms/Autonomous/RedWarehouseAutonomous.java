@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
-
+/**
+ * The Autonomous ran on Red side near Warehouse for Meet 3
+ */
 @Autonomous(name = "Red Warehouse Autonomous")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
     @Override

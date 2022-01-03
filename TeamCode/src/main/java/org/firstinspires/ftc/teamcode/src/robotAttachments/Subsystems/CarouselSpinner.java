@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+/**
+ * A class to control the robot carousel spinner
+ */
 public class CarouselSpinner {
     /**
      * How Fast the servo is to spin
@@ -16,7 +19,7 @@ public class CarouselSpinner {
     /**
      * The continuous servo
      */
-    private final CRServo spinnerServo;
+    protected final CRServo spinnerServo;
 
     /**
      * A constructor that sets up servo from Hardware map

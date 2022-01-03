@@ -165,7 +165,7 @@ public class ContinuousIntake {
     /**
      * Returns what the Color Sensor Sees
      *
-     * @return Returns values from 0->255 in the form of R,G,B
+     * @return Returns values from 0 to 255 in the form of R,G,B
      */
     public double[] getRGB() {
         return new double[]{intakeSensor.red(), intakeSensor.green(), intakeSensor.blue()};

@@ -65,6 +65,8 @@ public abstract class ThreadedSubsystemTemplate extends Thread {
 
     /**
      * Returns the running state of the thread
+     *
+     * @return true if running, false otherwise
      */
     public boolean isRunning() {
         return this.isRunning;

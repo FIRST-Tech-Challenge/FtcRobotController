@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 
-
+/**
+ * The Autonomous ran on Red side near spinner for Meet 1
+ */
 @Autonomous(name = "RedAutonomousNearSpinner")
 @Disabled
 public class RedAutonomousNearSpinner extends AutonomousTemplate {

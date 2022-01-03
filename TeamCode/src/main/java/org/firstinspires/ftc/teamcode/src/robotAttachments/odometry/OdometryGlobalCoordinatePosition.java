@@ -48,6 +48,8 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @param verticalEncoderRight right odometry encoder, facing the vertical direction
      * @param horizontalEncoder    horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      * @param threadSleepDelay     delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
+     * @param _isOpmodeActive      A Executable object wrapped around OpMode.opModeIsActive()
+     * @param _isStopRequested     A Executable object wrapped around OpMode.isStopRequested()
      */
     public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, int threadSleepDelay, Executable<Boolean> _isOpmodeActive, Executable<Boolean> _isStopRequested) {
         super(_isOpmodeActive, _isStopRequested);

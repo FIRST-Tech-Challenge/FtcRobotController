@@ -4,6 +4,9 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+/**
+ * A wrapper class for the BNO055IMU
+ */
 public class IMU {
 
     /**

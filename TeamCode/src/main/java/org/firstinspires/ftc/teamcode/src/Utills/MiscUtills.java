@@ -54,6 +54,7 @@ public class MiscUtills {
 
     /**
      * It is used to calculate a point on a line
+     *
      * @param m this is the slope of the line
      * @param b this is the y intercept of the line
      * @param x this is the x value
