@@ -218,12 +218,11 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     public void moveToPosition(double x, double y, double tolerance, boolean consoleOutput) throws InterruptedException {
         final String s = x + " , " + y;
         double power = 0;
-        //by setting distance to max value, we make sure that the loop will execute once
-        //by recalculating distance in the loop rather than in the while parenthesises, we remove one distance() call
-        double distance = Double.MAX_VALUE;
+        double odometry_x = odometry.returnRelativeXPosition();
+        double odometry_y = odometry.returnRelativeYPosition();
+        double distance = distance(odometry_x, odometry_y, x, y);
         double odometry_angle;
-        double odometry_x;
-        double odometry_y;
+
 
         while (distance > tolerance && !isStopRequested() && opModeIsActive()) {
             //By calculating the values here once in this loop and declaring the variables above, we minimize the number
