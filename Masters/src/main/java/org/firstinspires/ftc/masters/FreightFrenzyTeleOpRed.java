@@ -158,7 +158,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
             if (gamepad2.dpad_up) {
 //                Top scoring
-                dumpServo.setPosition(.56);
+                dumpServo.setPosition(.4);
                 linearSlideTarget = linearSlideTargets.TOP;
                 intakeMotor.setPower(0);
                 intakeOn = false;
@@ -169,7 +169,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
             if (gamepad2.dpad_left) {
 //                Middle scoring
-                dumpServo.setPosition(.56);
+                dumpServo.setPosition(.4);
                 linearSlideTarget = linearSlideTargets.MIDDLE;
                 intakeMotor.setPower(0);
                 intakeOn = false;
@@ -180,7 +180,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
             if (gamepad2.dpad_down) {
 //                Low scoring
-                dumpServo.setPosition(.56);
+                dumpServo.setPosition(.4);
                 linearSlideTarget = linearSlideTargets.BOTTOM;
                 intakeMotor.setPower(0);
                 intakeOn = false;
@@ -192,10 +192,10 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             if (gamepad2.left_trigger >= .35) {
                 if (linearSlideMotor.getCurrentPosition() >= 500) {
 //                    dump
-                    dumpServo.setPosition(.8);//1.5
-                    sleep(1800);
+                    dumpServo.setPosition(.65);
+                    sleep(1200);
 
-                    dumpServo.setPosition(.41);//0.75
+                    dumpServo.setPosition(.33);
                     linearSlideTarget = linearSlideTargets.BASE;
                     linearSlideMotor.setTargetPosition(0);
                     linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
