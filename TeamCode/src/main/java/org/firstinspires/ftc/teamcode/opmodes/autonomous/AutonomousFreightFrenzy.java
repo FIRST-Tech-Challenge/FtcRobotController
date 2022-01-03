@@ -51,8 +51,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             telemetry.addLine("Press (X) for BLUE, (B) for RED");
             telemetry.update();
         }));
-
-
+        
 
         //X (Blue) button
         Button blueAlliance = new GamepadButton(settingsOp, GamepadKeys.Button.X);
@@ -75,31 +74,35 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
         blueAlliance.whenPressed(()->{
             selectedAlliance[0] = "Blue";
+            Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.BLUE);
+            createLEDs.createAuto();
 
             schedule(new InstantCommand(() -> {
                 telemetry.clearAll();
+                telemetry.addLine("Blue Alliance Selected");
                 telemetry.addLine("What is your Position?");
                 telemetry.addLine("Press (Y) for Duck side, (A) for Wharehouse side");
                 telemetry.update();
             }));
 
-            Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.BLUE);
-            createLEDs.createAuto();
+
 
         });
 
         redAlliance.whenPressed(()->{
             selectedAlliance[0] = "Red";
+            Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.RED);
+            createLEDs.createAuto();
 
             schedule(new InstantCommand(() -> {
                 telemetry.clearAll();
+                telemetry.addLine("Red Alliance Selected");
                 telemetry.addLine("What is your Position?");
                 telemetry.addLine("Press (Y) for Duck side, (A) for Wharehouse side");
                 telemetry.update();
             }));
 
-            Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.RED);
-            createLEDs.createAuto();
+
 
         });
 
@@ -150,62 +153,86 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
         path1Selector.whenPressed(()->{
             selectedPath[0] = "Path 1";
-            telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedPath[0],selectedSide[0],selectedAlliance[0]));
+            telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
-            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
+            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Duck"){
                 DuckSideBluePath1 duckSideBluePath1 = new DuckSideBluePath1(hardwareMap, selectedStartPos[0], dashboard,telemetry);
                 duckSideBluePath1.createPath();
                 duckSideBluePath1.execute(this);
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Duck"){
                 DuckSideRedPath1 duckSideRedPath1 = new DuckSideRedPath1(hardwareMap,selectedStartPos[0],dashboard,telemetry);
                 duckSideRedPath1.createPath();
                 duckSideRedPath1.execute(this);
+            }
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
+
+            }
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
+
             }
         });
 
         path2Selector.whenPressed(()->{
             selectedPath[0] = "Path 2";
-            telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedPath[0],selectedSide[0],selectedAlliance[0]));
+            telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
-            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
-                DuckSideBluePath2 duckSideBluePath2 = new DuckSideBluePath2(hardwareMap, selectedStartPos[0], telemetry);
+            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Duck"){
+                DuckSideBluePath2 duckSideBluePath2 = new DuckSideBluePath2(hardwareMap, selectedStartPos[0], dashboard, telemetry);
                 duckSideBluePath2.createPath();
                 duckSideBluePath2.execute(this);
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Duck"){
                 DuckSideRedPath2 duckSideRedPath2 = new DuckSideRedPath2(hardwareMap,selectedStartPos[0], dashboard,telemetry);
                 duckSideRedPath2.createPath();
                 duckSideRedPath2.execute(this);
+            }
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
+
+            }
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
+
             }
         });
 
         path3Selector.whenPressed(()->{
             selectedPath[0] = "Path 3";
-            telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedPath[0],selectedSide[0],selectedAlliance[0]));
+            telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
-            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
+            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Duck"){
 
-                DuckSideBluePath3 duckSideBluePath3 = new DuckSideBluePath3(hardwareMap, selectedStartPos[0], telemetry);
+                DuckSideBluePath3 duckSideBluePath3 = new DuckSideBluePath3(hardwareMap, selectedStartPos[0], dashboard, telemetry);
                 duckSideBluePath3.createPath();
                 duckSideBluePath3.execute(this);
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Duck"){
                 DuckSideRedPath3 duckSideRedPath3 = new DuckSideRedPath3(hardwareMap, selectedStartPos[0], dashboard,telemetry);
                 duckSideRedPath3.createPath();
                 duckSideRedPath3.execute(this);
+            }
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
+
+            }
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
+
             }
         });
 
         path4Selector.whenPressed(()->{
             selectedPath[0] = "Path 4";
-            telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedPath[0],selectedSide[0],selectedAlliance[0]));
+            telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
-            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
+            if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Duck"){
 
             }
-            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED){
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Duck"){
+
+            }
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
+
+            }
+            else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
 
             }
         });

@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
+import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
@@ -76,8 +77,11 @@ public class DuckSideBluePath3 {
         createWebCam.createAuto();
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
 
-        MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
-        mockDetectTSEPosition.schedule();
+        //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
+        //mockDetectTSEPosition.schedule();
+
+        DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
+        detectTSEPosition.schedule();
 
         createCarousel.createAuto();
         carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
