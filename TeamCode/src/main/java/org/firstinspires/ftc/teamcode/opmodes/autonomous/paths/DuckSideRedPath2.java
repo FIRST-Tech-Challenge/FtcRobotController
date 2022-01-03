@@ -38,19 +38,21 @@ public class DuckSideRedPath2 {
     private FtcDashboard dashboard;
 
 
-    private Pose2d startPose;
+    private final Pose2d startPose;
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
-    public DuckSideRedPath2(HardwareMap hwMap, Telemetry telemetry){
+    public DuckSideRedPath2(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
+        startPose = sp;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
 
     }
 
-    public DuckSideRedPath2(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
+    public DuckSideRedPath2(HardwareMap hwMap, Pose2d sp, FtcDashboard db, Telemetry telemetry){
         this.hwMap = hwMap;
+        startPose = sp;
         dashboard = db;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
@@ -58,7 +60,7 @@ public class DuckSideRedPath2 {
     }
 
     public void createPath(){
-        startPose = new Pose2d(-36, -60, Math.toRadians(90));
+        //startPose = new Pose2d(-36, -60, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         CreateWebCam createWebCam = new CreateWebCam(hwMap, "Webcam 1", dashboard, telemetry);

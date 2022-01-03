@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -23,7 +24,15 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
         // telemetry.setAutoClear(false);
 
         final String[] selectedAlliance = new String[1];
+        final String[] selectedSide = new String[1];
         final String[] selectedPath = new String[1];
+
+        final Pose2d duckBlueStartPose = new Pose2d(-36, 60, Math.toRadians(270));
+        final Pose2d duckRedStartPose = new Pose2d(-36, -60, Math.toRadians(90));
+        final Pose2d wharehouseBlueStartPose = null;
+        final Pose2d wharehouseRedStartPose = null;
+
+        final Pose2d[] selectedStartPos = new Pose2d[1];
 
         CreateLEDs createLEDs = new CreateLEDs(hardwareMap, "blinkin");
 
@@ -32,6 +41,8 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
 
             boolean xPressed = false;
             boolean bPressed = false;
+            boolean aPressed = false;
+            boolean yPressed = false;
 
             while(!isStarted()) {
 
@@ -46,6 +57,28 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
                     Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.RED);
                 }
                 bPressed = gamepad1.x;
+
+                if (gamepad1.y & !yPressed) {
+                    selectedSide[0] = "Duck";
+
+                    if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
+                       selectedStartPos[0] = duckBlueStartPose;
+                    } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
+                        selectedStartPos[0] = duckRedStartPose;
+                    }
+                }
+                yPressed = gamepad1.y;
+
+                if (gamepad1.a & !aPressed) {
+                    selectedSide[0] = "Wharehouse";
+
+                    if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
+                        selectedStartPos[0] = wharehouseBlueStartPose;
+                    } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
+                        selectedStartPos[0] = wharehouseRedStartPose;
+                    }
+                }
+                aPressed = gamepad1.a;
 
                 if(gamepad1.dpad_up){
                     selectedPath[0] = "Path 1";
@@ -80,13 +113,13 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
         schedule(new InstantCommand(() -> {
 
             telemetry.clearAll();
-            telemetry.addData("Selections Complete", String.format("Alliance: %s - Path: %s", selectedPath[0], selectedAlliance[0]));
+            telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedPath[0],selectedSide[0],selectedAlliance[0]));
             telemetry.update();
 
             // Path 1, start on duck end, spin the duck, deliver to the shipping hub, park in the storage container
             if (selectedPath[0] == "Path 1") {
                 if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
-                    DuckSideBluePath1 bluePath1 = new DuckSideBluePath1(hardwareMap, telemetry);
+                    DuckSideBluePath1 bluePath1 = new DuckSideBluePath1(hardwareMap, selectedStartPos[0], telemetry);
                     bluePath1.createPath();
                     bluePath1.execute(this);
                 } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
@@ -101,7 +134,7 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
             // Path 2, start on duck end, spin the duck, deliver to the shipping hub, park in the storage container
             if (selectedPath[0] == "Path 2") {
                 if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
-                    DuckSideBluePath2 duckSideBluePath2 = new DuckSideBluePath2(hardwareMap, telemetry);
+                    DuckSideBluePath2 duckSideBluePath2 = new DuckSideBluePath2(hardwareMap, selectedStartPos[0], telemetry);
                     duckSideBluePath2.createPath();
                     duckSideBluePath2.execute(this);
                 } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {
@@ -115,7 +148,7 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
 
             if (selectedPath[0] == "Path 3") {
                 if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE) {
-                    DuckSideBluePath3 duckSideBluePath3 = new DuckSideBluePath3(hardwareMap, telemetry);
+                    DuckSideBluePath3 duckSideBluePath3 = new DuckSideBluePath3(hardwareMap, selectedStartPos[0], telemetry);
                     duckSideBluePath3.createPath();
                     duckSideBluePath3.execute(this);
                 } else if (Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED) {

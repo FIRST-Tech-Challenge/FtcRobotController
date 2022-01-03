@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.paths;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
 import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
-public class P1RedPath1 {
+public class DuckSideRedPath1 {
 
     private MecanumDriveSubsystem drive;
     private TrajectoryFollowerCommand sample1Follower1;
@@ -37,19 +37,21 @@ public class P1RedPath1 {
     private SequentialCommandGroup carouselGroupBlue1;
     private SequentialCommandGroup intakeGroupBlue1;
 
-    private Pose2d startPose;
+    private final Pose2d startPose;
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
-    public P1RedPath1(HardwareMap hwMap, Telemetry telemetry){
+    public DuckSideRedPath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
+        startPose = sp;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
 
     }
 
-    public P1RedPath1(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
+    public DuckSideRedPath1(HardwareMap hwMap, Pose2d sp, FtcDashboard db, Telemetry telemetry){
         this.hwMap = hwMap;
+        startPose = sp;
         dashboard = db;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
@@ -57,7 +59,7 @@ public class P1RedPath1 {
     }
 
     public void createPath(){
-        startPose = new Pose2d(-36, -60, Math.toRadians(90));
+        //startPose = new Pose2d(-36, -60, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);

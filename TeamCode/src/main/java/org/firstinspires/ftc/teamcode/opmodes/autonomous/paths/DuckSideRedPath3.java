@@ -41,19 +41,21 @@ public class DuckSideRedPath3 {
 
     private SequentialCommandGroup carouselGroupBlue1;
 
-    private Pose2d startPose;
+    private final Pose2d startPose;
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
-    public DuckSideRedPath3(HardwareMap hwMap, Telemetry telemetry){
+    public DuckSideRedPath3(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
+        startPose = sp;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
 
     }
 
-    public DuckSideRedPath3(HardwareMap hwMap, FtcDashboard db, Telemetry telemetry){
+    public DuckSideRedPath3(HardwareMap hwMap, Pose2d sp, FtcDashboard db, Telemetry telemetry){
         this.hwMap = hwMap;
+        startPose = sp;
         dashboard = db;
         this.telemetry = telemetry;
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
@@ -61,7 +63,7 @@ public class DuckSideRedPath3 {
     }
 
     public void createPath(){
-        startPose = new Pose2d(-36, -60, Math.toRadians(90));
+        //startPose = new Pose2d(-36, -60, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
