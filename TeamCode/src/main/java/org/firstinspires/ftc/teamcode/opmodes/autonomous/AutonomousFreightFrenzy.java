@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath3
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath2;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath3;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath1;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideBluePath2;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
 
@@ -190,6 +191,9 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == "Warehouse"){
 
+                WarehouseSideBluePath2 warehouseSideBluePath2 = new WarehouseSideBluePath2(hardwareMap, selectedStartPos[0], dashboard, telemetry);
+                warehouseSideBluePath2.createPath();
+                warehouseSideBluePath2.execute(this);
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == "Warehouse"){
 

@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class WarehouseSideBluePath1 {
+public class WarehouseSideBluePath2 {
     public static void main(String[] args){
 
         /*
@@ -29,9 +29,9 @@ public class WarehouseSideBluePath1 {
                             drive.trajectorySequenceBuilder(new Pose2d(12,60, Math.toRadians(270)))
                             .strafeTo(new Vector2d(-12, 42))
                             .strafeTo(new Vector2d(-12, 60))
-                                    .strafeTo(new Vector2d(44, 60))
-                                    .strafeTo(new Vector2d(44, 40))
-                            .build()
+                            .strafeTo(new Vector2d(44, 60))
+                            .strafeTo(new Vector2d(44, 40))
+                      .build()
                     );
         meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
             .setDarkMode(true)
