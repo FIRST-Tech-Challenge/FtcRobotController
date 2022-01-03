@@ -211,7 +211,6 @@ public abstract class MasterAutonomous extends MasterOpMode {
     }
 
     public void autoDeliver() {
-            //motorLift.setTargetPosition(10);
             servoGrabber.setPosition(0.5);
             motorLift.setPower(0.1);
             sleep(3000);
