@@ -6,16 +6,46 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
-
+/**
+ * Odometry Drivetrain Implements basic drive functions that can be inherited by other drive systems.
+ */
 public class OdometryDrivetrain extends BasicDrivetrain {
+    /**
+     * Internal Telemetry Object, allows debug information
+     */
     Telemetry telemetry;
+    /**
+     * Internal Odometry Global Coordinate Position Object, it runs the localization algorithm in a separate thread
+     */
     OdometryGlobalCoordinatePosition odometry;
+    /**
+     * A Lambda object that allows this class to check the stop requested condition of the OpMode
+     */
     Executable<Boolean> _isStopRequested;
+    /**
+     * A Lambda object that allows this class to check that the OpMode is active
+     */
     Executable<Boolean> _opModeIsActive;
 
-    protected OdometryDrivetrain(){super();}
+    /**
+     * A empty constructor for subclassing
+     */
+    protected OdometryDrivetrain() {
+        super();
+    }
 
-
+    /**
+     * A constructor that takes already initialized DcMotor Objects, Telemetry, Odometry,and Lambda objects
+     *
+     * @param front_right     A DcMotor object tied to the front right motor
+     * @param front_left      A DcMotor object tied to the front left motor
+     * @param back_right      A DcMotor object tied to the back right motor
+     * @param back_left       A DcMotor object tied to the back left motor
+     * @param telemetry       Telemetry object from the OpMode
+     * @param odometry        A Already Initialized OdometryGlobalCoordinatePosition object
+     * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
+     * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
+     */
     public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
         super(front_right, front_left, back_right, back_left);
         this.telemetry = telemetry;
@@ -24,6 +54,15 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         this._opModeIsActive = opmodeIsActive;
     }
 
+    /**
+     * A constructor that takes a already initialized BasicDrivetrain object
+     *
+     * @param drivetrain      A already initialized BasicDrivetrain object
+     * @param telemetry       Telemetry object from the OpMode
+     * @param odometry        A Already Initialized OdometryGlobalCoordinatePosition object
+     * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
+     * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
+     */
     public OdometryDrivetrain(BasicDrivetrain drivetrain, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
         super(drivetrain.front_right, drivetrain.front_left, drivetrain.back_right, drivetrain.back_left);
         this.telemetry = telemetry;
@@ -32,28 +71,26 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         this._opModeIsActive = opmodeIsActive;
     }
 
-    public void strafeAtAngle(double angle, double power) {
-        power = boundNumber(power);
-        double power1;
-        double power2;
-
-        angle = angle % 360;
-
-        power1 = -Math.cos(Math.toRadians(angle + 45.0));
-        power2 = -Math.cos(Math.toRadians(angle - 45));
-
-        power1 = power * power1;
-        power2 = power * power2;
-
-        front_right.setPower(power1);
-        back_left.setPower(power1);
-
-        front_left.setPower(power2);
-        back_right.setPower(power2);
-
+    /**
+     * Determines the distance between two points
+     *
+     * @param x1 the x-value of the first point
+     * @param y1 the y-value of the first point
+     * @param x2 the x-value of the second point
+     * @param y2 the y-value of the second point
+     * @return The distance between two points
+     */
+    private static double distance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
     }
 
-
+    /**
+     * Turns the robot to the given angle relative to the odometry zero angle.
+     *
+     * @param turnAngle The angle to turn to
+     * @param power     The power to turn at
+     * @throws InterruptedException This exception is thrown to stop the OpMode in response to the stop button
+     */
     public void turnTo(double turnAngle, double power) throws InterruptedException {
         double position = odometry.returnOrientation();
 
@@ -79,6 +116,12 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+    /**
+     * This determines what way the robot will turn based on given angle
+     *
+     * @param turnAngle The angle to turn towards
+     * @param power     The power to turn at
+     */
     private void turnWithStrafe(double turnAngle, double power) {
         // this method is only meant for use in moveToPositionWithTurn
         if (((360 - turnAngle) + odometry.returnOrientation()) % 360 > 180) {
@@ -89,6 +132,12 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
     }
 
+    /**
+     * This wraps the Executable<Boolean> _isStopRequested
+     *
+     * @return it returns false if the OpMode stop is not requested
+     * @throws InterruptedException Throws if stop is requested
+     */
     boolean isStopRequested() throws InterruptedException {
         if (_isStopRequested.call()) {
             throw new InterruptedException();
@@ -96,19 +145,13 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         return false;
     }
 
+    /**
+     * This wraps the Executable<Boolean> _opModeIsActive
+     *
+     * @return it returns true if the OpMode is active, returns false otherwise
+     */
     boolean opModeIsActive() {
         return _opModeIsActive.call();
-    }
-
-
-    /**
-     * @param x         X Value to move to
-     * @param y         Y Value to move to
-     * @param tolerance The distance the robot can be off from the given position
-     */
-    public void moveToPosition(double x, double y, double tolerance) throws InterruptedException {
-        moveToPosition(x, y, tolerance, false);
-        this.stopAll();
     }
 
 
@@ -130,11 +173,26 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         return ((angle - robotRot) % 360);
     }
 
+    /**
+     * Moves the robot to the provided position
+     *
+     * @param x         X Value to move to
+     * @param y         Y Value to move to
+     * @param tolerance The distance the robot can be off from the given position
+     * @throws InterruptedException Throws an exception if stop is requested during the move
+     */
+    public void moveToPosition(double x, double y, double tolerance) throws InterruptedException {
+        moveToPosition(x, y, tolerance, false);
+        this.stopAll();
+    }
 
     /**
+     * Precisely moves the robot to the given position
+     *
      * @param x         The x position to move to
      * @param y         The y position to move to
      * @param tolerance The tolerence for the movement
+     * @throws InterruptedException Throws an exception if stop is requested during the move
      */
     private void preciseMovement(double x, double y, double tolerance) throws InterruptedException {
         double power = 0.1;
@@ -149,27 +207,14 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         this.stopAll();
     }
 
-
     /**
-     * @param x1 the x-value of the first point
-     * @param y1 the y-value of the first point
-     * @param x2 the x-value of the second point
-     * @param y2 the y-value of the second point
-     * @return The distance between two points
-     */
-    private static double distance(double x1, double y1, double x2, double y2) {
-        return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
-    }
-
-
-    /**
-     * This assumes the pattern of drive wheels unique to the Ultimate Goal robot
-     * The set Motor power section may need to be changed
+     * Moves the robot to the given position with the option for debug information
      *
      * @param x             X Value to move to
      * @param y             Y Value to move to
      * @param tolerance     The distance the robot can be off from the given position
      * @param consoleOutput Prints debug info to the console for debugging, is slower and less accurate
+     * @throws InterruptedException Throws an exception if stop is requested during the move
      */
     public void moveToPosition(double x, double y, double tolerance, boolean consoleOutput) throws InterruptedException {
         final String s = x + " , " + y;
@@ -223,6 +268,16 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+    /**
+     * Moves to position and turns over the movement
+     *
+     * @param x             X Value to move to
+     * @param y             Y Value to move to
+     * @param rotate        How much the robot is to rotate over the movement
+     * @param tolerance     The distance the robot can be off from the given position
+     * @param consoleOutput Prints debug info to the console for debugging, is slower and less accurate
+     * @throws InterruptedException Throws an exception if stop is requested during the move
+     */
     public void moveToPositionWithTurn(double x, double y, double rotate, double tolerance, boolean consoleOutput) throws InterruptedException {
         final String s = x + " , " + y;
         double power = 0;
@@ -280,19 +335,39 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+    /**
+     * A debug method
+     *
+     * @return All odometry raw encoder counts
+     */
     public int[] getOdometryRaw() {
         return odometry.returnRaw();
     }
 
+    /**
+     * A debug method
+     *
+     * @return returns the right encoder position
+     */
     public int returnRightEncoderPosition() {
         return odometry.returnRightEncoderPosition();
     }
 
+    /**
+     * A debug method
+     *
+     * @return returns left encoder position
+     */
     public int returnLeftEncoderPosition() {
         return odometry.returnLeftEncoderPosition();
     }
 
-    public int returnHorizontalEncoderPosition(){
+    /**
+     * A debug method
+     *
+     * @return returns the right encoder position
+     */
+    public int returnHorizontalEncoderPosition() {
         return odometry.returnHorizontalEncoderPosition();
     }
 
