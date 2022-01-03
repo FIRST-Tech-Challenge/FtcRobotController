@@ -24,8 +24,7 @@ public class FullTeleOpScript extends TeleOpScript {
     private GamepadManager gamepadManager;
     private double timeAsOfLastIntakeMovement;
     private int intakeLowerPos, intakeUpperPos;
-    private double timeOfLastTimeToDropTrigger;
-    private boolean intakeShouldBeDown, intakeIsAtPosition, timeToDrop;
+    private boolean intakeShouldBeDown, intakeIsAtPosition;
     private InputSpace inputSpace;
     private OutputSpace outputSpace;
 
@@ -40,8 +39,6 @@ public class FullTeleOpScript extends TeleOpScript {
         intakeUpperPos = 30;
         intakeShouldBeDown = false;
         intakeIsAtPosition = false;
-        timeOfLastTimeToDropTrigger = 0;
-        timeToDrop = false;
         // calibrate elevator
         int timeAsOfLastElevatorCalibrationBegin = (int) getOpMode().time;
         while(outputSpace.receiveOutputFromElevatorBottomLimitSwitch(ElevatorBottomLimitSwitchLocation.Values.PRESSED) == 0 && timeAsOfLastElevatorCalibrationBegin > (int) getOpMode().time - 1) {
@@ -54,29 +51,20 @@ public class FullTeleOpScript extends TeleOpScript {
         }
         ((StandardMotor) inputSpace.getElevatorLeftLift().getInternalInteractionSurface()).reset();
         ((StandardMotor) inputSpace.getElevatorRightLift().getInternalInteractionSurface()).reset();
-        // calibrate hand
-        inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 100);
-        inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 10);
-        opMode.sleep(1000);
-        inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 83);
-        inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 28);
-        opMode.sleep(1000);
-        inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 100);
-        inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 10);
         // calibrate intake
-        while(!intakeIsAtPosition) {
-            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
-                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
-                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeLowerPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
-                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeLowerPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
-                }else{
-                    intakeIsAtPosition = true;
-                }
-                timeAsOfLastIntakeMovement = getOpMode().time;
-            }
-        }
+//        while(!intakeIsAtPosition) {
+//            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
+//                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
+//                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeLowerPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
+//                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeLowerPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
+//                }else{
+//                    intakeIsAtPosition = true;
+//                }
+//                timeAsOfLastIntakeMovement = getOpMode().time;
+//            }
+//        }
     }
 
     @Override
@@ -91,32 +79,33 @@ public class FullTeleOpScript extends TeleOpScript {
         }else if(gamepadManager.functionOneGamepad().dpad_left) {
             intakeShouldBeDown = true;
         }
-        if(intakeShouldBeDown) {
-            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
-                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
-                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeLowerPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
-                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeLowerPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
-                }else{
-                    intakeIsAtPosition = true;
-                }
-                timeAsOfLastIntakeMovement = getOpMode().time;
-            }
-        }else{
-            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
-                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
-                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeUpperPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
-                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeUpperPos) {
-                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
-                }else{
-                    intakeIsAtPosition = true;
-                }
-                timeAsOfLastIntakeMovement = getOpMode().time;
-            }
-        }
+//        if(intakeShouldBeDown) {
+//            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
+//                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
+//                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeLowerPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
+//                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeLowerPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
+//                }else{
+//                    intakeIsAtPosition = true;
+//                }
+//                timeAsOfLastIntakeMovement = getOpMode().time;
+//            }
+//        }else{
+//            if(timeAsOfLastIntakeMovement < getOpMode().time - 5 && !intakeIsAtPosition || timeAsOfLastIntakeMovement == 0 && !intakeIsAtPosition) {
+//                int pos = ((StandardServo) inputSpace.getIntakeLifter().getInternalInteractionSurface()).getPosition();
+//                if((int)outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() < intakeUpperPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos + 5);
+//                }else if((int) outputSpace.receiveOutputFromIntakeLiftingDistanceSensor() > intakeUpperPos) {
+//                    inputSpace.sendInputToIntakeLifter(IntakeLiftingServoLocation.Action.SET_POSITION, pos - 5);
+//                }else{
+//                    intakeIsAtPosition = true;
+//                }
+//                timeAsOfLastIntakeMovement = getOpMode().time;
+//            }
+//        }
         // update intake motor
+        intakeShouldBeDown = true; intakeIsAtPosition = true;
         if(intakeShouldBeDown && intakeIsAtPosition) {
             int intakeGas = (int) Range.clip(gamepadManager.functionOneGamepad().left_trigger * 100, 0, 100);
             int intakeBrake = (int) Range.clip(gamepadManager.functionOneGamepad().right_trigger * 100, 0, 100);
@@ -133,21 +122,9 @@ public class FullTeleOpScript extends TeleOpScript {
             inputSpace.sendInputToElevatorLeftLift(ElevatorLeftLiftMotorLocation.Action.SET_SPEED, 0);
             inputSpace.sendInputToElevatorRightLift(ElevatorRightLiftMotorLocation.Action.SET_SPEED, 0);
         }
-        // grab item if it exists and its not time to drop
-        if(timeOfLastTimeToDropTrigger < getOpMode().time - 1) {
-            timeToDrop = getOpMode().gamepad1.b;
-            timeOfLastTimeToDropTrigger = getOpMode().time;
-        }
-        if(outputSpace.receiveOutputFromHandDistanceSensor() < 60 && !timeToDrop) {
-            inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 83);
-            inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 28);
-        }else{
-            inputSpace.sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action.SET_POSITION, 100);
-            inputSpace.sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action.SET_POSITION, 10);
-        }
         inputSpace.sendInputToDuckMotor(DuckMotorLocation.Action.SET_SPEED, getOpMode().gamepad1.a ? 50 : 0);
         // debug
-        getOpMode().telemetry.addData("Distance<Hand, Intake>: ", String.valueOf(outputSpace.receiveOutputFromHandDistanceSensor()) + " " + String.valueOf(outputSpace.receiveOutputFromIntakeLiftingDistanceSensor()));
+        getOpMode().telemetry.addData("Distance<Intake>: ", String.valueOf(outputSpace.receiveOutputFromIntakeLiftingDistanceSensor()));
         getOpMode().telemetry.update();
     }
 
