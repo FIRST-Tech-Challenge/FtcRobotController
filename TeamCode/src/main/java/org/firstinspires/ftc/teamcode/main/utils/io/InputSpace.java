@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.main.utils.locations.DuckMotorLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.ElevatorLeftLiftMotorLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.ElevatorRightLiftMotorLocation;
-import org.firstinspires.ftc.teamcode.main.utils.locations.HandGrabbingServoLeftLocation;
-import org.firstinspires.ftc.teamcode.main.utils.locations.HandGrabbingServoRightLocation;
-import org.firstinspires.ftc.teamcode.main.utils.locations.HandSpinningServoXLocation;
-import org.firstinspires.ftc.teamcode.main.utils.locations.HandSpinningServoYLocation;
+import org.firstinspires.ftc.teamcode.main.utils.locations.HandSpinningServoLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.IntakeLiftingServoLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.IntakeSpinningMotorLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.TankDrivetrainLocation;
@@ -26,6 +23,7 @@ public class InputSpace {
     private final ElevatorRightLiftMotorLocation ELEVATOR_RIGHT;
     private final IntakeLiftingServoLocation INTAKE_LIFTING_SERVO;
     private final IntakeSpinningMotorLocation INTAKE_SPINNING_MOTOR;
+    private final HandSpinningServoLocation HAND_SPINNING_SERVO;
 
     public InputSpace(HardwareMap hardware) {
         HARDWARE = hardware;
@@ -35,6 +33,7 @@ public class InputSpace {
         ELEVATOR_RIGHT = new ElevatorRightLiftMotorLocation(HARDWARE);
         INTAKE_LIFTING_SERVO = new IntakeLiftingServoLocation(HARDWARE);
         INTAKE_SPINNING_MOTOR = new IntakeSpinningMotorLocation(HARDWARE);
+        HAND_SPINNING_SERVO = new HandSpinningServoLocation(HARDWARE);
     }
 
     public void sendInputToTank(TankDrivetrainLocation.Action action, int rightInput, int leftInput) {
@@ -59,6 +58,10 @@ public class InputSpace {
 
     public void sendInputToIntakeSpinner(IntakeSpinningMotorLocation.Action action, int input) {
         INTAKE_SPINNING_MOTOR.handleInput(action, input);
+    }
+
+    public void sendInputToHandSpinner(HandSpinningServoLocation.Action action, int input) {
+        HAND_SPINNING_SERVO.handleInput(action, input);
     }
 
     public HardwareMap getHardwareMap() {
@@ -89,6 +92,10 @@ public class InputSpace {
         return INTAKE_SPINNING_MOTOR;
     }
 
+    public HandSpinningServoLocation getHandSpinner() {
+        return HAND_SPINNING_SERVO;
+    }
+
     public void stop() {
         TANK.stop();
         DUCK.stop();
@@ -96,6 +103,7 @@ public class InputSpace {
         ELEVATOR_RIGHT.stop();
         INTAKE_LIFTING_SERVO.stop();
         INTAKE_SPINNING_MOTOR.stop();
+        HAND_SPINNING_SERVO.stop();
     }
 
 }
