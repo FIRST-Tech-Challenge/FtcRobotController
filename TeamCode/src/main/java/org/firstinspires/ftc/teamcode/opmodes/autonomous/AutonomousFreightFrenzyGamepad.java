@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath2
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath3;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
-@Disabled
 @Autonomous(name="Auto Freight Frenzy Gamepad", group="FreightFrenzy")
 public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
 
@@ -49,12 +48,14 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
                 if (gamepad1.x & !xPressed) {
                     selectedAlliance[0] = "Blue";
                     Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.BLUE);
+                    createLEDs.createAuto();
                 }
                 xPressed = gamepad1.x;
 
                 if (gamepad1.b & !bPressed) {
                     selectedAlliance[0] = "Red";
                     Alliance.getInstance().setAllicanceTeam(Alliance.AllianceTeam.RED);
+                    createLEDs.createAuto();
                 }
                 bPressed = gamepad1.x;
 
@@ -94,6 +95,7 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
                 }
 
                 telemetry.addData("Alliance", selectedAlliance[0]);
+                telemetry.addData("Side", selectedSide[0]);
                 telemetry.addData("Path", selectedPath[0]);
                 telemetry.addLine("___________________________________");
                 telemetry.addLine("Press (X) for BLUE, (B) for RED");
@@ -104,7 +106,7 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
                 telemetry.update();
             }
 
-            createLEDs.createAuto();
+
 
         }));
 
