@@ -71,7 +71,7 @@ public class Main {
         builder.waitSeconds(0.1);
         // 9.35 seconds long
         builder.lineTo(new Vector2d(-40, red ? -55 : 55));
-        builder.splineToLinearHeading(new Pose2d(-20, red ? -40 : 40, Math.toRadians(-70)),
+        builder.splineToLinearHeading(new Pose2d(-20, red ? -42 : 42, Math.toRadians(100)),
                 Math.toRadians(-110));
         builder.waitSeconds(2);
         builder.lineTo(new Vector2d(-19, red ? -45 : 45));

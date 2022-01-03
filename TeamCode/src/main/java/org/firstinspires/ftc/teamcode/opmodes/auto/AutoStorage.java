@@ -29,7 +29,7 @@ public class AutoStorage extends LinearOpMode {
         builder.waitSeconds(0.1);
         // 9.35 seconds long
         builder.lineTo(new Vector2d(-40, 55 * multiplier));
-        builder.splineToLinearHeading(new Pose2d(-20, 40, Math.toRadians(-110 * multiplier)),
+        builder.splineToLinearHeading(new Pose2d(-20, 42 * multiplier, Math.toRadians(100)),
                 Math.toRadians(-110));
         builder.addDisplacementMarker(() -> {
             // TODO LIFT UP
