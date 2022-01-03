@@ -25,7 +25,7 @@ public class AutonomousDriveSystem extends OdometryDrivetrain {
         //for example motorNames[1] could be "Motor 1", thus the DcMotor object motorObjects[1]
         //would have been created from the string "Motor 1"
         String[] motorNames = {front_left, front_right, back_left, back_right};
-        DcMotor[] motorObjects =  {
+        DcMotor[] motorObjects = {
                 hardwareMap.dcMotor.get(front_left),
                 hardwareMap.dcMotor.get(front_right),
                 hardwareMap.dcMotor.get(back_left),
@@ -84,8 +84,8 @@ public class AutonomousDriveSystem extends OdometryDrivetrain {
 
     }
 
-    public void setPosition(double x, double y, double angle){
-        odometry.setPosition(x,y,angle);
+    public void setPosition(double x, double y, double angle) {
+        odometry.setPosition(x, y, angle);
     }
 
     public void raiseOdometryPods() {
@@ -96,15 +96,15 @@ public class AutonomousDriveSystem extends OdometryDrivetrain {
         pod.lower();
     }
 
-    public void reverseLeftOdometryEncoder(){
+    public void reverseLeftOdometryEncoder() {
         this.odometry.reverseLeftEncoder();
     }
 
-    public void reverseRightOdometryEncoder(){
+    public void reverseRightOdometryEncoder() {
         this.odometry.reverseRightEncoder();
     }
 
-    public void reverseHorizontalOdometryEncoder(){
+    public void reverseHorizontalOdometryEncoder() {
         this.odometry.reverseNormalEncoder();
     }
 

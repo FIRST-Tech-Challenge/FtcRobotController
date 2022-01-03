@@ -15,29 +15,23 @@ import java.io.File;
  * Created by Sarthak on 6/1/2019.
  */
 public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate {
-    private BNO055IMU imu = null;
+    private static final Object lock = new Object();
     private final DcMotor verticalEncoderLeft;
     private final DcMotor verticalEncoderRight;
     private final DcMotor horizontalEncoder;
-    private static final Object lock = new Object();
-
     private final double COUNTS_PER_INCH = 1892.3724283364;
-    private volatile boolean isActive = false;
-
-
-    //Position variables used for storage and calculations
-    double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
-    private volatile double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
-    private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
-
     //Algorithm constants
     private final double robotEncoderWheelDistance;
     private final double horizontalEncoderTickPerDegreeOffset;
-
     //Files to access the algorithm constants
     private final File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
     private final File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
-
+    //Position variables used for storage and calculations
+    double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
+    private BNO055IMU imu = null;
+    private volatile boolean isActive = false;
+    private volatile double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
+    private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
     private int verticalLeftEncoderPositionMultiplier = 1;
     private int verticalRightEncoderPositionMultiplier = 1;
     private int normalEncoderPositionMultiplier = 1;

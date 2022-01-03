@@ -5,14 +5,32 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class CarouselSpinner {
-    private final CRServo spinnerServo;
+    /**
+     * How Fast the servo is to spin
+     */
     private static final double servoPower = 1;
+    /**
+     * How long it takes to spin off a duck
+     */
     private static final long duckSleepTime = 3100;
+    /**
+     * The continuous servo
+     */
+    private final CRServo spinnerServo;
 
+    /**
+     * A constructor that sets up servo from Hardware map
+     *
+     * @param hardwareMap Hardware Map Object
+     * @param deviceName  Name of continuous servo
+     */
     public CarouselSpinner(HardwareMap hardwareMap, String deviceName) {
         spinnerServo = hardwareMap.crservo.get(deviceName);
     }
 
+    /**
+     * Spins off the red duck
+     */
     public void spinOffRedDuck() {
         spinnerServo.setPower(-servoPower);
         ElapsedTime t = new ElapsedTime();
@@ -22,6 +40,9 @@ public class CarouselSpinner {
 
     }
 
+    /**
+     * Spins off the blue duck
+     */
     public void spinOffBlueDuck() {
         spinnerServo.setPower(servoPower);
         ElapsedTime t = new ElapsedTime();
@@ -31,21 +52,24 @@ public class CarouselSpinner {
 
     }
 
+    /**
+     * Spins in blue direction
+     */
     public void setPowerBlueDirection() {
         spinnerServo.setPower(servoPower);
     }
 
+    /**
+     * Spins in red direction
+     */
     public void setPowerRedDirection() {
         spinnerServo.setPower(-servoPower);
     }
-    public void spinForward(){
-        spinnerServo.setPower(servoPower);
-    }
-    public void spinBackward(){
-        spinnerServo.setPower(-servoPower);
-    }
 
-    public void stop(){
+    /**
+     * Stops the spinner
+     */
+    public void stop() {
         spinnerServo.setPower(0);
     }
 }

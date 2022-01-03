@@ -85,6 +85,24 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
     /**
+     * This is used to get the angle between two points
+     *
+     * @param rx       The robot x position
+     * @param ry       Robot Y Position
+     * @param x        X Position to go to
+     * @param y        Y position to go to
+     * @param robotRot The orientation of the robot
+     * @return The heading the point is from the robot
+     */
+    private static double getAngle(double rx, double ry, double x, double y, double robotRot) {
+        double angle;
+        x = x - rx;
+        y = y - ry;
+        angle = Math.toDegrees(Math.atan2(x, y));
+        return ((angle - robotRot) % 360);
+    }
+
+    /**
      * Turns the robot to the given angle relative to the odometry zero angle.
      *
      * @param turnAngle The angle to turn to
@@ -152,25 +170,6 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      */
     boolean opModeIsActive() {
         return _opModeIsActive.call();
-    }
-
-
-    /**
-     * This is used to get the angle between two points
-     *
-     * @param rx       The robot x position
-     * @param ry       Robot Y Position
-     * @param x        X Position to go to
-     * @param y        Y position to go to
-     * @param robotRot The orientation of the robot
-     * @return The heading the point is from the robot
-     */
-    private static double getAngle(double rx, double ry, double x, double y, double robotRot) {
-        double angle;
-        x = x - rx;
-        y = y - ry;
-        angle = Math.toDegrees(Math.atan2(x, y));
-        return ((angle - robotRot) % 360);
     }
 
     /**

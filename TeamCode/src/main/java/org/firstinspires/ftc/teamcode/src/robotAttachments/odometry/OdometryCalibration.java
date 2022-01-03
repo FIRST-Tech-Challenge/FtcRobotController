@@ -23,23 +23,18 @@ import java.io.File;
 @Disabled
 @TeleOp(name = "Odometry System Calibration", group = "Calibration")
 public class OdometryCalibration extends LinearOpMode {
+    final double PIVOT_SPEED = 0.15;
+    //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
+    final double COUNTS_PER_INCH = 1892.3724283364;
     //Drive motors
     DcMotor right_front, right_back, left_front, left_back;
     //Odometry Wheels
     DcMotor verticalLeft, verticalRight, horizontal;
-
     //IMU Sensor
     BNO055IMU imu;
-
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "front_right", rbName = "back_right", lfName = "front_left", lbName = "back_left ";
     String verticalLeftEncoderName = lfName, verticalRightEncoderName = rfName, horizontalEncoderName = rbName;
-
-    final double PIVOT_SPEED = 0.15;
-
-    //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
-    final double COUNTS_PER_INCH = 1892.3724283364;
-
     ElapsedTime timer = new ElapsedTime();
 
     double horizontalTickOffset = 0;

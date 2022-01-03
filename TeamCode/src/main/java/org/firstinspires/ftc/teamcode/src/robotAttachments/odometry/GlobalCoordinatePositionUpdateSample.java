@@ -20,19 +20,15 @@ import java.io.StringWriter;
 @TeleOp(name = "Global Coordinate Position Test", group = "Calibration")
 public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
 
+    //The amount of encoder ticks for each inch the robot moves. This will change for each robot and needs to be changed here
+    final double COUNTS_PER_INCH = 1892.3724283364;
     //Odometry encoder wheels
     DcMotor verticalRight, verticalLeft, horizontal;
-
     BNO055IMU imu;
-
     DcMotor right_front;
     DcMotor right_back;
     DcMotor left_front;
     DcMotor left_back;
-
-    //The amount of encoder ticks for each inch the robot moves. This will change for each robot and needs to be changed here
-    final double COUNTS_PER_INCH = 1892.3724283364;
-
     //Hardware Map Names for drive motors and odometry wheels.
     String rfName = "back_left", rbName = "front_left", lfName = "back_right", lbName = "front_right";
     String verticalLeftEncoderName = rbName, verticalRightEncoderName = lbName, horizontalEncoderName = lfName;
@@ -118,8 +114,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
                         left_front.setPower(flPower / 2.0);
                         left_back.setPower(blPower / 2.0);
                     }
-                }
-                else {
+                } else {
                     PIVOT_SPEED = 0;
                     frPower = PIVOT_SPEED;
                     flPower = PIVOT_SPEED;
