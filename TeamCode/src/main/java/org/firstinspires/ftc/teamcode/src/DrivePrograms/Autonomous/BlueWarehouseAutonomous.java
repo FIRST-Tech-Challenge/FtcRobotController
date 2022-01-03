@@ -18,7 +18,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         this.initVuforia();
         this.initTfod();
-        this.activate();
+        this.activateTF();
         odometry.setPosition(133, 63, 270);
 
         while (!isStarted()) {

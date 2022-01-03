@@ -17,7 +17,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
         MarkerPosition Pos = MarkerPosition.NotSeen;
         this.initVuforia();
         this.initTfod();
-        this.activate();
+        this.activateTF();
 
         odometry.setPosition(133, 101, 270);
 

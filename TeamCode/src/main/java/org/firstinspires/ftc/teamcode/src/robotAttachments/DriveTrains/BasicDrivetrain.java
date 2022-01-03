@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
+
 /**
  * BasicDrivetrain
  * Implements basic drive functions that can be inherited by other drive systems.
@@ -88,21 +90,6 @@ public class BasicDrivetrain {
     protected BasicDrivetrain() {
     }
 
-    /**
-     * This constrains the input number between 1 and -1 inclusive
-     *
-     * @param num the number to constrain
-     * @return the number after it has been constrained
-     */
-    protected static double boundNumber(double num) {
-        if (num > 1) {
-            num = 1;
-        }
-        if (num < -1) {
-            num = -1;
-        }
-        return num;
-    }
 
     /**
      * It sets the motors to turn right
@@ -171,7 +158,7 @@ public class BasicDrivetrain {
      * @param power The power to strafe at
      */
     public void strafeAtAngle(double angle, double power) {
-        power = boundNumber(power);
+        power = MiscUtills.boundNumber(power);
         double power1;
         double power2;
 

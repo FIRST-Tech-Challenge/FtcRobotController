@@ -17,7 +17,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         this.initVuforia();
         this.initTfod();
-        this.activate();
+        this.activateTF();
 
         odometry.setPosition(7, 101, 90);
 

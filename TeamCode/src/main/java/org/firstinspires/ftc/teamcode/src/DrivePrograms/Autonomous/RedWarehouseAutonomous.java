@@ -17,7 +17,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         this.initVuforia();
         this.initTfod();
-        this.activate();
+        this.activateTF();
 
         odometry.setPosition(7, 63, 90);
 

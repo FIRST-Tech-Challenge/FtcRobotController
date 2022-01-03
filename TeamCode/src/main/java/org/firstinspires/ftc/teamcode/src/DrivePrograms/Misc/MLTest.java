@@ -15,7 +15,7 @@ public class MLTest extends AutoObjDetectionTemplate {
         this.initVuforia();
         this.initTfod();
 
-        this.activate();
+        this.activateTF();
         MarkerPosition Pos = MarkerPosition.Right;
 
         while (!isStarted()) {

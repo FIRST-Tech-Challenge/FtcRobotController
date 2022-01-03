@@ -12,16 +12,45 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 
 
+/**
+ * A template for all Teleop opModes, allows easy initialization
+ */
 @Disabled
 public abstract class TeleopTemplate extends LinearOpMode {
 
+    /**
+     * Provides methods for driving
+     */
     public TeleopDriveTrain driveTrain;
+
+    /**
+     * Provides Carousel Spinner functionality
+     */
     public CarouselSpinner spinner;
+
+    /**
+     * Provides methods for lifting and lowering Odometry servos
+     */
     public OdometryPodServos pod;
+
+    /**
+     * Provides methods for using the linear slide
+     */
     public LinearSlide slide;
+
+    /**
+     * Provides methods for using the intake
+     */
     public ContinuousIntake intake;
+
+    /**
+     * Provides methods for using the robot LED's
+     */
     public RevBlinkinLedDriver leds;
 
+    /**
+     * Initializes the objects provided by this class
+     */
     public void initAll() {
         driveTrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
 
