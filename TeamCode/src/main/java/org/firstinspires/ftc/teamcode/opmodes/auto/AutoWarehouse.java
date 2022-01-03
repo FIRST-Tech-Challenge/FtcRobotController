@@ -19,8 +19,10 @@ public class AutoWarehouse extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
 
-        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
-                Math.toRadians(90 * multiplier)));
+        final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
+                Math.toRadians(90 * multiplier));
+        drive.setPoseEstimate(initial);
+        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(initial);
 
         builder.lineToLinearHeading(new Pose2d(-3, 40 * multiplier, Math.toRadians(70 * multiplier)));
         builder.waitSeconds(2);
