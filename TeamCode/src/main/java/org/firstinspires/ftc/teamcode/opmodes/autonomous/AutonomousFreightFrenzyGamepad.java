@@ -29,8 +29,8 @@ public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
 
         final Pose2d duckBlueStartPose = new Pose2d(-36, 60, Math.toRadians(270));
         final Pose2d duckRedStartPose = new Pose2d(-36, -60, Math.toRadians(90));
-        final Pose2d warehouseBlueStartPose = null;
-        final Pose2d warehouseRedStartPose = null;
+        final Pose2d warehouseBlueStartPose = new Pose2d(12, 60, Math.toRadians(270));
+        final Pose2d warehouseRedStartPose = new Pose2d(12, -60, Math.toRadians(90));
 
         final Pose2d[] selectedStartPos = new Pose2d[1];
 
