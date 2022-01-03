@@ -25,15 +25,19 @@ public class AAMainTeleop extends LinearOpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
+
         motorIntake = hardwareMap.dcMotor.get("intake");
         motorOuttake = hardwareMap.dcMotor.get("outtake");
+
         servoDuck = hardwareMap.crservo.get("duck");
         bucket = hardwareMap.servo.get("bucket");
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
         distsense = hardwareMap.get(DistanceSensor.class, "distsense");
 
         robot = new Robot_2022FF(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, motorIntake, motorOuttake, bucket, servoDuck, distsense, imu, this);
-
-        //reverse the needed motors
+        robot.setupRobot();
         //not here
         //Don't set 0 power behavior or direction here
         //do it in Robot_2022FF
@@ -69,7 +73,7 @@ public class AAMainTeleop extends LinearOpMode {
                 servoDuck.setPower(-1);
             }
             else {
-                motorIntake.setPower(0);
+                servoDuck.setPower(0);
             }
 
             //bucket
@@ -113,9 +117,9 @@ public class AAMainTeleop extends LinearOpMode {
 
             //telemetry
             telemetry.addData("ticks main:", motorFrontLeft.getCurrentPosition());
-            telemetry.addData("intake ticks", motorFrontRight.getCurrentPosition());
-            telemetry.addData("ticks main:", motorOuttake.getCurrentPosition());
+            telemetry.addData("outtake ticks main:", motorOuttake.getCurrentPosition());
             telemetry.addData("intake ticks", motorIntake.getCurrentPosition());
+            telemetry.addData("bucket pos",bucket.getPosition());
             telemetry.update();
 
 

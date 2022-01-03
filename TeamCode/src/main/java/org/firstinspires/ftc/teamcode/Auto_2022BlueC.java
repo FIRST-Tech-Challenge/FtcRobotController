@@ -14,11 +14,11 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Blue Caroseul Side, no PID")
-public class Auto_2022_noPID extends LinearOpMode {
+@Autonomous(name = "Blue Caroseul not carousel Side, no PID")
+public class Auto_2022BlueC extends LinearOpMode {
 
     //robot parts
-    private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorOuttake;
+    private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorOuttake, motorIntake;
     private CRServo duck;
     private Servo bucket;
     private BNO055IMU imu;
@@ -44,6 +44,7 @@ public class Auto_2022_noPID extends LinearOpMode {
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
         motorOuttake = hardwareMap.dcMotor.get("outtake");
+        motorIntake = hardwareMap.dcMotor.get("intake");
 
         duck = hardwareMap.crservo.get("duck");
         bucket = hardwareMap.servo.get("bucket");
@@ -53,7 +54,7 @@ public class Auto_2022_noPID extends LinearOpMode {
         distsense = hardwareMap.get(DistanceSensor.class,"distsense");
 
         //create robot object
-        robot = new Robot_2022FF(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, duck, imu, this);
+        robot = new Robot_2022FF(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorIntake, motorOuttake, bucket, duck, distsense, imu,this);
 
         //setup robot
         robot.setupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
@@ -100,21 +101,21 @@ public class Auto_2022_noPID extends LinearOpMode {
 
         switch (code) {//shell for later, do not delete!!!
             case 2:
-                robot.dropMiddle(0.25);
+//                robot.dropMiddle(0.25);
                 //center, middle
                 break;
             case 3:
                 //right, top
-                robot.dropTop(0.25);
+//                robot.dropTop(0.25);
                 break;
             case 1:
             default:
                 //left, bottom
-                robot.dropBottom(0.25);
+//                robot.dropBottom(0.25);
                 //error, put on bottom, do case1
                 break;
         }
-
+        Thread.sleep(500);
         //go to warehouse
         robot.gyroTurn(90,0.5);
         robot.driveToWall(0.5);
@@ -126,17 +127,17 @@ public class Auto_2022_noPID extends LinearOpMode {
 //        robot.gyroDriveSec(-0.2, 1);
 //        robot.intake(0);
 //
-//        //drive back to hub
+//        drive back to hub
 //        robot.gyroDriveSec(-1, 3);//todo change the seconds
 //
-//        //drop in bottom of hub
+//        drop in bottom of hub
 //        robot.pidGyroTurn(-90);
 //
-//        //park in warehouse, else park in box
-//        //warehouse
+//        park in warehouse, else park in box
+//        warehouse
 //        robot.pidGyroTurn(90);
 //        robot.gyroDriveSec(1, 3);//warehouse. todo also change seconds here
-//        //box
+//        box
 //        robot.pidGyroStrafeCm(90, 60);//todo change cm
 
 

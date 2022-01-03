@@ -205,9 +205,9 @@ public class Robot_2022FF {
      * */
     public void setupRobot() throws InterruptedException{
         //reverse the needed motors?
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-//        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-//        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        // motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+//       motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -216,9 +216,10 @@ public class Robot_2022FF {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        setIMUParameters();
         resetEncoders();
         resetAngle();
-        setIMUParameters();
+
 
         while (!imu.isGyroCalibrated()) {
             telemetry.addData("IMU", "calibrating...");
@@ -239,12 +240,10 @@ public class Robot_2022FF {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**
@@ -843,7 +842,13 @@ public class Robot_2022FF {
     public void duck(double power){
         duck.setPower(power);
     }
-
+    public void dobucket() throws InterruptedException{
+        bucket.setPosition(1);
+        Thread.sleep(1000);
+        //turn back
+        bucket.setPosition(0.4);
+        Thread.sleep(500);
+    }
     /**
      * Move arm to position...?
      *
@@ -857,46 +862,41 @@ public class Robot_2022FF {
     }
 
     public void dropTop(double power) throws InterruptedException{
-        resetEncoders();
-        while(outtake.getCurrentPosition() < 215 && opMode.opModeIsActive()){
+        while(outtake.getCurrentPosition() < 1350 && opMode.opModeIsActive()){
             outtake.setPower(power);
         }
         outtake.setPower(0);
-        bucket.setPosition(1);
-         Thread.sleep(500);
-        bucket.setPosition(0);
+        dobucket();
         //turn bucket
         //wait a second
         //turn back
         //wait a second
 
-        while(outtake.getCurrentPosition() < 215 && opMode.opModeIsActive()){
-            outtake.setPower(power);
+        while(outtake.getCurrentPosition() > 100 && opMode.opModeIsActive()){
+            outtake.setPower(-power);
         }
         outtake.setPower(0);
     }
 
     public void dropMiddle(double power) throws InterruptedException{
-        resetEncoders();
-        while(outtake.getCurrentPosition() < 170 && opMode.opModeIsActive()){
+        while(outtake.getCurrentPosition() < 750 && opMode.opModeIsActive()){
             outtake.setPower(power);
         }
         outtake.setPower(0);
+        dobucket();
         //turn bucket
         //wait a second
         //turn back
         //wait a second
 
-        while(outtake.getCurrentPosition() < 170 && opMode.opModeIsActive()){
-            outtake.setPower(power);
+        while(outtake.getCurrentPosition() > 100 && opMode.opModeIsActive()){
+            outtake.setPower(-power);
         }
         outtake.setPower(0);
     }
 
     public void dropBottom (double power) throws InterruptedException{
-        resetEncoders();
-
-        while(outtake.getCurrentPosition() < 100 && opMode.opModeIsActive()){
+        while(outtake.getCurrentPosition() < 150 && opMode.opModeIsActive()){
             outtake.setPower(power);
             telemetry.addData("ticks", outtake.getCurrentPosition());
             telemetry.update();
@@ -904,13 +904,10 @@ public class Robot_2022FF {
         outtake.setPower(0);
         //turn bucket
         //wait a second
-        bucket.setPosition(1);
-        Thread.sleep(500);
-        //turn back
-        bucket.setPosition(0);
+        dobucket();
         //wait a second
 
-        while(outtake.getCurrentPosition() > 0 && opMode.opModeIsActive()){
+        while(outtake.getCurrentPosition() > 100 && opMode.opModeIsActive()){
             outtake.setPower(-power);
         }
         outtake.setPower(0);
