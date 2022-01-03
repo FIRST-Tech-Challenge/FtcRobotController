@@ -44,7 +44,7 @@ public class RoadrunnerTest extends LinearOpMode {
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
 
-        mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo);
+        mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
 
         SampleMecanumDrive chassis = new SampleMecanumDrive(hardwareMap);
 
