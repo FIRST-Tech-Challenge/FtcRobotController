@@ -56,7 +56,8 @@ public class DetectTSEPosition extends CommandBase {
     }
 
     private void setLevel(){
-        //telemetry.addData("We have a 2 level", level);
+        telemetry.addData("We are setting level", level);
+        telemetry.update();
         webCamSubsytem.setLevel(level);
         if(level > 0)
             gotPosition = true;
