@@ -19,8 +19,7 @@ public class TseDetector {
     private TsePipeline pipeline;
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
-
-    public TseDetector(@NonNull EventThread eventThread, HardwareMap hMap, String webcamName, boolean debug) {
+    public TseDetector(HardwareMap hMap, String webcamName, boolean debug) {
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
         if (debug) {

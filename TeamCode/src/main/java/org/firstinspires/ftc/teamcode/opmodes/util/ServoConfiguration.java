@@ -17,6 +17,7 @@ public class ServoConfiguration extends LinearOpMode {
     @Config
     static class ServoConfigValue {
         public static double servoPos = 0.88;
+        public static String servoName = "armServo";
         final Servo servo;
 
         ServoConfigValue(@NonNull HardwareMap hardwareMap) {
@@ -28,7 +29,10 @@ public class ServoConfiguration extends LinearOpMode {
             servo.setPosition(servoPos);
         }
         @Config
-        static class MotorPos { public static int motorPos = 0; }
+        static class MotorPos {
+            public static int motorPos = 0;
+            public static String motorName = "liftMotor";
+        }
     }
 
     protected boolean withMotor = false;
@@ -38,7 +42,7 @@ public class ServoConfiguration extends LinearOpMode {
         final ServoConfigValue arm = new ServoConfigValue(hardwareMap);
         DcMotor motor = null;
         if (withMotor) {
-            motor = hardwareMap.get(DcMotor.class, "liftMotor");
+            motor = hardwareMap.get(DcMotor.class, ServoConfigValue.MotorPos.motorName);
             motor.setPower(0);
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             try { Thread.sleep(100); } catch (InterruptedException ignored) {}

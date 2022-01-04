@@ -12,7 +12,7 @@ public class CVAuto extends LinearOpMode {
     public void runOpMode(){
         telemetry.addLine("Starting");
         telemetry.update();
-        TseDetector webcam = new TseDetector(eventThread, hardwareMap, "webcam", true);
+        TseDetector webcam = new TseDetector(hardwareMap, "webcam", true);
         waitForStart();
         telemetry.addLine("Running");
         telemetry.update();
