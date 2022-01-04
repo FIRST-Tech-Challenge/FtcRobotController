@@ -83,11 +83,16 @@ public class HardwareBothHubs
     public int          cappingMotorPos  = 0;          // current encoder count
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
 
-    public int          CAPPING_ARM_POS_START   = 0;     // also used for STORE
+/*    public int          CAPPING_ARM_POS_START   = 0;     // also used for STORE
     public int          CAPPING_ARM_POS_STORE   = 349;
     public int          CAPPING_ARM_POS_LIBERTY = 942;   // status of liberty pose (end duck-autonomous here)
     public int          CAPPING_ARM_POS_CAP     = 1600;
-    public int          CAPPING_ARM_POS_GRAB    = 2490;
+    public int          CAPPING_ARM_POS_GRAB    = 2490; */
+    public int          CAPPING_ARM_POS_START   = 0;     // also used for STORE
+    public int          CAPPING_ARM_POS_STORE   = 291;
+    public int          CAPPING_ARM_POS_LIBERTY = 786;   // status of liberty pose (end duck-autonomous here)
+    public int          CAPPING_ARM_POS_CAP     = 1335;
+    public int          CAPPING_ARM_POS_GRAB    = 2078;
     public int          cappingArmPos = CAPPING_ARM_POS_START;
 
     // CAPPING ARM WRIST SERVO
@@ -109,14 +114,22 @@ public class HardwareBothHubs
     public int          freightMotorPos  = 0;          // current encoder count
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
 
-    public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
+/*    public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
     public int          FREIGHT_ARM_POS_SPIN       = 150;   // Raised enough for box to spin clearly
     public int          FREIGHT_ARM_POS_SHARED     = 350;   // Front scoring into shared shipping hub
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 400;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_VERTICAL   = 1350;  // Vertical ("up" vs "down" reverse at this point)
     public int          FREIGHT_ARM_POS_HUB_TOP    = 1950;  // For dumping into hub top level
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 2275;  // For dumping into hub middle level
-    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2400;  // For dumping into hub bottom level
+    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2400;  // For dumping into hub bottom level */
+    public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
+    public int          FREIGHT_ARM_POS_SPIN       = 125;   // Raised enough for box to spin clearly
+    public int          FREIGHT_ARM_POS_SHARED     = 292;   // Front scoring into shared shipping hub
+    public int          FREIGHT_ARM_POS_TRANSPORT1 = 334;   // Horizontal transport position
+    public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
+    public int          FREIGHT_ARM_POS_HUB_TOP    = 1627;  // For dumping into hub top level
+    public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1898;  // For dumping into hub middle level
+    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2002;  // For dumping into hub bottom level
 
     public Servo        boxServo                   = null;
     public double       BOX_SERVO_INIT             = 0.48;  // we init to the COLLECT position
@@ -248,7 +261,7 @@ public class HardwareBothHubs
 
         //Initialize capping arm motor
         cappingMotor = hwMap.get(DcMotorEx.class,"CappingMotor");
-        cappingMotor.setDirection(DcMotor.Direction.REVERSE);  // goBilda fwd/rev opposite of Matrix motors!
+        cappingMotor.setDirection(DcMotor.Direction.FORWARD);
         cappingMotor.setPower( 0.0 );
         if (!transitionFromAutonomous) {
             cappingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -266,7 +279,7 @@ public class HardwareBothHubs
 
         //Initialize freight arm motor
         freightMotor = hwMap.get(DcMotorEx.class,"FreightMotor");
-        freightMotor.setDirection(DcMotor.Direction.REVERSE);  // goBilda fwd/rev opposite of Matrix motors!
+        freightMotor.setDirection(DcMotor.Direction.FORWARD);
         freightMotor.setPower( 0.0 );
         if (!transitionFromAutonomous) {
             freightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -595,6 +608,16 @@ public class HardwareBothHubs
         Color.colorToHSV(colors.toColor(), hsvValues);
         return hsvValues[1] > 0.5;
     }
+
+    public void stopMotion() {
+        // Stop all motion;
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        rearLeftMotor.setPower(0);
+        rearRightMotor.setPower(0);
+
+    }
+
     /***
      *
      * waitForTick implements a periodic delay. However, this acts like a metronome with a regular

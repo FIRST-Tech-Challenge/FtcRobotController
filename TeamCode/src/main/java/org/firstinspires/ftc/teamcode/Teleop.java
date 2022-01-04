@@ -76,9 +76,11 @@ public abstract class Teleop extends LinearOpMode {
 
     boolean   duckMotorEnable = false;
 
+    //freight detection section
     boolean collectingFreight = false;
     boolean freightPresent = false;
     boolean freightIsCube = false;
+    int freightDetectionCounts = 0;
     Gamepad.RumbleEffect ballRumbleEffect1;    // Use to build a custom rumble sequence.
     Gamepad.RumbleEffect ballRumbleEffect2;    // Use to build a custom rumble sequence.
 
@@ -247,7 +249,15 @@ public abstract class Teleop extends LinearOpMode {
 
     private void processFreightDetector() {
         if(collectingFreight){
-            freightPresent = robot.freightPresent();
+            if (robot.freightPresent()) {
+                freightDetectionCounts++;
+                // Set freightpresent if set number of detections occurred
+                if(freightDetectionCounts > 10) {
+                    freightPresent = true;
+                }
+            } else {
+                freightDetectionCounts = 0;
+            }
             if(freightPresent) {
                 freightIsCube = robot.freightIsCube();
                 if(freightIsCube){

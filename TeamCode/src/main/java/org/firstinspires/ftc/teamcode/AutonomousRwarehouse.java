@@ -46,7 +46,7 @@ import java.lang.Math;
  */
 @Autonomous(name="Autonomous Red (warehouse)", group="7592", preselectTeleOp = "Teleop-Red")
 //@Disabled
-public class AutonomousRwarehouse extends LinearOpMode {
+public class AutonomousRwarehouse extends AutonomousBase {
 
     /* Declare OpMode members. */
     HardwareBothHubs robot = new HardwareBothHubs();
@@ -65,9 +65,7 @@ public class AutonomousRwarehouse extends LinearOpMode {
 
     static final double  HEADING_THRESHOLD    = 2.0;     // Minimum of 1 degree for an integer gyro
     static final double  P_TURN_COEFF         = 0.050;   // Larger is more responsive, but also less stable
-    static final double  P_DRIVE_COEFF        = 0.005;   // Larger is more responsive, but also less stable
 
-    static final int     DRIVE_TO             = 1;       // STOP  after the specified movement 
     static final int     DRIVE_THRU           = 2;       // COAST after the specified movement
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
@@ -559,42 +557,6 @@ public class AutonomousRwarehouse extends LinearOpMode {
         }
         return onTarget;
     } // onHeading()
-
-    /*---------------------------------------------------------------------------------------------
-     * getAngle queries the current gyro angle
-     * @return  current gyro angle (-179.9 to +180.0)
-     */
-    private double getAngle() {
-        // calculate error in -179.99 to +180.00 range  (
-        double gryoAngle = robot.headingIMU();
-        while (gryoAngle >   180.0) gryoAngle -= 360.0;
-        while (gryoAngle <= -180.0) gryoAngle += 360.0;
-        return gryoAngle;
-    } // getAngle()
-
-    /*---------------------------------------------------------------------------------------------
-     * getError determines the error between the target angle and the robot's current heading
-     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
-     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
-     *          Positive error means the robot should turn LEFT (CCW) to reduce error.
-     */
-    private double getError(double targetAngle) {
-        // calculate error in -179 to +180 range  (
-        double robotError = targetAngle - robot.headingIMU();
-        while (robotError >  180.0)  robotError -= 360.0;
-        while (robotError <= -180.0) robotError += 360.0;
-        return robotError;
-    } // getError()
-
-    /*---------------------------------------------------------------------------------------------
-     * returns desired steering force.  +/- 1 range.  positive = steer left
-     * @param error   Error angle in robot relative degrees
-     * @param PCoeff  Proportional Gain Coefficient
-     * @return clippedSteering
-     */
-    private double getSteer(double error, double PCoeff) {
-        return Range.clip(error * PCoeff, -1, 1);
-    } // getSteer()
 
     /* Skystone image procesing pipeline to be run upon receipt of each frame from the camera.
      * Note that the processFrame() method is called serially from the frame worker thread -
