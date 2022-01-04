@@ -98,6 +98,10 @@ public class WarehouseSideBluePath1 {
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .addDisplacementMarker(()->{
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
+                    setArmLevel.schedule();
+                })
                 .strafeTo(new Vector2d(-12, 60))
                 .strafeTo(new Vector2d(44, 60))
                 .strafeTo(new Vector2d(44, 40))

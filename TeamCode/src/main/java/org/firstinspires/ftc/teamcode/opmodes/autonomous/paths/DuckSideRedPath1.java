@@ -107,6 +107,10 @@ public class DuckSideRedPath1 {
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                .addDisplacementMarker(()->{
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
+                    setArmLevel.schedule();
+                })
                 .splineToLinearHeading(new Pose2d(-63, -32, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
