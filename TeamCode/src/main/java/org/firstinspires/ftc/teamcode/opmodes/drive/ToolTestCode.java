@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.drive;
 
 import android.os.Build;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerLift;
 import androidx.annotation.RequiresApi;
 
 @TeleOp
+@Disabled
 public class ToolTestCode extends LinearOpMode {
     public EventThread eventThread = new EventThread(this::opModeIsActive);
 
