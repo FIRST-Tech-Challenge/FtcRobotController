@@ -13,14 +13,25 @@ public class DucksSubsystem extends SubsystemBase {
         m_motor = hardwareMap.dcMotor.get("DucksMotor");
         m_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        m_motor.setPower(0);
+        m_motor.setTargetPosition(0);
+        m_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void spin(double power) {
+    public void setPower(double power) {
         m_motor.setPower(power);
     }
 
-    public double getSpin() {
+    public boolean isBusy() {
+        return m_motor.isBusy();
+    }
+
+    public double getPower() {
         return m_motor.getPower();
+    }
+
+    public void setTargetPosition(int position) {
+        m_motor.setTargetPosition(position);
     }
 
     public int getCurrentPosition() {
