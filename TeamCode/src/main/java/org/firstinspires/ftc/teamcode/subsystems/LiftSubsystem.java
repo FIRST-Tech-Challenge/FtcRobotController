@@ -24,6 +24,9 @@ public class LiftSubsystem extends SubsystemBase {
     public int getCurrentPosition() {
         return m_liftMotor.getCurrentPosition();
     }
+    public int getTargetPosition() {
+        return m_liftMotor.getTargetPosition();
+    }
 
     public void setHeight(double height) {
         m_liftMotor.setTargetPosition((int)(height / LiftConstants.distance_per_tick));
