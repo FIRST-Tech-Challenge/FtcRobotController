@@ -15,7 +15,8 @@ public class DuckSideBluePath3 {
         2) Spin the carosel
         3) Move forward to the end of the blue square
         4) Move left to the Shipping Hub
-        5) Go around shipping hub and park in warehouse
+        5) Go around shipping hub
+        6) Go over the barriers and park in warehouse
         */
 
 
@@ -36,10 +37,10 @@ public class DuckSideBluePath3 {
 
                                     //drive around shipping hub
                                     .strafeTo(new Vector2d(-34,16))
-                                    //.splineToLinearHeading(new Pose2d(-8, 0, Math.toRadians(0)),Math.toRadians(45))
                                     .splineToLinearHeading(new Pose2d(12, 20, Math.toRadians(0)),Math.toRadians(90))
-
                                     .strafeTo(new Vector2d(12,40))
+
+                                    // Drive over the barriers
                                     .strafeTo(new Vector2d(56,40))
                             .build()
                     );
