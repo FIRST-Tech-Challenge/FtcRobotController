@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
-
+/**
+ * The Autonomous ran on Blue side near warehouse for Meet 3
+ */
 @Autonomous(name = "Blue Warehouse Autonomous")
 public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
@@ -18,7 +20,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         this.initVuforia();
         this.initTfod();
-        this.activate();
+        this.activateTF();
         odometry.setPosition(133, 63, 270);
 
         while (!isStarted()) {

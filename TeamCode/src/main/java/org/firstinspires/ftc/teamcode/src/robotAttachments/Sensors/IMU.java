@@ -4,10 +4,22 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+/**
+ * A wrapper class for the BNO055IMU
+ */
 public class IMU {
 
+    /**
+     * The internal IMU object
+     */
     private final BNO055IMU imu;
 
+    /**
+     * Initializes Imu off of hardware map and name
+     *
+     * @param hardwareMap OpMode hardware map
+     * @param deviceName  Name of IMU sensor
+     */
     public IMU(HardwareMap hardwareMap, String deviceName) {
 
         imu = hardwareMap.get(BNO055IMU.class, deviceName);
@@ -22,6 +34,11 @@ public class IMU {
 
     }
 
+    /**
+     * Returns the IMU angle on the plane parallel to the floor
+     *
+     * @return Returns the angle in degrees
+     */
     public double getAngle() {
         double returnVal;
         if (imu.getAngularOrientation().firstAngle < 0) {
@@ -33,6 +50,11 @@ public class IMU {
 
     }
 
+    /**
+     * Returns the internal IMU object
+     *
+     * @return returns the Internal IMU object
+     */
     public BNO055IMU getImu() {
         return imu;
     }

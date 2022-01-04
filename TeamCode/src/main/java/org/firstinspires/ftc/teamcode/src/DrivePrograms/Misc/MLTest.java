@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 
+/**
+ * A Autonomous to test our machine learning model
+ */
 @Disabled
 @Autonomous(name = "MLTest")
 public class MLTest extends AutoObjDetectionTemplate {
@@ -15,7 +18,7 @@ public class MLTest extends AutoObjDetectionTemplate {
         this.initVuforia();
         this.initTfod();
 
-        this.activate();
+        this.activateTF();
         MarkerPosition Pos = MarkerPosition.Right;
 
         while (!isStarted()) {

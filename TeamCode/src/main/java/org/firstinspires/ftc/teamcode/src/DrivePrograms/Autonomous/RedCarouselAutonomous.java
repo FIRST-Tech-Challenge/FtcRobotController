@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
+/**
+ * The Autonomous ran on Red side near spinner for Meet 3
+ */
 @Autonomous(name = "Red Carousel Autonomous")
 public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
@@ -17,7 +20,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         this.initVuforia();
         this.initTfod();
-        this.activate();
+        this.activateTF();
 
         odometry.setPosition(7, 101, 90);
 

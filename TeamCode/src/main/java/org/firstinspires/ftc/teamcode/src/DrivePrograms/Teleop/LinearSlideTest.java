@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 
-
+/**
+ * A Teleop to test the Linear Slide
+ */
 @TeleOp(name = "LS Test")
 @Disabled
 public class LinearSlideTest extends TeleopTemplate {

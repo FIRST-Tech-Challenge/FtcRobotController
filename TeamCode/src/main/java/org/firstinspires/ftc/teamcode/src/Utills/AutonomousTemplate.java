@@ -15,17 +15,51 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
+/**
+ * A template for Autonomous OpModes, allows for easy initialization
+ */
 @Disabled
 public abstract class AutonomousTemplate extends LinearOpMode {
+    /**
+     * Provides methods for lifting and lowering Odometry servos
+     */
     public OdometryPodServos podServos;
+
+    /**
+     * Provides methods to use Odometry and associated drive methods
+     */
     public OdometryDrivetrain driveSystem;
+
+    /**
+     * Provides Carousel Spinner functionality
+     */
     public CarouselSpinner spinner;
+
+    /**
+     * Provides Odometry Methods, Also held by OdometryDrivetrain driveSystem
+     */
     public OdometryGlobalCoordinatePosition odometry;
+
+    /**
+     * Provides methods for using the intake
+     */
     public ContinuousIntake intake;
+
+    /**
+     * Provides methods for using the linear slide
+     */
     public LinearSlide slide;
+
+    /**
+     * Provides methods for using the robot LED's
+     */
     public RevBlinkinLedDriver leds;
 
-
+    /**
+     * Initializes all fields provided by this class
+     *
+     * @throws InterruptedException Throws if the OpMode is stopped during function execution
+     */
     public void initAll() throws InterruptedException {
         podServos = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
         podServos.lower();
@@ -91,6 +125,11 @@ public abstract class AutonomousTemplate extends LinearOpMode {
 
     }
 
+    /**
+     * Checks to see if the OpMode has been stopped
+     *
+     * @throws InterruptedException Throws if the OpMode is asked to stop
+     */
     protected void checkStop() throws InterruptedException {
         if (this.isStopRequested() || Thread.currentThread().isInterrupted()) {
             throw new InterruptedException();

@@ -11,6 +11,9 @@ import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 
 import java.util.List;
 
+/**
+ * A Autonomous that represents our first test writing a machine learning opMode
+ */
 @Disabled
 @Autonomous(name = "TeamModelObjectDetectionTest")
 public class TeamModelObjectDetectionTest extends AutonomousTemplate {
@@ -117,13 +120,6 @@ public class TeamModelObjectDetectionTest extends AutonomousTemplate {
 
     }
 
-    private enum MarkerPosition {
-        Right,
-        Left,
-        NotSeen
-    }
-
-
     /**
      * Initialize the Vuforia localization engine.
      */
@@ -154,6 +150,12 @@ public class TeamModelObjectDetectionTest extends AutonomousTemplate {
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+    }
+
+    private enum MarkerPosition {
+        Right,
+        Left,
+        NotSeen
     }
 }
 

@@ -15,31 +15,27 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 
 /**
- * Created by Sarthak on 6/1/2019.
  * Odometry system calibration. Run this OpMode to generate the necessary constants to calculate the robot's global position on the field.
  * The Global Positioning Algorithm will not function and will throw an error if this program is not run first
+ *
+ * @author Sarthak
+ * @since 6/1/2019
  */
-
 @Disabled
 @TeleOp(name = "Odometry System Calibration", group = "Calibration")
 public class OdometryCalibration extends LinearOpMode {
+    final double PIVOT_SPEED = 0.15;
+    //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
+    final double COUNTS_PER_INCH = 1892.3724283364;
     //Drive motors
     DcMotor right_front, right_back, left_front, left_back;
     //Odometry Wheels
     DcMotor verticalLeft, verticalRight, horizontal;
-
     //IMU Sensor
     BNO055IMU imu;
-
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "front_right", rbName = "back_right", lfName = "front_left", lbName = "back_left ";
     String verticalLeftEncoderName = lfName, verticalRightEncoderName = rfName, horizontalEncoderName = rbName;
-
-    final double PIVOT_SPEED = 0.15;
-
-    //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
-    final double COUNTS_PER_INCH = 1892.3724283364;
-
     ElapsedTime timer = new ElapsedTime();
 
     double horizontalTickOffset = 0;
@@ -160,6 +156,7 @@ public class OdometryCalibration extends LinearOpMode {
             telemetry.update();
         }
     }
+
 
     private void initHardwareMap(String rfName, String rbName, String lfName, String lbName, String vlEncoderName, String vrEncoderName, String hEncoderName) {
         right_front = hardwareMap.dcMotor.get(rfName);

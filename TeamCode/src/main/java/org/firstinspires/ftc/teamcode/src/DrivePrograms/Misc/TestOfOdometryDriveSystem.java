@@ -10,6 +10,9 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.IMU;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
+/**
+ * A Autonomous test odometry
+ */
 @Disabled
 @Autonomous(name = "TestOfOdometryDriveSystem")
 public class TestOfOdometryDriveSystem extends AutonomousTemplate {

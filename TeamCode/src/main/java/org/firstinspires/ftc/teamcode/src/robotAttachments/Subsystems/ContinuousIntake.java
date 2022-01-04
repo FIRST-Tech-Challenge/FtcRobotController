@@ -6,7 +6,6 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -20,17 +19,38 @@ import java.util.HashMap;
  * this is the class for our robot's intake subsystem
  */
 public class ContinuousIntake {
+    /**
+     * The power for going forward
+     */
     final static double forwardPower = 1;
-    DcMotor intakeMotor;
-
-
+    /**
+     * The Position servo must go to for it to be up
+     */
     private static final double BucketUpPosition = .98;
+    /**
+     * The Position servo must go to for it to be down
+     */
     private static final double BucketDownPosition = .46;
-    Servo slantServo;
+    /**
+     * The intake sensor
+     */
     public ColorRangeSensor intakeSensor;
-    public DistanceSensor intakeSensor_D;
+    /**
+     * DcMotor Object
+     */
+    DcMotor intakeMotor;
+    /**
+     * The internal Servo Object
+     */
+    Servo slantServo;
 
-
+    /**
+     * Initializes from hardware map and names
+     *
+     * @param hardwareMap hardware map object
+     * @param motorName   Name of intake motor
+     * @param servoName   Name of lifting servo
+     */
     public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName) {
         intakeMotor = hardwareMap.dcMotor.get(motorName);
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -43,18 +63,14 @@ public class ContinuousIntake {
     }
 
     /**
-     * this is a contructor for the Continuous intake that declares
-     * hardware on the intake and initializes the intake motor
+     * Initializes from hardware map and names
+     * Initializes the Color Sensor
      *
      * @param hardwareMap          this is the hardware map
      * @param motorName            this is a string for the name of the intake motor
      * @param servoName            this is a string for the name of the intake motor
      * @param colorSensor          this is a string for the name of the color sensor on the intake
-     * @param sensorDetectionLight this is a true or false value for turning the color sensor light on or off
-     */
-    /*
-    This next constructor has a parameter for the name of the color sensor in the configuration
-    and a boolean value for to have the color sensor LED on or off
+     * @param sensorDetectionLight this is a boolean for turning the color sensor light on(true) or off(false)
      */
     public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName, String colorSensor, boolean sensorDetectionLight) {
         intakeMotor = hardwareMap.dcMotor.get(motorName);
@@ -64,11 +80,27 @@ public class ContinuousIntake {
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intakeSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
-        //intakeSensor_D = hardwareMap.get(DistanceSensor.class, colorSensor);
         intakeSensor.enableLed(sensorDetectionLight);
 
         slantServo = hardwareMap.servo.get(servoName);
 
+    }
+
+    /**
+     * It treats color as 3D space and returns the distance between the two points
+     *
+     * @param sight  The first set of RGB values
+     * @param object The second set of RGB values
+     * @return The distance between the two, smaller is closer
+     */
+    public static double getDifferenceOfColor(double[] sight, double[] object) {
+        double difference;
+        double r = Math.abs(sight[0] - object[0]);
+        double g = Math.abs(sight[1] - object[1]);
+        double b = Math.abs(sight[2] - object[2]);
+        // this calculates the 3d distance between colors
+        difference = Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
+        return difference;
     }
 
     /**
@@ -114,14 +146,11 @@ public class ContinuousIntake {
         slantServo.setPosition(BucketDownPosition);
     }
 
-
     /**
+     * this following method takes a parameter for the type of color and outputs the sensor's number for that color
+     *
      * @param color the name of the color wanted as a String
      * @return this returns a number of the value for the name of the wanted color
-     */
-    /*
-    this following method takes a parameter for the type of color and outputs the
-    sensor's number for that color
      */
     public double getColor(String color) {
         HashMap<String, Double> colorKey = new HashMap<String, Double>() {{
@@ -133,133 +162,53 @@ public class ContinuousIntake {
         return colorKey.get(color).doubleValue();
     }
 
-
-   /* public double getColor(String color) {
-        int i;
-
-        double[] colorNumber = {intakeSensor.red(), intakeSensor.blue(), intakeSensor.green(), intakeSensor.alpha(), intakeSensor.argb()};
-        switch (color) {
-            case "red":
-                i = 0;
-                break;
-            case "blue":
-                i = 1;
-                break;
-            case "green":
-                i = 2;
-                break;
-            case "alpha":
-                i = 3;
-                break;
-            case "argb":
-                i = 4;
-                break;
-            default:
-                i = 0;
-        }
-        return colorNumber[i];
-
-    }
-
-    */
-
+    /**
+     * Returns what the Color Sensor Sees
+     *
+     * @return Returns values from 0 to 255 in the form of R,G,B
+     */
     public double[] getRGB() {
-
-        double[] colorNumber = {intakeSensor.red(), intakeSensor.green(), intakeSensor.blue()};
-        return colorNumber;
-
+        return new double[]{intakeSensor.red(), intakeSensor.green(), intakeSensor.blue()};
     }
 
+    /**
+     * Gets how close the Object is to the sensor
+     *
+     * @return The distance in Inches
+     */
     public double getCloseDistance() {
         double distance = intakeSensor.getDistance(DistanceUnit.INCH);
         return distance;
     }
 
-
-    /*
-    @Deprecated
-    protected double[] getRGBFromList(ContinuousIntake.gameObject object) {
-        //this is a list of approximations of values of RGB for different objects and empty
-        //css is cube smooth side and cws is cube waffle side
-
-        /* empty: 8,9,6
-           cws:  31, 18.5, 12
-           css:  56.5, 34.5, 20
-           ball: 611, 652, 594.5
-           duck: 17.67, 15.67, 9
-
-
-
-        switch (object) {
-
-            case BALL:
-                // change the values of these arrays
-                // order of color values in array is Red Green Blue
-                double[] ball = {611, 652, 594.5};
-                return ball;
-
-            case CUBESMOOTH:
-                double[] cubeSmooth = {56.5, 34.5, 20};
-                return cubeSmooth;
-
-            case CUBEWAFFLE:
-                double[] cubeWaffle = {31, 18.5, 12};
-                return cubeWaffle;
-
-            case DUCK:
-                double[] duck = {17.67, 15.67, 9};
-                return duck;
-            case EMPTY:
-                return new double[]{8, 9, 6};
-
-        }
-        return new double[]{0, 0, 0};
-    }*/
-
-    public static double getDifferenceOfColor(double[] sight, double[] object) {
-        double difference;
-        double r = Math.abs(sight[0] - object[0]);
-        double g = Math.abs(sight[1] - object[1]);
-        double b = Math.abs(sight[2] - object[2]);
-        // this calculates the 3d distance between colors
-        difference = Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
-        return difference;
-    }
-
+    /**
+     * Analyzes the content of the bucket to determine shape, returns the corresponding blink pattern
+     *
+     * @return Returns the blink pattern for the object in the bucket
+     */
     public RevBlinkinLedDriver.BlinkinPattern getLEDPatternFromFreight() {
         RevBlinkinLedDriver.BlinkinPattern o = gameObject.RevColorOfObj.get(ContinuousIntake.gameObject.identify(this.getRGB()));
         return o;
     }
 
-
-
-    /*
-    @Deprecated
-    private RevBlinkinLedDriver.BlinkinPattern getRevColorFromEnum(gameObject o) {
-        switch (o) {
-            case BALL:
-                return RevBlinkinLedDriver.BlinkinPattern.WHITE;
-            case CUBESMOOTH:
-                return RevBlinkinLedDriver.BlinkinPattern.ORANGE;
-            case CUBEWAFFLE:
-                return RevBlinkinLedDriver.BlinkinPattern.ORANGE;
-            case DUCK:
-                return RevBlinkinLedDriver.BlinkinPattern.GREEN;
-            case EMPTY:
-                return RevBlinkinLedDriver.BlinkinPattern.BLACK;
-        }
-        return RevBlinkinLedDriver.BlinkinPattern.BLACK;
-    }
+    /**
+     * A Enum for each object the bucket can pick up
      */
-
     public enum gameObject {
         BALL,
         CUBESMOOTH,
         CUBEWAFFLE,
         DUCK,
         EMPTY;
+
+        /**
+         * A list of every possible enum value
+         */
         protected static final ArrayList<gameObject> gameObjectList = new ArrayList<gameObject>(Arrays.asList(gameObject.values()));
 
+        /**
+         * The Key is the game object, the value is what LED pattern it should corespond to
+         */
         protected static final HashMap<gameObject, BlinkinPattern> RevColorOfObj = new HashMap<gameObject, BlinkinPattern>() {{
             put(gameObject.BALL, BlinkinPattern.WHITE);
             put(gameObject.CUBESMOOTH, BlinkinPattern.ORANGE);
@@ -268,6 +217,9 @@ public class ContinuousIntake {
             put(gameObject.EMPTY, null);
         }};
 
+        /**
+         * The Key is the game object, the value is the RGB value of what the sensor sees
+         */
         protected static final HashMap<gameObject, double[]> RGBOfObj = new HashMap<gameObject, double[]>() {{
             put(gameObject.BALL, new double[]{611.0, 652.0, 594.5});
             put(gameObject.CUBESMOOTH, new double[]{56.5, 34.5, 20});
@@ -276,6 +228,12 @@ public class ContinuousIntake {
             put(gameObject.EMPTY, new double[]{8, 9, 6});
         }};
 
+        /**
+         * Determines what game object best matches the color pattern provided
+         *
+         * @param RGB The color pattern in the form of RGB
+         * @return Returns what game object the RGB best matches
+         */
         public static gameObject identify(double[] RGB) {
             int size = gameObject.gameObjectList.size();
             double[][] originalRGB = new double[size][3];

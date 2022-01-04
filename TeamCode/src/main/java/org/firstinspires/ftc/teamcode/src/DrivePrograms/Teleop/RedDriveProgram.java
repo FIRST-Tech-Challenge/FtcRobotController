@@ -5,10 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 
-
+/**
+ * A Teleop for blue side
+ */
 @TeleOp(name = "Red Drive Program")
 public class RedDriveProgram extends TeleopTemplate {
     private static final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.RED;
+
     public void runOpMode() throws InterruptedException {
 
         this.initAll();

@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 
+/**
+ * The Autonomous ran on Blue side near warehouse for Meet 1
+ */
 @Autonomous(name = "BlueAutonomousNearWarehouse")
 @Disabled
 public class BlueAutonomousNearWarehouse extends AutonomousTemplate {
