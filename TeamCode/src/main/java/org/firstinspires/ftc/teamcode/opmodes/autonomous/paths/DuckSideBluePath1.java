@@ -114,12 +114,16 @@ public class DuckSideBluePath1 {
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
 
-                .splineToLinearHeading(new Pose2d(-34.58, 22, Math.toRadians(0)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-30.5, 24, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .addDisplacementMarker(()->{
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
+                    setArmLevel.schedule();
+                })
                 .strafeTo(new Vector2d(-37,22))
-                .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(0)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-60, 40, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
