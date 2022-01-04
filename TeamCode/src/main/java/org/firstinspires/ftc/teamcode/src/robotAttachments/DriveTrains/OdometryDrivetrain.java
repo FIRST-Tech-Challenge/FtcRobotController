@@ -240,7 +240,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
             currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
             odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
 
-            power = -Math.cos(2 * Math.PI * (currentDistance / initialDistance)) + (1.0 + (0.2 * (12 / voltageSensor.getVoltage())));
+            power = -Math.cos(2 * Math.PI * (currentDistance / initialDistance)) + (1.0 + (0.6 * (12 / voltageSensor.getVoltage())));
             power = power / 2;
             power = MiscUtills.boundNumber(power);
 
