@@ -17,12 +17,13 @@ public class ServoConfiguration extends LinearOpMode {
     @Config
     static class ServoConfigValue {
         public static double servoPos = 0.88;
-        public static String servoName = "armServo";
+        public static String servoName = "leftTse";
+        //0.59 closed, 1 open r
+        //0.42 closed, 0 open l
         final Servo servo;
 
         ServoConfigValue(@NonNull HardwareMap hardwareMap) {
-            //Put the name of the servo you want to config here.
-            this.servo = hardwareMap.get(Servo.class, "armServo");
+            this.servo = hardwareMap.get(Servo.class, servoName);
         }
 
         void update() {

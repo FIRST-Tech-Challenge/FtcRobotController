@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Blinker;
 
 import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
 import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerCarousel;
+import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerGrabber;
 import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerLift;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
@@ -19,7 +20,11 @@ public class Drive extends LinearOpMode {
         hardwareMap.get(Blinker.class, "Expansion Hub 2");
         final GamepadEx moveGamepad = new GamepadEx(gamepad1);
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
-        new ControllerCarousel(eventThread, hardwareMap, toolGamepad); // will automatically run update method
+
+        // will automatically run update method
+        new ControllerCarousel(eventThread, hardwareMap, toolGamepad);
+        new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
+
         Thread thread = new Thread(() -> {
             final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, telemetry);
             final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad);

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
+@Disabled
 public class EventTest extends LinearOpMode {
     public EventThread eventThread = new EventThread();
 

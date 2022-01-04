@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.core.movement.api.StrafingMovement;
 import org.firstinspires.ftc.teamcode.core.movement.impl.StrafedMovementImpl;
 
 @Autonomous
+@Disabled
 public class BasicStrafedMovementTest extends LinearOpMode {
 
     @Override
