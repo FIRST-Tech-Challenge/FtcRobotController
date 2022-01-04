@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.core.robot.vision.robot;
 
-import androidx.annotation.NonNull;
+import android.util.Pair;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -58,8 +57,11 @@ public class TseDetector {
     public int run() {
         pipeline.startPipeline();
         //noinspection StatementWithEmptyBody
-        while (!pipeline.differentSpot().first) {}
+        Pair<Boolean, Integer> result = pipeline.differentSpot();
+        while (!result.first) {
+            result = pipeline.differentSpot();
+        }
         pipeline.stopPipeline();
-        return pipeline.differentSpot().second;
+        return result.second;
     }
 }
