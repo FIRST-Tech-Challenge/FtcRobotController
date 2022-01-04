@@ -25,7 +25,9 @@ public class ArmSubsystem extends SubsystemBase {
 		m_motor.setDirection(DcMotorSimple.Direction.FORWARD);
 		m_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		m_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+		m_motor.setPower(0);
+		m_motor.setTargetPosition(0);
+		m_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		m_rightServo.setDirection(Servo.Direction.REVERSE);
 	}
 
@@ -33,12 +35,17 @@ public class ArmSubsystem extends SubsystemBase {
 		m_motor.setPower(power);
 	}
 
+	public void setTargetPosition(int position)
+	{
+		m_motor.setTargetPosition(position);
+	}
+
 	public double getPower() {
 		return m_motor.getPower();
 	}
 
 	public double getAngle() {
-		return (double)m_motor.getCurrentPosition() / ArmConstants.motorGear / ArmConstants.gear;
+		return (double)m_motor.getCurrentPosition() / ArmConstants.motorGear / ArmConstants.gear * 360;
 	}
 
 	public void setVerticalPosition(double position) {
@@ -52,6 +59,10 @@ public class ArmSubsystem extends SubsystemBase {
 
 	public double SyncError() {
 		return Math.abs(m_leftServo.getPosition() - m_rightServo.getPosition());
+	}
+
+	public boolean isBusy() {
+		return m_motor.isBusy();
 	}
 
 	public int getTargetPosition() {
