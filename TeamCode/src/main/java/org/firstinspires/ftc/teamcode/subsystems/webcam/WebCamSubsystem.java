@@ -135,6 +135,9 @@ public class WebCamSubsystem extends SubsystemBase {
         return currrentLevel;
     }
 
+    public void stopStreaming(){
+        webCam.stopStreaming();
+    }
 
 
 }
