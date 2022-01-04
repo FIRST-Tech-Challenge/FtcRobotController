@@ -107,6 +107,7 @@ public class Drive extends CommandBasedTeleOp
         telemetry.addData("arm position", armSubsystem::getCurrentPosition);
         telemetry.addData("arm angle", armSubsystem::getAngle);
         telemetry.addData("arm state", rotateArmCommand::getState);
+        telemetry.addData("arm state[calc]", rotateArmCommand::calculateState);
         telemetry.addData("duck position", ducksSubsystem::getCurrentPosition);
         telemetry.update();
     }

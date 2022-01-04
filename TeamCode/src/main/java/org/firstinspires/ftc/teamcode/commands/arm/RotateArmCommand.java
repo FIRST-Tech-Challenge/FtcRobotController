@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands.arm;
 
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
+import org.opencv.core.Mat;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -25,8 +26,9 @@ public class RotateArmCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        m_ArmSubsystem.setPower(m_power);
+        m_current_state = calculateState();
         updateState();
+        m_ArmSubsystem.setPower(m_power);
     }
 
     @Override
@@ -35,18 +37,31 @@ public class RotateArmCommand extends CommandBase {
     }
 
     public void incState() {
-        m_current_state = Math.min(m_current_state+1, m_states.length-1);
+        m_current_state = Math.min(calculateState()+1, m_states.length-1);
         updateState();
     }
 
     public void decState() {
-        m_current_state = Math.max(m_current_state-1, 0);
+        m_current_state = Math.max(calculateState()-1, 0);
         updateState();
     }
 
     public void setState(int state) {
         m_current_state = state;
         updateState();
+    }
+
+    public int calculateState() {
+        int current_match = 0;
+        double current_error = Math.abs(m_ArmSubsystem.getTargetAngle() - m_states[0]);
+        for (int i = 1; i < m_states.length; i++) {
+            double error = Math.abs(m_ArmSubsystem.getTargetAngle() - m_states[i]);
+            if (error < current_error) {
+                current_match = i;
+                current_error = error;
+            }
+        }
+        return current_match;
     }
 
     public int getState() {
