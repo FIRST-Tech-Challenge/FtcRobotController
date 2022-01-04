@@ -113,7 +113,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
                 new Size(224, 224),
                 new Scalar(meanVal, meanVal, meanVal),
-                false, false);
+                false, true);
 
         net.setInput(blob);
         detections = net.forward();
