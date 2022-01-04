@@ -21,7 +21,7 @@ import java.util.Locale;
 
 @Autonomous(name="AutoTestLeftRed", group="Autonomous")
 //@Disabled
-public class AutoTestLeftRed extends LinearOpMode {
+public class AutoSpinnerRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor lf = null;  //left front wheel
     private DcMotor rf = null;  //right front wheel
@@ -31,6 +31,9 @@ public class AutoTestLeftRed extends LinearOpMode {
     private DcMotor tower2 = null; //arm motor 2
     private Servo clawservo = null; //clawservo
     private CRServo duckspinner = null; // the duck spinny thingy
+
+
+
 
     @Override
     public void runOpMode() {
@@ -46,6 +49,8 @@ public class AutoTestLeftRed extends LinearOpMode {
         clawservo = hardwareMap.get(Servo.class,"clawservo");
         duckspinner = hardwareMap.get(CRServo.class, "duckspinner");
 
+        double sidemult = 1.0; //Red side = 1.0 Blue = -1.0
+
 
         lf.setDirection(DcMotor.Direction.FORWARD);
         rf.setDirection(DcMotor.Direction.REVERSE);
@@ -60,26 +65,6 @@ public class AutoTestLeftRed extends LinearOpMode {
 
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
 
-        tower1.setPower(0);
-        tower2.setPower(0);
-        lf.setPower(0.5);
-        rf.setPower(0.5);
-        lb.setPower(0.5);
-        rb.setPower(0.5);
-        clawservo.setPosition(0.75);
-        duckspinner.setPower(0);
-        sleep(500);
-
-
-        tower1.setPower(0);
-        tower2.setPower(0);
-        lf.setPower(0.5);
-        rf.setPower(-0.5);
-        lb.setPower(0.5);
-        rb.setPower(-0.5);
-        clawservo.setPosition(0.75);
-        duckspinner.setPower(0);
-        sleep(250);
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -89,7 +74,28 @@ public class AutoTestLeftRed extends LinearOpMode {
         rb.setPower(0.5);
         clawservo.setPosition(0.75);
         duckspinner.setPower(0);
-        sleep(250);
+        sleep(500); // Go forward towards goal
+
+
+        tower1.setPower(0);
+        tower2.setPower(0);
+        lf.setPower(0.5 * sidemult);
+        rf.setPower(-0.5 * sidemult);
+        lb.setPower(0.5 * sidemult);
+        rb.setPower(-0.5 * sidemult);
+        clawservo.setPosition(0.75);
+        duckspinner.setPower(0);
+        sleep(250); // Turn right 45 towards goal, and away from spinner
+
+        tower1.setPower(0);
+        tower2.setPower(0);
+        lf.setPower(0.5);
+        rf.setPower(0.5);
+        lb.setPower(0.5);
+        rb.setPower(0.5);
+        clawservo.setPosition(0.75);
+        duckspinner.setPower(0);
+        sleep(250); // Forward towards goal
 
         tower1.setPower(0.5);
         tower2.setPower(0.5);
@@ -99,7 +105,7 @@ public class AutoTestLeftRed extends LinearOpMode {
         rb.setPower(0);
         clawservo.setPosition(0.75);
         duckspinner.setPower(0);
-        sleep(250);
+        sleep(250); // Lower arm onto goal
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -109,7 +115,7 @@ public class AutoTestLeftRed extends LinearOpMode {
         rb.setPower(0);
         clawservo.setPosition(0);
         duckspinner.setPower(0);
-        sleep(250);
+        sleep(250); // Open claw and drop block onto goal
 
         tower1.setPower(-0.5);
         tower2.setPower(-0.5);
@@ -119,7 +125,7 @@ public class AutoTestLeftRed extends LinearOpMode {
         rb.setPower(0);
         clawservo.setPosition(0.75);
         duckspinner.setPower(0);
-        sleep(250);
+        sleep(250); // Raise arm and close claw
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -129,7 +135,7 @@ public class AutoTestLeftRed extends LinearOpMode {
         rb.setPower(-0.5);
         clawservo.setPosition(0.75);
         duckspinner.setPower(0);
-        sleep(750);
+        sleep(750); // Go backwards towards Carousel
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -139,17 +145,17 @@ public class AutoTestLeftRed extends LinearOpMode {
         rb.setPower(0);
         clawservo.setPosition(0.75);
         duckspinner.setPower(1);
-        sleep(7000);
+        sleep(7000); // Spin duck spinner
 
         tower1.setPower(0);
         tower2.setPower(0);
-        lf.setPower(-0.5);
-        rf.setPower(0.5);
-        lb.setPower(-0.5);
-        rb.setPower(0.5);
+        lf.setPower(-0.5 * sidemult);
+        rf.setPower(0.5 * sidemult);
+        lb.setPower(-0.5 * sidemult);
+        rb.setPower(0.5 * sidemult);
         clawservo.setPosition(0.75);
         duckspinner.setPower(0);
-        sleep(250);
+        sleep(250); // Turn left 90
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -159,7 +165,7 @@ public class AutoTestLeftRed extends LinearOpMode {
         rb.setPower(0.5);
         clawservo.setPosition(0.75);
         duckspinner.setPower(0);
-        sleep(250);
+        sleep(250); // Go forward
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -169,7 +175,7 @@ public class AutoTestLeftRed extends LinearOpMode {
         rb.setPower(0);
         clawservo.setPosition(0.75);
         duckspinner.setPower(0);
-        sleep(25000);
+        sleep(25000); // Stop
         }
     }
 }
