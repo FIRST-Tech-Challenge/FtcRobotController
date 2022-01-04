@@ -3,9 +3,7 @@ package org.firstinspires.ftc.blackswan;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name="TeleopRed")
 
@@ -40,8 +38,10 @@ public class TeleopRed extends LinearOpMode {
         String detection = "none";
         while(opModeIsActive()) {
             //turn with right stick
-            telemetry.addData("left stick value x", gamepad1.left_stick_x);
-            telemetry.addData("left stick value y", gamepad1.left_stick_y);
+//            telemetry.addData("left stick value x", gamepad1.left_stick_x);
+//            telemetry.addData("left stick value y", gamepad1.left_stick_y);
+            telemetry.addData("left stick value x", gamepad2.left_stick_x);
+            telemetry.addData("left stick value y", gamepad2.left_stick_y);
             telemetry.addData("detection", detection);
             telemetry.update();
             if (gamepad1.right_stick_x > 0.1) {
@@ -121,9 +121,9 @@ public class TeleopRed extends LinearOpMode {
             }
 
             if (gamepad2.left_stick_y < -0.1){
-                arm.setPower(-0.3);
+                arm.setPower(-0.5);
             } else if (gamepad2.left_stick_y > 0.1){
-                arm.setPower(0.3);
+                arm.setPower(0.5);
             } else {
                 arm.setPower(0);
             }
@@ -152,3 +152,4 @@ public class TeleopRed extends LinearOpMode {
         }
     }
 }
+

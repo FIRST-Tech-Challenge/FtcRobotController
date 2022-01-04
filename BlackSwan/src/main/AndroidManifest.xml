@@ -6,7 +6,7 @@
 
 <!-- The package name here determines the package for your R class and your BuildConfig class -->
 <manifest
-    package="org.firstinspires.ftc.blackSwan"
+    package="org.firstinspires.ftc.blackswan"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <application/>
 </manifest>
