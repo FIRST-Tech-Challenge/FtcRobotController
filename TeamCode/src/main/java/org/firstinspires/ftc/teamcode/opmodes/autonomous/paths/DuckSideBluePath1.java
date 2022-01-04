@@ -135,8 +135,7 @@ public class DuckSideBluePath1 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, intakeGroup,sample1Follower4)
-
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2)
         ));
     }
 }
