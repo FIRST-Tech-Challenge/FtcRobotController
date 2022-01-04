@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.drive;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
 
 import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerLift;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedOnceEvent;
 
+@TeleOp
 public class Drive extends LinearOpMode {
     private final EventThread eventThread = new EventThread(this::opModeIsActive);
     @Override
