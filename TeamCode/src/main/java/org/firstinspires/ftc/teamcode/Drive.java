@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.subsystems.DucksSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -36,9 +38,10 @@ public class Drive extends CommandBasedTeleOp
     // Lift Commands
 
     // Arm commands
-    RotateArmToPositionCommand rotateArmToPositionCommandL;
-    RotateArmToPositionCommand rotateArmToPositionCommandR;
     RotateArmCommand rotateArmCommand;
+    Command rotateArmLeftCommand;
+    Command rotateArmRightCommand;
+    Command centerArmCommand;
     // intake commands
     IntakeCommand intakeCommand;
     //Ducky command
@@ -63,12 +66,10 @@ public class Drive extends CommandBasedTeleOp
         driveLeftCommand = new DriveLeftCommand(driveTrain, this::getDriveSpeed);
         driveRightCommand = new DriveRightCommand(driveTrain, this::getDriveSpeed);
 
-        rotateArmToPositionCommandL = new RotateArmToPositionCommand(armSubsystem,1000,0.5);
-        rotateArmToPositionCommandR = new RotateArmToPositionCommand(armSubsystem,-1000,0.5);
-
-        rotateArmCommand = new RotateArmCommand(armSubsystem,
-                () -> (gamepad2.left_trigger > gamepad2.right_trigger ?
-                        gamepad2.left_trigger : -gamepad2.right_trigger)* 0.5);
+        rotateArmCommand = new RotateArmCommand(armSubsystem, 1, 2, new double[]{-80, -45, 0, 45, 80});
+        rotateArmLeftCommand = new InstantCommand(rotateArmCommand::decState);
+        rotateArmRightCommand = new InstantCommand(rotateArmCommand::incState);
+        centerArmCommand = new InstantCommand(() -> rotateArmCommand.setState(2));
 
         intakeCommand = new IntakeCommand(intakeSubsystem, () -> gamepad2.right_stick_y);
         // TODO: pulse power spin till duck falls and wait for new duck
@@ -85,8 +86,14 @@ public class Drive extends CommandBasedTeleOp
 
         // Arm command
         armSubsystem.setDefaultCommand(rotateArmCommand);
-        gp2.dpad_right().whileHeld(rotateArmToPositionCommandR);
-        gp2.dpad_left().whileHeld(rotateArmToPositionCommandL);
+
+        gp2.dpad_left().whenPressed(rotateArmLeftCommand);
+        gp2.dpad_right().whenPressed(rotateArmRightCommand);
+        gp2.dpad_down().whenPressed(centerArmCommand);
+
+        gp2.b().whenActive(() -> armSubsystem.setVerticalPosition(0.7), armSubsystem);
+        gp2.a().whenActive(() -> armSubsystem.setVerticalPosition(0), armSubsystem);
+        gp2.x().whenActive(() -> armSubsystem.setVerticalPosition(0.6), armSubsystem);
         // Intake commands
         intakeSubsystem.setDefaultCommand(intakeCommand);
         // Duck commands
@@ -94,19 +101,11 @@ public class Drive extends CommandBasedTeleOp
 
         // Telemetry
         // No need for anything but update in loop because use of suppliers
-        gp2.b().whenActive(() -> armSubsystem.setVerticalPosition(0.7), armSubsystem);
-        gp2.a().whenActive(() -> armSubsystem.setVerticalPosition(0), armSubsystem);
-        gp2.x().whenActive(() -> armSubsystem.setVerticalPosition(0.6), armSubsystem);
-
-
-
         telemetry.addData("Runtime", this::getRuntime);
         telemetry.addData("arm position", armSubsystem::getCurrentPosition);
         telemetry.addData("arm angle", armSubsystem::getAngle);
-//        telemetry.addData("lift position", liftSubsystem::getCurrentPosition);
+        telemetry.addData("arm state", rotateArmCommand::getState);
         telemetry.addData("duck position", ducksSubsystem::getCurrentPosition);
-//        telemetry.addData("lift target", liftSubsystem::getTargetPosition);
-//        telemetry.addData("lift current", liftSubsystem::getCurrentPosition);
         telemetry.update();
     }
 }
