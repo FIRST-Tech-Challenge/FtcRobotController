@@ -7,22 +7,10 @@ package org.firstinspires.ftc.team6220_2021;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TeleOp Comp", group = "TeleOp")
 public class TeleOpComp extends MasterOpMode{
-    // Declaring motors and servos
-    DcMotor motorBackLeft;
-    DcMotor motorBackRight;
-    DcMotor motorFrontLeft;
-    DcMotor motorFrontRight;
-    DcMotor motorDuck;
-    DcMotor motorLeftDuck;
-    DcMotor motorArm;
-    DcMotor motorBelt;
-    Servo servoGrabber;
-    Servo servoArm;
+
     int tickvalue = 97;
     double x = 0.7;
 
@@ -34,26 +22,7 @@ public class TeleOpComp extends MasterOpMode{
 
     @Override
     public void runOpMode() {
-        //Initialize the motors and servos
-        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
-        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-        motorArm = hardwareMap.dcMotor.get("motorArm");
-        motorBelt = hardwareMap.dcMotor.get("motorBelt");
-        motorDuck = hardwareMap.dcMotor.get("motorDuck");
-        motorLeftDuck = hardwareMap.dcMotor.get("motorLeftDuck");
-        servoGrabber = hardwareMap.servo.get("servoGrabber");
-        servoArm = hardwareMap.servo.get("servoArm");
-
-        //Set direction of the motors
-        motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorDuck.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLeftDuck.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBelt.setDirection(DcMotorSimple.Direction.REVERSE);
+        Initialize();
 
         //Set position of servos
         servoGrabber.setPosition(0.34);
@@ -67,19 +36,6 @@ public class TeleOpComp extends MasterOpMode{
         double increase = 1;
         double speed =1;
         int motorBeltTargetPosition = 0;
-
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBelt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        motorArm.setTargetPosition(0);
-        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         waitForStart();
 
