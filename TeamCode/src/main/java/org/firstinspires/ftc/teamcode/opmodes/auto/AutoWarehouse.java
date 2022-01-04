@@ -48,7 +48,7 @@ public class AutoWarehouse extends LinearOpMode {
                 cachedHeight[0] = height.get();
             });
             builder.waitSeconds(2);
-            builder.lineToLinearHeading(new Pose2d(-3, nextToWall * multiplier, Math.toRadians(0)));
+            builder.lineToLinearHeading(new Pose2d(-3, nextToWall * multiplier, Math.toRadians(5)));
             builder.lineTo(new Vector2d(20, nextToWall * multiplier));
             builder.lineTo(new Vector2d(40, nextToWall * multiplier));
             startSequence = builder.build();
@@ -58,7 +58,7 @@ public class AutoWarehouse extends LinearOpMode {
 
         {
             TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(new Pose2d(40,
-                    68 * multiplier, Math.toRadians(0)));
+                    nextToWall * multiplier, Math.toRadians(0)));
             builder.lineTo(new Vector2d(-3, nextToWall * multiplier));
             builder.lineToLinearHeading(new Pose2d(-3, 40 * multiplier,
                     Math.toRadians(70 * multiplier)));
@@ -69,8 +69,8 @@ public class AutoWarehouse extends LinearOpMode {
             builder.addDisplacementMarker(() -> {
                 // TODO LIFT DOWN
             });
-            builder.lineToLinearHeading(new Pose2d(-3, 66 * multiplier, 0));
-            builder.lineTo(new Vector2d(40, 70 * multiplier));
+            builder.lineToLinearHeading(new Pose2d(-3, nextToWall * multiplier, 5));
+            builder.lineTo(new Vector2d(40, nextToWall * multiplier));
 
             secondSequence = builder.build();
         }
@@ -87,20 +87,20 @@ public class AutoWarehouse extends LinearOpMode {
             drive.followTrajectorySequence(startSequence);
 
             for (int i = 0; i < 3; i++) {
-//                // intake code
-//                intake.forward();
-//                while (!intake.containsObject()) {
-//                    drive.setMotorPowers(1, 1, -1,-1);
-//                }
-//                intake.stop();
-//                // You'll want to correct for the distance that made it travel
-//                drive.setMotorPowers(0, 0, 0, 0);
-//                drive.followTrajectory(
-//                        drive.trajectoryBuilder(drive.getPoseEstimate())
-//                                .lineToLinearHeading(new Pose2d(40, 68 * multiplier,
-//                                        Math.toRadians(0)))
-//                                .build()
-//                );
+                // intake code
+                intake.forward();
+                while (!intake.containsObject()) {
+                    drive.setMotorPowers(0.1, 0.1, 0.1,0.1);
+                }
+                intake.stop();
+                // You'll want to correct for the distance that made it travel
+                drive.setMotorPowers(0, 0, 0, 0);
+                drive.followTrajectory(
+                        drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .lineToLinearHeading(new Pose2d(40, nextToWall * multiplier,
+                                        Math.toRadians(0)))
+                                .build()
+                );
                 drive.followTrajectorySequence(secondSequence);
             }
 
