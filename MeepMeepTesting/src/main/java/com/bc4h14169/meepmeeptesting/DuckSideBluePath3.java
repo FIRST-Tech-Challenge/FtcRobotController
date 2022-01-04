@@ -29,17 +29,18 @@ public class DuckSideBluePath3 {
                 .followTrajectorySequence(drive ->
                             drive.trajectorySequenceBuilder(new Pose2d(-36,60, Math.toRadians(270)))
                                     .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
-                                    .strafeTo(new Vector2d(-60, 22))
+                                    .strafeTo(new Vector2d(-60, 40))
 
                                     // deliver to shipping element
-                                    .splineToLinearHeading(new Pose2d(-35, 22, Math.toRadians(0)),Math.toRadians(90))
+                                    .splineToLinearHeading(new Pose2d(-35, 22, Math.toRadians(0)),Math.toRadians(45))
 
                                     //drive around shipping hub
-                                    .strafeTo(new Vector2d(-34,8))
-                                    .splineToLinearHeading(new Pose2d(-8, 8, Math.toRadians(0)),Math.toRadians(45))
-                                    .splineToLinearHeading(new Pose2d(11, 20, Math.toRadians(0)),Math.toRadians(45))
+                                    .strafeTo(new Vector2d(-34,16))
+                                    //.splineToLinearHeading(new Pose2d(-8, 0, Math.toRadians(0)),Math.toRadians(45))
+                                    .splineToLinearHeading(new Pose2d(12, 20, Math.toRadians(0)),Math.toRadians(90))
 
                                     .strafeTo(new Vector2d(12,40))
+                                    .strafeTo(new Vector2d(56,40))
                             .build()
                     );
         meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
