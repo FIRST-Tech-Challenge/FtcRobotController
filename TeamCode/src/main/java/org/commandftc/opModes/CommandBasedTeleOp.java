@@ -11,6 +11,8 @@ public abstract class CommandBasedTeleOp extends OpMode {
 
     protected Gp gp1;
     protected Gp gp2;
+    private double lastTime = 0;
+    private double dt = 0;
 
     /**
      * DON'T OVERRIDE THIS! IT CALLS init_impl() (WHICH YOU SHOULD INSTEAD OVERRIDE)
@@ -32,6 +34,9 @@ public abstract class CommandBasedTeleOp extends OpMode {
 
     @Override
     public final void loop() {
+        double time = getRuntime();
+        dt = time - lastTime;
+        lastTime = time;
         CommandScheduler.getInstance().run();
         telemetry.update();
     }
@@ -44,4 +49,8 @@ public abstract class CommandBasedTeleOp extends OpMode {
     }
 
     public void end(){}
+
+    public double dt() {
+        return dt;
+    }
 }

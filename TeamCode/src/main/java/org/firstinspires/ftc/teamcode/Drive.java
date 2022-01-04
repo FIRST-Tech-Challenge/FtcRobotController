@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -102,6 +103,7 @@ public class Drive extends CommandBasedTeleOp
         // Telemetry
         // No need for anything but update in loop because use of suppliers
         telemetry.addData("Runtime", this::getRuntime);
+        telemetry.addData("dt(s)", this::dt);
         telemetry.addData("arm position", armSubsystem::getCurrentPosition);
         telemetry.addData("arm angle", armSubsystem::getAngle);
         telemetry.addData("arm state", rotateArmCommand::getState);
