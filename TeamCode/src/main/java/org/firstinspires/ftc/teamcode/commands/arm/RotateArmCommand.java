@@ -19,8 +19,14 @@ public class RotateArmCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        m_ArmSubsystem.setPower(m_powerSupplier.getAsDouble());
+    public void execute()
+    {
+        if(m_ArmSubsystem.getAngle() > 92 && m_powerSupplier.getAsDouble() > 0) {
+            m_ArmSubsystem.setPower(0);
+        } else if(m_ArmSubsystem.getAngle() < -72 && m_powerSupplier.getAsDouble() < 0) {
+            m_ArmSubsystem.setPower(0);
+        } else {
+            m_ArmSubsystem.setPower(m_powerSupplier.getAsDouble());
+        }
     }
-
 }
