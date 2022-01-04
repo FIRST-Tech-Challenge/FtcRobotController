@@ -23,7 +23,7 @@ public class DriveTrainSubsystem extends SubsystemBase implements TankDrive, Arc
         m_FrontRightMotor =  hardwareMap.dcMotor.get("FrontRightDriveMotor");
         m_RearRightMotor  =  hardwareMap.dcMotor.get("RearRightDriveMotor");
 
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Default drive type
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
