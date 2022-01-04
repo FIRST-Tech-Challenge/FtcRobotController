@@ -4,41 +4,19 @@
 
 package org.firstinspires.ftc.team6220_2021.TestClasses;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.team6220_2021.MasterOpMode;
 
 @TeleOp(name = "Speed Test", group = "TeleOp")
 @Disabled
 public class SpeedTest extends MasterOpMode {
-    // Declaring motors and servos
-    DcMotor motorBackLeft;
-    DcMotor motorBackRight;
-    DcMotor motorFrontLeft;
-    DcMotor motorFrontRight;
     double x = 0.7;
-
-    //Other Devices
-    BNO055IMU imu;
 
     @Override
     public void runOpMode() {
-        //Initialize the motors and servos
-        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
-        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-
-        //Set direction of the motors
-        motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        Initialize();
 
         //Declare variables
         int position = 0;
@@ -46,11 +24,6 @@ public class SpeedTest extends MasterOpMode {
         double motorPower = 0.9;
         double increase = 1;
         double oldPosition = 0;
-
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
 
