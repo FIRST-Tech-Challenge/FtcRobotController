@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 public final class Constants {
     public static final class MotorConstants {
         public static final class RevHDHexMotor {
-            public static final int ticks_per_revolution = 72;
+            public static final int ticks_per_revolution = 28;
         }
     }
 
