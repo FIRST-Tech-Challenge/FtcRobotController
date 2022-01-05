@@ -31,6 +31,7 @@ public class TeleopRed extends LinearOpMode {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
@@ -119,19 +120,44 @@ public class TeleopRed extends LinearOpMode {
                 backRight.setPower(0);
                 detection = "None";
             }
+            if (gamepad2.dpad_up) { //up
+                arm.setTargetPosition(1000);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                arm.setPower(.5);
+                while (arm.isBusy() && opModeIsActive()) {
+                }
+            }
+            if (gamepad2.dpad_left) { //middle
+                arm.setTargetPosition(700);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                arm.setPower(.5);
+                while (arm.isBusy() && opModeIsActive()) {
+                }
+            }
+            if (gamepad2.dpad_right) { //low
+                arm.setTargetPosition(400);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                arm.setPower(.5);
+                while (arm.isBusy() && opModeIsActive()) {
+                }
+            }
 
-            if (gamepad2.left_stick_y < -0.1){
-                arm.setPower(-0.5);
-            } else if (gamepad2.left_stick_y > 0.1){
-                arm.setPower(0.5);
-            } else {
+            if (gamepad2.dpad_down ) { //floor
+                arm.setTargetPosition(0);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                arm.setPower(.3);
+                while (arm.isBusy() && opModeIsActive()) {
+
+                }
                 arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             }
 
             if(gamepad2.right_trigger > 0.1){
-                intake.setPower(-.5);
+                intake.setPower(-1);
             } else if(gamepad2.left_trigger > 0.1){
-                intake.setPower(.5);
+                intake.setPower(1);
             } else{
                 intake.setPower(0);
             }
@@ -146,7 +172,7 @@ public class TeleopRed extends LinearOpMode {
 
     protected void turnDuck(DcMotor carousel){
         if(gamepad2.right_bumper){
-            carousel.setPower(0.5 );
+            carousel.setPower(-0.5 );
         } else {
             carousel.setPower(0);
         }

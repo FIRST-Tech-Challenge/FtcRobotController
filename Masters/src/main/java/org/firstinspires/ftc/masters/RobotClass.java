@@ -211,9 +211,9 @@ public class RobotClass {
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
 
         }
-        linearSlideServo.setPosition(.8);//1.5
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         pause(1500);
-        linearSlideServo.setPosition(.41);
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(-.4);
@@ -226,14 +226,14 @@ public class RobotClass {
     public void dumpFreightMiddle () {
         linearSlideMotor.setTargetPosition(1400);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(.8);
+        linearSlideMotor.setPower(.9);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
 
         }
-        linearSlideServo.setPosition(.8);//1.5
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);//1.5
         pause(1500);
         forward(0.3, -0.4);
-        linearSlideServo.setPosition(.41);
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(-.4);
@@ -246,14 +246,14 @@ public class RobotClass {
     public void dumpFreightTop () {
         linearSlideMotor.setTargetPosition(1800);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(.8);
+        linearSlideMotor.setPower(.9);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
 
         }
-        linearSlideServo.setPosition(.8);
-        pause(1800);
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
+        pause(1500);
         forward(0.3, -0.2);
-        linearSlideServo.setPosition(.41);
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(-.4);
