@@ -2,15 +2,20 @@ package org.firstinspires.ftc.Team19567; //The "namespace" for the project is de
 
 //Import necessary packages/libraries
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="TeleOP", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
-public class TeleOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+@TeleOp(name="TestOP", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
+public class TestOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
@@ -23,6 +28,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private DcMotor armDC = null;
     private Servo releaseServo = null;
     private Servo balanceServo = null;
+    private DistanceSensor distanceSensor = null;
+    private RevBlinkinLedDriver blinker = null;
     private double carouselLeftPower = 0.0;
     private double carouselRightPower = 0.0;
     private double armPos = 0;
@@ -33,6 +40,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private boolean isSlowmode = false;
     private double acc = 1.0;
     private Mechanisms mechanisms = null;
+    private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_RAINBOW_PALETTE;
 
     @Override
     public void init() {
@@ -48,6 +56,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC = hardwareMap.get(DcMotor.class, "armDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
+        distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
+        blinker = hardwareMap.get(RevBlinkinLedDriver.class,"blinkin");
 
         //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
 
@@ -110,7 +120,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else if(gamepad2.right_trigger > 0) mechanisms.moveIntake(0.75*gamepad2.right_trigger);
         else mechanisms.moveIntake(0.0);
 
-        if(gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
+        if(gamepad1.right_bumper || gamepad2.right_bumper) mechanisms.moveIntake(-1.0);
         //CAROUSEL
         if(gamepad1.dpad_right || gamepad2.dpad_right) {
             mechanisms.rotateCarousel(0.5);
@@ -131,17 +141,26 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
         if(gamepad1.b || gamepad2.b) mechanisms.reset();
 
+//SENSORS
+        if(distanceSensor.getDistance(DistanceUnit.MM) <= 50) {
+            blinker.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE);
+        }
+        else {
+            blinker.setPattern(RevBlinkinLedDriver.BlinkinPattern.TWINKLES_RAINBOW_PALETTE);
+        }
+
 //MOTOR SET POWER
         leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
         rightDCFront.setPower(rightFrontSpeed);
         leftDCBack.setPower(leftBackSpeed);
         rightDCBack.setPower(rightBackSpeed);
         carouselLeft.setPower(carouselLeftPower);
-        //intakeDC.setPower(intakePower);
+        intakeDC.setPower(intakePower);
         armDC.setTargetPosition((int) armPos);
         armDC.setPower(armPower);
         releaseServo.setPosition(releaseServoPos);
         mechanisms.maintainBalance(); //TODO: SEE IF THIS ACTUALLY WORKS
+        blinker.setPattern(blinkinPattern);
 //TELEMETRY
         telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime

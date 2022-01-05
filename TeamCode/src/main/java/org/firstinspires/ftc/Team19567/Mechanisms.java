@@ -30,8 +30,13 @@ public class Mechanisms {
 
     public void rotateArm(int pos, double speed) {
         armDC.setPower(speed);
-        armDC.setTargetPosition(pos);
+        armDC.setTargetPosition(Range.clip(pos,0,1000));
     }
+
+    public void rotateArm(int pos) {
+        armDC.setTargetPosition(Range.clip(pos,0,1000));
+    }
+
     public void maintainBalance() {
         balanceServo.setPosition(Range.clip(armDC.getCurrentPosition()/1000.5,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
     }
@@ -49,6 +54,7 @@ public class Mechanisms {
     public void moveIntake(double speed) {
         intakeDC.setPower(speed);
     }
+
     public void releaseServoMove(double pos) {
         releaseServo.setPosition(Range.clip(pos,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION));
     }

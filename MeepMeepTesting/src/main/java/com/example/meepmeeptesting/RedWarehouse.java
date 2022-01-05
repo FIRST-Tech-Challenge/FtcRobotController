@@ -18,7 +18,8 @@ public class RedWarehouse {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15).setBotDimensions(12,13.5)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(90)))
-                                .addTemporalMarker(6500,() -> { /*mechanisms.moveIntake(1.0);*/ })
+                                .addTemporalMarker(6500,() -> { /* mechanisms.moveIntake(0.7); */ })
+                                .addTemporalMarker(20000,() -> { /* mechanisms.moveIntake(0.7); */ })
                                 .lineToSplineHeading(new Pose2d(8,-24,0))
                                 .addDisplacementMarker(() -> {
                                     /* timeout.reset();
