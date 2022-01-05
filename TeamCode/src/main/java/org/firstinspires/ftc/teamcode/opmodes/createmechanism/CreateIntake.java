@@ -59,7 +59,7 @@ public class CreateIntake {
     }
 
     public void create(){
-        telemetry.addData("create intake","creating");
+        //telemetry.addData("create intake","creating");
         telemetry.update();
 
         intake = new IntakeSubsystem(hwMap,deviceName);
@@ -80,7 +80,7 @@ public class CreateIntake {
     }
 
     public void createAuto(){
-        telemetry.addData("create intake","creating auto");
+        //telemetry.addData("create intake","creating auto");
         telemetry.update();
 
         intake = new IntakeSubsystem(hwMap,deviceName);
@@ -100,8 +100,8 @@ public class CreateIntake {
     }
 
     private StopIntake createStopIntake(){
-        telemetry.addData("create intake","create stop");
-        telemetry.update();
+        //telemetry.addData("create intake","create stop");
+        //telemetry.update();
 
         return new StopIntake(intake, telemetry);
     }

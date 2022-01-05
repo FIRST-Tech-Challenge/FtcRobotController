@@ -99,18 +99,18 @@ public class CreateCarousel {
         if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED)
         {
             maxEncoderCount = -CAROUSEL_MAX_ENCODER_COUNT;
-            telemetry.addLine("redCarousel");
-            telemetry.update();
+            //telemetry.addLine("redCarousel");
+            //telemetry.update();
         }
         else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
             maxEncoderCount = -CAROUSEL_MAX_ENCODER_COUNT;
-            telemetry.addLine("blueCarousel");
-            telemetry.update();
+            //telemetry.addLine("blueCarousel");
+            //telemetry.update();
         }
 
-        telemetry.addData("MoveCarouselToPosition", maxEncoderCount);
-        telemetry.addData("carousel pos", carousel.getCarouselCurrentPosition());
-        telemetry.update();
+        //telemetry.addData("MoveCarouselToPosition", maxEncoderCount);
+        //telemetry.addData("carousel pos", carousel.getCarouselCurrentPosition());
+        //telemetry.update();
         return new MoveCarouselToPosition(carousel,maxEncoderCount,MOVE_AUTO_POWER, telemetry);
     }
 
