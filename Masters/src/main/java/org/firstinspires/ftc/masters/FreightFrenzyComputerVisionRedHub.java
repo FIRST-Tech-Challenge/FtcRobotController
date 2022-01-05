@@ -41,12 +41,15 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class FreightFrenzyComputerVisionRedHub {
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
+    String color;
 
-    public FreightFrenzyComputerVisionRedHub(HardwareMap hardwareMap, Telemetry telemetry){
+    public FreightFrenzyComputerVisionRedHub(HardwareMap hardwareMap, Telemetry telemetry, String color) {
+        this.color = color;
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline(telemetry);
+        pipeline = new SkystoneDeterminationPipeline(telemetry, color);
         webcam.setPipeline(pipeline);
+
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
@@ -88,12 +91,13 @@ public class FreightFrenzyComputerVisionRedHub {
     }
 
 
-
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
         Telemetry telemetry;
+        String color;
 
-        public SkystoneDeterminationPipeline(Telemetry telemetry) {
+        public SkystoneDeterminationPipeline(Telemetry telemetry, String color) {
             this.telemetry = telemetry;
+            this.color = color;
         }
 
         /*
@@ -126,9 +130,9 @@ public class FreightFrenzyComputerVisionRedHub {
         static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(312, 210);
         static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(607, 210);
 
-        static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1,73);
-        static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(295,73);
-        static final Point REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(345,73);
+        static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1, 73);
+        static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(295, 73);
+        static final Point REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(345, 73);
 
 
         static final int REGION_WIDTH = 30;
@@ -138,7 +142,8 @@ public class FreightFrenzyComputerVisionRedHub {
 
         final int FREIGHT_PRESENT_THRESHOLD = 110;
 
-        final int HUB_PRESENT_THRESHOLD = 129;
+        final int HUB_PRESENT_THRESHOLD_RED = 129;
+        final int HUB_PRESENT_THRESHOLD_BLUE = 129;
 
         Point region1_pointA = new Point(
                 REGION1_TOP_LEFT_ANCHOR_POINT.x,
@@ -161,7 +166,7 @@ public class FreightFrenzyComputerVisionRedHub {
                 REGION3_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
 
-//        Hub regions
+        //        Hub regions
         Point region_hub_left_pointA = new Point(
                 REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x,
                 REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.y);
@@ -192,11 +197,11 @@ public class FreightFrenzyComputerVisionRedHub {
         Mat LAB = new Mat();
 
         Mat A = new Mat();
+        Mat B = new Mat();
 
         int avg1 = 0;
         int avg2 = 0;
         int avg3 = 0;
-
 
 
         Mat hub_region_left_A;
@@ -206,6 +211,14 @@ public class FreightFrenzyComputerVisionRedHub {
         int hub_avg_left_A = 0;
         int hub_avg_center_A = 0;
         int hub_avg_right_A = 0;
+
+        Mat hub_region_left_B;
+        Mat hub_region_center_B;
+        Mat hub_region_right_B;
+
+        int hub_avg_left_B = 0;
+        int hub_avg_center_B = 0;
+        int hub_avg_right_B = 0;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile FreightPosition position = FreightPosition.LEFT;
@@ -220,6 +233,7 @@ public class FreightFrenzyComputerVisionRedHub {
 //            "A" channel for detecting red and green by default
             Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
             Core.extractChannel(LAB, A, 1);
+            Core.extractChannel(LAB, B, 2);
         }
 
         @Override
@@ -234,10 +248,16 @@ public class FreightFrenzyComputerVisionRedHub {
             hub_region_center_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
             hub_region_right_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
 
+            hub_region_left_B = B.submat(new Rect(region_hub_left_pointA, region_hub_left_pointB));
+            hub_region_center_B = B.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
+            hub_region_right_B = B.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+
         }
 
         @Override
         public Mat processFrame(Mat input) {
+
+
             extractLABChannel(input);
             region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
             region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
@@ -254,6 +274,14 @@ public class FreightFrenzyComputerVisionRedHub {
             hub_avg_left_A = (int) Core.mean(hub_region_left_A).val[0];
             hub_avg_center_A = (int) Core.mean(hub_region_center_A).val[0];
             hub_avg_right_A = (int) Core.mean(hub_region_right_A).val[0];
+
+            hub_region_left_B = B.submat(new Rect(region_hub_left_pointA, region_hub_right_pointB));
+            hub_region_center_B = B.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
+            hub_region_right_B = B.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+
+            hub_avg_left_B = (int) Core.mean(hub_region_left_B).val[0];
+            hub_avg_center_B = (int) Core.mean(hub_region_center_B).val[0];
+            hub_avg_right_B = (int) Core.mean(hub_region_right_B).val[0];
 
 
             Imgproc.rectangle(
@@ -313,23 +341,54 @@ public class FreightFrenzyComputerVisionRedHub {
             telemetry.addData("Analysis3", avg3);
             telemetry.addData("Position", position);
 
-            if (hub_avg_left_A >= HUB_PRESENT_THRESHOLD) {
-                hub_position = HubPosition.LEFT;
-            } else if (hub_avg_center_A >= HUB_PRESENT_THRESHOLD) {
-                hub_position = HubPosition.CENTER;
-            } else {
-                hub_position = HubPosition.RIGHT;
+            if (color.equals("red")) {
+                hub_position = processRedHub();
+            }  else if (color.equals("blue")) {
+                hub_position = processBlueHub();
             }
-            telemetry.addData("Analysis of Hub Left", hub_avg_left_A);
-            telemetry.addData("Analysis2 of Hub Center", hub_avg_center_A);
-            telemetry.addData("Analysis3 of Hub Right", hub_avg_right_A);
-            telemetry.addData("Position", hub_position);
 
 
             telemetry.update();
 
 
             return input;
+        }
+
+        protected HubPosition processRedHub() {
+            if (hub_avg_left_A >= HUB_PRESENT_THRESHOLD_RED) {
+                hub_position = HubPosition.LEFT;
+            } else if (hub_avg_center_A >= HUB_PRESENT_THRESHOLD_RED) {
+                hub_position = HubPosition.CENTER;
+            } else if  (hub_avg_right_A >= HUB_PRESENT_THRESHOLD_RED){
+                hub_position = HubPosition.RIGHT;
+            } else {
+                hub_position = HubPosition.SHRUG_NOISES;
+            }
+            telemetry.addData("Analysis of Hub Left A", hub_avg_left_A);
+            telemetry.addData("Analysis2 of Hub Center A", hub_avg_center_A);
+            telemetry.addData("Analysis3 of Hub Right A", hub_avg_right_A);
+            telemetry.addData("Position", hub_position);
+
+            return hub_position;
+
+        }
+
+        protected HubPosition processBlueHub() {
+            if (hub_avg_left_B >= HUB_PRESENT_THRESHOLD_BLUE) {
+                hub_position = HubPosition.LEFT;
+            } else if (hub_avg_center_B >= HUB_PRESENT_THRESHOLD_BLUE) {
+                hub_position = HubPosition.CENTER;
+            } else if (hub_avg_right_B >= HUB_PRESENT_THRESHOLD_BLUE){
+                hub_position = HubPosition.RIGHT;
+            } else {
+                hub_position = HubPosition.SHRUG_NOISES;
+            }
+            telemetry.addData("Analysis of Hub Left B", hub_avg_left_B);
+            telemetry.addData("Analysis2 of Hub Center B", hub_avg_center_B);
+            telemetry.addData("Analysis3 of Hub Right B", hub_avg_right_B);
+            telemetry.addData("Position", hub_position);
+
+            return hub_position;
         }
 
         public int getAnalysis() {
