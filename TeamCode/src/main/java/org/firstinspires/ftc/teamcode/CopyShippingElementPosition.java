@@ -132,7 +132,7 @@ public class CopyShippingElementPosition extends LinearOpMode
              */
             //sleep(100);
         }
-        
+
     }
 
     class SamplePipeline extends OpenCvPipeline {
@@ -161,11 +161,15 @@ public class CopyShippingElementPosition extends LinearOpMode
              * Draw a simple box around the middle 1/2 of the entire frame
              */
             //Mat src  =  imread("imageName.jpg");
+            telemetry.addLine("we are in the save mode");
+            telemetry.update();
             Mat resizeimage = new Mat();
             Size scaleSize = new Size(224,224);
             Imgproc.resize(input, resizeimage, scaleSize , 0, 0, Imgproc.INTER_AREA);
 
             String random = getSaltString();
+            telemetry.addLine("saving image");
+            telemetry.update();
 
             String file = "/Users/alex/Pictures/opencv/level_1/" + random + ".jpg";
             Imgcodecs.imwrite(file,resizeimage);
