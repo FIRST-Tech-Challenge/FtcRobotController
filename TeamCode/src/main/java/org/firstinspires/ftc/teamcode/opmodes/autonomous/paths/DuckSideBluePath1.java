@@ -95,7 +95,7 @@ public class DuckSideBluePath1 {
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 //.strafeTo(new Vector2d(-60, 60))
-                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-63, 60.4, Math.toRadians(245)),Math.toRadians(180))
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
                 })
@@ -114,7 +114,7 @@ public class DuckSideBluePath1 {
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
 
-                .splineToLinearHeading(new Pose2d(-30.5, 24, Math.toRadians(0)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-35, 24, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
@@ -123,7 +123,7 @@ public class DuckSideBluePath1 {
                     setArmLevel.schedule();
                 })
                 .strafeTo(new Vector2d(-37,22))
-                .splineToLinearHeading(new Pose2d(-60, 40, Math.toRadians(0)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-60, 37, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
@@ -135,7 +135,7 @@ public class DuckSideBluePath1 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2)
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4)
         ));
     }
 }
