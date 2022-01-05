@@ -139,9 +139,9 @@ public class TeleopRed extends LinearOpMode {
             }
 
             if(gamepad2.right_trigger > 0.1){
-                intake.setPower(-.5);
+                intake.setPower(-1);
             } else if(gamepad2.left_trigger > 0.1){
-                intake.setPower(.5);
+                intake.setPower(1);
             } else{
                 intake.setPower(0);
             }
