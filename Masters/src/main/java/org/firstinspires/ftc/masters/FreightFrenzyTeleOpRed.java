@@ -5,8 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name="freight Frenzy Red", group = "competition")
 public class FreightFrenzyTeleOpRed extends LinearOpMode {
@@ -24,6 +27,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     DcMotor linearSlideMotor = null;
 
     Servo dumpServo = null;
+
+    DistanceSensor distanceSensorIntake;
 
     DcMotor carouselMotor = null;
     // declare motor speed variables
@@ -60,6 +65,17 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        /*
+            Buttons Being Used Gamepad 2
+            A
+            B
+            X
+            Dpad up
+            Dpad down
+            Dpad Left
+            Left Trigger
+            Dpad Right
+        */
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -78,6 +94,9 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
 
         dumpServo = hardwareMap.servo.get("dump");
+        dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+
+        distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
 
         // Set the drive motor direction:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -111,10 +130,9 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
+//            telemetry.addData("Status", "Run Time: " + runtime.toString());
+//            telemetry.update();
 
-            intakeMotor.setPower(0);
 
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
@@ -144,7 +162,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             rightRearMotor.setPower(rightRearPower);
 
             if(gamepad2.a) {
-                if(intakeMotor.getPower() != 0) intakeMotor.setPower(0);
+                if(intakeMotor.getPower() != 0)
+                    intakeMotor.setPower(0);
                 else
                     intakeMotor.setPower(-.8);
                 intakeOn = true;
@@ -158,29 +177,29 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
             if (gamepad2.dpad_up) {
 //                Top scoring
-                dumpServo.setPosition(.4);
+                dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                 linearSlideTarget = linearSlideTargets.TOP;
                 intakeMotor.setPower(0);
                 intakeOn = false;
                 linearSlideMotor.setTargetPosition(TOP_ENCODER_VALUE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(.8);//.4
+                linearSlideMotor.setPower(.9);
             }
 
             if (gamepad2.dpad_left) {
 //                Middle scoring
-                dumpServo.setPosition(.4);
+                dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                 linearSlideTarget = linearSlideTargets.MIDDLE;
                 intakeMotor.setPower(0);
                 intakeOn = false;
                 linearSlideMotor.setTargetPosition(MIDDLE_ENCODER_VALUE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(.8);//.4
+                linearSlideMotor.setPower(.9);
             }
 
             if (gamepad2.dpad_down) {
 //                Low scoring
-                dumpServo.setPosition(.4);
+                dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                 linearSlideTarget = linearSlideTargets.BOTTOM;
                 intakeMotor.setPower(0);
                 intakeOn = false;
@@ -192,14 +211,14 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             if (gamepad2.left_trigger >= .35) {
                 if (linearSlideMotor.getCurrentPosition() >= 500) {
 //                    dump
-                    dumpServo.setPosition(.65);
+                    dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
                     sleep(1200);
 
-                    dumpServo.setPosition(.33);
+                    dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
                     linearSlideTarget = linearSlideTargets.BASE;
                     linearSlideMotor.setTargetPosition(0);
                     linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    linearSlideMotor.setPower(-.8);//-.4
+                    linearSlideMotor.setPower(-.4);//-.4
                 }
             }
 
@@ -215,6 +234,19 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
             rotateCarousel();
 
+            double distance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+            telemetry.addData("distance", distance);
+            telemetry.update();
+            if (distance < 7) {
+                intakeMotor.setPower(0);
+                intakeOn = false;
+            }
+
+//            if (gamepad2.dpad_right) {
+//                //Thing that will be doing to find the thing
+//                robot.distanceSensorStuff();
+//            }
+
         }
     }
     protected void rotateCarousel(){
@@ -224,4 +256,5 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             carouselOn = true;
         } else if(!gamepad2.y) carouselOn = false;
     }
+
 }
