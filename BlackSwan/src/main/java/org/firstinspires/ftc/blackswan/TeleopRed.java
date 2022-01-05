@@ -120,7 +120,7 @@ public class TeleopRed extends LinearOpMode {
                 backRight.setPower(0);
                 detection = "None";
             }
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_up) { //up
                 arm.setTargetPosition(1000);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.5);
@@ -155,9 +155,9 @@ public class TeleopRed extends LinearOpMode {
             }
 
             if(gamepad2.right_trigger > 0.1){
-                intake.setPower(-.5);
+                intake.setPower(-1);
             } else if(gamepad2.left_trigger > 0.1){
-                intake.setPower(.5);
+                intake.setPower(1);
             } else{
                 intake.setPower(0);
             }
