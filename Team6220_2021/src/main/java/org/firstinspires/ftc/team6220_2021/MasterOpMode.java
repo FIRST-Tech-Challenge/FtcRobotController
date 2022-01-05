@@ -15,7 +15,7 @@ public abstract class MasterOpMode extends LinearOpMode {
     public static DcMotor motorBackLeft;
     public static DcMotor motorBackRight;
     public static DcMotor motorLeftDuck;
-    public static DcMotor motorDuck;
+    public static DcMotor motorRightDuck;
     public static DcMotor motorArm;
     public static DcMotor motorBelt;
 
@@ -37,10 +37,12 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+
         motorArm = hardwareMap.dcMotor.get("motorArm");
-        motorDuck = hardwareMap.dcMotor.get("motorDuck");
         motorBelt = hardwareMap.dcMotor.get("motorBelt");
         motorLeftDuck = hardwareMap.dcMotor.get("motorLeftDuck");
+        motorRightDuck = hardwareMap.dcMotor.get("motorRightDuck");
+
         servoGrabber = hardwareMap.servo.get("servoGrabber");
         servoArm = hardwareMap.servo.get("servoArm");
 
@@ -58,10 +60,9 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBelt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        motorArm.setTargetPosition(0);
-        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 

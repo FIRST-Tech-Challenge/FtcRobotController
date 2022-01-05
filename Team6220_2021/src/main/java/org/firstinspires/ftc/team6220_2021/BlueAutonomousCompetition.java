@@ -83,9 +83,9 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
         // todo - distance to carousel
         driveInches(16, Constants.MIN_DRIVE_PWR, false);
         pauseMillis(125);
-        motorDuck.setPower(-0.4);
+        motorRightDuck.setPower(-0.4);
         pauseMillis(2000);
-        motorDuck.setPower(0.0);
+        motorRightDuck.setPower(0.0);
         driveInches(4, Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
         turnToAngle(-10);

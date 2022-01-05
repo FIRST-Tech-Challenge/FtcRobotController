@@ -161,18 +161,18 @@ public class TeleOpComp extends MasterOpMode{
             if (gamepad1.right_bumper) {
                 x = 0.7;
                 while (true) {
-                    motorDuck.setPower(x);
+                    motorRightDuck.setPower(x);
                     motorLeftDuck.setPower(x);
                     pauseMillis(150);
                     x += 0.05;
-                    telemetry.addData("duckPower", motorDuck.getPower());
+                    telemetry.addData("duckPower", motorRightDuck.getPower());
                     telemetry.update();
                     if (x >= 0.85){
                         pauseMillis(1500);
-                        motorDuck.setPower(-.1);
+                        motorRightDuck.setPower(-.1);
                         motorLeftDuck.setPower(-.1);
                         pauseMillis(30);
-                        motorDuck.setPower(0);
+                        motorRightDuck.setPower(0);
                         motorLeftDuck.setPower(0);
                         x=0.7;
                         break;
@@ -181,18 +181,18 @@ public class TeleOpComp extends MasterOpMode{
             } else if (gamepad1.left_bumper) {
                 x = -0.7;
                 while (true) {
-                    motorDuck.setPower(x);
+                    motorRightDuck.setPower(x);
                     motorLeftDuck.setPower(x);
                     pauseMillis(150);
                     x -= 0.05;
-                    telemetry.addData("duckPower", motorDuck.getPower());
+                    telemetry.addData("duckPower", motorRightDuck.getPower());
                     telemetry.update();
                     if (x <= -0.85){
                         pauseMillis(1500);
-                        motorDuck.setPower(.1);
+                        motorRightDuck.setPower(.1);
                         motorLeftDuck.setPower(.1);
                         pauseMillis(30);
-                        motorDuck.setPower(0);
+                        motorRightDuck.setPower(0);
                         motorLeftDuck.setPower(0);
                         x=0.7;
                         break;
