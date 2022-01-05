@@ -23,11 +23,11 @@ public class ShippingElementPositionByColor extends LinearOpMode {
     private ContourPipeline pipeline;
 
 
-
-    private double crThreshHigh = 150;
-    private double crThreshLow = 120;
-    private double cbThreshHigh = 255;
-    private double cbThreshLow = 255;
+    // Default Testing Values
+    private double crThreshLow = 0;
+    private double crThreshHigh = 120;
+    private double cbThreshLow = 0;
+    private double cbThreshHigh = 80;
 
     private int minRectangleArea = 2000;
     private double leftBarcodeRangeBoundary = 0.3; //i.e 30% of the way across the frame from the left
@@ -37,8 +37,8 @@ public class ShippingElementPositionByColor extends LinearOpMode {
     private double upperRuntime = 0;
 
     // Green Range                                      Y      Cr     Cb
-    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
-    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 120.0, 120.0);
+    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
+    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 80.0, 130.0);
 
     @Override
     public void runOpMode() throws InterruptedException

@@ -20,8 +20,8 @@ public class ContourPipeline extends OpenCvPipeline {
     Scalar GREEN = new Scalar(0, 0, 255);
 
     // Green                        Y      Cr     Cb    (Do not change Y)
-    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
-    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 120.0, 120.0);
+    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
+    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 80.0, 130.0);
 
     // Green                                             Y      Cr     Cb
     // public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 0.0, 0.0);
@@ -44,12 +44,18 @@ public class ContourPipeline extends OpenCvPipeline {
     private int loopCounter = 0;
     private int pLoopCounter = 0;
 
-    private Mat matInit = new Mat();
-    private Mat mat = matInit.submat(new Rect(80,80,160,120));
 
-    private Mat processedInit = new Mat();
-    private Mat processed = processedInit.submat(new Rect(80,80,160,120));
     // private Mat output = new Mat();
+
+    //private Mat matInit = new Mat();
+    //private Mat mat = matInit.submat(new Rect(80.0,80.0,160.0,120.0));
+
+    //private Mat processedInit = new Mat();
+    //private Mat processed = processedInit.submat(new Rect(80.0,80.0,160.0,120.0));
+
+    private Mat mat = new Mat();
+    private Mat processed = new Mat();
+    private Mat output = new Mat();
 
     private Rect maxRect = new Rect(600,1,1,1);
     private Rect rect = new Rect(600,1,1,1);
@@ -101,7 +107,7 @@ public class ContourPipeline extends OpenCvPipeline {
             List<MatOfPoint> contours = new ArrayList<>();
             Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            // Draw Contours
+            // Draw Contours, red lines that show color areas that match
             Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
 
             //lock this up to prevent errors when outside threads access the max rect property.
