@@ -41,6 +41,8 @@ public class DuckSideRedPath1 {
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
+    private CreateIntake createIntake;
+
     public DuckSideRedPath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
         startPose = sp;
@@ -59,7 +61,7 @@ public class DuckSideRedPath1 {
     }
 
     public void createPath(){
-        //startPose = new Pose2d(-36, -60, Math.toRadians(90));
+        //startPose = new Pose2d(-36, 60, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
@@ -73,7 +75,7 @@ public class DuckSideRedPath1 {
 
         //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
         //mockDetectTSEPosition.schedule();
-
+        telemetry.addLine("Detecting Position");
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
         detectTSEPosition.schedule();
 
@@ -81,7 +83,7 @@ public class DuckSideRedPath1 {
         carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
                 new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
 
-        CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
+        createIntake = new CreateIntake(hwMap, "intake", telemetry);
         createIntake.createAuto();
 
         intakeGroup = new SequentialCommandGroup(
@@ -91,13 +93,16 @@ public class DuckSideRedPath1 {
         );
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .splineToLinearHeading(new Pose2d(-55, -60, Math.toRadians(245)),Math.toRadians(180))
+                //.strafeTo(new Vector2d(-60, 60))
+                .splineToLinearHeading(new Pose2d(-63, -53.4, Math.toRadians(-65)),Math.toRadians(180))
+                .addDisplacementMarker(()-> {
+                    telemetry.addData("Path 1", "performing path 1 action");
+                })
                 .build();
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .splineToLinearHeading(new Pose2d(-55, -24, Math.toRadians(0)),Math.toRadians(90))
-                .strafeTo(new Vector2d(-34.58, -24))
+                .strafeTo(new Vector2d(-60, -22))
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 2 Set Level", webCamSubsystem.getLevel());
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
@@ -107,43 +112,29 @@ public class DuckSideRedPath1 {
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+
+                .splineToLinearHeading(new Pose2d(-35, -24, Math.toRadians(0)),Math.toRadians(90))
+                .build();
+
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
                 .addDisplacementMarker(()->{
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
                     setArmLevel.schedule();
                 })
-                .splineToLinearHeading(new Pose2d(-63, -32, Math.toRadians(0)),Math.toRadians(90))
+                .strafeTo(new Vector2d(-39,-22))
+                .splineToLinearHeading(new Pose2d(-60, -37, Math.toRadians(0)),Math.toRadians(90))
                 .build();
-
-        /*Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .addDisplacementMarker(()->{
-                    createIntake.getSeGrabber().schedule();
-                    new WaitCommand(800)
-                            .andThen(createIntake.getStopIntake()).schedule();
-                })
-                .strafeTo(new Vector2d(-37,22))
-                .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(0)),Math.toRadians(90))
-                .build();*/
-
-        /*Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-
-                .splineToLinearHeading(new Pose2d(-63, 32, Math.toRadians(270)),Math.toRadians(90))
-
-                .build();*/
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
-        //sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-        //sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+        sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
+
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                // intakeGroupBlue1
-                // carouselGroupBlue1
-                // sample1Follower1.andThen(carouselGroup,sample1Follower2,intakeGroup, sample1Follower3, sample1Follower4)
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,intakeGroup, sample1Follower3)
-
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4)
         ));
     }
 }
