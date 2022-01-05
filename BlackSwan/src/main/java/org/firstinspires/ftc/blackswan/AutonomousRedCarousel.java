@@ -40,7 +40,6 @@ public class AutonomousRedCarousel extends LinearOpMode {
         if (cubethingwithlevels == 0 ){
             cubethingwithlevels = 3;
         }
-        robot.pause(100); //replace with color sensor check
         robot.right(2,.5);
         robot.forward(.75,.5);
         robot.armThing(cubethingwithlevels);
