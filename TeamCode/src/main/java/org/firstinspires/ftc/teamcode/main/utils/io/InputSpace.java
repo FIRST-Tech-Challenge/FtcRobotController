@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.main.utils.locations.DuckMotorLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.ElevatorLeftLiftMotorLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.ElevatorRightLiftMotorLocation;
-import org.firstinspires.ftc.teamcode.main.utils.locations.HandGrabbingServoLeftLocation;
-import org.firstinspires.ftc.teamcode.main.utils.locations.HandGrabbingServoRightLocation;
-import org.firstinspires.ftc.teamcode.main.utils.locations.HandSpinningServoXLocation;
-import org.firstinspires.ftc.teamcode.main.utils.locations.HandSpinningServoYLocation;
+import org.firstinspires.ftc.teamcode.main.utils.locations.HandSpinningServoLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.IntakeLiftingServoLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.IntakeSpinningMotorLocation;
 import org.firstinspires.ftc.teamcode.main.utils.locations.TankDrivetrainLocation;
@@ -24,12 +21,9 @@ public class InputSpace {
     private final DuckMotorLocation DUCK;
     private final ElevatorLeftLiftMotorLocation ELEVATOR_LEFT;
     private final ElevatorRightLiftMotorLocation ELEVATOR_RIGHT;
-    private final HandGrabbingServoRightLocation HAND_GRABBING_RIGHT_SERVO;
-    private final HandGrabbingServoLeftLocation HAND_GRABBING_LEFT_SERVO;
-    private final HandSpinningServoXLocation HAND_SPINNING_SERVO_X;
-    private final HandSpinningServoYLocation HAND_SPINNING_SERVO_Y;
     private final IntakeLiftingServoLocation INTAKE_LIFTING_SERVO;
     private final IntakeSpinningMotorLocation INTAKE_SPINNING_MOTOR;
+    private final HandSpinningServoLocation HAND_SPINNING_SERVO;
 
     public InputSpace(HardwareMap hardware) {
         HARDWARE = hardware;
@@ -37,12 +31,9 @@ public class InputSpace {
         DUCK = new DuckMotorLocation(HARDWARE);
         ELEVATOR_LEFT = new ElevatorLeftLiftMotorLocation(HARDWARE);
         ELEVATOR_RIGHT = new ElevatorRightLiftMotorLocation(HARDWARE);
-        HAND_GRABBING_RIGHT_SERVO = new HandGrabbingServoRightLocation(HARDWARE);
-        HAND_GRABBING_LEFT_SERVO = new HandGrabbingServoLeftLocation(HARDWARE);
-        HAND_SPINNING_SERVO_X = new HandSpinningServoXLocation(HARDWARE);
-        HAND_SPINNING_SERVO_Y = new HandSpinningServoYLocation(HARDWARE);
         INTAKE_LIFTING_SERVO = new IntakeLiftingServoLocation(HARDWARE);
         INTAKE_SPINNING_MOTOR = new IntakeSpinningMotorLocation(HARDWARE);
+        HAND_SPINNING_SERVO = new HandSpinningServoLocation(HARDWARE);
     }
 
     public void sendInputToTank(TankDrivetrainLocation.Action action, int rightInput, int leftInput) {
@@ -61,28 +52,16 @@ public class InputSpace {
         ELEVATOR_RIGHT.handleInput(action, input);
     }
 
-    public void sendInputToHandRightGrabber(HandGrabbingServoRightLocation.Action action, int input) {
-        HAND_GRABBING_RIGHT_SERVO.handleInput(action, input);
-    }
-
-    public void sendInputToHandLeftGrabber(HandGrabbingServoLeftLocation.Action action, int input) {
-        HAND_GRABBING_LEFT_SERVO.handleInput(action, input);
-    }
-
-    public void sendInputToHandSpinnerOnTheX(HandSpinningServoXLocation.Action action, int input) {
-        HAND_SPINNING_SERVO_X.handleInput(action, input);
-    }
-
-    public void sendInputToHandSpinnerOnTheY(HandSpinningServoYLocation.Action action, int input) {
-        HAND_SPINNING_SERVO_Y.handleInput(action, input);
-    }
-
     public void sendInputToIntakeLifter(IntakeLiftingServoLocation.Action action, int input) {
         INTAKE_LIFTING_SERVO.handleInput(action, input);
     }
 
     public void sendInputToIntakeSpinner(IntakeSpinningMotorLocation.Action action, int input) {
         INTAKE_SPINNING_MOTOR.handleInput(action, input);
+    }
+
+    public void sendInputToHandSpinner(HandSpinningServoLocation.Action action, int input) {
+        HAND_SPINNING_SERVO.handleInput(action, input);
     }
 
     public HardwareMap getHardwareMap() {
@@ -105,22 +84,6 @@ public class InputSpace {
         return ELEVATOR_RIGHT;
     }
 
-    public HandGrabbingServoRightLocation getHandRightGrabber() {
-        return HAND_GRABBING_RIGHT_SERVO;
-    }
-
-    public HandGrabbingServoLeftLocation getHandLeftGrabber() {
-        return HAND_GRABBING_LEFT_SERVO;
-    }
-
-    public HandSpinningServoXLocation getHandSpinnerOnTheX() {
-        return HAND_SPINNING_SERVO_X;
-    }
-
-    public HandSpinningServoYLocation getHandSpinnerOnTheY() {
-        return HAND_SPINNING_SERVO_Y;
-    }
-
     public IntakeLiftingServoLocation getIntakeLifter() {
         return INTAKE_LIFTING_SERVO;
     }
@@ -129,17 +92,18 @@ public class InputSpace {
         return INTAKE_SPINNING_MOTOR;
     }
 
+    public HandSpinningServoLocation getHandSpinner() {
+        return HAND_SPINNING_SERVO;
+    }
+
     public void stop() {
         TANK.stop();
         DUCK.stop();
         ELEVATOR_LEFT.stop();
         ELEVATOR_RIGHT.stop();
-        HAND_GRABBING_RIGHT_SERVO.stop();
-        HAND_GRABBING_LEFT_SERVO.stop();
-        HAND_SPINNING_SERVO_X.stop();
-        HAND_SPINNING_SERVO_Y.stop();
         INTAKE_LIFTING_SERVO.stop();
         INTAKE_SPINNING_MOTOR.stop();
+        HAND_SPINNING_SERVO.stop();
     }
 
 }

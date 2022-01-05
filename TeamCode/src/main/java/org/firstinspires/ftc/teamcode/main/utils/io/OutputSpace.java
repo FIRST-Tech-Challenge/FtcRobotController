@@ -16,21 +16,15 @@ import org.firstinspires.ftc.teamcode.main.utils.locations.IntakeLimitSwitchLoca
 public class OutputSpace {
 
     private final HardwareMap HARDWARE;
-    private final HandDistanceSensorLocation HAND_DISTANCE_SENSOR;
     private final IntakeLimitSwitchLocation INTAKE_LIMIT_SWITCH;
     private final ElevatorBottomLimitSwitchLocation ELEVATOR_BOTTOM_LIMIT_SWITCH;
     private final IntakeLiftingDistanceSensorLocation INTAKE_DISTANCE_SENSOR;
 
     public OutputSpace(HardwareMap hardware) {
         HARDWARE = hardware;
-        HAND_DISTANCE_SENSOR = new HandDistanceSensorLocation(HARDWARE);
         INTAKE_LIMIT_SWITCH = new IntakeLimitSwitchLocation(HARDWARE);
         ELEVATOR_BOTTOM_LIMIT_SWITCH = new ElevatorBottomLimitSwitchLocation(HARDWARE);
         INTAKE_DISTANCE_SENSOR = new IntakeLiftingDistanceSensorLocation(HARDWARE);
-    }
-
-    public double receiveOutputFromHandDistanceSensor() {
-        return HAND_DISTANCE_SENSOR.returnOutput();
     }
 
     public double receiveOutputFromIntakeLiftingDistanceSensor() {
@@ -47,10 +41,6 @@ public class OutputSpace {
 
     public HardwareMap getHardware() {
         return HARDWARE;
-    }
-
-    public HandDistanceSensorLocation getHandDistanceSensor() {
-        return HAND_DISTANCE_SENSOR;
     }
 
     public IntakeLiftingDistanceSensorLocation getIntakeLiftingDistanceSensor() {
@@ -70,7 +60,6 @@ public class OutputSpace {
     }
 
     public void close() {
-        HAND_DISTANCE_SENSOR.stop();
         INTAKE_DISTANCE_SENSOR.stop();
         ELEVATOR_BOTTOM_LIMIT_SWITCH.stop();
         INTAKE_LIMIT_SWITCH.stop();

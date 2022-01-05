@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardServo;
 
-public class HandSpinningServoYLocation extends Location {
+public class HandSpinningServoLocation extends Location {
 
     public enum Action {
         SET_POSITION,
@@ -16,7 +16,7 @@ public class HandSpinningServoYLocation extends Location {
 
     private StandardServo SERVO;
 
-    public HandSpinningServoYLocation(HardwareMap hardware) {
+    public HandSpinningServoLocation(HardwareMap hardware) {
         try {
             SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_SPINNING_SERVO_Y));
         } catch(Exception ignored) {}
