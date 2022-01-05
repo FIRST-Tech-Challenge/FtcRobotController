@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 public class ElevatorLeftLiftMotorLocation extends Location {
 
@@ -19,7 +20,7 @@ public class ElevatorLeftLiftMotorLocation extends Location {
 
     public ElevatorLeftLiftMotorLocation(HardwareMap hardware) {
         try {
-            LEFT = new StandardMotor(hardware, hardware.appContext.getString(R.string.LIFT_LEFT_ELEVATOR_MOTOR), DcMotorSimple.Direction.REVERSE, 288, 1, 1);
+            LEFT = new StandardMotor(hardware, Resources.Elevator.Motors.LeftLift, DcMotorSimple.Direction.REVERSE, 288, 1, 1);
         } catch(Exception ignored) {}
     }
 

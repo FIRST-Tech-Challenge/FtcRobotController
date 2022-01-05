@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 public class DuckMotorLocation extends Location {
 
@@ -19,7 +20,7 @@ public class DuckMotorLocation extends Location {
 
     public DuckMotorLocation(HardwareMap hardware) {
         try {
-            MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.DUCK_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
+            MOTOR = new StandardMotor(hardware, Resources.DuckSpinner.Motors.Spinner, DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
         } catch(Exception ignored) {};
     }
 

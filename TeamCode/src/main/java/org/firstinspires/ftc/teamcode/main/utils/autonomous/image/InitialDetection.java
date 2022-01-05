@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class InitialDetection extends LinearOpMode {
         PossiblePositions.add(InitialPositions.POS3);
 
 
-        VUFORIA_KEY = hardwareMap.appContext.getString(R.string.VUFORIA_KEY);
+        VUFORIA_KEY = Resources.Misc.VuforiaKey;
 
         tflite = new TFLITE_Wrapper(hardwareMap);
         tflite.TFOD_MODEL_ASSET = TFOD_MODEL_ASSET;

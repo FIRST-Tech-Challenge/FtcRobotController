@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -38,10 +39,10 @@ public class WebcamExample extends LinearOpMode
          */
 
         // int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        // webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.Webcam1)), cameraMonitorViewId);
+        // webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, Resources.Misc.Webcam), cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.WEBCAM)));
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, Resources.Misc.Webcam));
 
         /*
          * Specify the image processing pipeline we wish to invoke upon receipt

@@ -39,6 +39,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 import java.util.List;
 
@@ -103,7 +104,7 @@ public class AllObjectInitialTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        VUFORIA_KEY = hardwareMap.appContext.getString(R.string.VUFORIA_KEY);
+        VUFORIA_KEY = Resources.Misc.VuforiaKey;
 
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
@@ -166,7 +167,7 @@ public class AllObjectInitialTest extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.WEBCAM));
+        parameters.cameraName = hardwareMap.get(WebcamName.class, Resources.Misc.Webcam);
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);

@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class TFLITE_Wrapper {
                 "FreightFrenzy_BC.tflite",
                 new String[]{"Ball", "Cube"},
                 hardwareMap,
-                hardwareMap.appContext.getString(R.string.WEBCAM)
+                Resources.Misc.Webcam
         );
     }
 

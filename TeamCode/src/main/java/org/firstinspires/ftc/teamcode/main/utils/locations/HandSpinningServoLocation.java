@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.main.utils.locations;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardServo;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 public class HandSpinningServoLocation extends Location {
 
@@ -18,7 +18,7 @@ public class HandSpinningServoLocation extends Location {
 
     public HandSpinningServoLocation(HardwareMap hardware) {
         try {
-            SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.HAND_SPINNING_SERVO_Y));
+            SERVO = new StandardServo(hardware, Resources.Hand.Servos.Spinning);
         } catch(Exception ignored) {}
     }
 

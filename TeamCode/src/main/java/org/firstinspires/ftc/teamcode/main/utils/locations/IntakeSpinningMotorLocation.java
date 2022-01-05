@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 public class IntakeSpinningMotorLocation extends Location {
 
@@ -19,7 +20,7 @@ public class IntakeSpinningMotorLocation extends Location {
 
     public IntakeSpinningMotorLocation(HardwareMap hardware) {
         try {
-            MOTOR = new StandardMotor(hardware, hardware.appContext.getString(R.string.INTAKE_SPINNING_MOTOR), DcMotorSimple.Direction.FORWARD, 1120, 1, 1.75);
+            MOTOR = new StandardMotor(hardware, Resources.Intake.Motors.Spinner, DcMotorSimple.Direction.FORWARD, 1120, 1, 1.75);
         } catch(Exception ignored) {}
     }
 

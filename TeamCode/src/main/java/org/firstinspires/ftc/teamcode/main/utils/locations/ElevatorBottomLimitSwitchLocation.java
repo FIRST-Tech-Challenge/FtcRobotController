@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardTouchSensor;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 public class ElevatorBottomLimitSwitchLocation extends Location {
 
@@ -17,7 +18,7 @@ public class ElevatorBottomLimitSwitchLocation extends Location {
 
     public ElevatorBottomLimitSwitchLocation(HardwareMap hardware) {
         try {
-            SENSOR = new StandardTouchSensor(hardware, hardware.appContext.getString(R.string.LIFT_BOTTOM_LIFTING_LIMIT_SWITCH));
+            SENSOR = new StandardTouchSensor(hardware, Resources.Elevator.Sensors.BottomLimitSwitch);
         } catch(Exception ignored) {}
     }
 

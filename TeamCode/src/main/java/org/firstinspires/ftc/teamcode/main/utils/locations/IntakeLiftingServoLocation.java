@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardServo;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 public class IntakeLiftingServoLocation extends Location {
 
@@ -18,7 +19,7 @@ public class IntakeLiftingServoLocation extends Location {
 
     public IntakeLiftingServoLocation(HardwareMap hardware) {
         try {
-            SERVO = new StandardServo(hardware, hardware.appContext.getString(R.string.INTAKE_LIFTING_SERVO));
+            SERVO = new StandardServo(hardware, Resources.Intake.Servos.Lifter);
         } catch(Exception ignored) {}
     }
 

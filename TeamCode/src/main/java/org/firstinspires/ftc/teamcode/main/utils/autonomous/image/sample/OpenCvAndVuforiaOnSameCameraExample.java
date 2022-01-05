@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -53,10 +54,10 @@ public class OpenCvAndVuforiaOnSameCameraExample extends LinearOpMode
          * Setup Vuforia
          */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(viewportContainerIds[0]);
-        parameters.vuforiaLicenseKey = hardwareMap.appContext.getString(R.string.VUFORIA_KEY);
+        parameters.vuforiaLicenseKey = Resources.Misc.VuforiaKey;
         parameters.cameraDirection   = VuforiaLocalizer.CameraDirection.BACK;
         // Uncomment this line below to use a webcam
-        parameters.cameraName = hardwareMap.get(WebcamName.class, hardwareMap.appContext.getString(R.string.WEBCAM));
+        parameters.cameraName = hardwareMap.get(WebcamName.class, Resources.Misc.Webcam);
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Create a Vuforia passthrough "virtual camera"

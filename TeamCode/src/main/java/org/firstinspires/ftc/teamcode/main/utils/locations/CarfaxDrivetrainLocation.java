@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.groups.StandardCarfaxVehicleDrivetrain;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardMotor;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 public class CarfaxDrivetrainLocation extends Location {
 
@@ -20,8 +21,8 @@ public class CarfaxDrivetrainLocation extends Location {
 
     public CarfaxDrivetrainLocation(HardwareMap hardware) {
         try {
-            StandardMotor rt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_RIGHT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
-            StandardMotor lt = new StandardMotor(hardware, hardware.appContext.getString(R.string.DRIVETRAIN_LEFT_TOP_DRIVING_MOTOR), DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
+            StandardMotor rt = new StandardMotor(hardware, Resources.Drivetrain.Motors.Driving.RightTop, DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
+            StandardMotor lt = new StandardMotor(hardware, Resources.Drivetrain.Motors.Driving.RightBottom, DcMotorSimple.Direction.FORWARD, 1440, 1, 2);
             DRIVETRAIN = new StandardCarfaxVehicleDrivetrain(rt, lt);
         } catch(Exception ignored) {}
     }

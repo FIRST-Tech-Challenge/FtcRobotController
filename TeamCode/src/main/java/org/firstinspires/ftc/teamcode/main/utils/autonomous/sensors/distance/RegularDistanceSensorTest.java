@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance.wrappers.DistanceSensorWrapper;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 @Autonomous(name="Regular Distance Sensor Test", group="linear")
 public class RegularDistanceSensorTest extends LinearOpMode {
@@ -12,7 +13,7 @@ public class RegularDistanceSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         DistanceSensorWrapper sensor = new DistanceSensorWrapper(hardwareMap,
-                hardwareMap.appContext.getString(R.string.NAVIGATION_NORTH_DISTANCE_SENSOR));
+                Resources.Navigation.Sensors.Distance.North);
 
         waitForStart();
         while (opModeIsActive()) {

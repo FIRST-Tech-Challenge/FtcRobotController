@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardDistanceSensor;
+import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 
 public class HandDistanceSensorLocation extends Location {
 
@@ -13,7 +14,7 @@ public class HandDistanceSensorLocation extends Location {
 
     public HandDistanceSensorLocation(HardwareMap hardware) {
         try {
-            SENSOR = new StandardDistanceSensor(hardware, hardware.appContext.getString(R.string.HAND_DISTANCE_SENSOR));
+            SENSOR = new StandardDistanceSensor(hardware, Resources.Hand.Sensors.HandDistance);
         } catch(Exception ignored) {}
     }
 
