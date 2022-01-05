@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team8923_2021;
 
+import com.qualcomm.robotcore.util.Range;
+
 abstract public class MasterTeleOp extends MasterOpMode {
 
     private boolean isReverseMode = false;
@@ -8,18 +10,15 @@ abstract public class MasterTeleOp extends MasterOpMode {
     private Toggle driveSpeedToggle = new Toggle();
 
     double driveSpeed = 1.0;
-
-    int scoreState = 0;
-    int flickStage = 0;
-
+    boolean startScoring = false;
 
     // one joystick moves forwards and backwards, the other controls left and right.
     public void splitArcadeDrive() {
-        double forwardPower = gamepad1.left_stick_x;
-        double turningPower = gamepad1.right_stick_y;
+        double forwardPower = -gamepad1.left_stick_y;
+        double turningPower = gamepad1.right_stick_x;
 
-        double leftPower = turningPower - forwardPower ;
-        double rightPower = turningPower + forwardPower;
+        double leftPower = forwardPower + turningPower;
+        double rightPower = forwardPower - turningPower;
 
         motorLeft.setPower(leftPower);
         motorRight.setPower(rightPower);
@@ -27,26 +26,60 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     public void runDriveSpeed() {
         isSlowMode = driveSpeedToggle.toggle(gamepad1.left_bumper);
-        if (isSlowMode) driveSpeed = 0.25;
-        else driveSpeed = 1.0;
+        if (isSlowMode) {
+            driveSpeed = 0.25;
+        } else {
+            driveSpeed = 1.0;
+        }
     }
 
     public void runIntake() {
-        if(gamepad1.b)
-            motorIntake.setPower(0.8);
+        if (gamepad2.b) {
+            motorIntake.setPower(0.6);
+        } else if (gamepad2.x) {
+            motorIntake.setPower(-0.6);
+        } else {
+            motorIntake.setPower(0.0);
+        }
+    }
 
-        else if (gamepad1.x)
-            motorIntake.setPower(-0.8);
-        else    motorIntake.setPower(0.0);
+    public void runCarousel() throws InterruptedException {
+        if (gamepad2.left_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
+            motorCarousel.setPower(-1.0);
+        } else if (gamepad2.right_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
+            motorCarousel.setPower(1.0);
+        } else {
+            motorCarousel.setPower(0.0);
+        }
+    }
+
+    public void deliver() throws InterruptedException {
+        if (gamepad2.left_bumper) {
+            motorLift.setPower(0.1);
+        } else if (gamepad2.right_bumper) {
+            motorLift.setPower(-0.05);
+        } else {
+            motorLift.setPower(0.0);
+        }
 
     }
 
-    public void runCarousel() {
-        if (gamepad1.left_trigger > Constants.MINIMUM_TRIGGER_VALUE) {
-            motorCarousel.setPower(-0.8);
-
-        } else motorCarousel.setPower(0.0);
-
+    public void grab() {
+        if (gamepad2.dpad_up) {
+            servoGrabber.setPosition(1.0);
+        } else if (gamepad2.dpad_down) {
+            servoGrabber.setPosition(0.0);
+        } else if (gamepad2.dpad_left) {
+            servoGrabber.setPosition(0.4);
+        }
     }
+
+    public void cap() {
+        if (gamepad2.y) {
+            servoCapper.setPosition(0.3);
+        } else if (gamepad2.a) {
+            servoCapper.setPosition(0.0);
+        }
+    }
+
 }
-

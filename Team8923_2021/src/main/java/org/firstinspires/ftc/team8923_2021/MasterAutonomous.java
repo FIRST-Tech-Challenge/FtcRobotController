@@ -158,7 +158,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
         stopDriving();
     }
 
-    public void moveForward(int distance, double speed, double minSpeed) {
+    public void moveForward(double distance, double speed, double minSpeed) {
         //sets a target position to drive to
         newTargetLeft = motorLeft.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
         newTargetRight = motorRight.getCurrentPosition() + (int) Math.round(Constants.TICKS_PER_INCH * distance);
@@ -174,7 +174,9 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorLeft.setPower(speed);
         motorRight.setPower(speed);
 
-        // loop until both motors are not busy, then stop.
+        // loop until one of the motors stop because they're drive motors and they should be working together.
+        // Drive motors should stop when one of them reaches their target position.
+        //This avoids the issue of if one of the motors is not working and the robot never stops.
         while (motorLeft.isBusy() && motorRight.isBusy()) {
             telemetry.addData("Path1",  "Running to %7d :%7d", newTargetLeft,  newTargetRight);
             telemetry.addData("Path2",  "Running at %7d :%7d",
@@ -195,6 +197,32 @@ public abstract class MasterAutonomous extends MasterOpMode {
         motorIntake.setPower(Constants.INTAKE_PWR);
         sleep(900);
     }
+
+    public void spinCarouselBlue() {
+        motorCarousel.setPower(1.0);
+        sleep(4300);
+        motorCarousel.setPower(0.0);
+    }
+
+    public void spinCarouselRed() {
+        motorCarousel.setPower(-1.0);
+        sleep(4300);
+        motorCarousel.setPower(0.0);
+    }
+
+    public void autoDeliver() {
+            servoGrabber.setPosition(0.5);
+            motorLift.setPower(0.1);
+            sleep(3000);
+            servoGrabber.setPosition(1.0);
+            sleep(2000);
+            servoGrabber.setPosition(0.0);
+            sleep(1000);
+            moveForward(5, 10, 10);
+            motorLift.setPower(-0.1);
+            sleep(2000);
+            motorLift.setPower(0.0);
+        }
 
     public void sendTelemetry() {
         //Informs drivers of robot location
