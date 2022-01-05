@@ -48,9 +48,6 @@ import java.lang.Math;
 //@Disabled
 public class AutonomousBwarehouse extends AutonomousBase {
 
-    /* Declare OpMode members. */
-    HardwareBothHubs robot = new HardwareBothHubs();
-
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
     static final boolean DRIVE_Y              = true;    // Drive forward/backward
@@ -234,17 +231,17 @@ public class AutonomousBwarehouse extends AutonomousBase {
         switch( level ) {
             case 3 : angleToHub = -40.0;    // top
                      distanceToHub = -8.2;
-                     freightArmPos = 2000;  // FREIGHT_ARM_POS_HUB_TOP    = 1950
+                     freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
             case 2 : angleToHub = -38.0;
                      distanceToHub = -4.2;  // middle
-                     freightArmPos = 2270;  // FREIGHT_ARM_POS_HUB_MIDDLE = 2275;
+                     freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      armSleep = 750;  // 750 msec
                      break;
             case 1 : angleToHub = -35.0;
                      distanceToHub = -5.4;  // bottom
-                     freightArmPos = 2500;  // FREIGHT_ARM_POS_HUB_BOTTOM = 2400;
+                     freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
                      armSleep = 1250;   // 1.25 sec
                      break;
         } // switch()

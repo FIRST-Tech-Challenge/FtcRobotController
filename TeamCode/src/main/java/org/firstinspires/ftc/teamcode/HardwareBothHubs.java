@@ -92,7 +92,7 @@ public class HardwareBothHubs
     public int          CAPPING_ARM_POS_STORE   = 291;
     public int          CAPPING_ARM_POS_LIBERTY = 786;   // status of liberty pose (end duck-autonomous here)
     public int          CAPPING_ARM_POS_CAP     = 1335;
-    public int          CAPPING_ARM_POS_GRAB    = 2078;
+    public int          CAPPING_ARM_POS_GRAB    = 2060;
     public int          cappingArmPos = CAPPING_ARM_POS_START;
 
     // CAPPING ARM WRIST SERVO
@@ -127,9 +127,12 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_SHARED     = 292;   // Front scoring into shared shipping hub
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 334;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
-    public int          FREIGHT_ARM_POS_HUB_TOP    = 1627;  // For dumping into hub top level
+    public int          FREIGHT_ARM_POS_HUB_TOP    = 1726;  // For dumping into hub top level
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1898;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2002;  // For dumping into hub bottom level
+    public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 15;
+    public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 45;
+    public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 75;
 
     public Servo        boxServo                   = null;
     public double       BOX_SERVO_INIT             = 0.48;  // we init to the COLLECT position

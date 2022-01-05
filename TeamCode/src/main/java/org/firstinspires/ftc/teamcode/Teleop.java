@@ -107,14 +107,14 @@ public abstract class Teleop extends LinearOpMode {
         telemetry.update();
 
         ballRumbleEffect1 = new Gamepad.RumbleEffect.Builder()
-                .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
-                .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
-                .addStep(1.0, 0.0, 500)  //  Rumble left motor 100% for 500 mSec
+                .addStep(0.0, 1.0, 250)  //  Rumble right motor 100% for 500 mSec
+                .addStep(0.0, 0.0, 250)  //  Pause for 300 mSec
+                .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 500 mSec
                 .build();
         ballRumbleEffect2 = new Gamepad.RumbleEffect.Builder()
-                .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
-                .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
-                .addStep(1.0, 0.0, 500)  //  Rumble left motor 100% for 500 mSec
+                .addStep(0.0, 1.0, 250)  //  Rumble right motor 100% for 500 mSec
+                .addStep(0.0, 0.0, 250)  //  Pause for 300 mSec
+                .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 500 mSec
                 .build();
 
         // Initialize robot hardware
@@ -252,7 +252,7 @@ public abstract class Teleop extends LinearOpMode {
             if (robot.freightPresent()) {
                 freightDetectionCounts++;
                 // Set freightpresent if set number of detections occurred
-                if(freightDetectionCounts > 10) {
+                if(freightDetectionCounts > 15) {
                     freightPresent = true;
                 }
             } else {
@@ -261,8 +261,8 @@ public abstract class Teleop extends LinearOpMode {
             if(freightPresent) {
                 freightIsCube = robot.freightIsCube();
                 if(freightIsCube){
-                    gamepad1.rumble(500);
-                    gamepad2.rumble(500);
+                    gamepad1.rumble(300);
+                    gamepad2.rumble(300);
                 } else{
                     gamepad1.runRumbleEffect(ballRumbleEffect1);
                     gamepad2.runRumbleEffect(ballRumbleEffect2);
