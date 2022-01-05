@@ -9,7 +9,7 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
     private Toggle driveSpeedToggle = new Toggle();
 
-    double driveSpeed = 1.5;
+    double driveSpeed = 1.0;
     boolean startScoring = false;
 
     // one joystick moves forwards and backwards, the other controls left and right.

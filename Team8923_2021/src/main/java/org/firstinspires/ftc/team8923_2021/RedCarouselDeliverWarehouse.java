@@ -16,7 +16,7 @@ public class RedCarouselDeliverWarehouse extends MasterAutonomous {
         moveForward(-11, 10, 10);
         autoDeliver();
         moveForward(2, 10, 10);
-        imuPivot(referenceAngle,8,35, 0.015,3.0);
+        imuPivot(referenceAngle,8,35, 0.015, 3.0);
         moveForward(30.0, 10, 10);
     }
 }
