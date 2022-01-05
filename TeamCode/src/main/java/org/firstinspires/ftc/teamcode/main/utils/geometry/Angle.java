@@ -107,5 +107,23 @@ public class Angle extends Number {
         return value;
     }
 
-    public enum AngleUnit { DEGREE, RADIAN }
+    @Override
+    public String toString() {
+        return value + unit.toString();
+    }
+
+    public enum AngleUnit {
+        DEGREE("Degrees"), RADIAN("Radians");
+
+        public String name;
+
+        AngleUnit(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
 }

@@ -20,5 +20,6 @@ public class NavigationSensorCollection {
         this.east = east;
         this.west = west;
         this.imu = imu;
+        this.imuOffset = imuOffset;
     }
 }

@@ -74,7 +74,7 @@ public class StandardIMU extends InteractionItem {
     public ReturnData<DataPoint, Float> getData() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        float heading = angles.firstAngle + headingOffset;
+        float heading = -angles.firstAngle + headingOffset;
         /*if (heading < 0) {
             heading = 360 + heading;
         }*/

@@ -16,6 +16,8 @@ public class StandardDistanceSensor extends InteractionItem {
     private DistanceSensorWrapper SENSOR_DISTANCE;
     private UltrasonicDistanceSensor SENSOR_ULTRASONIC;
 
+    public int mostRecent;
+
     public StandardDistanceSensor(HardwareMap hardware, String name) {
         try {
             SENSOR_ULTRASONIC = new UltrasonicDistanceSensor(hardware, name);
@@ -30,7 +32,8 @@ public class StandardDistanceSensor extends InteractionItem {
     }
 
     public int getData() {
-        return getDistance(DistanceUnit.CM);
+        mostRecent = getDistance(DistanceUnit.CM);
+        return mostRecent;
     }
 
     public int getDistance(DistanceUnit unit) {

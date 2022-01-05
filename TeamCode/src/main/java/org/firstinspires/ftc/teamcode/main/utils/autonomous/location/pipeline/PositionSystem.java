@@ -30,7 +30,7 @@ public class PositionSystem {
         upAndDown = new Axis(sensors.north, sensors.north);
         this.imu = sensors.imu;
 
-        imuOffset += sensors.imuOffset;
+        imuOffset = sensors.imuOffset;
 
         coordinateSystem = new CoordinateSystem();
     }
@@ -114,8 +114,19 @@ public class PositionSystem {
         coordinateSystem.angle = angle;
     }
     public void updateAngle() {
+        switch (imuDirection) {
+            case HEADING:
+                imu.setHeadingOffset(imuOffset);
+                break;
+            case PITCH:
+                imu.setPitchOffset(imuOffset);
+                break;
+            case ROLL:
+                imu.setRollOffset(imuOffset);
+                break;
+        }
         coordinateSystem.angle.convert(Angle.AngleUnit.DEGREE);
-        coordinateSystem.angle.value = imu.getData().getHeading() + imuOffset;
+        coordinateSystem.angle.value = imu.getData().get(imuDirection);
     }
 
     public float normalizeDegrees(Float input) {
@@ -146,38 +157,42 @@ public class PositionSystem {
         }
     }
     public void turnDegree(int absoluteDegree, Path.Direction turnDirection) {
-        int leftInches = 2;
-        int rightInches = 2;
+        if (drivetrain != null) {
+            int leftInches = 2;
+            int rightInches = 2;
 
-        switch (turnDirection) {
-            case CW:
-                rightInches = -rightInches;
-                while (normalizeDegrees(imu.getData().get(imuDirection)) <= normalizeDegrees((float) absoluteDegree)) {
-                    encoderDrive(leftInches, rightInches);
-                    while (drivetrain.getRightTop().getDcMotor().isBusy() || drivetrain.getLeftTop().getDcMotor().isBusy() || drivetrain.getLeftBottom().getDcMotor().isBusy() || drivetrain.getRightBottom().getDcMotor().isBusy()) {}
-                }
-                break;
-            case CCW:
-                leftInches = -leftInches;
-                while (normalizeDegrees(imu.getData().get(imuDirection)) >= normalizeDegrees((float) absoluteDegree)) {
-                    encoderDrive(leftInches, rightInches);
-                    while (drivetrain.getRightTop().getDcMotor().isBusy() || drivetrain.getLeftTop().getDcMotor().isBusy() || drivetrain.getLeftBottom().getDcMotor().isBusy() || drivetrain.getRightBottom().getDcMotor().isBusy()) {}
-                }
-                break;
+            switch (turnDirection) {
+                case CW:
+                    rightInches = -rightInches;
+                    while (normalizeDegrees(imu.getData().get(imuDirection)) <= normalizeDegrees((float) absoluteDegree)) {
+                        encoderDrive(leftInches, rightInches);
+                        while (drivetrain.getRightTop().getDcMotor().isBusy() || drivetrain.getLeftTop().getDcMotor().isBusy() || drivetrain.getLeftBottom().getDcMotor().isBusy() || drivetrain.getRightBottom().getDcMotor().isBusy()) {}
+                    }
+                    break;
+                case CCW:
+                    leftInches = -leftInches;
+                    while (normalizeDegrees(imu.getData().get(imuDirection)) >= normalizeDegrees((float) absoluteDegree)) {
+                        encoderDrive(leftInches, rightInches);
+                        while (drivetrain.getRightTop().getDcMotor().isBusy() || drivetrain.getLeftTop().getDcMotor().isBusy() || drivetrain.getLeftBottom().getDcMotor().isBusy() || drivetrain.getRightBottom().getDcMotor().isBusy()) {}
+                    }
+                    break;
+            }
         }
     }
     public void runToPosition(CoordinateSystem.FieldCoordinates target) {
         getAndEvalReadings();
 
-        CoordinateSystem.FieldCoordinates current = coordinateSystem.current;
-        Angle angle = new Angle(Math.atan2(target.y - current.y, target.x - current.y), Angle.AngleUnit.RADIAN);
+        if (drivetrain != null) {
+            CoordinateSystem.FieldCoordinates current = coordinateSystem.current;
+            Angle angle = new Angle(Math.atan2(target.y - current.y, target.x - current.y), Angle.AngleUnit.RADIAN);
 
-        if (coordinateSystem.angle.lessThan(angle)) {
-            turnDegree(angle.asDegree(), Path.Direction.CW);
-        } else if (coordinateSystem.angle.greaterThan(angle)) {
-            turnDegree(angle.asDegree(), Path.Direction.CCW);
+            if (coordinateSystem.angle.lessThan(angle)) {
+                turnDegree(angle.asDegree(), Path.Direction.CW);
+            } else if (coordinateSystem.angle.greaterThan(angle)) {
+                turnDegree(angle.asDegree(), Path.Direction.CCW);
+            }
+
+            encoderDrive(Math.sqrt(Math.pow(target.y - current.y, 2) + Math.pow(target.x - current.x, 2)));
         }
-
-        encoderDrive(Math.sqrt(Math.pow(target.y - current.y, 2) + Math.pow(target.x - current.x, 2)));
     }
 }
