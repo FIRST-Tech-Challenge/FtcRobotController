@@ -44,9 +44,12 @@ public class ContourPipeline extends OpenCvPipeline {
     private int loopCounter = 0;
     private int pLoopCounter = 0;
 
-    private Mat mat = new Mat();
-    private Mat processed = new Mat();
-    private Mat output = new Mat();
+    private Mat matInit = new Mat();
+    private Mat mat = matInit.submat(new Rect(80.0,80.0,160.0,120.0));
+
+    private Mat processedInit = new Mat();
+    private Mat processed = processedInit.submat(new Rect(80.0,80.0,160.0,120.0));
+    // private Mat output = new Mat();
 
     private Rect maxRect = new Rect(600,1,1,1);
     private Rect rect = new Rect(600,1,1,1);
@@ -145,7 +148,7 @@ public class ContourPipeline extends OpenCvPipeline {
             ), GREEN, 2);
 
             // Display Data
-            Imgproc.putText(input, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y, new Point(5, CAMERA_HEIGHT - 5), 0, 0.6, new Scalar(255, 255, 255), 2);
+            Imgproc.putText(input, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y, new Point(5, CAMERA_HEIGHT - 5), 0, 0.2, new Scalar(255, 255, 255), 2);
 
             loopCounter++;
         } catch (Exception e) {
