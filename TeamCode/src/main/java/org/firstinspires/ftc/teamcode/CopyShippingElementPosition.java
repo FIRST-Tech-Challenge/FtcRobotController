@@ -132,9 +132,7 @@ public class CopyShippingElementPosition extends LinearOpMode
              */
             //sleep(100);
         }
-
-
-
+        
     }
 
     class SamplePipeline extends OpenCvPipeline {
