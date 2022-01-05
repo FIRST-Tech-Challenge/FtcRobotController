@@ -36,6 +36,9 @@ public class MecanumTeleOp extends LinearOpMode {
         int armLevel2 = 600; // (y)
         int armLevel3 = 900; // (b)
 
+        double armPower = 0.7;
+        double armPowerLevels = 0.7;
+
         //intake power
         double intakePower = 0.5;
 
@@ -94,26 +97,32 @@ public class MecanumTeleOp extends LinearOpMode {
 
             // Arm Up and Arm Down in small increments, >= 0.5 helps prevent issues with 0 value
             if (gamepad2.right_stick_y <= -0.5){
-                armSetPos = armSetPos + 1;
+                armSetPos = armSetPos + 10;
+                // armPower
             } else if (gamepad2.right_stick_y >= 0.5 && (!armLimitPressed && !armLimitSwitchFlag)) {
-                armSetPos = armSetPos - 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ;
+                armSetPos = armSetPos - 10;
+                // armPowe;
             }
 
 
             //set arm positions to gamepad.2 buttons
             if (gamepad2.a) {
                 armSetPos = armLevel0;
+                armPower = armPowerLevels;
             }else if (gamepad2.x) {
                 armSetPos = armLevel1;
+                armPower = armPowerLevels;
             }else if (gamepad2.y) {
                 armSetPos = armLevel2;
+                armPower = armPowerLevels;
             }else if (gamepad2.b) {
                 armSetPos = armLevel3;
+                armPower = armPowerLevels;
             }
 
             //set arm power
             robot.motorArm.setTargetPosition(armSetPos);
-            robot.motorArm.setPower(0.4); // needs to be slow otherwise is jerky
+            robot.motorArm.setPower(armPower); // needs to be slow otherwise is jerky
 
 
             /* Intake, Gamepad 2
