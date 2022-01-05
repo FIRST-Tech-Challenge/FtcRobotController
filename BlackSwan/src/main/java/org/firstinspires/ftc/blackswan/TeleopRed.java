@@ -121,7 +121,7 @@ public class TeleopRed extends LinearOpMode {
                 detection = "None";
             }
             if (gamepad2.dpad_up) { //up
-                arm.setTargetPosition(1000);
+                arm.setTargetPosition(1300);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.5);
                 while (arm.isBusy() && opModeIsActive()) {
