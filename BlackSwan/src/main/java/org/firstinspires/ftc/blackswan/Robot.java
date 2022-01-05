@@ -14,11 +14,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import static java.lang.Math.abs;
 
+import android.graphics.Color;
+
 import java.util.Date;
 
 public class Robot {
+    public Color colorSensor;
     Telemetry telemetry;
-    DcMotor frontLeft, backLeft, frontRight,backRight;
+    DcMotor frontLeft, backLeft, frontRight, backRight;
     DcMotor carousel, arm, intake;
     BNO055IMU imu;
     LinearOpMode opMode;
@@ -26,21 +29,20 @@ public class Robot {
     RevColorSensorV3 colorSensorRight;
 
 
+    final int TICKS_PER_ROTATION = 537;
 
-    final int TICKS_PER_ROTATION= 537;
-
-    public void stopMotors(){
+    public void stopMotors() {
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
     }
 
-    public Robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opMode){
-        frontLeft = hardwareMap.get(DcMotor.class,"frontLeft");
-        backLeft = hardwareMap.get(DcMotor.class,"backLeft");
-        frontRight = hardwareMap.get(DcMotor.class,"frontRight");
-        backRight = hardwareMap.get(DcMotor.class,"backRight");
+    public Robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opMode) {
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -49,46 +51,46 @@ public class Robot {
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
-        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
+        colorSensorRight = hardwareMap.get(RevColorSensorV3.class, "colorSensorRight");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = null;//= new JustLoggingAccelerationIntegrator();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        this.opMode= opMode;
+        this.opMode = opMode;
         this.telemetry = telemetry;
     }
 
-    public void forward(double distance, double speed){
+    public void forward(double distance, double speed) {
 
-         double distanceInTicks= distance*TICKS_PER_ROTATION;
+        double distanceInTicks = distance * TICKS_PER_ROTATION;
 
-        int frontLeftPosition= frontLeft.getCurrentPosition();
+        int frontLeftPosition = frontLeft.getCurrentPosition();
 
-        int frontLeftTarget= frontLeftPosition+ (int)distanceInTicks;
+        int frontLeftTarget = frontLeftPosition + (int) distanceInTicks;
 
-        int frontRightPosition= frontRight.getCurrentPosition();
+        int frontRightPosition = frontRight.getCurrentPosition();
 
-        int backLeftPosition= backLeft.getCurrentPosition();
+        int backLeftPosition = backLeft.getCurrentPosition();
 
-        int backLeftTarget= backLeftPosition+ (int)distanceInTicks;
+        int backLeftTarget = backLeftPosition + (int) distanceInTicks;
 
-        int backRightPosition= backRight.getCurrentPosition();
+        int backRightPosition = backRight.getCurrentPosition();
 
-        int backRightTarget= backRightPosition+ (int)distanceInTicks;
+        int backRightTarget = backRightPosition + (int) distanceInTicks;
 
-        int frontRightTarget= frontRightPosition+ (int)distanceInTicks;
-        frontLeft.setTargetPosition((int)frontLeftTarget);
-        frontRight.setTargetPosition((int)frontRightTarget);
-        backLeft.setTargetPosition((int)backLeftTarget);
-        backRight.setTargetPosition((int)backRightTarget);
+        int frontRightTarget = frontRightPosition + (int) distanceInTicks;
+        frontLeft.setTargetPosition((int) frontLeftTarget);
+        frontRight.setTargetPosition((int) frontRightTarget);
+        backLeft.setTargetPosition((int) backLeftTarget);
+        backRight.setTargetPosition((int) backRightTarget);
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -108,56 +110,57 @@ public class Robot {
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-
     }
-    public void back(double distance, double speed){
+
+    public void back(double distance, double speed) {
 
         forward(-distance, speed);
     }
-    public void left(double distance, double speed){
 
-        double distanceInTicks= distance*TICKS_PER_ROTATION;
+    public void left(double distance, double speed) {
 
-        int frontLeftPosition= frontLeft.getCurrentPosition();
+        double distanceInTicks = distance * TICKS_PER_ROTATION;
 
-        int frontLeftTarget= frontLeftPosition- (int)distanceInTicks; //
+        int frontLeftPosition = frontLeft.getCurrentPosition();
 
-        int frontRightPosition= frontRight.getCurrentPosition();
+        int frontLeftTarget = frontLeftPosition - (int) distanceInTicks; //
 
-        int backLeftPosition= backLeft.getCurrentPosition();
+        int frontRightPosition = frontRight.getCurrentPosition();
 
-        int backLeftTarget= backLeftPosition+ (int)distanceInTicks;
+        int backLeftPosition = backLeft.getCurrentPosition();
 
-        int backRightPosition= backRight.getCurrentPosition();
+        int backLeftTarget = backLeftPosition + (int) distanceInTicks;
 
-        int backRightTarget= backRightPosition- (int)distanceInTicks; //
+        int backRightPosition = backRight.getCurrentPosition();
 
-        int frontRightTarget= frontRightPosition+ (int)distanceInTicks;
+        int backRightTarget = backRightPosition - (int) distanceInTicks; //
+
+        int frontRightTarget = frontRightPosition + (int) distanceInTicks;
 
 
-        frontLeft.setTargetPosition((int)frontLeftTarget);
-        frontRight.setTargetPosition((int)frontRightTarget);
-        backLeft.setTargetPosition((int)backLeftTarget);
-        backRight.setTargetPosition((int)backRightTarget);
+        frontLeft.setTargetPosition((int) frontLeftTarget);
+        frontRight.setTargetPosition((int) frontRightTarget);
+        backLeft.setTargetPosition((int) backLeftTarget);
+        backRight.setTargetPosition((int) backRightTarget);
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontLeft.setPower(abs(speed)*-1);
+        frontLeft.setPower(abs(speed) * -1);
         frontRight.setPower(abs(speed));
         backLeft.setPower(abs(speed));
-        backRight.setPower(abs(speed)*-1);
+        backRight.setPower(abs(speed) * -1);
 
         while (this.opMode.opModeIsActive() &&
                 (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
-                telemetry.addData("frontLeftPosition", frontLeftPosition);
-                telemetry.addData("frontLeftTarget", frontLeftTarget);
-                telemetry.addData("frontRightPosition",frontRightPosition);
-                telemetry.addData("frontRightTarget",frontRightTarget);
-                telemetry.addData("backLeftPosition",backLeftPosition);
-                telemetry.addData("backLeftTarget",backLeftTarget);
-                telemetry.addData("backRightPosition", backRightPosition);
-                telemetry.addData("backRightTarget", backRightTarget  );
-                telemetry.update();
+            telemetry.addData("frontLeftPosition", frontLeftPosition);
+            telemetry.addData("frontLeftTarget", frontLeftTarget);
+            telemetry.addData("frontRightPosition", frontRightPosition);
+            telemetry.addData("frontRightTarget", frontRightTarget);
+            telemetry.addData("backLeftPosition", backLeftPosition);
+            telemetry.addData("backLeftTarget", backLeftTarget);
+            telemetry.addData("backRightPosition", backRightPosition);
+            telemetry.addData("backRightTarget", backRightTarget);
+            telemetry.update();
             // Display it for the driver.
 
         }
@@ -166,17 +169,19 @@ public class Robot {
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-
     }
-    public double gyroAngle(){
+
+    public double gyroAngle() {
         Orientation angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         return angles.secondAngle;
     }
-    public void right(double distance, double speed){
+
+    public void right(double distance, double speed) {
         left(-distance, speed);
     }
-    public void turnLeft(double angle, double speed){
+
+    public void turnLeft(double angle, double speed) {
 
         frontLeft.setPower(-speed);
         frontRight.setPower(speed);
@@ -185,13 +190,14 @@ public class Robot {
 
         double targetAngle = gyroAngle() - angle;
 
-        while(targetAngle < gyroAngle()){
+        while (targetAngle < gyroAngle()) {
             telemetry.addData("Current Gyro Angle", gyroAngle());
             telemetry.update();
         }
         stopMotors();
     }
-    public void turnRight(double angle, double speed){
+
+    public void turnRight(double angle, double speed) {
 
         frontLeft.setPower(speed);
         frontRight.setPower(-speed);
@@ -200,7 +206,7 @@ public class Robot {
 
         double targetAngle = gyroAngle() + angle;
 
-        while(targetAngle > gyroAngle()){
+        while (targetAngle > gyroAngle()) {
             telemetry.addData("Current Gyro Angle", gyroAngle());
             telemetry.update();
         }
@@ -208,49 +214,58 @@ public class Robot {
     }
 
 
-    protected void motorSetMode(DcMotor.RunMode runMode){
+    protected void motorSetMode(DcMotor.RunMode runMode) {
         frontLeft.setMode(runMode);
         frontRight.setMode(runMode);
         backLeft.setMode(runMode);
         backRight.setMode(runMode);
     }
-    public void pause(int millis){
+
+    public void pause(int millis) {
         long startTime = new Date().getTime();
         long time = 0;
 
-        while (time<millis && opMode.opModeIsActive()){
+        while (time < millis && opMode.opModeIsActive()) {
             time = new Date().getTime() - startTime;
         }
     }
-    public void blueCarousel(int millis){
+
+    public void blueCarousel(int millis) {
         carousel.setPower(0.35);
         pause(millis);
         carousel.setPower(0);
     }
-    public void redCarousel(int millis){
+
+    public void redCarousel(int millis) {
         carousel.setPower(-0.35);
         pause(millis);
         carousel.setPower(0);
     }
-    public void armThing(int level){
-        if(level == 1) {
+
+    public void armThing(int level) {
+        if (level == 1) {
+            arm.setTargetPosition(400);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(.5);
-            pause(//some random number test and change later
-                    1000);
-            arm.setPower(0);
+            while (arm.isBusy() && this.opMode.opModeIsActive()) {
+            }
+
         }
-        if(level == 2) {
+        if(level ==2){
+
+        arm.setTargetPosition(700);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(.5);
+        while (arm.isBusy() && this.opMode.opModeIsActive()) {
+        }
+    }
+        if(level ==3){
+            arm.setTargetPosition(1000);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(.5);
-            pause(//some random number test and change later
-                    1000);
-            arm.setPower(0);
-        }
-        if(level == 3) {
-            arm.setPower(.5);
-            pause(//some random number test and change later
-                    1000);
-            arm.setPower(0);
-        }
+            while (arm.isBusy() && this.opMode.opModeIsActive()) {
+            }
+    }
         intake.setPower(-1);
         pause(1000);
         intake.setPower(0);
