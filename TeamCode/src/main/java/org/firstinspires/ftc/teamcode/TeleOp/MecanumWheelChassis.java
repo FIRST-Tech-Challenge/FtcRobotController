@@ -46,7 +46,7 @@ public class MecanumWheelChassis extends LinearOpMode {
     private DcMotor bucket;
     private DcMotor linearSlide;
     private DcMotor carouselTurner;
-    private DcMotor linkage;
+    private DcMotor bucketTurner;
     
     @Override
     public void runOpMode() {
@@ -61,22 +61,11 @@ public class MecanumWheelChassis extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             
-            if (gamepad2.y) {
-                
-                linearSlide.setPower(0.5);
-                
-
-            } else if (gamepad2.a) {
-                
-                linearSlide.setPower(-0.5);
-                
-
-            } else {
-        
-                linearSlide.setPower(0);
-                
-
-            }
+            
+            linearSlide.setPower(gamepad2.right_stick_y * 0.5);
+            
+            bucketTurner.setPower(gamepad2.left_stick_y * 0.5);
+            
             
             if (gamepad2.dpad_up) {
                 
@@ -84,31 +73,27 @@ public class MecanumWheelChassis extends LinearOpMode {
                 
             } else if (gamepad2.dpad_down) {
                 
-                bucket.setPower(-1);
+                bucket.setPower(-0.75);
                 
-            } else {
+            } else if (gamepad2.dpad_right) {
                 
                 bucket.setPower(0);
                 
             }
             
-            linearSlide.setPower(gamepad2.right_stick_y);
+            if (gamepad2.y) {
+                
+                carouselTurner.setPower(1);
             
-            if (gamepad2.dpad_right) {
-            
-                linkage.setPower(0.5);
+            } else if (gamepad2.a) {
                 
-            } else if (gamepad2.dpad_left) {
-                
-                linkage.setPower(-0.5);
-                
+                carouselTurner.setPower(-1);
                 
             } else {
                 
-                linkage.setPower(0);
+                carouselTurner.setPower(0);
                 
             }
-            
             
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
@@ -123,10 +108,10 @@ public class MecanumWheelChassis extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            frontLeft.setPower(frontLeftPower * 0.5);
-            backLeft.setPower(backLeftPower * 0.5);
-            frontRight.setPower(frontRightPower * 0.5);
-            backRight.setPower(backRightPower * 0.5);
+            frontLeft.setPower(frontLeftPower * 0.75);
+            backLeft.setPower(backLeftPower * 0.75);
+            frontRight.setPower(frontRightPower * 0.75);
+            backRight.setPower(backRightPower * 0.75);
  
             
             telemetry.addData("Status", "Running");
@@ -143,15 +128,41 @@ public class MecanumWheelChassis extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class,"BackLeft");
         backRight = hardwareMap.get(DcMotor.class,"BackRight");
         
-        bucket = hardwareMap.get(DcMotor.class,"Bucket");
-        linearSlide = hardwareMap.get(DcMotor.class, "LinearSlide" );
-        linkage = hardwareMap.get(DcMotor.class, "Linkage" );
-        carouselTurner = hardwareMap.get(DcMotor.class, "CarouselTurner" );
+        frontLeft.setDirection(DcMotor.Direction.FORWARD) ;
+        frontRight.setDirection(DcMotor.Direction.REVERSE) ;
+        backLeft.setDirection(DcMotor.Direction.FORWARD) ;
+        backRight.setDirection(DcMotor.Direction.REVERSE) ;
         
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-       
-        linkage.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
+ 
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER) ;
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER) ;
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER) ;
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER) ;
+
+        bucket = hardwareMap.get(DcMotor.class,"Bucket");
+        bucketTurner = hardwareMap.get(DcMotor.class, "BucketTurner" );
+        linearSlide = hardwareMap.get(DcMotor.class, "LinearSlide");
+        carouselTurner = hardwareMap.get(DcMotor.class, "CarouselTurner" );
+
+
+        linearSlide.setDirection(DcMotor.Direction.FORWARD) ;
+        
+        
+        bucket.setDirection(DcMotor.Direction.FORWARD) ;
+ 
+
+        bucketTurner.setDirection(DcMotor.Direction.REVERSE) ;
+ 
+        
+        carouselTurner.setDirection(DcMotor.Direction.FORWARD) ;
+
+        
+        bucketTurner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        
         
     }
 }
