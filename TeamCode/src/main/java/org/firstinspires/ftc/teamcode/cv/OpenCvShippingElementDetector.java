@@ -143,6 +143,9 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         detections = net.forward();
 
 
+        //blob.release();
+
+
         for (int i = 0; i < detections.rows(); ++i) {
             Mat row = detections.row(i);
             //Mat scores = row.colRange(5, detections.cols());
@@ -156,10 +159,12 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
 
 
-                int centerX = (int) (row.get(0, 0)[0] * blob.cols());
-                int centerY = (int) (row.get(0, 1)[0] * blob.rows());
-                int width = (int) (row.get(0, 2)[0] * blob.cols());
-                int height = (int) (row.get(0, 3)[0] * blob.rows());
+                int centerX = (int) (row.get(0, 0)[0] * row.cols());
+                int centerY = (int) (row.get(0, 1)[0] * row.rows());
+                int width = (int) (row.get(0, 2)[0] * row.cols());
+                int height = (int) (row.get(0, 3)[0] * row.rows());
+
+                //row.release();
 
                 int left = (int) (centerX - width * 0.5);
                 int top = (int) (centerY - height * 0.5);
@@ -236,15 +241,20 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
                 levelSamples.replace(location,newVal);
 
+                telemetry.addData("The location being set is", location + " " + newVal);
+                telemetry.addData("With confidence", confidence);
+
                 telemetry.addData("This is a real location", getLocation());
                 telemetry.update();
 
                 //Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);
-                Imgproc.putText(blob, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(0, 0, 0), 4);
-                Imgproc.putText(blob, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(255, 255, 255), 2);
+                Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(0, 0, 0), 4);
+                Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(255, 255, 255), 2);
             }
 
         }
+
+        //detections.release();
 
         return imageRGB;
     }
