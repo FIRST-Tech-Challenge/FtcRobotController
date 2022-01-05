@@ -172,6 +172,20 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     }
 
     /**
+     * Sets the position of the robot using an Enum key from FeildPoints
+     *
+     * @param initPos the enum key of a three value array of an init position
+     */
+    public void setPosition(FieldPoints initPos) {
+        synchronized (lock) {
+            robotGlobalXCoordinatePosition = FieldPoints.positionsAndPoints.get(initPos)[0] * COUNTS_PER_INCH;
+            robotGlobalYCoordinatePosition = FieldPoints.positionsAndPoints.get(initPos)[1] * COUNTS_PER_INCH;
+            setOrientation(FieldPoints.positionsAndPoints.get(initPos)[2]);
+        }
+
+    }
+
+    /**
      * Returns if the Thread Main is currently executing
      *
      * @return True if Thread Main is currently executing, false otherwise

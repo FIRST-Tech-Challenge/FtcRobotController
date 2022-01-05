@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.Utills.Executable;
 import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
 import java.util.HashMap;
@@ -54,6 +55,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param odometry        A Already Initialized OdometryGlobalCoordinatePosition object
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
+     * @param voltageSensor an already initialized voltage sensor
      */
     public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
         super(front_right, front_left, back_right, back_left);
@@ -72,6 +74,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param odometry        A Already Initialized OdometryGlobalCoordinatePosition object
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
+     * @param voltageSensor   an already initialized voltage sensor
      */
     public OdometryDrivetrain(BasicDrivetrain drivetrain, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
         super(drivetrain.front_right, drivetrain.front_left, drivetrain.back_right, drivetrain.back_left);
@@ -79,6 +82,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         this.odometry = odometry;
         this._isStopRequested = isStopRequested;
         this._opModeIsActive = opmodeIsActive;
+        this.voltageSensor = voltageSensor;
     }
 
     /**
@@ -192,6 +196,19 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      */
     public void moveToPosition(double x, double y, double tolerance) throws InterruptedException {
         moveToPosition(x, y, tolerance, false);
+        this.stopAll();
+    }
+
+    /**
+     * Moves the robot to the provided position Enum
+     *
+     * @param position  a hashmap value referencing the 2 value array of the position
+     * @param tolerance The distance the robot can be off from the given position
+     * @throws InterruptedException
+     */
+    public void moveToPosition(FieldPoints position, double tolerance) throws InterruptedException {
+
+        moveToPosition(FieldPoints.positionsAndPoints.get(position)[0], FieldPoints.positionsAndPoints.get(position)[1], tolerance, false);
         this.stopAll();
     }
 
