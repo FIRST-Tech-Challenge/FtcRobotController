@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
+import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
@@ -78,7 +79,17 @@ public class DuckSideBluePath1 {
         //mockDetectTSEPosition.schedule();
         telemetry.addLine("Detecting Position");
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
+        StopDetectTSEPosition stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
         detectTSEPosition.schedule();
+
+        //SequentialCommandGroup webCamGroup = new SequentialCommandGroup(detectTSEPosition,stopDetectTSEPosition);
+        //webCamGroup.schedule();
+
+        /*detectTSEPosition.andThen(()->{
+            telemetry.addLine("stopping the stream at level: " + createWebCam.getWebCamSubsystem().getLevel());
+            stopDetectTSEPosition.schedule();
+            return null;
+        });*/
 
         createCarousel.createAuto();
         carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),

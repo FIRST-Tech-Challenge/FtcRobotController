@@ -171,7 +171,7 @@ public class CopyShippingElementPosition extends LinearOpMode
             telemetry.addLine("saving image");
             telemetry.update();
 
-            String file = "C:/Users/BC4HSTEM/Documents/opencv/level_1/" + random + ".jpg";
+            String file = "/sdcard/FIRST/EasyOpenCV/models/" + random + ".jpg";
             Imgcodecs.imwrite(file,resizeimage);
 
 

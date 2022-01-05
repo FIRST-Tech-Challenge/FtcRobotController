@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
+import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StreamToDashboard;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
@@ -30,6 +31,7 @@ public class CreateWebCam {
     private final FtcDashboard dashboard;
 
     private DetectTSEPosition detectTSEPosition;
+    private StopDetectTSEPosition stopDetectTSEPosition;
     private MockDetectTSEPosition mockDetectTSEPosition;
     private StreamToDashboard streamToDashboard;
     private SetArmLevel setArmLevel;
@@ -91,11 +93,8 @@ public class CreateWebCam {
         streamToDashboard.schedule();
         //mockDetectTSEPosition = new MockDetectTSEPosition(subsystem, telemetry);
         detectTSEPosition = new DetectTSEPosition(subsystem, telemetry);
-        /*detectTSEPosition.andThen(()->{
-            telemetry.addLine("stopping the stream");
-            //subsystem.stopStreaming();
-            return null;
-        });*/
+        stopDetectTSEPosition = new StopDetectTSEPosition(subsystem,telemetry);
+
 
         gotLevelTrigger = new Trigger(()->subsystem.getLevel() > 0);
 
@@ -105,6 +104,10 @@ public class CreateWebCam {
     public DetectTSEPosition getDetectTSEPositionCommand(){
         return detectTSEPosition;
 
+    }
+
+    public StopDetectTSEPosition getStopDetectTSEPosition(){
+        return stopDetectTSEPosition;
     }
 
     public MockDetectTSEPosition getMockDetectTSEPositionCommand(){

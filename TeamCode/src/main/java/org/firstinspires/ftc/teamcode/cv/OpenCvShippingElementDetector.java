@@ -25,23 +25,24 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
 
     public enum TSELocation {
-        P1_RED_LEVEL_3,
-        P1_RED_LEVEL_2,
-        P1_RED_LEVEL_1,
-        P2_RED_LEVEL_3,
-        P2_RED_LEVEL_2,
-        P2_RED_LEVEL_1,
-        P1_BLUE_LEVEL_3,
-        P1_BLUE_LEVEL_2,
-        P1_BLUE_LEVEL_1,
-        P2_BLUE_LEVEL_3,
-        P2_BLUE_LEVEL_2,
-        P2_BLUE_LEVEL_1,
+        DUCKSIDE_RED_LEVEL_3,
+        DUCKSIDE_RED_LEVEL_2,
+        DUCKSIDE_RED_LEVEL_1,
+        WAREHOUSESIDE_RED_LEVEL_3,
+        WAREHOUSESIDE_RED_LEVEL_2,
+        WAREHOUSESIDE_RED_LEVEL_1,
+        DUCKSIDE_BLUE_LEVEL_3,
+        DUCKSIDE_BLUE_LEVEL_2,
+        DUCKSIDE_BLUE_LEVEL_1,
+        WAREHOUSESIDE_BLUE_LEVEL_3,
+        WAREHOUSESIDE_BLUE_LEVEL_2,
+        WAREHOUSESIDE_BLUE_LEVEL_1,
         NONE
     }
 
     TSELocation location;
     Map<TSELocation, Integer> levels = new HashMap<>();
+    Map<TSELocation, Integer> levelSamples = new HashMap<>();
 
 
     private int width; // width of the image
@@ -54,13 +55,19 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     private Telemetry telemetry = null;
     private Mat imageRGB = new Mat();
 
+    //used to store maximum confidence amoung samples taken.  Only overwrite the level if we get a higher confidence
+    private float maxConfidence = 0.0f;
+    private boolean absolutelySure = false;
+
+    static final private float CONF_THRESHOLD = 0.75f;
+
     private final String[] classNames = {"background",
-            "p1_blue_level_1", "p1_blue_level_2", "p1_blue_level_3", "p2_blue_level_1", "p2_blue_level_2", "p2_blue_level_3" };
+            "duckside_blue_level_3", "duckside_blue_level_2", "duckside_blue_level_1", "warehouseside_blue_level_1", "warehouseside_blue_level_2", "warehouseside_blue_level_3" };
+
+    private List<TSELocation> locationSamples = new ArrayList<>();
 
 
-
-
-    private static List<Scalar> colors=new ArrayList<>();
+    //private static List<Scalar> colors=new ArrayList<>();
 
     /**
      *
@@ -73,28 +80,45 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
         levels.put(TSELocation.NONE,0);
 
-        levels.put(TSELocation.P1_BLUE_LEVEL_1,1);
-        levels.put(TSELocation.P2_BLUE_LEVEL_1,1);
-        levels.put(TSELocation.P1_RED_LEVEL_1,1);
-        levels.put(TSELocation.P2_RED_LEVEL_1,1);
+        levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_1,1);
+        levels.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_1,1);
+        levels.put(TSELocation.DUCKSIDE_RED_LEVEL_1,1);
+        levels.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_1,1);
 
-        levels.put(TSELocation.P1_BLUE_LEVEL_2,2);
-        levels.put(TSELocation.P2_BLUE_LEVEL_2,2);
-        levels.put(TSELocation.P1_RED_LEVEL_2,2);
-        levels.put(TSELocation.P2_RED_LEVEL_2,2);
+        levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_2,2);
+        levels.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_2,2);
+        levels.put(TSELocation.DUCKSIDE_RED_LEVEL_2,2);
+        levels.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_2,2);
 
-        levels.put(TSELocation.P1_BLUE_LEVEL_3,3);
-        levels.put(TSELocation.P2_BLUE_LEVEL_3,3);
-        levels.put(TSELocation.P1_RED_LEVEL_3,3);
-        levels.put(TSELocation.P2_RED_LEVEL_3,3);
+        levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_3,3);
+        levels.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_3,3);
+        levels.put(TSELocation.DUCKSIDE_RED_LEVEL_3,3);
+        levels.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_3,3);
+
+        levelSamples.put(TSELocation.NONE,0);
+
+        levelSamples.put(TSELocation.DUCKSIDE_BLUE_LEVEL_1,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_1,0);
+        levelSamples.put(TSELocation.DUCKSIDE_RED_LEVEL_1,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_1,0);
+
+        levelSamples.put(TSELocation.DUCKSIDE_BLUE_LEVEL_2,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_2,0);
+        levelSamples.put(TSELocation.DUCKSIDE_RED_LEVEL_2,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_2,0);
+
+        levelSamples.put(TSELocation.DUCKSIDE_BLUE_LEVEL_3,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_3,0);
+        levelSamples.put(TSELocation.DUCKSIDE_RED_LEVEL_3,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_3,0);
 
         location = TSELocation.NONE;
 
 
         cvDNN = new Dnn();
         net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_graph.pb");
-        for(int i=0; i<classNames.length; i++)
-            colors.add(randomColor());
+        //for(int i=0; i<classNames.length; i++)
+            //colors.add(randomColor());
 
     }
 
@@ -111,13 +135,13 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_RGBA2RGB);
 
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
-                new Size(640, 480),
+                new Size(224, 224),
                 new Scalar(meanVal, meanVal, meanVal),
-                false, false);
+                false, true);
 
         net.setInput(blob);
         detections = net.forward();
-        float confThreshold = 0.5f;
+
 
         for (int i = 0; i < detections.rows(); ++i) {
             Mat row = detections.row(i);
@@ -128,13 +152,14 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
             Point classIdPoint = mm.maxLoc;
 
 
-            if (confidence > confThreshold) {
+            if (confidence >= CONF_THRESHOLD) {
 
 
-                int centerX = (int) (row.get(0, 0)[0] * imageRGB.cols());
-                int centerY = (int) (row.get(0, 1)[0] * imageRGB.rows());
-                int width = (int) (row.get(0, 2)[0] * imageRGB.cols());
-                int height = (int) (row.get(0, 3)[0] * imageRGB.rows());
+
+                int centerX = (int) (row.get(0, 0)[0] * blob.cols());
+                int centerY = (int) (row.get(0, 1)[0] * blob.rows());
+                int width = (int) (row.get(0, 2)[0] * blob.cols());
+                int height = (int) (row.get(0, 3)[0] * blob.rows());
 
                 int left = (int) (centerX - width * 0.5);
                 int top = (int) (centerY - height * 0.5);
@@ -149,68 +174,74 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 int class_id = (int) classIdPoint.x;
                 String className = classNames[class_id].toString();
                 String label =  className + ": " + df.format(confidence);
-                Scalar color = colors.get(class_id);
+                //Scalar color = colors.get(class_id);
 
-                telemetry.addData("This is a real new", className);
-                telemetry.update();
+                //telemetry.addData("This is a real new", label);
+                //telemetry.update();
 
                 switch (className)
                 {
-                    case "p1_blue_level_1":
-                        location = TSELocation.P1_BLUE_LEVEL_1;
+                    case "duckside_blue_level_1":
+                        location = TSELocation.DUCKSIDE_BLUE_LEVEL_1;
                         break;
 
-                    case "p1_blue_level_2":
-                        location = TSELocation.P1_BLUE_LEVEL_2;
+                    case "duckside_blue_level_2":
+                        location = TSELocation.DUCKSIDE_BLUE_LEVEL_2;
                         break;
 
-                    case "p1_blue_level_3":
-                        location = TSELocation.P1_BLUE_LEVEL_3;
+                    case "duckside_blue_level_3":
+                        location = TSELocation.DUCKSIDE_BLUE_LEVEL_3;
                         break;
 
-                    case "p2_blue_level_1":
-                        location = TSELocation.P2_BLUE_LEVEL_1;
+                    case "warehouseside_blue_level_1":
+                        location = TSELocation.WAREHOUSESIDE_BLUE_LEVEL_1;
                         break;
 
-                    case "p2_blue_level_2":
-                        location = TSELocation.P2_BLUE_LEVEL_2;
+                    case "warehouseside_blue_level_2":
+                        location = TSELocation.WAREHOUSESIDE_BLUE_LEVEL_2;
                         break;
 
-                    case "p2_blue_level_3":
-                        location = TSELocation.P2_BLUE_LEVEL_3;
+                    case "warehouseside_blue_level_3":
+                        location = TSELocation.WAREHOUSESIDE_BLUE_LEVEL_3;
                         break;
 
-                    case "p1_red_level_1":
-                        location = TSELocation.P1_RED_LEVEL_1;
+                    case "duckside_red_level_1":
+                        location = TSELocation.DUCKSIDE_RED_LEVEL_1;
                         break;
 
-                    case "p1_red_level_2":
-                        location = TSELocation.P1_RED_LEVEL_2;
+                    case "duckside_red_level_2":
+                        location = TSELocation.DUCKSIDE_RED_LEVEL_2;
                         break;
 
-                    case "p1_red_level_3":
-                        location = TSELocation.P1_RED_LEVEL_3;
+                    case "duckside_red_level_3":
+                        location = TSELocation.DUCKSIDE_RED_LEVEL_3;
                         break;
 
-                    case "p2_red_level_1":
-                        location = TSELocation.P2_RED_LEVEL_1;
+                    case "warehouseside_red_level_1":
+                        location = TSELocation.WAREHOUSESIDE_RED_LEVEL_1;
                         break;
 
-                    case "p2_red_level_2":
-                        location = TSELocation.P2_RED_LEVEL_2;
+                    case "warehouseside_red_level_2":
+                        location = TSELocation.WAREHOUSESIDE_RED_LEVEL_2;
                         break;
 
-                    case "p2_red_level_3":
-                        location = TSELocation.P2_RED_LEVEL_3;
+                    case "warehouseside_red_level_3":
+                        location = TSELocation.WAREHOUSESIDE_RED_LEVEL_3;
                         break;
 
                     default:
                         location = TSELocation.NONE;
                 }
+                int newVal = levelSamples.get(location) + 1;
 
-                Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);
-                Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 0), 4);
-                Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 255, 255), 2);
+                levelSamples.replace(location,newVal);
+
+                telemetry.addData("This is a real location", getLocation());
+                telemetry.update();
+
+                //Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);
+                Imgproc.putText(blob, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(0, 0, 0), 4);
+                Imgproc.putText(blob, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(255, 255, 255), 2);
             }
 
         }
@@ -218,16 +249,27 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         return imageRGB;
     }
 
-    private Scalar randomColor() {
+    /*private Scalar randomColor() {
         Random random = new Random();
         int r = random.nextInt(255);
         int g = random.nextInt(255);
         int b = random.nextInt(255);
         return new Scalar(r,g,b);
 
-    }
+    }*/
     public TSELocation getLocation() {
-        return this.location;
+        final Integer[] value = new Integer[1];
+        value[0] = 0;
+        TSELocation[] mostSample = new TSELocation[1];
+        levelSamples.forEach((k,v)->{
+            if(v > value[0]){
+                value[0] = v;
+                mostSample[0] = k;
+
+            }
+
+        });
+        return mostSample[0];
     }
     public int getTSELevel(){
         //telemetry.addData("getTSELevel", location);
