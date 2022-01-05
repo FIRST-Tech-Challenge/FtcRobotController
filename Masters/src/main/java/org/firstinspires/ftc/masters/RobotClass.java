@@ -41,6 +41,7 @@ public class RobotClass {
 
     public DistanceSensor distanceSensorLeft;
     public DistanceSensor distanceSensorRight;
+    public DistanceSensor distanceSensorIntake;
 
     public DcMotor carousel;
     FreightFrenzyComputerVisionRedHub CV;
@@ -69,6 +70,7 @@ public class RobotClass {
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
         linearSlideServo = hardwareMap.servo.get("dump");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
 
         this.opmode= opmode;
 
@@ -293,7 +295,22 @@ public class RobotClass {
         stopMotors();
     }
 
+    public void getCube () {
+        frontLeft.setPower(.3);
+        frontRight.setPower(.3);
+        backLeft.setPower(.3);
+        backRight.setPower(.3);
+        intakeMotor.setPower(-.8);
+        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+
+        while (intakeDistance>7) {
+            intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+        }
+        stopMotors();
+        intakeMotor.setPower(0);
+    }
     public void distanceSensorStrafeLeft (double speed) {
+
         double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
