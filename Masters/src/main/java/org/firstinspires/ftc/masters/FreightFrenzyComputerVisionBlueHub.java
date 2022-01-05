@@ -10,12 +10,8 @@ import org.opencv.imgproc.Imgproc;
 public class FreightFrenzyComputerVisionBlueHub extends FreightFrenzyComputerVisionRedHub {
 
     public FreightFrenzyComputerVisionBlueHub(HardwareMap hardwareMap, Telemetry telemetry) {
-        super(hardwareMap, telemetry);
+        super(hardwareMap, telemetry, "blue");
+
     }
 
-    void extractLABChannel(Mat input, Mat LAB, Mat A) {
-//            "A" channel for detecting red and green by default
-        Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
-        Core.extractChannel(LAB, A, 1);
-    }
 }

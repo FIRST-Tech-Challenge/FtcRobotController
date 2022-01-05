@@ -710,14 +710,7 @@ if 360-abs(currentHeading)-abs(targetHeading) > 180
     }
     public void openCVInnitShenanigans() {
 
-
-
-        CV = new FreightFrenzyComputerVisionRedHub(hardwareMap, telemetry);
-
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-        // webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        CV = new FreightFrenzyComputerVisionRedHub(hardwareMap, telemetry, "Red");
 
 
     }
@@ -730,11 +723,11 @@ if 360-abs(currentHeading)-abs(targetHeading) > 180
 
 
 
-    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
+    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
         return CV.pipeline.hub_position;
     }
 
-    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
+    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
         return CV.pipeline.hub_position;
     }
 
