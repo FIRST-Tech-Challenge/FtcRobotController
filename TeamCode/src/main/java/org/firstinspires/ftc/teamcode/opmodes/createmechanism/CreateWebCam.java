@@ -86,7 +86,7 @@ public class CreateWebCam {
     }
 
     public void createAuto(){
-        subsystem = new WebCamSubsystem(hwMap,deviceName,new OpenCvShippingElementDetector(320,240,telemetry));
+        subsystem = new WebCamSubsystem(hwMap,deviceName,new OpenCvShippingElementDetector(640,480,telemetry));
         streamToDashboard = new StreamToDashboard(subsystem,dashboard);
         streamToDashboard.schedule();
         //mockDetectTSEPosition = new MockDetectTSEPosition(subsystem, telemetry);
