@@ -28,8 +28,13 @@ public class UltrasonicDistanceSensor implements SensorWrapper {
     }
 
     @Override
-    public int getData() {
+    public synchronized int getData() {
         sensor.writeData(EyeSquaredSeaDistanceSensor.Commands.WRITE_RANGE_COMMAND);
+        try {
+            wait(80L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return (int) sensor.readData(EyeSquaredSeaDistanceSensor.Commands.READ_LAST.bVal);
     }
 

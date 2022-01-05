@@ -8,7 +8,7 @@ public class CoordinateSystem {
 
     public FieldCoordinates current = FieldCoordinates.TOP_LEFT;
     public FieldCoordinates last = FieldCoordinates.TOP_LEFT;
-    public Angle angle;
+    public Angle angle = new Angle(0, Angle.AngleUnit.DEGREE);
 
     public void update(FieldCoordinates coordinates) {
         last = current;
@@ -40,6 +40,11 @@ public class CoordinateSystem {
             temp.x = x;
             temp.y = y;
             return temp;
+        }
+
+        @Override
+        public String toString() {
+            return "("+x+", "+y+")";
         }
     }
 }
