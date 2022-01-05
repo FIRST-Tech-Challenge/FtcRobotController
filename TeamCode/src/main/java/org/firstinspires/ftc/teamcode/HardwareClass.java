@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
+
 public class HardwareClass {
 
     // DcMotors
@@ -16,12 +18,14 @@ public class HardwareClass {
     public DcMotorEx frontLeft;
     public DcMotorEx backLeft;
     public DcMotor carousel;
+
+    public DigitalChannel grabberTouch = null;
     public DigitalChannel limitFront = null;
     public DigitalChannel limitRear = null;
 
     /* servos */
-    public CRServo rightGrabber = null;
-    public CRServo leftGrabber = null;
+    public CRServo grabberRight = null;
+    public CRServo grabberLeft = null;
 
 
     HardwareMap hardwareMap = null;
@@ -42,8 +46,19 @@ public class HardwareClass {
         backRight = hwMap.get(DcMotorEx.class, "rightRear");
         carousel = hwMap.get(DcMotor.class, "carousel");
 
+        //Servos
+        grabberLeft = hwMap.get(CRServo.class, "left");
+        grabberRight = hwMap.get(CRServo.class, "right");
+
+        //Sensors
         limitFront = hwMap.get(DigitalChannel.class, "armLimitFront");
+        limitFront.setMode(DigitalChannel.Mode.INPUT);
         limitRear = hwMap.get(DigitalChannel.class, "armLimitRear");
+        limitRear.setMode(DigitalChannel.Mode.INPUT);
+
+        grabberTouch = hwMap.get(DigitalChannel.class, "grabberTouch");
+        grabberTouch.setMode(DigitalChannel.Mode.INPUT);
+
 
         //Motor direction
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -51,11 +66,13 @@ public class HardwareClass {
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        //Motor modes
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //Zero power behavior (Makes sure robot does not move at all when motors at 0 power)
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
