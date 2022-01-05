@@ -15,8 +15,9 @@ public class blueStorageParkCarouselOnly extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        HardwareClass robot = new HardwareClass;
-        robot.init(hardwareMap);
+
+        //Comments
+        //Comments
 
 
     }
