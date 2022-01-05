@@ -19,11 +19,10 @@ import org.firstinspires.ftc.teamcode.ftcsecrets;
 
 import java.util.List;
 
-@Disabled
 @Autonomous
 
 public class blueLeftTFOD extends LinearOpMode {
-    private static final String TFOD_MODEL_ASSET = "FreightFrenzy.tflite";
+    private static final String TFOD_MODEL_ASSET = "";
     private static final String LABEL_LEFT = "left";
     private static final String LABEL_MIDDLE = "middle";
     private static final String LABEL_RIGHT = "right";
@@ -32,6 +31,7 @@ public class blueLeftTFOD extends LinearOpMode {
 
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tensorFlowObjDetector;
+
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -142,15 +142,10 @@ public class blueLeftTFOD extends LinearOpMode {
                             zone = 0;
                         }
                     }
-
-
                 }
-
                 telemetry.update();
             }
-
         }
-
         return zone;
     }
 
@@ -193,6 +188,6 @@ public class blueLeftTFOD extends LinearOpMode {
         tensorFlowObjDetector = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tensorFlowObjDetector.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_LEFT, LABEL_MIDDLE, LABEL_RIGHT);
         tensorFlowObjDetector.activate();
-        tensorFlowObjDetector.setZoom(1.75, 1.78);
+        tensorFlowObjDetector.setZoom(1, 1.78);
     }
 }

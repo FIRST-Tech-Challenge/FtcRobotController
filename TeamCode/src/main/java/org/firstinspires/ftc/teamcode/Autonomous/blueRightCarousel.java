@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -30,6 +31,7 @@ public class blueRightCarousel extends LinearOpMode {
 
     DcMotor carousel;
     DcMotor crane;
+    Servo arm;
 
     public void runOpMode() {
         initDriveMotors();
@@ -41,18 +43,53 @@ public class blueRightCarousel extends LinearOpMode {
         telemetry.update();
 
         if (opModeIsActive()) {
+            //closing the arm and waiting so we know the block is in possession
+            arm.setPosition(0);
+            sleep(500);
+
             //move forwards a few inches
             move(0.25, 500);
 
-            gyroTurning();
+            //turning 90 degrees counterclockwise
+            gyroTurning(90);
 
-//             //turn 90 degrees counter clockwise
-//             //reverse back into carousel
-            move(-0.5, 600);
-//             //turn on carousel motor'
+            //reverse back into carousel
+            move(-0.5, 450);
+
+            //basic sleeping to make sure we are turning the motors as soon as the robot stops
             sleep(500);
-            carouselMotor(0.5, 4000);
-            stop();
+
+            //turns on the carousel motor to get the duck onto the floor
+            carouselMotor(0.5, 4500);
+
+            //turning on the crane motor making the crane go up and avoid the terrain
+            crane.setPower(-0.5);
+            sleep(500);
+
+            //moving to warehouse
+            move(0.5, 1700);
+
+            //turning to shipping hub
+            gyroTurning(0);
+            sleep(500);
+
+            //move to delivery
+            move(0.25, 1200);
+            sleep(750);
+
+            //open claw
+            arm.setPosition(1);
+            sleep(750);
+
+            //move back from shipping hub
+            move(-0.5, 100);
+
+            // turn 90
+            gyroTurning(90);
+
+            //move to warehouse
+            move(0.90, 1700 );
+            sleep(1000);
         }
     }
 
@@ -74,6 +111,7 @@ public class blueRightCarousel extends LinearOpMode {
     public void initMiscMotors() {
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         crane = hardwareMap.get(DcMotor.class, "crane");
+        arm = hardwareMap.get(Servo.class, "arm");
     }
 
     public void initGyro() {
@@ -88,11 +126,10 @@ public class blueRightCarousel extends LinearOpMode {
     }
 
     //Movement methods
-    public boolean gyroTurning() {
+    public boolean gyroTurning(double targetAngle) {
         boolean foundAngle = false;
         while (opModeIsActive()) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            double targetAngle = 90;
             double currentAngle = angles.firstAngle;
 
             if (angles.firstAngle >= targetAngle - 0.1 && angles.firstAngle <= targetAngle + 0.1) {
