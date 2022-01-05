@@ -45,10 +45,10 @@ public class ContourPipeline extends OpenCvPipeline {
     private int pLoopCounter = 0;
 
     private Mat matInit = new Mat();
-    private Mat mat = matInit.submat(new Rect(80.0,80.0,160.0,120.0));
+    private Mat mat = matInit.submat(new Rect(80,80,160,120));
 
     private Mat processedInit = new Mat();
-    private Mat processed = processedInit.submat(new Rect(80.0,80.0,160.0,120.0));
+    private Mat processed = processedInit.submat(new Rect(80,80,160,120));
     // private Mat output = new Mat();
 
     private Rect maxRect = new Rect(600,1,1,1);
