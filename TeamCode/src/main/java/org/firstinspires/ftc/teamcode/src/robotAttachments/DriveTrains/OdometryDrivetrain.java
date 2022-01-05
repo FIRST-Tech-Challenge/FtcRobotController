@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 
+import java.util.HashMap;
+
 /**
  * Odometry Drivetrain Implements basic drive functions that can be inherited by other drive systems.
  */
@@ -214,6 +216,64 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         this.stopAll();
     }
 
+    /**
+     * These four variables configure the speed at which the robot moves during the odometry movement functions
+     * accelerationDistance controls the distance (in inches) that the robot uses to accelerate to maximum speed
+     * decelerationDistance controls the distance (in inches) that the robot uses to decelerate from maximum speed
+     * LongDistanceThreshold controls the distance at which the robot will swich from long to short distance mode
+     * normalVoltage is the voltage the robot is expected to operate at. If the voltage goes lower, the power returned is higher to compensate and visa versa
+     */
+    private final double accelerationDistance = 10.0D;
+    private final double decelerationDistance = 20.0D;
+    private final double LongDistanceThreshold = decelerationDistance + accelerationDistance;
+    private final double normalVoltage = 12.0D;
+
+    /**
+     * Determines the power to drive the motor at for the given distance away
+     *
+     * @param totalDistance   the total distance in inches, that the robot is expected to go
+     * @param currentDistance the total distance in inches, that the robot has traveled
+     * @return The power to drive the motor at in a range between -1 and 1
+     */
+    private double calculateLongDistancePower(double totalDistance, double currentDistance) {
+        final double distanceTraveled = totalDistance - currentDistance;
+        double power;
+
+
+        if (distanceTraveled < accelerationDistance) {
+            power = (-0.3 * Math.cos(distanceTraveled * (1.0 / accelerationDistance) * Math.PI)) + (0.7 * (normalVoltage / voltageSensor.getVoltage()));
+        } else if (currentDistance < decelerationDistance) {
+            power = (0.4 * Math.cos(distanceTraveled * (1.0 / decelerationDistance) * Math.PI)) + (0.6 * (normalVoltage / voltageSensor.getVoltage()));
+        } else {
+            return 1.0;
+        }
+
+        return MiscUtills.boundNumber(power);
+
+    }
+
+    /**
+     * Determines the power to drive the motor at for the given distance away
+     *
+     * @param totalDistance   the total distance in inches, that the robot is expected to go
+     * @param currentDistance the total distance in inches, that the robot has traveled
+     * @return The power to drive the motor at in a range between -1 and 1
+     */
+    private double calculateShortDistancePower(double totalDistance, double currentDistance) {
+        final double distancePercentage = (totalDistance - currentDistance) / totalDistance;
+        return MiscUtills.boundNumber((-1.0 / 4) * Math.cos(distancePercentage) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
+
+    }
+
+    public void move(double distance, double angle, double tolerance) throws InterruptedException {
+        final double xComponent = distance * Math.sin(angle);
+        final double yComponent = distance * Math.cos(angle);
+        moveToPosition(odometry.returnRelativeXPosition() + xComponent, odometry.returnRelativeYPosition() + yComponent, tolerance);
+    }
+
+    public void move(OdometryDirections direction, double distance, double tolerance) throws InterruptedException {
+        move(distance, OdometryDirections.positionToAngle.get(direction), tolerance);
+    }
 
     /**
      * Moves the robot to the given position with the option for debug information
@@ -232,7 +292,10 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         double odometry_y = odometry.returnRelativeYPosition();
 
         double currentDistance = distance(odometry_x, odometry_y, x, y);
-        double initialDistance = currentDistance;
+        final double initialDistance = currentDistance;
+
+        final boolean longDistanceTravel = (initialDistance > LongDistanceThreshold);
+
 
         while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
             odometry_x = odometry.returnRelativeXPosition(); //odometry x
@@ -240,9 +303,11 @@ public class OdometryDrivetrain extends BasicDrivetrain {
             currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
             odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
 
-            power = -Math.cos(2 * Math.PI * (currentDistance / initialDistance)) + (1.0 + (0.6 * (12 / voltageSensor.getVoltage())));
-            power = power / 2;
-            power = MiscUtills.boundNumber(power);
+            if (longDistanceTravel) {
+                power = this.calculateLongDistancePower(initialDistance, currentDistance);
+            } else {
+                power = this.calculateShortDistancePower(initialDistance, currentDistance);
+            }
 
             if (consoleOutput) {
                 telemetry.addData("Moving to", coordinateString);
@@ -252,6 +317,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
                 telemetry.addData("X Pos", odometry_x);
                 telemetry.addData("Y Pos", odometry_y);
                 telemetry.addData("Power", power);
+                telemetry.addData("Long Distance Mode = ", longDistanceTravel);
                 telemetry.update();
             }
 
@@ -259,6 +325,21 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
         }
         stopAll();
+    }
+
+
+    public enum OdometryDirections {
+        Forward,
+        Backward,
+        Right,
+        Left;
+
+        public static final HashMap<OdometryDirections, Double> positionToAngle = new HashMap<OdometryDirections, Double>() {{
+            put(OdometryDirections.Forward, 0D);
+            put(OdometryDirections.Backward, 180D);
+            put(OdometryDirections.Right, 90D);
+            put(OdometryDirections.Left, 270D);
+        }};
     }
 
     /**
