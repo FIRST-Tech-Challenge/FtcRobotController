@@ -66,6 +66,10 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     private List<TSELocation> locationSamples = new ArrayList<>();
 
+    private Mat blob = null;
+    private Mat detections = null;
+    private Mat row = null;
+
 
     //private static List<Scalar> colors=new ArrayList<>();
 
@@ -129,8 +133,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         //telemetry.addLine("Inside ProcessFrame");
         //telemetry.update();
         //Mat imageRGB = new Mat();
-        Mat blob = null;
-        Mat detections = null;
+
 
         Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_RGBA2RGB);
 
@@ -147,7 +150,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
 
         for (int i = 0; i < detections.rows(); ++i) {
-            Mat row = detections.row(i);
+            row = detections.row(i);
             //Mat scores = row.colRange(5, detections.cols());
             Core.MinMaxLocResult mm = Core.minMaxLoc(row);
             //Core.MinMaxLocResult mm = Core.minMaxLoc(scores);
