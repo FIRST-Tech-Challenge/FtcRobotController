@@ -38,7 +38,7 @@ public enum FieldPoints {
     /**
      * The Key is the point and the value is the location in inches in the form x,y
      */
-    public HashMap<FieldPoints, double[]> positionsAndPoints = new HashMap<FieldPoints, double[]>() {{
+    public static final HashMap<FieldPoints, double[]> positionsAndPoints = new HashMap<FieldPoints, double[]>() {{
         put(FieldPoints.RedWestLoadingPoint, new double[]{20, 85});
         put(FieldPoints.RedEastLoadingPoint, new double[]{66, 85.5});
         put(FieldPoints.RedSouthLoadingPoint, new double[]{47, 68});

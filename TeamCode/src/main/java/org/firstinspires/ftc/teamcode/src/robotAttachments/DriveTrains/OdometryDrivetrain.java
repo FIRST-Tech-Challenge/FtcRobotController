@@ -4,7 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.Utills.Executable;
+import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
+
+import java.util.HashMap;
 
 /**
  * Odometry Drivetrain Implements basic drive functions that can be inherited by other drive systems.
@@ -28,6 +33,11 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     Executable<Boolean> _opModeIsActive;
 
     /**
+     * A voltage sensor to monitor the robot voltage
+     */
+    RobotVoltageSensor voltageSensor;
+
+    /**
      * A empty constructor for subclassing
      */
     protected OdometryDrivetrain() {
@@ -45,13 +55,15 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param odometry        A Already Initialized OdometryGlobalCoordinatePosition object
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
+     * @param voltageSensor an already initialized voltage sensor
      */
-    public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
+    public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
         super(front_right, front_left, back_right, back_left);
         this.telemetry = telemetry;
         this.odometry = odometry;
         this._isStopRequested = isStopRequested;
         this._opModeIsActive = opmodeIsActive;
+        this.voltageSensor = voltageSensor;
     }
 
     /**
@@ -62,13 +74,15 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param odometry        A Already Initialized OdometryGlobalCoordinatePosition object
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
+     * @param voltageSensor   an already initialized voltage sensor
      */
-    public OdometryDrivetrain(BasicDrivetrain drivetrain, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive) {
+    public OdometryDrivetrain(BasicDrivetrain drivetrain, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
         super(drivetrain.front_right, drivetrain.front_left, drivetrain.back_right, drivetrain.back_left);
         this.telemetry = telemetry;
         this.odometry = odometry;
         this._isStopRequested = isStopRequested;
         this._opModeIsActive = opmodeIsActive;
+        this.voltageSensor = voltageSensor;
     }
 
     /**
@@ -186,6 +200,19 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
     /**
+     * Moves the robot to the provided position Enum
+     *
+     * @param position  a hashmap value referencing the 2 value array of the position
+     * @param tolerance The distance the robot can be off from the given position
+     * @throws InterruptedException
+     */
+    public void moveToPosition(FieldPoints position, double tolerance) throws InterruptedException {
+
+        moveToPosition(FieldPoints.positionsAndPoints.get(position)[0], FieldPoints.positionsAndPoints.get(position)[1], tolerance, false);
+        this.stopAll();
+    }
+
+    /**
      * Precisely moves the robot to the given position
      *
      * @param x         The x position to move to
@@ -207,6 +234,65 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
     /**
+     * These four variables configure the speed at which the robot moves during the odometry movement functions
+     * accelerationDistance controls the distance (in inches) that the robot uses to accelerate to maximum speed
+     * decelerationDistance controls the distance (in inches) that the robot uses to decelerate from maximum speed
+     * LongDistanceThreshold controls the distance at which the robot will swich from long to short distance mode
+     * normalVoltage is the voltage the robot is expected to operate at. If the voltage goes lower, the power returned is higher to compensate and visa versa
+     */
+    private final double accelerationDistance = 10.0D;
+    private final double decelerationDistance = 20.0D;
+    private final double LongDistanceThreshold = decelerationDistance + accelerationDistance;
+    private final double normalVoltage = 12.0D;
+
+    /**
+     * Determines the power to drive the motor at for the given distance away
+     *
+     * @param totalDistance   the total distance in inches, that the robot is expected to go
+     * @param currentDistance the total distance in inches, that the robot has traveled
+     * @return The power to drive the motor at in a range between -1 and 1
+     */
+    private double calculateLongDistancePower(double totalDistance, double currentDistance) {
+        final double distanceTraveled = totalDistance - currentDistance;
+        double power;
+
+
+        if (distanceTraveled < accelerationDistance) {
+            power = (-0.3 * Math.cos(distanceTraveled * (1.0 / accelerationDistance) * Math.PI)) + (0.7 * (normalVoltage / voltageSensor.getVoltage()));
+        } else if (currentDistance < decelerationDistance) {
+            power = (0.4 * Math.cos(distanceTraveled * (1.0 / decelerationDistance) * Math.PI)) + (0.6 * (normalVoltage / voltageSensor.getVoltage()));
+        } else {
+            return 1.0;
+        }
+
+        return MiscUtills.boundNumber(power);
+
+    }
+
+    /**
+     * Determines the power to drive the motor at for the given distance away
+     *
+     * @param totalDistance   the total distance in inches, that the robot is expected to go
+     * @param currentDistance the total distance in inches, that the robot has traveled
+     * @return The power to drive the motor at in a range between -1 and 1
+     */
+    private double calculateShortDistancePower(double totalDistance, double currentDistance) {
+        final double distancePercentage = (totalDistance - currentDistance) / totalDistance;
+        return MiscUtills.boundNumber((-1.0 / 4) * Math.cos(distancePercentage) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
+
+    }
+
+    public void move(double distance, double angle, double tolerance) throws InterruptedException {
+        final double xComponent = distance * Math.sin(angle);
+        final double yComponent = distance * Math.cos(angle);
+        moveToPosition(odometry.returnRelativeXPosition() + xComponent, odometry.returnRelativeYPosition() + yComponent, tolerance);
+    }
+
+    public void move(OdometryDirections direction, double distance, double tolerance) throws InterruptedException {
+        move(distance, OdometryDirections.positionToAngle.get(direction), tolerance);
+    }
+
+    /**
      * Moves the robot to the given position with the option for debug information
      *
      * @param x             X Value to move to
@@ -216,54 +302,61 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @throws InterruptedException Throws an exception if stop is requested during the move
      */
     public void moveToPosition(double x, double y, double tolerance, boolean consoleOutput) throws InterruptedException {
-        final String s = x + " , " + y;
-        double power = 0;
+        final String coordinateString = x + " , " + y;
+        double power, odometry_angle;
+
         double odometry_x = odometry.returnRelativeXPosition();
         double odometry_y = odometry.returnRelativeYPosition();
-        double distance = distance(odometry_x, odometry_y, x, y);
-        double odometry_angle;
+
+        double currentDistance = distance(odometry_x, odometry_y, x, y);
+        final double initialDistance = currentDistance;
+
+        final boolean longDistanceTravel = (initialDistance > LongDistanceThreshold);
 
 
-        while (distance > tolerance && !isStopRequested() && opModeIsActive()) {
-            //By calculating the values here once in this loop and declaring the variables above, we minimize the number
-            //of memory allocation calls and the number of variable calculations.
+        while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
             odometry_x = odometry.returnRelativeXPosition(); //odometry x
             odometry_y = odometry.returnRelativeYPosition(); //odometry y
-            distance = distance(odometry_x, odometry_y, x, y); //distance value
+            currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
             odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
 
-            /*The next if-else block takes the distance from target and
-             sets the power variable to odometry_angle power following the function
-             @param zeroPoint is the point where the robot goes at 1
-             power = 0.8/zeroPoint(distance) + 0.2
-             if the distance is greater than 24 in or ~2 ft, robot moves at power of 1
-             */
-            final double zeroPoint = 24;
-            if (distance > zeroPoint) {
-                power = 1;
+            if (longDistanceTravel) {
+                power = this.calculateLongDistancePower(initialDistance, currentDistance);
             } else {
-                power = ((0.9 / zeroPoint) * distance) + 0.2;
+                power = this.calculateShortDistancePower(initialDistance, currentDistance);
             }
-            //power = Math.abs(power);
-
 
             if (consoleOutput) {
-
-                telemetry.addData("Moving to", s);
-                telemetry.addData("distance", distance);
+                telemetry.addData("Moving to", coordinateString);
+                telemetry.addData("currentDistance", currentDistance);
                 telemetry.addData("angle", odometry_angle);
-                telemetry.addData("Moving?", distance > tolerance);
+                telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
                 telemetry.addData("X Pos", odometry_x);
                 telemetry.addData("Y Pos", odometry_y);
                 telemetry.addData("Power", power);
+                telemetry.addData("Long Distance Mode = ", longDistanceTravel);
                 telemetry.update();
-
             }
-            strafeAtAngle(odometry_angle, power);
 
+            strafeAtAngle(odometry_angle, power);
 
         }
         stopAll();
+    }
+
+
+    public enum OdometryDirections {
+        Forward,
+        Backward,
+        Right,
+        Left;
+
+        public static final HashMap<OdometryDirections, Double> positionToAngle = new HashMap<OdometryDirections, Double>() {{
+            put(OdometryDirections.Forward, 0D);
+            put(OdometryDirections.Backward, 180D);
+            put(OdometryDirections.Right, 90D);
+            put(OdometryDirections.Left, 270D);
+        }};
     }
 
     /**
