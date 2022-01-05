@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.main.utils.autonomous.location.pipeline;
 
-import org.firstinspires.ftc.teamcode.main.utils.Angle;
+import org.firstinspires.ftc.teamcode.main.utils.geometry.Angle;
 
 public class CoordinateSystem {
     public static double maxWidthInCM = 381;
