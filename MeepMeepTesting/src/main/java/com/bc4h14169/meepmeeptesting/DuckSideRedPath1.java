@@ -29,10 +29,17 @@ public class DuckSideRedPath1 {
                     .followTrajectorySequence(drive ->
                             drive.trajectorySequenceBuilder(new Pose2d(-36,-60, Math.toRadians(90)))
                                     //.splineToSplineHeading(new Pose2d(-55, -56, Math.toRadians(120)),Math.toRadians(180))
-                                    .splineToLinearHeading(new Pose2d(-55, -60, Math.toRadians(245)),Math.toRadians(180))
-                                    .splineToLinearHeading(new Pose2d(-55, -24, Math.toRadians(0)),Math.toRadians(90))
-                                    .strafeTo(new Vector2d(-34.58, -24))
-                                    .splineToLinearHeading(new Pose2d(-63, -32, Math.toRadians(0)),Math.toRadians(90))
+                                    .splineToLinearHeading(new Pose2d(-55, -60, Math.toRadians(-65)),Math.toRadians(180))
+                                    .addDisplacementMarker(()-> {
+                                        // spin carousel
+                                    })
+                                    .strafeTo(new Vector2d(-60, -22))
+                                    .splineToLinearHeading(new Pose2d(-35, -24, Math.toRadians(0)),Math.toRadians(90))
+                                    .addDisplacementMarker(()-> {
+                                        // deliver the shipping element
+                                    })
+                                    .strafeTo(new Vector2d(-39,-22))
+                                    .splineToLinearHeading(new Pose2d(-60, -37, Math.toRadians(0)),Math.toRadians(90))
                             .build()
                     );
         meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
