@@ -22,6 +22,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -35,9 +36,11 @@ import org.firstinspires.ftc.masters.util.AxesSigns;
 import org.firstinspires.ftc.masters.util.BNO055IMUUtil;
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
@@ -73,7 +76,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx frontLeft, backLeft, backRight, frontRight;
+    public DcMotor carousel;
+    public DistanceSensor distanceSensorLeft;
+    public DistanceSensor distanceSensorRight;
+    public DistanceSensor distanceSensorIntake;
+
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
@@ -105,12 +113,17 @@ public class SampleMecanumDrive extends MecanumDrive {
          BNO055IMUUtil.remapAxes(imu, AxesOrder.XZY, AxesSigns.NPN);
 
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
+        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
+        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
+        distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
+
+        motors = Arrays.asList(frontLeft, backLeft, backRight, frontRight);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -129,14 +142,104 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
+
+    public void pauseButInSecondsForThePlebeians(double seconds) {
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        while (time<seconds*1000 ) {
+            time = new Date().getTime() - startTime;
+        }
+    }
+
+    public void jevilTurnCarousel (double speed, double seconds) {
+        carousel.setPower(speed);
+        pauseButInSecondsForThePlebeians(seconds);
+        carousel.setPower(0);
+    }
+
+    public void stopMotors () {
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+    }
+
+    public void distanceSensorStrafeLeft (double speed) {
+
+        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+
+        frontLeft.setPower(speed);
+        frontRight.setPower(-speed);
+        backLeft.setPower(-speed);
+        backRight.setPower(speed);
+
+        while (rightDistance-leftDistance>1) {
+            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+        }
+        stopMotors();
+    }
+
+    public void distanceSensorStrafeRight (double speed) {
+        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+
+        frontLeft.setPower(-speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(-speed);
+
+        while (leftDistance-rightDistance>1) {
+            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+        }
+        stopMotors();
+    }
+
+    public void distanceSensorForward (double speed) {
+        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+
+        frontLeft.setPower(speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
+
+        while (leftDistance > 15) {
+            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        }
+        stopMotors();
+    }
+
+    public void distanceSensorStuff () {
+
+        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+
+
+        if (leftDistance-rightDistance>1) {
+            distanceSensorStrafeRight(.2);
+        } else if (rightDistance-leftDistance>1) {
+            distanceSensorStrafeLeft(.2);
+        }
+
+        if (leftDistance > 15) {
+            distanceSensorForward(.2);
+        }
+
+    }
+
+
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
@@ -276,10 +379,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+        frontLeft.setPower(v);
+        backLeft.setPower(v1);
+        backRight.setPower(v2);
+        frontRight.setPower(v3);
     }
 
     @Override
