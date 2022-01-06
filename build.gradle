@@ -79,8 +79,8 @@ task extractJavadoc {
 }
 
 task docs(type: Javadoc) {
-    include "**/FtcRobotController/src/main/java/*"
-    include "**/TeamCode/src/main/java/*"
+    include ':FtcRobotController'
+    include ':TeamCode'
     classpath = project.sourceSets.main.runtimeClasspath
     source = sourceSets.main.allJava
 }
