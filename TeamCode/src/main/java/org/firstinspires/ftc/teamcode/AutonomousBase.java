@@ -306,16 +306,16 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     // Drives to a distance returned by the back sensor allowing for specified error
     // Units are CM.
-    public boolean driveToBackDistance(double distance, double error, double maxSpeed) {
-        boolean reachedDestination;
+    public void driveToBackDistance(double distance, double error, double maxSpeed, int timeout) {
         double actualDistance = robot.updateSonarRangeB();
         double distanceError = distance - actualDistance;
-        if(Math.abs(distanceError) > error){
-            reachedDestination = false;
-        }else {
-            robot.stopMotion();
-            reachedDestination = true;
+        ElapsedTime rangeTimer = new ElapsedTime();
+        // keep looping while we are still active, and ALL motors are running.
+        while( opModeIsActive() ) {
+            if (Math.abs(distanceError) > error) {
+            } else {
+                robot.stopMotion();
+            }
         }
-        return reachedDestination;
     }
 }

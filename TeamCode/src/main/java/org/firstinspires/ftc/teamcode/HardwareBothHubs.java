@@ -124,10 +124,10 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2400;  // For dumping into hub bottom level */
     public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
     public int          FREIGHT_ARM_POS_SPIN       = 125;   // Raised enough for box to spin clearly
-    public int          FREIGHT_ARM_POS_SHARED     = 292;   // Front scoring into shared shipping hub
-    public int          FREIGHT_ARM_POS_TRANSPORT1 = 334;   // Horizontal transport position
+    public int          FREIGHT_ARM_POS_SHARED     = 232;   // Front scoring into shared shipping hub
+    public int          FREIGHT_ARM_POS_TRANSPORT1 = FREIGHT_ARM_POS_SHARED;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
-    public int          FREIGHT_ARM_POS_HUB_TOP    = 1726;  // For dumping into hub top level
+    public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level last
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1898;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2002;  // For dumping into hub bottom level
     public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 15;
