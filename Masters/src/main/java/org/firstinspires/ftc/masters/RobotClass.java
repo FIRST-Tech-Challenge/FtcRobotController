@@ -708,10 +708,8 @@ if 360-abs(currentHeading)-abs(targetHeading) > 180
             time = new Date().getTime() - startTime;
         }
     }
-    public void openCVInnitShenanigans() {
-
-        CV = new FreightFrenzyComputerVisionRedHub(hardwareMap, telemetry, "Red");
-
+    public void openCVInnitShenanigans(String color) {
+        CV = new FreightFrenzyComputerVisionRedHub(hardwareMap, telemetry, color);
 
     }
 
