@@ -271,7 +271,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     }*/
     public TSELocation getLocation() {
-        final Integer[] value = new Integer[1];
+        /*final Integer[] value = new Integer[1];
         value[0] = 0;
         TSELocation[] mostSample = new TSELocation[1];
         levelSamples.forEach((k,v)->{
@@ -282,7 +282,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
             }
 
         });
-        return mostSample[0];
+        return mostSample[0];*/
+        return location;
     }
     public int getTSELevel(){
         //telemetry.addData("getTSELevel", location);
