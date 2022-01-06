@@ -4,8 +4,6 @@
  * It is extraordinarily rare that you will ever need to edit this file. (no, no its not -thomas ricci)
  */
 
-apply plugin: 'java'
-
 configurations {
     doc { transitive false }
 }
@@ -49,11 +47,11 @@ repositories {
 }
 
 dependencies {
-    doc 'org.firstinspires.ftc:Hardware:6.2.0'
-    doc 'org.firstinspires.ftc:RobotCore:6.2.0'
-    doc 'org.firstinspires.ftc:FtcCommon:6.2.0'
-    doc 'org.firstinspires.ftc:OnBotJava:6.2.0'
-    doc 'org.firstinspires.ftc:Inspection:6.2.0'
+    doc 'org.firstinspires.ftc:Hardware:7.0.0'
+    doc 'org.firstinspires.ftc:RobotCore:7.0.0'
+    doc 'org.firstinspires.ftc:FtcCommon:7.0.0'
+    doc 'org.firstinspires.ftc:OnBotJava:7.0.0'
+    doc 'org.firstinspires.ftc:Inspection:7.0.0'
 }
 
 task extractJavadoc {
@@ -76,11 +74,4 @@ task extractJavadoc {
             }
         }
     }
-}
-
-task docs(type: Javadoc) {
-    include ':FtcRobotController'
-    include ':TeamCode'
-    classpath = project.sourceSets.main.runtimeClasspath
-    source = sourceSets.main.allJava
 }

@@ -13,6 +13,9 @@
     <option name="OPTION_DOCUMENT_TAG_USE" value="true" />
     <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="true" />
     <option name="OPTION_DOCUMENT_TAG_VERSION" value="true" />
+    <option name="OTHER_OPTIONS" value="-sourcepath C:\Users\Thomas\AppData\Local\Android\Sdk\platforms\android-29\android.jar --ignore-source-errors" />
+    <option name="OPTION_INCLUDE_LIBS" value="true" />
+    <option name="OPTION_LINK_TO_JDK_DOCS" value="true" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
