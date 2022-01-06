@@ -72,10 +72,10 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
             "duckside_red_level_3", "duckside_red_level_2", "duckside_red_level_1" };
 
     private final String[] classNamesWarehouseSideBlue = {"background",
-            "warehouseside_blue_level_1", "warehouseside_blue_level_2", "warehouseside_blue_level_3" };
+            "warehouseside_blue_level_3", "warehouseside_blue_level_2", "warehouseside_blue_level_1" };
 
     private final String[] classNamesWarehouseSideRed = {"background",
-            "warehouseside_red_level_1", "warehouseside_red_level_2", "warehouseside_red_level_3" };
+            "warehouseside_red_level_3", "warehouseside_red_level_2", "warehouseside_red_level_1" };
 
     private String[] classNames = classNamesDuckSideBlue;
 

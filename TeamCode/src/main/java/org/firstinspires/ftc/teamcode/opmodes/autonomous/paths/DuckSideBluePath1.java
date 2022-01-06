@@ -36,6 +36,7 @@ public class DuckSideBluePath1 {
 
     private FtcDashboard dashboard;
 
+    private SequentialCommandGroup webCamGroup;
     private SequentialCommandGroup carouselGroupBlue1;
     private SequentialCommandGroup intakeGroup;
 
@@ -82,14 +83,9 @@ public class DuckSideBluePath1 {
         StopDetectTSEPosition stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
         detectTSEPosition.schedule();
 
-        //SequentialCommandGroup webCamGroup = new SequentialCommandGroup(detectTSEPosition,stopDetectTSEPosition);
+        //webCamGroup = new SequentialCommandGroup(detectTSEPosition,stopDetectTSEPosition);
         //webCamGroup.schedule();
 
-        /*detectTSEPosition.andThen(()->{
-            telemetry.addLine("stopping the stream at level: " + createWebCam.getWebCamSubsystem().getLevel());
-            stopDetectTSEPosition.schedule();
-            return null;
-        });*/
 
         createCarousel.createAuto();
         carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
@@ -146,7 +142,7 @@ public class DuckSideBluePath1 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4)
-        ));
+                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4
+        )));
     }
 }
