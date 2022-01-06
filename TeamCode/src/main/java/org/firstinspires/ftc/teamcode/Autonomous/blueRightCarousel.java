@@ -67,7 +67,7 @@ public class blueRightCarousel extends LinearOpMode {
             sleep(500);
 
             //moving to warehouse
-            move(0.5, 1700);
+            move(0.5, 1300);
 
             //turning to shipping hub
             gyroTurning(0);
@@ -82,14 +82,13 @@ public class blueRightCarousel extends LinearOpMode {
             sleep(750);
 
             //move back from shipping hub
-            move(-0.5, 100);
+            move(-0.5, 250);
 
             // turn 90
             gyroTurning(90);
 
             //move to warehouse
-            move(0.90, 1700 );
-            sleep(1000);
+            move(0.70, 2000);
         }
     }
 

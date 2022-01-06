@@ -1,4 +1,6 @@
-//
+/*
+// This is a simple program which we will use to test values, driving styles, and other things. This is not our final version of the TeleOp but this will definitely contribute to it.
+ */
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 public class chassisTest extends LinearOpMode {
 
-    //Motor initalization
+    //Motor initialization
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
@@ -38,37 +40,39 @@ public class chassisTest extends LinearOpMode {
 
         waitForStart();
 
-
         while (opModeIsActive()) {
 
             //defining driving variables.
-            double throttle;
             double turn;
-            double strafeValue;
+            double throttle;
+            boolean strafeLeft;
+            boolean strafeRight;
 
-            double elevatorPower;
+            double cranePower;
+            boolean armToggle;
             double carouselPower;
-            double armPower = 0;
 
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
-            strafeValue = gamepad1.left_stick_x;
-            elevatorPower = gamepad2.left_stick_y;
-            armPower = gamepad2.right_stick_x;
+            strafeLeft = gamepad1.left_bumper;
+            strafeRight = gamepad1.right_bumper;
+
+            cranePower = gamepad2.left_stick_y;
+            armToggle = gamepad2.x;
             carouselPower = gamepad2.left_trigger;
 
             //making motors run.
             //strafing
-            if (strafeValue > 0.1) {
-                frontLeft.setPower(-strafeValue);
-                frontRight.setPower(strafeValue);
-                backLeft.setPower(strafeValue);
-                backRight.setPower(-strafeValue);
-            } else if (strafeValue < -0.1) {
-                frontLeft.setPower(-strafeValue);
-                frontRight.setPower(strafeValue);
-                backLeft.setPower(strafeValue);
-                backRight.setPower(-strafeValue);
+            if (strafeLeft) {
+                frontLeft.setPower(-0.75);
+                frontRight.setPower(0.75);
+                backLeft.setPower(0.75);
+                backRight.setPower(-0.75);
+            } else if (strafeRight) {
+                frontLeft.setPower(-0.75);
+                frontRight.setPower(0.75);
+                backLeft.setPower(0.75);
+                backRight.setPower(-0.75);
             }
             //forward and backward movement
             frontLeft.setPower(throttle);
@@ -82,23 +86,18 @@ public class chassisTest extends LinearOpMode {
             backLeft.setPower(-turn);
             backRight.setPower(turn);
 
-            crane.setPower(elevatorPower);
+            crane.setPower(cranePower);
 
-            arm.setPosition(armPower);
-//            if(armPower > 0){
-//                arm.setDirection(Servo.Direction.FORWARD);
-//            }else{
-//                arm.setDirection(Servo.Direction.REVERSE);
-//            }
-
+            if (armToggle){
+                arm.setPosition(0);
+            }else{
+                arm.setPosition(1);
+            }
             carousel.setPower(carouselPower);
 
-            telemetry.addData("Arm power", armPower);
-            telemetry.addData("Arm position", arm.getPosition());
+            telemetry.addData("Elevator Trim", cranePower);
+            System.out.println("servo position "+ arm.getPosition());
             telemetry.update();
         }
-        //telemetry for debugging
-
-
     }
 }
