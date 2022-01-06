@@ -1,8 +1,10 @@
 /**
  * Top-level build file for ftc_app project.
  *
- * It is extraordinarily rare that you will ever need to edit this file.
+ * It is extraordinarily rare that you will ever need to edit this file. (no, no its not -thomas ricci)
  */
+
+ apply plugin: 'java'
 
 configurations {
     doc { transitive false }
@@ -75,4 +77,10 @@ task extractJavadoc {
         }
     }
 }
+
+task docs(type: Javadoc) {
+    classpath = project.sourceSets.main.runtimeClasspath
+    source = sourceSets.main.allJava
+}
+
 
