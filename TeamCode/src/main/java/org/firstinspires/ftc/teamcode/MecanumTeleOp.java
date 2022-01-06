@@ -38,6 +38,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         double armPower = 0.7;
         double armPowerLevels = 0.7;
+        boolean gamepad2DPadDown = false; // track the state of the dpad
 
         //intake power
         double intakePower = 0.5;
@@ -82,15 +83,18 @@ public class MecanumTeleOp extends LinearOpMode {
              */
             armCurrentPos = robot.motorArm.getCurrentPosition();
             armLimitPressed = robot.armLimitSwitch.isPressed();
+            gamepad2DPadDown = gamepad2.dpad_down; // track state of the dpad button
 
             // Magnetic Limit Switch
-            if (armLimitPressed && !armLimitSwitchFlag){
+            if (armLimitPressed && !armLimitSwitchFlag && !gamepad2DPadDown){
                 // Reset to 0 if the magnetic limit switch is pressed and our flag is set to false
+                armSetPos = 0;
                 robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armSetPos = 0;
                 armLimitSwitchFlag = true;
-            }else if( armCurrentPos > 10 && !armLimitPressed) {
+                armPower = 0;// Added arm power 0
+
+            }else if( armCurrentPos > 15 && !armLimitPressed) {
                 // when arm is up set the limit switch flag to false to allow reset on next limit switch press
                 armLimitSwitchFlag = false;
             }
@@ -98,10 +102,12 @@ public class MecanumTeleOp extends LinearOpMode {
             // Arm Up and Arm Down in small increments, >= 0.5 helps prevent issues with 0 value
             if (gamepad2.right_stick_y <= -0.5){
                 armSetPos = armSetPos + 10;
-                // armPower
+                armPower = armPowerLevels;
             } else if (gamepad2.right_stick_y >= 0.5 && (!armLimitPressed && !armLimitSwitchFlag)) {
                 armSetPos = armSetPos - 10;
-                // armPowe;
+            } else if(gamepad2DPadDown == true){
+                armSetPos = armSetPos - 2;
+                armPower = armPowerLevels;
             }
 
 
