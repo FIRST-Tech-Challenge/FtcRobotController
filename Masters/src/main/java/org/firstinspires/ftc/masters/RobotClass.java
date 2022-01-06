@@ -70,6 +70,8 @@ public class RobotClass {
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
         linearSlideServo = hardwareMap.servo.get("dump");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
+        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
 
         this.opmode= opmode;
@@ -83,17 +85,17 @@ public class RobotClass {
 
         this.telemetry = telemetry;
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        // parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//
+//        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        // parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+//        parameters.loggingEnabled      = true;
+//        parameters.loggingTag          = "IMU";
+//        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+  //      imu.initialize(parameters);
 
 
     }
