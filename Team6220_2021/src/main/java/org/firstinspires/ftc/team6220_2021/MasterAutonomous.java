@@ -14,29 +14,29 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     // This method drives tank when given an angle drive power and turning power
     public void driveTank(double leftSidePower, double rightSidePower) {
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        motorFrontLeft.setPower(leftSidePower);
-        motorBackLeft.setPower(leftSidePower);
-        motorFrontRight.setPower(rightSidePower);
-        motorBackRight.setPower(rightSidePower);
+        motorFL.setPower(leftSidePower);
+        motorBL.setPower(leftSidePower);
+        motorFR.setPower(rightSidePower);
+        motorBR.setPower(rightSidePower);
     }
 
     // This method drives a specified number of inches in a straight line when given a target distance and max speed
     // Set direction to false when going forward and true when going backwards
     public void driveInches(double targetDistance, double minSpeed, boolean backwards) {
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         boolean distanceReached = false;
 
@@ -69,8 +69,8 @@ public abstract class MasterAutonomous extends MasterOpMode {
             }*/
 
             // Update positions using last distance measured by encoders
-            position = Constants.IN_PER_AM_TICK * (motorFrontLeft.getCurrentPosition() + motorBackLeft.getCurrentPosition() -
-                    motorFrontRight.getCurrentPosition() - motorBackRight.getCurrentPosition()) / 4.0;
+            position = Constants.IN_PER_AM_TICK * (motorFL.getCurrentPosition() + motorBL.getCurrentPosition() -
+                    motorFR.getCurrentPosition() - motorBR.getCurrentPosition()) / 4.0;
 
             if (backwards) {
                 if (Math.abs(position + targetDistance) <= 0.5) {
@@ -88,10 +88,10 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     // This method turns a specified number of degrees when given a target angle to turn
     public void turnToAngle(double targetAngle) {
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double angleLeft;
         boolean angleReached = false;

@@ -41,10 +41,10 @@ public class TeleOpComp extends MasterOpMode{
 
         //Set power of motors
         while (opModeIsActive()) {
-            motorBackLeft.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * speed);
-            motorFrontLeft.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * speed);
-            motorBackRight.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * speed);
-            motorFrontRight.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * speed);
+            motorBL.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * speed);
+            motorFL.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * speed);
+            motorBR.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * speed);
+            motorFR.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * speed);
 
             //Use switch to declare values for each arm position
             switch (position) {

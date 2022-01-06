@@ -27,14 +27,16 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
 
         int barcode = 2;
 
-        servoGrabber.setPosition(0.0);
+        servoGrabber.setPosition(Constants.CLOSED_GRABBER_POSITION);
+        // todo - fix
         servoArm.setPosition(0.81);
 
         pauseMillis(500);
 
+        // todo - fix
         servoArm.setPosition(0.4);
-        motorArm.setPower(0.9);
-        motorArm.setTargetPosition(1100);
+        motorArm.setPower(1.0);
+        motorArm.setTargetPosition(Constants.ARM_ALLIANCE_HUB_3RD_LEVEL);
 
         if (tfod != null) {
             tfod.activate();
@@ -98,26 +100,26 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
 
         switch (barcode) {
             case 0:
-                motorArm.setTargetPosition(300);
+                motorArm.setTargetPosition(Constants.ARM_ALLIANCE_HUB_1ST_LEVEL);
                 // todo - distance to the shipping hub
                 driveInches(10, Constants.MIN_DRIVE_PWR, false);
                 break;
 
             case 1:
-                motorArm.setTargetPosition(555);
+                motorArm.setTargetPosition(Constants.ARM_SHARED_HUB_LEVEL);
                 // todo - distance to the shipping hub
                 driveInches(12, Constants.MIN_DRIVE_PWR, false);
                 break;
 
             case 2:
-                motorArm.setTargetPosition(900);
+                motorArm.setTargetPosition(Constants.ARM_ALLIANCE_HUB_3RD_LEVEL);
                 // todo - distance to the shipping hub
                 driveInches(14, Constants.MIN_DRIVE_PWR, false);
                 break;
         }
 
         pauseMillis(500);
-        servoGrabber.setPosition(0.34);
+        servoGrabber.setPosition(Constants.OPEN_GRABBER_POSITION);
         pauseMillis(500);
 
         switch (barcode) {
@@ -141,10 +143,6 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
         turnToAngle(-170);
         pauseMillis(125);
         driveInches(6, Constants.MIN_DRIVE_PWR, false);
-
-        servoArm.setPosition(0.0);
-        servoGrabber.setPosition(0.81);
-        motorArm.setTargetPosition(-10);
 
         if (tfod != null) {
             tfod.shutdown();

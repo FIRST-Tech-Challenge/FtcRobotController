@@ -61,10 +61,10 @@ public class GyroTest extends MasterAutonomous {
             telemetry.addData("3 correction", correction);
             telemetry.update();
 
-            motorBackLeft.setPower(power + correction);
-            motorFrontLeft.setPower(power + correction);
-            motorBackRight.setPower(power - correction);
-            motorFrontRight.setPower(power - correction);
+            motorBL.setPower(power + correction);
+            motorFL.setPower(power + correction);
+            motorBR.setPower(power - correction);
+            motorFR.setPower(power - correction);
 
             // We record the sensor values because we will test them in more than
             // one place with time passing between those places. See the lesson on
@@ -77,18 +77,18 @@ public class GyroTest extends MasterAutonomous {
             if (touched || aButton || bButton)
             {
                 // backup.
-                motorFrontLeft.setPower(power);
-                motorBackLeft.setPower(power);
-                motorFrontRight.setPower(power);
-                motorBackRight.setPower(power);
+                motorFL.setPower(power);
+                motorBL.setPower(power);
+                motorFR.setPower(power);
+                motorBR.setPower(power);
 
                 sleep(3000);
 
                 // stop.
-                motorFrontLeft.setPower(0);
-                motorBackLeft.setPower(0);
-                motorFrontRight.setPower(0);
-                motorBackRight.setPower(0);
+                motorFL.setPower(0);
+                motorBL.setPower(0);
+                motorFR.setPower(0);
+                motorBR.setPower(0);
 
                 // turn 90 degrees right.
                 if (touched || aButton) rotate(-90, power);
@@ -99,10 +99,10 @@ public class GyroTest extends MasterAutonomous {
         }
 
         // turn the motors off.
-        motorFrontLeft.setPower(0);
-        motorBackLeft.setPower(0);
-        motorFrontRight.setPower(0);
-        motorBackRight.setPower(0);
+        motorFL.setPower(0);
+        motorBL.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
     }
 
     /**
@@ -192,10 +192,10 @@ public class GyroTest extends MasterAutonomous {
         else return;
 
         // set power to rotate.
-        motorFrontLeft.setPower(rightPower);
-        motorBackLeft.setPower(leftPower);
-        motorFrontRight.setPower(rightPower);
-        motorBackRight.setPower(leftPower);
+        motorFL.setPower(rightPower);
+        motorBL.setPower(leftPower);
+        motorFR.setPower(rightPower);
+        motorBR.setPower(leftPower);
 
         // rotate until turn is completed.
         if (degrees < 0)
@@ -209,10 +209,10 @@ public class GyroTest extends MasterAutonomous {
             while (opModeIsActive() && getAngle() < degrees) {}
 
         // turn the motors off.
-        motorFrontLeft.setPower(0);
-        motorBackLeft.setPower(0);
-        motorFrontRight.setPower(0);
-        motorBackRight.setPower(0);
+        motorFL.setPower(0);
+        motorBL.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
 
         // wait for rotation to stop.
         sleep(1000);

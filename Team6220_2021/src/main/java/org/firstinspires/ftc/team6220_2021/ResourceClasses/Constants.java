@@ -37,8 +37,19 @@ public class Constants {
     public static final double MINIMUM_JOYSTICK_POWER = 0.1;
     public static final double MINIMUM_TRIGGER_VALUE = 0.1;
 
+    // Motor Constants
+    public static final int ARM_COLLECTING_LEVEL = 0;
+    public static final int ARM_ALLIANCE_HUB_1ST_LEVEL = 300;
+    public static final int ARM_SHARED_HUB_LEVEL = 600;
+    public static final int ARM_ALLIANCE_HUB_3RD_LEVEL = 900;
+    public static final int ARM_BACKWARDS_ALLIANCE_HUB_3RD_LEVEL = 2000;
+    public static final int ARM_CAPPING_LEVEL = 1050;
+    public static final int ARM_BACKWARDS_CAPPING_LEVEL = 1850;
+
     // Servo Values
-    // servo constants go here
+    public static final double CLOSED_GRABBER_POSITION = 0.1;
+    public static final double OPEN_GRABBER_POSITION = 0.1;
+    public static final double SERVO_ARM_SHARED_HUB_POSITION = 0.1;
 
     // TensorFlow Autonomous
     public static final String VUFORIA_KEY = "AXDNhID/////AAABmTzx9+zSP0cgsSvEBLeS2Y9I1y9lY1nEbJ0" +
