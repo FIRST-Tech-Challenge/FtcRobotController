@@ -37,6 +37,7 @@ public class WarehouseSideBluePath1 {
     private TrajectoryFollowerCommand sample1Follower3;
     private TrajectoryFollowerCommand sample1Follower4;
     private TrajectoryFollowerCommand sample1Follower5;
+
     private FtcDashboard dashboard;
     private SequentialCommandGroup intakeGroup;
 
@@ -73,6 +74,7 @@ public class WarehouseSideBluePath1 {
         createWebCam.createAuto();
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
 
+
         //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
         //mockDetectTSEPosition.schedule();
 
@@ -96,6 +98,7 @@ public class WarehouseSideBluePath1 {
                     setArmLevel.schedule();
                 })
                 .build();
+
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .strafeTo(new Vector2d(-16, 42))
@@ -122,6 +125,7 @@ public class WarehouseSideBluePath1 {
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
         sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+
     }
 
     public void execute(CommandOpMode commandOpMode){
