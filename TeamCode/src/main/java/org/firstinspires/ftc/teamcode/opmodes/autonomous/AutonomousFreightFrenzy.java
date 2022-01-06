@@ -200,15 +200,15 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == DUCK_SIDE){
-                DuckSideBluePath2 duckSideBluePath2 = new DuckSideBluePath2(hardwareMap, selectedStartPos[0], dashboard, telemetry);
-                duckSideBluePath2.createPath();
-                duckSideBluePath2.execute(this);
+                //DuckSideBluePath2 duckSideBluePath2 = new DuckSideBluePath2(hardwareMap, selectedStartPos[0], dashboard, telemetry);
+                //duckSideBluePath2.createPath();
+                //duckSideBluePath2.execute(this);
 
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == DUCK_SIDE){
-                DuckSideRedPath2 duckSideRedPath2 = new DuckSideRedPath2(hardwareMap,selectedStartPos[0], dashboard,telemetry);
-                duckSideRedPath2.createPath();
-                duckSideRedPath2.execute(this);
+                //DuckSideRedPath2 duckSideRedPath2 = new DuckSideRedPath2(hardwareMap,selectedStartPos[0], dashboard,telemetry);
+                //duckSideRedPath2.createPath();
+                //duckSideRedPath2.execute(this);
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == WAREHOUSE_SIDE){
 

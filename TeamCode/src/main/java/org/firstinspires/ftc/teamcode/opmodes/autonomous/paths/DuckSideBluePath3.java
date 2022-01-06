@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -37,6 +38,8 @@ public class DuckSideBluePath3 {
     private TrajectoryFollowerCommand sample1Follower3;
     private TrajectoryFollowerCommand sample1Follower4;
     private TrajectoryFollowerCommand sample1Follower5;
+
+    private InstantCommand detect;
 
     private FtcDashboard dashboard;
 
@@ -81,7 +84,7 @@ public class DuckSideBluePath3 {
         //mockDetectTSEPosition.schedule();
 
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
-        detectTSEPosition.schedule();
+        //detectTSEPosition.schedule();
 
         createCarousel.createAuto();
         carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
@@ -122,14 +125,15 @@ public class DuckSideBluePath3 {
 
         // Drive around the shipping hub
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .strafeTo(new Vector2d(-34,16))
-                .splineToLinearHeading(new Pose2d(12, 20, Math.toRadians(0)),Math.toRadians(90))
-                .strafeTo(new Vector2d(12,40))
+                .strafeTo(new Vector2d(-35,12))
+                .splineToLinearHeading(new Pose2d(10, 12, Math.toRadians(0)),Math.toRadians(90))
+                .strafeTo(new Vector2d(10,50))
                 .build();
 
         // Drive over the barriers
-        Trajectory traj5 = drive.trajectoryBuilder(traj3.end())
-                .strafeTo(new Vector2d(56,40))
+        Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
+                .strafeTo(new Vector2d(48,50))
+
                 .build();
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
@@ -137,11 +141,13 @@ public class DuckSideBluePath3 {
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
         sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+
+        detect = new InstantCommand(()->{detectTSEPosition.schedule();});
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4,intakeGroup, sample1Follower5)
+                detect.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4, sample1Follower5)
         ));
     }
 }
