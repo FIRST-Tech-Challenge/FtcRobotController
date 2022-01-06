@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.globals.Alliance;
+import org.firstinspires.ftc.teamcode.globals.Side;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath1;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath2;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath2;
@@ -122,6 +123,8 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
         duckSide.whenPressed(()->{
 
             selectedSide[0] = DUCK_SIDE;
+            Side.getInstance().setPositionSide(Side.PositionSide.DUCKSIDE);
+
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
                 selectedStartPos[0] = duckBlueStartPose;
 
@@ -143,6 +146,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
         warehouseSide.whenPressed(()->{
             selectedSide[0] = WAREHOUSE_SIDE;
+            Side.getInstance().setPositionSide(Side.PositionSide.WAREHOUSESIDE);
 
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
                 selectedStartPos[0] = warehouseBlueStartPose;
