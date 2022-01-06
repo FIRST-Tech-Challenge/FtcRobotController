@@ -304,7 +304,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         return imageRGB;
     }
 
-    
+
     public TSELocation getLocation() {
         /*final Integer[] value = new Integer[1];
         value[0] = 0;
