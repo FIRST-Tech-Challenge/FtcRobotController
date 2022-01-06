@@ -35,10 +35,15 @@ jobs:
       with:
         arguments: build
 
-    - name: Build Javadocs
+    - name: Extract Javadoc
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: docs
+        arguments: extractJavadoc
+
+    # - name: Build Javadocs
+    #   uses: gradle/gradle-build-action@v2
+    #   with:
+    #     arguments: docs
 
     - name: Find
       run: find .
