@@ -164,9 +164,10 @@ public class FullTeleOpScript extends TeleOpScript {
             bWasDown = false;
         }
         if(handShouldBeDown) {
-            inputSpace.sendInputToHandSpinner(HandSpinningServoLocation.Action.SET_POSITION, 20);
+//            inputSpace.sendInputToHandSpinner(HandSpinningServoLocation.Action.SET_POSITION, 23);
+            inputSpace.sendInputToHandSpinner(HandSpinningServoLocation.Action.SET_POSITION, 36);
         }else{
-            inputSpace.sendInputToHandSpinner(HandSpinningServoLocation.Action.SET_POSITION, 50);
+            inputSpace.sendInputToHandSpinner(HandSpinningServoLocation.Action.SET_POSITION, 21);
         }
     }
 
