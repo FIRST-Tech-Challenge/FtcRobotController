@@ -13,7 +13,7 @@ public class WarehouseBlueStrafe extends LinearOpMode {
     public void runOpMode() {
         // Here Wayne will do stuff eventualy
         robot = new RobotClass(hardwareMap,telemetry,this);
-        robot.openCVInnitShenanigans();
+        robot.openCVInnitShenanigans("blue");
         FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         freightLocation = robot.analyze();
 

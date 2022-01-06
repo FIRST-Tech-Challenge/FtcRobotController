@@ -3,14 +3,14 @@ package org.firstinspires.ftc.masters;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Test CV Hub Alignment", group="competition")
-public class TestCVHubAlignment extends LinearOpMode {
+@TeleOp(name = "Test CV Hub Alignment blue", group="test")
+public class TestCVHubAlignmentBlue extends LinearOpMode {
     RobotClass robot;
     @Override
     public void runOpMode() throws InterruptedException {
 
         robot = new RobotClass(hardwareMap,telemetry,this);
-        robot.openCVInnitShenanigans();
+        robot.openCVInnitShenanigans("blue");
         FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.HubPosition hubLocation = null;
         freightLocation = robot.analyze();
@@ -18,7 +18,7 @@ public class TestCVHubAlignment extends LinearOpMode {
 
         waitForStart();
 
-        while (hubLocation != FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.HubPosition.CENTER) {
+        while (hubLocation != FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.HubPosition.CENTER && opModeIsActive()) {
             if (hubLocation == FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.HubPosition.LEFT) {
 //                robot.frontRight.setPower(.15);
 //                robot.frontLeft.setPower(-.15);
