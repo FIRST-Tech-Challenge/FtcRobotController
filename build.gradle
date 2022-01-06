@@ -77,11 +77,3 @@ task extractJavadoc {
         }
     }
 }
-
-task docs(type: Javadoc) {
-    // classpath = project.sourceSets.main.runtimeClasspath
-    source = sourceSets.main.allJava
-    destinationDir = reporting.file("./javadoc-output")
-}
-
-

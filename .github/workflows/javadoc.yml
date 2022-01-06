@@ -28,6 +28,7 @@ jobs:
       run: |
         rm -rf ./javadoc-output
         mkdir ./javadoc-output
+        find . -name "*.java"
 
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
@@ -35,9 +36,7 @@ jobs:
         arguments: build
 
     - name: Build Javadoc
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: docs
+      run: find . -name "*.java"
 
     - name: Upload the Javadoc output
       uses: actions/upload-artifact@v2
