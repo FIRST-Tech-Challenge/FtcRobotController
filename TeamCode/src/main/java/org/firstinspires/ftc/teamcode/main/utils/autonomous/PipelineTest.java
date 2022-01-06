@@ -13,19 +13,20 @@ import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 public class PipelineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        PositionSystem positionSystem = Resources.Navigation.Sensors.getPositionSystem(hardwareMap);
+        // FIXME: this method doesnt exist? not sure if its uncommitted or something but commenting out for now
+//        PositionSystem positionSystem = Resources.Navigation.Sensors.getPositionSystem(hardwareMap);
 
 /*        InputSpace input = new InputSpace(hardwareMap);
         StandardTankVehicleDrivetrain tank = (StandardTankVehicleDrivetrain) input.getTank().getInternalInteractionSurface();
         positionSystem.setDrivetrain(tank);*/
 
         waitForStart();
-
-        while (opModeIsActive()) {
-            positionSystem.getAndEvalReadings();
-            telemetry.addData("Angle (Degrees)", positionSystem.coordinateSystem.angle.toString());
-            telemetry.addData("Position", positionSystem.coordinateSystem.current.toString());
-            telemetry.update();
-        }
+//
+//        while (opModeIsActive()) {
+//            positionSystem.getAndEvalReadings();
+//            telemetry.addData("Angle (Degrees)", positionSystem.coordinateSystem.angle.toString());
+//            telemetry.addData("Position", positionSystem.coordinateSystem.current.toString());
+//            telemetry.update();
+//        }
     }
 }
