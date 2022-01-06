@@ -1,3 +1,0 @@
-0 Background
-1 Block
-2 Duck

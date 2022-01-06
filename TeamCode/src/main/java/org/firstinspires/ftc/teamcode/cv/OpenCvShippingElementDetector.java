@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.cv;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.globals.Alliance;
+import org.firstinspires.ftc.teamcode.globals.Side;
 import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.DNNObject;
 import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.OPCVFFObjectDetector3;
 import org.opencv.core.Core;
@@ -61,8 +63,28 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     static final private float CONF_THRESHOLD = 0.75f;
 
-    private final String[] classNames = {"background",
-            "duckside_blue_level_3", "duckside_blue_level_2", "duckside_blue_level_1", "warehouseside_blue_level_1", "warehouseside_blue_level_2", "warehouseside_blue_level_3" };
+
+
+    private final String[] classNamesDuckSideBlue = {"background",
+            "duckside_blue_level_3", "duckside_blue_level_2", "duckside_blue_level_1" };
+
+    private final String[] classNamesDuckSideRed = {"background",
+            "duckside_red_level_3", "duckside_red_level_2", "duckside_red_level_1" };
+
+    private final String[] classNamesWarehouseSideBlue = {"background",
+            "warehouseside_blue_level_3", "warehouseside_blue_level_2", "warehouseside_blue_level_1" };
+
+    private final String[] classNamesWarehouseSideRed = {"background",
+            "warehouseside_red_level_3", "warehouseside_red_level_2", "warehouseside_red_level_1" };
+
+    private String[] classNames = classNamesDuckSideBlue;
+
+    private final String modelPathDuckSideBlue = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelPathDuckSideRed = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_duckside_red_graph.pb";
+    private final String modelPathWarehouseSideBlue = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_warehouseside_blue_graph.pb";
+    private final String modelPathWarehouseSideRed = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_warehouseside_red_graph.pb";
+
+    private String modelPath = modelPathDuckSideBlue;
 
     private List<TSELocation> locationSamples = new ArrayList<>();
 
@@ -119,10 +141,34 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         location = TSELocation.NONE;
 
 
+        if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE &&
+                Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE){
+            classNames = classNamesDuckSideBlue;
+            modelPath = modelPathDuckSideBlue;
+        }
+        else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE &&
+                Side.getInstance().getPositionSide() == Side.PositionSide.WAREHOUSESIDE)
+        {
+            classNames = classNamesWarehouseSideBlue;
+            modelPath = modelPathWarehouseSideBlue;
+        }
+
+        else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED &&
+                Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE)
+        {
+            classNames = classNamesDuckSideRed;
+            modelPath = modelPathDuckSideRed;
+        }
+        else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED &&
+                Side.getInstance().getPositionSide() == Side.PositionSide.WAREHOUSESIDE)
+        {
+            classNames = classNamesWarehouseSideRed;
+            modelPath = modelPathWarehouseSideRed;
+        }
+
         cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow("/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_graph.pb");
-        //for(int i=0; i<classNames.length; i++)
-            //colors.add(randomColor());
+        net = cvDNN.readNetFromTensorflow(modelPath);
+
 
     }
 
@@ -130,9 +176,6 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat inputFrame) {
 
-        //telemetry.addLine("Inside ProcessFrame");
-        //telemetry.update();
-        //Mat imageRGB = new Mat();
 
 
         Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_RGBA2RGB);
@@ -182,7 +225,6 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 int class_id = (int) classIdPoint.x;
                 String className = classNames[class_id].toString();
                 String label =  className + ": " + df.format(confidence);
-                //Scalar color = colors.get(class_id);
 
                 //telemetry.addData("This is a real new", label);
                 //telemetry.update();
@@ -262,14 +304,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         return imageRGB;
     }
 
-    /*private Scalar randomColor() {
-        Random random = new Random();
-        int r = random.nextInt(255);
-        int g = random.nextInt(255);
-        int b = random.nextInt(255);
-        return new Scalar(r,g,b);
 
-    }*/
     public TSELocation getLocation() {
         /*final Integer[] value = new Integer[1];
         value[0] = 0;

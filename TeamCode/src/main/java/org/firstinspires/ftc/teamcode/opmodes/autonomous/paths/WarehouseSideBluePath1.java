@@ -63,7 +63,7 @@ public class WarehouseSideBluePath1 {
     }
 
     public void createPath(){
-        //startPose = new Pose2d(-36, 60, Math.toRadians(270));
+
         drive.setPoseEstimate(startPose);
 
         CreateWebCam createWebCam = new CreateWebCam(hwMap, "Webcam 1", dashboard, telemetry);

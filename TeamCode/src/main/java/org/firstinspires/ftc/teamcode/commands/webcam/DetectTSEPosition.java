@@ -41,6 +41,7 @@ public class DetectTSEPosition extends CommandBase {
 
     @Override
     public void execute(){
+
         location = detector.getLocation();
         level = detector.getTSELevel();
 

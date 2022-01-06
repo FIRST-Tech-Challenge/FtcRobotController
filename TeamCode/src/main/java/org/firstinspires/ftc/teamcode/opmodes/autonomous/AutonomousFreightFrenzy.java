@@ -13,8 +13,10 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.globals.Alliance;
+import org.firstinspires.ftc.teamcode.globals.Side;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath1;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath2;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath3;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath2;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath1;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideBluePath1;
@@ -122,6 +124,8 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
         duckSide.whenPressed(()->{
 
             selectedSide[0] = DUCK_SIDE;
+            Side.getInstance().setPositionSide(Side.PositionSide.DUCKSIDE);
+
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
                 selectedStartPos[0] = duckBlueStartPose;
 
@@ -143,6 +147,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
         warehouseSide.whenPressed(()->{
             selectedSide[0] = WAREHOUSE_SIDE;
+            Side.getInstance().setPositionSide(Side.PositionSide.WAREHOUSESIDE);
 
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE){
                 selectedStartPos[0] = warehouseBlueStartPose;
@@ -219,7 +224,9 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
             telemetry.addData("Selections Complete", String.format("Alliance: %s - Side: %s - Path: %s",selectedAlliance[0],selectedSide[0],selectedPath[0]));
             telemetry.update();
             if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == DUCK_SIDE){
-
+                DuckSideBluePath3 duckSidBluePath3 = new DuckSideBluePath3(hardwareMap,selectedStartPos[0], dashboard,telemetry);
+                duckSidBluePath3.createPath();
+                duckSidBluePath3.execute(this);
 
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == DUCK_SIDE){
