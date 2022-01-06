@@ -34,6 +34,9 @@ public class WarehouseSideRedPath1 {
     private MecanumDriveSubsystem drive;
     private TrajectoryFollowerCommand sample1Follower1;
     private TrajectoryFollowerCommand sample1Follower2;
+    private TrajectoryFollowerCommand sample1Follower3;
+    private TrajectoryFollowerCommand sample1Follower4;
+    private TrajectoryFollowerCommand sample1Follower5;
 
     private FtcDashboard dashboard;
     private SequentialCommandGroup intakeGroup;
@@ -71,6 +74,7 @@ public class WarehouseSideRedPath1 {
         createWebCam.createAuto();
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
 
+
         //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
         //mockDetectTSEPosition.schedule();
 
@@ -87,9 +91,8 @@ public class WarehouseSideRedPath1 {
                         .andThen(createIntake.getStopIntake())
         );
 
-
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .strafeTo(new Vector2d(-12, 42))
+                .strafeTo(new Vector2d(-12, -53))
                 .addDisplacementMarker(()->{
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
                     setArmLevel.schedule();
@@ -98,23 +101,36 @@ public class WarehouseSideRedPath1 {
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .strafeTo(new Vector2d(-16, -42))
+                .build();
+
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                .strafeTo(new Vector2d(-16, -67))
+                .build();
+
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .strafeTo(new Vector2d(42, -67))
+                .build();
+
+        Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
                 .addDisplacementMarker(()->{
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
                     setArmLevel.schedule();
                 })
-                .strafeTo(new Vector2d(-12, 60))
-                .strafeTo(new Vector2d(44, 60))
-                .strafeTo(new Vector2d(44, 40))
+                .strafeTo(new Vector2d(42, -36))
                 .build();
-
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
+        sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
+        sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
+        sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(intakeGroup,sample1Follower2)
+                sample1Follower1.andThen(sample1Follower2, intakeGroup, sample1Follower4, sample1Follower5)
         ));
     }
 }
