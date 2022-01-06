@@ -13,15 +13,8 @@ import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 public class PipelineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        NavigationSensorCollection sensors = new NavigationSensorCollection(
-                new StandardDistanceSensor(hardwareMap, Resources.Navigation.Sensors.Distance.North),
-                new StandardDistanceSensor(hardwareMap, Resources.Navigation.Sensors.Distance.East),
-                new StandardDistanceSensor(hardwareMap, Resources.Navigation.Sensors.Distance.West),
-                new StandardIMU(hardwareMap),
-                90
-        );
+        PositionSystem positionSystem = Resources.Navigation.Sensors.getPositionSystem(hardwareMap);
 
-        PositionSystem positionSystem = new PositionSystem(sensors);
 /*        InputSpace input = new InputSpace(hardwareMap);
         StandardTankVehicleDrivetrain tank = (StandardTankVehicleDrivetrain) input.getTank().getInternalInteractionSurface();
         positionSystem.setDrivetrain(tank);*/
