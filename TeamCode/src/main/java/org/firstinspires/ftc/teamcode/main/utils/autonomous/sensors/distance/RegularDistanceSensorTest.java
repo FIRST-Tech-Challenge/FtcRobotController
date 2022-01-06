@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.autonomous.sensors.distance.wrappers.DistanceSensorWrapper;
 import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
 

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.main.utils.locations;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.InteractionSurface;
 import org.firstinspires.ftc.teamcode.main.utils.interactions.items.StandardTouchSensor;
 import org.firstinspires.ftc.teamcode.main.utils.resources.Resources;
