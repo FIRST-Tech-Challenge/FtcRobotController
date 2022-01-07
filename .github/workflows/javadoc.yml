@@ -24,21 +24,26 @@ jobs:
       - name: Gradle version
         run: ./gradlew --version
 
-      - name: Setup CWD
+      - name: Setup Source
         run: |
-          rm -rf 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
-          mkdir 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
-          cd 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
+          rm -rf javadoc-output
           mkdir javadoc-output
-      - name: Install Android Studio
-        run: |
-          cd 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
-          wget https://r4---sn-a5mekn6s.gvt1.com/edgedl/android/studio/ide-zips/2020.3.1.26/android-studio-2020.3.1.26-linux.tar.gz?cms_redirect=yes&amp;mh=zH&amp;mip=20.106.79.99&amp;mm=28&amp;mn=sn-a5mekn6s&amp;ms=nvh&amp;mt=1641532576&amp;mv=m&amp;mvi=4&amp;pl=18&amp;shardbypass=yes&amp;smhost=r4---sn-a5meknl6.gvt1.com
-          tar -xf android-studio-2020.3.1.26-linux.tar.gz
-          cd android-studio/jre/bin
+          cp -r -p $GRADLE_USER_HOME/caches/modules-2/files-2.1 .
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+#       - name: Install Android Studio
+#         run: |
+#           cd 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
+#           wget https://r4---sn-a5mekn6s.gvt1.com/edgedl/android/studio/ide-zips/2020.3.1.26/android-studio-2020.3.1.26-linux.tar.gz?cms_redirect=yes&amp;mh=zH&amp;mip=20.106.79.99&amp;mm=28&amp;mn=sn-a5mekn6s&amp;ms=nvh&amp;mt=1641532576&amp;mv=m&amp;mvi=4&amp;pl=18&amp;shardbypass=yes&amp;smhost=r4---sn-a5meknl6.gvt1.com
+#           tar -xf android-studio-2020.3.1.26-linux.tar.gz
+#           cd android-studio/jre/bin
+#       - name: Generate Javadoc
+#         run: |
+#           ./javadoc -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -d ../../../javadoc-output
       - name: Generate Javadoc
-        run: |
-          ./javadoc -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -d ../../../javadoc-output
+        run: -d javadoc-output $(find . -name "*.java") -Xdoclint:none --ignore-source-errors
       - name: Find
         run: find .
       - name: Upload the Javadoc output
