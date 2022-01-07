@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
+import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
@@ -42,6 +43,7 @@ public class DuckSideRedPath1 {
     private final Telemetry telemetry;
 
     private CreateIntake createIntake;
+    private StopDetectTSEPosition stopDetectTSEPosition;
 
     public DuckSideRedPath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -77,6 +79,7 @@ public class DuckSideRedPath1 {
         //mockDetectTSEPosition.schedule();
         telemetry.addLine("Detecting Position");
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
+        stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
         detectTSEPosition.schedule();
 
         createCarousel.createAuto();
@@ -134,7 +137,7 @@ public class DuckSideRedPath1 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4)
+                stopDetectTSEPosition.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4)
         ));
     }
 }
