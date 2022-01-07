@@ -7,17 +7,24 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedIndefinitelyEvent;
 
 import androidx.annotation.NonNull;
 
 public class ControllerGrabber extends AutoGrabber {
+    final Thread thread;
     public ControllerGrabber(@NonNull EventThread eventThread, @NonNull HardwareMap hardwareMap, GamepadEx gamepadEx) {
         super(hardwareMap);
-        final ToggleButtonReader reader = new ToggleButtonReader(gamepadEx, GamepadKeys.Button.DPAD_UP);
-        eventThread.addEvent(new RunWhenOutputChangedIndefinitelyEvent(this::toggle, () -> {
-            reader.readValue();
-            return reader.getState();
-        }));
+        this.thread = new Thread(() -> {
+            final ToggleButtonReader reader = new ToggleButtonReader(gamepadEx, GamepadKeys.Button.DPAD_UP);
+            while (!eventThread.isInterrupted()) {
+                reader.readValue();
+                if (reader.wasJustReleased()) toggle();
+            }
+        });
+        thread.setPriority(5);
+    }
+
+    public void init() {
+        thread.start();
     }
 }

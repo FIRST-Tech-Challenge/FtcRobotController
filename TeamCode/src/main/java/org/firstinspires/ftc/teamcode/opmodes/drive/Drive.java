@@ -25,7 +25,7 @@ public class Drive extends LinearOpMode {
 
         // will automatically run update method
         new ControllerCarousel(eventThread, hardwareMap, toolGamepad);
-        new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
+        final ControllerGrabber grabber = new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
 
         Thread thread = new Thread(() -> {
             final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, telemetry);
@@ -40,6 +40,7 @@ public class Drive extends LinearOpMode {
         thread.setPriority(4);
         waitForStart();
         thread.start();
+        grabber.init();
         eventThread.start();
         while (opModeIsActive() && eventThread.isAlive()) {}
         eventThread.interrupt();
