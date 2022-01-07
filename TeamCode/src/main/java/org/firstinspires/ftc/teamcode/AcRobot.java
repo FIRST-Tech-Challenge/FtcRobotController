@@ -15,28 +15,28 @@ import org.firstinspires.ftc.teamcode.math.Vector;
 
 public class AcRobot {
     // movement
-    public static DcMotorEx leftFront = null;
-    public static DcMotorEx rightFront = null;
-    public static DcMotorEx leftRear = null;
-    public static DcMotorEx rightRear = null;
+    public DcMotorEx leftFront = null;
+    public DcMotorEx rightFront = null;
+    public DcMotorEx leftRear = null;
+    public DcMotorEx rightRear = null;
 
     // DcMotor
-    public static DcMotor carousel;
+    public DcMotor carousel;
 
-    public static DigitalChannel grabberTouch = null;
-    public static DigitalChannel limitFront = null;
-    public static DigitalChannel limitRear = null;
+    public DigitalChannel grabberTouch = null;
+    public DigitalChannel limitFront = null;
+    public DigitalChannel limitRear = null;
 
     /* servos */
-    public static CRServo grabberRight = null;
-    public static CRServo grabberLeft = null;
+    public CRServo grabberRight = null;
+    public CRServo grabberLeft = null;
 
 
     public AcRobot(){
     }
 
     //run this before anything else
-    public static void initHardware(HardwareMap hardwareMap){
+    public void initHardware(HardwareMap hardwareMap){
 
         //initialize drive motors
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -68,13 +68,13 @@ public class AcRobot {
 
     }
 
-    public static void DriveTo(Vector position, double duration){
+    public void DriveTo(Vector position, double duration){
         DriveWithVelocity(Vector.normalize(position), 0, (int)(position.magnitude()/duration));
         sleep((long)duration*1000);
         stop();
     }
 
-    public static void DriveWithVelocity(Vector direction, double rot, int speed){
+    public void DriveWithVelocity(Vector direction, double rot, int speed){
         double TPR = Constants.motor5203TPR;
         double r = Math.hypot(direction.x, direction.y);
         double robotAngle = Math.atan2(direction.y, -direction.x) - Math.PI / 4;
@@ -89,7 +89,7 @@ public class AcRobot {
         leftRear.setVelocity(lr*((double)speed/360)*TPR);
         rightRear.setVelocity(rr*((double)speed/360)*TPR);
     }
-    public static void stop(){
+    public void stop(){
         leftFront.setVelocity(0);
         rightFront.setVelocity(0);
         leftRear.setVelocity(0);
@@ -97,7 +97,7 @@ public class AcRobot {
     }
 
     // x and y are a vector direction
-    public static void DRIVE(double x, double y, double rot){
+    public void DRIVE(double x, double y, double rot){
         double r = Math.hypot(x, y);
         double robotAngle = Math.atan2(y, -x) - Math.PI / 4;
         double rightX = -rot;

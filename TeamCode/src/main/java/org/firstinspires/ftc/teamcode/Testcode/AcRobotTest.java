@@ -60,6 +60,7 @@ public class AcRobotTest extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    private AcRobot robot = new AcRobot();
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -68,11 +69,10 @@ public class AcRobotTest extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        AcRobot.initHardware(hardwareMap);
+        robot.initHardware(hardwareMap);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
-        AcRobot.DriveTo(new Vector(10,10), 10);
     }
 
     /*
@@ -95,7 +95,7 @@ public class AcRobotTest extends OpMode
      */
     @Override
     public void loop() {
-        //AcRobot.DRIVE(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        robot.DRIVE(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
         //AcRobot.DriveWithVelocity(new Vector(-1,0),0, 500);
     }
 
