@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.core.robot.tools.headless;
 
-import android.util.Pair;
-
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,37 +29,39 @@ public class AutoLift {
 
     @SuppressWarnings("unused")
     public enum Positions {
-        INTAKING(0, 0.76D),
-        SAFE(1375, 0.7D),
-        TOP(2880, 0.3D),
-        MIDDLE(1850, 0.3D),
-        BOTTOM(1375, 0.25D);
+        INTAKING(0, 0.76D, false),
+        SAFE(1375, 0.7D, false),
+        TOP(2880, 0.3D, true),
+        MIDDLE(1850, 0.3D, true),
+        BOTTOM(1375, 0.25D, true);
 
         public final double armPos;
         public final int motorPos;
-
-        Positions(int motorPos, double armPos) {
+        public final boolean dumper;
+        
+        Positions(int motorPos, double armPos, boolean dumper) {
             this.motorPos = motorPos;
             this.armPos = armPos;
+            this.dumper = dumper;
         }
     }
 
-    private enum MovementStates { // switch this to a bool if you have time
+    protected enum MovementStates { // switch this to a bool if you have time
         NO_MOVEMENT,
         MOVING,
         SERVO_MOVEMENT
     }
 
-    private final DcMotor liftMotor;
-    private final Servo armServo;
-    // private final DigitalChannel bottomSensor;
-    private final AtomicBoolean dumping = new AtomicBoolean(false);
-    private final AtomicBoolean dumpingEventRunning = new AtomicBoolean(false);
-    private final EventThread eventThread;
-    private TimedEvent event;
-    private Positions position = Positions.INTAKING;
-    private Positions lastPosition = Positions.INTAKING;
-    private MovementStates state = MovementStates.NO_MOVEMENT;
+    protected final DcMotor liftMotor;
+    protected final Servo armServo;
+    // protected final DigitalChannel bottomSensor;
+    protected final AtomicBoolean dumping = new AtomicBoolean(false);
+    protected final AtomicBoolean dumpingEventRunning = new AtomicBoolean(false);
+    protected final EventThread eventThread;
+    protected TimedEvent event;
+    protected Positions position = Positions.INTAKING;
+    protected Positions lastPosition = Positions.INTAKING;
+    protected MovementStates state = MovementStates.NO_MOVEMENT;
     // fix this later
     /**
      * @param eventThread local eventThread instance
@@ -78,13 +78,29 @@ public class AutoLift {
         this.eventThread = eventThread;
     }
 
-    public void goTo(@NonNull Positions positions) {
-        this.position = Positions.INTAKING;
+    public void setPosition(@NonNull Positions position) {
+        this.position = position;
     }
 
-    private boolean eval() {
+    public void blockingSetPosition(@NonNull Positions position) {
+        setPosition(position);
+        //insert some funny code that blocks until it has moved to position, will be very useful for finian burkard auto
+    }
+
+    protected boolean eval() {
         return (liftMotor.getCurrentPosition() >= position.motorPos - 10 && liftMotor.getCurrentPosition() <= position.motorPos + 10);
     }
+
+
+    /*
+    set to 0.7
+    go to motor position
+    set servo to servo position
+    if not dumper BREAK
+    wait 800 ms
+    go to motor 1375 and servo 0.7
+    BREAK
+     */
 
     public void update() {
         if (position != lastPosition) state = MovementStates.NO_MOVEMENT;
