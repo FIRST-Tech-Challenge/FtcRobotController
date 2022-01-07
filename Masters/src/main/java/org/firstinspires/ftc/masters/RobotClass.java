@@ -85,17 +85,17 @@ public class RobotClass {
 
         this.telemetry = telemetry;
 
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//
-//        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        // parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
-//        parameters.loggingEnabled      = true;
-//        parameters.loggingTag          = "IMU";
-//        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        // parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-  //      imu.initialize(parameters);
+        imu.initialize(parameters);
 
 
     }
@@ -207,7 +207,7 @@ public class RobotClass {
         carousel.setPower(0);
     }
     public void dumpFreightBottom () {
-        linearSlideMotor.setTargetPosition(900);
+        linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_LOW);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.8);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
@@ -226,7 +226,7 @@ public class RobotClass {
     }
 
     public void dumpFreightMiddle () {
-        linearSlideMotor.setTargetPosition(1400);
+        linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_MIDDLE);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.9);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
@@ -246,7 +246,7 @@ public class RobotClass {
     }
 
     public void dumpFreightTop () {
-        linearSlideMotor.setTargetPosition(1800);
+        linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.9);
         while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){

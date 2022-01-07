@@ -19,22 +19,27 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 
+import org.firstinspires.ftc.masters.FreightFrenzyComputerVisionRedHub;
+import org.firstinspires.ftc.masters.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.masters.util.AxesSigns;
 import org.firstinspires.ftc.masters.util.BNO055IMUUtil;
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -77,19 +82,28 @@ public class SampleMecanumDrive extends MecanumDrive {
     private TrajectoryFollower follower;
 
     private DcMotorEx frontLeft, backLeft, backRight, frontRight;
-    public DcMotor carousel;
-    public DistanceSensor distanceSensorLeft;
-    public DistanceSensor distanceSensorRight;
-    public DistanceSensor distanceSensorIntake;
+    public DcMotor carousel, intakeMotor, linearSlideMotor;
+    public DistanceSensor distanceSensorLeft, distanceSensorRight, distanceSensorIntake;
+    public Servo linearSlideServo;
 
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
+    protected LinearOpMode opmode;
+    FreightFrenzyComputerVisionRedHub CV;
+    HardwareMap hardwareMap;
+    Telemetry telemetry;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public SampleMecanumDrive(HardwareMap hardwareMap){
+        this(hardwareMap, null, null);
+    }
+
+    public SampleMecanumDrive(HardwareMap hardwareMap, LinearOpMode opmode, Telemetry telemetry) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-
+        this.opmode = opmode;
+        this.hardwareMap = hardwareMap;
+        this.telemetry = telemetry;
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -119,6 +133,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
 
         carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
+        intakeMotor = hardwareMap.dcMotor.get("intake");
+        linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
+        linearSlideServo = hardwareMap.servo.get("dump");
+        linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
         distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
@@ -155,7 +174,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         long startTime = new Date().getTime();
         long time = 0;
 
-        while (time<seconds*1000 ) {
+        while (time<seconds*1000 && this.opmode.opModeIsActive() ) {
             time = new Date().getTime() - startTime;
         }
     }
@@ -236,10 +255,95 @@ public class SampleMecanumDrive extends MecanumDrive {
         if (leftDistance > 15) {
             distanceSensorForward(.2);
         }
+    }
+
+    public void dumpFreightBottom () {
+        linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_LOW);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(.8);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
+        pause(1500);
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+        linearSlideMotor.setTargetPosition(0);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(-.4);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideMotor.setPower(0);
+    }
+
+    public void dumpFreightMiddle () {
+        linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_MIDDLE);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(.9);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);//1.5
+        pause(1500);
+        //forward(0.3, -0.4);
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+        linearSlideMotor.setTargetPosition(0);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(-.4);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideMotor.setPower(0);
+    }
+
+    public void dumpFreightTop () {
+        linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(.9);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
+        pause(1500);
+        //forward(0.3, -0.2);
+        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+        linearSlideMotor.setTargetPosition(0);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(-.4);
+        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+
+        }
+        linearSlideMotor.setPower(0);
+    }
+
+    public void openCVInnitShenanigans(String color) {
+        CV = new FreightFrenzyComputerVisionRedHub(hardwareMap, telemetry, color);
 
     }
 
+    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition analyze() {
+        return CV.pipeline.position;
+    }
 
+
+
+    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
+        return CV.pipeline.hub_position;
+    }
+
+    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
+        return CV.pipeline.hub_position;
+    }
+
+
+    public void pause(int millis){
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        while (time<millis && opmode.opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+        }
+    }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
