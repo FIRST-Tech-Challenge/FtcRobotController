@@ -93,7 +93,7 @@ public class CreateWebCam {
         streamToDashboard.schedule();
         //mockDetectTSEPosition = new MockDetectTSEPosition(subsystem, telemetry);
         detectTSEPosition = new DetectTSEPosition(subsystem, telemetry);
-        StopDetectTSEPosition stopDetectTSEPosition = new StopDetectTSEPosition(subsystem,telemetry);
+        stopDetectTSEPosition = new StopDetectTSEPosition(subsystem,telemetry);
 
 
         gotLevelTrigger = new Trigger(()->subsystem.getLevel() > 0);

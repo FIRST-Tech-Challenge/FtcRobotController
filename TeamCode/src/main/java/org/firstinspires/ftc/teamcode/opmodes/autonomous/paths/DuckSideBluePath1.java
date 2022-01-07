@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -45,6 +46,8 @@ public class DuckSideBluePath1 {
     private final Telemetry telemetry;
 
     private CreateIntake createIntake;
+    private StopDetectTSEPosition stopDetectTSEPosition;
+    private InstantCommand stopDetect;
 
     public DuckSideBluePath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -80,7 +83,7 @@ public class DuckSideBluePath1 {
         //mockDetectTSEPosition.schedule();
         telemetry.addLine("Detecting Position");
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
-        StopDetectTSEPosition stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
+        stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
         detectTSEPosition.schedule();
 
         //webCamGroup = new SequentialCommandGroup(detectTSEPosition,stopDetectTSEPosition);
@@ -104,6 +107,7 @@ public class DuckSideBluePath1 {
                 //.strafeTo(new Vector2d(-60, 60))
                 .splineToLinearHeading(new Pose2d(-63, 60.4, Math.toRadians(245)),Math.toRadians(180))
                 .addDisplacementMarker(()-> {
+
                     telemetry.addData("Path 1", "performing path 1 action");
                 })
                 .build();
@@ -137,12 +141,15 @@ public class DuckSideBluePath1 {
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
+        stopDetect = new InstantCommand(()->{
+            stopDetectTSEPosition.schedule();
+        });
 
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4
+                stopDetect.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4
         )));
     }
 }

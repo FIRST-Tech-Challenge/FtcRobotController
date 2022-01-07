@@ -67,11 +67,11 @@ public class DetectTSEPosition extends CommandBase {
 
     }
 
-    @Override
+   /* @Override
     public boolean isFinished() {
         //telemetry.addData("We are finished", gotPosition);
         //telemetry.update();
         return level > 0;
-    }
+    }*/
 
 }

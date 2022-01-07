@@ -22,6 +22,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
+import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
@@ -49,6 +50,8 @@ public class DuckSideBluePath3 {
     private final Pose2d startPose;
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
+
+    private InstantCommand stopDetect;
 
     public DuckSideBluePath3(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -84,7 +87,8 @@ public class DuckSideBluePath3 {
         //mockDetectTSEPosition.schedule();
 
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
-        //detectTSEPosition.schedule();
+        StopDetectTSEPosition stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
+        detectTSEPosition.schedule();
 
         createCarousel.createAuto();
         carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
@@ -128,6 +132,10 @@ public class DuckSideBluePath3 {
                 .strafeTo(new Vector2d(-35,12))
                 .splineToLinearHeading(new Pose2d(10, 12, Math.toRadians(0)),Math.toRadians(90))
                 .strafeTo(new Vector2d(10,50))
+                .addDisplacementMarker(()->{
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(1);
+                    setArmLevel.schedule();
+                })
                 .build();
 
         // Drive over the barriers
@@ -142,12 +150,16 @@ public class DuckSideBluePath3 {
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
         sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
 
-        detect = new InstantCommand(()->{detectTSEPosition.schedule();});
+        stopDetect = new InstantCommand(()->{
+            stopDetectTSEPosition.schedule();
+        });
+
+        //detect = new InstantCommand(()->{detectTSEPosition.schedule();});
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                detect.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4, sample1Follower5)
+                stopDetect.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4, sample1Follower5)
         ));
     }
 }
