@@ -18,6 +18,7 @@ public class HardwareClass {
     public DcMotorEx frontLeft;
     public DcMotorEx backLeft;
     public DcMotor carousel;
+    public DcMotorEx armJoint;
 
     public DigitalChannel grabberTouch = null;
     public DigitalChannel limitFront = null;
@@ -45,6 +46,7 @@ public class HardwareClass {
         frontRight = hwMap.get(DcMotorEx.class, "rightFront");
         backRight = hwMap.get(DcMotorEx.class, "rightRear");
         carousel = hwMap.get(DcMotor.class, "carousel");
+        armJoint = hwMap.get(DcMotorEx.class, "armJoint");
 
         //Servos
         grabberLeft = hwMap.get(CRServo.class, "left");
@@ -71,12 +73,15 @@ public class HardwareClass {
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armJoint.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //Zero power behavior (Makes sure robot does not move at all when motors at 0 power)
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        armJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
     }
