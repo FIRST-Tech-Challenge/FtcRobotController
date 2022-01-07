@@ -21,7 +21,8 @@ public class RotateArmToPositionCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        m_ArmSubsystem.setTargetPosition(m_ArmSubsystem.getCurrentPosition() + m_rotation);
+        //m_ArmSubsystem.setTargetPosition(m_ArmSubsystem.getCurrentPosition() + m_rotation);
+        m_ArmSubsystem.setAngle(m_ArmSubsystem.getAngle() + m_rotation);
         m_ArmSubsystem.setPower(m_power);
     }
 
