@@ -201,7 +201,7 @@ public class AutonomousBducks extends AutonomousBase {
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_SPIN, 0.50 );
         sleep( 750);   // wait for capping arm to clear the field wall
         robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
-        robot.wristServo.setPosition( robot.WRIST_SERVO_GRAB );  // rotate wrist into the grab position
+        robot.setWristPositionAuto( robot.WRIST_SERVO_GRAB );  // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         sleep( 2000);   // wait for arm to reach final position
 
@@ -215,7 +215,7 @@ public class AutonomousBducks extends AutonomousBase {
         sleep( 500 );   // wait for claw to close
 
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_LIBERTY, 0.40 );
-        robot.wristServo.setPosition( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
+        robot.setWristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_VERTICAL, 0.40 );
     } // collectTeamElement
 

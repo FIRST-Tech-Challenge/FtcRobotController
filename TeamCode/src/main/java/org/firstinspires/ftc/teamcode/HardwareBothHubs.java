@@ -97,6 +97,7 @@ public class HardwareBothHubs
 
     // CAPPING ARM WRIST SERVO
     public Servo   wristServo = null;
+    public static double wristPositionAuto = 0.0;
     public double  WRIST_SERVO_INIT    = 0.950;
     public double  WRIST_SERVO_GRAB    = 0.455;
     public double  WRIST_SERVO_LIBERTY = 0.500;  // status of liberty pose (end duck-autonomous here)
@@ -131,7 +132,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1898;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2002;  // For dumping into hub bottom level
     public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 15;
-    public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 45;
+    public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 30;
     public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 75;
 
     public Servo        boxServo                   = null;
@@ -275,6 +276,8 @@ public class HardwareBothHubs
         wristServo = hwMap.servo.get("WristServo");    // servo port 0 (hub 2)
         if (!transitionFromAutonomous) {
             wristServo.setPosition( WRIST_SERVO_INIT );
+        } else {
+            wristServo.setPosition( wristPositionAuto );
         }
 
         clawServo = hwMap.servo.get("ClawServo");      // servo port 1 (hub 2)
@@ -291,7 +294,9 @@ public class HardwareBothHubs
         freightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         boxServo = hwMap.servo.get("BoxServo");          // servo port 4 (hub 2)
-        boxServo.setPosition( BOX_SERVO_INIT );
+        if (!transitionFromAutonomous) {
+            boxServo.setPosition( BOX_SERVO_INIT );
+        }
 
         sweepServo = hwMap.crservo.get("SweepServo");    // servo port 5 (hub 2)
         sweepServo.setDirection( CRServo.Direction.REVERSE );
@@ -445,7 +450,15 @@ public class HardwareBothHubs
         cappingMotor.setPower( motorPower );
 
     } // cappingArmPosition
-    
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* setWristPositionAuto()                                                                       */
+    /* - newPos     = desired new wrist position                                                    */
+    public void setWristPositionAuto( double newPos ) {
+        wristServo.setPosition( newPos );
+        wristPositionAuto = newPos;
+    }
+
     /*--------------------------------------------------------------------------------------------*/
     /* freightArmPosition()                                                                       */
     /* - newPos     = desired new arm position                                                    */
